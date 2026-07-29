@@ -1,0 +1,60 @@
+# Python/editor state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.idea/
+.vscode/
+
+# Logs and scheduler output
+/logs/
+*.log
+*.out
+*.err
+
+# Catalogs, simulations, checkpoints, and generated arrays
+*.csv
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.fits
+*.pt
+*.pth
+*.ckpt
+*.bin
+/data_cf4/
+/data_hires/
+/data_sr/
+/data_train/
+/data_train_real/
+/refs/
+
+# Keep only the human-readable data provenance record
+/data/*
+!/data/PROVENANCE.md
+
+# Generated reconstruction products; retain only compact validation records
+/recon/*
+!/recon/linear_cr/
+/recon/linear_cr/*
+!/recon/linear_cr/manifest_final_test_n192.json
+!/recon/linear_cr/manifest_parent_v1_all.json
+!/recon/linear_cr/gate_v1/
+/recon/linear_cr/gate_v1/*
+!/recon/linear_cr/gate_v1/CR_GATE_REPORT.md
+!/recon/linear_cr/gate_v1/cr_gate_result.json
+
+# Generated plots and manuscript build products
+*.png
+*.jpg
+*.jpeg
+*.pdf
+/overleaf_cf4/
+
+# Local/independent compiled tools and scratch probes
+/src/opfof/
+/_probe192.py
+/scratch*
