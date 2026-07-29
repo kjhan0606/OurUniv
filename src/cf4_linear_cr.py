@@ -679,6 +679,7 @@ def main():
             )
 
     held_diag = {}
+    held_by_likelihood = {}
     if hold.any():
         A_hold, _, _, _ = build_forward(data["pos"][hold], data["rhat"][hold], args)
         held_diag = posterior_predictive(
@@ -691,6 +692,24 @@ def main():
             f"dlogscore={held_diag['delta_log_score']:+.1f}",
             flush=True,
         )
+        for label, name in ((0, "WF15"), (1, "local_direct")):
+            select = hold & (data["likelihood_kind"] == label)
+            if not select.any():
+                continue
+            A_kind, _, _, _ = build_forward(
+                data["pos"][select], data["rhat"][select], args
+            )
+            diag = posterior_predictive(
+                A_kind, data, select, mean_s, mean_q, samples_jax, qs
+            )
+            held_by_likelihood[name] = diag
+            print(
+                f"[holdout {name}] n={diag['n']} z={diag['z_mean']:+.3f}"
+                f"+/-{diag['z_std']:.3f} cov68={diag['coverage_1sigma']:.3f} "
+                f"cov95={diag['coverage_2sigma']:.3f} "
+                f"dlogscore={diag['delta_log_score']:+.1f}",
+                flush=True,
+            )
 
     mean_np = np.asarray(mean_s, np.float32)
     common = {
@@ -734,6 +753,7 @@ def main():
         "mean_nuisance_q": mean_q.tolist(),
         "train_normalized_residual_rms": float(np.sqrt(np.mean(train_resid**2))),
         "heldout": held_diag,
+        "heldout_by_likelihood": held_by_likelihood,
         "samples": sample_meta,
         "outputs": output_files,
     }

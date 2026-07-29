@@ -143,8 +143,18 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-Build and validate a v2 parent/local likelihood, then repeat P2 at a resolution
-that can actually form an LG candidate. For every accepted candidate:
+The first direct local-distance likelihood experiment removed the shared
+observer cavity, shifting the Gaussian `R=5 Mpc/h` linear density from about
+`-0.94` in the control to `+0.40` in a fresh validation. It did not pass all
+local held-out calibration gates (`z_std=1.303`, allowed maximum `1.2`) and is
+therefore not promoted to N192. See
+`recon/linear_cr/v2_local_validation_v1/V2_LOCAL_VALIDATION_REPORT.md`.
+
+Implement and mock-validate a CF4 Bias Gaussianization correction or a
+hierarchical distance-modulus likelihood. Do not further tune the direct model
+on split `20260809`. Once a new model passes a fresh N192 test, repeat P2 at a
+resolution that can actually form an LG candidate. For every accepted
+candidate:
 
 1. write an initial RAMSES particle snapshot at `a=0.02`;
 2. run HOP at z=0 and choose the LG midpoint without moving it to the box
