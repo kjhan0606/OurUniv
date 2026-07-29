@@ -43,13 +43,27 @@ RHO_CRIT = 2.775e11   # Msun/h / (Mpc/h)^3
 VUNIT_KMS = 100.0     # pmwd code velocity -> km/s
 
 
-def make_forward(N, spacing, dtype, return_dens=True):
+def make_forward(N, spacing, dtype, return_dens=True, cosmology=None):
+    """Build a PM forward model.
+
+    ``cosmology`` is an optional mapping using the project names ``Om``, ``Ob``,
+    ``h``, ``A_s_1e9``, and ``ns``.  The legacy default is retained for callers
+    that do not provide it; production constrained runs should always pass the
+    cosmology stored with their IC manifest.
+    """
     import jax
     from pmwd import (Configuration, SimpleLCDM, boltzmann,
                       linear_modes, lpt, nbody, scatter)
     conf = Configuration(ptcl_spacing=float(spacing), ptcl_grid_shape=(N,) * 3,
                          mesh_shape=1, float_dtype=dtype)
-    cosmo = boltzmann(SimpleLCDM(conf), conf)
+    params = {} if cosmology is None else {
+        "Omega_m": float(cosmology["Om"]),
+        "Omega_b": float(cosmology["Ob"]),
+        "h": float(cosmology["h"]),
+        "A_s_1e9": float(cosmology["A_s_1e9"]),
+        "n_s": float(cosmology["ns"]),
+    }
+    cosmo = boltzmann(SimpleLCDM(conf, **params), conf)
 
     def forward(s):
         lin = linear_modes(s.reshape(N, N, N), cosmo, conf)

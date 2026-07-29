@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""P2 two-scale zoom IC synthesis for levels FINER than the 1024^3 parent (pmwd-free).
+"""Two-scale, Lagrangian-mask zoom IC synthesis (pmwd-free).
 
 For a fine level L (dx = L_box/2^L, sub-box only) the displacement splits:
   * LONG range (|k| <= parent Nyquist): interpolate the parent ic_velc* (already the
@@ -22,16 +22,26 @@ to reproduce it on a grid of cell dx (=> full-box-equiv N=2^L):
 This factor is the same (Nf/Nc)^1.5 embed_ic uses and is independent of the sub-box size.
 
 Coarser-than-parent levels reuse the plain-downsample path (see cf4_zoom_ic.py, P0).
+Science runs require a sparse mask made by ``cf4_lagrangian_mask.py`` from
+z=0-selected particle IDs traced to the initial snapshot.  The old geometric
+box-centre sphere remains available only behind an explicit diagnostic flag.
 """
 import os
 import sys
 import argparse
+import json
 import numpy as np
 from scipy import fft as sfft
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import grafic_io as G
 from cf4_zoom_ic import block_downsample, snap_subbox, build_refmap
+from cf4_lagrangian_mask import (
+    level_bounds,
+    load_sparse_mask,
+    refmap_for_level,
+    sha256_file,
+)
 
 
 # ------------------------- transfer function -------------------------
@@ -109,36 +119,89 @@ def interp_parent(field, L_box_hmpc, off_hmpc, N_sub, dx_sub_hmpc, chunk=64):
     from scipy.ndimage import map_coordinates
     Np = field.shape[0]
     dx_par = L_box_hmpc / Np
-    loc = ((off_hmpc + (np.arange(N_sub) + 0.5) * dx_sub_hmpc) / dx_par - 0.5)   # parent index coords
+    off = np.broadcast_to(np.asarray(off_hmpc, dtype=np.float64), (3,))
+    loc = [((off[axis] + (np.arange(N_sub) + 0.5) * dx_sub_hmpc) / dx_par - 0.5)
+           for axis in range(3)]
     out = np.empty((N_sub, N_sub, N_sub), dtype=np.float32)
     # 2D j,k plane (reused every i-chunk); meshgrid(indexing='ij') ravel order:
     #   I = repeat(loc, N^2), J = tile(repeat(loc,N), .), K = tile(loc, .)
-    Jf = np.repeat(loc, N_sub)                     # J on one (N,N) plane, raveled
-    Kf = np.tile(loc, N_sub)                        # K on one (N,N) plane, raveled
+    Jf = np.repeat(loc[1], N_sub)                  # J on one (N,N) plane, raveled
+    Kf = np.tile(loc[2], N_sub)                    # K on one (N,N) plane, raveled
     for a in range(0, N_sub, chunk):
         b = min(a + chunk, N_sub)
         ni = b - a
-        coords = np.vstack([np.repeat(loc[a:b], N_sub * N_sub),
+        coords = np.vstack([np.repeat(loc[0][a:b], N_sub * N_sub),
                             np.tile(Jf, ni), np.tile(Kf, ni)])
         out[a:b] = map_coordinates(field, coords, order=1,
                                    mode="grid-wrap").reshape(ni, N_sub, N_sub)
     return out
 
 
+def _level_window(level, levelmin, box_hmpc, center_hmpc, half_hmpc, mask):
+    """Return three-axis integer bounds for a level."""
+    n = 2 ** level
+    if level == levelmin:
+        return np.zeros(3, dtype=np.int64), np.full(3, n, dtype=np.int64)
+    if mask is not None:
+        return level_bounds(mask, level)
+    i0, i1, _ = snap_subbox(
+        n, 2 ** levelmin, box_hmpc, center_hmpc, half_hmpc)
+    return np.full(3, i0, dtype=np.int64), np.full(3, i1, dtype=np.int64)
+
+
+def _slice3(lo, hi):
+    return tuple(slice(int(lo[a]), int(hi[a])) for a in range(3))
+
+
+def _parent_fingerprint(parent):
+    result = {}
+    for name in ("ic_velcx", "ic_velcy", "ic_velcz"):
+        path = os.path.join(parent, name)
+        stat = os.stat(path)
+        result[name] = {
+            "size": stat.st_size,
+            "mtime_ns": stat.st_mtime_ns,
+        }
+    return result
+
+
+def _write_manifest(path, payload):
+    tmp = path + ".tmp"
+    with open(tmp, "w") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+    os.replace(tmp, path)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--parent", default="/gpfs/kjhan/Hydro/CF4_LG/ic_cr6_e19_1024/level_010")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ap.add_argument("--parent", required=True,
+                    help="accepted parent GRAFIC level directory; no rejected-run default")
     ap.add_argument("--parent-level", type=int, default=10)
-    ap.add_argument("--transfer", default="/gpfs/kjhan/Hydro/CF4_LG/tier1/transfer_cr6_e19_camb.npz",
-                    help="CAMB-based transfer (user directive); *_eh98 or bare *.npz also work")
-    ap.add_argument("--out", default="/gpfs/kjhan/Hydro/CF4_LG/zoom_p2")
-    ap.add_argument("--levelmin", type=int, default=8)
-    ap.add_argument("--levelmax-ic", type=int, default=11, help="finest IC level (may exceed parent)")
-    ap.add_argument("--box-hmpc", type=float, default=384.0)
+    ap.add_argument("--transfer", required=True,
+                    help="CAMB-based parent transfer NPZ")
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--resolution-config",
+                    default=os.path.join(root, "config", "ic_resolution_v1.json"))
+    ap.add_argument("--tier", choices=("pilot", "production"), default="pilot")
+    ap.add_argument("--levelmin", type=int, default=None,
+                    help="global RAMSES base level; defaults to frozen config L9")
+    ap.add_argument("--levelmax-ic", type=int, default=None,
+                    help="finest zoom-particle IC level; defaults to selected tier")
+    ap.add_argument("--runtime-levelmax", type=int, default=None,
+                    help="RAMSES AMR levelmax; defaults to selected tier")
+    ap.add_argument("--box-hmpc", type=float, default=None)
     ap.add_argument("--h", type=float, default=0.746)
     ap.add_argument("--Om", type=float, default=0.31)
     ap.add_argument("--OL", type=float, default=0.69)
     ap.add_argument("--astart", type=float, default=0.02)
+    ap.add_argument("--mask-npz",
+                    help="sparse z=0 particle-trace mask from cf4_lagrangian_mask.py")
+    ap.add_argument("--resume", action="store_true",
+                    help="resume only when the stored run specification matches exactly")
+    ap.add_argument("--allow-geometric-mask", action="store_true",
+                    help="DIAGNOSTIC ONLY: permit the rejected box-centre sphere shortcut")
     ap.add_argument("--center-hmpc", type=float, default=192.0)
     ap.add_argument("--mask-R-hmpc", type=float, default=6.0)
     ap.add_argument("--subbox-half-hmpc", type=float, default=24.0)
@@ -147,8 +210,24 @@ def main():
                          "ensemble; unconstrained by CF4)")
     args = ap.parse_args()
 
-    Lc, Lf = args.levelmin, args.levelmax_ic
-    Nmin = 2 ** Lc
+    with open(args.resolution_config) as handle:
+        resolution = json.load(handle)
+    tier = resolution["zoom_tiers"][args.tier]
+    Lc = (resolution["global_base_level"] if args.levelmin is None
+          else args.levelmin)
+    Lf = (tier["finest_ic_particle_level"] if args.levelmax_ic is None
+          else args.levelmax_ic)
+    runtime_levelmax = (tier["runtime_amr_levelmax"]
+                        if args.runtime_levelmax is None else args.runtime_levelmax)
+    args.box_hmpc = (resolution["box_size_mpc_h"] if args.box_hmpc is None
+                     else args.box_hmpc)
+    if runtime_levelmax < Lf:
+        ap.error("--runtime-levelmax cannot be below --levelmax-ic")
+    if args.mask_npz is None and not args.allow_geometric_mask:
+        ap.error("science ICs require --mask-npz; use --allow-geometric-mask only for diagnostics")
+    mask = (None if args.mask_npz is None else
+            load_sparse_mask(args.mask_npz, expected_box=args.box_hmpc,
+                             expected_base_level=Lc))
     Npar = 2 ** args.parent_level
     Lbox_mpc = args.box_hmpc / args.h
     h0 = 100.0 * args.h
@@ -157,8 +236,50 @@ def main():
     a, Om, OL = args.astart, args.Om, args.OL
     H_a = h0 * np.sqrt(Om / a ** 3 + OL)
     Oma = Om / a ** 3 / (Om / a ** 3 + OL); f1 = Oma ** 0.545
-    print(f"[z2] levels {Lc}..{Lf} (parent={args.parent_level})  kcut={kcut:.2f} h/Mpc  "
-          f"f1={f1:.4f} H(a)={H_a:.1f}", flush=True)
+    mask_kind = args.mask_npz if mask is not None else "GEOMETRIC-DIAGNOSTIC"
+    print(f"[z2] tier={args.tier} IC levels {Lc}..{Lf}, runtime L{runtime_levelmax} "
+          f"(parent={args.parent_level})", flush=True)
+    print(f"[z2] box={args.box_hmpc} Mpc/h mask={mask_kind} "
+          f"kcut={kcut:.2f} h/Mpc f1={f1:.4f} H(a)={H_a:.1f}", flush=True)
+
+    run_spec = {
+        "schema": "ouruniv-zoom-ic-run-v1",
+        "tier": args.tier,
+        "global_levelmin": Lc,
+        "finest_ic_level": Lf,
+        "runtime_levelmax": runtime_levelmax,
+        "box_mpc_h": args.box_hmpc,
+        "h": args.h,
+        "Omega_m": Om,
+        "Omega_l": OL,
+        "astart": a,
+        "small_scale_seed": args.seed,
+        "parent": os.path.abspath(args.parent),
+        "parent_level": args.parent_level,
+        "parent_fingerprint": _parent_fingerprint(args.parent),
+        "transfer": os.path.abspath(args.transfer),
+        "transfer_sha256": sha256_file(args.transfer),
+        "mask": (None if args.mask_npz is None else os.path.abspath(args.mask_npz)),
+        "mask_sha256": (None if args.mask_npz is None else sha256_file(args.mask_npz)),
+        "geometric_mask_diagnostic": mask is None,
+        "resolution_config": os.path.abspath(args.resolution_config),
+        "resolution_config_sha256": sha256_file(args.resolution_config),
+    }
+    os.makedirs(args.out, exist_ok=True)
+    manifest_path = os.path.join(args.out, "zoom_ic_manifest.json")
+    if os.path.exists(manifest_path):
+        with open(manifest_path) as handle:
+            old_manifest = json.load(handle)
+        if old_manifest.get("run_spec") != run_spec:
+            raise RuntimeError(
+                f"{manifest_path} belongs to a different seed/mask/input configuration")
+        if not args.resume:
+            raise RuntimeError(
+                f"{manifest_path} already exists; pass --resume only for this exact run")
+    elif any(os.scandir(args.out)):
+        raise RuntimeError(
+            f"{args.out} is non-empty but has no compatible zoom_ic_manifest.json")
+    _write_manifest(manifest_path, {"status": "running", "run_spec": run_spec})
 
     # parent fields (read once): velocities always; delta only for coarse deltab
     print("[z2] reading parent ic_velc* ...", flush=True)
@@ -169,8 +290,13 @@ def main():
     fine_levels = [L for L in range(Lc, Lf + 1) if L > args.parent_level]
     if fine_levels:
         Lf_fine = fine_levels[-1]
-        i0f, i1f, _ = snap_subbox(2 ** Lf_fine, Nmin, args.box_hmpc, args.center_hmpc, args.subbox_half_hmpc)
-        Nf_fine = i1f - i0f
+        i0f, i1f = _level_window(
+            Lf_fine, Lc, args.box_hmpc, args.center_hmpc,
+            args.subbox_half_hmpc, mask)
+        shape_fine = i1f - i0f
+        if not np.all(shape_fine == shape_fine[0]):
+            raise ValueError(f"fine Fourier subbox is not cubic: {shape_fine}")
+        Nf_fine = int(shape_fine[0])
         print(f"[z2] fine levels {fine_levels}: one nested white-noise field N={Nf_fine}^3 "
               f"seed={args.seed} (~{Nf_fine ** 3 * 4 / 1e9:.1f} GB f32) ...", flush=True)
         Wf = hier_rfftn(Nf_fine, args.seed)
@@ -181,28 +307,38 @@ def main():
         N = 2 ** L
         dxg = Lbox_mpc / N                                     # GRAFIC comoving Mpc
         dx_h = args.box_hmpc / N
-        if L == Lc:
-            i0, i1 = 0, N
-        else:
-            i0, i1, _ = snap_subbox(N, Nmin, args.box_hmpc, args.center_hmpc, args.subbox_half_hmpc)
-        off_h = i0 * dx_h
+        i0, i1 = _level_window(
+            L, Lc, args.box_hmpc, args.center_hmpc,
+            args.subbox_half_hmpc, mask)
+        shape = i1 - i0
+        if not np.all(shape == shape[0]):
+            raise ValueError(f"IC subbox is not cubic at L{L}: {shape}")
+        off_h = i0.astype(np.float64) * dx_h
         off_mpc = off_h / args.h
-        Nsub = i1 - i0
+        Nsub = int(shape[0])
 
         # resume: skip a level whose 5 fields are already on disk at full size
         # (generation is deterministic in the seed, so an existing level is correct)
         outdir = os.path.join(args.out, f"level_{L:03d}")
         want = Nsub ** 3 * 4
-        if all(os.path.exists(os.path.join(outdir, f)) and os.path.getsize(os.path.join(outdir, f)) >= want
-               for f in ("ic_deltab", "ic_velcx", "ic_velcy", "ic_velcz", "ic_refmap")):
-            print(f"[z2] level {L:2d} N={N:5d} already complete -> skip", flush=True)
+        fields = ("ic_deltab", "ic_velcx", "ic_velcy", "ic_velcz", "ic_refmap")
+        complete = all(
+            os.path.exists(os.path.join(outdir, f))
+            and os.path.getsize(os.path.join(outdir, f)) >= want
+            for f in fields)
+        if complete and args.resume:
+            print(f"[z2] level {L:2d} N={N:5d} manifest-matched and complete -> skip",
+                  flush=True)
             continue
+        if os.path.isdir(outdir) and any(os.scandir(outdir)) and not args.resume:
+            raise RuntimeError(f"{outdir} already contains files; use a fresh --out")
 
         if L <= args.parent_level:
             # coarse/equal: downsample parent, extract sub-box (P0 path)
-            vx = block_downsample(vpar[0], N)[i0:i1, i0:i1, i0:i1]
-            vy = block_downsample(vpar[1], N)[i0:i1, i0:i1, i0:i1]
-            vz = block_downsample(vpar[2], N)[i0:i1, i0:i1, i0:i1]
+            sl = _slice3(i0, i1)
+            vx = block_downsample(vpar[0], N)[sl]
+            vy = block_downsample(vpar[1], N)[sl]
+            vz = block_downsample(vpar[2], N)[sl]
             mode = "downsample"
         else:
             # fine: two-scale (long interp parent vel + short fresh synth)
@@ -217,21 +353,41 @@ def main():
             vx, vy, vz = vlx + sx, vly + sy, vlz + sz
             mode = f"two-scale long_rms={vlx.std():.1f} short_rms={sx.std():.1f} km/s"
 
-        refmap = build_refmap(i0, i1, dx_h, args.center_hmpc, args.mask_R_hmpc)
+        if mask is not None:
+            refmap = refmap_for_level(mask, L, i0, i1)
+        else:
+            refmap = build_refmap(
+                int(i0[0]), int(i1[0]), dx_h,
+                args.center_hmpc, args.mask_R_hmpc)
         os.makedirs(outdir, exist_ok=True)
-        wargs = (dxg, (off_mpc, off_mpc, off_mpc), a, Om, OL, h0)
+        wargs = (dxg, tuple(off_mpc), a, Om, OL, h0)
         G.write_grafic_field(os.path.join(outdir, "ic_deltab"), np.zeros_like(vx), *wargs)
         G.write_grafic_field(os.path.join(outdir, "ic_velcx"), vx.astype(np.float32), *wargs)
         G.write_grafic_field(os.path.join(outdir, "ic_velcy"), vy.astype(np.float32), *wargs)
         G.write_grafic_field(os.path.join(outdir, "ic_velcz"), vz.astype(np.float32), *wargs)
         G.write_grafic_field(os.path.join(outdir, "ic_refmap"), refmap, *wargs)
-        print(f"[z2] level {L:2d} N={N:5d} sub=[{i0}:{i1}]({Nsub}^3) off={off_mpc:.2f}Mpc "
+        bounds = ",".join(f"{int(i0[q])}:{int(i1[q])}" for q in range(3))
+        offsets = ",".join(f"{off_mpc[q]:.2f}" for q in range(3))
+        print(f"[z2] level {L:2d} N={N:5d} sub=[{bounds}]({Nsub}^3) off=({offsets})Mpc "
               f"dx={dxg:.4f}Mpc v_rms=({vx.std():.1f},{vy.std():.1f},{vz.std():.1f}) [{mode}] -> {outdir}", flush=True)
 
     print("\n[z2] &INIT_PARAMS filetype='grafic'  (initfile 1-based rel. to levelmin)")
     for i, L in enumerate(range(Lc, Lf + 1), start=1):
         print(f"[z2]   initfile({i})='{os.path.join(args.out, f'level_{L:03d}')}'")
-    print(f"[z2] &AMR_PARAMS levelmin={Lc} levelmax>={Lf} ; &REFINE_PARAMS ivar_refine=0")
+    print(f"[z2] &AMR_PARAMS levelmin={Lc} levelmax={runtime_levelmax} ; "
+          f"&REFINE_PARAMS ivar_refine=0")
+    output_summary = {}
+    for L in range(Lc, Lf + 1):
+        outdir = os.path.join(args.out, f"level_{L:03d}")
+        output_summary[f"level_{L:03d}"] = {
+            name: os.path.getsize(os.path.join(outdir, name))
+            for name in ("ic_deltab", "ic_velcx", "ic_velcy", "ic_velcz", "ic_refmap")
+        }
+    _write_manifest(manifest_path, {
+        "status": "complete",
+        "run_spec": run_spec,
+        "output_file_sizes": output_summary,
+    })
 
 
 if __name__ == "__main__":

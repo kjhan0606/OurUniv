@@ -56,8 +56,12 @@ The replacement in `src/cf4_linear_cr.py` uses:
 
 - `src/cf4_linear_cr.py` — accepted WF/CR sampler
 - `src/cf4_cr_gate.py` — statistical, Gaussianity, and ΛCDM power gate
+- `src/cf4_trace_ramses_ids.py` — z=0-to-initial particle-ID trace
+- `src/cf4_lagrangian_mask.py` — sparse periodic Lagrangian zoom mask
+- `src/cf4_zoom_ic2.py` — phase-consistent multi-level GRAFIC zoom ICs
 - `src/cf4_zoom_z0_gate.py` — RAMSES z=0/HOP zoom validation
 - `src/` — reconstruction, forward-model, IC, and analysis utilities
+- `IC_RESOLUTION.md` — frozen base/pilot/production resolution hierarchy
 - `CODEX_PLAN.md` — ordered scientific gates and current status
 - `RESULTS.md` — historical experimental record
 - `recon/linear_cr/` — compact manifests and gate results only
@@ -92,10 +96,12 @@ The commands require the locally prepared `data/cf4_clean.npz`, which is not
 distributed in this repository. Its source and construction are documented in
 `data/PROVENANCE.md` and `src/cf4_ingest.py`.
 
-## Next gate
+## Current zoom hierarchy
 
-Freeze observational coordinates and tolerances for Virgo, Coma, the Local
-Void, and Boötes void, together with MW–M31–M33 and isolation criteria. Then
-forward all 16 accepted posterior members at the same inexpensive resolution,
-score them without using the held-out likelihood data, and select the physical
-parent before generating any new production zoom.
+The `384 Mpc/h` parent uses global L9 (`512^3`). An LG candidate first receives
+an L12-particle/L19-AMR pilot. A passing candidate advances to the aggressive
+L13-particle/L21-AMR production run (`m_DM=8.86e6 Msun/h`, formal minimum cell
+`0.245 physical kpc` at z=0). A science IC requires a stable-particle-ID
+traceback mask; the former box-centre sphere is diagnostic only.
+
+See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.

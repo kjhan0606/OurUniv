@@ -46,6 +46,14 @@ __pycache__/
 /recon/linear_cr/gate_v1/*
 !/recon/linear_cr/gate_v1/CR_GATE_REPORT.md
 !/recon/linear_cr/gate_v1/cr_gate_result.json
+!/recon/linear_cr/p1_parent_v1/
+/recon/linear_cr/p1_parent_v1/*
+!/recon/linear_cr/p1_parent_v1/P1_REPORT.md
+!/recon/linear_cr/p1_parent_v1/p1_result.json
+!/recon/linear_cr/p2_screen_v1/
+/recon/linear_cr/p2_screen_v1/*
+!/recon/linear_cr/p2_screen_v1/P2_SCREEN_REPORT.md
+!/recon/linear_cr/p2_screen_v1/p2_screen_result.json
 
 # Generated plots and manuscript build products
 *.png

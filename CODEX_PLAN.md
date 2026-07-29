@@ -40,9 +40,11 @@ required.
   center rather than the target's Lagrangian patch.
 - This run is retained as a diagnostic only and is rejected for LG/M33/dwarf
   science.
-- The old `power_complete` and nonlinear-MAP subtraction products remain
-  rejected as posterior samples. They must not be mixed with the accepted
-  `linear_cr/parent_v1_all` ensemble.
+- The old `power_complete` routine had the correct physical aim of restoring
+  Wiener-suppressed high-k power with random phases. It approximated the
+  residual covariance by an isotropic shell filter, so it and the nonlinear-MAP
+  subtraction products remain archived for provenance rather than serving as
+  inputs to the accepted `linear_cr/parent_v1_all` ensemble.
 
 ## Ordered gates
 
@@ -61,17 +63,23 @@ required.
 
 ### P1 — full-box Local-Universe scorecard
 
-Run the same HOP/void analysis on each parent candidate.
+**Status: complete at parent resolution.**
 
-- Virgo: position, `M200c`, LG–Virgo relative velocity/infall.
-- Coma: position and cluster mass at parent resolution.
-- Local Void: center, radial density profile, effective radius/ellipticity.
-- Boötes void: first freeze an observational catalog definition and coordinate
-  transform; the current project has no explicit target coordinate.
-- Reject candidates that recover one object by destroying another or by
-  violating the CF4 likelihood/power gate.
+- Definitions and thresholds were frozen in `config/p1_targets_v1.json`.
+- All 16 parent members were evolved with the same `pmwd` model and the exact
+  cosmology stored in the parent manifest.
+- Seeds 1002 and 1009 pass all four coarse environment gates: Virgo, Coma,
+  the four-probe Local Void, and the Boötes-void center/profile.
+- Fornax, Hydra, Centaurus, Norma, Perseus, and the Shapley core were measured
+  as blind non-gating anchors; they were not used to retune the hard gates.
+- Exact cluster masses, relative velocities, and extended basin/filament
+  topology remain higher-resolution measurements.
+- Both passing parents advance to P2; no single physical winner is selected
+  at P1.
 
 ### P2 — LG ensemble selection
+
+**Status: first paired screen complete; no candidate passed.**
 
 At sufficient parent resolution, rank random small-scale realizations using:
 
@@ -84,7 +92,21 @@ At sufficient parent resolution, rank random small-scale realizations using:
 Use an ensemble and report the selection probability; do not treat one seed as
 deterministic reconstruction of observed dwarfs.
 
+The first frozen paired screen applied small-scale seeds 2001--2008 to both P1
+parents. None of the 16 combinations contained an eligible MW-mass halo within
+6 Mpc/h of the observer. Parent-level diagnostics show a shared central cavity,
+so increasing only high-k seeds is not justified. Before repeating P2, the
+local low-redshift likelihood and the explicitly external Local-Sheet/LG
+selection must be separated and validated.
+
 ### P3 — exact Lagrangian masks
+
+**Resolution hierarchy frozen on 2026-07-29.** See
+`config/ic_resolution_v1.json` and `IC_RESOLUTION.md`.
+
+- Full box: `L=384 Mpc/h`, global RAMSES `levelmin=9` (`512^3`).
+- Pilot LG load: finest IC particles L12, runtime `levelmax=19`.
+- Production LG load: finest IC particles L13, runtime `levelmax=21`.
 
 1. Select each z=0 target using halo membership plus a buffered Eulerian
    region.
@@ -97,9 +119,9 @@ deterministic reconstruction of observed dwarfs.
 
 ### P4 — inexpensive z=0 pilot
 
-Before L14:
+Before the aggressive production run:
 
-- run an L11/L12 pilot to z=0;
+- run an L12-particle/L19-AMR pilot to z=0;
 - repeat HOP and spherical-overdensity measurements;
 - require the target to lie inside the high-resolution region;
 - require a declared contamination limit (default `<1%` mass inside each
@@ -110,7 +132,9 @@ Only a passing pilot authorizes the production zoom.
 
 ### P5 — production and reproducibility
 
-- Run LG L14 (or higher if M33/satellite science requires it).
+- Run the accepted LG mask with L13 particles and runtime L21. This gives
+  `m_DM=8.86e6 Msun/h` and a formal minimum cell size of
+  `0.183 ckpc/h` (`0.245 physical kpc` at z=0).
 - Create separate Virgo/Coma zooms as needed, all from the same parent phases.
 - Re-run the complete scorecard at every final snapshot.
 - Store code, configs, manifests, small catalogs, figures, and checksums in
@@ -119,11 +143,15 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-Freeze the P1/P2 acceptance table before looking at the 16 members, including
-the Boötes-void observational definition. Then forward all 16 accepted CRs at
-the same inexpensive resolution and score Virgo, Coma, the Local/Boötes
-voids, and LG environment. Only after that pre-registered selection should a
-single physical parent and its small-scale LG seed family be chosen.
+Build and validate a v2 parent/local likelihood, then repeat P2 at a resolution
+that can actually form an LG candidate. For every accepted candidate:
 
-In parallel, the failed cr6/e19 run can still be used for a diagnostic
-Lagrangian backtrace, but it is no longer a candidate parent.
+1. write an initial RAMSES particle snapshot at `a=0.02`;
+2. run HOP at z=0 and choose the LG midpoint without moving it to the box
+   centre;
+3. use `cf4_trace_ramses_ids.py` for the z=0-to-initial ID join;
+4. use `cf4_lagrangian_mask.py` to build the buffered sparse L9 mask;
+5. generate the L12/L19 pilot with `cf4_zoom_ic2.py`;
+6. authorize L13/L21 only after the HOP and contamination gates pass.
+
+The failed cr6/e19 run remains diagnostic only and is not a candidate parent.
