@@ -105,3 +105,12 @@ L13-particle/L21-AMR production run (`m_DM=8.86e6 Msun/h`, formal minimum cell
 traceback mask; the former box-centre sphere is diagnostic only.
 
 See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.
+
+## Present-density reconstruction reference
+
+The literal Hong et al. (2021) present-density reproduction is tracked
+separately in [`HONG2021_REPRODUCTION.md`](HONG2021_REPRODUCTION.md).  The
+published `0.3125 Mpc/h` voxel is not treated as a claim of uniform physical
+resolution.  The full-width architecture runs locally, while faithful
+TNG100-1 training is currently waiting for snapshot-99 particles and group
+catalog access.

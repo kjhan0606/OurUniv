@@ -1,0 +1,58 @@
+{
+  "status": "blocked_on_raw_simulation_data",
+  "reference": {
+    "paper": "Hong, Jeong, Hwang & Kim 2021, ApJ 913, 76",
+    "arxiv": "2008.01738",
+    "doi": "10.3847/1538-4357/abf040"
+  },
+  "simulation": {
+    "name": "TNG100-1",
+    "snapshot": 99,
+    "box_mpc_h": 75.0,
+    "center_stellar_mass_msun": [
+      40000000000.0,
+      100000000000.0
+    ],
+    "target_absolute_B_magnitude_max": -15.0,
+    "candidate_centers_reported": 988,
+    "nonoverlapping_train": 432,
+    "nonoverlapping_validation": 93
+  },
+  "cube": {
+    "box_mpc_h": 20.0,
+    "grid": 64,
+    "voxel_mpc_h": 0.3125,
+    "input_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s"
+    ],
+    "galactic_mask_abs_b_deg": 10.0,
+    "target": "log10(rho_dm/rho_dm_mean)/4.5"
+  },
+  "augmentation": {
+    "cyclic_axis_permutations": 3,
+    "axis_direction_flips": 8,
+    "factor": 24,
+    "train_after_augmentation": 10368,
+    "validation_after_augmentation": 2232
+  },
+  "training": {
+    "epochs": 200,
+    "batch_size": 6,
+    "batches_per_epoch": 1728,
+    "loss": "mean_squared_error",
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-07,
+    "batch_norm_epsilon": 0.001,
+    "model_selection": "minimum_training_loss_after_2pCF_comparison"
+  },
+  "required_local_inputs": {
+    "tng100_1_snapshot_099_dark_matter_coordinates": false,
+    "tng100_1_group_catalog_099": false,
+    "eagle_RefL0100N1504_z0_independent_test": false,
+    "author_weights_or_training_cubes": false
+  }
+}

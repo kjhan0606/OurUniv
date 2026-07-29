@@ -1,0 +1,269 @@
+#!/usr/bin/env python
+"""Train the published Hong et al. (2021) TNG100 network.
+
+Defaults reproduce the paper: 432 unaugmented training cubes, 93 validation
+cubes, 3 cyclic axis permutations x 8 flips, batch 6, 200 epochs, MSE, and Adam
+(lr=1e-3, beta=(0.9,0.999), eps=1e-7).  The input is deliberately *not*
+standardized: the paper feeds galaxy counts and mean radial velocity in km/s.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import random
+import time
+from pathlib import Path
+
+import h5py
+import numpy as np
+import torch
+from torch import nn
+from torch.utils.data import DataLoader, Dataset
+
+from hong2021_data import inspect_training_file
+from hong2021_model import Hong2021Net, PAPER_CHANNELS, parameter_count
+
+
+INPUT_MODES = {
+    "faithful": (2, "Ngal,mean_radial_vpec_kms"),
+    "uncertainty3": (
+        3,
+        "Ngal,weighted_mean_radial_vpec_kms,sigma_mean_radial_vpec_kms",
+    ),
+    "uncertainty4": (
+        4,
+        "Ngal,weighted_mean_radial_vpec_kms,sigma_mean_radial_vpec_kms,"
+        "within_voxel_velocity_dispersion_kms",
+    ),
+}
+
+
+class AugmentedH5Dataset(Dataset):
+    """Lazy HDF5 dataset expanded by the paper's fixed 24 symmetries."""
+
+    def __init__(self, path: str | Path, augment: bool) -> None:
+        self.path = str(path)
+        self.augment = augment
+        self.factor = 24 if augment else 1
+        self._handle: h5py.File | None = None
+        with h5py.File(self.path, "r") as handle:
+            self.n = int(handle["input"].shape[0])
+
+    def __len__(self) -> int:
+        return self.n * self.factor
+
+    def _open(self) -> h5py.File:
+        if self._handle is None:
+            self._handle = h5py.File(self.path, "r")
+        return self._handle
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        base, transform = divmod(index, self.factor)
+        handle = self._open()
+        x = np.asarray(handle["input"][base], dtype=np.float32)
+        y = np.asarray(handle["target"][base], dtype=np.float32)
+        if self.augment:
+            permutation_index, flip_bits = divmod(transform, 8)
+            spatial_axes = ((0, 1, 2), (1, 2, 0), (2, 0, 1))[permutation_index]
+            axes = (0,) + tuple(1 + v for v in spatial_axes)
+            x = np.transpose(x, axes)
+            y = np.transpose(y, axes)
+            for dim in range(3):
+                if flip_bits & (1 << dim):
+                    x = np.flip(x, axis=1 + dim)
+                    y = np.flip(y, axis=1 + dim)
+            x, y = np.ascontiguousarray(x), np.ascontiguousarray(y)
+        return torch.from_numpy(x), torch.from_numpy(y)
+
+
+def epoch_loss(
+    model: nn.Module,
+    loader: DataLoader,
+    device: torch.device,
+    optimizer: torch.optim.Optimizer | None,
+) -> float:
+    training = optimizer is not None
+    model.train(training)
+    total_loss = 0.0
+    total_samples = 0
+    context = torch.enable_grad() if training else torch.inference_mode()
+    with context:
+        for x, y in loader:
+            x = x.to(device, non_blocking=True)
+            y = y.to(device, non_blocking=True)
+            if training:
+                optimizer.zero_grad(set_to_none=True)
+            prediction = model(x)
+            loss = nn.functional.mse_loss(prediction, y)
+            if training:
+                loss.backward()
+                optimizer.step()
+            batch = x.shape[0]
+            total_loss += float(loss.detach()) * batch
+            total_samples += batch
+    return total_loss / total_samples
+
+
+def save_checkpoint(
+    path: Path,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    epoch: int,
+    train_loss: float,
+    validation_loss: float,
+) -> None:
+    torch.save(
+        {
+            "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "validation_loss": validation_loss,
+            "paper_channels": PAPER_CHANNELS,
+        },
+        path,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--train", required=True)
+    parser.add_argument("--validation", required=True)
+    parser.add_argument("--out", default="recon/hong2021/tng100_v1")
+    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--batch", type=int, default=6)
+    parser.add_argument("--lr", type=float, default=1.0e-3)
+    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--seed", type=int, default=2021)
+    parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--input-mode",
+        choices=tuple(INPUT_MODES),
+        default="faithful",
+        help="faithful is the paper; uncertainty3/4 are CF4 comparison models",
+    )
+    parser.add_argument(
+        "--smoke-widths",
+        default=None,
+        help="non-science smoke test only, e.g. 4,8,16,32,64",
+    )
+    args = parser.parse_args()
+
+    input_channels, channel_label = INPUT_MODES[args.input_mode]
+    reports = [
+        inspect_training_file(args.train, input_channels, channel_label),
+        inspect_training_file(args.validation, input_channels, channel_label),
+    ]
+    if not all(report["pass"] for report in reports):
+        raise SystemExit("input validation failed:\n" + json.dumps(reports, indent=2))
+    if args.smoke_widths is None and args.input_mode == "faithful":
+        if reports[0]["n_unaugmented"] != 432 or reports[1]["n_unaugmented"] != 93:
+            raise SystemExit("paper run requires exactly 432 train and 93 validation cubes")
+
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+    device = torch.device(args.device)
+    widths = (
+        tuple(int(v) for v in args.smoke_widths.split(","))
+        if args.smoke_widths
+        else PAPER_CHANNELS
+    )
+    model = Hong2021Net(in_channels=input_channels, channels=widths).to(device)
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=args.lr, betas=(0.9, 0.999), eps=1.0e-7
+    )
+    train_set = AugmentedH5Dataset(args.train, augment=True)
+    validation_set = AugmentedH5Dataset(args.validation, augment=True)
+    generator = torch.Generator().manual_seed(args.seed)
+    common = {
+        "batch_size": args.batch,
+        "num_workers": args.workers,
+        "pin_memory": device.type == "cuda",
+        "persistent_workers": args.workers > 0,
+    }
+    train_loader = DataLoader(
+        train_set, shuffle=True, generator=generator, drop_last=False, **common
+    )
+    validation_loader = DataLoader(
+        validation_set, shuffle=False, drop_last=False, **common
+    )
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    metadata = {
+        "faithful_paper_run": (
+            args.smoke_widths is None and args.input_mode == "faithful"
+        ),
+        "input_mode": args.input_mode,
+        "input_channels": input_channels,
+        "channels": widths,
+        "parameters": parameter_count(model),
+        "train_samples_unaugmented": reports[0]["n_unaugmented"],
+        "validation_samples_unaugmented": reports[1]["n_unaugmented"],
+        "train_samples_augmented": len(train_set),
+        "validation_samples_augmented": len(validation_set),
+        "batch": args.batch,
+        "epochs": args.epochs,
+        "optimizer": {"name": "Adam", "lr": args.lr, "betas": [0.9, 0.999], "eps": 1e-7},
+        "torch": torch.__version__,
+        "device": str(device),
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+    }
+    (out / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    print(json.dumps(metadata, indent=2), flush=True)
+
+    best_train = float("inf")
+    best_validation = float("inf")
+    history: list[dict[str, float | int]] = []
+    start = time.time()
+    for epoch in range(1, args.epochs + 1):
+        train_loss = epoch_loss(model, train_loader, device, optimizer)
+        validation_loss = epoch_loss(model, validation_loader, device, None)
+        row = {
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "validation_loss": validation_loss,
+            "elapsed_seconds": time.time() - start,
+        }
+        history.append(row)
+        (out / "history.json").write_text(json.dumps(history, indent=2) + "\n")
+        if train_loss < best_train:
+            best_train = train_loss
+            save_checkpoint(
+                out / "minimum_training_loss.pt",
+                model,
+                optimizer,
+                epoch,
+                train_loss,
+                validation_loss,
+            )
+        if validation_loss < best_validation:
+            best_validation = validation_loss
+            save_checkpoint(
+                out / "minimum_validation_loss.pt",
+                model,
+                optimizer,
+                epoch,
+                train_loss,
+                validation_loss,
+            )
+        save_checkpoint(
+            out / "last_epoch.pt",
+            model,
+            optimizer,
+            epoch,
+            train_loss,
+            validation_loss,
+        )
+        print(
+            f"epoch={epoch:03d} train={train_loss:.7f} "
+            f"validation={validation_loss:.7f} elapsed={row['elapsed_seconds']:.0f}s",
+            flush=True,
+        )
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,11 @@
 # CF4 — Local-Universe Density Reconstruction from Cosmicflows-4
 
+> **2026-07-30 status correction.** The high-resolution PMWD sub-cube run below
+> is not a Hong et al. reproduction.  A 0.3125-Mpc/h array spacing alone is not
+> evidence of that information resolution, and it cannot identify MW/M31/M33
+> analogs from CF4.  See `HONG2021_REPRODUCTION.md` for the literal architecture,
+> data specification, distance-dependent effective resolution, and audit.
+
 **Goal.** From CF4's biased galaxy distribution + sparse peculiar-velocity field,
 recover the present matter density field of the local universe (and ultimately its
 **initial** density field, which must be **cubic + periodic**). Method = CIRCLE's

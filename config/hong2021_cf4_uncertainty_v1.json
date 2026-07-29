@@ -1,0 +1,36 @@
+{
+  "status": "comparison_model_to_run_after_faithful_baseline",
+  "purpose": "Preserve CF4 radial-velocity uncertainty instead of hiding it in a point estimate.",
+  "input_models": {
+    "hong_faithful_2ch": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s"
+    ],
+    "cf4_uncertainty_3ch": [
+      "galaxy_count",
+      "inverse_variance_weighted_mean_radial_velocity_km_s",
+      "propagated_error_of_mean_velocity_km_s"
+    ],
+    "cf4_uncertainty_plus_scatter_4ch": [
+      "galaxy_count",
+      "inverse_variance_weighted_mean_radial_velocity_km_s",
+      "propagated_error_of_mean_velocity_km_s",
+      "within_voxel_weighted_velocity_dispersion_km_s"
+    ]
+  },
+  "weight": "1/(sigma_v_observational^2 + sigma_v_nonlinear^2)",
+  "empty_voxel_value": 0.0,
+  "warning": "The within-voxel sample dispersion is usually zero at 0.3125 Mpc/h because most occupied voxels contain only one galaxy.",
+  "acceptance": {
+    "required_comparison": [
+      "held-out TNG validation",
+      "independent EAGLE validation",
+      "CF4-like distance-error mocks"
+    ],
+    "metrics": [
+      "density residual",
+      "2pCF KS in 0-1, 1-3, and 3-10 Mpc/h",
+      "distance-dependent effective resolution"
+    ]
+  }
+}
