@@ -27,7 +27,7 @@ def any_file(root: Path, patterns: tuple[str, ...]) -> bool:
 
 
 def build_report() -> dict[str, Any]:
-    tng100_local = Path("/scratch/jaehyun/TNG100")
+    tng100_local = Path("/scratch/kjhan/IllustrisTNG/TNG100-1")
     tng300_local = Path(
         "/scratch/jhshin/02_illustris/08_illustrisTNG/TNG300-1"
     )
@@ -54,15 +54,22 @@ def build_report() -> dict[str, Any]:
         "V_GSR": any(name.lower() in {"vgsr", "v_gsr"} for name in cf4_columns),
         "V_CMB_only": "Vcmb" in cf4_columns,
     }
-    blockers = []
+    training_blockers = []
     if not raw_tng100_snapshot:
-        blockers.append("TNG100-1 snapshot 99 dark-matter coordinates are absent")
+        training_blockers.append(
+            "TNG100-1 snapshot 99 dark-matter coordinates are absent"
+        )
     if not raw_tng100_groupcat:
-        blockers.append("TNG100-1 group catalog 99 is absent")
+        training_blockers.append("TNG100-1 group catalog 99 is absent")
+    cf4_application_blockers = []
     if not required_cf4["B_band_absolute_magnitude"]:
-        blockers.append("CF4 table lacks the LEDA B-band magnitude used by the paper")
+        cf4_application_blockers.append(
+            "CF4 table lacks the LEDA B-band magnitude used by the paper"
+        )
     if not required_cf4["V_GSR"]:
-        blockers.append("CF4 table lacks V_GSR; it only supplies V_CMB")
+        cf4_application_blockers.append(
+            "CF4 table lacks V_GSR; it only supplies V_CMB"
+        )
     report = {
         "paper_target": {
             "simulation": "TNG100-1 snapshot 99",
@@ -108,8 +115,10 @@ def build_report() -> dict[str, Any]:
             "paper_required_fields": required_cf4,
             "rows": 55_877,
         },
-        "faithful_training_can_start": not blockers,
-        "blockers": blockers,
+        "faithful_training_can_start": not training_blockers,
+        "training_blockers": training_blockers,
+        "faithful_cf4_application_can_start": not cf4_application_blockers,
+        "cf4_application_blockers": cf4_application_blockers,
         "non_blocking_work_completed": [
             "paper architecture transcription",
             "paper augmentation and optimizer transcription",

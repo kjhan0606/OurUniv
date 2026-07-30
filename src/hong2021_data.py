@@ -161,6 +161,7 @@ def inspect_training_file(
     path: str | Path,
     expected_channels: int = 2,
     expected_channel_label: str = REQUIRED_ATTRIBUTES["channels"],
+    deep: bool = False,
 ) -> dict[str, Any]:
     """Validate a prepared file and return a JSON-serializable report."""
     path = Path(path)
@@ -207,6 +208,72 @@ def inspect_training_file(
                 report["failures"].append("nonfinite_target")
             if sample.min() < -1.0001 or sample.max() > 1.0001:
                 report["failures"].append("target_outside_tanh_range")
+        if deep and x.size and y.size:
+            input_min = np.full(x.shape[1], np.inf, dtype=np.float64)
+            input_max = np.full(x.shape[1], -np.inf, dtype=np.float64)
+            target_min = np.inf
+            target_max = -np.inf
+            target_sum = 0.0
+            target_sum2 = 0.0
+            target_count = 0
+            nonfinite_input = False
+            nonfinite_target = False
+            count_not_integer = False
+            nonzero_empty_velocity = False
+            for start in range(0, x.shape[0], 8):
+                stop = min(start + 8, x.shape[0])
+                input_block = np.asarray(x[start:stop])
+                target_block = np.asarray(y[start:stop])
+                nonfinite_input |= not np.isfinite(input_block).all()
+                nonfinite_target |= not np.isfinite(target_block).all()
+                input_min = np.minimum(
+                    input_min,
+                    input_block.min(axis=(0, 2, 3, 4)),
+                )
+                input_max = np.maximum(
+                    input_max,
+                    input_block.max(axis=(0, 2, 3, 4)),
+                )
+                target_min = min(target_min, float(target_block.min()))
+                target_max = max(target_max, float(target_block.max()))
+                target64 = target_block.astype(np.float64)
+                target_sum += float(target64.sum())
+                target_sum2 += float(np.square(target64).sum())
+                target_count += target_block.size
+                counts = input_block[:, 0]
+                count_not_integer |= bool(
+                    np.any(counts < 0)
+                    or np.any(counts != np.floor(counts))
+                )
+                if input_block.shape[1] >= 2:
+                    nonzero_empty_velocity |= bool(
+                        np.any(input_block[:, 1][counts == 0] != 0)
+                    )
+            if nonfinite_input:
+                report["failures"].append("nonfinite_input_deep")
+            if nonfinite_target:
+                report["failures"].append("nonfinite_target_deep")
+            if count_not_integer:
+                report["failures"].append("galaxy_count_not_nonnegative_integer")
+            if nonzero_empty_velocity:
+                report["failures"].append("nonzero_velocity_in_empty_voxel")
+            if target_min < -1.0001 or target_max > 1.0001:
+                report["failures"].append("target_outside_tanh_range_deep")
+            target_mean = target_sum / target_count
+            target_variance = max(
+                target_sum2 / target_count - target_mean**2, 0.0
+            )
+            report["deep_validation"] = {
+                "input_min_by_channel": input_min.tolist(),
+                "input_max_by_channel": input_max.tolist(),
+                "target_minmax": [target_min, target_max],
+                "target_mean": target_mean,
+                "target_std": float(np.sqrt(target_variance)),
+                "all_input_finite": not nonfinite_input,
+                "all_target_finite": not nonfinite_target,
+                "galaxy_count_nonnegative_integer": not count_not_integer,
+                "empty_voxel_velocity_zero": not nonzero_empty_velocity,
+            }
         report["n_unaugmented"] = int(x.shape[0])
         report["n_augmented_3x8"] = int(x.shape[0] * 24)
     report["pass"] = not report["failures"]
@@ -217,8 +284,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("files", nargs="+")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument(
+        "--deep",
+        action="store_true",
+        help="stream every voxel and validate finite values and channel semantics",
+    )
     args = parser.parse_args()
-    reports = [inspect_training_file(path) for path in args.files]
+    reports = [inspect_training_file(path, deep=args.deep) for path in args.files]
     if args.json:
         print(json.dumps(reports, indent=2))
     else:

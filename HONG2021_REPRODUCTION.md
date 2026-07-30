@@ -4,28 +4,42 @@ Reference: Hong, Jeong, Hwang & Kim, *ApJ* **913**, 76
 ([arXiv:2008.01738](https://arxiv.org/abs/2008.01738),
 [DOI](https://doi.org/10.3847/1538-4357/abf040)).
 
-## Result of the first audit
+## Current status
 
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
 The paper batch size of six also completes a full forward/backward/Adam step on
 one local A10, peaking at about 8.62 GiB allocated and 12.22 GiB reserved.
-Compute memory is therefore not the blocker.
+Compute memory is therefore not a blocker.
 
-A scientifically faithful training cannot start yet because the server does
-not contain TNG100-1 snapshot 99 or its group catalog.  The apparent
-`/scratch/jaehyun/TNG100` directory is only a small collection of logs and
-parameter files.  The 1.5-TB local TNG300 directory contains merger trees,
-offsets, hydrogen post-processing, and an IDL galaxy catalog, but no snapshot
-particles.  Particle coordinates are indispensable: the target is dark-matter
-density, not a halo- or galaxy-smoothed proxy.
+The full TNG100-1 snapshot 99 (1.7469 TiB) and group catalog (4.18 GiB) were
+downloaded to `/scratch/kjhan/IllustrisTNG/TNG100-1`.  On 2026-07-30,
+`src/tng_validate.py` passed all 448+448 chunks: manifest byte sizes, HDF5
+headers, required field shapes, and global object counts agree.  The subsequent
+density pass read every one of the `1820^3 = 6,028,568,000` dark-matter
+coordinates, checked finiteness and box bounds, and conserved the particle
+count exactly.
 
-The official full TNG100-1 snapshot is about 1.7 TB.  A field-restricted
-download only needs the dark-matter coordinates for the target plus the
-snapshot-99 group catalog for galaxy position, velocity, stellar mass, and
-photometry; access still requires an IllustrisTNG API key.  No key is present
-in the current environment.
+`src/hong2021_prepare_tng.py` produced 432 training and 93 validation cubes in
+`derived/hong2021` under that scratch tree.  A deep pass over every prepared
+voxel found no non-finite values, non-integer counts, non-zero velocities in
+empty cells, or targets outside `[-1,1]`.  The full 200-epoch paper-width run is
+active in tmux session `hong2021_train`; its products are under
+`training/tng100_v1`.
+
+Two reproduction details not specified sufficiently by the paper are frozen
+and recorded in every output:
+
+- The reported 988 observer candidates are reproduced only by applying
+  `4e10 < SubhaloMassType[:,4]*1e10 < 1e11` without an additional division by
+  `h`.  Dividing by `h`, as the public catalog unit label suggests, gives 1,552
+  instead.
+- The paper does not publish its 525 subhalo IDs or split seed.  We select a
+  deterministic spatial split with 93 clustered validation observers and 432
+  training observers, requiring no periodic 20-Mpc/h cube overlap across
+  splits.  The minimum cross-split L-infinity separation is 20.0377 Mpc/h and
+  the exact IDs are stored in the HDF5 files.
 
 ## Frozen paper specification
 
@@ -94,15 +108,15 @@ velocity in the Galactic Standard of Rest.  It contains `Vcmb` only.  These
 must be added by a documented external cross-match/frame conversion before a
 CF4 density map can be labeled a Hong-method application.
 
-## Next executable gate
+## Current run and next gate
 
-Obtain authenticated access to:
+The active baseline command uses the frozen 432/93 files, all 24 paper
+augmentations, batch 6, Adam at `1e-3`, and 200 epochs.  Checkpoints are written
+atomically once per epoch and best-model names are hard links, avoiding
+duplicate multi-GiB writes.  A stopped run can continue with `--resume`.
 
-- TNG100-1 snapshot-99 dark-matter `Coordinates`;
-- TNG100-1 snapshot-99 group catalog fields needed for centers and target
-  galaxies;
-- preferably EAGLE RefL0100N1504 at `z=0` for the independent test.
-
-After these arrive, prepare exactly 432/93 non-overlapping cubes, train the
-frozen baseline, reproduce the paper's density-residual and 2pCF-KS table, and
-only then run the uncertainty-aware CF4 extension.
+After training, reproduce the paper's density-residual and 2pCF-KS table on
+held-out TNG100.  EAGLE RefL0100N1504 at `z=0` remains the independent
+simulation gate.  Only after those tests pass should the uncertainty-aware CF4
+extension be interpreted; the present CF4 table still lacks the paper's LEDA
+B-band magnitude and V_GSR fields.

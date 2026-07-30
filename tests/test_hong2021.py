@@ -12,6 +12,10 @@ from hong2021_data import (  # noqa: E402
     grid_uncertainty_aware_observables,
 )
 from hong2021_model import Hong2021Net  # noqa: E402
+from hong2021_prepare_tng import (  # noqa: E402
+    choose_spatial_split,
+    extract_periodic_cube,
+)
 
 
 def test_all_24_paper_augmentations_preserve_values() -> None:
@@ -46,3 +50,26 @@ def test_three_channel_extension_preserves_grid_shape() -> None:
     with torch.inference_mode():
         output = model(torch.zeros(1, 3, 64, 64, 64))
     assert output.shape == (1, 1, 64, 64, 64)
+
+
+def test_periodic_cube_extraction_wraps_all_axes() -> None:
+    field = np.arange(8**3).reshape(8, 8, 8)
+    cube = extract_periodic_cube(field, np.array([6, 7, 5]), size=4)
+    expected = field[np.ix_([6, 7, 0, 1], [7, 0, 1, 2], [5, 6, 7, 0])]
+    np.testing.assert_array_equal(cube, expected)
+
+
+def test_spatial_split_has_no_cross_cube_overlap() -> None:
+    generator = np.random.default_rng(7)
+    validation_cluster = generator.uniform(4.0, 8.0, size=(8, 3))
+    training_cluster = generator.uniform(34.0, 38.0, size=(12, 3))
+    positions = np.concatenate((validation_cluster, training_cluster))
+    training, validation, metadata = choose_spatial_split(
+        positions, n_train=10, n_validation=6, seed=9
+    )
+    delta = np.abs(
+        positions[training][:, None, :] - positions[validation][None, :, :]
+    )
+    delta = np.minimum(delta, 75.0 - delta)
+    assert not np.any(np.all(delta < 20.0, axis=2))
+    assert metadata["available_nonoverlapping_training_centers"] >= 10

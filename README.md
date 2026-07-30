@@ -111,6 +111,7 @@ See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.
 The literal Hong et al. (2021) present-density reproduction is tracked
 separately in [`HONG2021_REPRODUCTION.md`](HONG2021_REPRODUCTION.md).  The
 published `0.3125 Mpc/h` voxel is not treated as a claim of uniform physical
-resolution.  The full-width architecture runs locally, while faithful
-TNG100-1 training is currently waiting for snapshot-99 particles and group
-catalog access.
+resolution.  The full TNG100-1 snapshot-99 and group catalog passed the local
+download validator, the 432/93 paper-sized data split has been prepared, and
+the 200-epoch full-width training run is active.  See the reproduction note
+for paths, validation results, and the explicitly frozen split convention.

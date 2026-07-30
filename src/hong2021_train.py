@@ -19,7 +19,7 @@ import h5py
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Subset
 
 from hong2021_data import inspect_training_file
 from hong2021_model import Hong2021Net, PAPER_CHANNELS, parameter_count
@@ -113,6 +113,7 @@ def save_checkpoint(
     train_loss: float,
     validation_loss: float,
 ) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
     torch.save(
         {
             "model": model.state_dict(),
@@ -122,8 +123,23 @@ def save_checkpoint(
             "validation_loss": validation_loss,
             "paper_channels": PAPER_CHANNELS,
         },
-        path,
+        temporary,
     )
+    os.replace(temporary, path)
+
+
+def replace_with_hardlink(source: Path, destination: Path) -> None:
+    """Atomically point a named best checkpoint at the saved epoch.
+
+    A paper-width checkpoint including Adam state is several GiB.  Writing the
+    same state three times per epoch is unnecessary and would generate terabytes
+    of avoidable I/O over 200 epochs.
+    """
+    temporary = destination.with_suffix(destination.suffix + ".linktmp")
+    if temporary.exists():
+        raise RuntimeError(f"stale checkpoint link exists: {temporary}")
+    os.link(source, temporary)
+    os.replace(temporary, destination)
 
 
 def main() -> None:
@@ -138,6 +154,11 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=2021)
     parser.add_argument("--device", default="cuda")
     parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="continue from OUT/last_epoch.pt and its existing history.json",
+    )
+    parser.add_argument(
         "--input-mode",
         choices=tuple(INPUT_MODES),
         default="faithful",
@@ -148,7 +169,20 @@ def main() -> None:
         default=None,
         help="non-science smoke test only, e.g. 4,8,16,32,64",
     )
+    parser.add_argument(
+        "--smoke-limit",
+        type=int,
+        default=None,
+        help=(
+            "limit each augmented split to this many samples; allowed only "
+            "with --smoke-widths"
+        ),
+    )
     args = parser.parse_args()
+    if args.smoke_limit is not None and args.smoke_widths is None:
+        raise SystemExit("--smoke-limit requires --smoke-widths")
+    if args.smoke_limit is not None and args.smoke_limit <= 0:
+        raise SystemExit("--smoke-limit must be positive")
 
     input_channels, channel_label = INPUT_MODES[args.input_mode]
     reports = [
@@ -178,6 +212,16 @@ def main() -> None:
     )
     train_set = AugmentedH5Dataset(args.train, augment=True)
     validation_set = AugmentedH5Dataset(args.validation, augment=True)
+    full_train_samples = len(train_set)
+    full_validation_samples = len(validation_set)
+    if args.smoke_limit is not None:
+        train_set = Subset(
+            train_set, range(min(args.smoke_limit, len(train_set)))
+        )
+        validation_set = Subset(
+            validation_set,
+            range(min(args.smoke_limit, len(validation_set))),
+        )
     generator = torch.Generator().manual_seed(args.seed)
     common = {
         "batch_size": args.batch,
@@ -205,51 +249,82 @@ def main() -> None:
         "validation_samples_unaugmented": reports[1]["n_unaugmented"],
         "train_samples_augmented": len(train_set),
         "validation_samples_augmented": len(validation_set),
+        "full_train_samples_augmented": full_train_samples,
+        "full_validation_samples_augmented": full_validation_samples,
         "batch": args.batch,
         "epochs": args.epochs,
         "optimizer": {"name": "Adam", "lr": args.lr, "betas": [0.9, 0.999], "eps": 1e-7},
         "torch": torch.__version__,
         "device": str(device),
         "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+        "resume_supported": True,
     }
-    (out / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    if not args.resume and (out / "last_epoch.pt").exists():
+        raise SystemExit(
+            f"{out}/last_epoch.pt already exists; use --resume or a new --out"
+        )
+    if not args.resume:
+        (out / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(json.dumps(metadata, indent=2), flush=True)
 
     best_train = float("inf")
     best_validation = float("inf")
     history: list[dict[str, float | int]] = []
+    start_epoch = 1
+    if args.resume:
+        checkpoint_path = out / "last_epoch.pt"
+        history_path = out / "history.json"
+        if not checkpoint_path.is_file() or not history_path.is_file():
+            raise SystemExit(
+                "--resume requires existing last_epoch.pt and history.json"
+            )
+        checkpoint = torch.load(
+            checkpoint_path, map_location=device, weights_only=False
+        )
+        model.load_state_dict(checkpoint["model"])
+        optimizer.load_state_dict(checkpoint["optimizer"])
+        history = json.loads(history_path.read_text())
+        if not history or int(history[-1]["epoch"]) != int(checkpoint["epoch"]):
+            raise SystemExit("checkpoint epoch and history.json disagree")
+        start_epoch = int(checkpoint["epoch"]) + 1
+        best_train = min(float(row["train_loss"]) for row in history)
+        best_validation = min(
+            float(row["validation_loss"]) for row in history
+        )
+        print(
+            f"[resume] epoch={start_epoch} best_train={best_train:.7f} "
+            f"best_validation={best_validation:.7f}",
+            flush=True,
+        )
+    if start_epoch > args.epochs:
+        print(
+            f"[complete] checkpoint already reached epoch {args.epochs}",
+            flush=True,
+        )
+        return
     start = time.time()
-    for epoch in range(1, args.epochs + 1):
+    prior_elapsed = (
+        float(history[-1]["elapsed_seconds"]) if history else 0.0
+    )
+    for epoch in range(start_epoch, args.epochs + 1):
         train_loss = epoch_loss(model, train_loader, device, optimizer)
         validation_loss = epoch_loss(model, validation_loader, device, None)
         row = {
             "epoch": epoch,
             "train_loss": train_loss,
             "validation_loss": validation_loss,
-            "elapsed_seconds": time.time() - start,
+            "elapsed_seconds": prior_elapsed + time.time() - start,
         }
         history.append(row)
         (out / "history.json").write_text(json.dumps(history, indent=2) + "\n")
-        if train_loss < best_train:
+        new_best_train = train_loss < best_train
+        new_best_validation = validation_loss < best_validation
+        if new_best_train:
             best_train = train_loss
-            save_checkpoint(
-                out / "minimum_training_loss.pt",
-                model,
-                optimizer,
-                epoch,
-                train_loss,
-                validation_loss,
-            )
-        if validation_loss < best_validation:
+        if new_best_validation:
             best_validation = validation_loss
-            save_checkpoint(
-                out / "minimum_validation_loss.pt",
-                model,
-                optimizer,
-                epoch,
-                train_loss,
-                validation_loss,
-            )
+        # Serialize once, then create atomic hard-link aliases for any best
+        # checkpoint attained at this epoch.
         save_checkpoint(
             out / "last_epoch.pt",
             model,
@@ -258,6 +333,14 @@ def main() -> None:
             train_loss,
             validation_loss,
         )
+        if new_best_train:
+            replace_with_hardlink(
+                out / "last_epoch.pt", out / "minimum_training_loss.pt"
+            )
+        if new_best_validation:
+            replace_with_hardlink(
+                out / "last_epoch.pt", out / "minimum_validation_loss.pt"
+            )
         print(
             f"epoch={epoch:03d} train={train_loss:.7f} "
             f"validation={validation_loss:.7f} elapsed={row['elapsed_seconds']:.0f}s",

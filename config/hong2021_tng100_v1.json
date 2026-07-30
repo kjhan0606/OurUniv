@@ -1,5 +1,5 @@
 {
-  "status": "blocked_on_raw_simulation_data",
+  "status": "full_training_in_progress",
   "reference": {
     "paper": "Hong, Jeong, Hwang & Kim 2021, ApJ 913, 76",
     "arxiv": "2008.01738",
@@ -50,9 +50,20 @@
     "model_selection": "minimum_training_loss_after_2pCF_comparison"
   },
   "required_local_inputs": {
-    "tng100_1_snapshot_099_dark_matter_coordinates": false,
-    "tng100_1_group_catalog_099": false,
+    "tng100_1_snapshot_099_dark_matter_coordinates": true,
+    "tng100_1_group_catalog_099": true,
     "eagle_RefL0100N1504_z0_independent_test": false,
     "author_weights_or_training_cubes": false
+  },
+  "local_run": {
+    "root": "/scratch/kjhan/IllustrisTNG/TNG100-1",
+    "download_validation_passed": true,
+    "dark_matter_particles_read": 6028568000,
+    "prepared_train_file": "derived/hong2021/tng100_train.h5",
+    "prepared_validation_file": "derived/hong2021/tng100_validation.h5",
+    "prepared_voxel_deep_validation_passed": true,
+    "tmux_session": "hong2021_train",
+    "training_output": "training/tng100_v1",
+    "training_log": "logs/hong2021_train_20260730.log"
   }
 }
