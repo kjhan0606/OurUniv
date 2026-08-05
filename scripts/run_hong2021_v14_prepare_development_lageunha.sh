@@ -89,41 +89,53 @@ wait "$swift_pid"
 write_status retargeting_tng "copy inputs/splits exactly; replace target from CIC cache"
 tng_out=$tng/derived/hong2021_v14/cic_data
 mkdir -p "$tng_out"
-python src/hong2021_retarget_tng_cic.py \
-    --source "$tng/derived/hong2021_v2/split00_l0_paper/tng100_train.h5" \
-    --grid "$tng/derived/hong2021_v14/dm_cic_240.npy" \
-    --out "$tng_out/tng100_train.h5" >"$log_root/tng_train_retarget.log" 2>&1
-python src/hong2021_retarget_tng_cic.py \
-    --source "$tng/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5" \
-    --grid "$tng/derived/hong2021_v14/dm_cic_240.npy" \
-    --out "$tng_out/tng100_validation.h5" >"$log_root/tng_validation_retarget.log" 2>&1
+if [[ ! -s $tng_out/tng100_train.h5 || ! -s $tng_out/tng100_train.json ]]; then
+    python src/hong2021_retarget_tng_cic.py \
+        --source "$tng/derived/hong2021_v2/split00_l0_paper/tng100_train.h5" \
+        --grid "$tng/derived/hong2021_v14/dm_cic_240.npy" \
+        --out "$tng_out/tng100_train.h5" >"$log_root/tng_train_retarget.log" 2>&1
+fi
+if [[ ! -s $tng_out/tng100_validation.h5 || ! -s $tng_out/tng100_validation.json ]]; then
+    python src/hong2021_retarget_tng_cic.py \
+        --source "$tng/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5" \
+        --grid "$tng/derived/hong2021_v14/dm_cic_240.npy" \
+        --out "$tng_out/tng100_validation.h5" >"$log_root/tng_validation_retarget.log" 2>&1
+fi
 
 write_status preparing_camels_hdf5 "all development-training and validation observers"
-python src/hong2021_prepare_camels_raw.py \
-    --suite SIMBA --root "$simba" --realizations 16,17,18,19,20,21,22,23 \
-    --observers all --role training \
-    --grid-pattern "$simba/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
-    --out "$simba/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5" \
-    >"$log_root/simba_train_prepare.log" 2>&1
-python src/hong2021_prepare_camels_raw.py \
-    --suite SIMBA --root "$simba" --realizations 24,25,26 \
-    --observers all --role development_validation \
-    --grid-pattern "$simba/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
-    --out "$simba/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5" \
-    >"$log_root/simba_validation_prepare.log" 2>&1
-python src/hong2021_prepare_camels_raw.py \
-    --suite Swift-EAGLE --root "$swift" \
-    --realizations 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 \
-    --observers all --role training \
-    --grid-pattern "$swift/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
-    --out "$swift/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5" \
-    >"$log_root/swift_eagle_train_prepare.log" 2>&1
-python src/hong2021_prepare_camels_raw.py \
-    --suite Swift-EAGLE --root "$swift" --realizations 20,21,22,23,24,25,26 \
-    --observers all --role development_validation \
-    --grid-pattern "$swift/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
-    --out "$swift/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5" \
-    >"$log_root/swift_eagle_validation_prepare.log" 2>&1
+simba_train=$simba/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5
+simba_validation=$simba/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5
+swift_train=$swift/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5
+swift_validation=$swift/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5
+if [[ ! -s $simba_train || ! -s ${simba_train%.h5}.json ]]; then
+    python src/hong2021_prepare_camels_raw.py \
+        --suite SIMBA --root "$simba" --realizations 16,17,18,19,20,21,22,23 \
+        --observers all --role training \
+        --grid-pattern "$simba/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
+        --out "$simba_train" >"$log_root/simba_train_prepare.log" 2>&1
+fi
+if [[ ! -s $simba_validation || ! -s ${simba_validation%.h5}.json ]]; then
+    python src/hong2021_prepare_camels_raw.py \
+        --suite SIMBA --root "$simba" --realizations 24,25,26 \
+        --observers all --role development_validation \
+        --grid-pattern "$simba/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
+        --out "$simba_validation" >"$log_root/simba_validation_prepare.log" 2>&1
+fi
+if [[ ! -s $swift_train || ! -s ${swift_train%.h5}.json ]]; then
+    python src/hong2021_prepare_camels_raw.py \
+        --suite Swift-EAGLE --root "$swift" \
+        --realizations 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 \
+        --observers all --role training \
+        --grid-pattern "$swift/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
+        --out "$swift_train" >"$log_root/swift_eagle_train_prepare.log" 2>&1
+fi
+if [[ ! -s $swift_validation || ! -s ${swift_validation%.h5}.json ]]; then
+    python src/hong2021_prepare_camels_raw.py \
+        --suite Swift-EAGLE --root "$swift" --realizations 20,21,22,23,24,25,26 \
+        --observers all --role development_validation \
+        --grid-pattern "$swift/derived/hong2021_v14/cic_grids/CV_{realization}.npy" \
+        --out "$swift_validation" >"$log_root/swift_eagle_validation_prepare.log" 2>&1
+fi
 
 python - "$status" "$tng_out" "$simba" "$swift" <<'PY'
 import json, os, socket, sys
