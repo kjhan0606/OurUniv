@@ -53,8 +53,10 @@ V15_E2_SCHEMA = "hong2021-v15-e2-relative-noise-multiscale-edm-v1"
 V15_E3_SCHEMA = "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1"
 V16_E4_SCHEMA = "hong2021-v16-e4-trilinear-decoder-multiscale-edm-v1"
 V17_E5_SCHEMA = "hong2021-v17-e5-band-balanced-denoising-multiscale-edm-v1"
+V19_E7_SCHEMA = "hong2021-v19-e7-band-anchored-noise-multiscale-edm-v1"
 SUPPORTED_CHECKPOINT_SCHEMAS = (
-    SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA
+    SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA,
+    V19_E7_SCHEMA,
 )
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
@@ -242,9 +244,9 @@ def train(args: argparse.Namespace) -> None:
     effective_p_mean, p_mean_mode = resolve_edm_p_mean(
         sigma_data, args.edm_p_mean, p_mean_fraction
     )
-    if run_schema == SCHEMA and p_mean_fraction is not None:
-        raise ValueError("the frozen V14 schema requires fixed edm_p_mean")
-    if run_schema != SCHEMA and p_mean_fraction is None:
+    if run_schema in (SCHEMA, V19_E7_SCHEMA) and p_mean_fraction is not None:
+        raise ValueError("the V14 and V19 schemas require fixed edm_p_mean")
+    if run_schema not in (SCHEMA, V19_E7_SCHEMA) and p_mean_fraction is None:
         raise ValueError("post-V14 schemas require target-free sigma_data-relative p_mean")
     feature_fit = source_balanced_feature_standardization(train_datasets)
     tail_fit = source_balanced_tail_weights(
@@ -455,7 +457,7 @@ def train(args: argparse.Namespace) -> None:
                 "learning_rate": float(optimizer.param_groups[0]["lr"]),
                 "elapsed_seconds": time.time() - started,
             }
-            if run_schema == V17_E5_SCHEMA:
+            if run_schema in (V17_E5_SCHEMA, V19_E7_SCHEMA):
                 row["gradient_diagnostic"] = {
                     "mean_norm_before_fixed_clip": gradient_norm_sum / gradient_updates,
                     "fixed_clip_activation_fraction": (
