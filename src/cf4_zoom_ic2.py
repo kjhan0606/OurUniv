@@ -35,7 +35,7 @@ from scipy import fft as sfft
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import grafic_io as G
-from cf4_zoom_ic import block_downsample, snap_subbox, build_refmap
+from cf4_zoom_ic import fourier_resample_field, snap_subbox, build_refmap
 from cf4_lagrangian_mask import (
     level_bounds,
     load_sparse_mask,
@@ -74,7 +74,7 @@ def _kmag(N, L_hmpc):
     return np.sqrt(kx[:, None, None] ** 2 + kx[None, :, None] ** 2 + kr[None, None, :] ** 2)
 
 
-def hier_rfftn(Nf, seed):
+def hier_rfftn(Nf, seed, workers=-1):
     """Draw ONE unit-variance real white-noise field on the finest sub-box grid (Nf^3)
     and return its rfftn (complex64).  This is the single source of every fine level's
     small-scale modes: coarser fine levels take a strict SUBSET of these modes
@@ -82,7 +82,7 @@ def hier_rfftn(Nf, seed):
     every level -> nested-consistent.  numpy/scipy rfftn is unnormalised: E|Wf|^2 = Nf^3."""
     rng = np.random.default_rng(seed)
     wf = rng.standard_normal((Nf, Nf, Nf), dtype=np.float32)
-    return sfft.rfftn(wf, workers=-1)
+    return sfft.rfftn(wf, workers=workers)
 
 
 def truncate_rfftn(Wf, Nf, N):
@@ -98,7 +98,7 @@ def truncate_rfftn(Wf, Nf, N):
     return Wc
 
 
-def synth_delta_fft(Wc, L_hmpc, N_equiv, N_par, tr, kcut):
+def synth_delta_fft(Wc, L_hmpc, N_equiv, N_par, tr, kcut, workers=-1):
     """delta = irfftn( Wc * T_eff(k) * (N_equiv/N_par)^1.5 ), high-passed to k>kcut.
     Wc is the level's nested white-noise rfftn from truncate_rfftn; the physical power
     is identical to the old real-noise synth_delta (same B, verified by round-trip)."""
@@ -106,7 +106,9 @@ def synth_delta_fft(Wc, L_hmpc, N_equiv, N_par, tr, kcut):
     km = _kmag(N, L_hmpc)
     B = tr.eval(km).astype(np.float32) * np.float32((float(N_equiv) / N_par) ** 1.5)
     B[km <= kcut] = 0.0
-    return sfft.irfftn(Wc * B, s=(N, N, N), axes=(0, 1, 2), workers=-1).astype(np.float32)
+    return sfft.irfftn(
+        Wc * B, s=(N, N, N), axes=(0, 1, 2), workers=workers
+    ).astype(np.float32)
 
 
 def interp_parent(field, L_box_hmpc, off_hmpc, N_sub, dx_sub_hmpc, chunk=64):
@@ -179,6 +181,9 @@ def main():
     ap.add_argument("--parent", required=True,
                     help="accepted parent GRAFIC level directory; no rejected-run default")
     ap.add_argument("--parent-level", type=int, default=10)
+    ap.add_argument("--parent-grid-size", type=int, default=None,
+                    help="actual canonical source mesh; permits e.g. N576 as a "
+                         "Fourier source without treating it as a RAMSES level")
     ap.add_argument("--transfer", required=True,
                     help="CAMB-based parent transfer NPZ")
     ap.add_argument("--out", required=True)
@@ -208,6 +213,8 @@ def main():
     ap.add_argument("--seed", type=int, default=1970,
                     help="seed for the ONE nested white-noise field (change alone for an "
                          "ensemble; unconstrained by CF4)")
+    ap.add_argument("--fft-workers", type=int, default=-1,
+                    help="SciPy FFT worker count; use a positive cap on a shared host")
     args = ap.parse_args()
 
     with open(args.resolution_config) as handle:
@@ -228,17 +235,20 @@ def main():
     mask = (None if args.mask_npz is None else
             load_sparse_mask(args.mask_npz, expected_box=args.box_hmpc,
                              expected_base_level=Lc))
-    Npar = 2 ** args.parent_level
+    Npar = (2 ** args.parent_level if args.parent_grid_size is None
+            else args.parent_grid_size)
     Lbox_mpc = args.box_hmpc / args.h
     h0 = 100.0 * args.h
     kcut = (Npar // 2) * (2.0 * np.pi / args.box_hmpc)          # parent Nyquist [h/Mpc]
     tr = Transfer(args.transfer)
+    if tr.N_par != Npar:
+        ap.error(f"transfer N={tr.N_par} differs from parent source N={Npar}")
     a, Om, OL = args.astart, args.Om, args.OL
     H_a = h0 * np.sqrt(Om / a ** 3 + OL)
     Oma = Om / a ** 3 / (Om / a ** 3 + OL); f1 = Oma ** 0.545
     mask_kind = args.mask_npz if mask is not None else "GEOMETRIC-DIAGNOSTIC"
     print(f"[z2] tier={args.tier} IC levels {Lc}..{Lf}, runtime L{runtime_levelmax} "
-          f"(parent={args.parent_level})", flush=True)
+          f"(canonical source N={Npar})", flush=True)
     print(f"[z2] box={args.box_hmpc} Mpc/h mask={mask_kind} "
           f"kcut={kcut:.2f} h/Mpc f1={f1:.4f} H(a)={H_a:.1f}", flush=True)
 
@@ -254,8 +264,10 @@ def main():
         "Omega_l": OL,
         "astart": a,
         "small_scale_seed": args.seed,
+        "fft_workers": args.fft_workers,
         "parent": os.path.abspath(args.parent),
         "parent_level": args.parent_level,
+        "parent_grid_size": Npar,
         "parent_fingerprint": _parent_fingerprint(args.parent),
         "transfer": os.path.abspath(args.transfer),
         "transfer_sha256": sha256_file(args.transfer),
@@ -284,10 +296,14 @@ def main():
     # parent fields (read once): velocities always; delta only for coarse deltab
     print("[z2] reading parent ic_velc* ...", flush=True)
     vpar = [G.read_grafic_field(os.path.join(args.parent, f"ic_velc{ax}"))[0] for ax in "xyz"]
+    if any(field.shape != (Npar, Npar, Npar) for field in vpar):
+        raise RuntimeError(
+            f"parent velocity shape {[field.shape for field in vpar]} "
+            f"does not match source N={Npar}")
 
     # ---- nested-consistent small-scale noise: ONE finest field feeds every fine level ----
     Wf = Nf_fine = Lf_fine = None
-    fine_levels = [L for L in range(Lc, Lf + 1) if L > args.parent_level]
+    fine_levels = [L for L in range(Lc, Lf + 1) if 2 ** L > Npar]
     if fine_levels:
         Lf_fine = fine_levels[-1]
         i0f, i1f = _level_window(
@@ -299,7 +315,7 @@ def main():
         Nf_fine = int(shape_fine[0])
         print(f"[z2] fine levels {fine_levels}: one nested white-noise field N={Nf_fine}^3 "
               f"seed={args.seed} (~{Nf_fine ** 3 * 4 / 1e9:.1f} GB f32) ...", flush=True)
-        Wf = hier_rfftn(Nf_fine, args.seed)
+        Wf = hier_rfftn(Nf_fine, args.seed, workers=args.fft_workers)
         print(f"[z2]   rfftn done: <|Wf|^2>/N^3 = {float((np.abs(Wf) ** 2).mean()) / Nf_fine ** 3:.3f} (want ~1)",
               flush=True)
 
@@ -333,13 +349,13 @@ def main():
         if os.path.isdir(outdir) and any(os.scandir(outdir)) and not args.resume:
             raise RuntimeError(f"{outdir} already contains files; use a fresh --out")
 
-        if L <= args.parent_level:
-            # coarse/equal: downsample parent, extract sub-box (P0 path)
+        if N <= Npar:
+            # coarse/equal: exact Fourier projection of the physical parent
             sl = _slice3(i0, i1)
-            vx = block_downsample(vpar[0], N)[sl]
-            vy = block_downsample(vpar[1], N)[sl]
-            vz = block_downsample(vpar[2], N)[sl]
-            mode = "downsample"
+            vx = fourier_resample_field(vpar[0], N, workers=args.fft_workers)[sl]
+            vy = fourier_resample_field(vpar[1], N, workers=args.fft_workers)[sl]
+            vz = fourier_resample_field(vpar[2], N, workers=args.fft_workers)[sl]
+            mode = "fourier-project"
         else:
             # fine: two-scale (long interp parent vel + short fresh synth)
             L_sub_h = Nsub * dx_h
@@ -348,7 +364,10 @@ def main():
             vlz = interp_parent(vpar[2], args.box_hmpc, off_h, Nsub, dx_h)
             assert Nsub == Nf_fine >> (Lf_fine - L), (L, Nsub, Nf_fine, Lf_fine)   # clean nesting
             Wc = truncate_rfftn(Wf, Nf_fine, Nsub)
-            dshort = synth_delta_fft(Wc, L_sub_h, N, Npar, tr, kcut=kcut)
+            dshort = synth_delta_fft(
+                Wc, L_sub_h, N, Npar, tr, kcut=kcut,
+                workers=args.fft_workers,
+            )
             sx, sy, sz = G.lpt2_velocity(dshort, L_sub_h / args.h, a, H_a, f1)   # short vel (km/s)
             vx, vy, vz = vlx + sx, vly + sy, vlz + sz
             mode = f"two-scale long_rms={vlx.std():.1f} short_rms={sx.std():.1f} km/s"

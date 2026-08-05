@@ -84,8 +84,155 @@ def stratified_holdout(cz: np.ndarray, fraction: float, seed: int) -> np.ndarray
     return out
 
 
+def raw_index_hash_holdout(
+    raw_idx: np.ndarray, fraction: float, seed: int
+) -> np.ndarray:
+    """Estimator-independent deterministic holdout keyed by raw catalog row.
+
+    SplitMix64 turns catalog indices into stable pseudorandom uniforms.  Thus a
+    row shared by two velocity estimators always receives the same assignment,
+    even when their cuts, positions, or radial ordering differ.
+    """
+    idx = np.asarray(raw_idx, dtype=np.uint64)
+    if idx.ndim != 1:
+        raise ValueError("raw_idx must be one-dimensional")
+    if fraction <= 0:
+        return np.zeros(idx.size, dtype=bool)
+    if fraction >= 1:
+        return np.ones(idx.size, dtype=bool)
+    with np.errstate(over="ignore"):
+        x = idx + np.uint64(seed) + np.uint64(0x9E3779B97F4A7C15)
+        x = (x ^ (x >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
+        x = (x ^ (x >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
+        x = x ^ (x >> np.uint64(31))
+    uniform = x.astype(np.float64) / float(2**64)
+    return uniform < fraction
+
+
+def prepare_bgc_catalog(
+    args: argparse.Namespace,
+    z: np.lib.npyio.NpzFile,
+) -> dict[str, np.ndarray]:
+    """Build a leakage-free BGc catalog for the linear CR likelihood.
+
+    The target split is frozen before estimating any running median.  All raw
+    rows assigned to the holdout set are then removed from the reference pool,
+    including candidates later rejected by geometric or velocity cuts.
+    """
+    from cf4_bgc import bgc_transform_from_reference
+
+    if getattr(args, "local_distance_max", 0.0) > 0:
+        raise ValueError("BGc and the experimental local-direct likelihood cannot be combined")
+
+    hcat = float(z["H0"]) / 100.0
+    h0 = float(z["H0"])
+    cz_all = z["v3k"].astype(np.float64)
+    dist_all = z["dist"].astype(np.float64)
+    edm_all = z["e_dm"].astype(np.float64)
+    nhat_all = z["nhat"].astype(np.float64)
+    pgc_all = z["pgc"].astype(np.int64)
+    sigln_all = (LN10 / 5.0) * np.maximum(edm_all, args.edm_floor)
+
+    finite_scalar = (
+        np.isfinite(cz_all)
+        & np.isfinite(dist_all)
+        & np.isfinite(edm_all)
+        & np.isfinite(sigln_all)
+        & (dist_all > 0)
+        & (edm_all > 0)
+    )
+    finite_direction = np.all(np.isfinite(nhat_all), axis=1)
+    candidate = (
+        finite_scalar
+        & finite_direction
+        & (cz_all >= args.bgc_cz_min)
+        & (cz_all <= args.bgc_cz_max)
+    )
+    candidate_idx = np.flatnonzero(candidate)
+    if candidate_idx.size < 3:
+        raise ValueError("fewer than 3 catalog rows lie in the BGc target range")
+
+    if getattr(args, "holdout_by_raw_index_hash", False):
+        candidate_hold = raw_index_hash_holdout(
+            candidate_idx, args.holdout, args.split_seed
+        )
+    else:
+        candidate_hold = stratified_holdout(
+            cz_all[candidate_idx], args.holdout, args.split_seed
+        )
+    raw_hold = np.zeros(cz_all.size, dtype=bool)
+    raw_hold[candidate_idx[candidate_hold]] = True
+    reference = (
+        finite_scalar
+        & (cz_all >= args.bgc_pool_cz_min)
+        & (cz_all <= args.bgc_pool_cz_max)
+        & ~raw_hold
+    )
+    if reference.sum() < 3:
+        raise ValueError("fewer than 3 training rows remain in the BGc reference pool")
+
+    result = bgc_transform_from_reference(
+        cz_all[candidate_idx],
+        dist_all[candidate_idx],
+        sigln_all[candidate_idx],
+        cz_all[reference],
+        dist_all[reference],
+        h0=h0,
+        window=args.bgc_window,
+        cz_min=args.bgc_cz_min,
+        cz_max=args.bgc_cz_max,
+    )
+    dpos_all = result.distance
+    vobs_all = result.velocity
+    sig_all = result.sigma_velocity
+    rmax_hmpc = args.box_size / 2.0 * args.radial_fraction
+    keep_candidate = (
+        result.corrected
+        & np.isfinite(dpos_all)
+        & np.isfinite(vobs_all)
+        & np.isfinite(sig_all)
+        & (dpos_all * hcat < rmax_hmpc)
+        & (np.abs(vobs_all) < args.vmax)
+    )
+    selected = np.flatnonzero(keep_candidate)
+    raw_idx = candidate_idx[selected]
+    cz = cz_all[raw_idx]
+    nhat = nhat_all[raw_idx]
+    dpos = dpos_all[selected]
+    vobs = vobs_all[selected]
+    sig_measure = sig_all[selected]
+    variance = (args.error_scale * sig_measure) ** 2 + args.sigma_nl**2
+    pos_hmpc = dpos[:, None] * nhat * hcat + args.box_size / 2.0
+    hold = raw_hold[raw_idx]
+
+    # B columns: external bulk flow [km/s] and delta-H0 [km/s/Mpc].
+    B = np.column_stack((nhat, -dpos))
+    q_std = np.array(
+        [args.bulk_prior, args.bulk_prior, args.bulk_prior, args.h0_prior],
+        dtype=np.float64,
+    )
+    return {
+        "raw_idx": raw_idx,
+        "pgc": pgc_all[raw_idx],
+        "cz": cz,
+        "pos": pos_hmpc,
+        "rhat": nhat,
+        "vobs": vobs,
+        "sig_measure": sig_measure,
+        "variance": variance,
+        "likelihood_kind": np.full(raw_idx.size, 2, dtype=np.int8),
+        "B": B,
+        "q_std": q_std,
+        "holdout": hold,
+        "bgc_reference_n": np.int64(reference.sum()),
+        "bgc_candidate_n": np.int64(candidate_idx.size),
+    }
+
+
 def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
     z = np.load(args.catalog)
+    if getattr(args, "velocity_estimator", "wf15") == "bgc":
+        return prepare_bgc_catalog(args, z)
     hcat = float(z["H0"]) / 100.0
     h0 = float(z["H0"])
     dm_all = z["dm"].astype(np.float64)
@@ -186,7 +333,9 @@ def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
         dtype=np.float64,
     )
 
-    if use_local:
+    if getattr(args, "holdout_by_raw_index_hash", False):
+        hold = raw_index_hash_holdout(raw_idx, args.holdout, args.split_seed)
+    elif use_local:
         hold = np.zeros(cz.size, dtype=bool)
         for label in (0, 1):
             select = np.flatnonzero(kind == label)
@@ -483,6 +632,17 @@ def main():
     ap.add_argument("--ns", type=float, default=0.96)
     ap.add_argument("--cz-min", type=float, default=1000.0, help="km/s")
     ap.add_argument("--cz-max", type=float, default=18000.0, help="km/s")
+    ap.add_argument(
+        "--velocity-estimator",
+        choices=("wf15", "bgc"),
+        default="wf15",
+        help="radial peculiar-velocity estimator",
+    )
+    ap.add_argument("--bgc-window", type=int, default=801)
+    ap.add_argument("--bgc-cz-min", type=float, default=1500.0, help="km/s")
+    ap.add_argument("--bgc-cz-max", type=float, default=18000.0, help="km/s")
+    ap.add_argument("--bgc-pool-cz-min", type=float, default=500.0, help="km/s")
+    ap.add_argument("--bgc-pool-cz-max", type=float, default=30000.0, help="km/s")
     ap.add_argument("--vmax", type=float, default=6000.0, help="WF15 estimator cut [km/s]")
     ap.add_argument("--edm-floor", type=float, default=0.04343, help="mag")
     ap.add_argument("--sigma-nl", type=float, default=250.0, help="km/s")
@@ -539,6 +699,11 @@ def main():
         help="Gaussian smoothing radius of observer density [Mpc/h]",
     )
     ap.add_argument("--holdout", type=float, default=0.2)
+    ap.add_argument(
+        "--holdout-by-raw-index-hash",
+        action="store_true",
+        help="use an estimator-independent raw-row hash split",
+    )
     ap.add_argument("--split-seed", type=int, default=20260729)
     ap.add_argument("--sample-seeds", type=parse_seeds, default=parse_seeds("1,2,3,4"))
     ap.add_argument("--precond-probes", type=int, default=4)
@@ -561,7 +726,8 @@ def main():
     kinds = data["likelihood_kind"]
     print(
         f"[data] likelihood rows: WF15={int(np.sum(kinds == 0))} "
-        f"local-direct={int(np.sum(kinds == 1))}",
+        f"local-direct={int(np.sum(kinds == 1))} "
+        f"BGc={int(np.sum(kinds == 2))}",
         flush=True,
     )
 
@@ -646,10 +812,30 @@ def main():
             flush=True,
         )
 
+    # Held-out posterior-predictive diagnostics need all draws together.  An
+    # all-data production ensemble does not: stream each draw to disk so a
+    # large seed batch cannot retain hundreds of N^3 JAX/NumPy arrays and OOM.
+    retain_samples = bool(hold.any())
     samples_jax = []
     samples_np = []
     qs = []
     sample_meta = []
+    mean_np = np.asarray(mean_s, np.float32)
+    common = {
+        "s_map": mean_np,
+        "kind": np.array("LINEAR_GAUSSIAN_CR"),
+        "N": np.int64(args.N),
+        "spacing": np.float64(args.box_size / args.N),
+        "L": np.float64(args.box_size),
+        "hh": np.float64(args.h),
+        "Om": np.float64(args.Om),
+        "Ob": np.float64(args.Ob),
+        "A_s_1e9": np.float64(args.A_s_1e9),
+        "ns": np.float64(args.ns),
+        "train_raw_idx": data["raw_idx"][train],
+        "holdout_raw_idx": data["raw_idx"][hold],
+    }
+    output_files = []
     for seed in args.sample_seeds:
         rs = np.random.default_rng(seed)
         xi = jnp.asarray(rs.standard_normal((args.N,) * 3), dtype=npdtype)
@@ -660,9 +846,6 @@ def main():
         scr = xi + ATn(alpha)
         qcr = np.asarray(q0 + qvar * (Bn.T @ alpha), np.float64)
         scr_np = np.asarray(scr, np.float32)
-        samples_jax.append(scr)
-        samples_np.append(scr_np)
-        qs.append(qcr)
         stats = field_statistics(scr_np, args.box_size)
         sample_meta.append({"seed": seed, "cg_rel": rel, "seconds": sec, "q": qcr.tolist(), **stats})
         print(
@@ -677,6 +860,21 @@ def main():
                 f"{float(Dobs(scr)[0]):+.4f}",
                 flush=True,
             )
+        if retain_samples:
+            samples_jax.append(scr)
+            samples_np.append(scr_np)
+            qs.append(qcr)
+        else:
+            path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
+            np.savez(
+                path,
+                **common,
+                s_out=scr_np,
+                sample_seed=np.int64(seed),
+                nuisance_q=qcr,
+            )
+            output_files.append(str(path))
+            del scr_np, scr, alpha, xi, q0, eps0, sample_rhs
 
     held_diag = {}
     held_by_likelihood = {}
@@ -692,7 +890,7 @@ def main():
             f"dlogscore={held_diag['delta_log_score']:+.1f}",
             flush=True,
         )
-        for label, name in ((0, "WF15"), (1, "local_direct")):
+        for label, name in ((0, "WF15"), (1, "local_direct"), (2, "BGc")):
             select = hold & (data["likelihood_kind"] == label)
             if not select.any():
                 continue
@@ -711,36 +909,24 @@ def main():
                 flush=True,
             )
 
-    mean_np = np.asarray(mean_s, np.float32)
-    common = {
-        "s_map": mean_np,
-        "kind": np.array("LINEAR_GAUSSIAN_CR"),
-        "N": np.int64(args.N),
-        "spacing": np.float64(args.box_size / args.N),
-        "L": np.float64(args.box_size),
-        "hh": np.float64(args.h),
-        "Om": np.float64(args.Om),
-        "Ob": np.float64(args.Ob),
-        "A_s_1e9": np.float64(args.A_s_1e9),
-        "ns": np.float64(args.ns),
-        "train_raw_idx": data["raw_idx"][train],
-        "holdout_raw_idx": data["raw_idx"][hold],
-    }
-    output_files = []
-    for seed, scr, qcr in zip(args.sample_seeds, samples_np, qs):
-        path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
-        np.savez(
-            path,
-            **common,
-            s_out=scr,
-            sample_seed=np.int64(seed),
-            nuisance_q=qcr,
-        )
-        output_files.append(str(path))
+    if retain_samples:
+        for seed, scr, qcr in zip(args.sample_seeds, samples_np, qs):
+            path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
+            np.savez(
+                path,
+                **common,
+                s_out=scr,
+                sample_seed=np.int64(seed),
+                nuisance_q=qcr,
+            )
+            output_files.append(str(path))
 
     manifest = {
         "status": "diagnostic" if hold.any() else "all_data",
-        "method": "linear Gaussian WF + Matheron constrained realization",
+        "method": (
+            f"linear Gaussian {args.velocity_estimator.upper()} + "
+            "Matheron constrained realization"
+        ),
         "catalog": os.path.abspath(args.catalog),
         "catalog_sha256": sha256_file(args.catalog),
         "configuration": vars(args) | {"sample_seeds": args.sample_seeds},
@@ -757,6 +943,12 @@ def main():
         "samples": sample_meta,
         "outputs": output_files,
     }
+    if "bgc_reference_n" in data:
+        manifest["bgc"] = {
+            "reference_training_rows": int(data["bgc_reference_n"]),
+            "target_candidate_rows": int(data["bgc_candidate_n"]),
+            "holdout_excluded_from_reference_pool": True,
+        }
     manifest_path = outdir / f"manifest_{args.tag}.json"
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)

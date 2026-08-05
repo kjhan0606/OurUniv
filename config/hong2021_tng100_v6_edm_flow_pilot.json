@@ -1,0 +1,190 @@
+{
+  "schema": "hong2021-tng100-v6-edm-flow-pilot-v1",
+  "status": "complete_edm_accepted_flow_rejected_at_grid_hop_gate",
+  "purpose": "Fairly compare two conditional stochastic models after diagnosing V5 implementation and training-budget failures",
+  "scientific_interpretation": "The frozen deterministic field is the conditional mean; unresolved present-day structure is sampled statistically and its individual phase is not claimed to be observed",
+  "v5_diagnosis": {
+    "optimizer_updates": 3600,
+    "examples_seen": 21600,
+    "augmentation_did_not_expand_epoch_length": true,
+    "ema_missing": true,
+    "checkpoint_validation_noise_was_not_fixed": true,
+    "cosine_ddpm_last_beta": 0.999,
+    "periodic_filter_on_nonperiodic_cubes": true,
+    "same_highpass_filter_applied_to_target_and_again_to_sample": true,
+    "consequence": "The transition response was squared at sampling and directly suppressed intermediate-k residual power"
+  },
+  "data": {
+    "train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "train_objects": 432,
+    "validation_objects": 93,
+    "voxel_mpc_h": 0.3125,
+    "grid": 64,
+    "cross_split_overlap": false
+  },
+  "residual": {
+    "definition": "reflect-boundary Gaussian-Laplacian of target minus frozen deterministic mean, with exact DC projection",
+    "sigma_cells": 2.0,
+    "sigma_mpc_h": 0.625,
+    "filter_at_sampling": false,
+    "train_rms": 0.09168624082624871,
+    "validation_rms_diagnostic": 0.09188970346033637,
+    "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_train_laplacian_sigma2.h5",
+    "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_validation_laplacian_sigma2.h5"
+  },
+  "common_model": {
+    "architecture": "conditional 3D GroupNorm U-Net",
+    "parameters": 3600801,
+    "base_channels": 32,
+    "conditioning": [
+      "training-standardized galaxy count",
+      "training-standardized mean radial peculiar velocity",
+      "frozen deterministic conditional mean",
+      "observer-centred radial geometry"
+    ],
+    "augmentation": "uniform random 48 signed cube isometries; no translations",
+    "batch": 6,
+    "optimizer_updates": 20000,
+    "examples_seen": 120000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "weight_decay": 0.0001,
+    "ema_decay": 0.999,
+    "fixed_validation_seed": 99173,
+    "validation_every_steps": 500,
+    "seed": 2021
+  },
+  "methods": {
+    "edm": {
+      "objective": "EDM-preconditioned denoising",
+      "sigma_data": 1.0,
+      "training_log_sigma_mean": -0.8,
+      "training_log_sigma_std": 1.2,
+      "sampler": "40-step Karras schedule with deterministic Heun integration",
+      "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v6_edm_laplacian_sigma2"
+    },
+    "flow": {
+      "objective": "rectified-flow velocity matching on a linear noise-to-data path",
+      "sampler": "40-step deterministic Heun integration",
+      "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v6_flow_laplacian_sigma2"
+    }
+  },
+  "smoke_test": {
+    "status": "passed",
+    "training_steps_per_method": 10,
+    "unit_tests": "24 passed",
+    "gpu_training_finite": true,
+    "gpu_sampling_finite": true
+  },
+  "evaluation": {
+    "status": "complete",
+    "objects": 16,
+    "ensemble_per_object": 16,
+    "shared_indices": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+    "shared_seed": 777,
+    "primary_requirements": [
+      "residual and total-field power",
+      "density PDF",
+      "ensemble 68/95 percent coverage and rank histogram",
+      "open-boundary 2pCF",
+      "peak and void abundance"
+    ],
+    "HOP_rule": "Run HOP only for a method passing the statistical field gate",
+    "metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v6_edm_flow/ensemble_evaluation/metrics.json",
+    "diagnostics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v6_edm_flow/ensemble_evaluation/diagnostics.png",
+    "finite_ensemble_coverage_expectation": {
+      "members": 16,
+      "central_68_interval": 0.6,
+      "central_95_interval": 0.8382352941176471,
+      "note": "The expected empirical coverage of sample quantile intervals is finite-ensemble coverage, not the nominal continuum probability"
+    },
+    "results": {
+      "edm": {
+        "field_gate": "passed",
+        "total_log_density_power_ratio_k_3_6": 0.92447,
+        "total_log_density_power_ratio_k_6_10": 0.9986,
+        "residual_rms_ratio": 0.974798,
+        "coverage_68": 0.593075,
+        "coverage_95": 0.843179,
+        "rank_histogram_tv": 0.012125,
+        "density_pdf_tv": 0.12569
+      },
+      "flow": {
+        "field_gate": "passed",
+        "total_log_density_power_ratio_k_3_6": 0.93231,
+        "total_log_density_power_ratio_k_6_10": 0.98208,
+        "residual_rms_ratio": 0.970573,
+        "coverage_68": 0.588579,
+        "coverage_95": 0.839571,
+        "rank_histogram_tv": 0.016414,
+        "density_pdf_tv": 0.126174
+      }
+    }
+  },
+  "grid_hop_gate": {
+    "status": "complete",
+    "interpretation": "Eulerian grid morphology/grouping gate using one pseudo-particle per voxel; not a gravitationally bound N-body halo catalog",
+    "original_ramses_hop_unchanged": "/home/kjhan/BACKUP/lagRamses-de-nonstd/utils/f90/hop_ramses/hop",
+    "source_adapter_copy": "/gpfs/kjhan/IllustrisTNG/TNG100-1/tools/hop_grid_adapter",
+    "fields_evaluated": 544,
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v6_edm_flow/grid_hop_gate.json",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v6_edm_flow/v6_gate_decision.json",
+    "paired_environment_bootstrap_resamples": 50000,
+    "results": {
+      "edm": {
+        "pass": true,
+        "all_group_count_ratio": 0.867816091954023,
+        "all_group_count_ratio_95": [0.7152768493761141, 1.0076439446846779],
+        "mass_ge_1e13_ratio": 0.876937984496124,
+        "mass_ge_1e13_ratio_95": [0.7025980119139869, 1.0537383177570094],
+        "mass_ge_3e13_ratio": 0.907258064516129,
+        "mass_ge_3e13_ratio_95": [0.7308668326201448, 1.098064193349754]
+      },
+      "flow": {
+        "pass": false,
+        "all_group_count_ratio": 0.8383620689655172,
+        "all_group_count_ratio_95": [0.7024886050911592, 0.9702384931245226],
+        "mass_ge_1e13_ratio": 0.8125,
+        "mass_ge_1e13_ratio_95": [0.6512602415966386, 0.983173581932773],
+        "mass_ge_3e13_ratio": 0.7348790322580645,
+        "mass_ge_3e13_ratio_95": [0.5863636363636363, 0.9017857142857143]
+      }
+    }
+  },
+  "final_decision": {
+    "accepted_method": "edm",
+    "rejected_method": "flow",
+    "extend_training_now": false,
+    "reason": "Both methods pass the ensemble field gate, but only EDM is statistically consistent with truth in every paired grid-HOP abundance metric",
+    "next_gate": "Independent EAGLE validation followed by forward PM/RAMSES dynamics and particle HOP before any physical halo claim"
+  },
+  "runtime": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "launched_at_kst": "2026-08-02T06:37:27+09:00",
+    "training_tmux": "hong2021_v6_compare",
+    "training_log": "/home/kjhan/BACKUP/CF4/logs/hong2021_v6_compare_lageunha_20260802.log",
+    "posttrain_tmux": "hong2021_v6_post",
+    "posttrain_log": "/home/kjhan/BACKUP/CF4/logs/hong2021_v6_post_lageunha_20260802.log",
+    "completed_training": {
+      "edm": {
+        "steps": 20000,
+        "best_fixed_validation_loss_ema": 0.7148678706538293
+      },
+      "flow": {
+        "steps": 20000,
+        "best_fixed_validation_loss_ema": 1.0728191521859938
+      }
+    },
+    "first_full_run_checkpoint": {
+      "method": "edm",
+      "step": 500,
+      "train_loss": 0.808496,
+      "fixed_validation_loss_ema": 0.889905,
+      "elapsed_seconds": 146,
+      "estimated_both_training_complete_kst": "2026-08-02T09:40:00+09:00"
+    }
+  }
+}

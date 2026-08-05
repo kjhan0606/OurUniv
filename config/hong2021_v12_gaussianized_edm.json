@@ -1,0 +1,42 @@
+{
+  "schema": "hong2021-v12-gaussianized-fullband-edm-plan-v1",
+  "status": "frozen_before_transform_fit_and_smoke",
+  "reason": "V11 matches power and RMS but its generated SIMBA residual has a broader negative extreme and a shorter positive extreme than the train/validation-consistent truth residual; learn the same spatial field in a train-only Gaussianized marginal coordinate",
+  "initialization": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v11_recentered/validation_checkpoints/step_010000.pt",
+  "correction_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v10_twocomponent/validation_checkpoints/step_005000.pt",
+  "transform": {
+    "fit_data": ["TNG training V11 residual", "SIMBA CV16-23 development-training V11 residual"],
+    "source_weights": {"TNG": 0.5, "SIMBA_development_train": 0.5},
+    "histogram_bins": 131072,
+    "latent_knots": 8193,
+    "latent_support": [-5.0, 5.0],
+    "validation_or_test_fit": false,
+    "forward": "equal-source empirical CDF followed by standard-normal quantile",
+    "inverse": "frozen monotone train-only quantile map followed by exact per-cube DC projection"
+  },
+  "model": {
+    "architecture": "V11 observable-context compact 3-D EDM U-Net",
+    "likelihood": "uniform EDM loss in Gaussianized latent coordinate",
+    "simulation_label_conditioning": false,
+    "target_or_truth_context": false,
+    "steps": 10000,
+    "batch": 6,
+    "source_balance_per_batch": {"TNG": 3, "SIMBA_development": 3},
+    "backbone_learning_rate": 0.00002,
+    "context_learning_rate": 0.0002,
+    "minimum_learning_rate": 0.000002,
+    "ema_decay": 0.999
+  },
+  "development_candidates": [2000, 5000, 10000],
+  "development_rule": "select the smallest predeclared step passing all eight unchanged field checks on both TNG and SIMBA development with ensemble16 and 40 EDM steps",
+  "postdevelopment_order": [
+    "historical SIMBA CV0-15 stress field gate",
+    "sealed EAGLE confirmation32 field gate opened once",
+    "unchanged grid-HOP gate"
+  ],
+  "independence": {
+    "historical_simba_used_for_fitting_or_selection": false,
+    "sealed_eagle_used_for_fitting_or_selection": false,
+    "eagle_opening": "only after development and historical SIMBA stress pass"
+  }
+}

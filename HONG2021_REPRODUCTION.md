@@ -4,7 +4,22 @@ Reference: Hong, Jeong, Hwang & Kim, *ApJ* **913**, 76
 ([arXiv:2008.01738](https://arxiv.org/abs/2008.01738),
 [DOI](https://doi.org/10.3847/1538-4357/abf040)).
 
+The post-v1 diagnosis and staged restart are frozen in
+[`HONG2021_RESTART_PLAN.md`](HONG2021_RESTART_PLAN.md).
+
 ## Current status
+
+The latest stochastic present-density path is V13.  It combines the
+source-balanced V12 Gaussianized residual EDM with a train-only observable
+scalar correction for the conditional cube mean.  V13 passes all eight frozen
+field checks on both TNG and SIMBA development and on the historical SIMBA
+stress set.  This authorized the one-time sealed EAGLE confirmation-32 test,
+which failed independently: high-k power ratios are `0.868/0.629`, residual
+RMS is `0.893` of truth, coverage and rank calibration fail, and the
+peak/void aggregate fails.  Grid-HOP and CF4 inference remain disabled.  The
+complete audit and the prohibition on EAGLE-driven retuning are recorded in
+[`HONG2021_RESTART_PLAN.md`](HONG2021_RESTART_PLAN.md) and
+[`EAGLE_INDEPENDENT_GATE.md`](EAGLE_INDEPENDENT_GATE.md).
 
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
@@ -14,7 +29,7 @@ one local A10, peaking at about 8.62 GiB allocated and 12.22 GiB reserved.
 Compute memory is therefore not a blocker.
 
 The full TNG100-1 snapshot 99 (1.7469 TiB) and group catalog (4.18 GiB) were
-downloaded to `/scratch/kjhan/IllustrisTNG/TNG100-1`.  On 2026-07-30,
+downloaded to `/scratch/kjhan/IllustrisTNG/TNG100-1` on `syntax`.  On 2026-07-30,
 `src/tng_validate.py` passed all 448+448 chunks: manifest byte sizes, HDF5
 headers, required field shapes, and global object counts agree.  The subsequent
 density pass read every one of the `1820^3 = 6,028,568,000` dark-matter
@@ -25,8 +40,98 @@ count exactly.
 `derived/hong2021` under that scratch tree.  A deep pass over every prepared
 voxel found no non-finite values, non-integer counts, non-zero velocities in
 empty cells, or targets outside `[-1,1]`.  The full 200-epoch paper-width run is
-active in tmux session `hong2021_train`; its products are under
-`training/tng100_v1`.
+complete.  It ran through epoch 97 on the `syntax` A10 and resumed without lost
+epochs on the `LagEunha` RTX 5000 Ada.  The portable training products and
+prepared cubes are under `/gpfs/kjhan/IllustrisTNG/TNG100-1`.
+
+The first held-out evaluation is also complete.  It uses the 93 unaugmented
+spatially held-out cubes and compares the unique minimum-validation-loss
+(epoch 9) and minimum-training-loss/last (epoch 200) checkpoints.  In agreement
+with the paper's selection procedure, the minimum-training-loss checkpoint has
+the lower mean 2pCF KS statistic.  It does **not**, however, reproduce the
+published TNG100 2pCF statistics:
+
+| Metric | This run, epoch 200 | Hong et al. TNG100 |
+| --- | ---: | ---: |
+| `log10(rho_pred/rho_truth)` | `+0.028 +/- 0.553` | `-0.014 +/- 0.543` |
+| 2pCF KS, `0-1 Mpc/h` | `0.781 +/- 0.189` | `0.263 +/- 0.035` |
+| 2pCF KS, `1-3 Mpc/h` | `0.590 +/- 0.112` | `0.175 +/- 0.087` |
+| 2pCF KS, `3-10 Mpc/h` | `0.489 +/- 0.080` | `0.130 +/- 0.042` |
+
+The voxel residual width is close to the paper, but rare predicted cells hit
+the `tanh` upper limit and dominate the linear-density 2pCF: the median
+zero-lag correlation is about `3.87e4` in the epoch-200 prediction versus
+`1.50e3` in truth.  The raw calculation used
+`delta=rho/rho_cosmic_mean-1`; over the finite validation ensemble the mean
+density ratios are `1.921` (truth) and `3.024` (prediction), so the statistic
+mixes spatial correlation with a large one-point normalization offset.  Using
+each field's validation-ensemble mean reduces the periodic mean KS over
+`0-10 Mpc/h` from `0.512` to `0.345`, confirming that normalization is a major
+part of the discrepancy.  Per-cube mean normalization and `xi/xi(0)` do not
+give the same correction, and the paper does not publish which finite-cube
+convention generated Table 2.  As a diagnostic only, clipping prediction
+values at the truth `99.999` percentile reduces the raw periodic mean KS to
+`0.258`; post-hoc clipping is not accepted as a scientific correction.
+
+The correct conclusion is therefore that the 2pCF gate is **inconclusive until
+its normalization is frozen**, not that the trained network has already failed
+the TNG gate.  CF4 inference remains disabled until that ambiguity is resolved.
+
+The subsequent BatchNorm audit separates checkpoint behavior from weight
+learning.  Epoch 9 reproduces its logged training and validation losses with
+the saved inference statistics and has no cube above MSE `0.05`.  At epoch 200,
+mini-batch statistics reproduce the logged training loss (`0.00613` versus
+`0.00615`), but saved inference statistics give `0.02262` and 39/432 training
+outliers.  Its inference validation MSE still reproduces the logged value
+(`0.01514`), so this is not a damaged checkpoint.  It is a late-epoch
+train/inference mismatch exposed by the heterogeneous training distribution;
+one-pass cumulative recalibration only improves the training MSE to `0.01445`
+and leaves 17 outliers.  The machine-readable audits are in
+`evaluation/tng100_v1/bn_audit/epoch009.json` and `epoch200.json`.
+
+Paper-matched 5-Mpc/h projections of linear density were also generated for
+both checkpoints.  The network recovers the principal nodes and filaments but
+smooths fine branches and high-k texture, qualitatively like the published
+TNG prediction.  This withdraws the earlier claim that the entire model failed
+to learn; normalization instability and conditional-mean smoothing are two
+different limitations.
+
+The split audit has also been resolved for the v2 pilot.  Metadata for all 988
+observer candidates was built from the group catalog and the already validated
+`240^3` dark-matter grid; no particle reread was needed.  The old split has a
+maximum absolute SMD of `1.024` across six frozen observer/input/target
+features.  Three jointly optimized 432/93 splits reduce this to `0.086`,
+`0.089`, and `0.091`, with maximum one-dimensional KS distances of `0.148`,
+`0.158`, and `0.154`.  Every split retains a minimum cross-split L-infinity
+separation greater than `20 Mpc/h`.  The exact candidate indices and subhalo
+IDs are frozen in
+`derived/hong2021_v2/joint_balanced_splits_v1.json`.
+
+The balanced-split pilot completed at 20 epochs.  BN auditing accepts the
+minimum-validation checkpoint at epoch 7 and rejects epoch 20.  The accepted
+checkpoint recovers the main nodes and filaments in the paper-style 5-Mpc/h
+projection, but removes fine branches and adds compact peak artifacts.  Its
+raw cosmic-mean 2pCF KS values are `0.685`, `0.453`, and `0.348` over
+`0--1`, `1--3`, and `3--10 Mpc/h`, an improvement over v1 but not a
+reproduction of the published table.  Separate ensemble-mean normalization
+improves the latter two ranges, but hides a factor-`1.895` prediction/truth
+mean-density bias and is therefore diagnostic only.
+
+The Fourier result rules out interpreting voxel size as information
+resolution.  In log density, transfer and phase correlation fall to
+`(T,r)=(0.393,0.358)` at `k=3--6 h/Mpc` and `(0.259,0.176)` at
+`k=6--10 h/Mpc`.  In linear density the model has excess rather than missing
+high-k power, but that power has poor phase correlation and is carried by
+compact peaks rather than the missing filamentary texture.  The complete
+machine-readable result and plots are under
+`evaluation/tng100_v2_split00_l0_bn/epoch007/spectral_v2`.
+
+The same spectral estimator applied to the v1 epoch-9 checkpoint confirms that
+the balanced split mainly improves the 2pCF distribution, not information
+resolution.  V1 and v2 log-density phase correlations are `0.356` and `0.358`
+at `k=3--6 h/Mpc`, then `0.190` and `0.176` at `k=6--10 h/Mpc`.
+Meanwhile the v2 linear-density high-k excess is larger.  This comparison is
+stored in `evaluation/tng100_v1/spectral_v2_minimum_validation`.
 
 Two reproduction details not specified sufficiently by the paper are frozen
 and recorded in every output:
@@ -108,15 +213,22 @@ velocity in the Galactic Standard of Rest.  It contains `Vcmb` only.  These
 must be added by a documented external cross-match/frame conversion before a
 CF4 density map can be labeled a Hong-method application.
 
-## Current run and next gate
+## Completed run and next gate
 
-The active baseline command uses the frozen 432/93 files, all 24 paper
-augmentations, batch 6, Adam at `1e-3`, and 200 epochs.  Checkpoints are written
-atomically once per epoch and best-model names are hard links, avoiding
-duplicate multi-GiB writes.  A stopped run can continue with `--resume`.
+The completed baseline used the frozen 432/93 files, all 24 paper augmentations,
+batch 6, Adam at `1e-3`, and 200 epochs.  Checkpoints were written atomically
+once per epoch and best-model names are hard links.  Evaluation products are in
+`/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v1`; `metrics.json` records
+the estimator convention, both checkpoint results, and model selection.
 
-After training, reproduce the paper's density-residual and 2pCF-KS table on
-held-out TNG100.  EAGLE RefL0100N1504 at `z=0` remains the independent
-simulation gate.  Only after those tests pass should the uncertainty-aware CF4
-extension be interpreted; the present CF4 table still lacks the paper's LEDA
-B-band magnitude and V_GSR fields.
+Before any CF4 application, first freeze the exact density-contrast and
+finite-volume normalization used for the 2pCF.  The next pilot must use matched,
+cross-split-nonoverlapping observer samples and reject any checkpoint whose
+inference-mode training loss differs from its logged training loss by more than
+10%.  The literal target selection remains `M_B<-15`; `SubhaloFlag`, star
+particle count, and stellar-mass cuts are separately labeled ablations, not
+silent changes to Hong et al.  A model assessed under the corrected statistic
+must reproduce the held-out TNG100 table before testing EAGLE RefL0100N1504 at
+`z=0`.  Only after both gates pass should the uncertainty-aware CF4 extension
+be interpreted; the present CF4 table still lacks the paper's LEDA B-band
+magnitude and V_GSR fields.

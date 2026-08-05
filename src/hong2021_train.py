@@ -39,13 +39,85 @@ INPUT_MODES = {
 }
 
 
+def input_preprocessing_spec(path: str | Path, mode: str) -> dict[str, object]:
+    if mode == "faithful":
+        return {"mode": "faithful", "schema": "hong2021-input-preprocessing-v1"}
+    if mode != "occupied_standardized":
+        raise ValueError(f"unknown input preprocessing: {mode}")
+    count_sum = count_square_sum = velocity_sum = velocity_square_sum = 0.0
+    occupied_cells = 0
+    with h5py.File(path, "r") as handle:
+        data = handle["input"]
+        if data.shape[1] != 2:
+            raise ValueError("occupied_standardized currently requires two channels")
+        for start in range(0, len(data), 8):
+            value = np.asarray(data[start : start + 8], dtype=np.float64)
+            count = value[:, 0]
+            velocity = value[:, 1]
+            occupied = count > 0
+            selected_count = count[occupied]
+            selected_velocity = velocity[occupied]
+            occupied_cells += int(occupied.sum())
+            count_sum += float(selected_count.sum())
+            count_square_sum += float(np.square(selected_count).sum())
+            velocity_sum += float(selected_velocity.sum())
+            velocity_square_sum += float(np.square(selected_velocity).sum())
+    if occupied_cells < 2:
+        raise ValueError("not enough occupied cells to estimate preprocessing")
+    count_mean = count_sum / occupied_cells
+    velocity_mean = velocity_sum / occupied_cells
+    count_std = np.sqrt(count_square_sum / occupied_cells - count_mean**2)
+    velocity_std = np.sqrt(
+        velocity_square_sum / occupied_cells - velocity_mean**2
+    )
+    if count_std <= 0 or velocity_std <= 0:
+        raise ValueError("invalid zero preprocessing scale")
+    return {
+        "mode": mode,
+        "schema": "hong2021-input-preprocessing-v1",
+        "fit_file": str(path),
+        "occupied_cells": occupied_cells,
+        "count_occupied_mean": count_mean,
+        "count_scale": float(count_std),
+        "count_centered": False,
+        "velocity_occupied_mean_kms": velocity_mean,
+        "velocity_occupied_std_kms": float(velocity_std),
+        "empty_cells_preserved_as_zero": True,
+    }
+
+
+def apply_input_preprocessing(
+    value: np.ndarray, spec: dict[str, object]
+) -> np.ndarray:
+    if spec["mode"] == "faithful":
+        return value
+    if spec["mode"] != "occupied_standardized":
+        raise ValueError(f"unknown input preprocessing: {spec['mode']}")
+    output = np.array(value, dtype=np.float32, copy=True)
+    occupied = output[0] > 0
+    output[0] /= float(spec["count_scale"])
+    output[1, occupied] = (
+        output[1, occupied] - float(spec["velocity_occupied_mean_kms"])
+    ) / float(spec["velocity_occupied_std_kms"])
+    output[1, ~occupied] = 0.0
+    return output
+
+
 class AugmentedH5Dataset(Dataset):
     """Lazy HDF5 dataset expanded by the paper's fixed 24 symmetries."""
 
-    def __init__(self, path: str | Path, augment: bool) -> None:
+    def __init__(
+        self,
+        path: str | Path,
+        augment: bool,
+        preprocessing: dict[str, object] | None = None,
+    ) -> None:
         self.path = str(path)
         self.augment = augment
         self.factor = 24 if augment else 1
+        self.preprocessing = preprocessing or input_preprocessing_spec(
+            path, "faithful"
+        )
         self._handle: h5py.File | None = None
         with h5py.File(self.path, "r") as handle:
             self.n = int(handle["input"].shape[0])
@@ -63,6 +135,7 @@ class AugmentedH5Dataset(Dataset):
         handle = self._open()
         x = np.asarray(handle["input"][base], dtype=np.float32)
         y = np.asarray(handle["target"][base], dtype=np.float32)
+        x = apply_input_preprocessing(x, self.preprocessing)
         if self.augment:
             permutation_index, flip_bits = divmod(transform, 8)
             spatial_axes = ((0, 1, 2), (1, 2, 0), (2, 0, 1))[permutation_index]
@@ -112,6 +185,7 @@ def save_checkpoint(
     epoch: int,
     train_loss: float,
     validation_loss: float,
+    scheduler: torch.optim.lr_scheduler.LRScheduler | None,
 ) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     torch.save(
@@ -121,7 +195,11 @@ def save_checkpoint(
             "epoch": epoch,
             "train_loss": train_loss,
             "validation_loss": validation_loss,
-            "paper_channels": PAPER_CHANNELS,
+            "paper_channels": tuple(int(value) for value in model.channels),
+            "normalization": model.normalization,
+            "input_preprocessing": model.input_preprocessing,
+            "lr_schedule": model.lr_schedule,
+            "scheduler": scheduler.state_dict() if scheduler is not None else None,
         },
         temporary,
     )
@@ -153,6 +231,21 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--seed", type=int, default=2021)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--normalization",
+        choices=("batch", "group"),
+        default="batch",
+        help="batch reproduces Hong; group is the batch-independent successor pilot",
+    )
+    parser.add_argument(
+        "--input-preprocessing",
+        choices=("faithful", "occupied_standardized"),
+        default="faithful",
+    )
+    parser.add_argument(
+        "--lr-schedule", choices=("constant", "cosine"), default="constant"
+    )
+    parser.add_argument("--min-lr", type=float, default=1.0e-5)
     parser.add_argument(
         "--resume",
         action="store_true",
@@ -206,12 +299,35 @@ def main() -> None:
         if args.smoke_widths
         else PAPER_CHANNELS
     )
-    model = Hong2021Net(in_channels=input_channels, channels=widths).to(device)
+    model = Hong2021Net(
+        in_channels=input_channels,
+        channels=widths,
+        normalization=args.normalization,
+    ).to(device)
+    preprocessing = input_preprocessing_spec(args.train, args.input_preprocessing)
+    model.input_preprocessing = preprocessing
+    model.lr_schedule = {
+        "name": args.lr_schedule,
+        "initial_lr": args.lr,
+        "minimum_lr": args.min_lr if args.lr_schedule == "cosine" else args.lr,
+        "epochs": args.epochs,
+    }
     optimizer = torch.optim.Adam(
         model.parameters(), lr=args.lr, betas=(0.9, 0.999), eps=1.0e-7
     )
-    train_set = AugmentedH5Dataset(args.train, augment=True)
-    validation_set = AugmentedH5Dataset(args.validation, augment=True)
+    scheduler = (
+        torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=args.epochs, eta_min=args.min_lr
+        )
+        if args.lr_schedule == "cosine"
+        else None
+    )
+    train_set = AugmentedH5Dataset(
+        args.train, augment=True, preprocessing=preprocessing
+    )
+    validation_set = AugmentedH5Dataset(
+        args.validation, augment=True, preprocessing=preprocessing
+    )
     full_train_samples = len(train_set)
     full_validation_samples = len(validation_set)
     if args.smoke_limit is not None:
@@ -239,11 +355,17 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     metadata = {
         "faithful_paper_run": (
-            args.smoke_widths is None and args.input_mode == "faithful"
+            args.smoke_widths is None
+            and args.input_mode == "faithful"
+            and args.normalization == "batch"
+            and args.input_preprocessing == "faithful"
+            and args.lr_schedule == "constant"
         ),
         "input_mode": args.input_mode,
         "input_channels": input_channels,
         "channels": widths,
+        "normalization": args.normalization,
+        "input_preprocessing": preprocessing,
         "parameters": parameter_count(model),
         "train_samples_unaugmented": reports[0]["n_unaugmented"],
         "validation_samples_unaugmented": reports[1]["n_unaugmented"],
@@ -253,7 +375,13 @@ def main() -> None:
         "full_validation_samples_augmented": full_validation_samples,
         "batch": args.batch,
         "epochs": args.epochs,
-        "optimizer": {"name": "Adam", "lr": args.lr, "betas": [0.9, 0.999], "eps": 1e-7},
+        "optimizer": {
+            "name": "Adam",
+            "lr": args.lr,
+            "betas": [0.9, 0.999],
+            "eps": 1e-7,
+        },
+        "lr_schedule": model.lr_schedule,
         "torch": torch.__version__,
         "device": str(device),
         "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
@@ -281,8 +409,26 @@ def main() -> None:
         checkpoint = torch.load(
             checkpoint_path, map_location=device, weights_only=False
         )
+        checkpoint_normalization = checkpoint.get("normalization", "batch")
+        if checkpoint_normalization != args.normalization:
+            raise SystemExit(
+                "checkpoint normalization does not match --normalization: "
+                f"{checkpoint_normalization} != {args.normalization}"
+            )
+        checkpoint_preprocessing = checkpoint.get(
+            "input_preprocessing",
+            {"mode": "faithful", "schema": "hong2021-input-preprocessing-v1"},
+        )
+        if checkpoint_preprocessing != preprocessing:
+            raise SystemExit("checkpoint input preprocessing does not match this run")
+        if checkpoint.get("lr_schedule", model.lr_schedule) != model.lr_schedule:
+            raise SystemExit("checkpoint learning-rate schedule does not match this run")
         model.load_state_dict(checkpoint["model"])
         optimizer.load_state_dict(checkpoint["optimizer"])
+        if scheduler is not None:
+            if checkpoint.get("scheduler") is None:
+                raise SystemExit("cosine resume checkpoint has no scheduler state")
+            scheduler.load_state_dict(checkpoint["scheduler"])
         history = json.loads(history_path.read_text())
         if not history or int(history[-1]["epoch"]) != int(checkpoint["epoch"]):
             raise SystemExit("checkpoint epoch and history.json disagree")
@@ -307,12 +453,14 @@ def main() -> None:
         float(history[-1]["elapsed_seconds"]) if history else 0.0
     )
     for epoch in range(start_epoch, args.epochs + 1):
+        learning_rate = float(optimizer.param_groups[0]["lr"])
         train_loss = epoch_loss(model, train_loader, device, optimizer)
         validation_loss = epoch_loss(model, validation_loader, device, None)
         row = {
             "epoch": epoch,
             "train_loss": train_loss,
             "validation_loss": validation_loss,
+            "learning_rate": learning_rate,
             "elapsed_seconds": prior_elapsed + time.time() - start,
         }
         history.append(row)
@@ -323,6 +471,8 @@ def main() -> None:
             best_train = train_loss
         if new_best_validation:
             best_validation = validation_loss
+        if scheduler is not None:
+            scheduler.step()
         # Serialize once, then create atomic hard-link aliases for any best
         # checkpoint attained at this epoch.
         save_checkpoint(
@@ -332,6 +482,7 @@ def main() -> None:
             epoch,
             train_loss,
             validation_loss,
+            scheduler,
         )
         if new_best_train:
             replace_with_hardlink(

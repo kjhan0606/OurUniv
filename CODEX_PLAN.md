@@ -18,9 +18,8 @@ required.
 
 ## Current state
 
-- **P0 passed on 2026-07-29.** The accepted statistical product is the
-  16-member N=192, L=384 Mpc/h linear-Gaussian parent ensemble in
-  `recon/linear_cr/manifest_parent_v1_all.json`.
+- The original WF15 P0 ensemble passed on 2026-07-29 and remains archived as
+  the control realization set.
 - The sampler uses the Gaussian Watkins--Feldman log-distance velocity
   estimator, a matrix-free Wiener filter, and exact Matheron conditional
   draws. It marginalizes an external bulk flow and the CF4 distance-scale
@@ -28,10 +27,27 @@ required.
 - A previously unseen 20% test split passed at N=192: standardized residual
   mean/std `+0.0077/1.0492`, 68/95% coverage `0.7050/0.9444`, and
   `Delta log predictive density=+815.0` relative to noise-only.
-- All 16 all-data draws pass the numerical, Gaussianity, and ΛCDM shell-power
-  gates. See `recon/linear_cr/gate_v1/CR_GATE_REPORT.md`.
-- Seed 1001 is only the deterministic reference member. No realization has
-  yet been selected using Local-Group or named-structure morphology.
+- **The replacement BGc P0 passed on 2026-08-02.** Its all-data product is the
+  16-member N=192, L=384 Mpc/h ensemble at
+  `/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_all_v1`, seeds 3001--3016.
+  All numerical, Gaussianity, and ΛCDM shell-power gates passed; the maximum
+  CG residual was `3.10e-5`, white-field standard deviations span
+  `0.999379--1.000378`, and the independent predictive test retained
+  `z=+0.023 +/- 1.012` and `Delta log score=+374.9`.
+- The first BGc P1 pass selected seed 3003 on Virgo, Coma, Local Void, and
+  Boötes alone. The subsequent P2 audit found persistent `2--4e13 Msun/h`
+  groups only about `3 Mpc/h` from the observer. A new observer-centred mass
+  gate therefore rejects seed 3003. None of the first 16 members passes all
+  five gates. A preregistered 48-member posterior extension passed P0, and
+  seed 3023 was its unique five-gate P1 survivor. An independently frozen
+  128-member extension (seeds 3065--3192) also passed P0; seed 3096 is its
+  sole five-gate P1 survivor. Its observer-centred mean densities are
+  `delta_R5=-0.317` and `delta_R8=-0.312`, so it does not repeat seed 3003's
+  nearby massive-group failure. Its unchanged 32-seed N576 P2 ensemble
+  completed with zero screen pairs. Across the two physically valid P1
+  parents, 3023 and 3096, the frozen result is therefore 0/64. The final
+  preregistered 256-parent extension (3193--3448) passed P0; seed 3429 is its
+  sole five-gate P1 survivor and its identical N576 P2 screen is now running.
 - The cr6/e19 L14 RAMSES run completed to `a=1.002955`.
 - A multi-mass HOP catalog and direct `M200c`/contamination measurements were
   completed.
@@ -45,6 +61,14 @@ required.
   residual covariance by an isotropic shell filter, so it and the nonlinear-MAP
   subtraction products remain archived for provenance rather than serving as
   inputs to the accepted `linear_cr/parent_v1_all` ensemble.
+- **BGc N192 validation passed on 2026-08-02.** The leakage-free BGc model
+  uses an 801-row reference window, `1500 <= cz <= 18000 km/s`, and a
+  development-selected error scale of `0.90`. On a reserved N192 split it
+  obtained `z=+0.023 +/- 1.012`, 68/95% coverage `0.708/0.951`, and
+  `Delta log score=+374.9`. Its observer `R=5 Mpc/h` posterior density is
+  `+0.430`; all eight validation realizations are positive. This removes the
+  shared central-cavity failure at the likelihood level without adding a
+  direct density constraint.
 
 ## Ordered gates
 
@@ -68,18 +92,29 @@ required.
 - Definitions and thresholds were frozen in `config/p1_targets_v1.json`.
 - All 16 parent members were evolved with the same `pmwd` model and the exact
   cosmology stored in the parent manifest.
-- Seeds 1002 and 1009 pass all four coarse environment gates: Virgo, Coma,
-  the four-probe Local Void, and the Boötes-void center/profile.
+- In the original WF15 control, seeds 1002 and 1009 passed all four gates.
+- Repeating the original scorecard on the accepted BGc ensemble left seed
+  3003 as the only field passing Virgo, Coma, the four-probe Local Void, and
+  the Boötes-void center/profile. That historical result is stored at
+  `/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_parent_v1/p1_result.json`.
+- P2 exposed a missing Local-Volume condition: seed 3003 forms group-scale
+  halos much nearer than Virgo. `config/p1_targets_v2_observer.json` adds
+  fixed excess-mass bounds within 5 and 8 Mpc/h while leaving every old gate
+  unchanged. Seed 3003 has excess masses `4.19e13` and `1.43e14 Msun/h` and
+  fails. The first 16 have zero five-gate passes.
 - Fornax, Hydra, Centaurus, Norma, Perseus, and the Shapley core were measured
   as blind non-gating anchors; they were not used to retune the hard gates.
 - Exact cluster masses, relative velocities, and extended basin/filament
   topology remain higher-resolution measurements.
-- Both passing parents advance to P2; no single physical winner is selected
-  at P1.
+- The same-model seeds 3017--3064 all passed the statistical P0 gate. Seed
+  3023 alone passes the five-gate P1: its coarse Local-Volume excess masses
+  are `3.09e12 Msun/h` (R=5) and `4.23e13 Msun/h` (R=8). However, neither its
+  eight canonical-L10 proposals nor its frozen 32-member N576 ensemble formed
+  a P2 screen pair. The conditional success estimate is therefore 0/32.
 
 ### P2 — LG ensemble selection
 
-**Status: first paired screen complete; no candidate passed.**
+**Status: 0/64 for the first two valid P1 parents; parent 3429 P2 in progress.**
 
 At sufficient parent resolution, rank random small-scale realizations using:
 
@@ -98,6 +133,30 @@ parents. None of the 16 combinations contained an eligible MW-mass halo within
 so increasing only high-k seeds is not justified. Before repeating P2, the
 local low-redshift likelihood and the explicitly external Local-Sheet/LG
 selection must be separated and validated.
+
+After BGc repaired the central likelihood, an exploratory N576 screen of parent 3003
+found passing morphology for small-scale seeds 2001, 2005, and 2008. Seed
+2008 had the best frozen ranking score (`2.558`), but its screen-scale total
+radial velocity was receding (`+217 km/s`) and is not a definitive dynamical
+pass. More importantly, calling the RNG with the same seed at N512 does not
+preserve the N576 Fourier realization. Therefore N576 candidates are not
+promoted directly. Independent N512 redraw and N576-to-N512 canonical
+projection checks both yielded zero passes. More decisively, their apparent
+N576 passes sit beside unphysical observer-neighbour groups and are rejected.
+
+The frozen 128-member parent extension (3065--3192) passed P0, and seed 3096
+alone passed all five P1 gates. Config
+`config/p2_lg_targets_v8_bgc_n576_parent3096.json` applies exactly the same
+small-scale seeds 2001--2032, physical cuts, and ranking weights used for seed
+3023. Only the parent, P1-result path, and output directory differ. It
+completed with zero passes, giving 0/64 across parents 3023 and 3096.
+
+If this ensemble has zero passes, the final blind extension is preregistered
+in `config/v3_bgc_parent_extension_v3.json`: seeds 3193--3448 receive the same
+P0 and observer-aware P1, and every P1 survivor receives the same 32 P2
+small-scale seeds. No further blind extension or threshold retuning follows a
+failure of that batch; the next model must label MW/M31/M33 information as an
+explicit additional likelihood rather than attributing it to CF4.
 
 ### P3 — exact Lagrangian masks
 
@@ -143,25 +202,36 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-The first direct local-distance likelihood experiment removed the shared
-observer cavity, shifting the Gaussian `R=5 Mpc/h` linear density from about
-`-0.94` in the control to `+0.40` in a fresh validation. It did not pass all
-local held-out calibration gates (`z_std=1.303`, allowed maximum `1.2`) and is
-therefore not promoted to N192. See
-`recon/linear_cr/v2_local_validation_v1/V2_LOCAL_VALIDATION_REPORT.md`.
+The inverse-mapped explicit-likelihood batch produced three P2 screening
+passes. Candidate parent 3429 / proposal seed 5108 ranks first. Its stable-ID
+trace, buffered sparse L9 mask, exact N576 GRAFIC parent, transfer function,
+and L9--L12 zoom IC are complete. The first IC's two-cell base-grid file pad
+was rejected after RAMSES showed that refinement expansion reached beyond the
+fine GRAFIC subvolume. The accepted `v2_pad6` IC uses six L9 pad cells and its
+zoom manifest has SHA256
+`25a03a21eb50e8acb983d9e81da1eb2b9896b42e7d9f2755e09e4099ca602cfd`.
 
-Implement and mock-validate a CF4 Bias Gaussianization correction or a
-hierarchical distance-modulus likelihood. Do not further tune the direct model
-on split `20260809`. Once a new model passes a fresh N192 test, repeat P2 at a
-resolution that can actually form an LG candidate. For every accepted
-candidate:
+1. run the two-step L12/L19 RAMSES startup preflight from
+   `config/ramses_lg_p3429_s5108_pilot_preflight_v1.nml`;
+2. if IC loading, AMR construction, particle counts, and memory are valid,
+   start the DMO pilot evolution to z=0 with the identical frozen inputs;
+3. run the user's HOP build at z=0 and measure M200c, pair kinematics, M33,
+   and low-resolution-particle contamination;
+4. trace RAMSES IDs again if the HOP midpoint changes materially;
+5. authorize L13/L21 only after the definitive pair, velocity, M33, P1
+   environment, and contamination gates pass.
 
-1. write an initial RAMSES particle snapshot at `a=0.02`;
-2. run HOP at z=0 and choose the LG midpoint without moving it to the box
-   centre;
-3. use `cf4_trace_ramses_ids.py` for the z=0-to-initial ID join;
-4. use `cf4_lagrangian_mask.py` to build the buffered sparse L9 mask;
-5. generate the L12/L19 pilot with `cf4_zoom_ic2.py`;
-6. authorize L13/L21 only after the HOP and contamination gates pass.
+The P2 result is provisional: seed 5108 has a promising two-halo morphology,
+but its PM radial velocity is only `-20.7 km/s` and no M33 analogue was found
+at screening resolution. Neither quantity is silently relaxed.
+
+The pad6 startup preflight passed on 2026-08-02 with 137,957,344 particles,
+zero IC-subvolume boundary warnings, zero Morton mismatches, and zero
+fatal/allocation errors. One L12 multigrid solve reached its 10-iteration cap
+at `3.919e-4`; the immediately following solves converged to `6.322e-5` and
+`8.491e-5`. The z=0 pilot is queued in tmux `cf4_ramses_5108_z0` and will
+start on Lageunha cores 0--31 as soon as the completed SIDM3 MPI ranks leave
+their finalization barrier. The complete gate record is
+`recon/linear_cr/ramses_lg_p3429_s5108_preflight_v3.json`.
 
 The failed cr6/e19 run remains diagnostic only and is not a candidate parent.

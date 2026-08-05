@@ -22,15 +22,35 @@ from torch.nn import functional as F
 PAPER_CHANNELS = (128, 256, 512, 1024, 2048)
 
 
+def group_count(channels: int, maximum: int = 32) -> int:
+    """Largest conventional GroupNorm group count dividing ``channels``."""
+    for groups in range(min(maximum, channels), 0, -1):
+        if channels % groups == 0:
+            return groups
+    raise RuntimeError("positive channel count must have a GroupNorm divisor")
+
+
+def normalization_layer(channels: int, kind: str) -> nn.Module:
+    if kind == "batch":
+        return nn.BatchNorm3d(channels, eps=1.0e-3, momentum=0.01)
+    if kind == "group":
+        return nn.GroupNorm(group_count(channels), channels, eps=1.0e-5)
+    raise ValueError(f"unknown normalization: {kind}")
+
+
 class EncoderBlock(nn.Module):
     """reflect-pad(2) -> Conv3d(5,stride=2) -> ReLU -> BatchNorm."""
 
-    def __init__(self, in_channels: int, out_channels: int) -> None:
+    def __init__(
+        self, in_channels: int, out_channels: int, normalization: str
+    ) -> None:
         super().__init__()
         self.conv = nn.Conv3d(
             in_channels, out_channels, kernel_size=5, stride=2, padding=0
         )
-        self.bn = nn.BatchNorm3d(out_channels, eps=1.0e-3, momentum=0.01)
+        # Keep the historical ``bn`` key so old BatchNorm checkpoints remain
+        # loadable without a state-dict migration.
+        self.bn = normalization_layer(out_channels, normalization)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = F.pad(x, (2, 2, 2, 2, 2, 2), mode="reflect")
@@ -41,11 +61,15 @@ class DecoderBlock(nn.Module):
     """nearest upsample -> concatenate skip -> BN -> reflect Conv3d(3) -> ReLU."""
 
     def __init__(
-        self, in_channels: int, skip_channels: int, out_channels: int
+        self,
+        in_channels: int,
+        skip_channels: int,
+        out_channels: int,
+        normalization: str,
     ) -> None:
         super().__init__()
         joined = in_channels + skip_channels
-        self.bn = nn.BatchNorm3d(joined, eps=1.0e-3, momentum=0.01)
+        self.bn = normalization_layer(joined, normalization)
         self.conv = nn.Conv3d(joined, out_channels, kernel_size=3, padding=0)
 
     def forward(self, x: torch.Tensor, skip: torch.Tensor) -> torch.Tensor:
@@ -59,10 +83,15 @@ class DecoderBlock(nn.Module):
 class OutputBlock(nn.Module):
     """Published Output layer: upsample, input skip, BN, 3^3 conv, tanh."""
 
-    def __init__(self, in_channels: int, input_channels: int = 2) -> None:
+    def __init__(
+        self,
+        in_channels: int,
+        input_channels: int = 2,
+        normalization: str = "batch",
+    ) -> None:
         super().__init__()
         joined = in_channels + input_channels
-        self.bn = nn.BatchNorm3d(joined, eps=1.0e-3, momentum=0.01)
+        self.bn = normalization_layer(joined, normalization)
         self.conv = nn.Conv3d(joined, 1, kernel_size=3, padding=0)
 
     def forward(self, x: torch.Tensor, raw_input: torch.Tensor) -> torch.Tensor:
@@ -80,6 +109,7 @@ class Hong2021Net(nn.Module):
         self,
         in_channels: int = 2,
         channels: Sequence[int] = PAPER_CHANNELS,
+        normalization: str = "batch",
     ) -> None:
         super().__init__()
         if len(channels) != 5:
@@ -87,19 +117,21 @@ class Hong2021Net(nn.Module):
         c = tuple(int(v) for v in channels)
         self.in_channels = int(in_channels)
         self.channels = c
+        self.normalization = normalization
         enc_in = (in_channels,) + c[:-1]
         self.encoder = nn.ModuleList(
-            EncoderBlock(ci, co) for ci, co in zip(enc_in, c, strict=True)
+            EncoderBlock(ci, co, normalization)
+            for ci, co in zip(enc_in, c, strict=True)
         )
         self.decoder = nn.ModuleList(
             (
-                DecoderBlock(c[4], c[3], c[3]),
-                DecoderBlock(c[3], c[2], c[2]),
-                DecoderBlock(c[2], c[1], c[1]),
-                DecoderBlock(c[1], c[0], c[0]),
+                DecoderBlock(c[4], c[3], c[3], normalization),
+                DecoderBlock(c[3], c[2], c[2], normalization),
+                DecoderBlock(c[2], c[1], c[1], normalization),
+                DecoderBlock(c[1], c[0], c[0], normalization),
             )
         )
-        self.output = OutputBlock(c[0], in_channels)
+        self.output = OutputBlock(c[0], in_channels, normalization)
         self.reset_parameters()
 
     def reset_parameters(self) -> None:
@@ -141,6 +173,7 @@ def main() -> None:
         help="comma-separated test widths; omit for paper widths",
     )
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--normalization", choices=("batch", "group"), default="batch")
     args = parser.parse_args()
 
     widths = (
@@ -148,7 +181,9 @@ def main() -> None:
         if args.smoke_widths
         else PAPER_CHANNELS
     )
-    model = Hong2021Net(channels=widths).to(args.device)
+    model = Hong2021Net(channels=widths, normalization=args.normalization).to(
+        args.device
+    )
     n_params = parameter_count(model)
     print(f"channels={widths} parameters={n_params:,} ({n_params/1e6:.3f} M)")
     with torch.inference_mode():

@@ -1,5 +1,5 @@
 {
-  "status": "full_training_in_progress",
+  "status": "training_complete_2pcf_normalization_under_audit",
   "reference": {
     "paper": "Hong, Jeong, Hwang & Kim 2021, ApJ 913, 76",
     "arxiv": "2008.01738",
@@ -56,14 +56,37 @@
     "author_weights_or_training_cubes": false
   },
   "local_run": {
-    "root": "/scratch/kjhan/IllustrisTNG/TNG100-1",
+    "raw_root": "/scratch/kjhan/IllustrisTNG/TNG100-1",
+    "raw_root_host": "syntax",
+    "portable_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1",
     "download_validation_passed": true,
     "dark_matter_particles_read": 6028568000,
     "prepared_train_file": "derived/hong2021/tng100_train.h5",
     "prepared_validation_file": "derived/hong2021/tng100_validation.h5",
     "prepared_voxel_deep_validation_passed": true,
-    "tmux_session": "hong2021_train",
+    "tmux_session": null,
     "training_output": "training/tng100_v1",
-    "training_log": "logs/hong2021_train_20260730.log"
+    "training_log": "logs/hong2021_train_lageunha_20260731.log",
+    "training_complete": true,
+    "completed_epochs": 200,
+    "evaluation": {
+      "script": "src/hong2021_evaluate.py",
+      "output": "evaluation/tng100_v1",
+      "validation_samples_unaugmented": 93,
+      "selected_checkpoint": "minimum_training_loss.pt",
+      "selected_epoch": 200,
+      "log10_density_residual_mean_std": [
+        0.028434429571570587,
+        0.5529255999318418
+      ],
+      "ks_2pcf_mean_std": {
+        "0-1_mpc_h": [0.7813620071684588, 0.18877697608980207],
+        "1-3_mpc_h": [0.5898617511520737, 0.11195617301559814],
+        "3-10_mpc_h": [0.4887585532746824, 0.07966014753423008]
+      },
+      "published_tng100_2pcf_reproduced": false,
+      "gate_interpretation": "inconclusive_until_finite_cube_2pcf_normalization_is_frozen",
+      "cf4_application_enabled": false
+    }
   }
 }

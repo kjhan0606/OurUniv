@@ -28,6 +28,33 @@ def file_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _deep_merge(base: dict, override: dict) -> dict:
+    result = dict(base)
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = _deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+
+def load_config(path: Path) -> dict:
+    """Load a frozen P2 config, optionally inheriting a SHA-pinned base."""
+    raw = json.loads(path.read_text())
+    if "extends" not in raw:
+        return raw
+    base_path = Path(raw["extends"])
+    if not base_path.is_absolute():
+        base_path = ROOT / base_path
+    expected = raw.get("extends_sha256")
+    actual = file_hash(base_path)
+    if expected != actual:
+        raise RuntimeError(
+            f"base config hash mismatch for {base_path}: {actual} != {expected}")
+    base = load_config(base_path)
+    return _deep_merge(base, raw)
+
+
 def rank_score(pair: dict, ranking: dict) -> float:
     weights = ranking["weights"]
     target_mass = ranking["target_member_mass_msun_h"]
@@ -163,6 +190,65 @@ def find_pairs(halos: dict, centre: np.ndarray, screen: dict, m33_gate: dict):
     return rows
 
 
+def extract_central_particles(
+    particles,
+    centre: np.ndarray,
+    half_width: float,
+    *,
+    velocity_unit: float,
+    chunk_size: int = 2_000_000,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Copy PM state to host and reconstruct only the central Eulerian cube.
+
+    Materializing ``Particles.pos()`` for all 576^3 particles adds a large
+    periodic-remainder executable on the GPU.  The P2 screen needs only the
+    central 60 Mpc/h cube, so reconstruct positions in bounded host chunks
+    from pmid and displacement while preserving the full N=576 PM evolution.
+    """
+    pmid = np.asarray(particles.pmid)
+    disp = np.asarray(particles.disp, dtype=np.float32)
+    vel = np.asarray(particles.vel, dtype=np.float32)
+    cell_size = np.asarray(particles.conf.cell_size, dtype=np.float32)
+    box_size = np.asarray(particles.conf.box_size, dtype=np.float32)
+    selected_pos = []
+    selected_vel = []
+    for start in range(0, pmid.shape[0], chunk_size):
+        stop = min(start + chunk_size, pmid.shape[0])
+        pos = (
+            pmid[start:stop].astype(np.float32) * cell_size
+            + disp[start:stop]
+        ) % box_size
+        select = np.all(np.abs(pos - centre) <= half_width, axis=1)
+        if np.any(select):
+            selected_pos.append(pos[select])
+            selected_vel.append(vel[start:stop][select] * velocity_unit)
+    if not selected_pos:
+        return np.empty((0, 3), np.float32), np.empty((0, 3), np.float32)
+    return np.concatenate(selected_pos), np.concatenate(selected_vel)
+
+
+def extract_central_arrays(
+    position_array,
+    velocity_array,
+    centre: np.ndarray,
+    half_width: float,
+    *,
+    velocity_unit: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Copy only final position/velocity outputs and select the central cube.
+
+    This path pairs with ``make_forward(return_particle_arrays=True)`` and
+    avoids exporting the full pmid+disp+vel particle pytree from XLA.
+    """
+    pos = np.asarray(position_array, dtype=np.float32)
+    select = np.all(np.abs(pos - centre) <= half_width, axis=1)
+    central_pos = pos[select].copy()
+    del pos
+    vel = np.asarray(velocity_array, dtype=np.float32)
+    central_vel = (vel[select] * velocity_unit).astype(np.float32, copy=False)
+    return central_pos, central_vel
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -179,9 +265,22 @@ def main() -> None:
     parser.add_argument(
         "--only", nargs="*", default=[], help="optional parent:smallseed combinations"
     )
+    parser.add_argument(
+        "--proposal-manifest",
+        type=Path,
+        help=(
+            "optional manifest of preconditioned N-mesh white fields; normally "
+            "SHA-pinned as input.conditioned_proposal_manifest in the config"
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-p1-result",
+        type=Path,
+        help="P1 result for parent-resolution projections of conditioned proposals",
+    )
     args = parser.parse_args()
 
-    config = json.loads(args.config.read_text())
+    config = load_config(args.config)
     p1 = json.loads(args.p1_result.read_text())
     if not config.get("frozen_before_high_resolution_forwarding"):
         raise RuntimeError("P2 config is not frozen")
@@ -193,11 +292,69 @@ def main() -> None:
     parent_files = {
         row["seed"]: Path(row["input"]) for row in p1["members"] if row["pass"]
     }
-    combinations = [
-        (parent, small)
-        for parent in config["parent_seeds"]
-        for small in config["paired_small_scale_seeds"]
-    ]
+    manifest_value = config.get("input", {}).get("conditioned_proposal_manifest")
+    manifest_path = args.proposal_manifest or (
+        Path(manifest_value) if manifest_value is not None else None)
+    proposal_files: dict[tuple[int, int], tuple[Path, str]] = {}
+    proposal_manifest_hash = None
+    if manifest_path is not None:
+        proposal_manifest_hash = file_hash(manifest_path)
+        expected_manifest_hash = config.get("input", {}).get(
+            "conditioned_proposal_manifest_sha256")
+        if expected_manifest_hash is not None and proposal_manifest_hash != expected_manifest_hash:
+            raise RuntimeError(
+                "conditioned proposal manifest hash mismatch: "
+                f"{proposal_manifest_hash} != {expected_manifest_hash}")
+        proposal_manifest = json.loads(manifest_path.read_text())
+        if proposal_manifest.get("status") != "complete":
+            raise RuntimeError("conditioned proposal manifest is not complete")
+        for entry in proposal_manifest.get("entries", []):
+            key = (int(entry["parent_seed"]), int(entry["proposal_seed"]))
+            field_path = Path(entry["field"])
+            if key in proposal_files:
+                raise RuntimeError(f"duplicate conditioned proposal {key}")
+            actual_field_hash = file_hash(field_path)
+            if actual_field_hash != entry["field_sha256"]:
+                raise RuntimeError(f"conditioned proposal hash mismatch for {field_path}")
+            proposal_files[key] = (field_path, actual_field_hash)
+        combinations = [
+            (parent, small)
+            for parent in config["parent_seeds"]
+            for small in config["paired_small_scale_seeds"]
+        ]
+        missing = [pair for pair in combinations if pair not in proposal_files]
+        if missing:
+            raise RuntimeError(f"conditioned proposal manifest lacks {missing}")
+
+        conditioned_p1_value = config.get("input", {}).get(
+            "conditioned_p1_result")
+        conditioned_p1_path = args.conditioned_p1_result or (
+            Path(conditioned_p1_value) if conditioned_p1_value is not None else None)
+        if conditioned_p1_path is None:
+            raise RuntimeError(
+                "conditioned proposals require a separately validated P1 result")
+        conditioned_p1_hash = file_hash(conditioned_p1_path)
+        expected_p1_hash = config.get("input", {}).get(
+            "conditioned_p1_result_sha256")
+        if expected_p1_hash is not None and conditioned_p1_hash != expected_p1_hash:
+            raise RuntimeError(
+                "conditioned P1 result hash mismatch: "
+                f"{conditioned_p1_hash} != {expected_p1_hash}")
+        conditioned_p1 = json.loads(conditioned_p1_path.read_text())
+        if conditioned_p1.get("status") != "complete":
+            raise RuntimeError("conditioned P1 result is not complete")
+        required_proposal_seeds = sorted({small for _, small in combinations})
+        if sorted(conditioned_p1.get("passing_seeds", [])) != required_proposal_seeds:
+            raise RuntimeError(
+                "P2 proposal seeds differ from the conditioned P1 survivors")
+    else:
+        conditioned_p1_path = None
+        conditioned_p1_hash = None
+        combinations = [
+            (parent, small)
+            for parent in config["parent_seeds"]
+            for small in config["paired_small_scale_seeds"]
+        ]
     if args.only:
         requested = {
             tuple(int(value) for value in item.split(":")) for item in args.only
@@ -208,7 +365,7 @@ def main() -> None:
 
     import jax
     import jax.numpy as jnp
-    from cf4_make_ic import embed_ic
+    from cf4_make_ic import embed_ic, embed_ic_projected
     from fof import fof
     from mock_pipeline import make_forward
 
@@ -225,6 +382,9 @@ def main() -> None:
         }
     screen = config["screen"]
     fine_n = int(screen["mesh_size"])
+    canonical_n = int(screen.get("canonical_mesh_size", fine_n))
+    if canonical_n < fine_n:
+        raise RuntimeError("canonical mesh cannot be smaller than the PM mesh")
     spacing = box_size / fine_n
     if not np.isclose(spacing, screen["particle_spacing_mpc_h"]):
         raise RuntimeError("P2 screen spacing differs from the frozen config")
@@ -234,35 +394,48 @@ def main() -> None:
     print(f"[P2] JAX {jax.__version__}; device={jax.devices()[0]}", flush=True)
     print(f"[P2] config SHA-256={file_hash(args.config)}", flush=True)
     print(
-        f"[P2] {len(combinations)} paired forwards; {coarse_n}^3 -> {fine_n}^3; "
+        f"[P2] {len(combinations)} paired forwards; {coarse_n}^3 -> "
+        f"{canonical_n}^3 canonical -> {fine_n}^3 PM; "
         f"m_particle={particle_mass:.3e} Msun/h",
         flush=True,
     )
     _, _, forward = make_forward(
-        fine_n, spacing, jnp.float32, return_dens=False, cosmology=cosmology
+        fine_n, spacing, jnp.float32, return_dens=False, cosmology=cosmology,
+        return_particle_arrays=True,
     )
     args.outdir.mkdir(parents=True, exist_ok=True)
     results = []
     cache = {}
     for number, (parent_seed, small_seed) in enumerate(combinations, 1):
         started = time.time()
-        if parent_seed not in cache:
-            with np.load(parent_files[parent_seed]) as data:
-                cache[parent_seed] = data["s_out"].astype(np.float64)
-        initial = embed_ic(cache[parent_seed], fine_n, small_seed)
-        particles = forward(jnp.asarray(initial))
-        particles.pos().block_until_ready()
-        pos = np.asarray(particles.pos(), dtype=np.float32)
-        vel = np.asarray(particles.vel, dtype=np.float32) * VUNIT_KMS
+        proposal_source = None
+        proposal_source_hash = None
+        if proposal_files:
+            proposal_source, proposal_source_hash = proposal_files[
+                (parent_seed, small_seed)]
+            with np.load(proposal_source, allow_pickle=False) as data:
+                initial = data["s_conditioned"].astype(np.float32)
+            if initial.shape != (fine_n, fine_n, fine_n):
+                raise RuntimeError(
+                    f"conditioned proposal {proposal_source} has shape "
+                    f"{initial.shape}, expected {(fine_n,) * 3}")
+        else:
+            if parent_seed not in cache:
+                with np.load(parent_files[parent_seed]) as data:
+                    cache[parent_seed] = data["s_out"].astype(np.float64)
+            initial = embed_ic_projected(
+                cache[parent_seed], canonical_n, fine_n, small_seed)
+        final_pos, final_vel = forward(jnp.asarray(initial))
         initial = None
-        particles = None
-
         half_width = screen["central_half_width_mpc_h"]
-        central = np.all(np.abs(pos - centre) <= half_width, axis=1)
-        central_pos = pos[central]
-        central_vel = vel[central]
-        pos = None
-        vel = None
+        central_pos, central_vel = extract_central_arrays(
+            final_pos,
+            final_vel,
+            centre,
+            half_width,
+            velocity_unit=VUNIT_KMS,
+        )
+        final_pos = final_vel = None
         halos = fof(
             central_pos,
             central_vel,
@@ -288,6 +461,14 @@ def main() -> None:
             "n_screen_pairs": len(pairs),
             "screen_pass": bool(pairs),
             "best_pair": pairs[0] if pairs else None,
+            # Preserve every physically admissible pair.  The cheapest P1
+            # environment recheck is observer-centred on the evolved pair,
+            # so a realization must not be rejected merely because its
+            # morphology-only rank put a different pair first.
+            "screen_pairs": pairs,
+            "conditioned_proposal": (
+                str(proposal_source.resolve()) if proposal_source else None),
+            "conditioned_proposal_sha256": proposal_source_hash,
         }
         results.append(row)
         combo = f"p{parent_seed}_s{small_seed}"
@@ -327,7 +508,15 @@ def main() -> None:
         "config": str(args.config.resolve()),
         "config_sha256": file_hash(args.config),
         "p1_result": str(args.p1_result.resolve()),
+        "conditioned_proposal_manifest": (
+            str(manifest_path.resolve()) if manifest_path else None),
+        "conditioned_proposal_manifest_sha256": proposal_manifest_hash,
+        "conditioned_p1_result": (
+            str(conditioned_p1_path.resolve()) if conditioned_p1_path else None),
+        "conditioned_p1_result_sha256": conditioned_p1_hash,
         "cosmology": cosmology,
+        "canonical_mesh_size": canonical_n,
+        "pm_mesh_size": fine_n,
         "particle_mass_msun_h": particle_mass,
         "results": results,
         "passing_combinations": [

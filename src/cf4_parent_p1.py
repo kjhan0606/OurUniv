@@ -16,6 +16,8 @@ from pathlib import Path
 
 import numpy as np
 
+RHO_CRIT = 2.775e11
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -38,21 +40,40 @@ def sg_xyz(sgl_deg: float, sgb_deg: float, distance: float) -> np.ndarray:
 class DensityScorer:
     """Measurements on a periodic, observer-centred Cartesian density mesh."""
 
-    def __init__(self, delta: np.ndarray, spacing: float, shell_half_width: float):
+    def __init__(
+        self,
+        delta: np.ndarray,
+        spacing: float,
+        shell_half_width: float,
+        observer_offset: np.ndarray | None = None,
+    ):
         self.delta = np.asarray(delta, np.float32)
         self.nmesh = delta.shape[0]
         self.spacing = float(spacing)
         self.box_size = self.nmesh * self.spacing
         self.centre = self.box_size / 2.0
+        self.observer_offset = (
+            np.zeros(3, dtype=np.float64)
+            if observer_offset is None else np.asarray(observer_offset, np.float64)
+        )
+        if self.observer_offset.shape != (3,):
+            raise ValueError("observer_offset must contain three Cartesian coordinates")
+        self.observer_position = self.centre + self.observer_offset
         self.shell_half_width = float(shell_half_width)
-        axis = (np.arange(self.nmesh, dtype=np.float32) + 0.5) * spacing - self.centre
-        axis2 = axis**2
+        axes = []
+        for coordinate in self.observer_position:
+            axis = (np.arange(self.nmesh, dtype=np.float32) + 0.5) * spacing
+            axis = (axis - coordinate + self.box_size / 2) % self.box_size
+            axes.append(axis - self.box_size / 2)
         self.observer_radius = np.sqrt(
-            axis2[:, None, None] + axis2[None, :, None] + axis2[None, None, :]
+            axes[0][:, None, None] ** 2
+            + axes[1][None, :, None] ** 2
+            + axes[2][None, None, :] ** 2
         )
 
     def value(self, offset: np.ndarray) -> float:
-        index = np.floor((offset + self.centre) / self.spacing).astype(int)
+        index = np.floor(
+            (offset + self.observer_position) / self.spacing).astype(int)
         return float(self.delta[tuple(index % self.nmesh)])
 
     def shell_percentile(self, offset: np.ndarray, value: float) -> float:
@@ -61,7 +82,7 @@ class DensityScorer:
         return float(100.0 * np.mean(self.delta[shell] < value))
 
     def _local_cube(self, offset: np.ndarray, radius: float):
-        box_pos = offset + self.centre
+        box_pos = offset + self.observer_position
         lower = np.floor((box_pos - radius) / self.spacing).astype(int)
         upper = np.floor((box_pos + radius) / self.spacing).astype(int) + 1
         raw_axes = [np.arange(a, b) for a, b in zip(lower, upper)]
@@ -92,7 +113,8 @@ class DensityScorer:
         local_index = np.array(np.unravel_index(flat_index, cube.shape))
         peak = np.array(
             [
-                (raw_axes[i][local_index[i]] + 0.5) * self.spacing - self.centre
+                (raw_axes[i][local_index[i]] + 0.5) * self.spacing
+                - self.observer_position[i]
                 for i in range(3)
             ]
         )
@@ -187,9 +209,10 @@ def bootes_metrics(spec: dict, scorer: DensityScorer) -> dict:
         "centre_delta": centre_delta,
         "centre_shell_percentile": centre_percentile,
         "mean_delta_profile": profile,
-        "nearest_box_face_mpc_h": float(
-            scorer.box_size / 2 - np.max(np.abs(target))
-        ),
+        "nearest_box_face_mpc_h": float(np.min(np.minimum(
+            (scorer.observer_position + target) % scorer.box_size,
+            scorer.box_size - (scorer.observer_position + target) % scorer.box_size,
+        ))),
         "pass": bool(
             centre_percentile <= spec["maximum_center_shell_percentile"]
             and negative_required
@@ -197,8 +220,45 @@ def bootes_metrics(spec: dict, scorer: DensityScorer) -> dict:
     }
 
 
-def score_member(delta: np.ndarray, spacing: float, config: dict) -> dict:
-    scorer = DensityScorer(delta, spacing, config["shell_half_width_mpc_h"])
+def observer_environment_metrics(spec: dict, scorer: DensityScorer,
+                                 omega_m: float) -> dict:
+    """Coarse Local-Volume mass proxy, independent of LG pair morphology."""
+    rows = {}
+    passed = True
+    for radius_text, maximum_excess in spec["maximum_excess_mass_msun_h"].items():
+        radius = float(radius_text)
+        mean_delta = scorer.sphere_mean(np.zeros(3), radius)
+        mean_mass = omega_m * RHO_CRIT * (4.0 * np.pi / 3.0) * radius**3
+        excess_mass = mean_delta * mean_mass
+        row_pass = excess_mass <= float(maximum_excess)
+        if np.isclose(radius, spec["local_sheet_radius_mpc_h"]):
+            row_pass = row_pass and mean_delta >= spec["minimum_local_sheet_mean_delta"]
+        rows[radius_text] = {
+            "radius_mpc_h": radius,
+            "mean_delta": mean_delta,
+            "cosmic_mean_mass_msun_h": mean_mass,
+            "excess_mass_msun_h": excess_mass,
+            "maximum_excess_mass_msun_h": float(maximum_excess),
+            "pass": bool(row_pass),
+        }
+        passed = passed and row_pass
+    return {
+        "spheres": rows,
+        "minimum_local_sheet_mean_delta": spec["minimum_local_sheet_mean_delta"],
+        "pass": bool(passed),
+        "status": "coarse smoothed-density proxy; definitive exclusion uses particle HOP",
+    }
+
+
+def score_member(
+    delta: np.ndarray,
+    spacing: float,
+    config: dict,
+    omega_m: float = 0.31,
+    observer_offset: np.ndarray | None = None,
+) -> dict:
+    scorer = DensityScorer(
+        delta, spacing, config["shell_half_width_mpc_h"], observer_offset)
     h = float(config["cosmology_h"])
     clusters = {
         name: cluster_metrics(name, spec, scorer, h, hard=True)
@@ -210,17 +270,24 @@ def score_member(delta: np.ndarray, spacing: float, config: dict) -> dict:
     }
     local_void = local_void_metrics(config["local_void"], scorer)
     bootes_void = bootes_metrics(config["bootes_void"], scorer)
+    observer = (
+        observer_environment_metrics(config["observer_environment"], scorer, omega_m)
+        if "observer_environment" in config else None
+    )
     gates = {
         **{name: row["pass"] for name, row in clusters.items()},
         "LocalVoid": local_void["pass"],
         "BootesVoid": bootes_void["pass"],
     }
+    if observer is not None:
+        gates["ObserverEnvironment"] = observer["pass"]
     passed = all(gates[name] for name in config["hard_gate_policy"]["pass_requires"])
     return {
         "clusters": clusters,
         "secondary_cluster_anchors": secondary,
         "local_void": local_void,
         "bootes_void": bootes_void,
+        "observer_environment": observer,
         "gates": gates,
         "n_gates_passed": int(sum(gates.values())),
         "pass": bool(passed),
@@ -236,8 +303,8 @@ def markdown_report(result: dict) -> str:
         f"- Full P1 passes: {len(result['passing_seeds'])}",
         f"- Passing seeds: {result['passing_seeds'] or 'none'}",
         "",
-        "| seed | Virgo | Coma | Local Void | Boötes | gates | P1 |",
-        "|---:|:---:|:---:|:---:|:---:|---:|:---:|",
+        "| seed | Virgo | Coma | Local Void | Boötes | Observer | gates | P1 |",
+        "|---:|:---:|:---:|:---:|:---:|:---:|---:|:---:|",
     ]
     label = lambda value: "PASS" if value else "fail"
     for row in result["members"]:
@@ -245,7 +312,9 @@ def markdown_report(result: dict) -> str:
         lines.append(
             f"| {row['seed']} | {label(gates['Virgo'])} | "
             f"{label(gates['Coma'])} | {label(gates['LocalVoid'])} | "
-            f"{label(gates['BootesVoid'])} | {row['n_gates_passed']}/4 | "
+            f"{label(gates['BootesVoid'])} | "
+            f"{label(gates.get('ObserverEnvironment', True))} | "
+            f"{row['n_gates_passed']}/{len(gates)} | "
             f"{label(row['pass'])} |"
         )
     lines += [
@@ -335,7 +404,7 @@ def main() -> None:
             "seed": seed,
             "input": str(input_path.resolve()),
             "seconds": time.time() - started,
-            **score_member(delta, spacing, config),
+            **score_member(delta, spacing, config, omega_m=cosmology["Om"]),
         }
         members.append(row)
         gates = " ".join(
@@ -348,7 +417,10 @@ def main() -> None:
         )
 
     result = {
-        "schema": "cf4-p1-result-v1",
+        "schema": (
+            "cf4-p1-result-v2-observer"
+            if "observer_environment" in config else "cf4-p1-result-v1"
+        ),
         "status": "complete" if not args.limit else "development_subset",
         "manifest": str(args.manifest.resolve()),
         "manifest_sha256": file_hash(args.manifest),
