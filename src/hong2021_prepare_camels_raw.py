@@ -33,6 +33,7 @@ from hong2021_prepare_simba import (
     load_catalog,
     observer_candidates,
 )
+from hong2021_v14_target import log_cic_target
 
 
 SCHEMA = "hong2021-camels-raw-cic-input-v14"
@@ -161,11 +162,14 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
                 density = density_cache[realization]
                 mean_density = float(np.mean(density, dtype=np.float64))
                 cube_density = extract_periodic_cube(density, origin)
-                if mean_density <= 0 or np.any(cube_density <= 0):
-                    raise RuntimeError(f"non-positive CIC density in CV_{realization}")
-                target = np.log10(cube_density / mean_density) / DENSITY_SCALE
-                if not np.isfinite(target).all() or target.min() < -1 or target.max() > 1:
-                    raise RuntimeError(f"invalid target range in CV_{realization}")
+                try:
+                    target = log_cic_target(
+                        cube_density, mean_density, DENSITY_SCALE
+                    )
+                except (ValueError, RuntimeError) as error:
+                    raise RuntimeError(
+                        f"invalid CIC target in CV_{realization}"
+                    ) from error
                 input_data[output_index, 0] = count
                 input_data[output_index, 1] = radial_velocity
                 target_data[output_index, 0] = target

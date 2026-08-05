@@ -12,6 +12,7 @@ import h5py
 import numpy as np
 
 from hong2021_prepare_tng import DENSITY_SCALE, extract_periodic_cube
+from hong2021_v14_target import log_cic_target
 
 
 def retarget(source: Path, grid_path: Path, destination: Path) -> dict[str, Any]:
@@ -64,11 +65,12 @@ def retarget(source: Path, grid_path: Path, destination: Path) -> dict[str, Any]
             origins = np.asarray(old["cube_origin_cell"], dtype=np.int64)
             for index, origin in enumerate(origins):
                 density = extract_periodic_cube(grid, origin, size=cube_grid)
-                if np.any(density <= 0):
-                    raise RuntimeError(f"non-positive CIC density in TNG cube {index}")
-                value = np.log10(density / mean_density) / DENSITY_SCALE
-                if not np.isfinite(value).all() or value.min() < -1 or value.max() > 1:
-                    raise RuntimeError(f"invalid target range in TNG cube {index}")
+                try:
+                    value = log_cic_target(density, mean_density, DENSITY_SCALE)
+                except (ValueError, RuntimeError) as error:
+                    raise RuntimeError(
+                        f"invalid CIC target in TNG cube {index}"
+                    ) from error
                 target[index, 0] = value
                 rows.append(
                     {
