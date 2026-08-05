@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 import os
 import time
 from pathlib import Path
@@ -43,6 +44,9 @@ from hong2021_v14_residual_cache import STANDARDIZED_SCHEMA
 
 
 SCHEMA = "hong2021-v14-three-domain-multiscale-observable-context-edm-v1"
+V15_E2_SCHEMA = "hong2021-v15-e2-relative-noise-multiscale-edm-v1"
+V15_E3_SCHEMA = "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1"
+SUPPORTED_CHECKPOINT_SCHEMAS = (SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA)
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
 
@@ -140,6 +144,26 @@ def source_balanced_sigma_data(datasets: dict[str, V14ResidualDataset]) -> float
     return float(np.sqrt(np.mean([value.cache_rms**2 for value in datasets.values()])))
 
 
+def resolve_edm_p_mean(
+    sigma_data: float,
+    fixed_p_mean: float,
+    sigma_data_fraction: float | None,
+) -> tuple[float, str]:
+    """Resolve the training-noise log median without consulting a target domain."""
+    if not np.isfinite(sigma_data) or sigma_data <= 0:
+        raise ValueError("sigma_data must be finite and positive")
+    if sigma_data_fraction is None:
+        if not np.isfinite(fixed_p_mean):
+            raise ValueError("fixed EDM p_mean must be finite")
+        return float(fixed_p_mean), "fixed_log_sigma"
+    if not np.isfinite(sigma_data_fraction) or sigma_data_fraction <= 0:
+        raise ValueError("sigma_data fraction must be finite and positive")
+    return (
+        float(math.log(sigma_data_fraction * sigma_data)),
+        "log_sigma_data_fraction",
+    )
+
+
 def source_balanced_feature_standardization(
     datasets: dict[str, Dataset], batch_size: int = 8
 ) -> dict[str, Any]:
@@ -196,6 +220,17 @@ def train(args: argparse.Namespace) -> None:
         for name, value in paths.items()
     }
     sigma_data = source_balanced_sigma_data(train_datasets)
+    run_schema = getattr(args, "run_schema", SCHEMA)
+    if run_schema not in SUPPORTED_CHECKPOINT_SCHEMAS:
+        raise ValueError(f"unsupported EDM run schema: {run_schema}")
+    p_mean_fraction = getattr(args, "edm_p_mean_sigma_data_fraction", None)
+    effective_p_mean, p_mean_mode = resolve_edm_p_mean(
+        sigma_data, args.edm_p_mean, p_mean_fraction
+    )
+    if run_schema == SCHEMA and p_mean_fraction is not None:
+        raise ValueError("the frozen V14 schema requires fixed edm_p_mean")
+    if run_schema != SCHEMA and p_mean_fraction is None:
+        raise ValueError("V15 schemas require target-free sigma_data-relative p_mean")
     feature_fit = source_balanced_feature_standardization(train_datasets)
     tail_fit = source_balanced_tail_weights(
         {name: density_bin_counts(value[0]) for name, value in paths.items()},
@@ -251,7 +286,7 @@ def train(args: argparse.Namespace) -> None:
     if (output / "last.pt").exists():
         raise RuntimeError(f"refusing to overwrite existing run: {output}")
     metadata = {
-        "schema": SCHEMA,
+        "schema": run_schema,
         "status": "training",
         "target": "zero-DC multiscale-standardized corrected residual",
         "data": {
@@ -276,7 +311,10 @@ def train(args: argparse.Namespace) -> None:
         "weight_decay": args.weight_decay,
         "ema_decay": args.ema_decay,
         "gradient_clip": args.gradient_clip,
-        "edm_p_mean": args.edm_p_mean,
+        "edm_p_mean": effective_p_mean,
+        "edm_p_mean_mode": p_mean_mode,
+        "edm_p_mean_fixed_argument": args.edm_p_mean,
+        "edm_p_mean_sigma_data_fraction": p_mean_fraction,
         "edm_p_std": args.edm_p_std,
         "validation_every": args.validation_every,
         "validation_seeds": validation_seeds,
@@ -284,6 +322,12 @@ def train(args: argparse.Namespace) -> None:
         "augmentation": "48 signed cube isometries",
         "seed": args.seed,
         "device": str(device),
+        "experiment_registry": getattr(args, "experiment_registry", None),
+        "experiment_registry_sha256": getattr(
+            args, "experiment_registry_sha256", None
+        ),
+        "code_commit_at_launch": getattr(args, "code_commit_at_launch", None),
+        "worktree_clean_at_launch": getattr(args, "worktree_clean_at_launch", None),
     }
     (output / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(json.dumps(metadata, indent=2), flush=True)
@@ -301,7 +345,7 @@ def train(args: argparse.Namespace) -> None:
         with torch.autocast(device_type=device.type, enabled=device.type == "cuda"):
             values = tail_balanced_edm_loss(
                 model, residual, condition, truth, bin_weights, noise,
-                sigma_data, args.edm_p_mean, args.edm_p_std,
+                sigma_data, effective_p_mean, args.edm_p_std,
             )
         scaler.scale(values[0]).backward()
         scaler.unscale_(optimizer)
@@ -316,7 +360,7 @@ def train(args: argparse.Namespace) -> None:
             validation = {
                 name: fixed_tail_validation_loss(
                     ema_model, validation_loaders[name], device, bin_weights,
-                    validation_seeds[name], sigma_data, args.edm_p_mean, args.edm_p_std,
+                    validation_seeds[name], sigma_data, effective_p_mean, args.edm_p_std,
                 )
                 for name in DOMAINS
             }
@@ -364,8 +408,8 @@ def sample(args: argparse.Namespace) -> None:
     seed_everything(args.seed)
     device = torch.device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
-    if checkpoint.get("schema") != SCHEMA:
-        raise ValueError("not a V14 multiscale EDM checkpoint")
+    if checkpoint.get("schema") not in SUPPORTED_CHECKPOINT_SCHEMAS:
+        raise ValueError("not a supported multiscale EDM checkpoint")
     feature_fit = checkpoint["observable_context_features"]
     model = ObservableContextUNet(
         base_channels=int(checkpoint["base_channels"]),
@@ -438,6 +482,7 @@ def sample(args: argparse.Namespace) -> None:
                     "method": "edm",
                     "checkpoint": str(Path(args.checkpoint).resolve()),
                     "checkpoint_step": int(checkpoint["step"]),
+                    "checkpoint_schema": str(checkpoint["schema"]),
                     "source_cache": str(Path(args.cache).resolve()),
                     "sigma_data": float(checkpoint["sigma_data"]),
                     "sampling_steps": args.sampling_steps,
@@ -481,6 +526,10 @@ def build_parser() -> argparse.ArgumentParser:
     training.add_argument("--ema-decay", type=float, default=0.999)
     training.add_argument("--gradient-clip", type=float, default=1.0)
     training.add_argument("--edm-p-mean", type=float, default=-0.8)
+    training.add_argument("--edm-p-mean-sigma-data-fraction", type=float)
+    training.add_argument(
+        "--run-schema", choices=SUPPORTED_CHECKPOINT_SCHEMAS, default=SCHEMA
+    )
     training.add_argument("--edm-p-std", type=float, default=1.2)
     training.add_argument("--tail-exponent", type=float, default=0.5)
     training.add_argument("--tail-maximum", type=float, default=10.0)

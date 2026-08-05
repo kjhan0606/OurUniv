@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from hong2021_v14_edm import (
+    resolve_edm_p_mean,
     source_balanced_feature_standardization,
     source_balanced_sigma_data,
 )
@@ -38,6 +39,15 @@ def test_sigma_data_uses_equal_source_rms_not_sample_counts() -> None:
     datasets = dict(zip(DOMAINS, (_RMS(1.0), _RMS(2.0), _RMS(3.0)), strict=True))
     actual = source_balanced_sigma_data(datasets)  # type: ignore[arg-type]
     assert actual == np.sqrt((1.0 + 4.0 + 9.0) / 3.0)
+
+
+def test_relative_p_mean_tracks_sigma_data_without_target_features() -> None:
+    actual, mode = resolve_edm_p_mean(2.0, -0.8, 0.6)
+    assert np.isclose(actual, np.log(1.2))
+    assert mode == "log_sigma_data_fraction"
+    fixed, fixed_mode = resolve_edm_p_mean(2.0, -0.8, None)
+    assert fixed == -0.8
+    assert fixed_mode == "fixed_log_sigma"
 
 
 def test_feature_standardization_gives_three_sources_equal_weight() -> None:
