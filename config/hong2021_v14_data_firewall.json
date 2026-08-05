@@ -1,0 +1,128 @@
+{
+  "schema": "hong2021-v14-cross-code-data-firewall-v1",
+  "status": "frozen_before_swift_eagle_download_or_astrid_truth_access",
+  "frozen_utc": "2026-08-05T09:45:28Z",
+  "purpose": "Permit new cross-code model development after the sealed V13 EAGLE failure without using that failure for tuning, while preserving one genuinely untouched public simulation family for a one-time gate.",
+  "historical_eagle": {
+    "suite": "EAGLE RefL0100N1504",
+    "role": "sealed_historical_failed_stress_only",
+    "confirmation32_state": "opened_once_and_failed_v13",
+    "allowed_uses": [
+      "retain the immutable V13 decision and metrics",
+      "report the historical failure after V14 is frozen"
+    ],
+    "forbidden_uses": [
+      "model fitting",
+      "feature or normalization fitting",
+      "architecture or checkpoint selection",
+      "amplitude, seed, threshold, or gate tuning",
+      "opening additional RefL0100N1504 cubes as a replacement independent test"
+    ]
+  },
+  "development_domains": {
+    "tng100": {
+      "role": "development",
+      "partitions": "unchanged repository V13 train and validation partitions"
+    },
+    "camels_simba": {
+      "role": "development",
+      "training_realizations": [16, 17, 18, 19, 20, 21, 22, 23],
+      "validation_realizations": [24, 25, 26],
+      "historical_stress_realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "historical_stress_policy": "report only after development selection; never fit or select on it"
+    },
+    "camels_swift_eagle": {
+      "role": "new_development_domain",
+      "reason": "Public Swift hydrodynamics with EAGLE subgrid physics supplies an EAGLE-like development shift without reopening the sealed EAGLE RefL0100N1504 truth.",
+      "training_realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+      "validation_realizations": [20, 21, 22, 23, 24, 25, 26],
+      "training_observers": "all subhalos satisfying the frozen observer stellar-mass interval",
+      "validation_selection": "exactly 16 observers chosen once by deterministic maximin coverage of the eight observable V8 context features; no target or density feature may enter",
+      "truth_access": "permitted only after this firewall is committed",
+      "sources": {
+        "snapshot_pattern": "https://users.flatironinstitute.org/~camels/Sims/Swift-EAGLE/L25n256/CV/CV_{realization}/snapshot_090.hdf5",
+        "catalog_pattern": "https://users.flatironinstitute.org/~camels/FOF_Subfind/Swift-EAGLE/L25n256/CV/CV_{realization}/groups_090.hdf5"
+      }
+    }
+  },
+  "sealed_independent_domain": {
+    "suite": "CAMELS Astrid",
+    "set": "L25n256 CV",
+    "role": "one_time_independent_gate",
+    "realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+    "objects": "one observer per realization, chosen by the frozen stellar-mass-only rule",
+    "observer_choice": "candidate closest in log stellar mass to the geometric midpoint of 4e10 to 1e11 Msun in the existing CAMELS catalog convention, with subhalo index as deterministic tie breaker",
+    "galaxy_proxy": "SubhaloMassType[:,4]*1e10 >= 97664166.24188423",
+    "input_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s"
+    ],
+    "target": "log10(rho_cdm/rho_cdm_box_mean)/4.5",
+    "sources": {
+      "dm_grid": "https://users.flatironinstitute.org/~camels/CMD/3D_grids/data/Astrid/Grids_Mcdm_Astrid_CV_256_z=0.0.npy",
+      "catalog_pattern": "https://users.flatironinstitute.org/~camels/FOF_Subfind/Astrid/L25n256/CV/CV_{realization}/groups_090.hdf5"
+    },
+    "preseal_audit": {
+      "local_astrid_files_found": 0,
+      "content_read": false,
+      "http_metadata_only": {
+        "dm_grid_content_length_bytes": 1811939456,
+        "dm_grid_last_modified": "Sun, 16 Oct 2022 14:44:11 GMT",
+        "cv0_catalog_content_length_bytes": 153670440,
+        "cv0_catalog_last_modified": "Wed, 15 Jun 2022 04:59:10 GMT"
+      }
+    },
+    "access_firewall": [
+      "Do not download, mmap, inspect, summarize, or derive any Astrid density target before the V14 model, checkpoint, preprocessing, representative rule, and gate command are frozen and committed.",
+      "Do not use Astrid catalog observables for training, normalization, architecture choice, or checkpoint selection.",
+      "After freeze, prepare all 27 objects and open the field gate exactly once.",
+      "A failed gate remains failed; no alternate checkpoint, seed, realization subset, correction, or threshold is tried on Astrid."
+    ],
+    "sampler": {
+      "ensemble_members": 16,
+      "sampling_steps": 40,
+      "seed": 28777
+    },
+    "field_gate": {
+      "checks": "the same eight checks and thresholds used by V13",
+      "requirement": "all eight pass",
+      "bootstrap_replicates": 50000,
+      "bootstrap_seed": 2024
+    },
+    "grid_hop": {
+      "run_only_after_field_pass": true,
+      "objects": 27,
+      "members_per_object": 16,
+      "thresholds": "unchanged repository grid-HOP gate"
+    }
+  },
+  "v14_development_boundary": {
+    "allowed": [
+      "fit and compare models using only TNG100, SIMBA development, and Swift-EAGLE development",
+      "use target-free observable context at inference",
+      "train a conditional multiscale location-scale likelihood rather than apply a post-hoc transfer function",
+      "require simultaneous unchanged field-gate passes on all three development validation domains"
+    ],
+    "forbidden": [
+      "simulation identity as an inference feature",
+      "target-derived inference features",
+      "post-hoc A(k) or truth-derived amplitude correction",
+      "any EAGLE RefL0100N1504 or Astrid-driven model choice"
+    ]
+  },
+  "locked_order": [
+    "commit this data firewall",
+    "download and schema-audit Swift-EAGLE development data",
+    "implement and select V14 only on the three development domains",
+    "freeze and commit the exact V14 artifact hashes and one-shot command",
+    "download and prepare the sealed Astrid inputs",
+    "run the Astrid field gate once",
+    "run Astrid grid-HOP only after a field pass",
+    "advance to CF4 application or forward dynamics only after the complete independent gate passes"
+  ],
+  "unavailable_preferred_alternative": {
+    "suite": "CAMELS Magneticum",
+    "official_access_status_checked_2026_08_05": "private",
+    "policy": "Do not claim Magneticum as an executable independent gate unless access is granted under a separately committed protocol."
+  }
+}

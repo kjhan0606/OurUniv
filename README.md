@@ -41,6 +41,12 @@ and CF4 application are therefore disabled; see
 [the restart audit](HONG2021_RESTART_PLAN.md) and
 [the EAGLE gate record](EAGLE_INDEPENDENT_GATE.md).
 
+The next model cycle now has a committed cross-code data firewall.  Public
+CAMELS Swift-EAGLE is development-only, while all 27 CAMELS Astrid CV
+realizations remain unopened for a one-time independent V14 gate.  The sealed
+EAGLE failure is never used for tuning.  See
+[the V14 independent-gate protocol](NEW_INDEPENDENT_GATE.md).
+
 The original P1 gates selected seed 3003 as the only member simultaneously
 passing Virgo, Coma, Local Void, and Boötes-void criteria. P2 then found three
 N576 morphology-screen passes (small-scale seeds 2001, 2005, 2008), with 2008

@@ -602,3 +602,21 @@ retuning, alternate checkpoint, seed, amplitude, or threshold is permitted.
 Further development requires additional non-EAGLE training simulations and a
 new untouched independent simulation family; the remaining EAGLE cubes are
 not a replacement independent gate.
+
+### V14 cross-code data firewall (frozen 2026-08-05)
+
+Before reading any new simulation truth, the next-cycle roles were frozen in
+`config/hong2021_v14_data_firewall.json`.  TNG100 and SIMBA remain development
+domains.  Public CAMELS Swift-EAGLE CV0--19 becomes a new training domain and
+CV20--26 becomes development validation.  It provides an EAGLE-like domain
+shift without reopening the failed RefL0100N1504 target.  All 27 CAMELS Astrid
+CV realizations are reserved for a one-time independent gate and were absent
+locally at freeze time; only public HTTP file metadata was queried.
+
+The preferred Magneticum alternative cannot currently be executed because the
+official CAMELS access table marks it private.  The executable protocol thus
+keeps Astrid completely unopened until a conditional multiscale location-scale
+V14 model and every artifact hash are committed.  Astrid then uses one frozen
+stellar-mass-only observer per realization, ensemble 16, 40 sampling steps,
+seed 28777, and the unchanged eight-check field gate.  A failure is terminal
+for V14 and grid-HOP is skipped.  See `NEW_INDEPENDENT_GATE.md`.
