@@ -445,6 +445,7 @@ def sample(args: argparse.Namespace) -> None:
                     "sigma_max": args.sigma_max,
                     "rho": args.rho,
                     "seed": args.seed,
+                    "diagnostic_k_h_mpc": 1.0,
                     "location_scale_uses_target": False,
                     "complete": True,
                 }

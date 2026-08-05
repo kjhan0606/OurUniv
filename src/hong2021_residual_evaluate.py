@@ -33,6 +33,7 @@ CENTERED_SCHEMAS = {
     "hong2021-corrected-mean-fullband-residual-v11-observable-context-edm",
     "hong2021-gaussianized-fullband-residual-v12-observable-context-edm",
     "hong2021-v13-dc-corrected-v12-ensemble",
+    "hong2021-v14-multiscale-location-scale-edm-ensemble-v1",
 }
 
 
