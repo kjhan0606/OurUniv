@@ -36,7 +36,8 @@
     "cube_mpc_h": 20.0,
     "target": "log10(cic_cdm_cell_mass/box_mean_cic_cdm_cell_mass)/4.5",
     "zero_policy": "fail preparation if any selected cube cell is non-positive; no pseudocount, clipping, censoring, or learned floor",
-    "mass_conservation": "require float64 deposited mass to equal the selected particle count and float32 cache relative error <=2e-8",
+    "mass_conservation": "require float64 deposited mass to equal the selected particle count and float32 cache relative error <=1e-7",
+    "storage_tolerance_amendment": "The original 2e-8 bound was tightened below the 4.75e-8 representation error of the exact CAMELS mean count 32.768 in a synthetic uniform-grid test. It was changed to 1e-7 before preparation or model fitting; the CIC operator and physical target are unchanged.",
     "implementation": "src/hong2021_build_particle_grid.py",
     "forbidden": [
       "CAMELS Multifield Dataset adaptive-smoothed grids as a V14 target",

@@ -161,7 +161,7 @@ def build_grid(
     payload = counts.astype(np.float32)
     float32_total = float(payload.sum(dtype=np.float64))
     relative_float32_mass_error = abs(float32_total / particles_read - 1.0)
-    if relative_float32_mass_error > 2e-8:
+    if relative_float32_mass_error > 1e-7:
         raise RuntimeError(
             f"float32 grid mass error {relative_float32_mass_error} is too large"
         )
