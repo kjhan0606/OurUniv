@@ -1,0 +1,124 @@
+{
+  "schema": "hong2021-v17-predeclared-band-balanced-loss-program-v1",
+  "status": "frozen_after_v16_e4_development_failure_before_v17_e5",
+  "purpose": "Test one parameter-free equal-Fourier-band denoising objective after the rejected trilinear representation change, without post-hoc tuning or independent-data access.",
+  "parent_evidence": {
+    "v16_registry": "config/hong2021_v16_development_program.json",
+    "v16_registry_sha256": "f4935d277c2bbd9990f511eb7755010277713e3249abd165825501ef1c1ed6f4",
+    "e4_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v16_e4_trilinear_decoder_edm/development_decision.json",
+    "e4_decision_sha256": "06581fb714f339b7f67f44d438d38ad316d88e23db8d04b275daca41d1aebcc7",
+    "e4_decision_digest_sha256": "0d9666a48370de6a64d4a20df9db041f1fd0b923da265e6dbac16870702f0bdf",
+    "e4_development_pass": false,
+    "e4_selected_checkpoint": null,
+    "e4_next": "stop_unopened_then_predeclare_band_balanced_denoising_loss",
+    "astrid_used": false,
+    "scientific_baseline": "V15-E3 nearest decoder; E4 trilinear is rejected rather than inherited"
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "posthoc_Ak": false,
+    "simulation_label_conditioning": false,
+    "target_derived_inference_features_or_scales": false,
+    "field_clipping": false,
+    "density_floor": false,
+    "pseudocount": false,
+    "tail_exponent_or_loss_coefficient_search": false,
+    "threshold_seed_or_subset_changes_after_results": false,
+    "near_miss_rescue": false
+  },
+  "e5_band_balanced_denoising": {
+    "single_change_from_v15_e3": "replace L=(U+T)/2 by L=(U+T+B)/3; retain the nearest decoder and every other E3 model, optimizer, data, and sampler setting",
+    "decoder_upsampling": "nearest",
+    "loss": {
+      "error": "e = edm_denoise(noisy_residual, condition, sigma) - standardized_residual",
+      "edm_weight": "w=(sigma^2+sigma_data^2)/(sigma*sigma_data)^2, applied per sample to U, T, and B",
+      "U": "mean squared e over channel and all N^3 voxels",
+      "T": "sum(e^2 * frozen train-only density-tail voxel weights) / sum(weights), unchanged from E3",
+      "B": "full-complex FFT of float32 e with norm=ortho; within each non-DC Fourier band take mean |e_hat|^2 per channel and mode, then take the equal mean of four bands",
+      "coefficients": {
+        "U": {"numerator": 1, "denominator": 3},
+        "T": {"numerator": 1, "denominator": 3},
+        "B": {"numerator": 1, "denominator": 3}
+      },
+      "fft": {
+        "transform": "torch.fft.fftn",
+        "dimensions": [-3, -2, -1],
+        "norm": "ortho",
+        "full_complex": true,
+        "input_dtype": "float32",
+        "autocast_enabled": false,
+        "dc_in_band_loss": false,
+        "additional_rng_draws": 0
+      },
+      "bands_h_mpc": [[0.0, 1.0], [1.0, 3.0], [3.0, 6.0], [6.0, "infinity"]],
+      "mask_implementation": "reuse src/hong2021_v14_multiscale.py:fourier_band_masks without redefining k",
+      "grid": 80,
+      "voxel_mpc_h": 0.3125,
+      "expected_full_fft_mode_counts": [250, 6872, 49928, 454949],
+      "expected_non_dc_modes": 511999,
+      "parseval_relative_tolerance": 0.0001,
+      "validation_uses_identical_loss": true
+    },
+    "edm_p_mean": "log(0.6*sigma_data)",
+    "edm_p_std": 1.2,
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "tail_exponent": 0.25,
+    "tail_maximum": 10.0,
+    "training_seed": 144021,
+    "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+    "sampler": {
+      "ensemble_members": 16,
+      "steps": 40,
+      "sigma_min": 0.002,
+      "sigma_max": 40.0,
+      "rho": 7.0
+    },
+    "sampling_seeds": {"TNG100": 45777, "SIMBA": 46777, "Swift": 47777},
+    "seed_rationale": "reuse the E4 seeds because B consumes no RNG, preserving paired training-noise and sampling-noise comparisons against the nearest E3 baseline without a result-conditioned seed change",
+    "development_objects": {
+      "TNG100": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "SIMBA": {
+        "path": "config/hong2021_simba_dev_representative16_v1.json",
+        "sha256": "8e60a07328f75058a682ffd42a4667655f62935baaeb3985b10bcdd727a92663"
+      },
+      "Swift": {
+        "path": "config/hong2021_swift_eagle_dev_representative16_v1.json",
+        "sha256": "d0475680dc846332b928833961a34802fb4560dd100f8714bc95241db13582b7"
+      }
+    },
+    "selection": "smallest candidate passing all unchanged V6 field checks in all three development domains",
+    "unchanged_gate": "src/hong2021_v6_gate.py:field_gate",
+    "report_only_all_band_diagnostic": {
+      "bands_h_mpc": ["0.3-1", "1-3", "3-6", "6-10.0531"],
+      "quantity": "generated total power divided by truth total power",
+      "selection_role": "none",
+      "falsifiable_prediction": "relative to nearest E3 at the same step and paired seed, TNG 1-3 and 3-6 ratios move toward unity",
+      "low_band_gate_promotion": false,
+      "seal_disclosure_required": true
+    },
+    "optimization_diagnostic_only": {
+      "record_gradient_norm_before_fixed_clip": true,
+      "record_fixed_clip_activation_fraction": true,
+      "gradient_clip_threshold": 1.0,
+      "selection_role": "none"
+    }
+  },
+  "fixed_decision_order": [
+    "implement and train E5 exactly as declared",
+    "evaluate candidates in ascending order 5000 then 10000 using the unchanged V6 field gate on all three development domains",
+    "if E5 passes, stop development and create a new one-file committed Astrid seal before any independent-data access",
+    "if E5 makes TNG and SIMBA pass and leaves only the Swift peak/void check failing, stop unopened and predeclare the already reserved all-band target-free conditional-scale experiment",
+    "for every other E5 failure pattern, stop without opening Astrid and obtain a new independent design audit; do not tune loss coefficients or band weights"
+  ],
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "date": "2026-08-06",
+    "record": "/home/kjhan/.claude/plans/harmonic-crafting-steele.md",
+    "conclusion": "Reject trilinear, return to the E3 nearest baseline, and add exactly one equal-band Fourier denoising term with U/T/B equal weights.",
+    "astrid_must_remain_sealed": true
+  }
+}
