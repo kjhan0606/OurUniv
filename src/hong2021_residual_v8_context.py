@@ -150,8 +150,12 @@ class ObservableContextUNet(ConditionalResidualUNet):
         base_channels: int = 32,
         context_mean: list[float] | torch.Tensor | None = None,
         context_std: list[float] | torch.Tensor | None = None,
+        decoder_upsampling: str = "nearest",
     ) -> None:
         super().__init__(condition_channels, base_channels)
+        if decoder_upsampling not in {"nearest", "trilinear"}:
+            raise ValueError("decoder upsampling must be nearest or trilinear")
+        self.decoder_upsampling = decoder_upsampling
         feature_count = len(FEATURE_NAMES)
         mean = torch.zeros(feature_count) if context_mean is None else torch.as_tensor(context_mean)
         std = torch.ones(feature_count) if context_std is None else torch.as_tensor(context_std)
@@ -172,6 +176,15 @@ class ObservableContextUNet(ConditionalResidualUNet):
         # Loading a V6/V7 backbone then starts as the exact parent model.
         nn.init.zeros_(self.context[-1].weight)
         nn.init.zeros_(self.context[-1].bias)
+
+    def upsample_decoder(
+        self, value: torch.Tensor, size: tuple[int, int, int]
+    ) -> torch.Tensor:
+        if self.decoder_upsampling == "trilinear":
+            return F.interpolate(
+                value, size=size, mode="trilinear", align_corners=False
+            )
+        return F.interpolate(value, size=size, mode="nearest")
 
     def standardized_context(self, condition: torch.Tensor) -> torch.Tensor:
         raw = observable_context_features(condition)
@@ -196,10 +209,10 @@ class ObservableContextUNet(ConditionalResidualUNet):
         )
         level1 = self.level1(self.down1(level0), time)
         middle = self.middle2(self.middle1(self.down2(level1), time), time)
-        up1 = F.interpolate(middle, size=level1.shape[-3:], mode="nearest")
+        up1 = self.upsample_decoder(middle, level1.shape[-3:])
         up1 = self.up1(up1)
         up1 = self.decode1(torch.cat((up1, level1), dim=1), time)
-        up0 = F.interpolate(up1, size=level0.shape[-3:], mode="nearest")
+        up0 = self.upsample_decoder(up1, level0.shape[-3:])
         up0 = self.up0(up0)
         up0 = self.decode0(torch.cat((up0, level0), dim=1), time)
         return self.output(F.silu(self.output_norm(up0)))

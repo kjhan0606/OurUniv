@@ -3,7 +3,9 @@ set -euo pipefail
 
 # This downloader has no development-mode entry point.  The committed V14
 # Astrid runner sets the guard only after verifying the exact artifact seal.
-if [[ ${HONG2021_V14_ASTRID_ONE_SHOT:-} != sealed && ${HONG2021_V15_ASTRID_ONE_SHOT:-} != sealed ]]; then
+if [[ ${HONG2021_V14_ASTRID_ONE_SHOT:-} != sealed \
+   && ${HONG2021_V15_ASTRID_ONE_SHOT:-} != sealed \
+   && ${HONG2021_V16_ASTRID_ONE_SHOT:-} != sealed ]]; then
     printf 'Refusing Astrid download outside the sealed one-shot runner.\n' >&2
     exit 2
 fi

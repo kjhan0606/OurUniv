@@ -46,8 +46,15 @@ from hong2021_v14_residual_cache import STANDARDIZED_SCHEMA
 SCHEMA = "hong2021-v14-three-domain-multiscale-observable-context-edm-v1"
 V15_E2_SCHEMA = "hong2021-v15-e2-relative-noise-multiscale-edm-v1"
 V15_E3_SCHEMA = "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1"
-SUPPORTED_CHECKPOINT_SCHEMAS = (SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA)
+V16_E4_SCHEMA = "hong2021-v16-e4-trilinear-decoder-multiscale-edm-v1"
+SUPPORTED_CHECKPOINT_SCHEMAS = (SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA)
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
+
+
+def decoder_upsampling_for_schema(schema: str) -> str:
+    if schema not in SUPPORTED_CHECKPOINT_SCHEMAS:
+        raise ValueError(f"unsupported EDM run schema: {schema}")
+    return "trilinear" if schema == V16_E4_SCHEMA else "nearest"
 
 
 class V14ResidualDataset(Dataset):
@@ -230,7 +237,7 @@ def train(args: argparse.Namespace) -> None:
     if run_schema == SCHEMA and p_mean_fraction is not None:
         raise ValueError("the frozen V14 schema requires fixed edm_p_mean")
     if run_schema != SCHEMA and p_mean_fraction is None:
-        raise ValueError("V15 schemas require target-free sigma_data-relative p_mean")
+        raise ValueError("post-V14 schemas require target-free sigma_data-relative p_mean")
     feature_fit = source_balanced_feature_standardization(train_datasets)
     tail_fit = source_balanced_tail_weights(
         {name: density_bin_counts(value[0]) for name, value in paths.items()},
@@ -266,6 +273,7 @@ def train(args: argparse.Namespace) -> None:
         base_channels=args.base_channels,
         context_mean=feature_fit["mean"],
         context_std=feature_fit["std"],
+        decoder_upsampling=decoder_upsampling_for_schema(run_schema),
     ).to(device)
     ema_model = copy.deepcopy(model).eval()
     for parameter in ema_model.parameters():
@@ -320,6 +328,8 @@ def train(args: argparse.Namespace) -> None:
         "validation_seeds": validation_seeds,
         "candidate_steps": candidate_steps,
         "augmentation": "48 signed cube isometries",
+        "decoder_upsampling": decoder_upsampling_for_schema(run_schema),
+        "decoder_align_corners": False if run_schema == V16_E4_SCHEMA else None,
         "seed": args.seed,
         "device": str(device),
         "experiment_registry": getattr(args, "experiment_registry", None),
@@ -411,9 +421,16 @@ def sample(args: argparse.Namespace) -> None:
     if checkpoint.get("schema") not in SUPPORTED_CHECKPOINT_SCHEMAS:
         raise ValueError("not a supported multiscale EDM checkpoint")
     feature_fit = checkpoint["observable_context_features"]
+    decoder_upsampling = decoder_upsampling_for_schema(checkpoint["schema"])
+    if checkpoint.get("decoder_upsampling", decoder_upsampling) != decoder_upsampling:
+        raise ValueError("checkpoint decoder upsampling differs from its schema")
+    expected_align_corners = False if decoder_upsampling == "trilinear" else None
+    if checkpoint.get("decoder_align_corners", expected_align_corners) != expected_align_corners:
+        raise ValueError("checkpoint decoder align_corners differs from its schema")
     model = ObservableContextUNet(
         base_channels=int(checkpoint["base_channels"]),
         context_mean=feature_fit["mean"], context_std=feature_fit["std"],
+        decoder_upsampling=decoder_upsampling,
     )
     model.load_state_dict(checkpoint["ema_model"])
     model.eval().to(device)

@@ -21,6 +21,8 @@ def verify_astrid_seal(
         from hong2021_v14_freeze import verify_seal
     elif schema == "hong2021-v15-astrid-one-shot-artifact-seal-v1":
         from hong2021_v15_freeze import verify_seal
+    elif schema == "hong2021-v16-astrid-one-shot-artifact-seal-v1":
+        from hong2021_v16_freeze import verify_seal
     else:
         raise ValueError("unsupported Astrid seal schema")
     return verify_seal(
