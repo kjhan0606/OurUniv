@@ -25,6 +25,7 @@ def test_development_downloader_rejects_astrid(tmp_path):
 def test_one_shot_downloader_requires_runner_guard(tmp_path):
     environment = os.environ.copy()
     environment.pop("HONG2021_V14_ASTRID_ONE_SHOT", None)
+    environment.pop("HONG2021_V15_ASTRID_ONE_SHOT", None)
     result = subprocess.run(
         [
             str(REPO / "scripts/download_hong2021_v14_astrid_one_shot.sh"),

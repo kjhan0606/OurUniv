@@ -5,7 +5,9 @@ repo=/home/kjhan/BACKUP/CF4
 tng=/gpfs/kjhan/IllustrisTNG/TNG100-1
 root=/gpfs/kjhan/CAMELS/Astrid/L25n256
 seal=${1:-config/hong2021_v14_astrid_one_shot_seal.json}
-evaluation=$root/evaluation/hong2021_v14_astrid_one_shot
+freeze_script=${HONG2021_ASTRID_FREEZE_SCRIPT:-src/hong2021_v14_freeze.py}
+evaluation=${HONG2021_ASTRID_EVALUATION:-$root/evaluation/hong2021_v14_astrid_one_shot}
+state_schema=${HONG2021_ASTRID_STATE_SCHEMA:-hong2021-v14-astrid-one-shot-sequence-status-v1}
 state=$evaluation/sequence_status.json
 raw_manifest=$root/download/hong2021_v14_astrid_raw_manifest.json
 input=$root/derived/hong2021_v14/astrid_cv0_26_one_observer.h5
@@ -23,7 +25,7 @@ cd "$repo"
 export PYTHONPATH=$repo/src
 
 mkdir -p /gpfs/kjhan/.hong2021_locks
-exec 9>/gpfs/kjhan/.hong2021_locks/v14_astrid_one_shot.lock
+exec 9>/gpfs/kjhan/.hong2021_locks/astrid_one_shot.lock
 if ! flock -n 9; then
     printf 'Another sealed Astrid one-shot runner holds the lock.\n' >&2
     exit 2
@@ -32,15 +34,15 @@ fi
 write_state() {
     local stage=$1 detail=$2
     mkdir -p "$evaluation"
-    python - "$state" "$stage" "$detail" <<'PY'
+    python - "$state" "$stage" "$detail" "$state_schema" <<'PY'
 import json, os, socket, subprocess, sys
 from datetime import datetime, timezone
 from pathlib import Path
-path, stage, detail = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+path, stage, detail, schema = Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4]
 now = datetime.now(timezone.utc).isoformat()
 old = json.loads(path.read_text()) if path.exists() else {}
 report = {
-    "schema": "hong2021-v14-astrid-one-shot-sequence-status-v1",
+    "schema": schema,
     "stage": stage, "detail": detail, "host": socket.gethostname(),
     "updated_utc": now,
     "opened_utc": old.get("opened_utc", now),
@@ -70,11 +72,11 @@ if [[ -s $state ]]; then
         printf 'Astrid one-shot already has terminal state: %s\n' "$previous"
         exit 0
     fi
-    python src/hong2021_v14_freeze.py verify --repo "$repo" --seal "$seal"
+    python "$freeze_script" verify --repo "$repo" --seal "$seal"
 else
     # This is the final target-blind check.  The state file is created only
     # after proving that no Astrid file exists and the exact seal is committed.
-    python src/hong2021_v14_freeze.py verify \
+    python "$freeze_script" verify \
         --repo "$repo" --seal "$seal" --require-unopened
     write_state opening_frozen_download \
         "exact committed model opened for Astrid CV0-26; no alternate is permitted"

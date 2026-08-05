@@ -3,7 +3,7 @@ set -euo pipefail
 
 # This downloader has no development-mode entry point.  The committed V14
 # Astrid runner sets the guard only after verifying the exact artifact seal.
-if [[ ${HONG2021_V14_ASTRID_ONE_SHOT:-} != sealed ]]; then
+if [[ ${HONG2021_V14_ASTRID_ONE_SHOT:-} != sealed && ${HONG2021_V15_ASTRID_ONE_SHOT:-} != sealed ]]; then
     printf 'Refusing Astrid download outside the sealed one-shot runner.\n' >&2
     exit 2
 fi
@@ -20,7 +20,11 @@ fi
 
 cd "$repo"
 export PYTHONPATH=$repo/src
-python src/hong2021_v14_freeze.py verify --repo "$repo" --seal "$seal"
+python - "$seal" "$repo" <<'PY'
+import sys
+from hong2021_astrid_seal import verify_astrid_seal
+verify_astrid_seal(sys.argv[1], repo=sys.argv[2], require_committed=True)
+PY
 mkdir -p "$root/raw" "$root/CV" "$root/download"
 
 remote_bytes() {

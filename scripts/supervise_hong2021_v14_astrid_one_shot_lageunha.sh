@@ -6,7 +6,9 @@ set -euo pipefail
 repo=/home/kjhan/BACKUP/CF4
 root=/gpfs/kjhan/CAMELS/Astrid/L25n256
 seal=${1:-config/hong2021_v14_astrid_one_shot_seal.json}
-state=$root/evaluation/hong2021_v14_astrid_one_shot/sequence_status.json
+evaluation=${HONG2021_ASTRID_EVALUATION:-$root/evaluation/hong2021_v14_astrid_one_shot}
+runner=${HONG2021_ASTRID_RUNNER:-scripts/run_hong2021_v14_astrid_one_shot_lageunha.sh}
+state=$evaluation/sequence_status.json
 retry_seconds=${HONG2021_ASTRID_RETRY_SECONDS:-300}
 if [[ ! $retry_seconds =~ ^[1-9][0-9]*$ ]]; then
     printf 'HONG2021_ASTRID_RETRY_SECONDS must be a positive integer\n' >&2
@@ -23,7 +25,7 @@ while true; do
         fi
     fi
     set +e
-    scripts/run_hong2021_v14_astrid_one_shot_lageunha.sh "$seal"
+    "$runner" "$seal"
     result=$?
     set -e
     if [[ -s $state ]]; then

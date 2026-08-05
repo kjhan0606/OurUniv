@@ -15,7 +15,8 @@ from hong2021_v14_baseline_audit import (
     SCHEMA as BASELINE_SCHEMA,
     prepare_astrid_independent,
 )
-from hong2021_v14_freeze import sha256, verify_seal
+from hong2021_astrid_seal import verify_astrid_seal
+from hong2021_v14_freeze import sha256
 from hong2021_v14_residual_cache import (
     CORRECTED_SCHEMA,
     STANDARDIZED_SCHEMA,
@@ -52,7 +53,7 @@ def _validate_raw_manifest(path: Path) -> dict[str, Any]:
 def prepare_input(
     *, seal: Path, repo: Path, root: Path, raw_manifest: Path, output: Path
 ) -> dict[str, Any]:
-    verify_seal(seal, repo=repo, require_committed=True)
+    verify_astrid_seal(seal, repo=repo, require_committed=True)
     _validate_raw_manifest(raw_manifest)
     report_path = output.with_suffix(".json")
     if _complete_h5(output, INPUT_SCHEMA):
@@ -77,7 +78,7 @@ def prepare_input(
 def prepare_model_cache(
     *, seal: Path, repo: Path, data: Path, output_root: Path, device: str
 ) -> dict[str, Any]:
-    record = verify_seal(seal, repo=repo, require_committed=True)
+    record = verify_astrid_seal(seal, repo=repo, require_committed=True)
     artifacts = {name: Path(row["path"]) for name, row in record["artifacts"].items()}
     with h5py.File(data, "r") as handle:
         if str(handle.attrs.get("schema")) != INPUT_SCHEMA or not bool(

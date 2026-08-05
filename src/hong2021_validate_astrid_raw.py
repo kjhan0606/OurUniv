@@ -23,7 +23,7 @@ from hong2021_prepare_simba import (
     OBSERVER_MASS,
     choose_observer,
 )
-from hong2021_v14_freeze import verify_seal
+from hong2021_astrid_seal import verify_astrid_seal
 
 
 SCHEMA = "hong2021-v14-astrid-raw-independent-download-v1"
@@ -178,7 +178,7 @@ def main() -> None:
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    verify_seal(args.seal, repo=args.repo, require_committed=True)
+    verify_astrid_seal(args.seal, repo=args.repo, require_committed=True)
     if args.out.exists():
         raise RuntimeError(f"refusing to overwrite Astrid manifest: {args.out}")
     report = validate(args.root, EXPECTED_REALIZATIONS)
