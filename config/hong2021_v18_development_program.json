@@ -1,6 +1,6 @@
 {
   "schema": "hong2021-v18-predeclared-prior-matched-initialization-program-v1",
-  "status": "frozen_after_v17_e5_development_failure_before_v18_e6",
+  "status": "frozen_after_preexecution_inference_grid_mapping_correction_before_v18_e6",
   "purpose": "Test one training-free, parameter-free correction to the EDM sampler prior on the frozen V15-E3 checkpoints, without post-hoc tuning or independent-data access.",
   "parent_evidence": {
     "v17_registry": "config/hong2021_v17_development_program.json",
@@ -80,6 +80,10 @@
       "band_edges_h_mpc": [0.0, 1.0, 3.0, 6.0, "infinity"],
       "full_fft_mode_counts": [146, 3596, 25296, 233105],
       "non_dc_modes": 262143,
+      "expected_mode_counts_by_grid": {
+        "64": [146, 3596, 25296, 233105],
+        "80": [250, 6872, 49928, 454949]
+      },
       "source_balanced_per_band_mode_variance": [1836.1418485297647, 73.04195496322953, 10.368459581198783, 1.1250001849821358],
       "measurement_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v18_e6_prior_matched_init/initialization_variance_measurement.json",
       "measurement_report_sha256": "e1ca69de9d71c3af0b590c3ce14b6901655ec66cdd785badd75b57dae4d84dd7",
@@ -87,6 +91,18 @@
       "parseval_relative_tolerance": 1e-9,
       "maximum_absolute_ortho_dc": 1e-6,
       "band0_shell_profile_selection_role": "report-only; no shell-specific initialization or tuning"
+    },
+    "inference_initialization_mapping": {
+      "astrid_grid": 80,
+      "astrid_voxel_mpc_h": 0.3125,
+      "mapping": "apply the identical source-balanced per-Fourier-mode variances measured on the 64^3 training caches to every non-DC 80^3 mode in the corresponding physical-k band; DC uses sigma_first_step only",
+      "justification": "with norm=ortho at fixed voxel size, stationary-field per-mode coefficient variance is an intensive lattice power spectral density and is not rescaled by box volume or mode count",
+      "astrid_mode_counts": [250, 6872, 49928, 454949],
+      "astrid_non_dc_modes": 511999,
+      "astrid_data_used_in_mapping": false,
+      "inference_data_remeasurement_forbidden": true,
+      "free_parameters_added": 0,
+      "finite_box_disclosure": "six 80^3 fundamental modes at k=0.2513 h/Mpc lie below the 64^3 fundamental k=0.3142 h/Mpc and inherit the band-average variance; relative band-integrated per-voxel variance shifts from lattice counts are approximately -12%, -2%, +1%, and 0% for bands 0-3 and are not corrected or tuned"
     },
     "training_cache_sources": {
       "TNG100": {
@@ -203,6 +219,21 @@
     "if P1a fails anywhere, discard the initialization hypothesis and retain E3 as the scientific baseline",
     "never tune sigma_max, initialization variance, steps, members, seeds, subsets, thresholds, loss coefficients, or band weights after E6 results"
   ],
+  "pre_execution_correction": {
+    "date": "2026-08-06",
+    "reason": "The initial committed V18 registry specified the 64^3 development initializer but omitted the zero-free-parameter mapping to the future sealed 80^3 Astrid inference grid.",
+    "failed_attempt_stage": "implementation review before any V18-E6 sampling, ensemble creation, metric calculation, or independent-data access",
+    "optimizer_updates": 0,
+    "sampling_or_gate_metrics_created": false,
+    "astrid_accessed": false,
+    "scientific_changes": "adds only the missing inference-grid mapping; every development quantity, seed, subset, threshold, checkpoint, sampler step, and gate remains unchanged",
+    "corrected_fields": [
+      "status",
+      "e6_prior_matched_initialization.initialization.expected_mode_counts_by_grid",
+      "e6_prior_matched_initialization.inference_initialization_mapping"
+    ],
+    "independent_audit": "Claude Fable PASS; same per-mode variance on the 80^3 physical-k masks is the unique ortho-FFT stationary-field mapping"
+  },
   "astrid_seal": {
     "required_before_access": true,
     "one_file_commit": true,
