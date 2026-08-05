@@ -282,6 +282,20 @@ def verify_seal(
         raise RuntimeError("the sealed code commit is not an ancestor of HEAD")
     if require_committed:
         relative = path.relative_to(repo).as_posix()
+        seal_commits = _run_git(
+            repo, "log", "--format=%H", "--follow", "--", relative
+        ).splitlines()
+        if len(seal_commits) != 1:
+            raise RuntimeError("the seal must be added once and never modified")
+        seal_commit = seal_commits[0]
+        seal_parent = _run_git(repo, "rev-parse", f"{seal_commit}^")
+        if seal_parent != code_commit:
+            raise RuntimeError("the seal commit is not directly atop the frozen code")
+        changed = _run_git(
+            repo, "diff-tree", "--no-commit-id", "--name-only", "-r", seal_commit
+        ).splitlines()
+        if changed != [relative]:
+            raise RuntimeError("the seal commit must contain only the seal record")
         committed = subprocess.run(
             ["git", "-C", str(repo), "show", f"HEAD:{relative}"],
             check=True,

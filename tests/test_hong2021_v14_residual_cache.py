@@ -7,6 +7,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 import torch
+import pytest
 
 from hong2021_residual_diffusion import ConditionalResidualUNet
 from hong2021_residual_v8_context import FEATURE_NAMES
@@ -17,6 +18,7 @@ from hong2021_v14_residual_cache import (
     CORRECTED_SCHEMA,
     STANDARDIZED_SCHEMA,
     prepare_corrected,
+    prepare_astrid_independent_corrected,
     prepare_standardized,
 )
 
@@ -117,3 +119,21 @@ def test_corrected_and_standardized_cache_end_to_end(tmp_path: Path) -> None:
             np.array([[0.1, 0.2, 0.3, 0.4]] * 2),
             rtol=1.0e-6,
         )
+
+
+def test_astrid_cache_has_separate_non_cli_entry_point(tmp_path: Path) -> None:
+    data, baseline, checkpoint = _fixture(tmp_path)
+    arguments = argparse.Namespace(
+        domain="CAMELS-Astrid",
+        data=str(data),
+        baseline_cache=str(baseline),
+        correction_checkpoint=str(checkpoint),
+        out=str(tmp_path / "astrid_corrected.h5"),
+        batch=2,
+        workers=0,
+        device="cpu",
+    )
+    with pytest.raises(ValueError, match="not allowed"):
+        prepare_corrected(arguments)
+    report = prepare_astrid_independent_corrected(arguments)
+    assert report["domain"] == "CAMELS-Astrid"
