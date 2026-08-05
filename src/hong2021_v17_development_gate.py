@@ -27,7 +27,7 @@ from hong2021_v17_edm import load_frozen_registry
 
 SCHEMA = "hong2021-v17-integrity-bound-three-domain-decision-v1"
 POWER_BANDS = ("0.3-1_h_mpc", "1-3_h_mpc", "3-6_h_mpc", "6-10.0531_h_mpc")
-EXPECTED_MODE_COUNTS = [250, 6872, 49928, 454949]
+EXPECTED_MODE_COUNTS = [146, 3596, 25296, 233105]
 
 
 def _validate_checkpoint(
@@ -68,8 +68,8 @@ def _validate_checkpoint(
         "dc_in_band_loss": False,
         "band_edges_h_mpc": [0.0, 1.0, 3.0, 6.0, "infinity"],
         "mode_counts": EXPECTED_MODE_COUNTS,
-        "non_dc_modes": 511999,
-        "grid": 80,
+        "non_dc_modes": 262143,
+        "grid": 64,
         "voxel_mpc_h": 0.3125,
         "parseval_relative_tolerance": 1.0e-4,
         "additional_rng_draws": 0,

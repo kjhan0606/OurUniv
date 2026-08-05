@@ -258,10 +258,10 @@ def train(args: argparse.Namespace) -> None:
         all_datasets = [*train_datasets.values(), *validation_datasets.values()]
         grids = {value.grid for value in all_datasets}
         voxels = {value.voxel_mpc_h.hex() for value in all_datasets}
-        if grids != {80} or voxels != {float(0.3125).hex()}:
-            raise ValueError("V17 requires bit-identical 80^3, 0.3125 Mpc/h caches")
+        if grids != {64} or voxels != {float(0.3125).hex()}:
+            raise ValueError("V17 requires bit-identical 64^3, 0.3125 Mpc/h caches")
         band_masks, band_loss_specification = prepare_fourier_band_loss(
-            80, 0.3125, device
+            64, 0.3125, device
         )
     if args.smoke_limit is not None:
         train_datasets = {

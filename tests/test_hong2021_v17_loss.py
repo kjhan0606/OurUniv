@@ -19,11 +19,11 @@ class ZeroNetwork(nn.Module):
 
 def test_production_fourier_masks_and_parseval_are_frozen() -> None:
     masks, specification = prepare_fourier_band_loss(
-        80, 0.3125, torch.device("cpu")
+        64, 0.3125, torch.device("cpu")
     )
-    assert masks.shape == (4, 80, 80, 80)
-    assert specification["mode_counts"] == [250, 6872, 49928, 454949]
-    assert specification["non_dc_modes"] == 80**3 - 1
+    assert masks.shape == (4, 64, 64, 64)
+    assert specification["mode_counts"] == [146, 3596, 25296, 233105]
+    assert specification["non_dc_modes"] == 64**3 - 1
     assert specification["fft_norm"] == "ortho"
     assert specification["parseval_self_check_relative_error"] <= 1.0e-4
     assert specification["mask_partition_self_check_relative_error"] <= 1.0e-4

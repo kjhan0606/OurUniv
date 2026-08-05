@@ -13,7 +13,7 @@ from hong2021_v15_edm import git_state, sha256_file
 
 
 REGISTRY_SCHEMA = "hong2021-v17-predeclared-band-balanced-loss-program-v1"
-FROZEN_REGISTRY_SHA256 = "cf5a8f9f59330c855dbddc5f2b3ee610d6c470cd9a15b0ae6c785c0301b6a84c"
+FROZEN_REGISTRY_SHA256 = "11763978f768ba83d9cbb5b36ccb8198a7625546d678147e035e5530fee604e0"
 
 
 def _resolve(value: str, repo: Path) -> Path:
@@ -29,7 +29,7 @@ def load_frozen_registry(path: Path, repo: Path) -> dict[str, Any]:
     registry = json.loads(registry_path.read_text())
     if registry.get("schema") != REGISTRY_SCHEMA:
         raise ValueError("invalid V17 development registry")
-    if registry.get("status") != "frozen_after_v16_e4_development_failure_before_v17_e5":
+    if registry.get("status") != "frozen_after_preexecution_grid_correction_before_v17_e5":
         raise ValueError("V17 registry is not in its pre-E5 frozen state")
     parent = registry["parent_evidence"]
     if sha256_file(_resolve(parent["v16_registry"], repo)) != parent["v16_registry_sha256"]:
@@ -89,9 +89,9 @@ def _validate_exact_experiment(experiment: dict[str, Any]) -> None:
         "additional_rng_draws": 0,
     }:
         raise ValueError("registry differs from the frozen V17 FFT convention")
-    if loss.get("expected_full_fft_mode_counts") != [250, 6872, 49928, 454949]:
+    if loss.get("expected_full_fft_mode_counts") != [146, 3596, 25296, 233105]:
         raise ValueError("registry differs from the frozen V17 mode counts")
-    if loss.get("expected_non_dc_modes") != 511999:
+    if loss.get("expected_non_dc_modes") != 262143:
         raise ValueError("registry differs from the frozen V17 non-DC count")
 
 

@@ -116,7 +116,7 @@ def create_seal(
         "unweighted": 1.0 / 3.0,
         "tail_weighted": 1.0 / 3.0,
         "band_balanced": 1.0 / 3.0,
-    } or loss.get("fft_norm") != "ortho" or loss.get("mode_counts") != [250, 6872, 49928, 454949]:
+    } or loss.get("fft_norm") != "ortho" or loss.get("mode_counts") != [146, 3596, 25296, 233105]:
         raise ValueError("selected EDM lacks the frozen V17 loss invariant")
     if correction.get("schema") != "hong2021-v14-three-domain-zero-dc-mean-correction-v1":
         raise ValueError("unexpected mean-correction checkpoint schema")
@@ -235,7 +235,7 @@ def verify_seal(
     loss = invariants.get("denoising_loss", {})
     if invariants.get("decoder_upsampling") != "nearest":
         raise RuntimeError("seal does not retain the V17 nearest invariant")
-    if loss.get("fft_norm") != "ortho" or loss.get("mode_counts") != [250, 6872, 49928, 454949]:
+    if loss.get("fft_norm") != "ortho" or loss.get("mode_counts") != [146, 3596, 25296, 233105]:
         raise RuntimeError("seal does not retain the V17 loss invariant")
     if _run_git(repo, "status", "--porcelain"):
         raise RuntimeError("the repository is dirty; sealed execution is forbidden")

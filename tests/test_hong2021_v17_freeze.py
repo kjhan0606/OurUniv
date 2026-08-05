@@ -40,7 +40,7 @@ def test_v17_committed_seal_requires_direct_single_file_commit(tmp_path) -> None
             "decoder_upsampling": "nearest",
             "denoising_loss": {
                 "fft_norm": "ortho",
-                "mode_counts": [250, 6872, 49928, 454949],
+                "mode_counts": [146, 3596, 25296, 233105],
             },
         },
         "artifacts": {"edm": {
