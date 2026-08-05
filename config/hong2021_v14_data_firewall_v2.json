@@ -1,0 +1,163 @@
+{
+  "schema": "hong2021-v14-cross-code-data-firewall-v2",
+  "status": "frozen_before_swift_eagle_download_or_astrid_truth_access",
+  "frozen_utc": "2026-08-05T09:57:05Z",
+  "supersedes": "config/hong2021_v14_data_firewall.json",
+  "reason_for_revision": {
+    "discovery": "The legacy TNG target is a 0.3125 Mpc/h NGP particle-count grid, while the legacy SIMBA target is a CAMELS Multifield Dataset grid produced with an adaptive 32-neighbour particle kernel and then resampled from 256^3 to 80^3.",
+    "development_only_audit": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/operator_audit_cv16.json",
+    "audit_truth_status": "SIMBA CV16 was already historical/development truth before V14; no Swift-EAGLE, Astrid, or additional EAGLE truth was read.",
+    "audit_results": {
+      "ngp_zero_volume_fraction": 0.036869140625,
+      "ngp_half_particle_floor_vs_cmd_log_rms_dex": 0.23396991519544436,
+      "ngp_half_particle_floor_vs_cmd_highest_k_power_ratio": 2.1161442014726077,
+      "raw_cic_zero_volume_fraction": 0.0,
+      "raw_cic_vs_cmd_voxel_log_pearson_r": 0.9874449996149199,
+      "raw_cic_vs_cmd_log_rms_dex": 0.09397768785076097,
+      "raw_cic_vs_cmd_power_ratios": [1.1161092722951946, 1.1049227929929224, 1.0796506706130484, 1.0847127202172522]
+    },
+    "decision": "Use one exact cell-centred CIC raw-particle operator for TNG100, SIMBA, Swift-EAGLE, and sealed Astrid. Exclude all CMD targets from V14 fitting and gating."
+  },
+  "common_target_operator": {
+    "source": "all PartType1/Coordinates at z=0 from the raw snapshot",
+    "particle_mass_requirement": "all dark-matter particles have one identical positive mass; fail preparation otherwise",
+    "assignment": "periodic cell-centred cloud-in-cell",
+    "cell_centres": "(i+0.5)*box/grid",
+    "grid": {
+      "tng100": 240,
+      "camels_l25n256": 80
+    },
+    "box_mpc_h": {
+      "tng100": 75.0,
+      "camels_l25n256": 25.0
+    },
+    "voxel_mpc_h": 0.3125,
+    "cube_grid": 64,
+    "cube_mpc_h": 20.0,
+    "target": "log10(cic_cdm_cell_mass/box_mean_cic_cdm_cell_mass)/4.5",
+    "zero_policy": "fail preparation if any selected cube cell is non-positive; no pseudocount, clipping, censoring, or learned floor",
+    "mass_conservation": "require float64 deposited mass to equal the selected particle count and float32 cache relative error <=2e-8",
+    "implementation": "src/hong2021_build_particle_grid.py",
+    "forbidden": [
+      "CAMELS Multifield Dataset adaptive-smoothed grids as a V14 target",
+      "mixing NGP, CIC, adaptive-kernel, or suite-specific target operators",
+      "post-hoc deconvolution or A(k)",
+      "target-dependent inference features"
+    ]
+  },
+  "historical_eagle": {
+    "suite": "EAGLE RefL0100N1504",
+    "role": "sealed_historical_failed_stress_only",
+    "confirmation32_state": "opened_once_and_failed_v13",
+    "allowed_uses": [
+      "retain and report the immutable V13 decision and metrics after V14 freeze"
+    ],
+    "forbidden_uses": [
+      "model, feature, target-operator, or normalization fitting",
+      "architecture or checkpoint selection",
+      "amplitude, seed, threshold, or gate tuning",
+      "opening additional RefL0100N1504 cubes"
+    ]
+  },
+  "development_domains": {
+    "tng100": {
+      "role": "development",
+      "observer_partitions": "the exact existing V13 train and validation IDs",
+      "input_policy": "copy the existing two observable channels and metadata exactly",
+      "target_policy": "replace target only from the new full-box CIC cache using the existing cube origins"
+    },
+    "camels_simba": {
+      "role": "development",
+      "training_realizations": [16, 17, 18, 19, 20, 21, 22, 23],
+      "validation_realizations": [24, 25, 26],
+      "raw_snapshot_pattern": "https://users.flatironinstitute.org/~camels/Sims/SIMBA/L25n256/CV/CV_{realization}/snapshot_090.hdf5",
+      "catalog_pattern": "https://users.flatironinstitute.org/~camels/FOF_Subfind/SIMBA/L25n256/CV/CV_{realization}/groups_090.hdf5",
+      "legacy_cmd_policy": "excluded from all V14 fitting, selection, and gate decisions",
+      "historical_stress_realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "historical_stress_policy": "regenerate with common CIC and report only after V14 development selection; never fit or select on it"
+    },
+    "camels_swift_eagle": {
+      "role": "new_development_domain",
+      "reason": "Public Swift hydrodynamics with EAGLE subgrid physics supplies an EAGLE-like shift without reopening EAGLE RefL0100N1504.",
+      "training_realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+      "validation_realizations": [20, 21, 22, 23, 24, 25, 26],
+      "raw_snapshot_pattern": "https://users.flatironinstitute.org/~camels/Sims/Swift-EAGLE/L25n256/CV/CV_{realization}/snapshot_090.hdf5",
+      "catalog_pattern": "https://users.flatironinstitute.org/~camels/FOF_Subfind/Swift-EAGLE/L25n256/CV/CV_{realization}/groups_090.hdf5",
+      "training_observers": "all subhalos satisfying the frozen observer stellar-mass interval",
+      "validation_selection": "exactly 16 observers selected once by deterministic maximin coverage of the eight V8 observable context features; no target or density feature"
+    }
+  },
+  "sealed_independent_domain": {
+    "suite": "CAMELS Astrid",
+    "set": "L25n256 CV",
+    "role": "one_time_independent_gate",
+    "realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+    "objects": "one observer per realization, chosen by the frozen stellar-mass-only rule",
+    "observer_choice": "candidate closest in log stellar mass to the geometric midpoint of 4e10 to 1e11 Msun in the existing CAMELS catalog convention, subhalo index tie breaker",
+    "galaxy_proxy": "SubhaloMassType[:,4]*1e10 >= 97664166.24188423",
+    "input_channels": ["galaxy_count", "mean_radial_peculiar_velocity_km_s"],
+    "raw_snapshot_pattern": "https://users.flatironinstitute.org/~camels/Sims/Astrid/L25n256/CV/CV_{realization}/snapshot_090.hdf5",
+    "catalog_pattern": "https://users.flatironinstitute.org/~camels/FOF_Subfind/Astrid/L25n256/CV/CV_{realization}/groups_090.hdf5",
+    "cmd_grid_policy": "do not download or use the Astrid CMD grid for V14",
+    "preseal_audit": {
+      "local_astrid_files_found": 0,
+      "content_read": false,
+      "http_metadata_only": {
+        "cv0_snapshot_content_length_bytes": 2941832780,
+        "cv0_snapshot_last_modified": "Sun, 25 Jun 2023 21:42:47 GMT",
+        "cv0_catalog_content_length_bytes": 153670440,
+        "cv0_catalog_last_modified": "Wed, 15 Jun 2022 04:59:10 GMT"
+      }
+    },
+    "access_firewall": [
+      "Do not download, open, mmap, summarize, or derive any Astrid snapshot, catalog, CMD grid, or target before the complete V14 model, preprocessing, checkpoint, hashes, and gate command are frozen and committed.",
+      "After freeze, prepare all 27 objects and open the field gate exactly once.",
+      "A failed gate remains failed; no alternate checkpoint, seed, realization subset, target operator, correction, or threshold is tried."
+    ],
+    "sampler": {
+      "ensemble_members": 16,
+      "sampling_steps": 40,
+      "seed": 28777
+    },
+    "field_gate": {
+      "checks": "the same eight checks and thresholds used by V13",
+      "requirement": "all eight pass",
+      "bootstrap_replicates": 50000,
+      "bootstrap_seed": 2024
+    },
+    "grid_hop": {
+      "run_only_after_field_pass": true,
+      "objects": 27,
+      "members_per_object": 16,
+      "thresholds": "unchanged repository grid-HOP gate"
+    }
+  },
+  "v14_model_boundary": {
+    "allowed": [
+      "fit and compare models using only TNG100, SIMBA development, and Swift-EAGLE development CIC truth",
+      "use target-free observable context at inference",
+      "train a conditional multiscale location-scale likelihood",
+      "require simultaneous unchanged field-gate passes on all three development validation domains"
+    ],
+    "forbidden": [
+      "simulation identity as an inference feature",
+      "post-hoc A(k) or truth-derived amplitude correction",
+      "EAGLE RefL0100N1504 or Astrid-driven model choice"
+    ]
+  },
+  "locked_order": [
+    "commit this v2 firewall",
+    "build common-CIC TNG and download/prepare raw-CIC SIMBA and Swift-EAGLE development data",
+    "implement and select V14 only on the three development domains",
+    "freeze and commit exact V14 artifact hashes and one-shot command",
+    "download and prepare raw-CIC Astrid data",
+    "run the Astrid field gate once",
+    "run Astrid grid-HOP only after a field pass",
+    "advance only after the complete independent gate passes"
+  ],
+  "unavailable_alternative": {
+    "suite": "CAMELS Magneticum",
+    "official_access_status_checked_2026_08_05": "private",
+    "policy": "Do not claim Magneticum as an executable independent gate without access and a separately committed protocol."
+  }
+}

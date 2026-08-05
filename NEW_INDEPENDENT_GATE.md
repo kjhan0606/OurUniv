@@ -17,8 +17,14 @@ The next cycle therefore assigns data roles before any new truth is read:
   when this role was frozen.  Only HTTP size and modification metadata were
   queried.
 
-The exact machine-readable contract is
-`config/hong2021_v14_data_firewall.json`.  In particular, Astrid uses one
+The authoritative machine-readable contract is
+`config/hong2021_v14_data_firewall_v2.json`.  The original v1 contract was
+superseded before any Swift-EAGLE or Astrid truth was read: it would have mixed
+the adaptive 32-neighbour CAMELS Multifield Dataset target with the direct
+particle-assignment TNG target.  A raw SIMBA CV16 development audit measured
+that operator difference at roughly the ten-percent Fourier-gate scale.  V14
+therefore uses the same raw-particle, cell-centred CIC operator for TNG100,
+SIMBA, Swift-EAGLE, and Astrid; CMD grids are excluded.  In particular, Astrid uses one
 stellar-mass-selected observer per independent CV realization, 16 ensemble
 members, 40 sampling steps, and seed 28777.  It must pass the same eight field
 checks as V13.  Grid-HOP runs only after all eight pass.  Failure is terminal
@@ -30,8 +36,8 @@ or relaxed gate.
 The current CAMELS documentation lists first-generation Swift-EAGLE and
 Astrid as public, while Magneticum is private.  Swift-EAGLE's public z=0 raw
 snapshots and corrected SUBFIND catalogues permit a target grid to be derived
-locally.  Astrid's public 27-realization CDM grid and catalogues permit an exact
-one-shot test after model freeze.  Astrid also changes both simulation code
+locally.  Astrid's public raw snapshots and catalogues permit an exact
+one-shot raw-CIC test after model freeze.  Astrid also changes both simulation code
 and subgrid model relative to the TNG, SIMBA, and Swift-EAGLE development
 mixture.
 

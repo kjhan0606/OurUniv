@@ -1,6 +1,8 @@
 {
   "schema": "hong2021-v14-cross-code-data-firewall-v1",
-  "status": "frozen_before_swift_eagle_download_or_astrid_truth_access",
+  "status": "superseded_before_swift_eagle_or_astrid_truth_access",
+  "superseded_by": "config/hong2021_v14_data_firewall_v2.json",
+  "supersession_reason": "The published CMD dark-matter grids use adaptive 32-neighbour smoothing, whereas the TNG and EAGLE Hong targets use direct particle assignment. A development-only SIMBA CV16 raw audit measured an operator-sized high-k difference, so v2 freezes one raw-particle CIC operator for every suite before any new Swift-EAGLE or Astrid truth is read.",
   "frozen_utc": "2026-08-05T09:45:28Z",
   "purpose": "Permit new cross-code model development after the sealed V13 EAGLE failure without using that failure for tuning, while preserving one genuinely untouched public simulation family for a one-time gate.",
   "historical_eagle": {

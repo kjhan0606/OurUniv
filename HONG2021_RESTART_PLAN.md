@@ -620,3 +620,14 @@ V14 model and every artifact hash are committed.  Astrid then uses one frozen
 stellar-mass-only observer per realization, ensemble 16, 40 sampling steps,
 seed 28777, and the unchanged eight-check field gate.  A failure is terminal
 for V14 and grid-HOP is skipped.  See `NEW_INDEPENDENT_GATE.md`.
+
+The original V14 firewall was superseded before downloading Swift-EAGLE or
+opening Astrid.  The audit had missed a target-operator confound present since
+V7: TNG and EAGLE used direct 0.3125-Mpc/h particle assignment, while SIMBA
+used the public CMD adaptive 32-neighbour density followed by 256-to-80
+resampling.  On already-development SIMBA CV16, raw NGP had 3.69% zero cells
+and a half-particle floor produced 2.12 times the CMD high-k power; raw CIC had
+no zero cells, log-field correlation 0.987 with CMD, and 1.08--1.12 power
+ratios.  V14 firewall v2 therefore excludes CMD and freezes exact periodic,
+cell-centred CIC from raw particles for every development suite and sealed
+Astrid.  No pseudocount or post-hoc transfer is allowed.
