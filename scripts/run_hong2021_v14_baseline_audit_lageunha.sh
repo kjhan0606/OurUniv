@@ -63,11 +63,26 @@ audit_one CAMELS-SIMBA "$simba/derived/hong2021_v14/simba_cv24_26_validation_all
 audit_one CAMELS-Swift-EAGLE "$swift/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5" swift_eagle_train
 audit_one CAMELS-Swift-EAGLE "$swift/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5" swift_eagle_validation
 
-python - "$root" "$status" <<'PY'
+location_scale=$root/location_scale_predictability.json
+write_status auditing_location_scale_predictability \
+    "source-balanced train-only ridge versus development-validation constants"
+if [[ ! -s $location_scale ]]; then
+    python src/hong2021_v14_location_scale_audit.py \
+        --train TNG100="$root/tng_train.h5" \
+        --train CAMELS-SIMBA="$root/simba_train.h5" \
+        --train CAMELS-Swift-EAGLE="$root/swift_eagle_train.h5" \
+        --validation TNG100="$root/tng_validation.h5" \
+        --validation CAMELS-SIMBA="$root/simba_validation.h5" \
+        --validation CAMELS-Swift-EAGLE="$root/swift_eagle_validation.h5" \
+        --out "$location_scale" --folds 5 --seed 14021 \
+        >"$root/location_scale_predictability.log" 2>&1
+fi
+
+python - "$root" "$status" "$location_scale" <<'PY'
 import json, os, socket, sys
 from datetime import datetime, timezone
 from pathlib import Path
-root, status = map(Path, sys.argv[1:])
+root, status, location_scale = map(Path, sys.argv[1:])
 labels = (
     "tng_train", "tng_validation", "simba_train", "simba_validation",
     "swift_eagle_train", "swift_eagle_validation",
@@ -87,6 +102,7 @@ combined = {
     "schema": "hong2021-v14-cross-domain-baseline-audit-v1",
     "uses_eagle_ref100_or_astrid": False,
     "domains": domains,
+    "location_scale_predictability": str(location_scale.resolve()),
 }
 combined_path = root / "cross_domain_report.json"
 combined_path.write_text(json.dumps(combined, indent=2) + "\n")
