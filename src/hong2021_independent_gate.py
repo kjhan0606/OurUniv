@@ -40,6 +40,7 @@ def main() -> None:
             ),
         }
     is_simba = args.simulation.startswith("CAMELS-SIMBA")
+    is_astrid = args.simulation.startswith("CAMELS-Astrid")
     report = {
         "schema": "hong2021-independent-simulation-gate-v1",
         "simulation": args.simulation,
@@ -56,8 +57,13 @@ def main() -> None:
             "SIMBA cross-code evidence does not replace the EAGLE "
             "particle-data gate or forward particle dynamics"
             if is_simba
-            else "EAGLE is the paper-matched independent particle-data gate; "
-            "passing still does not replace forward particle dynamics"
+            else (
+                "Astrid is the predeclared one-shot independent raw-particle "
+                "gate; passing still does not replace forward particle dynamics"
+                if is_astrid
+                else "EAGLE is the paper-matched independent particle-data gate; "
+                "passing still does not replace forward particle dynamics"
+            )
         ),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)

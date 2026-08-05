@@ -82,9 +82,11 @@ def _summary(values: np.ndarray) -> dict[str, Any]:
     }
 
 
-def prepare(args: argparse.Namespace) -> dict[str, Any]:
-    if args.domain not in ALLOWED_DOMAINS:
-        raise ValueError(f"domain is not V14 development data: {args.domain}")
+def _prepare_allowed(
+    args: argparse.Namespace, allowed_domains: tuple[str, ...]
+) -> dict[str, Any]:
+    if args.domain not in allowed_domains:
+        raise ValueError(f"domain is not allowed for this V14 preparation: {args.domain}")
     output = Path(args.out)
     partial = output.with_suffix(output.suffix + ".partial")
     report_path = output.with_suffix(".json")
@@ -195,6 +197,20 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2), flush=True)
     return report
+
+
+def prepare(args: argparse.Namespace) -> dict[str, Any]:
+    """Prepare development caches; the public CLI remains development-only."""
+    return _prepare_allowed(args, ALLOWED_DOMAINS)
+
+
+def prepare_astrid_independent(args: argparse.Namespace) -> dict[str, Any]:
+    """Prepare the already-unsealed Astrid baseline for the one-shot gate.
+
+    Callers must verify the committed V14 seal before invoking this function.
+    It is deliberately absent from this module's CLI.
+    """
+    return _prepare_allowed(args, ("CAMELS-Astrid",))
 
 
 def main() -> None:

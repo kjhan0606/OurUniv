@@ -42,9 +42,11 @@ def _summary(values: np.ndarray) -> dict[str, Any]:
     }
 
 
-def prepare_corrected(args: argparse.Namespace) -> dict[str, Any]:
-    if args.domain not in DOMAINS:
-        raise ValueError(f"not a V14 development domain: {args.domain}")
+def _prepare_corrected_allowed(
+    args: argparse.Namespace, allowed_domains: tuple[str, ...]
+) -> dict[str, Any]:
+    if args.domain not in allowed_domains:
+        raise ValueError(f"domain is not allowed for this V14 cache: {args.domain}")
     checkpoint = torch.load(
         args.correction_checkpoint, map_location="cpu", weights_only=False
     )
@@ -157,6 +159,18 @@ def prepare_corrected(args: argparse.Namespace) -> dict[str, Any]:
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2), flush=True)
     return report
+
+
+def prepare_corrected(args: argparse.Namespace) -> dict[str, Any]:
+    """Prepare development caches; the public CLI remains development-only."""
+    return _prepare_corrected_allowed(args, DOMAINS)
+
+
+def prepare_astrid_independent_corrected(
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """Prepare an unsealed Astrid correction cache for the one-shot gate."""
+    return _prepare_corrected_allowed(args, ("CAMELS-Astrid",))
 
 
 def prepare_standardized(args: argparse.Namespace) -> dict[str, Any]:

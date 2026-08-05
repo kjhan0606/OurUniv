@@ -80,15 +80,15 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
     if not realizations or len(realizations) != len(set(realizations)):
         raise ValueError("realizations must be a non-empty unique list")
 
-    catalogs = {
-        realization: load_catalog(
-            root / "CV" / f"CV_{realization}" / "groups_090.hdf5"
-        )
-        for realization in realizations
-    }
     samples: list[tuple[int, int]] = []
     for realization in realizations:
-        stellar_mass = np.asarray(catalogs[realization]["stellar_mass"])
+        # Catalogue files can be large (notably Astrid).  Keep only one
+        # realization resident during observer selection instead of retaining
+        # all catalogues simultaneously.
+        selection_catalog = load_catalog(
+            root / "CV" / f"CV_{realization}" / "groups_090.hdf5"
+        )
+        stellar_mass = np.asarray(selection_catalog["stellar_mass"])
         if args.observers == "single":
             selected = np.asarray([choose_observer(stellar_mass)])
         else:
@@ -100,6 +100,8 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     density_cache: dict[int, np.ndarray] = {}
     density_metadata: dict[int, dict[str, Any]] = {}
+    current_realization: int | None = None
+    current_catalog: dict[str, np.ndarray | float] | None = None
     try:
         with h5py.File(temporary, "w") as handle:
             handle.attrs.update(
@@ -134,7 +136,13 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
             origin_data = handle.create_dataset("cube_origin_cell", shape=(len(samples), 3), dtype="i2")
 
             for output_index, (realization, observer) in enumerate(samples):
-                catalog = catalogs[realization]
+                if current_realization != realization:
+                    current_catalog = load_catalog(
+                        root / "CV" / f"CV_{realization}" / "groups_090.hdf5"
+                    )
+                    current_realization = realization
+                assert current_catalog is not None
+                catalog = current_catalog
                 position = np.asarray(catalog["position"])
                 velocity = np.asarray(catalog["velocity"])
                 stellar_mass = np.asarray(catalog["stellar_mass"])
