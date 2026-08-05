@@ -5,7 +5,8 @@ set -euo pipefail
 # Astrid runner sets the guard only after verifying the exact artifact seal.
 if [[ ${HONG2021_V14_ASTRID_ONE_SHOT:-} != sealed \
    && ${HONG2021_V15_ASTRID_ONE_SHOT:-} != sealed \
-   && ${HONG2021_V16_ASTRID_ONE_SHOT:-} != sealed ]]; then
+   && ${HONG2021_V16_ASTRID_ONE_SHOT:-} != sealed \
+   && ${HONG2021_V17_ASTRID_ONE_SHOT:-} != sealed ]]; then
     printf 'Refusing Astrid download outside the sealed one-shot runner.\n' >&2
     exit 2
 fi

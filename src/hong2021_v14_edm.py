@@ -41,13 +41,21 @@ from hong2021_train import apply_input_preprocessing
 from hong2021_v14_mean_correction import DOMAINS, source_balanced_tail_weights
 from hong2021_v14_multiscale import inverse_standardized_residual
 from hong2021_v14_residual_cache import STANDARDIZED_SCHEMA
+from hong2021_v17_loss import (
+    band_balanced_tail_edm_loss,
+    fixed_band_balanced_validation_loss,
+    prepare_fourier_band_loss,
+)
 
 
 SCHEMA = "hong2021-v14-three-domain-multiscale-observable-context-edm-v1"
 V15_E2_SCHEMA = "hong2021-v15-e2-relative-noise-multiscale-edm-v1"
 V15_E3_SCHEMA = "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1"
 V16_E4_SCHEMA = "hong2021-v16-e4-trilinear-decoder-multiscale-edm-v1"
-SUPPORTED_CHECKPOINT_SCHEMAS = (SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA)
+V17_E5_SCHEMA = "hong2021-v17-e5-band-balanced-denoising-multiscale-edm-v1"
+SUPPORTED_CHECKPOINT_SCHEMAS = (
+    SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA
+)
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
 
@@ -244,6 +252,17 @@ def train(args: argparse.Namespace) -> None:
         args.tail_exponent,
         args.tail_maximum,
     )
+    band_masks = None
+    band_loss_specification = None
+    if run_schema == V17_E5_SCHEMA:
+        all_datasets = [*train_datasets.values(), *validation_datasets.values()]
+        grids = {value.grid for value in all_datasets}
+        voxels = {value.voxel_mpc_h.hex() for value in all_datasets}
+        if grids != {80} or voxels != {float(0.3125).hex()}:
+            raise ValueError("V17 requires bit-identical 80^3, 0.3125 Mpc/h caches")
+        band_masks, band_loss_specification = prepare_fourier_band_loss(
+            80, 0.3125, device
+        )
     if args.smoke_limit is not None:
         train_datasets = {
             name: Subset(value, range(min(args.smoke_limit, len(value))))
@@ -330,6 +349,14 @@ def train(args: argparse.Namespace) -> None:
         "augmentation": "48 signed cube isometries",
         "decoder_upsampling": decoder_upsampling_for_schema(run_schema),
         "decoder_align_corners": False if run_schema == V16_E4_SCHEMA else None,
+        "denoising_loss": (
+            band_loss_specification
+            if run_schema == V17_E5_SCHEMA
+            else {
+                "coefficients": {"unweighted": 0.5, "tail_weighted": 0.5},
+                "band_balanced": False,
+            }
+        ),
         "seed": args.seed,
         "device": str(device),
         "experiment_registry": getattr(args, "experiment_registry", None),
@@ -343,7 +370,15 @@ def train(args: argparse.Namespace) -> None:
     print(json.dumps(metadata, indent=2), flush=True)
     iterators = {name: cycling(train_loaders[name]) for name in DOMAINS}
     history = []
-    interval = np.zeros(4, dtype=np.float64)
+    loss_names = (
+        ("combined", "unweighted", "tail_weighted", "band_balanced")
+        if run_schema == V17_E5_SCHEMA
+        else ("combined", "unweighted", "tail_weighted")
+    )
+    interval = np.zeros(len(loss_names) + 1, dtype=np.float64)
+    gradient_norm_sum = 0.0
+    gradient_clip_activations = 0
+    gradient_updates = 0
     started = time.time()
     model.train()
     for step in range(1, args.steps + 1):
@@ -353,41 +388,82 @@ def train(args: argparse.Namespace) -> None:
         truth = torch.cat([value[3] for value in batches]).to(device, non_blocking=True)
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast(device_type=device.type, enabled=device.type == "cuda"):
-            values = tail_balanced_edm_loss(
-                model, residual, condition, truth, bin_weights, noise,
-                sigma_data, effective_p_mean, args.edm_p_std,
-            )
+            if run_schema == V17_E5_SCHEMA:
+                assert band_masks is not None
+                values = band_balanced_tail_edm_loss(
+                    model, residual, condition, truth, bin_weights, band_masks,
+                    noise, sigma_data, effective_p_mean, args.edm_p_std,
+                )
+            else:
+                values = tail_balanced_edm_loss(
+                    model, residual, condition, truth, bin_weights, noise,
+                    sigma_data, effective_p_mean, args.edm_p_std,
+                )
         scaler.scale(values[0]).backward()
         scaler.unscale_(optimizer)
-        nn.utils.clip_grad_norm_(model.parameters(), args.gradient_clip)
+        gradient_norm = float(
+            nn.utils.clip_grad_norm_(model.parameters(), args.gradient_clip)
+        )
+        gradient_norm_sum += gradient_norm
+        gradient_clip_activations += int(gradient_norm > args.gradient_clip)
+        gradient_updates += 1
         scaler.step(optimizer)
         scaler.update()
         scheduler.step()
         update_ema(ema_model, model, args.ema_decay)
-        interval[:3] += np.asarray([float(value.detach()) for value in values]) * len(residual)
-        interval[3] += len(residual)
+        interval[: len(loss_names)] += np.asarray(
+            [float(value.detach()) for value in values]
+        ) * len(residual)
+        interval[len(loss_names)] += len(residual)
         if step % args.validation_every == 0 or step == args.steps:
-            validation = {
-                name: fixed_tail_validation_loss(
-                    ema_model, validation_loaders[name], device, bin_weights,
-                    validation_seeds[name], sigma_data, effective_p_mean, args.edm_p_std,
-                )
-                for name in DOMAINS
-            }
+            if run_schema == V17_E5_SCHEMA:
+                assert band_masks is not None
+                validation = {
+                    name: fixed_band_balanced_validation_loss(
+                        ema_model, validation_loaders[name], device, bin_weights,
+                        band_masks, validation_seeds[name], sigma_data,
+                        effective_p_mean, args.edm_p_std,
+                    )
+                    for name in DOMAINS
+                }
+                validation_key = "fixed_band_balanced_validation"
+            else:
+                validation = {
+                    name: fixed_tail_validation_loss(
+                        ema_model, validation_loaders[name], device, bin_weights,
+                        validation_seeds[name], sigma_data, effective_p_mean,
+                        args.edm_p_std,
+                    )
+                    for name in DOMAINS
+                }
+                validation_key = "fixed_tail_validation"
             row = {
                 "step": step,
                 "train": dict(
                     zip(
-                        ("combined", "unweighted", "tail_weighted"),
-                        (interval[:3] / interval[3]).tolist(),
+                        loss_names,
+                        (
+                            interval[: len(loss_names)]
+                            / interval[len(loss_names)]
+                        ).tolist(),
+                        strict=True,
                     )
                 ),
-                "fixed_tail_validation": validation,
+                validation_key: validation,
                 "balanced_validation": float(np.mean(list(validation.values()))),
                 "worst_validation": float(max(validation.values())),
                 "learning_rate": float(optimizer.param_groups[0]["lr"]),
                 "elapsed_seconds": time.time() - started,
             }
+            if run_schema == V17_E5_SCHEMA:
+                row["gradient_diagnostic"] = {
+                    "mean_norm_before_fixed_clip": gradient_norm_sum / gradient_updates,
+                    "fixed_clip_activation_fraction": (
+                        gradient_clip_activations / gradient_updates
+                    ),
+                    "fixed_clip_threshold": args.gradient_clip,
+                    "selection_role": "none",
+                }
             history.append(row)
             (output / "history.json").write_text(json.dumps(history, indent=2) + "\n")
             checkpoint = {**metadata, **row, "ema_model": ema_model.state_dict()}
@@ -408,6 +484,9 @@ def train(args: argparse.Namespace) -> None:
                 flush=True,
             )
             interval[:] = 0
+            gradient_norm_sum = 0.0
+            gradient_clip_activations = 0
+            gradient_updates = 0
             model.train()
     metadata["status"] = "complete"
     (output / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
