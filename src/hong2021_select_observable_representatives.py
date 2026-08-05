@@ -19,6 +19,7 @@ from hong2021_train import apply_input_preprocessing
 
 
 SCHEMA = "hong2021-observable-context-representatives-v1"
+V14_AUDIT_SCHEMA = "hong2021-v14-common-cic-baseline-mean-audit-v1"
 
 
 def farthest_feature_subset(features: np.ndarray, count: int) -> np.ndarray:
@@ -69,18 +70,70 @@ def extract_features(
     return (raw - feature_mean) / feature_std, data_schema
 
 
+def balanced_audit_feature_fit(paths: list[Path]) -> dict[str, object]:
+    """Fit target-free feature moments with equal weight per development code."""
+    if len(paths) < 2 or len(set(paths)) != len(paths):
+        raise ValueError("at least two unique feature-fit audit caches are required")
+    means = []
+    seconds = []
+    sources = []
+    for path in paths:
+        with h5py.File(path, "r") as handle:
+            if str(handle.attrs.get("schema")) != V14_AUDIT_SCHEMA:
+                raise ValueError(f"not a V14 baseline audit cache: {path}")
+            if bool(handle.attrs.get("feature_uses_target", True)):
+                raise ValueError("representative feature fit must be target-free")
+            names = tuple(json.loads(handle.attrs["feature_names"]))
+            if names != FEATURE_NAMES:
+                raise ValueError("observable feature order differs")
+            value = np.asarray(
+                handle["observable_context_features"], dtype=np.float64
+            )
+            if value.ndim != 2 or value.shape[1] != len(FEATURE_NAMES) or len(value) == 0:
+                raise ValueError(f"invalid observable features: {path}")
+            means.append(value.mean(axis=0))
+            seconds.append((value * value).mean(axis=0))
+            sources.append(
+                {
+                    "path": str(path.resolve()),
+                    "domain": str(handle.attrs["domain"]),
+                    "samples": len(value),
+                }
+            )
+    mean = np.mean(means, axis=0)
+    second = np.mean(seconds, axis=0)
+    std = np.sqrt(np.maximum(second - mean * mean, 1.0e-12))
+    return {
+        "feature_names": list(FEATURE_NAMES),
+        "mean": mean.tolist(),
+        "std": std.tolist(),
+        "sources": sources,
+        "weighting": f"equal {1.0 / len(paths):.16g} per development source",
+        "uses_density_truth": False,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--cache", type=Path, required=True)
-    parser.add_argument("--feature-fit-checkpoint", type=Path, required=True)
+    fit_group = parser.add_mutually_exclusive_group(required=True)
+    fit_group.add_argument("--feature-fit-checkpoint", type=Path)
+    fit_group.add_argument("--feature-fit-cache", type=Path, action="append")
     parser.add_argument("--count", type=int, default=16)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    checkpoint = torch.load(
-        args.feature_fit_checkpoint, map_location="cpu", weights_only=False
-    )
-    fit = checkpoint["observable_context_features"]
+    if args.feature_fit_cache:
+        fit = balanced_audit_feature_fit(args.feature_fit_cache)
+        feature_fit_checkpoint = None
+        feature_fit_caches = fit["sources"]
+    else:
+        checkpoint = torch.load(
+            args.feature_fit_checkpoint, map_location="cpu", weights_only=False
+        )
+        fit = checkpoint["observable_context_features"]
+        feature_fit_checkpoint = str(args.feature_fit_checkpoint.resolve())
+        feature_fit_caches = None
     if fit["feature_names"] != list(FEATURE_NAMES):
         raise ValueError("checkpoint feature order differs")
     mean = np.asarray(fit["mean"], dtype=np.float64)
@@ -98,7 +151,9 @@ def main() -> None:
         "source_data": str(args.data.resolve()),
         "source_data_schema": data_schema,
         "source_cache": str(args.cache.resolve()),
-        "feature_fit_checkpoint": str(args.feature_fit_checkpoint.resolve()),
+        "feature_fit_checkpoint": feature_fit_checkpoint,
+        "feature_fit_caches": feature_fit_caches,
+        "feature_fit": fit,
         "feature_names": list(FEATURE_NAMES),
         "samples": len(features),
         "representatives": len(indices),
