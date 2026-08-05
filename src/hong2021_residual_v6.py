@@ -17,7 +17,7 @@ import os
 import random
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import h5py
 import numpy as np
@@ -528,15 +528,22 @@ def sample_edm(
     sigma_max: float,
     rho: float,
     sigma_data: float,
+    *,
+    init_transform: Callable[[torch.Tensor], torch.Tensor] | None = None,
 ) -> torch.Tensor:
     sigmas = karras_sigmas(
         steps, sigma_min, sigma_max, rho, condition.device
     )
-    value = torch.randn(
+    noise = torch.randn(
         (len(condition), 1) + tuple(condition.shape[-3:]),
         device=condition.device,
         generator=generator,
-    ) * sigmas[0]
+    )
+    value = noise * sigmas[0] if init_transform is None else init_transform(noise)
+    if value.shape != noise.shape or value.dtype != noise.dtype or value.device != noise.device:
+        raise ValueError("EDM initialization transform changed tensor shape, dtype, or device")
+    if not torch.isfinite(value).all():
+        raise ValueError("EDM initialization transform produced non-finite values")
     for index in range(steps):
         sigma = sigmas[index]
         sigma_next = sigmas[index + 1]

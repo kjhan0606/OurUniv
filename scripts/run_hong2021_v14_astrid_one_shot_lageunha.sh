@@ -8,6 +8,8 @@ seal=${1:-config/hong2021_v14_astrid_one_shot_seal.json}
 freeze_script=${HONG2021_ASTRID_FREEZE_SCRIPT:-src/hong2021_v14_freeze.py}
 evaluation=${HONG2021_ASTRID_EVALUATION:-$root/evaluation/hong2021_v14_astrid_one_shot}
 state_schema=${HONG2021_ASTRID_STATE_SCHEMA:-hong2021-v14-astrid-one-shot-sequence-status-v1}
+sample_mode=${HONG2021_ASTRID_SAMPLE_MODE:-v14}
+sample_script=${HONG2021_ASTRID_SAMPLE_SCRIPT:-src/hong2021_v14_edm.py}
 state=$evaluation/sequence_status.json
 raw_manifest=$root/download/hong2021_v14_astrid_raw_manifest.json
 input=$root/derived/hong2021_v14/astrid_cv0_26_one_observer.h5
@@ -140,11 +142,22 @@ if [[ ! -s $ensemble ]]; then
         stamp=$(date -u +%Y%m%dT%H%M%SZ)
         mv "$ensemble.partial" "$ensemble.partial.interrupted.$stamp"
     fi
-    python src/hong2021_v14_edm.py sample \
-        --data "$input" --cache "$cache" --checkpoint "$edm_checkpoint" \
-        --out "$ensemble" --indices "$indices" --ensemble 16 \
-        --sampling-steps 40 --sigma-min 0.002 --sigma-max 40 --rho 7 \
-        --seed 28777 --device cuda >"$evaluation/sample.log" 2>&1
+    if [[ $sample_mode == v14 ]]; then
+        python "$sample_script" sample \
+            --data "$input" --cache "$cache" --checkpoint "$edm_checkpoint" \
+            --out "$ensemble" --indices "$indices" --ensemble 16 \
+            --sampling-steps 40 --sigma-min 0.002 --sigma-max 40 --rho 7 \
+            --seed 28777 --device cuda >"$evaluation/sample.log" 2>&1
+    elif [[ $sample_mode == v18_prior_matched ]]; then
+        python "$sample_script" --seal "$seal" --repo "$repo" \
+            --data "$input" --cache "$cache" --out "$ensemble" \
+            --indices "$indices" --ensemble 16 --sampling-steps 40 \
+            --sigma-min 0.002 --sigma-max 40 --rho 7 --seed 28777 \
+            --device cuda >"$evaluation/sample.log" 2>&1
+    else
+        printf 'Unsupported sealed Astrid sample mode: %s\n' "$sample_mode" >&2
+        exit 2
+    fi
 fi
 if [[ ! -s $metrics ]]; then
     python src/hong2021_residual_evaluate.py \
