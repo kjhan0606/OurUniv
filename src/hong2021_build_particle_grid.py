@@ -50,6 +50,28 @@ def _header_total(header: h5py.AttributeManager) -> int:
     return int(low[1] + (high[1] << np.uint64(32)))
 
 
+def _scalar_header(value: Any, name: str) -> float:
+    array = np.asarray(value)
+    if array.size != 1:
+        raise ValueError(f"{name} must contain one value, got {array.shape}")
+    result = float(array.reshape(-1)[0])
+    if not np.isfinite(result):
+        raise ValueError(f"{name} must be finite")
+    return result
+
+
+def _isotropic_box_size(value: Any) -> float:
+    """Accept Gadget scalar or SWIFT three-vector periodic box headers."""
+    array = np.asarray(value, dtype=np.float64)
+    if array.size == 1:
+        return _scalar_header(array, "Header/BoxSize")
+    if array.shape != (3,) or not np.isfinite(array).all():
+        raise ValueError("Header/BoxSize must be a scalar or finite three-vector")
+    if not np.all(array == array[0]):
+        raise ValueError("anisotropic snapshot boxes are unsupported")
+    return float(array[0])
+
+
 def _uniform_dm_mass(handle: h5py.File) -> float:
     header_mass = float(np.asarray(handle["Header"].attrs["MassTable"])[1])
     if "PartType1/Masses" not in handle:
@@ -104,8 +126,10 @@ def build_grid(
     for file_index, source in enumerate(sources, start=1):
         with h5py.File(source, "r") as handle:
             header = handle["Header"].attrs
-            source_box = float(header["BoxSize"]) * coordinate_scale_to_mpc_h
-            redshift = float(header["Redshift"])
+            source_box = _isotropic_box_size(
+                header["BoxSize"]
+            ) * coordinate_scale_to_mpc_h
+            redshift = _scalar_header(header["Redshift"], "Header/Redshift")
             if not np.isclose(source_box, box_mpc_h, rtol=0.0, atol=1e-7):
                 raise ValueError(f"{source}: BoxSize {source_box} != {box_mpc_h}")
             if abs(redshift) > 1e-6:

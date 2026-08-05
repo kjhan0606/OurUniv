@@ -7,10 +7,16 @@ import pytest
 from hong2021_build_particle_grid import build_grid, expand_sources
 
 
-def write_snapshot(path: Path, coordinates: np.ndarray, total: int) -> None:
+def write_snapshot(
+    path: Path,
+    coordinates: np.ndarray,
+    total: int,
+    *,
+    box_size: float | np.ndarray = 1000.0,
+) -> None:
     with h5py.File(path, "w") as handle:
         header = handle.create_group("Header")
-        header.attrs["BoxSize"] = 1000.0
+        header.attrs["BoxSize"] = box_size
         header.attrs["Redshift"] = 0.0
         header.attrs["MassTable"] = np.array([0, 2.5, 0, 0, 0, 0])
         number = np.zeros(6, dtype=np.uint32)
@@ -65,3 +71,29 @@ def test_build_grid_refuses_overwrite(tmp_path):
             assignment="ngp",
             block_particles=1,
         )
+
+
+def test_build_grid_accepts_swift_vector_box_and_length_one_redshift(tmp_path):
+    source = tmp_path / "swift_snapshot.hdf5"
+    box_mpc = 1.0 / 0.5
+    write_snapshot(
+        source,
+        np.array([[0.0, 0.0, 0.0], [box_mpc - 1.0e-6] * 3]),
+        2,
+        box_size=np.full(3, box_mpc),
+    )
+    with h5py.File(source, "r+") as handle:
+        handle["Header"].attrs.modify("Redshift", np.array([0.0]))
+    destination = tmp_path / "swift_grid.npy"
+    result = build_grid(
+        [source],
+        destination=destination,
+        grid=4,
+        box_mpc_h=1.0,
+        coordinate_scale_to_mpc_h=0.5,
+        assignment="cic",
+        block_particles=1,
+    )
+    assert result["dm_particles"] == 2
+    assert result["box_mpc_h"] == 1.0
+    assert np.load(destination).sum(dtype=np.float64) == pytest.approx(2.0)

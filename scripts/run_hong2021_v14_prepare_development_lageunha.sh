@@ -48,7 +48,7 @@ wait_for_file "$simba/download/hong2021_v14_raw_development_manifest.json" simba
 wait_for_file "$swift/download/hong2021_v14_raw_development_manifest.json" swift_eagle_download
 
 build_one() {
-    local suite=$1 root=$2 realization=$3
+    local suite=$1 root=$2 realization=$3 coordinate_scale=$4
     local out=$root/derived/hong2021_v14/cic_grids/CV_${realization}.npy
     local log=$root/derived/hong2021_v14/cic_grids/CV_${realization}.log
     mkdir -p "$(dirname "$out")"
@@ -59,16 +59,16 @@ build_one() {
     python src/hong2021_build_particle_grid.py \
         --snapshots "$root/raw/CV_${realization}/snapshot_090.hdf5" \
         --out "$out" --grid 80 --box-mpc-h 25 \
-        --coordinate-scale-to-mpc-h 0.001 --assignment cic \
+        --coordinate-scale-to-mpc-h "$coordinate_scale" --assignment cic \
         --block-particles 20000000 >"$log" 2>&1
     printf '[built] %s CV_%s\n' "$suite" "$realization"
 }
 
 build_suite() {
-    local suite=$1 root=$2 first=$3 last=$4
+    local suite=$1 root=$2 first=$3 last=$4 coordinate_scale=$5
     local pids=()
     for realization in $(seq "$first" "$last"); do
-        build_one "$suite" "$root" "$realization" &
+        build_one "$suite" "$root" "$realization" "$coordinate_scale" &
         pids+=("$!")
         if [[ ${#pids[@]} -ge 4 ]]; then
             wait "${pids[0]}"
@@ -79,9 +79,9 @@ build_suite() {
 }
 
 write_status building_common_cic_grids "SIMBA CV16-26 and Swift-EAGLE CV0-26"
-build_suite SIMBA "$simba" 16 26 >"$log_root/simba_cic_grids.log" 2>&1 &
+build_suite SIMBA "$simba" 16 26 0.001 >"$log_root/simba_cic_grids.log" 2>&1 &
 simba_pid=$!
-build_suite Swift-EAGLE "$swift" 0 26 >"$log_root/swift_eagle_cic_grids.log" 2>&1 &
+build_suite Swift-EAGLE "$swift" 0 26 0.6711 >"$log_root/swift_eagle_cic_grids.log" 2>&1 &
 swift_pid=$!
 wait "$simba_pid"
 wait "$swift_pid"
