@@ -20,9 +20,14 @@
     "Swift_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "eb8d306548f1d312ab46830cd0219bed4c76044781da33689d69a3cd3c224687"}
   },
   "initialization": {
+    "measurement_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/initialization_variance_measurement.json",
+    "measurement_sha256": "0b9d6e3137bb4f3873fb43132062329644031e9827b27da11733e9198944edcf",
     "sigma_data": 0.9999819216912903,
     "p_mean": -0.5108437022381149,
     "p_std": 1.2,
+    "source_balanced_band_mode_variance": [490.456187565309, 18.229794815913994, 2.4713316204080806, 0.26794265087816144],
+    "maximum_parseval_relative_error": 4.731866048776616e-16,
+    "maximum_absolute_ortho_dc": 4.547473508864641e-13,
     "rule": "sigma_data=sqrt(equal-source mean of final postprojection train-cache RMS squared); p_mean=ln(0.6*sigma_data)"
   }
 }
