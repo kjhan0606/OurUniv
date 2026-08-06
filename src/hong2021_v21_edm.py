@@ -186,10 +186,10 @@ def sample(args: argparse.Namespace) -> None:
     residual_knots = torch.as_tensor(transform["residual_value_knots"], dtype=torch.float32, device=device)
     centers = torch.as_tensor(profile["centers"], dtype=torch.float32, device=device)
     mu = torch.as_tensor(profile["mu"], dtype=torch.float32, device=device)
-    sigma = torch.as_tensor(profile["sigma"], dtype=torch.float32, device=device)
+    log_sigma = torch.as_tensor(profile["log_sigma"], dtype=torch.float32, device=device)
     def conditional_inverse(value: torch.Tensor, mean: torch.Tensor) -> torch.Tensor:
         u = inverse_gaussianize_torch(value, z_knots, residual_knots)
-        return invert_profile_torch(u, mean, centers, mu, sigma)
+        return invert_profile_torch(u, mean, centers, mu, log_sigma)
     generator = torch.Generator(device=device).manual_seed(204603)
     state = generator.get_state().clone()
     _ = conditional_inverse(torch.zeros((1, 1, 2, 2, 2), device=device), torch.zeros((1, 1, 2, 2, 2), device=device))

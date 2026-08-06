@@ -45,8 +45,9 @@ def fit_profile(paths: Mapping[str, Path], *, bins: int = 10, floor: float = 0.2
     )
     edges = source_quantiles.mean(axis=0)
     edges[0] = float(np.min(source_quantiles[:, 0])); edges[-1] = float(np.max(source_quantiles[:, -1]))
-    source_means = np.zeros((3, bins), dtype=np.float64)
-    source_sigmas = np.zeros((3, bins), dtype=np.float64)
+    source_mean_m = np.zeros((3, bins), dtype=np.float64)
+    source_mean_r = np.zeros((3, bins), dtype=np.float64)
+    source_second_moments = np.zeros((3, bins), dtype=np.float64)
     counts = np.zeros((3, bins), dtype=np.int64)
     for source_index, domain in enumerate(DOMAIN_ORDER):
         values_m, values_r = [], []
@@ -60,8 +61,10 @@ def fit_profile(paths: Mapping[str, Path], *, bins: int = 10, floor: float = 0.2
             if not np.any(selected):
                 raise ValueError(f"empty V21 profile bin {domain} {index}")
             counts[source_index, index] = int(selected.sum())
-            source_means[source_index, index] = float(np.mean(m[selected]))
-    mu = source_means.mean(axis=0)
+            source_mean_m[source_index, index] = float(np.mean(m[selected]))
+            source_mean_r[source_index, index] = float(np.mean(r[selected]))
+    centers = source_mean_m.mean(axis=0)
+    mu = source_mean_r.mean(axis=0)
     for source_index, domain in enumerate(DOMAIN_ORDER):
         chunks_m, chunks_r = [], []
         for mean, residual in _rows(paths[domain]):
@@ -70,16 +73,20 @@ def fit_profile(paths: Mapping[str, Path], *, bins: int = 10, floor: float = 0.2
         assignment = np.clip(np.searchsorted(edges, m, side="right") - 1, 0, bins - 1)
         for index in range(bins):
             selected = assignment == index
-            source_sigmas[source_index, index] = float(np.mean(np.square(r[selected] - mu[index])))
-    sigma = np.sqrt(np.mean(source_sigmas, axis=0))
+            source_second_moments[source_index, index] = float(
+                np.mean(np.square(r[selected] - mu[index]))
+            )
+    sigma = np.sqrt(np.mean(source_second_moments, axis=0))
     sigma = np.maximum(sigma, float(floor))
-    centers = source_means.mean(axis=0)
+    log_sigma = np.log(sigma)
     return {
         "schema": PROFILE_SCHEMA, "bins": bins, "floor": floor,
         "edges": edges.tolist(), "centers": centers.tolist(),
-        "mu": mu.tolist(), "sigma": sigma.tolist(),
-        "source_bin_counts": counts.tolist(), "source_bin_means": source_means.tolist(),
-        "source_bin_second_central_moments": source_sigmas.tolist(),
+        "mu": mu.tolist(), "sigma": sigma.tolist(), "log_sigma": log_sigma.tolist(),
+        "source_bin_counts": counts.tolist(),
+        "source_bin_mean_m": source_mean_m.tolist(),
+        "source_bin_mean_r": source_mean_r.tolist(),
+        "source_bin_second_central_moments": source_second_moments.tolist(),
         "fit_sources": list(DOMAIN_ORDER), "source_weights": [1/3, 1/3, 1/3],
         "train_only": True,
     }
@@ -91,10 +98,13 @@ def apply_profile(residual: np.ndarray, mean: np.ndarray, profile: Mapping) -> n
     r = np.asarray(residual, dtype=np.float32)
     centers = np.asarray(profile["centers"], dtype=np.float64)
     mu = np.asarray(profile["mu"], dtype=np.float64)
-    sigma = np.asarray(profile["sigma"], dtype=np.float64)
+    log_sigma = np.asarray(profile["log_sigma"], dtype=np.float64)
     mf = m.astype(np.float64)
     mapped_mu = np.interp(mf, centers, mu, left=mu[0], right=mu[-1])
-    mapped_sigma = np.interp(mf, centers, sigma, left=sigma[0], right=sigma[-1])
+    mapped_log_sigma = np.interp(
+        mf, centers, log_sigma, left=log_sigma[0], right=log_sigma[-1]
+    )
+    mapped_sigma = np.exp(mapped_log_sigma)
     return ((r.astype(np.float64) - mapped_mu) / mapped_sigma).astype(np.float32)
 
 
@@ -102,10 +112,14 @@ def invert_profile(value: np.ndarray, mean: np.ndarray, profile: Mapping) -> np.
     """Invert the affine map in float32."""
     u = np.asarray(value, dtype=np.float32); m = np.asarray(mean, dtype=np.float32)
     centers = np.asarray(profile["centers"], dtype=np.float64)
-    mu = np.asarray(profile["mu"], dtype=np.float64); sigma = np.asarray(profile["sigma"], dtype=np.float64)
+    mu = np.asarray(profile["mu"], dtype=np.float64)
+    log_sigma = np.asarray(profile["log_sigma"], dtype=np.float64)
     mf = m.astype(np.float64)
     mapped_mu = np.interp(mf, centers, mu, left=mu[0], right=mu[-1])
-    mapped_sigma = np.interp(mf, centers, sigma, left=sigma[0], right=sigma[-1])
+    mapped_log_sigma = np.interp(
+        mf, centers, log_sigma, left=log_sigma[0], right=log_sigma[-1]
+    )
+    mapped_sigma = np.exp(mapped_log_sigma)
     return (u.astype(np.float64) * mapped_sigma + mapped_mu).astype(np.float32)
 
 
@@ -127,11 +141,11 @@ def invert_profile_torch(
     mean: torch.Tensor,
     centers: torch.Tensor,
     mu: torch.Tensor,
-    sigma: torch.Tensor,
+    log_sigma: torch.Tensor,
 ) -> torch.Tensor:
     """Torch inverse used after G21 inverse during sampling."""
     mapped_mu = _interp_torch(mean, centers, mu)
-    mapped_sigma = _interp_torch(mean, centers, sigma)
+    mapped_sigma = torch.exp(_interp_torch(mean, centers, log_sigma))
     return value * mapped_sigma + mapped_mu
 
 
