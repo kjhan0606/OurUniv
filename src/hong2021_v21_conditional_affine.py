@@ -144,9 +144,14 @@ def invert_profile_torch(
     log_sigma: torch.Tensor,
 ) -> torch.Tensor:
     """Torch inverse used after G21 inverse during sampling."""
-    mapped_mu = _interp_torch(mean, centers, mu)
-    mapped_sigma = torch.exp(_interp_torch(mean, centers, log_sigma))
-    return value * mapped_sigma + mapped_mu
+    output_dtype = value.dtype
+    value64 = value.to(dtype=torch.float64)
+    mean64 = mean.to(dtype=torch.float64)
+    mapped_mu = _interp_torch(mean64, centers.to(dtype=torch.float64), mu.to(dtype=torch.float64))
+    mapped_sigma = torch.exp(
+        _interp_torch(mean64, centers.to(dtype=torch.float64), log_sigma.to(dtype=torch.float64))
+    )
+    return (value64 * mapped_sigma + mapped_mu).to(dtype=output_dtype)
 
 
 def transform_cube(residual: np.ndarray, mean: np.ndarray, profile: Mapping, transform: Mapping) -> tuple[np.ndarray, float, dict]:

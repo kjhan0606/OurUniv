@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import torch
+import h5py
 
 from hong2021_residual_v6 import karras_sigmas, seed_everything
 from hong2021_residual_v8_context import ObservableContextUNet
@@ -30,8 +31,8 @@ from hong2021_v21_conditional_affine import invert_profile_torch
 REGISTRY_SCHEMA = "hong2021-v21-voxel-conditional-affine-development-program-v1"
 REGISTRY_SHA256 = "e44486a52f284ded1d17a83da491b571a7987f0380cd5ff0fdc1ef5f3c29a27d"
 ARTIFACT_SCHEMA = "hong2021-v21-derived-artifact-attestation-v1"
-ARTIFACT_SHA256 = "19b78c2e5e76288c7e8b23318d98b2d79fb425e5f5c5d851e1c2983282ad79f0"
-P_MEAN = -0.5108437022381149
+ARTIFACT_SHA256 = "5622fc5a22b7502eac433f50e6cc2b51e6253c6e89b179335b1f8eef4e6d5852"
+P_MEAN = -0.5110403821419721
 P_STD = 1.2
 DOMAIN_KEYS = {"TNG100": "tng", "SIMBA": "simba_dev", "Swift": "swift_dev"}
 CACHE_KEYS = {
@@ -105,6 +106,13 @@ def frozen_training_namespace(args: argparse.Namespace) -> argparse.Namespace:
         return data[domain][f"{split}_data"]["path"]
     def cache_path(domain: str, split: str) -> str:
         return caches[CACHE_KEYS[domain][split]]["path"]
+    train_rms = []
+    for domain in DOMAIN_KEYS:
+        with h5py.File(cache_path(domain, "train"), "r") as handle:
+            train_rms.append(float(handle.attrs["standardized_residual_rms"]))
+    measured_sigma = math.sqrt(sum(value * value for value in train_rms) / 3.0)
+    if measured_sigma.hex() != float(artifacts["initialization"]["sigma_data"]).hex():
+        raise ValueError("V21 cache RMS metadata differs from attested sigma_data")
     return argparse.Namespace(
         tng_train_data=data_path("TNG100", "train"), tng_train_cache=cache_path("TNG100", "train"),
         tng_validation_data=data_path("TNG100", "validation"), tng_validation_cache=cache_path("TNG100", "validation"),
@@ -182,19 +190,27 @@ def sample(args: argparse.Namespace) -> None:
         raise RuntimeError("V21 initializer changed the paired random stream")
     profile = json.loads(Path(artifacts["profile"]["path"]).read_text())
     transform = json.loads(Path(artifacts["gaussianization"]["path"]).read_text())
+    if profile.get("schema") != "hong2021-v21-voxel-conditional-affine-profile-v1":
+        raise ValueError("V21 profile schema mismatch")
+    if transform.get("schema") != "hong2021-v21-equal-source-conditional-affine-gaussianization-v1":
+        raise ValueError("V21 transform schema mismatch")
+    if transform.get("profile_sha256") != artifacts["profile"]["sha256"]:
+        raise ValueError("V21 transform was not fitted from the attested profile")
     z_knots = torch.as_tensor(transform["z_knots"], dtype=torch.float32, device=device)
     residual_knots = torch.as_tensor(transform["residual_value_knots"], dtype=torch.float32, device=device)
-    centers = torch.as_tensor(profile["centers"], dtype=torch.float32, device=device)
-    mu = torch.as_tensor(profile["mu"], dtype=torch.float32, device=device)
-    log_sigma = torch.as_tensor(profile["log_sigma"], dtype=torch.float32, device=device)
+    centers = torch.as_tensor(profile["centers"], dtype=torch.float64, device=device)
+    mu = torch.as_tensor(profile["mu"], dtype=torch.float64, device=device)
+    log_sigma = torch.as_tensor(profile["log_sigma"], dtype=torch.float64, device=device)
     def conditional_inverse(value: torch.Tensor, mean: torch.Tensor) -> torch.Tensor:
         u = inverse_gaussianize_torch(value, z_knots, residual_knots)
         return invert_profile_torch(u, mean, centers, mu, log_sigma)
-    generator = torch.Generator(device=device).manual_seed(204603)
-    state = generator.get_state().clone()
+    cpu_state = torch.random.get_rng_state().clone()
+    device_state = torch.cuda.get_rng_state(device).clone() if device.type == "cuda" else None
     _ = conditional_inverse(torch.zeros((1, 1, 2, 2, 2), device=device), torch.zeros((1, 1, 2, 2, 2), device=device))
-    if not torch.equal(state, generator.get_state()):
+    if not torch.equal(cpu_state, torch.random.get_rng_state()):
         raise RuntimeError("V21 conditional inverse consumed RNG state")
+    if device_state is not None and not torch.equal(device_state, torch.cuda.get_rng_state(device)):
+        raise RuntimeError("V21 conditional inverse consumed CUDA RNG state")
     write_prior_matched_ensemble(
         model=model, dataset=dataset, checkpoint=checkpoint, checkpoint_path=checkpoint_path,
         checkpoint_sha256=checkpoint_sha, output=args.out.resolve(), indices=indices,

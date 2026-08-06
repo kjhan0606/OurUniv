@@ -5,28 +5,28 @@
   "historical_eagle_accessed": false,
   "profile": {
     "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/conditional_affine_profile.json",
-    "sha256": "42dec0a94a250a87c2a8996de95e3b8535b577fc19afaeb9e23f2ecbad8c9506"
+    "sha256": "7db8eb5427720ce4976e63073cbf7fd19c7d0cbbede7e0baa07d708593ecaf99"
   },
   "gaussianization": {
     "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/gaussianization_v21.json",
-    "sha256": "87166d1d8a3c6c38dc157d046f76a9750dcc67b903fd6ead05264197e756ca0a"
+    "sha256": "1ee6fa7a398cbfd08c4d135e279f85d097fa65d74c464f4782b3d33422039fd0"
   },
   "caches": {
-    "TNG100_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5", "sha256": "a072b7ebbd9fa2ae6de50312c3cdd5b755f804ca50371fd939e84f944af23eb6"},
-    "TNG100_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5", "sha256": "c055b11b472975423c31edb3b1da076b6edfac963587f5f814bcc3d301fbaeae"},
-    "SIMBA_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5", "sha256": "bcb1f8eb01b061e8673a0ec6bbbca72b4d0fd5ed10da7ef411fbeeabc056dadc"},
-    "SIMBA_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5", "sha256": "012b0c77af3ea02c226aefb46317104f1302e4c0e0c41358fa4c2e02c04eb331"},
-    "Swift_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5", "sha256": "faa14700bf730325f2f019b900a5058d714bc50b1c837307ee789dfd3c1eab8b"},
-    "Swift_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "d1acdfea64399600563bb8cd9cc9dd996f3671891724ed2a36dd62edc6928d79"}
+    "TNG100_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5", "sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"},
+    "TNG100_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5", "sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff"},
+    "SIMBA_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5", "sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"},
+    "SIMBA_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5", "sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e"},
+    "Swift_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5", "sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"},
+    "Swift_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46"}
   },
   "initialization": {
     "measurement_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/initialization_variance_measurement.json",
-    "measurement_sha256": "beb2fd6e942a4d49a342835cfaf574c58063b3ae408c332ce96c32ce261277fe",
-    "sigma_data": 0.9999819216912903,
-    "p_mean": -0.5108437022381149,
+    "measurement_sha256": "8df60f4fd3a40084cd6154cadb12e5510b09f62cdef50693130d0b4da4782c81",
+    "sigma_data": 0.9997852646829478,
+    "p_mean": -0.5110403821419721,
     "p_std": 1.2,
-    "source_balanced_band_mode_variance": [490.456187565309, 18.229794815913994, 2.4713316204080806, 0.26794265087816144],
-    "maximum_parseval_relative_error": 4.731866048776616e-16,
+    "source_balanced_band_mode_variance": [474.2378499298902, 18.386579022747515, 2.498382923944394, 0.2723041987011055],
+    "maximum_parseval_relative_error": 4.769886984487529e-16,
     "maximum_absolute_ortho_dc": 4.547473508864641e-13,
     "rule": "sigma_data=sqrt(equal-source mean of final postprojection train-cache RMS squared); p_mean=ln(0.6*sigma_data)"
   }
