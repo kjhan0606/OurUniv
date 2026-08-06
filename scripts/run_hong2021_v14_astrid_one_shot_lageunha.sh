@@ -148,7 +148,7 @@ if [[ ! -s $ensemble ]]; then
             --out "$ensemble" --indices "$indices" --ensemble 16 \
             --sampling-steps 40 --sigma-min 0.002 --sigma-max 40 --rho 7 \
             --seed 28777 --device cuda >"$evaluation/sample.log" 2>&1
-    elif [[ $sample_mode == v18_prior_matched || $sample_mode == v19_prior_matched ]]; then
+    elif [[ $sample_mode == v18_prior_matched || $sample_mode == v19_prior_matched || $sample_mode == v20_gaussianized ]]; then
         python "$sample_script" --seal "$seal" --repo "$repo" \
             --data "$input" --cache "$cache" --out "$ensemble" \
             --indices "$indices" --ensemble 16 --sampling-steps 40 \

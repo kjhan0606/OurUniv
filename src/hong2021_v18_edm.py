@@ -6,7 +6,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 import h5py
 import numpy as np
@@ -240,6 +240,7 @@ def write_prior_matched_ensemble(
     sigma_first: float,
     metadata: Mapping[str, Any],
     progress_label: str,
+    latent_inverse: Callable[[torch.Tensor], torch.Tensor] | None = None,
 ) -> None:
     """Write one V18 ensemble using the sole shared prior-matched sampler path."""
     if not indices or len(set(indices)) != len(indices):
@@ -292,6 +293,8 @@ def write_prior_matched_ensemble(
                     float(checkpoint["sigma_data"]), init_transform=initializer,
                 )
                 standardized -= standardized.mean(dim=(-3, -2, -1), keepdim=True)
+                if latent_inverse is not None:
+                    standardized = latent_inverse(standardized)
                 standardized_numpy = standardized[:, 0].float().cpu().numpy()
                 physical = np.stack([
                     inverse_standardized_residual(

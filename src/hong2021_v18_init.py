@@ -57,10 +57,13 @@ def measure_band_mode_variances(
     *,
     parseval_relative_tolerance: float = 1.0e-9,
     maximum_absolute_ortho_dc: float = 1.0e-6,
+    allowed_schemas: tuple[str, ...] = (STANDARDIZED_SCHEMA,),
 ) -> dict[str, Any]:
     """Measure source-balanced per-mode variance from frozen train caches."""
     if tuple(sources) != ("TNG100", "SIMBA", "Swift"):
         raise ValueError("V18 measurement sources must be TNG100, SIMBA, Swift in order")
+    if not allowed_schemas or any(not isinstance(value, str) for value in allowed_schemas):
+        raise ValueError("V18 measurement allowed schemas must be non-empty strings")
     masks = fourier_band_masks(EXPECTED_GRID, EXPECTED_VOXEL_MPC_H)
     _validate_masks(masks, EXPECTED_GRID)
     per_domain: dict[str, list[float]] = {}
@@ -73,7 +76,7 @@ def measure_band_mode_variances(
         expected_domain = str(specification["domain_attribute"])
         sums = np.zeros(4, dtype=np.float64)
         with h5py.File(path, "r") as handle:
-            if str(handle.attrs.get("schema")) != STANDARDIZED_SCHEMA:
+            if str(handle.attrs.get("schema")) not in allowed_schemas:
                 raise ValueError(f"{label} has the wrong standardized-cache schema")
             if not bool(handle.attrs.get("complete", False)):
                 raise ValueError(f"{label} standardized cache is incomplete")
