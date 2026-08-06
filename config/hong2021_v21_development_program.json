@@ -19,7 +19,7 @@
     "date": "2026-08-06",
     "verdict": "PASS",
     "record": "config/hong2021_v21_conditional_affine_design.json",
-    "record_sha256": "frozen_in_parent_commit_1954644",
+    "record_sha256": "e635add53881c391f96b375d5e4d0c535eccc71532bbe43b6b5b7e657ca78b83",
     "astrid_must_remain_sealed": true
   },
   "firewall": {
