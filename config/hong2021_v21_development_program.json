@@ -1,0 +1,126 @@
+{
+  "schema": "hong2021-v21-voxel-conditional-affine-development-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Test one predeclared voxel-conditional affine Gaussianization intervention after V20 marginal Gaussianization failed Q3/Q4.",
+  "parent_evidence": {
+    "v20_registry": "config/hong2021_v20_development_program.json",
+    "v20_registry_sha256": "4c9f8cbb992bb2475e3731ca915b6d0795ba0a76256923f973770288dc468bc0",
+    "v20_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v20_e8_gaussianized_marginal/development_decision.json",
+    "v20_decision_sha256": "9a615ddf60cf512a26fae6bb82c91963cd95c9c5e1cfcba8a9b52ea1cae2aa3a",
+    "v20_decision_digest_sha256": "bd2eba71d846e1a7a90893c30414bfe5e1c944986018aa7493e237f56b39a30c",
+    "classification": "gaussianized_marginal_falsified_audit_conditional_structure",
+    "conditional_audit": "config/hong2021_v20_conditional_structure_audit.json",
+    "conditional_audit_sha256": "314feebe8c9af261962a7e4c73f0a0f71a1a17f664794bc56c6c392b03c429b4",
+    "astrid_used": false,
+    "historical_eagle_used": false
+  },
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "date": "2026-08-06",
+    "verdict": "PASS",
+    "record": "config/hong2021_v21_conditional_affine_design.json",
+    "record_sha256": "frozen_in_parent_commit_1954644",
+    "astrid_must_remain_sealed": true
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "posthoc_Ak": false,
+    "target_derived_inference_features_or_scales": false,
+    "field_clipping_outside_frozen_support": false,
+    "density_floor": false,
+    "architecture_or_capacity_search": false,
+    "loss_or_band_weight_search": false,
+    "noise_or_sampler_search": false,
+    "threshold_changes_after_results": false,
+    "near_miss_rescue": false
+  },
+  "v21_conditional_affine": {
+    "training_from_scratch": true,
+    "continuation_checkpoint": null,
+    "checkpoint_schema": "hong2021-v21-conditional-affine-multiscale-edm-v1",
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "feature": "frozen V14 conditional_mean field m in y units",
+    "location_scale_model": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/location_scale_model.json",
+      "sha256": "0132cb15088d16b89251c9f76ec8fc34cae1292f7549368ed0d9bd9000330bbe"
+    },
+    "profile": {
+      "bins": 10,
+      "edges": "equal-source pooled training voxel quantiles q=0,.1,...,1; source weight 1/3",
+      "assignment": "numpy.searchsorted(edges, m, side=right)-1, clamp [0,9]",
+      "center": "equal-source weighted mean m in each bin",
+      "mu": "mean of three source bin means",
+      "sigma": "sqrt(equal-source mean of E_source[(r-mu_bin)^2])",
+      "interpolation": "piecewise-linear float64 at frozen bin centers; constant extrapolation",
+      "scale_floor": 0.25,
+      "application": "profile evaluated from m, then cast to float32"
+    },
+    "transform": {
+      "r_definition": "V14 standardized residual before V21 affine",
+      "forward": "u=(r-mu(m))/sigma(m)",
+      "fit_sources": ["TNG100 train", "SIMBA train", "Swift train"],
+      "source_weights": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333],
+      "histogram_bins": 131072,
+      "knots": 8193,
+      "z_support": [-5.0, 5.0],
+      "recipe": "V20 equal-source weighted histogram midpoint CDF, Addendum A monotonic repair",
+      "cube_centering": "subtract each cube mean of G21(u) before inherited Addendum-B projection",
+      "inverse": "r=u*sigma(m)+mu(m) after G21 inverse and sampler DC centering",
+      "validation_or_test_data_used": false
+    },
+    "new_derived_artifacts": [
+      "conditional_affine_profile.json",
+      "gaussianization_v21.json",
+      "tng_train_conditional_affine.h5", "tng_validation_conditional_affine.h5",
+      "simba_train_conditional_affine.h5", "simba_validation_conditional_affine.h5",
+      "swift_eagle_train_conditional_affine.h5", "swift_eagle_validation_conditional_affine.h5",
+      "initialization_variance_measurement.json"
+    ]
+  },
+  "inherited_training_protocol": {
+    "batch": 6,
+    "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift": 2},
+    "workers": 1,
+    "architecture": "ObservableContextUNet(base_channels=32)",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "CosineAnnealingLR over exactly 10000 optimizer steps",
+    "weight_decay": 0.0001,
+    "ema_decay": 0.999,
+    "gradient_clip": 1.0,
+    "loss": "0.5*unweighted_EDM_MSE+0.5*tail_weighted_EDM_MSE, tail_exponent=0.25, tail_maximum=10",
+    "validation_every": 500,
+    "training_seed": 144021,
+    "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+    "augmentation": "48 signed cube isometries",
+    "noise": {"mode": "log_sigma_data_fraction", "median_sigma_data_fraction": 0.6, "p_std": 1.2},
+    "sampler": {"ensemble_members": 16, "steps": 40, "sigma_min": 0.002, "sigma_max": 40.0, "rho": 7.0, "integrator": "deterministic Heun probability-flow ODE", "additional_rng_draws": 0}
+  },
+  "new_gate_diagnostics": {
+    "Q3": "V20 Q3 thresholds unchanged; evaluate per deterministic-mean voxel decile and domain",
+    "Q4": "V20 Q4 threshold unchanged; evaluate per deterministic-mean voxel decile and domain",
+    "Q5": "all inherited no-harm checks unchanged; selection_role none",
+    "Q6": {"name": "conditional_profile_match", "selection_role": "none", "edges": "frozen pooled train m deciles", "statistics": "per-domain equal-source residual mean/std and generated-minus-truth delta"}
+  },
+  "hard_preflight": [
+    "validate this registry and all parent/audit hashes without opening Astrid or historical EAGLE",
+    "fit profile and G21 from train caches only and reproduce frozen bytes and moments",
+    "audit six new caches with inherited Addendum-B exact float32 zero-DC projection",
+    "remeasure sigma_data and band variances from final V21 cache bytes; derive p_mean=ln(0.6*sigma_data)",
+    "prove conditional inverse consumes no random numbers and preserve draw-paired initialization",
+    "run full tests and independent implementation audit before GPU execution",
+    "confirm clean committed worktree and Lageunha Ada allocation"
+  ],
+  "fixed_decision_order": [
+    "freeze registry, implement, and independently audit V21",
+    "train from scratch on Lageunha Ada; evaluate 5000 then 10000",
+    "if Q3/Q4/Q5 pass in all three domains, select smallest passing step and stop before seal",
+    "otherwise classify failure by Q3/Q4 and stop with Astrid unopened",
+    "never tune profile bins, floor, transform, architecture, loss, sampler, seeds, subsets, or thresholds after results"
+  ],
+  "approval_firewall": {"astrid_access": "forbidden_until_development_pass_and_committed_seal_and_explicit_user_approval", "historical_eagle_access": "forbidden"}
+}
