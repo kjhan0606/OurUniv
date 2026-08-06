@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 
 import h5py
 import numpy as np
@@ -99,3 +100,20 @@ def test_v20_gate_accepts_the_mode_emitted_by_training(tmp_path, monkeypatch) ->
             registry_path=tmp_path / "registry.json", repo=tmp_path,
             gate_code_commit="a" * 40,
         )
+
+
+def test_v20_sampling_commit_may_be_an_ancestor_of_gate_commit(monkeypatch) -> None:
+    class Result:
+        returncode = 0
+
+    seen = []
+
+    def fake_run(command, **kwargs):
+        seen.append(command)
+        return Result()
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    sampling = "a" * 40
+    gate_commit = "b" * 40
+    assert gate._sampling_commit_is_ancestor(sampling, gate_commit)
+    assert seen[-1][-2:] == [sampling, gate_commit]

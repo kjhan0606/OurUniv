@@ -55,6 +55,18 @@ def _source_indices(path: Path) -> list[int]:
         return [int(value) for value in handle["source_index"][:]]
 
 
+def _sampling_commit_is_ancestor(sampling_commit: str, gate_commit: str) -> bool:
+    if len(sampling_commit) != 40 or len(gate_commit) != 40:
+        return False
+    return subprocess.run(
+        [
+            "git", "-C", str(Path.cwd()), "merge-base", "--is-ancestor",
+            sampling_commit, gate_commit,
+        ],
+        capture_output=True,
+    ).returncode == 0
+
+
 def _parent_e7_decision(registry: dict[str, Any]) -> dict[str, Any]:
     row = registry["parent_evidence"]["development_decisions"]["E7"]
     path = Path(row["path"]).resolve()
@@ -125,6 +137,11 @@ def _validate_v20_ensemble(
     with h5py.File(path, "r") as handle:
         if tuple(handle["sample"].shape) != (16, 16, 1, 64, 64, 64):
             raise ValueError("V20 development ensemble is not exactly 16x16x1x64^3")
+        sampling_code_commit = str(handle.attrs.get("sampling_code_commit", ""))
+        if not _sampling_commit_is_ancestor(sampling_code_commit, gate_commit):
+            raise ValueError(
+                "V20 ensemble sampling commit is not an ancestor of gate commit"
+            )
         exact = {
             "checkpoint_sha256": checkpoint_sha,
             "source_cache_sha256": cache["sha256"],
@@ -150,7 +167,7 @@ def _validate_v20_ensemble(
             "training_noise_p_mean": P_MEAN,
             "training_noise_p_std": P_STD,
             "worktree_clean_at_sampling": True,
-            "sampling_code_commit": gate_commit,
+            "sampling_code_commit": sampling_code_commit,
         }
         for key, expected in exact.items():
             actual = handle.attrs.get(key)
@@ -170,7 +187,7 @@ def _validate_v20_ensemble(
         "seed": seed,
         "effective_sigma_first_step": effective_sigma,
         "maximum_imaginary_over_real_rms": imaginary_ratio,
-        "sampling_code_commit": gate_commit,
+        "sampling_code_commit": sampling_code_commit,
     }
 
 
