@@ -36,10 +36,14 @@ def fit_profile(paths: Mapping[str, Path], *, bins: int = 10, floor: float = 0.2
     for domain in DOMAIN_ORDER:
         with h5py.File(paths[domain], "r") as handle:
             means.append(np.asarray(handle["conditional_mean"][:, 0], dtype=np.float32).reshape(-1))
-    pooled = np.concatenate(means).astype(np.float64)
     quantiles = np.linspace(0.0, 1.0, bins + 1)
-    edges = np.quantile(pooled, quantiles, method="linear")
-    edges[0] = float(np.min(pooled)); edges[-1] = float(np.max(pooled))
+    # Equal-source pooled quantiles: average each source quantile curve, rather
+    # than weighting a source by its number of voxels.
+    source_quantiles = np.asarray(
+        [np.quantile(value.astype(np.float64), quantiles, method="linear") for value in means]
+    )
+    edges = source_quantiles.mean(axis=0)
+    edges[0] = float(np.min(source_quantiles[:, 0])); edges[-1] = float(np.max(source_quantiles[:, -1]))
     source_means = np.zeros((3, bins), dtype=np.float64)
     source_sigmas = np.zeros((3, bins), dtype=np.float64)
     counts = np.zeros((3, bins), dtype=np.int64)
