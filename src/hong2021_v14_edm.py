@@ -56,6 +56,7 @@ V17_E5_SCHEMA = "hong2021-v17-e5-band-balanced-denoising-multiscale-edm-v1"
 V19_E7_SCHEMA = "hong2021-v19-e7-band-anchored-noise-multiscale-edm-v1"
 V20_E8_SCHEMA = "hong2021-v20-e8-gaussianized-marginal-multiscale-edm-v1"
 V21_E9_SCHEMA = "hong2021-v21-conditional-affine-multiscale-edm-v1"
+V22_E10_SCHEMA = "hong2021-v22-long-horizon-conditional-affine-multiscale-edm-v1"
 V20_GAUSSIANIZED_CACHE_SCHEMA = (
     "hong2021-v20-gaussianized-multiscale-standardized-residual-cache-v1"
 )
@@ -64,7 +65,7 @@ V21_CONDITIONAL_AFFINE_CACHE_SCHEMA = (
 )
 SUPPORTED_CHECKPOINT_SCHEMAS = (
     SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA,
-    V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA,
+    V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA,
 )
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
@@ -334,7 +335,7 @@ def train(args: argparse.Namespace) -> None:
             "exact-zero-DC Gaussianized multiscale-standardized corrected residual"
             if run_schema == V20_E8_SCHEMA
             else "exact-zero-DC conditional-affine Gaussianized multiscale-standardized corrected residual"
-            if run_schema == V21_E9_SCHEMA
+            if run_schema in (V21_E9_SCHEMA, V22_E10_SCHEMA)
             else "zero-DC multiscale-standardized corrected residual"
         ),
         "data": {
@@ -476,7 +477,7 @@ def train(args: argparse.Namespace) -> None:
                 "learning_rate": float(optimizer.param_groups[0]["lr"]),
                 "elapsed_seconds": time.time() - started,
             }
-            if run_schema in (V17_E5_SCHEMA, V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA):
+            if run_schema in (V17_E5_SCHEMA, V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA):
                 row["gradient_diagnostic"] = {
                     "mean_norm_before_fixed_clip": gradient_norm_sum / gradient_updates,
                     "fixed_clip_activation_fraction": (
