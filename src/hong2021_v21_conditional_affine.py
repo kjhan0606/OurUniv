@@ -12,6 +12,7 @@ from typing import Mapping, Sequence
 
 import h5py
 import numpy as np
+import torch
 
 from hong2021_v20_gaussianize import fit_knots
 from hong2021_residual_v12_gaussianized import gaussianize_numpy, inverse_gaussianize_numpy
@@ -108,6 +109,32 @@ def invert_profile(value: np.ndarray, mean: np.ndarray, profile: Mapping) -> np.
     return (u.astype(np.float64) * mapped_sigma + mapped_mu).astype(np.float32)
 
 
+def _interp_torch(value: torch.Tensor, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """Piecewise-linear interpolation with constant endpoint extrapolation."""
+    if x.ndim != 1 or y.ndim != 1 or x.shape != y.shape or x.numel() < 2:
+        raise ValueError("V21 interpolation knots are invalid")
+    index = torch.bucketize(value, x, right=True) - 1
+    index = index.clamp(0, x.numel() - 2)
+    x0 = x[index]; x1 = x[index + 1]
+    y0 = y[index]; y1 = y[index + 1]
+    fraction = (value - x0) / (x1 - x0)
+    interpolated = y0 + fraction * (y1 - y0)
+    return torch.where(value <= x[0], y[0], torch.where(value >= x[-1], y[-1], interpolated))
+
+
+def invert_profile_torch(
+    value: torch.Tensor,
+    mean: torch.Tensor,
+    centers: torch.Tensor,
+    mu: torch.Tensor,
+    sigma: torch.Tensor,
+) -> torch.Tensor:
+    """Torch inverse used after G21 inverse during sampling."""
+    mapped_mu = _interp_torch(mean, centers, mu)
+    mapped_sigma = _interp_torch(mean, centers, sigma)
+    return value * mapped_sigma + mapped_mu
+
+
 def transform_cube(residual: np.ndarray, mean: np.ndarray, profile: Mapping, transform: Mapping) -> tuple[np.ndarray, float, dict]:
     """Apply affine map, V20-style G21, per-cube centering and DC projection."""
     from hong2021_v20_gaussianize import exact_zero_dc_projection
@@ -131,6 +158,7 @@ def prepare_cache(source: Path, output: Path, profile: Mapping, transform: Mappi
     partial = output.with_suffix(output.suffix + ".partial")
     output.parent.mkdir(parents=True, exist_ok=True)
     maximum_dc = 0.0; maximum_adjustment = 0.0; total = 0
+    sum_squares = 0.0; voxels = 0
     with h5py.File(source, "r") as src, h5py.File(partial, "w") as dst:
         for key, value in src.attrs.items():
             dst.attrs[key] = value
@@ -150,6 +178,8 @@ def prepare_cache(source: Path, output: Path, profile: Mapping, transform: Mappi
             mean = np.asarray(src["conditional_mean"][index, 0], dtype=np.float32)
             value, dc, audit = transform_cube(residual, mean, profile, transform)
             dst["standardized_residual"][index, 0] = value
+            sum_squares += float(np.square(value, dtype=np.float64).sum())
+            voxels += value.size
             latent_dc[index] = dc; projection_dc[index] = audit["final_ortho_dc"]
             maximum_dc = max(maximum_dc, float(audit["final_ortho_dc"]))
             maximum_adjustment = max(maximum_adjustment, abs(float(audit["adjustment"])))
@@ -158,10 +188,11 @@ def prepare_cache(source: Path, output: Path, profile: Mapping, transform: Mappi
         dst.attrs["objects"] = total
         dst.attrs["maximum_postprojection_ortho_dc"] = maximum_dc
         dst.attrs["maximum_absolute_adjustment"] = maximum_adjustment
+        dst.attrs["standardized_residual_rms"] = float(np.sqrt(sum_squares / voxels))
     partial.replace(output)
     import hashlib
     digest = hashlib.sha256(output.read_bytes()).hexdigest()
-    return {"path": str(output), "sha256": digest, "objects": total, "maximum_postprojection_ortho_dc": maximum_dc, "maximum_absolute_adjustment": maximum_adjustment}
+    return {"path": str(output), "sha256": digest, "objects": total, "rms": float(np.sqrt(sum_squares / voxels)), "maximum_postprojection_ortho_dc": maximum_dc, "maximum_absolute_adjustment": maximum_adjustment}
 
 
 def fit_v21_transform(train_paths: Mapping[str, Path], profile: Mapping, *, histogram_bins: int = 131072, knots: int = 8193, z_limit: float = 5.0) -> dict:
@@ -189,4 +220,4 @@ def fit_v21_transform(train_paths: Mapping[str, Path], profile: Mapping, *, hist
         return fit_knots(paths, histogram_bins=histogram_bins, knots=knots, z_limit=z_limit)
 
 
-__all__ = ["fit_profile", "apply_profile", "invert_profile", "transform_cube", "inverse_cube", "fit_v21_transform"]
+__all__ = ["fit_profile", "apply_profile", "invert_profile", "invert_profile_torch", "transform_cube", "inverse_cube", "fit_v21_transform", "prepare_cache"]

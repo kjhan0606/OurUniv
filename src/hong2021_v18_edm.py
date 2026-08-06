@@ -241,6 +241,7 @@ def write_prior_matched_ensemble(
     metadata: Mapping[str, Any],
     progress_label: str,
     latent_inverse: Callable[[torch.Tensor], torch.Tensor] | None = None,
+    conditional_latent_inverse: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] | None = None,
 ) -> None:
     """Write one V18 ensemble using the sole shared prior-matched sampler path."""
     if not indices or len(set(indices)) != len(indices):
@@ -249,6 +250,8 @@ def write_prior_matched_ensemble(
         raise ValueError("V18 sample indices are outside the dataset")
     if ensemble_members <= 0:
         raise ValueError("V18 ensemble size must be positive")
+    if latent_inverse is not None and conditional_latent_inverse is not None:
+        raise ValueError("V18 permits only one latent inverse callback")
     partial = output.with_suffix(output.suffix + ".partial")
     if output.exists() or partial.exists():
         raise RuntimeError(f"refusing to overwrite V18 ensemble: {output}")
@@ -293,7 +296,12 @@ def write_prior_matched_ensemble(
                     float(checkpoint["sigma_data"]), init_transform=initializer,
                 )
                 standardized -= standardized.mean(dim=(-3, -2, -1), keepdim=True)
-                if latent_inverse is not None:
+                if conditional_latent_inverse is not None:
+                    mean_batch = corrected_mean[None].to(device).expand(
+                        ensemble_members, -1, -1, -1, -1
+                    )
+                    standardized = conditional_latent_inverse(standardized, mean_batch)
+                elif latent_inverse is not None:
                     standardized = latent_inverse(standardized)
                 standardized_numpy = standardized[:, 0].float().cpu().numpy()
                 physical = np.stack([
