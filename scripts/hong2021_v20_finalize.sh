@@ -33,6 +33,10 @@ while true; do
     state=$(python -c 'import json,sys;print(json.load(open(sys.argv[1]))["state"])' "$sequence")
     case "$state" in
       complete_e8_passed_astrid_still_unopened)
+        if [[ ${HONG2021_APPROVE_V20_ASTRID:-0} != 1 ]]; then
+          write_status awaiting_user_approval_before_v20_seal_and_astrid "$sequence"
+          exit 0
+        fi
         write_status creating_committed_v20_seal "$sequence"
         if [[ -n $(git status --porcelain) ]]; then
           write_status stopped_dirty_worktree_before_seal "$(git status --short)"
