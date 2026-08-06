@@ -60,6 +60,40 @@ def test_v20_training_namespace_uses_relative_noise_and_new_caches(
     assert actual.candidate_steps == "5000,10000"
 
 
+def test_v20_checkpoint_accepts_the_training_emitted_relative_noise_mode(
+    tmp_path,
+) -> None:
+    checkpoint_path = tmp_path / "step_005000.pt"
+    torch.save({
+        "schema": V20_E8_SCHEMA,
+        "step": 5000,
+        "experiment_registry_sha256": v20.FROZEN_REGISTRY_SHA256,
+        "worktree_clean_at_launch": True,
+        "sigma_data": 0.9999915369331587,
+        "edm_p_mean": v20.P_MEAN,
+        "edm_p_std": v20.P_STD,
+        "edm_p_mean_mode": "log_sigma_data_fraction",
+        "edm_p_mean_sigma_data_fraction": 0.6,
+        "decoder_upsampling": "nearest",
+        "denoising_loss": {
+            "coefficients": {"unweighted": 0.5, "tail_weighted": 0.5},
+            "band_balanced": False,
+        },
+        "code_commit_at_launch": "a" * 40,
+    }, checkpoint_path)
+    registry = {
+        "e8_gaussianized_marginal_retrain": {
+            "initialization_and_normalization": {
+                "sigma_data": 0.9999915369331587,
+            },
+        },
+    }
+    checkpoint, _ = v20._validate_checkpoint(
+        checkpoint_path, step=5000, registry=registry
+    )
+    assert checkpoint["edm_p_mean_mode"] == "log_sigma_data_fraction"
+
+
 class _Dataset:
     grid = 2
     voxel_mpc_h = 0.3125

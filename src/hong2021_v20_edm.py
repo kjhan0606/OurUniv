@@ -303,7 +303,7 @@ def _validate_checkpoint(
         raise ValueError("V20 checkpoint p_mean mismatch")
     if float(checkpoint.get("edm_p_std", math.nan)) != P_STD:
         raise ValueError("V20 checkpoint p_std mismatch")
-    if checkpoint.get("edm_p_mean_mode") != "sigma_data_fraction":
+    if checkpoint.get("edm_p_mean_mode") != "log_sigma_data_fraction":
         raise ValueError("V20 checkpoint did not use the E3 relative-noise mode")
     if float(checkpoint.get("edm_p_mean_sigma_data_fraction", math.nan)) != 0.6:
         raise ValueError("V20 checkpoint sigma_data fraction mismatch")

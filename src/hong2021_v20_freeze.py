@@ -157,7 +157,7 @@ def create_seal(
         raise ValueError("selected V20 model has wrong registry provenance")
     if checkpoint.get("edm_p_mean") != P_MEAN or checkpoint.get("edm_p_std") != P_STD:
         raise ValueError("selected V20 model has wrong E3 relative-noise constants")
-    if checkpoint.get("edm_p_mean_mode") != "sigma_data_fraction":
+    if checkpoint.get("edm_p_mean_mode") != "log_sigma_data_fraction":
         raise ValueError("selected V20 model has wrong p_mean mode")
     if correction.get("schema") != "hong2021-v14-three-domain-zero-dc-mean-correction-v1":
         raise ValueError("unexpected mean-correction checkpoint schema")
@@ -308,7 +308,7 @@ def verify_seal(
         raise RuntimeError("V20 seal does not retain the E8 checkpoint")
     if invariants.get("edm_p_mean") != P_MEAN or invariants.get("edm_p_std") != P_STD:
         raise RuntimeError("V20 seal does not retain the E3 relative-noise distribution")
-    if invariants.get("edm_p_mean_mode") != "sigma_data_fraction":
+    if invariants.get("edm_p_mean_mode") != "log_sigma_data_fraction":
         raise RuntimeError("V20 seal does not retain the relative p_mean mode")
     initialization = record.get("initialization", {})
     if initialization.get("registry_sha256") != FROZEN_REGISTRY_SHA256:

@@ -32,7 +32,7 @@ def _record(tmp_path: Path, repo: Path, code_commit: str) -> dict:
             "decoder_upsampling": "nearest",
             "edm_p_mean": P_MEAN,
             "edm_p_std": P_STD,
-            "edm_p_mean_mode": "sigma_data_fraction",
+            "edm_p_mean_mode": "log_sigma_data_fraction",
         },
         "initialization": {
             "registry_sha256": FROZEN_REGISTRY_SHA256,

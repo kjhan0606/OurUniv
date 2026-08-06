@@ -288,7 +288,7 @@ def evaluate(
         raise ValueError("V20 training run registry provenance mismatch")
     if run.get("edm_p_mean") != P_MEAN or run.get("edm_p_std") != P_STD:
         raise ValueError("V20 training run noise distribution mismatch")
-    if run.get("edm_p_mean_mode") != "sigma_data_fraction":
+    if run.get("edm_p_mean_mode") != "log_sigma_data_fraction":
         raise ValueError("V20 training run p_mean mode mismatch")
     if run.get("sigma_data") != initialization["sigma_data"]:
         raise ValueError("V20 training run sigma_data mismatch")

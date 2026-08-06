@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import json
+
 import h5py
 import numpy as np
 import pytest
 
 import hong2021_v20_development_gate as gate
+from hong2021_v14_edm import V20_E8_SCHEMA, resolve_edm_p_mean
 
 
 def _domain(*, q3: float, maximum: float, q4: float, q5: bool = True):
@@ -56,3 +59,43 @@ def test_v20_marginal_diagnostics_uses_unique_truth_and_all_generated(tmp_path) 
         np.mean(generated_delta**2)
     )
     assert result["generated_max_log10rho"] == pytest.approx(0.9)
+
+
+def test_v20_gate_accepts_the_mode_emitted_by_training(tmp_path, monkeypatch) -> None:
+    _, produced_mode = resolve_edm_p_mean(
+        0.9999915369331587, fixed_p_mean=0.0, sigma_data_fraction=0.6
+    )
+    assert produced_mode == "log_sigma_data_fraction"
+    registry = {
+        "e8_gaussianized_marginal_retrain": {
+            "initialization_and_normalization": {
+                "sigma_data": 0.9999915369331587,
+            },
+        },
+    }
+    training = tmp_path / "training"
+    training.mkdir()
+    (training / "run.json").write_text(json.dumps({
+        "status": "complete",
+        "schema": V20_E8_SCHEMA,
+        "experiment_registry_sha256": gate.FROZEN_REGISTRY_SHA256,
+        "edm_p_mean": gate.P_MEAN,
+        "edm_p_std": gate.P_STD,
+        "edm_p_mean_mode": produced_mode,
+        "sigma_data": 0.9999915369331587,
+    }))
+    monkeypatch.setattr(gate, "load_frozen_registry", lambda path, repo: registry)
+
+    class ReachedPastRunMetadata(RuntimeError):
+        pass
+
+    def reached(_registry):
+        raise ReachedPastRunMetadata
+
+    monkeypatch.setattr(gate, "_remeasure_variance", reached)
+    with pytest.raises(ReachedPastRunMetadata):
+        gate.evaluate(
+            root=tmp_path / "candidates", training=training,
+            registry_path=tmp_path / "registry.json", repo=tmp_path,
+            gate_code_commit="a" * 40,
+        )
