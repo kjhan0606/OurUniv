@@ -1,0 +1,28 @@
+{
+  "schema": "hong2021-v21-derived-artifact-attestation-v1",
+  "generated_on": "Lageunha",
+  "astrid_accessed": false,
+  "historical_eagle_accessed": false,
+  "profile": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/conditional_affine_profile.json",
+    "sha256": "42dec0a94a250a87c2a8996de95e3b8535b577fc19afaeb9e23f2ecbad8c9506"
+  },
+  "gaussianization": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/gaussianization_v21.json",
+    "sha256": "87166d1d8a3c6c38dc157d046f76a9750dcc67b903fd6ead05264197e756ca0a"
+  },
+  "caches": {
+    "TNG100_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5", "sha256": "fe01f23c5d983814caa2032d261a46c916810b3572c5c2ac53faf051c5a3874f"},
+    "TNG100_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5", "sha256": "cdae25c62d5691e8a76737a36503ec8b0e98c0e12a76ee24fae2f10987b3d8b6"},
+    "SIMBA_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5", "sha256": "100574c8118c4ae93c66fbb4fb769b4981015cee435b2f822bfc186cbc2ad10d"},
+    "SIMBA_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5", "sha256": "66d731ab51b725cff3686d3caacdd11e6869ee4a8d13694a85997832158be0ad"},
+    "Swift_train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5", "sha256": "bc5539b8d13f9d8c942d50f9d88747ce5c6f0201cdd2e0cf2d0059f032f25be7"},
+    "Swift_validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "eb8d306548f1d312ab46830cd0219bed4c76044781da33689d69a3cd3c224687"}
+  },
+  "initialization": {
+    "sigma_data": 0.9999819216912903,
+    "p_mean": -0.5108437022381149,
+    "p_std": 1.2,
+    "rule": "sigma_data=sqrt(equal-source mean of final postprojection train-cache RMS squared); p_mean=ln(0.6*sigma_data)"
+  }
+}
