@@ -123,6 +123,47 @@ def inverse_cube(latent: np.ndarray, mean: np.ndarray, profile: Mapping, transfo
     return invert_profile(u, mean, profile)
 
 
+def prepare_cache(source: Path, output: Path, profile: Mapping, transform: Mapping) -> dict:
+    """Materialize one V21 cache with the inherited exact-zero-DC projection."""
+    from hong2021_v20_gaussianize import exact_zero_dc_projection
+    if output.exists() or output.with_suffix(output.suffix + ".partial").exists():
+        raise RuntimeError(f"refusing to overwrite V21 cache: {output}")
+    partial = output.with_suffix(output.suffix + ".partial")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    maximum_dc = 0.0; maximum_adjustment = 0.0; total = 0
+    with h5py.File(source, "r") as src, h5py.File(partial, "w") as dst:
+        for key, value in src.attrs.items():
+            dst.attrs[key] = value
+        dst.attrs["schema"] = "hong2021-v21-conditional-affine-standardized-residual-cache-v1"
+        dst.attrs["complete"] = False
+        dst.attrs["v21_profile_schema"] = str(profile["schema"])
+        dst.attrs["v21_transform_schema"] = str(transform["schema"])
+        for name, dataset in src.items():
+            if name == "standardized_residual":
+                dst.create_dataset(name, shape=dataset.shape, dtype="f4", chunks=dataset.chunks, compression=dataset.compression)
+            else:
+                src.copy(name, dst)
+        latent_dc = dst.create_dataset("latent_dc", shape=(src["standardized_residual"].shape[0],), dtype="f8")
+        projection_dc = dst.create_dataset("dc_projection_ortho", shape=(src["standardized_residual"].shape[0],), dtype="f8")
+        for index in range(src["standardized_residual"].shape[0]):
+            residual = np.asarray(src["standardized_residual"][index, 0], dtype=np.float32)
+            mean = np.asarray(src["conditional_mean"][index, 0], dtype=np.float32)
+            value, dc, audit = transform_cube(residual, mean, profile, transform)
+            dst["standardized_residual"][index, 0] = value
+            latent_dc[index] = dc; projection_dc[index] = audit["final_ortho_dc"]
+            maximum_dc = max(maximum_dc, float(audit["final_ortho_dc"]))
+            maximum_adjustment = max(maximum_adjustment, abs(float(audit["adjustment"])))
+            total += 1
+        dst.attrs["complete"] = True
+        dst.attrs["objects"] = total
+        dst.attrs["maximum_postprojection_ortho_dc"] = maximum_dc
+        dst.attrs["maximum_absolute_adjustment"] = maximum_adjustment
+    partial.replace(output)
+    import hashlib
+    digest = hashlib.sha256(output.read_bytes()).hexdigest()
+    return {"path": str(output), "sha256": digest, "objects": total, "maximum_postprojection_ortho_dc": maximum_dc, "maximum_absolute_adjustment": maximum_adjustment}
+
+
 def fit_v21_transform(train_paths: Mapping[str, Path], profile: Mapping, *, histogram_bins: int = 131072, knots: int = 8193, z_limit: float = 5.0) -> dict:
     """Fit G21 by streaming affine-normalized training voxels through temporary caches.
 
