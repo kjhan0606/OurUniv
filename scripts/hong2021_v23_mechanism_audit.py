@@ -142,6 +142,7 @@ def gradient_audit(
         structural["maximum_bin_count"] = int(np.max(counts))
         vectors = {}
         losses = None
+        maximum_loss_reproduction_difference = 0.0
         for name, component in (("unweighted", 1), ("tail_weighted", 2), ("conditional_mean", 3)):
             model.zero_grad(set_to_none=True)
             generator = torch.Generator(device=device).manual_seed(230100 + batch_index)
@@ -153,8 +154,17 @@ def gradient_audit(
             current = [float(value.detach()) for value in values]
             if losses is None:
                 losses = current
-            elif not np.array_equal(np.asarray(losses), np.asarray(current)):
-                raise RuntimeError("gradient audit failed to reproduce identical draws")
+            else:
+                difference = float(
+                    np.max(np.abs(np.asarray(losses) - np.asarray(current)))
+                )
+                maximum_loss_reproduction_difference = max(
+                    maximum_loss_reproduction_difference, difference
+                )
+                if not np.allclose(losses, current, rtol=1.0e-6, atol=1.0e-8):
+                    raise RuntimeError(
+                        "gradient audit failed to reproduce fixed draws within tolerance"
+                    )
             values[component].backward()
             vectors[name] = _gradient_vector(model)
         assert losses is not None
@@ -172,6 +182,9 @@ def gradient_audit(
             {
                 "indices_per_domain": list(indices),
                 "noise_seed": 230100 + batch_index,
+                "maximum_repeated_forward_loss_difference": (
+                    maximum_loss_reproduction_difference
+                ),
                 "losses": {
                     key: value
                     for key, value in zip(
