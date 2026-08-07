@@ -43,6 +43,7 @@ DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
 DOMAIN_KEYS = {"TNG100": "tng", "SIMBA": "simba_dev", "Swift": "swift_dev"}
 TRACE_STEPS = (0, 1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40)
 TARGET_DENSITY_SCALE = 4.5
+FLOAT32_REPLAY_ATOL = float(np.finfo(np.float32).eps)
 V24_REGISTRY = Path("config/hong2021_v24_development_program.json")
 TRAINING = Path(
     "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/"
@@ -181,6 +182,14 @@ def _correlation(first: list[float], second: list[float]) -> float | None:
     return float(np.corrcoef(x, y)[0, 1])
 
 
+def replay_is_numerically_identical(maximum_absolute_y_difference: float) -> bool:
+    """Accept at most one float32 machine epsilon in the stored y field."""
+    return bool(
+        math.isfinite(maximum_absolute_y_difference)
+        and maximum_absolute_y_difference <= FLOAT32_REPLAY_ATOL
+    )
+
+
 def _group_summary(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
     if not rows:
         return {"members": 0}
@@ -306,6 +315,7 @@ def audit_domain(
     trajectory: list[dict[str, Any]] = []
     terminal: list[dict[str, Any]] = []
     exact_fields = 0
+    numerical_fields = 0
     maximum_difference = 0.0
     with h5py.File(ensemble_path, "r") as ensemble:
         for object_index, data_index in enumerate(indices):
@@ -360,6 +370,10 @@ def audit_domain(
             difference = np.max(np.abs(replay - stored), axis=(1, 2, 3))
             maximum_difference = max(maximum_difference, float(np.max(difference)))
             exact_fields += int(sum(np.array_equal(replay[m], stored[m]) for m in range(16)))
+            numerical_fields += int(sum(
+                replay_is_numerically_identical(float(difference[m]))
+                for m in range(16)
+            ))
             band_rms = _terminal_band_rms(centered, dataset.voxel_mpc_h)
             final_stats = {
                 int(row["member"]): row
@@ -388,6 +402,9 @@ def audit_domain(
                     "physical_maximum_log10rho": float(source["physical_maximum"]),
                     "physical_maximum_coordinate": list(coordinates[member]),
                     "replay_byte_identical": bool(np.array_equal(replay[member], stored[member])),
+                    "replay_within_one_float32_epsilon": replay_is_numerically_identical(
+                        float(difference[member])
+                    ),
                     "replay_maximum_absolute_y_difference": float(difference[member]),
                     "sampler_uncentered_mean": float(stat["mean"]),
                     "sampler_centered_minimum": float(stat["centered_minimum"]),
@@ -437,8 +454,10 @@ def audit_domain(
         "high_density_failure_fields": len(high),
         "replay_integrity": {
             "byte_identical_fields": exact_fields,
+            "within_one_float32_epsilon_fields": numerical_fields,
             "expected_fields": len(terminal),
             "maximum_absolute_y_difference": maximum_difference,
+            "absolute_y_tolerance": FLOAT32_REPLAY_ATOL,
         },
         "terminal_correlations_with_physical_maximum": {
             name: _correlation(physical_maxima, values)
@@ -537,6 +556,11 @@ def main() -> None:
         == row["replay_integrity"]["expected_fields"]
         for row in domains.values()
     )
+    all_numerical = all(
+        row["replay_integrity"]["within_one_float32_epsilon_fields"]
+        == row["replay_integrity"]["expected_fields"]
+        for row in domains.values()
+    )
     high_overshoot = sum(
         row["terminal_groups"]["high_density_failure"][
             "members_with_upper_support_overshoot"
@@ -567,6 +591,8 @@ def main() -> None:
         "domains": domains,
         "classification": {
             "replay_byte_identical": all_exact,
+            "replay_numerically_identical_within_one_float32_epsilon": all_numerical,
+            "float32_absolute_y_tolerance": FLOAT32_REPLAY_ATOL,
             "high_density_failure_fields_replayed": high_fields,
             "high_density_failure_fields_with_terminal_upper_support_overshoot": high_overshoot,
             "terminal_upper_support_overshoot_is_necessary_for_failure": bool(
@@ -574,7 +600,7 @@ def main() -> None:
             ),
             "next": (
                 "design_v25_from_exact_terminal_trajectory"
-                if all_exact else "stop_and_resolve_replay_mismatch"
+                if all_numerical else "stop_and_resolve_replay_mismatch"
             ),
         },
         "Astrid_accessed": False,

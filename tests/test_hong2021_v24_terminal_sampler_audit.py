@@ -3,7 +3,11 @@ from __future__ import annotations
 import torch
 
 from hong2021_residual_v6 import sample_edm
-from scripts.hong2021_v24_terminal_sampler_audit import sample_edm_with_trace
+from scripts.hong2021_v24_terminal_sampler_audit import (
+    FLOAT32_REPLAY_ATOL,
+    replay_is_numerically_identical,
+    sample_edm_with_trace,
+)
 
 
 class ZeroNetwork(torch.nn.Module):
@@ -37,3 +41,9 @@ def test_traced_sampler_is_bit_identical_to_frozen_sampler() -> None:
     assert torch.equal(actual, expected)
     assert [row["step"] for row in trace if row["phase"] == "state" and row["member"] == 0] == [0, 1, 2, 4]
     assert torch.equal(first.get_state(), second.get_state())
+
+
+def test_replay_integrity_allows_only_one_float32_epsilon() -> None:
+    assert replay_is_numerically_identical(0.5 * FLOAT32_REPLAY_ATOL)
+    assert replay_is_numerically_identical(FLOAT32_REPLAY_ATOL)
+    assert not replay_is_numerically_identical(1.01 * FLOAT32_REPLAY_ATOL)
