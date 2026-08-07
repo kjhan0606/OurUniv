@@ -50,6 +50,10 @@ from hong2021_v23_conditional_loss import (
     conditional_mean_tail_edm_loss,
     fixed_conditional_validation,
 )
+from hong2021_v25_loss import (
+    fixed_proper_unweighted_validation,
+    proper_unweighted_edm_loss,
+)
 
 
 SCHEMA = "hong2021-v14-three-domain-multiscale-observable-context-edm-v1"
@@ -63,6 +67,7 @@ V21_E9_SCHEMA = "hong2021-v21-conditional-affine-multiscale-edm-v1"
 V22_E10_SCHEMA = "hong2021-v22-long-horizon-conditional-affine-multiscale-edm-v1"
 V23_E11_SCHEMA = "hong2021-v23-conditional-mean-penalty-multiscale-edm-v1"
 V24_E12_SCHEMA = "hong2021-v24-base48-capacity-multiscale-edm-v1"
+V25_E13_SCHEMA = "hong2021-v25-base48-unweighted-score-edm-v1"
 V20_GAUSSIANIZED_CACHE_SCHEMA = (
     "hong2021-v20-gaussianized-multiscale-standardized-residual-cache-v1"
 )
@@ -72,7 +77,7 @@ V21_CONDITIONAL_AFFINE_CACHE_SCHEMA = (
 SUPPORTED_CHECKPOINT_SCHEMAS = (
     SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA,
     V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA,
-    V23_E11_SCHEMA, V24_E12_SCHEMA,
+    V23_E11_SCHEMA, V24_E12_SCHEMA, V25_E13_SCHEMA,
 )
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
@@ -357,7 +362,8 @@ def train(args: argparse.Namespace) -> None:
             if run_schema == V20_E8_SCHEMA
             else "exact-zero-DC conditional-affine Gaussianized multiscale-standardized corrected residual"
             if run_schema in (
-                V21_E9_SCHEMA, V22_E10_SCHEMA, V23_E11_SCHEMA, V24_E12_SCHEMA
+                V21_E9_SCHEMA, V22_E10_SCHEMA, V23_E11_SCHEMA, V24_E12_SCHEMA,
+                V25_E13_SCHEMA,
             )
             else "zero-DC multiscale-standardized corrected residual"
         ),
@@ -411,6 +417,13 @@ def train(args: argparse.Namespace) -> None:
             }
             if run_schema == V23_E11_SCHEMA
             else {
+                "coefficients": {"unweighted": 1.0, "tail_weighted": 0.0},
+                "tail_weighted_role": "detached_diagnostic_only",
+                "proper_score_for_unreweighted_conditional_distribution": True,
+                "band_balanced": False,
+            }
+            if run_schema == V25_E13_SCHEMA
+            else {
                 "coefficients": {"unweighted": 0.5, "tail_weighted": 0.5},
                 "band_balanced": False,
             }
@@ -424,7 +437,7 @@ def train(args: argparse.Namespace) -> None:
         "code_commit_at_launch": getattr(args, "code_commit_at_launch", None),
         "worktree_clean_at_launch": getattr(args, "worktree_clean_at_launch", None),
     }
-    if run_schema in (V23_E11_SCHEMA, V24_E12_SCHEMA):
+    if run_schema in (V23_E11_SCHEMA, V24_E12_SCHEMA, V25_E13_SCHEMA):
         metadata.update(
             {
                 "hard_preflight": args.hard_preflight,
@@ -445,6 +458,8 @@ def train(args: argparse.Namespace) -> None:
             "conditional_mean_loss",
         )
         if run_schema == V23_E11_SCHEMA
+        else ("unweighted", "tail_weighted_diagnostic")
+        if run_schema == V25_E13_SCHEMA
         else ("combined", "unweighted", "tail_weighted")
     )
     interval = np.zeros(len(loss_names) + 1, dtype=np.float64)
@@ -473,6 +488,18 @@ def train(args: argparse.Namespace) -> None:
                     conditional_edges, noise, sigma_data, effective_p_mean,
                     args.edm_p_std, args.lambda_conditional_mean,
                     args.conditional_minimum_count,
+                )
+            elif run_schema == V25_E13_SCHEMA:
+                values = proper_unweighted_edm_loss(
+                    model,
+                    residual,
+                    condition,
+                    truth,
+                    bin_weights,
+                    noise,
+                    sigma_data,
+                    effective_p_mean,
+                    args.edm_p_std,
                 )
             else:
                 values = tail_balanced_edm_loss(
@@ -507,6 +534,25 @@ def train(args: argparse.Namespace) -> None:
                     for name in DOMAINS
                 }
                 validation_key = "fixed_band_balanced_validation"
+            elif run_schema == V25_E13_SCHEMA:
+                validation_diagnostics = {
+                    name: fixed_proper_unweighted_validation(
+                        ema_model,
+                        validation_loaders[name],
+                        device,
+                        bin_weights,
+                        validation_seeds[name],
+                        sigma_data,
+                        effective_p_mean,
+                        args.edm_p_std,
+                    )
+                    for name in DOMAINS
+                }
+                validation = {
+                    name: values[0]
+                    for name, values in validation_diagnostics.items()
+                }
+                validation_key = "fixed_unweighted_validation"
             else:
                 validation = {
                     name: fixed_tail_validation_loss(
@@ -553,9 +599,16 @@ def train(args: argparse.Namespace) -> None:
                     np.mean(list(conditional_validation.values()))
                 )
                 row["conditional_validation_selection_role"] = "none"
+            if run_schema == V25_E13_SCHEMA:
+                row["fixed_tail_weighted_validation_diagnostic"] = {
+                    name: values[1]
+                    for name, values in validation_diagnostics.items()
+                }
+                row["tail_weighted_validation_selection_role"] = "none"
             if run_schema in (
                 V17_E5_SCHEMA, V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA,
                 V22_E10_SCHEMA, V23_E11_SCHEMA, V24_E12_SCHEMA,
+                V25_E13_SCHEMA,
             ):
                 row["gradient_diagnostic"] = {
                     "mean_norm_before_fixed_clip": gradient_norm_sum / gradient_updates,
@@ -579,7 +632,7 @@ def train(args: argparse.Namespace) -> None:
                 output / "last.pt",
             )
             print(
-                f"step={step:06d} train={row['train'][('combined_loss' if run_schema == V23_E11_SCHEMA else 'combined')]:.6e} "
+                f"step={step:06d} train={row['train'][('combined_loss' if run_schema == V23_E11_SCHEMA else 'unweighted' if run_schema == V25_E13_SCHEMA else 'combined')]:.6e} "
                 + " ".join(f"{name}={validation[name]:.6e}" for name in DOMAINS)
                 + f" elapsed={row['elapsed_seconds']:.0f}s",
                 flush=True,
