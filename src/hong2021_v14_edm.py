@@ -46,6 +46,10 @@ from hong2021_v17_loss import (
     fixed_band_balanced_validation_loss,
     prepare_fourier_band_loss,
 )
+from hong2021_v23_conditional_loss import (
+    conditional_mean_tail_edm_loss,
+    fixed_conditional_validation,
+)
 
 
 SCHEMA = "hong2021-v14-three-domain-multiscale-observable-context-edm-v1"
@@ -57,6 +61,7 @@ V19_E7_SCHEMA = "hong2021-v19-e7-band-anchored-noise-multiscale-edm-v1"
 V20_E8_SCHEMA = "hong2021-v20-e8-gaussianized-marginal-multiscale-edm-v1"
 V21_E9_SCHEMA = "hong2021-v21-conditional-affine-multiscale-edm-v1"
 V22_E10_SCHEMA = "hong2021-v22-long-horizon-conditional-affine-multiscale-edm-v1"
+V23_E11_SCHEMA = "hong2021-v23-conditional-mean-penalty-multiscale-edm-v1"
 V20_GAUSSIANIZED_CACHE_SCHEMA = (
     "hong2021-v20-gaussianized-multiscale-standardized-residual-cache-v1"
 )
@@ -66,6 +71,7 @@ V21_CONDITIONAL_AFFINE_CACHE_SCHEMA = (
 SUPPORTED_CHECKPOINT_SCHEMAS = (
     SCHEMA, V15_E2_SCHEMA, V15_E3_SCHEMA, V16_E4_SCHEMA, V17_E5_SCHEMA,
     V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA,
+    V23_E11_SCHEMA,
 )
 ENSEMBLE_SCHEMA = "hong2021-v14-multiscale-location-scale-edm-ensemble-v1"
 
@@ -289,6 +295,20 @@ def train(args: argparse.Namespace) -> None:
             for name, value in validation_datasets.items()
         }
     bin_weights = torch.tensor(tail_fit["weights"], device=device)
+    conditional_edges = None
+    if run_schema == V23_E11_SCHEMA:
+        edge_values = getattr(args, "conditional_mean_edges", None)
+        if edge_values is None or len(edge_values) != 11:
+            raise ValueError("V23 requires the 11 frozen conditional-mean edges")
+        conditional_edges = torch.tensor(
+            edge_values, dtype=torch.float64, device=device
+        )
+        if not bool(torch.all(conditional_edges[1:] > conditional_edges[:-1])):
+            raise ValueError("V23 conditional-mean edges must be strictly increasing")
+        if getattr(args, "lambda_conditional_mean", None) != 1.0:
+            raise ValueError("V23 freezes lambda_conditional_mean at 1.0")
+        if getattr(args, "conditional_minimum_count", None) != 64:
+            raise ValueError("V23 freezes conditional_minimum_count at 64")
     source_batch = args.batch // len(DOMAINS)
     train_loaders = {
         name: make_loader(
@@ -335,7 +355,7 @@ def train(args: argparse.Namespace) -> None:
             "exact-zero-DC Gaussianized multiscale-standardized corrected residual"
             if run_schema == V20_E8_SCHEMA
             else "exact-zero-DC conditional-affine Gaussianized multiscale-standardized corrected residual"
-            if run_schema in (V21_E9_SCHEMA, V22_E10_SCHEMA)
+            if run_schema in (V21_E9_SCHEMA, V22_E10_SCHEMA, V23_E11_SCHEMA)
             else "zero-DC multiscale-standardized corrected residual"
         ),
         "data": {
@@ -375,6 +395,19 @@ def train(args: argparse.Namespace) -> None:
             band_loss_specification
             if run_schema == V17_E5_SCHEMA
             else {
+                "coefficients": {
+                    "unweighted": 0.5,
+                    "tail_weighted": 0.5,
+                    "conditional_mean": 1.0,
+                },
+                "conditional_mean_channel": 2,
+                "conditional_mean_edges": list(args.conditional_mean_edges),
+                "conditional_minimum_count": args.conditional_minimum_count,
+                "conditional_bin_rule": "clamp(bucketize(m, edges, right=True)-1, 0, 9)",
+                "band_balanced": False,
+            }
+            if run_schema == V23_E11_SCHEMA
+            else {
                 "coefficients": {"unweighted": 0.5, "tail_weighted": 0.5},
                 "band_balanced": False,
             }
@@ -388,6 +421,15 @@ def train(args: argparse.Namespace) -> None:
         "code_commit_at_launch": getattr(args, "code_commit_at_launch", None),
         "worktree_clean_at_launch": getattr(args, "worktree_clean_at_launch", None),
     }
+    if run_schema == V23_E11_SCHEMA:
+        metadata.update(
+            {
+                "hard_preflight": args.hard_preflight,
+                "hard_preflight_sha256": args.hard_preflight_sha256,
+                "execution_host": args.execution_host,
+                "execution_gpu": args.execution_gpu,
+            }
+        )
     (output / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(json.dumps(metadata, indent=2), flush=True)
     iterators = {name: cycling(train_loaders[name]) for name in DOMAINS}
@@ -395,6 +437,11 @@ def train(args: argparse.Namespace) -> None:
     loss_names = (
         ("combined", "unweighted", "tail_weighted", "band_balanced")
         if run_schema == V17_E5_SCHEMA
+        else (
+            "combined_loss", "unweighted_loss", "tail_weighted_loss",
+            "conditional_mean_loss",
+        )
+        if run_schema == V23_E11_SCHEMA
         else ("combined", "unweighted", "tail_weighted")
     )
     interval = np.zeros(len(loss_names) + 1, dtype=np.float64)
@@ -415,6 +462,14 @@ def train(args: argparse.Namespace) -> None:
                 values = band_balanced_tail_edm_loss(
                     model, residual, condition, truth, bin_weights, band_masks,
                     noise, sigma_data, effective_p_mean, args.edm_p_std,
+                )
+            elif run_schema == V23_E11_SCHEMA:
+                assert conditional_edges is not None
+                values = conditional_mean_tail_edm_loss(
+                    model, residual, condition, truth, bin_weights,
+                    conditional_edges, noise, sigma_data, effective_p_mean,
+                    args.edm_p_std, args.lambda_conditional_mean,
+                    args.conditional_minimum_count,
                 )
             else:
                 values = tail_balanced_edm_loss(
@@ -459,6 +514,18 @@ def train(args: argparse.Namespace) -> None:
                     for name in DOMAINS
                 }
                 validation_key = "fixed_tail_validation"
+            conditional_validation = None
+            if run_schema == V23_E11_SCHEMA:
+                assert conditional_edges is not None
+                conditional_validation = {
+                    name: fixed_conditional_validation(
+                        ema_model, validation_loaders[name], device,
+                        conditional_edges, validation_seeds[name] + 20,
+                        sigma_data, effective_p_mean, args.edm_p_std,
+                        args.conditional_minimum_count,
+                    )
+                    for name in DOMAINS
+                }
             row = {
                 "step": step,
                 "train": dict(
@@ -477,7 +544,13 @@ def train(args: argparse.Namespace) -> None:
                 "learning_rate": float(optimizer.param_groups[0]["lr"]),
                 "elapsed_seconds": time.time() - started,
             }
-            if run_schema in (V17_E5_SCHEMA, V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA):
+            if conditional_validation is not None:
+                row["fixed_conditional_validation"] = conditional_validation
+                row["balanced_conditional_validation"] = float(
+                    np.mean(list(conditional_validation.values()))
+                )
+                row["conditional_validation_selection_role"] = "none"
+            if run_schema in (V17_E5_SCHEMA, V19_E7_SCHEMA, V20_E8_SCHEMA, V21_E9_SCHEMA, V22_E10_SCHEMA, V23_E11_SCHEMA):
                 row["gradient_diagnostic"] = {
                     "mean_norm_before_fixed_clip": gradient_norm_sum / gradient_updates,
                     "fixed_clip_activation_fraction": (
@@ -500,7 +573,7 @@ def train(args: argparse.Namespace) -> None:
                 output / "last.pt",
             )
             print(
-                f"step={step:06d} train={row['train']['combined']:.6e} "
+                f"step={step:06d} train={row['train'][('combined_loss' if run_schema == V23_E11_SCHEMA else 'combined')]:.6e} "
                 + " ".join(f"{name}={validation[name]:.6e}" for name in DOMAINS)
                 + f" elapsed={row['elapsed_seconds']:.0f}s",
                 flush=True,

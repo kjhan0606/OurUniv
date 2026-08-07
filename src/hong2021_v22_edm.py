@@ -113,17 +113,27 @@ def _validate_checkpoint(path: Path, *, step: int, artifacts: dict[str, Any]) ->
 
 
 @torch.inference_mode()
-def sample(args: argparse.Namespace) -> None:
+def sample_frozen_conditional_affine(
+    args: argparse.Namespace,
+    *,
+    program_loader=load_frozen_program,
+    checkpoint_validator=_validate_checkpoint,
+    registry_sha: str = REGISTRY_SHA256,
+    registry_metadata_key: str = "v22_registry_sha256",
+    label: str = "V22",
+) -> None:
     repo = args.repo.resolve()
-    registry, artifacts, v20, _ = load_frozen_program(args.registry.resolve(), repo)
+    registry, artifacts, v20, _ = program_loader(args.registry.resolve(), repo)
     commit, clean = git_state(repo)
     if not clean:
-        raise RuntimeError("V22 sampling requires a clean committed worktree")
+        raise RuntimeError(f"{label} sampling requires a clean committed worktree")
     domain, step = args.domain, int(args.step)
     if domain not in ("TNG100", "SIMBA", "Swift") or step not in (10000, 20000, 30000):
-        raise ValueError("V22 domain or step is not preregistered")
+        raise ValueError(f"{label} domain or step is not preregistered")
     checkpoint_path = args.training_root.resolve() / "validation_checkpoints" / f"step_{step:06d}.pt"
-    checkpoint, checkpoint_sha = _validate_checkpoint(checkpoint_path, step=step, artifacts=artifacts)
+    checkpoint, checkpoint_sha = checkpoint_validator(
+        checkpoint_path, step=step, artifacts=artifacts
+    )
     experiment = v20["e8_gaussianized_marginal_retrain"]
     data = experiment["data"][domain]["validation_data"]
     cache_key = {"TNG100": "TNG100_validation", "SIMBA": "SIMBA_validation", "Swift": "Swift_validation"}[domain]
@@ -142,7 +152,7 @@ def sample(args: argparse.Namespace) -> None:
     model.load_state_dict(checkpoint["ema_model"]); model.eval().to(device)
     dataset = V14ResidualDataset(data_path, cache_path, False)
     if dataset.cache_schema != V21_CONDITIONAL_AFFINE_CACHE_SCHEMA or dataset.grid != 64 or dataset.voxel_mpc_h != 0.3125:
-        raise ValueError("V22 inherited cache schema or grid mismatch")
+        raise ValueError(f"{label} inherited cache schema or grid mismatch")
     sigmas = karras_sigmas(int(sampler["steps"]), float(sampler["sigma_min"]), float(sampler["sigma_max"]), float(sampler["rho"]), device)
     sigma_first = float(sigmas[0])
     initialization = artifacts["initialization"]
@@ -156,11 +166,11 @@ def sample(args: argparse.Namespace) -> None:
         maximum_imaginary_ratio=maximum_imaginary,
     )
     if not _rng_pairing_self_check(device, initializer, grid=dataset.grid):
-        raise RuntimeError("V22 initializer changed the paired random stream")
+        raise RuntimeError(f"{label} initializer changed the paired random stream")
     profile = json.loads(Path(artifacts["profile"]["path"]).read_text())
     transform = json.loads(Path(artifacts["gaussianization"]["path"]).read_text())
     if transform.get("profile_sha256") != artifacts["profile"]["sha256"]:
-        raise ValueError("V22 transform/profile binding mismatch")
+        raise ValueError(f"{label} transform/profile binding mismatch")
     z_knots = torch.as_tensor(transform["z_knots"], dtype=torch.float32, device=device)
     residual_knots = torch.as_tensor(transform["residual_value_knots"], dtype=torch.float32, device=device)
     centers = torch.as_tensor(profile["centers"], dtype=torch.float64, device=device)
@@ -177,7 +187,19 @@ def sample(args: argparse.Namespace) -> None:
     if not torch.equal(cpu_state, torch.random.get_rng_state()) or (
         cuda_state is not None and not torch.equal(cuda_state, torch.cuda.get_rng_state(device))
     ):
-        raise RuntimeError("V22 conditional inverse consumed RNG state")
+        raise RuntimeError(f"{label} conditional inverse consumed RNG state")
+    provenance = {
+        "source_cache": str(cache_path), "source_cache_sha256": cache["sha256"],
+        "source_data_sha256": data["sha256"], registry_metadata_key: registry_sha,
+        "v21_artifact_attestation_sha256": ARTIFACT_SHA256,
+        "v21_profile_sha256": artifacts["profile"]["sha256"],
+        "v21_gaussianization_sha256": artifacts["gaussianization"]["sha256"],
+        "init_measurement_report_sha256": initialization["measurement_sha256"],
+        "init_band_mode_variances_json": json.dumps(initialization["source_balanced_band_mode_variance"]),
+        "conditional_inverse_additional_rng_draws": 0, "training_noise_p_mean": P_MEAN,
+        "training_noise_p_std": P_STD, "sampling_code_commit": commit,
+        "worktree_clean_at_sampling": clean,
+    }
     write_prior_matched_ensemble(
         model=model, dataset=dataset, checkpoint=checkpoint, checkpoint_path=checkpoint_path,
         checkpoint_sha256=checkpoint_sha, output=args.out.resolve(), indices=indices,
@@ -185,19 +207,13 @@ def sample(args: argparse.Namespace) -> None:
         sigma_min=float(sampler["sigma_min"]), sigma_max=float(sampler["sigma_max"]), rho=float(sampler["rho"]),
         seed=seed, device=device, initializer=initializer, sigma_first=sigma_first,
         conditional_latent_inverse=conditional_inverse,
-        metadata={
-            "source_cache": str(cache_path), "source_cache_sha256": cache["sha256"],
-            "source_data_sha256": data["sha256"], "v22_registry_sha256": REGISTRY_SHA256,
-            "v21_artifact_attestation_sha256": ARTIFACT_SHA256,
-            "v21_profile_sha256": artifacts["profile"]["sha256"],
-            "v21_gaussianization_sha256": artifacts["gaussianization"]["sha256"],
-            "init_measurement_report_sha256": initialization["measurement_sha256"],
-            "init_band_mode_variances_json": json.dumps(initialization["source_balanced_band_mode_variance"]),
-            "conditional_inverse_additional_rng_draws": 0, "training_noise_p_mean": P_MEAN,
-            "training_noise_p_std": P_STD, "sampling_code_commit": commit, "worktree_clean_at_sampling": clean,
-        },
-        progress_label=f"V22 {domain} {step}",
+        metadata=provenance,
+        progress_label=f"{label} {domain} {step}",
     )
+
+
+def sample(args: argparse.Namespace) -> None:
+    sample_frozen_conditional_affine(args)
 
 
 def main() -> None:
