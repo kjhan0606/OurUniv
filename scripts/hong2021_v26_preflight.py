@@ -72,9 +72,9 @@ def main() -> None:
         for parameter in model.parameters()
     )
     gradient_norm = float(torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0e9))
-    lowpass, details = haar_pyramid(residual[:1])
+    lowpass, details = haar_pyramid(residual[:1].double())
     recovered = inverse_haar_pyramid(lowpass, details)
-    haar_roundtrip = float((recovered - residual[:1]).abs().max())
+    haar_roundtrip = float((recovered - residual[:1].double()).abs().max())
     spatial_energy = float(residual[:1].double().square().sum())
     coefficient_energy = float(
         lowpass.double().square().sum()

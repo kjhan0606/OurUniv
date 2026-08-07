@@ -311,7 +311,9 @@ class ConditionalHaarSplineFlow(nn.Module):
         broadcast = global_context[:, :, None, None, None].expand(
             -1, -1, *resolution
         )
-        return torch.cat((pooled, coarse_lowpass, broadcast), dim=1)
+        return torch.cat(
+            (pooled, coarse_lowpass.to(dtype=condition.dtype), broadcast), dim=1
+        )
 
     def log_prob(
         self, latent: torch.Tensor, condition: torch.Tensor
@@ -320,7 +322,10 @@ class ConditionalHaarSplineFlow(nn.Module):
             raise ValueError("flow latent or condition channels differ")
         if latent.shape[0] != condition.shape[0] or latent.shape[-3:] != condition.shape[-3:]:
             raise ValueError("flow latent and condition shapes differ")
-        lowpass, details = haar_pyramid(latent, levels=self.levels)
+        # The V21 field contains large coarse coefficients.  Keep the fixed
+        # orthonormal coordinate transform in float64 so its roundtrip and
+        # Parseval identities are not degraded before the float32 flow.
+        lowpass, details = haar_pyramid(latent.double(), levels=self.levels)
         coarsest_dc = lowpass.flatten(1)[:, 0]
         global_context = self.standardized_global_context(condition)
         total = latent.new_zeros(len(latent), dtype=torch.float32)
@@ -332,9 +337,9 @@ class ConditionalHaarSplineFlow(nn.Module):
             zip(self.flows, reversed(details), strict=True)
         ):
             level = self.levels - 1 - coarse_index
-            mean = self.detail_mean[level][None, :, None, None, None]
-            std = self.detail_std[level][None, :, None, None, None]
-            detail = (raw_detail - mean) / std
+            mean = self.detail_mean[level].double()[None, :, None, None, None]
+            std = self.detail_std[level].double()[None, :, None, None, None]
+            detail = ((raw_detail - mean) / std).to(dtype=latent.dtype)
             context = self.scale_context(condition, lowpass, global_context)
             transformed, logabsdet = flow(detail, context)
             base_log_prob = -0.5 * (
@@ -378,7 +383,9 @@ class ConditionalHaarSplineFlow(nn.Module):
             raise ValueError("flow condition has the wrong shape")
         batch = len(condition)
         global_context = self.standardized_global_context(condition)
-        lowpass = condition.new_zeros((batch, 1, 1, 1, 1))
+        lowpass = torch.zeros(
+            (batch, 1, 1, 1, 1), device=condition.device, dtype=torch.float64
+        )
         for coarse_index, flow in enumerate(self.flows):
             level = self.levels - 1 - coarse_index
             resolution = 2**coarse_index
@@ -392,12 +399,13 @@ class ConditionalHaarSplineFlow(nn.Module):
             detail, _ = flow.inverse(base, context)
             mean = self.detail_mean[level][None, :, None, None, None]
             std = self.detail_std[level][None, :, None, None, None]
-            raw_detail = detail * std + mean
+            raw_detail = (detail * std + mean).double()
             lowpass = haar_synthesis(lowpass, raw_detail)
-        pre_center_mean = lowpass.mean(dim=(-3, -2, -1), keepdim=True)
-        lowpass -= pre_center_mean
-        post_center_mean = lowpass.mean(dim=(-3, -2, -1), keepdim=True)
-        return lowpass, {
+        sample = lowpass.to(dtype=condition.dtype)
+        pre_center_mean = sample.mean(dim=(-3, -2, -1), keepdim=True)
+        sample -= pre_center_mean
+        post_center_mean = sample.mean(dim=(-3, -2, -1), keepdim=True)
+        return sample, {
             "pre_center_mean": pre_center_mean.flatten(),
             "post_center_mean": post_center_mean.flatten(),
         }
