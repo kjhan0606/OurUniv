@@ -43,26 +43,33 @@ def _validate_ensemble_v22(
     path: Path, *, artifacts: dict[str, Any], v20: dict[str, Any],
     domain: str, step: int, checkpoint_path: Path, checkpoint_sha: str,
     expected_indices: list[int], gate_commit: str,
+    checkpoint_schema: str = V22_E10_SCHEMA,
+    registry_sha: str = REGISTRY_SHA256,
+    registry_metadata_key: str = "v22_registry_sha256",
+    label: str = "V22",
 ) -> dict[str, Any]:
     experiment = v20["e8_gaussianized_marginal_retrain"]
     source = REGISTRY_DOMAINS[domain]
     seed = int(experiment["sampler"]["sampling_seeds"][source])
-    _validate_ensemble(path, checkpoint=checkpoint_path, checkpoint_schema=V22_E10_SCHEMA, step=step, seed=seed)
+    _validate_ensemble(
+        path, checkpoint=checkpoint_path, checkpoint_schema=checkpoint_schema,
+        step=step, seed=seed,
+    )
     if _source_indices(path) != expected_indices:
-        raise ValueError("V22 ensemble source indices differ from frozen subset")
+        raise ValueError(f"{label} ensemble source indices differ from frozen subset")
     data = experiment["data"][source]["validation_data"]
     cache = artifacts["caches"][CACHE_KEYS[source]]
     init = artifacts["initialization"]
     with h5py.File(path, "r") as handle:
         if tuple(handle["sample"].shape) != (16, 16, 1, 64, 64, 64):
-            raise ValueError("V22 ensemble shape differs from 16x16x1x64^3")
+            raise ValueError(f"{label} ensemble shape differs from 16x16x1x64^3")
         sampling_commit = str(handle.attrs.get("sampling_code_commit", ""))
         if not _sampling_commit_is_ancestor(sampling_commit, gate_commit):
-            raise ValueError("V22 sampling commit is not an ancestor of gate commit")
+            raise ValueError(f"{label} sampling commit is not an ancestor of gate commit")
         exact = {
             "checkpoint_sha256": checkpoint_sha,
             "source_cache_sha256": cache["sha256"], "source_data_sha256": data["sha256"],
-            "init_schema": INIT_SCHEMA, "v22_registry_sha256": REGISTRY_SHA256,
+            "init_schema": INIT_SCHEMA, registry_metadata_key: registry_sha,
             "v21_artifact_attestation_sha256": ARTIFACT_SHA256,
             "v21_profile_sha256": artifacts["profile"]["sha256"],
             "v21_gaussianization_sha256": artifacts["gaussianization"]["sha256"],
@@ -77,11 +84,11 @@ def _validate_ensemble_v22(
             actual = handle.attrs.get(key)
             if isinstance(actual, np.generic): actual = actual.item()
             if actual != expected:
-                raise ValueError(f"V22 ensemble metadata differs: {key}")
+                raise ValueError(f"{label} ensemble metadata differs: {key}")
         effective_sigma = float(handle.attrs.get("init_sigma_effective_first_step", -1))
         imaginary = float(handle.attrs.get("init_maximum_imaginary_over_real_rms", np.inf))
         if abs(effective_sigma - 40.0) > 1e-4 or imaginary > 1e-12:
-            raise ValueError("V22 initialization metadata exceeds frozen bounds")
+            raise ValueError(f"{label} initialization metadata exceeds frozen bounds")
     return {"seed": seed, "effective_sigma_first_step": effective_sigma, "maximum_imaginary_over_real_rms": imaginary, "sampling_code_commit": sampling_commit}
 
 
