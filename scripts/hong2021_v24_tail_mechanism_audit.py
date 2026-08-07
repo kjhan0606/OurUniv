@@ -25,6 +25,7 @@ from hong2021_v21_conditional_affine import apply_profile
 
 
 SCHEMA = "hong2021-v24-high-density-tail-mechanism-audit-v1"
+TARGET_DENSITY_SCALE = 4.5
 DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
 GATE_KEYS = {"TNG100": "tng", "SIMBA": "simba_dev", "Swift": "swift_dev"}
 V24_DECISION = Path(
@@ -114,7 +115,8 @@ def forward_latent_diagnostics(
     raw_latent = np.interp(
         u.astype(np.float64), residual_knots, z_knots
     ).astype(np.float32)
-    centered = (raw_latent - raw_latent.mean(dtype=np.float64)).astype(np.float32)
+    latent_dc = float(raw_latent.mean(dtype=np.float64))
+    centered = (raw_latent - latent_dc).astype(np.float32)
     centered, projection = exact_zero_dc_projection(centered)
     low, high = float(residual_knots[0]), float(residual_knots[-1])
     total = int(u.size)
@@ -156,10 +158,11 @@ def _maximum_cell(
     coordinate = tuple(int(value) for value in np.unravel_index(flat_index, physical.shape))
     return {
         "coordinate": list(coordinate),
-        "physical_log10rho": float(physical[coordinate]),
-        "conditional_mean_with_location": float(stored_mean[coordinate]),
-        "corrected_conditional_mean": float(corrected_mean[coordinate]),
-        "physical_minus_conditional_mean": float(
+        "target_y": float(physical[coordinate]),
+        "physical_log10rho": float(TARGET_DENSITY_SCALE * physical[coordinate]),
+        "conditional_mean_with_location_y": float(stored_mean[coordinate]),
+        "corrected_conditional_mean_y": float(corrected_mean[coordinate]),
+        "target_y_minus_conditional_mean_y": float(
             physical[coordinate] - stored_mean[coordinate]
         ),
         "recovered_v14_standardized": float(standardized[coordinate]),
@@ -209,7 +212,7 @@ def _aggregate_fields(
         float(row["support"]["centered_latent_maximum"]) for row in rows
     ]
     mean_at_max = [
-        float(row["maximum_cell"]["conditional_mean_with_location"]) for row in rows
+        float(row["maximum_cell"]["conditional_mean_with_location_y"]) for row in rows
     ]
     result = {
         "fields": len(rows),
@@ -292,7 +295,9 @@ def audit_domain(
         indices = [int(value) for value in ensemble["source_index"][:]]
         if len(indices) != 16 or len(set(indices)) != 16:
             raise ValueError("V24 development ensemble requires 16 unique source indices")
-        truth_global_maximum = float(np.max(ensemble["truth"][:]))
+        truth_global_maximum = float(
+            TARGET_DENSITY_SCALE * np.max(ensemble["truth"][:])
+        )
         for object_index, source_index in enumerate(indices):
             location = float(ensemble["predicted_residual_dc"][object_index])
             scales = np.asarray(
@@ -344,7 +349,7 @@ def audit_domain(
             truth_rows.append({
                 "object_index": object_index,
                 "source_index": source_index,
-                "physical_maximum": float(np.max(truth)),
+                "physical_maximum": float(TARGET_DENSITY_SCALE * np.max(truth)),
                 "support": truth_support,
                 "maximum_cell": _maximum_cell(
                     truth, source_mean + np.float32(location), source_mean,
@@ -366,18 +371,27 @@ def audit_domain(
                     "object_index": object_index,
                     "source_index": source_index,
                     "member": member,
-                    "physical_maximum": float(np.max(physical)),
-                    "corresponding_truth_maximum": float(np.max(truth)),
+                    "physical_maximum": float(
+                        TARGET_DENSITY_SCALE * np.max(physical)
+                    ),
+                    "corresponding_truth_maximum": float(
+                        TARGET_DENSITY_SCALE * np.max(truth)
+                    ),
                     "maximum_minus_corresponding_truth_maximum": float(
-                        np.max(physical) - np.max(truth)
+                        TARGET_DENSITY_SCALE * (np.max(physical) - np.max(truth))
                     ),
                     "predicted_residual_dc": location,
                     "predicted_band_scales": scales.tolist(),
                     "physical_voxels_above_truth_global_maximum": int(
-                        np.count_nonzero(physical > truth_global_maximum)
+                        np.count_nonzero(
+                            TARGET_DENSITY_SCALE * physical > truth_global_maximum
+                        )
                     ),
                     "physical_voxels_above_truth_global_plus_0p3": int(
-                        np.count_nonzero(physical > truth_global_maximum + 0.3)
+                        np.count_nonzero(
+                            TARGET_DENSITY_SCALE * physical
+                            > truth_global_maximum + 0.3
+                        )
                     ),
                     "support": support,
                     "maximum_cell": _maximum_cell(
@@ -556,6 +570,7 @@ def main() -> None:
             "transform_sha256": sha256_file(transform_path),
         },
         "support": {
+            "target_density_mapping": "log10rho=4.5*y",
             "z": [float(transform["z_knots"][0]), float(transform["z_knots"][-1])],
             "u": [
                 float(transform["residual_value_knots"][0]),

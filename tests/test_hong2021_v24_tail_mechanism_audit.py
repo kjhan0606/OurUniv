@@ -4,6 +4,7 @@ import numpy as np
 
 from hong2021_v14_multiscale import inverse_standardized_residual
 from scripts.hong2021_v24_tail_mechanism_audit import (
+    _maximum_cell,
     forward_latent_diagnostics,
     recover_v14_standardized,
 )
@@ -54,3 +55,12 @@ def test_forward_latent_diagnostics_counts_both_support_endpoints() -> None:
     assert support["raw_latent_minimum"] == -5.0
     assert support["raw_latent_maximum"] == 5.0
     assert abs(float(latent.sum(dtype=np.float64))) / np.sqrt(latent.size) <= 1.0e-9
+
+
+def test_maximum_cell_reports_frozen_physical_log_density_units() -> None:
+    physical = np.asarray([[[0.1, 0.8]]], dtype=np.float32)
+    zero = np.zeros_like(physical)
+    row = _maximum_cell(physical, zero, zero, zero, zero, zero)
+    assert row["coordinate"] == [0, 0, 1]
+    assert row["target_y"] == float(physical[0, 0, 1])
+    assert row["physical_log10rho"] == float(4.5 * physical[0, 0, 1])
