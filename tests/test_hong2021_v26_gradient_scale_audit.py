@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import torch
 
 
 SCRIPT = Path(__file__).parents[1] / "scripts/hong2021_v26_gradient_scale_audit.py"
@@ -43,3 +44,42 @@ def test_gradient_geometry_reports_global_clipping() -> None:
     )
     assert report["global_registered_gradient_norm"] > 1.0
     assert 0.0 < report["global_clip_factor"] < 1.0
+
+
+class _TwoScaleModel(torch.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.flows = torch.nn.ModuleList(
+            [torch.nn.Linear(1, 1, bias=False) for _ in range(6)]
+        )
+
+
+def test_adamw_update_geometry_uses_stored_moments_not_raw_gradient() -> None:
+    model = _TwoScaleModel()
+    named = list(model.named_parameters())
+    state = {
+        index: {
+            "step": torch.tensor(100.0),
+            "exp_avg": torch.ones_like(parameter) * (index + 1),
+            "exp_avg_sq": torch.ones_like(parameter) * (index + 1) ** 2,
+        }
+        for index, (_, parameter) in enumerate(named)
+    }
+    optimizer = {
+        "state": state,
+        "param_groups": [
+            {
+                "params": list(range(len(named))),
+                "lr": 1.0e-3,
+                "weight_decay": 1.0e-4,
+                "eps": 1.0e-8,
+                "betas": (0.9, 0.999),
+            }
+        ],
+    }
+    report = MODULE.adamw_update_geometry(model, optimizer)
+    updates = [row["adam_data_update_norm"] for row in report["scales"]]
+    assert max(updates) / min(updates) < 1.001
+    assert max(
+        row["weight_decay_over_data_update_norm"] for row in report["scales"]
+    ) < 1.0e-3

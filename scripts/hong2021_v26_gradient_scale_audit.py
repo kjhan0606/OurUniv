@@ -36,7 +36,7 @@ from hong2021_v26 import (
 )
 
 
-SCHEMA = "hong2021-v26-gradient-scale-conditioning-audit-v1"
+SCHEMA = "hong2021-v26-gradient-scale-conditioning-audit-v2"
 TRAINING = Path(
     "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/"
     "tng100_simba_swift_v26_e14_conditional_haar_flow"
@@ -186,7 +186,88 @@ def _batch_gradient_audit(
     return summary
 
 
-def _interpret(candidates: dict[str, Any]) -> dict[str, Any]:
+def adamw_update_geometry(
+    model: torch.nn.Module, optimizer_state: dict[str, Any]
+) -> dict[str, Any]:
+    """Reconstruct the next AdamW update from the stored first/second moments."""
+    groups = optimizer_state.get("param_groups", [])
+    if len(groups) != 1:
+        raise ValueError("V26 AdamW audit expects exactly one parameter group")
+    group = groups[0]
+    parameter_ids = group["params"]
+    named_parameters = list(model.named_parameters())
+    if len(parameter_ids) != len(named_parameters):
+        raise ValueError("V26 optimizer and model parameter order differ")
+    learning_rate = float(group["lr"])
+    weight_decay = float(group["weight_decay"])
+    epsilon = float(group["eps"])
+    beta1, beta2 = (float(value) for value in group["betas"])
+    rows = []
+    for scale in range(6):
+        data_square = 0.0
+        decay_square = 0.0
+        parameter_square = 0.0
+        parameters = 0
+        steps = set()
+        prefix = f"flows.{scale}."
+        for (name, parameter), parameter_id in zip(
+            named_parameters, parameter_ids, strict=True
+        ):
+            if not name.startswith(prefix):
+                continue
+            state = optimizer_state["state"][parameter_id]
+            step = float(state["step"])
+            steps.add(step)
+            bias1 = 1.0 - beta1**step
+            bias2 = 1.0 - beta2**step
+            denominator = (
+                state["exp_avg_sq"].double().sqrt() / math.sqrt(bias2) + epsilon
+            )
+            direction = state["exp_avg"].double() / denominator / bias1
+            data_square += float((learning_rate * direction).square().sum())
+            decay_square += float(
+                (learning_rate * weight_decay * parameter.detach().double())
+                .square()
+                .sum()
+            )
+            parameter_square += float(parameter.detach().double().square().sum())
+            parameters += parameter.numel()
+        if not parameters or len(steps) != 1:
+            raise ValueError("V26 per-scale AdamW state is incomplete")
+        data_norm = math.sqrt(data_square)
+        decay_norm = math.sqrt(decay_square)
+        rows.append(
+            {
+                "coarse_to_fine_index": scale,
+                "parameters": parameters,
+                "optimizer_step": next(iter(steps)),
+                "adam_data_update_norm": data_norm,
+                "decoupled_weight_decay_update_norm": decay_norm,
+                "weight_decay_over_data_update_norm": decay_norm
+                / max(data_norm, np.finfo(float).tiny),
+                "parameter_norm": math.sqrt(parameter_square),
+            }
+        )
+    global_data_norm = math.sqrt(
+        sum(row["adam_data_update_norm"] ** 2 for row in rows)
+    )
+    for row in rows:
+        row["adam_data_update_fraction_of_global_l2"] = (
+            row["adam_data_update_norm"] / global_data_norm
+        )
+    return {
+        "learning_rate": learning_rate,
+        "weight_decay": weight_decay,
+        "epsilon": epsilon,
+        "betas": [beta1, beta2],
+        "global_adam_data_update_norm": global_data_norm,
+        "scales": rows,
+    }
+
+
+def _interpret(
+    candidates: dict[str, Any], actual_update: dict[str, Any]
+) -> dict[str, Any]:
     final = candidates["30000"]
     rows = final["train"]["scales"]
     coarse_decay_ratios = [
@@ -199,17 +280,27 @@ def _interpret(candidates: dict[str, Any]) -> dict[str, Any]:
     registered_fractions = [
         float(row["registered_gradient_fraction_of_global_l2"]) for row in rows
     ]
-    coarse_gradient_suppressed = max(registered_fractions[:2]) < 0.05
-    decay_disproportionate = min(coarse_decay_ratios) > 10.0 * finest_decay_ratio
-    if coarse_gradient_suppressed and decay_disproportionate:
-        classification = "registered_optimizer_geometry_suppresses_coarse_scale_learning"
+    raw_coarse_gradient_suppressed = max(registered_fractions[:2]) < 0.05
+    raw_decay_disproportionate = min(coarse_decay_ratios) > 10.0 * finest_decay_ratio
+    update_rows = actual_update["scales"]
+    actual_fractions = [
+        float(row["adam_data_update_fraction_of_global_l2"])
+        for row in update_rows
+    ]
+    actual_decay_ratios = [
+        float(row["weight_decay_over_data_update_norm"]) for row in update_rows
+    ]
+    adam_compensates_raw_scale = min(actual_fractions[:2]) >= 0.2
+    actual_decay_negligible = max(actual_decay_ratios) <= 1.0e-3
+    if adam_compensates_raw_scale and actual_decay_negligible:
+        classification = "coarse_failure_not_explained_by_optimizer_update_magnitude"
         next_step = (
-            "a separately frozen per-scale optimizer preconditioning control is "
-            "eligible before abandoning the conditional representation"
+            "do not run a per-scale preconditioning retry; audit conditional context "
+            "and train-validation representation shift"
         )
-    elif coarse_gradient_suppressed:
-        classification = "coarse_scale_gradient_suppressed_without_decay_dominance"
-        next_step = "audit global clipping and Adam second moments before a new model"
+    elif raw_coarse_gradient_suppressed and not adam_compensates_raw_scale:
+        classification = "registered_optimizer_geometry_suppresses_coarse_scale_learning"
+        next_step = "a separately frozen per-scale optimizer control is eligible"
     else:
         classification = "coarse_failure_not_explained_by_registered_gradient_magnitude"
         next_step = "reassess conditional context and train-validation representation shift"
@@ -220,8 +311,14 @@ def _interpret(candidates: dict[str, Any]) -> dict[str, Any]:
         "finest_registered_gradient_fraction_of_global_l2": registered_fractions[-1],
         "coarse_weight_decay_over_gradient_proxy": coarse_decay_ratios,
         "finest_weight_decay_over_gradient_proxy": finest_decay_ratio,
-        "coarse_gradient_suppressed": coarse_gradient_suppressed,
-        "coarse_decay_disproportionate": decay_disproportionate,
+        "raw_coarse_gradient_suppressed": raw_coarse_gradient_suppressed,
+        "raw_decay_proxy_disproportionate": raw_decay_disproportionate,
+        "actual_adam_data_update_fraction_of_global_l2": actual_fractions,
+        "actual_weight_decay_over_data_update_norm": actual_decay_ratios,
+        "adam_compensates_raw_scale": adam_compensates_raw_scale,
+        "actual_weight_decay_negligible": actual_decay_negligible,
+        "optimizer_steps_completed": int(update_rows[0]["optimizer_step"]),
+        "amp_skipped_steps": 30_000 - int(update_rows[0]["optimizer_step"]),
         "final_train_global_clip_factor": final["train"]["global_clip_factor"],
         "final_validation_global_clip_factor": final["validation"][
             "global_clip_factor"
@@ -309,6 +406,19 @@ def main() -> None:
         print(f"[gradient-audit] step={step}", flush=True)
         del model
         torch.cuda.empty_cache()
+    last = torch.load(args.training / "last.pt", map_location="cpu", weights_only=False)
+    if (
+        last.get("schema") != MODEL_SCHEMA
+        or int(last.get("step", -1)) != 30_000
+        or "model" not in last
+        or "optimizer" not in last
+    ):
+        raise ValueError("V26 final optimizer checkpoint provenance differs")
+    optimizer_model = build_model(
+        haar, last["observable_context_features"], device=torch.device("cpu")
+    )
+    optimizer_model.load_state_dict(last["model"])
+    actual_update = adamw_update_geometry(optimizer_model, last["optimizer"])
     report = {
         "schema": SCHEMA,
         "status": "complete_development_only_post_failure_audit",
@@ -326,7 +436,8 @@ def main() -> None:
         "audit_code_commit": commit,
         "worktree_clean_at_audit": clean,
         "candidates": candidates,
-        "interpretation": _interpret(candidates),
+        "final_actual_adamw_update_geometry": actual_update,
+        "interpretation": _interpret(candidates, actual_update),
         "model_or_optimizer_changed": False,
         "Astrid_accessed": False,
         "historical_EAGLE_accessed": False,
