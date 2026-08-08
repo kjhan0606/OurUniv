@@ -56,3 +56,60 @@ def test_history_audit_exposes_dimension_weighting_and_nonfinite_gradients() -> 
     row = report["scale_resolved"]["TNG100"][0]
     assert row["change_10000_to_30000"] == pytest.approx(0.2)
     assert row["worsened_10000_to_30000"] is True
+
+
+def _domain_mechanism_row(truth_std: float, truth_maximum: float) -> dict:
+    return {
+        "roundtrip": {
+            "maximum_absolute_latent_error": 0.01,
+            "rms_latent_error": 5.0e-4,
+            "maximum_absolute_logdet_cancellation_coarse_to_fine": [
+                1.0e-5,
+                1.0e-4,
+                1.0e-3,
+                1.0e-2,
+                0.1,
+                1.0,
+            ],
+        },
+        "stored_ensemble_replay": {"maximum_absolute_y_difference": 1.0e-7},
+        "truth_latent": {
+            "absolute_maximum": truth_maximum,
+            "absolute_tail_fractions": {"5.0": 1.0e-6},
+        },
+        "generated_latent": {
+            "absolute_maximum": truth_maximum + 2.0,
+            "absolute_tail_fractions": {"5.0": 4.0e-6},
+        },
+        "truth_base_z_coarse_to_fine": [
+            {"standard_deviation": truth_std},
+            {"standard_deviation": 1.2},
+        ],
+        "generated_base_z_coarse_to_fine": [
+            {"standard_deviation": 1.0},
+            {"standard_deviation": 1.0},
+        ],
+    }
+
+
+def test_mechanism_summary_does_not_mistake_small_roundtrip_residual_for_cause() -> None:
+    domains = {
+        "TNG100": _domain_mechanism_row(1.6, 5.0),
+        "SIMBA": _domain_mechanism_row(1.3, 5.0),
+        "Swift": _domain_mechanism_row(1.2, 5.0),
+    }
+    optimization = {
+        "scale_resolved": {
+            name: [
+                {"coarse_to_fine_index": index, "worsened_10000_to_30000": index < 2}
+                for index in range(6)
+            ]
+            for name in ("TNG100", "SIMBA", "Swift-EAGLE")
+        },
+        "finest_scale_objective_fraction": 0.875,
+        "nonfinite_mean_gradient_intervals": [4500, 6500],
+    }
+    report = MODULE._mechanism_summary({"30000": domains}, optimization)
+    assert report["trained_flow_roundtrip_stable"] is True
+    assert report["coarse_base_underfit_all_domains"] is True
+    assert report["classification"].startswith("coarse_scale_conditional_underfit")

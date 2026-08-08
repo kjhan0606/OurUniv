@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo=/home/kjhan/BACKUP/CF4
 tng=/gpfs/kjhan/IllustrisTNG/TNG100-1
-output=$tng/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/trained_flow_mechanism_audit.json
+output=$tng/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/trained_flow_mechanism_audit_v2.json
 lock=/gpfs/kjhan/.hong2021_locks/v26_trained_flow_mechanism_audit.lock
 
 [[ ${HOSTNAME,,} == lageunha ]] || {

@@ -45,7 +45,7 @@ from hong2021_v26 import (
 from hong2021_v26_haar import haar_pyramid, haar_synthesis
 
 
-SCHEMA = "hong2021-v26-trained-flow-mechanism-audit-v1"
+SCHEMA = "hong2021-v26-trained-flow-mechanism-audit-v2"
 DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
 TRAINING = Path(
     "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/"
@@ -424,6 +424,9 @@ def _mechanism_summary(
         for row in final.values()
     )
     support = {}
+    tail_excess = {}
+    coarse_base_z = {}
+    maximum_logdet_per_dimension = 0.0
     for domain, row in final.items():
         generated = row["generated_latent"]["absolute_tail_fractions"]["5.0"]
         truth = row["truth_latent"]["absolute_tail_fractions"]["5.0"]
@@ -432,6 +435,39 @@ def _mechanism_summary(
             "truth_absolute_latent_at_least_5_fraction": truth,
             "generated_over_truth": None if truth == 0.0 else generated / truth,
         }
+        truth_maximum = float(row["truth_latent"]["absolute_maximum"])
+        generated_maximum = float(row["generated_latent"]["absolute_maximum"])
+        tail_excess[domain] = {
+            "truth_absolute_latent_maximum": truth_maximum,
+            "generated_absolute_latent_maximum": generated_maximum,
+            "generated_minus_truth_absolute_maximum": generated_maximum
+            - truth_maximum,
+            "roundtrip_error_over_generated_tail_excess": roundtrip_max
+            / max(generated_maximum - truth_maximum, np.finfo(float).tiny),
+        }
+        coarse_base_z[domain] = {
+            "truth_standard_deviation_first_two_scales": [
+                float(item["standard_deviation"])
+                for item in row["truth_base_z_coarse_to_fine"][:2]
+            ],
+            "generated_standard_deviation_first_two_scales": [
+                float(item["standard_deviation"])
+                for item in row["generated_base_z_coarse_to_fine"][:2]
+            ],
+        }
+        maximum_logdet_per_dimension = max(
+            maximum_logdet_per_dimension,
+            *(
+                float(value) / dimension
+                for value, dimension in zip(
+                    row["roundtrip"][
+                        "maximum_absolute_logdet_cancellation_coarse_to_fine"
+                    ],
+                    DETAIL_DIMENSIONS_COARSE_TO_FINE,
+                    strict=True,
+                )
+            ),
+        )
     coarse_worsened = {
         domain: [
             row["coarse_to_fine_index"]
@@ -440,16 +476,46 @@ def _mechanism_summary(
         ]
         for domain, scales in optimization["scale_resolved"].items()
     }
-    numerical_roundtrip_stable = roundtrip_max <= 2.0e-4
+    # The trained spline is not bit-exact, so assess whether its error is large
+    # enough to explain the observed tail excursion.  V1 incorrectly treated a
+    # fixed 2e-4 absolute tolerance as a causal test.  Here the roundtrip RMS,
+    # per-dimension logdet residual, and error relative to the actual excess are
+    # all required to be small.
+    maximum_roundtrip_over_tail_excess = max(
+        row["roundtrip_error_over_generated_tail_excess"]
+        for row in tail_excess.values()
+    )
+    maximum_roundtrip_rms = max(
+        float(row["roundtrip"]["rms_latent_error"]) for row in final.values()
+    )
+    numerical_roundtrip_stable = (
+        maximum_roundtrip_rms <= 1.0e-3
+        and maximum_roundtrip_over_tail_excess <= 0.01
+        and maximum_logdet_per_dimension <= 1.0e-4
+    )
     stored_replay_stable = replay_max <= 2.0 * float(np.finfo(np.float32).eps)
     generated_support_excess = all(
         row["generated_absolute_latent_at_least_5_fraction"]
         > row["truth_absolute_latent_at_least_5_fraction"]
         for row in support.values()
     )
-    if numerical_roundtrip_stable and stored_replay_stable and generated_support_excess:
+    coarse_base_underfit = all(
+        row["truth_standard_deviation_first_two_scales"][0] > 1.1
+        for row in coarse_base_z.values()
+    )
+    first_two_validation_worsen_all_domains = all(
+        0 in scales and 1 in scales for scales in coarse_worsened.values()
+    )
+    if (
+        numerical_roundtrip_stable
+        and stored_replay_stable
+        and generated_support_excess
+        and coarse_base_underfit
+        and first_two_validation_worsen_all_domains
+    ):
         classification = (
-            "joint_latent_tail_miscalibration_under_fine_scale_dominated_likelihood"
+            "coarse_scale_conditional_underfit_and_cross_scale_tail_miscalibration_"
+            "under_fine_scale_dominated_likelihood"
         )
         next_step = (
             "do_not_extend_v26; redesign the observation-to-density representation "
@@ -467,16 +533,32 @@ def _mechanism_summary(
         "trained_flow_roundtrip_stable": numerical_roundtrip_stable,
         "stored_ensemble_replay_stable": stored_replay_stable,
         "maximum_final_roundtrip_error": roundtrip_max,
+        "maximum_final_roundtrip_rms": maximum_roundtrip_rms,
+        "maximum_roundtrip_error_over_generated_tail_excess": (
+            maximum_roundtrip_over_tail_excess
+        ),
+        "maximum_logdet_cancellation_per_dimension": maximum_logdet_per_dimension,
         "maximum_final_stored_replay_difference_y": replay_max,
         "latent_G21_support": support,
+        "latent_tail_extrema": tail_excess,
+        "coarse_base_z_calibration": coarse_base_z,
         "generated_support_excess_all_domains": generated_support_excess,
+        "coarse_base_underfit_all_domains": coarse_base_underfit,
         "validation_scales_worsened_10000_to_30000": coarse_worsened,
+        "first_two_validation_scales_worsened_all_domains": (
+            first_two_validation_worsen_all_domains
+        ),
         "finest_scale_objective_fraction": optimization[
             "finest_scale_objective_fraction"
         ],
         "nonfinite_mean_gradient_intervals": optimization[
             "nonfinite_mean_gradient_intervals"
         ],
+        "nonfinite_gradient_interpretation": (
+            "periodic intervals are consistent with CUDA GradScaler growth/backoff "
+            "rather than persistent divergence; finite validation NLL continued "
+            "to improve"
+        ),
     }
 
 
