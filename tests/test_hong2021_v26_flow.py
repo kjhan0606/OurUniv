@@ -4,6 +4,7 @@ import torch
 
 from hong2021_residual_v8_context import FEATURE_NAMES
 from hong2021_v26_flow import ConditionalHaarSplineFlow, ConditionalSplineCoupling3D
+from hong2021_v26_haar import haar_pyramid
 
 
 def test_identity_initialized_coupling_roundtrip_and_logdet():
@@ -86,3 +87,26 @@ def test_sampling_reports_roundoff_dc_projection():
     assert diagnostics["pre_center_mean"].shape == (2,)
     assert torch.max(torch.abs(diagnostics["post_center_mean"])) < 2.0e-8
     assert torch.max(torch.abs(sample.mean(dim=(-3, -2, -1)))) < 2.0e-8
+
+
+def test_coarsest_context_discards_condition_orientation():
+    model = _small_flow().eval()
+    condition = torch.randn(
+        1, 4, 8, 8, 8, generator=torch.Generator().manual_seed(60)
+    )
+    reflected = condition.flip(-1)
+    lowpass = torch.zeros(1, 1, 1, 1, 1, dtype=torch.float64)
+    original_context = model.scale_context(
+        condition, lowpass, model.standardized_global_context(condition)
+    )
+    reflected_context = model.scale_context(
+        reflected, lowpass, model.standardized_global_context(reflected)
+    )
+    assert torch.max(torch.abs(original_context - reflected_context)) < 2.0e-6
+
+    # A spatial field carried by the condition has different oriented octant
+    # contrasts after reflection even though V26 presents identical coarsest
+    # context to the conditional flow.
+    _, original_details = haar_pyramid(condition[:, 2:3].double(), levels=3)
+    _, reflected_details = haar_pyramid(reflected[:, 2:3].double(), levels=3)
+    assert torch.max(torch.abs(original_details[-1] - reflected_details[-1])) > 0.1
