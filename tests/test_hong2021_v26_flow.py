@@ -19,6 +19,27 @@ def test_identity_initialized_coupling_roundtrip_and_logdet():
     assert torch.max(torch.abs(forward_logdet + inverse_logdet)) < 2.0e-5
 
 
+def test_nonidentity_coupling_roundtrip_and_logdet():
+    layer = ConditionalSplineCoupling3D(
+        (0, 1, 2), context_channels=5, hidden_channels=8, bins=8
+    )
+    generator = torch.Generator().manual_seed(510)
+    with torch.no_grad():
+        layer.conditioner.output.weight.normal_(0.0, 0.01, generator=generator)
+        layer.conditioner.output.bias.add_(
+            torch.randn(
+                layer.conditioner.output.bias.shape, generator=generator
+            )
+            * 0.03
+        )
+    value = torch.randn(2, 7, 4, 4, 4, generator=torch.Generator().manual_seed(511))
+    context = torch.randn(2, 5, 4, 4, 4, generator=torch.Generator().manual_seed(512))
+    transformed, forward_logdet = layer(value, context)
+    recovered, inverse_logdet = layer.inverse(transformed, context)
+    assert torch.max(torch.abs(recovered - value)) < 2.0e-5
+    assert torch.max(torch.abs(forward_logdet + inverse_logdet)) < 2.0e-4
+
+
 def _small_flow() -> ConditionalHaarSplineFlow:
     return ConditionalHaarSplineFlow(
         detail_mean=[[0.0] * 7] * 3,
