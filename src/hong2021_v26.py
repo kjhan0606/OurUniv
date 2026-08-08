@@ -8,6 +8,7 @@ import json
 import math
 import os
 import socket
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -45,6 +46,10 @@ MODEL_SCHEMA = "hong2021-v26-conditional-haar-spline-flow-v1"
 PARAMETERS = 3_206_424
 NON_DC_DIMENSIONS = 262_143
 CANDIDATE_STEPS = (10_000, 20_000, 30_000)
+PREFLIGHT_SCHEMA = "hong2021-v26-hard-preflight-v1"
+PROGRAM_LABEL = "V26"
+ENSEMBLE_METHOD = "conditional_haar_spline_flow"
+REGISTRY_ATTRIBUTE = "v26_registry_sha256"
 DOMAIN_KEYS = {"TNG100": "tng", "SIMBA": "simba_dev", "Swift": "swift_dev"}
 CACHE_KEYS = {
     "TNG100": {"train": "TNG100_train", "validation": "TNG100_validation"},
@@ -218,42 +223,44 @@ def fixed_validation(
     }
 
 
-def train(args: argparse.Namespace) -> None:
+def train(args: argparse.Namespace, *, program: Any | None = None) -> None:
+    program = sys.modules[__name__] if program is None else program
+    label = str(program.PROGRAM_LABEL)
     repo = args.repo.resolve()
     if socket.gethostname().lower() != "lageunha":
-        raise RuntimeError("V26 training requires Lageunha")
+        raise RuntimeError(f"{label} training requires Lageunha")
     if args.device != "cuda" or not torch.cuda.is_available():
-        raise RuntimeError("V26 training requires the Lageunha Ada CUDA device")
+        raise RuntimeError(f"{label} training requires the Lageunha Ada CUDA device")
     gpu = torch.cuda.get_device_name(0)
     if "ada" not in gpu.lower():
-        raise RuntimeError(f"V26 training requires an Ada GPU, found {gpu}")
-    registry, artifacts, v20, _, haar = load_frozen_program(
+        raise RuntimeError(f"{label} training requires an Ada GPU, found {gpu}")
+    registry, artifacts, v20, _, haar = program.load_frozen_program(
         args.registry.resolve(), repo
     )
     commit, clean = git_state(repo)
     if not clean:
-        raise RuntimeError("V26 training requires a clean committed worktree")
+        raise RuntimeError(f"{label} training requires a clean committed worktree")
     preflight_path = args.preflight.resolve()
     if not preflight_path.is_file():
-        raise RuntimeError("V26 hard preflight is absent")
+        raise RuntimeError(f"{label} hard preflight is absent")
     preflight = json.loads(preflight_path.read_text())
     expected_preflight = {
-        "schema": "hong2021-v26-hard-preflight-v1",
+        "schema": program.PREFLIGHT_SCHEMA,
         "status": "pass",
-        "registry_sha256": REGISTRY_SHA256,
+        "registry_sha256": program.REGISTRY_SHA256,
         "code_commit": commit,
         "host": socket.gethostname(),
         "gpu": gpu,
-        "parameters": PARAMETERS,
+        "parameters": program.PARAMETERS,
         "Astrid_accessed": False,
         "historical_EAGLE_accessed": False,
     }
     for key, value in expected_preflight.items():
         if preflight.get(key) != value:
-            raise RuntimeError(f"V26 hard preflight mismatch: {key}")
+            raise RuntimeError(f"{label} hard preflight mismatch: {key}")
     output = args.out.resolve()
     if output.exists():
-        raise RuntimeError(f"V26 refuses a pre-existing training output: {output}")
+        raise RuntimeError(f"{label} refuses a pre-existing training output: {output}")
     seed_everything(144021)
     device = torch.device(args.device)
     paths = _paths(artifacts, v20)
@@ -282,7 +289,7 @@ def train(args: argparse.Namespace) -> None:
         )
         for index, (domain, dataset) in enumerate(validation_datasets.items())
     }
-    model = build_model(haar, feature_fit, device=device)
+    model = program.build_model(haar, feature_fit, device=device)
     ema_model = copy.deepcopy(model).eval()
     for parameter in ema_model.parameters():
         parameter.requires_grad_(False)
@@ -303,14 +310,14 @@ def train(args: argparse.Namespace) -> None:
     checkpoints = output / "validation_checkpoints"
     checkpoints.mkdir()
     metadata = {
-        "schema": MODEL_SCHEMA,
+        "schema": program.MODEL_SCHEMA,
         "status": "training",
         "experiment_registry": str(args.registry.resolve()),
-        "experiment_registry_sha256": REGISTRY_SHA256,
-        "design_audit_sha256": DESIGN_AUDIT_SHA256,
+        "experiment_registry_sha256": program.REGISTRY_SHA256,
+        "design_audit_sha256": program.DESIGN_AUDIT_SHA256,
         "v21_artifacts_sha256": ARTIFACT_SHA256,
         "haar_artifact": registry["coordinate_system"]["standardization_artifact"],
-        "haar_artifact_sha256": HAAR_ARTIFACT_SHA256,
+        "haar_artifact_sha256": program.HAAR_ARTIFACT_SHA256,
         "data": {
             domain: {
                 "train": row[0], "train_cache": row[1],
@@ -320,8 +327,8 @@ def train(args: argparse.Namespace) -> None:
         },
         "observable_context_features": feature_fit,
         "model": registry["likelihood"],
-        "parameters": PARAMETERS,
-        "non_dc_dimensions": NON_DC_DIMENSIONS,
+        "parameters": program.PARAMETERS,
+        "non_dc_dimensions": program.NON_DC_DIMENSIONS,
         "steps": int(protocol["steps"]),
         "candidate_steps": protocol["candidate_steps"],
         "batch": int(protocol["batch"]),
@@ -364,7 +371,7 @@ def train(args: argparse.Namespace) -> None:
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast(device_type="cuda", enabled=True):
             log_prob, diagnostic = model.log_prob(residual, condition)
-            loss = -log_prob.mean() / NON_DC_DIMENSIONS
+            loss = -log_prob.mean() / program.NON_DC_DIMENSIONS
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
         gradient = float(
@@ -455,54 +462,59 @@ def _validate_checkpoint(
     *,
     step: int,
     artifacts: dict[str, Any],
+    program: Any | None = None,
 ) -> tuple[dict[str, Any], str]:
+    program = sys.modules[__name__] if program is None else program
+    label = str(program.PROGRAM_LABEL)
     digest = sha256_file(path)
     checkpoint = torch.load(path, map_location="cpu", weights_only=False)
     if (
-        checkpoint.get("schema") != MODEL_SCHEMA
+        checkpoint.get("schema") != program.MODEL_SCHEMA
         or int(checkpoint.get("step", -1)) != step
-        or checkpoint.get("experiment_registry_sha256") != REGISTRY_SHA256
-        or checkpoint.get("design_audit_sha256") != DESIGN_AUDIT_SHA256
+        or checkpoint.get("experiment_registry_sha256") != program.REGISTRY_SHA256
+        or checkpoint.get("design_audit_sha256") != program.DESIGN_AUDIT_SHA256
         or checkpoint.get("v21_artifacts_sha256") != ARTIFACT_SHA256
-        or checkpoint.get("haar_artifact_sha256") != HAAR_ARTIFACT_SHA256
-        or checkpoint.get("parameters") != PARAMETERS
-        or checkpoint.get("non_dc_dimensions") != NON_DC_DIMENSIONS
+        or checkpoint.get("haar_artifact_sha256") != program.HAAR_ARTIFACT_SHA256
+        or checkpoint.get("parameters") != program.PARAMETERS
+        or checkpoint.get("non_dc_dimensions") != program.NON_DC_DIMENSIONS
         or checkpoint.get("steps") != 30_000
-        or checkpoint.get("candidate_steps") != list(CANDIDATE_STEPS)
+        or checkpoint.get("candidate_steps") != list(program.CANDIDATE_STEPS)
         or checkpoint.get("batch") != 6
         or checkpoint.get("target_or_density_dependent_weights") is not False
         or checkpoint.get("nondevelopment_data_used") is not False
         or checkpoint.get("worktree_clean_at_launch") is not True
     ):
-        raise ValueError("V26 checkpoint protocol or provenance mismatch")
+        raise ValueError(f"{label} checkpoint protocol or provenance mismatch")
     preflight_path = Path(str(checkpoint.get("hard_preflight", "")))
     if (
         not preflight_path.is_file()
         or sha256_file(preflight_path) != checkpoint.get("hard_preflight_sha256")
     ):
-        raise ValueError("V26 checkpoint preflight seal mismatch")
+        raise ValueError(f"{label} checkpoint preflight seal mismatch")
     return checkpoint, digest
 
 
 @torch.inference_mode()
-def sample(args: argparse.Namespace) -> None:
+def sample(args: argparse.Namespace, *, program: Any | None = None) -> None:
+    program = sys.modules[__name__] if program is None else program
+    label = str(program.PROGRAM_LABEL)
     repo = args.repo.resolve()
-    registry, artifacts, v20, _, haar = load_frozen_program(
+    registry, artifacts, v20, _, haar = program.load_frozen_program(
         args.registry.resolve(), repo
     )
     commit, clean = git_state(repo)
     if not clean:
-        raise RuntimeError("V26 sampling requires a clean committed worktree")
+        raise RuntimeError(f"{label} sampling requires a clean committed worktree")
     step = int(args.step)
-    if step not in CANDIDATE_STEPS:
-        raise ValueError("V26 sampling step is not preregistered")
+    if step not in program.CANDIDATE_STEPS:
+        raise ValueError(f"{label} sampling step is not preregistered")
     checkpoint_path = (
         args.training_root.resolve()
         / "validation_checkpoints"
         / f"step_{step:06d}.pt"
     )
     checkpoint, checkpoint_sha = _validate_checkpoint(
-        checkpoint_path, step=step, artifacts=artifacts
+        checkpoint_path, step=step, artifacts=artifacts, program=program
     )
     domain = args.domain
     experiment = v20["e8_gaussianized_marginal_retrain"]
@@ -512,7 +524,7 @@ def sample(args: argparse.Namespace) -> None:
     seed = int(registry["training_protocol"]["sampling_seeds"][domain])
     seed_everything(seed)
     device = torch.device(args.device)
-    model = build_model(
+    model = program.build_model(
         haar, checkpoint["observable_context_features"], device=device
     )
     model.load_state_dict(checkpoint["ema_model"])
@@ -534,7 +546,7 @@ def sample(args: argparse.Namespace) -> None:
     output = args.out.resolve()
     partial = output.with_suffix(output.suffix + ".partial")
     if output.exists() or partial.exists():
-        raise RuntimeError(f"V26 refuses to overwrite ensemble: {output}")
+        raise RuntimeError(f"{label} refuses to overwrite ensemble: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     generator = torch.Generator(device=device).manual_seed(seed)
     maximum_pre_center_dc = 0.0
@@ -592,28 +604,28 @@ def sample(args: argparse.Namespace) -> None:
                 truth_ds[output_index] = truth.numpy()
                 location_ds[output_index] = location
                 scale_ds[output_index] = scales
-                print(f"[sample] V26 {domain} {output_index + 1}/16", flush=True)
+                print(f"[sample] {label} {domain} {output_index + 1}/16", flush=True)
             handle.attrs.update({
                 "schema": ENSEMBLE_SCHEMA,
-                "method": "conditional_haar_spline_flow",
+                "method": program.ENSEMBLE_METHOD,
                 "checkpoint": str(checkpoint_path),
                 "checkpoint_sha256": checkpoint_sha,
                 "checkpoint_step": step,
-                "checkpoint_schema": MODEL_SCHEMA,
+                "checkpoint_schema": program.MODEL_SCHEMA,
                 "source_cache": str(Path(cache["path"]).resolve()),
                 "source_cache_sha256": cache["sha256"],
                 "source_data_sha256": data["sha256"],
-                "v26_registry_sha256": REGISTRY_SHA256,
+                program.REGISTRY_ATTRIBUTE: program.REGISTRY_SHA256,
                 "v21_artifact_attestation_sha256": ARTIFACT_SHA256,
                 "v21_profile_sha256": artifacts["profile"]["sha256"],
                 "v21_gaussianization_sha256": artifacts["gaussianization"]["sha256"],
-                "haar_artifact_sha256": HAAR_ARTIFACT_SHA256,
+                "haar_artifact_sha256": program.HAAR_ARTIFACT_SHA256,
                 "ensemble_members": 16,
                 "seed": seed,
                 "diagnostic_k_h_mpc": 1.0,
                 "location_scale_uses_target": False,
                 "direct_sampling": True,
-                "modeled_non_dc_dimensions": NON_DC_DIMENSIONS,
+                "modeled_non_dc_dimensions": program.NON_DC_DIMENSIONS,
                 "maximum_pre_center_latent_dc": maximum_pre_center_dc,
                 "maximum_post_center_latent_dc": maximum_post_center_dc,
                 "sampling_code_commit": commit,
