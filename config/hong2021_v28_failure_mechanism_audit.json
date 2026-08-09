@@ -1,0 +1,73 @@
+{
+  "schema": "hong2021-v28-representation-backbone-failure-audit-program-v1",
+  "status": "frozen_before_mechanism_audit_execution",
+  "purpose": "Separate V21/V14 representation loss, selected-donor population mismatch, cross-condition inverse inflation, and deterministic/2PCF limitations after the failed V28 empirical control.",
+  "parent": {
+    "v28_registry": "config/hong2021_v28_development_program.json",
+    "v28_registry_sha256": "7d51039e3acf3a9297ce70e9f9db19f17b9290b9501fdb72ac047422220ac3a6",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_empirical_sequence/preflight.json",
+    "preflight_sha256": "45e0d3a91553d2cc473f89c0292222a19256c343297b4781e8b697f8283ae40c",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_decision.json",
+    "decision_sha256": "6caf29d6b22b4dab4976a5301bc00a6f557e85f9299dbd1aec00c333161c740b",
+    "decision_digest_sha256": "21bfc212ecaa7214363d000374e637afc61765b6019d0df04edc5ab144f80e1f",
+    "failure_class": "train_empirical_joint_support_does_not_transfer_through_current_representation",
+    "required_next": "audit_V21_V14_density_representation_and_deterministic_backbone"
+  },
+  "frozen_inputs": {
+    "tng": {
+      "ensemble_sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840",
+      "metrics_sha256": "afb9172b98c3b2454ca5401a3c9e97a3314e989a4073ca4ebe738ad02b4a96c2"
+    },
+    "simba_dev": {
+      "ensemble_sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504",
+      "metrics_sha256": "2fdf3be2844a4eddbefa8009868aeb0e2f05d362c6fd1875b5c8f8df7ded18ed"
+    },
+    "swift_dev": {
+      "ensemble_sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88",
+      "metrics_sha256": "8ba5778e610c08d50b2c8bab4b9cd751214a41ac1669ea12fcbf97b15c7c97f3"
+    }
+  },
+  "diagnostics": {
+    "representation_self_reconstruction": "invert each frozen validation V21 latent through V21 and V14 with its own mean and location/scales, then compare with its own held-out physical target",
+    "selected_donor_population": "compare the physical train truths of the exact selected V28 donors with the corresponding validation truths; no new donor search",
+    "cross_condition_transfer": "compare stored V28 cross-inverted samples with those exact selected donors' own physical train truths",
+    "source_decomposition": "repeat donor and cross-inverted marginal summaries by TNG100, SIMBA, and Swift donor source",
+    "distance_tail_association": "record Spearman correlation of frozen total matching distance with generated physical maximum; diagnostic only",
+    "backbone_and_2pcf": "copy deterministic-versus-truth and generated-versus-truth 2PCF KS by scale from the frozen metrics"
+  },
+  "unchanged_physical_checks": {
+    "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "generated_max_above_reference_max_dex": 0.3,
+    "mean_delta_squared_ratio_max": 1.5,
+    "density_definition": "log10rho=4.5*y and delta=10**log10rho-1"
+  },
+  "fixed_classification_order": [
+    {
+      "condition": "representation self-reconstruction fails any unchanged physical check",
+      "classification": "V21_V14_representation_self_reconstruction_is_not_tail_preserving",
+      "next": "repair and validate a lossless physical-density coordinate before another residual model"
+    },
+    {
+      "condition": "self-reconstruction passes but cross-condition transfer relative to selected donor truths fails",
+      "classification": "cross_condition_inverse_inflates_intact_train_residuals",
+      "next": "replace latent transplantation with a condition-consistent physical residual representation"
+    },
+    {
+      "condition": "self and cross transfer pass but selected donor truths fail against validation truths",
+      "classification": "target_free_condition_matching_selects_the_wrong_physical_population",
+      "next": "redesign the local observation descriptor and deterministic current-density backbone"
+    },
+    {
+      "condition": "physical checks pass but 2PCF still fails",
+      "classification": "deterministic_backbone_or_local_phase_alignment_limits_2PCF",
+      "next": "audit and replace the deterministic current-density backbone before residual modeling"
+    }
+  ],
+  "firewall": {
+    "new_sampling": false,
+    "donor_reselection": false,
+    "threshold_changes": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}
