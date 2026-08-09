@@ -65,8 +65,8 @@ def _validate_ensemble(
         if any(not np.array_equal(current[name][:], old[name][:]) for name in reused):
             raise ValueError("V29 did not reuse V28 donor selections exactly")
         residual = np.asarray(current["sample"], dtype=np.float32) - np.asarray(
-            current["conditional_mean"][:, None], dtype=np.float32
-        )
+            current["conditional_mean"], dtype=np.float32
+        )[:, None]
         maximum_dc = float(
             np.max(np.abs(residual.mean(axis=(-3, -2, -1))))
         )
