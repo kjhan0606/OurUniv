@@ -457,6 +457,7 @@ def sample_all(args: argparse.Namespace) -> None:
                                 "source_cache_sha256": str(old.attrs["source_cache_sha256"]),
                                 "source_data_sha256": str(old.attrs["source_data_sha256"]),
                                 "ensemble_members": 16,
+                                "diagnostic_k_h_mpc": 1.0,
                                 "maximum_absolute_transported_residual_dc": maximum_dc,
                                 "donor_reselection": False,
                                 "selection_uses_validation_truth": False,
