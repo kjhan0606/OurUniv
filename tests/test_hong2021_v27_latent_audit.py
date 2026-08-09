@@ -98,6 +98,19 @@ def test_numerical_stability_and_fixed_classification_order():
     assert summary["classification"] == "v27_trained_flow_numerical_failure"
 
 
+def test_numerical_tail_ratio_never_mixes_domains():
+    large = _row(coarse=(1.0, 1.0), truth_tail=1, generated_tail=16)
+    small = copy.deepcopy(large)
+    large["generated_latent"]["absolute_maximum"] = 7.0
+    large["roundtrip"]["maximum_absolute_latent_error"] = 0.018
+    small["generated_latent"]["absolute_maximum"] = 5.2
+    small["roundtrip"]["maximum_absolute_latent_error"] = 0.001
+    final = {"TNG100": large, "SIMBA": small, "Swift": copy.deepcopy(small)}
+    result = numerical_stability(final)
+    assert result["maximum_roundtrip_error_over_generated_tail_excess"] == 0.009
+    assert result["pass"] is True
+
+
 def test_one_domain_without_both_improvements_selects_empirical_control():
     prior = _row(coarse=(1.6, 1.4), truth_tail=1, generated_tail=64)
     current = _row(coarse=(1.2, 1.1), truth_tail=1, generated_tail=24)

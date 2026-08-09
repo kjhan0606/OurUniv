@@ -111,15 +111,21 @@ def numerical_stability(final: Mapping[str, Mapping[str, Any]]) -> dict[str, Any
     tail_rows: dict[str, Any] = {}
     ratios = []
     for domain, row in final.items():
+        domain_roundtrip_max = float(
+            row["roundtrip"]["maximum_absolute_latent_error"]
+        )
         truth_maximum = float(row["truth_latent"]["absolute_maximum"])
         generated_maximum = float(row["generated_latent"]["absolute_maximum"])
         excess = generated_maximum - truth_maximum
-        ratio = roundtrip_max / max(excess, np.finfo(float).tiny)
+        # A causal comparison must not combine one domain's numerical error
+        # with another domain's physical tail excess.
+        ratio = domain_roundtrip_max / max(excess, np.finfo(float).tiny)
         ratios.append(ratio)
         tail_rows[domain] = {
             "truth_absolute_latent_maximum": truth_maximum,
             "generated_absolute_latent_maximum": generated_maximum,
             "generated_minus_truth_absolute_maximum": excess,
+            "maximum_absolute_latent_roundtrip_error": domain_roundtrip_max,
             "maximum_roundtrip_error_over_generated_tail_excess": ratio,
         }
     maximum_roundtrip_over_excess = max(ratios)
