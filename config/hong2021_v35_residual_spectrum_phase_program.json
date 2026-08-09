@@ -1,6 +1,10 @@
 {
   "schema": "hong2021-v35-conditional-residual-spectrum-phase-coupling-program-v1",
-  "status": "frozen_before_implementation_or_execution",
+  "status": "frozen_revision_before_implementation_or_execution",
+  "freeze_revision": {
+    "reason": "Pre-implementation code audit found that V31 conditional_forward uses constant endpoint extension outside the train-derived per-bin residual support. The coherent validation round trip must therefore distinguish support truncation from phase translation before either mechanism is assigned to the remaining Q3/Q4 and 2PCF failures.",
+    "execution_before_revision": false
+  },
   "purpose": "Test whether the V31 conditional-copula donor transport fails because residual spectral amplitudes depend on target-free context and/or because translating a donor innovation destroys the query-aligned backbone-residual Fourier cross phase needed for the total-density 2PCF.",
   "parent_evidence": {
     "v34_record": "config/hong2021_v34_result_record.json",
@@ -101,13 +105,16 @@
     "reference": "m plus the exact truth residual after the same residual-mean subtraction",
     "measurements": [
       "coherent-control maximum absolute reconstruction error",
+      "fraction of validation voxels mapped to conditional CDF endpoints and coherent-control log10-density tail error",
       "translated total-power ratio and absolute log10 power error per band",
       "exact and translated backbone-residual cross-correlation per band",
       "error as a function of translation scale"
     ],
-    "phase_coupling_material": "there is at least one common band below 6 h/Mpc where all domains have |exact backbone-residual cross-correlation|>=0.05 and the mean translated total-power absolute log10 error at either 2.5 or 5 Mpc/h is >=0.02 dex"
+    "phase_coupling_material": "there is at least one common band below 6 h/Mpc where all domains have |exact backbone-residual cross-correlation|>=0.05 and the mean translated total-power absolute log10 error at either 2.5 or 5 Mpc/h is >=0.02 dex",
+    "conditional_support_material": "in any domain, either at least 1e-5 of validation voxels map exactly to u=0 or u=1 or the coherent-control maximum absolute reconstruction error exceeds 0.1 dex in log10 density (=4.5*y)"
   },
   "predeclared_interpretation": {
+    "if_conditional_support_is_material": "replace finite endpoint saturation with a train-only conditional tail likelihood or explicit extreme-value continuation; never use validation extrema, clipping, or post-hoc amplitude correction",
     "if_spectrum_and_phase_supported": "replace donor transport with a query-aligned conditional multiscale stochastic field model that jointly learns residual auto-covariance and backbone-residual cross-covariance",
     "if_only_phase_supported": "retain train residual spectral amplitudes but replace translated donor phases with a query-aligned joint conditional residual model",
     "if_only_spectrum_supported": "condition the stochastic residual band amplitudes on target-free context while retaining an independent phase innovation",
