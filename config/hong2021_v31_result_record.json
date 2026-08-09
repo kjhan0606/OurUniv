@@ -1,0 +1,69 @@
+{
+  "schema": "hong2021-v31-physical-conditional-copula-result-record-v1",
+  "status": "complete_development_only_failure_with_material_mechanism_improvement",
+  "registry": "config/hong2021_v31_development_program.json",
+  "registry_sha256": "48fca645621078d512e0e667eac925292cbb22bfa693ffa776fbc2627f8646ff",
+  "fit_artifact": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "fit_report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.json",
+    "sha256": "bd80a7751d5d0a88bf09e897809bec43b546defdfbd6a787c1fe408d5b12c7c9",
+    "decision_digest_sha256": "a9bf8c39332eeeccceeb676b1f686bfa07bfdc6e831713d08920b6724f5db210"
+  },
+  "hard_preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_copula_sequence/preflight.json",
+    "sha256": "2564cef9f2a73de8528fd83d297c92867585cf2427b843c61f96f401734f74ad",
+    "aggregate_selected_donor_counts": {"TNG100": 256, "SIMBA": 256, "Swift": 256},
+    "maximum_absolute_real_transport_dc": 3.686287386450715e-18
+  },
+  "metadata_repair": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_copula_sequence/diagnostic_attribute_repair.json",
+    "sha256": "04ceaaab9bd30cd4f37cfcb77a28220a22766f100dc3e10932879262e2c4e968",
+    "code_commit": "904e476408f2ebc779718ea42ea78c8e942f7eec",
+    "scope": "metadata_only_no_dataset_write",
+    "attribute": "diagnostic_k_h_mpc=1.0"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_e18_physical_conditional_copula/development_decision.json",
+    "sha256": "5f0166eb680dd10f440974aad4edf56da5fb921f3de7b3832323bfe3056b6bd9",
+    "decision_digest_sha256": "87239c066317f2e68019ad564f935e9d8019d173f8b458be599f27cf4dbfd655",
+    "gate_code_commit": "904e476408f2ebc779718ea42ea78c8e942f7eec",
+    "development_pass": false,
+    "classification": "backbone_only_conditional_copula_is_insufficient",
+    "next": "include_local_observable_patches_and_multiscale_backbone_context_in_conditional_residual_representation"
+  },
+  "paired_v29_to_v31": {
+    "TNG100": {
+      "Q3_delta_q99_999_dex": [0.40947364384893126, 0.2557302647641073],
+      "Q3_maximum_excess_dex": [2.628928542137146, 1.9519776105880737],
+      "Q4": [153.95667754359297, 12.430654369910183],
+      "V31_field_failures": ["two_point_improves_deterministic_all_scales"]
+    },
+    "SIMBA": {
+      "Q3_delta_q99_999_dex": [0.4890205413983022, 0.32144639001185116],
+      "Q3_maximum_excess_dex": [1.49857297539711, 1.1326933801174164],
+      "Q4": [19.607616657214443, 6.348658275131794],
+      "V31_field_failures": ["two_point_improves_deterministic_all_scales"]
+    },
+    "Swift": {
+      "Q3_delta_q99_999_dex": [0.3337885819316355, 0.1664042760429787],
+      "Q3_maximum_excess_dex": [1.427097201347351, 0.7151938676834106],
+      "Q4": [9.259783988076233, 2.2148310662425215],
+      "V31_field_failures": ["finite_ensemble_coverage_within_0.03"]
+    }
+  },
+  "scientific_conclusion": [
+    "Conditioning the physical residual marginal on the scalar V14 backbone is strongly supported: it reduces every frozen extreme-tail diagnostic in every domain by a large factor.",
+    "The scalar backbone value is nevertheless not a sufficient local condition. TNG100 and SIMBA still miss 2PCF morphology, while Swift still misses ensemble coverage, and all three exceed Q3/Q4 limits.",
+    "The next representation must consume oriented local galaxy-count and radial-velocity patches plus multiscale backbone context; another unconditional likelihood, A(k), clipping, or scalar-bin refinement is not justified.",
+    "The uncertainty-aware input implementation already supports mean velocity, propagated sigma of the mean, and within-voxel velocity dispersion. V32 must explicitly audit the faithful two-channel input against these three/four-channel variants instead of silently treating velocity as exact."
+  ],
+  "firewall": {
+    "posthoc_Ak_used": false,
+    "validation_truth_used_for_fit_or_sampling": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}
