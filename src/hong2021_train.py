@@ -27,6 +27,11 @@ from hong2021_model import Hong2021Net, PAPER_CHANNELS, parameter_count
 
 INPUT_MODES = {
     "faithful": (2, "Ngal,mean_radial_vpec_kms"),
+    "kinematic3": (
+        3,
+        "Ngal,mean_radial_vpec_kms,"
+        "intrinsic_within_voxel_radial_velocity_dispersion_kms",
+    ),
     "uncertainty3": (
         3,
         "Ngal,weighted_mean_radial_vpec_kms,sigma_mean_radial_vpec_kms",
