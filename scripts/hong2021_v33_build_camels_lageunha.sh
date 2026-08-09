@@ -7,7 +7,7 @@ mkdir -p "$log_root"
 cd "$repo"
 export PYTHONPATH=$repo/src
 
-if [[ $(hostname -s) != lageunha ]]; then
+if [[ $(hostname -s | tr '[:upper:]' '[:lower:]') != lageunha ]]; then
     echo "V33 CAMELS reconstruction is frozen on lageunha" >&2
     exit 1
 fi

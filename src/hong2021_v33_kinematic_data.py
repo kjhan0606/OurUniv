@@ -454,9 +454,10 @@ def main() -> None:
     args = parser.parse_args()
     program = load_program(args.program, args.repo.resolve())
     expected_host = program["datasets"][args.domain]["execution_host"]
-    if socket.gethostname().split(".")[0] != expected_host:
+    actual_host = socket.gethostname().split(".")[0]
+    if actual_host.lower() != expected_host.lower():
         raise SystemExit(
-            f"V33 {args.domain} is frozen for {expected_host}, not {socket.gethostname()}"
+            f"V33 {args.domain} is frozen for {expected_host}, not {actual_host}"
         )
     print(json.dumps(build_dataset(program, args.domain, args.split), indent=2), flush=True)
 

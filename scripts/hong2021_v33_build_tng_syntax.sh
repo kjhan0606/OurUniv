@@ -7,7 +7,7 @@ mkdir -p "$log_root"
 cd "$repo"
 export PYTHONPATH=$repo/src
 
-if [[ $(hostname -s) != syntax ]]; then
+if [[ $(hostname -s | tr '[:upper:]' '[:lower:]') != syntax ]]; then
     echo "V33 TNG raw catalogues are frozen on syntax" >&2
     exit 1
 fi
