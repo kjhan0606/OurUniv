@@ -36,6 +36,7 @@ CENTERED_SCHEMAS = {
     "hong2021-v14-multiscale-location-scale-edm-ensemble-v1",
     "hong2021-v28-train-only-empirical-joint-residual-ensemble-v1",
     "hong2021-v29-direct-physical-residual-transport-ensemble-v1",
+    "hong2021-v31-physical-conditional-copula-ensemble-v1",
 }
 
 
