@@ -22,7 +22,7 @@ from hong2021_v27 import (
     build_model,
     load_frozen_program,
 )
-from hong2021_v27_latent_audit import (
+from hong2021_v27_latent_audit_logic import (
     AUDIT_PROGRAM_SHA256,
     DOMAIN_ORDER,
     mechanism_summary,

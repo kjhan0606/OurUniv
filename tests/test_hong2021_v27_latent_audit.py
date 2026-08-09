@@ -4,7 +4,7 @@ import copy
 from pathlib import Path
 
 from hong2021_v18_init import sha256_file
-from hong2021_v27_latent_audit import (
+from hong2021_v27_latent_audit_logic import (
     AUDIT_PROGRAM_SHA256,
     coarse_base_z_score,
     compare_to_v26,
