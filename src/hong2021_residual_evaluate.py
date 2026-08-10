@@ -42,6 +42,7 @@ CENTERED_SCHEMAS = {
     "hong2021-v39-bijective-local-patch-copula-ensemble-v1",
     "hong2021-v41-two-stage-structure-amplitude-ensemble-v1",
     "hong2021-v42-within-block-tail-body-ensemble-v1",
+    "hong2021-v44-query-local-mixture-copula-ensemble-v1",
 }
 
 
