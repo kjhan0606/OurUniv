@@ -190,7 +190,7 @@ def _cdf_interval_bins(
         or weights.shape[0] != COMPONENTS
         or base.ndim != 1
         or base.shape[0] != weights.shape[1]
-        or order not in (CONTROL_ORDER, PRIMARY_ORDER)
+        or order <= 0
     ):
         raise ValueError("V58 interval quadrature input differs")
     nodes, quadrature_weights = np.polynomial.legendre.leggauss(order)
@@ -607,6 +607,10 @@ def _domain(
     thresholds: np.ndarray,
     grid_weights: np.ndarray,
     numerics: dict[str, Any],
+    primary_order: int = PRIMARY_ORDER,
+    control_order: int = CONTROL_ORDER,
+    summary_function: Any = None,
+    progress_label: str = "v58-audit",
 ) -> dict[str, Any]:
     row = v35["development_domains"][domain]
     objects = int(row["train_objects"])
@@ -681,7 +685,7 @@ def _domain(
                 ranked_scale_parts.append(selected_scales.cpu())
                 base_parts.append(base.index_select(0, selected).cpu())
             if (object_index + 1) % 16 == 0 or object_index + 1 == objects:
-                print(f"[v58-audit] {domain} {object_index + 1}/{objects}", flush=True)
+                print(f"[{progress_label}] {domain} {object_index + 1}/{objects}", flush=True)
     finally:
         data.close()
         cache.close()
@@ -703,7 +707,7 @@ def _domain(
         bases,
         target_std,
         thresholds_t,
-        PRIMARY_ORDER,
+        primary_order,
     )
     control = _cdf_interval_bins(
         ranked_weights,
@@ -712,10 +716,11 @@ def _domain(
         bases,
         target_std,
         thresholds_t,
-        CONTROL_ORDER,
+        control_order,
     )
     component_mass_sums = ranked_weights.double().sum(dim=1).cpu().numpy()
-    return _domain_summary(
+    summarize = _domain_summary if summary_function is None else summary_function
+    return summarize(
         truth_log10rho,
         truth_delta_squared,
         exact_values,
