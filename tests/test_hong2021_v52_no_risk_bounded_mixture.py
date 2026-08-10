@@ -1,5 +1,6 @@
 import ast
 import hashlib
+import json
 import math
 from pathlib import Path
 
@@ -106,3 +107,20 @@ def test_fixed_classification_precedence() -> None:
     assert classify(False, False, False, False, False, True, False, False)[0] == (
         "matched_no_risk_result_is_mixed_or_not_a_common_domain_repair"
     )
+
+
+def test_result_record_seals_mixed_domain_outcome() -> None:
+    record = json.loads((REPO / "config/hong2021_v52_result_record.json").read_text())
+    decision = record["development_decision"]
+    comparison = record["comparison_to_sealed_V50"]
+    assert decision["development_pass"] is False
+    assert decision["classification"] == (
+        "matched_no_risk_result_is_mixed_or_not_a_common_domain_repair"
+    )
+    assert comparison["TNG100"]["V50_equals_or_improves_all_three"] is True
+    for domain in ("SIMBA", "Swift"):
+        assert comparison[domain]["q99_999_error_strictly_improves"] is True
+        assert comparison[domain]["maximum_excess_strictly_improves"] is True
+        assert comparison[domain]["mean_delta_squared_ratio_strictly_improves"] is True
+    assert record["firewall"]["historical_EAGLE_accessed"] is False
+    assert record["firewall"]["independent_gate_locked"] is True
