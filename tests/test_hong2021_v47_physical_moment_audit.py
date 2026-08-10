@@ -2,7 +2,13 @@ import hashlib
 import math
 from pathlib import Path
 
-from hong2021_v47_physical_moment_audit import PROGRAM_SHA256, classify
+import torch
+
+from hong2021_v47_physical_moment_audit import (
+    PROGRAM_SHA256,
+    _finite_log10_contribution,
+    classify,
+)
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -31,3 +37,12 @@ def test_classification_precedence() -> None:
         "rare_logistic_scale_excursions_are_mathematically_incompatible_with_Q4"
     )
     assert classify(False, False, False)[0] == "logistic_physical_moments_exist_on_train_probes"
+
+
+def test_finite_contribution_handles_fully_divergent_voxel() -> None:
+    log_weighted = torch.zeros(3, 2)
+    finite = torch.tensor([[True, False], [False, False], [False, False]])
+    value, absent = _finite_log10_contribution(log_weighted, finite)
+    assert absent == 1
+    assert value.shape == (1,)
+    assert value[0] == 0.0

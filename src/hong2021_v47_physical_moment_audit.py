@@ -137,6 +137,18 @@ def _summary(value: np.ndarray) -> list[float]:
     return np.quantile(value.astype(np.float64, copy=False), QUANTILES).tolist()
 
 
+def _finite_log10_contribution(
+    log_weighted: torch.Tensor, finite_component: torch.Tensor
+) -> tuple[np.ndarray, int]:
+    has_finite = finite_component.any(dim=0)
+    values = torch.logsumexp(
+        torch.where(finite_component, log_weighted, -torch.inf), dim=0
+    )[has_finite] / math.log(10.0)
+    if values.numel() and not torch.isfinite(values).all():
+        raise RuntimeError("V47 finite analytic contribution differs")
+    return values.cpu().numpy(), int((~has_finite).sum().cpu())
+
+
 @torch.inference_mode()
 def _domain(
     model: LocalMixtureUNet,
@@ -161,6 +173,7 @@ def _domain(
     total_second_mass: list[np.ndarray] = []
     finite_log10_first: list[np.ndarray] = []
     finite_log10_second: list[np.ndarray] = []
+    no_finite_component_count = np.zeros(2, dtype=np.int64)
     target_mean = float(prepared["target_mean"][()])
     target_std = float(prepared["target_std"][()])
     t_values = (
@@ -209,12 +222,11 @@ def _domain(
                     .cpu()
                 )
             selected_backbone = torch.from_numpy(backbone.reshape(-1)[indices]).to(device).float()
-            for power, (t_value, limit, divergent, sink) in enumerate(
+            for moment_index, (power, t_value, limit, divergent, sink) in enumerate(
                 (
-                    (t_values[0], first_limit, first_divergent, finite_log10_first),
-                    (t_values[1], second_limit, second_divergent, finite_log10_second),
+                    (1, t_values[0], first_limit, first_divergent, finite_log10_first),
+                    (2, t_values[1], second_limit, second_divergent, finite_log10_second),
                 ),
-                start=1,
             ):
                 argument = math.pi * component_scales * t_value
                 log_mgf = (
@@ -227,11 +239,13 @@ def _domain(
                     + power * 4.5 * math.log(10.0) * (selected_backbone[None] + target_mean)
                     + log_mgf
                 )
-                log_weighted = torch.where(divergent, -torch.inf, log_weighted)
-                finite_log = torch.logsumexp(log_weighted, dim=0) / math.log(10.0)
-                if not torch.isfinite(finite_log).all():
-                    raise RuntimeError("V47 finite analytic contribution differs")
-                sink.append(finite_log.cpu().numpy())
+                finite_component = (component_scales < limit) & positive
+                finite_log, absent = _finite_log10_contribution(
+                    log_weighted, finite_component
+                )
+                no_finite_component_count[moment_index] += absent
+                if finite_log.size:
+                    sink.append(finite_log)
             if (object_index + 1) % 32 == 0 or object_index + 1 == objects:
                 print(f"[v47-audit] {domain} {object_index + 1}/{objects}", flush=True)
     finally:
@@ -263,6 +277,10 @@ def _domain(
             "above_zero": float(np.mean(second_mass > 0.0)),
             "above_0.01": float(np.mean(second_mass >= MASS_THRESHOLD)),
             "above_0.05": float(np.mean(second_mass >= LARGE_MASS_THRESHOLD)),
+        },
+        "fraction_voxels_with_no_finite_component": {
+            "first_moment": float(no_finite_component_count[0] / probes),
+            "second_moment": float(no_finite_component_count[1] / probes),
         },
         "finite_component_log10_rho_moment_contribution_quantiles": _summary(
             np.concatenate(finite_log10_first)
