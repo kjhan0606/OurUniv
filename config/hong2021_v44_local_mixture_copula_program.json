@@ -1,0 +1,172 @@
+{
+  "schema": "hong2021-v44-query-local-mixture-copula-development-program-v1",
+  "status": "frozen_before_implementation_training_sampling_or_development_evaluation",
+  "purpose": "Replace the falsified spatial donor-rank transport by a direct train-only query-local residual likelihood while retaining an intact empirical stochastic copula: predict a continuous logistic-mixture marginal at every query voxel, then transform the unchanged paired V31 donor rank at that same voxel without any rank rearrangement.",
+  "parent_evidence": {
+    "v43_record": "config/hong2021_v43_result_record.json",
+    "v43_record_sha256": "1b9057e09f9fb6bfd29de27744047baf25743227e43d0f44a78bdf4a97cad27d",
+    "required_classification": "object_target_is_supported_but_transported_body_and_backbone_are_incompatible",
+    "required_next": "retire_block_and_native_rank_transport_and_fit_a_train_only_local_conditional_residual_likelihood"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "v41_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.joblib",
+    "v41_artifact_sha256": "bb53077bfd4a96edb2da6f4ce3c14fb351e601834f0af78cfb5cfe0d265c4e9e",
+    "v41_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.json",
+    "v41_report_sha256": "c2e9c6352771a9e725443bf000e17bd5a0ba19d679dea32ffd33c250879a2b42",
+    "selection_rule": "reuse every frozen V28/V31 query, donor identity, donor isometry, and member pairing byte-for-byte"
+  },
+  "conditioning": {
+    "native_channels": [
+      "log1p galaxy count",
+      "mean radial peculiar velocity",
+      "intrinsic radial velocity dispersion",
+      "frozen V14 corrected backbone",
+      "observer radius divided by 10 Mpc/h"
+    ],
+    "supervised_train_only_channels": [
+      "V41 full extreme-structure block probability, nearest-neighbor lifted from 16^3 to 64^3",
+      "V41 object log10 mean delta squared prediction, broadcast over 64^3"
+    ],
+    "target_free_at_inference": true,
+    "channel_standardization": "one equal-source train-only voxel mean and standard deviation per channel; constant object channels are weighted one object per source before spatial broadcast",
+    "validation_truth_feature": false,
+    "simulation_identity_feature": false
+  },
+  "target_and_likelihood": {
+    "target": "physical residual y_truth minus the frozen V14 corrected backbone",
+    "target_standardization": "one equal-source train-only scalar mean and standard deviation over physical residual voxels",
+    "distribution": "five-component continuous logistic mixture independently parameterized at every native voxel",
+    "network_outputs_per_voxel": 15,
+    "parameters": [
+      "five unconstrained mixture logits",
+      "five unconstrained standardized locations",
+      "five scales equal softplus(raw_scale)+0.01 standardized residual units"
+    ],
+    "objective": "equal-source mean exact continuous logistic-mixture negative log likelihood per voxel",
+    "target_density_or_tail_weight": false,
+    "field_or_fourier_auxiliary_loss": false,
+    "density_clipping": false,
+    "non_saturating_tail": true
+  },
+  "network": {
+    "architecture": "three-dimensional residual U-Net",
+    "input_channels": 7,
+    "base_channels": 32,
+    "channel_multipliers_at_64_32_16_8": [1, 2, 4, 4],
+    "residual_blocks_per_resolution": 2,
+    "convolution": "reflection-padded 3x3x3",
+    "downsampling": "reflection-padded stride-two 3x3x3 convolution",
+    "upsampling": "nearest-neighbor factor two followed by reflection-padded 3x3x3 convolution",
+    "skip": "concatenate encoder feature at matching resolution then one residual block",
+    "normalization": "GroupNorm with eight groups where divisible, otherwise the largest divisor at most eight",
+    "activation": "SiLU",
+    "final_initialization": "zero weights and biases, giving equal components at zero location with softplus(0)+0.01 scale before training"
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {"TNG100": 1, "SIMBA": 1, "Swift": 1},
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "CUDA autocast plus GradScaler; mixture log probabilities remain float32",
+    "augmentation": "uniform one of 48 signed cube isometries applied jointly to all conditioning channels and target",
+    "seed": 144044,
+    "validation": "fixed diagnostic NLL at steps 4000, 8000, and 12000; never used for stopping, selection, or hyperparameter changes",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v44/local_mixture_copula_step12000.pt",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v44/local_mixture_copula_step12000.json"
+  },
+  "sampling": {
+    "candidate": "compute query-local mixture parameters once, compute the unchanged paired donor V31 conditional-rank field and frozen isometry, and use each rank at the same flat query voxel as a mixture-selection plus within-component logistic quantile",
+    "mixture_inverse": "partition u by local softmax mixture weights, map the within-component conditional u through log(u)-log1p(-u), and apply that component location and scale",
+    "numerical_rank_bound": "clamp only arithmetic u to [1e-7,1-1e-7]; empirical V31 midpoint ranks lie strictly inside this interval and this is not density clipping",
+    "post_sample": "undo train-only residual standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16
+  },
+  "matched_arms": {
+    "query_local_mixture_copula": "actual query-local mixture parameters and the unchanged paired donor rank field; the only selectable arm",
+    "rolled_parameter_control": "periodically roll all 15 predicted mixture-parameter fields by (16,8,4) native voxels while keeping the query backbone and donor rank fixed",
+    "structure_risk_ablation": "rerun query inference with the standardized V41 block-risk channel set identically to zero while retaining every other query channel and donor rank",
+    "common": "identical query, donor, isometry, V31 rank field, backbone, trained model, sampling arithmetic, and exact DC rule except for the named control change"
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+    "Q3_generated_max_above_truth_max_dex": 0.30,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.50,
+    "primary_pass": "query_local_mixture_copula passes field, Q3, and Q4 independently in every domain",
+    "selection_role": "only query_local_mixture_copula can be selected",
+    "paired_references": ["V31", "V41", "V42"]
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "query_local_mixture_copula_sufficient",
+      "next": "seal_v44_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "local_marginal_likelihood_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_marginal_likelihood"
+    },
+    {
+      "condition": "high-k power and residual RMS pass every domain but Q3 or Q4 fails anywhere",
+      "classification": "local_mixture_body_is_supported_but_extreme_likelihood_is_insufficient",
+      "next": "audit_train_only_mixture_tail_NLL_and_component_occupancy_without_threshold_tuning"
+    },
+    {
+      "condition": "rolled parameter control equals or improves candidate Q3 and Q4 jointly in every domain",
+      "classification": "query_local_parameter_alignment_is_not_causal",
+      "next": "stop_local_neural_likelihoods_and_reassess_the_observable_information_ceiling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "query_local_mixture_copula_is_not_a_common_domain_repair",
+      "next": "audit_candidate_vs_structure_ablation_and_V31_before_any_further_generator"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V43, V35 data/cache, V31 copula, V41 model, and frozen selection hashes",
+    "train-only conditioning and target moments are source balanced and finite",
+    "network shape, exact architecture, zero final initialization, parameter count, and finite nonzero gradients",
+    "mixture log probability and inverse-sampling analytic self-consistency",
+    "48-isometry joint conditioning/target transform",
+    "one real source-balanced GPU step with peak allocated memory below 24 GiB",
+    "one real paired-donor sample is finite, has no rank permutation, and residual DC below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v44_e24_local_mixture_copula",
+  "firewall": {
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}
