@@ -23,6 +23,7 @@ from hong2021_v41_two_stage import (
     ENSEMBLE_SCHEMA,
     PREFLIGHT_SCHEMA,
     PROGRAM_SHA256,
+    _verified_json,
     load_program,
 )
 
