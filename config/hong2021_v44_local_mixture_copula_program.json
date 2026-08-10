@@ -90,8 +90,8 @@
     "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v44/local_mixture_copula_step12000.json"
   },
   "sampling": {
-    "candidate": "compute query-local mixture parameters once, compute the unchanged paired donor V31 conditional-rank field and frozen isometry, and use each rank at the same flat query voxel as a mixture-selection plus within-component logistic quantile",
-    "mixture_inverse": "partition u by local softmax mixture weights, map the within-component conditional u through log(u)-log1p(-u), and apply that component location and scale",
+    "candidate": "compute query-local mixture parameters once, compute the unchanged paired donor V31 conditional-rank field and frozen isometry, and apply the monotone inverse of the local mixture CDF to each rank at the same flat query voxel",
+    "mixture_inverse": "solve sum_k weight_k*sigmoid((x-location_k)/scale_k)=u by exactly 28 vectorized bisection iterations between the most conservative componentwise logistic 1e-7 and 1-1e-7 endpoints; this preserves the complete donor rank ordering pointwise",
     "numerical_rank_bound": "clamp only arithmetic u to [1e-7,1-1e-7]; empirical V31 midpoint ranks lie strictly inside this interval and this is not density clipping",
     "post_sample": "undo train-only residual standardization and apply one exact residual DC projection before adding the unchanged query backbone",
     "spatial_rank_permutation": false,
