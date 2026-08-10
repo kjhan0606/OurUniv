@@ -686,16 +686,16 @@ def _domain(
         data.close()
         cache.close()
     exact_values = np.concatenate(exact_parts)
-    ranked_weights = torch.cat(ranked_weight_parts, dim=1).to(device)
-    ranked_locations = torch.cat(ranked_location_parts, dim=1).to(device)
-    ranked_scales = torch.cat(ranked_scale_parts, dim=1).to(device)
-    bases = torch.cat(base_parts).to(device)
+    ranked_weights = torch.cat(ranked_weight_parts, dim=1)
+    ranked_locations = torch.cat(ranked_location_parts, dim=1)
+    ranked_scales = torch.cat(ranked_scale_parts, dim=1)
+    bases = torch.cat(base_parts)
     if exact_values.shape != (expected_top,) or ranked_weights.shape != (
         COMPONENTS,
         expected_top,
     ):
         raise RuntimeError("V58 collected top probe differs")
-    thresholds_t = torch.from_numpy(thresholds).to(device)
+    thresholds_t = torch.from_numpy(thresholds)
     primary = _cdf_interval_bins(
         ranked_weights,
         ranked_locations,
