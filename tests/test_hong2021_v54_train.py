@@ -28,6 +28,11 @@ def test_program_hash_and_firewall() -> None:
     assert '"historical_EAGLE_access": "forbidden"' in text
 
 
+def test_v53_audit_uses_its_explicit_decision_digest_key() -> None:
+    source = (REPO / "src/hong2021_v54_train.py").read_text()
+    assert '"v53_audit": "v53_audit_decision_digest_sha256"' in source
+
+
 def test_source_has_no_json_boolean_names() -> None:
     names = {
         node.id

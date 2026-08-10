@@ -115,11 +115,16 @@ def load_program(
     ):
         if sha256_file(_resolve(repo, frozen[key])) != frozen[f"{key}_sha256"]:
             raise ValueError(f"V54 frozen input differs: {key}")
-    for key in ("v50_development_decision", "v52_development_decision", "v53_audit"):
+    digest_keys = {
+        "v50_development_decision": "v50_development_decision_digest_sha256",
+        "v52_development_decision": "v52_development_decision_digest_sha256",
+        "v53_audit": "v53_audit_decision_digest_sha256",
+    }
+    for key, digest_key in digest_keys.items():
         value = _verified_json(
             _resolve(repo, frozen[key]), frozen[f"{key}_sha256"], key
         )
-        if canonical_digest(value) != frozen[f"{key}_digest_sha256"]:
+        if canonical_digest(value) != frozen[digest_key]:
             raise ValueError(f"V54 frozen digest differs: {key}")
         if (
             value.get("independent_gate_locked") is not True
