@@ -1,3 +1,4 @@
+import ast
 import hashlib
 from pathlib import Path
 
@@ -23,6 +24,17 @@ def test_program_hash_and_firewall() -> None:
     assert '"new_development_sampling": false' in text
     assert '"validation_access": "forbidden"' in text
     assert '"independent_gate_locked": true' in text
+
+
+def test_audit_source_has_no_json_boolean_names() -> None:
+    path = REPO / "src/hong2021_v46_tail_occupancy_audit.py"
+    names = {
+        node.id
+        for node in ast.walk(ast.parse(path.read_text()))
+        if isinstance(node, ast.Name)
+    }
+    assert "false" not in names
+    assert "true" not in names
 
 
 def test_probe_indices_are_fixed_unique_and_object_specific() -> None:
