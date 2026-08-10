@@ -1,0 +1,70 @@
+{
+  "schema": "hong2021-v46-mixture-tail-occupancy-audit-result-record-v1",
+  "status": "complete_mixed_tail_failure_requires_physical_moment_audit",
+  "program": "config/hong2021_v46_mixture_tail_occupancy_audit_program.json",
+  "program_sha256": "85f429131257e617391345ab08e1743d4683a35681d1e10d4c79d4d381d049ad",
+  "audit_code_commit": "d2e66bc98a7c7814f397a2c5f2f180aee2555c18",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v46_mixture_tail_occupancy_audit/audit.json",
+    "sha256": "201cbd79244ff4a573ef8f32c44a53fce95fee178d965e68487950f19d840813",
+    "decision_digest_sha256": "c5aa8d561b49d98b4ee120564e6e54b04145be1d295c5ea18ba6dc9b0dbfd1a6",
+    "classification": "mixture_tail_failure_is_mixed_or_not_identified",
+    "next": "compare_train_tail_NLL_PIT_occupancy_and_posterior_predictive_failures_before_any_new_generator"
+  },
+  "domain_summary": {
+    "TNG100": {
+      "mean_NLL": 1.347511773476047,
+      "upper_q99_9_NLL": 6.5630884507535505,
+      "PIT_upper_q0_001_observed_over_expected": 0.8654682724564163,
+      "effective_responsibility_components": 4.663481763486476,
+      "posterior_predictive_delta_q99_99_log10rho_dex": 0.12158306131362684,
+      "posterior_predictive_mean_delta_squared_ratio": 46955.820949087945,
+      "unsupported_component_indices": []
+    },
+    "SIMBA": {
+      "mean_NLL": 1.3475626520826238,
+      "upper_q99_9_NLL": 6.272286407492597,
+      "PIT_upper_q0_001_observed_over_expected": 0.851149606232596,
+      "effective_responsibility_components": 4.619392759063968,
+      "posterior_predictive_delta_q99_99_log10rho_dex": 0.050363301897072166,
+      "posterior_predictive_mean_delta_squared_ratio": 4.253529188552367,
+      "unsupported_component_indices": []
+    },
+    "Swift": {
+      "mean_NLL": 1.3449318331479156,
+      "upper_q99_9_NLL": 6.362098363066122,
+      "PIT_upper_q0_001_observed_over_expected": 0.887341487670003,
+      "effective_responsibility_components": 4.630393734367639,
+      "posterior_predictive_delta_q99_99_log10rho_dex": 0.08622687191974787,
+      "posterior_predictive_mean_delta_squared_ratio": 129.46746070978696,
+      "unsupported_component_indices": []
+    }
+  },
+  "component_five_standardized_scale_quantiles": {
+    "order": [0.5, 0.9, 0.99, 0.999, 1.0],
+    "TNG100": [0.4776574671268463, 0.5584516882896424, 0.7663472658395767, 0.972368435144433, 1.8698796033859253],
+    "SIMBA": [0.48567304015159607, 0.5994985044002533, 0.7920155441761015, 0.9504172394275742, 1.433184266090393],
+    "Swift": [0.48148012161254883, 0.5856208205223083, 0.774981033802032, 0.9414282620549169, 1.6031907796859741]
+  },
+  "mathematical_followup": {
+    "target_standard_deviation": 0.09877202271987233,
+    "finite_delta_squared_logistic_scale_limit_standardized": 0.48854869126807954,
+    "derivation": "For residual y=target_std*z with logistic component scale s, E[rho^2] requires the logistic MGF at t=9 ln(10) target_std, hence 9 ln(10) target_std s < 1.",
+    "observation": "The fifth component exceeds the finite-second-moment scale bound over a substantial part of its probed distribution in every domain, while carrying mean mixture weight about 0.126 to 0.130. V47 must measure the exact divergent probability mass before choosing a new likelihood."
+  },
+  "scientific_conclusion": [
+    "V45 components are occupied and calibrated by mean weight versus posterior responsibility; neither dead components nor global component collapse explains the failure.",
+    "PIT q0.001 ratios are 0.85 to 0.89 and q99.99 density errors are only 0.05 to 0.12 dex, yet posterior-predictive mean delta squared is high by factors 4.25 to 4.70e4. The failure is confined to a rarer tail that dominates nonlinear physical moments.",
+    "The unbounded logistic tail has a finite physical delta-squared moment only below an analytic scale bound. The observed scale summaries cross that bound, motivating a train-only exact physical-moment existence audit rather than any posthoc clipping."
+  ],
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_inputs_opened": false,
+    "validation_truth_opened": false,
+    "threshold_changed_after_diagnostic": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}
