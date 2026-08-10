@@ -77,7 +77,8 @@ def load_program(path: Path, repo: Path) -> tuple[dict[str, Any], dict[str, Any]
         record.get("status") != parent["required_status"]
         or decision.get("classification") != parent["required_classification"]
         or decision.get("next") != parent["required_next"]
-        or firewall.get("development_access") is not parent["required_development_accessed"]
+        or firewall.get("development_accessed")
+        is not parent["required_development_accessed"]
         or firewall.get("independent_gate_locked") is not parent["required_independent_gate_locked"]
         or firewall.get("Astrid_accessed") is not False
         or firewall.get("historical_EAGLE_accessed") is not False

@@ -19,8 +19,15 @@ PROGRAM = ROOT / "config/hong2021_v55_tail_amplitude_audit_program.json"
 
 def test_program_is_frozen_and_hash_bound():
     row = json.loads(PROGRAM.read_text())
+    parent_record = json.loads((ROOT / row["parent_evidence"]["v54_record"]).read_text())
     assert sha256_file(PROGRAM) == PROGRAM_SHA256
+    assert sha256_file(ROOT / row["parent_evidence"]["v54_record"]) == row[
+        "parent_evidence"
+    ]["v54_record_sha256"]
     assert row["status"] == "frozen_before_audit_implementation_or_execution"
+    assert parent_record["firewall"]["development_accessed"] is row[
+        "parent_evidence"
+    ]["required_development_accessed"]
     assert row["firewall"]["development_access"] == "forbidden"
     assert row["firewall"]["historical_EAGLE_access"] == "forbidden"
     assert row["firewall"]["independent_gate_locked"] is True
