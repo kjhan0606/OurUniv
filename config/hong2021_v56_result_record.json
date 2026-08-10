@@ -1,0 +1,132 @@
+{
+  "schema": "hong2021-v56-upper-survival-grid-result-record-v1",
+  "status": "complete_train_only_mechanism_gate_partial_domain_success_development_unopened",
+  "program": "config/hong2021_v56_survival_grid_program.json",
+  "program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+  "code_commit": "9aaf1aff01fba3b23666e68807a3e01a060a4ff8",
+  "grid": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "threshold_count": 16,
+    "lower_reference": "sealed global-train q99.999",
+    "upper_reference": "immutable global-train maximum",
+    "weighting": "normalized physical moment increments"
+  },
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.pt",
+    "checkpoint_sha256": "dd6d7bf4d3054c7cf22a218f113e591ab30323d2037c07c6c0f9ab5fd0e111f6",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.json",
+    "report_sha256": "271cb783031d0a1fc19f9978ee0c04140a629a431575b82505e9bfbf8e4a93ca",
+    "report_decision_digest_sha256": "da2266b863027531f628f10d2b8a3143870b27673d2b4246e27fd4b42b486684",
+    "steps": 12000,
+    "fixed_validation_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "AMP_overflow_count": 7,
+    "AMP_overflow_steps": [
+      1,
+      2,
+      3,
+      3220,
+      7673,
+      9709,
+      11827
+    ],
+    "final_validation": {
+      "TNG100": {
+        "composite": 1.5317964142123346,
+        "bounded_NLL": 1.3908195995515393,
+        "V54_tail_score": 1.1133681619039146,
+        "upper_grid_score": 0.29639993791759994
+      },
+      "SIMBA": {
+        "composite": 1.4251228030555483,
+        "bounded_NLL": 1.359454384073615,
+        "V54_tail_score": 0.5712802971247584,
+        "upper_grid_score": 0.08540390037798432
+      },
+      "Swift": {
+        "composite": 1.412127922685189,
+        "bounded_NLL": 1.3508291325053654,
+        "V54_tail_score": 0.54251160945844,
+        "upper_grid_score": 0.07047630009242786
+      }
+    }
+  },
+  "train_only_mechanism_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_train_high_backbone_gate/decision.json",
+    "sha256": "02a7507960b854a6c93b65bce6598992a164e4c5e86c0ec138200c1a9e491383",
+    "decision_digest_sha256": "c139c455727d5ea18976c8a0f0fa5e237a71815a81fdca59d9e068d92ae77c54",
+    "train_mechanism_pass": false,
+    "classification": "proper_upper_survival_grid_does_not_calibrate_train_high_backbone_physical_moments",
+    "next": "stop_before_development_sampling_and_audit_grid_survival_calibration_and_component_tail_amplitudes"
+  },
+  "train_only_physical_moment_ratios": {
+    "definition": "predicted 64-point quadrature mean delta-squared divided by empirical truth mean delta-squared in the fixed train-backbone strata",
+    "allowed_top_backbone_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "TNG100": {
+      "below_q90": 0.8293617938392506,
+      "q90_to_q99": 3.3120703273581737,
+      "q99_to_q99_9": 4.387610512382472,
+      "q99_9_and_above": 8.176958714802524,
+      "V54_q99_9_and_above": 107.69606342937506,
+      "top_backbone_pass": false
+    },
+    "SIMBA": {
+      "below_q90": 0.5963276727563988,
+      "q90_to_q99": 3.8385173964191748,
+      "q99_to_q99_9": 5.411289349359725,
+      "q99_9_and_above": 1.2286124898532462,
+      "V54_q99_9_and_above": 5.26119499358814,
+      "top_backbone_pass": true
+    },
+    "Swift": {
+      "below_q90": 1.082684007385013,
+      "q90_to_q99": 2.510256545172686,
+      "q99_to_q99_9": 2.978807141272592,
+      "q99_9_and_above": 1.3453022621835105,
+      "V54_q99_9_and_above": 21.143516089392783,
+      "top_backbone_pass": true
+    },
+    "maximum_32_to_64_quadrature_relative_difference": 1.0732161770857315e-09,
+    "quadrature_limit": 0.005,
+    "interpretation": "The survival grid removes most of the V54 extreme-tail moment excess and brings SIMBA and Swift inside the sealed absolute gate, but the TNG100 q99.9-and-above moment remains 8.18 times truth. The next audit must determine whether the remaining TNG excess is survival-probability or conditional-amplitude error across the fixed grid and mixture components."
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_training": true,
+    "pytest_passed": 432,
+    "sequence_status": "complete_train_gate_failure",
+    "sequence_status_sha256": "ad85577558bf81e890b53dd04447c7839aa372a38d4734573fbdc1446ad147e6",
+    "pytest_log_sha256": "6d5f673699c8a7007e461d5618f03f1ea0a95b254e38a6681a3c24cb32136ae7",
+    "grid_log_sha256": "6fddb488d3879c9c9f0c875c55027b39c7400cf468a49c02364e4ee9ae993995",
+    "preflight_log_sha256": "062ee6152717eb471944023e29755e65a6624fcda37e4ff94664ec2af2be34a3",
+    "preflight_sha256": "eb6a8d984a907c0983828f192a40388578dc2fcbb53415a161606e606c639295",
+    "training_log_sha256": "e8315bc2b53cba4e490b3880805d08797bdfc03b5c801e5dc84df5ebfd3bbc0f",
+    "train_gate_log_sha256": "5fdd903a24e9605f1867332ac4f203885d208a079fbbce46ba4c7959e65aa0df",
+    "runtime_only_affinity_change": "The V56 Python main thread was moved from logical CPU 0 to idle logical CPU 100 because an unrelated process occupied CPU 0. No model, data, objective, optimizer, RNG, checkpoint selection, or gate condition changed."
+  },
+  "scientific_conclusion": [
+    "The proper upper survival grid is a large but incomplete repair: q99.9-and-above moment ratios fall from V54 values 107.70, 5.26, and 21.14 to V56 values 8.18, 1.23, and 1.35 for TNG100, SIMBA, and Swift.",
+    "SIMBA and Swift independently pass the predeclared absolute train-only interval, while TNG100 alone fails and therefore keeps all development and independent data locked.",
+    "The maximum 32-versus-64 quadrature discrepancy is 1.08e-9, excluding quadrature resolution as the failure cause.",
+    "The next action is a no-refit train-only decomposition of fixed-grid survival probability and conditional tail amplitude, including mixture-component attribution, before choosing one further model change."
+  ],
+  "firewall": {
+    "new_development_sample_generated": false,
+    "development_accessed": false,
+    "validation_used_for_selection": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}
