@@ -11,6 +11,7 @@ from typing import Any
 
 import numpy as np
 import torch
+from torch.utils.checkpoint import checkpoint
 
 from hong2021_augmentation import CUBE_ISOMETRIES, apply_cube_isometry
 from hong2021_v15_development_gate import canonical_digest, git_state
@@ -41,6 +42,7 @@ PROGRAM_SCHEMA = "hong2021-v61-reachable-support-bounded-mixture-program-v1"
 SCHEMA = "hong2021-v61-reachable-support-hard-preflight-v1"
 GRID_CELLS = 134
 EXISTING_CELLS = 16
+SCORE_CHUNK_CELLS = 8
 
 
 def _verified_json(path: Path, digest: str, label: str) -> dict[str, Any]:
@@ -140,23 +142,14 @@ def load_program(
     return program, v56_preflight, v60_grid
 
 
-def reachable_survival_grid_score(
+def _raw_survival_components(
     parameters: torch.Tensor,
     target: torch.Tensor,
     backbone: torch.Tensor,
     target_mean: float,
     target_std: float,
     thresholds_log10rho: torch.Tensor,
-    weights: torch.Tensor,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    if (
-        target.shape != (len(parameters), 1, *parameters.shape[-3:])
-        or backbone.shape != target.shape
-        or thresholds_log10rho.shape != (GRID_CELLS,)
-        or weights.shape != thresholds_log10rho.shape
-        or target_std <= 0.0
-    ):
-        raise ValueError("V61 reachable survival score input differs")
+) -> torch.Tensor:
     components = []
     for threshold in thresholds_log10rho:
         physical_y = threshold.double() / 4.5
@@ -174,12 +167,88 @@ def reachable_survival_grid_score(
         if not torch.isfinite(raw):
             raise RuntimeError("V61 nonfinite survival Brier component")
         components.append(raw)
-    stacked = torch.stack(components)
+    return torch.stack(components)
+
+
+def _checkpointed_weighted_score(
+    parameters: torch.Tensor,
+    target: torch.Tensor,
+    backbone: torch.Tensor,
+    target_mean: float,
+    target_std: float,
+    thresholds: torch.Tensor,
+    weights: torch.Tensor,
+) -> torch.Tensor:
     normalization = REFERENCE_PROBABILITY * (1.0 - REFERENCE_PROBABILITY)
-    existing = torch.sum(weights[:EXISTING_CELLS].double() * stacked[:EXISTING_CELLS])
-    appended = torch.sum(weights[EXISTING_CELLS:].double() * stacked[EXISTING_CELLS:])
-    existing = existing / normalization
-    appended = appended / normalization
+    chunks = []
+    for start in range(0, len(thresholds), SCORE_CHUNK_CELLS):
+        stop = min(start + SCORE_CHUNK_CELLS, len(thresholds))
+        threshold_chunk = thresholds[start:stop]
+        weight_chunk = weights[start:stop]
+
+        def weighted_chunk(
+            value: torch.Tensor,
+            selected_thresholds: torch.Tensor = threshold_chunk,
+            selected_weights: torch.Tensor = weight_chunk,
+        ) -> torch.Tensor:
+            raw = _raw_survival_components(
+                value,
+                target,
+                backbone,
+                target_mean,
+                target_std,
+                selected_thresholds,
+            )
+            return torch.sum(selected_weights.double() * raw) / normalization
+
+        chunks.append(checkpoint(weighted_chunk, parameters, use_reentrant=False))
+    return torch.stack(chunks).sum()
+
+
+def reachable_survival_grid_score(
+    parameters: torch.Tensor,
+    target: torch.Tensor,
+    backbone: torch.Tensor,
+    target_mean: float,
+    target_std: float,
+    thresholds_log10rho: torch.Tensor,
+    weights: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    if (
+        target.shape != (len(parameters), 1, *parameters.shape[-3:])
+        or backbone.shape != target.shape
+        or thresholds_log10rho.shape != (GRID_CELLS,)
+        or weights.shape != thresholds_log10rho.shape
+        or target_std <= 0.0
+    ):
+        raise ValueError("V61 reachable survival score input differs")
+    existing = _checkpointed_weighted_score(
+        parameters,
+        target,
+        backbone,
+        target_mean,
+        target_std,
+        thresholds_log10rho[:EXISTING_CELLS],
+        weights[:EXISTING_CELLS],
+    )
+    appended = _checkpointed_weighted_score(
+        parameters,
+        target,
+        backbone,
+        target_mean,
+        target_std,
+        thresholds_log10rho[EXISTING_CELLS:],
+        weights[EXISTING_CELLS:],
+    )
+    with torch.no_grad():
+        stacked = _raw_survival_components(
+            parameters,
+            target,
+            backbone,
+            target_mean,
+            target_std,
+            thresholds_log10rho,
+        )
     return existing + appended, stacked, existing, appended
 
 
@@ -258,7 +327,9 @@ def preflight(program_path: Path, repo: Path) -> dict[str, Any]:
         grid_weights = torch.tensor(grid["physical_moment_weights"], device=device)
         parameters = model(condition_tensor)
         expected = torch.tensor(INITIAL_BIASES, device=device).reshape(1, 15, 1, 1, 1)
-        initialization_error = float(torch.max(torch.abs(parameters - expected)).cpu())
+        initialization_error = float(
+            torch.max(torch.abs(parameters - expected)).detach().cpu()
+        )
         scores = composite_loss(
             parameters,
             target_tensor,
@@ -331,6 +402,7 @@ def preflight(program_path: Path, repo: Path) -> dict[str, Any]:
         "grid_cells": GRID_CELLS,
         "existing_cells": EXISTING_CELLS,
         "appended_cells": GRID_CELLS - EXISTING_CELLS,
+        "score_checkpoint_chunk_cells": SCORE_CHUNK_CELLS,
         "grid_thresholds_log10rho": grid["thresholds_log10rho"],
         "grid_physical_moment_weights": grid["physical_moment_weights"],
         "tail_coefficient": TAIL_COEFFICIENT,

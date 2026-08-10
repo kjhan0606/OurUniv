@@ -10,6 +10,7 @@ from hong2021_v61_preflight import (
     EXISTING_CELLS,
     GRID_CELLS,
     PROGRAM_SHA256,
+    REFERENCE_PROBABILITY,
     reachable_survival_grid_score,
 )
 
@@ -58,6 +59,10 @@ def test_reachable_score_decomposition_identity_and_appended_gradient():
     )
     assert components.shape == (GRID_CELLS,)
     assert torch.allclose(total, existing + appended, rtol=0.0, atol=1e-14)
+    expected = torch.sum(weights.double() * components.double()) / (
+        REFERENCE_PROBABILITY * (1.0 - REFERENCE_PROBABILITY)
+    )
+    assert torch.allclose(total, expected, rtol=1e-12, atol=1e-12)
     assert existing > 0.0
     assert appended > 0.0
     gradient = torch.autograd.grad(appended, parameters)[0]
