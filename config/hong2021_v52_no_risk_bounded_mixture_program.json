@@ -1,0 +1,213 @@
+{
+  "schema": "hong2021-v52-matched-no-risk-bounded-mixture-development-program-v1",
+  "status": "frozen_before_model_implementation_training_sampling_or_development_evaluation",
+  "purpose": "Test the V51 causal branch by retraining the V50 bounded-logit mixture from the same initialization with only the standardized V41 structure-risk channel fixed to zero throughout train, fixed validation diagnostics, and inference, while holding all other information, support, optimization, donor ranks, controls, and gates fixed.",
+  "parent_evidence": {
+    "v51_record": "config/hong2021_v51_result_record.json",
+    "v51_record_sha256": "ff724d3b54b57c2b3e69d5bbd86c3f69dfcc5d576e8ae346354d06c1331322cd",
+    "required_status": "complete_structure_risk_amplification_sealed_and_no_risk_model_selected",
+    "required_classification": "structure_risk_conditioning_amplifies_the_bounded_extreme_tail",
+    "required_next": "freeze_a_matched_train_only_no-risk-channel_model_ablation_with_all_other_V50_information_support_and_gates_unchanged",
+    "required_selected_model": "matched train-only no-risk-channel V50 ablation",
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v50_program": "config/hong2021_v50_bounded_logit_mixture_copula_program.json",
+    "v50_program_sha256": "f67e8f5a9eacf40eb138774632add896e922e84d944263bb245ff2a71344d85f",
+    "v50_result_record": "config/hong2021_v50_result_record.json",
+    "v50_result_record_sha256": "965ecdbccf384d43b58f027ff89f07f3bb68debe9334f4ec517cba0f612dcdce",
+    "v50_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "v50_checkpoint_sha256": "834488cf990e0334573d66ead742d6036f6737f551f406be10b16cdc54e466b4",
+    "v50_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json",
+    "v50_training_report_sha256": "0b1525e49904f8465e922de09d3a85f23d9c238c15e5a39433dd1e70ae688e55",
+    "v50_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_bounded_logit_mixture_sequence/preflight.json",
+    "v50_preflight_sha256": "934570caa2a4cb259710557a3ab865904aea4e26a1935136f7b3aaf2aefdbb14",
+    "v50_development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "v50_development_decision_sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "v50_development_decision_digest_sha256": "17dc814404609dbd517cc5a50354720cdf3011fc476849a005d72858bd210dc0",
+    "v51_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v51_bounded_support_calibration_audit/audit.json",
+    "v51_audit_sha256": "a73395b3d99a727cf371cc25205e57c314eebe56fc84389df9e7d2f4c22769d2",
+    "v51_audit_decision_digest_sha256": "4e3f0082f552a85062ad5f56656d0259d88104a276ea8d71b1ee3ef5242a19ba",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "support_selection_decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce"
+  },
+  "single_changed_factor": {
+    "channel": "standardized V41 full extreme-structure block-risk input channel at index 5",
+    "V50": "observed train-only cached risk value standardized by the immutable V45 condition mean and standard deviation",
+    "V52": "exact floating-point zero after immutable standardization",
+    "scope": [
+      "every training object and augmentation",
+      "every fixed validation diagnostic",
+      "every development candidate and control sample",
+      "every future independent query if and only if V52 passes development and access is explicitly approved"
+    ],
+    "meaning": "zero is the immutable standardized mean-risk condition, not raw physical risk zero",
+    "all_other_condition_channels_unchanged": true,
+    "target_unchanged": true,
+    "support_unchanged": true
+  },
+  "conditioning": {
+    "network_input_channels": 7,
+    "active_channels": [
+      "log1p galaxy count",
+      "mean radial peculiar velocity",
+      "intrinsic radial velocity dispersion",
+      "frozen V14 corrected backbone",
+      "observer radius divided by 10 Mpc/h",
+      "object log10 mean delta squared prediction broadcast over 64^3"
+    ],
+    "fixed_zero_channel": "V41 full extreme-structure block probability lifted from 16^3 to 64^3",
+    "target_free_at_inference": true,
+    "standardization": "exact immutable V45 train-only condition scalars and target mean and standard deviation",
+    "validation_truth_feature": false,
+    "simulation_identity_feature": false
+  },
+  "likelihood_and_network": {
+    "likelihood": "unchanged V50 five-component Gaussian mixture in latent x=logit((z-lower)/(upper-lower)) with exact Jacobian",
+    "open_standardized_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "architecture": "unchanged V50 three-dimensional residual U-Net including the unused seventh input-channel weights",
+    "parameters": 8490415,
+    "initialization": "same V50 seed 144044, transformed output biases, and initialization call order",
+    "objective": "same equal-source exact bounded-mixture negative log likelihood",
+    "density_or_tail_weighted_loss": false,
+    "field_or_fourier_auxiliary_loss": false,
+    "sample_clipping": false,
+    "component_scale_cap": false
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {
+      "TNG100": 1,
+      "SIMBA": 1,
+      "Swift": 1
+    },
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "unchanged CUDA autocast plus GradScaler path; transformed log probability and Jacobian remain float32",
+    "AMP_overflow_accounting": "record every scale reduction and nonfinite pre-clip gradient without emitting non-standard JSON numeric tokens; do not alter the V50 optimizer or EMA update order",
+    "augmentation": "uniform one of the same 48 signed cube isometries applied jointly to the six active condition fields, fixed-zero risk field, and target",
+    "seed": 144044,
+    "validation": "fixed diagnostic transformed NLL at steps 4000, 8000, and 12000; never used for stopping, selection, support, or hyperparameter changes",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.pt",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.json"
+  },
+  "sampling": {
+    "candidate": "same-voxel monotone bounded-mixture CDF inversion of the unchanged paired V31 donor conditional-rank field with risk fixed to standardized zero",
+    "inverse": "unchanged 28-step latent Gaussian-mixture inverse at rank epsilon 1e-7 followed by the exact frozen sigmoid support transform",
+    "post_sample": "undo immutable V45 standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "sample_clipping": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16,
+    "seeds_donor_objects_donor_isometries_and_member_pairing": "identical to V50"
+  },
+  "matched_arms": {
+    "no_risk_query_local_mixture_copula": "actual V52 query-local latent parameters with channel 5 fixed to standardized zero and unchanged paired donor ranks; the only selectable arm",
+    "rolled_parameter_control": "periodically roll all 15 V52 latent parameter fields by (16,8,4) native voxels while retaining the no-risk query, backbone, and donor rank",
+    "sealed_V50_risk_model_reference": "reuse only the immutable V50 development decision and its bound metrics and hashes; do not resample or reevaluate V50"
+  },
+  "development_evaluation": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "primary_pass": "no_risk_query_local_mixture_copula passes field, Q3, and Q4 independently in every domain",
+    "V50_comparison": "strictly compare absolute q99.999 error, generated maximum excess, and absolute log generated-over-truth mean delta squared ratio in every domain",
+    "selection_role": "only no_risk_query_local_mixture_copula can be selected"
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "matched_no_risk_bounded_mixture_is_development_sufficient",
+      "next": "seal_V52_and_await_explicit_approval_before_independent_EAGLE_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "no_risk_marginal_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_no_risk_bounded_likelihood"
+    },
+    {
+      "condition": "V52 strictly improves absolute q99.999 error, maximum excess, and absolute log mean-delta-squared ratio over sealed V50 in every domain but primary_pass is false",
+      "classification": "structure_risk_is_a_causal_amplifier_but_removal_is_not_sufficient",
+      "next": "audit_train_only_high_backbone_conditional_calibration_and_strictly_proper_physical_tail_scores_before_one_new_model"
+    },
+    {
+      "condition": "V52 improves Q4 over V50 in every domain but high-k power or residual RMS fails anywhere",
+      "classification": "structure_risk_removal_reduces_extremes_but_damages_the_stochastic_field_body",
+      "next": "freeze_a_train_only_calibrated_continuous_risk_conditioning_test_instead_of_binary_feature_removal"
+    },
+    {
+      "condition": "sealed V50 equals or improves all three extreme comparisons in every domain",
+      "classification": "inference_only_risk_ablation_did_not_survive_matched_retraining",
+      "next": "stop_the_risk_removal_branch_and_audit_high_backbone_conditional_calibration"
+    },
+    {
+      "condition": "rolled parameter control equals or improves V52 Q3 and Q4 jointly in every domain",
+      "classification": "no_risk_query_local_parameter_alignment_is_not_causal",
+      "next": "stop_local_neural_likelihoods_and_reassess_the_observable_information_ceiling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "matched_no_risk_result_is_mixed_or_not_a_common_domain_repair",
+      "next": "audit_V52_vs_V50_domainwise_extremes_field_checks_and_high_backbone_strata_before_any_new_model"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V51 record and audit, V50 program, result record, checkpoint, report, preflight and decision, immutable support artifact, and conditioning-cache hashes and canonical digests",
+    "prove channel 5 is exactly zero for real TNG100, SIMBA, and Swift train and validation conditions while every other channel and target exactly equals V50 preprocessing",
+    "prove the original cached risk channel is nonconstant so the intervention is substantive",
+    "prove all source-balanced real train targets lie strictly inside the unchanged frozen support with no clipping",
+    "prove initial parameters and output biases equal V50 under seed 144044 and all 8490415 parameters remain trainable",
+    "network shape, finite bounded likelihood, nonzero finite gradients, and CDF inverse consistency",
+    "one real source-balanced GPU step with peak allocated memory below 24 GiB",
+    "one real paired-donor no-risk sample is finite, remains strictly inside support before DC projection, has no rank permutation, and residual DC below 1e-7 after projection",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_roots": {
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_no_risk_bounded_mixture_sequence",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture"
+  },
+  "firewall": {
+    "risk_channel_nonzero_anywhere_in_V52": false,
+    "support_changed": false,
+    "development_threshold_changed": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}
