@@ -1,0 +1,99 @@
+{
+  "schema": "hong2021-v42-within-block-tail-body-result-record-v1",
+  "status": "complete_development_only_body_preserved_but_tail_support_and_target_are_incompatible",
+  "program": "config/hong2021_v42_within_block_tail_body_program.json",
+  "program_sha256": "186fa2738995e30e068fcd903ff0e69c121996ab3ca8655a05b8f2e1fb8e5b1e",
+  "sampling_and_gate_implementation_commit": "e5c3224603b1cd843c14ed494f8fc0291acdaf7a",
+  "fit": {
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v42/native_extreme_model.joblib",
+    "artifact_sha256": "089ac4a8fc0130a7c230d6714b0d0e0771fc23e0e2165de5d884aebd6fe4da08",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v42/native_extreme_model.json",
+    "report_sha256": "cb25b48cb442fab87cd44406b8bd88ca067ebdc93c958a0c0b707856e9211fe3",
+    "report_decision_digest_sha256": "c4f28b71df4e9757861f63035c81fcbf5c06c0bac93420908e12d2d1e1ef0405",
+    "balanced_rows_per_source_per_class": 5293,
+    "balanced_total_rows": 31758,
+    "native_features": 221,
+    "native_seed_voxels_per_seed_block": 2,
+    "model_iterations": 128,
+    "validation_opened": false
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v42_tail_body_sequence/preflight.json",
+    "sha256": "da0772dddc527eb9f3d3af169746534aac5e823e0f9572805811e4537ca307a7",
+    "decision_digest_sha256": "49a84e8d138d3a796c7f684a6cb2e1087ed5d27ccc60d0789bf1e880d6013bca"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v42_e23_within_block_tail_body/development_decision.json",
+    "sha256": "021fd881ed0a9b3f1e2b809d5c81c9182a83f7bc1b5ba514395cbf37d00d9aa4",
+    "decision_digest_sha256": "80a238ca12aca2c74b9932415ce6b308ab332e61aa5ae03fd1513aef487d6a2f",
+    "development_pass": false,
+    "classification": "body_preserving_tail_intervention_is_not_a_common_domain_repair",
+    "next": "audit_tail_threshold_support_and_object_amplitude_target_compatibility"
+  },
+  "candidate": {
+    "TNG100": {
+      "Q3_delta_q99_999_dex": 1.121144,
+      "Q3_maximum_excess_dex": 1.511417,
+      "Q4_generated_over_truth": 137.888747,
+      "generated_residual_rms_over_truth": 0.9508685099948538,
+      "rank_histogram_total_variation": 0.0265508679782643,
+      "total_power_over_truth_3_to_6_h_mpc": 1.0397787297573493,
+      "total_power_over_truth_6_to_10_h_mpc": 1.1193339823411097,
+      "mean_tail_lambda": 0.015625,
+      "tail_lambda_boundary_fraction": 1.0,
+      "mean_amplitude_error_dex": 2.3108560238033533
+    },
+    "SIMBA": {
+      "Q3_delta_q99_999_dex": 1.288068,
+      "Q3_maximum_excess_dex": 1.705515,
+      "Q4_generated_over_truth": 505.556614,
+      "generated_residual_rms_over_truth": 0.996162130507158,
+      "rank_histogram_total_variation": 0.003835790297564333,
+      "total_power_over_truth_3_to_6_h_mpc": 1.048872824363249,
+      "total_power_over_truth_6_to_10_h_mpc": 1.1460969802096315,
+      "mean_tail_lambda": 0.015625,
+      "tail_lambda_boundary_fraction": 1.0,
+      "mean_amplitude_error_dex": 2.481296577490866
+    },
+    "Swift": {
+      "Q3_delta_q99_999_dex": 1.092733,
+      "Q3_maximum_excess_dex": 1.41167,
+      "Q4_generated_over_truth": 134.425031,
+      "generated_residual_rms_over_truth": 0.9982871493259776,
+      "rank_histogram_total_variation": 0.020689263063318593,
+      "total_power_over_truth_3_to_6_h_mpc": 1.0841831478698063,
+      "total_power_over_truth_6_to_10_h_mpc": 1.1847727857341128,
+      "mean_tail_lambda": 0.015625,
+      "tail_lambda_boundary_fraction": 1.0,
+      "mean_amplitude_error_dex": 2.028175958432257
+    }
+  },
+  "control_Q4_generated_over_truth": {
+    "order": [
+      "within_block_tail_body",
+      "block_only_tail_control",
+      "rolled_native_risk_control",
+      "tail_calibration_disabled_control"
+    ],
+    "TNG100": [137.888747, 63.188153, 51.403953, 7209.289187],
+    "SIMBA": [505.556614, 224.336584, 200.103576, 45143.881918],
+    "Swift": [134.425031, 51.140465, 46.133092, 7838.405104]
+  },
+  "scientific_conclusion": [
+    "The body-preservation invariant worked: residual RMS is within five percent of truth in all three domains and rank-histogram total variation is at most 0.027, reversing the stochastic-body collapse caused by V41 global scaling.",
+    "The frozen q99.9 residual-tail support is too narrow for the V41 object-amplitude target after block transport. Every one of the 768 candidate member-object pairs selected the minimum allowed lambda=1/64, yet candidate Q4 remains 137.9, 505.6, and 134.4 in TNG100, SIMBA, and Swift.",
+    "Actual native-risk placement worsens Q3 and Q4 relative to both block-only and periodically rolled native-risk controls. A train-only classifier for present-day extreme-density locations is therefore not, by itself, a compatible rule for placing donor conditional-residual extremes on a query backbone.",
+    "The remaining high-k excess is modest compared with V41's collapse, but the candidate still fails the upper high-k band, two-point morphology, and selected peak/void checks. It must not advance to an independent simulation gate.",
+    "The next step is a diagnostic-only audit of train-only conditional tail thresholds, attainable amplitude intervals, backbone/body contributions, and held-out object-amplitude prediction error before any model or generator change."
+  ],
+  "firewall": {
+    "validation_used_for_native_fit_or_sampling_prediction": false,
+    "global_residual_scaling_used": false,
+    "hard_density_or_residual_clipping_used": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}
