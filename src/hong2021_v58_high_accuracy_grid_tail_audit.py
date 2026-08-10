@@ -225,7 +225,7 @@ def _cdf_interval_bins(
             coordinate = torch.clamp(
                 coordinate, min=lower_endpoint, max=upper_endpoint
             )
-            normal = torch.special.ndtri(coordinate)
+            normal = math.sqrt(2.0) * torch.erfinv(2.0 * coordinate - 1.0)
             latent = locations[component].double()[:, None] + (
                 scales[component].double()[:, None] * normal
             )
