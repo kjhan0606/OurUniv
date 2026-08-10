@@ -168,13 +168,35 @@ def gaussian_mixture_log_probability(
     return torch.logsumexp(F.log_softmax(logits, dim=1) + component, dim=1, keepdim=True)
 
 
+def standard_normal_cdf(value: torch.Tensor) -> torch.Tensor:
+    """CUDA-portable normal CDF; float32 maximum absolute error is below 3e-7."""
+    absolute = torch.abs(value.float())
+    t = 1.0 / (1.0 + 0.2316419 * absolute)
+    polynomial = t * (
+        0.319381530
+        + t
+        * (
+            -0.356563782
+            + t
+            * (
+                1.781477937
+                + t * (-1.821255978 + t * 1.330274429)
+            )
+        )
+    )
+    positive = 1.0 - torch.exp(-0.5 * torch.square(absolute)) * polynomial / math.sqrt(
+        2.0 * math.pi
+    )
+    return torch.where(value >= 0.0, positive, 1.0 - positive)
+
+
 def gaussian_mixture_cdf(parameters: torch.Tensor, value: torch.Tensor) -> torch.Tensor:
     logits, locations, scales = mixture_parameters(parameters)
     if value.shape != (len(parameters), 1, *parameters.shape[-3:]):
         raise ValueError("V48 CDF value shape differs")
     weights = F.softmax(logits, dim=1)
     standardized = (value.float() - locations) / scales
-    component_cdf = 0.5 * torch.erfc(-standardized / math.sqrt(2.0))
+    component_cdf = standard_normal_cdf(standardized)
     return torch.sum(weights * component_cdf, dim=1, keepdim=True)
 
 
@@ -199,11 +221,7 @@ def gaussian_mixture_inverse(
     for _ in range(steps):
         middle = 0.5 * (lower + upper)
         cdf = torch.sum(
-            weights
-            * 0.5
-            * torch.erfc(
-                -(middle - locations) / scales / math.sqrt(2.0)
-            ),
+            weights * standard_normal_cdf((middle - locations) / scales),
             dim=1,
             keepdim=True,
         )
@@ -232,4 +250,5 @@ __all__ = [
     "gaussian_mixture_log_probability",
     "mixture_parameters",
     "parameter_count",
+    "standard_normal_cdf",
 ]

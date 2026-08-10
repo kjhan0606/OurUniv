@@ -14,6 +14,7 @@ from hong2021_v48_network import (
     gaussian_mixture_log_probability,
     mixture_parameters,
     parameter_count,
+    standard_normal_cdf,
 )
 from hong2021_v48_sample import ENSEMBLE_SCHEMA
 from hong2021_v48_train import (
@@ -91,6 +92,12 @@ def test_mixture_likelihood_inverse_is_accurate_and_monotone() -> None:
         ranks = torch.linspace(0.01, 0.99, 16).reshape(1, 1, 1, 1, 16)
         samples = gaussian_mixture_inverse(fixed, ranks)
         assert torch.all(torch.diff(samples.reshape(-1)) > 0)
+
+
+def test_cuda_portable_normal_cdf_matches_reference() -> None:
+    value = torch.linspace(-8.0, 8.0, 100_001)
+    reference = torch.special.ndtr(value)
+    assert torch.max(torch.abs(standard_normal_cdf(value) - reference)).item() < 3.0e-7
 
 
 def test_all_finite_gaussian_parameters_have_finite_physical_moments() -> None:
