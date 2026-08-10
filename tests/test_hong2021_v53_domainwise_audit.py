@@ -1,5 +1,6 @@
 import ast
 import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -74,3 +75,21 @@ def test_fixed_classification_precedence() -> None:
     assert classify(False, False, False, True, False, False)[0] == (
         "V50_V52_mixed_domain_failure_not_explained_by_risk_backbone_or_two_point_audits"
     )
+
+
+def test_result_record_seals_common_high_backbone_branch() -> None:
+    record = json.loads((REPO / "config/hong2021_v53_result_record.json").read_text())
+    assert record["audit"]["classification"] == (
+        "risk_choice_does_not_remove_common_train_high_backbone_physical_tail_miscalibration"
+    )
+    assert record["frozen_branch_evidence"][
+        "both_V50_and_V52_common_train_high_backbone_miscalibration"
+    ] is True
+    assert record["frozen_branch_evidence"][
+        "paired_domain_dependent_structure_risk_utility"
+    ] is False
+    assert record["selected_next_model"]["single_changed_factor"].startswith(
+        "add one predeclared train-only multi-threshold"
+    )
+    assert record["firewall"]["historical_EAGLE_accessed"] is False
+    assert record["firewall"]["independent_gate_locked"] is True
