@@ -1,6 +1,12 @@
+import json
+from pathlib import Path
+
 import numpy as np
 
 from hong2021_v68_population_pair_objective_audit import classify, population_row
+
+
+REPO = Path(__file__).resolve().parents[1]
 
 
 def test_v68_population_gradient_aggregates_moments_before_ratio() -> None:
@@ -23,3 +29,13 @@ def test_v68_classification_requires_stability_coherence_and_safety() -> None:
     assert unstable[2] is False
     assert incoherent[2] is False
     assert failed[2] is False
+
+
+def test_v68_result_rejects_pair_loss_and_selects_rank_convergence() -> None:
+    record = json.loads((REPO / "config/hong2021_v68_result_record.json").read_text())
+    assert record["audit"]["candidate_selected"] is False
+    assert record["population_audit"]["population_value_stable"] is False
+    assert record["population_audit"]["optimization_safe"] is True
+    assert record["selected_next_step"]["rank_levels"] == [8, 16, 32, 64]
+    assert record["firewall"]["training_or_refit_performed"] is False
+    assert record["firewall"]["independent_gate_locked"] is True
