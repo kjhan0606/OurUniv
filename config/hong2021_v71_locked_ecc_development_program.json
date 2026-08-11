@@ -1,6 +1,6 @@
 {
-  "schema": "hong2021-v71-single-use-tail-preserving-ensemble-copula-development-program-v1",
-  "status": "frozen_before_V71_implementation_or_development_access_after_explicit_path_B_approval",
+  "schema": "hong2021-v71-single-use-tail-preserving-ensemble-copula-development-program-v2",
+  "status": "refrozen_after_code_only_float32_tie_audit_before_implementation_commit_or_development_access",
   "purpose": "Define V71 as a new, training-free ensemble-copula coupling of the fixed V70 joint spatial latent sampler to the paired independent V63 marginal innovations, then authorize exactly one previously unopened TNG100, SIMBA, and Swift development evaluation under the unchanged field, Q3, and Q4 gates. This is Path B: it has no fresh train-only selection screen and may not be presented as one.",
   "authorization": {
     "explicit_user_scope_decision": "The user explicitly approved path B in this conversation with '경로 B로 진행'.",
@@ -12,6 +12,8 @@
     "required_after_development_pass": "seal the V71 result and await a new explicit user approval before any independent EAGLE access"
   },
   "parent_evidence": {
+    "preimplementation_tie_threshold_erratum": "config/hong2021_v71_preimplementation_tie_threshold_erratum.json",
+    "preimplementation_tie_threshold_erratum_sha256": "15c6d0dc5e0d511fa7dfbcf3a3b845ea1f19f6a2f27fd8444f4f4c8c36bb765d",
     "v71_feasibility_audit": "config/hong2021_v71_feasibility_audit.json",
     "v71_feasibility_audit_sha256": "1a5884e92f177d3714811e8b8b98692fc911885631b7fd1551aebb7b441f0888",
     "v70_result_record": "config/hong2021_v70_result_record.json",
@@ -101,7 +103,7 @@
       "maximum_inverse_CDF_error": 2e-06,
       "maximum_absolute_sample_residual_DC": 1e-07,
       "pre_inverse_sorted_latent_multiset_equality": "bitwise exact for every query and voxel",
-      "maximum_control_tied_voxel_fraction": 1e-05,
+      "maximum_control_tied_voxel_fraction": 2e-05,
       "innovation_digest_pairing_between_arms": "exact"
     },
     "post_DC_sorted_residual_difference": "record diagnostically for every query but do not use it to alter the candidate, sampler, gate, or thresholds"
