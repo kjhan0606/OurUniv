@@ -103,3 +103,10 @@ def test_gradient_recheck_preserves_the_false_positive() -> None:
     assert "attempt1_invalid_unscaled_amp_gradient" in source
     assert "preflight_false_positive.json" in source
     assert "only 194/8771649 scalar gradients nonzero" in source
+
+
+def test_latent_cache_runner_binds_corrected_preflight_and_no_validation() -> None:
+    source = (REPO / "scripts/hong2021_v70_latent_cache_lageunha.sh").read_text()
+    assert "5b708473534954ff45f19ae0711249dd2d7305fa7288458467b71a78b853a3c4" in source
+    assert "hong2021_v70_latent_cache.py" in source
+    assert "validation" not in source
