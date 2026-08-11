@@ -13,6 +13,14 @@ from hong2021_v70_preflight import (
     gaussianize_rank,
     representation_summary,
 )
+from hong2021_v70_train import (
+    EMA_DECAY,
+    LEARNING_RATE,
+    MINIMUM_LEARNING_RATE,
+    STEPS,
+    learning_rate,
+    update_ema,
+)
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -130,3 +138,39 @@ def test_latent_cache_roundoff_recovery_preserves_failed_partial() -> None:
     assert "train_latent.h5.partial" in source
     assert "1.000000119" in source
     assert "within 5e-7" in source
+
+
+def test_fixed_training_schedule_has_frozen_endpoints() -> None:
+    assert STEPS == 30_000
+    assert learning_rate(1) == pytest.approx(LEARNING_RATE)
+    assert learning_rate(STEPS) == pytest.approx(MINIMUM_LEARNING_RATE)
+    assert learning_rate(STEPS // 2) > MINIMUM_LEARNING_RATE
+    with pytest.raises(ValueError, match="step"):
+        learning_rate(0)
+
+
+def test_fixed_ema_update_uses_frozen_decay() -> None:
+    model = torch.nn.Linear(2, 1, bias=False)
+    ema = torch.nn.Linear(2, 1, bias=False)
+    with torch.no_grad():
+        model.weight.fill_(2.0)
+        ema.weight.fill_(1.0)
+    update_ema(ema, model)
+    assert torch.allclose(
+        ema.weight,
+        torch.full_like(ema.weight, EMA_DECAY + (1.0 - EMA_DECAY) * 2.0),
+    )
+
+
+def test_training_runner_binds_cache_and_fixed_fit() -> None:
+    source = (REPO / "scripts/hong2021_v70_train_lageunha.sh").read_text()
+    assert "3419206ce239546d7a2742ead01f20c9e6495c311dda0e4b82da6944a799ef76" in source
+    assert "0ddc9a592bc0eb1ab08d11ce71a5da1864b1fedb241663b2cc9f309094943ad3" in source
+    assert "--resume" not in source
+
+
+def test_training_source_has_no_validation_or_checkpoint_selection_path() -> None:
+    source = (REPO / "src/hong2021_v70_train.py").read_text()
+    assert '_open_split(v35["development_domains"][domain], "train")' in source
+    assert '_open_split(v35["development_domains"][domain], "validation")' not in source
+    assert "minimum_validation" not in source
