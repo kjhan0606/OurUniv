@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 import hong2021_v70_development_sample as development
+import hong2021_v70_seal as sealing
 from hong2021_v15_development_gate import canonical_digest
 from hong2021_v18_init import sha256_file
 from hong2021_v70_development_gate import _validate_frozen_gate_sources
@@ -115,3 +116,71 @@ def test_train_gate_runner_auto_advances_only_on_pass() -> None:
     failure_status = "complete_V70_train_only_gate_rejection_development_locked"
     assert source.index(pass_status) < source.index(development_runner)
     assert source.index(development_runner) < source.index(failure_status)
+
+
+def test_terminal_seal_rejection_never_validates_development(monkeypatch) -> None:
+    program = development.load_program(PROGRAM, REPO)
+    train = {
+        "candidate_selected": False,
+        "classification": (
+            "query_aligned_latent_spatial_score_does_not_learn_cross_domain_joint_structure"
+        ),
+        "next": (
+            "stop_before_development_without_posthoc_training_sampling_or_gate_tuning"
+        ),
+    }
+    monkeypatch.setattr(sealing, "load_program", lambda *_: program)
+    monkeypatch.setattr(sealing, "git_state", lambda *_: ("f" * 40, True))
+    monkeypatch.setattr(
+        sealing, "validate_train_gate", lambda *_: (train, "1" * 64)
+    )
+    monkeypatch.setattr(
+        sealing,
+        "validate_development",
+        lambda *_: pytest.fail("rejected train gate touched development"),
+    )
+    result = sealing.seal(PROGRAM, REPO, Path("train.json"), None)
+    assert result["status"] == "sealed_train_gate_rejection_development_not_accessed"
+    assert result["development_accessed"] is False
+    assert result["development_decision"] is None
+    assert result["independent_gate_locked"] is True
+
+
+@pytest.mark.parametrize("passed", [False, True])
+def test_terminal_seal_preserves_locked_development_branch(monkeypatch, passed) -> None:
+    program = development.load_program(PROGRAM, REPO)
+    train = {"candidate_selected": True}
+    branch = (
+        {
+            "development_pass": True,
+            "classification": "V70_is_development_sufficient",
+            "next": (
+                "seal_V70_and_await_explicit_user_approval_before_independent_EAGLE_access"
+            ),
+        }
+        if passed
+        else {
+            "development_pass": False,
+            "classification": (
+                "V70_joint_spatial_model_is_not_development_sufficient"
+            ),
+            "next": (
+                "seal_the_failure_and_stop_before_independent_EAGLE_without_sampler_threshold_or_model_tuning"
+            ),
+        }
+    )
+    monkeypatch.setattr(sealing, "load_program", lambda *_: program)
+    monkeypatch.setattr(sealing, "git_state", lambda *_: ("f" * 40, True))
+    monkeypatch.setattr(
+        sealing, "validate_train_gate", lambda *_: (train, "1" * 64)
+    )
+    monkeypatch.setattr(
+        sealing, "validate_development", lambda *_: (branch, "2" * 64)
+    )
+    result = sealing.seal(
+        PROGRAM, REPO, Path("train.json"), Path("development.json")
+    )
+    assert result["development_accessed"] is True
+    assert result["development_pass"] is passed
+    assert result["explicit_user_approval_required_before_EAGLE"] is passed
+    assert result["independent_EAGLE_accessed"] is False

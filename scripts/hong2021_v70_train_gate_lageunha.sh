@@ -10,6 +10,7 @@ report=$training/training_report.json
 root=$tng/evaluation/tng100_simba_swift_v70_train_joint_structure_gate
 decision=$root/decision.json
 sequence=$tng/evaluation/tng100_simba_swift_v70_latent_spatial_sequence
+sealed=$sequence/sealed_result.json
 status=$sequence/status
 cd "$repo"
 export PYTHONPATH=$repo/src CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=16 MKL_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16
@@ -51,6 +52,10 @@ if [[ $selected == true ]]; then
   trap - EXIT
   exec bash "$repo/scripts/hong2021_v70_development_lageunha.sh"
 else
+  python -u src/hong2021_v70_seal.py \
+    --program "$repo/config/hong2021_v70_locked_development_program.json" \
+    --repo "$repo" --train-gate "$decision" --out "$sealed" \
+    >"$sequence/seal.log" 2>&1
   printf "%s\n" complete_V70_train_only_gate_rejection_development_locked >"$status"
 fi
 trap - EXIT

@@ -8,6 +8,7 @@ train_gate=$tng/evaluation/tng100_simba_swift_v70_train_joint_structure_gate/dec
 development=$tng/evaluation/tng100_simba_swift_v70_development
 sequence=$tng/evaluation/tng100_simba_swift_v70_latent_spatial_sequence
 status=$sequence/status
+sealed=$sequence/sealed_result.json
 
 cd "$repo"
 export PYTHONPATH=$repo/src CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=16 MKL_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16
@@ -62,6 +63,11 @@ python -u src/hong2021_v70_development_gate.py \
   --train-gate "$train_gate" --train-gate-sha256 "$train_gate_sha" \
   --out "$development/development_decision.json" \
   >"$development/development_decision.log" 2>&1
+python -u src/hong2021_v70_seal.py \
+  --program "$program" --repo "$repo" \
+  --train-gate "$train_gate" \
+  --development-decision "$development/development_decision.json" \
+  --out "$sealed" >"$sequence/seal.log" 2>&1
 if [[ $(jq -r '.development_pass' "$development/development_decision.json") == true ]]; then
   printf "%s\n" complete_V70_development_pass_waiting_explicit_EAGLE_approval >"$status"
 else
