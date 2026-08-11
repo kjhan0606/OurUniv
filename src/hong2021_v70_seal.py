@@ -17,6 +17,13 @@ from hong2021_v70_train_gate import SCHEMA as TRAIN_GATE_SCHEMA
 
 
 SCHEMA = "hong2021-v70-terminal-sealed-result-v1"
+DEVIATION_SCHEMA = "hong2021-v70-intermediate-checkpoint-access-deviation-v1"
+DEVIATION_PATH = Path(
+    "config/hong2021_v70_intermediate_checkpoint_access_deviation.json"
+)
+DEVIATION_SHA256 = (
+    "9ad2acaaac2860ee4bd5b5a8e8459823f09bf6e0935ac48b615571e542a0a9aa"
+)
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -24,6 +31,37 @@ def _json(path: Path) -> dict[str, Any]:
         path.read_text(),
         parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)),
     )
+
+
+def load_checkpoint_access_deviation(repo: Path) -> tuple[dict[str, Any], Path]:
+    path = (repo / DEVIATION_PATH).resolve()
+    if sha256_file(path) != DEVIATION_SHA256:
+        raise ValueError("V70 checkpoint-access deviation record hash differs")
+    deviation = _json(path)
+    assessment = deviation.get("assessment", {})
+    if (
+        deviation.get("schema") != DEVIATION_SCHEMA
+        or deviation.get("status")
+        != "disclosed_integrity_only_access_literal_firewall_failed_selection_blinding_preserved"
+        or assessment.get(
+            "literal_precompletion_checkpoint_access_firewall_satisfied"
+        )
+        is not False
+        or assessment.get(
+            "posthoc_model_checkpoint_sampler_seed_metric_or_threshold_tuning_occurred"
+        )
+        is not False
+        or assessment.get("train_or_development_target_information_disclosed")
+        is not False
+        or assessment.get("train_and_development_gate_selection_blinding_preserved")
+        is not True
+        or assessment.get(
+            "statistical_gate_may_proceed_with_disclosed_protocol_deviation"
+        )
+        is not True
+    ):
+        raise ValueError("V70 checkpoint-access deviation classification differs")
+    return deviation, path
 
 
 def validate_train_gate(
@@ -124,6 +162,7 @@ def seal(
     commit, clean = git_state(repo)
     if not clean:
         raise RuntimeError("V70 sealing requires a clean worktree")
+    deviation, deviation_path = load_checkpoint_access_deviation(repo)
     train, train_sha = validate_train_gate(
         program, train_gate_path.resolve(), repo, commit
     )
@@ -170,6 +209,12 @@ def seal(
         "classification": classification,
         "next": next_step,
         "posthoc_training_sampling_threshold_or_gate_tuning": False,
+        "protocol_deviation": str(deviation_path),
+        "protocol_deviation_sha256": DEVIATION_SHA256,
+        "literal_precompletion_checkpoint_access_firewall_satisfied": False,
+        "train_and_development_gate_selection_blinding_preserved": deviation[
+            "assessment"
+        ]["train_and_development_gate_selection_blinding_preserved"],
         "Astrid_accessed": False,
         "historical_EAGLE_accessed": False,
         "independent_EAGLE_accessed": False,

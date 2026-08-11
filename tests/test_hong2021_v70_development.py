@@ -144,6 +144,11 @@ def test_terminal_seal_rejection_never_validates_development(monkeypatch) -> Non
     assert result["development_accessed"] is False
     assert result["development_decision"] is None
     assert result["independent_gate_locked"] is True
+    assert result[
+        "literal_precompletion_checkpoint_access_firewall_satisfied"
+    ] is False
+    assert result["train_and_development_gate_selection_blinding_preserved"]
+    assert result["protocol_deviation_sha256"] == sealing.DEVIATION_SHA256
 
 
 @pytest.mark.parametrize("passed", [False, True])
@@ -201,6 +206,26 @@ def test_independent_eagle_readiness_audit_is_code_only_and_hash_bound() -> None
     assert audit["firewall"][
         "new_or_reserved_EAGLE_target_or_metric_read_by_this_audit"
     ] is False
+
+
+def test_checkpoint_access_deviation_is_disclosed_and_hash_bound() -> None:
+    deviation, path = sealing.load_checkpoint_access_deviation(REPO)
+    assert path == (
+        REPO / "config/hong2021_v70_intermediate_checkpoint_access_deviation.json"
+    ).resolve()
+    assert sha256_file(path) == sealing.DEVIATION_SHA256
+    assessment = deviation["assessment"]
+    assert assessment[
+        "literal_precompletion_checkpoint_access_firewall_satisfied"
+    ] is False
+    assert assessment[
+        "posthoc_model_checkpoint_sampler_seed_metric_or_threshold_tuning_occurred"
+    ] is False
+    assert assessment["train_or_development_target_information_disclosed"] is False
+    assert assessment["train_and_development_gate_selection_blinding_preserved"]
+    assert deviation["corrective_actions"]["further_precompletion_checkpoint_access"] == (
+        "forbidden"
+    )
 
 
 def test_progress_monitor_is_read_only_and_tracks_all_terminal_branches() -> None:
