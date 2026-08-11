@@ -11,6 +11,7 @@ import torch
 import hong2021_v71_development_sample as sampling
 import hong2021_v71_ecc as ecc
 import hong2021_v71_seal as sealing
+from hong2021_v18_init import sha256_file
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -155,3 +156,37 @@ def test_v71_runner_orders_preflight_before_semantic_access_and_seal() -> None:
     assert "complete_V71_development_pass_waiting_explicit_EAGLE_approval" in source
     assert "complete_V71_development_failure_independent_gate_locked" in source
     assert "hong2021" not in source.split("pytest -q", 1)[1].split("preflight", 1)[0]
+
+
+def test_v71_result_record_binds_sealed_failure_without_override() -> None:
+    result = json.loads(
+        (REPO / "config/hong2021_v71_result_record.json").read_text()
+    )
+    assert result["status"] == (
+        "complete_single_use_development_failure_sealed_independent_gate_locked"
+    )
+    frozen = result["frozen_program"]
+    assert sha256_file(REPO / frozen["path"]) == frozen["sha256"]
+    assert sha256_file(REPO / frozen["preimplementation_erratum"]) == frozen[
+        "preimplementation_erratum_sha256"
+    ]
+    assert result["code_only_preflight"]["preflight_pass"] is True
+    assert result["sampling"]["numerical_and_ECC_invariants_pass"] is True
+    gate = result["development_gate"]
+    assert gate["development_pass"] is False
+    assert gate["candidate_Q3_all_domains"] is False
+    assert gate["candidate_Q4_all_domains"] is True
+    assert gate["candidate_high_k_power_and_residual_RMS_all_domains"] is False
+    assert all(
+        not result["Q3_extreme_maximum_failure"][domain]["maximum_pass"]
+        for domain in ("TNG100", "SIMBA", "Swift")
+    )
+    assert result["Q4_physical_moment_pass"]["all_domains_pass"] is True
+    assert result["spectral_failure"]["all_candidate_3_6_h_mpc_rows_pass"] is True
+    assert result["spectral_failure"]["all_candidate_6_10_h_mpc_rows_pass"] is False
+    assert result["scientific_conclusion"]["ECC_transfers_nontrivial_joint_structure"]
+    assert result["scientific_conclusion"]["ECC_is_development_sufficient"] is False
+    assert result["firewall"]["development_attempts"] == 1
+    assert result["firewall"]["independent_EAGLE_accessed"] is False
+    assert result["authorization"]["rerun_or_modify_V71"] is False
+    assert result["authorization"]["open_independent_EAGLE"] is False
