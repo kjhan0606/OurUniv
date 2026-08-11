@@ -200,11 +200,13 @@ def build_cache(
     repo = repo.resolve()
     program, _, v65 = load_program(program_path, repo)
     commit, clean = git_state(repo)
+    partial = output.with_suffix(output.suffix + ".partial")
     if (
         not clean
         or not _is_ancestor(repo, PROGRAM_FREEZE_COMMIT, commit)
         or socket.gethostname().split(".")[0].lower() != "lageunha"
         or output.exists()
+        or partial.exists()
         or report_path.exists()
     ):
         raise RuntimeError("V70 cache requires clean Lageunha and new outputs")
@@ -218,7 +220,6 @@ def build_cache(
     query = v65["immutable_train_queries"]
     expected: dict[str, dict[str, Any]] = {}
     output.parent.mkdir(parents=True, exist_ok=True)
-    partial = output.with_suffix(output.suffix + ".partial")
     try:
         with h5py.File(partial, "w") as target_file:
             target_file.attrs.update(

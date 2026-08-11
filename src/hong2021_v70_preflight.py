@@ -46,6 +46,7 @@ SEED = 170070
 FIXED_REPRESENTATION_INDICES = (0, 1, 2, 3)
 FIXED_ISOMETRY = 7
 V65_PROGRAM_SHA256 = "58c244e03a5f7fbb9cef29943869067fe3c202d01f3f3773d3cb69d4022bcc21"
+CDF_NUMERICAL_TOLERANCE = 5.0e-7
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -138,9 +139,14 @@ def gaussianize_rank(
     rank: np.ndarray, epsilon: float = RANK_EPSILON
 ) -> tuple[np.ndarray, np.ndarray, int]:
     value = np.asarray(rank, dtype=np.float64)
-    if not np.isfinite(value).all() or np.any(value < 0.0) or np.any(value > 1.0):
+    if (
+        not np.isfinite(value).all()
+        or np.any(value < -CDF_NUMERICAL_TOLERANCE)
+        or np.any(value > 1.0 + CDF_NUMERICAL_TOLERANCE)
+    ):
         raise ValueError("V70 conditional ranks differ")
-    clipped = np.clip(value, epsilon, 1.0 - epsilon)
+    projected = np.clip(value, 0.0, 1.0)
+    clipped = np.clip(projected, epsilon, 1.0 - epsilon)
     latent = ndtri(clipped).astype(np.float32)
     reconstructed = ndtr(latent.astype(np.float64))
     count = int(np.count_nonzero(value != clipped))

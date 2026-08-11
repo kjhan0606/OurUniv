@@ -39,6 +39,16 @@ def test_gaussianized_rank_is_finite_and_roundtrips_after_frozen_clamp() -> None
     assert np.max(np.abs(restored - clipped)) < 2.0e-7
 
 
+def test_gaussianized_rank_projects_only_documented_float32_CDF_roundoff() -> None:
+    rank = np.asarray([-(2.0**-24), 1.0 + 2.0**-23], dtype=np.float64)
+    latent, restored, count = gaussianize_rank(rank)
+    assert count == 2
+    assert np.isfinite(latent).all()
+    assert np.all((restored > 0.0) & (restored < 1.0))
+    with pytest.raises(ValueError, match="conditional ranks"):
+        gaussianize_rank(np.asarray([1.0 + 1.0e-5]))
+
+
 def test_representation_summary_records_clamps_and_moments() -> None:
     rank = np.asarray([[[[[0.0, 0.5, 1.0]]]]])
     latent, restored, _ = gaussianize_rank(rank)
@@ -110,3 +120,13 @@ def test_latent_cache_runner_binds_corrected_preflight_and_no_validation() -> No
     assert "5b708473534954ff45f19ae0711249dd2d7305fa7288458467b71a78b853a3c4" in source
     assert "hong2021_v70_latent_cache.py" in source
     assert "validation" not in source
+
+
+def test_latent_cache_roundoff_recovery_preserves_failed_partial() -> None:
+    source = (
+        REPO / "scripts/hong2021_v70_latent_cache_roundoff_recovery_lageunha.sh"
+    ).read_text()
+    assert "cache_attempt1_strict_CDF_range" in source
+    assert "train_latent.h5.partial" in source
+    assert "1.000000119" in source
+    assert "within 5e-7" in source
