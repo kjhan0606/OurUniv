@@ -244,3 +244,35 @@ def test_progress_monitor_is_read_only_and_tracks_all_terminal_branches() -> Non
     assert '"EAGLE_accessed": False' in source
     assert "hong2021_v70_train_gate.py" not in source
     assert "hong2021_v70_development_sample.py" not in source
+
+
+def test_v70_terminal_result_binds_narrow_rejection_and_locked_branch() -> None:
+    result = json.loads(
+        (REPO / "config/hong2021_v70_result_record.json").read_text()
+    )
+    assert result["status"] == (
+        "complete_train_gate_rejection_development_unopened_failure_audited"
+    )
+    for name in ("training_program", "train_gate_program", "locked_development_program"):
+        path = REPO / result["frozen_programs"][name]
+        assert sha256_file(path) == result["frozen_programs"][f"{name}_sha256"]
+    gate = result["train_only_gate"]
+    assert gate["candidate_selected"] is False
+    assert gate["one_point_pass"] is False
+    assert gate["spectral_pass"] is True
+    assert gate["phase_sensitive_energy_score_pass"] is True
+    assert gate["stream_reproducibility_pass"] is True
+    assert gate["numerical_pass"] is True
+    failure = result["sole_gate_failure"]
+    assert failure["stream_A"]["value"] > failure["frozen_interval"][1]
+    assert failure["stream_B"]["value"] > failure["frozen_interval"][1]
+    evidence = result[
+        "passed_joint_structure_evidence_not_used_to_override_rejection"
+    ]
+    assert evidence[
+        "all_12_domain_stream_band_candidate_energy_scores_better_than_paired_independent_voxel_control"
+    ]
+    assert result["firewall"]["development_accessed"] is False
+    assert result["firewall"]["independent_EAGLE_accessed"] is False
+    assert result["authorization"]["modify_or_rerun_V70"] is False
+    assert result["authorization"]["automatic_followup_model_authorized"] is False
