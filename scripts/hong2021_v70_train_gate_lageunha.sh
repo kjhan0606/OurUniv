@@ -48,6 +48,8 @@ PY
 )
 if [[ $selected == true ]]; then
   printf "%s\n" complete_V70_train_only_gate_pass_locked_development_authorized >"$status"
+  trap - EXIT
+  exec bash "$repo/scripts/hong2021_v70_development_lageunha.sh"
 else
   printf "%s\n" complete_V70_train_only_gate_rejection_development_locked >"$status"
 fi
