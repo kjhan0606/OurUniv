@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from hong2021_v65_structure_factorization_audit import (
     causal_flags,
     classify,
@@ -7,6 +10,7 @@ from hong2021_v65_structure_factorization_audit import (
 
 
 DOMAINS = ("TNG100", "SIMBA", "Swift")
+REPO = Path(__file__).resolve().parents[1]
 
 
 def _minimal_v35() -> dict:
@@ -76,3 +80,17 @@ def test_v65_gradient_summary_and_causal_rules_are_predeclared() -> None:
     }
     assert gradients["global_median_leave_one_out_cosine"] > 0.99
     assert causal_flags(summaries, gradients) == (True, True, True)
+
+
+def test_v65_result_stops_refit_and_selects_conditional_gradient_probe() -> None:
+    record = json.loads((REPO / "config/hong2021_v65_result_record.json").read_text())
+    assert record["audit"]["candidate_selected"] is False
+    assert record["causal_factorization"]["rank_dependence_causal"] is False
+    assert record["causal_factorization"][
+        "query_parameter_spatial_arrangement_causal"
+    ] is True
+    assert record["selected_next_step"]["action"] == (
+        "freeze and run a no-refit train-only final-output-layer conditional gradient-routing audit"
+    )
+    assert record["firewall"]["training_or_refit_performed"] is False
+    assert record["firewall"]["independent_gate_locked"] is True
