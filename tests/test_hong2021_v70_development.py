@@ -276,3 +276,40 @@ def test_v70_terminal_result_binds_narrow_rejection_and_locked_branch() -> None:
     assert result["firewall"]["independent_EAGLE_accessed"] is False
     assert result["authorization"]["modify_or_rerun_V70"] is False
     assert result["authorization"]["automatic_followup_model_authorized"] is False
+
+
+def test_v71_feasibility_audit_has_no_fresh_train_gate_or_candidate() -> None:
+    audit = json.loads(
+        (REPO / "config/hong2021_v71_feasibility_audit.json").read_text()
+    )
+    assert audit["status"] == (
+        "complete_code_only_no_candidate_or_followup_authorized"
+    )
+    for name in (
+        "v70_result_record",
+        "v70_program",
+        "v70_train_gate_program",
+        "v70_development_program",
+        "v70_cache_record",
+    ):
+        path = REPO / audit["bound_evidence"][name]
+        assert sha256_file(path) == audit["bound_evidence"][f"{name}_sha256"]
+    partition = audit["train_partition_exhaustion"]
+    assert all(
+        partition[domain]["untouched_objects_remaining"] == 0
+        for domain in ("TNG100", "SIMBA", "Swift")
+    )
+    assert partition["fresh_internal_train_only_gate_available"] is False
+    coupling = audit["ensemble_copula_coupling_property"]
+    assert coupling["training_required"] is False
+    assert coupling["guarantees_field_or_phase_gate_pass"] is False
+    assert audit["statistically_valid_next_paths"]["recommended_given_current_assets"] == (
+        "path_B"
+    )
+    authorization = audit["authorization"]
+    assert authorization["V71_program_frozen"] is False
+    assert authorization["V71_code_implemented"] is False
+    assert authorization["development_access_authorized"] is False
+    assert authorization["explicit_user_scope_decision_required"] is True
+    assert audit["firewall"]["target_payload_read_by_this_audit"] is False
+    assert audit["firewall"]["independent_EAGLE_accessed"] is False
