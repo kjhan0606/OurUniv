@@ -236,3 +236,20 @@ def test_residual_DC_projection_is_exact_and_finite() -> None:
     assert np.isfinite(residual).all()
     assert maximum < 1.0e-12
     assert np.max(np.abs(residual.mean(axis=(-3, -2, -1), dtype=np.float64))) < 1.0e-6
+
+
+def test_train_gate_runner_requires_completed_fixed_fit() -> None:
+    source = (REPO / "scripts/hong2021_v70_train_gate_lageunha.sh").read_text()
+    assert "complete_fixed_30000_step_fit" in source
+    assert "train_only_mechanism_gate_run" in source
+    assert "validation_accessed" in source
+    assert "hong2021_v70_train_gate.py" in source
+
+
+def test_training_supervisor_advances_only_after_exact_completion_status() -> None:
+    source = (
+        REPO / "scripts/hong2021_v70_training_to_gate_supervisor_lageunha.sh"
+    ).read_text()
+    assert "sleep 60" in source
+    assert "complete_V70_fixed_training_pending_train_only_gate" in source
+    assert "hong2021_v70_train_gate_lageunha.sh" in source
