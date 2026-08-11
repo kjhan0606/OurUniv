@@ -253,3 +253,38 @@ def test_training_supervisor_advances_only_after_exact_completion_status() -> No
     assert "sleep 60" in source
     assert "complete_V70_fixed_training_pending_train_only_gate" in source
     assert "hong2021_v70_train_gate_lageunha.sh" in source
+
+
+def test_train_gate_normalization_audit_is_hash_bound_and_target_free() -> None:
+    audit = json.loads(
+        (
+            REPO / "config/hong2021_v70_train_gate_normalization_audit.json"
+        ).read_text()
+    )
+    assert audit["status"] == (
+        "complete_code_only_normalization_audit_gate_unchanged"
+    )
+    for path_key, sha_key in (
+        ("train_gate_source", "train_gate_source_sha256"),
+        ("spectral_binner_source", "spectral_binner_source_sha256"),
+        ("frozen_gate_program", "frozen_gate_program_sha256"),
+    ):
+        path = REPO / audit["audited_inputs"][path_key]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+            audit["audited_inputs"][sha_key]
+        )
+    assert audit["power_normalization"]["member_factor_present_exactly_once"]
+    assert audit["power_normalization"]["two_point_correlation_function_computed"] is False
+    assert audit["phase_sensitive_energy_score"][
+        "candidate_and_control_use_identical_innovation"
+    ]
+    assert audit["decision"]["normalization_audit_pass"]
+    assert audit["decision"]["gate_source_changed"] is False
+    assert audit["decision"][
+        "seed_member_sampler_metric_or_threshold_changed"
+    ] is False
+    firewall = audit["firewall"]
+    assert firewall["training_checkpoint_read_by_this_audit"] is False
+    assert firewall["mechanism_holdout_payload_read_by_this_audit"] is False
+    assert firewall["validation_or_development_payload_read_by_this_audit"] is False
+    assert firewall["independent_EAGLE_accessed"] is False
