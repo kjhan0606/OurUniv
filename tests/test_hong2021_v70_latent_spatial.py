@@ -94,3 +94,12 @@ def test_preflight_requires_every_parameter_gradient_tensor() -> None:
     assert 'model["every_parameter_gradient_present"]' in source
     assert 'model["every_parameter_gradient_tensor_finite"]' in source
     assert 'model["every_parameter_gradient_tensor_nonzero"]' in source
+
+
+def test_gradient_recheck_preserves_the_false_positive() -> None:
+    source = (
+        REPO / "scripts/hong2021_v70_preflight_gradient_recheck_lageunha.sh"
+    ).read_text()
+    assert "attempt1_invalid_unscaled_amp_gradient" in source
+    assert "preflight_false_positive.json" in source
+    assert "only 194/8771649 scalar gradients nonzero" in source
