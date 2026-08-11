@@ -201,3 +201,21 @@ def test_independent_eagle_readiness_audit_is_code_only_and_hash_bound() -> None
     assert audit["firewall"][
         "new_or_reserved_EAGLE_target_or_metric_read_by_this_audit"
     ] is False
+
+
+def test_progress_monitor_is_read_only_and_tracks_all_terminal_branches() -> None:
+    source = (
+        REPO / "scripts/hong2021_v70_progress_monitor_lageunha.sh"
+    ).read_text()
+    for value in (
+        "complete_V70_train_only_gate_rejection_development_locked",
+        "complete_V70_development_pass_waiting_explicit_EAGLE_approval",
+        "complete_V70_development_failure_independent_gate_locked",
+        "failed_V70_",
+    ):
+        assert value in source
+    assert "progress.json.partial" not in source
+    assert "os.replace(partial, output)" in source
+    assert '"EAGLE_accessed": False' in source
+    assert "hong2021_v70_train_gate.py" not in source
+    assert "hong2021_v70_development_sample.py" not in source
