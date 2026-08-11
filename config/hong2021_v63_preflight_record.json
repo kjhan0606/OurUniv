@@ -1,0 +1,76 @@
+{
+  "schema": "hong2021-v63-conditional-log-physical-moment-preflight-record-v1",
+  "status": "complete_hard_preflight_pass_training_authorized",
+  "program": "config/hong2021_v63_conditional_moment_model_program.json",
+  "program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+  "implementation": "src/hong2021_v63_preflight.py",
+  "implementation_sha256": "a48b1fe58f9df34bff7ad5c2d625b1565f455395aa4eb506a459adcd60f7eb27",
+  "code_commit": "b1b0d4904c0f436b3b9d24de4da1be1fdb1335bd",
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "decision_digest_sha256": "fa68bbb71797ed58403d2a3f5da1118e1d1f4bb9740c1e3b659e8d0498b93aa5",
+    "status": "pass",
+    "V56_base_reproduction_pass": true,
+    "candidate_reproduces_V62": true,
+    "train_mask_occupancy_pass": true,
+    "quadrature_convergence_pass": true,
+    "gradient_scale_pass": true,
+    "gradient_pass": true,
+    "memory_pass": true
+  },
+  "preflight_measurements": {
+    "candidate_score": 0.7974053595552164,
+    "candidate_coefficient": 0.1,
+    "coefficient_scaled_candidate_to_NLL_output_gradient_L2_ratio": 12.093224666201584,
+    "maximum_32_to_64_relative_difference": 2.5350461566542166e-16,
+    "full_model_gradient_L2": 50.99387721568765,
+    "peak_allocated_bytes": 11320572928,
+    "peak_allocated_bytes_limit": 30064771072,
+    "minimum_train_mask_voxels": {
+      "TNG100": 8,
+      "SIMBA": 68,
+      "Swift": 53
+    },
+    "zero_count_train_objects": {
+      "TNG100": 0,
+      "SIMBA": 0,
+      "Swift": 0
+    }
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_preflight": true,
+    "pytest_passed": 466,
+    "pytest_log_sha256": "061d15000dd873cb027e523edb82d6c30ddae2475ccdabf7248d992958e263d7",
+    "preflight_log_sha256": "18f346ca53e3ca96acfabdd636bb24560f5684ed6ee591a9e885ca9d79467915",
+    "launcher_log_sha256": "c5a3e317988ebb1ae1126779ba6e7b0bfdc7860a2ec55e383a0ed93f4291eb5b",
+    "sequence_status": "complete_preflight_pass",
+    "sequence_status_sha256": "39b9303e65f9a81e092c372ee191b17b8fcfaddb3d0ae566dc80d90ca373ae14"
+  },
+  "authorization": {
+    "training_allowed": true,
+    "training_steps": 12000,
+    "checkpoint_step": 12000,
+    "fixed_validation_diagnostic_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "train_only_gate_required_before_development": true,
+    "development_access_allowed": false,
+    "independent_gate_locked": true
+  },
+  "firewall": {
+    "training_performed": false,
+    "validation_accessed": false,
+    "new_development_sample_generated": false,
+    "development_accessed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}
