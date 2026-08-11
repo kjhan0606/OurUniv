@@ -184,3 +184,20 @@ def test_terminal_seal_preserves_locked_development_branch(monkeypatch, passed) 
     assert result["development_pass"] is passed
     assert result["explicit_user_approval_required_before_EAGLE"] is passed
     assert result["independent_EAGLE_accessed"] is False
+
+
+def test_independent_eagle_readiness_audit_is_code_only_and_hash_bound() -> None:
+    path = REPO / "config/hong2021_v70_independent_eagle_readiness_audit.json"
+    audit = json.loads(path.read_text())
+    assert audit["status"] == "complete_code_only_gate_not_authorized"
+    for row in audit["local_evidence"].values():
+        assert sha256_file(REPO / row["path"]) == row["sha256"]
+    assert audit["findings"]["historical_runner_compatibility"] is False
+    assert audit["findings"][
+        "velocity_dispersion_feasible_without_new_catalog_information"
+    ] is True
+    assert audit["authorization_state"]["independent_EAGLE_access_authorized"] is False
+    assert audit["firewall"]["GPFS_EAGLE_file_opened_by_this_audit"] is False
+    assert audit["firewall"][
+        "new_or_reserved_EAGLE_target_or_metric_read_by_this_audit"
+    ] is False
