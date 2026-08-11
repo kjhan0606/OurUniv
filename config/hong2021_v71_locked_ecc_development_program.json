@@ -1,0 +1,156 @@
+{
+  "schema": "hong2021-v71-single-use-tail-preserving-ensemble-copula-development-program-v1",
+  "status": "frozen_before_V71_implementation_or_development_access_after_explicit_path_B_approval",
+  "purpose": "Define V71 as a new, training-free ensemble-copula coupling of the fixed V70 joint spatial latent sampler to the paired independent V63 marginal innovations, then authorize exactly one previously unopened TNG100, SIMBA, and Swift development evaluation under the unchanged field, Q3, and Q4 gates. This is Path B: it has no fresh train-only selection screen and may not be presented as one.",
+  "authorization": {
+    "explicit_user_scope_decision": "The user explicitly approved path B in this conversation with '경로 B로 진행'.",
+    "approval_date_Asia_Seoul": "2026-08-11",
+    "approved_scope": "freeze and implement V71 ECC, then run exactly one single-use unopened development attempt if all code-only integrity checks pass",
+    "V70_rerun_or_reinterpretation_authorized": false,
+    "V71_implementation_and_single_development_attempt_authorized": true,
+    "independent_EAGLE_access_authorized": false,
+    "required_after_development_pass": "seal the V71 result and await a new explicit user approval before any independent EAGLE access"
+  },
+  "parent_evidence": {
+    "v71_feasibility_audit": "config/hong2021_v71_feasibility_audit.json",
+    "v71_feasibility_audit_sha256": "1a5884e92f177d3714811e8b8b98692fc911885631b7fd1551aebb7b441f0888",
+    "v70_result_record": "config/hong2021_v70_result_record.json",
+    "v70_result_record_sha256": "469c1ff221c604d8b615026a4a9ee758125c5c862a9f6c37f3c6f174eb43f68b",
+    "v70_model_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_model_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v70_development_program": "config/hong2021_v70_locked_development_program.json",
+    "v70_development_program_sha256": "5417fceb29b42108b3f75cc00f0c2c3d9a8f3cc1977b778dbb9386cce1caa7fd",
+    "v70_train_gate_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_train_joint_structure_gate/decision.json",
+    "v70_train_gate_decision_sha256": "2097e14bb96e8423d4fd0e8be0b97c35e8e872652936715284631e24c2715ffa",
+    "v70_train_gate_decision_digest_sha256": "928674ed5ee1a937886e5592e2ed65220e82923ff9ad2a59ca316e844ed7e285",
+    "v70_terminal_seal": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/sealed_result.json",
+    "v70_terminal_seal_sha256": "57ba8e263a56a2f514568c61a2e10cc2c9ae6dbe11353107ff2157855d145ecf",
+    "statistical_role_of_consumed_V70_train_gate": "model-development evidence motivating V71 only; it is not a V71 selection gate",
+    "fresh_train_only_V71_screen_available": false,
+    "V70_observation_used_to_predeclare_V71": "V70 passed every frozen spectral, phase-sensitive energy-score, stream-reproducibility, and numerical row but reproducibly exceeded only the TNG100 q99.9 physical moment upper bound in both streams. V71 therefore changes only the ensemble marginal coupling and does not retrain or change the joint-spatial sampler."
+  },
+  "frozen_inputs": {
+    "v35_development_definition": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_development_definition_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "v70_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "v70_checkpoint_sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf",
+    "v70_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json",
+    "v70_training_report_sha256": "831697545e4b73ea1f875a5cbf07ba4eb82b5602964b0165851433a7553ef519"
+  },
+  "immutable_development_selection": {
+    "objects_per_domain": 16,
+    "source": "the exact source_index arrays in the three hash-bound V28 phase-object-selection ensembles referenced by the V35 program and the never-executed V70 development program",
+    "TNG100_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/tng/ensemble16.h5",
+    "TNG100_selection_sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840",
+    "SIMBA_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/simba_dev/ensemble16.h5",
+    "SIMBA_selection_sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504",
+    "Swift_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/swift_dev/ensemble16.h5",
+    "Swift_selection_sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88",
+    "development_truth_or_source_index_access_before_frozen_V71_runner_authorization": "forbidden"
+  },
+  "fixed_candidate_construction": {
+    "name": "tail_preserving_ensemble_copula_coupling",
+    "abbreviation": "ECC",
+    "candidate_arm": "tail_preserving_ECC_V70_copula_V63_marginal",
+    "diagnostic_control_arm": "independent_voxel_V63_marginal",
+    "diagnostic_control_may_affect_selection": false,
+    "rank_source": "the sixteen fixed V70 step-30000 Heun latent samples generated for the identical query from the paired innovations",
+    "marginal_value_source": "the same sixteen independent standard-normal initial innovations at the identical query, channel, and voxel",
+    "member_axis_algorithm": [
+      "compute a stable ascending argsort of the V70 latent values across the sixteen members independently at every channel and voxel",
+      "compute a stable ascending sort of the paired independent innovation values across the sixteen members at that same channel and voxel",
+      "scatter the sorted innovation values into the member positions specified by the V70 stable order"
+    ],
+    "tie_rule": "stable ascending order with original member index as the deterministic secondary order; exact equal control values remain indistinguishable and their frequency is recorded",
+    "exact_pre_inverse_invariant": "at every query, channel, and voxel, the ECC latent and independent-control latent multisets must be bitwise identical after sorting across members",
+    "joint_structure_property": "apart from indistinguishable control ties, the ECC member ordering at every voxel equals the V70 member ordering, retaining the empirical V70 cross-voxel member-rank copula",
+    "physical_inverse": "apply the unchanged V63 bounded-mixture inverse, target affine inverse, and exactly one per-member residual DC projection before adding the unchanged query backbone",
+    "DC_projection_caveat": "per-member DC projection mixes voxels through a member-specific constant, so exact per-voxel multiset equality is guaranteed before DC projection but is only measured, not guaranteed, afterward",
+    "training_or_gradient_required": false,
+    "interpolation_optimization_or_fitted_coupling": false,
+    "density_or_residual_clipping": false,
+    "posthoc_global_scale_or_Ak": false
+  },
+  "fixed_sampling": {
+    "noise_seed": 170073,
+    "members_per_query": 16,
+    "inference_batch": 4,
+    "V70_candidate_sampler": "the fixed step-30000 EMA with the already frozen deterministic 40-step probability-flow Heun sampler",
+    "sigma_steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "sample_clipping": false,
+    "second_seed_or_sampler_attempt": false
+  },
+  "code_only_preflight_and_numerical_requirements": {
+    "required_before_development_payload_access": [
+      "clean worktree descending from this frozen program commit",
+      "all parent program, result, checkpoint, report, gate, seal, selection, evaluator, and gate-source hashes match",
+      "V70 terminal seal still states development was not accessed and the independent gate remains locked",
+      "the V71 output root and terminal seal do not exist",
+      "ECC synthetic unit tests prove exact member-axis multiset preservation and deterministic stable assignment without reading development inputs"
+    ],
+    "required_during_single_sampling": {
+      "all_samples_finite": true,
+      "maximum_inverse_CDF_error": 2e-06,
+      "maximum_absolute_sample_residual_DC": 1e-07,
+      "pre_inverse_sorted_latent_multiset_equality": "bitwise exact for every query and voxel",
+      "maximum_control_tied_voxel_fraction": 1e-05,
+      "innovation_digest_pairing_between_arms": "exact"
+    },
+    "post_DC_sorted_residual_difference": "record diagnostically for every query but do not use it to alter the candidate, sampler, gate, or thresholds"
+  },
+  "unchanged_development_gate": {
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256_at_freeze": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate_source": "src/hong2021_v6_gate.py",
+    "field_gate_source_sha256_at_freeze": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "Q3_Q4_measurement_source": "src/hong2021_v20_development_gate.py",
+    "Q3_Q4_measurement_source_sha256_at_freeze": "f63b8eb8813f1c21265e7a5ec13a6543e7372fdce6d9955909bb33635149a028",
+    "Q3_Q4_pass_source": "src/hong2021_v48_development_gate.py",
+    "Q3_Q4_pass_source_sha256_at_freeze": "f1b2e58ca766d3ce1e0e6c7f6a917d9fe7b9475ed2bb9318730bf57cfa37ad17",
+    "candidate_pass": "the V71 ECC candidate independently passes Q3 and Q4 across all three domains and every unchanged field_gate check passes in all three domains",
+    "diagnostic_control_excluded_from_selection": true,
+    "checkpoint_sampler_seed_member_count_metric_or_threshold_selection_from_development": false,
+    "development_repetition_after_failure": false
+  },
+  "fixed_branches": [
+    {
+      "condition": "any code-only authorization, ancestry, hash, pre-existing-output, or synthetic ECC preflight requirement fails",
+      "classification": "V71_not_authorized_for_development_access",
+      "next": "stop_without_opening_development_or_changing_the_frozen_program"
+    },
+    {
+      "condition": "the single V71 ECC development gate fails",
+      "classification": "V71_tail_preserving_ECC_is_not_development_sufficient",
+      "next": "seal_the_failure_and_stop_before_independent_EAGLE_without_repeating_development_or_tuning_from_its_results"
+    },
+    {
+      "condition": "the single V71 ECC development gate passes",
+      "classification": "V71_tail_preserving_ECC_is_development_sufficient",
+      "next": "seal_V71_and_await_new_explicit_user_approval_before_independent_EAGLE_access"
+    }
+  ],
+  "output_roots": {
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_development",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_sequence",
+    "terminal_seal": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_sequence/sealed_result.json"
+  },
+  "firewall": {
+    "V70_development_branch_reopened": false,
+    "development_access_before_frozen_V71_runner_authorization": "forbidden",
+    "training_gradient_or_optimizer": "forbidden",
+    "checkpoint_sampler_seed_member_count_metric_threshold_or_gate_tuning": "forbidden",
+    "second_development_attempt": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden without a new explicit user approval after the single locked V71 development pass",
+    "independent_gate_locked": true
+  }
+}
