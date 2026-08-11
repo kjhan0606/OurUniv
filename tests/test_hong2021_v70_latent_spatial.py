@@ -87,3 +87,10 @@ def test_fit_partition_excludes_exact_mechanism_holdout() -> None:
 def test_fit_partition_rejects_duplicate_holdout() -> None:
     with pytest.raises(ValueError, match="holdout"):
         fit_and_holdout_indices(8, [1, 1, 3])
+
+
+def test_preflight_requires_every_parameter_gradient_tensor() -> None:
+    source = (REPO / "src/hong2021_v70_preflight.py").read_text()
+    assert 'model["every_parameter_gradient_present"]' in source
+    assert 'model["every_parameter_gradient_tensor_finite"]' in source
+    assert 'model["every_parameter_gradient_tensor_nonzero"]' in source

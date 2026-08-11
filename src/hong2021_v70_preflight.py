@@ -295,22 +295,30 @@ def _preflight_model(
             torch.roll(condition, shifts=1, dims=0),
             c_noise,
         )
-        full_loss, full_per_object = edm_loss(
-            model, latent, condition, sigma, noise
-        )
+    model.zero_grad(set_to_none=True)
+    full_loss, full_per_object = edm_loss(model, latent, condition, sigma, noise)
+    full_loss.backward()
+    parameter_gradients = [
+        parameter.grad
+        for parameter in model.parameters()
+        if parameter.requires_grad
+    ]
+    gradient_tensors = len(parameter_gradients)
+    gradients_present = all(value is not None for value in parameter_gradients)
+    gradients = [value.detach() for value in parameter_gradients if value is not None]
+    gradient_tensor_finite = [
+        bool(torch.isfinite(value).all().cpu()) for value in gradients
+    ]
+    gradient_tensor_nonzero = [
+        bool(torch.count_nonzero(value).cpu()) for value in gradients
+    ]
+    gradient_values = torch.cat([value.float().reshape(-1) for value in gradients])
     model.zero_grad(set_to_none=True)
     with torch.amp.autocast("cuda", dtype=torch.float16):
         amp_loss, amp_per_object = edm_loss(
             model, latent, condition, sigma, noise
         )
-    amp_loss.backward()
-    gradients = [
-        parameter.grad.detach()
-        for parameter in model.parameters()
-        if parameter.grad is not None
-    ]
-    gradient_values = torch.cat([value.float().reshape(-1) for value in gradients])
-    gradient_finite = bool(torch.isfinite(gradient_values).all().cpu())
+    gradient_finite = bool(all(gradient_tensor_finite))
     gradient_nonzero = int(torch.count_nonzero(gradient_values).cpu())
     gradient_total = int(gradient_values.numel())
     peak = int(torch.cuda.max_memory_allocated(device))
@@ -344,6 +352,12 @@ def _preflight_model(
         "condition_permutation_mean_absolute_response": sensitivity,
         "response_finite": response_finite,
         "gradient_finite": gradient_finite,
+        "gradient_tensors_expected": gradient_tensors,
+        "gradient_tensors_present": len(gradients),
+        "gradient_tensors_with_nonzero_norm": int(sum(gradient_tensor_nonzero)),
+        "every_parameter_gradient_present": gradients_present,
+        "every_parameter_gradient_tensor_finite": bool(all(gradient_tensor_finite)),
+        "every_parameter_gradient_tensor_nonzero": bool(all(gradient_tensor_nonzero)),
         "gradient_L2": float(torch.linalg.vector_norm(gradient_values).cpu()),
         "gradient_nonzero_values": gradient_nonzero,
         "gradient_values": gradient_total,
@@ -384,6 +398,9 @@ def preflight(program_path: Path, repo: Path) -> dict[str, Any]:
     model_pass = bool(
         model["response_finite"]
         and model["gradient_finite"]
+        and model["every_parameter_gradient_present"]
+        and model["every_parameter_gradient_tensor_finite"]
+        and model["every_parameter_gradient_tensor_nonzero"]
         and model["gradient_L2"] > 0.0
         and model["gradient_nonzero_values"] > 0
         and model["condition_permutation_mean_absolute_response"] > 0.0
