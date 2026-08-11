@@ -1,4 +1,10 @@
+import json
+from pathlib import Path
+
 from hong2021_v63_development_gate import classify
+
+
+REPO = Path(__file__).resolve().parents[1]
 
 
 def test_v63_primary_branch_requires_sealing_and_explicit_approval() -> None:
@@ -22,3 +28,17 @@ def test_v63_nontransfer_branch_remains_independent_gate_locked() -> None:
     assert "does_not_transfer" in classification
     assert "stop_before_independent_EAGLE" in next_step
 
+
+def test_v63_result_selects_no_refit_sampler_alignment_audit() -> None:
+    record = json.loads((REPO / "config/hong2021_v63_result_record.json").read_text())
+    assert record["status"] == (
+        "complete_development_failure_selected_sampler_alignment_audit"
+    )
+    assert record["development_decision"]["development_pass"] is False
+    assert record["development_decision"][
+        "V63_strictly_improves_all_three_over_both_V50_and_V52_every_domain"
+    ] is True
+    assert record["selected_next_step"]["action"] == (
+        "freeze and run a no-refit train-only empirical-rank sampler-alignment audit"
+    )
+    assert record["firewall"]["independent_gate_locked"] is True
