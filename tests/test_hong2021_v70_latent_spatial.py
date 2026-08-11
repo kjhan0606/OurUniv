@@ -174,3 +174,28 @@ def test_training_source_has_no_validation_or_checkpoint_selection_path() -> Non
     assert '_open_split(v35["development_domains"][domain], "train")' in source
     assert '_open_split(v35["development_domains"][domain], "validation")' not in source
     assert "minimum_validation" not in source
+
+
+def test_train_gate_program_freezes_two_paired_streams_during_training() -> None:
+    program = json.loads(
+        (
+            REPO / "config/hong2021_v70_train_joint_structure_gate_program.json"
+        ).read_text()
+    )
+    streams = program["noise_streams"]
+    assert streams["stream_A_seed"] != streams["stream_B_seed"]
+    assert streams["members_per_query_and_stream"] == 16
+    assert streams["inference_batch"] == 4
+    assert program["sampler"]["steps"] == 40
+    assert program["firewall"]["independent_gate_locked"] is True
+
+
+def test_train_gate_is_pair_loss_free_and_phase_sensitive() -> None:
+    program = json.loads(
+        (
+            REPO / "config/hong2021_v70_train_joint_structure_gate_program.json"
+        ).read_text()
+    )
+    assert "complex" in program["fourier_measurement"]["phase_sensitive_energy_score"]
+    assert "strictly lower" in program["selection_rules"]["phase_sensitive_pass"]
+    assert program["resource_gate"]["training_or_refit_by_gate"] is False
