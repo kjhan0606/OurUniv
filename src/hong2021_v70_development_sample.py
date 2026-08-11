@@ -187,12 +187,11 @@ def sample_all(
         raise RuntimeError("V70 development sampling requires clean frozen Lageunha")
     if not torch.cuda.is_available() or "ada" not in torch.cuda.get_device_name(0).lower():
         raise RuntimeError("V70 development sampling requires the Lageunha Ada GPU")
-    if output_root.exists():
-        raise FileExistsError("V70 refuses an existing development output")
-
     gate = authorize_train_gate(
         program, repo, train_gate_path.resolve(), train_gate_sha, commit
     )
+    if output_root.exists():
+        raise FileExistsError("V70 refuses an existing development output")
     # The following call is deliberately after the passing gate check.
     v35 = load_development_definition(program, repo)
     parent = program["parent_programs"]

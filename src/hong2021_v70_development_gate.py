@@ -60,6 +60,8 @@ def _validate_ensemble(
     parent: Path,
     train_gate_path: Path,
     train_gate_sha: str,
+    train_gate: dict[str, Any],
+    program: dict[str, Any],
     repo: Path,
     gate_commit: str,
 ) -> dict[str, Any]:
@@ -69,6 +71,9 @@ def _validate_ensemble(
             "method": METHOD if arm == CANDIDATE else "independent_voxel_V63_marginal_control",
             "arm": arm,
             "v70_development_program_sha256": PROGRAM_SHA256,
+            "v70_train_gate_program_sha256": program["parent_programs"][
+                "v70_train_gate_program_sha256"
+            ],
             "train_mechanism_gate": str(train_gate_path.resolve()),
             "train_mechanism_gate_sha256": train_gate_sha,
             "train_mechanism_pass": True,
@@ -142,6 +147,14 @@ def _validate_ensemble(
         innovation_digest = np.asarray(current["initial_latent_sha256"], dtype=np.uint8)
     if (
         any(sha256_file(file_path) != digest for file_path, digest in bindings.values())
+        or bindings["checkpoint"][1]
+        != train_gate["training_checkpoint_sha256"]
+        or bindings["training_report"][1]
+        != train_gate["training_report_sha256"]
+        or bindings["checkpoint"][0].resolve()
+        != Path(program["frozen_inputs"]["expected_v70_checkpoint"]).resolve()
+        or bindings["training_report"][0].resolve()
+        != Path(program["frozen_inputs"]["expected_v70_training_report"]).resolve()
         or not _is_ancestor(repo, PROGRAM_FREEZE_COMMIT, sampling_commit)
         or not _is_ancestor(repo, sampling_commit, gate_commit)
     ):
@@ -168,7 +181,9 @@ def evaluate(
     commit, clean = git_state(repo)
     if not clean or not _is_ancestor(repo, PROGRAM_FREEZE_COMMIT, commit):
         raise RuntimeError("V70 development gate requires clean frozen ancestry")
-    authorize_train_gate(program, repo, train_gate_path, train_gate_sha, commit)
+    train_gate = authorize_train_gate(
+        program, repo, train_gate_path, train_gate_sha, commit
+    )
     _validate_frozen_gate_sources(program, repo)
     v35 = load_development_definition(program, repo)
     arms: dict[str, Any] = {}
@@ -182,7 +197,7 @@ def evaluate(
             parent = Path(v35["development_domains"][domain]["phase_object_selection"])
             provenance = _validate_ensemble(
                 ensemble, arm, domain, parent, train_gate_path,
-                train_gate_sha, repo, commit,
+                train_gate_sha, train_gate, program, repo, commit,
             )
             private[arm][domain] = provenance
             metrics_path = domain_root / "ensemble_evaluation" / "metrics.json"
