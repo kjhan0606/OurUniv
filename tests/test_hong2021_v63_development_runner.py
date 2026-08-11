@@ -32,3 +32,13 @@ def test_v63_train_record_authorizes_only_locked_development() -> None:
     assert authorization["locked_V63_development_sampling_and_evaluation_allowed"]
     assert authorization["new_training_or_refit_allowed"] is False
     assert authorization["independent_EAGLE_gate_allowed"] is False
+
+
+def test_v63_schema_failure_resume_never_resamples() -> None:
+    text = (
+        REPO / "scripts/hong2021_v63_resume_development_evaluation_lageunha.sh"
+    ).read_text()
+    assert "failed_development_sequence exit=1 previous=development_evaluating" in text
+    assert "hong2021_v63_sample.py" not in text
+    assert "development_evaluating_resumed_after_schema_registration" in text
+    assert "complete_development_gate_pass_waiting_explicit_EAGLE_approval" in text

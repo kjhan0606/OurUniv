@@ -47,6 +47,7 @@ CENTERED_SCHEMAS = {
     "hong2021-v48-identifiable-query-local-Gaussian-mixture-copula-ensemble-v1",
     "hong2021-v50-bounded-query-local-mixture-copula-ensemble-v1",
     "hong2021-v52-matched-no-risk-bounded-mixture-ensemble-v1",
+    "hong2021-v63-conditional-log-physical-moment-ensemble-v1",
 }
 
 

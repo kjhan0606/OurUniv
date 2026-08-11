@@ -1,4 +1,5 @@
 from hong2021_v63_sample import ARMS, ENSEMBLE_SCHEMA, METHOD
+from hong2021_residual_evaluate import CENTERED_SCHEMAS
 
 
 def test_v63_sampling_identity() -> None:
@@ -10,4 +11,4 @@ def test_v63_sampling_identity() -> None:
         "bounded_query_local_mixture_copula",
         "rolled_parameter_control",
     )
-
+    assert ENSEMBLE_SCHEMA in CENTERED_SCHEMAS
