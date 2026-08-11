@@ -55,3 +55,16 @@ def test_v64_pair_conflict_prevents_model_selection() -> None:
         "sampler_aligned_tail_repair_is_not_a_sufficient_single_model_change"
     )
     assert selected is False
+
+
+def test_v64_result_selects_structure_factorization_without_refit() -> None:
+    record = json.loads((REPO / "config/hong2021_v64_result_record.json").read_text())
+    assert record["status"] == (
+        "complete_no_refit_audit_selected_train_only_structure_factorization"
+    )
+    assert record["tail_sampler_alignment"]["material_sampler_mismatch"] is False
+    assert record["gradient_evidence"]["pair_gradient_scale_pass"] is True
+    assert record["selected_next_step"]["action"] == (
+        "freeze and run a no-refit multi-object train-only donor-dependence versus query-parameter structure audit"
+    )
+    assert record["firewall"]["independent_gate_locked"] is True
