@@ -21,6 +21,12 @@ from hong2021_v70_train import (
     learning_rate,
     update_ema,
 )
+from hong2021_v70_train_gate import (
+    PROGRAM_SHA256 as TRAIN_GATE_PROGRAM_SHA256,
+    fourier_energy_score,
+    project_residual_dc,
+    sigma_schedule,
+)
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -199,3 +205,34 @@ def test_train_gate_is_pair_loss_free_and_phase_sensitive() -> None:
     assert "complex" in program["fourier_measurement"]["phase_sensitive_energy_score"]
     assert "strictly lower" in program["selection_rules"]["phase_sensitive_pass"]
     assert program["resource_gate"]["training_or_refit_by_gate"] is False
+
+
+def test_train_gate_program_is_byte_bound() -> None:
+    path = REPO / "config/hong2021_v70_train_joint_structure_gate_program.json"
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == TRAIN_GATE_PROGRAM_SHA256
+
+
+def test_heun_schedule_has_frozen_endpoints_and_terminal_zero() -> None:
+    schedule = sigma_schedule()
+    assert schedule.shape == (41,)
+    assert float(schedule[0]) == pytest.approx(40.0)
+    assert float(schedule[-2]) == pytest.approx(0.002)
+    assert float(schedule[-1]) == 0.0
+    assert torch.all(schedule[:-1][1:] < schedule[:-1][:-1])
+
+
+def test_fourier_energy_score_rewards_exact_phase_amplitude_field() -> None:
+    truth = np.asarray([1.0 + 2.0j, -0.5 + 0.25j, 3.0 - 1.0j])
+    exact = np.stack((truth, truth))
+    displaced = np.stack((truth + 1.0j, truth + 1.0j))
+    selected = np.asarray([True, True, True])
+    assert fourier_energy_score(exact, truth, selected) == pytest.approx(0.0)
+    assert fourier_energy_score(displaced, truth, selected) > 0.0
+
+
+def test_residual_DC_projection_is_exact_and_finite() -> None:
+    value = np.arange(2 * 4 * 4 * 4, dtype=np.float32).reshape(2, 1, 4, 4, 4)
+    residual, maximum = project_residual_dc(value)
+    assert np.isfinite(residual).all()
+    assert maximum < 1.0e-12
+    assert np.max(np.abs(residual.mean(axis=(-3, -2, -1), dtype=np.float64))) < 1.0e-6
