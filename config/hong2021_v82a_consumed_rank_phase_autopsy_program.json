@@ -1,0 +1,156 @@
+{
+  "schema": "hong2021-v82a-consumed-rank-phase-autopsy-program-v1",
+  "status": "frozen_and_pushed_before_bound_ensemble_payload_inspection",
+  "frozen_at": "2026-08-12T23:55:00+09:00",
+  "purpose": "Localize the already observed V80 rank/coverage and high-k failures using only the six consumed, sealed V80DR recovered ensembles. Separate rank-histogram shape, conditional-environment dependence, residual amplitude, and descriptive phase/coherence effects before deciding how to construct a consumed-only Gaussian residual control.",
+  "engineering_only": true,
+  "statistically_independent": false,
+  "voxel_mpc_h": 0.3125,
+  "parent_result": {
+    "classification": "complete_V80DR2_not_promising_stop_model_path",
+    "formula_global_p": 0.00012,
+    "rank_coverage_block_p": 0.000060,
+    "interpretation": "V80 is rejected as a candidate path; V82A is a cause autopsy and cannot reverse or replace that result."
+  },
+  "scope_boundary": {
+    "read_only_inputs": true,
+    "write_or_mutate_input": false,
+    "resample_existing_model": false,
+    "train_or_select_model": false,
+    "change_metric_threshold_or_gate": false,
+    "open_new_independent_data": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "use_CF4": false,
+    "modify_or_stop_RAMSES": false,
+    "statistical_validation_claim": false
+  },
+  "support_artifacts": {
+    "V80DR2_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v80dr2_report_only_program.json",
+      "sha256": "cc84825d29bf969cce8bba5355356c0da78e6fe2e41198ba8329bc621f2e9db6"
+    },
+    "V80DR2_result_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v80dr2_result_record.json",
+      "sha256": "41dad732cbf8266189a7adeec2c0bc9174df069cc10d756f50720cc42c4becc0"
+    },
+    "V80DR2_report": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr2_report_only/diagnostic_report.json",
+      "sha256": "0133b7ae8d037b2c9bd502477a51f702f14e3d58826f848c71cb5e4803644417"
+    }
+  },
+  "input_artifacts": {
+    "TNG100": {
+      "candidate_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/tng/ensemble16.h5",
+        "sha256": "f52c826f98a53f1f4b78e47c2e0fae2f8aa305d02df3ad307d30324e2b57d772"
+      },
+      "control_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/tng/ensemble16.h5",
+        "sha256": "c1b0f0ff90f2d43f861aac67680d7345e7b0df52312af8c109d40962f02e6dd1"
+      },
+      "candidate_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/tng/ensemble_evaluation/metrics.json",
+        "sha256": "7c07056a7ede8768911af2e5c6c3a041a0cceba759cefdf694b68eaca7ffe7f3"
+      },
+      "control_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/tng/ensemble_evaluation/metrics.json",
+        "sha256": "239dccaa7067e5567ad50f0603c4a80f298b06fb89a8ee33f3acc9ef00e17dc5"
+      }
+    },
+    "SIMBA": {
+      "candidate_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/simba_dev/ensemble16.h5",
+        "sha256": "632329be9a142c022e1c9c997c27ad8bacb026f04e2363d70f5a50b6db531677"
+      },
+      "control_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/simba_dev/ensemble16.h5",
+        "sha256": "6424ce236fe8635a39eda73652d7f0c74d7f2f4fc368f9f5dae3ef886d484c97"
+      },
+      "candidate_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/simba_dev/ensemble_evaluation/metrics.json",
+        "sha256": "2969dc2a2c23a3e3ee1632754be7200ba9da59866a6e74730388e2cdcc72c02a"
+      },
+      "control_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/simba_dev/ensemble_evaluation/metrics.json",
+        "sha256": "13c33f56e1b7243ce6ed70ae0491a2dd8d3a22af9d76c0ce3c0f314a3074f1de"
+      }
+    },
+    "Swift": {
+      "candidate_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/swift_dev/ensemble16.h5",
+        "sha256": "d2d990b663ddc7f49f92d298d91d4528c7db9eb35bc6ede517fc454022c2f262"
+      },
+      "control_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/swift_dev/ensemble16.h5",
+        "sha256": "59c0171e420f43a6a71a4b89b256f33866908cb37785be60871e99302c3f1aa0"
+      },
+      "candidate_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/swift_dev/ensemble_evaluation/metrics.json",
+        "sha256": "741cc295aafc57ae4b153030fee616d431e066a4a6da94c12ebd3fd2e47caff0"
+      },
+      "control_metrics": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/control/swift_dev/ensemble_evaluation/metrics.json",
+        "sha256": "b990cb7d14c1b8efe4e403f0dfea959293ea91da6b053819d9389bd4a260d728"
+      }
+    }
+  },
+  "implementation_sources": {
+    "V82A_autopsy": {
+      "path": "src/hong2021_v82a_consumed_autopsy.py",
+      "sha256": "8664a43c7ca26d43e5f809b08b542b863ca861da239c54e3a8a1fd81ecc0d8b8"
+    },
+    "V82A_tests": {
+      "path": "tests/test_hong2021_v82a_consumed_autopsy.py",
+      "sha256": "fd0906e936cfe2e93c1df431bd55b1916b7518dfd3edc1f43e65e73ed1f12230"
+    }
+  },
+  "frozen_diagnostics": {
+    "rank_shape": {
+      "rank_rule": "For each voxel, count the 16 centered generated residuals strictly below the centered truth residual, yielding ranks 0 through 16.",
+      "aggregate_and_query_statistics": [
+        "17-bin histogram and total variation from uniform",
+        "mean rank minus 8 for signed bias",
+        "rank variance divided by the discrete-uniform variance 24",
+        "edge ranks 0 and 16 divided by their uniform expectation",
+        "central ranks 7, 8, and 9 divided by their uniform expectation",
+        "outer-four versus central-three normalized excess",
+        "left ranks 0:7 minus right ranks 9:16 probability"
+      ],
+      "coverage": "Use numpy linear empirical quantiles 0.16/0.84 and 0.025/0.975; compare with finite-16-member expectations 0.60 and 0.838235294117647.",
+      "environment_strata": "Within each query, stable-sort all 64^3 conditional-mean voxels and split into four exactly equal-count strata. Compute the same rank-shape statistics in each stratum.",
+      "tie_interpretation": "The prior exact-label audit found adjacent_tie_fraction=0 in all three candidate domains; V82A retains strict ranks and does not invent jitter."
+    },
+    "residual_spectrum": {
+      "field": "sample minus conditional mean and truth minus conditional mean, each with exact per-cube DC subtraction",
+      "transform": "The frozen evaluator SpectralBinner: separable Hann window, rfftn, radial bins at voxel_mpc_h=0.3125.",
+      "bands_h_mpc": [[0.3, 1.0], [1.0, 3.0], [3.0, 6.0], [6.0, 10.0531]],
+      "amplitude": "Per query, radial member-mean residual power divided by truth residual power, then mode-count-weighted band means.",
+      "phase": [
+        "phase-only cosine of the ensemble-mean residual and truth residual",
+        "mean phase-only cosine of generated members and truth residual",
+        "phase-only cosine of paired candidate/control members sharing the frozen innovations"
+      ],
+      "scientific_limit": "A stochastic held-out truth need not share an individual generated member's phases. Truth-phase statistics are descriptive localization diagnostics, not acceptance gates or phase-copying targets."
+    },
+    "paired_comparison": "Candidate and control share truth, conditional mean, source indices, and initial innovations. Report paired query differences without claiming fresh inferential p-values.",
+    "result_use": "Use the autopsy only to specify the next consumed-only Gaussian residual control. Do not tune V80, reopen V79, or claim validation."
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence/report.json",
+    "refuse_existing": true
+  },
+  "execution": {
+    "host": "lageunha",
+    "cpu_affinity": "64-95",
+    "nice": 10,
+    "RAMSES_cpu_affinity_to_leave_untouched": "0-63",
+    "GPU_required": false
+  },
+  "authorization": {
+    "user_instruction": "The user approved proceeding with Fable's recommended sequence using '그렇게 진행해'.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "user_approved_consumed_only_autopsy": true,
+    "automatic_next_step": "After reporting V82A, freeze a cheap consumed-only Gaussian residual baseline whose design is informed only by the frozen V82A diagnostics; do not use independent data."
+  }
+}
