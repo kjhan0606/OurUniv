@@ -20,6 +20,7 @@ from hong2021_v72_sqt import (
     strict_json,
     validate_preflight,
 )
+from hong2021_v72_metadata_recovery import RECORD_SCHEMA as RECOVERY_RECORD_SCHEMA
 
 
 SCHEMA = "hong2021-v72-terminal-sealed-result-v1"
@@ -101,6 +102,7 @@ def seal(
     preflight_sha: str,
     stage_A_path: Path,
     stage_B_path: Path | None,
+    metadata_recovery_path: Path | None = None,
 ) -> dict[str, Any]:
     repo = repo.resolve()
     program = load_program(program_path.resolve(), repo)
@@ -109,6 +111,28 @@ def seal(
         raise RuntimeError("V72 sealing requires a clean frozen worktree")
     evidence = authorize_parent_evidence(program, repo, commit)
     validate_preflight(preflight_path.resolve(), preflight_sha, repo, commit)
+    expected_recovery = Path(program["output_roots"]["sequence"]) / (
+        "stage_A_metadata_recovery.json"
+    )
+    recovery_sha: str | None = None
+    if metadata_recovery_path is not None:
+        if metadata_recovery_path.resolve() != expected_recovery.resolve():
+            raise ValueError("V72 seal metadata recovery path differs")
+        recovery = strict_json(metadata_recovery_path.resolve())
+        recovery_sha = sha256_file(metadata_recovery_path.resolve())
+        if (
+            recovery.get("schema") != RECOVERY_RECORD_SCHEMA
+            or recovery.get("status")
+            != "complete_metadata_only_recovery_evaluation_may_resume"
+            or recovery.get("v72_program_sha256") != PROGRAM_SHA256
+            or recovery.get("all_nine_dataset_manifests_unchanged") is not True
+            or recovery.get("sampling_repeated") is not False
+            or recovery.get("stage_B_accessed") is not False
+            or recovery.get("independent_EAGLE_accessed") is not False
+            or canonical_digest(recovery) != recovery.get("decision_digest_sha256")
+            or not _is_ancestor(repo, str(recovery.get("recovery_code_commit")), commit)
+        ):
+            raise ValueError("V72 metadata recovery record differs")
     first, first_sha = validate_stage_decision(
         program, stage_A_path.resolve(), "A", preflight_sha, repo, commit
     )
@@ -146,6 +170,11 @@ def seal(
         "worktree_clean": clean,
         "preflight": str(preflight_path.resolve()),
         "preflight_sha256": preflight_sha,
+        "metadata_recovery": (
+            str(metadata_recovery_path.resolve())
+            if metadata_recovery_path is not None else None
+        ),
+        "metadata_recovery_sha256": recovery_sha,
         "v71_terminal_seal": evidence["v71_terminal_seal"],
         "v71_terminal_seal_sha256": evidence["v71_terminal_seal_sha256"],
         "stage_A_decision": str(stage_A_path.resolve()),
@@ -181,6 +210,7 @@ def main() -> None:
     parser.add_argument("--preflight-sha256", required=True)
     parser.add_argument("--stage-A-decision", type=Path, required=True)
     parser.add_argument("--stage-B-decision", type=Path)
+    parser.add_argument("--metadata-recovery", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     program = load_program(args.program.resolve(), args.repo.resolve())
@@ -190,7 +220,7 @@ def main() -> None:
         raise FileExistsError("V72 refuses an existing terminal seal")
     result = seal(
         args.program, args.repo, args.preflight, args.preflight_sha256,
-        args.stage_A_decision, args.stage_B_decision,
+        args.stage_A_decision, args.stage_B_decision, args.metadata_recovery,
     )
     args.out.parent.mkdir(parents=True, exist_ok=True)
     partial = args.out.with_suffix(args.out.suffix + ".partial")

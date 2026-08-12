@@ -379,6 +379,7 @@ def sample_stage(
                             "sigma_maximum": 40.0,
                             "rho": 7.0,
                             "stochastic_churn": 0.0,
+                            "diagnostic_k_h_mpc": 1.0,
                             "candidate_arm": arm == CANDIDATE,
                             "diagnostic_control_may_affect_selection": False,
                             "unequal_sample_global_maximum_used": False,

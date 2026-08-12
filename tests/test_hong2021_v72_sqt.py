@@ -11,6 +11,8 @@ import torch
 import hong2021_v72_sample as sampling
 import hong2021_v72_seal as sealing
 import hong2021_v72_sqt as sqt
+import hong2021_v72_metadata_recovery as recovery
+from hong2021_v18_init import sha256_file
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -195,3 +197,44 @@ def test_v72_gate_source_never_uses_unequal_global_maximum_for_selection() -> No
     assert "cube_maximum_energy_score" in source
     assert '"unequal_sample_global_maximum_used": False' in source
     assert "generated_max_above_truth_max_dex" not in source
+
+
+def test_v72_metadata_recovery_changes_only_one_attribute(tmp_path) -> None:
+    path = tmp_path / "ensemble.h5"
+    with h5py.File(path, "w") as handle:
+        handle.create_dataset("sample", data=np.arange(24, dtype=np.float32).reshape(2, 3, 4))
+        handle.create_dataset("source_index", data=np.asarray([7, 11], dtype=np.int64))
+        handle.attrs.update(
+            {
+                "schema": sqt.ENSEMBLE_SCHEMA,
+                "v72_program_sha256": sqt.PROGRAM_SHA256,
+                "stage": "A",
+                "complete": True,
+                "another_attribute": "unchanged",
+            }
+        )
+    before = sha256_file(path)
+    row = recovery.repair_file(path, before)
+    assert row["all_datasets_byte_identical"] is True
+    assert row["only_added_attribute"] == {"diagnostic_k_h_mpc": 1.0}
+    with h5py.File(path, "r") as handle:
+        assert float(handle.attrs["diagnostic_k_h_mpc"]) == 1.0
+        assert handle.attrs["another_attribute"] == "unchanged"
+        assert np.array_equal(
+            handle["sample"][:], np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+        )
+
+
+def test_v72_recovery_runner_never_resamples_stage_A() -> None:
+    source = (
+        REPO / "scripts/hong2021_v72_resume_after_metadata_recovery_lageunha.sh"
+    ).read_text()
+    assert "hong2021_v72_metadata_recovery.py" in source
+    assert "--stage A" in source
+    assert "hong2021_v72_sample.py" in source
+    sample_invocation = source.split("hong2021_v72_sample.py", 1)[1]
+    assert "--stage B" in sample_invocation
+    assert "--stage A" not in sample_invocation
+    assert source.index("hong2021_v72_metadata_recovery.py") < source.index(
+        "evaluate_stage A"
+    )
