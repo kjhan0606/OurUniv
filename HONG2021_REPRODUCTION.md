@@ -37,6 +37,25 @@ are in
 [`config/hong2021_v73_result_record.json`](config/hong2021_v73_result_record.json).
 No new Hong candidate or gate change is authorized pending explicit approval.
 
+V74 then prospectively audited the two V73-identified redesigns without
+reading raw truth again.  It independently reproduced the sixteen-query joint
+pass probability (`0.7661` versus V73 `0.7633`) and found that 32 grouped
+queries are the minimum tested count that makes the unchanged physical and
+morphology conjunction attainable.  At 32 queries the all-domain joint pass
+probability is `0.91975` with 95% Wilson interval
+`[0.91590,0.92344]`; TNG100 absolute-core probability is `0.95075`.
+
+The strict maximum-energy winner was replaced prospectively by a
+truth-oracle-calibrated, three-domain Bonferroni no-detectable-inferiority
+rule.  Its independent 32-query family-wise false-rejection probability is
+`0.04735`, with Wilson upper bound `0.05038`.  The consumed V72 TNG100 result
+still fails the prospective margin (`+0.07425` versus `+0.03962`), so V72 is
+not rescued.  V74 is recorded in
+[`config/hong2021_v74_result_record.json`](config/hong2021_v74_result_record.json).
+The complete prospective gate remains unfinished: rank histogram and voxel
+coverage need a separate exact-conditional-null audit before any new Hong
+candidate or fresh gate is authorized.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
