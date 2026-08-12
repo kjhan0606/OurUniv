@@ -1,0 +1,143 @@
+{
+  "schema": "hong2021-v80dr2-report-only-engineering-result-record-v1",
+  "status": "complete_not_promising_stop_V80_without_V81_input_audit",
+  "recorded_at": "2026-08-12T23:12:04+09:00",
+  "purpose": "Seal the single authorized V80DR2 report-only formula diagnostic computed from the already sealed V80DR ensembles and evaluator metrics. Record the predeclared not-promising branch, preserve the non-independent engineering interpretation, and stop V80 without opening or acquiring independent V81 validation objects.",
+  "program": {
+    "path": "config/hong2021_v80dr2_report_only_program.json",
+    "sha256": "cc84825d29bf969cce8bba5355356c0da78e6fe2e41198ba8329bc621f2e9db6",
+    "freeze_commit": "508b62608626225c9997d952740e1c1d72da1b13",
+    "metric_value_inspected_before_program_freeze": false
+  },
+  "execution": {
+    "host": "Lageunha",
+    "runner": "scripts/hong2021_v80dr2_report_only_lageunha.sh",
+    "runner_commit": "c6569ab8990478ab2426c358be7e02ac3bd93311",
+    "tmux_session": "hong_v80dr2_report",
+    "tmux_auto_exited": true,
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr2_report_only_sequence/status",
+    "status_sha256": "f03e2c01dc2c05de0dd07dc1d0daac2c3220827e9c19acccb21f3e538870b0ef",
+    "status": "complete_V80DR2_not_promising_stop_model_path",
+    "full_tests": "672 passed in 40.12s",
+    "pytest_log_sha256": "58c46ada029d14d2f4102da4ee8452023d3a348a2dc47af534104bed11f89c40",
+    "report_log_sha256": "10a1949875fd978dcfa0ee83b7bc60fbe49de2955685c0f6ff743c6eed850f5b",
+    "exact_label_query_lines": 96,
+    "partial_output_files_remaining": false
+  },
+  "report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr2_report_only/diagnostic_report.json",
+    "sha256": "0133b7ae84e1766b5dd571b397b5ca5b41d7cf1263b999e6be9dd7d215370a47",
+    "decision_digest_sha256": "3d3b835c94e114536ddb21a17f10f738c0f621f020c3be4c7433ab62baeca7be",
+    "schema": "hong2021-v80dr2-report-only-engineering-diagnostic-v1",
+    "status": "complete_V80DR2_report_only_engineering_diagnostic_not_a_V79_gate"
+  },
+  "interpretation_firewall": {
+    "engineering_only": true,
+    "same_previously_consumed_subset_reused": true,
+    "statistically_valid_target_unseen_V79_result": false,
+    "may_be_reported_as_a_V79_pass": false,
+    "metadata_recovery_or_mutation_repeated": false,
+    "sampling_repeated": false,
+    "evaluator_repeated": false,
+    "V79_manifest_or_gate_executed": false,
+    "global_type_I_error_claim": false
+  },
+  "formula_diagnostic": {
+    "formula_global_p": 0.00012000000000000002,
+    "formula_global_alpha_reference": 0.05,
+    "deterministic_numerical_and_pairing_pass": true,
+    "would_pass_formula_if_prospective": false,
+    "physical_energy_block_p": 0.004699765011749413,
+    "physical_energy_sparse_p": 0.0023498825058747065,
+    "physical_energy_dense_p": 0.0028998550072496373,
+    "physical_family_p_values": {
+      "q99_999": 0.9674516274186291,
+      "Q4": 0.8290585470726464,
+      "high_k_power": 0.00024998750062496874,
+      "residual_RMS": 0.00039998000099995,
+      "density_PDF": 0.09459527023648817,
+      "two_point": 0.7631618419079046,
+      "environment": 1.0,
+      "energy": 0.028198590070496476
+    },
+    "rank_coverage_block_p": 0.00006000000000000001,
+    "rank_coverage_individual_p_values_in_TNG_SIMBA_Swift_rank_then_coverage_order": [
+      0.00001,
+      1.0,
+      0.00156,
+      0.00495,
+      0.05695,
+      0.97115
+    ]
+  },
+  "domain_measurements": {
+    "TNG100": {
+      "q99_999_delta_dex": 0.0012912870134011989,
+      "Q4_ratio": 0.9949079045637288,
+      "power_3_6_ratio": 1.038693422657005,
+      "power_6_10_ratio": 1.0497882664140172,
+      "residual_RMS_ratio": 0.9837177225780595,
+      "density_PDF_TV": 0.008475080132484436,
+      "two_point_KS_0_1": 0.126953125,
+      "two_point_KS_1_3": 0.11077008928571429,
+      "two_point_KS_3_10": 0.13432173295454544,
+      "environment_improves": true,
+      "candidate_minus_control_energy": 0.0003513193689286681,
+      "rank_TV_conditional_p": 0.00001,
+      "coverage_deviation_conditional_p": 1.0
+    },
+    "SIMBA": {
+      "q99_999_delta_dex": -0.003604730370550868,
+      "Q4_ratio": 1.0228646979765723,
+      "power_3_6_ratio": 1.0133993898065357,
+      "power_6_10_ratio": 1.0361539456944526,
+      "residual_RMS_ratio": 1.0031634735667705,
+      "density_PDF_TV": 0.008758885439443184,
+      "two_point_KS_0_1": 0.17057291666666666,
+      "two_point_KS_1_3": 0.14564732142857142,
+      "two_point_KS_3_10": 0.14630681818181818,
+      "environment_improves": true,
+      "candidate_minus_control_energy": -0.00034259296953678686,
+      "rank_TV_conditional_p": 0.00156,
+      "coverage_deviation_conditional_p": 0.00495
+    },
+    "Swift": {
+      "q99_999_delta_dex": 0.008557625380807288,
+      "Q4_ratio": 0.9382505644060314,
+      "power_3_6_ratio": 1.0202742418198822,
+      "power_6_10_ratio": 1.0320834702334034,
+      "residual_RMS_ratio": 0.9974170369680266,
+      "density_PDF_TV": 0.006938226851065893,
+      "two_point_KS_0_1": 0.10611979166666667,
+      "two_point_KS_1_3": 0.14174107142857142,
+      "two_point_KS_3_10": 0.15349786931818182,
+      "environment_improves": true,
+      "candidate_minus_control_energy": 0.014490196877159175,
+      "rank_TV_conditional_p": 0.05695,
+      "coverage_deviation_conditional_p": 0.97115
+    }
+  },
+  "decision": {
+    "classification": "V80_not_promising_on_non_independent_engineering_formula",
+    "stop_V80_model_path": true,
+    "audit_V81_independent_input_availability_or_cost": false,
+    "freeze_V81_design": false,
+    "acquire_or_open_independent_V81_inputs": false,
+    "reason": "The predeclared V81 audit trigger required would_pass_formula_if_prospective=true. The diagnostic global p is 0.00012 and the trigger is false.",
+    "scientific_summary": "The monotone V80 calibration repaired one-point tail, Q4, and much of the two-point behavior, but the joint high-k/residual calibration and especially ensemble rank calibration remain inconsistent. The candidate therefore should not receive scarce independent validation objects."
+  },
+  "untouched": {
+    "V72_stage_B": true,
+    "Astrid": true,
+    "EAGLE": true,
+    "new_independent_simulation_payloads": true,
+    "RAMSES_modified_or_stopped": false
+  },
+  "terminal_policy": {
+    "V80_report_retry_authorized": false,
+    "V80_candidate_seed_sampler_calibration_metric_partition_or_threshold_change_authorized": false,
+    "V81_automatic_progression_authorized": false,
+    "next": "Stop this V80 candidate and redesign the model-development method using only already consumed development data. Any new candidate requires a new prospective design and must not reuse this engineering result as independent validation."
+  },
+  "decision_digest_sha256": "673416d1340de8dd3179ed4b5b2acd2acf0aca0ba22a4d20e670dda4c9c574bd"
+}

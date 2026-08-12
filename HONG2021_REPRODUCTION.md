@@ -229,6 +229,24 @@ are bound in
 No V79 manifest or gate was run, and V72 stage B, Astrid, EAGLE, and RAMSES
 remained untouched.
 
+The separately authorized V80DR2 action was strictly report-only: it reused
+the six sealed metrics without another HDF5 mutation, sample, or evaluator
+run.  Its exact V79 helper-domain contract and all 12 input hashes were frozen
+before any metric value was inspected.  The formula completed, but the
+candidate was not promising: the diagnostic global p-value is `0.00012`
+against the `0.05` reference, with physical-energy block p=`0.00470` and
+rank/coverage block p=`0.000060`.  The monotone V80 map made the one-point tail,
+Q4, density PDF, and 2pCF diagnostics close to their targets.  It did not fix
+the joint high-k/residual-calibration families (p approximately `0.00025` and
+`0.00040`) or ensemble rank calibration: TNG rank-TV p=`0.00001`, while SIMBA
+rank-TV and coverage-deviation p-values are `0.00156` and `0.00495`.  This is
+non-independent engineering evidence, not a V79 statistical rejection, but it
+activates the predeclared stop branch: do not spend new independent V81 objects
+on V80.  The result and all decision firewalls are frozen in
+[`config/hong2021_v80dr2_result_record.json`](config/hong2021_v80dr2_result_record.json).
+No V81 availability audit or design freeze was performed.  V72 stage B,
+Astrid, EAGLE, and RAMSES remained untouched.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
