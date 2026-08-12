@@ -1,7 +1,7 @@
 {
   "schema": "hong2021-v82a-consumed-rank-phase-autopsy-program-v1",
-  "status": "frozen_and_pushed_before_bound_ensemble_payload_inspection",
-  "frozen_at": "2026-08-12T23:55:00+09:00",
+  "status": "frozen_and_pushed_after_support_hash_correction_before_bound_ensemble_payload_inspection",
+  "frozen_at": "2026-08-13T00:00:00+09:00",
   "purpose": "Localize the already observed V80 rank/coverage and high-k failures using only the six consumed, sealed V80DR recovered ensembles. Separate rank-histogram shape, conditional-environment dependence, residual amplitude, and descriptive phase/coherence effects before deciding how to construct a consumed-only Gaussian residual control.",
   "engineering_only": true,
   "statistically_independent": false,
@@ -11,6 +11,16 @@
     "formula_global_p": 0.00012,
     "rank_coverage_block_p": 0.000060,
     "interpretation": "V80 is rejected as a candidate path; V82A is a cause autopsy and cannot reverse or replace that result."
+  },
+  "prior_V82A_execution_failure": {
+    "classification": "support_artifact_SHA_transcription_failure_before_any_bound_ensemble_payload_inspection",
+    "incorrect_V80DR2_report_sha256": "0133b7ae8d037b2c9bd502477a51f702f14e3d58826f848c71cb5e4803644417",
+    "correct_V80DR2_report_sha256": "0133b7ae84e1766b5dd571b397b5ca5b41d7cf1263b999e6be9dd7d215370a47",
+    "correct_SHA_matches_existing_V80DR2_result_record": true,
+    "rank_or_spectrum_value_computed": false,
+    "ensemble_payload_inspected": false,
+    "scientific_definition_changed": false,
+    "new_output_required_to_preserve_failure_evidence": true
   },
   "scope_boundary": {
     "read_only_inputs": true,
@@ -35,7 +45,19 @@
     },
     "V80DR2_report": {
       "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr2_report_only/diagnostic_report.json",
-      "sha256": "0133b7ae8d037b2c9bd502477a51f702f14e3d58826f848c71cb5e4803644417"
+      "sha256": "0133b7ae84e1766b5dd571b397b5ca5b41d7cf1263b999e6be9dd7d215370a47"
+    },
+    "failed_V82A_status": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence/status",
+      "sha256": "b5b3642d75dda1ac26a7aa106d599eac7d5cbed4875c4f21e4b319536ee9824c"
+    },
+    "failed_V82A_pytest_log": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence/pytest.log",
+      "sha256": "1a30f22313d58cc1df80eae120100d7db9dc62c60d110b73d4fd7919097b42d3"
+    },
+    "failed_V82A_autopsy_log": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence/autopsy.log",
+      "sha256": "7b44d97c14f4458e837bd09ce90e2405675c5f18d023235ad4b4597040cafc23"
     }
   },
   "input_artifacts": {
@@ -97,7 +119,7 @@
   "implementation_sources": {
     "V82A_autopsy": {
       "path": "src/hong2021_v82a_consumed_autopsy.py",
-      "sha256": "8664a43c7ca26d43e5f809b08b542b863ca861da239c54e3a8a1fd81ecc0d8b8"
+      "sha256": "05052bbf97f49fab722106fcb7377030adcd62f6a30cdf5baa65fe2e073f77d7"
     },
     "V82A_tests": {
       "path": "tests/test_hong2021_v82a_consumed_autopsy.py",
@@ -136,8 +158,8 @@
     "result_use": "Use the autopsy only to specify the next consumed-only Gaussian residual control. Do not tune V80, reopen V79, or claim validation."
   },
   "outputs": {
-    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence",
-    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a_consumed_autopsy_sequence/report.json",
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82ar_consumed_autopsy_sequence",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82ar_consumed_autopsy_sequence/report.json",
     "refuse_existing": true
   },
   "execution": {
