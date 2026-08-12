@@ -6,6 +6,24 @@ import pytest
 import hong2021_v80dr2_report_only as report
 
 
+REPO = Path(__file__).resolve().parents[1]
+PROGRAM = REPO / "config/hong2021_v80dr2_report_only_program.json"
+
+
+def test_report_only_program_binds_all_existing_inputs_without_reexecution() -> None:
+    program = report.load_program(PROGRAM, REPO)
+    assert program["engineering_only"] is True
+    assert program["statistically_valid_V79_reexecution"] is False
+    assert set(program["input_artifacts"]) == set(report.DOMAIN_ORDER)
+    assert all(len(rows) == 4 for rows in program["input_artifacts"].values())
+    assert program["frozen_formula"]["metric_value_inspected_before_program_freeze"] is False
+    authorization = program["authorization"]
+    assert authorization["metadata_recovery_or_mutation"] is False
+    assert authorization["resampling"] is False
+    assert authorization["evaluator_execution"] is False
+    assert authorization["V79_manifest_or_gate"] is False
+
+
 def _domain_row(domain: str) -> dict:
     return {
         "candidate_ensemble": Path(f"/{domain}/candidate.h5"),
