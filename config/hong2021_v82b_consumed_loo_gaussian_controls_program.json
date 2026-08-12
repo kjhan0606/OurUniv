@@ -1,0 +1,144 @@
+{
+  "schema": "hong2021-v82b-consumed-loo-gaussian-controls-program-v1",
+  "status": "frozen_and_pushed_before_V82B_generated_draw_or_report",
+  "frozen_at": "2026-08-13T00:42:00+09:00",
+  "purpose": "Test whether the consumed V80 rank failure can be explained by isotropic two-point amplitude alone or by conditional-mean-quartile heteroscedasticity before authorizing any conditional non-Gaussian model. Fit every evaluated query only from the other 31 consumed truth residuals in its domain.",
+  "engineering_only": true,
+  "statistically_independent": false,
+  "scope_boundary": {
+    "consumed_inputs_only": true,
+    "leave_one_query_out_truth_fit": true,
+    "evaluated_query_truth_excluded_from_its_fit": true,
+    "train_neural_network": false,
+    "select_or_tune_V80": false,
+    "write_or_mutate_input": false,
+    "persist_generated_ensemble": false,
+    "open_new_independent_data": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "use_CF4": false,
+    "modify_or_stop_RAMSES": false,
+    "statistical_validation_claim": false
+  },
+  "support_artifacts": {
+    "V82A_result_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v82a_result_record.json",
+      "sha256": "19f5d5e00b00ded08b0550f21206c1456422343d63bc3bddce78eae5b5e02abd"
+    },
+    "V82A_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v82a_consumed_rank_phase_autopsy_program.json",
+      "sha256": "1c2ebd894d21f5e186070193548b43f8b39df0e25c3f7b2f291d46bf439a78f1"
+    },
+    "V82A_report": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a3_consumed_autopsy_sequence/report.json",
+      "sha256": "bece9587af1ee147b5737eb2a62a776a3adeb0faf928889c203e8f808b66c6cc"
+    }
+  },
+  "input_artifacts": {
+    "TNG100": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/tng/ensemble16.h5",
+        "sha256": "f52c826f98a53f1f4b78e47c2e0fae2f8aa305d02df3ad307d30324e2b57d772"
+      }
+    },
+    "SIMBA": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/simba_dev/ensemble16.h5",
+        "sha256": "632329be9a142c022e1c9c997c27ad8bacb026f04e2363d70f5a50b6db531677"
+      }
+    },
+    "Swift": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/swift_dev/ensemble16.h5",
+        "sha256": "d2d990b663ddc7f49f92d298d91d4528c7db9eb35bc6ede517fc454022c2f262"
+      }
+    }
+  },
+  "implementation_sources": {
+    "V82B_controls": {
+      "path": "src/hong2021_v82b_gaussian_control.py",
+      "sha256": "f1d67e363962bb1d356f5c767722bdbb120d29615554e0c9a615a9f94ba63f4b"
+    },
+    "V82B_tests": {
+      "path": "tests/test_hong2021_v82b_gaussian_control.py",
+      "sha256": "a8ffb334086247bc76f6ad3aba9336eaa8346e8a1340fbad864d0474b0a6537d"
+    },
+    "V82A_diagnostics": {
+      "path": "src/hong2021_v82a_consumed_autopsy.py",
+      "sha256": "c9939ff4aaba87259a9bae8c59877576876d2a66b201d9c6d7c4008c9c630250"
+    },
+    "V75_exact_label_null": {
+      "path": "src/hong2021_v75_rank_coverage_exact_null.py",
+      "sha256": "06c1c1a3daabddc947c2f64f26fbd93c627b4488dfb723472c804619b9fcccd2"
+    },
+    "spectral_binner": {
+      "path": "src/hong2021_residual_evaluate.py",
+      "sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42"
+    },
+    "canonical_digest_and_git_state": {
+      "path": "src/hong2021_v15_development_gate.py",
+      "sha256": "cdbe64cd5541f86287cbb46beef790a9d0cbead82f07bb39dd8f2c75de64ea3b"
+    },
+    "file_hash": {
+      "path": "src/hong2021_v18_init.py",
+      "sha256": "11b4d27d9420883746d2306313870d05a5af3a1b33cc3cff01a4791a5810ecaf"
+    },
+    "git_ancestor": {
+      "path": "src/hong2021_v63_train.py",
+      "sha256": "fcdb4c493ce6fd1658477a5ff904ba50e6cd01dbc9c24c3422d6275a0f5fc318"
+    }
+  },
+  "fixed_controls": {
+    "common": {
+      "queries_per_domain": 32,
+      "members_per_query": 16,
+      "grid": 64,
+      "voxel_mpc_h": 0.3125,
+      "truth_residual": "truth minus conditional mean followed by exact per-cube DC subtraction",
+      "LOO_fit": "For query q, use truth residuals of the other 31 queries in the same domain only.",
+      "periodic_spectrum": "Unwindowed rfftn; shells are nearest integer multiples of the box fundamental mode through the three-dimensional corner; fitted value is mean squared Fourier amplitude per shell and mode.",
+      "draw": "Generate real-space standard Gaussian white noise, subtract DC, rfftn, multiply each mode by sqrt(LOO fitted mode power / 64^3), set DC to zero, irfftn, and subtract numerical DC.",
+      "pairing": "Both controls use the identical stationary Gaussian draw for every domain, query, and member."
+    },
+    "stationary": "Use the domain/query LOO isotropic Gaussian residual without another transform.",
+    "quartile_scale": "Stable-sort the evaluated query conditional mean into four exact equal-count strata; fit truth-residual RMS per stratum from the other 31 queries relative to their own strata; multiply the shared stationary draw by stratum RMS divided by LOO global RMS and restore DC.",
+    "no_per_draw_shell_normalization": true,
+    "no_target_truth_in_fit": true,
+    "no_model_or_baseline_selection_during_execution": true
+  },
+  "fixed_random_seeds": {
+    "TNG100": 182200,
+    "SIMBA": 182201,
+    "Swift": 182202
+  },
+  "frozen_diagnostics_and_decision": {
+    "rank_and_coverage": "For each baseline and domain, use the exact V75 17-label table and 99,999 SHA/label-derived relabelings. Report rank-TV and finite-ensemble coverage-deviation conditional p-values.",
+    "individual_reference_threshold": 0.004166666666666667,
+    "stationary_compatible": "All six stationary p-values, two per domain, are strictly greater than 1/240.",
+    "quartile_scale_compatible": "All six quartile-scale p-values are strictly greater than 1/240.",
+    "branch_1": "If stationary is compatible, do not authorize a conditional flow; two-point Gaussian rank calibration is sufficient as a low-cost control.",
+    "branch_2": "If stationary fails and quartile-scale is compatible, do not authorize a conditional flow yet; conditional heteroscedastic structure is required but Gaussianity is sufficient.",
+    "branch_3": "If both fail, record that a conditional non-Gaussian model such as a conditional flow is warranted for design, but do not automatically train it.",
+    "spectral_metrics": "Report the same four Hann-windowed residual-power and descriptive phase bands as V82A; they do not override the exact rank/coverage branch.",
+    "truth_nonGaussianity": "Report truth residual mean, RMS, skewness, and excess kurtosis by conditional-mean quartile as explanatory consumed evidence.",
+    "not_a_validation_gate": true
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82b_consumed_gaussian_sequence",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82b_consumed_gaussian_sequence/report.json",
+    "refuse_existing": true
+  },
+  "execution": {
+    "host": "lageunha",
+    "cpu_affinity": "64-95",
+    "nice": 10,
+    "RAMSES_cpu_affinity_to_leave_untouched": "0-63",
+    "GPU_required": false
+  },
+  "authorization": {
+    "user_instruction": "The user approved the Fable sequence and automatic progression with '그렇게 진행해'. V82A's frozen automatic next step explicitly authorizes a consumed-only Gaussian control.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "user_approved_automatic_consumed_Gaussian_control": true,
+    "automatic_training_after_result": false,
+    "automatic_result_record_and_design_recommendation": true
+  }
+}
