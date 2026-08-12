@@ -46,6 +46,16 @@ def test_rank_and_coverage_uses_strict_rank_and_four_strata() -> None:
     assert all(row["histogram"][0] == 16 for row in result["conditional_mean_quartiles"])
 
 
+def test_evaluator_rank_crosscheck_is_exactly_float32() -> None:
+    mean = np.full((2, 2, 2), np.float32(0.1), dtype=np.float32)
+    truth = mean.copy()
+    sample = np.broadcast_to(mean, (16, 2, 2, 2)).copy()
+    result = audit.evaluator_rank_histogram(sample, truth, mean)
+    assert result.dtype == np.dtype("int64")
+    assert result[0] == 8
+    assert result.sum() == 8
+
+
 def test_phase_cosine_identifies_same_and_opposite_fields() -> None:
     rng = np.random.default_rng(8)
     field = rng.normal(size=(1, 64, 64, 64))
@@ -64,4 +74,4 @@ def test_source_is_read_only_and_contains_no_model_fit_or_sampling_import() -> N
     assert "create_dataset" not in source
     assert "h5py.File(paths[\"candidate\"], \"r\")" in source
     assert "h5py.File(paths[\"control\"], \"r\")" in source
-    assert "evaluator_rank = np.sum(raw_residual < target[None], axis=0)" in source
+    assert "def evaluator_rank_histogram(" in source

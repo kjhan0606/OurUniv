@@ -26,7 +26,7 @@ from hong2021_v63_train import _is_ancestor
 
 PROGRAM_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-program-v1"
 PROGRAM_STATUS = (
-    "frozen_and_pushed_after_evaluator_histogram_crosscheck_correction"
+    "frozen_and_pushed_after_exact_float32_evaluator_crosscheck_correction"
 )
 REPORT_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-v1"
 DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
@@ -178,6 +178,20 @@ def rank_and_coverage(
     }
 
 
+def evaluator_rank_histogram(
+    sample: np.ndarray, truth: np.ndarray, conditional_mean: np.ndarray
+) -> np.ndarray:
+    """Exactly reproduce the frozen evaluator's float32 rank histogram."""
+    generated = np.asarray(sample, dtype=np.float32)
+    target = np.asarray(truth, dtype=np.float32)
+    mean = np.asarray(conditional_mean, dtype=np.float32)
+    residual = generated - mean[None]
+    target_residual = target - mean
+    target_residual -= target_residual.mean(keepdims=True)
+    rank = np.sum(residual < target_residual[None], axis=0)
+    return np.bincount(rank.ravel(), minlength=MEMBERS + 1)
+
+
 def _band_average(binner: SpectralBinner, value: np.ndarray) -> dict[str, float]:
     result = {}
     for low, high in BANDS:
@@ -297,8 +311,10 @@ def inspect_domain(domain: str, rows: dict[str, Any]) -> dict[str, Any]:
                 raise ValueError(f"V82A {domain} paired {name} differs")
         source_indices = candidate["source_index"][:].astype(np.int64).tolist()
         for query in range(QUERIES):
-            mean = np.asarray(candidate["conditional_mean"][query, 0], dtype=np.float64)
-            target = np.asarray(candidate["truth"][query, 0], dtype=np.float64) - mean
+            mean32 = np.asarray(candidate["conditional_mean"][query, 0], dtype=np.float32)
+            truth32 = np.asarray(candidate["truth"][query, 0], dtype=np.float32)
+            mean = mean32.astype(np.float64)
+            target = truth32.astype(np.float64) - mean
             target -= target.mean()
             strata = equal_count_strata(mean)
             current: dict[str, Any] = {
@@ -312,13 +328,11 @@ def inspect_domain(domain: str, rows: dict[str, Any]) -> dict[str, Any]:
             }
             residuals = {}
             for arm, handle in (("candidate", candidate), ("control", control)):
-                raw_residual = (
-                    np.asarray(handle["sample"][query, :, 0], dtype=np.float64) - mean
+                sample32 = np.asarray(handle["sample"][query, :, 0], dtype=np.float32)
+                evaluator_hist[arm] += evaluator_rank_histogram(
+                    sample32, truth32, mean32
                 )
-                evaluator_rank = np.sum(raw_residual < target[None], axis=0)
-                evaluator_hist[arm] += np.bincount(
-                    evaluator_rank.ravel(), minlength=MEMBERS + 1
-                )
+                raw_residual = sample32.astype(np.float64) - mean
                 residual = raw_residual.copy()
                 residual -= residual.mean(axis=(-3, -2, -1), keepdims=True)
                 residuals[arm] = residual
