@@ -56,6 +56,30 @@ The complete prospective gate remains unfinished: rank histogram and voxel
 coverage need a separate exact-conditional-null audit before any new Hong
 candidate or fresh gate is authorized.
 
+V75 completed that audit.  It showed that the old fixed rank-TV and coverage
+cutoffs are invalid: their null behavior changes drastically with within-field
+spatial dependence, and the old finite-ensemble coverage expectation is not
+distribution-free.  The replacement pools the sixteen generated residual
+fields and truth field per query and randomizes which of the seventeen is
+designated truth.  This exact field-label null preserves spatial dependence,
+the marginal distribution, quantile interpolation, and ties.  Across four
+exchangeable synthetic scenarios its preregistered domain test rejected
+`1.22--1.686%` at nominal `1/60`, and it had `0.87` and `1.0` power against
+the two frozen alternatives.
+
+The V75 scalar combination itself is **not promoted** to the complete gate.
+Post-result logical inspection found that
+`max(rank_tv/0.05, coverage_deviation/0.03)` can let the wider null component
+hide an extreme conditional p-value in the other component.  The decisive
+already-consumed example is V72 candidate TNG100: rank has conditional
+`p=0.00001`, coverage has `p=0.97439`, yet the scalar composite also has
+`p=0.97439` and passes.  V76 must therefore retain the exact label null but
+protect rank and coverage separately over three domains at per-test
+`alpha=1/120`.  No complete gate, new candidate, or fresh partition is
+authorized yet.  The immutable V75 result and this correction boundary are
+recorded in
+[`config/hong2021_v75_result_record.json`](config/hong2021_v75_result_record.json).
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
