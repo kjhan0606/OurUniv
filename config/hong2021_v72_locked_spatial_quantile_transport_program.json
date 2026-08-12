@@ -1,6 +1,6 @@
 {
-  "schema": "hong2021-v72-two-stage-conditioning-stratified-spatial-quantile-transport-program-v1",
-  "status": "frozen_before_V72_implementation_or_fresh_stage_A_or_stage_B_payload_access",
+  "schema": "hong2021-v72-two-stage-conditioning-stratified-spatial-quantile-transport-program-v2",
+  "status": "refrozen_after_code_only_spatial_tie_audit_before_V72_implementation_or_fresh_payload_access",
   "purpose": "Test one training-free successor to V71 that retains the fixed V70 within-member spatial rank field while restoring the paired V63 latent marginal inside target-free conditioning strata. Run one fresh stage-A screen and, only after an exact pass, one disjoint fresh stage-B confirmation under predeclared fair tail, spectral, and field gates.",
   "authorization": {
     "user_instruction": "The user explicitly instructed '다음으로 진행' after the sealed V71 result.",
@@ -11,6 +11,8 @@
     "required_after_stage_B_pass": "seal V72 and await a new explicit user approval before independent EAGLE access"
   },
   "parent_evidence": {
+    "preimplementation_spatial_tie_threshold_erratum": "config/hong2021_v72_preimplementation_spatial_tie_threshold_erratum.json",
+    "preimplementation_spatial_tie_threshold_erratum_sha256": "5746fc94fc3f80b6ace24b44d9a3de4d9d209ae67165f916d130e4a552eeb233",
     "v72_feasibility_audit": "config/hong2021_v72_feasibility_and_fresh_partition_audit.json",
     "v72_feasibility_audit_sha256": "8699a6776b7cfdad71cf58717ed8898a3dddabbd91ccf05d29b6f60c3983524e",
     "v71_result_record": "config/hong2021_v71_result_record.json",
@@ -127,7 +129,7 @@
     "maximum_inverse_CDF_error": 2e-06,
     "maximum_absolute_residual_DC": 1e-07,
     "pre_inverse_stratum_multiset_equality": "bitwise exact",
-    "maximum_marginal_tied_voxel_fraction": 2e-05,
+    "maximum_marginal_tied_voxel_fraction": 0.0003,
     "rank_disagreement_fraction_excluding_marginal_ties": 0.0,
     "innovation_digest_pairing_across_all_arms": "exact",
     "peak_Ada_allocation_bytes": 30064771072
