@@ -12,6 +12,17 @@ import h5py
 import numpy as np
 
 from hong2021_v18_init import sha256_file
+from hong2021_v84b_network import (
+    INITIAL_LOWER_SCALE,
+    INITIAL_TAIL_MASS,
+    INITIAL_UPPER_SCALE,
+    LOWER_THRESHOLD,
+    MAXIMUM_LOWER_SCALE,
+    MAXIMUM_UPPER_SCALE,
+    MINIMUM_LOWER_SCALE,
+    MINIMUM_UPPER_SCALE,
+    UPPER_THRESHOLD,
+)
 
 
 SCHEMA = "hong2021-v84b-group-held-out-spliced-tail-program-v1"
@@ -108,6 +119,29 @@ def load_program(
     v35 = strict_json(repo / V35_PROGRAM)
     if tuple(v35.get("development_domains", {})) != DOMAIN_ORDER:
         raise ValueError("V84B domain order differs")
+    parent = program["parent_evidence"]
+    if sha256_file(repo / parent["v84a1_result"]) != parent["v84a1_result_sha256"]:
+        raise ValueError("V84B parent evidence differs")
+    frozen = program["frozen_inputs"]
+    if (
+        frozen.get("v35_program") != str(V35_PROGRAM)
+        or frozen.get("v35_program_sha256") != V35_PROGRAM_SHA256
+    ):
+        raise ValueError("V84B V35 binding differs")
+    central = program["model"]["central_distribution"]
+    tail = program["model"]["tail_distribution"]
+    if (
+        central.get("lower_threshold_standardized_residual") != LOWER_THRESHOLD
+        or central.get("upper_threshold_standardized_residual") != UPPER_THRESHOLD
+        or tail.get("initial_mass_each_side") != INITIAL_TAIL_MASS
+        or tail.get("lower_scale_range")
+        != [MINIMUM_LOWER_SCALE, MAXIMUM_LOWER_SCALE]
+        or tail.get("upper_scale_range")
+        != [MINIMUM_UPPER_SCALE, MAXIMUM_UPPER_SCALE]
+        or tail.get("initial_lower_scale") != INITIAL_LOWER_SCALE
+        or tail.get("initial_upper_scale") != INITIAL_UPPER_SCALE
+    ):
+        raise ValueError("V84B spliced-tail model contract differs")
     for label, row in program["implementation"].items():
         if sha256_file(repo / row["path"]) != row["sha256"]:
             raise ValueError(f"V84B implementation differs: {label}")

@@ -34,4 +34,7 @@ def test_group_partition_digest_is_deterministic() -> None:
     v35 = json.loads(
         (REPO / "config/hong2021_v35_residual_spectrum_phase_program.json").read_text()
     )
-    assert partition_digest(group_partition(v35)) == partition_digest(group_partition(v35))
+    assert (
+        partition_digest(group_partition(v35))
+        == "1127cf7f11193d31dac6fbc1da9cd84e40446300e3963c0646cde19b3aedf7ff"
+    )
