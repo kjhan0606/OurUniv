@@ -1,0 +1,144 @@
+{
+  "schema": "hong2021-v76-separate-rank-coverage-nonmasking-audit-program-v1",
+  "status": "frozen_before_V76_implementation_or_power_synthetic_draws",
+  "purpose": "Correct the V75 scalar-composite masking defect without changing the exact truth-label randomization null. Audit separate rank and coverage conditional p-values under a six-test family-wise correction, independently verify power with frozen synthetic alternatives, and stop before a complete prospective gate or new candidate.",
+  "frozen_at": "2026-08-12T16:25:00+09:00",
+  "parent_evidence": {
+    "V75_result_record": "config/hong2021_v75_result_record.json",
+    "V75_result_record_sha256": "ae5bbfd7124ceb20a80062adb8a63afd54dad2a34ba5cc02e66ec972ec93059f",
+    "V75_program": "config/hong2021_v75_rank_coverage_exact_null_audit_program.json",
+    "V75_program_sha256": "6f0eaf9d06c151e429e7d378dc4f1c4460d1ea170214367fce0262ca559a13b6",
+    "V75_source": "src/hong2021_v75_rank_coverage_exact_null.py",
+    "V75_source_sha256": "06c1c1a3daabddc947c2f64f26fbd93c627b4488dfb723472c804619b9fcccd2",
+    "V75_audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/audit_result.json",
+    "V75_audit_result_sha256": "b42be3029ad219d11f0bebad6d8b51835d062b227ec97a8d3aeddec3ece0def2",
+    "V75_synthetic_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/synthetic_arrays.npz",
+    "V75_synthetic_arrays_sha256": "ee9540f3426fd8c622675b52e95e8b02c1cd6d075c02b59e61326df333262cbe",
+    "V75_decision_preserved": true,
+    "V72_decision_preserved": true
+  },
+  "scientific_rule": {
+    "retained_null": "Use the V75 field-level exact truth-label randomization unchanged, including priorities that move with fields for ties.",
+    "metrics": [
+      "pooled voxel-rank total-variation distance",
+      "maximum absolute deviation of empirical 68/95-percent coverage from its field-label conditional null"
+    ],
+    "conditional_p_value": "For each metric separately, (1 + number of random relabelings with the metric at least the observed metric)/(1 + random relabelings).",
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "family_wise_alpha": 0.05,
+    "number_of_tests": 6,
+    "per_test_alpha": 0.008333333333333333,
+    "multiplicity": "Bonferroni over three domains times two separately necessary calibration metrics; this controls family-wise type-I error without an independence assumption.",
+    "per_test_pass": "conditional p-value strictly greater than 1/120",
+    "domain_pass": "both rank and coverage p-values pass",
+    "all_domain_pass": "all six p-values pass",
+    "nonmasking_invariant": "The rule fails whenever either metric p-value in any domain is at or below 1/120, regardless of the other metric's value.",
+    "claim_boundary": "Passing means neither frozen metric detects conditional field nonexchangeability at family-wise alpha 0.05. It is not proof that the generator is correct or that the test has power against every alternative."
+  },
+  "existing_null_calibration_audit": {
+    "input": "Only the calibration and verification rank_tv and coverage_deviation arrays already written by V75; no synthetic field regeneration.",
+    "scenarios": [
+      "independent_normal_voxels",
+      "spatially_correlated_normal",
+      "perfect_within_field_dependence",
+      "rounded_heavy_tail_with_ties"
+    ],
+    "reference_phase": "calibration",
+    "evaluated_phase": "verification",
+    "tail_convention": "inclusive upper tail with add-one finite-Monte-Carlo correction",
+    "reports": [
+      "per-scenario and per-metric rejection probability with Wilson 95-percent interval",
+      "per-scenario within-domain union rejection probability",
+      "three-independent-domain extrapolation 1-(1-domain_union)^3",
+      "the mathematical Bonferroni family-wise upper bound of 0.05"
+    ],
+    "individual_calibrated_if": "Every per-scenario per-metric point rejection probability is <=0.01 and every Wilson 95-percent upper bound is <=0.011.",
+    "family_diagnostic_calibrated_if": "Every per-scenario three-domain extrapolated rejection probability is <=0.055.",
+    "selection_role": true
+  },
+  "deterministic_nonmasking_audit": {
+    "p_value_grid": [
+      0.00001,
+      0.004166666666666667,
+      0.008333333333333333,
+      0.008333333333333335,
+      0.5,
+      1.0
+    ],
+    "test": "Enumerate every ordered rank/coverage pair. The implemented pass decision must equal (rank_p > 1/120 and coverage_p > 1/120). Explicit rank-only and coverage-only failures must be detected.",
+    "selection_role": true
+  },
+  "independent_synthetic_power_audit": {
+    "replications_per_alternative": 100,
+    "queries": 32,
+    "fields_per_query": 17,
+    "voxels_per_field": 256,
+    "random_relabelings_per_replication": 4095,
+    "seed": 760101,
+    "common_structure": "0.7 field-global normal plus sqrt(1-0.7^2) iid voxel normal",
+    "alternatives": {
+      "location_bias": "sixteen generated fields have conditional mean +0.5 while truth fields have mean zero",
+      "underdispersion": "sixteen generated fields have conditional standard deviation 0.6 while truth fields have standard deviation one"
+    },
+    "detection": "rank conditional p-value <=1/120 or coverage conditional p-value <=1/120",
+    "reports": [
+      "rank, coverage, and union detection probability per alternative",
+      "Wilson 95-percent interval for union detection",
+      "separate p-value quantiles"
+    ],
+    "power_sufficient_if": "Both alternatives have union point detection probability >=0.8 and Wilson 95-percent lower bound >=0.7.",
+    "selection_role": true
+  },
+  "consumed_V75_diagnostic": {
+    "input": "Only consumed_V72_diagnostic values embedded in the immutable V75 audit result; do not reopen any V72 ensemble or array.",
+    "role": "diagnostic only; cannot select, validate, rescue, or change the V72 verdict",
+    "report": "Apply the proposed separate per-test threshold to the already reported candidate and control p-values and identify scalar-composite masking cases."
+  },
+  "decision_rules": {
+    "select_separate_rule_if_all": [
+      "all existing-null individual calibration requirements pass",
+      "all existing-null family diagnostic requirements pass",
+      "the deterministic nonmasking invariant passes",
+      "both independent synthetic power requirements pass"
+    ],
+    "selected_classification": "separate_exact_label_rank_coverage_rule_selected",
+    "failed_classification": "rank_coverage_rule_requires_additional_redesign",
+    "if_selected_next": "Freeze a complete prospective 32-query gate combining V74 physical, morphology, and energy rules with the V76 separate exact-label rule, then await explicit approval before constructing or evaluating a new candidate.",
+    "if_failed_next": "Stop before a complete gate or new candidate and report which frozen requirement failed.",
+    "V72_verdict_change": false
+  },
+  "scope_limits": {
+    "this_is_not_a_generator": true,
+    "training_or_model_sampling": false,
+    "raw_fit_train_truth_access": false,
+    "validation_or_fresh_partition_access": false,
+    "V72_ensemble_or_array_access": false,
+    "V72_stage_B_access": false,
+    "Astrid_access": false,
+    "historical_or_independent_EAGLE_access": false,
+    "model_checkpoint_access": false,
+    "new_candidate_or_complete_gate_authorized": false,
+    "new_random_data": "only the frozen independent synthetic power alternatives"
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "one process pinned to logical CPU 64 at nice 15",
+    "repository": "/home/kjhan/BACKUP/CF4",
+    "require_clean_worktree": true,
+    "require_program_freeze_commit_ancestor": true,
+    "refuse_existing_output": true
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking",
+    "power_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking/power_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking/audit_result.json"
+  },
+  "authorization": {
+    "implement_and_execute_this_exact_audit_after_freeze": true,
+    "rerun_or_reinterpret_V72": false,
+    "freeze_or_execute_a_complete_prospective_gate": false,
+    "implement_or_train_a_new_generator": false,
+    "open_fresh_validation_Stage_B_Astrid_or_EAGLE": false
+  }
+}
