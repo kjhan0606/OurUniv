@@ -80,6 +80,25 @@ authorized yet.  The immutable V75 result and this correction boundary are
 recorded in
 [`config/hong2021_v75_result_record.json`](config/hong2021_v75_result_record.json).
 
+V76 prospectively replaced only that masking-prone combination.  Rank and
+coverage now receive separate exact-label conditional p-values in each of
+TNG100, SIMBA, and Swift; all six must be strictly greater than `1/120`.
+Bonferroni therefore bounds family-wise type-I error by `0.05` without assuming
+independence.  Reusing the immutable V75 null arrays, individual false-rejection
+rates were `0.547--0.887%`, and the three-domain family diagnostic was
+`3.62--4.88%` over the four spatial-dependence and tie scenarios.  All frozen
+calibration limits passed.
+
+The independent V76 power draw detected location bias in `86/100` replications
+(95% Wilson lower `0.7786`) and underdispersion in `100/100` (lower `0.9630`).
+The deterministic nonmasking audit passed all 36 p-value pairs and detects
+rank-only and coverage-only failures.  The separate exact-label rule is thus
+selected.  V72 remains failed and sealed; no V72 ensemble, fresh partition,
+checkpoint, or model sample was accessed.  The result is bound in
+[`config/hong2021_v76_result_record.json`](config/hong2021_v76_result_record.json).
+Only a complete prospective 32-query gate specification may now be frozen;
+executing it or constructing a new candidate still requires explicit approval.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
