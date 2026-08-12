@@ -172,6 +172,27 @@ has been chosen, trained, sampled, or evaluated.  A separately frozen
 candidate design and the one authorized execution still require a new
 explicit user approval.
 
+That approval was used for one V80 candidate.  V80 fitted a single domain-wise
+monotone one-point calibration on the already consumed V72 stage-A data, then
+froze a candidate that would apply it equally to the V72 spatial-quantile arm
+and the paired independent-marginal control.  The calibration fit was not a
+selection gate.  Its consumed TNG diagnostic changed the q99.999 error from
+`+0.190` to `-0.0055 dex` and the mean-delta-squared ratio from `2.2485` to
+`1.0013`; no second fit or setting change was made.
+
+The only authorized V80/V79 execution ended during the first selected TNG100
+query, before any scientific metric or global p-value was computed.  The
+generated DC diagnostic retained a singleton channel dimension `(16,1)`, but
+the frozen HDF5 row was `(16,)`; h5py therefore refused the write.  Since the
+selected input and target for source index 10 had already been read, the
+predeclared no-retry policy applies even though this is an implementation
+failure rather than a statistical rejection.  No shape fix, resampling,
+remaining fresh-index access, evaluator run, manifest, or V79 gate run was
+performed.  Partial files and all logs remain immutable, and the terminal
+record is
+[`config/hong2021_v80_terminal_failure_seal.json`](config/hong2021_v80_terminal_failure_seal.json).
+V72 stage B, Astrid, EAGLE, and RAMSES were not touched.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
