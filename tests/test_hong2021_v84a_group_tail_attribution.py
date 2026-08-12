@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import h5py
 
@@ -9,6 +12,9 @@ from hong2021_v84a_group_tail_attribution import (
     group_leakage,
     periodic_nearest_distance,
 )
+
+
+REPO = Path(__file__).resolve().parents[1]
 
 
 def test_periodic_nearest_distance_wraps_box() -> None:
@@ -67,3 +73,15 @@ def test_group_leakage_uses_only_consumed_validation_selection(tmp_path) -> None
     assert row["consumed_validation_groups"] == [2]
     assert row["fit_consumed_group_intersection"] == []
     assert row["consumed_nearest_fit_center_within_same_group"]["available"] is False
+
+
+def test_amended_program_freezes_validation_object_counts_and_new_output() -> None:
+    program = json.loads(
+        (REPO / "config/hong2021_v84a_group_tail_attribution_program.json").read_text()
+    )
+    assert program["amendment"]["revision"] == 1
+    assert {
+        domain: row["validation_objects"]
+        for domain, row in program["domains"].items()
+    } == {"TNG100": 93, "SIMBA": 64, "Swift": 148}
+    assert "v84a1_group_tail_attribution" in program["output"]

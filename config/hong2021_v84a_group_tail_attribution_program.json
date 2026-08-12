@@ -4,6 +4,13 @@
   "purpose": "Determine whether V83 failed because its random-object train holdout leaked simulation realizations or overlapping observer volumes, because the conditional marginal does not generalize to unseen realizations and extreme PIT tails, or because V72 SQT distorts an otherwise calibrated marginal.",
   "engineering_only": true,
   "statistically_independent": false,
+  "amendment": {
+    "revision": 1,
+    "reason": "Add the omitted validation object counts after the original frozen program terminated before model inference with KeyError validation_objects.",
+    "superseded_program_sha256": "549439e97d5c90665d5a3f40068b5d403459bbc40b61ed8f54e8155467a322c2",
+    "failed_preflight_status": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84a_group_tail_attribution/status",
+    "scientific_payload_accessed_before_failure": false
+  },
   "single_audit": {
     "group_provenance": "compare the exact V83 fit/holdout partition by realization and periodic observer-center distance, and compare against the already consumed validation realization set",
     "direct_marginal": "run the frozen step-12000 V83 EMA CDF on the exact random-object holdout and the already consumed 32-query validation selection",
@@ -33,6 +40,7 @@
       "validation_data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
       "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
       "validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "validation_objects": 93,
       "consumed_selection": [10, 11, 13, 20, 22, 25, 27, 28, 33, 36, 38, 41, 42, 45, 46, 54, 56, 61, 65, 68, 69, 70, 71, 72, 77, 80, 83, 84, 88, 89, 91, 92],
       "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/tng/ensemble16.h5",
       "candidate_ensemble_sha256": "761a773ecd56bc605497992e92d5645ae9b61da3a4cd23e05c2035d6f662be8a",
@@ -53,6 +61,7 @@
       "validation_data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
       "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
       "validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "validation_objects": 64,
       "consumed_selection": [1, 5, 6, 10, 11, 12, 17, 20, 21, 23, 26, 27, 28, 29, 30, 32, 33, 37, 38, 40, 42, 43, 44, 45, 46, 48, 49, 51, 53, 54, 57, 58],
       "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/simba_dev/ensemble16.h5",
       "candidate_ensemble_sha256": "cc15b3fb710899b86203a77c88a95d2afa0d449ccaa48d7909c292cdf9657f0e",
@@ -73,6 +82,7 @@
       "validation_data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
       "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
       "validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "validation_objects": 148,
       "consumed_selection": [1, 4, 6, 15, 26, 28, 31, 37, 41, 44, 51, 53, 55, 59, 60, 66, 75, 83, 85, 90, 93, 95, 96, 97, 104, 107, 110, 112, 125, 128, 132, 141],
       "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/swift_dev/ensemble16.h5",
       "candidate_ensemble_sha256": "67253742f2c727a5b1c116287a3770fd9c2f0e0c516237227a39b45716552019",
@@ -85,7 +95,7 @@
     }
   },
   "implementation_sources": {
-    "audit": {"path": "src/hong2021_v84a_group_tail_attribution.py", "sha256": "1092b2a1060eb54f8fcc6ca2631ae4f8c1a3ec5093e58771070843fd523a516b"}
+    "audit": {"path": "src/hong2021_v84a_group_tail_attribution.py", "sha256": "d3c226ba1470930259c94687cf42e03a1805dc05c6ad56c93585c096213a5309"}
   },
   "fixed_numerics": {
     "PIT_bins": 100,
@@ -98,7 +108,7 @@
     "TNG100_periodic_box_mpc_h": 75.0,
     "CAMELS_periodic_box_mpc_h": 25.0
   },
-  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84a_group_tail_attribution/report.json",
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84a1_group_tail_attribution/report.json",
   "authorization": {
     "user_approved_V84A_audit": true,
     "training_or_refit": false,

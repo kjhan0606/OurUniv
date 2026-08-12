@@ -96,6 +96,18 @@ def load_program(path: Path, repo: Path) -> dict[str, Any]:
         raise ValueError("V84A domain set differs")
     for domain in DOMAIN_ORDER:
         row = program["domains"][domain]
+        for split in ("train", "validation"):
+            objects = int(row[f"{split}_objects"])
+            if objects <= 0:
+                raise ValueError(f"V84A {domain} {split} object count differs")
+        selection = list(map(int, row["consumed_selection"]))
+        if (
+            len(selection) != 32
+            or len(set(selection)) != 32
+            or min(selection) < 0
+            or max(selection) >= int(row["validation_objects"])
+        ):
+            raise ValueError(f"V84A {domain} consumed selection differs")
         for key in (
             "train_data",
             "train_cache",
