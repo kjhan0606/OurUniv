@@ -162,3 +162,8 @@ def test_runner_keeps_cross_domain_stress_absolute_only() -> None:
     assert "absolute_only=True" in cross
     assert "training_or_model_sampling_performed\": False" in source
     assert "validation_or_fresh_payload_accessed\": False" in source
+    runner = (
+        REPO / "scripts/hong2021_v73_gate_attainability_lageunha.sh"
+    ).read_text()
+    assert "taskset -c 64-67 nice -n 15" in runner
+    assert "--workers 4" in runner

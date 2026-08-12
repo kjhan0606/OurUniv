@@ -35,11 +35,11 @@ trap record_failure EXIT
 
 printf "%s\n" testing >"$status"
 pytest -q tests/test_hong2021_v73_gate_attainability.py >"$sequence/pytest.log" 2>&1
-printf "%s\n" building_train_truth_summary_CPU_only >"$status"
-python -u src/hong2021_v73_gate_attainability.py \
+printf "%s\n" building_train_truth_summary_CPU_only_workers4_nice15_cpus64-67 >"$status"
+taskset -c 64-67 nice -n 15 python -u src/hong2021_v73_gate_attainability.py \
   --program "$program" \
   --repo "$repo" \
   --output-root "$root" \
-  --workers 16 >"$sequence/audit.log" 2>&1
+  --workers 4 >"$sequence/audit.log" 2>&1
 printf "%s\n" complete_train_truth_gate_attainability_audit >"$status"
 trap - EXIT
