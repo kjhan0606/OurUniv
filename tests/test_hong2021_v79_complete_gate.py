@@ -74,6 +74,10 @@ def _small_pair(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, 
     monkeypatch.setattr(gate, "FIELD_SHAPE", field_shape)
     monkeypatch.setattr(gate, "SOURCE_SHAPE", (queries,))
     paths = (tmp_path / "candidate.h5", tmp_path / "control.h5")
+    latent_digest = np.arange(queries * gate.MEMBERS * 32, dtype=np.uint8).reshape(
+        queries, gate.MEMBERS, 32
+    )
+    pairing_digest = hashlib.sha256(latent_digest.tobytes()).hexdigest()
     truth = np.linspace(-0.1, 0.1, np.prod(field_shape), dtype=np.float32).reshape(field_shape)
     mean = np.zeros(field_shape, dtype=np.float32)
     for offset, path in enumerate(paths):
@@ -85,8 +89,9 @@ def _small_pair(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, 
             handle.create_dataset("truth", data=truth)
             handle.create_dataset("conditional_mean", data=mean)
             handle.create_dataset("source_index", data=np.asarray([3, 5]))
+            handle.create_dataset("initial_latent_sha256", data=latent_digest)
             handle.attrs["sampler"] = "frozen"
-            handle.attrs["innovation_pairing_digest"] = "a" * 64
+            handle.attrs["innovation_pairing_digest"] = pairing_digest
     return paths
 
 
@@ -94,6 +99,10 @@ def test_ensemble_pair_checks_shapes_equality_pairing_and_dc(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     candidate, control = _small_pair(tmp_path, monkeypatch)
+    with h5py.File(candidate, "r") as handle:
+        pairing_digest = hashlib.sha256(
+            handle["initial_latent_sha256"][:].tobytes()
+        ).hexdigest()
     result = gate.validate_ensemble_pair(
         candidate,
         control,
@@ -102,7 +111,7 @@ def test_ensemble_pair_checks_shapes_equality_pairing_and_dc(
         {"sampler": "frozen"},
         {
             "rule": "same frozen innovation",
-            "innovation_pairing_digest": "a" * 64,
+            "innovation_pairing_digest": pairing_digest,
             "candidate_control_pairing_proven": True,
         },
     )
@@ -115,6 +124,10 @@ def test_ensemble_pair_rejects_truth_mismatch(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     candidate, control = _small_pair(tmp_path, monkeypatch)
+    with h5py.File(candidate, "r") as handle:
+        pairing_digest = hashlib.sha256(
+            handle["initial_latent_sha256"][:].tobytes()
+        ).hexdigest()
     with h5py.File(control, "r+") as handle:
         handle["truth"][0, 0, 0, 0, 0] += 1.0
     with pytest.raises(ValueError, match="truth differs"):
@@ -126,7 +139,7 @@ def test_ensemble_pair_rejects_truth_mismatch(
             {"sampler": "frozen"},
             {
                 "rule": "same frozen innovation",
-                "innovation_pairing_digest": "a" * 64,
+                "innovation_pairing_digest": pairing_digest,
                 "candidate_control_pairing_proven": True,
             },
         )

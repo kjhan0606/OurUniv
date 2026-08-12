@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import socket
@@ -508,6 +509,21 @@ def validate_ensemble_pair(
                 or not np.isfinite(control_input).all()
             ):
                 raise ValueError("V79 candidate/control input differs or is nonfinite")
+        if (
+            "initial_latent_sha256" not in candidate
+            or "initial_latent_sha256" not in control
+        ):
+            raise ValueError("V79 paired innovation digests are missing")
+        candidate_latent = candidate["initial_latent_sha256"][:]
+        control_latent = control["initial_latent_sha256"][:]
+        if (
+            candidate_latent.shape != (QUERIES, MEMBERS, 32)
+            or candidate_latent.dtype != np.dtype("uint8")
+            or not _bitwise_equal(candidate_latent, control_latent)
+            or hashlib.sha256(candidate_latent.tobytes(order="C")).hexdigest()
+            != pairing_digest
+        ):
+            raise ValueError("V79 candidate/control innovation pairing bytes differ")
         for label, handle in (("candidate", candidate), ("control", control)):
             maximum = 0.0
             for query in range(QUERIES):
