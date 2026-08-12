@@ -149,6 +149,29 @@ Only the candidate-agnostic complete gate may now be frozen and tested.  No
 candidate construction, sampling, or selected fresh payload access is yet
 authorized.
 
+V79 has now frozen and implemented that candidate-agnostic complete gate.  The
+immutable program is
+[`config/hong2021_v79_complete_candidate_agnostic_gate_program.json`](config/hong2021_v79_complete_candidate_agnostic_gate_program.json)
+at freeze commit `4eb30e7`.  Its implementation validates a separately frozen
+candidate program and a single-use execution manifest before it may open any
+selected payload.  The manifest must hash-bind candidate and paired-control
+ensembles and evaluator outputs, exact 32-query source orders, sampler and
+seed settings, code/configuration/checkpoint/cache inputs, sampling metadata,
+and an innovation-pairing proof.  Candidate/control truth, conditional mean,
+source index, and stored input must be bitwise identical; all fields must be
+finite and every generated residual cube must have absolute DC no larger than
+`1e-7`.
+
+The statistical decision is exactly the V78 physical-energy block plus the
+V76 exact-label rank/coverage block, combined into one global p-value at
+`alpha=0.05`.  Both pass and failure are terminal single-use results, and a
+failure cannot authorize a seed, metric, partition, or candidate retry.  The
+implementation has only been exercised on synthetic unit fixtures; none of
+the reserved V79 validation inputs or targets has been read, and no candidate
+has been chosen, trained, sampled, or evaluated.  A separately frozen
+candidate design and the one authorized execution still require a new
+explicit user approval.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
