@@ -1,0 +1,137 @@
+{
+  "schema": "hong2021-v80dr-metadata-recovery-terminal-failure-seal-v1",
+  "status": "sealed_recovery_and_evaluation_success_report_contract_failure_no_retry",
+  "sealed_at": "2026-08-12T20:57:19+09:00",
+  "purpose": "Seal the single authorized V80DR metadata-only recovery. The copy recovery and all six frozen evaluator invocations succeeded, but the diagnostic report implementation omitted an internal ensemble-SHA key required by the frozen rank/coverage helper. Preserve all recovered ensembles, integrity proof, metrics, plots, and logs; prohibit report correction or retry under V80DR; and prevent any claim of a V79 result or automatic V81 validation trigger.",
+  "program": {
+    "path": "config/hong2021_v80dr_metadata_only_recovery_program.json",
+    "sha256": "b36fd4db6e5a9fbe89fecd36cf17caeb3102fc698cd053c894a7da0a160a1b5a",
+    "freeze_commit": "38e75b8ba7079aae9e7aabe616f8ca1efc09a325",
+    "engineering_only": true,
+    "statistically_valid_V79_reexecution": false,
+    "execution_failure_policy": "seal and stop without another metadata repair, evaluator retry, or report retry"
+  },
+  "execution": {
+    "host": "Lageunha",
+    "runner": "scripts/hong2021_v80dr_metadata_recovery_lageunha.sh",
+    "runner_sha256": "9fc2738034aa597d731a4d4f136b79451817eda6b7793c7abbfe971620b1a5c5",
+    "runner_commit": "fdc82462ceec3e157b2f8ea1ddf29225ac520d5d",
+    "tmux_session": "hong_v80dr_recovery",
+    "tmux_auto_exited": true,
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_sequence/status",
+    "status_sha256": "35ce2368fdc0625ee9be3c883cbda910d1e688dbc5d6058a8bd786935471009e",
+    "status": "failed_terminal_V80DR_no_additional_repair_evaluator_or_report_retry exit=1 previous=computing_non_independent_recovered_V80DR_formula_diagnostic",
+    "RAMSES_modified_or_stopped": false,
+    "V80DR_CPU_sets": ["64-73", "74-83", "84-93", "94-103", "104-113", "114-123"]
+  },
+  "completed_steps": {
+    "Lageunha_full_tests": "665 passed in 34.32s",
+    "pytest_log_sha256": "ada609e16cdcb5051d28241c3487d22767ead440073b556dcc1f180ed5901b82",
+    "metadata_only_copy_recovery": true,
+    "recovery_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_sequence/recovery_record.json",
+    "recovery_record_sha256": "0c2fdb6a8b60b02c8fc2b0c5d38b4c605fbc599652796498c8d34355eda9a515",
+    "recovery_record_decision_digest_sha256": "54c93cb2fee6d5fbd49dbafb743fe7b5bea80ba13bab6002054b074018d05b3c",
+    "recovery_log_sha256": "0c2fdb6a8b60b02c8fc2b0c5d38b4c605fbc599652796498c8d34355eda9a515",
+    "all_six_dataset_manifests_unchanged": true,
+    "only_added_attribute": {
+      "diagnostic_k_h_mpc": 1.0
+    },
+    "sealed_originals_modified": false,
+    "sampling_repeated": false,
+    "six_frozen_evaluator_invocations_completed": true,
+    "metrics_json_files_created": 6,
+    "detailed_metrics_json_files_created": 6,
+    "diagnostic_plots_created": 6
+  },
+  "sealed_original_ensembles_final_verification": {
+    "candidate/tng": "61225065054f2865caa9ac2e18b5c97fbb5b71364bcbf2144eac1caca8cba177",
+    "control/tng": "05e1c6d178e0994e820b3cf222910280a559c9b4bd8ee7b681ad983a223e2790",
+    "candidate/simba_dev": "efa51981f650740c1e3cc0af88d7928e30d03c9c1fbb5fb212c9d9a4f963590e",
+    "control/simba_dev": "a2deb1df44e602bdfd434011d92affade7bfa853825a56b13f80e321e8967e72",
+    "candidate/swift_dev": "647878ca93336213e12173f05d69f746d50bd14c16d2c8d7d24532d9d2a0fb9e",
+    "control/swift_dev": "90d741da0f2e8c2be6466106f5c806f0cd4eb6fc11a67c0fecc280e6b233d3a1",
+    "all_match_V80D_terminal_seal": true
+  },
+  "preserved_recovered_ensembles": {
+    "candidate/tng": "f52c826f98a53f1f4b78e47c2e0fae2f8aa305d02df3ad307d30324e2b57d772",
+    "control/tng": "c1b0f0ff90f2d43f861aac67680d7345e7b0df52312af8c109d40962f02e6dd1",
+    "candidate/simba_dev": "632329be9a142c022e1c9c997c27ad8bacb026f04e2363d70f5a50b6db531677",
+    "control/simba_dev": "6424ce236fe8635a39eda73652d7f0c74d7f2f4fc368f9f5dae3ef886d484c97",
+    "candidate/swift_dev": "d2d990b663ddc7f49f92d298d91d4528c7db9eb35bc6ede517fc454022c2f262",
+    "control/swift_dev": "59c0171e420f43a6a71a4b89b256f33866908cb37785be60871e99302c3f1aa0",
+    "all_match_recovery_record_after_evaluation": true,
+    "files_modified_after_recovery": false
+  },
+  "preserved_evaluator_metrics": {
+    "candidate/tng": "7c07056a7ede8768911af2e5c6c3a041a0cceba759cefdf694b68eaca7ffe7f3",
+    "control/tng": "239dccaa7067e5567ad50f0603c4a80f298b06fb89a8ee33f3acc9ef00e17dc5",
+    "candidate/simba_dev": "2969dc2a2c23a3e3ee1632754be7200ba9da59866a6e74730388e2cdcc72c02a",
+    "control/simba_dev": "13c33f56e1b7243ce6ed70ae0491a2dd8d3a22af9d76c0ce3c0f314a3074f1de",
+    "candidate/swift_dev": "741cc295aafc57ae4b153030fee616d431e066a4a6da94c12ebd3fd2e47caff0",
+    "control/swift_dev": "b990cb7d14c1b8efe4e403f0dfea959293ea91da6b053819d9389bd4a260d728"
+  },
+  "preserved_detailed_metrics": {
+    "candidate/tng": "6fa0fbefbd5f93561893ff9044de21155360d651497c46365fd755486c20a7a9",
+    "control/tng": "f5f1fff7838b387286f054ab0398e54b8182295adfc981dd32e40f78693e050b",
+    "candidate/simba_dev": "28ef329d08caa5224680e01c3fcdb56dbc99a694bdb32d6c15dcf2ae9a08687b",
+    "control/simba_dev": "c610e71e0bad2ba087a675c9966fe93439430cbabb02681e13a3d97ee8596bd0",
+    "candidate/swift_dev": "d8e6a8748f8cf4e3081877ce190830a930db927fd5e2bf0b09f339206468bcff",
+    "control/swift_dev": "2d6c307b68c00808c4dceddb91fd41955527418a52c81583a0783ac61d95a012"
+  },
+  "preserved_evaluator_logs": {
+    "candidate/tng": "10e69109daff3b5913557075190171acae78c08e984680d7f7ed1912aad06b2e",
+    "control/tng": "fe3c3b855b87d18535db25d356b0b74dbd43a836fcdef6fa9dbae53e9cfe0613",
+    "candidate/simba_dev": "0527ce820465323fc7313e84f86bbadbbc82b62ceb4393fee0536f565a5e5d83",
+    "control/simba_dev": "ab81b23a031a728df73edf6366597a58259afb217b0c7a4036e96510396ac900",
+    "candidate/swift_dev": "3f95cf53efeab259fb0a8408a6b7a931d33aa690f37407c525277d5a7cc2e95f",
+    "control/swift_dev": "d36ace04bae08de27ff85d97d3c06690daec3997cfea6997a11700b4abd2f723"
+  },
+  "preserved_diagnostic_plots": {
+    "candidate/tng": "0d774a32b209bac72de8e19c1c05dea7d2ab00fa8ed94a07b0a2f504d2f9ad32",
+    "control/tng": "87c8f378571d02623e72c8d9b8021dfee668f904a150485bb631bb8ef743ae2b",
+    "candidate/simba_dev": "a4e9be128e304d3d2f85116f5ef9983bded776014fc1b10ac6f54fe8e0032ead",
+    "control/simba_dev": "2ef4eb8719f7cfbab4ab76819834aff9237c8576340cdff0cef812af2357e7a8",
+    "candidate/swift_dev": "35721bd9a9c6791ce4a0f397be676b34ed24c2e5989189c539a1fa238c381de4",
+    "control/swift_dev": "0ecbc5ae02c8e83315153b25ea1b9e8402ebedce2445288fad2a8a7c62718b96"
+  },
+  "failure": {
+    "phase": "construct non-independent recovered V80DR formula diagnostic after six successful evaluator invocations",
+    "exception": "KeyError: 'candidate_ensemble_sha256'",
+    "source": "src/hong2021_v80dr_engineering_report.py",
+    "source_sha256": "483425c18846716c37f50b3ca46329cc35f640193713059e94e543584810a3de",
+    "source_line": 157,
+    "frozen_helper": "src/hong2021_v79_complete_gate.py:rank_coverage_observation",
+    "root_cause": "The V80DR report constructed each internal domain row with candidate_ensemble, control_ensemble, candidate_metrics, control_metrics, and numerical_and_pairing but omitted candidate_ensemble_sha256 and companion provenance keys that the frozen rank/coverage helper consumes. The earlier V80D report contained those keys. The V80DR end-to-end report contract was not exercised by its unit tests.",
+    "recovery_failed": false,
+    "evaluator_failed": false,
+    "model_statistically_rejected_or_accepted": false,
+    "physical_energy_helper_completed_in_memory_before_failure": true,
+    "physical_energy_value_persisted_or_disclosed": false,
+    "rank_coverage_observation_available": false,
+    "formula_global_p_available": false,
+    "would_pass_formula_if_prospective_available": false,
+    "diagnostic_report_file_created": false,
+    "report_log_sha256": "c91d8856f926810d22674e1ac358a7d3aa3fe14fb147719e3dac0be579932d28",
+    "classification": "terminal_engineering_report_implementation_failure_not_a_model_result"
+  },
+  "unperformed_steps": {
+    "V80DR_formula_report": false,
+    "V79_manifest_or_gate": false,
+    "V79_decision_or_gate_seal": false,
+    "V81_independent_input_availability_audit": false,
+    "V81_design_freeze": false,
+    "new_independent_simulation_payload_access": false,
+    "V72_stage_B_access": false,
+    "Astrid_or_EAGLE_access": false
+  },
+  "terminal_policy": {
+    "metadata_recovery_repeat_authorized": false,
+    "evaluator_repeat_authorized": false,
+    "report_code_correction_and_retry_authorized": false,
+    "run_V79_gate_authorized": false,
+    "V81_automatic_audit_triggered": false,
+    "reason_V81_not_triggered": "The frozen trigger requires a complete formula diagnostic with would_pass_formula_if_prospective=true. No rank/coverage observation or global formula result exists.",
+    "next": "Stop V80DR and preserve all artifacts. Any corrected report-only computation would be a new explicitly authorized engineering program and could never become V79 completion. Do not acquire or open independent V81 validation data on this evidence."
+  },
+  "decision_digest_sha256": "9a100167bcab4e9756374fe3901c9b7f151909af185c61c327a83afe77f458b4"
+}

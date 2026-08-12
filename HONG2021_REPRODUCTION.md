@@ -211,6 +211,24 @@ A metadata-only recovery would require a new explicit authorization and a new
 prospectively frozen engineering program; even then it could not be called a
 V79 result.  V72 stage B, Astrid, EAGLE, and RAMSES again remained untouched.
 
+That metadata-only recovery was subsequently authorized and frozen as V80DR.
+It preserved the six sealed originals byte-for-byte, copied them to a new
+root, added only the float64 root attribute `diagnostic_k_h_mpc=1.0`, and
+proved every pre-existing dataset and attribute unchanged.  All six frozen
+evaluator invocations then completed and produced their metrics and diagnostic
+plots.  The final engineering report nevertheless failed before a global
+formula result: its internal domain rows omitted `candidate_ensemble_sha256`,
+which the frozen rank/coverage helper requires.  The physical-energy helper
+had completed in memory, but no value was persisted; rank/coverage, global p,
+and `would_pass_formula_if_prospective` do not exist.  This is a report-code
+contract failure, not model acceptance or rejection.  The frozen V80DR policy
+forbids correction or retry, so the independent V81 audit was not triggered.
+All recovered ensembles, metrics, plots, logs, and final original-file hashes
+are bound in
+[`config/hong2021_v80dr_terminal_failure_seal.json`](config/hong2021_v80dr_terminal_failure_seal.json).
+No V79 manifest or gate was run, and V72 stage B, Astrid, EAGLE, and RAMSES
+remained untouched.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
