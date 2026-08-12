@@ -277,3 +277,18 @@ def test_v72_gate_label_recovery_runner_never_repeats_stage_A() -> None:
     assert "--stage A --stage-A-decision" not in source
     assert "--stage B" in source
     assert "--gate-label-recovery \"$gate_recovery\"" in source
+
+
+def test_v72_terminal_result_records_the_sealed_stage_A_failure() -> None:
+    result = json.loads(
+        (REPO / "config/hong2021_v72_result_record.json").read_text()
+    )
+    assert result["stage_A_gate"]["stage_pass"] is False
+    assert result["stage_A_gate"]["explicit_spectral_all_domains"] is True
+    assert result["stage_A_gate"]["explicit_residual_RMS_all_domains"] is True
+    assert result["terminal_seal"]["stage_B_accessed"] is False
+    assert result["firewall"]["independent_EAGLE_accessed"] is False
+    assert result["authorization"]["rerun_or_modify_V72"] is False
+    assert sha256_file(REPO / result["frozen_program"]["path"]) == result[
+        "frozen_program"
+    ]["sha256"]
