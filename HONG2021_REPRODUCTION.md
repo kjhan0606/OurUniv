@@ -193,6 +193,24 @@ record is
 [`config/hong2021_v80_terminal_failure_seal.json`](config/hong2021_v80_terminal_failure_seal.json).
 V72 stage B, Astrid, EAGLE, and RAMSES were not touched.
 
+The subsequently authorized V80D run was explicitly an engineering diagnostic
+on that consumed subset, not a statistically valid V79 retry.  It changed only
+the DC diagnostic row from `(16,1)` to `(16,)`, passed all 657 tests, and
+successfully generated all six candidate/control ensembles for TNG100, SIMBA,
+and Swift.  Evaluation nevertheless stopped before the first metric because
+the V80 sampler's frozen HDF5 attributes omit `diagnostic_k_h_mpc`, which the
+reused residual evaluator requires at startup.  All six complete ensemble
+files have the same metadata-contract mismatch; no `metrics.json`, formula
+diagnostic, V79 p-value, or V80D report exists.  Thus this failure neither
+accepts nor rejects the model and does not trigger acquisition of independent
+V81 validation data.  The frozen V80D program prohibited any further repair or
+retry.  The complete ensembles and logs remain unchanged, and their hashes and
+the terminal policy are recorded in
+[`config/hong2021_v80d_terminal_failure_seal.json`](config/hong2021_v80d_terminal_failure_seal.json).
+A metadata-only recovery would require a new explicit authorization and a new
+prospectively frozen engineering program; even then it could not be called a
+V79 result.  V72 stage B, Astrid, EAGLE, and RAMSES again remained untouched.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
