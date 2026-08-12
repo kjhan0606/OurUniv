@@ -86,6 +86,14 @@ def load_program(path: Path, repo: Path) -> dict[str, Any]:
         source = resolve_path(repo, str(row["path"]))
         if sha256_file(source) != row["sha256"]:
             raise ValueError(f"V80DR implementation source differs: {label}")
+    contract = program["frozen_scientific_contract"]
+    for path_key, sha_key in (
+        ("V80D_program", "V80D_program_sha256"),
+        ("V80_candidate_program", "V80_candidate_program_sha256"),
+        ("V79_formula_program", "V79_formula_program_sha256"),
+    ):
+        if sha256_file(resolve_path(repo, contract[path_key])) != contract[sha_key]:
+            raise ValueError(f"V80DR scientific contract differs: {path_key}")
     return program
 
 
@@ -202,6 +210,8 @@ def recover(program_path: Path, repo: Path, out: Path) -> dict[str, Any]:
         raise RuntimeError("V80DR recovery requires clean frozen Lageunha ancestry")
     if out.exists():
         raise FileExistsError("V80DR recovery refuses an existing record")
+    if out.resolve() != Path(program["outputs"]["recovery_record"]).resolve():
+        raise ValueError("V80DR recovery record output differs")
     evidence = program["frozen_failure_state"]
     sequence = Path(evidence["sequence_root"])
     if (
@@ -209,6 +219,7 @@ def recover(program_path: Path, repo: Path, out: Path) -> dict[str, Any]:
         or sha256_file(sequence / "status") != evidence["status_sha256"]
         or sha256_file(sequence / "sealed_result.json")
         != evidence["sealed_result_sha256"]
+        or sha256_file(sequence / "sample.log") != evidence["sample_log_sha256"]
         or list(Path(evidence["original_ensemble_root"]).glob("**/metrics.json"))
         or Path(evidence["original_report"]).exists()
     ):
@@ -218,6 +229,9 @@ def recover(program_path: Path, repo: Path, out: Path) -> dict[str, Any]:
     if target_root.exists() or partial_root.exists():
         raise FileExistsError("V80DR recovered ensemble output exists")
     source_root = Path(evidence["original_ensemble_root"])
+    expected_keys = {f"{arm}/{domain}" for arm in ARMS for domain in DOMAIN_KEYS}
+    if set(program["sealed_source_ensembles"]) != expected_keys:
+        raise ValueError("V80DR sealed source set differs")
     artifacts: dict[str, Any] = {}
     try:
         for arm in ARMS:
@@ -226,11 +240,17 @@ def recover(program_path: Path, repo: Path, out: Path) -> dict[str, Any]:
                 source = source_root / arm / domain / "ensemble16.h5"
                 temporary = partial_root / arm / domain / "ensemble16.h5"
                 final = target_root / arm / domain / "ensemble16.h5"
+                binding = program["sealed_source_ensembles"][key]
+                if (
+                    Path(binding["path"]).resolve() != source.resolve()
+                    or source.stat().st_size != int(binding["bytes"])
+                ):
+                    raise ValueError(f"V80DR sealed source binding differs: {key}")
                 artifacts[key] = copy_and_repair(
                     source,
                     temporary,
                     final,
-                    str(program["sealed_source_ensembles"][key]["sha256"]),
+                    str(binding["sha256"]),
                 )
         os.replace(partial_root, target_root)
     except Exception:

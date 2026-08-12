@@ -98,6 +98,8 @@ def run(
     freeze_commit = program_freeze_commit(program_path, repo)
     if not clean or not _is_ancestor(repo, freeze_commit, commit):
         raise RuntimeError("V80DR report requires clean frozen ancestry")
+    if output_path.resolve() != Path(program["outputs"]["report"]).resolve():
+        raise ValueError("V80DR report output differs")
     recovery_record = load_recovery_record(
         recovery_record_path, program_path, program, repo, commit
     )
