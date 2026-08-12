@@ -26,7 +26,7 @@ from hong2021_v63_train import _is_ancestor
 
 PROGRAM_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-program-v1"
 PROGRAM_STATUS = (
-    "frozen_and_pushed_after_support_hash_correction_before_bound_ensemble_payload_inspection"
+    "frozen_and_pushed_after_evaluator_histogram_crosscheck_correction"
 )
 REPORT_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-v1"
 DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
@@ -280,6 +280,7 @@ def inspect_domain(domain: str, rows: dict[str, Any]) -> dict[str, Any]:
         arm: strict_json(Path(rows[f"{arm}_metrics"]["path"]).resolve()) for arm in ARM_ORDER
     }
     aggregate_hist = {arm: np.zeros(MEMBERS + 1, dtype=np.int64) for arm in ARM_ORDER}
+    evaluator_hist = {arm: np.zeros(MEMBERS + 1, dtype=np.int64) for arm in ARM_ORDER}
     aggregate_strata = {
         arm: [np.zeros(MEMBERS + 1, dtype=np.int64) for _ in range(4)] for arm in ARM_ORDER
     }
@@ -311,7 +312,14 @@ def inspect_domain(domain: str, rows: dict[str, Any]) -> dict[str, Any]:
             }
             residuals = {}
             for arm, handle in (("candidate", candidate), ("control", control)):
-                residual = np.asarray(handle["sample"][query, :, 0], dtype=np.float64) - mean
+                raw_residual = (
+                    np.asarray(handle["sample"][query, :, 0], dtype=np.float64) - mean
+                )
+                evaluator_rank = np.sum(raw_residual < target[None], axis=0)
+                evaluator_hist[arm] += np.bincount(
+                    evaluator_rank.ravel(), minlength=MEMBERS + 1
+                )
+                residual = raw_residual.copy()
                 residual -= residual.mean(axis=(-3, -2, -1), keepdims=True)
                 residuals[arm] = residual
                 current[arm] = rank_and_coverage(residual, target, strata)
@@ -330,9 +338,10 @@ def inspect_domain(domain: str, rows: dict[str, Any]) -> dict[str, Any]:
         expected_metric_hist = next(iter(metrics[arm]["candidates"].values()))[
             "residual_calibration"
         ]["rank_histogram"]
-        if aggregate_hist[arm].tolist() != list(map(int, expected_metric_hist)):
+        if evaluator_hist[arm].tolist() != list(map(int, expected_metric_hist)):
             raise ValueError(f"V82A {domain} {arm} rank histogram differs from sealed evaluator")
         arm_summary[arm] = {
+            "sealed_evaluator_uncentered_residual_rank_histogram_crosscheck_pass": True,
             "aggregate_rank_shape": rank_shape(aggregate_hist[arm]),
             "aggregate_rank_shape_by_conditional_mean_quartile": [
                 rank_shape(value) for value in aggregate_strata[arm]

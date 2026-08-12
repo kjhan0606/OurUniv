@@ -64,3 +64,4 @@ def test_source_is_read_only_and_contains_no_model_fit_or_sampling_import() -> N
     assert "create_dataset" not in source
     assert "h5py.File(paths[\"candidate\"], \"r\")" in source
     assert "h5py.File(paths[\"control\"], \"r\")" in source
+    assert "evaluator_rank = np.sum(raw_residual < target[None], axis=0)" in source
