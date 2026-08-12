@@ -96,7 +96,16 @@ def load_program(path: Path, repo: Path) -> dict[str, Any]:
         raise ValueError("V84A domain set differs")
     for domain in DOMAIN_ORDER:
         row = program["domains"][domain]
-        for key in ("train_data", "train_cache", "validation_data", "validation_cache"):
+        for key in (
+            "train_data",
+            "train_cache",
+            "validation_data",
+            "validation_cache",
+            "candidate_ensemble",
+            "control_ensemble",
+            "candidate_metrics",
+            "control_metrics",
+        ):
             artifact = Path(row[key]).resolve()
             if sha256_file(artifact) != row[f"{key}_sha256"]:
                 raise ValueError(f"V84A {domain} {key} differs")
@@ -144,9 +153,11 @@ def group_leakage(
     validation: h5py.File,
     fit_indices: list[int],
     holdout_indices: list[int],
+    validation_indices: list[int],
 ) -> dict[str, Any]:
     fit = np.asarray(fit_indices, dtype=np.int64)
     holdout = np.asarray(holdout_indices, dtype=np.int64)
+    consumed = np.asarray(validation_indices, dtype=np.int64)
     box = 75.0 if domain == "TNG100" else 25.0
     train_positions = np.asarray(train["center_position_mpc_h"], dtype=np.float64)
     validation_positions = np.asarray(validation["center_position_mpc_h"], dtype=np.float64)
@@ -158,7 +169,7 @@ def group_leakage(
         validation_groups = np.zeros(len(validation_positions), dtype=np.int64)
     fit_groups = set(map(int, train_groups[fit]))
     holdout_groups = set(map(int, train_groups[holdout]))
-    consumed_groups = set(map(int, validation_groups))
+    consumed_groups = set(map(int, validation_groups[consumed]))
 
     def within_group_distance(
         positions: np.ndarray,
@@ -176,7 +187,9 @@ def group_leakage(
     holdout_distance = within_group_distance(
         train_positions[holdout], train_groups[holdout]
     )
-    consumed_distance = within_group_distance(validation_positions, validation_groups)
+    consumed_distance = within_group_distance(
+        validation_positions[consumed], validation_groups[consumed]
+    )
     return {
         "group_field": "realization" if "realization" in train else "single_TNG100_realization",
         "simulation_box_mpc_h": box,
@@ -459,6 +472,7 @@ def audit(program_path: Path, repo: Path, output_path: Path) -> dict[str, Any]:
                     validation_data,
                     partition[domain]["fit"],
                     partition[domain]["holdout"],
+                    definition["consumed_selection"],
                 )
                 populations[domain] = {
                     "fit_probe": inspect_population(

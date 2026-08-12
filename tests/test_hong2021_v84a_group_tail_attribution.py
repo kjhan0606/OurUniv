@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import numpy as np
+import h5py
 
 from hong2021_v84a_group_tail_attribution import (
     PopulationAccumulator,
     direct_tail_failure,
+    group_leakage,
     periodic_nearest_distance,
 )
 
@@ -43,3 +45,25 @@ def test_population_accumulator_reports_uniform_PIT() -> None:
     assert row["direct_PIT"]["mean"] == 0.5
     assert row["direct_PIT"]["voxels"] == 8
     assert row["direct_PIT"]["central_coverage"]["50"] == 0.5
+
+
+def test_group_leakage_uses_only_consumed_validation_selection(tmp_path) -> None:
+    train_path = tmp_path / "train.h5"
+    validation_path = tmp_path / "validation.h5"
+    with h5py.File(train_path, "w") as train:
+        train.create_dataset(
+            "center_position_mpc_h",
+            data=np.asarray([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]),
+        )
+        train.create_dataset("realization", data=np.asarray([1, 1]))
+    with h5py.File(validation_path, "w") as validation:
+        validation.create_dataset(
+            "center_position_mpc_h",
+            data=np.asarray([[2.0, 0.0, 0.0], [3.0, 0.0, 0.0]]),
+        )
+        validation.create_dataset("realization", data=np.asarray([1, 2]))
+    with h5py.File(train_path) as train, h5py.File(validation_path) as validation:
+        row = group_leakage("SIMBA", train, validation, [0], [1], [1])
+    assert row["consumed_validation_groups"] == [2]
+    assert row["fit_consumed_group_intersection"] == []
+    assert row["consumed_nearest_fit_center_within_same_group"]["available"] is False
