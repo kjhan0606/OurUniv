@@ -1,0 +1,70 @@
+{
+  "schema": "hong2021-v72-stage-A-evaluator-metadata-only-recovery-program-v1",
+  "status": "frozen_after_sampling_before_any_metric_gate_or_stage_B_access",
+  "purpose": "Recover the single V72 stage-A evaluation after the frozen evaluator immediately rejected a missing inherited diagnostic_k_h_mpc attribute. Add exactly that metadata value while proving every HDF5 dataset is byte-identical, then resume evaluation and the already frozen gate without resampling or changing any candidate or scientific rule.",
+  "failure_state": {
+    "sequence_status": "failed_V72_two_stage_SQT exit=1 previous=evaluating_single_V72_SQT_stage_A",
+    "sampling_status": "complete_single_V72_SQT_stage_A_sampling",
+    "sampling_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_sample.log",
+    "sampling_log_sha256": "b3e54b3e8a3672656135bab3d83017cfc0d8e5fbd158b444a9d5d907be7ded51",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/preflight.json",
+    "preflight_sha256": "d3e2d7e71923054ba5c4234fad36ddb6d7b497ffec3878a507c467bb2b11c0a8",
+    "metrics_json_files_created": 0,
+    "stage_A_decision_created": false,
+    "stage_B_created_or_accessed": false,
+    "independent_EAGLE_accessed": false
+  },
+  "diagnosis": {
+    "failing_source": "src/hong2021_residual_evaluate.py",
+    "frozen_source_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "failure": "KeyError reading HDF5 attribute diagnostic_k_h_mpc before any metric output was written",
+    "required_inherited_value": 1.0,
+    "scientific_role": "fixed diagnostic high-pass boundary already used by V70/V71; it is not selected from V72 data or a pass threshold",
+    "sample_arrays_or_metrics_disclosed_to_design": false
+  },
+  "pre_repair_artifacts": {
+    "conditioning_stratified_spatial_quantile_transport/simba_dev": "a69a464ce0cc1e9696b7b1e6abe10434aae58142d56f09f9c5a1a1c922651389",
+    "conditioning_stratified_spatial_quantile_transport/swift_dev": "8e67f320e5ee0d670c79340807240f97393236dcdec09850a698687d314b0649",
+    "conditioning_stratified_spatial_quantile_transport/tng": "35cd4f7f5a6a52ea3d5aa29716d5fcbba7dd80c5824603e235afa4f4cc5f4cf0",
+    "independent_voxel_V63_marginal/simba_dev": "ec9e6f3b9913d4b24fa2eb63cd2e763a80b68be9f0575a8323e076bd12f91b22",
+    "independent_voxel_V63_marginal/swift_dev": "e2726c6de78ab16da28926b4dce4587d7e52fb43b3900a43294cca445ec9244e",
+    "independent_voxel_V63_marginal/tng": "0b2787d6e74f74f99737deac9e3868bccb9a1eee186944356eaf4acb63b15fb7",
+    "raw_V70_latent_spatial_score/simba_dev": "597936fd7a8d1f42fd1bde30fec63a09bce25acdcfc2f2b670564991d7eeb012",
+    "raw_V70_latent_spatial_score/swift_dev": "59d625202e1792bb4e23b4f748517cc377e6f88f37abe74df667e5f50c412d55",
+    "raw_V70_latent_spatial_score/tng": "3cf2117df0b227668798232427c07b192c342a350dff26ce318a6b55e8ff7bc9"
+  },
+  "only_authorized_mutation": {
+    "target": "all nine complete stage-A ensemble16.h5 files above",
+    "precondition": "diagnostic_k_h_mpc attribute is absent",
+    "operation": "set diagnostic_k_h_mpc HDF5 root attribute to float64 1.0",
+    "forbidden": "any dataset write, deletion, rename, compression change, other attribute change, sample regeneration, metric change, gate change, seed change, or stage-B access"
+  },
+  "mandatory_integrity_proof": {
+    "before": "verify each complete-file SHA256 above, expected schema/program/stage/complete attributes, missing diagnostic_k_h_mpc, zero metrics, no decision, and no stage B",
+    "dataset_proof": "stream every dataset in every file into a name, shape, dtype, and raw C-order byte SHA256 manifest before mutation; repeat after mutation and require the manifests to be identical",
+    "attribute_proof": "require every pre-existing root attribute to compare identically after mutation and require exactly one new key diagnostic_k_h_mpc with float value 1.0",
+    "record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_metadata_recovery.json",
+    "single_use": true
+  },
+  "code_correction": {
+    "future_stage_B_and_any_unrun_stage": "the sampler must write diagnostic_k_h_mpc=1.0 atomically with all other frozen metadata",
+    "gate_validation": "the gate must require diagnostic_k_h_mpc exactly 1.0",
+    "scientific_candidate_or_threshold_changed": false
+  },
+  "resume_sequence": [
+    "run the metadata-only recovery once and write its canonical record",
+    "run all nine unchanged frozen evaluator invocations on the existing stage-A samples",
+    "run the unchanged predeclared V72 stage-A gate",
+    "if stage A fails, seal and stop with stage B unopened",
+    "if stage A passes, execute the already frozen stage-B sequence with the corrected future metadata writer"
+  ],
+  "firewall": {
+    "stage_A_resampling": "forbidden",
+    "candidate_strata_seed_member_sampler_metric_or_threshold_tuning": "forbidden",
+    "stage_B_access_before_exact_stage_A_pass": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}
