@@ -25,7 +25,9 @@ from hong2021_v63_train import _is_ancestor
 
 
 PROGRAM_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-program-v1"
-PROGRAM_STATUS = "frozen_and_pushed_before_bound_ensemble_payload_inspection"
+PROGRAM_STATUS = (
+    "frozen_and_pushed_after_support_hash_correction_before_bound_ensemble_payload_inspection"
+)
 REPORT_SCHEMA = "hong2021-v82a-consumed-rank-phase-autopsy-v1"
 DOMAIN_ORDER = ("TNG100", "SIMBA", "Swift")
 ARM_ORDER = ("candidate", "control")
@@ -422,6 +424,9 @@ def run(program_path: Path, repo: Path, output_path: Path) -> dict[str, Any]:
     program_path = program_path.resolve()
     output_path = output_path.resolve()
     program = load_program(program_path, repo)
+    expected_output = Path(program["outputs"]["report"]).resolve()
+    if output_path != expected_output or program["outputs"].get("refuse_existing") is not True:
+        raise ValueError("V82A output binding differs")
     commit, clean = git_state(repo)
     freeze_commit = program_freeze_commit(program_path, repo)
     if not clean or not _is_ancestor(repo, freeze_commit, commit):
