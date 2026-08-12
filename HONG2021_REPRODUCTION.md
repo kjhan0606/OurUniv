@@ -9,17 +9,33 @@ The post-v1 diagnosis and staged restart are frozen in
 
 ## Current status
 
-The latest stochastic present-density path is V13.  It combines the
-source-balanced V12 Gaussianized residual EDM with a train-only observable
-scalar correction for the conditional cube mean.  V13 passes all eight frozen
-field checks on both TNG and SIMBA development and on the historical SIMBA
-stress set.  This authorized the one-time sealed EAGLE confirmation-32 test,
-which failed independently: high-k power ratios are `0.868/0.629`, residual
-RMS is `0.893` of truth, coverage and rank calibration fail, and the
-peak/void aggregate fails.  Grid-HOP and CF4 inference remain disabled.  The
-complete audit and the prohibition on EAGLE-driven retuning are recorded in
-[`HONG2021_RESTART_PLAN.md`](HONG2021_RESTART_PLAN.md) and
-[`EAGLE_INDEPENDENT_GATE.md`](EAGLE_INDEPENDENT_GATE.md).
+The latest completed model path is the sealed V72 conditioning-stratified
+spatial quantile transport.  Its single fresh stage-A screen failed on the
+TNG100 physical tail, Q4, sub-Mpc two-point comparison, and maximum-energy
+ordering; stage B, Astrid, and independent EAGLE remained unopened.  The V72
+verdict and artifact hashes are bound in
+[`config/hong2021_v72_result_record.json`](config/hong2021_v72_result_record.json).
+
+Before spending another fresh partition or training another generator, V73
+measured the attainability of the unchanged sixteen-query gate using 10,000
+cluster-aware fit-train truth-oracle trials per domain.  The all-domain joint
+pass probability is only `0.7633`, below the preregistered `0.8` floor.  TNG100
+is the bottleneck: the q99.999, Q4, and all-scale two-point pass probabilities
+are `0.896`, `0.868`, and `0.8559`, while high-k power (`0.9996`) and residual
+RMS (`1.0`) are stable.  The current gate therefore has a measured `0.2367`
+truth-oracle false-rejection probability and requires prospective
+null-calibrated redesign.  This finding does not rescue or reopen V72.
+
+The domain-blind stress also fails four of six ordered source-target pairs,
+all involving TNG100, whereas SIMBA and Swift transfer in both directions with
+absolute-core probabilities `0.85` and `0.8784`.  TNG within-box spatial
+heterogeneity does not cross the frozen materiality limits.  In the already
+consumed V72 maximum-energy comparison, TNG100 is decisively worse than the
+independent control (paired mean `+0.07425`, 95% interval
+`[+0.04280,+0.10623]`); SIMBA and Swift remain underpowered.  Complete results
+are in
+[`config/hong2021_v73_result_record.json`](config/hong2021_v73_result_record.json).
+No new Hong candidate or gate change is authorized pending explicit approval.
 
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
