@@ -99,6 +99,32 @@ checkpoint, or model sample was accessed.  The result is bound in
 Only a complete prospective 32-query gate specification may now be frozen;
 executing it or constructing a new candidate still requires explicit approval.
 
+V77 found that such a complete gate still cannot be frozen.  V74's 32-query
+attainability result used four/eight/twenty fit-train groups for
+TNG100/SIMBA/Swift, whereas the untouched validation pool has four/three/seven
+groups and cannot execute the same quotas.  A prospectively frozen compatible
+design reserved 32 metadata-only indices per domain after excluding all
+historical development and consumed V72 stage-A indices; no input or target
+voxels were read.
+
+On 20,000 independent compatible-design verification trials, the unchanged
+physical/morphology conjunction passed all three domains only `0.7311` of the
+time (95% Wilson lower `0.72491`), below the `0.8` requirement.  SIMBA is the
+main named bottleneck: its strict all-scale two-point improvement passes
+`0.82075`, and its full domain joint passes `0.7974`.  The energy rule remains
+well calibrated (`0.04835` family false rejection; Wilson upper `0.05141`).
+After adding the V76 rank/coverage error budget, the conservative complete-gate
+pass lower bound is only `0.6235`.  Even perfect morphology would not suffice,
+because the all-domain absolute-core Wilson lower is `0.86045`.
+
+The result is therefore a sealed gate-design failure, not a model failure.
+No complete gate or new candidate is authorized.  A next attempt must replace
+the collection of sampling-sensitive hard/conjunctive checks with a separately
+frozen conditional-null design and one global error budget; changing only the
+query count, energy rule, or two-point row cannot meet the target.  Full hashes
+and the untouched index reservation are in
+[`config/hong2021_v77_result_record.json`](config/hong2021_v77_result_record.json).
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
