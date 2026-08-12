@@ -125,6 +125,30 @@ query count, energy rule, or two-point row cannot meet the target.  Full hashes
 and the untouched index reservation are in
 [`config/hong2021_v77_result_record.json`](config/hong2021_v77_result_record.json).
 
+V78 replaced that unattainable conjunction with one global conditional-null
+p-value.  Six continuous physical/morphology families are scored by compatible
+truth-oracle Mahalanobis distance, environment and maximum energy contribute
+two additional calibrated families, and sparse maximum-`-log(p)` and dense
+Fisher paths are jointly adjusted.  This physical-energy block receives half
+of a global `0.05` budget.  The other half is assigned to V76's exact
+rank/coverage field-label block, tightening its six individual thresholds to
+`1/240`.  The final selection statistic is a single twice-Bonferroni-adjusted
+global p-value; no independence assumption is used.
+
+On a newly seeded 20,000-trial compatible bootstrap, physical-energy false
+rejection was `0.0181` at its `0.025` allocation.  When paired with each of the
+four V76 spatial-dependence/tie scenarios, complete-gate rejection was
+`0.03757--0.04340`; the largest 95% Wilson upper bound was `0.04468`, below
+the global `0.05` level.  Detection was `0.979--1.0` over nine frozen
+alternatives spanning q99.999, Q4, high-k, RMS, PDF, 2PCF, environment,
+maximum-energy, and diffuse multi-metric errors.  The global rule is selected.
+
+The exact result is recorded in
+[`config/hong2021_v78_result_record.json`](config/hong2021_v78_result_record.json).
+Only the candidate-agnostic complete gate may now be frozen and tested.  No
+candidate construction, sampling, or selected fresh payload access is yet
+authorized.
+
 The published network can run on the local NVIDIA A10 hardware.  A full-width
 TNG100 forward pass has been executed at `64^3`: the transcription has
 461,024,955 parameters and returns the required `64^3` density grid.
