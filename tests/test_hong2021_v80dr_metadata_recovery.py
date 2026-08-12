@@ -11,6 +11,26 @@ from hong2021_v18_init import sha256_file
 from hong2021_v80_sample import ENSEMBLE_SCHEMA
 
 
+REPO = Path(__file__).resolve().parents[1]
+PROGRAM = REPO / "config/hong2021_v80dr_metadata_only_recovery_program.json"
+
+
+def test_recovery_program_is_source_bound_and_copy_only() -> None:
+    program = recovery.load_program(PROGRAM, REPO)
+    assert program["engineering_only"] is True
+    assert program["statistically_valid_V79_reexecution"] is False
+    assert program["only_authorized_mutation"] == {
+        **program["only_authorized_mutation"],
+        "attribute": {"diagnostic_k_h_mpc": 1.0},
+        "modify_original_ensembles": False,
+    }
+    assert len(program["sealed_source_ensembles"]) == 6
+    assert (
+        program["outputs"]["recovered_ensemble_root"]
+        != program["frozen_failure_state"]["original_ensemble_root"]
+    )
+
+
 def make_ensemble(path: Path) -> None:
     with h5py.File(path, "w") as handle:
         handle.create_dataset(
