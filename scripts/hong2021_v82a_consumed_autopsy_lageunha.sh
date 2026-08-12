@@ -4,9 +4,9 @@ set -euo pipefail
 repo=/home/kjhan/BACKUP/CF4
 base=/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation
 program=$repo/config/hong2021_v82a_consumed_rank_phase_autopsy_program.json
-program_sha=7f29f2c454573fb3a622123ba9abcf4c7c999807a2ac9d79ef1833d751003e78
-program_freeze=2ef7a625b11ebde7644da485c782ae6090248ae3
-sequence=$base/tng100_simba_swift_v82a2_consumed_autopsy_sequence
+program_sha=1c2ebd894d21f5e186070193548b43f8b39df0e25c3f7b2f291d46bf439a78f1
+program_freeze=00d4c5b021493454947cb28193d74615851e046e
+sequence=$base/tng100_simba_swift_v82a3_consumed_autopsy_sequence
 report=$sequence/report.json
 status=$sequence/status
 
