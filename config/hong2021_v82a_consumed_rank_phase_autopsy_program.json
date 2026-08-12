@@ -1,7 +1,7 @@
 {
   "schema": "hong2021-v82a-consumed-rank-phase-autopsy-program-v1",
-  "status": "frozen_and_pushed_after_evaluator_histogram_crosscheck_correction",
-  "frozen_at": "2026-08-13T00:09:00+09:00",
+  "status": "frozen_and_pushed_after_exact_float32_evaluator_crosscheck_correction",
+  "frozen_at": "2026-08-13T00:16:00+09:00",
   "purpose": "Localize the already observed V80 rank/coverage and high-k failures using only the six consumed, sealed V80DR recovered ensembles. Separate rank-histogram shape, conditional-environment dependence, residual amplitude, and descriptive phase/coherence effects before deciding how to construct a consumed-only Gaussian residual control.",
   "engineering_only": true,
   "statistically_independent": false,
@@ -26,6 +26,16 @@
     "classification": "evaluator_histogram_crosscheck_definition_mismatch_after_TNG100_computation_before_report_creation",
     "failure": "The scientific autopsy correctly centered both generated and truth residuals as in the V79 exact-label rank statistic, but its crosscheck incorrectly compared that histogram with the sealed evaluator histogram, whose generated residual retains its tiny numerical DC.",
     "correction": "Retain the frozen centered V79 autopsy statistic unchanged and separately accumulate the evaluator's uncentered-generated/centered-truth strict-rank histogram solely for byte-bound metrics crosschecking.",
+    "domains_computed_before_failure": ["TNG100"],
+    "rank_shape_or_spectrum_values_persisted_or_inspected": false,
+    "report_created": false,
+    "scientific_diagnostic_changed": false,
+    "new_output_required_to_preserve_failure_evidence": true
+  },
+  "prior_V82A2_execution_failure": {
+    "classification": "evaluator_histogram_crosscheck_dtype_mismatch_after_TNG100_computation_before_report_creation",
+    "failure": "The separated evaluator crosscheck used float64 arrays, whereas the frozen evaluator loads sample, truth, and conditional mean as float32 and performs its subtraction and truth-DC operation in float32. Strict rank bins are sensitive to this numerical distinction.",
+    "correction": "Reproduce the evaluator crosscheck in a dedicated helper with the exact float32 load, subtraction, mean, strict-less-than, and bincount sequence. A read-only TNG100-control probe confirmed exact equality and zero absolute count difference before this freeze.",
     "domains_computed_before_failure": ["TNG100"],
     "rank_shape_or_spectrum_values_persisted_or_inspected": false,
     "report_created": false,
@@ -80,6 +90,18 @@
     "failed_V82AR_autopsy_log": {
       "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82ar_consumed_autopsy_sequence/autopsy.log",
       "sha256": "04a5dbe74083d50dc4748e9e0b820e26883bf92b83ce8e166298dff3eac1bb7d"
+    },
+    "failed_V82A2_status": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a2_consumed_autopsy_sequence/status",
+      "sha256": "e04018c36f537b11852fe8394fb4af8511199d75412f1bd8c9fb941930e0a522"
+    },
+    "failed_V82A2_pytest_log": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a2_consumed_autopsy_sequence/pytest.log",
+      "sha256": "44fdf7b0881494ae1045219a8722fb3cabb76f544a0b7c0df8de0f344402ab9d"
+    },
+    "failed_V82A2_autopsy_log": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a2_consumed_autopsy_sequence/autopsy.log",
+      "sha256": "63c0094e240786501267360c441c9ac1a687d538c3ccb24cb5001a94fa06157c"
     }
   },
   "input_artifacts": {
@@ -141,11 +163,11 @@
   "implementation_sources": {
     "V82A_autopsy": {
       "path": "src/hong2021_v82a_consumed_autopsy.py",
-      "sha256": "34069517295681d90d70d6c5891e1d0e9e83329b692566fa9ce8880f3707ac9a"
+      "sha256": "c9939ff4aaba87259a9bae8c59877576876d2a66b201d9c6d7c4008c9c630250"
     },
     "V82A_tests": {
       "path": "tests/test_hong2021_v82a_consumed_autopsy.py",
-      "sha256": "21c5617982512bf1498ee135be8549d447d5dc0f19e43f633612c63fab2f342a"
+      "sha256": "7bb70049ee3868ddab84ba9e396cc62db03a9f5aeae6893749951b0da8c60da7"
     }
   },
   "frozen_diagnostics": {
@@ -163,7 +185,7 @@
       "coverage": "Use numpy linear empirical quantiles 0.16/0.84 and 0.025/0.975; compare with finite-16-member expectations 0.60 and 0.838235294117647.",
       "environment_strata": "Within each query, stable-sort all 64^3 conditional-mean voxels and split into four exactly equal-count strata. Compute the same rank-shape statistics in each stratum.",
       "tie_interpretation": "The prior exact-label audit found adjacent_tie_fraction=0 in all three candidate domains; V82A retains strict ranks and does not invent jitter.",
-      "sealed_evaluator_crosscheck": "Separately reproduce the sealed evaluator convention: do not recenter generated residuals, do center the truth residual, and require the aggregate strict-rank histogram to equal metrics.json exactly. This is an integrity check, not the V79 scientific rank statistic."
+      "sealed_evaluator_crosscheck": "Separately reproduce the sealed evaluator convention in its exact float32 arithmetic: do not recenter generated residuals, do center the truth residual, and require the aggregate strict-rank histogram to equal metrics.json exactly. This is an integrity check, not the V79 scientific rank statistic."
     },
     "residual_spectrum": {
       "field": "sample minus conditional mean and truth minus conditional mean, each with exact per-cube DC subtraction",
@@ -181,8 +203,8 @@
     "result_use": "Use the autopsy only to specify the next consumed-only Gaussian residual control. Do not tune V80, reopen V79, or claim validation."
   },
   "outputs": {
-    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a2_consumed_autopsy_sequence",
-    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a2_consumed_autopsy_sequence/report.json",
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a3_consumed_autopsy_sequence",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a3_consumed_autopsy_sequence/report.json",
     "refuse_existing": true
   },
   "execution": {
