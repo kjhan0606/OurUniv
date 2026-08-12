@@ -12,7 +12,7 @@ from hong2021_v83_network import (
     PARAMETERS as CORE_PARAMETERS,
     ConditionalMarginalSplineUNet,
     conditional_cdf as core_cdf,
-    conditional_icdf as core_icdf,
+    conditional_inverse as core_inverse,
     conditional_log_probability as core_log_probability,
 )
 
@@ -110,6 +110,44 @@ def _value_field(value: torch.Tensor, parameters: torch.Tensor) -> torch.Tensor:
     return value.float()
 
 
+def standard_normal_icdf(probability: torch.Tensor) -> torch.Tensor:
+    """Acklam inverse-normal approximation using portable CUDA arithmetic only."""
+    value = probability.float().clamp(RANK_EPSILON, 1.0 - RANK_EPSILON)
+    a = (-39.69683028665376, 220.9460984245205, -275.9285104469687,
+         138.3577518672690, -30.66479806614716, 2.506628277459239)
+    b = (-54.47609879822406, 161.5858368580409, -155.6989798598866,
+         66.80131188771972, -13.28068155288572)
+    c = (-0.007784894002430293, -0.3223964580411365, -2.400758277161838,
+         -2.549732539343734, 4.374664141464968, 2.938163982698783)
+    d = (0.007784695709041462, 0.3224671290700398,
+         2.445134137142996, 3.754408661907416)
+
+    def polynomial(coefficient: tuple[float, ...], argument: torch.Tensor) -> torch.Tensor:
+        output = torch.full_like(argument, coefficient[0])
+        for item in coefficient[1:]:
+            output = output * argument + item
+        return output
+
+    lower_q = torch.sqrt(-2.0 * torch.log(value))
+    lower = polynomial(c, lower_q) / (
+        polynomial(d, lower_q) * lower_q + 1.0
+    )
+    upper_q = torch.sqrt(-2.0 * torch.log1p(-value))
+    upper = -polynomial(c, upper_q) / (
+        polynomial(d, upper_q) * upper_q + 1.0
+    )
+    central_q = value - 0.5
+    central_r = torch.square(central_q)
+    central = polynomial(a, central_r) * central_q / (
+        polynomial(b, central_r) * central_r + 1.0
+    )
+    return torch.where(
+        value < 0.02425,
+        lower,
+        torch.where(value > 1.0 - 0.02425, upper, central),
+    )
+
+
 def conditional_log_probability(
     parameters: torch.Tensor,
     residual: torch.Tensor,
@@ -174,7 +212,8 @@ def conditional_icdf(parameters: torch.Tensor, uniform: torch.Tensor) -> torch.T
         (probability - weights[:, 0:1]) / weights[:, 1:2]
     ).clamp(RANK_EPSILON, 1.0 - RANK_EPSILON)
     central_core_probability = lower_core + central_probability * central_normalizer
-    central = core_icdf(core, central_core_probability)
+    central_latent = standard_normal_icdf(central_core_probability)
+    central, _ = core_inverse(core, central_latent)
     upper = UPPER_THRESHOLD - upper_scale * torch.log(
         (1.0 - probability) / weights[:, 2:3]
     )
@@ -216,5 +255,6 @@ __all__ = [
     "conditional_log_probability",
     "parameter_count",
     "spliced_parameters",
+    "standard_normal_icdf",
     "upper_physical_second_moment_margin",
 ]

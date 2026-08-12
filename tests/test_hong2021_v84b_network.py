@@ -13,6 +13,7 @@ from hong2021_v84b_network import (
     conditional_icdf,
     conditional_log_probability,
     spliced_parameters,
+    standard_normal_icdf,
     upper_physical_second_moment_margin,
 )
 
@@ -56,3 +57,13 @@ def test_spliced_density_integrates_to_one() -> None:
 
 def test_upper_tail_bound_guarantees_finite_physical_second_moment() -> None:
     assert upper_physical_second_moment_margin(0.09877202271987233) > 0.3
+
+
+def test_portable_inverse_normal_matches_reference_without_erfinv() -> None:
+    probability = torch.tensor(
+        [1.0e-7, 1.0e-5, 0.001, 0.1, 0.5, 0.9, 0.999, 1.0 - 1.0e-5],
+        dtype=torch.float64,
+    )
+    expected = torch.distributions.Normal(0.0, 1.0).icdf(probability.float().double())
+    observed = standard_normal_icdf(probability).double()
+    assert torch.max(torch.abs(observed - expected)).item() < 2.0e-5
