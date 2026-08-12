@@ -12,6 +12,8 @@ import hong2021_v72_sample as sampling
 import hong2021_v72_seal as sealing
 import hong2021_v72_sqt as sqt
 import hong2021_v72_metadata_recovery as recovery
+import hong2021_v72_gate as gating
+import hong2021_v72_gate_label_recovery as gate_label_recovery
 from hong2021_v18_init import sha256_file
 
 
@@ -238,3 +240,40 @@ def test_v72_recovery_runner_never_resamples_stage_A() -> None:
     assert source.index("hong2021_v72_metadata_recovery.py") < source.index(
         "evaluate_stage A"
     )
+
+
+def test_v72_gate_label_recovery_is_byte_bound() -> None:
+    path = REPO / "config/hong2021_v72_stage_A_gate_label_recovery_program.json"
+    assert sha256_file(path) == gate_label_recovery.RECOVERY_SHA256
+    program = json.loads(path.read_text())
+    assert program["schema"] == gate_label_recovery.RECOVERY_SCHEMA
+    assert len(program["stage_A_artifacts"]) == 9
+    assert program["firewall"]["stage_A_resampling_or_reevaluation"] == "forbidden"
+
+
+def test_v72_gate_loader_requires_the_sole_sqt_candidate(tmp_path) -> None:
+    path = tmp_path / "metrics.json"
+    payload = {
+        "schema": gating.EVALUATION_SCHEMA,
+        "voxel_mpc_h": 0.3125,
+        "candidates": {"sqt": {"label": "sqt", "path": "/frozen/ensemble.h5"}},
+    }
+    path.write_text(json.dumps(payload))
+    assert gating._load_sqt_metrics(path)["label"] == "sqt"
+    payload["candidates"] = {"edm": {"label": "edm"}}
+    path.write_text(json.dumps(payload))
+    with pytest.raises(ValueError, match="sole sqt"):
+        gating._load_sqt_metrics(path)
+
+
+def test_v72_gate_label_recovery_runner_never_repeats_stage_A() -> None:
+    source = (
+        REPO / "scripts/hong2021_v72_resume_after_gate_label_recovery_lageunha.sh"
+    ).read_text()
+    gate = source.index("hong2021_v72_gate_label_recovery.py")
+    decision = source.index("--stage A --out \"$stage_A/decision.json\"")
+    assert gate < decision
+    assert "evaluate_stage A" not in source
+    assert "--stage A --stage-A-decision" not in source
+    assert "--stage B" in source
+    assert "--gate-label-recovery \"$gate_recovery\"" in source

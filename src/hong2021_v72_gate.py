@@ -12,7 +12,7 @@ import h5py
 import numpy as np
 
 from hong2021_v6_gate import field_gate
-from hong2021_v15_development_gate import _load_metrics, canonical_digest, git_state
+from hong2021_v15_development_gate import canonical_digest, git_state
 from hong2021_v18_init import sha256_file
 from hong2021_v20_development_gate import marginal_diagnostics
 from hong2021_v63_train import _is_ancestor
@@ -32,6 +32,7 @@ from hong2021_v72_sqt import (
     load_program,
     scalar_energy_score,
     stage_selection,
+    strict_json,
     validate_preflight,
     validate_frozen_gate_sources,
     validate_stage_A_pass,
@@ -40,6 +41,22 @@ from hong2021_v72_sqt import (
 
 DENSITY_SCALE = 4.5
 POWER_BANDS = ("3-6_h_mpc", "6-10.0531_h_mpc")
+EVALUATION_SCHEMA = "hong2021-stochastic-residual-ensemble-evaluation-v1"
+
+
+def _load_sqt_metrics(path: Path) -> dict[str, Any]:
+    """Load the sole V72 evaluator row without the legacy V15 EDM assumption."""
+    payload = strict_json(path)
+    candidates = payload.get("candidates")
+    if (
+        payload.get("schema") != EVALUATION_SCHEMA
+        or not isinstance(candidates, dict)
+        or list(candidates) != ["sqt"]
+        or not isinstance(candidates["sqt"], dict)
+        or candidates["sqt"].get("label") != "sqt"
+    ):
+        raise ValueError("V72 evaluator schema or sole sqt candidate differs")
+    return candidates["sqt"]
 
 
 def _value(value: Any) -> Any:
@@ -265,7 +282,7 @@ def evaluate_stage(
             )
             private[arm][domain] = provenance
             metrics_path = domain_root / "ensemble_evaluation" / "metrics.json"
-            metrics = _load_metrics(metrics_path)
+            metrics = _load_sqt_metrics(metrics_path)
             if Path(metrics["path"]).resolve() != ensemble.resolve():
                 raise ValueError("V72 metrics point elsewhere")
             marginal = marginal_diagnostics(ensemble)

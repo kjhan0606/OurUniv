@@ -21,6 +21,9 @@ from hong2021_v72_sqt import (
     validate_preflight,
 )
 from hong2021_v72_metadata_recovery import RECORD_SCHEMA as RECOVERY_RECORD_SCHEMA
+from hong2021_v72_gate_label_recovery import (
+    RECORD_SCHEMA as GATE_LABEL_RECOVERY_RECORD_SCHEMA,
+)
 
 
 SCHEMA = "hong2021-v72-terminal-sealed-result-v1"
@@ -103,6 +106,7 @@ def seal(
     stage_A_path: Path,
     stage_B_path: Path | None,
     metadata_recovery_path: Path | None = None,
+    gate_label_recovery_path: Path | None = None,
 ) -> dict[str, Any]:
     repo = repo.resolve()
     program = load_program(program_path.resolve(), repo)
@@ -133,6 +137,35 @@ def seal(
             or not _is_ancestor(repo, str(recovery.get("recovery_code_commit")), commit)
         ):
             raise ValueError("V72 metadata recovery record differs")
+    expected_gate_label_recovery = Path(program["output_roots"]["sequence"]) / (
+        "stage_A_gate_label_recovery.json"
+    )
+    gate_label_recovery_sha: str | None = None
+    if gate_label_recovery_path is not None:
+        if gate_label_recovery_path.resolve() != expected_gate_label_recovery.resolve():
+            raise ValueError("V72 seal gate-label recovery path differs")
+        gate_label_recovery = strict_json(gate_label_recovery_path.resolve())
+        gate_label_recovery_sha = sha256_file(gate_label_recovery_path.resolve())
+        if (
+            gate_label_recovery.get("schema") != GATE_LABEL_RECOVERY_RECORD_SCHEMA
+            or gate_label_recovery.get("status")
+            != "complete_gate_label_only_recovery_gate_may_run_once"
+            or gate_label_recovery.get("v72_program_sha256") != PROGRAM_SHA256
+            or gate_label_recovery.get(
+                "all_nine_ensembles_and_metrics_hash_verified"
+            )
+            is not True
+            or gate_label_recovery.get("metrics_recomputed") is not False
+            or gate_label_recovery.get("stage_A_resampled_or_reevaluated") is not False
+            or gate_label_recovery.get("stage_B_accessed") is not False
+            or gate_label_recovery.get("independent_EAGLE_accessed") is not False
+            or canonical_digest(gate_label_recovery)
+            != gate_label_recovery.get("decision_digest_sha256")
+            or not _is_ancestor(
+                repo, str(gate_label_recovery.get("recovery_code_commit")), commit
+            )
+        ):
+            raise ValueError("V72 gate-label recovery record differs")
     first, first_sha = validate_stage_decision(
         program, stage_A_path.resolve(), "A", preflight_sha, repo, commit
     )
@@ -175,6 +208,11 @@ def seal(
             if metadata_recovery_path is not None else None
         ),
         "metadata_recovery_sha256": recovery_sha,
+        "gate_label_recovery": (
+            str(gate_label_recovery_path.resolve())
+            if gate_label_recovery_path is not None else None
+        ),
+        "gate_label_recovery_sha256": gate_label_recovery_sha,
         "v71_terminal_seal": evidence["v71_terminal_seal"],
         "v71_terminal_seal_sha256": evidence["v71_terminal_seal_sha256"],
         "stage_A_decision": str(stage_A_path.resolve()),
@@ -211,6 +249,7 @@ def main() -> None:
     parser.add_argument("--stage-A-decision", type=Path, required=True)
     parser.add_argument("--stage-B-decision", type=Path)
     parser.add_argument("--metadata-recovery", type=Path)
+    parser.add_argument("--gate-label-recovery", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     program = load_program(args.program.resolve(), args.repo.resolve())
@@ -221,6 +260,7 @@ def main() -> None:
     result = seal(
         args.program, args.repo, args.preflight, args.preflight_sha256,
         args.stage_A_decision, args.stage_B_decision, args.metadata_recovery,
+        args.gate_label_recovery,
     )
     args.out.parent.mkdir(parents=True, exist_ok=True)
     partial = args.out.with_suffix(args.out.suffix + ".partial")
