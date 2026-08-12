@@ -1,8 +1,18 @@
 {
   "schema": "hong2021-v84b-group-held-out-spliced-tail-program-v1",
   "status": "frozen_before_preflight_training_or_group_holdout_evaluation",
+  "amendment": {
+    "revision": 1,
+    "reason": "Replace the inherited torch.erfinv inverse-normal call by the distribution-equivalent Acklam rational approximation after the first preflight encountered a missing system libnvrtc-builtins.so.13.0.",
+    "superseded_program_sha256": "5a6c89fc032f33a1245f43d731189e5e4114c2e564acef55e96d2d62a45c03bb",
+    "failed_preflight_status": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_sequence/status",
+    "failed_preflight_status_sha256": "8f7c144f120f5dfe01b2c59c54cec3ef75d270b2140321b1426763b81795ab9c",
+    "training_performed_before_failure": false,
+    "group_holdout_payload_accessed_before_failure": false,
+    "CUDA_round_trip_error_after_fix": 1.1920928955078125e-7
+  },
   "purpose": "Test the V84A1 attribution prospectively: retain the V70/V72 spatial copula, train a proper conditional marginal only on simulation-group/spatially embargoed fit objects, and explicitly model the rare lower and upper tails that V83 missed.",
-  "freeze_commit": "ad947eb8b83c50bd775f4258385c2ef5d3683748",
+  "freeze_commit": "1c499abc7eeeaa7ba10169ecf2b88bbbebd622b8",
   "parent_evidence": {
     "v84a1_result": "config/hong2021_v84a1_result_record.json",
     "v84a1_result_sha256": "f960617c99fd974b8063e246c847d455be7796d4d37006eced7016d2c3b69c35",
@@ -169,18 +179,18 @@
   },
   "implementation": {
     "contract": {"path": "src/hong2021_v84b_contract.py", "sha256": "eddac98c5e9c80108a61b56e1a15af96e569a98afbe03c9968ffbb7ae8e4f785"},
-    "network": {"path": "src/hong2021_v84b_network.py", "sha256": "2c13e31cfc5d77ea07c5bd1c3319478d804b3b659dd03950184a8b8a7425a021"},
+    "network": {"path": "src/hong2021_v84b_network.py", "sha256": "809c2023ca638b8a2ae6cf066de312f48866fe302fc330a0fb777b2afce33940"},
     "preflight": {"path": "src/hong2021_v84b_preflight.py", "sha256": "158191be6afe31f4814cb7bba782003b2eaa3ea5417578c0a3fec5bfc83d2d8a"},
     "train": {"path": "src/hong2021_v84b_train.py", "sha256": "f8719ed68ed8a3036a70ff91fbdc033b4b837a9ac4acdd7fc9c6609b5628c701"},
     "group_gate": {"path": "src/hong2021_v84b_group_gate.py", "sha256": "fc763d5cb65f4d33c6f7bd81071469042fe1d3d67888352fcb9fd0d85bf9f38e"}
   },
   "output_roots": {
-    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_sequence",
-    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_sequence/preflight.json",
-    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b_group_spliced_tail",
-    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b_group_spliced_tail/step12000.pt",
-    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b_group_spliced_tail/training_report.json",
-    "group_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_gate/decision.json"
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_sequence/preflight.json",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/step12000.pt",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/training_report.json",
+    "group_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_gate/decision.json"
   },
   "authorization": {
     "user_approved_next_V84B_stage": true,
