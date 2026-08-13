@@ -46,8 +46,10 @@ required.
   nearby massive-group failure. Its unchanged 32-seed N576 P2 ensemble
   completed with zero screen pairs. Across the two physically valid P1
   parents, 3023 and 3096, the frozen result is therefore 0/64. The final
-  preregistered 256-parent extension (3193--3448) passed P0; seed 3429 is its
-  sole five-gate P1 survivor and its identical N576 P2 screen is now running.
+  preregistered 256-parent extension (3193--3448) passed P0; seed 3429 was its
+  sole five-gate P1 survivor and its unchanged 32-seed N576 P2 screen also
+  returned zero pairs. The CF4-only result is therefore 0/96 across the three
+  valid P1 parents.
 - The cr6/e19 L14 RAMSES run completed to `a=1.002955`.
 - A multi-mass HOP catalog and direct `M200c`/contamination measurements were
   completed.
@@ -114,7 +116,8 @@ required.
 
 ### P2 — LG ensemble selection
 
-**Status: 0/64 for the first two valid P1 parents; parent 3429 P2 in progress.**
+**Status: CF4-only 0/96; the first explicit-LG pilot and fixed-midpoint
+proposal model are rejected; a fresh latent-midpoint bank is frozen.**
 
 At sufficient parent resolution, rank random small-scale realizations using:
 
@@ -150,6 +153,20 @@ alone passed all five P1 gates. Config
 small-scale seeds 2001--2032, physical cuts, and ranking weights used for seed
 3023. Only the parent, P1-result path, and output directory differ. It
 completed with zero passes, giving 0/64 across parents 3023 and 3096.
+
+The final parent 3429 CF4-only bank also returned 0/32. An explicitly labelled
+additional MW/M31 peak likelihood then produced three coarse P2 pairs in eight
+draws. The promoted p3429/s5108 L12/L19 RAMSES run was clean and phase
+consistent, and HOP found an M33-scale subpeak, but the definitive pair failed:
+`M200c=(3.23,1.65)e12 Msun/h` and separation `1.224 Mpc/h` violate the frozen
+first-member mass and separation gates. Its environment gate also failed.
+
+Keeping the same inverse-mapped Lagrangian midpoint and drawing 96 more
+explicit-likelihood proposals (v4/v5) gave six PM screen realizations and nine
+pairs, but none retained the five P1 gates when the observer was placed at the
+evolved pair midpoint. Every pair failed Virgo and Coma, with midpoint offsets
+`2.006--4.641 Mpc/h`. The unchanged fixed-midpoint model is therefore closed;
+see `config/cf4_lg_v5_result_record.json`.
 
 If this ensemble has zero passes, the final blind extension is preregistered
 in `config/v3_bgc_parent_extension_v3.json`: seeds 3193--3448 receive the same
@@ -202,36 +219,26 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-The inverse-mapped explicit-likelihood batch produced three P2 screening
-passes. Candidate parent 3429 / proposal seed 5108 ranks first. Its stable-ID
-trace, buffered sparse L9 mask, exact N576 GRAFIC parent, transfer function,
-and L9--L12 zoom IC are complete. The first IC's two-cell base-grid file pad
-was rejected after RAMSES showed that refinement expansion reached beyond the
-fine GRAFIC subvolume. The accepted `v2_pad6` IC uses six L9 pad cells and its
-zoom manifest has SHA256
-`25a03a21eb50e8acb983d9e81da1eb2b9896b42e7d9f2755e09e4099ca602cfd`.
+Run the prospectively frozen 64-member v6 bank in
+`config/p2_lg_peak_likelihood_v6_latent_midpoint.json`. It changes only the
+failed model assumption: instead of fixing every protohalo midpoint at
+`[0,-6,+4] Mpc/h`, each proposal draws that unknown Lagrangian location from
+one declared diagonal-normal prior with `sigma=3 Mpc/h` per axis. The peak
+likelihood, parent 3429, N64 long modes, P1/P2 thresholds, and N576 forward are
+unchanged.
 
-1. run the two-step L12/L19 RAMSES startup preflight from
-   `config/ramses_lg_p3429_s5108_pilot_preflight_v1.nml`;
-2. if IC loading, AMR construction, particle counts, and memory are valid,
-   start the DMO pilot evolution to z=0 with the identical frozen inputs;
-3. run the user's HOP build at z=0 and measure M200c, pair kinematics, M33,
-   and low-resolution-particle contamination;
-4. trace RAMSES IDs again if the HOP midpoint changes materially;
-5. authorize L13/L21 only after the definitive pair, velocity, M33, P1
-   environment, and contamination gates pass.
+The v6 rules are one-shot:
 
-The P2 result is provisional: seed 5108 has a promising two-halo morphology,
-but its PM radial velocity is only `-20.7 km/s` and no M33 analogue was found
-at screening resolution. Neither quantity is silently relaxed.
+1. use only fresh seeds 5205--5268 and preserve the sampled midpoint in every
+   manifest;
+2. re-run all five P1 gates on every N192 projection;
+3. run the unchanged N576 PM/FoF screen and evaluate every eligible pair;
+4. require all five P1 gates again at the actual evolved pair midpoint;
+5. stop before RAMSES even if a survivor exists, so the frozen evidence can be
+   reviewed before spending another L12/L19 pilot;
+6. do not extend the same model with more seeds after a v6 failure. A failure
+   moves the project to a genuinely forward-modelled z=0 LG likelihood rather
+   than another static-peak batch.
 
-The pad6 startup preflight passed on 2026-08-02 with 137,957,344 particles,
-zero IC-subvolume boundary warnings, zero Morton mismatches, and zero
-fatal/allocation errors. One L12 multigrid solve reached its 10-iteration cap
-at `3.919e-4`; the immediately following solves converged to `6.322e-5` and
-`8.491e-5`. The z=0 pilot is queued in tmux `cf4_ramses_5108_z0` and will
-start on Lageunha cores 0--31 as soon as the completed SIDM3 MPI ranks leave
-their finalization barrier. The complete gate record is
-`recon/linear_cr/ramses_lg_p3429_s5108_preflight_v3.json`.
-
-The failed cr6/e19 run remains diagnostic only and is not a candidate parent.
+The rejected cr6/e19 and p3429/s5108 runs remain diagnostic only and are not
+production candidates.

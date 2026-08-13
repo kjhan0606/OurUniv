@@ -15,11 +15,10 @@ phase-consistent zoom families for the Local Group, Virgo, and Coma.
 
 ## Current status
 
-Priority P0 is complete for the accepted BGc linear-Gaussian model. The
-observer-aware P1 search is complete through seed 3192. Its two valid parent
-survivors produced zero P2 pairs in 64 frozen trials. The final blind parent
-extension passed P0 and supplied one new P1 survivor, seed 3429, whose P2 is
-running.
+Priority P0 is complete for the accepted BGc linear-Gaussian model. The three
+observer-aware P1 parent survivors (3023, 3096, and 3429) produced zero
+CF4-only P2 pairs in 96 frozen N576 trials. Additional MW/M31 information is
+therefore labelled explicitly rather than attributed to CF4.
 
 - Grid: `N=192`, `L=384 Mpc/h`
 - Cosmology: `Om=0.31`, `Ob=0.05`, `h=0.746`,
@@ -168,18 +167,20 @@ L13-particle/L21-AMR production run (`m_DM=8.86e6 Msun/h`, formal minimum cell
 `0.245 physical kpc` at z=0). A science IC requires a stable-particle-ID
 traceback mask; the former box-centre sphere is diagnostic only.
 
-The current provisional candidate is parent 3429 / explicit-likelihood seed
-5108. Its L9--L12 `v2_pad6` IC has passed streaming GRAFIC header/record
-validation and includes a six-L9-cell file-edge guard around the sparse
-refinement mask. The next gate is the two-step RAMSES startup preflight in
-`config/ramses_lg_p3429_s5108_pilot_preflight_v1.nml`, followed by a DMO z=0
-pilot and HOP validation. A P2 screen is not treated as a final LG detection.
+The former provisional candidate, parent 3429 / explicit-likelihood seed
+5108, completed its L12/L19 DMO run and HOP gate. The zoom was clean, retained
+the intended phases, and contained an M33-scale HOP subpeak, but the pair
+failed the frozen mass and separation gates (`3.23e12 Msun/h` for the larger
+member and `1.224 Mpc/h` separation) as well as the recentered environment
+gate. The fixed protohalo-midpoint model subsequently yielded zero fully valid
+pairs in 96 development proposals and is closed.
 
-The pad6 RAMSES startup preflight passed with 137,957,344 particles and no
-fine-IC boundary warning. Its compact audit record is
-`recon/linear_cr/ramses_lg_p3429_s5108_preflight_v3.json`. The z=0 DMO pilot
-uses `config/ramses_lg_p3429_s5108_pilot_z0_v1.nml` and is resource-gated so
-it does not overlap the existing SIDM3 allocation on Lageunha.
+The next one-shot bank is frozen in
+`config/p2_lg_peak_likelihood_v6_latent_midpoint.json`. It treats the unknown
+Lagrangian midpoint as a declared latent variable while preserving parent
+3429's N64 long modes and all P1/P2 thresholds. It stops before another RAMSES
+run for result review. The consumed evidence is pinned in
+`config/cf4_lg_v5_result_record.json`.
 
 See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.
 

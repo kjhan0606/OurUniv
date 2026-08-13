@@ -61,6 +61,12 @@ export XLA_PYTHON_CLIENT_PREALLOCATE=false
     --p2-result "$p2_dir/p2_screen_result.json" --outdir "$p2_dir"
 
 if [[ -s "$p2_dir/AUTO_PASS" ]]; then
+    if [[ "${CF4_STOP_BEFORE_PROMOTION:-0}" == 1 ]]; then
+        echo "[batch] survivor found; stopping before RAMSES for review"
+        printf '%s survivor_ready_for_review\n' "$(date -Is)" \
+            >"$p2_dir/READY_FOR_PROMOTION_REVIEW"
+        exit 0
+    fi
     echo "[batch] survivor found; starting automatic promotion"
     CF4_P2_DIR="$p2_dir" CF4_CONDITIONED_P1_RESULT="$p1_result" \
         CF4_BATCH_LABEL="$label" \

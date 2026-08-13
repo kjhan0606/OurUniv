@@ -2,7 +2,9 @@ import numpy as np
 
 from src.cf4_lg_peak_cr import (
     condition_translated_constraints,
+    draw_protohalo_midpoint_offset,
     free_rfft_mask,
+    proposal_seed_rows,
     two_peak_points,
 )
 
@@ -44,3 +46,53 @@ def test_two_peak_geometry_has_fourteen_unique_probes():
     assert points.shape == (14, 3)
     assert len(np.unique(points, axis=0)) == 14
     assert kinds.sum() == 2
+
+
+def test_fixed_midpoint_is_backward_compatible():
+    peak = {"protohalo_midpoint_offset_mpc_h": [0.0, -6.0, 4.0]}
+    offset, metadata = draw_protohalo_midpoint_offset(peak, None)
+    np.testing.assert_array_equal(offset, [0.0, -6.0, 4.0])
+    assert metadata["mode"] == "fixed"
+
+
+def test_latent_midpoint_is_seeded_and_uses_declared_prior():
+    peak = {"protohalo_midpoint_prior": {
+        "distribution": "diagonal_normal",
+        "mean_mpc_h": [0.0, -6.0, 4.0],
+        "sigma_mpc_h": [3.0, 2.0, 1.0],
+    }}
+    first, metadata = draw_protohalo_midpoint_offset(peak, 8501)
+    second, _ = draw_protohalo_midpoint_offset(peak, 8501)
+    different, _ = draw_protohalo_midpoint_offset(peak, 8502)
+    np.testing.assert_array_equal(first, second)
+    assert not np.array_equal(first, different)
+    assert metadata["midpoint_seed"] == 8501
+    assert metadata["mode"] == "latent_diagonal_normal"
+
+
+def test_proposal_seed_rows_rejects_silent_truncation():
+    config = {
+        "proposal_seeds": [1, 2],
+        "geometry_seeds": [11],
+        "likelihood_noise_seeds": [21, 22],
+        "peak_constraints": {},
+    }
+    with np.testing.assert_raises(ValueError):
+        proposal_seed_rows(config)
+
+
+def test_proposal_seed_rows_binds_latent_midpoint_seed():
+    config = {
+        "proposal_seeds": [1, 2],
+        "geometry_seeds": [11, 12],
+        "likelihood_noise_seeds": [21, 22],
+        "midpoint_seeds": [31, 32],
+        "peak_constraints": {"protohalo_midpoint_prior": {
+            "distribution": "diagonal_normal",
+            "mean_mpc_h": [0.0, 0.0, 0.0],
+            "sigma_mpc_h": 1.0,
+        }},
+    }
+    assert proposal_seed_rows(config) == [
+        (1, 11, 21, 31), (2, 12, 22, 32)
+    ]

@@ -225,6 +225,86 @@ def two_peak_points(
     return np.mod(np.asarray(points), n), np.asarray(kinds, dtype=np.int8)
 
 
+def draw_protohalo_midpoint_offset(
+    peak: dict, midpoint_seed: int | None
+) -> tuple[np.ndarray, dict]:
+    """Resolve the latent Lagrangian midpoint for one proposal.
+
+    Historical configs contain one fixed ``protohalo_midpoint_offset_mpc_h``.
+    A hierarchical config may instead declare an independent diagonal-normal
+    prior.  The latter is a model change, not a post-forward recentering: the
+    seed and the prior are frozen before any PM result is inspected.
+    """
+    prior = peak.get("protohalo_midpoint_prior")
+    if prior is None:
+        if midpoint_seed is not None:
+            raise ValueError(
+                "midpoint_seeds require peak_constraints.protohalo_midpoint_prior"
+            )
+        offset = np.asarray(
+            peak.get("protohalo_midpoint_offset_mpc_h", [0.0, 0.0, 0.0]),
+            dtype=np.float64,
+        )
+        source = {
+            "mode": "fixed",
+            "mean_mpc_h": offset.tolist(),
+            "midpoint_seed": None,
+        }
+    else:
+        if midpoint_seed is None:
+            raise ValueError(
+                "protohalo_midpoint_prior requires one midpoint seed per proposal"
+            )
+        if prior.get("distribution") != "diagonal_normal":
+            raise ValueError("only diagonal_normal midpoint priors are supported")
+        mean = np.asarray(prior["mean_mpc_h"], dtype=np.float64)
+        sigma = np.broadcast_to(
+            np.asarray(prior["sigma_mpc_h"], dtype=np.float64), (3,)
+        )
+        if mean.shape != (3,) or np.any(~np.isfinite(mean)):
+            raise ValueError("midpoint prior mean_mpc_h must contain three values")
+        if np.any(~np.isfinite(sigma)) or np.any(sigma <= 0.0):
+            raise ValueError("midpoint prior sigma_mpc_h must be finite and positive")
+        offset = np.random.default_rng(int(midpoint_seed)).normal(mean, sigma)
+        source = {
+            "mode": "latent_diagonal_normal",
+            "distribution": "diagonal_normal",
+            "mean_mpc_h": mean.tolist(),
+            "sigma_mpc_h": sigma.tolist(),
+            "midpoint_seed": int(midpoint_seed),
+        }
+    if offset.shape != (3,) or np.any(~np.isfinite(offset)):
+        raise ValueError("protohalo midpoint offset must contain three finite values")
+    return offset, source
+
+
+def proposal_seed_rows(config: dict) -> list[tuple[int, int, int, int | None]]:
+    """Return strictly aligned proposal seeds instead of silently truncating."""
+    keys = ("proposal_seeds", "geometry_seeds", "likelihood_noise_seeds")
+    values = [list(config[key]) for key in keys]
+    lengths = {len(value) for value in values}
+    if len(lengths) != 1 or not values[0]:
+        raise ValueError(f"proposal seed lists must have one equal non-zero length: {keys}")
+    midpoint = config.get("midpoint_seeds")
+    prior = config["peak_constraints"].get("protohalo_midpoint_prior")
+    if prior is None:
+        if midpoint is not None:
+            raise ValueError("midpoint_seeds are invalid without a midpoint prior")
+        midpoint_values: list[int | None] = [None] * len(values[0])
+    else:
+        if midpoint is None or len(midpoint) != len(values[0]):
+            raise ValueError(
+                "midpoint_seeds must match proposal_seeds when a midpoint prior is used"
+            )
+        midpoint_values = [int(seed) for seed in midpoint]
+    return [
+        (int(seed), int(geometry), int(noise), midpoint_seed)
+        for seed, geometry, noise, midpoint_seed in zip(
+            values[0], values[1], values[2], midpoint_values
+        )
+    ]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
@@ -255,15 +335,6 @@ def main() -> None:
     prepared = prepare_translated_conditioner(filt, free, (n, n, n))
     separation_cells = int(round(peak["protohalo_separation_mpc_h"] / dx))
     shell_cells = int(round(peak["shell_radius_mpc_h"] / dx))
-    midpoint_offset = np.asarray(
-        peak.get("protohalo_midpoint_offset_mpc_h", [0.0, 0.0, 0.0]),
-        dtype=np.float64,
-    )
-    if midpoint_offset.shape != (3,):
-        raise ValueError("protohalo_midpoint_offset_mpc_h must have three values")
-    midpoint = np.full(3, n // 2, dtype=np.int64) + np.rint(
-        midpoint_offset / dx).astype(np.int64)
-
     from cf4_make_ic import embed_ic, fourier_resample_white_field
 
     projection_n = config.get("parent_projection_mesh_size")
@@ -277,10 +348,16 @@ def main() -> None:
         projection_dir.mkdir(parents=True, exist_ok=True)
 
     entries = []
-    triplets = zip(
-        config["proposal_seeds"], config["geometry_seeds"],
-        config["likelihood_noise_seeds"])
-    for number, (seed, geometry_seed, noise_seed) in enumerate(triplets, 1):
+    seed_rows = proposal_seed_rows(config)
+    for number, (seed, geometry_seed, noise_seed, midpoint_seed) in enumerate(
+        seed_rows, 1
+    ):
+        midpoint_offset_draw, midpoint_source = draw_protohalo_midpoint_offset(
+            peak, midpoint_seed
+        )
+        midpoint = np.full(3, n // 2, dtype=np.int64) + np.rint(
+            midpoint_offset_draw / dx).astype(np.int64)
+        midpoint_offset_realized = (midpoint - n // 2) * dx
         axis = np.random.default_rng(geometry_seed).normal(size=3)
         points, kinds = two_peak_points(
             n, midpoint, axis, separation_cells, shell_cells)
@@ -300,7 +377,9 @@ def main() -> None:
             "likelihood_noise_seed": int(noise_seed),
             "axis": (axis / np.linalg.norm(axis)).tolist(),
             "protohalo_midpoint_grid": np.mod(midpoint, n).tolist(),
-            "protohalo_midpoint_offset_mpc_h": midpoint_offset.tolist(),
+            "protohalo_midpoint_offset_draw_mpc_h": midpoint_offset_draw.tolist(),
+            "protohalo_midpoint_offset_mpc_h": midpoint_offset_realized.tolist(),
+            "protohalo_midpoint_source": midpoint_source,
             "points_grid": points.tolist(),
             "kinds": kinds.tolist(),
             "field": str(path),
@@ -345,7 +424,10 @@ def main() -> None:
             del projected
         entries.append(record)
         print(
-            f"[LG-CR] {number}/{len(config['proposal_seeds'])} seed={seed} "
+            f"[LG-CR] {number}/{len(seed_rows)} seed={seed} "
+            f"mid=({midpoint_offset_realized[0]:+.1f},"
+            f"{midpoint_offset_realized[1]:+.1f},"
+            f"{midpoint_offset_realized[2]:+.1f}) "
             f"std={record['field_std']:.5f} "
             f"corr_rms={metadata['correction_rms']:.4f} "
             f"frozen_max={metadata['frozen_mode_correction_max']:.2e}",
