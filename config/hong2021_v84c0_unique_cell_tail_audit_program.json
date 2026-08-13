@@ -4,6 +4,16 @@
   "purpose": "Correct the V84B1 pooled-voxel pseudoreplication before any V84C training: count each global physical target cell once in total, estimate tail curvature with equal realization/spatial-block weighting, and prospectively sequester a cell-disjoint outer development set.",
   "training_or_refit": false,
   "statistically_independent": false,
+  "amendment": {
+    "revision": 1,
+    "reason": "Correct the CAMELS provenance object count, which initialized at the domain inner count and then added each realization count a second time. Voxel occurrences, unique-cell weights, tail statistics, and the scientific decision were unaffected.",
+    "superseded_program_sha256": "8ffd8ec74ee0494c195c114069cc1eabccbce50f7d83091f2c3477f372a43489",
+    "superseded_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0_unique_cell_tail_audit/report.json",
+    "superseded_report_sha256": "be56a9457a2ad85ca950bd27d1c6982454c6210229827b4f4746e63a9227ff68",
+    "superseded_status_sha256": "7f467318ca3624517043c7db1a2b1f11cf075470c054aa6cc9502eec09ed25f1",
+    "outer_development_payload_accessed": false,
+    "training_or_refit_performed": false
+  },
   "evidence": {
     "v84a1_result": {
       "path": "config/hong2021_v84a1_result_record.json",
@@ -125,10 +135,10 @@
   "implementation": {
     "audit": {
       "path": "src/hong2021_v84c0_unique_cell_tail_audit.py",
-      "sha256": "ac57b1d3731273d5e26f9f5ad7753b9bfaa69e692776439f6ef20485ce1f3a76"
+      "sha256": "425a5c41935888344d4721d18a150798922666fd0a66f6f99017fee37e57f1f1"
     }
   },
-  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0_unique_cell_tail_audit/report.json",
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0r_unique_cell_tail_audit/report.json",
   "authorization": {
     "user_approved_Fable_recommended_read_only_audit": true,
     "V84C_training_authorized": false,
