@@ -9,8 +9,18 @@ The post-v1 diagnosis and staged restart are frozen in
 
 ## Current status
 
-The latest completed model path is the sealed V72 conditioning-stratified
-spatial quantile transport.  Its single fresh stage-A screen failed on the
+The Hong-style ML path is now closed with a **negative scientific result**, not
+an EAGLE reconstruction success.  V84C0R found no cross-domain support for the
+proposed two-slope tail extension and authorized neither training nor an
+independent gate.  No post-V13 experiment reopened historical EAGLE, and the
+Astrid one-shot gate remained unopened.  The correct locked-sequence action is
+to stop this model family and return to the CF4 constrained-realization path.
+The immutable evidence and its machine-checkable assertions are collected in
+[`config/hong2021_eagle_goal_completion_audit.json`](config/hong2021_eagle_goal_completion_audit.json)
+and verified by `src/hong2021_eagle_goal_completion_verify.py`.
+
+An earlier major candidate was the V72 conditioning-stratified spatial
+quantile transport.  Its single fresh stage-A screen failed on the
 TNG100 physical tail, Q4, sub-Mpc two-point comparison, and maximum-energy
 ordering; stage B, Astrid, and independent EAGLE remained unopened.  The V72
 verdict and artifact hashes are bound in
@@ -35,7 +45,7 @@ independent control (paired mean `+0.07425`, 95% interval
 `[+0.04280,+0.10623]`); SIMBA and Swift remain underpowered.  Complete results
 are in
 [`config/hong2021_v73_result_record.json`](config/hong2021_v73_result_record.json).
-No new Hong candidate or gate change is authorized pending explicit approval.
+That failure did not authorize a retry or independent-data opening.
 
 V74 then prospectively audited the two V73-identified redesigns without
 reading raw truth again.  It independently reproduced the sixteen-query joint
