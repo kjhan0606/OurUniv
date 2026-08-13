@@ -196,6 +196,10 @@ def load_program(
         or numerics.get("CAMELS_outer_seeds") != CAMELS_OUTER_SEEDS
         or numerics.get("CAMELS_outer_group_counts") != CAMELS_OUTER_GROUPS
         or numerics.get("TNG_block_cells") != TNG_BLOCK_CELLS
+        or numerics.get("minimum_TNG_block_unique_cell_weight")
+        != MINIMUM_TNG_BLOCK_UNIQUE_CELL_WEIGHT
+        or numerics.get("minimum_TNG_block_tail_weight")
+        != MINIMUM_TNG_BLOCK_TAIL_WEIGHT
         or numerics.get("lower_threshold") != LOWER_THRESHOLD
         or numerics.get("upper_threshold") != UPPER_THRESHOLD
         or numerics.get("near_survival_fraction") != NEAR_SURVIVAL_FRACTION
