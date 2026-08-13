@@ -54,3 +54,10 @@ def test_prospective_partition_reserves_outer_payload_and_zero_overlap() -> None
     assert partition["Swift"]["inner_groups"] == [1, 2, 3, 5, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19]
     assert partition["Swift"]["outer_groups"] == [0, 4, 16]
     assert partition_digest(partition) == partition_digest(prospective_partition(v35))
+
+
+def test_camels_provenance_objects_start_at_zero_before_group_accumulation() -> None:
+    source = (REPO / "src/hong2021_v84c0_unique_cell_tail_audit.py").read_text()
+    start = source.index('provenance = {\n                    "objects": 0,')
+    stop = source.index('unit_rows = []', start)
+    assert '"objects": 0' in source[start:stop]

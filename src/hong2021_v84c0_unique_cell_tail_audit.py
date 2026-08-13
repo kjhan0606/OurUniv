@@ -418,7 +418,7 @@ def audit(program_path: Path, repo: Path, output_path: Path) -> dict[str, Any]:
             else:
                 realization = np.asarray(data["realization"], dtype=np.int64)
                 provenance = {
-                    "objects": len(indices),
+                    "objects": 0,
                     "voxel_occurrences": 0,
                     "unique_physical_cells": 0,
                     "inverse_multiplicity_weight_sum": 0.0,
