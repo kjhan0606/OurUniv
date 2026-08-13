@@ -171,7 +171,41 @@ def load_program(
         check=False,
     ).returncode:
         raise ValueError("V84C0 execution does not descend from freeze")
-    v35 = strict_json(repo / program["frozen_inputs"]["v35_program"])
+    frozen = program["frozen_inputs"]
+    v35_path = repo / frozen["v35_program"]
+    if sha256_file(v35_path) != frozen["v35_program_sha256"]:
+        raise ValueError("V84C0 V35 program differs")
+    v35 = strict_json(v35_path)
+    for domain in DOMAIN_ORDER:
+        source = v35["development_domains"][domain]
+        binding = frozen["training_domains"][domain]
+        for kind in ("data", "cache"):
+            key = f"train_{kind}"
+            digest_key = f"train_{kind}_sha256"
+            path = Path(binding[key])
+            if (
+                binding[key] != source[key]
+                or binding[digest_key] != source[digest_key]
+                or sha256_file(path) != binding[digest_key]
+            ):
+                raise ValueError(f"V84C0 {domain} train {kind} differs")
+    numerics = program["fixed_numerics"]
+    if (
+        numerics.get("TNG_outer_seed") != TNG_OUTER_SEED
+        or numerics.get("TNG_outer_objects") != TNG_OUTER_OBJECTS
+        or numerics.get("CAMELS_outer_seeds") != CAMELS_OUTER_SEEDS
+        or numerics.get("CAMELS_outer_group_counts") != CAMELS_OUTER_GROUPS
+        or numerics.get("TNG_block_cells") != TNG_BLOCK_CELLS
+        or numerics.get("lower_threshold") != LOWER_THRESHOLD
+        or numerics.get("upper_threshold") != UPPER_THRESHOLD
+        or numerics.get("near_survival_fraction") != NEAR_SURVIVAL_FRACTION
+        or numerics.get("far_survival_fraction") != FAR_SURVIVAL_FRACTION
+        or numerics.get("curvature_ratio_deviation") != CURVATURE_RATIO_DEVIATION
+        or numerics.get("minimum_sign_consistency") != MINIMUM_SIGN_CONSISTENCY
+        or numerics.get("bootstrap_replicates") != BOOTSTRAP_REPLICATES
+        or numerics.get("bootstrap_seed") != BOOTSTRAP_SEED
+    ):
+        raise ValueError("V84C0 fixed numerics differ")
     partition = prospective_partition(v35)
     counts = {
         domain: {
