@@ -3,10 +3,10 @@
 #SBATCH --partition=h200,h100,a100
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=400G
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
 #SBATCH --gres=gpu:1
-#SBATCH --time=2-00:00:00
+#SBATCH --time=04:00:00
 #SBATCH --output=/gpfs/kjhan/CF4/recon/linear_cr/v6_p2_resume_slurm-%j.out
 #SBATCH --error=/gpfs/kjhan/CF4/recon/linear_cr/v6_p2_resume_slurm-%j.err
 
@@ -72,7 +72,7 @@ trap record_failure EXIT
 export JAX_ENABLE_X64=True
 export XLA_PYTHON_CLIENT_PREALLOCATE=true
 export XLA_PYTHON_CLIENT_MEM_FRACTION=0.95
-export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-32}"
+export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-16}"
 export MKL_NUM_THREADS="$OMP_NUM_THREADS"
 export OPENBLAS_NUM_THREADS="$OMP_NUM_THREADS"
 export NUMEXPR_NUM_THREADS="$OMP_NUM_THREADS"
