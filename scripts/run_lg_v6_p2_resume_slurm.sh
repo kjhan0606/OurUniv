@@ -17,9 +17,9 @@ python=/home/kjhan/miniconda3/envs/circle/bin/python
 root=/gpfs/kjhan/CF4/recon/linear_cr
 proposal_manifest=$root/v3_bgc_lg_peak_proposals_v6_latent_midpoint/lg_peak_proposals_manifest.json
 p1_result=$root/v3_bgc_lg_peak_p1_v6_latent_midpoint/p1_result.json
-p2_dir=$root/v3_bgc_lg_peak_p2_v6_latent_midpoint
-p2_config=$p2_dir/p2_targets_frozen.json
-status_dir=$root/v6_latent_midpoint_p2_resume_status
+p2_dir=${CF4_V6_P2_DIR:-$root/v3_bgc_lg_peak_p2_v6_latent_midpoint}
+p2_config=${CF4_V6_P2_CONFIG:-$p2_dir/p2_targets_frozen.json}
+status_dir=${CF4_V6_STATUS_DIR:-$root/v6_latent_midpoint_p2_resume_status}
 
 declare -A expected_sha=(
     ["$proposal_manifest"]=f6834de385337a8e08e3a9c08a76d5be537f681da0bea138886b21d316a89114
