@@ -31,6 +31,7 @@ likelihood_result=$p2_dir/z0_importance_score.json
 pair_input=$p2_dir/z0_likelihood_pair_recenter_input.json
 preview=$p2_dir/z0_likelihood_recentered_p1.json
 gate_result=$p2_dir/z0_importance_gate.json
+resume_after_generation=${CF4_V8_RESUME_AFTER_GENERATION:-0}
 
 declare -A expected_sha=(
     ["$program"]=6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2
@@ -48,12 +49,49 @@ for path in "${!expected_sha[@]}"; do
         exit 2
     fi
 done
-for directory in "$proposal_dir" "$projection_dir" "$p1_dir" "$p2_dir"; do
-    if [[ -d "$directory" ]] && find "$directory" -mindepth 1 -print -quit | grep -q .; then
-        echo "V8 output already exists; refusing to overwrite: $directory" >&2
+if [[ "$resume_after_generation" == 1 ]]; then
+    if [[ ! -s "$manifest" || ! -s "$projection_manifest" ]]; then
+        echo "V8 resume requires both completed generation manifests." >&2
         exit 3
     fi
-done
+    for directory in "$p1_dir" "$p2_dir" "$status_dir"; do
+        if [[ -d "$directory" ]] && find "$directory" -mindepth 1 -print -quit | grep -q .; then
+            echo "V8 post-generation output already exists: $directory" >&2
+            exit 3
+        fi
+    done
+    "$test_python" - "$program" "$manifest" "$projection_manifest" <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+program, proposal_path, projection_path = map(Path, sys.argv[1:])
+program_sha = hashlib.sha256(program.read_bytes()).hexdigest()
+proposal = json.loads(proposal_path.read_text())
+projection = json.loads(projection_path.read_text())
+if proposal.get("status") != "complete" or proposal.get("config_sha256") != program_sha:
+    raise SystemExit("proposal manifest is not a complete product of the frozen program")
+if len(proposal.get("entries", [])) != 256:
+    raise SystemExit("proposal manifest does not contain 256 entries")
+if projection.get("status") != "all_data" or len(projection.get("entries", [])) != 256:
+    raise SystemExit("projection manifest is incomplete")
+for row in proposal["entries"] + projection["entries"]:
+    if not Path(row["field"]).is_file():
+        raise SystemExit(f"resume field is missing: {row['field']}")
+print("[v8-resume] validated 256 proposal and projection files")
+PY
+elif [[ "$resume_after_generation" == 0 ]]; then
+    for directory in "$proposal_dir" "$projection_dir" "$p1_dir" "$p2_dir"; do
+        if [[ -d "$directory" ]] && find "$directory" -mindepth 1 -print -quit | grep -q .; then
+            echo "V8 output already exists; refusing to overwrite: $directory" >&2
+            exit 3
+        fi
+    done
+else
+    echo "CF4_V8_RESUME_AFTER_GENERATION must be 0 or 1." >&2
+    exit 2
+fi
 
 mkdir -p "$proposal_dir" "$projection_dir" "$p1_dir" "$p2_dir" "$status_dir"
 failure_marker=$status_dir/JOB_FAILED
@@ -97,8 +135,12 @@ echo "[v8] validating frozen implementation $(date -Is)"
     tests/test_cf4_lg_v8_program.py \
     tests/test_lg_v8_slurm_scripts.py
 
-echo "[v8] generating 256 fresh defensive-mixture realizations $(date -Is)"
-"$python" src/cf4_lg_peak_cr.py --config "$program"
+if [[ "$resume_after_generation" == 1 ]]; then
+    echo "[v8] reusing the completed and validated 256-member generation $(date -Is)"
+else
+    echo "[v8] generating 256 fresh defensive-mixture realizations $(date -Is)"
+    "$python" src/cf4_lg_peak_cr.py --config "$program"
+fi
 
 echo "[v8] unchanged parent-resolution P1 gate $(date -Is)"
 "$python" src/cf4_parent_p1.py --manifest "$projection_manifest" \
