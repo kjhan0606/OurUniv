@@ -20,6 +20,7 @@ from cf4_lg_mode_release_reference import (
 
 REPO = Path(__file__).resolve().parents[1]
 PROGRAM = REPO / "config/p2_lg_v8_cf4_mode_release_reference.json"
+RESULT = REPO / "config/cf4_lg_v8_mode_release_reference_result_record.json"
 
 
 def test_profile_gaussian_nuisance_matches_direct_augmented_quadratic():
@@ -188,3 +189,21 @@ def test_main_runtime_validates_its_frozen_implementation():
     assert 'implementation_info = program["implementation"]' in source
     assert '"reference implementation"' in source
     assert '"implementation_sha256": sha256_file(implementation_path)' in source
+
+
+def test_reference_result_record_seals_only_the_authorized_next_step():
+    program = json.loads(PROGRAM.read_text())
+    result = json.loads(RESULT.read_text())
+    assert result["lineage"]["program_sha256"] == hashlib.sha256(
+        PROGRAM.read_bytes()
+    ).hexdigest()
+    assert result["lineage"]["implementation_sha256"] == program[
+        "implementation"
+    ]["sha256"]
+    assert result["results"]["L2_parent3429"]["pass"] is True
+    assert result["results"]["two_chain_mean_checks_all_pass"] is True
+    assert result["results"]["two_chain_homogeneity"]["pass"] is True
+    assert result["decision"]["authorize_opening_V8_projection_CF4_metrics"] is True
+    assert result["decision"]["fresh_V9_authorized"] is False
+    assert result["decision"]["seed_promotion_authorized"] is False
+    assert result["decision"]["RAMSES_authorized"] is False
