@@ -181,3 +181,10 @@ def test_reference_program_pins_code_and_keeps_projection_firewall_closed():
     assert program["reference"]["canonical_mean_policy"].startswith(
         "Use the seed3429"
     )
+
+
+def test_main_runtime_validates_its_frozen_implementation():
+    source = (REPO / "src/cf4_lg_mode_release_reference.py").read_text()
+    assert 'implementation_info = program["implementation"]' in source
+    assert '"reference implementation"' in source
+    assert '"implementation_sha256": sha256_file(implementation_path)' in source

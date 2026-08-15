@@ -398,6 +398,15 @@ def main() -> None:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     program = load_program(args.program)
+    implementation_info = program["implementation"]
+    implementation_path = (ROOT / implementation_info["path"]).resolve()
+    if implementation_path != Path(__file__).resolve():
+        raise RuntimeError("frozen implementation path does not name this program")
+    validate_source(
+        implementation_path,
+        implementation_info["sha256"],
+        "reference implementation",
+    )
     canonical_out = Path(program["storage"]["canonical_output"])
     if args.out.resolve() != canonical_out.resolve():
         raise RuntimeError("output path differs from the frozen canonical output")
@@ -722,6 +731,8 @@ def main() -> None:
         ),
         "program": str(args.program.resolve()),
         "program_sha256": sha256_file(args.program),
+        "implementation": str(implementation_path),
+        "implementation_sha256": sha256_file(implementation_path),
         "authorization_sha256": sha256_file(authorization),
         "reference_manifest": str(parent_manifest_path.resolve()),
         "reference_manifest_sha256": sha256_file(parent_manifest_path),

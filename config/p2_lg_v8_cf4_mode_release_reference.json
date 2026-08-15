@@ -5,7 +5,7 @@
   "purpose": "Seal a result-blind reference calibration for the exact N64-to-N192 CF4 mode-release audit before calculating any V8 projection CF4 likelihood or released-mode diagnostic.",
   "implementation": {
     "path": "src/cf4_lg_mode_release_reference.py",
-    "sha256": "32f9e1f7441bf49a2c328ee55cd7ee8ee0e98d15d91812d4c357624bcf9c01b4"
+    "sha256": "4ecfc294cecb61293de8585807ed0d7ecd9a3f3279659e5e4cec364d7be36e52"
   },
   "authorization": {
     "path": "config/cf4_lg_v8_joint_support_autopsy_result_record.json",
