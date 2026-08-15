@@ -27,6 +27,11 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def sha256_array(value: np.ndarray) -> str:
+    array = np.ascontiguousarray(value)
+    return hashlib.sha256(array.view(np.uint8)).hexdigest()
+
+
 def json_default(value: Any) -> Any:
     if isinstance(value, np.bool_):
         return bool(value)
@@ -299,6 +304,77 @@ def mahalanobis_distance(
     return np.sqrt(np.maximum(squared, 0.0))
 
 
+def _sorted_unique_end_indices(values: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    order = np.argsort(values, kind="mergesort")
+    sorted_values = values[order]
+    ends = np.r_[np.flatnonzero(sorted_values[1:] != sorted_values[:-1]), values.size - 1]
+    return order, ends
+
+
+def two_group_max_ks_permutation(
+    matrix: np.ndarray,
+    first_group_size: int,
+    iterations: int,
+    seed: int,
+    chunk_size: int = 512,
+) -> dict[str, Any]:
+    """Common-label, two-sided max-KS homogeneity test for complete rows."""
+    matrix = np.asarray(matrix, dtype=np.float64)
+    if matrix.ndim != 2 or not np.all(np.isfinite(matrix)):
+        raise ValueError("homogeneity matrix must be finite and two-dimensional")
+    nrow, ncoord = matrix.shape
+    n_a = int(first_group_size)
+    n_b = nrow - n_a
+    if n_a <= 0 or n_b <= 0:
+        raise ValueError("both homogeneity groups must be nonempty")
+    sorted_coordinates = [
+        _sorted_unique_end_indices(matrix[:, column]) for column in range(ncoord)
+    ]
+    positions = np.arange(1, nrow + 1, dtype=np.float64)
+
+    def evaluate(labels: np.ndarray) -> np.ndarray:
+        labels = np.asarray(labels, dtype=bool)
+        if labels.ndim == 1:
+            labels = labels[None, :]
+        maxima = np.zeros(labels.shape[0], dtype=np.float64)
+        for order, ends in sorted_coordinates:
+            cumulative_a = np.cumsum(labels[:, order], axis=1, dtype=np.int32)
+            cumulative_b = positions[None, :] - cumulative_a
+            distance = np.abs(cumulative_a / n_a - cumulative_b / n_b)
+            maxima = np.maximum(maxima, np.max(distance[:, ends], axis=1))
+        return maxima
+
+    observed_labels = np.zeros(nrow, dtype=bool)
+    observed_labels[:n_a] = True
+    scale = math.sqrt(n_a * n_b / nrow)
+    observed = float(scale * evaluate(observed_labels)[0])
+    permutation_statistics = np.empty(iterations, dtype=np.float64)
+    rng = np.random.Generator(np.random.PCG64DXSM(seed))
+    for start in range(0, iterations, chunk_size):
+        stop = min(start + chunk_size, iterations)
+        count = stop - start
+        random_keys = rng.random((count, nrow))
+        selected = np.argpartition(random_keys, n_a - 1, axis=1)[:, :n_a]
+        labels = np.zeros((count, nrow), dtype=bool)
+        np.put_along_axis(labels, selected, True, axis=1)
+        permutation_statistics[start:stop] = scale * evaluate(labels)
+    pvalue = float(
+        (1 + np.count_nonzero(permutation_statistics >= observed))
+        / (iterations + 1)
+    )
+    return {
+        "n_rows": nrow,
+        "n_coordinates": ncoord,
+        "group_sizes": [n_a, n_b],
+        "iterations": iterations,
+        "rng": "NumPy Generator PCG64DXSM",
+        "seed": seed,
+        "statistic": "max over coordinates of sqrt(n1*n2/(n1+n2))*two-sided KS",
+        "observed_statistic": observed,
+        "permutation_pvalue": pvalue,
+    }
+
+
 def load_program(path: Path) -> dict[str, Any]:
     program = json.loads(path.read_text())
     if program.get("status") != "frozen_before_reference_only_CF4_calibration":
@@ -341,6 +417,10 @@ def main() -> None:
     parent_manifest = json.loads(parent_manifest_path.read_text())
     catalog_path = Path(parent_manifest["catalog"])
     validate_source(catalog_path, program["reference"]["catalog_sha256"], "CF4 catalog")
+    operator_info = program["reference"]["operator_implementation"]
+    validate_source(
+        ROOT / operator_info["path"], operator_info["sha256"], "CF4 operator"
+    )
 
     expected_seeds = list(range(
         int(program["reference"]["seed_range_inclusive"][0]),
@@ -350,6 +430,32 @@ def main() -> None:
         raise RuntimeError("reference manifest seed bank differs from frozen program")
     if len(parent_manifest["outputs"]) != len(expected_seeds):
         raise RuntimeError("reference manifest output count differs from seed bank")
+
+    mean_groups = program["reference"]["mean_groups"]
+    group_by_seed: dict[int, dict[str, Any]] = {}
+    for group in mean_groups:
+        start, stop = map(int, group["seed_range_inclusive"])
+        seeds = list(range(start, stop + 1))
+        if len(seeds) != int(group["count"]):
+            raise RuntimeError(f"mean group {group['name']} has an inconsistent count")
+        for seed in seeds:
+            if seed in group_by_seed:
+                raise RuntimeError(f"seed {seed} appears in multiple mean groups")
+            group_by_seed[seed] = group
+        log_path = Path(group["chain_log"])
+        validate_source(log_path, group["chain_log_sha256"], f"{group['name']} log")
+        if group["catalog_sha256"] != program["reference"]["catalog_sha256"]:
+            raise RuntimeError(f"{group['name']} catalog hash differs from reference")
+        if group["operator_sha256"] != operator_info["sha256"]:
+            raise RuntimeError(f"{group['name']} operator hash differs from reference")
+        manifest_info = group.get("chain_manifest")
+        if manifest_info is not None:
+            validate_source(
+                Path(manifest_info["path"]), manifest_info["sha256"],
+                f"{group['name']} manifest",
+            )
+    if sorted(group_by_seed) != expected_seeds or len(mean_groups) != 2:
+        raise RuntimeError("mean groups must form exactly the frozen two-group seed partition")
 
     config = argparse.Namespace(**parent_manifest["configuration"])
     data = prepare_catalog(config)
@@ -378,8 +484,31 @@ def main() -> None:
     with np.load(parent_path, allow_pickle=False) as item:
         reference_mean = item["s_map"].astype(np.float64)
         parent_field = item["s_out"].astype(np.float64)
+        canonical_mean_dtype = str(item["s_map"].dtype)
+        canonical_mean_shape = list(item["s_map"].shape)
+        canonical_mean_hash = sha256_array(item["s_map"])
+    canonical_group = group_by_seed[parent_seed]
+    if canonical_mean_hash != canonical_group["mean_array_sha256"]:
+        raise RuntimeError("parent 3429 canonical Wiener-mean array hash mismatch")
     reference_mean_fft = np.fft.rfftn(reference_mean, norm="ortho")
     parent_fft = np.fft.rfftn(parent_field, norm="ortho")
+
+    native_means: dict[str, np.ndarray] = {}
+    native_mean_ffts: dict[str, np.ndarray] = {}
+    for group in mean_groups:
+        first_seed = int(group["seed_range_inclusive"][0])
+        first_path = Path(parent_manifest["outputs"][expected_seeds.index(first_seed)])
+        with np.load(first_path, allow_pickle=False) as item:
+            native = item["s_map"].astype(np.float64)
+            actual_hash = sha256_array(item["s_map"])
+        if actual_hash != group["mean_array_sha256"]:
+            raise RuntimeError(f"{group['name']} Wiener-mean array hash mismatch")
+        native_means[group["name"]] = native
+        native_mean_ffts[group["name"]] = np.fft.rfftn(native, norm="ortho")
+
+    sample_metadata = {int(row["seed"]): row for row in parent_manifest["samples"]}
+    if sorted(sample_metadata) != expected_seeds:
+        raise RuntimeError("reference manifest sample metadata seed bank mismatch")
 
     rows = []
     field_hashes = []
@@ -389,13 +518,16 @@ def main() -> None:
         with np.load(path, allow_pickle=False) as item:
             actual_seed = int(item["sample_seed"])
             field = item["s_out"].astype(np.float64)
-            stored_mean = item["s_map"].astype(np.float64)
+            stored_mean_hash = sha256_array(item["s_map"])
             if int(item["N"]) != int(config.N) or not np.isclose(item["L"], config.box_size):
                 raise RuntimeError(f"reference geometry mismatch for seed {seed}")
         if actual_seed != seed:
             raise RuntimeError(f"reference file seed mismatch: expected {seed}, got {actual_seed}")
-        if not np.array_equal(stored_mean, reference_mean):
-            raise RuntimeError(f"reference Wiener mean differs for seed {seed}")
+        group = group_by_seed[seed]
+        if stored_mean_hash != group["mean_array_sha256"]:
+            raise RuntimeError(
+                f"unrecognized Wiener mean for seed {seed}: {stored_mean_hash}"
+            )
         prediction = np.asarray(forward(jnp.asarray(field, dtype=npdtype)), dtype=np.float64)
         nuisance = profile_gaussian_nuisance(
             data["vobs"], prediction, data["variance"], data["B"], data["q_std"]
@@ -406,8 +538,13 @@ def main() -> None:
         shells = released_shell_metrics(
             field, reference_mean_fft, parent_fft, geometry
         )
+        native_shells = released_shell_metrics(
+            field, native_mean_ffts[group["name"]], parent_fft, geometry
+        )
+        field_meta = sample_metadata[seed]
         rows.append({
             "seed": seed,
+            "mean_group": group["name"],
             "field": str(path.resolve()),
             "field_sha256": digest,
             "marginal_deviance": nuisance["marginal_deviance"],
@@ -418,8 +555,12 @@ def main() -> None:
             "radial_bias": bias,
             "radial_rms": radial_rms,
             "released_Eres": shells["Eres"],
+            "released_Eres_native_mean_diagnostic_only": native_shells["Eres"],
             "released_Pwhite": shells["Pwhite"],
             "released_delta_E_parent3429": shells["delta_E_parent3429"],
+            "global_white_field_std": float(field_meta["std"]),
+            "global_white_field_skew": float(field_meta["skew"]),
+            "global_white_field_excess_kurtosis": float(field_meta["excess_kurtosis"]),
         })
         field_hashes.append({"seed": seed, "path": str(path.resolve()), "sha256": digest})
         if number % 16 == 0 or number == len(expected_seeds):
@@ -437,8 +578,99 @@ def main() -> None:
     delta_e = np.asarray([
         row["released_delta_E_parent3429"] for row in calibration_rows
     ])
+    global_statistics = np.asarray([[
+        row["global_white_field_std"], row["global_white_field_skew"],
+        row["global_white_field_excess_kurtosis"],
+    ] for row in rows])
     parent_deviance = rows[parent_index]["marginal_deviance"]
     parent_p = higher_tail_conformal_p(parent_deviance, deviance)
+
+    first_group = mean_groups[0]
+    second_group = mean_groups[1]
+    mean_difference = (
+        native_means[first_group["name"]] - native_means[second_group["name"]]
+    )
+    canonical_mean_rms = float(np.sqrt(np.mean(reference_mean**2)))
+    mean_difference_rms = float(np.sqrt(np.mean(mean_difference**2)))
+    mean_difference_max = float(np.max(np.abs(mean_difference)))
+    mean_difference_relative_rms = mean_difference_rms / canonical_mean_rms
+    mean_power = released_shell_metrics(
+        native_means[first_group["name"]], reference_mean_fft,
+        reference_mean_fft, geometry,
+    )["Eres"]
+    median_eres = np.median(eres, axis=0)
+    mean_power_ratio = mean_power / median_eres
+    first_group_rows = [
+        row for row in rows if row["mean_group"] == first_group["name"]
+    ]
+    first_canonical_eres = np.asarray([
+        row["released_Eres"] for row in first_group_rows
+    ])
+    first_native_eres = np.asarray([
+        row["released_Eres_native_mean_diagnostic_only"]
+        for row in first_group_rows
+    ])
+    native_eres_relative_effect = np.abs(
+        first_canonical_eres - first_native_eres
+    ) / median_eres[None, :]
+    mean_gates_config = program["reference"]["two_chain_gates"]
+    mean_checks = {
+        "exact_two_group_membership_and_hashes": True,
+        "each_group_CG_relative_residual": all(
+            float(group["mean_cg_relative_residual"])
+            <= float(mean_gates_config["CG_relative_residual_max"])
+            for group in mean_groups
+        ),
+        "each_group_adjoint_relative_error": all(
+            float(group["adjoint_relative_error"])
+            <= float(mean_gates_config["adjoint_relative_error_max"])
+            for group in mean_groups
+        ),
+        "mean_difference_RMS": (
+            mean_difference_rms <= float(mean_gates_config["mean_difference_RMS_max"])
+        ),
+        "mean_difference_max_absolute": (
+            mean_difference_max
+            <= float(mean_gates_config["mean_difference_max_absolute_max"])
+        ),
+        "mean_difference_relative_RMS": (
+            mean_difference_relative_rms
+            <= float(mean_gates_config["mean_difference_relative_RMS_max"])
+        ),
+        "shell_mean_power_effect": bool(np.all(
+            mean_power_ratio
+            <= float(mean_gates_config["shell_mean_power_over_median_Eres_max"])
+        )),
+        "native_vs_canonical_Eres_effect": bool(np.all(
+            native_eres_relative_effect
+            <= float(mean_gates_config["native_vs_canonical_Eres_relative_max"])
+        )),
+    }
+
+    homogeneity_matrix = np.column_stack((
+        np.asarray([row["deviance_per_CF4_row"] for row in rows]),
+        np.asarray([row["qhat"] for row in rows]),
+        np.asarray([row["radial_bias"] for row in rows]),
+        np.asarray([row["radial_rms"] for row in rows]),
+        np.asarray([row["released_Eres"] for row in rows]),
+        np.asarray([row["released_Pwhite"] for row in rows]),
+        np.asarray([row["released_delta_E_parent3429"] for row in rows]),
+        global_statistics,
+    ))
+    homogeneity = two_group_max_ks_permutation(
+        homogeneity_matrix,
+        first_group_size=int(first_group["count"]),
+        iterations=int(program["reference"]["chain_homogeneity"]["iterations"]),
+        seed=int(program["reference"]["chain_homogeneity"]["seed"]),
+        chunk_size=int(program["reference"]["chain_homogeneity"]["chunk_size"]),
+    )
+    homogeneity["minimum_p"] = float(
+        program["reference"]["chain_homogeneity"]["minimum_p"]
+    )
+    homogeneity["pass"] = (
+        homogeneity["permutation_pvalue"] >= homogeneity["minimum_p"]
+    )
+    two_chain_pass = all(mean_checks.values()) and homogeneity["pass"]
 
     qhat_median = np.median(qhat, axis=0)
     qhat_centre = np.mean(qhat, axis=0)
@@ -482,8 +714,11 @@ def main() -> None:
         "schema": "ouruniv-cf4-lg-v8-mode-release-reference-calibration-v1",
         "status": (
             "complete_reference_calibration_parent3429_pass"
-            if parent_p >= float(program["gates"]["L2_parent_conformal_p_min"])
-            else "complete_reference_calibration_parent3429_fail_stop"
+            if (
+                parent_p >= float(program["gates"]["L2_parent_conformal_p_min"])
+                and two_chain_pass
+            )
+            else "complete_reference_calibration_fail_stop"
         ),
         "program": str(args.program.resolve()),
         "program_sha256": sha256_file(args.program),
@@ -496,6 +731,31 @@ def main() -> None:
         "reference_seed_count": len(rows),
         "calibration_seed_count": len(calibration_rows),
         "excluded_parent_seed": parent_seed,
+        "canonical_Wiener_mean": {
+            "seed": parent_seed,
+            "group": canonical_group["name"],
+            "array_sha256": canonical_mean_hash,
+            "dtype": canonical_mean_dtype,
+            "shape": canonical_mean_shape,
+            "policy": "Used for every final Eres. Native chain means are validation-only.",
+        },
+        "two_chain_audit": {
+            "groups": mean_groups,
+            "mean_difference": {
+                "RMS": mean_difference_rms,
+                "max_absolute": mean_difference_max,
+                "relative_RMS_to_canonical": mean_difference_relative_rms,
+                "released_shell_power": mean_power,
+                "released_shell_power_over_median_reference_Eres": mean_power_ratio,
+                "maximum_native_vs_canonical_Eres_relative_effect": float(
+                    native_eres_relative_effect.max()
+                ),
+            },
+            "checks": mean_checks,
+            "homogeneity": homogeneity,
+            "all_pass": two_chain_pass,
+            "failure_action": "Regenerate all 256 reference fields in one solver chain; do not discard a group or loosen a threshold.",
+        },
         "CF4_likelihood_rows": int(data["raw_idx"].size),
         "nuisance": {
             "parameters": ["bulk_x_km_s", "bulk_y_km_s", "bulk_z_km_s", "delta_H0_km_s_Mpc"],
@@ -545,8 +805,9 @@ def main() -> None:
         },
         "rows": rows,
         "decision": {
-            "authorize_opening_V8_projection_CF4_metrics": parent_p >= float(
-                program["gates"]["L2_parent_conformal_p_min"]
+            "authorize_opening_V8_projection_CF4_metrics": (
+                parent_p >= float(program["gates"]["L2_parent_conformal_p_min"])
+                and two_chain_pass
             ),
             "fresh_V9_authorized": False,
             "seed_promotion_authorized": False,

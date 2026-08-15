@@ -14,6 +14,7 @@ from cf4_lg_mode_release_reference import (
     released_shell_geometry,
     released_shell_metrics,
     summary_coordinates,
+    two_group_max_ks_permutation,
 )
 
 
@@ -118,6 +119,23 @@ def test_four_dimensional_mahalanobis_uses_joint_covariance():
     assert np.isclose(distance[0], direct)
 
 
+def test_two_group_max_ks_permutation_is_deterministic_and_detects_shift():
+    rng = np.random.default_rng(27)
+    matrix = np.vstack((
+        rng.normal(0.0, 1.0, size=(20, 3)),
+        rng.normal(2.5, 1.0, size=(20, 3)),
+    ))
+    first = two_group_max_ks_permutation(
+        matrix, first_group_size=20, iterations=999, seed=31, chunk_size=73
+    )
+    second = two_group_max_ks_permutation(
+        matrix, first_group_size=20, iterations=999, seed=31, chunk_size=128
+    )
+    assert np.isclose(first["observed_statistic"], second["observed_statistic"])
+    assert first["permutation_pvalue"] == second["permutation_pvalue"]
+    assert first["permutation_pvalue"] < 0.01
+
+
 def test_bootstrap_calibration_is_deterministic_and_joint_across_families():
     rng = np.random.default_rng(8)
     families = {
@@ -154,3 +172,12 @@ def test_reference_program_pins_code_and_keeps_projection_firewall_closed():
     )
     assert program["decision"]["fresh_V9_authorized_now"] is False
     assert program["decision"]["RAMSES_authorized"] is False
+    groups = program["reference"]["mean_groups"]
+    assert [(row["seed_range_inclusive"], row["count"]) for row in groups] == [
+        ([3193, 3328], 136),
+        ([3329, 3448], 120),
+    ]
+    assert program["reference"]["chain_homogeneity"]["coordinate_count"] == 42
+    assert program["reference"]["canonical_mean_policy"].startswith(
+        "Use the seed3429"
+    )
