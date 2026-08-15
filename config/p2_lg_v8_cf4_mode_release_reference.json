@@ -1,0 +1,145 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-mode-release-reference-program-v1",
+  "status": "frozen_before_reference_only_CF4_calibration",
+  "frozen_date": "2026-08-15",
+  "purpose": "Seal a result-blind reference calibration for the exact N64-to-N192 CF4 mode-release audit before calculating any V8 projection CF4 likelihood or released-mode diagnostic.",
+  "implementation": {
+    "path": "src/cf4_lg_mode_release_reference.py",
+    "sha256": "d14f5392d473511822a81f61228db9d87edbfd559f6668086be866bef013da06"
+  },
+  "authorization": {
+    "path": "config/cf4_lg_v8_joint_support_autopsy_result_record.json",
+    "sha256": "9e924394aa8fe722b78fb7a421718bfdda437ade893b3a337017bbee11973b66",
+    "required_status": "complete_pass_lineage_and_terminal_reproduction_authorize_CF4_mode_release_audit_only"
+  },
+  "information_firewall": {
+    "reference_data_only": true,
+    "V8_projection_CF4_metrics_opened": false,
+    "V8_projection_released_shell_metrics_opened": false,
+    "P1_P2_or_seed5422_subset_allowed": false,
+    "threshold_retuning_after_reference_calibration": false,
+    "new_field_or_forward_allowed": false,
+    "fresh_V9_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "reference": {
+    "manifest": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/manifest_v3_bgc_parent_extension_v3.json",
+    "manifest_sha256": "dcf5d24104b178a74371455497f4228eb03188189937915672219f10d4c11687",
+    "catalog_sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37",
+    "seed_range_inclusive": [3193, 3448],
+    "expected_count": 256,
+    "parent_seed": 3429,
+    "parent_field_sha256": "5db9b43a00f71ff9bbf291e9979df57b26fa0bd6b3de7d5b3f9e87b51c9bc463",
+    "calibration_excludes_parent_seed": true,
+    "calibration_count": 255,
+    "expected_CF4_rows": 19316,
+    "posterior": "Frozen all-data N192 leakage-free BGc linear-Gaussian constrained-realization bank."
+  },
+  "CF4_likelihood": {
+    "operator": "The unchanged N192 linear radial-velocity operator and catalog configuration stored in the reference manifest.",
+    "nuisance_parameters": ["bulk_x", "bulk_y", "bulk_z", "delta_H0"],
+    "nuisance_prior_sigma": [150.0, 150.0, 150.0, 3.0],
+    "nuisance_policy": "For every reference and future V8 projection field, analytically marginalize the identical Gaussian nuisance prior using the Woodbury quadratic and record the identical posterior-mode qhat profile.",
+    "deviance": "D=(u-As)^T (N+B Lambda B^T)^-1 (u-As); field-independent log determinants cancel."
+  },
+  "radial_residuals": {
+    "coordinate": "CF4 CMB-frame cz in km/s",
+    "cz_edges_km_s": [1500.0, 3000.0, 6000.0, 10000.0, 14000.0, 18000.0],
+    "standardized_residual": "e=(u-As-B qhat)/sqrt(Nii) after fitting one global four-dimensional qhat per field",
+    "metrics_per_bin": ["bias=mean(e)", "RMS=sqrt(mean(e^2))"],
+    "bias_test": "two-sided after conversion to absolute reference-median deviation",
+    "RMS_test": "one-sided upper"
+  },
+  "released_modes": {
+    "parent_mesh_size": 192,
+    "frozen_mesh_size": 64,
+    "mask": "Exact cubical F192 minus F64 rFFT coefficient mask, not a spherical approximation.",
+    "shell_edges_h_mpc": [0.0, 0.65, 0.80, 1.00, 1.25, 1.55, 1.90, 2.30, null],
+    "edge_convention": "The final JSON null means positive infinity. The eight half-open shells must be mutually exclusive and their Boolean OR must equal the exact released mask, including every axial boundary and corner mode.",
+    "empty_shell_action": "fail before opening V8 projection diagnostics",
+    "Hermitian_weights": "w=1 at kz=0 and the N192 Nyquist plane; w=2 otherwise",
+    "metrics_per_shell": [
+      "Eres=sum(w*abs(s-mref)^2)/sum(w)",
+      "Pwhite=sum(w*abs(s)^2)/sum(w)",
+      "delta_E_parent3429=sum(w*abs(s-s3429)^2)/sum(w)"
+    ]
+  },
+  "calibration": {
+    "quantile_method": "linear",
+    "bootstrap_iterations": 100000,
+    "bootstrap_seed": 2026081502,
+    "bootstrap_rng": "NumPy Generator PCG64DXSM",
+    "bootstrap_chunk_size": 1024,
+    "row_bootstrap_preserves_coordinate_correlation": true,
+    "summary_coordinates_per_metric": ["median", "Q90", "fraction_above_reference_Q99"],
+    "studentization": "Subtract the 255-row reference summary and divide by the reference-bootstrap standard deviation coordinate by coordinate.",
+    "simultaneous_envelope": "The 0.99 linear quantile of each replicate's maximum studentized coordinate.",
+    "permutation_iterations": 100000,
+    "permutation_seed": 2026081503,
+    "permutation_rng": "NumPy Generator PCG64DXSM"
+  },
+  "gates": {
+    "L0_lineage": {
+      "require_all_256_reference_and_proposal_hashes": true,
+      "require_exact_seed_identity": true,
+      "require_recomputed_N576_to_N192_projection_for_every_proposal": true,
+      "projection_relative_RMS_max": 2e-6,
+      "projection_maximum_normalized_error_max": 2e-5,
+      "normalization": "Divide both errors by the RMS of the recomputed N192 projection; zero RMS is a hard error."
+    },
+    "L1_N64_preservation": {
+      "relative_RMS_max": 2e-6,
+      "maximum_normalized_error_max": 2e-5
+    },
+    "L2_parent_conformal_p_min": 0.01,
+    "L3_CF4_deviance": {
+      "one_sided_permutation_max_stat_FWER_alpha": 0.01,
+      "group_sizes": {"reference": 255, "proposal": 256, "pooled": 511},
+      "permutation": "For each PCG64DXSM permutation of all 511 complete row vectors, the first 255 labels form reference and the remaining 256 form proposal. The same label permutation is used for all nine coordinates.",
+      "max_stat_coordinates": [
+        "right-sided KS for D per CF4 row",
+        "right-sided KS for radial RMS bin 1",
+        "right-sided KS for radial RMS bin 2",
+        "right-sided KS for radial RMS bin 3",
+        "right-sided KS for radial RMS bin 4",
+        "right-sided KS for radial RMS bin 5",
+        "D median shift",
+        "D Q90 shift",
+        "fraction above the fixed reference-calibration D Q99"
+      ],
+      "right_sided_KS_definition": "sup_t(F_reference(t)-F_proposal(t)); larger values diagnose a proposal distribution shifted to larger D or radial RMS.",
+      "shift_definitions": {
+        "median": "median(D_proposal)-median(D_reference)",
+        "Q90": "Q90(D_proposal)-Q90(D_reference)",
+        "Q99_exceedance": "mean(D_proposal>fixed_reference_Q99)-mean(D_reference>fixed_reference_Q99)"
+      },
+      "studentization": "For each coordinate j, z_j=(T_j-observed_null_mean_j)/observed_null_sample_sd_j using ddof=1 over the 100000 common-label permutation replicates. M=max_j(z_j).",
+      "permutation_p_value": "(1 + number of replicate M values greater than or equal to observed M)/(100000+1); pass requires p>=0.01.",
+      "proposal_median_must_not_exceed_reference_Q95": true,
+      "proposal_Q90_must_not_exceed_reference_Q99p5": true,
+      "proposal_reference_Q99_exceedance_fraction_must_not_exceed_reference_bootstrap_Q99p9": true
+    },
+    "L4_nuisance_and_radial": "All four marginal abs(qhat-reference median) coordinates, the 4D reference-mean/covariance Mahalanobis coordinate, five abs(radial bias-reference median) coordinates, and five radial RMS coordinates use median/Q90/Q99-exceedance-fraction summaries and must pass one simultaneous 99% reference-bootstrap upper envelope.",
+    "L5_released_modes": {
+      "simultaneous_family": "All eight-shell Eres, abs(Pwhite-1), and delta_E_parent3429 coordinates use median/Q90/Q99-exceedance-fraction summaries and must pass one simultaneous 99% upper envelope.",
+      "global_white_field_std_each_projection": [0.995, 1.005],
+      "global_white_field_max_abs_skew_each_projection": 0.01,
+      "global_white_field_max_abs_excess_kurtosis_each_projection": 0.01,
+      "LCDM_released_shell_mean_Pwhite": "For every shell, abs(mean_over_256(Pwhite)-1) <= max(0.05, 3/sqrt(nmode_rfft)), using the frozen exact shell rFFT mode count.",
+      "finite_all_metrics_required": true
+    }
+  },
+  "storage": {
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+    "write_policy": "exclusive create; an existing path is a hard stop and may not be overwritten"
+  },
+  "decision": {
+    "on_L2_failure": "Stop before opening any V8 projection CF4 or released-mode metric.",
+    "on_reference_calibration_pass": "Seal the calibration result and only then freeze the V8 projection audit program.",
+    "on_any_future_L0_to_L5_failure": "Current N64-freeze architecture is V9 NO-GO.",
+    "on_all_future_L0_to_L5_pass": "Authorize design of a new prospective V9 only; do not promote any seed and do not run RAMSES.",
+    "fresh_V9_authorized_now": false,
+    "seed_promotion_authorized": false,
+    "RAMSES_authorized": false
+  }
+}
