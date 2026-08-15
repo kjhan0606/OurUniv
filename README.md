@@ -177,12 +177,19 @@ member and `1.224 Mpc/h` separation) as well as the recentered environment
 gate. The fixed protohalo-midpoint model subsequently yielded zero fully valid
 pairs in 96 development proposals and is closed.
 
-The next one-shot bank is frozen in
-`config/p2_lg_peak_likelihood_v6_latent_midpoint.json`. It treats the unknown
-Lagrangian midpoint as a declared latent variable while preserving parent
-3429's N64 long modes and all P1/P2 thresholds. It stops before another RAMSES
-run for result review. The consumed evidence is pinned in
-`config/cf4_lg_v5_result_record.json`.
+The 64-member latent-midpoint v6 bank is complete. Five realizations passed
+the unchanged N576 hard-P2 screen, but none passed all five P1 environment
+gates at the evolved pair midpoint; the best, seed 5238, passed four of five.
+V6 is therefore closed and cannot be extended with more seeds. Its consumed
+evidence is pinned in `config/cf4_lg_v6_result_record.json`.
+
+The next one-shot bank is the statistically normalized v8 program in
+`config/p2_lg_z0_forward_importance_v8.json`. It uses the unchanged v7 z=0
+MW/M31 halo-pair likelihood and a 50/50 defensive latent-midpoint proposal,
+with exact `log p(q)-log g(q)` correction. A frozen bootstrap audit selected
+256 fresh realizations (0.5-percent lower expected ESS 8.47). A candidate must
+pass the same hard P2 pair cuts and all five P1 gates at that same pair's
+midpoint. The automated job stops before RAMSES regardless of the outcome.
 
 See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.
 

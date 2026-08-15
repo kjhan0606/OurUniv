@@ -68,6 +68,38 @@ def test_latent_midpoint_is_seeded_and_uses_declared_prior():
     assert not np.array_equal(first, different)
     assert metadata["midpoint_seed"] == 8501
     assert metadata["mode"] == "latent_diagonal_normal"
+    assert metadata["log_target_prior_over_sampling_proposal"] == 0.0
+
+
+def test_latent_midpoint_importance_mixture_records_exact_correction():
+    prior = {
+        "distribution": "diagonal_normal",
+        "mean_mpc_h": [0.0, -6.0, 4.0],
+        "sigma_mpc_h": [3.0, 3.0, 3.0],
+    }
+    peak = {
+        "protohalo_midpoint_prior": prior,
+        "protohalo_midpoint_sampling_proposal": {
+            "distribution": "diagonal_normal_mixture",
+            "components": [
+                dict(prior, weight=0.5),
+                {
+                    "weight": 0.5,
+                    "mean_mpc_h": [0.7, -6.4, 4.6],
+                    "sigma_mpc_h": [1.5, 1.5, 1.5],
+                },
+            ],
+        },
+    }
+    value, metadata = draw_protohalo_midpoint_offset(peak, 8569)
+    repeated, _ = draw_protohalo_midpoint_offset(peak, 8569)
+    np.testing.assert_array_equal(value, repeated)
+    assert metadata["mode"] == "latent_importance_mixture"
+    assert metadata["sampled_component_index"] in (0, 1)
+    assert np.isclose(
+        metadata["log_target_prior_over_sampling_proposal"],
+        metadata["log_target_prior"] - metadata["log_sampling_proposal"],
+    )
 
 
 def test_proposal_seed_rows_rejects_silent_truncation():
@@ -95,4 +127,26 @@ def test_proposal_seed_rows_binds_latent_midpoint_seed():
     }
     assert proposal_seed_rows(config) == [
         (1, 11, 21, 31), (2, 12, 22, 32)
+    ]
+
+
+def test_proposal_seed_rows_expands_frozen_contiguous_bank():
+    config = {
+        "seed_bank": {
+            "count": 3,
+            "proposal_seed_start": 101,
+            "geometry_seed_start": 201,
+            "likelihood_noise_seed_start": 301,
+            "midpoint_seed_start": 401,
+        },
+        "peak_constraints": {"protohalo_midpoint_prior": {
+            "distribution": "diagonal_normal",
+            "mean_mpc_h": [0.0, 0.0, 0.0],
+            "sigma_mpc_h": 1.0,
+        }},
+    }
+    assert proposal_seed_rows(config) == [
+        (101, 201, 301, 401),
+        (102, 202, 302, 402),
+        (103, 203, 303, 403),
     ]

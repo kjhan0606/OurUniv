@@ -219,26 +219,31 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-Run the prospectively frozen 64-member v6 bank in
-`config/p2_lg_peak_likelihood_v6_latent_midpoint.json`. It changes only the
-failed model assumption: instead of fixing every protohalo midpoint at
-`[0,-6,+4] Mpc/h`, each proposal draws that unknown Lagrangian location from
-one declared diagonal-normal prior with `sigma=3 Mpc/h` per axis. The peak
-likelihood, parent 3429, N64 long modes, P1/P2 thresholds, and N576 forward are
-unchanged.
+V6 is complete and closed: 60 N576 forwards produced five hard-P2 pairs, but
+zero pair-centred five-of-five P1 survivors. The v7 normalized z=0 likelihood
+correctly ranked four of those five pairs in its top ten, but naive prior
+sampling had ESS 1.28 and a maximum weight of 0.882. This identified a
+rare-event sampling problem in the latent midpoint, not permission to loosen
+the physical likelihood.
 
-The v6 rules are one-shot:
+Run the frozen v8 program in
+`config/p2_lg_z0_forward_importance_v8.json`. Its prospective proposal audit
+selected 256 fresh realizations: the bootstrap 0.5-percent lower expected ESS
+is 8.47 (point expectation 22.23), and the defensive component guarantees
+`p(q)/g(q) <= 2`. The rules are:
 
-1. use only fresh seeds 5205--5268 and preserve the sampled midpoint in every
-   manifest;
-2. re-run all five P1 gates on every N192 projection;
-3. run the unchanged N576 PM/FoF screen and evaluate every eligible pair;
-4. require all five P1 gates again at the actual evolved pair midpoint;
-5. stop before RAMSES even if a survivor exists, so the frozen evidence can be
-   reviewed before spending another L12/L19 pilot;
-6. do not extend the same model with more seeds after a v6 failure. A failure
-   moves the project to a genuinely forward-modelled z=0 LG likelihood rather
-   than another static-peak batch.
+1. generate only fresh proposal seeds 5269--5524 from the frozen 50/50
+   midpoint mixture and record exact `log p(q)-log g(q)`;
+2. preserve parent 3429's N64 long modes and repeat unchanged P1 on every N192
+   projection;
+3. forward every P1 survivor at N576 and keep the unchanged hard-P2 support;
+4. evaluate the unchanged normalized v7 z=0 likelihood over every loose pair;
+5. repeat all five P1 gates at those pair midpoints and require the same halo
+   pair to pass both recentered P1 and hard P2;
+6. require at least eight jointly eligible realizations, importance ESS >= 8,
+   and maximum normalized weight <= 0.25;
+7. stop before RAMSES for review on either pass or failure; never extend this
+   same model with more seeds.
 
 The rejected cr6/e19 and p3429/s5108 runs remain diagnostic only and are not
 production candidates.

@@ -18,6 +18,12 @@ from pathlib import Path
 import numpy as np
 from scipy import fft as spfft
 
+from cf4_lg_midpoint_proposal import (
+    diagonal_normal_logpdf,
+    draw_diagonal_normal_mixture,
+    mixture_logpdf,
+)
+
 
 def free_rfft_mask(n: int, coarse_n: int) -> np.ndarray:
     """Coefficients not overwritten by ``cf4_make_ic.embed_ic``."""
@@ -236,7 +242,10 @@ def draw_protohalo_midpoint_offset(
     seed and the prior are frozen before any PM result is inspected.
     """
     prior = peak.get("protohalo_midpoint_prior")
+    proposal = peak.get("protohalo_midpoint_sampling_proposal")
     if prior is None:
+        if proposal is not None:
+            raise ValueError("a midpoint sampling proposal requires a target prior")
         if midpoint_seed is not None:
             raise ValueError(
                 "midpoint_seeds require peak_constraints.protohalo_midpoint_prior"
@@ -258,21 +267,47 @@ def draw_protohalo_midpoint_offset(
         if prior.get("distribution") != "diagonal_normal":
             raise ValueError("only diagonal_normal midpoint priors are supported")
         mean = np.asarray(prior["mean_mpc_h"], dtype=np.float64)
-        sigma = np.broadcast_to(
-            np.asarray(prior["sigma_mpc_h"], dtype=np.float64), (3,)
-        )
+        sigma = np.broadcast_to(np.asarray(prior["sigma_mpc_h"], dtype=np.float64), (3,))
         if mean.shape != (3,) or np.any(~np.isfinite(mean)):
             raise ValueError("midpoint prior mean_mpc_h must contain three values")
         if np.any(~np.isfinite(sigma)) or np.any(sigma <= 0.0):
             raise ValueError("midpoint prior sigma_mpc_h must be finite and positive")
-        offset = np.random.default_rng(int(midpoint_seed)).normal(mean, sigma)
-        source = {
-            "mode": "latent_diagonal_normal",
-            "distribution": "diagonal_normal",
-            "mean_mpc_h": mean.tolist(),
-            "sigma_mpc_h": sigma.tolist(),
-            "midpoint_seed": int(midpoint_seed),
-        }
+        rng = np.random.default_rng(int(midpoint_seed))
+        if proposal is None:
+            offset = rng.normal(mean, sigma)
+            log_target = diagonal_normal_logpdf(offset, prior)
+            source = {
+                "mode": "latent_diagonal_normal",
+                "distribution": "diagonal_normal",
+                "mean_mpc_h": mean.tolist(),
+                "sigma_mpc_h": sigma.tolist(),
+                "midpoint_seed": int(midpoint_seed),
+                "log_target_prior": log_target,
+                "log_sampling_proposal": log_target,
+                "log_target_prior_over_sampling_proposal": 0.0,
+            }
+        else:
+            if proposal.get("distribution") not in {
+                "diagonal_normal_mixture",
+                "equal_weight_two_component_diagonal_normal_mixture",
+            }:
+                raise ValueError("unsupported midpoint sampling proposal")
+            components = proposal["components"]
+            offset, component_index = draw_diagonal_normal_mixture(rng, components)
+            log_target = diagonal_normal_logpdf(offset, prior)
+            log_proposal = mixture_logpdf(offset, components)
+            source = {
+                "mode": "latent_importance_mixture",
+                "distribution": proposal["distribution"],
+                "components": components,
+                "sampled_component_index": component_index,
+                "midpoint_seed": int(midpoint_seed),
+                "log_target_prior": log_target,
+                "log_sampling_proposal": log_proposal,
+                "log_target_prior_over_sampling_proposal": (
+                    log_target - log_proposal
+                ),
+            }
     if offset.shape != (3,) or np.any(~np.isfinite(offset)):
         raise ValueError("protohalo midpoint offset must contain three finite values")
     return offset, source
@@ -281,11 +316,32 @@ def draw_protohalo_midpoint_offset(
 def proposal_seed_rows(config: dict) -> list[tuple[int, int, int, int | None]]:
     """Return strictly aligned proposal seeds instead of silently truncating."""
     keys = ("proposal_seeds", "geometry_seeds", "likelihood_noise_seeds")
-    values = [list(config[key]) for key in keys]
+    seed_bank = config.get("seed_bank")
+    if seed_bank is not None:
+        if any(key in config for key in (*keys, "midpoint_seeds")):
+            raise ValueError("seed_bank cannot be combined with explicit seed lists")
+        count = int(seed_bank["count"])
+        if count <= 0:
+            raise ValueError("seed_bank count must be positive")
+        start_keys = (
+            "proposal_seed_start",
+            "geometry_seed_start",
+            "likelihood_noise_seed_start",
+        )
+        values = [
+            list(range(int(seed_bank[key]), int(seed_bank[key]) + count))
+            for key in start_keys
+        ]
+        midpoint = list(range(
+            int(seed_bank["midpoint_seed_start"]),
+            int(seed_bank["midpoint_seed_start"]) + count,
+        ))
+    else:
+        values = [list(config[key]) for key in keys]
+        midpoint = config.get("midpoint_seeds")
     lengths = {len(value) for value in values}
     if len(lengths) != 1 or not values[0]:
         raise ValueError(f"proposal seed lists must have one equal non-zero length: {keys}")
-    midpoint = config.get("midpoint_seeds")
     prior = config["peak_constraints"].get("protohalo_midpoint_prior")
     if prior is None:
         if midpoint is not None:

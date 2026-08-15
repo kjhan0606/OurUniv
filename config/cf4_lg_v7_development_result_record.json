@@ -1,0 +1,43 @@
+{
+  "schema": "ouruniv-cf4-lg-v7-development-result-record-v1",
+  "status": "complete_single_stage_importance_failure_fresh_v7_locked",
+  "program": {
+    "path": "config/p2_lg_z0_forward_likelihood_v7_development.json",
+    "sha256": "e42f4be5b01658c8dc67195d80d818292f585d8a31ce04385d514cc838df1705"
+  },
+  "result": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v7_z0_forward_likelihood_development/result.json",
+    "sha256": "fec9f153a6bd139adf351ef8851c5a155f08baa6ff16b542fdef217aac0c7c31"
+  },
+  "metrics": {
+    "catalogs": 60,
+    "finite_likelihood_catalogs": 40,
+    "effective_sample_size": 1.2809940373338218,
+    "maximum_single_normalized_weight": 0.8822196618872759,
+    "old_hard_screen_pairs_in_top_10": 4
+  },
+  "checks": {
+    "minimum_finite_catalogs": true,
+    "minimum_effective_sample_size": false,
+    "maximum_single_normalized_weight": false,
+    "minimum_old_hard_screen_pairs_in_top_k": true
+  },
+  "attribution": {
+    "forward_summary_has_physical_alignment": true,
+    "evidence": "Four of the five old hard-screen pairs occur in the likelihood top ten, and seed 5238 is best under every combined z=0 term without any post-result scale change.",
+    "single_stage_prior_sampling_is_adequate": false,
+    "dominant_failure": "The observer-midpoint term is a rare-event factor under the broad latent-midpoint prior. It gives seed 5238 88.2 percent of the one-stage development weight.",
+    "forbidden_repairs": [
+      "widen the midpoint or kinematic discrepancy after seeing the result",
+      "promote seed 5238",
+      "open the predeclared fresh v7 bank despite the failed gate",
+      "drop exact importance correction for an adapted midpoint proposal"
+    ]
+  },
+  "decision": {
+    "fresh_v7_authorized": false,
+    "v7_seed_bank_opened": false,
+    "RAMSES_authorized": false,
+    "next": "Redesign the same target likelihood as a conditional rare-event importance sampler: use a defensive mixture proposal for the latent midpoint, retain exact log p(q)-log g(q), and prospectively size a new fresh bank from a bootstrap lower bound on importance ESS before opening any new phase."
+  }
+}
