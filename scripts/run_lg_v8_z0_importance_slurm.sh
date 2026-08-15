@@ -14,6 +14,7 @@ set -euo pipefail
 
 repo=/home/kjhan/BACKUP/CF4
 python=/home/kjhan/miniconda3/envs/circle/bin/python
+test_python=/home/kjhan/miniconda3/bin/python
 root=/gpfs/kjhan/CF4/recon/linear_cr
 program=$repo/config/p2_lg_z0_forward_importance_v8.json
 proposal_dir=$root/v3_bgc_lg_peak_proposals_v8_z0_importance
@@ -88,7 +89,7 @@ export NUMEXPR_NUM_THREADS="$OMP_NUM_THREADS"
 cd "$repo"
 
 echo "[v8] validating frozen implementation $(date -Is)"
-"$python" -m pytest -q \
+"$test_python" -m pytest -q \
     tests/test_cf4_lg_peak_cr.py \
     tests/test_cf4_lg_midpoint_proposal_audit.py \
     tests/test_cf4_lg_z0_likelihood.py \
