@@ -176,3 +176,23 @@ def test_v1_failure_is_preserved_as_tolerance_not_science_failure():
     assert record["decision"]["delete_or_overwrite_failed_state"] is False
     assert record["decision"]["v2_control_authorized"] is True
     assert record["decision"]["all_parent_evidence_authorized"] is False
+
+
+def test_v2_result_authorizes_evidence_program_but_not_candidates():
+    record = json.loads((
+        ROOT / "config/cf4_peak_evidence_phase_control_v2_result_record.json"
+    ).read_text())
+    assert record["status"] == "complete_pass_exact_N576_phase_cache"
+    assert sha256_file(ROOT / record["lineage"]["program"]) == (
+        record["lineage"]["program_sha256"]
+    )
+    assert sha256_file(ROOT / record["lineage"]["phase_cache_implementation"]) == (
+        record["lineage"]["phase_cache_implementation_sha256"]
+    )
+    assert record["gates"]["phase_cache_pass"] is True
+    decision = record["decision"]
+    assert decision["freeze_all_256_parent_evidence_program_authorized"] is True
+    assert decision["stationary_covariance_approximation_authorized"] is False
+    assert decision["candidate_generation_authorized"] is False
+    assert decision["parent_or_seed_selection_authorized"] is False
+    assert decision["PM_or_RAMSES_authorized"] is False
