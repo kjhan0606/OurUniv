@@ -1,7 +1,9 @@
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
+import subprocess
 
 import numpy as np
 
@@ -38,6 +40,7 @@ from cf4_aggregate_evidence_oracle_regression import (
     unique_keys_and_inverse,
     validate_dense_phase_coverage,
     validate_frozen_design,
+    validate_program,
 )
 
 
@@ -569,3 +572,140 @@ def test_public_execution_rejects_noncanonical_missing_unauthorized_and_wrong_sh
         regression_module.execute_program(canonical)
     assert calls == []
     assert canonical_data.exists() is data_existed_before
+
+
+def test_canonical_program_passes_preflight_and_opens_only_regression():
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "config/cf4_aggregate_evidence_oracle_regression_program.json"
+    )
+    program = json.loads(path.read_text())
+    validate_program(program, path)
+    assert program["source_commit"] == "05b2cc373c94ba719492929f10409383257100b1"
+    assert program["execution"]["worker_processes"] == 8
+    assert program["execution"]["parent_block_size"] == 32
+    assert program["execution"]["geometry_batch_size"] == 256
+    assert program["decision"]["regression_execution_authorized"] is True
+    for key in (
+        "production_SMC_authorized",
+        "conditional_field_bank_authorized",
+        "parent_or_seed_selection_authorized",
+        "PM_or_halo_finder_authorized",
+        "RAMSES_authorized",
+        "automatic_follow_on",
+    ):
+        assert program["decision"][key] is False
+
+
+def test_canonical_scripts_are_hash_pinned_marker_only_and_no_follow_on():
+    root = Path(__file__).resolve().parents[1]
+    runner = (
+        root / "scripts/run_cf4_aggregate_evidence_oracle_regression_lageunha.sh"
+    ).read_text()
+    launcher = (
+        root / "scripts/launch_cf4_aggregate_evidence_oracle_regression_lageunha.sh"
+    ).read_text()
+    status = (
+        root / "scripts/status_cf4_aggregate_evidence_oracle_regression.sh"
+    ).read_text()
+    combined = "\n".join((runner, launcher, status)).lower()
+    assert "expected_program_sha=" in runner
+    assert "expected_design_sha=" in runner
+    assert "expected_implementation_sha=" in runner
+    assert "expected_tests_sha=" in runner
+    assert "merge-base --is-ancestor" in runner
+    assert "git -C \"$repo\" diff --quiet HEAD" in runner
+    assert "flock -n" in runner
+    assert "complete_pass_exact_oracle_regression" in runner
+    assert "complete_fail_exact_oracle_regression" in runner
+    assert "nonfinite_or_numerical_failure" not in runner.split(
+        "allowed_failure =", 1
+    )[1].split("}", 1)[0]
+    assert "production_SMC_execution_authorized=false" in runner
+    assert "conditional_field_bank_authorized=false" in runner
+    assert "invalid_state_no_marker" in status
+    assert "invalid_state_conflicting_markers" in status
+    assert "invalid_state_empty_marker" in status
+    assert "invalid_data_without_lifecycle_state" in status
+    assert "invalid_complete_artifacts" in status
+    assert "validate_program_and_pins" in runner
+    assert "postflight source hash mismatch" in runner
+    assert "changed during execution" in runner
+    assert "result lineage mismatch" in runner
+    assert "RUNNING" in runner and "COMPLETE" in runner and "FAILED" in runner
+    assert "pgrep" not in combined
+    assert "postgres" not in combined
+    assert "while " not in combined
+    assert "sleep " not in combined
+
+
+def _status_result(script, state, data):
+    environment = os.environ.copy()
+    environment["CF4_ORACLE_REGRESSION_STATUS_STATE"] = str(state)
+    environment["CF4_ORACLE_REGRESSION_STATUS_DATA"] = str(data)
+    return subprocess.run(
+        [str(script)],
+        check=False,
+        text=True,
+        capture_output=True,
+        env=environment,
+    )
+
+
+def test_status_lifecycle_is_fail_closed_for_orphans_empty_and_conflicts(tmp_path):
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts/status_cf4_aggregate_evidence_oracle_regression.sh"
+    )
+
+    absent = _status_result(script, tmp_path / "state0", tmp_path / "data0")
+    assert absent.returncode == 0
+    assert absent.stdout.strip() == "status=not_started"
+
+    orphan_data = tmp_path / "data1"
+    orphan_data.mkdir()
+    orphan = _status_result(script, tmp_path / "state1", orphan_data)
+    assert orphan.returncode == 65
+    assert orphan.stdout.strip() == "status=invalid_data_without_lifecycle_state"
+
+    markerless_state = tmp_path / "state2"
+    markerless_state.mkdir()
+    markerless = _status_result(script, markerless_state, tmp_path / "data2")
+    assert markerless.returncode == 65
+    assert markerless.stdout.strip() == "status=invalid_state_no_marker"
+
+    empty_state = tmp_path / "state3"
+    empty_state.mkdir()
+    (empty_state / "COMPLETE").touch()
+    empty = _status_result(script, empty_state, tmp_path / "data3")
+    assert empty.returncode == 65
+    assert empty.stdout.strip() == "status=invalid_state_empty_marker"
+
+    conflict_state = tmp_path / "state4"
+    conflict_state.mkdir()
+    (conflict_state / "COMPLETE").touch()
+    (conflict_state / "FAILED").write_text("status=failed\n")
+    conflict = _status_result(script, conflict_state, tmp_path / "data4")
+    assert conflict.returncode == 65
+    assert conflict.stdout.strip() == "status=invalid_state_conflicting_markers"
+
+    incomplete_state = tmp_path / "state5"
+    incomplete_data = tmp_path / "data5"
+    incomplete_state.mkdir()
+    incomplete_data.mkdir()
+    (incomplete_state / "COMPLETE").write_text("status=complete\n")
+    incomplete = _status_result(script, incomplete_state, incomplete_data)
+    assert incomplete.returncode == 65
+    assert incomplete.stdout.strip() == "status=invalid_complete_artifacts"
+
+    complete_state = tmp_path / "state6"
+    complete_data = tmp_path / "data6"
+    complete_state.mkdir()
+    complete_data.mkdir()
+    marker_text = "status=complete\nscience_status=complete_pass_exact_oracle_regression\n"
+    (complete_state / "COMPLETE").write_text(marker_text)
+    for name in ("arrays.npz", "result.json", "manifest.json"):
+        (complete_data / name).write_bytes(b"sealed")
+    complete = _status_result(script, complete_state, complete_data)
+    assert complete.returncode == 0
+    assert complete.stdout == marker_text
