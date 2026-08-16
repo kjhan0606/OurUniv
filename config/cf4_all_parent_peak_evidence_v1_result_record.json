@@ -1,0 +1,74 @@
+{
+  "schema": "ouruniv-cf4-all-parent-peak-evidence-v1-result-record-v1",
+  "status": "complete_fail_Monte_Carlo_or_proposal_instability",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the first all-256-parent, 64-common-geometry evidence-only result without selecting a parent or opening any conditional field.",
+  "lineage": {
+    "git_commit": "94b3e84aa1d9822f13bc0928ec9535e3617c713d",
+    "program": "config/cf4_all_parent_peak_evidence_program.json",
+    "program_sha256": "9280ccab55d32771245df1e8b230bbac4f924d7ead8173afa404b8fb542af77d",
+    "implementation": "src/cf4_all_parent_peak_evidence.py",
+    "implementation_sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/all_parent_peak_evidence_v1/result.json",
+    "canonical_result_sha256": "f0cbea0eaf7fa4161758a23f1137304a35e1f2e7315f7fe8465167d028c9327f",
+    "complete_marker": "/gpfs/kjhan/CF4/recon/linear_cr/all_parent_peak_evidence_v1/COMPLETE",
+    "complete_marker_sha256": "47d2cf13aa8226217430577faf2361ab7a99186402926bdd80092df4c3d79ed3",
+    "environment_sha256": "2db6fd792dfd9bcf48b101147d220a886c5d3caf3e27c1a15c5e45f8809d677f",
+    "run_log_sha256": "038b69b5b835b6d92a5999794da487366b7ff5e4b6814dbbbe4e389aa7334c37"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "elapsed_seconds": 591.7405718648806,
+    "parent_count": 256,
+    "common_geometry_draws_per_parent": 64,
+    "normalized_evidence_row_count": 16384
+  },
+  "gates": {
+    "all_parent_lineage": true,
+    "finite_normalized_evidence": true,
+    "half_bank_stability": false,
+    "joint_integration_support": false,
+    "parent_support": false,
+    "weighted_CF4_compatibility": true,
+    "feasibility_pass": false
+  },
+  "results": {
+    "parent_ESS": 10.614831123984763,
+    "maximum_parent_weight": 0.19699356902552378,
+    "first_half_parent_ESS": 4.384149075999432,
+    "second_half_parent_ESS": 6.973669313316581,
+    "half_bank_parent_weight_L1": 1.931923146427137,
+    "half_bank_ESS_relative_difference": 0.3713282234895088,
+    "joint_parent_geometry_ESS": 11.725701559313608,
+    "maximum_joint_parent_geometry_weight": 0.1969217897623397,
+    "minimum_parent_geometry_ESS": 1.0,
+    "parent_geometry_ESS_Q05": 1.0,
+    "median_parent_geometry_ESS": 1.005511720385022,
+    "weighted_CF4_deviance_Q90": 19776.967184287536,
+    "reference_CF4_deviance_Q99p5": 19871.05292144636,
+    "weighted_CF4_reference_Q99_exceedance_mass": 4.868964865909301e-06,
+    "weighted_CF4_one_sided_KS_statistic": 0.08191422989121343,
+    "weighted_CF4_one_sided_KS_permutation_pvalue": 0.7949520504794952
+  },
+  "independent_Fable_audit": {
+    "result_and_failure_classification_pass": true,
+    "failure_class": "Monte_Carlo_or_proposal_instability",
+    "interpretation": "The 64-draw proposal is too sparse to estimate parent weights. Parent-support and CF4 diagnostics cannot yet be promoted to physical conclusions.",
+    "allowed_conclusions": [
+      "The current 64-draw integration proposal is inadequate for the Local-Group peak evidence integral.",
+      "No clear CF4 tension was detected in the unstable weights, but CF4 compatibility is not established.",
+      "Physical peak targets and likelihood_sigma_delta=0.25 must remain unchanged."
+    ]
+  },
+  "decision": {
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false,
+    "new_independent_integration_design_authorized": true,
+    "next": "Freeze a defensive-proposal 2048-draw adaptation-only bank followed by a separately seeded 8192-draw final bank; never combine adaptation rows with the final scientific gate."
+  }
+}

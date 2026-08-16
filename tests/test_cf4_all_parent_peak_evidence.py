@@ -201,6 +201,26 @@ def test_all_parent_program_keeps_fields_and_simulations_closed():
     assert gates["pass_requires_all"] is True
 
 
+def test_v1_result_record_seals_failure_without_opening_fields():
+    record = json.loads((
+        ROOT / "config/cf4_all_parent_peak_evidence_v1_result_record.json"
+    ).read_text())
+    assert record["status"] == "complete_fail_Monte_Carlo_or_proposal_instability"
+    lineage = record["lineage"]
+    assert sha256_file(ROOT / lineage["program"]) == lineage["program_sha256"]
+    assert sha256_file(ROOT / lineage["implementation"]) \
+        == lineage["implementation_sha256"]
+    decision = record["decision"]
+    assert decision["conditional_field_bank_authorized"] is False
+    assert decision["candidate_generation_authorized"] is False
+    assert decision["parent_or_seed_selection_authorized"] is False
+    assert decision["PM_or_halo_finder_authorized"] is False
+    assert decision["RAMSES_authorized"] is False
+    canonical = Path(lineage["canonical_result"])
+    if canonical.exists():
+        assert sha256_file(canonical) == lineage["canonical_result_sha256"]
+
+
 def test_runner_is_marker_driven_hash_pinned_and_resource_bounded():
     runner = (ROOT / "scripts/run_cf4_all_parent_peak_evidence_lageunha.sh").read_text()
     launcher = (ROOT / "scripts/launch_cf4_all_parent_peak_evidence_lageunha.sh").read_text()
