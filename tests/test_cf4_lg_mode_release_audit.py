@@ -16,6 +16,7 @@ from cf4_lg_peak_cr import free_rfft_mask
 
 REPO = Path(__file__).resolve().parents[1]
 PROGRAM = REPO / "config/p2_lg_v8_cf4_mode_release_audit.json"
+RESULT = REPO / "config/cf4_lg_v8_mode_release_audit_result_record.json"
 
 
 def test_right_sided_ks_handles_ties_and_direction():
@@ -94,3 +95,23 @@ def test_source_stops_after_L0_before_constructing_CF4_operator():
     assert source.index("if not l0_pass:") < source.index(
         "forward, _, _, npdtype = build_forward"
     )
+
+
+def test_result_record_seals_failure_without_promoting_a_seed_or_ramses():
+    program = json.loads(PROGRAM.read_text())
+    result = json.loads(RESULT.read_text())
+    assert result["lineage"]["program_sha256"] == hashlib.sha256(
+        PROGRAM.read_bytes()
+    ).hexdigest()
+    assert result["lineage"]["implementation_sha256"] == program[
+        "implementation"
+    ]["sha256"]
+    assert result["gates"]["L0"]["pass"] is True
+    assert result["gates"]["L1"]["pass"] is True
+    assert result["gates"]["L2"]["pass"] is True
+    assert result["gates"]["L3"]["pass"] is False
+    assert result["gates"]["L4"]["pass"] is False
+    assert result["gates"]["L5"]["pass"] is False
+    assert result["decision"]["V9_design_authorized"] is False
+    assert result["decision"]["seed_promotion_authorized"] is False
+    assert result["decision"]["RAMSES_authorized"] is False
