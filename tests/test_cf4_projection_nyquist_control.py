@@ -121,3 +121,25 @@ def test_control_lifecycle_scripts_do_not_poll_process_table():
         assert "pgrep" not in text
         assert "while " not in text
         assert "sleep " not in text
+
+
+def test_result_record_separates_projection_pass_from_single_parent_failure():
+    record = json.loads((
+        ROOT / "config/cf4_projection_nyquist_control_result_record.json"
+    ).read_text())
+    assert record["status"] == (
+        "complete_pass_output_Nyquist_boundary_mechanism_isolated"
+    )
+    assert sha256_file(ROOT / record["lineage"]["program"]) == (
+        record["lineage"]["program_sha256"]
+    )
+    assert sha256_file(ROOT / record["lineage"]["implementation"]) == (
+        record["lineage"]["implementation_sha256"]
+    )
+    assert record["gates"]["mechanism_isolated"] is True
+    decision = record["decision"]
+    assert decision["future_only_variance_preserving_projection_contract_authorized"] is True
+    assert decision["retroactive_V8_mutation_authorized"] is False
+    assert decision["current_single_parent_N64_freeze_architecture_reopened"] is False
+    assert decision["V9_or_seed_promotion_authorized"] is False
+    assert decision["RAMSES_authorized"] is False
