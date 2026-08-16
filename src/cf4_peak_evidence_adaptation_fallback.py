@@ -25,6 +25,11 @@ def validate_fallback_contract(
         raise RuntimeError("fallback adaptation program is not frozen")
     if program.get("adaptation_stage") != "fallback_8192":
         raise RuntimeError("fallback adaptation stage mismatch")
+    imported_core = program.get("implementation", {}).get(
+        "imported_adaptation_core"
+    )
+    if imported_core != program.get("adaptation_core"):
+        raise RuntimeError("fallback proposal lineage omitted or changed the numeric core")
     storage = program["storage"]
     actual = (output_path.resolve(), arrays_path.resolve(), proposal_path.resolve())
     canonical = (

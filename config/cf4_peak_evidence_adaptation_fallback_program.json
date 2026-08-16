@@ -22,7 +22,11 @@
   },
   "implementation": {
     "path": "src/cf4_peak_evidence_adaptation_fallback.py",
-    "sha256": "4e6398d522b2653b90fdfb4eb57cfe52846ee3481822107c95996f8be869c095"
+    "sha256": "b8a3a66d3ef4916cc157a70379ec7eaee8d336178e83870ab342681d1f2c3c4a",
+    "imported_adaptation_core": {
+      "path": "src/cf4_peak_evidence_adaptation.py",
+      "sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d"
+    }
   },
   "adaptation_core": {
     "path": "src/cf4_peak_evidence_adaptation.py",
@@ -33,7 +37,7 @@
     "sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc"
   },
   "pinned_local_files": [
-    {"path": "src/cf4_peak_evidence_adaptation_fallback.py", "sha256": "4e6398d522b2653b90fdfb4eb57cfe52846ee3481822107c95996f8be869c095"},
+    {"path": "src/cf4_peak_evidence_adaptation_fallback.py", "sha256": "b8a3a66d3ef4916cc157a70379ec7eaee8d336178e83870ab342681d1f2c3c4a"},
     {"path": "src/cf4_peak_evidence_adaptation.py", "sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d"},
     {"path": "src/cf4_adaptive_geometry_proposal.py", "sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc"},
     {"path": "src/cf4_all_parent_peak_evidence.py", "sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e"},

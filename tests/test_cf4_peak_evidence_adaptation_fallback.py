@@ -39,6 +39,8 @@ def test_fallback_program_is_hash_pinned_to_the_failed_2048_bank():
         == prerequisite["canonical_arrays_sha256"]
     assert record["lineage"]["complete_marker_sha256"] \
         == prerequisite["complete_marker_sha256"]
+    assert program["implementation"]["imported_adaptation_core"] \
+        == program["adaptation_core"]
 
 
 def test_fallback_contract_uses_canonical_paths_when_gpfs_inputs_exist():
@@ -64,6 +66,15 @@ def test_fallback_contract_uses_canonical_paths_when_gpfs_inputs_exist():
     with pytest.raises(RuntimeError, match="not frozen"):
         validate_fallback_contract(
             draft,
+            Path(storage["canonical_output"]),
+            Path(storage["canonical_arrays"]),
+            Path(storage["canonical_proposal"]),
+        )
+    missing_core = deepcopy(program)
+    del missing_core["implementation"]["imported_adaptation_core"]
+    with pytest.raises(RuntimeError, match="numeric core"):
+        validate_fallback_contract(
+            missing_core,
             Path(storage["canonical_output"]),
             Path(storage["canonical_arrays"]),
             Path(storage["canonical_proposal"]),
