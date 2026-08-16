@@ -1,13 +1,25 @@
+import hashlib
+import json
+from pathlib import Path
+
 import numpy as np
 
 from cf4_peak_evidence import prepare_exact_peak_operator
 from cf4_peak_evidence_phase_cache import (
     covariance_for_point_sets,
+    full_spectrum_from_rfft,
     impulse_spectrum,
     parent_mean_at_point_sets,
     phase_cache_metadata,
     phase_response_grid,
 )
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def sha256_file(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def gaussian_filter(n, radius=1.4):
@@ -30,6 +42,16 @@ def test_analytic_impulse_spectrum_matches_unitary_fft():
     np.testing.assert_allclose(
         impulse_spectrum(n, point),
         np.fft.fftn(impulse, norm="ortho"),
+        rtol=2e-14, atol=2e-14,
+    )
+
+
+def test_full_spectrum_expansion_matches_real_field_fft():
+    rng = np.random.default_rng(69)
+    field = rng.standard_normal((12, 12, 12))
+    expanded = full_spectrum_from_rfft(np.fft.rfftn(field, norm="ortho"))
+    np.testing.assert_allclose(
+        expanded, np.fft.fftn(field, norm="ortho"),
         rtol=2e-14, atol=2e-14,
     )
 
@@ -96,3 +118,41 @@ def test_phase_cache_is_exact_but_not_yet_full_size_authorized():
     assert metadata["memory_policy"] == "one Nfine response grid at a time"
     assert "no workers=-1" in metadata["FFT_workers"]
     assert metadata["all_parent_evidence_authorized"] is False
+
+
+def test_full_size_phase_control_is_hash_pinned_and_firewalled():
+    program = json.loads((
+        ROOT / "config/cf4_peak_evidence_phase_control_program.json"
+    ).read_text())
+    for key in ("implementation", "phase_cache", "projection_contract"):
+        item = program[key]
+        assert sha256_file(ROOT / item["path"]) == item["sha256"]
+    assert sha256_file(
+        ROOT / program["authorization"]["architecture_design"]
+    ) == program["authorization"]["architecture_design_sha256"]
+    peak = program["peak_geometry_implementation"]
+    assert sha256_file(ROOT / peak["path"]) == peak["sha256"]
+    model = program["Local_Group_model"]
+    assert sha256_file(ROOT / model["source_program"]) == (
+        model["source_program_sha256"]
+    )
+    firewall = program["information_firewall"]
+    assert firewall["all_parent_weights_computed"] is False
+    assert firewall["candidate_field_generated"] is False
+    assert firewall["PM_or_halo_finder_run"] is False
+    assert firewall["parent_or_seed_selection_allowed"] is False
+    assert firewall["RAMSES_authorized"] is False
+
+
+def test_phase_control_lifecycle_is_single_shot_without_process_polling():
+    paths = [
+        ROOT / "scripts/run_cf4_peak_evidence_phase_control_lageunha.sh",
+        ROOT / "scripts/launch_cf4_peak_evidence_phase_control_lageunha.sh",
+        ROOT / "scripts/status_cf4_peak_evidence_phase_control.sh",
+    ]
+    for path in paths:
+        text = path.read_text()
+        assert "pgrep" not in text
+        assert "while " not in text
+        assert "sleep " not in text
+        assert "workers=-1" not in text

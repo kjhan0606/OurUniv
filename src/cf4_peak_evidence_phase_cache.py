@@ -22,6 +22,27 @@ from cf4_projection_contract import (
 )
 
 
+def full_spectrum_from_rfft(rfft: np.ndarray) -> np.ndarray:
+    """Expand a cubic real-input rFFT using exact Hermitian indexing."""
+    rfft = np.asarray(rfft)
+    if rfft.ndim != 3 or rfft.shape[0] != rfft.shape[1]:
+        raise ValueError("rfft must have shape (n,n,n//2+1)")
+    n = rfft.shape[0]
+    if rfft.shape[2] != n // 2 + 1:
+        raise ValueError("rfft final-axis length mismatch")
+    dtype = np.result_type(rfft.dtype, np.complex64)
+    full = np.empty((n, n, n), dtype=dtype)
+    half = n // 2
+    full[..., :half + 1] = rfft
+    if half > 1:
+        negative_xy = np.mod(-np.arange(n), n)
+        positive_z = np.arange(1, half)
+        full[..., n - positive_z] = np.conjugate(
+            rfft[np.ix_(negative_xy, negative_xy, positive_z)]
+        )
+    return full
+
+
 def _validate_ratio(fine_n: int, coarse_n: int) -> int:
     if fine_n <= 0 or coarse_n <= 0 or fine_n % 2 or coarse_n % 2:
         raise ValueError("fine_n and coarse_n must be positive and even")
