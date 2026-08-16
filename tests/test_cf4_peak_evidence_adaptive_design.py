@@ -89,3 +89,36 @@ def test_all_downstream_field_and_simulation_authorizations_remain_closed():
     assert decision["parent_or_seed_selection_authorized"] is False
     assert decision["PM_or_halo_finder_authorized"] is False
     assert decision["RAMSES_authorized"] is False
+
+
+def test_2048_adaptation_result_record_authorizes_only_the_frozen_fallback():
+    record = json.loads((
+        ROOT / "config/cf4_peak_evidence_adaptation_v1_result_record.json"
+    ).read_text())
+    assert record["status"] == "complete_fail_insufficient_adaptation_support"
+    assert record["gates"]["all_parent_lineage"] is True
+    assert record["gates"]["all_log_Z_and_importance_finite"] is True
+    assert record["gates"]["real_evidence_scalar_vectorized_control"] is True
+    assert record["gates"]["geometry_integration_support"] is False
+    decision = record["decision"]
+    assert decision["fallback_8192_adaptation_bank_authorized"] is True
+    assert decision["combine_or_reuse_2048_rows"] is False
+    assert decision["additional_fallback_after_8192_authorized"] is False
+    assert decision["final_proposal_frozen"] is False
+    assert decision["independent_8192_final_bank_authorized"] is False
+    for key in (
+        "conditional_field_bank_authorized",
+        "candidate_generation_authorized",
+        "parent_or_seed_selection_authorized",
+        "PM_or_halo_finder_authorized",
+        "RAMSES_authorized",
+    ):
+        assert decision[key] is False
+    for path_key, hash_key in (
+        ("canonical_result", "canonical_result_sha256"),
+        ("canonical_arrays", "canonical_arrays_sha256"),
+        ("complete_marker", "complete_marker_sha256"),
+    ):
+        path = Path(record["lineage"][path_key])
+        if path.exists():
+            assert sha256_file(path) == record["lineage"][hash_key]
