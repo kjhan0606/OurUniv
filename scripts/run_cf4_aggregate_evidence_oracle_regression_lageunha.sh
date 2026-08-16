@@ -308,7 +308,7 @@ with np.load(arrays_path, allow_pickle=False) as item:
     )
 if manifest.get("arrays_shape_dtype") != actual_contract:
     raise SystemExit("oracle-regression manifest array metadata mismatch")
-if inside_selection_sha != "d91f20f27fb2f43df78179b2e9f89bd9c29f802a41a107ca69ab5d375955b13" \
+if inside_selection_sha != "d91f20f27fb2f43df781f79b2e9f89bd9c29f802a41a107ca69ab5d375955b13" \
         or outside_selection_sha != "3b5ab76f91b008a8671b33a46f33f36f4788251bebe53e35ce784cabc031aefc" \
         or result["selection"]["inside_selection_sha256"] != inside_selection_sha \
         or result["selection"]["outside_selection_sha256"] != outside_selection_sha:
