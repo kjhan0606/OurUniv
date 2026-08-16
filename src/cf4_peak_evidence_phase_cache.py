@@ -22,6 +22,9 @@ from cf4_projection_contract import (
 )
 
 
+PHASE_RESPONSE_IMAGINARY_RELATIVE_RMS_MAX = 1.0e-10
+
+
 def full_spectrum_from_rfft(rfft: np.ndarray) -> np.ndarray:
     """Expand a cubic real-input rFFT using exact Hermitian indexing."""
     rfft = np.asarray(rfft)
@@ -72,11 +75,11 @@ def impulse_spectrum(n: int, point: np.ndarray) -> np.ndarray:
     )
 
 
-def phase_response_grid(
+def _phase_response_grid_with_diagnostics(
     filter_full: np.ndarray,
     coarse_n: int,
     phase: np.ndarray,
-) -> np.ndarray:
+) -> tuple[np.ndarray, dict[str, float]]:
     """Return A Q A* response to an impulse at one refinement phase."""
     filter_full = np.asarray(filter_full)
     if filter_full.ndim != 3 or not (
@@ -97,9 +100,30 @@ def phase_response_grid(
     response = np.fft.ifftn(response_spectrum, norm="ortho")
     real_rms = float(np.sqrt(np.mean(response.real ** 2)))
     imaginary_rms = float(np.sqrt(np.mean(response.imag ** 2)))
-    if imaginary_rms / max(real_rms, np.finfo(float).tiny) > 1e-12:
+    imaginary_relative_rms = imaginary_rms / max(
+        real_rms, np.finfo(float).tiny
+    )
+    maximum_absolute_imaginary = float(np.max(np.abs(response.imag)))
+    if imaginary_relative_rms > PHASE_RESPONSE_IMAGINARY_RELATIVE_RMS_MAX:
         raise RuntimeError("phase response broke Hermitian symmetry")
-    return response.real
+    return response.real, {
+        "real_RMS": real_rms,
+        "imaginary_RMS": imaginary_rms,
+        "imaginary_relative_RMS": imaginary_relative_rms,
+        "maximum_absolute_imaginary": maximum_absolute_imaginary,
+    }
+
+
+def phase_response_grid(
+    filter_full: np.ndarray,
+    coarse_n: int,
+    phase: np.ndarray,
+) -> np.ndarray:
+    """Return an exact response grid after enforcing the recorded tolerance."""
+    response, _ = _phase_response_grid_with_diagnostics(
+        filter_full, coarse_n, phase
+    )
+    return response
 
 
 def covariance_for_point_sets(
@@ -124,8 +148,20 @@ def covariance_for_point_sets(
                 phase = tuple(int(value) for value in np.mod(points[column], ratio))
                 tasks[phase].append((set_index, row, column))
 
+    maximum_imaginary_relative_rms = 0.0
+    maximum_absolute_imaginary = 0.0
     for phase in sorted(tasks):
-        grid = phase_response_grid(filter_full, coarse_n, np.asarray(phase))
+        grid, diagnostics = _phase_response_grid_with_diagnostics(
+            filter_full, coarse_n, np.asarray(phase)
+        )
+        maximum_imaginary_relative_rms = max(
+            maximum_imaginary_relative_rms,
+            diagnostics["imaginary_relative_RMS"],
+        )
+        maximum_absolute_imaginary = max(
+            maximum_absolute_imaginary,
+            diagnostics["maximum_absolute_imaginary"],
+        )
         for set_index, row, column in tasks[phase]:
             points = normalized_sets[set_index]
             source_translation = points[column] - np.asarray(phase)
@@ -144,6 +180,13 @@ def covariance_for_point_sets(
         "maximum_possible_phase_count": ratio ** 3,
         "response_grids_held_simultaneously": 1,
         "maximum_pre_symmetrization_asymmetry": maximum_asymmetry,
+        "maximum_phase_response_imaginary_relative_RMS": (
+            maximum_imaginary_relative_rms
+        ),
+        "maximum_phase_response_absolute_imaginary": maximum_absolute_imaginary,
+        "phase_response_imaginary_relative_RMS_limit": (
+            PHASE_RESPONSE_IMAGINARY_RELATIVE_RMS_MAX
+        ),
     }
 
 
@@ -183,5 +226,8 @@ def phase_cache_metadata() -> dict[str, Any]:
         "memory_policy": "one Nfine response grid at a time",
         "parent_mean": "one exact fine inverse FFT per parent for all point sets",
         "FFT_workers": "NumPy default; no workers=-1",
+        "phase_response_imaginary_relative_RMS_limit": (
+            PHASE_RESPONSE_IMAGINARY_RELATIVE_RMS_MAX
+        ),
         "all_parent_evidence_authorized": False,
     }

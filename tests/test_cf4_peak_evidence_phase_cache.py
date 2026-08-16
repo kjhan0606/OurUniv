@@ -122,7 +122,7 @@ def test_phase_cache_is_exact_but_not_yet_full_size_authorized():
 
 def test_full_size_phase_control_is_hash_pinned_and_firewalled():
     program = json.loads((
-        ROOT / "config/cf4_peak_evidence_phase_control_program.json"
+        ROOT / "config/cf4_peak_evidence_phase_control_v2_program.json"
     ).read_text())
     for key in ("implementation", "phase_cache", "projection_contract"):
         item = program[key]
@@ -142,13 +142,20 @@ def test_full_size_phase_control_is_hash_pinned_and_firewalled():
     assert firewall["PM_or_halo_finder_run"] is False
     assert firewall["parent_or_seed_selection_allowed"] is False
     assert firewall["RAMSES_authorized"] is False
+    extends = program["extends"]
+    assert sha256_file(ROOT / extends["v1_program"]) == extends["v1_program_sha256"]
+    assert sha256_file(ROOT / extends["v1_failure_record"]) == (
+        extends["v1_failure_record_sha256"]
+    )
+    assert program["gates"]["phase_response_imaginary_relative_RMS_max"] == 1e-10
+    assert program["gates"]["phase_response_absolute_imaginary_max"] == 1e-15
 
 
 def test_phase_control_lifecycle_is_single_shot_without_process_polling():
     paths = [
-        ROOT / "scripts/run_cf4_peak_evidence_phase_control_lageunha.sh",
-        ROOT / "scripts/launch_cf4_peak_evidence_phase_control_lageunha.sh",
-        ROOT / "scripts/status_cf4_peak_evidence_phase_control.sh",
+        ROOT / "scripts/run_cf4_peak_evidence_phase_control_v2_lageunha.sh",
+        ROOT / "scripts/launch_cf4_peak_evidence_phase_control_v2_lageunha.sh",
+        ROOT / "scripts/status_cf4_peak_evidence_phase_control_v2.sh",
     ]
     for path in paths:
         text = path.read_text()
@@ -156,3 +163,16 @@ def test_phase_control_lifecycle_is_single_shot_without_process_polling():
         assert "while " not in text
         assert "sleep " not in text
         assert "workers=-1" not in text
+
+
+def test_v1_failure_is_preserved_as_tolerance_not_science_failure():
+    record = json.loads((
+        ROOT / "config/cf4_peak_evidence_phase_control_failure_record.json"
+    ).read_text())
+    assert record["status"] == "failed_numerical_tolerance_before_scientific_gate"
+    assert record["failure"]["scientific_gate_opened"] is False
+    assert record["failure"]["parent_evidence_computed"] is False
+    assert record["decision"]["reuse_failed_output_as_pass"] is False
+    assert record["decision"]["delete_or_overwrite_failed_state"] is False
+    assert record["decision"]["v2_control_authorized"] is True
+    assert record["decision"]["all_parent_evidence_authorized"] is False

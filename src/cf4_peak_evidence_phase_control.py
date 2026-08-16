@@ -218,6 +218,10 @@ def run(program: dict[str, Any], filter_path: Path) -> dict[str, Any]:
     phase_pass = bool(
         cache["phase_count_used"] <= cache["maximum_possible_phase_count"]
         and cache["response_grids_held_simultaneously"] == 1
+        and cache["maximum_phase_response_imaginary_relative_RMS"]
+        <= gate["phase_response_imaginary_relative_RMS_max"]
+        and cache["maximum_phase_response_absolute_imaginary"]
+        <= gate["phase_response_absolute_imaginary_max"]
     )
     passed = bool(finite and covariance_pass and translation_pass and phase_pass)
     return {
