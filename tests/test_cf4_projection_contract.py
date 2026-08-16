@@ -124,3 +124,23 @@ def test_contract_control_scripts_are_single_shot_without_process_polling():
         assert "pgrep" not in text
         assert "while " not in text
         assert "sleep " not in text
+
+
+def test_contract_result_record_authorizes_design_but_not_generation():
+    record = json.loads((
+        ROOT / "config/cf4_projection_contract_control_result_record.json"
+    ).read_text())
+    assert record["status"] == "complete_pass_future_projection_contract"
+    assert sha256_file(ROOT / record["lineage"]["program"]) == (
+        record["lineage"]["program_sha256"]
+    )
+    assert sha256_file(ROOT / record["lineage"]["contract_implementation"]) == (
+        record["lineage"]["contract_implementation_sha256"]
+    )
+    assert record["gates"]["contract_pass"] is True
+    decision = record["decision"]
+    assert decision["paired_projection_contract_authorized"] is True
+    assert decision["independent_parent_architecture_design_authorized"] is True
+    assert decision["candidate_generation_authorized"] is False
+    assert decision["seed_selection_authorized"] is False
+    assert decision["PM_or_RAMSES_authorized"] is False
