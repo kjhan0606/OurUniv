@@ -75,11 +75,20 @@ def atlas_parent_case(case: dict[str, Any]) -> dict[str, Any]:
         if int(item["sample_seed"]) != int(case["seed"]):
             raise RuntimeError("parent internal seed mismatch")
         coarse = item["s_out"].astype(np.float32)
+    expected_coarse_n = _WORKER_FILTER.shape[0] // 3
+    if coarse.shape != (expected_coarse_n,) * 3 or not np.all(np.isfinite(coarse)):
+        raise RuntimeError("parent coarse field shape or finite gate failed")
     response = parent_response_grid(coarse, _WORKER_FILTER)
+    if not np.all(np.isfinite(response)):
+        raise RuntimeError("parent exact response contains nonfinite values")
     atlas = extract_response_atlas(response, _WORKER_BOUNDS)
     del response
-    if atlas.dtype != np.float64 or atlas.shape != _WORKER_BOUNDS.shape:
-        raise RuntimeError("response atlas shape or dtype mismatch")
+    if (
+        atlas.dtype != np.float64
+        or atlas.shape != _WORKER_BOUNDS.shape
+        or not np.all(np.isfinite(atlas))
+    ):
+        raise RuntimeError("response atlas shape, dtype, or finite gate failed")
     output = _WORKER_OUTPUT_DIRECTORY / f"parent_response_s{case['seed']}.npy"
     atomic_npy(output, atlas)
     return {
