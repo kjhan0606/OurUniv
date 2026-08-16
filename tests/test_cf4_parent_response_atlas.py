@@ -140,3 +140,56 @@ def test_atlas_preflight_rejects_design_constant_and_source_set_changes():
     program["pinned_local_files"] = program["pinned_local_files"][:-1]
     with np.testing.assert_raises_regex(RuntimeError, "source set"):
         validate_program(program, program_path)
+
+
+def test_canonical_atlas_program_passes_full_preflight_and_closes_downstream():
+    program_path = ROOT / "config/cf4_parent_response_atlas_program.json"
+    program = json.loads(program_path.read_text())
+    validate_program(program, program_path)
+    assert program["status"] == "frozen_before_response_atlas_construction"
+    assert program["source_commit"] == "383b2f17b72d5baf510e5329db7c8a4b60d2681f"
+    assert program["atlas"]["shape"] == [101, 101, 101]
+    assert program["execution"] == {
+        "host": "LagEunha",
+        "worker_processes": 8,
+        "threads_per_worker": 1,
+        "process_table_polling": False,
+    }
+    decision = program["decision"]
+    assert decision["response_atlas_construction_authorized"] is True
+    assert decision["oracle_regression_authorized"] is False
+    assert decision["production_SMC_authorized"] is False
+    assert decision["conditional_field_bank_authorized"] is False
+    assert decision["PM_or_RAMSES_authorized"] is False
+
+
+def test_atlas_scripts_are_marker_only_hash_pinned_and_bounded():
+    runner = (
+        ROOT / "scripts/run_cf4_parent_response_atlas_lageunha.sh"
+    ).read_text()
+    launcher = (
+        ROOT / "scripts/launch_cf4_parent_response_atlas_lageunha.sh"
+    ).read_text()
+    status = (ROOT / "scripts/status_cf4_parent_response_atlas.sh").read_text()
+    combined = "\n".join((runner, launcher, status)).lower()
+    assert "expected_program_sha=" in runner
+    assert "expected_oracle_sha=" in runner
+    assert "expected_implementation_sha=" in runner
+    assert "merge-base --is-ancestor" in runner
+    assert "git -c" not in runner
+    assert "git -C \"$repo\" diff --quiet HEAD" in runner
+    assert "flock -n" in runner
+    assert "worker_processes=8" in runner
+    assert "threads_per_worker=1" in runner
+    assert "atlas_construction_pass=true" in runner
+    assert "production_SMC_authorized=false" in runner
+    assert "conditional_field_bank_authorized=false" in runner
+    assert 'np.load(path, mmap_mode="r", allow_pickle=False)' in runner
+    assert "parent lineage differs from calibration" in runner
+    assert "invalid_state_no_marker" in status
+    assert "invalid_state_conflicting_markers" in status
+    assert "RUNNING" in runner and "COMPLETE" in runner and "FAILED" in runner
+    assert "pgrep" not in combined
+    assert "postgres" not in combined
+    assert "while " not in combined
+    assert "sleep " not in combined
