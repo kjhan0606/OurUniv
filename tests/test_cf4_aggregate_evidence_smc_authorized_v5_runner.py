@@ -47,6 +47,19 @@ def test_v5_runner_has_no_unchecked_complete_or_completion_masquerade_path():
     assert "status=failed" in completion
 
 
+def test_v5_runner_host_gate_ascii_normalizes_shortname_but_rejects_other_host():
+    text = RUNNER.read_text()
+    assert 'host_short=${host%%.*}' in text
+    assert "LC_ALL=C tr '[:upper:]' '[:lower:]'" in text
+    assert '[[ "$host_short_ascii_lower" != "$expected_host" ]]' in text
+    normalize = (
+        "short=${1%%.*}; normalized=$(LC_ALL=C tr '[:upper:]' '[:lower:]' <<<\"$short\"); "
+        "[[ \"$normalized\" == lageunha ]]"
+    )
+    assert subprocess.run(["bash", "-c", normalize, "--", "LagEunha.cluster"], check=False).returncode == 0
+    assert subprocess.run(["bash", "-c", normalize, "--", "different-host"], check=False).returncode != 0
+
+
 def test_v5_launcher_refuses_before_any_remote_or_namespace_action():
     subprocess.run(["bash", "-n", str(LAUNCHER)], check=True)
     text = LAUNCHER.read_text()

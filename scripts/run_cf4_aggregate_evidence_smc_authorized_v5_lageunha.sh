@@ -34,7 +34,10 @@ finish() {
 }
 
 host=$(hostname); readonly host
-if [[ "${host%%.*}" != "$expected_host" ]]; then
+host_short=${host%%.*}; readonly host_short
+host_short_ascii_lower=$(LC_ALL=C tr '[:upper:]' '[:lower:]' <<<"$host_short")
+readonly host_short_ascii_lower
+if [[ "$host_short_ascii_lower" != "$expected_host" ]]; then
     echo "host gate failed" >&2; exit 69
 fi
 if [[ -e "$data" || -e "$state" || -e "$receipt" ]]; then
