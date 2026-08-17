@@ -1,0 +1,142 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-program-v3",
+  "status": "frozen_versioned_one_shot_program_execution_unauthorized",
+  "frozen_date": "2026-08-16",
+  "purpose": "Hard-pin the audited aggregate-evidence SMC runner and its complete frozen input lineage behind a future separately sealed one-shot grant while keeping execution and all resulting actions unauthorized in this version.",
+  "authorization_design_base_commit": "d3213fa8fa2effe82dc6874911d21132dc088b4b",
+  "runner_implementation_commit": "f4e282cb1fe1e80a1184ead23d1fe5892a0c7c5e",
+  "authorization_design": {
+    "path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v3.json",
+    "sha256": "62be0352ffb9c180ba300894169a1503d46109011b100f3e860dc2621f858112"
+  },
+  "runner_implementation_result_record": {
+    "path": "config/cf4_aggregate_evidence_smc_runner_implementation_result_record.json",
+    "sha256": "d96708a9f6b4998237aba4b4078918e2b483b7bb7cbf370bb1866da692d9f92a"
+  },
+  "base_production_program": {
+    "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+    "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5"
+  },
+  "audited_runner_files": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+      "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+      "git_blob_oid": "36df434fb9e5b94dffa50af520361df67e1462c9",
+      "git_mode": "100644"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "sha256": "330000c2c74092b529541518e743fde751a1b91394412c2376448c5c250e3473",
+      "git_blob_oid": "688d1dd10ae10f9b2e071961057bdabadcd7a38e",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "sha256": "e0e3c359ca92ed556a2cfe240121263407e664bbc709cc93670a941eee889431",
+      "git_blob_oid": "7bc72c27cd5001dbca483534f535f0120010aa22",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/status_cf4_aggregate_evidence_smc_production.sh",
+      "sha256": "5a122ee557783d838ceea2beba70c66d56bd7c97fa0a388c428922da34baab23",
+      "git_blob_oid": "dc2af65ff9b6329dfd8292264ef29d9dc9d4a16a",
+      "git_mode": "100755"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_execution.py",
+      "sha256": "64f68b8bd0ae69c02509fdd940f80a393439c7c94362c5e279b8edc7b1a08533",
+      "git_blob_oid": "683f6d8da86b72db86ecb1b95ac23e51100867f9",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_execution.py",
+      "sha256": "8d15adb282e0c8e16138ed9559a34e619cb7de2fc3ad57ec250b7c00fe339fbc",
+      "git_blob_oid": "00cd38427804032c1a8eaa650f66a28429be517b",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_production_runner.py",
+      "sha256": "b68fe387c82e64dd6de7ade594949a9ae2fb7e1a8dbb377fe630e90d89e14e38",
+      "git_blob_oid": "1564c205142ba65e438da5dfcc8ad9990fdcdcec",
+      "git_mode": "100644"
+    }
+  ],
+  "frozen_input_lineage": {
+    "pinned_local_files": [
+      {"path": "config/cf4_aggregate_evidence_smc_capability_implementation_result_record.json", "sha256": "0eba7e9ae0bf09613b53cf636dcda8cef615be58dea3c645abca1b8d8786fc30"},
+      {"path": "config/cf4_aggregate_evidence_smc_production_capability_design.json", "sha256": "2a253e049da3c02ef3cff4fc68a72a1f70efde616670538274a01d733460c888"},
+      {"path": "src/cf4_aggregate_evidence_parallel_oracle.py", "sha256": "1d4d587a2e54c676f71c5c68fcd0744db21ec3006501f4185b3854f7c3b19e3c"},
+      {"path": "src/cf4_aggregate_evidence_smc_capability.py", "sha256": "aeb385bcb55767c94867ae6037ba56cbc0150b8512c3d778797870e300929b1c"},
+      {"path": "tests/test_cf4_aggregate_evidence_parallel_oracle.py", "sha256": "4ed0b8a83ef64226871e5c513c7f02d3fb44eb2fcb94ae2434fafaede7e1da05"},
+      {"path": "tests/test_cf4_aggregate_evidence_smc_capability.py", "sha256": "359c743375e6c0452d0dff27b473e20df86c0e4f4ec8cc3bfdf36db740a23416"},
+      {"path": "config/cf4_aggregate_evidence_annealed_smc_design.json", "sha256": "47397a00b497dc09e0e517cebe61a285cebdf9aa4b0a0ef1688af588c2c58609"},
+      {"path": "src/cf4_aggregate_evidence_smc.py", "sha256": "392c75d823fb055e7b592299aa90540b1176d4cfd3c11442b446e42fd11f8337"},
+      {"path": "src/cf4_aggregate_evidence_oracle.py", "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f"},
+      {"path": "src/cf4_aggregate_evidence_smc_validation.py", "sha256": "9e03019807ca6b532da28688dc8e2b382ff9b6b256824825506787bd74cd73f2"},
+      {"path": "src/cf4_aggregate_evidence_smc_production.py", "sha256": "b8cd39fac8d33c400a084c6929726a66795c757066fbe60fcc2a463014b90527"},
+      {"path": "config/cf4_parent_response_atlas_v1_result_record.json", "sha256": "a0677aaa9af7c1c820766d4db2b83533c5cf176bc3680548a34adfb0ce414ab7"},
+      {"path": "config/cf4_aggregate_evidence_oracle_regression_postmortem_result_record.json", "sha256": "de0b6b047f251679b2542868ed2546488bb2bbe40d34393899ff3094df3c2310"},
+      {"path": "config/cf4_peak_evidence_adaptation_v1_result_record.json", "sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238"},
+      {"path": "config/cf4_peak_evidence_adaptation_fallback_result_record.json", "sha256": "d890b7ba4baa2887e6518bb6cd02cbaa3c23dbeeb7c31aeea5dbeccbe35618c0"},
+      {"path": "config/p2_lg_z0_forward_importance_v8.json", "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"}
+    ],
+    "external_inputs": {
+      "response_atlas_manifest": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json", "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"},
+      "oracle_regression_arrays": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1/arrays.npz", "sha256": "40c52c48ae7899219476fe6c9f0308b7f68e70ac2493c9fdea26cd37923572e2"},
+      "density_filter": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy", "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"},
+      "physical_model": {"path": "config/p2_lg_z0_forward_importance_v8.json", "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"},
+      "reference_calibration": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json", "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988"}
+    },
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256
+  },
+  "storage": {
+    "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v3",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v3_run",
+    "exclusive_reservation": true,
+    "restart_or_checkpoint_import": false
+  },
+  "future_grant_interface": {
+    "canonical_path": "config/cf4_aggregate_evidence_smc_execution_grant_v3.json",
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v3",
+    "required_status": "sealed_one_shot_execution_authorization",
+    "current_grant_present": false,
+    "runtime_grant_path_override_allowed": false,
+    "single_separately_audited_commit_required": true,
+    "worktree_HEAD_local_tracking_remote_identity_required": true,
+    "authorization_commit_field_forbidden": true,
+    "postcommit_audit_verdict_field_forbidden": true,
+    "grant_parent_commit_source": "The commit containing the immutable authorization-v3 implementation result record.",
+    "authorization_v3_implementation_result_record_path": "config/cf4_aggregate_evidence_smc_execution_authorization_implementation_result_record_v3.json",
+    "prospective_values_resolved_from_grant_parent_not_self_pinned": true,
+    "exact_commit_chain": "grant_parent^ == authorization_v3_implementation_commit and grant_HEAD^ == grant_parent_commit",
+    "result_record_and_grant_commits_each_exact_one_file_addition": true,
+    "seven_files_verified_at_exact_implementation_commit": true
+  },
+  "external_pre_execution_release": {
+    "canonical_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v3_release.json",
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-release-v3",
+    "required_status": "complete_pass_external_postcommit_lineage_audit",
+    "required_verdict": "LINEAGE GO",
+    "current_release_present": false,
+    "committed_in_grant_commit": false,
+    "runtime_path_override_allowed": false,
+    "runner_SHA256_snapshot_and_postflight_revalidation_required": true
+  },
+  "authorization": {
+    "versioned_one_shot_authorization_design_and_implementation_authorized": true,
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}
