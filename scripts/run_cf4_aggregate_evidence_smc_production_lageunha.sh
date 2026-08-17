@@ -259,6 +259,9 @@ print(value["status"], value["outcome_kind"], failure, value["valid_scientific_c
 PY
 )
 read -r science_status outcome_kind failure_class validated_complete <<<"$postcheck"
+# Python's string form of bool is "True"/"False"; normalize the wire value
+# before the shell completion gate and EXIT trap consume it.
+validated_complete=${validated_complete,,}
 if [[ "$validated_complete" != true \
       || "$science_status" != complete_pass_production_smc \
          && "$science_status" != complete_scientific_fail_production_smc ]]; then

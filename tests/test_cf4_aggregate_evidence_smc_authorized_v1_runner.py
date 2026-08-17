@@ -95,6 +95,7 @@ def test_authorized_runner_marker_lifecycle_remains_exclusive_and_no_follow_on()
     assert 'readonly complete="$state/COMPLETE"' in text
     assert 'readonly failed="$state/FAILED"' in text
     assert 'if (( rc == 0 )) && [[ "${validated_complete:-false}" == true' in text
+    assert 'validated_complete=${validated_complete,,}' in text
     assert 'mv "$marker_tmp" "$complete"' in text
     assert 'mv "$marker_tmp" "$failed"' in text
     assert 'rm -f "$running"' in text

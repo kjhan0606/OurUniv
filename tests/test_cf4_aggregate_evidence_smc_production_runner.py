@@ -64,6 +64,7 @@ def test_runner_marker_lifecycle_is_exclusive_and_scientific_complete_only():
     assert 'readonly complete="$state/COMPLETE"' in text
     assert 'readonly failed="$state/FAILED"' in text
     assert 'if (( rc == 0 )) && [[ "${validated_complete:-false}" == true' in text
+    assert 'validated_complete=${validated_complete,,}' in text
     assert "complete_pass_production_smc" in text
     assert "complete_scientific_fail_production_smc" in text
     assert "invalid_execution_or_postcheck_failure" in text
