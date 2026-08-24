@@ -13,11 +13,10 @@ from typing import Any, Iterable
 import numpy as np
 
 from cf4_aggregate_evidence_parallel_oracle import ParallelExactAtlasEvaluator
-from cf4_aggregate_evidence_smc import initialize_particles, mh_rejuvenation_sweep
+from cf4_aggregate_evidence_smc import initialize_particles
 from cf4_lowk_cross_mode_bridge import (
     PopulationState,
-    run_beta_one_control,
-    run_parallel_tempering_bridge,
+    run_grouped_parallel_tempering_bridge,
 )
 from cf4_lowk_terminal_rejuvenation_pilot import (
     ATLAS_MANIFEST,
@@ -98,29 +97,6 @@ def _systematic_thin_indices(source_count: int, target_count: int, seed: int) ->
     return np.minimum(source_count - 1, np.floor(positions * source_count).astype(np.int64))
 
 
-def _burnin_state(
-    state: PopulationState,
-    *,
-    beta: float,
-    oracle: Any,
-    master_seed: int,
-    sweeps: int,
-    namespace: int,
-) -> PopulationState:
-    q, a, k, z = (
-        np.asarray(state.midpoint_mpc_h).copy(),
-        np.asarray(state.axis).copy(),
-        np.asarray(state.keys).copy(),
-        np.asarray(state.log_z_bar).copy(),
-    )
-    for sweep in range(sweeps):
-        q, a, k, z, _ = mh_rejuvenation_sweep(
-            q, a, k, z, float(beta), oracle, int(master_seed),
-            int(namespace), sweep,
-        )
-    return PopulationState(q, a, k, z)
-
-
 def _key_mass(keys: np.ndarray) -> dict[tuple[int, ...], float]:
     unique, count = np.unique(keys, axis=0, return_counts=True)
     return {tuple(int(x) for x in key): float(n / len(keys)) for key, n in zip(unique, count)}
@@ -165,12 +141,10 @@ def run_pilot(
     saved_keys = set(original_keys)
     oracle = CachedParentOracle(evaluator, evidence)
 
-    bridge_states_by_checkpoint = [[] for _ in bridge_cycles]
-    bridge_parent_by_checkpoint = [[] for _ in bridge_cycles]
-    control_states_by_checkpoint = [[] for _ in control_sweeps]
-    control_parent_by_checkpoint = [[] for _ in control_sweeps]
-    group_summaries = []
-
+    ladders = []
+    bridge_seeds = []
+    lower_q = []
+    lower_axis = []
     for group in range(4):
         with np.load(source_root / f"replicate_{group}_sweep_32.npz", allow_pickle=False) as item:
             source_count = len(item["keys"])
@@ -184,94 +158,109 @@ def run_pilot(
             )
 
         bridge_seed = source_seed + 10_000_000
-        ladder = []
-        for temperature, beta in enumerate(np.asarray(betas)):
+        bridge_seeds.append(bridge_seed)
+        ladder = [None] * len(betas)
+        ladder[-1] = top
+        for temperature in range(len(betas)):
             if temperature == len(betas) - 1:
-                ladder.append(top)
                 continue
             initial_seed = bridge_seed + 100 + temperature
             q, a = initialize_particles(initial_seed, particle_count)
-            k, z = oracle.evaluate(q, a)
-            ladder.append(_burnin_state(
-                PopulationState(q, a, k, z),
-                beta=float(beta),
-                oracle=oracle,
-                master_seed=bridge_seed,
-                sweeps=lower_burnin_sweeps,
-                namespace=4_000_000 + group * 10_000 + temperature * 100,
-            ))
+            ladder[temperature] = (len(lower_q), len(lower_q) + particle_count)
+            lower_q.extend(q)
+            lower_axis.extend(a)
+        ladders.append(ladder)
 
-        bridge = run_parallel_tempering_bridge(
-            states=ladder,
-            betas=np.asarray(betas),
-            oracle=oracle,
-            master_seed=bridge_seed,
-            checkpoints=bridge_cycles,
-            sweeps_per_cycle=2,
-            namespace=5_000_000 + group * 10_000,
-        )
-        control = run_beta_one_control(
-            state=top,
-            oracle=oracle,
-            master_seed=bridge_seed,
-            checkpoints=control_sweeps,
-            namespace=6_000_000 + group * 10_000,
-        )
-
-        for index, row in enumerate(bridge):
-            probability = oracle.parent_probabilities(
-                row.top.keys, np.full(particle_count, 1.0 / particle_count)
+    lower_keys, lower_log_z = oracle.evaluate(
+        np.asarray(lower_q, dtype=np.float64),
+        np.asarray(lower_axis, dtype=np.float64),
+    )
+    for ladder in ladders:
+        for temperature in range(len(betas) - 1):
+            start, stop = ladder[temperature]
+            ladder[temperature] = PopulationState(
+                np.asarray(lower_q[start:stop], dtype=np.float64),
+                np.asarray(lower_axis[start:stop], dtype=np.float64),
+                lower_keys[start:stop],
+                lower_log_z[start:stop],
             )
-            bridge_states_by_checkpoint[index].append(row.top)
+
+    bridge = run_grouped_parallel_tempering_bridge(
+        ladders=ladders,
+        betas=np.asarray(betas),
+        oracle=oracle,
+        master_seeds=bridge_seeds,
+        checkpoints=bridge_cycles,
+        sweeps_per_cycle=2,
+        lower_burnin_sweeps=lower_burnin_sweeps,
+        namespace=4_000_000,
+    )
+
+    bridge_states_by_checkpoint = [[] for _ in bridge_cycles]
+    bridge_parent_by_checkpoint = [[] for _ in bridge_cycles]
+    control_states_by_checkpoint = [[] for _ in control_sweeps]
+    control_parent_by_checkpoint = [[] for _ in control_sweeps]
+    group_summaries = []
+    for group in range(4):
+        for index, row in enumerate(bridge):
+            bridge_state = row.bridge_top[group]
+            probability = oracle.parent_probabilities(
+                bridge_state.keys, np.full(particle_count, 1.0 / particle_count)
+            )
+            bridge_states_by_checkpoint[index].append(bridge_state)
             bridge_parent_by_checkpoint[index].append(probability)
             _atomic_npz(output_root / f"group_{group}_bridge_cycle_{row.cycle}.npz", {
                 "cycle": np.asarray(row.cycle, dtype=np.int64),
-                "midpoint_mpc_h": row.top.midpoint_mpc_h,
-                "axis": row.top.axis,
-                "keys": row.top.keys,
-                "log_Z_bar": row.top.log_z_bar,
+                "midpoint_mpc_h": bridge_state.midpoint_mpc_h,
+                "axis": bridge_state.axis,
+                "keys": bridge_state.keys,
+                "log_Z_bar": bridge_state.log_z_bar,
                 "P_parent": probability,
-                "top_origin_id": row.top_origin_id,
-                "swap_proposal_count": row.swap_proposal_count,
-                "swap_acceptance_count": row.swap_acceptance_count,
+                "top_origin_id": row.top_origin_id[group],
+                "swap_proposal_count": row.swap_proposal_count[group],
+                "swap_acceptance_count": row.swap_acceptance_count[group],
                 "original_top_roundtrip_count": np.asarray(
-                    row.original_top_roundtrip_count, dtype=np.int64
+                    row.original_top_roundtrip_count[group], dtype=np.int64
                 ),
             })
-        for index, row in enumerate(control):
+            control_state = row.control[group]
             probability = oracle.parent_probabilities(
-                row.keys, np.full(particle_count, 1.0 / particle_count)
+                control_state.keys, np.full(particle_count, 1.0 / particle_count)
             )
-            control_states_by_checkpoint[index].append(row)
+            control_states_by_checkpoint[index].append(control_state)
             control_parent_by_checkpoint[index].append(probability)
             _atomic_npz(output_root / f"group_{group}_control_sweep_{control_sweeps[index]}.npz", {
                 "sweep": np.asarray(control_sweeps[index], dtype=np.int64),
-                "midpoint_mpc_h": row.midpoint_mpc_h,
-                "axis": row.axis,
-                "keys": row.keys,
-                "log_Z_bar": row.log_z_bar,
+                "midpoint_mpc_h": control_state.midpoint_mpc_h,
+                "axis": control_state.axis,
+                "keys": control_state.keys,
+                "log_Z_bar": control_state.log_z_bar,
                 "P_parent": probability,
             })
 
         final_bridge = bridge[-1]
         group_summary = {
             "group": group,
-            "roundtrip_fraction": final_bridge.original_top_roundtrip_count / particle_count,
+            "roundtrip_fraction": (
+                final_bridge.original_top_roundtrip_count[group] / particle_count
+            ),
             "swap_acceptance_fraction": (
-                final_bridge.swap_acceptance_count / final_bridge.swap_proposal_count
+                final_bridge.swap_acceptance_count[group]
+                / final_bridge.swap_proposal_count[group]
             ).tolist(),
-            "top_original_fraction": float(np.mean(final_bridge.top_origin_id >= 0)),
+            "top_original_fraction": float(
+                np.mean(final_bridge.top_origin_id[group] >= 0)
+            ),
         }
         group_summaries.append(group_summary)
         _atomic_json(output_root / f"group_{group}_summary.json", group_summary)
 
-        delta_keys = sorted(set(evidence).difference(saved_keys))
-        _atomic_npz(output_root / f"new_evidence_cache_group_{group}.npz", {
-            "keys": np.asarray(delta_keys, dtype=np.int16).reshape(-1, 6),
-            "log_Z": np.stack([evidence[key] for key in delta_keys])
-            if delta_keys else np.empty((0, parent_count), dtype=np.float64),
-        })
-        saved_keys.update(delta_keys)
+    delta_keys = sorted(set(evidence).difference(saved_keys))
+    _atomic_npz(output_root / "new_evidence_cache.npz", {
+        "keys": np.asarray(delta_keys, dtype=np.int16).reshape(-1, 6),
+        "log_Z": np.stack([evidence[key] for key in delta_keys])
+        if delta_keys else np.empty((0, parent_count), dtype=np.float64),
+    })
 
     checkpoint_results = []
     for index, (cycle, sweep) in enumerate(zip(bridge_cycles, control_sweeps)):

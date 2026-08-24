@@ -53,4 +53,4 @@ def test_bridge_pilot_writes_group_checkpoints_and_comparison(tmp_path):
     for group in range(4):
         assert (output / f"group_{group}_bridge_cycle_2.npz").is_file()
         assert (output / f"group_{group}_control_sweep_4.npz").is_file()
-        assert (output / f"new_evidence_cache_group_{group}.npz").is_file()
+    assert (output / "new_evidence_cache.npz").is_file()
