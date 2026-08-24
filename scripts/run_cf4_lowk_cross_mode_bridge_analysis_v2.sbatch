@@ -9,15 +9,20 @@
 #SBATCH --no-requeue
 #SBATCH --export=NONE
 #SBATCH --chdir=/home/kjhan/BACKUP/CF4
-#SBATCH --output=/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_analysis_v1_slurm-%j.log
-#SBATCH --error=/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_analysis_v1_slurm-%j.log
+#SBATCH --output=/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_analysis_v2_slurm-%j.log
+#SBATCH --error=/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_analysis_v2_slurm-%j.log
 #SBATCH --open-mode=truncate
 
 set -Eeuo pipefail
 
+if [[ $# -ne 1 ]]; then
+    echo "usage: sbatch $0 ARTIFACT_ROOT" >&2
+    exit 64
+fi
+
 readonly repo=/home/kjhan/BACKUP/CF4
 readonly python=/home/kjhan/miniconda3/envs/circle/bin/python
-readonly root=/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_pilot_v1
+readonly root=$1
 
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONNOUSERSITE=1

@@ -297,6 +297,8 @@ def run_pilot(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--particle-count", type=int, default=PARTICLES_PER_GROUP)
+    parser.add_argument("--extra-cache-shard", type=Path, action="append", default=[])
     args = parser.parse_args()
     evaluator = ParallelExactAtlasEvaluator(
         ATLAS_MANIFEST, ATLAS_SHA256, FILTER, FILTER_SHA256,
@@ -305,9 +307,10 @@ def main() -> None:
     try:
         result = run_pilot(
             source_root=SOURCE_ROOT,
-            cache_shards=CACHE_SHARDS,
+            cache_shards=CACHE_SHARDS + tuple(args.extra_cache_shard),
             output_root=args.output_root,
             evaluator=evaluator,
+            particle_count=args.particle_count,
         )
     finally:
         evaluator.close()
