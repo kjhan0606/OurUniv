@@ -1,6 +1,6 @@
 {
   "schema": "ouruniv-cf4-lg-highk-streaming-forward-program-v1",
-  "status": "frozen_implementation_complete_execution_unauthorized",
+  "status": "frozen_covariance_cache_and_integrated_pilot_authorized",
   "frozen_date_kst": "2026-08-25",
   "objective": "Forward the frozen 256-state CF4 plus explicit-LG posterior through N576 PM without storing N576 fields, then preserve halo catalogues for hard-P2, pair-recentered-P1, and normalized z=0 likelihood evaluation.",
   "lineage": {
@@ -157,8 +157,8 @@
   },
   "authorization": {
     "implementation_and_synthetic_tests": true,
-    "covariance_cache_execution": false,
-    "integrated_four_row_PM_pilot_execution": false,
+    "covariance_cache_execution": true,
+    "integrated_four_row_PM_pilot_execution": true,
     "production_256_forward_execution": false,
     "pair_recentered_P1_aggregation_execution": false,
     "RAMSES": false

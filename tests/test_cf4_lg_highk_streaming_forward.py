@@ -84,10 +84,19 @@ def test_highk_gates_use_fixed_model_program_block() -> None:
     assert all(_highk_gates(diagnostics, program).values())
 
 
-def test_frozen_program_refuses_unauthorized_execution() -> None:
+def test_frozen_program_refuses_unauthorized_execution(tmp_path: Path) -> None:
     root = Path(__file__).parents[1]
+    program = json.loads(
+        (root / "config/cf4_lg_highk_streaming_forward_program_v1.json").read_text()
+    )
+    program["authorization"]["integrated_four_row_PM_pilot_execution"] = False
+    temporary = tmp_path / "unauthorized-program.json"
+    temporary.write_text(json.dumps(program))
     with pytest.raises(PermissionError, match="not authorized"):
-        run_streaming_forward(
-            program_path=root / "config/cf4_lg_highk_streaming_forward_program_v1.json",
-            mode="pilot", output_root=root / "unused-test-output",
-        )
+        try:
+            run_streaming_forward(
+                program_path=temporary,
+                mode="pilot", output_root=root / "unused-test-output",
+            )
+        finally:
+            temporary.unlink()

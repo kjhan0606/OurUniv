@@ -17,7 +17,7 @@ set -Eeuo pipefail
 
 readonly repo=/home/kjhan/BACKUP/CF4
 readonly program="$repo/config/cf4_lg_highk_streaming_forward_program_v1.json"
-readonly expected_program_sha=34a8e8976be7b5b8690568b620898910d534913ca8326cb5f86120f63cfcd8b1
+readonly expected_program_sha=c21e860d9e7b4ad01f3b73a6ed3304f4f2776e8fb18552b1c3e7a6674901d60c
 readonly expected_source_sha=6da87bb7ef73ada54269424c82e949d16059a87eb209bc79235144681979040d
 
 [[ "$(sha256sum "$program" | awk '{print $1}')" == "$expected_program_sha" ]]
