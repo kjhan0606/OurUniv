@@ -240,7 +240,8 @@ def conditional_field(
     tolerance = 2.0e-5 if np.dtype(float_dtype) == np.dtype(np.float32) else 1.0e-12
     if imaginary_relative_rms > tolerance:
         raise RuntimeError("conditional field broke Hermitian symmetry")
-    field = np.asarray(conditioned.real, dtype=float_dtype)
+    field = np.array(conditioned.real, dtype=float_dtype, copy=True, order="C")
+    del conditioned
     metadata = {
         "fine_seed": int(fine_seed),
         "noise_seed": int(noise_seed),

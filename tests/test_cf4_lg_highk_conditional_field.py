@@ -70,6 +70,7 @@ def test_conditional_field_matches_exact_float64_reference():
         workers=1,
     )
     np.testing.assert_allclose(actual, expected, atol=2e-6, rtol=2e-6)
+    assert actual.flags.c_contiguous
     np.testing.assert_allclose(
         actual_meta["achieved_after"], expected_meta["achieved_after"],
         atol=2e-6, rtol=2e-6,
