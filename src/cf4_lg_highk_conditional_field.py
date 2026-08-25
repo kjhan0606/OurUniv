@@ -219,6 +219,17 @@ def conditional_field(
     )
     roundtrip_error = _spectrum_relative_error(coarse_roundtrip, coarse_fft)
     correction_null_error = float(np.sqrt(np.mean(np.abs(correction_low) ** 2)))
+    coarse_spectrum_rms = float(np.sqrt(np.mean(np.abs(coarse_fft) ** 2)))
+    correction_null_relative_error = correction_null_error / max(
+        coarse_spectrum_rms, 1.0e-30
+    )
+    response_identity_error = float(np.max(np.abs(
+        achieved - (predicted + signal @ weights)
+    )))
+    fine_energy = float(np.sum(np.abs(conditioned_fft) ** 2, dtype=np.float64))
+    coarse_energy = float(np.sum(np.abs(coarse_roundtrip) ** 2, dtype=np.float64))
+    null_rank = fine_n**3 - coarse.shape[0]**3
+    null_subspace_mean_square = (fine_energy - coarse_energy) / null_rank
     conditioned = spfft.ifftn(
         conditioned_fft, norm="ortho", workers=workers
     )
@@ -241,6 +252,10 @@ def conditional_field(
         "weights": weights.tolist(),
         "coarse_roundtrip_relative_RMS": roundtrip_error,
         "correction_restriction_absolute_RMS": correction_null_error,
+        "correction_restriction_relative_RMS": correction_null_relative_error,
+        "maximum_response_identity_error": response_identity_error,
+        "null_subspace_mean_square": null_subspace_mean_square,
+        "field_mean": float(np.mean(field, dtype=np.float64)),
         "field_RMS": real_rms,
         "field_imaginary_relative_RMS": imaginary_relative_rms,
         "FFT_workers": int(workers),

@@ -75,6 +75,9 @@ def test_conditional_field_matches_exact_float64_reference():
         atol=2e-6, rtol=2e-6,
     )
     assert actual_meta["coarse_roundtrip_relative_RMS"] < 1e-12
+    assert actual_meta["correction_restriction_relative_RMS"] < 1e-12
+    assert actual_meta["maximum_response_identity_error"] < 1e-12
+    assert actual_meta["null_subspace_mean_square"] > 0.0
     assert actual_meta["peak_evidence_reapplied"] is False
 
 
