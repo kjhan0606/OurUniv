@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 
 from cf4_aggregate_evidence_oracle import geometry_key
-from cf4_lg_highk_schedule import build_joint_schedule, validate_bank
+from cf4_lg_highk_schedule import (
+    build_joint_schedule,
+    parent_l1_null,
+    validate_bank,
+)
 
 
 def synthetic_bank() -> dict[str, np.ndarray]:
@@ -85,6 +89,21 @@ def test_schedule_seed_changes_draw_but_not_prospective_seed_ranges():
     np.testing.assert_array_equal(
         first["likelihood_noise_seed"], second["likelihood_noise_seed"]
     )
+
+
+def test_parent_l1_null_is_deterministic():
+    bank = synthetic_bank()
+    _, metadata = build_joint_schedule(bank)
+    first = parent_l1_null(
+        bank, observed_l1=metadata["empirical_parent_L1"], draws=128, seed=44
+    )
+    second = parent_l1_null(
+        bank, observed_l1=metadata["empirical_parent_L1"], draws=128, seed=44
+    )
+    assert first == second
+    assert first["draws"] == 128
+    assert first["q999"] >= first["q99"]
+    assert 0.0 < first["tail_probability"] <= 1.0
 
 
 def test_validate_rejects_parent_marginal_mismatch():

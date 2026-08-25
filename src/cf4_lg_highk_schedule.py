@@ -210,6 +210,70 @@ def build_joint_schedule(
     return schedule, metadata
 
 
+def parent_l1_null(
+    bank: Mapping[str, np.ndarray],
+    *,
+    observed_l1: float,
+    count_per_group: int = 64,
+    draws: int = 50000,
+    seed: int = 2026082502,
+    chunk_size: int = 256,
+) -> dict[str, Any]:
+    """Calibrate schedule parent-L1 under the exact group-stratified sampler."""
+    validate_bank(bank)
+    if draws <= 0 or chunk_size <= 0 or not np.isfinite(observed_l1):
+        raise ValueError("invalid parent-L1 null parameters")
+    group = np.asarray(bank["group_id"], dtype=np.int64)
+    within = np.asarray(bank["group_particle"], dtype=np.int64)
+    conditional = np.asarray(
+        bank["parent_conditional_probability"], dtype=np.float64
+    )
+    target = np.asarray(bank["P_parent"], dtype=np.float64)
+    cdf = []
+    for group_id in range(EXPECTED_GROUPS):
+        rows = np.flatnonzero(group == group_id)
+        rows = rows[np.argsort(within[rows], kind="stable")]
+        probability = conditional[rows].reshape(-1) / len(rows)
+        current = np.cumsum(probability)
+        current[-1] = 1.0
+        cdf.append(current)
+
+    rng = np.random.Generator(np.random.PCG64DXSM(int(seed)))
+    null = np.empty(draws, dtype=np.float64)
+    lattice = np.arange(count_per_group, dtype=np.float64)
+    total_count = count_per_group * EXPECTED_GROUPS
+    for start in range(0, draws, chunk_size):
+        stop = min(start + chunk_size, draws)
+        size = stop - start
+        offsets = rng.random((size, EXPECTED_GROUPS))
+        counts = np.zeros((size, EXPECTED_PARENTS), dtype=np.int16)
+        draw_index = np.repeat(np.arange(size), count_per_group)
+        for group_id in range(EXPECTED_GROUPS):
+            threshold = (
+                offsets[:, group_id, None] + lattice[None, :]
+            ) / count_per_group
+            flat = np.searchsorted(
+                cdf[group_id], threshold.reshape(-1), side="left"
+            )
+            parent_index = flat % EXPECTED_PARENTS
+            np.add.at(counts, (draw_index, parent_index), 1)
+        empirical = counts.astype(np.float64) / total_count
+        null[start:stop] = np.sum(np.abs(empirical - target), axis=1)
+    q99, q999 = np.quantile(null, [0.99, 0.999], method="higher")
+    tail_probability = float(
+        (1 + np.count_nonzero(null >= observed_l1)) / (draws + 1)
+    )
+    return {
+        "draws": int(draws),
+        "seed": int(seed),
+        "observed_parent_L1": float(observed_l1),
+        "q99": float(q99),
+        "q999": float(q999),
+        "tail_probability": tail_probability,
+        "passes_q999": bool(observed_l1 <= q999),
+    }
+
+
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
     temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     with temporary.open("x") as stream:
@@ -232,6 +296,8 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--count-per-group", type=int, default=64)
     parser.add_argument("--master-seed", type=int, default=2026082501)
+    parser.add_argument("--null-draws", type=int, default=50000)
+    parser.add_argument("--null-seed", type=int, default=2026082502)
     args = parser.parse_args()
     if args.expected_sha256 and sha256_file(args.bank) != args.expected_sha256:
         raise RuntimeError("posterior bank SHA256 changed")
@@ -243,16 +309,31 @@ def main() -> None:
     schedule, metadata = build_joint_schedule(
         bank, count_per_group=args.count_per_group, master_seed=args.master_seed
     )
+    null = parent_l1_null(
+        bank,
+        observed_l1=metadata["empirical_parent_L1"],
+        count_per_group=args.count_per_group,
+        draws=args.null_draws,
+        seed=args.null_seed,
+    )
     args.output_root.mkdir(parents=False, exist_ok=False)
-    _atomic_npz(args.output_root / "schedule.npz", schedule)
+    if null["passes_q999"]:
+        _atomic_npz(args.output_root / "schedule.npz", schedule)
     _atomic_json(args.output_root / "result.json", {
         "schema": "ouruniv-cf4-lg-highk-joint-schedule-v1",
-        "status": "complete_schedule_only_no_field_generated",
+        "status": (
+            "complete_pass_schedule_only_no_field_generated"
+            if null["passes_q999"]
+            else "complete_fail_schedule_parent_null_no_field_generated"
+        ),
         "source_bank": str(args.bank),
         "source_bank_sha256": sha256_file(args.bank),
+        "parent_L1_null": null,
         **metadata,
     })
-    print(json.dumps(metadata, sort_keys=True))
+    print(json.dumps({**metadata, "parent_L1_null": null}, sort_keys=True))
+    if not null["passes_q999"]:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
