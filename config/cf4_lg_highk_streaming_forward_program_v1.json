@@ -1,6 +1,6 @@
 {
   "schema": "ouruniv-cf4-lg-highk-streaming-forward-program-v1",
-  "status": "frozen_covariance_cache_and_integrated_pilot_authorized",
+  "status": "frozen_256_row_streaming_PM_production_authorized",
   "frozen_date_kst": "2026-08-25",
   "objective": "Forward the frozen 256-state CF4 plus explicit-LG posterior through N576 PM without storing N576 fields, then preserve halo catalogues for hard-P2, pair-recentered-P1, and normalized z=0 likelihood evaluation.",
   "lineage": {
@@ -92,13 +92,43 @@
     "scheduled_rows_are_equal_weight_posterior_draws": true,
     "peak_evidence_reapplied": false,
     "midpoint_proposal_importance_correction_reapplied": false,
-    "only_new_scientific_weight": "The normalized z=0 likelihood after intersection with unchanged hard-P2 and pair-recentered-P1 support.",
+    "only_new_scientific_weight": "For each row, sum the preregistered normalized z=0 likelihood over same-identity pairs passing hard-P2 and pair-recentered-P1, but retain the total loose-pair count as the mixture denominator; never renormalize over survivors.",
     "parent_centered_P1_prefilter_authorized": false,
     "forward_all_scheduled_states": true,
     "hard_P2_after_forward_retained": true,
     "pair_recentered_P1_after_forward_retained": true,
     "M33_PM_hard_gate": false,
     "M33_definitive_RAMSES_HOP_gate": true
+  },
+  "terminal_decision_rule": {
+    "status": "frozen_before_any_256_row_production_result_is_opened",
+    "pair_identity": "The sorted pair (halo_i, halo_j) must be identical in the loose likelihood catalogue, hard-P2 catalogue, and pair-recentered-P1 result.",
+    "row_log_evidence": "logsumexp(log_L_pair for jointly eligible loose pairs) - log(number of all loose pairs in that row); negative infinity if the row has no loose pair or no jointly eligible pair.",
+    "row_log_weight": "log(1/256) + row_log_evidence; normalize once across the 256 frozen rows.",
+    "minimum_jointly_eligible_rows": 8,
+    "minimum_normalized_row_weight_ESS": 8.0,
+    "maximum_single_normalized_row_weight": 0.25,
+    "grouped_support_gates": {
+      "minimum_parent_weight_ESS": 4.0,
+      "maximum_single_parent_normalized_weight": 0.5,
+      "minimum_geometry_key_weight_ESS": 8.0,
+      "maximum_single_geometry_key_normalized_weight": 0.25,
+      "minimum_bridge_group_weight_ESS": 2.0,
+      "maximum_single_bridge_group_normalized_weight": 0.5
+    },
+    "mandatory_reports": [
+      "distinct eligible parent count and parent-summed normalized weights",
+      "distinct eligible geometry-key count and geometry-key-summed normalized weights",
+      "distinct eligible fine-field seed count",
+      "bridge-group-summed normalized weights",
+      "row, parent, geometry-key, and bridge-group ESS",
+      "maximum normalized weight at every reported grouping"
+    ],
+    "covariance_phase_interpretation": "The 27 translation phases are deterministic components used to evaluate every exact AQA* matrix; they are not 27 posterior draws and must not receive a phase-grouped ESS.",
+    "deduplicate_repeated_posterior_rows": false,
+    "same_model_extension_after_failure": false,
+    "threshold_retuning_after_results": false,
+    "automatic_candidate_promotion": false
   },
   "covariance_cache": {
     "artifact_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_covariance_cache_v1",
@@ -149,17 +179,18 @@
     },
     "streaming_forward": {
       "cpus": 16,
-      "memory": "48G",
+      "memory_pilot": "48G",
+      "memory_production": "21G",
       "time_limit_pilot": "01:00:00",
       "time_limit_production_task": "02:00:00",
-      "memory_basis": "Conservative 40 GiB anticipated peak for simultaneous exact-field and N576 JAX/host forward state, multiplied by 1.2. The pilot must replace this estimate with measured MaxRSS before production submission."
+      "memory_basis": "The integrated H200 pilot measured 18025656 KiB = 17.19 GiB MaxRSS; 1.2 times this is 20.63 GiB, rounded upward to a 21 GiB production request."
     }
   },
   "authorization": {
     "implementation_and_synthetic_tests": true,
     "covariance_cache_execution": true,
     "integrated_four_row_PM_pilot_execution": true,
-    "production_256_forward_execution": false,
+    "production_256_forward_execution": true,
     "pair_recentered_P1_aggregation_execution": false,
     "RAMSES": false
   },
