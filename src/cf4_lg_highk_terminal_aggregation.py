@@ -137,6 +137,101 @@ def load_terminal_config(path: Path) -> dict[str, Any]:
     return config
 
 
+def validate_two_commit_lineage_values(
+    config: Mapping[str, Any], *, head: str, upstream: str,
+    head_parents: Sequence[str], baseline_parents: Sequence[str],
+    baseline_rows: Sequence[tuple[str, str]],
+    correction_rows: Sequence[tuple[str, str]],
+    baseline_modes: Mapping[str, str], head_modes: Mapping[str, str],
+) -> None:
+    """Pure validation of the exact baseline-plus-correction commit grammar."""
+    contract = config["lineage"]["two_commit_execution_lineage"]
+    baseline = contract["baseline_commit"]
+    parent = contract["baseline_parent_commit"]
+    expected_baseline = sorted(
+        ("A", path) for path in contract["baseline_exact_added_paths"]
+    )
+    expected_correction = sorted(
+        ("M", path) for path in contract["correction_exact_modified_paths"]
+    )
+    if head != upstream or list(head_parents) != [baseline] \
+            or list(baseline_parents) != [parent]:
+        raise RuntimeError("runtime HEAD/upstream or two-commit parent lineage changed")
+    if sorted(baseline_rows) != expected_baseline:
+        raise RuntimeError("baseline commit is not the exact original six additions")
+    if sorted(correction_rows) != expected_correction:
+        raise RuntimeError("correction commit is not the exact four modifications")
+    required_mode = contract["required_mode"]
+    if set(baseline_modes) != set(contract["baseline_exact_added_paths"]) \
+            or set(head_modes) != set(contract["correction_exact_modified_paths"]) \
+            or any(mode != required_mode for mode in baseline_modes.values()) \
+            or any(mode != required_mode for mode in head_modes.values()):
+        raise RuntimeError("baseline or correction file modes changed")
+
+
+def _git_text(*arguments: str) -> str:
+    return subprocess.run(
+        ["git", "-C", str(ROOT), *arguments], check=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    ).stdout.strip()
+
+
+def _name_status_rows(older: str, newer: str) -> list[tuple[str, str]]:
+    output = _git_text(
+        "diff", "--no-renames", "--name-status", older, newer, "--",
+    )
+    rows: list[tuple[str, str]] = []
+    for line in output.splitlines() if output else []:
+        fields = line.split("\t")
+        if len(fields) != 2 or fields[0] not in {"A", "M", "D"}:
+            raise RuntimeError("Git diff contains a rename, copy, or malformed status row")
+        rows.append((fields[0], fields[1]))
+    return rows
+
+
+def _tree_modes(commit: str, paths: Sequence[str]) -> dict[str, str]:
+    modes: dict[str, str] = {}
+    for path in paths:
+        fields = _git_text("ls-tree", commit, "--", path).split()
+        if len(fields) < 4 or fields[3] != path:
+            raise RuntimeError(f"Git tree entry is absent or malformed: {path}")
+        modes[path] = fields[0]
+    return modes
+
+
+def validate_two_commit_lineage(config: Mapping[str, Any]) -> dict[str, Any]:
+    """Read-only runtime validation called by the Slurm preflight."""
+    contract = config["lineage"]["two_commit_execution_lineage"]
+    baseline = contract["baseline_commit"]
+    parent = contract["baseline_parent_commit"]
+    head = _git_text("rev-parse", "HEAD")
+    upstream = _git_text("rev-parse", "@{upstream}")
+    head_line = _git_text("rev-list", "--parents", "-n", "1", head).split()
+    baseline_line = _git_text("rev-list", "--parents", "-n", "1", baseline).split()
+    baseline_paths = contract["baseline_exact_added_paths"]
+    correction_paths = contract["correction_exact_modified_paths"]
+    validate_two_commit_lineage_values(
+        config, head=head, upstream=upstream,
+        head_parents=head_line[1:], baseline_parents=baseline_line[1:],
+        baseline_rows=_name_status_rows(parent, baseline),
+        correction_rows=_name_status_rows(baseline, head),
+        baseline_modes=_tree_modes(baseline, baseline_paths),
+        head_modes=_tree_modes(head, correction_paths),
+    )
+    status = subprocess.run(
+        [
+            "git", "-C", str(ROOT), "status", "--porcelain=v1", "-z",
+            "--untracked-files=all", "--", ".", ":(exclude)scripts/tripwire/**",
+        ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout
+    if status:
+        raise RuntimeError("worktree is not clean outside scripts/tripwire/")
+    for path, expected in contract["untouched_files"].items():
+        if sha256_file(ROOT / path) != expected:
+            raise RuntimeError(f"untouched lineage file hash changed: {path}")
+    return {"head": head, "baseline": baseline, "baseline_parent": parent}
+
+
 def _pair_id(pair: Mapping[str, Any]) -> tuple[int, int]:
     i, j = int(pair["halo_i"]), int(pair["halo_j"])
     if not 0 <= i < j:
@@ -236,13 +331,19 @@ def _p1_values_close(left: Any, right: Any, *, path: str = "P1") -> None:
         leaf = path.rsplit(".", 1)[-1]
         if "percentile" in leaf:
             tolerance = 1e-10
+            policy = "percentile absolute bound"
+        elif leaf == "nearest_box_face_mpc_h":
+            tolerance = 4.0 * max(math.ulp(float(left)), math.ulp(float(right)))
+            policy = "binary64 ULP bound"
         elif leaf in P1_FLOAT32_ULP_FIELDS or ".mean_delta_profile." in path:
             scale = np.float32(max(abs(left), abs(right), 1.0))
             tolerance = float(8.0 * abs(np.spacing(scale)))
+            policy = "float32 ULP bound"
         else:
             tolerance = 0.0
+            policy = "exact bound"
         if not math.isclose(left, right, rel_tol=0.0, abs_tol=tolerance):
-            raise RuntimeError(f"{path} exceeds P1 float32 ULP bound {tolerance}")
+            raise RuntimeError(f"{path} exceeds P1 {policy} {tolerance}")
         return
     if left != right:
         raise RuntimeError(f"{path} values differ")
@@ -909,8 +1010,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--test-only", action="store_true")
+    parser.add_argument("--lineage-preflight", action="store_true")
     args = parser.parse_args()
-    result = run(args.config, test_only=args.test_only)
+    if args.lineage_preflight:
+        if args.test_only:
+            parser.error("--lineage-preflight and --test-only are mutually exclusive")
+        result = {"status": "lineage_preflight_pass", **validate_two_commit_lineage(
+            load_terminal_config(args.config)
+        )}
+    else:
+        result = run(args.config, test_only=args.test_only)
     summary = {name: result[name] for name in (
         "status", "scientific_pass", "jointly_eligible_rows",
         "normalized_row_weight_ESS", "maximum_single_normalized_row_weight",

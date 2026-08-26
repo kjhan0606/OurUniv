@@ -386,3 +386,67 @@ def test_checker_rejects_correlated_reseal_with_changed_p1_likelihood(
     monkeypatch.setattr(independent, "_verify_anchors", lambda *args: None)
     with pytest.raises(RuntimeError, match="log_likelihood"):
         independent.check_output(CONFIG, output)
+
+
+def test_nearest_box_face_binary64_tolerance_preserves_bootes_and_five_gates() -> None:
+    def advance(value: float, count: int) -> float:
+        for _ in range(count):
+            value = math.nextafter(value, math.inf)
+        return value
+
+    base = 64.0
+    gates = {name: True for name in terminal.FIVE_P1_GATES}
+    sealed = {
+        "bootes_void": {"nearest_box_face_mpc_h": base, "pass": True},
+        "gates": gates, "pass": True,
+    }
+    two_ulp = copy.deepcopy(sealed)
+    two_ulp["bootes_void"]["nearest_box_face_mpc_h"] = advance(base, 2)
+    terminal._p1_values_close(two_ulp, sealed)
+    assert two_ulp["bootes_void"]["pass"] is True
+    assert two_ulp["gates"] == gates and two_ulp["pass"] is True
+
+    five_ulp = copy.deepcopy(sealed)
+    five_ulp["bootes_void"]["nearest_box_face_mpc_h"] = advance(base, 5)
+    with pytest.raises(RuntimeError, match="binary64|ULP bound"):
+        terminal._p1_values_close(five_ulp, sealed)
+    assert five_ulp["bootes_void"]["pass"] is True
+    assert five_ulp["gates"] == gates and five_ulp["pass"] is True
+
+
+def _valid_two_commit_snapshot() -> dict:
+    config = _config()
+    contract = config["lineage"]["two_commit_execution_lineage"]
+    baseline_paths = contract["baseline_exact_added_paths"]
+    correction_paths = contract["correction_exact_modified_paths"]
+    return {
+        "config": config, "head": "f" * 40, "upstream": "f" * 40,
+        "head_parents": [contract["baseline_commit"]],
+        "baseline_parents": [contract["baseline_parent_commit"]],
+        "baseline_rows": [("A", path) for path in baseline_paths],
+        "correction_rows": [("M", path) for path in correction_paths],
+        "baseline_modes": {path: "100644" for path in baseline_paths},
+        "head_modes": {path: "100644" for path in correction_paths},
+    }
+
+
+def test_two_commit_lineage_rejects_wrong_parent_and_extra_row() -> None:
+    snapshot = _valid_two_commit_snapshot()
+    terminal.validate_two_commit_lineage_values(**snapshot)
+    wrong_parent = copy.deepcopy(snapshot)
+    wrong_parent["head_parents"] = ["0" * 40]
+    with pytest.raises(RuntimeError, match="parent lineage"):
+        terminal.validate_two_commit_lineage_values(**wrong_parent)
+    extra = copy.deepcopy(snapshot)
+    extra["correction_rows"].append(("M", "README.md"))
+    with pytest.raises(RuntimeError, match="exact four"):
+        terminal.validate_two_commit_lineage_values(**extra)
+
+
+@pytest.mark.parametrize("status", ["A", "D", "R"])
+def test_two_commit_lineage_rejects_added_deleted_or_renamed_correction(status: str) -> None:
+    snapshot = _valid_two_commit_snapshot()
+    path = snapshot["correction_rows"][0][1]
+    snapshot["correction_rows"][0] = (status, path)
+    with pytest.raises(RuntimeError, match="exact four"):
+        terminal.validate_two_commit_lineage_values(**snapshot)

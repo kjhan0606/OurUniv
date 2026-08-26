@@ -21,7 +21,48 @@
       "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py",
       "tests/test_cf4_lg_highk_terminal_aggregation.py",
       "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
-    ]
+    ],
+    "execution_history": [
+      {
+        "job_id": 324902,
+        "classification": "technical_failure_before_any_scientific_output",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed_seconds": 56,
+        "partition": "a40",
+        "node": "syn05",
+        "log": {
+          "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1_slurm-324902.log",
+          "sha256": "dce48a1892f27610fbfaf96bc1c4c2f77c9e6bb3011f9c02cf84014300174dfe"
+        },
+        "canonical_output_created": false,
+        "sibling_staging_created": false
+      }
+    ],
+    "two_commit_execution_lineage": {
+      "baseline_commit": "0f74bcecf01012a2c9cc40827759440db380ff6d",
+      "baseline_parent_commit": "9f4fa6c934407efcc35c894924380639d0bd1714",
+      "baseline_exact_added_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
+      ],
+      "correction_exact_modified_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py"
+      ],
+      "required_mode": "100644",
+      "renames_allowed": false,
+      "untouched_files": {
+        "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py": "e72a595c322ec10921a8435b650f07d82198ae0baab81e3824089d5a0d496aa4",
+        "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py": "baccfd0b2cc76784b2eac3db0bda8f64eba04c574bd5908d45c159e764297007"
+      }
+    }
   },
   "inputs": {
     "production_root": {
@@ -113,6 +154,14 @@
     "density_smoothing_mpc_h": 4.0,
     "pair_midpoint_is_observer": true,
     "zero_offset_P1_must_match_sealed_legacy_parent_row": true,
+    "P1_binary64_comparison_policy": {
+      "field": "nearest_box_face_mpc_h",
+      "relative_tolerance": 0.0,
+      "absolute_tolerance": "4 * max(math.ulp(left), math.ulp(right))",
+      "observed_absolute_difference": 2.842170943040401e-14,
+      "observed_binary64_ULPs": 2,
+      "all_other_unregistered_float_fields": "exact"
+    },
     "N576_field_or_particle_regeneration": false,
     "exact_P1_gate_names": ["Virgo", "Coma", "LocalVoid", "BootesVoid", "ObserverEnvironment"],
     "all_five_P1_gates_required": true
