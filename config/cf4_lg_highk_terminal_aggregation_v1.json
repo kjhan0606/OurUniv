@@ -37,9 +37,24 @@
         },
         "canonical_output_created": false,
         "sibling_staging_created": false
+      },
+      {
+        "job_id": 324919,
+        "classification": "technical_failure_before_any_scientific_output",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed_seconds": 45,
+        "partition": "a40",
+        "node": "syn05",
+        "log": {
+          "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1_slurm-324919.log",
+          "sha256": "7f878a83d647309453cf8d36f3f10e1fa08a4af75dac69d113fd31253c3a4501"
+        },
+        "canonical_output_created": false,
+        "sibling_staging_created": false
       }
     ],
-    "two_commit_execution_lineage": {
+    "three_commit_execution_lineage": {
       "baseline_commit": "0f74bcecf01012a2c9cc40827759440db380ff6d",
       "baseline_parent_commit": "9f4fa6c934407efcc35c894924380639d0bd1714",
       "baseline_exact_added_paths": [
@@ -50,7 +65,16 @@
         "tests/test_cf4_lg_highk_terminal_aggregation.py",
         "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
       ],
-      "correction_exact_modified_paths": [
+      "correction1_commit": "863792f4d476a4336291f60b66be7d68833dabd6",
+      "correction1_parent_commit": "0f74bcecf01012a2c9cc40827759440db380ff6d",
+      "correction1_exact_modified_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py"
+      ],
+      "correction2_parent_commit": "863792f4d476a4336291f60b66be7d68833dabd6",
+      "correction2_exact_modified_paths": [
         "config/cf4_lg_highk_terminal_aggregation_v1.json",
         "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
         "src/cf4_lg_highk_terminal_aggregation.py",
@@ -154,12 +178,21 @@
     "density_smoothing_mpc_h": 4.0,
     "pair_midpoint_is_observer": true,
     "zero_offset_P1_must_match_sealed_legacy_parent_row": true,
-    "P1_binary64_comparison_policy": {
-      "field": "nearest_box_face_mpc_h",
-      "relative_tolerance": 0.0,
-      "absolute_tolerance": "4 * max(math.ulp(left), math.ulp(right))",
-      "observed_absolute_difference": 2.842170943040401e-14,
-      "observed_binary64_ULPs": 2,
+    "P1_numeric_comparison_policy": {
+      "nearest_box_face_mpc_h": {
+        "relative_tolerance": 0.0,
+        "absolute_tolerance": "4 * max(math.ulp(left), math.ulp(right))",
+        "observed_absolute_difference": 2.842170943040401e-14,
+        "observed_binary64_ULPs": 2
+      },
+      "observer_environment_spheres": {
+        "mean_delta": "existing narrow field-specific float32 serialization ULP bound",
+        "radius_mpc_h": "exact binary64",
+        "cosmic_mean_mass_msun_h": "exact binary64",
+        "maximum_excess_mass_msun_h": "exact binary64",
+        "excess_mass_msun_h": "fresh and legacy must each equal mean_delta * cosmic_mean_mass_msun_h within 4 * max(math.ulp(derived), math.ulp(formula)); no direct cross-run derived-mass tolerance after both formula checks",
+        "sphere_and_environment_pass": "exact, recomputed from primitive values, and any boundary-induced pass change is rejected"
+      },
       "all_other_unregistered_float_fields": "exact"
     },
     "N576_field_or_particle_regeneration": false,

@@ -137,34 +137,51 @@ def load_terminal_config(path: Path) -> dict[str, Any]:
     return config
 
 
-def validate_two_commit_lineage_values(
+def validate_three_commit_lineage_values(
     config: Mapping[str, Any], *, head: str, upstream: str,
-    head_parents: Sequence[str], baseline_parents: Sequence[str],
+    head_parents: Sequence[str], correction1_parents: Sequence[str],
+    baseline_parents: Sequence[str],
     baseline_rows: Sequence[tuple[str, str]],
-    correction_rows: Sequence[tuple[str, str]],
-    baseline_modes: Mapping[str, str], head_modes: Mapping[str, str],
+    correction1_rows: Sequence[tuple[str, str]],
+    correction2_rows: Sequence[tuple[str, str]],
+    baseline_modes: Mapping[str, str], correction1_modes: Mapping[str, str],
+    head_modes: Mapping[str, str],
 ) -> None:
-    """Pure validation of the exact baseline-plus-correction commit grammar."""
-    contract = config["lineage"]["two_commit_execution_lineage"]
+    """Pure validation of the exact baseline-plus-two-corrections grammar."""
+    contract = config["lineage"]["three_commit_execution_lineage"]
     baseline = contract["baseline_commit"]
     parent = contract["baseline_parent_commit"]
+    correction1 = contract["correction1_commit"]
+    if contract["renames_allowed"] is not False:
+        raise RuntimeError("three-commit lineage must forbid renames")
     expected_baseline = sorted(
         ("A", path) for path in contract["baseline_exact_added_paths"]
     )
-    expected_correction = sorted(
-        ("M", path) for path in contract["correction_exact_modified_paths"]
+    expected_correction1 = sorted(
+        ("M", path) for path in contract["correction1_exact_modified_paths"]
     )
-    if head != upstream or list(head_parents) != [baseline] \
+    expected_correction2 = sorted(
+        ("M", path) for path in contract["correction2_exact_modified_paths"]
+    )
+    if head != upstream or list(head_parents) != [correction1] \
+            or list(correction1_parents) != [baseline] \
             or list(baseline_parents) != [parent]:
-        raise RuntimeError("runtime HEAD/upstream or two-commit parent lineage changed")
+        raise RuntimeError("runtime HEAD/upstream or three-commit parent lineage changed")
+    if contract["correction1_parent_commit"] != baseline \
+            or contract["correction2_parent_commit"] != correction1:
+        raise RuntimeError("frozen correction parent declarations changed")
     if sorted(baseline_rows) != expected_baseline:
         raise RuntimeError("baseline commit is not the exact original six additions")
-    if sorted(correction_rows) != expected_correction:
-        raise RuntimeError("correction commit is not the exact four modifications")
+    if sorted(correction1_rows) != expected_correction1:
+        raise RuntimeError("correction1 commit is not the exact approved four modifications")
+    if sorted(correction2_rows) != expected_correction2:
+        raise RuntimeError("correction2 commit is not the exact corrective four modifications")
     required_mode = contract["required_mode"]
     if set(baseline_modes) != set(contract["baseline_exact_added_paths"]) \
-            or set(head_modes) != set(contract["correction_exact_modified_paths"]) \
+            or set(correction1_modes) != set(contract["correction1_exact_modified_paths"]) \
+            or set(head_modes) != set(contract["correction2_exact_modified_paths"]) \
             or any(mode != required_mode for mode in baseline_modes.values()) \
+            or any(mode != required_mode for mode in correction1_modes.values()) \
             or any(mode != required_mode for mode in head_modes.values()):
         raise RuntimeError("baseline or correction file modes changed")
 
@@ -199,24 +216,32 @@ def _tree_modes(commit: str, paths: Sequence[str]) -> dict[str, str]:
     return modes
 
 
-def validate_two_commit_lineage(config: Mapping[str, Any]) -> dict[str, Any]:
+def validate_three_commit_lineage(config: Mapping[str, Any]) -> dict[str, Any]:
     """Read-only runtime validation called by the Slurm preflight."""
-    contract = config["lineage"]["two_commit_execution_lineage"]
+    contract = config["lineage"]["three_commit_execution_lineage"]
     baseline = contract["baseline_commit"]
     parent = contract["baseline_parent_commit"]
+    correction1 = contract["correction1_commit"]
     head = _git_text("rev-parse", "HEAD")
     upstream = _git_text("rev-parse", "@{upstream}")
     head_line = _git_text("rev-list", "--parents", "-n", "1", head).split()
+    correction1_line = _git_text(
+        "rev-list", "--parents", "-n", "1", correction1,
+    ).split()
     baseline_line = _git_text("rev-list", "--parents", "-n", "1", baseline).split()
     baseline_paths = contract["baseline_exact_added_paths"]
-    correction_paths = contract["correction_exact_modified_paths"]
-    validate_two_commit_lineage_values(
+    correction1_paths = contract["correction1_exact_modified_paths"]
+    correction2_paths = contract["correction2_exact_modified_paths"]
+    validate_three_commit_lineage_values(
         config, head=head, upstream=upstream,
-        head_parents=head_line[1:], baseline_parents=baseline_line[1:],
+        head_parents=head_line[1:], correction1_parents=correction1_line[1:],
+        baseline_parents=baseline_line[1:],
         baseline_rows=_name_status_rows(parent, baseline),
-        correction_rows=_name_status_rows(baseline, head),
+        correction1_rows=_name_status_rows(baseline, correction1),
+        correction2_rows=_name_status_rows(correction1, head),
         baseline_modes=_tree_modes(baseline, baseline_paths),
-        head_modes=_tree_modes(head, correction_paths),
+        correction1_modes=_tree_modes(correction1, correction1_paths),
+        head_modes=_tree_modes(head, correction2_paths),
     )
     status = subprocess.run(
         [
@@ -229,7 +254,10 @@ def validate_two_commit_lineage(config: Mapping[str, Any]) -> dict[str, Any]:
     for path, expected in contract["untouched_files"].items():
         if sha256_file(ROOT / path) != expected:
             raise RuntimeError(f"untouched lineage file hash changed: {path}")
-    return {"head": head, "baseline": baseline, "baseline_parent": parent}
+    return {
+        "head": head, "correction1": correction1,
+        "baseline": baseline, "baseline_parent": parent,
+    }
 
 
 def _pair_id(pair: Mapping[str, Any]) -> tuple[int, int]:
@@ -308,11 +336,96 @@ def _compare_catalogues(
         )
 
 
+def _p1_numeric_failure(
+    path: str, fresh: float, legacy: float, tolerance: float, policy: str,
+) -> RuntimeError:
+    return RuntimeError(
+        f"{path} exceeds P1 {policy}: fresh={fresh!r} legacy={legacy!r} "
+        f"diff={abs(fresh - legacy)!r} tolerance={tolerance!r}"
+    )
+
+
+def _primitive_delta_atol(fresh: float, legacy: float) -> float:
+    scale = np.float32(max(abs(fresh), abs(legacy), 1.0))
+    return float(8.0 * abs(np.spacing(scale)))
+
+
+def _validate_observer_environment(
+    fresh: Mapping[str, Any], legacy: Mapping[str, Any], path: str,
+) -> None:
+    expected_environment_keys = {
+        "spheres", "minimum_local_sheet_mean_delta", "pass", "status",
+    }
+    expected_sphere_keys = {
+        "radius_mpc_h", "mean_delta", "cosmic_mean_mass_msun_h",
+        "excess_mass_msun_h", "maximum_excess_mass_msun_h", "pass",
+    }
+    if set(fresh) != expected_environment_keys or set(legacy) != expected_environment_keys \
+            or set(fresh["spheres"]) != set(legacy["spheres"]):
+        raise RuntimeError(f"{path} observer-environment keysets differ")
+    if fresh["minimum_local_sheet_mean_delta"] != legacy["minimum_local_sheet_mean_delta"] \
+            or fresh["status"] != legacy["status"] or fresh["pass"] is not legacy["pass"]:
+        raise RuntimeError(f"{path} environment exact fields or pass differ")
+    minimum_sheet = float(fresh["minimum_local_sheet_mean_delta"])
+    fresh_passes = []
+    legacy_passes = []
+    for radius_key in sorted(fresh["spheres"]):
+        fresh_row = fresh["spheres"][radius_key]
+        legacy_row = legacy["spheres"][radius_key]
+        row_path = f"{path}.spheres.{radius_key}"
+        if set(fresh_row) != expected_sphere_keys or set(legacy_row) != expected_sphere_keys:
+            raise RuntimeError(f"{row_path} sphere keysets differ")
+        for field in (
+            "radius_mpc_h", "cosmic_mean_mass_msun_h",
+            "maximum_excess_mass_msun_h",
+        ):
+            fresh_value, legacy_value = float(fresh_row[field]), float(legacy_row[field])
+            if fresh_value != legacy_value:
+                raise _p1_numeric_failure(
+                    f"{row_path}.{field}", fresh_value, legacy_value, 0.0,
+                    "exact binary64 bound",
+                )
+        fresh_delta, legacy_delta = float(fresh_row["mean_delta"]), float(legacy_row["mean_delta"])
+        primitive_tolerance = _primitive_delta_atol(fresh_delta, legacy_delta)
+        if not math.isclose(fresh_delta, legacy_delta, rel_tol=0.0, abs_tol=primitive_tolerance):
+            raise _p1_numeric_failure(
+                f"{row_path}.mean_delta", fresh_delta, legacy_delta,
+                primitive_tolerance, "primitive float32 ULP bound",
+            )
+        for label, row in (("fresh", fresh_row), ("legacy", legacy_row)):
+            derived = float(row["excess_mass_msun_h"])
+            expected = float(row["mean_delta"]) * float(row["cosmic_mean_mass_msun_h"])
+            formula_tolerance = 4.0 * max(math.ulp(derived), math.ulp(expected))
+            if not math.isclose(derived, expected, rel_tol=0.0, abs_tol=formula_tolerance):
+                raise RuntimeError(
+                    f"{row_path}.excess_mass_msun_h {label} formula mismatch: "
+                    f"fresh={float(fresh_row['excess_mass_msun_h'])!r} "
+                    f"legacy={float(legacy_row['excess_mass_msun_h'])!r} "
+                    f"diff={abs(derived - expected)!r} tolerance={formula_tolerance!r}"
+                )
+        def expected_pass(row: Mapping[str, Any]) -> bool:
+            passed = float(row["excess_mass_msun_h"]) <= float(row["maximum_excess_mass_msun_h"])
+            if float(row["radius_mpc_h"]) == 5.0:
+                passed = passed and float(row["mean_delta"]) >= minimum_sheet
+            return bool(passed)
+        fresh_expected, legacy_expected = expected_pass(fresh_row), expected_pass(legacy_row)
+        if fresh_row["pass"] is not fresh_expected or legacy_row["pass"] is not legacy_expected \
+                or fresh_row["pass"] is not legacy_row["pass"]:
+            raise RuntimeError(f"{row_path} primitive perturbation changes or contradicts pass")
+        fresh_passes.append(fresh_expected)
+        legacy_passes.append(legacy_expected)
+    if fresh["pass"] is not all(fresh_passes) or legacy["pass"] is not all(legacy_passes):
+        raise RuntimeError(f"{path} aggregate observer-environment pass is inconsistent")
+
+
 def _p1_values_close(left: Any, right: Any, *, path: str = "P1") -> None:
     """Compare legacy P1 using small field-aware float32 ULP bounds."""
     if isinstance(left, Mapping) and isinstance(right, Mapping):
         if set(left) != set(right):
             raise RuntimeError(f"{path} keysets differ")
+        if path.endswith(".observer_environment") and (left or right):
+            _validate_observer_environment(left, right, path)
+            return
         for key in left:
             _p1_values_close(left[key], right[key], path=f"{path}.{key}")
         return
@@ -343,7 +456,7 @@ def _p1_values_close(left: Any, right: Any, *, path: str = "P1") -> None:
             tolerance = 0.0
             policy = "exact bound"
         if not math.isclose(left, right, rel_tol=0.0, abs_tol=tolerance):
-            raise RuntimeError(f"{path} exceeds P1 {policy} {tolerance}")
+            raise _p1_numeric_failure(path, left, right, tolerance, policy)
         return
     if left != right:
         raise RuntimeError(f"{path} values differ")
@@ -1015,7 +1128,7 @@ def main() -> None:
     if args.lineage_preflight:
         if args.test_only:
             parser.error("--lineage-preflight and --test-only are mutually exclusive")
-        result = {"status": "lineage_preflight_pass", **validate_two_commit_lineage(
+        result = {"status": "lineage_preflight_pass", **validate_three_commit_lineage(
             load_terminal_config(args.config)
         )}
     else:

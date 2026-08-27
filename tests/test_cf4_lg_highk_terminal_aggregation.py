@@ -414,39 +414,110 @@ def test_nearest_box_face_binary64_tolerance_preserves_bootes_and_five_gates() -
     assert five_ulp["gates"] == gates and five_ulp["pass"] is True
 
 
-def _valid_two_commit_snapshot() -> dict:
+def _valid_three_commit_snapshot() -> dict:
     config = _config()
-    contract = config["lineage"]["two_commit_execution_lineage"]
+    contract = config["lineage"]["three_commit_execution_lineage"]
     baseline_paths = contract["baseline_exact_added_paths"]
-    correction_paths = contract["correction_exact_modified_paths"]
+    correction1_paths = contract["correction1_exact_modified_paths"]
+    correction2_paths = contract["correction2_exact_modified_paths"]
     return {
         "config": config, "head": "f" * 40, "upstream": "f" * 40,
-        "head_parents": [contract["baseline_commit"]],
+        "head_parents": [contract["correction1_commit"]],
+        "correction1_parents": [contract["baseline_commit"]],
         "baseline_parents": [contract["baseline_parent_commit"]],
         "baseline_rows": [("A", path) for path in baseline_paths],
-        "correction_rows": [("M", path) for path in correction_paths],
+        "correction1_rows": [("M", path) for path in correction1_paths],
+        "correction2_rows": [("M", path) for path in correction2_paths],
         "baseline_modes": {path: "100644" for path in baseline_paths},
-        "head_modes": {path: "100644" for path in correction_paths},
+        "correction1_modes": {path: "100644" for path in correction1_paths},
+        "head_modes": {path: "100644" for path in correction2_paths},
     }
 
 
-def test_two_commit_lineage_rejects_wrong_parent_and_extra_row() -> None:
-    snapshot = _valid_two_commit_snapshot()
-    terminal.validate_two_commit_lineage_values(**snapshot)
+def test_three_commit_lineage_rejects_wrong_parent_and_extra_row() -> None:
+    snapshot = _valid_three_commit_snapshot()
+    terminal.validate_three_commit_lineage_values(**snapshot)
     wrong_parent = copy.deepcopy(snapshot)
     wrong_parent["head_parents"] = ["0" * 40]
     with pytest.raises(RuntimeError, match="parent lineage"):
-        terminal.validate_two_commit_lineage_values(**wrong_parent)
+        terminal.validate_three_commit_lineage_values(**wrong_parent)
+    wrong_correction1_parent = copy.deepcopy(snapshot)
+    wrong_correction1_parent["correction1_parents"] = ["0" * 40]
+    with pytest.raises(RuntimeError, match="parent lineage"):
+        terminal.validate_three_commit_lineage_values(**wrong_correction1_parent)
     extra = copy.deepcopy(snapshot)
-    extra["correction_rows"].append(("M", "README.md"))
-    with pytest.raises(RuntimeError, match="exact four"):
-        terminal.validate_two_commit_lineage_values(**extra)
+    extra["correction2_rows"].append(("M", "README.md"))
+    with pytest.raises(RuntimeError, match="exact corrective four"):
+        terminal.validate_three_commit_lineage_values(**extra)
 
 
+@pytest.mark.parametrize("rows_name", ["correction1_rows", "correction2_rows"])
 @pytest.mark.parametrize("status", ["A", "D", "R"])
-def test_two_commit_lineage_rejects_added_deleted_or_renamed_correction(status: str) -> None:
-    snapshot = _valid_two_commit_snapshot()
-    path = snapshot["correction_rows"][0][1]
-    snapshot["correction_rows"][0] = (status, path)
-    with pytest.raises(RuntimeError, match="exact four"):
-        terminal.validate_two_commit_lineage_values(**snapshot)
+def test_three_commit_lineage_rejects_added_deleted_or_renamed_correction(
+    status: str, rows_name: str,
+) -> None:
+    snapshot = _valid_three_commit_snapshot()
+    path = snapshot[rows_name][0][1]
+    snapshot[rows_name][0] = (status, path)
+    with pytest.raises(RuntimeError, match="exact (approved|corrective) four"):
+        terminal.validate_three_commit_lineage_values(**snapshot)
+
+
+def _observer_environment(mean_delta: float, *, maximum: float = 1000.0) -> dict:
+    cosmic = 100.0
+    sphere_pass = mean_delta * cosmic <= maximum and mean_delta >= -0.5
+    return {
+        "spheres": {
+            "5.0": {
+                "radius_mpc_h": 5.0,
+                "mean_delta": mean_delta,
+                "cosmic_mean_mass_msun_h": cosmic,
+                "excess_mass_msun_h": mean_delta * cosmic,
+                "maximum_excess_mass_msun_h": maximum,
+                "pass": sphere_pass,
+            }
+        },
+        "minimum_local_sheet_mean_delta": -0.5,
+        "pass": sphere_pass,
+        "status": "coarse smoothed-density proxy; definitive exclusion uses particle HOP",
+    }
+
+
+def test_observer_sphere_allows_primitive_perturbation_with_consistent_mass() -> None:
+    legacy = {"observer_environment": _observer_environment(0.1)}
+    fresh = {"observer_environment": _observer_environment(0.1000005)}
+    terminal._p1_values_close(fresh, legacy)
+    assert fresh["observer_environment"]["pass"] is True
+
+
+def test_observer_sphere_rejects_inconsistent_derived_mass() -> None:
+    legacy = {"observer_environment": _observer_environment(0.1)}
+    fresh = copy.deepcopy(legacy)
+    fresh["observer_environment"]["spheres"]["5.0"]["excess_mass_msun_h"] += 0.001
+    with pytest.raises(RuntimeError, match=r"fresh=.*legacy=.*diff=.*tolerance="):
+        terminal._p1_values_close(fresh, legacy)
+
+
+def test_observer_sphere_rejects_primitive_over_bound() -> None:
+    legacy = {"observer_environment": _observer_environment(0.1)}
+    fresh = {"observer_environment": _observer_environment(0.100002)}
+    with pytest.raises(RuntimeError, match=r"fresh=.*legacy=.*diff=.*tolerance="):
+        terminal._p1_values_close(fresh, legacy)
+
+
+def test_observer_sphere_rejects_boundary_pass_change_within_primitive_bound() -> None:
+    maximum = 10.00002
+    legacy = {"observer_environment": _observer_environment(0.1, maximum=maximum)}
+    fresh = {"observer_environment": _observer_environment(0.1000005, maximum=maximum)}
+    assert legacy["observer_environment"]["pass"] is True
+    assert fresh["observer_environment"]["pass"] is False
+    with pytest.raises(RuntimeError, match="pass"):
+        terminal._p1_values_close(fresh, legacy)
+
+
+def test_other_unregistered_P1_float_remains_exact() -> None:
+    with pytest.raises(RuntimeError, match="exact bound"):
+        terminal._p1_values_close(
+            {"unregistered": math.nextafter(1.0, math.inf)},
+            {"unregistered": 1.0},
+        )

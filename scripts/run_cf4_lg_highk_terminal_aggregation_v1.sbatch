@@ -22,8 +22,8 @@ readonly config="$repo/config/cf4_lg_highk_terminal_aggregation_v1.json"
 readonly runner="$repo/src/cf4_lg_highk_terminal_aggregation.py"
 readonly checker="$repo/scripts/check_cf4_lg_highk_terminal_aggregation_v1.py"
 readonly slurm_test="$repo/tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
-readonly expected_config_sha=24500fe5e538e4f69593f511f3bce264b8944b75a9a8409f199c5f71796c0c51
-readonly expected_runner_sha=c86e278e02107c59aa813910c5adae4b70652c3cc2509ab98cd3a430b615d968
+readonly expected_config_sha=9c4d57705b7a423fbfc73898f0fee731e11a5aa87f0ab3e5603110b8c02eb213
+readonly expected_runner_sha=c5647fb706b3791085080e431b6283e44c612d67a3d68cb45b1de7520836f3e5
 readonly expected_checker_sha=e72a595c322ec10921a8435b650f07d82198ae0baab81e3824089d5a0d496aa4
 readonly expected_slurm_test_sha=baccfd0b2cc76784b2eac3db0bda8f64eba04c574bd5908d45c159e764297007
 readonly required_code_audit=CODE_GO
@@ -54,7 +54,10 @@ git -C "$repo" status --porcelain=v1 -z --untracked-files=all -- . \
 entries=[row for row in sys.stdin.buffer.read().split(b"\0") if row]
 if entries: raise SystemExit("worktree is not clean outside scripts/tripwire/: "+repr(entries))'
 
-# The pinned Python lineage validator performs the equivalent strict probes
+# The pinned Python lineage validator enforces baseline 0f74bcec (parent
+# 9f4fa6c9), approved correction1 863792f4 (parent 0f74bcec), and runtime
+# correction2 (parent 863792f4), with exact A/M rows and no renames.  It performs
+# the equivalent strict probes
 # `git rev-list --parents -n 1 HEAD`,
 # `git diff-tree --root --no-commit-id --name-status -r HEAD`, and
 # `git ls-tree HEAD` with required mode 100644.  Its baseline six paths are:
