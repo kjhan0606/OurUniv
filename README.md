@@ -1,8 +1,9 @@
 # OurUniv
 
-OurUniv reconstructs statistically controlled ΛCDM initial conditions for the
-local Universe from Cosmicflows-4 (CF4), then searches the posterior ensemble
-for realizations reproducing:
+OurUniv first reconstructs a statistically controlled present-day density and
+velocity posterior for the local Universe from Cosmicflows-4 (CF4), then
+infers ΛCDM initial conditions whose forward evolution reproduces that
+present-day posterior and the observed local structures:
 
 - the Milky Way, M31, and M33;
 - Virgo and Coma;
@@ -10,12 +11,44 @@ for realizations reproducing:
 - the observed large-scale peculiar-velocity field;
 - the target ΛCDM power spectrum and phase statistics.
 
-The intended deliverable is one validated parent realization and
-phase-consistent zoom families for the Local Group, Virgo, and Coma.
+The intended deliverables are a validated present-day posterior at a target
+voxel size of at most `0.3 cMpc/h`, an ensemble of initial conditions that
+closes under forward evolution, and phase-consistent zoom families for the
+Local Group, Virgo, and Coma.
+
+## Authoritative science route (2026-08-29)
+
+The active route is fixed in
+[`config/cf4_science_route_v2.json`](config/cf4_science_route_v2.json):
+
+```text
+CF4 observations
+  -> z=0 density/velocity posterior
+  -> IC posterior inferred through a dynamical forward model
+  -> PM evolution
+  -> z=0 closure against the target posterior and observations
+```
+
+This route supersedes the earlier return to direct `CF4 -> IC` seed searches.
+The existing linear constrained realizations, parent banks, P1/P2 results, and
+unconstrained reference ensemble remain useful as low-k priors, controls, and
+historical evidence, but they are not the active reconstruction product.
+
+The Hong-style model family has a valid negative result; that closes the
+specific estimator, not the present-density-first architecture. Until a new
+z=0 density/velocity method passes its declared validation gate, the project
+must not select or promote a direct-CR parent, launch new high-k IC production,
+or advance a zoom or RAMSES run. Changing this route requires explicit user
+approval and a prior update to the authoritative route record.
 
 ## Current status
 
-Priority P0 is complete for the accepted BGc linear-Gaussian model. The three
+The active project is at **Z0-A: present-density method redesign**. No validated
+high-resolution CF4 z=0 density/velocity posterior exists yet. No new compute
+is authorized by this status statement.
+
+The following is archived direct-route evidence. Priority P0 was completed for
+the accepted BGc linear-Gaussian model. The three
 observer-aware P1 parent survivors (3023, 3096, and 3429) produced zero
 CF4-only P2 pairs in 96 frozen N576 trials. Additional MW/M31 information is
 therefore labelled explicitly rather than attributed to CF4.
@@ -46,8 +79,9 @@ conditional-flow, and spliced-tail candidates failed their prospective
 development gates.  The final V84C0R feasibility audit found no cross-domain
 support for another tail-model expansion.  Consequently Astrid remained
 unopened, historical EAGLE was never reused for tuning, and neither HOP nor
-RAMSES promotion was authorized.  The project has returned to the main CF4
-constrained-realization route.  See the
+RAMSES promotion was authorized.  Its historical recommendation to return to
+the direct CF4 constrained-realization route is superseded by the
+present-density-first route fixed above.  See the
 [machine-verifiable completion audit](config/hong2021_eagle_goal_completion_audit.json)
 and [Hong reproduction history](HONG2021_REPRODUCTION.md).
 

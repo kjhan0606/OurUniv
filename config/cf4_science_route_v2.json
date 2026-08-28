@@ -1,0 +1,101 @@
+{
+  "schema": "ouruniv-cf4-science-route-v2",
+  "status": "active_present_density_first_route",
+  "effective_date": "2026-08-29",
+  "authority": {
+    "supersedes": "historical_return_to_direct_CF4_constrained_realization_route",
+    "route_change_requires_explicit_user_approval": true,
+    "route_change_requires_prior_committed_record_update": true,
+    "historical_status_or_result_cannot_change_route": true
+  },
+  "objective": {
+    "target": "CF4-conditioned local-Universe z=0 density and velocity posterior followed by dynamically closed LambdaCDM initial conditions",
+    "target_voxel_size_cMpc_h_max": 0.3,
+    "final_products": [
+      "validated_z0_density_velocity_posterior",
+      "PM_closed_initial_condition_posterior",
+      "phase_consistent_zoom_families_for_LG_Virgo_Coma"
+    ]
+  },
+  "mandatory_stage_order": [
+    {
+      "id": "Z0-A",
+      "name": "present_density_method_design",
+      "status": "active",
+      "purpose": "Design a non-Hong probabilistic reconstruction of the present-day density and velocity fields."
+    },
+    {
+      "id": "Z0-B",
+      "name": "present_density_validation",
+      "status": "blocked_by_Z0_A",
+      "required_outputs": [
+        "density_ensemble_mean_and_uncertainty",
+        "velocity_ensemble_mean_and_uncertainty",
+        "effective_resolution_transfer_function",
+        "added_information_provenance"
+      ],
+      "required_checks": [
+        "held_out_CF4_velocity_likelihood_and_residual_calibration",
+        "simulation_based_blind_reconstruction",
+        "density_and_structure_diagnostics",
+        "uncertainty_coverage",
+        "effective_resolution_at_or_below_target"
+      ]
+    },
+    {
+      "id": "IC-A",
+      "name": "dynamical_IC_inference",
+      "status": "blocked_by_Z0_B",
+      "rule": "Infer an IC posterior through a dynamical forward model; do not literally reverse one deterministic z=0 map."
+    },
+    {
+      "id": "IC-B",
+      "name": "PM_z0_closure",
+      "status": "blocked_by_IC_A",
+      "required_checks": [
+        "closure_against_target_z0_posterior",
+        "closure_against_original_CF4_observations",
+        "LambdaCDM_power_and_phase_statistics"
+      ]
+    },
+    {
+      "id": "ZOOM",
+      "name": "target_selection_and_zoom_validation",
+      "status": "blocked_by_IC_B"
+    }
+  ],
+  "information_policy": {
+    "CF4_role": "constrain the observationally supported present-day large-scale density and velocity modes",
+    "high_k_rule": "Any information beyond CF4 support must be explicit, probabilistic, and provenance-labelled.",
+    "required_velocity_products": [
+      "posterior_mean_velocity",
+      "posterior_velocity_uncertainty_or_dispersion"
+    ],
+    "single_deterministic_density_map_is_sufficient": false
+  },
+  "historical_artifact_policy": {
+    "direct_CF4_to_IC_route": "superseded_as_primary_science_route",
+    "Hong_model_family": "closed_negative_result_estimator_only",
+    "reusable_roles": [
+      "low_k_prior",
+      "unconstrained_control",
+      "forward_model_validation",
+      "historical_evidence"
+    ],
+    "cannot_authorize": [
+      "parent_or_seed_selection",
+      "high_k_IC_production",
+      "zoom_promotion",
+      "HOP_execution",
+      "RAMSES_execution"
+    ]
+  },
+  "current_action": {
+    "name": "bounded_Z0_A_design_audit",
+    "production_compute_authorized": false,
+    "Slurm_submission_authorized": false,
+    "model_training_authorized": false,
+    "IC_generation_authorized": false,
+    "PM_HOP_RAMSES_authorized": false
+  }
+}

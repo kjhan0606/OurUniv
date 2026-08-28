@@ -1,9 +1,11 @@
-# OurUniv / CF4 constrained-initial-condition plan
+# OurUniv / CF4 present-density-first reconstruction plan
 
 ## Scientific objective
 
-Construct an ensemble of ΛCDM constrained realizations that simultaneously
-reproduce, within declared observational tolerances:
+First reconstruct a posterior ensemble of the local density and velocity
+fields at `z=0`, then infer an ensemble of ΛCDM initial conditions whose
+forward evolution simultaneously reproduces, within declared observational
+tolerances:
 
 - the MW–M31–M33 configuration and dynamics;
 - Virgo and Coma;
@@ -11,12 +13,47 @@ reproduce, within declared observational tolerances:
 - the CF4 peculiar-velocity data and large-scale density/velocity field;
 - the target ΛCDM initial power spectrum and phase statistics.
 
-The deliverable is one validated parent realization plus phase-consistent
-zoom-IC families. LG, Virgo, and Coma should normally be separate zoom runs
-sharing the same parent phases; resolving all three in one L14 run is not
-required.
+The deliverables are a validated z=0 density/velocity posterior at a target
+voxel size of at most `0.3 cMpc/h`, a dynamically closed IC posterior, and
+phase-consistent zoom-IC families. LG, Virgo, and Coma should normally be
+separate zoom runs sharing the same parent phases; resolving all three in one
+L14 run is not required.
+
+## Authoritative route and non-regression rule
+
+The machine-readable authority is
+`config/cf4_science_route_v2.json`. The mandatory order is:
+
+1. infer the z=0 density/velocity posterior from CF4 and explicitly labelled
+   additional observations;
+2. validate that posterior on held-out velocities, simulation-based blind
+   tests, uncertainty calibration, and declared density/structure diagnostics;
+3. infer ICs through the dynamical forward model, rather than literal reversal
+   of one deterministic z=0 map;
+4. evolve those ICs with PM and require closure against both the target z=0
+   posterior and the original observations;
+5. only after closure, select zoom targets and run HOP/RAMSES validation.
+
+Direct `CF4 -> IC` artifacts are retained only as low-k priors, controls, and
+historical evidence. They cannot authorize parent selection, high-k IC
+production, zoom promotion, HOP, or RAMSES. A change in this order requires
+explicit user approval and an earlier committed update to the authoritative
+route record; a status summary or historical result cannot change it.
 
 ## Current state
+
+- **Active stage: Z0-A, present-density method redesign.** No validated
+  high-resolution CF4 z=0 density/velocity posterior currently exists.
+- The Hong-style model family is closed after a negative cross-code result.
+  This closes that estimator only; it does not close or reverse the
+  present-density-first route.
+- No direct parent/seed promotion, new high-k IC production, zoom advancement,
+  HOP, or RAMSES execution is active or authorized by this plan.
+- The existing CF4 linear posterior and the 768-member unconstrained P1
+  reference are reusable controls for large-scale information and enrichment,
+  not substitutes for the missing z=0 posterior.
+
+### Archived direct-route evidence
 
 - The original WF15 P0 ensemble passed on 2026-07-29 and remains archived as
   the control realization set.
@@ -72,7 +109,11 @@ required.
   shared central-cavity failure at the likelihood level without adding a
   direct density constraint.
 
-## Ordered gates
+## Archived direct-route gates
+
+The P0--P5 material below records completed or attempted work on the superseded
+direct route. Its status labels are historical and do not override the active
+Z0 route above.
 
 ### P0 — statistically valid parent field
 
@@ -219,31 +260,20 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-V6 is complete and closed: 60 N576 forwards produced five hard-P2 pairs, but
-zero pair-centred five-of-five P1 survivors. The v7 normalized z=0 likelihood
-correctly ranked four of those five pairs in its top ten, but naive prior
-sampling had ESS 1.28 and a maximum weight of 0.882. This identified a
-rare-event sampling problem in the latent midpoint, not permission to loosen
-the physical likelihood.
+Complete a bounded, no-production Z0-A design audit that:
 
-Run the frozen v8 program in
-`config/p2_lg_z0_forward_importance_v8.json`. Its prospective proposal audit
-selected 256 fresh realizations: the bootstrap 0.5-percent lower expected ESS
-is 8.47 (point expectation 22.23), and the defensive component guarantees
-`p(q)/g(q) <= 2`. The rules are:
+1. inventories which CF4 position, radial peculiar-velocity, measurement
+   uncertainty, and velocity-dispersion products are scientifically usable;
+2. separates CF4-supported low-k information from additional galaxy and
+   structure information used to complete high-k modes;
+3. compares non-Hong alternatives for a probabilistic z=0 reconstruction and
+   rejects any method that emits only a deterministic mean map;
+4. defines the z=0 outputs: density ensemble/mean/uncertainty, velocity
+   ensemble/mean/uncertainty, resolution transfer function, and provenance of
+   every added constraint;
+5. freezes independent validation and the effective-resolution criterion
+   before implementation or training.
 
-1. generate only fresh proposal seeds 5269--5524 from the frozen 50/50
-   midpoint mixture and record exact `log p(q)-log g(q)`;
-2. preserve parent 3429's N64 long modes and repeat unchanged P1 on every N192
-   projection;
-3. forward every P1 survivor at N576 and keep the unchanged hard-P2 support;
-4. evaluate the unchanged normalized v7 z=0 likelihood over every loose pair;
-5. repeat all five P1 gates at those pair midpoints and require the same halo
-   pair to pass both recentered P1 and hard P2;
-6. require at least eight jointly eligible realizations, importance ESS >= 8,
-   and maximum normalized weight <= 0.25;
-7. stop before RAMSES for review on either pass or failure; never extend this
-   same model with more seeds.
-
-The rejected cr6/e19 and p3429/s5108 runs remain diagnostic only and are not
-production candidates.
+This design audit does not authorize Slurm submission, model training, parent
+selection, IC generation, PM/HOP/RAMSES execution, or production artifacts.
+The superseded v8 program and rejected zooms remain historical diagnostics.
