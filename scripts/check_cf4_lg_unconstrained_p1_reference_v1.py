@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independent live-buffer and sealed-output checker for P1 reference v1.
+"""Independent offline sealed-output checker for P1 reference v1.
 
 This file intentionally imports no producer module and duplicates framing,
 margin, aggregation, and seal validation logic from the declarative contracts.
@@ -322,87 +322,6 @@ def independently_validate_critical_contracts(program: Mapping[str, Any], design
         raise RuntimeError("independent forbidden/diagnostic/field contract mismatch")
 
 
-def independent_live_allocation_recheck(grant: Mapping[str, Any]) -> None:
-    receipt=grant["allocation_receipt"];pins=grant["runtime_pins"]
-    required=("SLURM_JOB_ID","SLURM_JOB_NODELIST","SLURM_JOB_PARTITION","SLURM_CPUS_PER_TASK","SLURM_NTASKS")
-    if any(not os.environ.get(key) for key in required): raise RuntimeError("live Slurm environment absent")
-    host=subprocess.check_output(["hostname"],text=True).strip()
-    config=subprocess.check_output(["scontrol","show","config"],text=True)
-    if "ClusterName             = syntax" not in config or host!=pins["node"] \
-            or os.environ["SLURM_JOB_ID"]!=receipt["slurm_job_id"] \
-            or os.environ["SLURM_JOB_NODELIST"]!=receipt["slurm_nodelist"]:
-        raise RuntimeError("live allocation controller/job/node identity mismatch")
-    job=subprocess.check_output(["scontrol","show","job","--oneliner",receipt["slurm_job_id"]],text=True).strip()
-    fields={}
-    for token in job.split():
-        if "=" in token:
-            key,value=token.split("=",1);fields[key]=value
-    hosts=subprocess.check_output(["scontrol","show","hostnames",receipt["slurm_nodelist"]],text=True).split()
-    raw_keys=("NumNodes","NumTasks","NumCPUs","CPUs/Task","ReqTRES","TresPerNode","AllocTRES",
-              "TimeLimit","Requeue","Restarts","Partition","JobState","NodeList")
-    if fields.get("JobState")!="RUNNING" or host not in hosts \
-            or {key:fields.get(key) for key in raw_keys}!=pins["Slurm_raw_resource_fields"]:
-        raise RuntimeError("live allocation state/resources changed")
-    import re
-    if any(fields.get(key)!=value for key,value in
-           {"NumNodes":"1","NumTasks":"1","NumCPUs":"16","CPUs/Task":"16",
-            "Requeue":"0","Restarts":"0"}.items()) \
-            or fields.get("TimeLimit") not in {"24:00:00","1-00:00:00"} \
-            or fields.get("Partition") not in {"a10","a40","h100","h200","a100","a100_pcie"} \
-            or re.search(r"(?:^|,)mem=(?:20G|20480M)(?:,|$)",fields.get("ReqTRES","")) is None \
-            or re.search(r"(?:gres/)?gpu(?:[:/][A-Za-z0-9_.-]+)?(?::|=)1(?=,|\s|\)|$)",
-                         " ".join(fields.get(key,"") for key in
-                                  ("ReqTRES","TresPerNode","AllocTRES"))) is None:
-        raise RuntimeError("live allocation differs from exact frozen resources")
-    slurm_env_keys=("SLURM_JOB_ID","SLURM_JOB_NODELIST","SLURM_JOB_PARTITION","SLURM_JOB_NUM_NODES",
-                    "SLURM_NTASKS","SLURM_CPUS_PER_TASK","SLURM_MEM_PER_NODE","SLURM_RESTART_COUNT")
-    if {key:os.environ.get(key) for key in slurm_env_keys}!=pins["Slurm_environment_variables"]:
-        raise RuntimeError("live Slurm environment receipt changed")
-    gpu_env_keys=("SLURM_JOB_GPUS","SLURM_GPUS","SLURM_GPUS_ON_NODE")
-    if {key:os.environ.get(key) for key in gpu_env_keys}!=pins["Slurm_GPU_variables"]:
-        raise RuntimeError("live GPU allocation variables changed")
-    current_gpus=[]
-    for stored in pins["gpus"]:
-        token=stored["allocation_token"]
-        output=subprocess.check_output(["nvidia-smi",f"--id={token}",
-            "--query-gpu=index,name,uuid,memory.total,driver_version",
-            "--format=csv,noheader,nounits"],text=True).splitlines()
-        if len(output)!=1: raise RuntimeError("live allocated GPU token is ambiguous")
-        pieces=[item.strip() for item in output[0].split(",")]
-        if len(pieces)!=5: raise RuntimeError("live GPU receipt malformed")
-        current_gpus.append({"allocation_token":token,"index":int(pieces[0]),"model":pieces[1],
-            "uuid":pieces[2],"memory_MiB":int(pieces[3]),"driver":pieces[4]})
-    if current_gpus!=pins["gpus"]: raise RuntimeError("live allocated GPU identity changed")
-    import sys
-    banner=subprocess.check_output(
-        ["nvidia-smi",f"--id={current_gpus[0]['allocation_token']}"],text=True)
-    cuda=re.search(r"CUDA Version:\s*([^ |]+)",banner)
-    python_pin={"executable":sys.executable,"version":sys.version.split()[0],
-                "sha256":_file_digest(Path(os.path.realpath(sys.executable)))}
-    if cuda is None or cuda.group(1)!=pins["CUDA_reported"] or python_pin!=pins["python"]:
-        raise RuntimeError("live CUDA/Python identity changed")
-    import importlib.metadata as metadata
-    for name,stored in pins["packages"].items():
-        distribution=metadata.distribution(name)
-        metadata_entry=next(item for item in distribution.files or [] if str(item).endswith("METADATA"))
-        metadata_path=Path(distribution.locate_file(metadata_entry));init_path=Path(stored["import_init_path"])
-        located_init=Path(distribution.locate_file(Path(name)/"__init__.py"))
-        if distribution.version!=stored["version"] or _file_digest(metadata_path)!=stored["METADATA_sha256"] \
-                or located_init!=init_path or _file_digest(init_path)!=stored["import_init_sha256"]:
-            raise RuntimeError("live package identity changed")
-    for stored in pins["pmwd_module_files"].values():
-        if _file_digest(Path(stored["path"]))!=stored["sha256"]: raise RuntimeError("live pmwd module changed")
-    import platform
-    if pins["platform"]!={"uname":list(platform.uname()),"libc":list(platform.libc_ver()),
-                           "byteorder":sys.byteorder}:
-        raise RuntimeError("live platform identity changed")
-    environment_keys=("CUDA_VISIBLE_DEVICES","JAX_ENABLE_X64","XLA_PYTHON_CLIENT_PREALLOCATE",
-        "XLA_PYTHON_CLIENT_MEM_FRACTION","OMP_NUM_THREADS","MKL_NUM_THREADS","OPENBLAS_NUM_THREADS",
-        "NUMEXPR_NUM_THREADS","JAX_PLATFORM_NAME","TF_CPP_MIN_LOG_LEVEL")
-    if {key:os.environ.get(key) for key in environment_keys}!=pins["environment"]:
-        raise RuntimeError("live runtime environment changed")
-
-
 def verify_seal_contract_values(manifest: Mapping[str,Any],complete: Mapping[str,Any]) -> None:
     if manifest.get("schema")!="ouruniv-cf4-lg-unconstrained-p1-reference-seal-manifest-v1" \
             or manifest.get("status")!="complete" \
@@ -605,7 +524,9 @@ def verify_seed_manifest_integrity(seed: Mapping[str, Any], program: Mapping[str
             raise RuntimeError("independently extracted forbidden JAX inventory mismatch")
 
 
-def independent_program_grant_preflight(program: Mapping[str, Any], grant: Mapping[str, Any]) -> None:
+def independent_program_grant_preflight(program: Mapping[str, Any], grant: Mapping[str, Any],
+                                        grant_commit: str) -> None:
+    """Validate immutable provenance from Git objects, not the current runtime."""
     contract = program["grant_contract"]
     if program.get("schema") != "ouruniv-cf4-lg-unconstrained-p1-reference-program-v1" \
             or program.get("status") != "implementation_frozen_execution_unauthorized_waiting_exact_one_grant":
@@ -653,29 +574,35 @@ def independent_program_grant_preflight(program: Mapping[str, Any], grant: Mappi
     if grant["outputs"]!=program["outputs"]: raise RuntimeError("grant output contract mismatch")
     git=lambda *a:subprocess.run(["git","-C",str(ROOT),*a],check=True,stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,text=True).stdout.strip()
-    head=git("rev-parse","HEAD");upstream=git("rev-parse","@{upstream}");impl=grant["implementation"]["commit"]
-    if head!=upstream or git("rev-list","--parents","-n","1",head).split()[1:]!=[impl] \
+    impl=grant["implementation"]["commit"]
+    if not isinstance(grant_commit,str) or len(grant_commit)!=40 \
+            or any(char not in "0123456789abcdef" for char in grant_commit) \
+            or git("cat-file","-t",grant_commit)!="commit" \
+            or git("rev-list","--parents","-n","1",grant_commit).split()[1:]!=[impl] \
             or git("rev-list","--parents","-n","1",impl).split()[1:]!=[program["lineage"]["required_parent_commit"]]:
-        raise RuntimeError("independent Git direct-parent/upstream mismatch")
+        raise RuntimeError("independent immutable Git lineage mismatch")
     paths=program["lineage"]["implementation_exact_added_paths"]
     def rows(a,b):
         raw=git("diff","--no-renames","--name-status",a,b,"--")
         return [tuple(line.split("\t")) for line in raw.splitlines() if line]
     if sorted(rows(program["lineage"]["required_parent_commit"],impl))!=sorted(("A",p) for p in paths) \
-            or rows(impl,head)!=[("A",program["lineage"]["future_grant_path"])]:
+            or rows(impl,grant_commit)!=[("A",program["lineage"]["future_grant_path"])]:
         raise RuntimeError("independent exact-six/exact-one diff mismatch")
+    committed_grant=subprocess.check_output(
+        ["git","-C",str(ROOT),"show",f"{grant_commit}:{program['lineage']['future_grant_path']}"])
+    if committed_grant!=grant_path.read_bytes():
+        raise RuntimeError("committed grant bytes differ from canonical grant")
     bound={x["path"]:(x["mode"],x["sha256"]) for x in grant["implementation"]["files"]}
-    tree_modes={}
+    tree_modes={};tree_hashes={}
     for path in paths:
         entry=git("ls-tree",impl,"--",path).split()
         if len(entry)<4 or entry[3]!=path: raise RuntimeError("independent implementation tree entry absent")
         tree_modes[path]=entry[0]
+        blob=subprocess.check_output(["git","-C",str(ROOT),"show",f"{impl}:{path}"])
+        tree_hashes[path]=hashlib.sha256(blob).hexdigest()
     if set(bound)!=set(paths) or any(tree_modes[p]!="100644" \
-            or bound[p] != ("100644",_file_digest(ROOT/p)) for p in paths):
+            or bound[p] != ("100644",tree_hashes[p]) for p in paths):
         raise RuntimeError("independent implementation file pin mismatch")
-    dirty=subprocess.run(["git","-C",str(ROOT),"status","--porcelain=v1","-z","--untracked-files=all","--",".",
-                          ":(exclude)scripts/tripwire/**"],check=True,stdout=subprocess.PIPE).stdout
-    if dirty: raise RuntimeError("independent checker found dirty runtime worktree")
 
 
 def checker_frame_live_array(array: np.ndarray, domain_tag: str,
@@ -971,7 +898,6 @@ def independent_summary(rows: list[dict[str, Any]], component_order: Sequence[st
 
 def check_output_directory(directory: Path, program: Mapping[str, Any],
                            grant: Mapping[str, Any], private: bool = False) -> dict[str, Any]:
-    independent_program_grant_preflight(program, grant)
     directory = Path(directory); mode = stat.S_IMODE(os.lstat(directory).st_mode)
     if mode != (0o700 if private else 0o555): raise RuntimeError("output directory mode mismatch")
     if {p.name for p in directory.iterdir()} != ENTRY_SET: raise RuntimeError("output entry set mismatch")
@@ -983,12 +909,13 @@ def check_output_directory(directory: Path, program: Mapping[str, Any],
     if set(manifest)!={"schema","status","grant_sha256","grant_commit","files","exact_entry_set"} \
             or set(complete)!={"schema","status","manifest_sha256","scientific_result","automatic_promotion"}:
         raise RuntimeError("seal/COMPLETE exact keyset mismatch")
+    grant_commit=manifest.get("grant_commit")
+    independent_program_grant_preflight(program, grant, grant_commit)
     verify_seal_contract_values(manifest,complete)
     if manifest.get("exact_entry_set")!=sorted(ENTRY_SET) or complete.get("manifest_sha256")!=_file_digest(directory/"manifest.json"):
         raise RuntimeError("seal manifest/COMPLETE mismatch")
     grant_path=ROOT/program["lineage"]["future_grant_path"]
     grant_file_sha=_file_digest(grant_path)
-    grant_commit=subprocess.check_output(["git","-C",str(ROOT),"rev-parse","HEAD"],text=True).strip()
     if manifest.get("grant_sha256")!=grant_file_sha or manifest.get("grant_commit")!=grant_commit:
         raise RuntimeError("seal grant file/commit mismatch")
     if [x.get("name") for x in manifest["files"]] != ["input_manifest.json","member_metrics.jsonl","summary.json"]:
@@ -1052,7 +979,6 @@ def check_output_directory(directory: Path, program: Mapping[str, Any],
     for name in ("input_manifest.json","summary.json","manifest.json","COMPLETE"):
         value=json.loads((directory/name).read_bytes())
         if (directory/name).read_bytes()!=_json_bytes(value): raise RuntimeError(f"noncanonical {name}")
-    independent_live_allocation_recheck(grant)
     return {"status":"PASS","rows":768,"entries":sorted(ENTRY_SET)}
 
 

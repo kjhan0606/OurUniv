@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
-import ctypes
-import errno
 import hashlib
 from importlib.metadata import version as package_version
 import json
@@ -918,8 +916,8 @@ def _fsync_directory(path: Path) -> None:
         os.close(descriptor)
 
 
-def _publish_no_replace(staging: Path, output: Path) -> None:
-    """Atomically publish a directory without any overwrite race."""
+def _publish_single_writer(staging: Path, output: Path) -> None:
+    """Publish one sealed single-writer directory with a POSIX rename."""
     if staging.parent.resolve() != output.parent.resolve() \
             or staging.parent.stat().st_dev != output.parent.stat().st_dev:
         raise RuntimeError("staging and final output are not sibling paths on one filesystem")
@@ -938,19 +936,7 @@ def _publish_no_replace(staging: Path, output: Path) -> None:
         "manifest_sha256": sha256_file(staging / "manifest.json"),
     }:
         raise RuntimeError("refusing to publish staging without a valid COMPLETE seal")
-    library = ctypes.CDLL(None, use_errno=True)
-    renameat2 = getattr(library, "renameat2", None)
-    if renameat2 is None:
-        raise RuntimeError("renameat2(RENAME_NOREPLACE) is unavailable")
-    renameat2.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
-    renameat2.restype = ctypes.c_int
-    if renameat2(
-        -100, os.fsencode(staging), -100, os.fsencode(output), 1,
-    ) != 0:
-        code = ctypes.get_errno()
-        if code == errno.EEXIST:
-            raise FileExistsError(f"refusing to replace terminal output: {output}")
-        raise OSError(code, os.strerror(code), str(output))
+    os.rename(staging, output)
     _fsync_directory(output.parent)
 
 
@@ -1115,7 +1101,7 @@ def run(config_path: Path, *, test_only: bool = False) -> dict[str, Any]:
         "pair_recentered_p1.json": p1_result,
         "terminal_result.json": terminal,
     }, runtime)
-    _publish_no_replace(staging, output)
+    _publish_single_writer(staging, output)
     return terminal
 
 

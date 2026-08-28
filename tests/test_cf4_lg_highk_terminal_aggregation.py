@@ -268,22 +268,25 @@ def _fake_payloads() -> dict[str, dict]:
     }
 
 
-def test_durable_seal_and_no_overwrite_publish(tmp_path: Path) -> None:
+def test_durable_seal_and_single_writer_publish(tmp_path: Path) -> None:
     staging = tmp_path / ".staging"
     staging.mkdir(mode=0o700)
     terminal._seal(staging, CONFIG, _fake_payloads(), {"test": True})
     assert stat.S_IMODE(staging.stat().st_mode) == 0o555
     assert all(stat.S_IMODE(path.stat().st_mode) == 0o444 for path in staging.iterdir())
     final = tmp_path / "final"
-    terminal._publish_no_replace(staging, final)
+    terminal._publish_single_writer(staging, final)
     assert final.is_dir() and not staging.exists()
 
     second = tmp_path / ".second"
     second.mkdir(mode=0o700)
     terminal._seal(second, CONFIG, _fake_payloads(), {"test": True})
     with pytest.raises(FileExistsError, match="replace"):
-        terminal._publish_no_replace(second, final)
+        terminal._publish_single_writer(second, final)
     assert second.exists()
+    source = (ROOT / "src/cf4_lg_highk_terminal_aggregation.py").read_text()
+    assert "os.rename(staging, output)" in source
+    assert "renameat2" not in source and "ctypes" not in source
 
 
 def test_partial_staging_never_becomes_canonical(tmp_path: Path) -> None:
@@ -291,7 +294,7 @@ def test_partial_staging_never_becomes_canonical(tmp_path: Path) -> None:
     partial.mkdir(mode=0o555)
     final = tmp_path / "final"
     with pytest.raises(RuntimeError, match="partial or unsealed"):
-        terminal._publish_no_replace(partial, final)
+        terminal._publish_single_writer(partial, final)
     assert partial.exists() and not final.exists()
 
 

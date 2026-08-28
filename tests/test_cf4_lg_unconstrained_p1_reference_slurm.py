@@ -35,41 +35,28 @@ def test_sbatch_syntax_and_exact_resources():
     assert "sequential" in resources["host_memory_estimate_basis"]
 
 
-def test_held_allocation_is_event_driven_and_fail_closed():
+def test_completed_v1_submission_is_archived_without_hidden_activation():
     source = text()
-    assert "--wait-ref" in source and "--wait-timeout" in source
-    assert "--expected-old-commit" in source
-    assert "command -v inotifywait" not in source
-    assert "HELD_ALLOCATION_BLOCKED_NO_SCIENCE" in source
-    assert "GRANT_ACTIVE_SCIENCE_GATE_OPEN" in source
-    assert source.index("--emit-runtime-receipt") < source.index("--wait-ref")
-    assert source.index("--lineage-preflight") < source.index('"$python" -P "$runner" --config "$program" --grant "$grant"\n')
-    commands = [line.strip() for line in source.splitlines()
-                if line.strip() and not line.lstrip().startswith("#")]
-    assert not any(line.startswith("sleep ") or line.startswith("while ")
-                   or line.startswith("for ") for line in commands)
-    assert "sbatch " not in source and "srun " not in source
-    assert "abort_preexecution" in source
-    assert "TECHNICAL_PRE_EXECUTION_ABORT_NO_SCIENCE" in source
-    assert "TECHNICAL_POST_GATE_INCOMPLETE_NO_RETRY_OR_CLEANUP" in source
-    assert source.index("implementation_commit=") < source.index("--emit-runtime-receipt")
-    assert source.index("phase=postgate") < source.index("GRANT_ACTIVE_SCIENCE_GATE_OPEN")
+    assert "ARCHIVED_COMPLETED_V1_RESUBMISSION_FORBIDDEN" in source
+    assert "exit 64" in source
+    for forbidden in ("--wait-ref", "inotify", "pgrep", "srun ", "sbatch ",
+                      "--grant", "--emit-runtime-receipt", "lineage-preflight"):
+        assert forbidden not in source
     runner = (ROOT / "src/cf4_lg_unconstrained_p1_reference.py").read_text()
     checker = (ROOT / "scripts/check_cf4_lg_unconstrained_p1_reference_v1.py").read_text()
+    assert "inotify" not in runner and "wait_for_exact_ref_event" not in runner
     assert 'f"--id={token}"' in runner
     assert '["nvidia-smi", "--query-gpu=' not in runner
     assert 'check_output(["nvidia-smi"],text=True)' not in runner.replace(" ", "")
     assert 'check_output(["nvidia-smi"],text=True)' not in checker.replace(" ", "")
     assert 'f"--id={gpu_tokens[0]}"' in runner
-    assert "f\"--id={current_gpus[0]['allocation_token']}\"" in checker
-    assert "JAX_PLATFORM_NAME=gpu" in source and "TF_CPP_MIN_LOG_LEVEL=2" in source
+    assert "independent_live_allocation_recheck" not in checker
+    assert "JAX_PLATFORM_NAME" not in source and "TF_CPP_MIN_LOG_LEVEL" not in source
 
 
 def test_slurm_only_and_manual_controller_guards():
     source = text()
-    assert 'SLURM_CLUSTER_NAME:-}" == syntax' in source
-    assert '"$(hostname)" != syntax' in source
-    assert 'SLURM_JOB_ID:-' in source and 'SLURM_JOB_NODELIST:-' in source
+    assert "ARCHIVED_COMPLETED_V1_RESUBMISSION_FORBIDDEN" in source
     config = json.loads(PROGRAM.read_bytes())
     assert config["resources"]["route"] == "Slurm_only"
     assert config["resources"]["manual_syntax"] is False
@@ -90,7 +77,7 @@ def test_modules_have_no_jax_or_pmwd_top_level_import():
         assert f'"{module}"' in runner
     assert runner.index('jax.config.jax_enable_x64') < runner.rindex('.standard_normal(')
     checker=(ROOT/"scripts/check_cf4_lg_unconstrained_p1_reference_v1.py").read_text()
-    assert "independent_live_allocation_recheck(grant)" in checker
+    assert "independent_live_allocation_recheck" not in checker
 
 
 def _git(*args):
@@ -107,20 +94,6 @@ def _diff_rows(parent, child):
     return rows
 
 
-def _non_tripwire_status():
-    raw = subprocess.check_output(
-        ["git", "-C", str(ROOT), "status", "--porcelain=v1", "-z", "--untracked-files=all"])
-    rows = []
-    for row in raw.split(b"\0"):
-        if not row:
-            continue
-        assert len(row) >= 4 and row[2:3] == b" "
-        status, path = row[:2].decode(), row[3:].decode()
-        if not path.startswith("scripts/tripwire/"):
-            rows.append((status, path))
-    return rows
-
-
 def _assert_exact_implementation(parent, implementation, expected):
     assert _git("rev-list", "--parents", "-n", "1", implementation).split()[1:] == [parent]
     assert sorted(_diff_rows(parent, implementation)) == sorted(("A", path) for path in expected)
@@ -134,24 +107,16 @@ def test_exact_six_paths_are_only_new_non_tripwire_files():
     expected = sorted(config["lineage"]["implementation_exact_added_paths"])
     parent = config["lineage"]["required_parent_commit"]
     grant_path = config["lineage"]["future_grant_path"]
-    head = _git("rev-parse", "HEAD")
-    status = _non_tripwire_status()
-    if head == parent:
-        assert sorted(status) == sorted(("??", path) for path in expected)
-    else:
-        head_parents = _git("rev-list", "--parents", "-n", "1", head).split()[1:]
-        assert len(head_parents) == 1
-        if head_parents == [parent]:
-            implementation = head
-            _assert_exact_implementation(parent, implementation, expected)
-            assert status in ([], [("??", grant_path)])
-        else:
-            implementation = head_parents[0]
-            _assert_exact_implementation(parent, implementation, expected)
-            assert _diff_rows(implementation, head) == [("A", grant_path)]
-            grant_tree = _git("ls-tree", head, "--", grant_path).split()
-            assert len(grant_tree) >= 4 and grant_tree[0] == "100644" and grant_tree[3] == grant_path
-            assert status == []
+    additions = _git("log", "--all", "--diff-filter=A", "--format=%H", "--", grant_path).splitlines()
+    assert len(additions) == 1
+    grant_commit = additions[0]
+    grant_parents = _git("rev-list", "--parents", "-n", "1", grant_commit).split()[1:]
+    assert len(grant_parents) == 1
+    implementation = grant_parents[0]
+    _assert_exact_implementation(parent, implementation, expected)
+    assert _diff_rows(implementation, grant_commit) == [("A", grant_path)]
+    grant_tree = _git("ls-tree", grant_commit, "--", grant_path).split()
+    assert len(grant_tree) >= 4 and grant_tree[0] == "100644" and grant_tree[3] == grant_path
     assert all((ROOT / path).is_file() and not (ROOT / path).is_symlink() for path in expected)
 
 

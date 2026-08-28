@@ -8,8 +8,6 @@ import json
 from pathlib import Path
 import subprocess
 import sys
-import threading
-import time
 import zlib
 
 import numpy as np
@@ -245,29 +243,16 @@ def test_lineage_pure_validator_rejects_wrong_parent():
     with pytest.raises(RuntimeError): producer.validate_lineage_values(program, grant, **kwargs)
 
 
-def test_atomic_noreplace_publish_and_existing_refusal(tmp_path):
+def test_single_writer_publish_and_existing_refusal(tmp_path):
     first = tmp_path / "first"; first.mkdir(); final = tmp_path / "final"
-    producer._publish_noreplace(first, final)
+    producer._publish_single_writer(first, final)
     assert final.is_dir() and not first.exists()
     second = tmp_path / "second"; second.mkdir()
-    with pytest.raises(FileExistsError): producer._publish_noreplace(second, final)
+    with pytest.raises(FileExistsError): producer._publish_single_writer(second, final)
     assert second.is_dir()
-
-
-def test_exact_ref_wait_is_event_driven(tmp_path):
-    old="0"*40;new="1"*40
-    ref = tmp_path / "branch"; ref.write_text(old+"\n")
-    def update():
-        time.sleep(.05)
-        lock = tmp_path / "branch.lock"; lock.write_text(new+"\n"); lock.replace(ref)
-    worker = threading.Thread(target=update); worker.start()
-    producer.wait_for_exact_ref_event(ref, old, 2)
-    worker.join(); assert ref.read_text() == new+"\n"
-
-
-def test_exact_ref_wait_detects_push_before_watcher_read(tmp_path):
-    ref=tmp_path/"branch";ref.write_text("2"*40+"\n")
-    producer.wait_for_exact_ref_event(ref,"1"*40,1)
+    source = (ROOT / "src/cf4_lg_unconstrained_p1_reference.py").read_text()
+    assert "os.rename(source, target)" in source
+    assert "renameat2" not in source
 
 
 def test_program_is_canonical_and_execution_unauthorized():

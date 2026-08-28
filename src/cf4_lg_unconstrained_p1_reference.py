@@ -2,25 +2,21 @@
 """Frozen unconstrained P1 reference producer.
 
 Importing this module is CPU-only.  JAX, PMWD, the forward factory, and the P1
-scorer are imported only after a committed execution grant and its held Slurm
-allocation receipt have passed every fail-closed gate.
+scorer remain below explicit runtime validation.  The completed v1 Slurm
+submission is archived; this module contains no filesystem event transport.
 """
 from __future__ import annotations
 
 import argparse
-import ctypes
 import hashlib
 import importlib.util
 import json
 import math
 import os
 from pathlib import Path
-import select
 import stat
-import struct
 import subprocess
 import sys
-import time
 from typing import Any, Callable, Mapping, Sequence
 
 import numpy as np
@@ -461,42 +457,6 @@ def runtime_receipt(program: Mapping[str, Any]) -> dict[str, Any]:
             "one_live_held_allocation": True}
 
 
-def wait_for_exact_ref_event(ref: Path, expected_old_commit: str, timeout_seconds: int) -> None:
-    """Wait for an exact Git loose-ref rename using Linux inotify, not polling."""
-    ref = ref.resolve(); parent = ref.parent; name = os.fsencode(ref.name)
-    import re
-    if not ref.is_file() or not parent.is_dir() or timeout_seconds <= 0 \
-            or re.fullmatch(r"[0-9a-f]{40}",expected_old_commit) is None:
-        raise RuntimeError("invalid exact ref wait target/timeout")
-    libc = ctypes.CDLL(None, use_errno=True)
-    fd = libc.inotify_init1(os.O_CLOEXEC | os.O_NONBLOCK)
-    if fd < 0:
-        error = ctypes.get_errno(); raise OSError(error, os.strerror(error))
-    try:
-        watch = libc.inotify_add_watch(fd, os.fsencode(parent), 0x00000080)  # IN_MOVED_TO
-        if watch < 0:
-            error = ctypes.get_errno(); raise OSError(error, os.strerror(error))
-        current=ref.read_text(encoding="ascii").strip()
-        if re.fullmatch(r"[0-9a-f]{40}",current) is None:
-            raise RuntimeError("exact ref contains a malformed commit")
-        if current!=expected_old_commit:
-            return
-        deadline = time.monotonic() + timeout_seconds
-        while True:  # event consumption, never a filesystem/status poll
-            remaining = deadline - time.monotonic()
-            if remaining <= 0 or not select.select([fd], [], [], remaining)[0]:
-                raise TimeoutError("exact grant ref activation timed out")
-            data = os.read(fd, 65536); offset = 0
-            while offset < len(data):
-                _watch, mask, _cookie, length = struct.unpack_from("iIII", data, offset)
-                offset += 16; event_name = data[offset:offset + length].split(b"\0", 1)[0]
-                offset += length
-                if mask & 0x00000080 and event_name == name:
-                    return
-    finally:
-        os.close(fd)
-
-
 def slurm_gpu_counts(text: str) -> list[int]:
     import re
     return [int(value) for value in re.findall(
@@ -893,14 +853,14 @@ def _fsync_dir(path: Path) -> None:
     finally: os.close(fd)
 
 
-def _publish_noreplace(source: Path, target: Path) -> None:
-    if target.exists():
+def _publish_single_writer(source: Path, target: Path) -> None:
+    """Publish one sealed single-writer directory with a POSIX rename."""
+    if source.parent.resolve() != target.parent.resolve() \
+            or source.parent.stat().st_dev != target.parent.stat().st_dev:
+        raise RuntimeError("staging and final output must be siblings on one filesystem")
+    if target.exists() or target.is_symlink():
         raise FileExistsError(str(target))
-    libc = ctypes.CDLL(None, use_errno=True)
-    result = libc.renameat2(-100, os.fsencode(source), -100, os.fsencode(target), 1)
-    if result != 0:
-        error = ctypes.get_errno()
-        raise OSError(error, os.strerror(error), str(target))
+    os.rename(source, target)
 
 
 def seal_outputs(program: Mapping[str, Any], grant: Mapping[str, Any], receipt: Mapping[str, Any],
@@ -932,7 +892,7 @@ def seal_outputs(program: Mapping[str, Any], grant: Mapping[str, Any], receipt: 
     checker = _load_checker_module()
     checker.check_output_directory(staging, program, grant, private=True)
     os.chmod(staging, 0o555); _fsync_dir(staging)
-    _publish_noreplace(staging, final); _fsync_dir(final.parent)
+    _publish_single_writer(staging, final); _fsync_dir(final.parent)
     return final
 
 
@@ -1025,9 +985,6 @@ def main() -> None:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--grant", type=Path)
     parser.add_argument("--emit-runtime-receipt", action="store_true")
-    parser.add_argument("--wait-ref", type=Path)
-    parser.add_argument("--expected-old-commit")
-    parser.add_argument("--wait-timeout", type=int, default=0)
     parser.add_argument("--lineage-preflight", action="store_true")
     parser.add_argument("--test-only", action="store_true")
     args = parser.parse_args()
@@ -1035,11 +992,6 @@ def main() -> None:
     load_seed_manifest(program)
     if args.test_only:
         print("TEST_ONLY_PASS_NO_SCIENCE_IMPORTS")
-        return
-    if args.wait_ref is not None:
-        if args.expected_old_commit is None: raise PermissionError("expected old ref commit is required")
-        wait_for_exact_ref_event(args.wait_ref,args.expected_old_commit,args.wait_timeout)
-        print("EXACT_GRANT_REF_EVENT_OBSERVED")
         return
     receipt = runtime_receipt(program)
     if args.emit_runtime_receipt:
