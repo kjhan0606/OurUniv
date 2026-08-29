@@ -1,57 +1,66 @@
 # OurUniv
 
-OurUniv infers a ΛCDM initial-condition (IC) posterior with the original
-Cosmicflows-4 (CF4) observation-space likelihood applied directly to a PM
-forward model. A statistically controlled present-day density/velocity
-posterior is retained as a proposal, initialization, preconditioner, and
-diagnostic layer rather than as an independent likelihood or a deterministic
-truth map. The forward-evolved ensemble is evaluated against:
+OurUniv infers a ΛCDM initial-condition (IC) posterior from a declared all-data
+vector `D`, using observation-space likelihoods directly on PM-forwarded
+fields. The first objective is to extend the constraint frontier toward high-k
+as far as independently calibrated information permits, without imposing an
+artificial low-k/high-k cutoff in advance. Information is measured over every
+mode and region in the declared analysis domain.
 
-- the Milky Way, M31, and M33;
-- Virgo and Coma;
-- the Local Void and Boötes void;
-- the observed large-scale peculiar-velocity field;
-- the target ΛCDM power spectrum and phase statistics.
+`D` contains separately provenance-labelled likelihoods for CF4; galaxy
+density with its selection function, redshift-space distortions, and bias;
+MW/M31/M33 positions, masses, distances, and relative velocities; Virgo and
+Coma positions, masses, velocities, and environments; Local and Boötes Void
+centres, sizes, and profiles; and the Local Sheet/observer mass environment.
+Catalog overlap, crossmatches, shared uncertainties, and joint latent variables
+must be modelled so the same information is not counted twice. Non-CF4
+conditions must never be described as information supplied by CF4.
 
-The intended deliverables are a calibrated CF4-supported low-k posterior, an
-IC posterior that closes under direct CF4 likelihood evaluation, and
-phase-consistent zoom families for the Local Group, Virgo, and Coma. A
-`<=0.3 cMpc/h` grid or force scale is a numerical resolution target, not by
-itself evidence for `0.3 cMpc/h` observational density-phase resolution.
+The numerical grid/force target is `<=0.3 cMpc/h`; it is distinct from
+observational effective resolution. The deliverables are an expanded and
+calibrated constraint frontier, an all-data hybrid IC posterior, and
+phase-consistent zoom families for the Local Group, Virgo, and Coma.
 
 ## Authoritative science route (2026-08-29)
 
 The active route is fixed in
-[`config/cf4_science_route_v2.json`](config/cf4_science_route_v2.json):
+[`config/cf4_science_route_v3.json`](config/cf4_science_route_v3.json). V3
+supersedes the committed v2 route and history as active authority; v2 remains
+unchanged as a historical record.
 
 ```text
-CF4 observations
-  |-> RES-CAL truth mocks -> calibrated low-k k_eff and coverage
-  `-> full z=0 density/velocity posterior -> IC proposal/preconditioner
-                                                   |
-LambdaCDM IC prior ---------------------------------+
-  -> PM forward F_z0(IC)
-  -> original CF4 observation-space likelihood
+Declared D_j likelihoods + independent truth mocks
+  -> KF-DESIGN: freeze baseline, regions, metrics, overlap, and GO threshold
+  -> KF-EXPAND: maximize calibrated global and ROI constraint frontiers
+  -> full multiscale z=0 posterior -> IC proposal/preconditioner q(IC)
+                                                       |
+LambdaCDM IC prior -> PM forward F_z0(IC) --------------+
+  -> product_j L_j(D_j|F_z0(IC))
   -> exact q-corrected importance / MH / SMC transition
-  -> p(IC|CF4) proportional to p(IC) p(CF4|F_z0(IC))
+  -> p(IC|D) proportional to p(IC) product_j L_j(D_j|F_z0(IC))
 ```
 
-The active route is hybrid. The z=0 posterior must retain its ensemble and
-covariance; it must not be collapsed to one point map and literally reversed.
-Because it is derived from the same CF4 data, it must not be multiplied into
-the target as though it were an independent likelihood. Pure direct
-`CF4 -> IC` inference defines the statistically clean target but is not the
-sole search mechanism because of mixing and cost; the z=0 layer supplies the
-proposal machinery. Existing direct-route constrained realizations, parent
-banks, P1/P2 results, and the unconstrained reference ensemble remain low-k
-proposals, controls, and historical evidence only.
+The active route remains hybrid. The full multiscale z=0 posterior retains its
+ensemble/covariance and is used only for proposal, initialization,
+preconditioning, and diagnostics. Candidate-generation must not be followed by
+seed post-selection on Local Group, cluster, void, or observer properties;
+those conditions belong in preregistered likelihoods or ABC kernels. ABC
+summaries and tolerances are frozen before any truth or candidate is examined.
 
 For a proposal `q(IC)`, importance weights are
-`w proportional to p(IC)p(CF4|F_z0(IC))/q(IC)`; MH must include the exact target
-and forward/reverse proposal ratios, while SMC must use declared normalized
-targets and reweight/resample/move steps. An implicit proposal with neither an
-evaluable `q` nor a proven target-invariant kernel cannot correct the final
-posterior.
+`w proportional to p(IC) product_j L_j(D_j|F_z0(IC))/q(IC)`; MH must include
+the exact target and forward/reverse proposal ratios, while SMC must use
+declared normalized targets and reweight/resample/move steps. An implicit
+proposal with neither an evaluable `q` nor a proven target-invariant kernel
+cannot correct the final posterior.
+
+Every modeled mode and declared region is classified as
+`observation-constrained`, `structure-conditioned`, or `prior-dominated`. The
+goal is to enlarge the first two domains and push the onset of the
+prior-dominated domain toward high-k. Global `k_eff_global` and separate
+`k_eff_ROI` values are reported for preregistered LG, Virgo, Coma, Local Void,
+Boötes Void, and observer-environment regions; selected bins or locations
+cannot support a claim.
 
 The Hong-style model family has a valid negative result; that closes only the
 specific estimator, not the hybrid architecture. Changing this route requires
@@ -59,21 +68,25 @@ explicit user approval and a prior update to the authoritative route record.
 
 ## Current status
 
-The active project is at **RES-CAL: effective-resolution and coverage
-calibration**. CF4 selection/noise truth mocks must determine the actual low-k
-`k_eff` and uncertainty coverage before the z=0 proposal layer is built. Final
-scientific approval of even the low-k reconstruction is currently **NO-GO**;
-Z0-PROP, IC-HYBRID, and HIRES/ZOOM are blocked in that order. No new compute is
-authorized by this status statement.
+The active project is at **KF-DESIGN: constraint-frontier design and
+preregistration**. Existing BGc/WF and current artifacts are frozen as the
+baseline. Inventory/provenance/overlap, independent selection/noise truth
+mocks, global/ROI definitions, metrics, and a material frontier-improvement
+threshold must be fixed before truth is viewed. The v2 RES-CAL stage is
+superseded historical status. KF-EXPAND, Z0-PROP, IC-HYBRID, and HIRES/ZOOM are
+blocked in that order, and no compute is authorized by this status statement.
 
-Random high-k modes, interpolation, super-resolution, and zoom dynamics must
-be labelled `conditional-prior` or `numerically-resolved`, never
-CF4-observationally reconstructed. An observational `0.3 cMpc/h` claim is
-allowed only after independent truth mocks pass preregistered cross-response,
-`r(k)`, phase-coherence, residual-power, information-gain, 68/95% coverage,
-and held-out-prediction gates over a continuous k-band. Under the cell-scale
-convention that band must extend through
-`k_claim = pi / 0.3 ~= 10.47 h/Mpc`.
+Method GO requires a material expansion beyond the frozen baseline in the
+contiguous global/ROI frontier or a preregistered information-volume measure on
+independent selection/noise truth mocks; a narrow-low-k-only pass cannot GO.
+Random high-k power, interpolation, super-resolution, and zoom dynamics are not
+frontier-expansion evidence. The v2 strict continuous-band mock gates remain:
+cross-response `0.8--1.2`, `r(k)>=0.7`, residual-power ratio `<=0.5`, significant
+phase separation from a random-phase null, material variance reduction,
+68/95% coverage, and held-out improvement. Full observational 0.3 density-phase
+claims require those gates through `k_claim=pi/0.3~=10.47 h/Mpc`; otherwise an
+object/structure-conditioned 0.3 ensemble may be labelled only within the
+support of its declared likelihood.
 
 The following is archived direct-route evidence. Priority P0 was completed for
 the accepted BGc linear-Gaussian model. The three

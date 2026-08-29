@@ -2,62 +2,82 @@
 
 ## Scientific objective
 
-Infer an ensemble of ΛCDM initial conditions using the original CF4
-observation-space likelihood directly on PM-forwarded fields. A full
-present-day density/velocity posterior supplies proposals, initialization,
-preconditioning, and diagnostics, but is not a second likelihood. The
-forward-evolved ensemble must reproduce, within declared observational
-tolerances:
+Infer an ensemble of ΛCDM initial conditions using a declared all-data vector
+`D` and observation-space likelihoods directly on PM-forwarded fields. The
+first objective is to push the calibrated constraint frontier toward high-k as
+far as the data permit. No fixed or artificial low-k/high-k cutoff is chosen in
+advance: prior-to-posterior information is measured for every modeled mode and
+declared region. The forward-evolved ensemble must reproduce, within declared
+observational tolerances:
 
 - the MW–M31–M33 configuration and dynamics;
 - Virgo and Coma;
 - the Local Void and Boötes void;
-- the CF4 peculiar-velocity data and large-scale density/velocity field;
+- the CF4 peculiar-velocity data and galaxy density field;
 - the target ΛCDM initial power spectrum and phase statistics.
 
-The deliverables are a calibrated CF4-supported low-k posterior, a dynamically
-closed hybrid IC posterior, and phase-consistent zoom-IC families. A numerical
-grid or force target of `<=0.3 cMpc/h` does not establish observational
-effective resolution at `0.3 cMpc/h`. LG, Virgo, and Coma should normally be
-separate zoom runs sharing the same parent phases; resolving all three in one
-L14 run is not required.
+The deliverables are a materially expanded, calibrated global/ROI constraint
+frontier, a dynamically closed all-data hybrid IC posterior, and
+phase-consistent zoom-IC families. A numerical grid or force target of
+`<=0.3 cMpc/h` does not establish observational effective resolution at
+`0.3 cMpc/h`. LG, Virgo, and Coma should normally be separate zoom runs sharing
+the same parent phases; resolving all three in one L14 run is not required.
 
 ## Authoritative route and non-regression rule
 
 The machine-readable authority is
-`config/cf4_science_route_v2.json`. The mandatory order is:
+`config/cf4_science_route_v3.json`. V3 supersedes the committed v2 route and
+history as active authority; `config/cf4_science_route_v2.json` remains
+unchanged as a historical record. The mandatory order is:
 
-1. **RES-CAL:** use CF4 selection/noise truth mocks to determine actual low-k
-   `k_eff`, information gain, held-out prediction, and calibrated uncertainty
-   coverage;
-2. **Z0-PROP:** after RES-CAL passes, construct a full z=0 density/velocity
-   posterior for IC proposal, initialization, preconditioning, and diagnosis;
-3. **IC-HYBRID:** use that proposal while applying the original/raw CF4
-   observation-space likelihood directly to PM-forwarded ICs through
-   importance reweighting with evaluated `q`, exact-ratio MH accept/reject, or
-   SMC reweight/resample/move with a declared normalized target sequence;
-4. **HIRES/ZOOM:** only after hybrid closure, add explicitly labelled high-k
-   conditional-prior modes and separate tracer likelihoods, then consider
-   zoom/HOP/RAMSES validation.
+1. **KF-DESIGN:** inventory data provenance, selection, uncertainty, and
+   overlap; freeze the existing baseline, independent mocks, global/ROI
+   definitions, metrics, and material frontier-improvement thresholds;
+2. **KF-EXPAND:** compare multiscale inference alternatives on those mocks and
+   maximize the contiguous global/ROI frontier or preregistered
+   information-volume; a narrow-low-k-only pass cannot GO;
+3. **Z0-PROP:** build the winning calibrated all-data multiscale z=0 posterior
+   for IC proposal, initialization, preconditioning, and diagnosis;
+4. **IC-HYBRID:** apply all declared data likelihoods directly to PM-forwarded
+   ICs with exact `q`-corrected importance, MH, or SMC inference;
+5. **HIRES/ZOOM:** label remaining prior-dominated high-k explicitly and
+   require hybrid closure before target selection, HOP, or RAMSES.
 
-The final target is
-`p(IC|CF4) proportional to p(IC) p(CF4|F_z0(IC))`. The z=0 posterior must
-retain its full ensemble/covariance; one deterministic point map must never be
-treated as truth and literally reversed. Because that posterior was derived
-from CF4, multiplying it as an independent likelihood would double count the
-same data and is forbidden. Pure direct `CF4 -> IC` sampling is the
-statistically clean target but is not required to be the sole search mechanism
-because of its mixing and cost. Existing direct-route artifacts remain only
-low-k proposals, controls, and historical evidence and cannot authorize
-parent selection, high-k IC production, zoom promotion, HOP, or RAMSES.
+The data vector is
+`D={D_CF4,D_galaxy_density,D_LG,D_clusters,D_voids,D_observer}`:
+
+- `D_CF4` contains the declared CF4 distances/radial velocities and their
+  selection and noise model;
+- `D_galaxy_density` declares catalog provenance, selection function,
+  redshift-space distortion treatment, bias model, and uncertainty;
+- `D_LG` declares MW/M31/M33 positions, masses, distances, and relative
+  velocities;
+- `D_clusters` declares Virgo/Coma positions, masses, velocities, and
+  environments;
+- `D_voids` declares Local/Boötes Void centres, sizes, and profiles;
+- `D_observer` declares the Local Sheet and local mass environment.
+
+Each likelihood must state provenance, selection, uncertainty, and its
+overlap/crossmatch or joint-latent treatment with every other component. Added
+conditions must not be attributed to CF4. The final target is
+`p(IC|D) proportional to p(IC) product_j L_j(D_j|F_z0(IC))`; a same-data z=0
+posterior cannot be multiplied in again as an independent likelihood.
+
+Local Group, cluster, void, and observer constraints enter the posterior as
+preregistered likelihoods or ABC kernels, not as post-hoc seed selection after
+candidate generation. For ABC, summaries and tolerances must be frozen before
+viewing truth or candidates. The full multiscale z=0 posterior retains its
+ensemble/covariance and is used only as proposal, initialization,
+preconditioner, and diagnostic.
 
 For proposal `q(IC)`, the importance weight is
-`w proportional to p(IC)p(CF4|F_z0(IC))/q(IC)`; MH accept/reject must contain
-the exact target ratio and forward/reverse proposal ratio, and SMC must declare
-its normalized target sequence and perform the corresponding
+`w proportional to p(IC) product_j L_j(D_j|F_z0(IC))/q(IC)`; MH accept/reject
+must contain the exact target ratio and forward/reverse proposal ratio, and SMC
+must declare its normalized target sequence and perform the corresponding
 reweight/resample/move steps. An implicit proposal is ineligible for final
 posterior correction if `q` cannot be evaluated and no target-invariant kernel
-has been proved.
+has been proved. Existing direct-route artifacts remain only frozen baselines,
+proposals, controls, and historical evidence; they cannot authorize promotion.
 
 A change in this order requires explicit user approval and an earlier
 committed update to the authoritative route record; a status summary or
@@ -65,19 +85,29 @@ historical result cannot change it.
 
 ## Current state
 
-- **Active stage: RES-CAL, effective-resolution and coverage calibration.**
-  Final scientific approval of the CF4-supported low-k reconstruction is
-  currently **NO-GO**.
-- Z0-PROP is blocked by RES-CAL; IC-HYBRID is blocked by Z0-PROP; HIRES/ZOOM is
-  blocked by IC-HYBRID closure.
+- **Active stage: KF-DESIGN, constraint-frontier design and
+  preregistration.** No compute is authorized.
+- The v2 RES-CAL stage is superseded historical status. KF-EXPAND is blocked by
+  KF-DESIGN; Z0-PROP by KF-EXPAND; IC-HYBRID by Z0-PROP; HIRES/ZOOM by
+  IC-HYBRID closure.
 - The Hong-style model family is closed after a negative cross-code result.
   This is an estimator-only negative result and does not close the hybrid
   route.
 - No direct parent/seed promotion, new high-k IC production, zoom advancement,
   HOP, or RAMSES execution is active or authorized by this plan.
 - The existing CF4 linear posterior and the 768-member unconstrained P1
-  reference are reusable low-k proposals, controls, and historical evidence,
-  not evidence for promotion or observational high-k recovery.
+  reference, together with current artifacts, are the frozen baseline and
+  reusable proposals/controls, not evidence for frontier expansion or
+  promotion.
+
+Every modeled mode and declared region must be classified as
+`observation-constrained`, `structure-conditioned`, or `prior-dominated`. The
+goal is to enlarge the first two information domains and move the onset of the
+prior-dominated domain toward high-k. Report both a preregistered global
+`k_eff_global` and separate `k_eff_ROI` values. Before truth or candidates are
+viewed, freeze the LG, Virgo, Coma, Local Void, Boötes Void, and observer
+environment ROIs; selected bins or locations cannot support a resolution
+claim.
 
 ### Resolution claim policy
 
@@ -96,6 +126,21 @@ null, and information gain must be a material variance reduction relative to
 the prior. The 68/95% coverage thresholds and held-out-prediction improvement
 must also be preregistered on mocks. With the cell-scale convention, the
 claimed band must extend to `k_claim = pi / 0.3 ~= 10.47 h/Mpc`.
+
+Failure of the full 0.3 density-phase gate does not forbid a numerically
+resolved `object/structure-conditioned 0.3 cMpc/h ensemble` label, but that
+label is restricted to the support of the corresponding preregistered
+likelihood. It is not a global observational phase-reconstruction claim.
+
+### Method-success contract
+
+Freeze the existing BGc/WF and current artifacts as the baseline. On
+independent selection/noise truth mocks, a method may GO only if its contiguous
+global/ROI frontier or preregistered information-volume materially exceeds
+that baseline. The material threshold is frozen during KF-DESIGN before truth
+is viewed. A narrow-low-k-only pass cannot GO, and power-only completion,
+random high-k modes, super-resolution, or interpolation do not demonstrate
+frontier expansion.
 
 ### Archived direct-route evidence
 
@@ -157,7 +202,7 @@ claimed band must extend to `k_claim = pi / 0.3 ~= 10.47 h/Mpc`.
 
 The P0--P5 material below records completed or attempted work on the superseded
 direct route. Its status labels are historical and do not override the active
-Z0 route above.
+v3 constraint-frontier route above.
 
 ### P0 — statistically valid parent field
 
@@ -304,17 +349,20 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-Complete the bounded, no-production **RES-CAL** design and preregistration:
+Complete the bounded, no-production **KF-DESIGN** preregistration:
 
-1. specify independent CF4 selection/noise truth mocks and untouched held-out
-   predictions;
-2. freeze a continuous k-band and estimators for cross-response, `r(k)`, phase
-   coherence, residual power, and information gain;
-3. freeze 68/95% posterior-coverage tests and the rule that derives actual
-   low-k `k_eff` rather than equating it with voxel size;
-4. label random high-k, interpolation, super-resolution, and zoom-generated
-   content as conditional-prior/numerically-resolved;
-5. preregister pass/fail thresholds before any Z0-PROP implementation.
+1. inventory every `D_j` source, provenance, selection, uncertainty, catalog
+   overlap/crossmatch, and joint latent-variable treatment;
+2. freeze the existing BGc/WF and current-artifact baseline plus independent
+   all-component selection/noise truth mocks and held-out predictions;
+3. freeze the modeled modes, declared volume, global definition, and LG,
+   Virgo, Coma, Local Void, Boötes Void, and observer-environment ROIs before
+   truth or candidates are viewed;
+4. freeze the strict response/correlation/residual/phase/information/coverage
+   metrics and the separate `k_eff_global`, `k_eff_ROI`, contiguous-frontier,
+   and information-volume estimators;
+5. freeze the material improvement threshold relative to baseline, plus all
+   likelihood or ABC summaries/tolerances, before KF-EXPAND.
 
 This step does not authorize Slurm submission, model training, parent
 selection, IC generation, PM/HOP/RAMSES execution, or production artifacts.
