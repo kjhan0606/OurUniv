@@ -1,10 +1,12 @@
-# OurUniv / CF4 present-density-first reconstruction plan
+# OurUniv / CF4 hybrid IC-inference plan
 
 ## Scientific objective
 
-First reconstruct a posterior ensemble of the local density and velocity
-fields at `z=0`, then infer an ensemble of ΛCDM initial conditions whose
-forward evolution simultaneously reproduces, within declared observational
+Infer an ensemble of ΛCDM initial conditions using the original CF4
+observation-space likelihood directly on PM-forwarded fields. A full
+present-day density/velocity posterior supplies proposals, initialization,
+preconditioning, and diagnostics, but is not a second likelihood. The
+forward-evolved ensemble must reproduce, within declared observational
 tolerances:
 
 - the MW–M31–M33 configuration and dynamics;
@@ -13,9 +15,10 @@ tolerances:
 - the CF4 peculiar-velocity data and large-scale density/velocity field;
 - the target ΛCDM initial power spectrum and phase statistics.
 
-The deliverables are a validated z=0 density/velocity posterior at a target
-voxel size of at most `0.3 cMpc/h`, a dynamically closed IC posterior, and
-phase-consistent zoom-IC families. LG, Virgo, and Coma should normally be
+The deliverables are a calibrated CF4-supported low-k posterior, a dynamically
+closed hybrid IC posterior, and phase-consistent zoom-IC families. A numerical
+grid or force target of `<=0.3 cMpc/h` does not establish observational
+effective resolution at `0.3 cMpc/h`. LG, Virgo, and Coma should normally be
 separate zoom runs sharing the same parent phases; resolving all three in one
 L14 run is not required.
 
@@ -24,34 +27,75 @@ L14 run is not required.
 The machine-readable authority is
 `config/cf4_science_route_v2.json`. The mandatory order is:
 
-1. infer the z=0 density/velocity posterior from CF4 and explicitly labelled
-   additional observations;
-2. validate that posterior on held-out velocities, simulation-based blind
-   tests, uncertainty calibration, and declared density/structure diagnostics;
-3. infer ICs through the dynamical forward model, rather than literal reversal
-   of one deterministic z=0 map;
-4. evolve those ICs with PM and require closure against both the target z=0
-   posterior and the original observations;
-5. only after closure, select zoom targets and run HOP/RAMSES validation.
+1. **RES-CAL:** use CF4 selection/noise truth mocks to determine actual low-k
+   `k_eff`, information gain, held-out prediction, and calibrated uncertainty
+   coverage;
+2. **Z0-PROP:** after RES-CAL passes, construct a full z=0 density/velocity
+   posterior for IC proposal, initialization, preconditioning, and diagnosis;
+3. **IC-HYBRID:** use that proposal while applying the original/raw CF4
+   observation-space likelihood directly to PM-forwarded ICs through
+   importance reweighting with evaluated `q`, exact-ratio MH accept/reject, or
+   SMC reweight/resample/move with a declared normalized target sequence;
+4. **HIRES/ZOOM:** only after hybrid closure, add explicitly labelled high-k
+   conditional-prior modes and separate tracer likelihoods, then consider
+   zoom/HOP/RAMSES validation.
 
-Direct `CF4 -> IC` artifacts are retained only as low-k priors, controls, and
-historical evidence. They cannot authorize parent selection, high-k IC
-production, zoom promotion, HOP, or RAMSES. A change in this order requires
-explicit user approval and an earlier committed update to the authoritative
-route record; a status summary or historical result cannot change it.
+The final target is
+`p(IC|CF4) proportional to p(IC) p(CF4|F_z0(IC))`. The z=0 posterior must
+retain its full ensemble/covariance; one deterministic point map must never be
+treated as truth and literally reversed. Because that posterior was derived
+from CF4, multiplying it as an independent likelihood would double count the
+same data and is forbidden. Pure direct `CF4 -> IC` sampling is the
+statistically clean target but is not required to be the sole search mechanism
+because of its mixing and cost. Existing direct-route artifacts remain only
+low-k proposals, controls, and historical evidence and cannot authorize
+parent selection, high-k IC production, zoom promotion, HOP, or RAMSES.
+
+For proposal `q(IC)`, the importance weight is
+`w proportional to p(IC)p(CF4|F_z0(IC))/q(IC)`; MH accept/reject must contain
+the exact target ratio and forward/reverse proposal ratio, and SMC must declare
+its normalized target sequence and perform the corresponding
+reweight/resample/move steps. An implicit proposal is ineligible for final
+posterior correction if `q` cannot be evaluated and no target-invariant kernel
+has been proved.
+
+A change in this order requires explicit user approval and an earlier
+committed update to the authoritative route record; a status summary or
+historical result cannot change it.
 
 ## Current state
 
-- **Active stage: Z0-A, present-density method redesign.** No validated
-  high-resolution CF4 z=0 density/velocity posterior currently exists.
+- **Active stage: RES-CAL, effective-resolution and coverage calibration.**
+  Final scientific approval of the CF4-supported low-k reconstruction is
+  currently **NO-GO**.
+- Z0-PROP is blocked by RES-CAL; IC-HYBRID is blocked by Z0-PROP; HIRES/ZOOM is
+  blocked by IC-HYBRID closure.
 - The Hong-style model family is closed after a negative cross-code result.
-  This closes that estimator only; it does not close or reverse the
-  present-density-first route.
+  This is an estimator-only negative result and does not close the hybrid
+  route.
 - No direct parent/seed promotion, new high-k IC production, zoom advancement,
   HOP, or RAMSES execution is active or authorized by this plan.
 - The existing CF4 linear posterior and the 768-member unconstrained P1
-  reference are reusable controls for large-scale information and enrichment,
-  not substitutes for the missing z=0 posterior.
+  reference are reusable low-k proposals, controls, and historical evidence,
+  not evidence for promotion or observational high-k recovery.
+
+### Resolution claim policy
+
+Numerical grid/force resolution and observational effective resolution are
+separate quantities. CF4 alone does not currently support a claim of
+`0.3 cMpc/h` observational density-phase reconstruction. Random high-k
+completion, interpolation, super-resolution, and zoom dynamics must be labelled
+as `conditional-prior` or `numerically-resolved` content.
+
+An observational `0.3 cMpc/h` claim requires independent truth mocks to pass a
+preregistered gate over the declared volume and continuous k-band, never only
+selected locations or bins. Cross-response must remain within `0.8--1.2`,
+`r(k) >= 0.7`, and the residual-power ratio must be `<=0.5`. Phase coherence
+must show a preregistered significant separation from the mock random-phase
+null, and information gain must be a material variance reduction relative to
+the prior. The 68/95% coverage thresholds and held-out-prediction improvement
+must also be preregistered on mocks. With the cell-scale convention, the
+claimed band must extend to `k_claim = pi / 0.3 ~= 10.47 h/Mpc`.
 
 ### Archived direct-route evidence
 
@@ -260,20 +304,18 @@ Only a passing pilot authorizes the production zoom.
 
 ## Immediate next action
 
-Complete a bounded, no-production Z0-A design audit that:
+Complete the bounded, no-production **RES-CAL** design and preregistration:
 
-1. inventories which CF4 position, radial peculiar-velocity, measurement
-   uncertainty, and velocity-dispersion products are scientifically usable;
-2. separates CF4-supported low-k information from additional galaxy and
-   structure information used to complete high-k modes;
-3. compares non-Hong alternatives for a probabilistic z=0 reconstruction and
-   rejects any method that emits only a deterministic mean map;
-4. defines the z=0 outputs: density ensemble/mean/uncertainty, velocity
-   ensemble/mean/uncertainty, resolution transfer function, and provenance of
-   every added constraint;
-5. freezes independent validation and the effective-resolution criterion
-   before implementation or training.
+1. specify independent CF4 selection/noise truth mocks and untouched held-out
+   predictions;
+2. freeze a continuous k-band and estimators for cross-response, `r(k)`, phase
+   coherence, residual power, and information gain;
+3. freeze 68/95% posterior-coverage tests and the rule that derives actual
+   low-k `k_eff` rather than equating it with voxel size;
+4. label random high-k, interpolation, super-resolution, and zoom-generated
+   content as conditional-prior/numerically-resolved;
+5. preregister pass/fail thresholds before any Z0-PROP implementation.
 
-This design audit does not authorize Slurm submission, model training, parent
+This step does not authorize Slurm submission, model training, parent
 selection, IC generation, PM/HOP/RAMSES execution, or production artifacts.
 The superseded v8 program and rejected zooms remain historical diagnostics.

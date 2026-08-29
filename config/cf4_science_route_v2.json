@@ -1,85 +1,152 @@
 {
   "schema": "ouruniv-cf4-science-route-v2",
-  "status": "active_present_density_first_route",
+  "status": "active_hybrid_route_res_cal",
   "effective_date": "2026-08-29",
   "authority": {
-    "supersedes": "historical_return_to_direct_CF4_constrained_realization_route",
+    "supersedes": "present_density_first_exclusive_route",
     "route_change_requires_explicit_user_approval": true,
     "route_change_requires_prior_committed_record_update": true,
     "historical_status_or_result_cannot_change_route": true
   },
   "objective": {
-    "target": "CF4-conditioned local-Universe z=0 density and velocity posterior followed by dynamically closed LambdaCDM initial conditions",
-    "target_voxel_size_cMpc_h_max": 0.3,
+    "target": "LambdaCDM initial-condition posterior evaluated with the original CF4 observation-space likelihood on PM-forwarded fields",
+    "posterior_equation": "p(IC|CF4) proportional_to p(IC) p(CF4|F_z0(IC))",
+    "primary_route": "hybrid",
     "final_products": [
-      "validated_z0_density_velocity_posterior",
-      "PM_closed_initial_condition_posterior",
+      "calibrated_CF4_supported_low_k_posterior",
+      "direct_CF4_likelihood_closed_initial_condition_posterior",
       "phase_consistent_zoom_families_for_LG_Virgo_Coma"
     ]
   },
+  "hybrid_inference_policy": {
+    "z0_density_velocity_posterior_roles": [
+      "IC_proposal",
+      "initialization",
+      "preconditioner",
+      "diagnostic"
+    ],
+    "z0_posterior_must_retain_full_ensemble_and_covariance": true,
+    "deterministic_z0_point_map_may_be_treated_as_truth": false,
+    "literal_reverse_of_deterministic_z0_map_allowed": false,
+    "final_likelihood": "raw_original_CF4_observation_space_likelihood_applied_directly_to_PM_forward_F_z0_of_IC",
+    "same_CF4_derived_z0_posterior_may_be_multiplied_as_independent_likelihood": false,
+    "double_counting_same_CF4_data_forbidden": true,
+    "posterior_correction_contract": {
+      "target_density": "p(IC) p(CF4|F_z0(IC))",
+      "importance_weight": "w(IC) proportional_to p(IC) p(CF4|F_z0(IC)) / q(IC)",
+      "importance_requires_evaluable_q_and_target_support": true,
+      "Metropolis_Hastings_acceptance": "min(1, target(IC_proposed) q(IC_current|IC_proposed) / (target(IC_current) q(IC_proposed|IC_current)))",
+      "Metropolis_Hastings_requires_exact_target_and_proposal_ratios": true,
+      "SMC_rule": "use_declared_normalized_target_sequence_and_reweight_resample_move",
+      "implicit_proposal_without_evaluable_q_or_proven_target_invariant_kernel_allowed": false
+    },
+    "pure_direct_CF4_to_IC_route": {
+      "statistical_role": "clean_target_distribution",
+      "sole_search_route": false,
+      "reason": "standalone exploration can have prohibitive mixing and cost; the z0 layer supplies proposal machinery"
+    }
+  },
+  "resolution_policy": {
+    "requested_numerical_grid_or_force_resolution_cMpc_h_max": 0.3,
+    "numerical_resolution_is_observational_effective_resolution": false,
+    "CF4_only_observational_density_phase_resolution_claim_cMpc_h": null,
+    "CF4_only_0p3_observational_claim_currently_allowed": false,
+    "high_k_labels": {
+      "random_high_k": "conditional_prior",
+      "interpolation": "numerically_resolved",
+      "super_resolution": "conditional_prior",
+      "zoom_dynamics": "numerically_resolved"
+    },
+    "observational_0p3_claim_gate": {
+      "requires_independent_truth_mocks": true,
+      "band_definition": "preregistered_continuous_k_band",
+      "spatial_scope": "declared_volume_not_selected_locations",
+      "spectral_scope": "entire_declared_continuous_band_not_selected_bins",
+      "thresholds": {
+        "cross_response_min": 0.8,
+        "cross_response_max": 1.2,
+        "r_of_k_min": 0.7,
+        "residual_power_ratio_max": 0.5,
+        "phase_coherence": "preregistered_significant_separation_from_mock_random_phase_null",
+        "information_gain": "material_posterior_variance_reduction_relative_to_prior",
+        "coverage_68_and_95_percent": "thresholds_preregistered_on_independent_mocks",
+        "held_out_prediction": "improvement_threshold_preregistered_on_independent_mocks"
+      },
+      "cell_scale_convention": {
+        "k_claim_formula": "pi / 0.3 cMpc/h",
+        "k_claim_h_Mpc_approx": 10.47
+      },
+      "required_checks": [
+        "cross_response",
+        "r_of_k",
+        "phase_coherence",
+        "residual_power",
+        "information_gain",
+        "coverage_68_percent",
+        "coverage_95_percent",
+        "held_out_prediction"
+      ]
+    }
+  },
   "mandatory_stage_order": [
     {
-      "id": "Z0-A",
-      "name": "present_density_method_design",
+      "id": "RES-CAL",
+      "name": "effective_resolution_and_coverage_calibration",
       "status": "active",
-      "purpose": "Design a non-Hong probabilistic reconstruction of the present-day density and velocity fields."
-    },
-    {
-      "id": "Z0-B",
-      "name": "present_density_validation",
-      "status": "blocked_by_Z0_A",
+      "purpose": "Use CF4 selection/noise truth mocks to measure actual low-k k_eff and calibrate posterior coverage.",
+      "final_low_k_scientific_approval": "NO-GO",
       "required_outputs": [
-        "density_ensemble_mean_and_uncertainty",
-        "velocity_ensemble_mean_and_uncertainty",
-        "effective_resolution_transfer_function",
-        "added_information_provenance"
+        "actual_low_k_k_eff",
+        "cross_response",
+        "r_of_k",
+        "phase_coherence",
+        "residual_power",
+        "information_gain",
+        "coverage_68_and_95_percent",
+        "held_out_prediction"
+      ]
+    },
+    {
+      "id": "Z0-PROP",
+      "name": "full_z0_posterior_proposal_layer",
+      "status": "blocked_by_RES_CAL",
+      "purpose": "Construct the full z=0 density/velocity posterior used only for proposal, initialization, preconditioning, and diagnostics."
+    },
+    {
+      "id": "IC-HYBRID",
+      "name": "hybrid_initial_condition_inference",
+      "status": "blocked_by_Z0_PROP",
+      "purpose": "Correct or accept/reweight z0-informed proposals with the direct raw CF4 observation-space likelihood.",
+      "allowed_correction_methods": [
+        "importance_reweighting_with_q",
+        "Metropolis_Hastings_accept_reject_with_proposal_ratio",
+        "SMC_reweight_resample_move_with_declared_targets"
       ],
-      "required_checks": [
-        "held_out_CF4_velocity_likelihood_and_residual_calibration",
-        "simulation_based_blind_reconstruction",
-        "density_and_structure_diagnostics",
-        "uncertainty_coverage",
-        "effective_resolution_at_or_below_target"
+      "required_gates": [
+        "proposal_target_support",
+        "effective_sample_size",
+        "independent_replicates",
+        "posterior_predictive_checks"
       ]
     },
     {
-      "id": "IC-A",
-      "name": "dynamical_IC_inference",
-      "status": "blocked_by_Z0_B",
-      "rule": "Infer an IC posterior through a dynamical forward model; do not literally reverse one deterministic z=0 map."
-    },
-    {
-      "id": "IC-B",
-      "name": "PM_z0_closure",
-      "status": "blocked_by_IC_A",
-      "required_checks": [
-        "closure_against_target_z0_posterior",
-        "closure_against_original_CF4_observations",
-        "LambdaCDM_power_and_phase_statistics"
+      "id": "HIRES/ZOOM",
+      "name": "high_k_completion_and_zoom_validation",
+      "status": "blocked_by_IC_HYBRID",
+      "current_scientific_approval": "NO-GO",
+      "rules": [
+        "label_high_k_completion_as_conditional_prior",
+        "add_each_additional_tracer_as_a_separate_likelihood",
+        "require_hybrid_closure_before_zoom_HOP_or_RAMSES"
       ]
-    },
-    {
-      "id": "ZOOM",
-      "name": "target_selection_and_zoom_validation",
-      "status": "blocked_by_IC_B"
     }
   ],
-  "information_policy": {
-    "CF4_role": "constrain the observationally supported present-day large-scale density and velocity modes",
-    "high_k_rule": "Any information beyond CF4 support must be explicit, probabilistic, and provenance-labelled.",
-    "required_velocity_products": [
-      "posterior_mean_velocity",
-      "posterior_velocity_uncertainty_or_dispersion"
-    ],
-    "single_deterministic_density_map_is_sufficient": false
-  },
   "historical_artifact_policy": {
-    "direct_CF4_to_IC_route": "superseded_as_primary_science_route",
+    "direct_CF4_to_IC_artifacts": "not_promotion_evidence",
     "Hong_model_family": "closed_negative_result_estimator_only",
     "reusable_roles": [
-      "low_k_prior",
-      "unconstrained_control",
-      "forward_model_validation",
+      "low_k_proposal",
+      "control",
       "historical_evidence"
     ],
     "cannot_authorize": [
@@ -91,7 +158,7 @@
     ]
   },
   "current_action": {
-    "name": "bounded_Z0_A_design_audit",
+    "name": "bounded_RES_CAL_design_and_preregistration",
     "production_compute_authorized": false,
     "Slurm_submission_authorized": false,
     "model_training_authorized": false,

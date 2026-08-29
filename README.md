@@ -1,9 +1,11 @@
 # OurUniv
 
-OurUniv first reconstructs a statistically controlled present-day density and
-velocity posterior for the local Universe from Cosmicflows-4 (CF4), then
-infers ΛCDM initial conditions whose forward evolution reproduces that
-present-day posterior and the observed local structures:
+OurUniv infers a ΛCDM initial-condition (IC) posterior with the original
+Cosmicflows-4 (CF4) observation-space likelihood applied directly to a PM
+forward model. A statistically controlled present-day density/velocity
+posterior is retained as a proposal, initialization, preconditioner, and
+diagnostic layer rather than as an independent likelihood or a deterministic
+truth map. The forward-evolved ensemble is evaluated against:
 
 - the Milky Way, M31, and M33;
 - Virgo and Coma;
@@ -11,10 +13,11 @@ present-day posterior and the observed local structures:
 - the observed large-scale peculiar-velocity field;
 - the target ΛCDM power spectrum and phase statistics.
 
-The intended deliverables are a validated present-day posterior at a target
-voxel size of at most `0.3 cMpc/h`, an ensemble of initial conditions that
-closes under forward evolution, and phase-consistent zoom families for the
-Local Group, Virgo, and Coma.
+The intended deliverables are a calibrated CF4-supported low-k posterior, an
+IC posterior that closes under direct CF4 likelihood evaluation, and
+phase-consistent zoom families for the Local Group, Virgo, and Coma. A
+`<=0.3 cMpc/h` grid or force scale is a numerical resolution target, not by
+itself evidence for `0.3 cMpc/h` observational density-phase resolution.
 
 ## Authoritative science route (2026-08-29)
 
@@ -23,29 +26,54 @@ The active route is fixed in
 
 ```text
 CF4 observations
-  -> z=0 density/velocity posterior
-  -> IC posterior inferred through a dynamical forward model
-  -> PM evolution
-  -> z=0 closure against the target posterior and observations
+  |-> RES-CAL truth mocks -> calibrated low-k k_eff and coverage
+  `-> full z=0 density/velocity posterior -> IC proposal/preconditioner
+                                                   |
+LambdaCDM IC prior ---------------------------------+
+  -> PM forward F_z0(IC)
+  -> original CF4 observation-space likelihood
+  -> exact q-corrected importance / MH / SMC transition
+  -> p(IC|CF4) proportional to p(IC) p(CF4|F_z0(IC))
 ```
 
-This route supersedes the earlier return to direct `CF4 -> IC` seed searches.
-The existing linear constrained realizations, parent banks, P1/P2 results, and
-unconstrained reference ensemble remain useful as low-k priors, controls, and
-historical evidence, but they are not the active reconstruction product.
+The active route is hybrid. The z=0 posterior must retain its ensemble and
+covariance; it must not be collapsed to one point map and literally reversed.
+Because it is derived from the same CF4 data, it must not be multiplied into
+the target as though it were an independent likelihood. Pure direct
+`CF4 -> IC` inference defines the statistically clean target but is not the
+sole search mechanism because of mixing and cost; the z=0 layer supplies the
+proposal machinery. Existing direct-route constrained realizations, parent
+banks, P1/P2 results, and the unconstrained reference ensemble remain low-k
+proposals, controls, and historical evidence only.
 
-The Hong-style model family has a valid negative result; that closes the
-specific estimator, not the present-density-first architecture. Until a new
-z=0 density/velocity method passes its declared validation gate, the project
-must not select or promote a direct-CR parent, launch new high-k IC production,
-or advance a zoom or RAMSES run. Changing this route requires explicit user
-approval and a prior update to the authoritative route record.
+For a proposal `q(IC)`, importance weights are
+`w proportional to p(IC)p(CF4|F_z0(IC))/q(IC)`; MH must include the exact target
+and forward/reverse proposal ratios, while SMC must use declared normalized
+targets and reweight/resample/move steps. An implicit proposal with neither an
+evaluable `q` nor a proven target-invariant kernel cannot correct the final
+posterior.
+
+The Hong-style model family has a valid negative result; that closes only the
+specific estimator, not the hybrid architecture. Changing this route requires
+explicit user approval and a prior update to the authoritative route record.
 
 ## Current status
 
-The active project is at **Z0-A: present-density method redesign**. No validated
-high-resolution CF4 z=0 density/velocity posterior exists yet. No new compute
-is authorized by this status statement.
+The active project is at **RES-CAL: effective-resolution and coverage
+calibration**. CF4 selection/noise truth mocks must determine the actual low-k
+`k_eff` and uncertainty coverage before the z=0 proposal layer is built. Final
+scientific approval of even the low-k reconstruction is currently **NO-GO**;
+Z0-PROP, IC-HYBRID, and HIRES/ZOOM are blocked in that order. No new compute is
+authorized by this status statement.
+
+Random high-k modes, interpolation, super-resolution, and zoom dynamics must
+be labelled `conditional-prior` or `numerically-resolved`, never
+CF4-observationally reconstructed. An observational `0.3 cMpc/h` claim is
+allowed only after independent truth mocks pass preregistered cross-response,
+`r(k)`, phase-coherence, residual-power, information-gain, 68/95% coverage,
+and held-out-prediction gates over a continuous k-band. Under the cell-scale
+convention that band must extend through
+`k_claim = pi / 0.3 ~= 10.47 h/Mpc`.
 
 The following is archived direct-route evidence. Priority P0 was completed for
 the accepted BGc linear-Gaussian model. The three
@@ -80,8 +108,8 @@ development gates.  The final V84C0R feasibility audit found no cross-domain
 support for another tail-model expansion.  Consequently Astrid remained
 unopened, historical EAGLE was never reused for tuning, and neither HOP nor
 RAMSES promotion was authorized.  Its historical recommendation to return to
-the direct CF4 constrained-realization route is superseded by the
-present-density-first route fixed above.  See the
+the direct CF4 constrained-realization route is superseded by the hybrid route
+fixed above.  See the
 [machine-verifiable completion audit](config/hong2021_eagle_goal_completion_audit.json)
 and [Hong reproduction history](HONG2021_REPRODUCTION.md).
 
@@ -195,7 +223,7 @@ The commands require the locally prepared `data/cf4_clean.npz`, which is not
 distributed in this repository. Its source and construction are documented in
 `data/PROVENANCE.md` and `src/cf4_ingest.py`.
 
-## Current zoom hierarchy
+## Archived zoom hierarchy
 
 The `384 Mpc/h` parent uses global L9 (`512^3`). An LG candidate first receives
 an L12-particle/L19-AMR pilot. A passing candidate advances to the aggressive
@@ -217,13 +245,15 @@ gates at the evolved pair midpoint; the best, seed 5238, passed four of five.
 V6 is therefore closed and cannot be extended with more seeds. Its consumed
 evidence is pinned in `config/cf4_lg_v6_result_record.json`.
 
-The next one-shot bank is the statistically normalized v8 program in
+The statistically normalized v8 program was frozen as the next one-shot bank in
 `config/p2_lg_z0_forward_importance_v8.json`. It uses the unchanged v7 z=0
 MW/M31 halo-pair likelihood and a 50/50 defensive latent-midpoint proposal,
 with exact `log p(q)-log g(q)` correction. A frozen bootstrap audit selected
 256 fresh realizations (0.5-percent lower expected ESS 8.47). A candidate must
 pass the same hard P2 pair cuts and all five P1 gates at that same pair's
 midpoint. The automated job stops before RAMSES regardless of the outcome.
+It is now a historical diagnostic and is not authorized for execution or
+promotion under the hybrid route.
 
 See `IC_RESOLUTION.md` for the exact units, particle counts, and gates.
 
