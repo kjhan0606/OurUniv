@@ -1,8 +1,8 @@
-"""Deterministic ROI-window leakage calibration for the frozen CF4 k design.
+"""Deterministic ROI-window leakage v3 precheck for frozen CF4 design v2.
 
 This module consumes no truth or candidate field.  It computes integer-lattice
 mode counts and window-only shell mixing, then publishes a hash-bound artifact
-directory only for a numerically passing v2 precheck.  This precheck makes no
+directory only for a numerically passing v3 precheck.  This precheck makes no
 scientific leakage decision; invalid inputs, numerics, or provenance publish
 neither an artifact directory nor COMPLETE.
 """
@@ -23,7 +23,7 @@ import tempfile
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Callable, Mapping, Sequence
 
 import numpy as np
 from numpy.polynomial.legendre import leggauss
@@ -31,20 +31,27 @@ from scipy.signal import fftconvolve
 
 
 FROZEN_DESIGN_SHA256 = (
+    "c2b1949b4fea26e96c79da57ff3d39aa654292f908ed414b038d094bf4303402"
+)
+PREDECESSOR_DESIGN_SHA256 = (
     "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9"
 )
 ROUNDING_ABS_TOLERANCE = 1.0e-5
 CONVERGENCE_ABS_TOLERANCE = 5.0e-4
 COARSE_NUMERICS = {
     "moment_order": 96,
-    "shell_order": 6,
+    "u_order": 6,
+    "v_period_samples": 16,
+    "v_panel_order": 4,
     "q_period_samples": 16,
     "q_panel_order": 4,
     "parseval_tail_x": (384.0, 768.0),
 }
 FINE_NUMERICS = {
     "moment_order": 160,
-    "shell_order": 10,
+    "u_order": 10,
+    "v_period_samples": 32,
+    "v_panel_order": 8,
     "q_period_samples": 32,
     "q_panel_order": 8,
     "parseval_tail_x": (512.0, 1024.0),
@@ -83,13 +90,17 @@ class WindowSpec:
 @dataclass(frozen=True)
 class MixingEvaluation:
     matrix: np.ndarray
+    lower_guard: np.ndarray
+    upper_guard: np.ndarray
+    far_tail: np.ndarray
+    total_through_guard: np.ndarray
     containment: np.ndarray
     column_sum: np.ndarray
     signed_normalization_residual: np.ndarray
     localized_neff: np.ndarray
     normalization_valid: np.ndarray
     raw_supported: np.ndarray
-    suffix: dict[str, object]
+    run_proposal: dict[str, object]
     moments: dict[str, float]
     numerical_audit: dict[str, object]
 
@@ -144,18 +155,37 @@ def load_frozen_design(path: str | Path) -> tuple[dict[str, object], str]:
         design = json.loads(raw)
     except json.JSONDecodeError as exc:
         raise LeakageError("cannot parse frozen design JSON") from exc
-    if design.get("schema") != "ouruniv-cf4-kf-bin-manifest-design-v1":
+    if design.get("schema") != "ouruniv-cf4-kf-bin-manifest-design-v2":
         raise LeakageError("unexpected frozen design schema")
-    if design.get("status") != (
-        "user_approved_design_frozen_ROI_leakage_and_manifest_materialization_pending"
-    ):
+    if design.get("status") != "user_approved_design_frozen_numerical_preflight_pending":
         raise LeakageError("frozen design status is not approved/pending")
-
-    source = design["ROI_geometry"]["source"]
     repository_root = design_path.resolve().parents[1]
+    predecessor_record = design.get("predecessor", {})
+    predecessor_path = repository_root / predecessor_record.get("design_path", "")
+    predecessor_raw = predecessor_path.read_bytes()
+    if _sha256(predecessor_raw) != PREDECESSOR_DESIGN_SHA256:
+        raise LeakageError("predecessor design v1 SHA256 mismatch")
+    if predecessor_record.get("design_raw_sha256") != PREDECESSOR_DESIGN_SHA256:
+        raise LeakageError("design v2 predecessor binding mismatch")
+    try:
+        predecessor = json.loads(predecessor_raw)
+    except json.JSONDecodeError as exc:
+        raise LeakageError("cannot parse predecessor design v1") from exc
+    for section in ("ROI_geometry", "ROI_window_and_leakage_design"):
+        design[section] = predecessor[section]
+    source = design["ROI_geometry"]["source"]
     source_path = repository_root / source["path"]
     if _sha256(source_path.read_bytes()) != source["raw_sha256"]:
         raise LeakageError("frozen ROI source SHA256 mismatch")
+    frozen_numerics = design.get("frozen_numerics", {})
+    if frozen_numerics.get("coarse") != json.loads(
+        canonical_json_bytes(COARSE_NUMERICS)
+    ):
+        raise LeakageError("design v2 frozen coarse numerics mismatch")
+    if frozen_numerics.get("fine") != json.loads(
+        canonical_json_bytes(FINE_NUMERICS)
+    ):
+        raise LeakageError("design v2 frozen fine numerics mismatch")
     return design, digest
 
 
@@ -687,117 +717,286 @@ def parseval_audit(
     }
 
 
+def uv_v_segments(
+    output_lower: float,
+    output_upper: float,
+    input_lower: float,
+    input_upper: float,
+) -> tuple[tuple[float, float], ...]:
+    """Return exact smooth v segments for a mapped shell rectangle."""
+
+    if not (
+        0.0 <= output_lower < output_upper
+        and 0.0 < input_lower < input_upper
+        and all(
+            math.isfinite(value)
+            for value in (output_lower, output_upper, input_lower, input_upper)
+        )
+    ):
+        raise LeakageError("invalid output/input shell interval")
+    lower = output_lower - input_upper
+    upper = output_upper - input_lower
+    points = {lower, upper}
+    for point in (
+        0.0,
+        output_lower - input_lower,
+        output_upper - input_upper,
+    ):
+        if lower < point < upper:
+            points.add(point)
+    ordered = sorted(points)
+    segments = tuple(
+        (first, second)
+        for first, second in zip(ordered[:-1], ordered[1:])
+        if second > first
+    )
+    if not segments or segments[0][0] != lower or segments[-1][1] != upper:
+        raise LeakageError("u-v branch segmentation failed to cover v domain")
+    return segments
+
+
+def uv_shell_integral(
+    output_lower: float,
+    output_upper: float,
+    input_lower: float,
+    input_upper: float,
+    cumulative: Callable[[np.ndarray], np.ndarray],
+    *,
+    frequency_scale: float,
+    numerics: Mapping[str, object],
+) -> float:
+    """Integrate one shell pair in u=k_o+k_i, v=k_o-k_i coordinates."""
+
+    u_order = int(numerics["u_order"])
+    v_order = int(numerics["v_panel_order"])
+    period_samples = int(numerics["v_period_samples"])
+    if u_order < 2 or v_order < 2 or period_samples < 4 or frequency_scale <= 0.0:
+        raise LeakageError("invalid frozen u-v quadrature contract")
+    u_nodes, u_weights = leggauss(u_order)
+    v_nodes, v_weights = leggauss(v_order)
+    maximum_panel_width = 2.0 * math.pi / (frequency_scale * period_samples)
+    total = 0.0
+    for segment_lower, segment_upper in uv_v_segments(
+        output_lower, output_upper, input_lower, input_upper
+    ):
+        panel_count = max(
+            1, math.ceil((segment_upper - segment_lower) / maximum_panel_width)
+        )
+        panel_width = (segment_upper - segment_lower) / panel_count
+        panel_lower = segment_lower + panel_width * np.arange(panel_count)
+        v = (
+            panel_lower[:, None]
+            + 0.5 * panel_width * (v_nodes[None, :] + 1.0)
+        ).reshape(-1)
+        v_quadrature_weights = np.broadcast_to(
+            0.5 * panel_width * v_weights[None, :],
+            (panel_count, v_order),
+        ).reshape(-1)
+        u_lower = np.maximum(2.0 * output_lower - v, 2.0 * input_lower + v)
+        u_upper = np.minimum(2.0 * output_upper - v, 2.0 * input_upper + v)
+        if np.any(u_upper <= u_lower):
+            raise LeakageError("mapped shell produced an empty u interval")
+        half_width = 0.5 * (u_upper - u_lower)
+        midpoint = 0.5 * (u_upper + u_lower)
+        u = midpoint[:, None] + half_width[:, None] * u_nodes[None, :]
+        polynomial = (u * u - v[:, None] * v[:, None]) / 8.0
+        f_u_integral = half_width * np.sum(
+            u_weights[None, :] * polynomial * cumulative(u), axis=1
+        )
+        polynomial_integral = (
+            (u_upper**3 - u_lower**3) / 3.0
+            - v * v * (u_upper - u_lower)
+        ) / 8.0
+        inner = f_u_integral - cumulative(np.abs(v)) * polynomial_integral
+        total += float(np.sum(v_quadrature_weights * inner))
+    if not math.isfinite(total):
+        raise LeakageError("nonfinite u-v shell integral")
+    return total
+
+
 def compute_mixing_matrix(
     bins: Sequence[NativeBin],
     specification: WindowSpec,
     *,
     numerics: Mapping[str, object],
-) -> tuple[np.ndarray, dict[str, float], dict[str, object]]:
-    """Integrate M[out,in] using dmu=q*dq/(k*k')."""
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    dict[str, float],
+    dict[str, object],
+]:
+    """Integrate analysis mixing plus lower/upper diagnostic guards."""
 
     verify_disjoint_union(specification)
     moment_order = int(numerics["moment_order"])
-    shell_order = int(numerics["shell_order"])
     moments = _window_moments(specification, moment_order)
     parseval_denominator = (2.0 * math.pi) ** 3 * moments["int_W2_dV"]
+    nyquist = max(item.upper for item in bins)
+    fundamental = bins[0].lower
     q_cumulative = QPowerCumulative(
         specification,
-        2.0 * max(item.upper for item in bins),
+        3.0 * nyquist,
         period_samples=int(numerics["q_period_samples"]),
         panel_order=int(numerics["q_panel_order"]),
     )
-    shell_nodes: list[np.ndarray] = []
-    shell_weights: list[np.ndarray] = []
-    shell_norms: list[float] = []
-    for item in bins:
-        nodes, weights = _gauss_interval(shell_order, item.lower, item.upper)
-        shell_nodes.append(nodes)
-        shell_weights.append(weights)
-        shell_norms.append((item.upper**3 - item.lower**3) / 3.0)
-
-    matrix = np.empty((len(bins), len(bins)), dtype=np.float64)
-    for input_index, (input_k, input_weight, input_norm) in enumerate(
-        zip(shell_nodes, shell_weights, shell_norms)
+    frequency_scale = _window_frequency_scale(specification)
+    shell_norms = np.array(
+        [(item.upper**3 - item.lower**3) / 3.0 for item in bins]
+    )
+    kernel = np.empty((len(bins), len(bins)), dtype=np.float64)
+    lower_kernel = np.empty(len(bins), dtype=np.float64)
+    upper_kernel = np.empty(len(bins), dtype=np.float64)
+    for input_index, input_bin in enumerate(bins):
+        for output_index, output_bin in enumerate(bins):
+            kernel[output_index, input_index] = uv_shell_integral(
+                output_bin.lower,
+                output_bin.upper,
+                input_bin.lower,
+                input_bin.upper,
+                q_cumulative,
+                frequency_scale=frequency_scale,
+                numerics=numerics,
+            )
+        lower_kernel[input_index] = uv_shell_integral(
+            0.0,
+            fundamental,
+            input_bin.lower,
+            input_bin.upper,
+            q_cumulative,
+            frequency_scale=frequency_scale,
+            numerics=numerics,
+        )
+        upper_kernel[input_index] = uv_shell_integral(
+            nyquist,
+            2.0 * nyquist,
+            input_bin.lower,
+            input_bin.upper,
+            q_cumulative,
+            frequency_scale=frequency_scale,
+            numerics=numerics,
+        )
+    factor = 2.0 * math.pi / parseval_denominator
+    matrix = factor * kernel / shell_norms[None, :]
+    lower_guard = factor * lower_kernel / shell_norms
+    upper_guard = factor * upper_kernel / shell_norms
+    if (
+        not np.all(np.isfinite(matrix))
+        or not np.all(np.isfinite(lower_guard))
+        or not np.all(np.isfinite(upper_guard))
     ):
-        ki = input_k[None, :]
-        for output_index, (output_k, output_weight) in enumerate(
-            zip(shell_nodes, shell_weights)
-        ):
-            ko = output_k[:, None]
-            angular = q_cumulative.angular_integral(ko, ki)
-            integrand_weights = (
-                output_weight[:, None]
-                * ko
-                * ko
-                * input_weight[None, :]
-                * ki
-                * ki
-            )
-            numerator = 2.0 * math.pi * float(
-                np.sum(integrand_weights * angular)
-            )
-            matrix[output_index, input_index] = (
-                numerator / input_norm / parseval_denominator
-            )
-    if not np.all(np.isfinite(matrix)) or np.any(matrix < -1.0e-12):
-        raise LeakageError("mixing matrix contains nonfinite or materially negative values")
+        raise LeakageError("mixing or guard response is nonfinite")
     transform_zero = float(sphere_radial_transform(np.array([0.0]), specification.radius)[0])
     single_moment_one = single_sphere_window_moment(
         specification.radius, 1, moment_order
     )
     column_sum = matrix.sum(axis=0)
+    total_through_guard = column_sum + lower_guard + upper_guard
+    far_tail = 1.0 - total_through_guard
+    reciprocity_abs = float(np.max(np.abs(kernel - kernel.T)))
+    reciprocity_scale = max(float(np.max(np.abs(kernel))), np.finfo(float).tiny)
     audit: dict[str, object] = {
         "analytic_radial_transform": True,
+        "shell_coordinate_map": "u=k_output+k_input;v=k_output-k_input",
         "moment_order": moment_order,
-        "shell_order": shell_order,
+        "u_order": int(numerics["u_order"]),
+        "v_period_samples": int(numerics["v_period_samples"]),
+        "v_panel_order": int(numerics["v_panel_order"]),
         "q_period_samples": int(numerics["q_period_samples"]),
         "q_panel_order": int(numerics["q_panel_order"]),
         "q_panel_count_for_mixing": q_cumulative.panel_count,
         "q_panel_width_h_Mpc": q_cumulative.panel_width,
+        "q_cumulative_max_h_Mpc": q_cumulative.q_max,
         "sphere_A0_relative_error": abs(transform_zero - single_moment_one)
         / single_moment_one,
         "parseval_denominator": parseval_denominator,
         "minimum_analysis_column_sum": float(np.min(column_sum)),
         "maximum_analysis_column_sum": float(np.max(column_sum)),
         "maximum_analysis_column_overshoot": float(max(0.0, np.max(column_sum) - 1.0)),
+        "minimum_analysis_response": float(np.min(matrix)),
+        "minimum_lower_guard_response": float(np.min(lower_guard)),
+        "minimum_upper_guard_response": float(np.min(upper_guard)),
+        "maximum_total_through_guard": float(np.max(total_through_guard)),
+        "minimum_far_tail": float(np.min(far_tail)),
+        "analysis_reciprocity_max_abs_unnormalized": reciprocity_abs,
+        "analysis_reciprocity_max_relative_unnormalized": (
+            reciprocity_abs / reciprocity_scale
+        ),
+        "analysis_reciprocity_pass": (
+            reciprocity_abs / reciprocity_scale <= CONVERGENCE_ABS_TOLERANCE
+        ),
         "parseval_q_space": parseval_audit(specification, moments, numerics),
     }
-    return matrix, moments, audit
+    return matrix, lower_guard, upper_guard, moments, audit
 
 
-def supported_suffix(mask: Sequence[bool]) -> dict[str, object]:
+def maximal_contiguous_runs(
+    mask: Sequence[bool],
+    bins: Sequence[NativeBin],
+    independent_counts: Sequence[int],
+) -> dict[str, object]:
+    """Enumerate all supported runs and choose the deterministic interior proposal."""
+
     values = np.asarray(mask)
-    if values.ndim != 1 or values.dtype != np.bool_ or len(values) == 0:
-        raise LeakageError("supported suffix input must be nonempty exact booleans")
-    passing = np.flatnonzero(values)
-    if len(passing) == 0:
-        return {
-            "pass": False,
-            "first_supported_bin": None,
-            "failed_after_first_supported": [],
-            "reason": "no_supported_native_bin",
-        }
-    first = int(passing[0])
-    holes = [int(index) for index in np.flatnonzero(~values[first:]) + first]
-    if holes:
-        return {
-            "pass": False,
-            "first_supported_bin": None,
-            "first_raw_supported_bin": first,
-            "failed_after_first_supported": holes,
-            "reason": "supported_suffix_hole_fail_closed",
-        }
+    counts = np.asarray(independent_counts)
+    if (
+        values.ndim != 1
+        or values.dtype != np.bool_
+        or len(values) == 0
+        or len(values) != len(bins)
+        or counts.shape != values.shape
+        or np.any(counts < 0)
+    ):
+        raise LeakageError("run selection inputs are invalid")
+    runs: list[dict[str, object]] = []
+    index = 0
+    while index < len(values):
+        if not values[index]:
+            index += 1
+            continue
+        start = index
+        while index + 1 < len(values) and values[index + 1]:
+            index += 1
+        end = index
+        runs.append(
+            {
+                "start_native_bin": start,
+                "end_native_bin": end,
+                "native_bin_count": end - start + 1,
+                "lower_h_Mpc": bins[start].lower,
+                "upper_h_Mpc": bins[end].upper,
+                "summed_independent_real_modes": int(counts[start : end + 1].sum()),
+                "includes_terminal_bin": bool(bins[end].terminal),
+            }
+        )
+        index += 1
+    proposal = (
+        max(
+            runs,
+            key=lambda item: (
+                item["upper_h_Mpc"],
+                item["native_bin_count"],
+                item["summed_independent_real_modes"],
+            ),
+        )
+        if runs
+        else None
+    )
     return {
-        "pass": True,
-        "first_supported_bin": first,
-        "failed_after_first_supported": [],
-        "reason": "contiguous_supported_suffix_through_Nyquist",
+        "all_maximal_contiguous_runs": runs,
+        "deterministic_proposal": proposal,
+        "selection_order": "highest_upper_k_then_more_bins_then_larger_summed_independent_modes",
+        "proposal_semantics": "geometry_window_only_not_scientific_frontier_or_observational_resolution",
+        "terminal_failure_allowed": True,
     }
 
 
 def evaluate_support(
     matrix: np.ndarray,
+    lower_guard: Sequence[float],
+    upper_guard: Sequence[float],
     independent_counts: Sequence[int],
+    bins: Sequence[NativeBin],
     moments: Mapping[str, float],
     box_size: float,
     *,
@@ -811,13 +1010,24 @@ def evaluate_support(
     np.ndarray,
     np.ndarray,
     np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
     dict[str, object],
 ]:
     matrix = np.asarray(matrix, dtype=float)
+    lower_guard = np.asarray(lower_guard, dtype=float)
+    upper_guard = np.asarray(upper_guard, dtype=float)
     counts = np.asarray(independent_counts, dtype=float)
     if matrix.shape != (len(counts), len(counts)):
         raise LeakageError("mixing matrix/count shape mismatch")
-    if not np.all(np.isfinite(matrix)) or np.any(matrix < 0):
+    if lower_guard.shape != counts.shape or upper_guard.shape != counts.shape:
+        raise LeakageError("guard/count shape mismatch")
+    if (
+        not np.all(np.isfinite(matrix))
+        or not np.all(np.isfinite(lower_guard))
+        or not np.all(np.isfinite(upper_guard))
+    ):
         raise LeakageError("invalid mixing matrix for support evaluation")
     containment = np.empty(len(counts), dtype=float)
     for index in range(len(counts)):
@@ -826,7 +1036,19 @@ def evaluate_support(
         containment[index] = float(matrix[lower:upper, index].sum())
     column_sums = matrix.sum(axis=0)
     signed_residual = 1.0 - column_sums
-    normalization_valid = signed_residual >= -CONVERGENCE_ABS_TOLERANCE
+    total_through_guard = column_sums + lower_guard + upper_guard
+    far_tail = 1.0 - total_through_guard
+    decomposition_residual = signed_residual - (
+        lower_guard + upper_guard + far_tail
+    )
+    normalization_valid = (
+        (total_through_guard <= 1.0 + CONVERGENCE_ABS_TOLERANCE)
+        & (far_tail >= -CONVERGENCE_ABS_TOLERANCE)
+        & (np.abs(decomposition_residual) <= CONVERGENCE_ABS_TOLERANCE)
+        & (np.min(matrix, axis=0) >= -CONVERGENCE_ABS_TOLERANCE)
+        & (lower_guard >= -CONVERGENCE_ABS_TOLERANCE)
+        & (upper_guard >= -CONVERGENCE_ABS_TOLERANCE)
+    )
     effective_volume = float(moments["V_eff"])
     localized_neff = counts * effective_volume / box_size**3
     supported = (
@@ -840,10 +1062,13 @@ def evaluate_support(
         containment,
         column_sums,
         signed_residual,
+        total_through_guard,
+        far_tail,
+        decomposition_residual,
         localized_neff,
         normalization_valid,
         supported,
-        supported_suffix(supported),
+        maximal_contiguous_runs(supported, bins, independent_counts),
     )
 
 
@@ -886,21 +1111,45 @@ def _evaluate_window(
     independent_counts: np.ndarray,
     numerics: Mapping[str, object],
 ) -> MixingEvaluation:
-    matrix, moments, audit = compute_mixing_matrix(
+    matrix, lower_guard, upper_guard, moments, audit = compute_mixing_matrix(
         bins, specification, numerics=numerics
     )
-    containment, column_sum, residual, neff, valid, supported, suffix = evaluate_support(
-        matrix, independent_counts, moments, specification.box_size
+    (
+        containment,
+        column_sum,
+        residual,
+        total_through_guard,
+        far_tail,
+        decomposition_residual,
+        neff,
+        valid,
+        supported,
+        run_proposal,
+    ) = evaluate_support(
+        matrix,
+        lower_guard,
+        upper_guard,
+        independent_counts,
+        bins,
+        moments,
+        specification.box_size,
+    )
+    audit["guard_decomposition_max_abs_residual"] = float(
+        np.max(np.abs(decomposition_residual))
     )
     return MixingEvaluation(
         matrix,
+        lower_guard,
+        upper_guard,
+        far_tail,
+        total_through_guard,
         containment,
         column_sum,
         residual,
         neff,
         valid,
         supported,
-        suffix,
+        run_proposal,
         moments,
         audit,
     )
@@ -917,12 +1166,16 @@ def _roi_result(
         "signed_outside_analysis_residual": (
             evaluation.signed_normalization_residual.tolist()
         ),
+        "lower_guard": evaluation.lower_guard.tolist(),
+        "upper_guard": evaluation.upper_guard.tolist(),
+        "far_tail": evaluation.far_tail.tolist(),
+        "total_through_upper_guard": evaluation.total_through_guard.tolist(),
         "normalization_valid": evaluation.normalization_valid.tolist(),
         "localized_effective_independent_mode_count": (
             evaluation.localized_neff.tolist()
         ),
         "native_bin_supported": evaluation.raw_supported.tolist(),
-        "supported_suffix": evaluation.suffix,
+        "contiguous_run_geometry_proposal": evaluation.run_proposal,
         "window_moments": evaluation.moments,
         "numerical_audit": evaluation.numerical_audit,
     }
@@ -938,7 +1191,7 @@ def _mode_counts_document(
 ) -> dict[str, object]:
     merged = greedy_merge_bins(bins, independent_counts, minimum=32)
     return {
-        "schema": "ouruniv-cf4-kf-roi-leakage-mode-counts-v2",
+        "schema": "ouruniv-cf4-kf-roi-leakage-mode-counts-v3",
         "design_raw_sha256": design_sha,
         "grid_size_N": grid_size,
         "native_bins": [
@@ -966,22 +1219,22 @@ def load_execution_grant(
     try:
         grant = json.loads(payload)
     except json.JSONDecodeError as exc:
-        raise LeakageError("cannot parse v2 execution grant") from exc
-    if grant.get("schema") != "ouruniv-cf4-kf-roi-leakage-execution-v2":
-        raise LeakageError("unexpected v2 execution grant schema")
-    if grant.get("status") != "user_approved_single_v2_preflight_only":
-        raise LeakageError("v2 execution grant is not active")
+        raise LeakageError("cannot parse v3 execution grant") from exc
+    if grant.get("schema") != "ouruniv-cf4-kf-roi-leakage-execution-v3":
+        raise LeakageError("unexpected v3 execution grant schema")
+    if grant.get("status") != "user_approved_single_v3_preflight_only":
+        raise LeakageError("v3 execution grant is not active")
     if grant.get("scope", {}).get("design_raw_sha256") != design_sha256:
         raise LeakageError("execution grant/design SHA256 mismatch")
     authorization = grant.get("authorization", {})
     required_true = {
-        "v2_implementation_authorized",
+        "v3_implementation_authorized",
         "Slurm_preflight_authorized",
     }
     if any(authorization.get(key) is not True for key in required_true):
-        raise LeakageError("v2 implementation/preflight authority is missing")
+        raise LeakageError("v3 implementation/preflight authority is missing")
     if authorization.get("maximum_preflight_submissions") != 1:
-        raise LeakageError("v2 grant must authorize exactly one preflight")
+        raise LeakageError("v3 grant must authorize exactly one preflight")
     required_false = {
         "Slurm_production_authorized",
         "retry_authorized",
@@ -995,14 +1248,14 @@ def load_execution_grant(
         "network_access_authorized",
     }
     if any(authorization.get(key) is not False for key in required_false):
-        raise LeakageError("v2 grant contains forbidden downstream authority")
+        raise LeakageError("v3 grant contains forbidden downstream authority")
     numerical_contract = grant.get("numerical_contract", {})
     expected_coarse = json.loads(canonical_json_bytes(COARSE_NUMERICS))
     expected_fine = json.loads(canonical_json_bytes(FINE_NUMERICS))
     if numerical_contract.get("coarse") != expected_coarse:
-        raise LeakageError("v2 grant frozen coarse numerics mismatch")
+        raise LeakageError("v3 grant frozen coarse numerics mismatch")
     if numerical_contract.get("fine") != expected_fine:
-        raise LeakageError("v2 grant frozen fine numerics mismatch")
+        raise LeakageError("v3 grant frozen fine numerics mismatch")
     return grant, digest
 
 
@@ -1011,14 +1264,17 @@ def _compare_evaluations(
 ) -> dict[str, object]:
     containment_difference = 0.0
     residual_difference = 0.0
+    guard_difference = 0.0
     moment_difference = 0.0
     classification_match = True
-    suffix_match = True
+    run_proposal_match = True
     normalization_overshoot = 0.0
     transform_zero_error = 0.0
     parseval_error = 0.0
     parseval_tail = 0.0
     normalization_valid = True
+    reciprocity_error = 0.0
+    decomposition_error = 0.0
     per_window: dict[str, object] = {}
     for key in sorted(fine):
         first = coarse[key]
@@ -1041,10 +1297,10 @@ def _compare_evaluations(
         same_classification = bool(
             np.array_equal(first.raw_supported, second.raw_supported)
         )
-        same_suffix = first.suffix["pass"] == second.suffix["pass"]
+        same_run_proposal = first.run_proposal == second.run_proposal
         overshoot = float(max(
-            first.numerical_audit["maximum_analysis_column_overshoot"],
-            second.numerical_audit["maximum_analysis_column_overshoot"],
+            max(0.0, first.numerical_audit["maximum_total_through_guard"] - 1.0),
+            max(0.0, second.numerical_audit["maximum_total_through_guard"] - 1.0),
         ))
         a0_error = max(
             first.numerical_audit["sphere_A0_relative_error"],
@@ -1068,22 +1324,53 @@ def _compare_evaluations(
         window_normalization_valid = bool(
             np.all(first.normalization_valid) and np.all(second.normalization_valid)
         )
+        window_guard_difference = float(
+            max(
+                np.max(np.abs(first.lower_guard - second.lower_guard)),
+                np.max(np.abs(first.upper_guard - second.upper_guard)),
+                np.max(np.abs(first.far_tail - second.far_tail)),
+                np.max(
+                    np.abs(
+                        first.total_through_guard - second.total_through_guard
+                    )
+                ),
+            )
+        )
+        window_reciprocity = float(
+            max(
+                first.numerical_audit[
+                    "analysis_reciprocity_max_relative_unnormalized"
+                ],
+                second.numerical_audit[
+                    "analysis_reciprocity_max_relative_unnormalized"
+                ],
+            )
+        )
+        window_decomposition = float(
+            max(
+                first.numerical_audit["guard_decomposition_max_abs_residual"],
+                second.numerical_audit["guard_decomposition_max_abs_residual"],
+            )
+        )
         residual_difference = max(residual_difference, residual_delta)
+        guard_difference = max(guard_difference, window_guard_difference)
         moment_difference = max(moment_difference, relative_moments)
         classification_match &= same_classification
-        suffix_match &= same_suffix
+        run_proposal_match &= same_run_proposal
         normalization_overshoot = max(normalization_overshoot, overshoot)
         transform_zero_error = max(transform_zero_error, a0_error)
         parseval_error = max(parseval_error, window_parseval_error)
         parseval_tail = max(parseval_tail, window_parseval_tail)
         normalization_valid &= window_normalization_valid
+        reciprocity_error = max(reciprocity_error, window_reciprocity)
+        decomposition_error = max(decomposition_error, window_decomposition)
         per_window[key] = {
             "max_abs_containment_difference": containment_delta,
             "max_abs_signed_normalization_residual_difference": residual_delta,
             "max_relative_window_moment_difference": relative_moments,
             "native_classification_identical": same_classification,
-            "suffix_classification_identical": same_suffix,
-            "maximum_analysis_column_overshoot": overshoot,
+            "contiguous_run_proposal_identical": same_run_proposal,
+            "maximum_total_through_guard_overshoot": overshoot,
             "coarse_failed_normalization_bins": np.flatnonzero(
                 ~first.normalization_valid
             ).tolist(),
@@ -1098,6 +1385,15 @@ def _compare_evaluations(
             "fine_signed_normalization_residual": (
                 second.signed_normalization_residual.tolist()
             ),
+            "max_abs_guard_or_far_tail_difference": window_guard_difference,
+            "coarse_lower_guard": first.lower_guard.tolist(),
+            "fine_lower_guard": second.lower_guard.tolist(),
+            "coarse_upper_guard": first.upper_guard.tolist(),
+            "fine_upper_guard": second.upper_guard.tolist(),
+            "coarse_far_tail": first.far_tail.tolist(),
+            "fine_far_tail": second.far_tail.tolist(),
+            "max_reciprocity_relative_error": window_reciprocity,
+            "max_guard_decomposition_abs_residual": window_decomposition,
             "max_relative_parseval_error": window_parseval_error,
             "max_relative_parseval_tail_increment": window_parseval_tail,
             "coarse_sphere_A0_relative_error": first.numerical_audit[
@@ -1110,31 +1406,39 @@ def _compare_evaluations(
     passed = (
         containment_difference <= CONVERGENCE_ABS_TOLERANCE
         and residual_difference <= CONVERGENCE_ABS_TOLERANCE
+        and guard_difference <= CONVERGENCE_ABS_TOLERANCE
         and moment_difference <= CONVERGENCE_ABS_TOLERANCE
         and normalization_overshoot <= CONVERGENCE_ABS_TOLERANCE
         and transform_zero_error <= CONVERGENCE_ABS_TOLERANCE
         and parseval_error <= CONVERGENCE_ABS_TOLERANCE
         and parseval_tail <= CONVERGENCE_ABS_TOLERANCE
+        and reciprocity_error <= CONVERGENCE_ABS_TOLERANCE
+        and decomposition_error <= CONVERGENCE_ABS_TOLERANCE
         and normalization_valid
         and classification_match
-        and suffix_match
+        and run_proposal_match
     )
     return {
         "status": "PASS" if passed else "FAIL",
         "absolute_tolerance": CONVERGENCE_ABS_TOLERANCE,
         "max_abs_containment_difference": containment_difference,
         "max_abs_signed_normalization_residual_difference": residual_difference,
+        "max_abs_guard_or_far_tail_difference": guard_difference,
         "max_relative_parseval_denominator_or_window_moment_difference": (
             moment_difference
         ),
-        "max_analysis_column_overshoot": normalization_overshoot,
+        "max_total_through_guard_overshoot": normalization_overshoot,
         "max_sphere_A0_relative_error": transform_zero_error,
         "max_relative_parseval_error": parseval_error,
         "max_relative_parseval_tail_increment": parseval_tail,
         "all_analysis_column_normalizations_valid": normalization_valid,
+        "max_analysis_reciprocity_relative_error": reciprocity_error,
+        "max_guard_decomposition_abs_residual": decomposition_error,
         "native_classification_identical": classification_match,
-        "suffix_classification_identical": suffix_match,
-        "threshold_margin_safety_pass": classification_match and suffix_match,
+        "contiguous_run_proposal_identical": run_proposal_match,
+        "threshold_margin_safety_pass": (
+            classification_match and run_proposal_match
+        ),
         "per_numeric_window": per_window,
     }
 
@@ -1187,6 +1491,12 @@ def calculate(
     for key in sorted(specifications):
         arrays[f"coarse__{key}"] = coarse[key].matrix
         arrays[f"fine__{key}"] = fine[key].matrix
+        arrays[f"coarse_lower_guard__{key}"] = coarse[key].lower_guard
+        arrays[f"fine_lower_guard__{key}"] = fine[key].lower_guard
+        arrays[f"coarse_upper_guard__{key}"] = coarse[key].upper_guard
+        arrays[f"fine_upper_guard__{key}"] = fine[key].upper_guard
+        arrays[f"coarse_far_tail__{key}"] = coarse[key].far_tail
+        arrays[f"fine_far_tail__{key}"] = fine[key].far_tail
     status = "PRECHECK_PASS" if convergence["status"] == "PASS" else "PRECHECK_FAIL"
 
     roi_results = [
@@ -1200,9 +1510,13 @@ def calculate(
             "observer_environment",
         )
     ]
-    leakage_gate_pass = all(item["supported_suffix"]["pass"] for item in roi_results)
+    geometry_proposals_available = all(
+        item["contiguous_run_geometry_proposal"]["deterministic_proposal"]
+        is not None
+        for item in roi_results
+    )
     result = {
-        "schema": "ouruniv-cf4-kf-roi-leakage-result-v2",
+        "schema": "ouruniv-cf4-kf-roi-leakage-result-v3",
         "status": status,
         "mode": "preflight",
         "design_raw_sha256": design_sha,
@@ -1218,7 +1532,8 @@ def calculate(
         "Local_Group_observer_numeric_product_shared": True,
         "Local_Group_observer_semantic_results_separate": True,
         "Local_Group_observer_scores_summed": False,
-        "overall_leakage_gate_pass": leakage_gate_pass,
+        "geometry_window_proposals_available": geometry_proposals_available,
+        "geometry_window_proposals_are_scientific_claims": False,
         "scientific_disposition": "numerical_PRECHECK_only_no_scientific_leakage_decision_authorized",
         "scientific_leakage_decision_authorized": False,
         "final_manifest_materialized": False,
@@ -1246,7 +1561,7 @@ def publish_artifacts(
     arrays: Mapping[str, np.ndarray],
 ) -> None:
     if result.get("status") != "PRECHECK_PASS":
-        raise LeakageError("only a fully passing v2 precheck may be published")
+        raise LeakageError("only a fully passing v3 precheck may be published")
     output = Path(output_path)
     if output.exists():
         raise FileExistsError(f"refusing overwrite of existing output {output}")
@@ -1268,7 +1583,7 @@ def publish_artifacts(
         for filename, payload in payloads.items():
             _write_and_fsync(stage / filename, payload)
         manifest = {
-            "schema": "ouruniv-cf4-kf-roi-leakage-artifact-manifest-v2",
+            "schema": "ouruniv-cf4-kf-roi-leakage-artifact-manifest-v3",
             "status": "PRECHECK_PASS",
             "mode": result["mode"],
             "design_raw_sha256": result["design_raw_sha256"],
@@ -1284,7 +1599,7 @@ def publish_artifacts(
         manifest_payload = canonical_json_bytes(manifest)
         _write_and_fsync(stage / "manifest.json", manifest_payload)
         complete = {
-            "schema": "ouruniv-cf4-kf-roi-leakage-complete-v2",
+            "schema": "ouruniv-cf4-kf-roi-leakage-complete-v3",
             "status": manifest["status"],
             "mode": result["mode"],
             "manifest_sha256": _sha256(manifest_payload),
@@ -1341,7 +1656,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         design, design_sha = load_frozen_design(args.design)
         grant, grant_sha = load_execution_grant(args.execution_grant, design_sha)
         if str(args.output) != grant["scope"]["preflight_output"]:
-            raise LeakageError("output does not equal the v2 grant preflight path")
+            raise LeakageError("output does not equal the v3 grant preflight path")
         result, mode_counts, arrays = calculate(
             design,
             design_sha,
@@ -1365,7 +1680,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             {
                 "status": result["status"],
                 "mode": "preflight",
-                "overall_leakage_gate_pass": result["overall_leakage_gate_pass"],
+                "geometry_window_proposals_available": result[
+                    "geometry_window_proposals_available"
+                ],
                 "scientific_disposition": result["scientific_disposition"],
                 "output": str(args.output),
             },
