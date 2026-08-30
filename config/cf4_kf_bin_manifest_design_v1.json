@@ -1,0 +1,329 @@
+{
+  "schema": "ouruniv-cf4-kf-bin-manifest-design-v1",
+  "date": "2026-08-30",
+  "status": "user_approved_design_frozen_ROI_leakage_and_manifest_materialization_pending",
+  "stage": "KF-DESIGN",
+  "authority": {
+    "authorization_basis": "current_user_approval",
+    "design_freeze_recorded": true,
+    "ROI_geometry_approved": true,
+    "ROI_geometry_frozen": true,
+    "ROI_leakage_execution_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_compute_authorized": false,
+    "Slurm_submission_authorized": false,
+    "GPFS_read_authorized": false,
+    "GPFS_write_authorized": false,
+    "network_access_authorized": false
+  },
+  "analysis_lattice": {
+    "box_size_cMpc_h": 384.0,
+    "grid_spacing_cMpc_h": 0.3,
+    "cells_per_axis_N": 1280,
+    "exact_identity": "N * grid_spacing_cMpc_h = box_size_cMpc_h",
+    "fundamental_formula": "k_f = 2*pi/L",
+    "fundamental_h_Mpc": 0.016362461737446838,
+    "isotropic_analysis_Nyquist_formula": "k_Ny = pi/grid_spacing_cMpc_h",
+    "isotropic_analysis_Nyquist_h_Mpc": 10.471975511965978,
+    "DFT_integer_frequency_convention_per_axis": {
+      "minimum_inclusive": -640,
+      "maximum_inclusive": 639
+    },
+    "DC_mode_included": false,
+    "radial_mode_domain": "0 < |k| <= k_Ny",
+    "cube_corner_modes_included": false,
+    "user_supplied_low_or_high_k_cutoff_allowed": false,
+    "observational_resolution_claim_created_by_this_design": false
+  },
+  "native_bin_design": {
+    "first_lower_edge": "k_f",
+    "edge_ratio": "2^(1/4)",
+    "delta_log2_k": 0.25,
+    "construction": "Starting at k_f, emit every complete quarter-octave bin whose upper edge is <= k_Ny, then emit exactly one terminal truncated bin ending at k_Ny if k_Ny is not a native edge.",
+    "complete_native_bin_count_for_frozen_lattice": 37,
+    "terminal_truncated_bin_count_for_frozen_lattice": 1,
+    "complete_bin_interval": "lower inclusive and upper exclusive",
+    "terminal_bin_interval": "lower inclusive and k_Ny upper inclusive",
+    "representative_k": "geometric center sqrt(lower_edge * upper_edge), including the terminal truncated bin",
+    "record_every_native_bin": true,
+    "record_zero_mode_bins": true,
+    "record_failed_bins": true,
+    "prefix_omission_allowed": false,
+    "suffix_omission_allowed": false,
+    "failed_bin_omission_allowed": false,
+    "bin_reordering_allowed": false,
+    "shortened_Nyquist_allowed": false,
+    "user_science_cutoff_allowed": false
+  },
+  "independent_real_mode_count": {
+    "algorithm_status": "frozen",
+    "enumeration_domain": "integer DFT lattice [-640,639]^3 restricted to 0 < n_x^2+n_y^2+n_z^2 <= 640^2",
+    "histogram_key": "integer squared radius q = n_x^2+n_y^2+n_z^2",
+    "conjugate_map": "Map -n modulo N back to the canonical signed DFT interval [-640,639] on each axis.",
+    "pair_count_rule": "For a non-self-conjugate pair {n, conjugate(n)}, retain exactly the lexicographically smaller signed integer triplet and count the pair once.",
+    "self_conjugate_rule": "If n equals conjugate(n), count that real self-conjugate mode once.",
+    "DC_rule": "q=0 is excluded before counting",
+    "native_bin_assignment": "Assign the integer-q histogram to quarter-octave squared-edge intervals. Even half-octave exponents use integer power-of-two comparison; odd half-octave exponents use exact integer squared comparison against the corresponding power-of-two times sqrt(2). The terminal boundary is q<=640^2.",
+    "floating_point_catalog_enumeration_allowed": false,
+    "truth_or_candidate_input_allowed": false,
+    "merged_bin_rule": {
+      "minimum_independent_real_modes": 32,
+      "construction": "From the lowest native bin, greedily merge consecutive native bins until their summed independent-real-mode count is at least 32, then begin the next merged bin.",
+      "terminal_underfill_rule": "If the final merged group is below 32 at k_Ny, merge it into the immediately preceding merged group; if no preceding group exists, materialization fails closed.",
+      "record_native_memberships": true,
+      "record_native_counts": true,
+      "record_merged_counts": true,
+      "truth_blind": true
+    }
+  },
+  "manifest_envelope_contract": {
+    "future_final_manifest_path": "config/cf4_kf_bin_manifest_v1.json",
+    "final_manifest_status_now": "absent_blocking",
+    "body_key": "manifest_body",
+    "body_canonical_serialization": {
+      "JSON_object_keys": "sorted lexicographically",
+      "separators": "compact comma and colon with no insignificant whitespace",
+      "encoding": "UTF-8",
+      "nonfinite_numbers_allowed": false,
+      "termination": "exactly one newline"
+    },
+    "body_hash_algorithm": "SHA256",
+    "body_hash_key_outside_body": "manifest_body_sha256",
+    "self_hash_recursion_allowed": false,
+    "evaluator_binding": "Recompute SHA256 over canonical manifest_body bytes and require exact equality to the envelope manifest_body_sha256 before evaluation.",
+    "required_before_materialization": [
+      "ROI leakage implementation SHA256",
+      "COMPLETE ROI leakage result SHA256",
+      "all native and merged bin records",
+      "all ROI supported and failed bin records"
+    ],
+    "k_boundary_claim_allowed_now": false
+  },
+  "ROI_geometry": {
+    "status": "user_approved_frozen",
+    "coordinate_frame": "de Vaucouleurs supergalactic Cartesian in the periodic analysis box",
+    "length_unit": "cMpc/h",
+    "source": {
+      "path": "config/p1_targets_v2_observer.json",
+      "raw_sha256": "34bf11486b084312d6a7e476f469e6973cfbf3a9392c7c7eab9b1a6b9a124e0a",
+      "cosmology_h": 0.746
+    },
+    "observer_box_center_cMpc_h": [
+      192.0,
+      192.0,
+      192.0
+    ],
+    "spherical_direction_conversion": {
+      "relative_x": "distance_mpc_h * cos(sgb) * cos(sgl)",
+      "relative_y": "distance_mpc_h * cos(sgb) * sin(sgl)",
+      "relative_z": "distance_mpc_h * sin(sgb)",
+      "angle_unit": "degrees converted to radians",
+      "box_center_rule": "observer_box_center_cMpc_h plus relative vector",
+      "distance_conversion_for_mpc_sources": "distance_mpc_h = distance_mpc * 0.746"
+    },
+    "ROIs": [
+      {
+        "id": "Local_Group",
+        "geometry": "sphere",
+        "center_cMpc_h": [
+          192.0,
+          192.0,
+          192.0
+        ],
+        "radius_cMpc_h": 8.0,
+        "source_binding": "current user-approved Local Group observer-centred ROI"
+      },
+      {
+        "id": "Virgo",
+        "geometry": "sphere",
+        "source_binding": "config/p1_targets_v2_observer.json#/clusters/Virgo",
+        "source_sgl_deg": 102.8806,
+        "source_sgb_deg": -2.348,
+        "source_distance_mpc": 16.07,
+        "derived_distance_mpc_h": 11.98822,
+        "center_cMpc_h": [
+          189.329829033528,
+          203.676745420703,
+          191.508856275301
+        ],
+        "radius_cMpc_h": 5.0
+      },
+      {
+        "id": "Coma",
+        "geometry": "sphere",
+        "source_binding": "config/p1_targets_v2_observer.json#/clusters/Coma",
+        "source_sgl_deg": 89.6165,
+        "source_sgb_deg": 8.3266,
+        "source_distance_mpc": 95.0,
+        "derived_distance_mpc_h": 70.87,
+        "center_cMpc_h": [
+          192.469352982037,
+          262.121364740826,
+          202.263080174214
+        ],
+        "radius_cMpc_h": 8.0
+      },
+      {
+        "id": "Local_Void",
+        "geometry": "union_max_of_spheres",
+        "source_binding": "config/p1_targets_v2_observer.json#/local_void/probes",
+        "composition_rule": "window value is the maximum of the four component-sphere window values",
+        "component_radius_cMpc_h": 6.0,
+        "component_centers_from_observer_plus_source_offsets_cMpc_h": [
+          {
+            "id": "Lacerta-2.4",
+            "source_offset_cMpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "center_cMpc_h": [
+              208.5,
+              185.0,
+              208.5
+            ]
+          },
+          {
+            "id": "Andromeda-2.3",
+            "source_offset_cMpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "center_cMpc_h": [
+              213.0,
+              185.0,
+              189.0
+            ]
+          },
+          {
+            "id": "Aquila-0.8",
+            "source_offset_cMpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "center_cMpc_h": [
+              190.0,
+              190.0,
+              199.0
+            ]
+          },
+          {
+            "id": "UrsaMinor-3.7",
+            "source_offset_cMpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "center_cMpc_h": [
+              223.0,
+              209.0,
+              204.0
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Bootes_Void",
+        "geometry": "sphere",
+        "source_binding": "config/p1_targets_v2_observer.json#/bootes_void",
+        "source_sgl_deg": 71.9564,
+        "source_sgb_deg": 31.4293,
+        "source_distance_mpc_h": 155.0,
+        "center_cMpc_h": [
+          232.966003459258,
+          317.75470258947,
+          272.824138332617
+        ],
+        "radius_cMpc_h": 31.0
+      },
+      {
+        "id": "observer_environment",
+        "geometry": "sphere",
+        "center_cMpc_h": [
+          192.0,
+          192.0,
+          192.0
+        ],
+        "radius_cMpc_h": 8.0,
+        "source_binding": "config/p1_targets_v2_observer.json#/observer_environment"
+      }
+    ],
+    "overlap_contract": {
+      "Local_Group_and_observer_environment_windows_are_spatially_identical": true,
+      "semantic_scores_are_separate": true,
+      "scores_may_be_summed": false,
+      "overlap_must_be_reported": true
+    },
+    "truth_candidate_or_result_dependent_geometry_change_allowed": false
+  },
+  "ROI_window_and_leakage_design": {
+    "status": "frozen_not_executed",
+    "window": {
+      "family": "compact_C1_raised_cosine_sphere",
+      "radial_definition": {
+        "r_le_0.75R": "w(r)=1",
+        "0.75R_lt_r_le_R": "w(r)=0.5*[1+cos(pi*(r-0.75R)/(0.25R))]",
+        "r_gt_R": "w(r)=0"
+      },
+      "union_rule": "For Local_Void use the pointwise maximum of the four component-sphere windows.",
+      "periodic_distance_convention": "minimum-image displacement in the L=384 cMpc/h periodic box"
+    },
+    "mixing_matrix": {
+      "definition": "truth- and candidate-independent native-bin shell mixing matrix computed from the Fourier response of the frozen ROI window",
+      "sphere_method": "deterministic verified quadrature or analytic radial transform for spheres",
+      "union_method": "declared deterministic integration of the pointwise-max union geometry",
+      "truth_input_allowed": false,
+      "candidate_input_allowed": false,
+      "implementation_SHA256_required": true,
+      "COMPLETE_result_SHA256_required": true
+    },
+    "native_bin_support_gate": {
+      "response_contained_in_b_minus_1_b_b_plus_1_min_inclusive": 0.9,
+      "edge_neighbor_rule": "At the first and terminal native bin, use only existing in-analysis neighbor bins; any response outside the analysis domain contributes to outside-analysis fraction, not containment.",
+      "alias_or_outside_analysis_fraction_max_inclusive": 0.01,
+      "localized_effective_independent_mode_count_min_inclusive": 32,
+      "combination": "all conditions required",
+      "missing_or_nonfinite_semantics": "fail"
+    },
+    "supported_suffix_rule": {
+      "rule": "The first supported native bin must be followed by an unbroken supported suffix through the terminal k_Ny bin.",
+      "unsupported_bins_before_first_supported_allowed": true,
+      "failure_after_first_supported_semantics": "final_manifest_materialization_fail_closed",
+      "all_supported_and_failed_bins_retained_in_leakage_artifact": true,
+      "post_result_threshold_or_geometry_change_allowed": false
+    },
+    "pass_results_declared_now": false,
+    "supported_lowest_scales_declared_now": false,
+    "final_manifest_materialization_allowed_now": false
+  },
+  "future_execution_route": {
+    "authorization_status": "not_authorized_design_only",
+    "heavy_execution_mode_if_separately_authorized": "Slurm_only",
+    "controller": "syntax_controller",
+    "controller_allowed_actions": [
+      "submit",
+      "audit"
+    ],
+    "manual_syn101_allowed": false,
+    "manual_syntax_allowed": false,
+    "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1",
+    "memory_request_rule": "requested memory >= 1.2 * measured preflight peak memory for the same implementation and decomposition",
+    "measured_preflight_required": true,
+    "refuse_overwrite": true,
+    "publication_order": "validated artifacts first; COMPLETE marker/result published last",
+    "current_Slurm_submission_authorized": false,
+    "current_GPFS_access_authorized": false,
+    "current_execution_authorized": false
+  },
+  "current_scientific_state": {
+    "ROI_geometry": "approved_and_frozen",
+    "ROI_leakage": "not_executed",
+    "final_manifest": "absent",
+    "KF_EXPAND": "blocked",
+    "k_boundary_claim": "none"
+  }
+}

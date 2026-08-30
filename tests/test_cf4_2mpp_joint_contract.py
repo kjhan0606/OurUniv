@@ -147,7 +147,9 @@ def test_kf_inventory_binds_crossmatch_but_retains_likelihood_and_manifest_block
         "CF4 group-member shared-redshift covariance",
     ):
         assert required in blockers
-    assert kf["declared_bin_manifest_contract"]["status"] == "absent_blocking"
+    assert kf["declared_bin_manifest_contract"]["status"] == (
+        "design_frozen_ROI_leakage_pending_blocking"
+    )
     assert kf["declared_bin_manifest_contract"][
         "evaluation_inputs_must_bind_to_manifest_SHA256"
     ] is True
@@ -198,7 +200,7 @@ def test_frozen_threshold_seed_and_roi_contract_values_are_unchanged():
         "observer_environment",
     ]
     assert all(
-        item["geometry_status"] == "proposed_pending_user_approval"
+        item["geometry_status"] == "approved_frozen"
         for item in rois
     )
     assert rois[0]["geometry_source"] == [

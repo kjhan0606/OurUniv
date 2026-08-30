@@ -7,6 +7,8 @@
     "driver_audit_required": false,
     "user_approval_required": false,
     "user_approval_granted": true,
+    "ROI_leakage_execution_authorized": false,
+    "final_bin_manifest_materialization_authorized": false,
     "KF_EXPAND_authorized": false,
     "all_D_mock_execution_authorized": false,
     "all_D_mock_blockers": [
@@ -273,7 +275,10 @@
     }
   },
   "declared_bin_manifest_contract": {
-    "status": "absent_blocking",
+    "status": "design_frozen_ROI_leakage_pending_blocking",
+    "design_path": "config/cf4_kf_bin_manifest_design_v1.json",
+    "design_status": "user_approved_design_frozen_ROI_leakage_and_manifest_materialization_pending",
+    "ROI_geometry_approved_and_frozen": true,
     "future_manifest_path": "config/cf4_kf_bin_manifest_v1.json",
     "immutability_binding": "canonical manifest bytes and SHA256",
     "evaluation_inputs_must_bind_to_manifest_SHA256": true,
@@ -295,7 +300,18 @@
       "unrecorded ROI scale removal"
     ],
     "manifest_or_SHA256_binding_missing_semantics": "KF_EXPAND_fail_closed",
-    "truth_or_candidate_may_change_manifest": false
+    "truth_or_candidate_may_change_manifest": false,
+    "future_execution_route_is_authorization": false,
+    "future_execution_route": {
+      "mode_if_separately_authorized": "Slurm_only",
+      "controller": "syntax_controller_submit_and_audit_only",
+      "manual_syn101_or_manual_syntax_allowed": false,
+      "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1",
+      "memory_request_rule": "measured preflight peak memory times at least 1.2",
+      "refuse_overwrite": true,
+      "COMPLETE_last": true,
+      "current_execution_authorized": false
+    }
   },
   "strict_bin_gates": {
     "combination": "logical_AND_fail_closed",
@@ -403,7 +419,8 @@
       {
         "id": "Local_Group",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/0",
         "geometry_source": [
           "config/p1_targets_v2_observer.json observer-centred radii",
           "existing Local Group target configs/references"
@@ -412,31 +429,36 @@
       {
         "id": "Virgo",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/1",
         "geometry_source": "config/p1_targets_v2_observer.json#/clusters/Virgo"
       },
       {
         "id": "Coma",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/2",
         "geometry_source": "config/p1_targets_v2_observer.json#/clusters/Coma"
       },
       {
         "id": "Local_Void",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/3",
         "geometry_source": "config/p1_targets_v2_observer.json#/local_void"
       },
       {
         "id": "Bootes_Void",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/4",
         "geometry_source": "config/p1_targets_v2_observer.json#/bootes_void"
       },
       {
         "id": "observer_environment",
         "metric": "k_eff_ROI",
-        "geometry_status": "proposed_pending_user_approval",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/5",
         "geometry_source": "config/p1_targets_v2_observer.json#/observer_environment"
       }
     ],
