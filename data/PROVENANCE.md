@@ -4,8 +4,11 @@ Downloaded 2026-07-07 from VizieR (CDS) via TAP, catalog **J/ApJ/944/94**
 (Tully et al. 2023, "Cosmicflows-4", ApJ 944, 94).
 
 - `cf4_groups.csv`   — 38053 rows, table `J/ApJ/944/94/groups` (grouped catalog:
-  distances DMzp/Dist, peculiar velocities Vpec, SG coords).
-- `cf4_galaxies.csv` — 55877 rows, table `J/ApJ/944/94/table2` (individual galaxies).
+  distances DMzp/Dist, peculiar velocities Vpec, SG coords); raw SHA256
+  `bfdc0cfc0f172b48468e3a8fd05e87978c1ec68c341fb2d929fc1200f0123334`.
+- `cf4_galaxies.csv` — 55877 rows, table `J/ApJ/944/94/table2` (individual
+  galaxies); raw SHA256
+  `28e7b8bd386f53716ed84cddd67a6f7602f98bc1394923a312f906555da7f709`.
 
 TAP endpoint: https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 Query: `SELECT * FROM "J/ApJ/944/94/<table>"` (format=csv, MAXREC=200000).
@@ -82,3 +85,57 @@ are not counted twice.
 binds downloads to the order-invariant canonical hashes. The reproducible
 downloader is `scripts/download_2mpp_v1.sh`; it validates a temporary download
 before atomically installing the directory and refuses to overwrite a target.
+
+## CF4–2M++ crossmatch
+
+The driver published the deterministic crossmatch on 2026-08-30 using
+`src/cf4_2mpp_crossmatch.py`. Matching uses bidirectional nearest neighbours on
+the unit sphere. A row is marked `secure_joint_mark` only when it is an exact
+mutual one-to-one nearest pair, its angular separation is at most 3.0 arcsec,
+and `abs(CF4 Vcmb - 2M++ Vcmb)` is at most 300 km/s. Normalized 2M++
+`Ref.strip() == 'zoa'` rows are excluded before matching; the `Cln` flag is
+retained and its cloned radial redshift remains latent rather than an
+independent datum.
+
+- `data/cf4_2mpp_crossmatch_v1.csv` — canonical mapping sorted by integer CF4
+  `recno`; SHA256
+  `64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf`.
+  This is an ignored local data artifact, not a repository source file.
+- `config/cf4_2mpp_crossmatch_v1_result.json` — COMPLETE result bound to the
+  mapping hash above; raw SHA256
+  `3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a`.
+
+The COMPLETE result contains 55,877 CF4 rows and 69,160 eligible real 2M++
+rows. Its mutually exclusive classifications are 16,584 secure joint marks,
+188 coordinate/redshift conflicts, 5 nonreciprocal collisions, 273 extended
+review candidates, and 38,827 unmatched rows. Secure matches cover 11,610
+unique CF4 `1PGC` groups. Conflicts, collisions, and extended-review candidates
+remain quarantined; neither automatic promotion nor manual truth editing is
+allowed.
+
+The ignored mapping is reproducible in a new ignored directory. Plain `mkdir`
+is intentional: reproduction fails rather than reusing or overwriting an
+existing directory or artifact.
+
+```bash
+mkdir data/cf4_2mpp_reproduction_v1
+python src/cf4_2mpp_crossmatch.py \
+  --cf4-galaxies data/cf4_galaxies.csv \
+  --twompp-catalog data/2mpp_catalog.csv \
+  --output data/cf4_2mpp_reproduction_v1/mapping.csv \
+  --summary data/cf4_2mpp_reproduction_v1/result.json
+sha256sum \
+  data/cf4_2mpp_reproduction_v1/mapping.csv \
+  data/cf4_2mpp_reproduction_v1/result.json
+```
+
+The printed mapping and result hashes can be compared respectively with the
+canonical values
+`64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf` and
+`3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a`.
+
+Publication of the mapping closes only the catalog crossmatch artifact step.
+The de-duplicated factorization, shared-redshift treatment, and remaining
+likelihood blockers are authoritative in
+`config/cf4_2mpp_joint_likelihood_v1.json`; the crossmatch does not authorize
+joint-likelihood, KF-EXPAND, all-D mock, or production execution.

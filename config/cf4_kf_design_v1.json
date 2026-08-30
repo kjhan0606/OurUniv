@@ -1,6 +1,6 @@
 {
   "schema": "ouruniv-cf4-kf-design-v1",
-  "status": "user_approved_design_frozen_blocked_by_data_and_bin_manifest",
+  "status": "user_approved_design_frozen_crossmatch_complete_blocked_by_likelihood_and_bin_manifest",
   "date": "2026-08-30",
   "authority": {
     "science_route": "config/cf4_science_route_v3.json",
@@ -10,13 +10,14 @@
     "KF_EXPAND_authorized": false,
     "all_D_mock_execution_authorized": false,
     "all_D_mock_blockers": [
-      "2M++ raw provenance is confirmed, but selection/RSD/luminosity-bias/model-discrepancy and CF4-crossmatch joint-covariance likelihood implementation is pending",
+      "2M++ raw provenance and CF4 crossmatch are complete, but angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance likelihood implementation remain pending",
       "structure-summary likelihood provenance, covariance, and model-discrepancy contracts are partial"
     ],
     "production_compute_authorized": false,
     "Slurm_submission_authorized": false,
     "GPFS_read_authorized": false,
-    "GPFS_write_authorized": false
+    "GPFS_write_authorized": false,
+    "network_access_authorized": false
   },
   "driver_audit": {
     "date": "2026-08-30",
@@ -91,7 +92,7 @@
     },
     {
       "id": "D_galaxy_density_external",
-      "status": "raw_2Mpp_downloaded_and_provenance_confirmed_but_likelihood_blocked",
+      "status": "raw_2Mpp_and_CF4_crossmatch_COMPLETE_but_likelihood_blocked",
       "provenance": "data/PROVENANCE.md#2m-galaxy-density-source",
       "source": {
         "catalog": "CDS/VizieR J/MNRAS/416/2840",
@@ -117,6 +118,17 @@
         "ReadMe": {
           "path": "data/2mpp_ReadMe.txt",
           "sha256": "0a4206da2c0e9997ff508909434816dfa095595d23eb6be4bee85fb8aee6c2d9"
+        },
+        "CF4_crossmatch_mapping": {
+          "path": "data/cf4_2mpp_crossmatch_v1.csv",
+          "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
+          "publication_status": "COMPLETE"
+        },
+        "CF4_crossmatch_result": {
+          "path": "config/cf4_2mpp_crossmatch_v1_result.json",
+          "raw_sha256": "3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a",
+          "status": "COMPLETE",
+          "mapping_sha256_binding": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"
         }
       },
       "validated_counts_and_linkage": {
@@ -128,6 +140,17 @@
         "known_orphan_rows": 3,
         "other_orphan_GIDs": 0
       },
+      "verified_CF4_crossmatch": {
+        "CF4_individual_rows": 55877,
+        "2Mpp_real_rows": 69160,
+        "secure_joint_mark_rows": 16584,
+        "coordinate_redshift_conflict_rows": 188,
+        "nonreciprocal_collision_rows": 5,
+        "extended_review_candidate_rows": 273,
+        "unmatched_rows": 38827,
+        "secure_unique_CF4_1PGC_groups": 11610,
+        "quarantine_auto_promotion_allowed": false
+      },
       "imputation_policy": {
         "normalized_Ref_equals_zoa": "imputed_latent_forbidden_as_independent_observation",
         "Cln_equals_1": "imputed_latent_forbidden_as_independent_observation"
@@ -137,11 +160,11 @@
         "redshift_space_distortion_model",
         "luminosity-dependent galaxy bias model",
         "forward-model discrepancy",
-        "CF4 catalog crossmatch and de-duplication",
+        "CF4 group-member covariance and shared-redshift source resolution",
         "joint uncertainty and cross-covariance with CF4"
       ],
       "raw_catalog_is_published_4_Mpc_h_density_map": false,
-      "likelihood_readiness": "blocked_pending_selection_RSD_luminosity_bias_model_discrepancy_and_CF4_joint_covariance"
+      "likelihood_readiness": "crossmatch_COMPLETE_but_blocked_pending_angular_empty_sky_selection_K_evolution_extinction_LF_RSD_FoG_luminosity_bias_HOD_model_discrepancy_and_CF4_group_member_shared_redshift_covariance"
     },
     {
       "id": "D_LG",
@@ -204,7 +227,7 @@
         "D_CF4_galaxies positions and counts"
       ],
       "current_exclusions": [
-        "2M++ raw data are provenance-confirmed but the independent galaxy-density likelihood remains blocked pending selection/RSD/luminosity-bias/model-discrepancy and CF4-crossmatch joint-covariance implementation"
+        "2M++ raw data and CF4 crossmatch are COMPLETE, but the independent galaxy-density likelihood remains blocked pending angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance implementation"
       ],
       "CF4_derived_density_rule": "A density field derived from CF4 galaxies remains inside the joint or de-duplicated D_CF4 factor and is not an independent field-observation factor."
     },
@@ -488,7 +511,7 @@
     "validation_seed_extension_allowed": false,
     "post_validation_retuning_allowed": false,
     "all_D_mock_and_KF_EXPAND_execution_blocked_until": [
-      "the provenance-confirmed 2M++ source has an implemented and validated selection/RSD/luminosity-bias/model-discrepancy likelihood with CF4 crossmatch and joint covariance",
+      "the provenance-confirmed and CF4-crossmatched 2M++ source has an implemented and validated angular empty-sky selection, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy likelihood with CF4 group-member shared-redshift covariance",
       "partial structure-summary likelihood and ABC covariance/model-discrepancy contracts are complete",
       "driver audit passes",
       "user approval is recorded"
