@@ -10,7 +10,7 @@
     "KF_EXPAND_authorized": false,
     "all_D_mock_execution_authorized": false,
     "all_D_mock_blockers": [
-      "D_galaxy_density_external is absent",
+      "2M++ raw provenance is confirmed, but selection/RSD/luminosity-bias/model-discrepancy and CF4-crossmatch joint-covariance likelihood implementation is pending",
       "structure-summary likelihood provenance, covariance, and model-discrepancy contracts are partial"
     ],
     "production_compute_authorized": false,
@@ -91,16 +91,57 @@
     },
     {
       "id": "D_galaxy_density_external",
-      "status": "absent_blocking",
-      "provenance": null,
+      "status": "raw_2Mpp_downloaded_and_provenance_confirmed_but_likelihood_blocked",
+      "provenance": "data/PROVENANCE.md#2m-galaxy-density-source",
+      "source": {
+        "catalog": "CDS/VizieR J/MNRAS/416/2840",
+        "publication_DOI": "10.1111/j.1365-2966.2011.19233.x",
+        "VizieR_DOI": "10.26093/cds/vizier.74162840",
+        "download_date": "2026-08-30"
+      },
+      "artifacts": {
+        "catalog": {
+          "path": "data/2mpp_catalog.csv",
+          "rows": 72973,
+          "observed_local_raw_sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d",
+          "canonical_recno_sorted_sha256": "e761a9973f92e74520b81d36c5c7e76f739e47e2279da0567cdb2a92cf9d02ce",
+          "validator_binding": "canonical_recno_sorted_sha256"
+        },
+        "groups": {
+          "path": "data/2mpp_groups.csv",
+          "rows": 4002,
+          "observed_local_raw_sha256": "e83bcad0ebe97f6048f36b3235f66babaadf995fc2257302313160f35980057a",
+          "canonical_recno_sorted_sha256": "c2959d7fbda188ae2496ce76743a9243b6fb260099550025db988d1df381f6fa",
+          "validator_binding": "canonical_recno_sorted_sha256"
+        },
+        "ReadMe": {
+          "path": "data/2mpp_ReadMe.txt",
+          "sha256": "0a4206da2c0e9997ff508909434816dfa095595d23eb6be4bee85fb8aee6c2d9"
+        }
+      },
+      "validated_counts_and_linkage": {
+        "real_galaxies": 69160,
+        "fake_ZoA_rows": 3813,
+        "cloned_redshift_rows": 1840,
+        "group_unique_GIDs": 4002,
+        "known_orphan_GID": 5000,
+        "known_orphan_rows": 3,
+        "other_orphan_GIDs": 0
+      },
+      "imputation_policy": {
+        "normalized_Ref_equals_zoa": "imputed_latent_forbidden_as_independent_observation",
+        "Cln_equals_1": "imputed_latent_forbidden_as_independent_observation"
+      },
       "required_contract": [
-        "catalog_and_version",
-        "selection_function",
+        "2M++ angular and radial selection function",
         "redshift_space_distortion_model",
-        "galaxy_bias_model",
-        "uncertainty_and_covariance"
+        "luminosity-dependent galaxy bias model",
+        "forward-model discrepancy",
+        "CF4 catalog crossmatch and de-duplication",
+        "joint uncertainty and cross-covariance with CF4"
       ],
-      "CF4_galaxy_fallback_rule": "A density product made from CF4 galaxies is part of D_CF4 and must use a joint or explicitly de-duplicated likelihood; it is not an independent D_galaxy_density factor."
+      "raw_catalog_is_published_4_Mpc_h_density_map": false,
+      "likelihood_readiness": "blocked_pending_selection_RSD_luminosity_bias_model_discrepancy_and_CF4_joint_covariance"
     },
     {
       "id": "D_LG",
@@ -163,7 +204,7 @@
         "D_CF4_galaxies positions and counts"
       ],
       "current_exclusions": [
-        "D_galaxy_density_external is absent_blocking"
+        "2M++ raw data are provenance-confirmed but the independent galaxy-density likelihood remains blocked pending selection/RSD/luminosity-bias/model-discrepancy and CF4-crossmatch joint-covariance implementation"
       ],
       "CF4_derived_density_rule": "A density field derived from CF4 galaxies remains inside the joint or de-duplicated D_CF4 factor and is not an independent field-observation factor."
     },
@@ -447,7 +488,7 @@
     "validation_seed_extension_allowed": false,
     "post_validation_retuning_allowed": false,
     "all_D_mock_and_KF_EXPAND_execution_blocked_until": [
-      "provenance-confirmed independent galaxy-density likelihood is available",
+      "the provenance-confirmed 2M++ source has an implemented and validated selection/RSD/luminosity-bias/model-discrepancy likelihood with CF4 crossmatch and joint covariance",
       "partial structure-summary likelihood and ABC covariance/model-discrepancy contracts are complete",
       "driver audit passes",
       "user approval is recorded"
