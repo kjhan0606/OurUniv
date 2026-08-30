@@ -1,12 +1,12 @@
 {
   "schema": "ouruniv-cf4-kf-design-v1",
-  "status": "driver_audited_candidate_awaiting_user_approval",
+  "status": "user_approved_design_frozen_blocked_by_data_and_bin_manifest",
   "date": "2026-08-30",
   "authority": {
     "science_route": "config/cf4_science_route_v3.json",
     "driver_audit_required": false,
-    "user_approval_required": true,
-    "user_approval_granted": false,
+    "user_approval_required": false,
+    "user_approval_granted": true,
     "KF_EXPAND_authorized": false,
     "all_D_mock_execution_authorized": false,
     "all_D_mock_blockers": [
@@ -30,6 +30,33 @@
     ],
     "scope_is_exact_three_new_files": true,
     "compute_or_slurm_executed": false
+  },
+  "user_approval": {
+    "date": "2026-08-30",
+    "decision": "approve_KF_DESIGN_metric_threshold_ROI_source_and_mock_firewall_contract",
+    "scope": "Freeze the KF-DESIGN scientific and validation contract only; this is not approval to execute KF-EXPAND, all-D mocks, production compute, Slurm, or GPFS work.",
+    "execution_approval": false
+  },
+  "frozen_contract": {
+    "material_thresholds": {
+      "frozen": true
+    },
+    "mock_seed_ranges": {
+      "frozen": true
+    },
+    "ROI_sources": {
+      "frozen": true
+    },
+    "science_fields": {
+      "frozen": true,
+      "fields": [
+        "z0_matter_density_delta",
+        "z0_velocity_divergence_theta",
+        "joint_z0_frontier",
+        "separate_later_IC_frontier"
+      ]
+    },
+    "change_before_untouched_validation_truth_opening_allowed": false
   },
   "objective": {
     "primary": "discover and materially extend the calibrated constraint frontier toward high-k",
