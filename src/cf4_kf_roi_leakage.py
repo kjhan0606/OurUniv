@@ -1219,43 +1219,54 @@ def load_execution_grant(
     try:
         grant = json.loads(payload)
     except json.JSONDecodeError as exc:
-        raise LeakageError("cannot parse v3 execution grant") from exc
-    if grant.get("schema") != "ouruniv-cf4-kf-roi-leakage-execution-v3":
-        raise LeakageError("unexpected v3 execution grant schema")
-    if grant.get("status") != "user_approved_single_v3_preflight_only":
-        raise LeakageError("v3 execution grant is not active")
+        raise LeakageError("cannot parse v3a execution grant") from exc
+    if grant.get("schema") != "ouruniv-cf4-kf-roi-leakage-execution-v3a":
+        raise LeakageError("unexpected v3a execution grant schema")
+    if grant.get("status") != "original_user_approval_operator_correction_single_v3a_preflight_only":
+        raise LeakageError("v3a execution grant is not active")
+    if grant.get("authorization_basis") != (
+        "the_original_user_approval_remains_authoritative_for_this_operator_error_correction; "
+        "this is not new scientific or numerical scope"
+    ):
+        raise LeakageError("v3a authorization basis mismatch")
     if grant.get("scope", {}).get("design_raw_sha256") != design_sha256:
         raise LeakageError("execution grant/design SHA256 mismatch")
     authorization = grant.get("authorization", {})
-    required_true = {
-        "v3_implementation_authorized",
-        "Slurm_preflight_authorized",
+    expected_authorization = {
+        "v3a_operator_correction_implementation_authorized": True,
+        "corrective_scheduler_submission_authorized": True,
+        "Slurm_preflight_authorized": True,
+        "maximum_corrective_scheduler_submissions": 1,
+        "maximum_numerical_preflight_executions": 1,
+        "prior_v3_scheduler_attempts_recorded": 1,
+        "prior_v3_numerical_preflight_executions_recorded": 0,
+        "further_operator_correction_authorized": False,
+        "Slurm_production_authorized": False,
+        "GPFS_read_authorized_only_for_declared_inputs_and_output_root": True,
+        "GPFS_write_authorized_only_under_output_root": True,
+        "network_access_authorized": False,
+        "retry_authorized": False,
+        "numeric_retuning_authorized": False,
+        "replacement_run_authorized": False,
+        "final_manifest_materialization_authorized": False,
+        "KF_EXPAND_authorized": False,
+        "all_D_mock_execution_authorized": False,
+        "production_science_inference_authorized": False,
+        "scientific_leakage_decision_authorized": False,
     }
-    if any(authorization.get(key) is not True for key in required_true):
-        raise LeakageError("v3 implementation/preflight authority is missing")
-    if authorization.get("maximum_preflight_submissions") != 1:
-        raise LeakageError("v3 grant must authorize exactly one preflight")
-    required_false = {
-        "Slurm_production_authorized",
-        "retry_authorized",
-        "numeric_retuning_authorized",
-        "replacement_run_authorized",
-        "final_manifest_materialization_authorized",
-        "KF_EXPAND_authorized",
-        "all_D_mock_execution_authorized",
-        "production_science_inference_authorized",
-        "scientific_leakage_decision_authorized",
-        "network_access_authorized",
-    }
-    if any(authorization.get(key) is not False for key in required_false):
-        raise LeakageError("v3 grant contains forbidden downstream authority")
+    if authorization != expected_authorization:
+        raise LeakageError("v3a authorization is not the exact frozen operator-correction authority")
     numerical_contract = grant.get("numerical_contract", {})
     expected_coarse = json.loads(canonical_json_bytes(COARSE_NUMERICS))
     expected_fine = json.loads(canonical_json_bytes(FINE_NUMERICS))
     if numerical_contract.get("coarse") != expected_coarse:
-        raise LeakageError("v3 grant frozen coarse numerics mismatch")
+        raise LeakageError("v3a grant frozen coarse numerics mismatch")
     if numerical_contract.get("fine") != expected_fine:
-        raise LeakageError("v3 grant frozen fine numerics mismatch")
+        raise LeakageError("v3a grant frozen fine numerics mismatch")
+    if _sha256(canonical_json_bytes(numerical_contract)) != (
+        "dd94f416ca7d1d0078faef98cf4a36be9703b154a3b4fac665329aece3d433e9"
+    ):
+        raise LeakageError("v3a grant numerical contract is not exact")
     return grant, digest
 
 
@@ -1517,6 +1528,7 @@ def calculate(
     )
     result = {
         "schema": "ouruniv-cf4-kf-roi-leakage-result-v3",
+        "operational_execution_schema": "ouruniv-cf4-kf-roi-leakage-execution-v3a",
         "status": status,
         "mode": "preflight",
         "design_raw_sha256": design_sha,
@@ -1584,6 +1596,7 @@ def publish_artifacts(
             _write_and_fsync(stage / filename, payload)
         manifest = {
             "schema": "ouruniv-cf4-kf-roi-leakage-artifact-manifest-v3",
+            "operational_execution_schema": result["operational_execution_schema"],
             "status": "PRECHECK_PASS",
             "mode": result["mode"],
             "design_raw_sha256": result["design_raw_sha256"],
@@ -1600,6 +1613,7 @@ def publish_artifacts(
         _write_and_fsync(stage / "manifest.json", manifest_payload)
         complete = {
             "schema": "ouruniv-cf4-kf-roi-leakage-complete-v3",
+            "operational_execution_schema": result["operational_execution_schema"],
             "status": manifest["status"],
             "mode": result["mode"],
             "manifest_sha256": _sha256(manifest_payload),

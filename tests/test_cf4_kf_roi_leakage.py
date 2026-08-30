@@ -51,7 +51,9 @@ from check_cf4_kf_roi_leakage_v3 import audit_directory  # noqa: E402
 
 
 DESIGN_PATH = ROOT / "config" / "cf4_kf_bin_manifest_design_v2.json"
-GRANT_PATH = ROOT / "config" / "cf4_kf_roi_leakage_execution_v3.json"
+GRANT_PATH = ROOT / "config" / "cf4_kf_roi_leakage_execution_v3a.json"
+GRANT_V3_PATH = ROOT / "config" / "cf4_kf_roi_leakage_execution_v3.json"
+RUNNER_V3A_PATH = ROOT / "scripts" / "run_cf4_kf_roi_leakage_v3a.sbatch"
 DESIGN_V1_PATH = ROOT / "config" / "cf4_kf_bin_manifest_design_v1.json"
 GRANT_V1_PATH = ROOT / "config" / "cf4_kf_roi_leakage_execution_v1.json"
 GRANT_V2_PATH = ROOT / "config" / "cf4_kf_roi_leakage_execution_v2.json"
@@ -392,6 +394,7 @@ def _published_result(grant_sha):
     }
     return {
         "schema": "ouruniv-cf4-kf-roi-leakage-result-v3",
+        "operational_execution_schema": "ouruniv-cf4-kf-roi-leakage-execution-v3a",
         "status": "PRECHECK_PASS",
         "mode": "preflight",
         "design_raw_sha256": FROZEN_DESIGN_SHA256,
@@ -465,14 +468,40 @@ def test_design_and_grant_tamper_fail_closed(tmp_path):
     grant_path.write_bytes(canonical_json_bytes(grant))
     with pytest.raises(LeakageError, match="frozen fine numerics mismatch"):
         load_execution_grant(grant_path, FROZEN_DESIGN_SHA256)
+    with pytest.raises(LeakageError, match="unexpected v3a execution grant schema"):
+        load_execution_grant(GRANT_V3_PATH, FROZEN_DESIGN_SHA256)
+    grant = json.loads(GRANT_PATH.read_text())
+    grant["authorization"]["retry_authorized"] = True
+    grant_path.write_bytes(canonical_json_bytes(grant))
+    with pytest.raises(LeakageError, match="exact frozen operator-correction authority"):
+        load_execution_grant(grant_path, FROZEN_DESIGN_SHA256)
 
 
-def test_v3_grant_is_single_preflight_and_prior_files_unchanged():
+def test_v3a_grant_is_single_corrective_submission_and_numerical_execution():
     grant, digest = load_execution_grant(GRANT_PATH, FROZEN_DESIGN_SHA256)
     assert len(digest) == 64
-    assert grant["authorization"]["maximum_preflight_submissions"] == 1
+    authorization = grant["authorization"]
+    assert authorization["maximum_corrective_scheduler_submissions"] == 1
+    assert authorization["maximum_numerical_preflight_executions"] == 1
     assert grant["authorization"]["Slurm_production_authorized"] is False
-    assert grant["scope"]["output_root"] == "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3"
+    assert grant["scope"]["output_root"] == "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3a"
+    failure = grant["predecessor_scheduler_failure"]
+    assert failure["Slurm_job_id"] == 327915
+    assert failure["scheduler_exit_status"] == 141
+    assert failure["python_or_numerical_code_reached"] is False
+    assert failure["artifact_or_COMPLETE_published"] is False
+    assert hashlib.sha256(DESIGN_PATH.read_bytes()).hexdigest() == FROZEN_DESIGN_SHA256
     assert hashlib.sha256(DESIGN_V1_PATH.read_bytes()).hexdigest() == "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9"
     assert hashlib.sha256(GRANT_V1_PATH.read_bytes()).hexdigest() == "4511916c16b77e39985b7bfc22230d7773e02799cc8cccc08159d0f8f39586a9"
     assert hashlib.sha256(GRANT_V2_PATH.read_bytes()).hexdigest() == "86c39590be609c47f0333026d9eedcfcb71ba33a4b2309caca9e6b687b6d1607"
+    assert hashlib.sha256(GRANT_V3_PATH.read_bytes()).hexdigest() == "dc8f5b78e030fde11b8070e63273967cf63f03c8d1368e1a0425be92c444e6fa"
+
+
+def test_v3a_runner_drains_scontrol_output_without_disabling_pipefail():
+    runner = RUNNER_V3A_PATH.read_text()
+    assert "set -euo pipefail" in runner
+    cluster_line = next(line for line in runner.splitlines() if line.startswith("cluster_name="))
+    assert "scontrol show config" in cluster_line
+    assert "exit" not in cluster_line
+    assert "|| true" not in cluster_line
+    assert '[[ "$cluster_name" == syntax ]]' in runner

@@ -66,10 +66,16 @@ def audit_directory(
         raise AuditError("design v2 is not frozen/pending")
     grant, grant_bytes = _load(Path(grant_path))
     grant_sha = _sha256(grant_bytes)
-    if grant.get("schema") != "ouruniv-cf4-kf-roi-leakage-execution-v3":
-        raise AuditError("unexpected v3 grant schema")
-    if grant.get("status") != "user_approved_single_v3_preflight_only":
-        raise AuditError("v3 grant is not active")
+    execution_schema = "ouruniv-cf4-kf-roi-leakage-execution-v3a"
+    if grant.get("schema") != execution_schema:
+        raise AuditError("unexpected v3a grant schema")
+    if grant.get("status") != "original_user_approval_operator_correction_single_v3a_preflight_only":
+        raise AuditError("v3a grant is not active")
+    if grant.get("authorization_basis") != (
+        "the_original_user_approval_remains_authoritative_for_this_operator_error_correction; "
+        "this is not new scientific or numerical scope"
+    ):
+        raise AuditError("v3a authorization basis mismatch")
     if grant.get("scope", {}).get("design_raw_sha256") != design_sha:
         raise AuditError("grant/design binding mismatch")
     for order in ("coarse", "fine"):
@@ -79,25 +85,41 @@ def audit_directory(
             raise AuditError(f"grant/design frozen {order} numerics mismatch")
     if str(root) != grant["scope"]["preflight_output"]:
         raise AuditError("artifact path does not equal granted v3 preflight output")
-    authorization = grant["authorization"]
-    if authorization.get("Slurm_preflight_authorized") is not True:
-        raise AuditError("v3 Slurm preflight is not authorized")
-    if authorization.get("maximum_preflight_submissions") != 1:
-        raise AuditError("grant does not authorize exactly one v3 preflight")
-    for forbidden in (
-        "Slurm_production_authorized",
-        "network_access_authorized",
-        "retry_authorized",
-        "numeric_retuning_authorized",
-        "replacement_run_authorized",
-        "final_manifest_materialization_authorized",
-        "KF_EXPAND_authorized",
-        "all_D_mock_execution_authorized",
-        "production_science_inference_authorized",
-        "scientific_leakage_decision_authorized",
-    ):
-        if authorization.get(forbidden) is not False:
-            raise AuditError(f"forbidden authority is not exact false: {forbidden}")
+    expected_authorization = {
+        "v3a_operator_correction_implementation_authorized": True,
+        "corrective_scheduler_submission_authorized": True,
+        "Slurm_preflight_authorized": True,
+        "maximum_corrective_scheduler_submissions": 1,
+        "maximum_numerical_preflight_executions": 1,
+        "prior_v3_scheduler_attempts_recorded": 1,
+        "prior_v3_numerical_preflight_executions_recorded": 0,
+        "further_operator_correction_authorized": False,
+        "Slurm_production_authorized": False,
+        "GPFS_read_authorized_only_for_declared_inputs_and_output_root": True,
+        "GPFS_write_authorized_only_under_output_root": True,
+        "network_access_authorized": False,
+        "retry_authorized": False,
+        "numeric_retuning_authorized": False,
+        "replacement_run_authorized": False,
+        "final_manifest_materialization_authorized": False,
+        "KF_EXPAND_authorized": False,
+        "all_D_mock_execution_authorized": False,
+        "production_science_inference_authorized": False,
+        "scientific_leakage_decision_authorized": False,
+    }
+    if grant.get("authorization") != expected_authorization:
+        raise AuditError("v3a authorization is not exact")
+    numerical_payload = (
+        json.dumps(
+            grant.get("numerical_contract", {}),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+    if _sha256(numerical_payload) != "dd94f416ca7d1d0078faef98cf4a36be9703b154a3b4fac665329aece3d433e9":
+        raise AuditError("v3a frozen numerical contract is not exact")
 
     result, result_bytes = _load(root / "result.json")
     counts, counts_bytes = _load(root / "mode_counts.json")
@@ -105,6 +127,8 @@ def audit_directory(
     complete, _ = _load(root / "COMPLETE")
     if result.get("schema") != "ouruniv-cf4-kf-roi-leakage-result-v3":
         raise AuditError("unexpected result v3 schema")
+    if result.get("operational_execution_schema") != execution_schema:
+        raise AuditError("result v3a operational schema mismatch")
     if result.get("mode") != "preflight" or result.get("status") != "PRECHECK_PASS":
         raise AuditError("only v3 PRECHECK_PASS may be published")
     if result.get("design_raw_sha256") != design_sha:
@@ -188,6 +212,8 @@ def audit_directory(
 
     if manifest.get("schema") != "ouruniv-cf4-kf-roi-leakage-artifact-manifest-v3":
         raise AuditError("unexpected manifest schema")
+    if manifest.get("operational_execution_schema") != execution_schema:
+        raise AuditError("manifest v3a operational schema mismatch")
     if manifest.get("status") != "PRECHECK_PASS" or manifest.get("mode") != "preflight":
         raise AuditError("manifest status/mode mismatch")
     for record, expected, label in (
@@ -210,6 +236,8 @@ def audit_directory(
             raise AuditError(f"manifest hash/size mismatch for {name}")
     if complete.get("schema") != "ouruniv-cf4-kf-roi-leakage-complete-v3":
         raise AuditError("unexpected COMPLETE schema")
+    if complete.get("operational_execution_schema") != execution_schema:
+        raise AuditError("COMPLETE v3a operational schema mismatch")
     if complete.get("status") != "PRECHECK_PASS" or complete.get("mode") != "preflight":
         raise AuditError("COMPLETE status/mode mismatch")
     if complete.get("manifest_sha256") != _sha256(manifest_bytes):
