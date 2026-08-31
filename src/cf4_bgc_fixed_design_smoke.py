@@ -1403,7 +1403,12 @@ def validate_output(directory: str | Path) -> dict[str, object]:
                 recorded = np.asarray(source, dtype=float)
             except (TypeError, ValueError) as exc:
                 raise SmokeError(f"{label} delta/theta errors are invalid") from exc
-            if recorded.shape != (6,) or not np.array_equal(recorded, consistency):
+            if recorded.shape != (6,) or not np.allclose(
+                recorded,
+                consistency,
+                rtol=64.0 * np.finfo(np.float64).eps,
+                atol=1.0e-30,
+            ):
                 raise SmokeError(f"{label} delta/theta errors do not bind stored fields")
     return {
         "status": "PASS",

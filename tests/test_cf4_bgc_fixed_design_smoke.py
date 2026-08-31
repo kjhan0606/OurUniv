@@ -403,6 +403,18 @@ def test_validate_rejects_scalar_velocity_substitution(tmp_path):
         smoke.validate_output(output)
 
 
+def test_validate_tolerates_last_bit_roundoff_in_recorded_theta_error(tmp_path):
+    output = tmp_path / "portable-smoke"
+    smoke.publish(output, _publication_result(), _publication_arrays())
+
+    def perturb(result):
+        result["delta_theta_normalization"]["non_nyquist_relative_errors"][0] = 1e-31
+        result["numerical_gates"]["delta_theta_non_nyquist_relative_errors"][0] = 1e-31
+
+    _rewrite_published_result(output, perturb)
+    assert smoke.validate_output(output)["status"] == "PASS"
+
+
 @pytest.mark.parametrize(
     "mutate,match",
     [

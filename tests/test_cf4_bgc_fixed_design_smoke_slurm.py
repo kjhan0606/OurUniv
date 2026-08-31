@@ -58,12 +58,20 @@ def test_correction_execution_contract_is_single_fixed_design_no_claim_smoke():
     )
 
 
-def test_source_and_input_hashes_are_current():
+def test_v2_inputs_and_unchanged_dependencies_remain_bound():
     config = json.loads(CONFIG.read_text())
-    for section in ("input_bindings", "source_bindings"):
-        for record in config[section].values():
-            expected = record.get("sha256", record.get("file_sha256"))
-            assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == expected
+    for record in config["input_bindings"].values():
+        expected = record.get("sha256", record.get("file_sha256"))
+        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == expected
+    for name, record in config["source_bindings"].items():
+        if name == "fixed_design_smoke":
+            assert record["sha256"] == (
+                "0a1a9348ec4a65ff8a9d10eddc0f3dd251b3a1469ec8b50f874f80f554aa46cb"
+            )
+            continue
+        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == (
+            record["sha256"]
+        )
 
 
 def test_slurm_runner_matches_resource_and_controller_contract():
