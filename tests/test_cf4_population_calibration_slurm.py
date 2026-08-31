@@ -10,6 +10,8 @@ MEMBERS = ROOT / "scripts/run_cf4_bgc_population_calibration_members_v1.sbatch"
 AGGREGATE = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v1.sbatch"
 CORRECTION = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_v2.json"
 AGGREGATE_V2 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v2.sbatch"
+CORRECTION_V3 = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_v3.json"
+AGGREGATE_V3 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v3.sbatch"
 
 
 def test_program_binds_current_sources_and_inputs():
@@ -124,6 +126,43 @@ def test_v2_runner_uses_persistent_comment_and_no_live_dependency_assertion():
     assert '--implementation-commit "$IMPLEMENTATION_COMMIT"' in source
     assert "run-member" not in source
     assert "aggregate" in source and "validate-aggregate" in source
+    assert "--requeue" not in source
+    assert "renameat2" not in source
+    assert "pgrep" not in source
+
+
+def test_v3_preserves_both_pre_python_failures_and_member_science_state():
+    correction = json.loads(CORRECTION_V3.read_text())
+    assert [row["Slurm_job_id"] for row in correction["preserved_failures"]] == [
+        328695,
+        328769,
+    ]
+    assert correction["shared_failure_properties"]["Python_aggregation_started"] is False
+    assert correction["shared_failure_properties"]["aggregate_artifact_published"] is False
+    assert correction["shared_failure_properties"]["member_array_job_id"] == 328686
+    assert correction["correction"]["scientific_program_changed"] is False
+    assert correction["correction"]["source_changed"] is False
+    assert correction["authorization"]["member_rerun"] is False
+    assert correction["authorization"]["automatic_retry_after_v3"] is False
+    for record in correction["bindings"].values():
+        if not isinstance(record, dict):
+            continue
+        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == record[
+            "sha256"
+        ]
+
+
+def test_v3_runner_requires_exact_ids_comment_and_separate_commits():
+    source = AGGREGATE_V3.read_text()
+    assert f"correction_sha={hashlib.sha256(CORRECTION_V3.read_bytes()).hexdigest()}" in source
+    assert "Comment=${expected_comment}" in source
+    assert "Dependency=afterok:${MEMBER_ARRAY_JOB_ID}" not in source
+    assert '[[ "$MEMBER_ARRAY_JOB_ID" == 328686 ]]' in source
+    assert '[[ "$FAILED_V1_JOB_ID" == 328695 ]]' in source
+    assert '[[ "$FAILED_V2_JOB_ID" == 328769 ]]' in source
+    assert 'head_commit" == "$EXPECTED_COMMIT' in source
+    assert '--implementation-commit "$IMPLEMENTATION_COMMIT"' in source
+    assert "run-member" not in source
     assert "--requeue" not in source
     assert "renameat2" not in source
     assert "pgrep" not in source

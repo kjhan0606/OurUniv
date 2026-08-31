@@ -1,0 +1,86 @@
+{
+  "schema": "ouruniv-cf4-bgc-population-calibration-aggregate-correction-v3",
+  "date": "2026-08-31",
+  "status": "ASSISTANT_SUBMISSION_SHA_ERROR_SINGLE_AGGREGATE_CORRECTION_AUTHORIZED",
+  "authorization_basis": "Standing user instruction permits correction of an assistant-caused immediate operational failure without a new approval.",
+  "preserved_failures": [
+    {
+      "Slurm_job_id": 328695,
+      "state": "FAILED",
+      "elapsed_seconds": 3,
+      "exit_code": "1:0",
+      "batch_MaxRSS_KiB": 3512,
+      "cause": "invalid live Dependency-field assertion in v1 runner"
+    },
+    {
+      "Slurm_job_id": 328769,
+      "state": "FAILED",
+      "elapsed_seconds": 3,
+      "exit_code": "1:0",
+      "batch_MaxRSS_KiB": 3516,
+      "cause": "assistant manually supplied an incorrect EXPECTED_COMMIT value in the sbatch export",
+      "submitted_EXPECTED_COMMIT": "ff48d7f084726b1c57fa1c8160132603ea1cb780",
+      "actual_runtime_commit": "ff48d7f23e03da8c1ab28d77c6f1d083609faf9a"
+    }
+  ],
+  "shared_failure_properties": {
+    "Python_aggregation_started": false,
+    "scientific_or_numerical_failure": false,
+    "aggregate_artifact_published": false,
+    "member_array_job_id": 328686,
+    "member_array_state": "COMPLETED_64_OF_64_EXIT_0"
+  },
+  "correction": {
+    "semantic_delta_from_v2_runner": "Read and validate the v3 correction record and require the exact v3 persistent Slurm comment; aggregation source and scientific inputs remain unchanged.",
+    "submission_rule": "Obtain the exact full runtime commit from git rev-parse HEAD after the v3 commit and pass that byte-for-byte as both expected runtime and upstream commit.",
+    "scientific_program_changed": false,
+    "source_changed": false,
+    "member_artifacts_changed_or_rerun": false,
+    "aggregate_output_reused_or_overwritten": false
+  },
+  "authorization": {
+    "single_v3_aggregate_correction_submission": true,
+    "reuse_exact_completed_64_member_artifacts": true,
+    "member_rerun": false,
+    "automatic_retry_after_v3": false,
+    "untouched_256_mock_validation": false,
+    "frontier_promotion": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "bindings": {
+    "scientific_program": {
+      "path": "config/cf4_bgc_population_calibration_program_v1.json",
+      "sha256": "38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0"
+    },
+    "aggregate_source": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "v2_correction": {
+      "path": "config/cf4_bgc_population_calibration_aggregate_correction_v2.json",
+      "sha256": "6a782db37c768d043747c13ca7636ba9e5aa34735a71937f9561a122c7e2e3bd"
+    },
+    "failed_v2_runner": {
+      "path": "scripts/run_cf4_bgc_population_calibration_aggregate_v2.sbatch",
+      "sha256": "971144bf8c26f01429ea0948088b2f03f311cffb9685e58c11f5666059af3509"
+    },
+    "member_implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d"
+  },
+  "execution": {
+    "backend": "Slurm_CPU_only_afterok_328686",
+    "persistent_Slurm_comment": "cf4_bgc_pop_v3_afterok_328686_failed_328695_328769",
+    "cpus_per_task": 4,
+    "expected_peak_memory_MiB": 3200,
+    "requested_memory_MiB": 4096,
+    "memory_headroom_multiplier": 1.28,
+    "time_limit": "00:30:00",
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "output": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "maximum_v3_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true
+  }
+}
