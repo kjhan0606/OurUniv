@@ -156,12 +156,16 @@ def compute_development_smoke_metrics(
     *,
     domain_id: str,
     bin_manifest_body_sha256: str,
+    posterior_mean: object | None = None,
 ) -> dict[str, object]:
     """Compute per-bin CF4-only metrics without permitting a science gate.
 
     ``truth`` has shape ``(mock, mode)`` and ``posterior_ensemble`` has shape
     ``(mock, draw, mode)``.  Real or complex Fourier coefficients are allowed.
-    Every declared bin must own at least one mode; omission fails closed.
+    ``posterior_mean`` may supply the analytic mean with shape ``(mock, mode)``;
+    if omitted, the historical draw mean is retained for compatibility.  Draws
+    always determine the ddof=1 posterior variance.  Every declared bin must
+    own at least one mode; omission fails closed.
     """
 
     truth_array = _field_array(truth, 2, "truth")
@@ -228,7 +232,14 @@ def compute_development_smoke_metrics(
     else:
         raise CalibrationError("prior_variance must be 1D per-mode or 2D per-mock/mode")
 
-    posterior_mean = posterior.mean(axis=1)
+    if posterior_mean is None:
+        posterior_mean_array = posterior.mean(axis=1)
+        posterior_mean_source = "ensemble_draw_mean_backward_compatible_default"
+    else:
+        posterior_mean_array = _field_array(posterior_mean, 2, "posterior_mean")
+        if posterior_mean_array.shape != truth_array.shape:
+            raise CalibrationError("explicit posterior_mean must match truth shape")
+        posterior_mean_source = "explicit_analytic_posterior_mean"
     posterior_variance = np.var(posterior, axis=1, ddof=1)
     response: list[float] = []
     correlation: list[float] = []
@@ -238,7 +249,7 @@ def compute_development_smoke_metrics(
     for bin_id in bins:
         mask = assignment == bin_id
         truth_bin = truth_array[:, mask].reshape(-1)
-        mean_bin = posterior_mean[:, mask].reshape(-1)
+        mean_bin = posterior_mean_array[:, mask].reshape(-1)
         truth_power = float(np.sum(np.abs(truth_bin) ** 2))
         mean_power = float(np.sum(np.abs(mean_bin) ** 2))
         cross = float(np.real(np.vdot(truth_bin, mean_bin)))
@@ -298,6 +309,7 @@ def compute_development_smoke_metrics(
         "bin_manifest_body_sha256": bin_manifest_body_sha256,
         "mock_count": int(mock_count),
         "posterior_draw_count": int(posterior.shape[1]),
+        "posterior_mean_source": posterior_mean_source,
         "declared_bin_ids": bins.tolist(),
         "modes_per_mock_by_bin": mode_counts,
         "response": response_array.tolist(),
@@ -306,9 +318,15 @@ def compute_development_smoke_metrics(
         "posterior_prior_variance_ratio_median": variance_array.tolist(),
         "metric_definitions": {
             "response": "Re(sum truth_conjugate*posterior_mean)/sum(abs(truth)^2)",
-            "correlation_r": "Re(sum truth_conjugate*posterior_mean)/sqrt(sum(abs(truth)^2)*sum(abs(posterior_mean)^2))",
+            "correlation_r": (
+                "Re(sum truth_conjugate*posterior_mean)/"
+                "sqrt(sum(abs(truth)^2)*sum(abs(posterior_mean)^2))"
+            ),
             "residual_power_ratio": "sum(abs(posterior_mean-truth)^2)/sum(abs(truth)^2)",
-            "posterior_prior_variance_ratio_median": "median_over_mock_mode_of(sample_variance_across_draws_ddof_1/prior_variance)",
+            "posterior_prior_variance_ratio_median": (
+                "median_over_mock_mode_of("
+                "sample_variance_across_draws_ddof_1/prior_variance)"
+            ),
         },
         "variance_ratio_median_le_0_8_pass": variance_point_pass.tolist(),
         "phase_null_pass_upstream": upstream["phase"].tolist(),

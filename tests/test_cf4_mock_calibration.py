@@ -39,6 +39,7 @@ def test_perfect_posterior_mean_metrics_and_geometry_intersection():
     np.testing.assert_allclose(result["correlation_r"], [1.0, 1.0])
     np.testing.assert_allclose(result["residual_power_ratio"], [0.0, 0.0], atol=1e-31)
     np.testing.assert_allclose(result["posterior_prior_variance_ratio_median"], [0.02, 0.02])
+    assert result["posterior_mean_source"] == "ensemble_draw_mean_backward_compatible_default"
     assert result["data_scope"] == "implementation_smoke_input_provenance_not_validated"
     assert result["CF4_selection_noise_truth_mock_provenance_validated"] is False
     assert result["development_science_metric_allowed"] is False
@@ -68,6 +69,49 @@ def test_response_correlation_and_residual_formulas_for_scaled_mean():
     np.testing.assert_allclose(result["response"], [0.5, 0.5])
     np.testing.assert_allclose(result["correlation_r"], [1.0, 1.0])
     np.testing.assert_allclose(result["residual_power_ratio"], [0.25, 0.25])
+
+
+def test_explicit_analytic_mean_controls_point_metrics_but_not_draw_variance():
+    truth, posterior, prior, mode_bins, declared, geometry, upstream = _inputs()
+    explicit_mean = 0.25 * truth
+    result = compute_development_smoke_metrics(
+        truth,
+        posterior,
+        prior,
+        mode_bins,
+        declared,
+        geometry,
+        upstream,
+        domain_id="global_delta",
+        bin_manifest_body_sha256=MANIFEST_SHA,
+        posterior_mean=explicit_mean,
+    )
+    np.testing.assert_allclose(result["response"], [0.25, 0.25])
+    np.testing.assert_allclose(result["correlation_r"], [1.0, 1.0])
+    np.testing.assert_allclose(result["residual_power_ratio"], [0.5625, 0.5625])
+    np.testing.assert_allclose(
+        result["posterior_prior_variance_ratio_median"], [0.02, 0.02]
+    )
+    assert result["posterior_mean_source"] == "explicit_analytic_posterior_mean"
+
+
+@pytest.mark.parametrize(
+    "posterior_mean,match",
+    [
+        (np.ones((1, 4)), "must match truth shape"),
+        (np.full((2, 4), np.nan), "nonfinite"),
+    ],
+)
+def test_explicit_posterior_mean_shape_and_finiteness_fail_closed(
+    posterior_mean, match
+):
+    with pytest.raises(CalibrationError, match=match):
+        compute_development_smoke_metrics(
+            *_inputs(),
+            domain_id="global_delta",
+            bin_manifest_body_sha256=MANIFEST_SHA,
+            posterior_mean=posterior_mean,
+        )
 
 
 def test_complex_fourier_coefficients_are_supported():
