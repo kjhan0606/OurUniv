@@ -15,6 +15,7 @@ import cf4_same_truth_ablation as ablation  # noqa: E402
 
 PROGRAM = ROOT / "config/cf4_same_truth_likelihood_ablation_program_v1.json"
 SOURCE = ROOT / "src/cf4_same_truth_ablation.py"
+RESULT_RECORD = ROOT / "config/cf4_same_truth_likelihood_ablation_v1_result.json"
 
 
 def _args():
@@ -133,3 +134,25 @@ def test_memory_requests_have_at_least_twenty_percent_headroom():
     execution = json.loads(PROGRAM.read_text())["execution"]
     assert execution["member_requested_memory_MiB"] >= 1.2 * execution["member_expected_peak_memory_MiB"]
     assert execution["aggregate_requested_memory_MiB"] >= 1.2 * execution["aggregate_expected_peak_memory_MiB"]
+
+
+def test_result_record_preserves_no_go_and_next_execution_firewall():
+    result = json.loads(RESULT_RECORD.read_text())
+    assert result["status"] == "COMPLETE_SAME_TRUTH_DEVELOPMENT_ABLATION_NO_GO"
+    assert result["lowest_joint_bin"]["strict_pass_pattern"] == {
+        "A": False,
+        "B": False,
+        "C": False,
+        "D": False,
+    }
+    assert result["lowest_joint_bin"]["preregistered_diagnostic_code"] == (
+        "IDEAL_TRUE_POSITION_BASELINE_INSUFFICIENT"
+    )
+    assert result["paired_contract_audit"]["new_truth_seed_count"] == 0
+    assert result["paired_contract_audit"]["population_selection_removed_or_independently_tested"] is False
+    assert result["scientific_disposition"]["current_low_k_parent_posterior_promotion"] == "NO_GO"
+    assert result["scientific_disposition"]["untouched_256_mock_validation"].startswith("NOT_RUN")
+    assert result["recommended_next_stage_requiring_user_approval"]["new_Slurm_execution_authorized_by_this_record"] is False
+    assert result["resource_audit"]["recommended_future_round_request_MiB"] >= (
+        1.2 * result["resource_audit"]["observed_max_batch_MaxRSS_MiB"]
+    )
