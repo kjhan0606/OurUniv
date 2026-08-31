@@ -14,6 +14,7 @@ import cf4_kf_calibration_smoke as smoke  # noqa: E402
 
 CONFIG = ROOT / "config" / "cf4_kf_calibration_smoke_execution_v1.json"
 MANIFEST = ROOT / "config" / "cf4_kf_bin_manifest_v1.json"
+RESULT_RECORD = ROOT / "config" / "cf4_kf_calibration_smoke_v1_result.json"
 COMMIT = "a" * 40
 
 
@@ -67,3 +68,18 @@ def test_validation_rejects_result_tamper_even_with_canonical_json(tmp_path):
     (output / "result.json").write_bytes(smoke.canonical_json_bytes(result))
     with pytest.raises(smoke.SmokeError):
         smoke.validate_smoke(output, config, MANIFEST)
+
+
+def test_published_result_record_is_bound_and_non_scientific():
+    record = json.loads(RESULT_RECORD.read_text())
+    assert record["status"] == "COMPLETE_SMOKE_PASS_NO_SCIENCE_CLAIM"
+    assert record["bindings"]["execution_config_sha256"] == hashlib.sha256(
+        CONFIG.read_bytes()
+    ).hexdigest()
+    assert record["bindings"]["bin_manifest_file_sha256"] == hashlib.sha256(
+        MANIFEST.read_bytes()
+    ).hexdigest()
+    disposition = record["scientific_disposition"]
+    assert disposition["observational_constraint_frontier_created"] is False
+    assert disposition["KF_EXPAND_authorized"] is False
+    assert disposition["IC_PM_HOP_RAMSES_authorized"] is False
