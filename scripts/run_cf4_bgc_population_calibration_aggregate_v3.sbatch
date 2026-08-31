@@ -26,11 +26,11 @@ output_root=/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1
 members_root=${output_root}/members
 output=${output_root}/aggregate
 program_sha=38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0
-correction_sha=f23079feff02c584fd7c7ed6801790a591cd2d72c80df09608adbb98dc436304
+correction_sha=a8a1054d7e9c181afdcb3677cdf86b41375f1bf4121b3a4afb9340a8d6db4f57
 source_sha=fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af
 v2_correction_sha=6a782db37c768d043747c13ca7636ba9e5aa34735a71937f9561a122c7e2e3bd
 failed_v2_runner_sha=971144bf8c26f01429ea0948088b2f03f311cffb9685e58c11f5666059af3509
-expected_comment=cf4_bgc_pop_v3_afterok_328686_failed_328695_328769
+expected_comment=cf4_bgc_pop_v3_accounted_328686_failed_328695_328769
 
 : "${SLURM_JOB_ID:?active Slurm job required}"
 : "${SLURM_SUBMIT_HOST:?Slurm submit host required}"
@@ -64,6 +64,16 @@ host_name=$(hostname -s)
 [[ "$host_name" != syntax && "$host_name" != syntax.* && "$host_name" != syn101 && "$host_name" != syn101.* ]]
 job_record=$(scontrol show job "$SLURM_JOB_ID" -o)
 [[ "$job_record" == *"Comment=${expected_comment}"* ]]
+declare -A member_state
+while IFS='|' read -r job_id state exit_code; do
+  [[ -n "$job_id" ]]
+  [[ -z "${member_state[$job_id]+present}" ]]
+  member_state[$job_id]="${state}|${exit_code}"
+done < <(sacct -j "$MEMBER_ARRAY_JOB_ID" --starttime 2026-08-31 -X -n -P -o JobID,State,ExitCode)
+[[ "${#member_state[@]}" -eq 64 ]]
+for index in $(seq 0 63); do
+  [[ "${member_state[${MEMBER_ARRAY_JOB_ID}_${index}]-missing}" == "COMPLETED|0:0" ]]
+done
 
 head_commit=$(git -C "$repo" rev-parse HEAD)
 upstream_commit=$(git -C "$repo" rev-parse '@{upstream}')
@@ -91,6 +101,7 @@ for package in ("numpy", "jax", "jaxlib", "pmwd", "scipy"):
 assert [row["Slurm_job_id"] for row in correction["preserved_failures"]] == [328695, 328769]
 assert correction["shared_failure_properties"]["Python_aggregation_started"] is False
 assert correction["shared_failure_properties"]["aggregate_artifact_published"] is False
+assert correction["non_job_submission_rejection"]["job_created"] is False
 assert correction["authorization"]["single_v3_aggregate_correction_submission"] is True
 assert correction["authorization"]["member_rerun"] is False
 assert correction["authorization"]["automatic_retry_after_v3"] is False

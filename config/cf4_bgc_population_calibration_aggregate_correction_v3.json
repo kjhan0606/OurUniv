@@ -30,8 +30,14 @@
     "member_array_job_id": 328686,
     "member_array_state": "COMPLETED_64_OF_64_EXIT_0"
   },
+  "non_job_submission_rejection": {
+    "message": "Batch job submission failed: Job dependency problem",
+    "job_created": false,
+    "authorization_consumed_as_a_Slurm_submission": false,
+    "cause": "The completed array had aged beyond the controller interval in which it could be named as a new afterok dependency."
+  },
   "correction": {
-    "semantic_delta_from_v2_runner": "Read and validate the v3 correction record and require the exact v3 persistent Slurm comment; aggregation source and scientific inputs remain unchanged.",
+    "semantic_delta_from_v2_runner": "Read and validate the v3 correction record, require the exact v3 persistent Slurm comment, and verify exact sacct rows 328686_0 through 328686_63 are all COMPLETED with ExitCode 0:0 before aggregation; aggregation source and scientific inputs remain unchanged.",
     "submission_rule": "Obtain the exact full runtime commit from git rev-parse HEAD after the v3 commit and pass that byte-for-byte as both expected runtime and upstream commit.",
     "scientific_program_changed": false,
     "source_changed": false,
@@ -68,8 +74,10 @@
     "member_implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d"
   },
   "execution": {
-    "backend": "Slurm_CPU_only_afterok_328686",
-    "persistent_Slurm_comment": "cf4_bgc_pop_v3_afterok_328686_failed_328695_328769",
+    "backend": "Slurm_CPU_only_after_exact_accounting_verification_of_328686",
+    "persistent_Slurm_comment": "cf4_bgc_pop_v3_accounted_328686_failed_328695_328769",
+    "submission_dependency": "none_because_controller_rejected_the_aged_completed_job_as_a_new_dependency",
+    "runtime_member_completion_check": "exactly_64_sacct_rows_named_328686_0_through_328686_63_each_COMPLETED_and_0:0",
     "cpus_per_task": 4,
     "expected_peak_memory_MiB": 3200,
     "requested_memory_MiB": 4096,

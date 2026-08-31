@@ -140,6 +140,7 @@ def test_v3_preserves_both_pre_python_failures_and_member_science_state():
     assert correction["shared_failure_properties"]["Python_aggregation_started"] is False
     assert correction["shared_failure_properties"]["aggregate_artifact_published"] is False
     assert correction["shared_failure_properties"]["member_array_job_id"] == 328686
+    assert correction["non_job_submission_rejection"]["job_created"] is False
     assert correction["correction"]["scientific_program_changed"] is False
     assert correction["correction"]["source_changed"] is False
     assert correction["authorization"]["member_rerun"] is False
@@ -157,6 +158,10 @@ def test_v3_runner_requires_exact_ids_comment_and_separate_commits():
     assert f"correction_sha={hashlib.sha256(CORRECTION_V3.read_bytes()).hexdigest()}" in source
     assert "Comment=${expected_comment}" in source
     assert "Dependency=afterok:${MEMBER_ARRAY_JOB_ID}" not in source
+    assert "sacct -j \"$MEMBER_ARRAY_JOB_ID\"" in source
+    assert '[[ "${#member_state[@]}" -eq 64 ]]' in source
+    assert 'seq 0 63' in source
+    assert '"COMPLETED|0:0"' in source
     assert '[[ "$MEMBER_ARRAY_JOB_ID" == 328686 ]]' in source
     assert '[[ "$FAILED_V1_JOB_ID" == 328695 ]]' in source
     assert '[[ "$FAILED_V2_JOB_ID" == 328769 ]]' in source
