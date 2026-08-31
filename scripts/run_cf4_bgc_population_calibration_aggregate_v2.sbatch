@@ -34,6 +34,7 @@ expected_comment=cf4_bgc_pop_v2_afterok_328686_failed_v1_328695
 : "${SLURM_SUBMIT_HOST:?Slurm submit host required}"
 : "${EXPECTED_COMMIT:?EXPECTED_COMMIT must be explicitly exported}"
 : "${EXPECTED_UPSTREAM_COMMIT:?EXPECTED_UPSTREAM_COMMIT must be explicitly exported}"
+: "${IMPLEMENTATION_COMMIT:?IMPLEMENTATION_COMMIT must be explicitly exported}"
 : "${MEMBER_ARRAY_JOB_ID:?MEMBER_ARRAY_JOB_ID must be explicitly exported}"
 : "${FAILED_V1_JOB_ID:?FAILED_V1_JOB_ID must be explicitly exported}"
 : "${SUBMISSION_CONTROLLER:?SUBMISSION_CONTROLLER must be explicitly exported}"
@@ -44,6 +45,7 @@ expected_comment=cf4_bgc_pop_v2_afterok_328686_failed_v1_328695
 [[ "$SLURM_SUBMIT_HOST" == syntax || "$SLURM_SUBMIT_HOST" == syntax.* ]]
 [[ "$EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
 [[ "$EXPECTED_UPSTREAM_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+[[ "$IMPLEMENTATION_COMMIT" == 342bb7c77ac60801a303cb81311a30b3506c8f1d ]]
 [[ "$MEMBER_ARRAY_JOB_ID" == 328686 ]]
 [[ "$FAILED_V1_JOB_ID" == 328695 ]]
 [[ -d "$output_root" ]]
@@ -116,7 +118,7 @@ export PYTHONHASHSEED=0
   --program "$program" \
   --members-root "$members_root" \
   --output "$output" \
-  --implementation-commit "$EXPECTED_COMMIT"
+  --implementation-commit "$IMPLEMENTATION_COMMIT"
 
 "$python" -I -P "$source_file" validate-aggregate \
   --directory "$output"

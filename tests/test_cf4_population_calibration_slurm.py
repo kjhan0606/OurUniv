@@ -120,6 +120,8 @@ def test_v2_runner_uses_persistent_comment_and_no_live_dependency_assertion():
     assert "Dependency=afterok:${MEMBER_ARRAY_JOB_ID}" not in source
     assert '[[ "$MEMBER_ARRAY_JOB_ID" == 328686 ]]' in source
     assert '[[ "$FAILED_V1_JOB_ID" == 328695 ]]' in source
+    assert '[[ "$IMPLEMENTATION_COMMIT" == 342bb7c77ac60801a303cb81311a30b3506c8f1d ]]' in source
+    assert '--implementation-commit "$IMPLEMENTATION_COMMIT"' in source
     assert "run-member" not in source
     assert "aggregate" in source and "validate-aggregate" in source
     assert "--requeue" not in source
