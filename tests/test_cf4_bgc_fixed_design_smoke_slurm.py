@@ -9,6 +9,7 @@ RUNNER_V1 = ROOT / "scripts" / "run_cf4_bgc_fixed_design_smoke_v1.sbatch"
 RESULT_V1 = ROOT / "config" / "cf4_bgc_fixed_design_smoke_v1_result.json"
 CONFIG = ROOT / "config" / "cf4_bgc_fixed_design_smoke_execution_v2.json"
 RUNNER = ROOT / "scripts" / "run_cf4_bgc_fixed_design_smoke_v2.sbatch"
+RESULT = ROOT / "config" / "cf4_bgc_fixed_design_smoke_v2_result.json"
 
 
 def test_failed_v1_is_preserved_and_bound_to_its_original_execution():
@@ -99,3 +100,32 @@ def test_runner_binds_exact_execution_config_hash():
     source = RUNNER.read_text()
     expected = hashlib.sha256(CONFIG.read_bytes()).hexdigest()
     assert f"config_sha={expected}" in source
+
+
+def test_v2_result_record_binds_pass_without_a_science_claim():
+    record = json.loads(RESULT.read_text())
+    assert record["status"] == "COMPLETE_IMPLEMENTATION_SMOKE_PASS_NO_SCIENCE_CLAIM"
+    assert record["execution"]["Slurm_job_id"] == 328664
+    assert record["execution"]["new_unique_development_truth_seed_count_consumed"] == 0
+    assert record["bindings"]["execution_config_sha256"] == hashlib.sha256(
+        CONFIG.read_bytes()
+    ).hexdigest()
+    assert record["bindings"]["Slurm_runner_sha256"] == hashlib.sha256(
+        RUNNER.read_bytes()
+    ).hexdigest()
+    assert record["bindings"]["failed_v1_result_record_sha256"] == hashlib.sha256(
+        RESULT_V1.read_bytes()
+    ).hexdigest()
+    assert record["bindings"]["portable_validator_source_sha256"] == hashlib.sha256(
+        (ROOT / "src" / "cf4_bgc_fixed_design_smoke.py").read_bytes()
+    ).hexdigest()
+    checks = record["implementation_checks"]
+    assert checks["theta_non_Nyquist_canonical_independent_real_mode_count"] == 8535
+    assert checks["delta_theta_non_Nyquist_max_relative_error"] < 1e-12
+    assert checks["all_non_theta_arrays_identical_to_v1"] is True
+    disposition = record["scientific_disposition"]
+    assert disposition["fixed_design_conditional_truth_mock_implementation"] == "PASS"
+    assert disposition["population_selection_function_validated"] is False
+    assert disposition["development_64_mock_execution_performed"] is False
+    assert disposition["target_0_3_cMpc_h_reached"] is False
+    assert disposition["science_claim_allowed"] is False
