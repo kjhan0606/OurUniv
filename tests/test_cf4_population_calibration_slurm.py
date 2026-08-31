@@ -8,6 +8,8 @@ PROGRAM = ROOT / "config/cf4_bgc_population_calibration_program_v1.json"
 SOURCE = ROOT / "src/cf4_population_calibration.py"
 MEMBERS = ROOT / "scripts/run_cf4_bgc_population_calibration_members_v1.sbatch"
 AGGREGATE = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v1.sbatch"
+CORRECTION = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_v2.json"
+AGGREGATE_V2 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v2.sbatch"
 
 
 def test_program_binds_current_sources_and_inputs():
@@ -86,3 +88,40 @@ def test_no_untouched_validation_or_downstream_science_is_authorized():
     assert authorization["automatic_retry"] is False
     assert authorization["automatic_follow_on_after_aggregate"] is False
     assert program["validation_firewall"]["may_be_opened_or_executed_by_this_program"] is False
+
+
+def test_v2_preserves_v1_failure_and_changes_only_dependency_authentication():
+    correction = json.loads(CORRECTION.read_text())
+    assert correction["status"] == "ASSISTANT_ERROR_SINGLE_AGGREGATE_CORRECTION_AUTHORIZED"
+    assert correction["failed_v1"]["Slurm_job_id"] == 328695
+    assert correction["failed_v1"]["member_array_job_id"] == 328686
+    assert correction["failed_v1"]["aggregate_artifact_published"] is False
+    assert correction["failed_v1"]["scientific_or_numerical_failure"] is False
+    assert correction["correction"]["scientific_program_changed"] is False
+    assert correction["correction"]["source_changed"] is False
+    assert correction["authorization"]["member_rerun"] is False
+    assert correction["authorization"]["untouched_256_mock_validation"] is False
+    assert correction["execution"]["requested_memory_MiB"] >= 1.2 * correction[
+        "execution"
+    ]["expected_peak_memory_MiB"]
+    for record in correction["bindings"].values():
+        if not isinstance(record, dict):
+            continue
+        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == record[
+            "sha256"
+        ]
+
+
+def test_v2_runner_uses_persistent_comment_and_no_live_dependency_assertion():
+    source = AGGREGATE_V2.read_text()
+    correction_sha = hashlib.sha256(CORRECTION.read_bytes()).hexdigest()
+    assert f"correction_sha={correction_sha}" in source
+    assert "Comment=${expected_comment}" in source
+    assert "Dependency=afterok:${MEMBER_ARRAY_JOB_ID}" not in source
+    assert '[[ "$MEMBER_ARRAY_JOB_ID" == 328686 ]]' in source
+    assert '[[ "$FAILED_V1_JOB_ID" == 328695 ]]' in source
+    assert "run-member" not in source
+    assert "aggregate" in source and "validate-aggregate" in source
+    assert "--requeue" not in source
+    assert "renameat2" not in source
+    assert "pgrep" not in source

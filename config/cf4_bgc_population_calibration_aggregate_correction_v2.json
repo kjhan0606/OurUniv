@@ -1,0 +1,68 @@
+{
+  "schema": "ouruniv-cf4-bgc-population-calibration-aggregate-correction-v2",
+  "date": "2026-08-31",
+  "status": "ASSISTANT_ERROR_SINGLE_AGGREGATE_CORRECTION_AUTHORIZED",
+  "authorization_basis": "Standing user instruction permits correction of an assistant-caused immediate implementation failure without a new approval.",
+  "failed_v1": {
+    "Slurm_job_id": 328695,
+    "state": "FAILED",
+    "elapsed_seconds": 3,
+    "exit_code": "1:0",
+    "batch_MaxRSS_KiB": 3512,
+    "member_array_job_id": 328686,
+    "member_array_state": "COMPLETED_64_OF_64_EXIT_0",
+    "aggregate_artifact_published": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "root_cause": "The v1 runner inspected its own live scontrol Dependency field after the dependency had already been satisfied. Slurm clears a fulfilled dependency to Dependency=(null), so the runner's assertion failed before Python aggregation began.",
+    "scientific_or_numerical_failure": false
+  },
+  "correction": {
+    "semantic_delta": "Remove only the invalid live Dependency field assertion. Preserve scheduler afterok submission, add a persistent exact Slurm comment binding the member-array and failed-v1 IDs, and retain exact 64-member artifact validation in the aggregator.",
+    "scientific_program_changed": false,
+    "source_changed": false,
+    "member_artifacts_changed_or_rerun": false,
+    "aggregate_output_reused_or_overwritten": false
+  },
+  "authorization": {
+    "single_aggregate_correction_submission": true,
+    "reuse_exact_completed_64_member_artifacts": true,
+    "member_rerun": false,
+    "automatic_retry_after_this_correction": false,
+    "untouched_256_mock_validation": false,
+    "frontier_promotion": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "bindings": {
+    "scientific_program": {
+      "path": "config/cf4_bgc_population_calibration_program_v1.json",
+      "sha256": "38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0"
+    },
+    "aggregate_source": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "failed_v1_runner": {
+      "path": "scripts/run_cf4_bgc_population_calibration_aggregate_v1.sbatch",
+      "sha256": "fbb0672a0890a8838adf81024ae333ae9c067db6b2929adf43a4b083c98fad30"
+    },
+    "implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d"
+  },
+  "execution": {
+    "backend": "Slurm_CPU_only_afterok_328686",
+    "persistent_Slurm_comment": "cf4_bgc_pop_v2_afterok_328686_failed_v1_328695",
+    "cpus_per_task": 4,
+    "expected_peak_memory_MiB": 3200,
+    "requested_memory_MiB": 4096,
+    "memory_headroom_multiplier": 1.28,
+    "time_limit": "00:30:00",
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "output": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "maximum_correction_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true
+  }
+}
