@@ -12,6 +12,8 @@ CORRECTION = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_
 AGGREGATE_V2 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v2.sbatch"
 CORRECTION_V3 = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_v3.json"
 AGGREGATE_V3 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v3.sbatch"
+CORRECTION_V4 = ROOT / "config/cf4_bgc_population_calibration_aggregate_correction_v4.json"
+AGGREGATE_V4 = ROOT / "scripts/run_cf4_bgc_population_calibration_aggregate_v4.sbatch"
 
 
 def test_program_binds_current_sources_and_inputs():
@@ -167,6 +169,48 @@ def test_v3_runner_requires_exact_ids_comment_and_separate_commits():
     assert '[[ "$FAILED_V2_JOB_ID" == 328769 ]]' in source
     assert 'head_commit" == "$EXPECTED_COMMIT' in source
     assert '--implementation-commit "$IMPLEMENTATION_COMMIT"' in source
+    assert "run-member" not in source
+    assert "--requeue" not in source
+    assert "renameat2" not in source
+    assert "pgrep" not in source
+
+
+def test_v4_correction_is_structural_fail_closed_and_does_not_retune():
+    correction = json.loads(CORRECTION_V4.read_text())
+    assert [row["Slurm_job_id"] for row in correction["preserved_failed_jobs"]] == [
+        328695,
+        328769,
+        328782,
+    ]
+    fix = correction["root_cause_and_fix"]
+    assert fix["density_available_merged_bin_ids"] == list(range(12))
+    assert fix["theta_available_merged_bin_ids"] == list(range(11))
+    assert (fix["density_bin_11_mode_count"], fix["theta_bin_11_mode_count"]) == (3, 0)
+    assert fix["truth_metric_or_candidate_value_used_to_choose_fix"] is False
+    assert fix["threshold_seed_population_or_member_changed"] is False
+    authorization = correction["authorization"]
+    assert authorization["member_rerun"] is False
+    assert authorization["metric_threshold_change"] is False
+    assert authorization["seed_change"] is False
+    assert authorization["population_generator_change"] is False
+    assert authorization["untouched_256_mock_validation"] is False
+    for record in correction["bindings"].values():
+        if not isinstance(record, dict):
+            continue
+        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == record[
+            "sha256"
+        ]
+
+
+def test_v4_runner_uses_corrected_aggregate_only_after_exact_accounting():
+    source = AGGREGATE_V4.read_text()
+    assert f"correction_sha={hashlib.sha256(CORRECTION_V4.read_bytes()).hexdigest()}" in source
+    assert "source_file=src/cf4_population_calibration_aggregate_v2.py" in source
+    assert '[[ "${#member_state[@]}" -eq 64 ]]' in source
+    assert 'seq 0 63' in source and '"COMPLETED|0:0"' in source
+    assert '[[ "$FAILED_V3_JOB_ID" == 328782 ]]' in source
+    assert '--member-implementation-commit "$MEMBER_IMPLEMENTATION_COMMIT"' in source
+    assert '--aggregation-runtime-commit "$EXPECTED_COMMIT"' in source
     assert "run-member" not in source
     assert "--requeue" not in source
     assert "renameat2" not in source
