@@ -4,28 +4,58 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "config" / "cf4_bgc_fixed_design_smoke_execution_v1.json"
-RUNNER = ROOT / "scripts" / "run_cf4_bgc_fixed_design_smoke_v1.sbatch"
+CONFIG_V1 = ROOT / "config" / "cf4_bgc_fixed_design_smoke_execution_v1.json"
+RUNNER_V1 = ROOT / "scripts" / "run_cf4_bgc_fixed_design_smoke_v1.sbatch"
+RESULT_V1 = ROOT / "config" / "cf4_bgc_fixed_design_smoke_v1_result.json"
+CONFIG = ROOT / "config" / "cf4_bgc_fixed_design_smoke_execution_v2.json"
+RUNNER = ROOT / "scripts" / "run_cf4_bgc_fixed_design_smoke_v2.sbatch"
 
 
-def test_execution_contract_is_single_fixed_design_no_claim_smoke():
+def test_failed_v1_is_preserved_and_bound_to_its_original_execution():
+    config = json.loads(CONFIG_V1.read_text())
+    record = json.loads(RESULT_V1.read_text())
+    assert record["status"] == (
+        "IMPLEMENTATION_FAIL_THETA_NOT_DERIVED_FROM_STORED_VELOCITY"
+    )
+    assert record["execution"]["Slurm_job_id"] == 328661
+    assert record["bindings"]["execution_config_sha256"] == hashlib.sha256(
+        CONFIG_V1.read_bytes()
+    ).hexdigest()
+    assert record["failed_check"]["full_grid_velocity_divergence_relative_error"] > 0.08
+    assert record["failed_check"]["non_Nyquist_velocity_divergence_relative_error"] < 1e-12
+    assert record["scientific_disposition"]["science_claim_allowed"] is False
+    assert f"config_sha={hashlib.sha256(CONFIG_V1.read_bytes()).hexdigest()}" in (
+        RUNNER_V1.read_text()
+    )
+    assert config["authorization"]["retry_authorized"] is False
+
+
+def test_correction_execution_contract_is_single_fixed_design_no_claim_smoke():
     config = json.loads(CONFIG.read_text())
-    assert config["status"] == "USER_APPROVED_SINGLE_FIXED_DESIGN_TRUTH_MOCK_SMOKE"
+    assert config["status"] == (
+        "ASSISTANT_ERROR_CORRECTION_SINGLE_FIXED_DESIGN_TRUTH_MOCK_SMOKE"
+    )
     authorization = config["authorization"]
-    assert authorization["single_Slurm_execution_authorized"] is True
-    assert authorization["development_truth_seed_count_authorized"] == 1
+    assert authorization["single_Slurm_correction_execution_authorized"] is True
+    assert authorization["same_truth_seed_reexecution_authorized"] is True
+    assert authorization["new_unique_development_truth_seed_authorized"] is False
     assert authorization["population_selection_mock_authorized"] is False
     assert authorization["development_64_mock_execution_authorized"] is False
     assert authorization["untouched_256_mock_validation_authorized"] is False
-    assert authorization["retry_authorized"] is False
+    assert authorization["additional_retry_authorized"] is False
     smoke = config["smoke_contract"]
     assert smoke["selection_semantics"] == "observed_grouped_CF4_fixed_design_conditioned"
     assert smoke["mock_datum"] == "u_mock=A*s_truth+B*q_truth+epsilon"
     assert (smoke["grid_N"], smoke["cell_size_cMpc_h"]) == (32, 12.0)
-    assert smoke["development_truth_seed_count"] == 1
+    assert smoke["new_unique_development_truth_seed_count"] == 0
     assert smoke["posterior_draw_count"] == 4
-    assert smoke["canonical_independent_real_mode_count"] == 8538
+    assert smoke["density_canonical_independent_real_mode_count"] == 8538
+    assert smoke["theta_non_Nyquist_canonical_independent_real_mode_count"] == 8535
+    assert smoke["Nyquist_plane_modes_excluded_from_theta_metrics"] is True
     assert smoke["science_claim_allowed"] is False
+    assert config["failed_predecessor_binding"]["result_record_sha256"] == (
+        hashlib.sha256(RESULT_V1.read_bytes()).hexdigest()
+    )
 
 
 def test_source_and_input_hashes_are_current():
@@ -42,10 +72,11 @@ def test_slurm_runner_matches_resource_and_controller_contract():
     execution = config["execution"]
     assert "#SBATCH --partition=a10" in source
     assert "#SBATCH --cpus-per-task=4" in source
-    assert "#SBATCH --mem=4096M" in source
+    assert "#SBATCH --mem=1536M" in source
     assert "#SBATCH --time=00:30:00" in source
     assert execution["memory_request_MiB"] >= 1.2 * execution["memory_expected_peak_MiB"]
-    assert execution["maximum_submissions"] == execution["maximum_executions"] == 1
+    assert execution["maximum_correction_submissions"] == 1
+    assert execution["maximum_correction_executions"] == 1
     assert "SUBMISSION_CONTROLLER\" == syntax" in source
     assert "host_name\" != syntax" in source
     assert "host_name\" != syn101" in source

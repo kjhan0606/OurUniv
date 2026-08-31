@@ -35,7 +35,7 @@ def _tiny_design():
 
 def _publication_result():
     return {
-        "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v1",
+        "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v2",
         "status": "COMPLETE_IMPLEMENTATION_SMOKE_NO_SCIENCE_CLAIM",
         "implementation": {"commit": "a" * 40},
         "bin_manifest": {"manifest_body_sha256": "b" * 64},
@@ -55,11 +55,38 @@ def _publication_result():
             "adjoint": smoke.ADJOINT_SEED,
         },
         "N32_canonical_independent_real_analysis_mode_count": 8538,
+        "N32_non_nyquist_theta_analysis_mode_count": 8535,
         "global_merged_bin_availability": [
-            {"merged_bin_index": index} for index in range(33)
+            {
+                "merged_bin_index": index,
+                "N32_canonical_independent_real_mode_count": 8538 if index == 0 else 0,
+            }
+            for index in range(33)
         ],
+        "theta_global_merged_bin_availability": [
+            {
+                "merged_bin_index": index,
+                "N32_non_nyquist_canonical_independent_real_mode_count": (
+                    8535 if index == 0 else 0
+                ),
+            }
+            for index in range(33)
+        ],
+        "growth_rate": 0.5,
+        "delta_theta_normalization": {
+            "stored_theta_semantics": (
+                "reconstructed_from_stored_velocity_not_copied_from_delta"
+            ),
+            "non_nyquist_consistency_pass": True,
+            "Nyquist_plane_modes_excluded_from_theta_metrics": True,
+            "non_nyquist_relative_errors": [0.0] * 6,
+        },
         "catalog_design": {"selected_rows": 3, "train_rows": 2, "holdout_rows": 1},
-        "numerical_gates": {"all_pass": True},
+        "numerical_gates": {
+            "all_pass": True,
+            "delta_theta_non_nyquist_pass": True,
+            "delta_theta_non_nyquist_relative_errors": [0.0] * 6,
+        },
         "delta_metrics": {
             "posterior_mean_source": "explicit_analytic_posterior_mean",
             "mock_count": 1,
@@ -193,13 +220,12 @@ def test_mock_datum_uses_truth_nuisance_noise_and_is_deterministic():
     np.testing.assert_allclose(first["u_mock"], expected)
 
 
-def test_delta_theta_identity_and_velocity_divergence_kernel():
+def test_delta_and_velocity_divergence_kernel_away_from_nyquist_planes():
     rng = np.random.default_rng(4)
     white = rng.standard_normal((8, 8, 8))
     transfer = np.ones_like(white)
     transfer[0, 0, 0] = 0.0
-    delta, theta = smoke.white_to_delta_theta(white, transfer)
-    np.testing.assert_array_equal(delta, theta)
+    delta = smoke.white_to_delta(white, transfer)
     coordinate = np.arange(8) * 10.0
     x, y, z = np.meshgrid(coordinate, coordinate, coordinate, indexing="ij")
     delta = (
@@ -208,6 +234,9 @@ def test_delta_theta_identity_and_velocity_divergence_kernel():
         - 0.2 * np.cos(6.0 * np.pi * z / 80.0)
     )
     velocity = smoke.delta_to_velocity(delta, growth_rate=0.5, box_size=80.0)
+    theta = smoke.velocity_to_normalized_divergence(
+        velocity, growth_rate=0.5, box_size=80.0
+    )
     frequency = 2.0 * np.pi * np.fft.fftfreq(8, d=10.0)
     kx, ky, kz = np.meshgrid(frequency, frequency, frequency, indexing="ij")
     divergence = np.fft.ifftn(
@@ -219,6 +248,7 @@ def test_delta_theta_identity_and_velocity_divergence_kernel():
         )
     ).real
     np.testing.assert_allclose(-divergence / 50.0, delta, atol=1e-12)
+    np.testing.assert_allclose(theta, delta, atol=1e-12)
 
 
 def test_cic_truth_velocity_matches_equivalent_radial_forward():
@@ -231,7 +261,7 @@ def test_cic_truth_velocity_matches_equivalent_radial_forward():
     radial = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 
     def forward(white):
-        delta, _ = smoke.white_to_delta_theta(white, transfer)
+        delta = smoke.white_to_delta(white, transfer)
         velocity = smoke.delta_to_velocity(delta, growth, box)
         return smoke.cic_sample_radial_velocity(velocity, positions, radial, box)
 
@@ -242,7 +272,7 @@ def test_cic_truth_velocity_matches_equivalent_radial_forward():
     design["rhat"] = radial
     design["B"] = design["B"][:3]
     mock = smoke.generate_mock_datum(forward, design, shape=(grid,) * 3)
-    delta, _ = smoke.white_to_delta_theta(mock["s_truth"], transfer)
+    delta = smoke.white_to_delta(mock["s_truth"], transfer)
     stored = smoke.delta_to_velocity(delta, growth, box)
     sampled = smoke.cic_sample_radial_velocity(stored, positions, radial, box)
     np.testing.assert_allclose(sampled, mock["signal"], rtol=1e-13, atol=1e-13)
@@ -303,7 +333,7 @@ def test_one_mock_metrics_are_strictly_fail_closed_and_delta_theta_match():
     transfer = np.ones_like(truth)
     transfer[0, 0, 0] = 0.0
     delta, theta, fields = smoke.evaluate_delta_theta_metrics(
-        truth, draws, analytic_mean, transfer, plan, body_sha
+        truth, draws, analytic_mean, transfer, 0.5, plan, body_sha
     )
     assert delta["mock_count"] == theta["mock_count"] == 1
     assert not any(delta["strict_gate_intersection_with_geometry"])
@@ -312,8 +342,14 @@ def test_one_mock_metrics_are_strictly_fail_closed_and_delta_theta_match():
     assert delta["posterior_mean_source"] == "explicit_analytic_posterior_mean"
     assert theta["posterior_mean_source"] == "explicit_analytic_posterior_mean"
     np.testing.assert_allclose(delta["response"], [0.75] * len(delta["response"]))
-    np.testing.assert_array_equal(fields["truth_delta"], fields["truth_theta"])
-    np.testing.assert_array_equal(fields["posterior_delta"], fields["posterior_theta"])
+    np.testing.assert_array_equal(
+        fields["truth_theta"],
+        smoke.velocity_to_normalized_divergence(fields["truth_velocity"], 0.5),
+    )
+    assert max(fields["delta_theta_non_nyquist_relative_errors"]) < 1.0e-12
+    assert fields["theta_non_nyquist_analysis_mode_count"] < plan[
+        "canonical_independent_real_analysis_mode_count"
+    ]
 
 
 def test_numerical_threshold_edges_and_no_claim_policy():
@@ -414,7 +450,7 @@ def test_validate_rejects_semantic_gate_and_claim_tampering(
         ),
         (
             lambda arrays: arrays["posterior_theta"].__setitem__((0, 0, 0, 0), 1.0),
-            "posterior-draw normalized theta",
+            "stored theta is not reconstructed from velocity",
         ),
     ],
 )
@@ -444,7 +480,7 @@ def test_validate_rejects_artifact_and_complete_schema_tampering(tmp_path):
     with pytest.raises(smoke.SmokeError, match="artifact manifest schema"):
         smoke.validate_output(output)
     artifact["schema"] = (
-        "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v1"
+        "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v2"
     )
     artifact_payload = smoke.canonical_json_bytes(artifact)
     artifact_path.write_bytes(artifact_payload)

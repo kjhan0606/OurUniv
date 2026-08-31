@@ -65,6 +65,7 @@ PRECONDITIONER_PROBES = 4
 ADJOINT_MAX = 5.0e-5
 CG_RESIDUAL_MAX = 1.0e-4
 RADIAL_FORWARD_MAX_RELATIVE_ERROR = 5.0e-8
+THETA_NON_NYQUIST_MAX_RELATIVE_ERROR = 1.0e-12
 EXPECTED_OUTPUT_FILES = {"fields.npz", "result.json", "manifest.json", "COMPLETE"}
 
 
@@ -266,10 +267,8 @@ def build_density_transfer(args: SimpleNamespace) -> tuple[np.ndarray, float]:
     return transfer, growth_rate
 
 
-def white_to_delta_theta(
-    white: np.ndarray, transfer: np.ndarray
-) -> tuple[np.ndarray, np.ndarray]:
-    """Apply one transfer; normalized theta=-div(v)/(100 f) equals delta."""
+def white_to_delta(white: np.ndarray, transfer: np.ndarray) -> np.ndarray:
+    """Apply the frozen white-to-z=0 linear-density transfer."""
 
     white = np.asarray(white, dtype=np.float64)
     transfer = np.asarray(transfer, dtype=np.float64)
@@ -278,9 +277,7 @@ def white_to_delta_theta(
     if not np.all(np.isfinite(white)) or not np.all(np.isfinite(transfer)):
         raise SmokeError("white field or transfer contains nonfinite values")
     delta_k = np.fft.fftn(white, norm="ortho") * transfer
-    delta = np.fft.ifftn(delta_k, norm="ortho").real
-    theta = delta.copy()
-    return delta, theta
+    return np.fft.ifftn(delta_k, norm="ortho").real
 
 
 def delta_to_velocity(
@@ -314,6 +311,70 @@ def delta_to_velocity(
     if not np.all(np.isfinite(result)):
         raise SmokeError("velocity field contains nonfinite values")
     return result
+
+
+def velocity_to_normalized_divergence(
+    velocity: np.ndarray,
+    growth_rate: float,
+    box_size: float = BOX_SIZE,
+) -> np.ndarray:
+    """Compute theta=-div(v)/(100 f) from the stored discrete velocity grid."""
+
+    velocity = np.asarray(velocity, dtype=np.float64)
+    if velocity.ndim != 4 or velocity.shape[0] != 3:
+        raise SmokeError("velocity must have shape (3,N,N,N)")
+    grid_size = velocity.shape[1]
+    if velocity.shape != (3, grid_size, grid_size, grid_size):
+        raise SmokeError("velocity grid must be cubic")
+    if not np.all(np.isfinite(velocity)):
+        raise SmokeError("velocity grid contains nonfinite values")
+    if not math.isfinite(growth_rate) or growth_rate <= 0.0:
+        raise SmokeError("growth rate must be finite and positive")
+    spacing = box_size / grid_size
+    frequency = 2.0 * np.pi * np.fft.fftfreq(grid_size, d=spacing)
+    radial_frequency = 2.0 * np.pi * np.fft.rfftfreq(grid_size, d=spacing)
+    kx, ky, kz = np.meshgrid(
+        frequency, frequency, radial_frequency, indexing="ij"
+    )
+    divergence_k = 1j * (
+        kx * np.fft.rfftn(velocity[0])
+        + ky * np.fft.rfftn(velocity[1])
+        + kz * np.fft.rfftn(velocity[2])
+    )
+    theta = -np.fft.irfftn(
+        divergence_k, s=(grid_size,) * 3, axes=(0, 1, 2)
+    ) / (100.0 * growth_rate)
+    if not np.all(np.isfinite(theta)):
+        raise SmokeError("normalized velocity divergence contains nonfinite values")
+    return theta
+
+
+def non_nyquist_mode_mask(grid_size: int) -> np.ndarray:
+    """Modes where a real-grid spectral derivative has no Nyquist ambiguity."""
+
+    if grid_size <= 0 or grid_size % 2 != 0:
+        raise SmokeError("non-Nyquist mask requires a positive even grid size")
+    indices = np.arange(grid_size)
+    ix, iy, iz = np.meshgrid(indices, indices, indices, indexing="ij")
+    return (ix != grid_size // 2) & (iy != grid_size // 2) & (iz != grid_size // 2)
+
+
+def non_nyquist_delta_theta_relative_error(
+    delta: np.ndarray, theta: np.ndarray
+) -> float:
+    """Relative Fourier-space delta/theta error outside Nyquist planes."""
+
+    delta = np.asarray(delta, dtype=np.float64)
+    theta = np.asarray(theta, dtype=np.float64)
+    if delta.shape != theta.shape or delta.ndim != 3 or len(set(delta.shape)) != 1:
+        raise SmokeError("delta/theta fields must be matching cubic grids")
+    mask = non_nyquist_mode_mask(delta.shape[0])
+    delta_modes = np.fft.fftn(delta, norm="ortho")[mask]
+    theta_modes = np.fft.fftn(theta, norm="ortho")[mask]
+    return float(
+        np.linalg.norm(theta_modes - delta_modes)
+        / max(np.linalg.norm(delta_modes), 1.0e-30)
+    )
 
 
 def cic_sample_radial_velocity(
@@ -484,9 +545,10 @@ def evaluate_delta_theta_metrics(
     posterior_white: np.ndarray,
     posterior_mean_white: np.ndarray,
     transfer: np.ndarray,
+    growth_rate: float,
     plan: Mapping[str, object],
     manifest_body_sha256: str,
-) -> tuple[dict[str, object], dict[str, object], dict[str, np.ndarray]]:
+) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
     """Evaluate only available global merged bins; all strict gates stay false."""
 
     posterior_white = np.asarray(posterior_white, dtype=np.float64)
@@ -497,52 +559,109 @@ def evaluate_delta_theta_metrics(
         np.isfinite(posterior_mean_white)
     ):
         raise SmokeError("analytic posterior mean white field must match finite truth")
-    truth_delta, truth_theta = white_to_delta_theta(truth_white, transfer)
-    mean_delta, mean_theta = white_to_delta_theta(posterior_mean_white, transfer)
+    truth_delta = white_to_delta(truth_white, transfer)
+    mean_delta = white_to_delta(posterior_mean_white, transfer)
     draw_delta = []
-    draw_theta = []
     for draw in posterior_white:
-        delta, theta = white_to_delta_theta(draw, transfer)
-        draw_delta.append(delta)
-        draw_theta.append(theta)
+        draw_delta.append(white_to_delta(draw, transfer))
     draw_delta_array = np.stack(draw_delta)
-    draw_theta_array = np.stack(draw_theta)
-    if not np.array_equal(truth_delta, truth_theta) or not np.array_equal(
-        draw_delta_array, draw_theta_array
-    ) or not np.array_equal(mean_delta, mean_theta):
-        raise SmokeError("normalized theta and delta are not exactly identical")
+    truth_velocity = delta_to_velocity(truth_delta, growth_rate)
+    mean_velocity = delta_to_velocity(mean_delta, growth_rate)
+    draw_velocity_array = np.stack(
+        [delta_to_velocity(field, growth_rate) for field in draw_delta_array]
+    )
+    truth_theta = velocity_to_normalized_divergence(truth_velocity, growth_rate)
+    mean_theta = velocity_to_normalized_divergence(mean_velocity, growth_rate)
+    draw_theta_array = np.stack(
+        [
+            velocity_to_normalized_divergence(field, growth_rate)
+            for field in draw_velocity_array
+        ]
+    )
     flat = np.asarray(plan["flat_independent_field_indices"], dtype=np.int64)
     assignment = np.asarray(plan["mode_merged_bin_index"], dtype=np.int64)
     available = np.asarray(plan["available_merged_bin_ids"], dtype=np.int64)
-    truth_modes = np.fft.fftn(truth_delta, norm="ortho").ravel()[flat]
-    draw_modes = np.stack(
+    truth_delta_modes = np.fft.fftn(truth_delta, norm="ortho").ravel()[flat]
+    draw_delta_modes = np.stack(
         [np.fft.fftn(field, norm="ortho").ravel()[flat] for field in draw_delta_array]
     )
-    mean_modes = np.fft.fftn(mean_delta, norm="ortho").ravel()[flat]
-    prior_variance = np.asarray(transfer, dtype=np.float64).ravel()[flat] ** 2
-    if np.any(prior_variance <= 0.0):
+    mean_delta_modes = np.fft.fftn(mean_delta, norm="ortho").ravel()[flat]
+    delta_prior_variance = np.asarray(transfer, dtype=np.float64).ravel()[flat] ** 2
+    if np.any(delta_prior_variance <= 0.0):
         raise SmokeError("available N32 modes have zero prior density variance")
-    upstream = development_upstream_gate_schema(
+    delta_upstream = development_upstream_gate_schema(
         np.zeros(available.size, dtype=bool),
         np.zeros(available.size, dtype=bool),
-    )
-    common = dict(
-        truth=truth_modes[None, :],
-        posterior_ensemble=draw_modes[None, :, :],
-        prior_variance=prior_variance,
-        mode_bin_index=assignment,
-        declared_bin_ids=available,
-        geometry_supported=np.ones(available.size, dtype=bool),
-        upstream_gates=upstream,
-        bin_manifest_body_sha256=manifest_body_sha256,
-        posterior_mean=mean_modes[None, :],
     )
     delta_metrics = compute_development_smoke_metrics(
-        **common, domain_id="global_z0_density_delta"
+        truth_delta_modes[None, :],
+        draw_delta_modes[None, :, :],
+        delta_prior_variance,
+        assignment,
+        available,
+        np.ones(available.size, dtype=bool),
+        delta_upstream,
+        domain_id="global_z0_density_delta",
+        bin_manifest_body_sha256=manifest_body_sha256,
+        posterior_mean=mean_delta_modes[None, :],
+    )
+
+    grid_size = truth_delta.shape[0]
+    independent_grid_indices = np.unravel_index(flat, (grid_size,) * 3)
+    theta_keep = np.logical_and.reduce(
+        [axis != grid_size // 2 for axis in independent_grid_indices]
+    )
+    theta_flat = flat[theta_keep]
+    theta_assignment = assignment[theta_keep]
+    theta_available = np.unique(theta_assignment)
+    theta_availability = []
+    for item in plan["availability"]:
+        merged_index = int(item["merged_bin_index"])
+        count = int(np.count_nonzero(theta_assignment == merged_index))
+        theta_availability.append(
+            {
+                "merged_bin_index": merged_index,
+                "native_bin_indices": item["native_bin_indices"],
+                "N32_non_nyquist_canonical_independent_real_mode_count": count,
+                "status": (
+                    "AVAILABLE_DEVELOPMENT_SMOKE"
+                    if count > 0
+                    else "NOT_EVALUATED_NO_N32_NON_NYQUIST_MODES"
+                ),
+            }
+        )
+    truth_theta_modes = np.fft.fftn(truth_theta, norm="ortho").ravel()[theta_flat]
+    draw_theta_modes = np.stack(
+        [np.fft.fftn(field, norm="ortho").ravel()[theta_flat] for field in draw_theta_array]
+    )
+    mean_theta_modes = np.fft.fftn(mean_theta, norm="ortho").ravel()[theta_flat]
+    theta_prior_variance = (
+        np.asarray(transfer, dtype=np.float64).ravel()[theta_flat] ** 2
+    )
+    theta_upstream = development_upstream_gate_schema(
+        np.zeros(theta_available.size, dtype=bool),
+        np.zeros(theta_available.size, dtype=bool),
     )
     theta_metrics = compute_development_smoke_metrics(
-        **common, domain_id="global_normalized_velocity_divergence_theta"
+        truth_theta_modes[None, :],
+        draw_theta_modes[None, :, :],
+        theta_prior_variance,
+        theta_assignment,
+        theta_available,
+        np.ones(theta_available.size, dtype=bool),
+        theta_upstream,
+        domain_id="global_discrete_normalized_velocity_divergence_theta",
+        bin_manifest_body_sha256=manifest_body_sha256,
+        posterior_mean=mean_theta_modes[None, :],
     )
+    consistency_errors = [
+        non_nyquist_delta_theta_relative_error(truth_delta, truth_theta),
+        non_nyquist_delta_theta_relative_error(mean_delta, mean_theta),
+        *[
+            non_nyquist_delta_theta_relative_error(delta, theta)
+            for delta, theta in zip(draw_delta_array, draw_theta_array)
+        ],
+    ]
     return delta_metrics, theta_metrics, {
         "truth_delta": truth_delta,
         "truth_theta": truth_theta,
@@ -550,6 +669,12 @@ def evaluate_delta_theta_metrics(
         "posterior_mean_theta": mean_theta,
         "posterior_delta": draw_delta_array,
         "posterior_theta": draw_theta_array,
+        "truth_velocity": truth_velocity,
+        "posterior_mean_velocity": mean_velocity,
+        "posterior_draw_velocity": draw_velocity_array,
+        "theta_global_merged_bin_availability": theta_availability,
+        "theta_non_nyquist_analysis_mode_count": int(theta_flat.size),
+        "delta_theta_non_nyquist_relative_errors": consistency_errors,
     }
 
 
@@ -733,23 +858,15 @@ def calculate(
         posterior_white_array,
         mean_white,
         transfer,
+        growth_rate,
         plan,
         body_sha,
     )
     posterior_mean_delta = physical_fields["posterior_mean_delta"]
     posterior_mean_theta = physical_fields["posterior_mean_theta"]
-    truth_velocity = delta_to_velocity(
-        physical_fields["truth_delta"], growth_rate, BOX_SIZE
-    )
-    posterior_mean_velocity = delta_to_velocity(
-        posterior_mean_delta, growth_rate, BOX_SIZE
-    )
-    posterior_draw_velocity = np.stack(
-        [
-            delta_to_velocity(field, growth_rate, BOX_SIZE)
-            for field in physical_fields["posterior_delta"]
-        ]
-    )
+    truth_velocity = physical_fields["truth_velocity"]
+    posterior_mean_velocity = physical_fields["posterior_mean_velocity"]
+    posterior_draw_velocity = physical_fields["posterior_draw_velocity"]
     truth_radial_cic = cic_sample_radial_velocity(
         truth_velocity, design["pos"], design["rhat"], BOX_SIZE
     )
@@ -768,11 +885,26 @@ def calculate(
     gates["truth_radial_forward_CIC_pass"] = bool(
         radial_relative_error <= RADIAL_FORWARD_MAX_RELATIVE_ERROR
     )
+    theta_errors = np.asarray(
+        physical_fields["delta_theta_non_nyquist_relative_errors"], dtype=float
+    )
+    gates["delta_theta_non_nyquist_relative_errors"] = theta_errors.tolist()
+    gates["delta_theta_non_nyquist_max_relative_error"] = float(
+        np.max(theta_errors)
+    )
+    gates["delta_theta_non_nyquist_max_inclusive"] = (
+        THETA_NON_NYQUIST_MAX_RELATIVE_ERROR
+    )
+    gates["delta_theta_non_nyquist_pass"] = bool(
+        np.all(theta_errors <= THETA_NON_NYQUIST_MAX_RELATIVE_ERROR)
+    )
     gates["all_pass"] = bool(
-        gates["all_pass"] and gates["truth_radial_forward_CIC_pass"]
+        gates["all_pass"]
+        and gates["truth_radial_forward_CIC_pass"]
+        and gates["delta_theta_non_nyquist_pass"]
     )
     if not gates["all_pass"]:
-        raise SmokeError("adjoint, CG, or radial-forward numerical gate failed")
+        raise SmokeError("adjoint, CG, radial-forward, or theta numerical gate failed")
     heldout = heldout_mock_predictive(
         forward_all,
         design,
@@ -784,7 +916,7 @@ def calculate(
     )
     implementation_path = Path(__file__)
     result = {
-        "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v1",
+        "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v2",
         "status": "COMPLETE_IMPLEMENTATION_SMOKE_NO_SCIENCE_CLAIM",
         "selection_semantics": "observed_grouped_CF4_fixed_design_conditioned",
         "population_selection_mock": False,
@@ -825,13 +957,22 @@ def calculate(
         "growth_rate": growth_rate,
         "numerical_gates": gates,
         "global_merged_bin_availability": plan["availability"],
+        "theta_global_merged_bin_availability": physical_fields[
+            "theta_global_merged_bin_availability"
+        ],
         "N32_canonical_independent_real_analysis_mode_count": plan[
             "canonical_independent_real_analysis_mode_count"
+        ],
+        "N32_non_nyquist_theta_analysis_mode_count": physical_fields[
+            "theta_non_nyquist_analysis_mode_count"
         ],
         "delta_metrics": delta_metrics,
         "theta_metrics": theta_metrics,
         "delta_theta_normalization": {
-            "definition": "theta=-div(v)/(100*f)=delta_in_linear_theory",
+            "definition": "theta=-discrete_spectral_div(stored_v)/(100*f)",
+            "stored_theta_semantics": "reconstructed_from_stored_velocity_not_copied_from_delta",
+            "continuum_relation": "theta=delta_outside_real_grid_Nyquist_planes",
+            "Nyquist_plane_modes_excluded_from_theta_metrics": True,
             "truth_max_abs_difference": float(
                 np.max(np.abs(physical_fields["truth_delta"] - physical_fields["truth_theta"]))
             ),
@@ -843,7 +984,12 @@ def calculate(
                     )
                 )
             ),
-            "exact_identity_pass": True,
+            "non_nyquist_relative_errors": theta_errors.tolist(),
+            "non_nyquist_max_relative_error": float(np.max(theta_errors)),
+            "non_nyquist_max_inclusive": THETA_NON_NYQUIST_MAX_RELATIVE_ERROR,
+            "non_nyquist_consistency_pass": gates[
+                "delta_theta_non_nyquist_pass"
+            ],
         },
         "velocity_posterior_product": {
             "linear_kernel": "v_k=i*100*f*k/k^2*delta_k_with_DC_zero",
@@ -951,7 +1097,7 @@ def publish(
         _write_exclusive(stage / "fields.npz", fields_payload)
         _write_exclusive(stage / "result.json", result_payload)
         artifact = {
-            "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v1",
+            "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v2",
             "status": result["status"],
             "implementation_commit": result["implementation"]["commit"],
             "bin_manifest_body_sha256": result["bin_manifest"]["manifest_body_sha256"],
@@ -963,7 +1109,7 @@ def publish(
         artifact_payload = canonical_json_bytes(artifact)
         _write_exclusive(stage / "manifest.json", artifact_payload)
         complete = {
-            "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-complete-v1",
+            "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-complete-v2",
             "status": result["status"],
             "manifest_sha256": _sha256(artifact_payload),
             "implementation_commit": result["implementation"]["commit"],
@@ -1013,18 +1159,18 @@ def validate_output(directory: str | Path) -> dict[str, object]:
         raise SmokeError("artifact manifest JSON is not canonical")
     if complete_payload != canonical_json_bytes(complete):
         raise SmokeError("COMPLETE JSON is not canonical")
-    if result.get("schema") != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v1":
+    if result.get("schema") != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-v2":
         raise SmokeError("result schema mismatch")
     if result.get("status") != "COMPLETE_IMPLEMENTATION_SMOKE_NO_SCIENCE_CLAIM":
         raise SmokeError("result status mismatch")
     if (
         artifact.get("schema")
-        != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v1"
+        != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-artifact-manifest-v2"
     ):
         raise SmokeError("artifact manifest schema mismatch")
     if (
         complete.get("schema")
-        != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-complete-v1"
+        != "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-complete-v2"
     ):
         raise SmokeError("COMPLETE schema mismatch")
     if artifact.get("payloads") != {
@@ -1080,13 +1226,39 @@ def validate_output(directory: str | Path) -> dict[str, object]:
         raise SmokeError("RNG stream contract mismatch")
     if result.get("numerical_gates", {}).get("all_pass") is not True:
         raise SmokeError("output numerical gates are not all passing")
+    if result.get("numerical_gates", {}).get("delta_theta_non_nyquist_pass") is not True:
+        raise SmokeError("output delta/theta non-Nyquist gate is not passing")
     if result.get("N32_canonical_independent_real_analysis_mode_count") != 8538:
         raise SmokeError("N32 canonical independent-real mode count mismatch")
+    if result.get("N32_non_nyquist_theta_analysis_mode_count") != 8535:
+        raise SmokeError("N32 non-Nyquist theta mode count mismatch")
     availability = result.get("global_merged_bin_availability")
     if not isinstance(availability, list) or len(availability) != 33:
         raise SmokeError("all 33 merged-bin availability records are required")
     if [item.get("merged_bin_index") for item in availability] != list(range(33)):
         raise SmokeError("merged-bin availability indices are not canonical")
+    if sum(
+        item.get("N32_canonical_independent_real_mode_count", -1)
+        for item in availability
+    ) != 8538:
+        raise SmokeError("density merged-bin mode counts do not sum to 8538")
+    theta_availability = result.get("theta_global_merged_bin_availability")
+    if not isinstance(theta_availability, list) or len(theta_availability) != 33:
+        raise SmokeError("all 33 theta merged-bin availability records are required")
+    if [item.get("merged_bin_index") for item in theta_availability] != list(range(33)):
+        raise SmokeError("theta merged-bin availability indices are not canonical")
+    if sum(
+        item.get("N32_non_nyquist_canonical_independent_real_mode_count", -1)
+        for item in theta_availability
+    ) != 8535:
+        raise SmokeError("theta merged-bin mode counts do not sum to 8535")
+    normalization = result.get("delta_theta_normalization", {})
+    if normalization.get("stored_theta_semantics") != (
+        "reconstructed_from_stored_velocity_not_copied_from_delta"
+    ) or normalization.get("non_nyquist_consistency_pass") is not True or normalization.get(
+        "Nyquist_plane_modes_excluded_from_theta_metrics"
+    ) is not True:
+        raise SmokeError("stored theta/divergence semantics or consistency gate mismatch")
     for key, expected in no_claim_policy().items():
         if result.get(key) is not expected:
             raise SmokeError(f"output no-claim flag mismatch: {key}")
@@ -1177,14 +1349,62 @@ def validate_output(directory: str | Path) -> dict[str, object]:
         for name, shape in row_shapes.items():
             if fields[name].shape != shape or not np.all(np.isfinite(fields[name])):
                 raise SmokeError(f"row/nuisance field shape or finiteness mismatch: {name}")
-        if not np.array_equal(fields["truth_delta"], fields["truth_theta"]):
-            raise SmokeError("truth normalized theta does not equal delta")
-        if not np.array_equal(
-            fields["posterior_mean_delta"], fields["posterior_mean_theta"]
+        growth_rate = result.get("growth_rate")
+        if (
+            not isinstance(growth_rate, (int, float))
+            or isinstance(growth_rate, bool)
+            or not math.isfinite(growth_rate)
+            or growth_rate <= 0.0
         ):
-            raise SmokeError("posterior-mean normalized theta does not equal delta")
-        if not np.array_equal(fields["posterior_delta"], fields["posterior_theta"]):
-            raise SmokeError("posterior-draw normalized theta does not equal delta")
+            raise SmokeError("result growth rate is not finite and positive")
+        reconstructed = {
+            "truth_theta": velocity_to_normalized_divergence(
+                fields["truth_velocity"], growth_rate
+            ),
+            "posterior_mean_theta": velocity_to_normalized_divergence(
+                fields["posterior_mean_velocity"], growth_rate
+            ),
+        }
+        reconstructed["posterior_theta"] = np.stack(
+            [
+                velocity_to_normalized_divergence(velocity, growth_rate)
+                for velocity in fields["posterior_draw_velocity"]
+            ]
+        )
+        for name, expected in reconstructed.items():
+            if not np.array_equal(fields[name], expected):
+                raise SmokeError(f"stored theta is not reconstructed from velocity: {name}")
+        consistency = [
+            non_nyquist_delta_theta_relative_error(
+                fields["truth_delta"], fields["truth_theta"]
+            ),
+            non_nyquist_delta_theta_relative_error(
+                fields["posterior_mean_delta"], fields["posterior_mean_theta"]
+            ),
+            *[
+                non_nyquist_delta_theta_relative_error(delta, theta)
+                for delta, theta in zip(
+                    fields["posterior_delta"], fields["posterior_theta"]
+                )
+            ],
+        ]
+        if np.max(consistency) > THETA_NON_NYQUIST_MAX_RELATIVE_ERROR:
+            raise SmokeError("stored delta/theta non-Nyquist consistency gate failed")
+        for source, label in (
+            (normalization.get("non_nyquist_relative_errors"), "normalization"),
+            (
+                result.get("numerical_gates", {}).get(
+                    "delta_theta_non_nyquist_relative_errors"
+                ),
+                "numerical gate",
+            ),
+        ):
+            try:
+                recorded = np.asarray(source, dtype=float)
+            except (TypeError, ValueError) as exc:
+                raise SmokeError(f"{label} delta/theta errors are invalid") from exc
+            if recorded.shape != (6,) or not np.array_equal(recorded, consistency):
+                raise SmokeError(f"{label} delta/theta errors do not bind stored fields")
     return {
         "status": "PASS",
         "directory": str(root),
