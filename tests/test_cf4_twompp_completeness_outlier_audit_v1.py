@@ -16,6 +16,9 @@ RUNNER = ROOT / "scripts/run_cf4_twompp_completeness_outlier_audit_v1.sbatch"
 V4_PROGRAM = ROOT / "config/cf4_twompp_disjoint_tracer_pilot_program_v4.json"
 V4_SOURCE = ROOT / "src/cf4_twompp_disjoint_tracer_pilot_v4.py"
 V4_RECORD = ROOT / "config/cf4_twompp_disjoint_tracer_pilot_v4_result_record_v1.json"
+FAILURE_RECORD = (
+    ROOT / "config/cf4_twompp_completeness_outlier_audit_v1_failure_result_record.json"
+)
 
 
 def _load_module():
@@ -161,3 +164,27 @@ def test_runner_pins_resources_and_controller_boundary() -> None:
     assert "renameat2" not in text
     assert "pgrep" not in text
     assert "--requeue" not in text
+
+
+def test_failure_record_binds_preserved_metrics_and_stops_joint_execution() -> None:
+    record = json.loads(FAILURE_RECORD.read_text())
+    assert record["execution"]["Slurm_job_id"] == 329539
+    assert record["execution"]["failure_mode"] == (
+        "intentional_fail_closed_scientific_input_gate"
+    )
+    for key in ("result", "outliers", "FAILED", "stdout", "stderr"):
+        binding = record["preserved_failure_artifacts"][key]
+        raw = Path(binding["path"]).read_bytes()
+        assert len(raw) == binding["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == binding["sha256"]
+    gate = record["gate_result"]
+    assert gate["zero_exposure_count"] == 1
+    assert gate["large_difference_count"] == 319
+    assert gate["large_difference_fraction"] <= gate["large_difference_fraction_limit"]
+    assert gate["usable_after_frozen_outlier_exclusion_count"] == 36635
+    assert all(count > 0 for count in gate["usable_six_population_counts"].values())
+    decision = record["scientific_decision"]
+    assert decision["unfiltered_36954_tracer_count_likelihood"] == "NO_GO"
+    assert decision["joint_information_budget_execution"] == "STOPPED_NOT_RUN"
+    assert decision["density_field_inference"] == "NOT_RUN"
+    assert record["recommended_redesign"]["approval_required"] is True
