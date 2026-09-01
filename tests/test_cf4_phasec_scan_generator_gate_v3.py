@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROGRAM = ROOT / "config/cf4_phasec_scan_generator_gate_v3_hardware_quarantine.json"
 RUNNER = ROOT / "scripts/run_cf4_phasec_scan_generator_gate_v3.sbatch"
 AGGREGATOR = ROOT / "scripts/aggregate_cf4_phasec_scan_generator_gate_v3.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_phasec_scan_generator_gate_v3_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -77,5 +78,20 @@ def test_v3_does_not_release_sampler_directly():
     decision = load_program()["decision_rule"]
     assert decision["sampler_mechanics_pilot_indices_after_PASS"] == [0, 6]
     assert decision["sampler_release_by_this_execution"] is False
+    assert decision["actual_observational_posterior_allowed"] is False
+    assert decision["validation_or_Phase_D_allowed"] is False
+
+
+def test_v3_result_record_passes_all_eight_and_releases_only_mock_pilot_indices():
+    result = json.loads(RESULT_RECORD.read_text())
+    assert result["lineage"]["commit"] == "214a2fc03ec3be0bacc10b9241c026350387e046"
+    summary = result["summary"]
+    assert summary["valid_task_artifact_count"] == 8
+    assert summary["passing_seed_count"] == 8
+    assert summary["all_seed_gate_pass"] is True
+    assert len(result["hardware_provenance"]) == 4
+    decision = result["decision"]
+    assert decision["sampler_mechanics_pilot_indices_allowed"] == [0, 6]
+    assert decision["sampler_mechanics_pilot_started"] is False
     assert decision["actual_observational_posterior_allowed"] is False
     assert decision["validation_or_Phase_D_allowed"] is False
