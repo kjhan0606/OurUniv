@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phaseb_smoke_program_v2.json"
+PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phaseb_smoke_program_v3.json"
 SOURCE = ROOT / "src/cf4_datum_bearing_z0_phaseb_smoke.py"
 
 
