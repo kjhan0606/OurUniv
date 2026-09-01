@@ -8,6 +8,7 @@ PROGRAM = ROOT / "config/cf4_phasec_scan_generator_gate_v2.json"
 SOURCE = ROOT / "src/cf4_phasec_scan_generator_gate_v2.py"
 RUNNER = ROOT / "scripts/run_cf4_phasec_scan_generator_gate_v2.sbatch"
 AGGREGATOR = ROOT / "scripts/aggregate_cf4_phasec_scan_generator_gate_v2.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_phasec_scan_generator_gate_v2_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -95,3 +96,16 @@ def test_pass_releases_only_two_mock_sampler_mechanics_indices():
     assert decision["sampler_mechanics_pilot_indices_after_PASS"] == [0, 6]
     assert decision["actual_observational_posterior_allowed"] is False
     assert decision["validation_or_Phase_D_allowed"] is False
+
+
+def test_recorded_result_is_no_go_and_revises_the_two_seed_inference():
+    result = json.loads(RESULT_RECORD.read_text())
+    assert result["lineage"]["commit"] == "b4f33d2a1f408c07ba746a8765d78096a6028e5c"
+    summary = result["summary"]
+    assert summary["valid_task_artifact_count"] == 8
+    assert summary["passing_seed_count"] == 6
+    assert summary["failing_seeds"] == [2026083001, 2026083006]
+    assert summary["all_seed_gate_pass"] is False
+    assert result["decision"]["run_sampler_mechanics_pilot"] is False
+    assert "falsifies" in result["audit_revision"]["revised_interpretation"]
+    assert result["decision"]["next_allowed_work"].startswith("mock-only")
