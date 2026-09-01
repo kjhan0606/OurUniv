@@ -11,6 +11,7 @@ SOURCE = ROOT / "src/cf4_datum_bearing_z0_phasec_pilot.py"
 PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
 RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
 AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_datum_bearing_z0_phasec_v5_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -186,3 +187,32 @@ def test_v2_is_execution_only_and_binds_the_v1_failure():
     assert prior_record["failure_boundary"]["joint_likelihood_value_or_gradient_created"] is False
     assert prior_record["failure_boundary"]["posterior_draw_count"] == 0
     assert prior_record["execution_only_repair"]["science_contract_change"] is False
+
+
+def test_v5_result_record_is_fail_closed_and_preserves_scope_firewall():
+    record = json.loads(RESULT_RECORD.read_text())
+    assert record["lineage"]["execution_amendment"]["sha256"] == sha256(PROGRAM)
+    assert record["lineage"]["implementation"]["sha256"] == sha256(SOURCE)
+    summary = record["array_summary"]
+    assert summary["requested_tasks"] == 8
+    assert summary["validated_complete_artifact_sets"] == 6
+    assert summary["Slurm_failed_tasks"] == 2
+    assert summary["tasks_passing_all_sampler_usability_flags"] == 0
+    assert summary["balanced_arm_summary_allowed"] is False
+    assert [row["assignment"]["seed"] for row in record["task_outcomes"]] == list(
+        range(2026083000, 2026083008)
+    )
+    decision = record["decision"]
+    for key in (
+        "Phase_C_pilot_pass",
+        "promote_current_parent_posterior",
+        "open_validation_seeds",
+        "run_actual_observational_posterior",
+        "enter_Phase_D",
+        "claim_present_day_density_or_velocity_posterior",
+        "claim_0p3_cMpc_h_resolution",
+        "automatic_retry_allowed",
+    ):
+        assert decision[key] is False
+    assert decision["new_user_approval_required_for_redesigned_Phase_C"] is True
+    assert not any(record["scope_firewall"].values())
