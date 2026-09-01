@@ -10,6 +10,7 @@ PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_redesign_v1.json"
 SOURCE = ROOT / "src/cf4_phasec_redesign_generator_gate.py"
 RUNNER = ROOT / "scripts/run_cf4_phasec_redesign_generator_gate_v1.sbatch"
 AGGREGATOR = ROOT / "scripts/aggregate_cf4_phasec_redesign_generator_gate_v1.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_phasec_redesign_generator_v1_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -157,3 +158,28 @@ def test_success_semantics_do_not_claim_observations_or_resolution():
     ):
         assert semantics[key] is False
     assert semantics["actual_observational_step_requires_separate_user_approval"] is True
+
+
+def test_generator_result_record_is_no_go_and_releases_no_sampler():
+    record = json.loads(RESULT_RECORD.read_text())
+    assert record["lineage"]["program"]["sha256"] == sha256(PROGRAM)
+    assert record["lineage"]["implementation"]["sha256"] == sha256(SOURCE)
+    assert record["summary"]["valid_task_artifact_count"] == 8
+    assert record["summary"]["passing_seed_count"] == 7
+    assert record["summary"]["all_seed_gate_pass"] is False
+    assert record["summary"]["sampler_mechanics_pilot_started"] is False
+    failures = [row for row in record["task_outcomes"] if not row["pass"]]
+    assert [row["seed"] for row in failures] == [2026083002]
+    assert record["cross_run_evidence"]["seed_2026083002"][
+        "nested_white_metrics_identical_between_V5_and_redesign"
+    ] is True
+    decision = record["decision"]
+    assert decision["generator_gate_pass"] is False
+    assert decision["run_sampler_mechanics_pilot"] is False
+    assert decision["replace_or_drop_seed_2026083002"] is False
+    assert decision["relax_generator_thresholds"] is False
+    assert not any(record["scope_firewall"].values())
+    resource = record["resource_audit"]
+    assert resource["next_GPU_job_rounded_request_MiB"] >= 1.2 * resource[
+        "largest_sacct_batch_MaxRSS_MiB"
+    ]

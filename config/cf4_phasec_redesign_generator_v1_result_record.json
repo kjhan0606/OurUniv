@@ -1,0 +1,164 @@
+{
+  "schema": "ouruniv-cf4-phasec-redesign-generator-v1-result-record-v1",
+  "date": "2026-09-01",
+  "status": "GENERATOR_GATE_NO_GO_SEVEN_OF_EIGHT_PASS_STOP_BEFORE_SAMPLER",
+  "lineage": {
+    "commit": "f60b7ba6ffcd16817dc9ef946f935e0d170babe2",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_phasec_redesign_v1.json",
+      "sha256": "f5817e71c8038e64825516f01ddfd8e61a077ef664cf5b73acbc4a4bd1c14a76"
+    },
+    "implementation": {
+      "path": "src/cf4_phasec_redesign_generator_gate.py",
+      "sha256": "1751948d93dd18d25f0cdb1b8139373809bd8380baf62d558a95d2daae124afc"
+    },
+    "array_job_id": 329902,
+    "aggregate_job_id": 329910
+  },
+  "aggregate_artifact": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_redesign_v1_generator_aggregate",
+    "aggregate_sha256": "d61654faaef9ec87c57aba6531e405b2087abad4cc0c02baeb26d0ce44264add",
+    "manifest_sha256": "7a8a8964fe1f622e69ffd1bc98c993c4268200c39ed4596eda10565896cd2fc1",
+    "complete_sha256": "286a0b2d4ea37402d0527e925ba741a31326dc462a32de58925c93a6fc3e9b97",
+    "independent_validation": "PASS"
+  },
+  "summary": {
+    "requested_seed_count": 8,
+    "valid_task_artifact_count": 8,
+    "passing_seed_count": 7,
+    "failing_seed_count": 1,
+    "all_seed_gate_pass": false,
+    "sampler_mechanics_pilot_started": false,
+    "posterior_created": false
+  },
+  "task_outcomes": [
+    {
+      "index": 0,
+      "seed": 2026083000,
+      "arm": "A",
+      "pass": true,
+      "density_cross_correlation": 0.9999996686763666,
+      "density_relative_L2": 0.0008180036817880461,
+      "velocity_cross_correlation": 0.9999999554561935,
+      "velocity_relative_L2": 0.00030068882272888016,
+      "result_sha256": "6bfe3ab5eaddd325a5f20272dd60e767525ffeb5ed8abac0573a60d24f431931"
+    },
+    {
+      "index": 1,
+      "seed": 2026083001,
+      "arm": "A",
+      "pass": true,
+      "density_cross_correlation": 0.9999996994058575,
+      "density_relative_L2": 0.0007804291823419906,
+      "velocity_cross_correlation": 0.9999999518535472,
+      "velocity_relative_L2": 0.0003142050257394135,
+      "result_sha256": "574d2b721be410eddc9c5a6b82d147873e80a1ad5990cf99f5e5f499ee2caad6"
+    },
+    {
+      "index": 2,
+      "seed": 2026083002,
+      "arm": "B",
+      "pass": false,
+      "convergence_1_over_128_density_and_momentum_all_finite": false,
+      "production_1_over_256_density_and_momentum_all_finite": false,
+      "time_convergence_available": false,
+      "result_sha256": "26a8c2caa5e44f9bc65d8ec10587d748d7c66d3a93bcc41236763c3fc19671d0"
+    },
+    {
+      "index": 3,
+      "seed": 2026083003,
+      "arm": "B",
+      "pass": true,
+      "density_cross_correlation": 0.999999699909153,
+      "density_relative_L2": 0.0007800159181550435,
+      "velocity_cross_correlation": 0.9999999513256039,
+      "velocity_relative_L2": 0.00031566067358231834,
+      "result_sha256": "ffc8fc82c418a9116bb672f3f0b11bcbf11926decdb75263e833c9f72664cd17"
+    },
+    {
+      "index": 4,
+      "seed": 2026083004,
+      "arm": "C",
+      "pass": true,
+      "density_cross_correlation": 0.999999688463156,
+      "density_relative_L2": 0.0007934203845215604,
+      "velocity_cross_correlation": 0.9999999534464468,
+      "velocity_relative_L2": 0.0003091874334316598,
+      "result_sha256": "e5d01bfb944c9715d24699eb5f2e7594a091254d9f07caf592e2f1feac233804"
+    },
+    {
+      "index": 5,
+      "seed": 2026083005,
+      "arm": "C",
+      "pass": true,
+      "density_cross_correlation": 0.9999997187362202,
+      "density_relative_L2": 0.0007554974650308027,
+      "velocity_cross_correlation": 0.9999999527819323,
+      "velocity_relative_L2": 0.00031159872634528265,
+      "result_sha256": "80edfd97adce5738809be3486c59fdc369105005e8e31bd277a3de91241735cf"
+    },
+    {
+      "index": 6,
+      "seed": 2026083006,
+      "arm": "D",
+      "pass": true,
+      "density_cross_correlation": 0.9999996917019667,
+      "density_relative_L2": 0.0007901558676759865,
+      "velocity_cross_correlation": 0.9999999534377367,
+      "velocity_relative_L2": 0.00030861119848022664,
+      "result_sha256": "2b5f63e1b1e141915a5800ae46e6c5c3bd518f72e4d5c07d3fb927fe0850d991"
+    },
+    {
+      "index": 7,
+      "seed": 2026083007,
+      "arm": "D",
+      "pass": true,
+      "density_cross_correlation": 0.9999996768898199,
+      "density_relative_L2": 0.0008077532137351598,
+      "velocity_cross_correlation": 0.9999999549801833,
+      "velocity_relative_L2": 0.00030373282141719525,
+      "result_sha256": "d762f52aaafabb9328571a1e4a4c94cc399ed84f9bff282acf872bd8dfb5e44a"
+    }
+  ],
+  "cross_run_evidence": {
+    "seed_2026083002": {
+      "V5_default_1_over_64": "finite",
+      "redesign_1_over_128": "nonfinite",
+      "redesign_1_over_256": "nonfinite",
+      "nested_white_metrics_identical_between_V5_and_redesign": true
+    },
+    "seed_2026083007": {
+      "V5_default_1_over_64": "nonfinite",
+      "redesign_1_over_128": "finite",
+      "redesign_1_over_256": "finite"
+    },
+    "interpretation": "The observed PMWD failure is seed- and integration-path-dependent and is not explained by a monotonic too-large-time-step model. A step-localized numerical audit is required before choosing a truth integrator."
+  },
+  "resource_audit": {
+    "requested_host_memory_MiB_per_task": 5120,
+    "largest_sacct_batch_MaxRSS_KiB": 7199600,
+    "largest_sacct_batch_MaxRSS_MiB": 7030.859375,
+    "next_GPU_job_minimum_20_percent_headroom_MiB": 8437.03125,
+    "next_GPU_job_rounded_request_MiB": 9216,
+    "note": "Two co-scheduled tasks showed roughly double the other task MaxRSS in sacct; future requests nevertheless use the largest observed accounting value."
+  },
+  "decision": {
+    "generator_gate_pass": false,
+    "run_sampler_mechanics_pilot": false,
+    "replace_or_drop_seed_2026083002": false,
+    "relax_generator_thresholds": false,
+    "run_actual_observational_posterior": false,
+    "open_validation_or_Phase_D": false,
+    "claim_0p3_cMpc_h": false,
+    "next_allowed_work": "mock-only step-localized PMWD failure diagnostic"
+  },
+  "scope_firewall": {
+    "actual_2Mpp_counts_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_seed_accessed": false,
+    "posterior_created": false,
+    "sampler_started": false,
+    "Phase_D_started": false,
+    "IC_PM_HOP_or_RAMSES_started": false
+  }
+}
