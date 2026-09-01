@@ -30,8 +30,8 @@ import cf4_bgc_fixed_design_smoke as fixed
 import cf4_linear_cr as linear
 
 
-SCHEMA = "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-program-v1"
-RESULT_SCHEMA = "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-result-v1"
+SCHEMA = "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-program-v2"
+RESULT_SCHEMA = "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-result-v2"
 EXPECTED_FILES = {"diagnostics.npz", "result.json", "manifest.json", "COMPLETE"}
 
 
@@ -183,7 +183,7 @@ def _artifact_manifest(directory: Path) -> dict[str, object]:
         if path.name in {"manifest.json", "COMPLETE"}:
             continue
         rows.append({"name": path.name, "bytes": path.stat().st_size, "sha256": sha256_file(path)})
-    return {"schema": "ouruniv-cf4-phaseb-artifact-manifest-v1", "files": rows}
+    return {"schema": "ouruniv-cf4-phaseb-artifact-manifest-v2", "files": rows}
 
 
 def run(program_path: str | Path, output_path: str | Path, implementation_commit: str) -> None:
@@ -265,25 +265,37 @@ def run(program_path: str | Path, output_path: str | Path, implementation_commit
         displacement = radial_velocity / 100.0
         return (centres + displacement[..., None] * rhat_cells) % L, displacement
 
-    def cic_deposit(masses, positions):
-        """Periodic, conservative, piecewise-differentiable CIC push."""
+    def tsc_deposit(masses, positions):
+        """Periodic conservative C1 TSC push, one population at a time."""
         flat_pos = positions.reshape((-1, 3))
         flat_mass = masses.reshape((masses.shape[0], -1))
         cell = flat_pos / spacing - 0.5
-        lower = jnp.floor(cell).astype(jnp.int32)
-        frac = cell - lower
-        out = jnp.zeros((masses.shape[0], N, N, N), dtype=masses.dtype)
-        for dx in (0, 1):
-            wx = frac[:, 0] if dx else 1.0 - frac[:, 0]
-            for dy in (0, 1):
-                wy = frac[:, 1] if dy else 1.0 - frac[:, 1]
-                for dz in (0, 1):
-                    wz = frac[:, 2] if dz else 1.0 - frac[:, 2]
-                    ii = (lower[:, 0] + dx) % N
-                    jj = (lower[:, 1] + dy) % N
-                    kk = (lower[:, 2] + dz) % N
-                    out = out.at[:, ii, jj, kk].add(flat_mass * (wx * wy * wz)[None, :])
-        return out
+        nearest = jnp.floor(cell + 0.5).astype(jnp.int32)
+        offset_from_nearest = cell - nearest
+
+        def weights(component):
+            return (
+                0.5 * (0.5 - component) ** 2,
+                0.75 - component**2,
+                0.5 * (0.5 + component) ** 2,
+            )
+
+        wx_all = weights(offset_from_nearest[:, 0])
+        wy_all = weights(offset_from_nearest[:, 1])
+        wz_all = weights(offset_from_nearest[:, 2])
+        populations = []
+        for population in range(masses.shape[0]):
+            out = jnp.zeros((N, N, N), dtype=masses.dtype)
+            for x_index, dx in enumerate((-1, 0, 1)):
+                for y_index, dy in enumerate((-1, 0, 1)):
+                    for z_index, dz in enumerate((-1, 0, 1)):
+                        ii = (nearest[:, 0] + dx) % N
+                        jj = (nearest[:, 1] + dy) % N
+                        kk = (nearest[:, 2] + dz) % N
+                        weight = wx_all[x_index] * wy_all[y_index] * wz_all[z_index]
+                        out = out.at[ii, jj, kk].add(flat_mass[population] * weight)
+            populations.append(out)
+        return jnp.stack(populations)
 
     def count_lambda(white, alpha, logbias, response):
         delta = white_to_delta(white)
@@ -292,7 +304,7 @@ def run(program_path: str | Path, output_path: str | Path, implementation_commit
         positions, displacement = rsd_positions(velocity)
         bias = jnp.exp(logbias)
         real_mass = jnp.exp(alpha[:, None, None, None] + bias[:, None, None, None] * eta)
-        redshift_mass = cic_deposit(real_mass, positions)
+        redshift_mass = tsc_deposit(real_mass, positions)
         return response * redshift_mass, displacement, eta, positions
 
     truth_white = jnp.asarray(truth["truth_white"])
@@ -351,7 +363,7 @@ def run(program_path: str | Path, output_path: str | Path, implementation_commit
     test_cotangent_np = operator_rng.standard_normal((6, N, N, N))
     test_mass = jnp.asarray(test_mass_np)
     fixed_positions = jax.lax.stop_gradient(truth_positions)
-    pushed, pullback = jax.vjp(lambda mass: cic_deposit(mass, fixed_positions), test_mass)
+    pushed, pullback = jax.vjp(lambda mass: tsc_deposit(mass, fixed_positions), test_mass)
     pulled = pullback(jnp.asarray(test_cotangent_np))[0]
     left = float(jnp.vdot(pushed, jnp.asarray(test_cotangent_np)))
     right = float(jnp.vdot(test_mass, pulled))
@@ -533,7 +545,7 @@ def run(program_path: str | Path, output_path: str | Path, implementation_commit
             "full_sky_position_dependent_LOS": True,
             "plane_parallel_RSD": False,
             "coherent_RSD_only_FoG_disabled": True,
-            "periodic_CIC_mass_push": True,
+            "periodic_TSC_mass_push": True,
             "selection_applied_after_RSD": True,
             "CF4_mean_velocity_and_sigma_factor": True,
         },
@@ -587,7 +599,7 @@ def run(program_path: str | Path, output_path: str | Path, implementation_commit
         manifest = _artifact_manifest(staging)
         (staging / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
         complete = {
-            "schema": "ouruniv-cf4-phaseb-complete-v1",
+            "schema": "ouruniv-cf4-phaseb-complete-v2",
             "result_sha256": sha256_file(staging / "result.json"),
             "manifest_sha256": sha256_file(staging / "manifest.json"),
             "all_pass": all_pass,
