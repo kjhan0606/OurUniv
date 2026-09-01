@@ -19,6 +19,9 @@ V3_FAILURE = (
 PROGRAM = ROOT / "config/cf4_twompp_disjoint_tracer_pilot_program_v4.json"
 SOURCE = ROOT / "src/cf4_twompp_disjoint_tracer_pilot_v4.py"
 RUNNER = ROOT / "scripts/run_cf4_twompp_disjoint_tracer_pilot_v4.sbatch"
+RESULT_RECORD = (
+    ROOT / "config/cf4_twompp_disjoint_tracer_pilot_v4_result_record_v1.json"
+)
 
 
 def _load_v4():
@@ -157,3 +160,25 @@ def test_v4_runner_pins_resources_and_controller_boundary() -> None:
     assert "renameat2" not in text
     assert "pgrep" not in text
     assert "--requeue" not in text
+
+
+def test_v4_result_record_binds_the_passing_artifact_without_science_overclaim() -> None:
+    record = json.loads(RESULT_RECORD.read_text())
+    artifact = Path(record["artifacts"]["result"]["path"])
+    raw = artifact.read_bytes()
+    result = json.loads(raw)
+    assert hashlib.sha256(raw).hexdigest() == record["artifacts"]["result"]["sha256"]
+    assert len(raw) == record["artifacts"]["result"]["bytes"]
+    assert record["execution"]["Slurm_job_id"] == 329501
+    assert record["execution"]["state"] == "COMPLETED"
+    assert record["gate_result"]["all_nine_gates_passed"]
+    assert result["failed_gates"] == []
+    assert record["gate_result"]["eligible_CF4_disjoint_real_2Mpp_tracers"] == (
+        result["tracer_voxel_summary"]["eligible_row_count"]
+    )
+    interpretation = record["interpretation"]
+    assert interpretation["technical_input_route"] == "GO"
+    assert interpretation["present_density_posterior_validated"] is False
+    assert interpretation["joint_velocity_density_information_budget_executed"] is False
+    assert interpretation["observational_resolution_0p3_cMpc_h_established"] is False
+    assert record["next"]["approval_required"] is True
