@@ -10,6 +10,7 @@ PROGRAM = ROOT / "config/cf4_phasec_pmwd_scan_diagnostic_v1.json"
 SOURCE = ROOT / "src/cf4_phasec_pmwd_scan_diagnostic.py"
 RUNNER = ROOT / "scripts/run_cf4_phasec_pmwd_scan_diagnostic_v1.sbatch"
 AGGREGATOR = ROOT / "scripts/aggregate_cf4_phasec_pmwd_scan_diagnostic_v1.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_phasec_pmwd_scan_diagnostic_v1_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -124,3 +125,17 @@ def test_sampler_cannot_be_released_by_the_diagnostic_aggregate():
     decision = load_program()["decision_rule"]
     assert decision["automatic_sampler_release"] is False
     assert "all-eight-seed generator gate" in decision["next_if_pass"]
+
+
+def test_scan_diagnostic_result_releases_only_the_all_eight_generator_gate():
+    record = json.loads(RESULT_RECORD.read_text())
+    assert record["lineage"]["program"]["sha256"] == sha256(PROGRAM)
+    assert record["lineage"]["implementation"]["sha256"] == sha256(SOURCE)
+    assert all(row["all_scan_candidates_finite"] for row in record["outcomes"])
+    assert all(row["first_nonfinite_step"] is None for row in record["outcomes"])
+    decision = record["decision"]
+    assert decision["scan_loop_repair_admissible"] is True
+    assert decision["all_eight_scan_generator_gate_allowed"] is True
+    assert decision["sampler_allowed_now"] is False
+    assert decision["actual_observational_posterior_allowed"] is False
+    assert not any(record["scope_firewall"].values())
