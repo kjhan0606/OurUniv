@@ -30,10 +30,12 @@ import cf4_linear_cr as linear
 
 
 SCHEMA = "ouruniv-cf4-datum-bearing-z0-phasec-program-v1"
+AMENDMENT_SCHEMA = "ouruniv-cf4-datum-bearing-z0-phasec-execution-amendment-v2"
 TASK_SCHEMA = "ouruniv-cf4-datum-bearing-z0-phasec-task-result-v1"
 AGGREGATE_SCHEMA = "ouruniv-cf4-datum-bearing-z0-phasec-aggregate-result-v1"
 TASK_FILES = {"posterior_summary.npz", "diagnostics.npz", "result.json", "manifest.json", "COMPLETE"}
 AGGREGATE_FILES = {"aggregate.json", "manifest.json", "COMPLETE"}
+PREFLIGHT_FILES = {"result.json", "manifest.json", "COMPLETE"}
 
 
 class PhaseCError(ValueError):
@@ -63,9 +65,36 @@ def task_name(index: int, seed: int, arm: str) -> str:
 def load_program(path: str | Path) -> tuple[dict[str, object], str]:
     payload = Path(path).read_bytes()
     try:
-        program = json.loads(payload)
+        document = json.loads(payload)
     except json.JSONDecodeError as exc:
         raise PhaseCError("cannot parse Phase-C program") from exc
+    if document.get("schema") == AMENDMENT_SCHEMA:
+        for binding_name in ("base_program", "V1_infrastructure_failure"):
+            binding = document.get(binding_name, {})
+            binding_path = Path(str(binding.get("path", "")))
+            if not binding_path.is_file() or sha256_file(binding_path) != binding.get("sha256"):
+                raise PhaseCError(f"Phase-C V2 amendment binding mismatch: {binding_name}")
+        if document.get("authorization", {}).get("execution_only_retry_after_pre_science_failure") is not True:
+            raise PhaseCError("Phase-C V2 execution-only repair is unauthorized")
+        program = json.loads(Path(document["base_program"]["path"]).read_text())
+        program["status"] = "AUTHORIZED_V2_EXECUTION_ONLY_REPAIR"
+        program["authorization"]["execution_only_retry_after_pre_science_failure"] = True
+        program["input_bindings"]["V1_program"] = dict(document["base_program"])
+        program["input_bindings"]["V1_infrastructure_failure"] = dict(
+            document["V1_infrastructure_failure"]
+        )
+        program["source_bindings"]["Phase_C_implementation"] = dict(
+            document["Phase_C_implementation"]
+        )
+        program["execution"].update(document["execution_override"])
+        program["environment"].update(document["environment_override"])
+        program["execution_amendment"] = {
+            "schema": AMENDMENT_SCHEMA,
+            "path": str(Path(path).resolve()),
+            "science_contract_change": False,
+        }
+    else:
+        program = document
     if program.get("schema") != SCHEMA:
         raise PhaseCError("Phase-C program schema mismatch")
     authorization = program.get("authorization", {})
@@ -1243,6 +1272,111 @@ def artifact_manifest(directory: Path, schema: str) -> dict[str, object]:
     return {"schema": schema, "files": rows}
 
 
+def run_preflight(
+    program_path: str | Path,
+    output_path: str | Path,
+    implementation_commit: str,
+) -> None:
+    """Compile one seed-0 truth and joint value/gradient, without sampling."""
+
+    program, program_sha = load_program(program_path)
+    output = Path(output_path)
+    staging = output.parent / f".{output.name}.staging"
+    if output.exists() or staging.exists():
+        raise PhaseCError("Phase-C preflight output or staging already exists")
+    if len(implementation_commit) != 40:
+        raise PhaseCError("implementation commit must be a full Git hash")
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    import jax
+    import jax.numpy as jnp
+
+    jax.config.update("jax_enable_x64", True)
+    if jax.default_backend() != "gpu":
+        raise PhaseCError("Phase-C preflight requires the allocated Slurm GPU")
+    assignment = program["mock_assignments"][0]
+    seed = int(assignment["seed"])
+    response6, response4 = _load_selection(program)
+    nbar, bias = _published_prior_arrays(program)
+    args = fixed.frozen_args(program["input_bindings"]["CF4_catalog"]["path"])
+    design = linear.prepare_catalog(args)
+    fine_white, _coarse_white, nesting = nested_white_fields(
+        seed,
+        int(program["grid"]["inference_N"]),
+        int(program["grid"]["truth_N"]),
+        int(program["rng_tags"]["high_k_white"]),
+    )
+    truth = build_pmwd_truth(fine_white, program)
+    intensity, stress_meta = truth_intensity(
+        str(assignment["arm"]), truth, response6, response4, nbar, bias, program, seed
+    )
+    mock = generate_mock_data(str(assignment["arm"]), seed, intensity, truth, design, program)
+    negative_log_posterior, _count_lambda, initial, _metadata = build_inference_model(
+        program, response6, mock, design
+    )
+    value, gradient = jax.jit(jax.value_and_grad(negative_log_posterior))(jnp.asarray(initial))
+    value_float = float(value)
+    gradient_np = np.asarray(gradient, dtype=np.float64)
+    if not math.isfinite(value_float) or not np.all(np.isfinite(gradient_np)):
+        raise PhaseCError("Phase-C preflight value/gradient is nonfinite")
+    result = {
+        "schema": "ouruniv-cf4-datum-bearing-z0-phasec-preflight-result-v1",
+        "status": "PASS_PHASE_C_EXECUTION_PREFLIGHT_NO_SAMPLER_NO_SCIENCE_RESULT",
+        "program": {"path": str(Path(program_path).resolve()), "sha256": program_sha},
+        "implementation": {
+            "path": str(Path(__file__).resolve()),
+            "sha256": sha256_file(__file__),
+            "commit": implementation_commit,
+        },
+        "assignment_reused": assignment,
+        "nested_white": nesting,
+        "stress": stress_meta,
+        "initial_negative_log_posterior": value_float,
+        "initial_gradient_norm": float(np.linalg.norm(gradient_np)),
+        "initial_gradient_max_abs": float(np.max(np.abs(gradient_np))),
+        "environment": {
+            "jax_backend": jax.default_backend(),
+            "jax_devices": [str(device) for device in jax.devices()],
+            "XLA_FLAGS": os.environ.get("XLA_FLAGS", ""),
+        },
+        "semantics": {
+            "optimizer_run": False,
+            "sampler_run": False,
+            "posterior_created": False,
+            "science_metric_created": False,
+            "actual_observational_datum_used": False,
+            "validation_seed_used": False,
+            "preflight_result_may_tune_science_contract": False,
+        },
+    }
+    staging.mkdir(mode=0o700)
+    (staging / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    manifest = artifact_manifest(staging, "ouruniv-cf4-phasec-preflight-manifest-v1")
+    (staging / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    complete = {
+        "schema": "ouruniv-cf4-phasec-preflight-complete-v1",
+        "result_sha256": sha256_file(staging / "result.json"),
+        "manifest_sha256": sha256_file(staging / "manifest.json"),
+        "pass": True,
+    }
+    (staging / "COMPLETE").write_text(json.dumps(complete, sort_keys=True) + "\n")
+    os.replace(staging, output)
+
+
+def validate_preflight(directory: str | Path) -> None:
+    root = Path(directory)
+    if not root.is_dir() or {path.name for path in root.iterdir()} != PREFLIGHT_FILES:
+        raise PhaseCError("Phase-C preflight file set mismatch")
+    result = json.loads((root / "result.json").read_text())
+    if result.get("status") != "PASS_PHASE_C_EXECUTION_PREFLIGHT_NO_SAMPLER_NO_SCIENCE_RESULT":
+        raise PhaseCError("Phase-C preflight did not pass")
+    complete = json.loads((root / "COMPLETE").read_text())
+    if complete.get("result_sha256") != sha256_file(root / "result.json"):
+        raise PhaseCError("Phase-C preflight result hash mismatch")
+    if complete.get("manifest_sha256") != sha256_file(root / "manifest.json"):
+        raise PhaseCError("Phase-C preflight manifest hash mismatch")
+
+
 def run_task(
     program_path: str | Path,
     output_root: str | Path,
@@ -1658,6 +1792,12 @@ def validate_aggregate(directory: str | Path) -> None:
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
+    preflight_parser = sub.add_parser("preflight")
+    preflight_parser.add_argument("--program", required=True)
+    preflight_parser.add_argument("--output", required=True)
+    preflight_parser.add_argument("--implementation-commit", required=True)
+    validate_preflight_parser = sub.add_parser("validate-preflight")
+    validate_preflight_parser.add_argument("--directory", required=True)
     run_parser = sub.add_parser("run")
     run_parser.add_argument("--program", required=True)
     run_parser.add_argument("--output-root", required=True)
@@ -1673,7 +1813,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     validate_aggregate_parser = sub.add_parser("validate-aggregate")
     validate_aggregate_parser.add_argument("--directory", required=True)
     args = parser.parse_args(argv)
-    if args.command == "run":
+    if args.command == "preflight":
+        run_preflight(args.program, args.output, args.implementation_commit)
+    elif args.command == "validate-preflight":
+        validate_preflight(args.directory)
+    elif args.command == "run":
         run_task(args.program, args.output_root, args.task_index, args.implementation_commit)
     elif args.command == "validate-task":
         validate_task(args.directory)

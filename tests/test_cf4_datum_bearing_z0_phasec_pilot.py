@@ -6,10 +6,11 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_program_v1.json"
+PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v2.json"
 SOURCE = ROOT / "src/cf4_datum_bearing_z0_phasec_pilot.py"
-RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v1.sbatch"
-AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v1.sbatch"
+PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
+RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
+AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
 
 
 def sha256(path: Path) -> str:
@@ -17,7 +18,9 @@ def sha256(path: Path) -> str:
 
 
 def load():
-    return json.loads(PROGRAM.read_text())
+    from cf4_datum_bearing_z0_phasec_pilot import load_program
+
+    return load_program(PROGRAM)[0]
 
 
 def test_phase_c_scope_seed_firewall_and_balanced_assignment():
@@ -146,15 +149,34 @@ def test_success_cannot_claim_actual_posterior_or_resolution():
 
 
 def test_slurm_runners_are_fail_closed_and_never_use_manual_syn101():
+    preflight = PREFLIGHT.read_text()
     runner = RUNNER.read_text()
     aggregate = AGGREGATOR.read_text()
     assert "#SBATCH --array=0-7" in runner
     assert "#SBATCH --mem=10240M" in runner
+    assert "#SBATCH --mem=5120M" in preflight
     assert "#SBATCH --mem=1024M" in aggregate
+    assert "XLA_FLAGS=--xla_gpu_autotune_level=0" in preflight
+    assert "XLA_FLAGS=--xla_gpu_autotune_level=0" in runner
     assert "XLA_PYTHON_CLIENT_PREALLOCATE=false" in runner
-    for text in (runner, aggregate):
+    assert "h100" not in preflight.splitlines()[2]
+    assert "h100" not in runner.splitlines()[2]
+    for text in (preflight, runner, aggregate):
         assert '[[ "$SUBMISSION_CONTROLLER" == syntax ]]' in text
         assert "EXPECTED_UPSTREAM_COMMIT" in text
         assert "scripts/tripwire/**" in text
         assert "renameat2" not in text
         assert "pgrep" not in text
+
+
+def test_v2_is_execution_only_and_binds_the_v1_failure():
+    amendment = json.loads(PROGRAM.read_text())
+    assert amendment["authorization"]["execution_only_retry_after_pre_science_failure"] is True
+    assert amendment["authorization"]["change_science_contract"] is False
+    assert amendment["execution_override"]["maximum_Slurm_submissions"] == 3
+    assert amendment["execution_override"]["dependency_order"].startswith("preflight afterok")
+    failure = Path(amendment["V1_infrastructure_failure"]["path"])
+    assert sha256(failure) == amendment["V1_infrastructure_failure"]["sha256"]
+    record = json.loads(failure.read_text())
+    assert record["artifact_status"]["science_result_created"] is False
+    assert record["execution_only_repair"]["science_contract_change"] is False

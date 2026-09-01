@@ -1,0 +1,120 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-infrastructure-failure-record-v1",
+  "date": "2026-09-01",
+  "status": "V1_ABORTED_NO_SCIENCE_RESULT_EXECUTION_ONLY_REPAIR_REQUIRED",
+  "lineage": {
+    "commit": "60392ab7c84f1d62b3122ac4b3b5a2d859562c41",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+      "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "cc368f5207c1a6aae59e8a636ce42ff5197c08f9ab45eeddc2ee4664d1db5996"
+    },
+    "runner": "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v1.sbatch",
+    "array_job_id": 329861,
+    "cancelled_aggregate_job_id": 329862
+  },
+  "task_outcomes": [
+    {
+      "task": 0,
+      "raw_job_id": 329863,
+      "node": "syn06",
+      "partition": "a40",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed": "00:01:01",
+      "MaxRSS_KiB": 1569940,
+      "failure": "XLA GPU autotuning failed before the first finite model value/gradient because every profiled kernel configuration failed redzone checks",
+      "stderr": {
+        "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-329861_0.err",
+        "bytes": 15750,
+        "sha256": "392ae4a18ad501f6a253787e891038167d10e54fc2b5e869f49f9a98f5971cf8"
+      }
+    },
+    {
+      "task": 1,
+      "raw_job_id": 329864,
+      "node": "syn07",
+      "partition": "a40",
+      "state": "CANCELLED_BY_CONTROLLER_AFTER_COMMON_FAILURE",
+      "stderr_sha256": "2b9657e706e275907de486d6a48b26cd4563a5d52f1bd0a679096b8a48cbea60"
+    },
+    {
+      "task": 2,
+      "raw_job_id": 329865,
+      "node": "syn07",
+      "partition": "a40",
+      "state": "CANCELLED_BY_CONTROLLER_AFTER_COMMON_FAILURE",
+      "stderr_sha256": "8ead7a7917a2a093473a5b792fc22f096f6497e90a11d36d45d9af008f35ff18"
+    },
+    {
+      "task": 3,
+      "raw_job_id": 329866,
+      "node": "syn08",
+      "partition": "h100",
+      "state": "FAILED",
+      "failure": "CUDA context initialization failed with CUDA_ERROR_OUT_OF_MEMORY before truth generation",
+      "stderr_sha256": "a07a89274ed9b0d5a106df751f7a735578f75ade1599dfb6c286cf2df1a6fd06"
+    },
+    {
+      "task": 4,
+      "raw_job_id": 329867,
+      "node": "syn08",
+      "partition": "h100",
+      "state": "FAILED",
+      "failure": "same pre-science CUDA context initialization failure",
+      "stderr_sha256": "b4c075dfc2e784e21f1b50014eef2e470795650c6d9070a035844d21f36ae512"
+    },
+    {
+      "task": 5,
+      "raw_job_id": 329868,
+      "node": "syn08",
+      "partition": "h100",
+      "state": "FAILED",
+      "failure": "same pre-science CUDA context initialization failure",
+      "stderr_sha256": "19fa6a92c33fe83107a19493af1bd744c00ad8ba107ce232bf47a4237e8c0259"
+    },
+    {
+      "task": 6,
+      "raw_job_id": 329869,
+      "node": "syn08",
+      "partition": "h100",
+      "state": "FAILED",
+      "failure": "same pre-science CUDA context initialization failure",
+      "stderr_sha256": "6e47a5dbe4f5176922ab31677d7a2358d60d212af7a7e33bfe4091bb906563dc"
+    },
+    {
+      "task": 7,
+      "raw_job_id": 329861,
+      "node": "syn08",
+      "partition": "h100",
+      "state": "FAILED",
+      "failure": "same pre-science CUDA context initialization failure",
+      "stderr_sha256": "b9d1d45afa420e019a4b2c0f3e75e7818b6e7117271ca8ca036c8290ef1ae8ac"
+    }
+  ],
+  "artifact_status": {
+    "V1_output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v1",
+    "V1_output_root_exists_but_is_empty": true,
+    "task_result_count": 0,
+    "posterior_draw_count": 0,
+    "aggregate_created": false,
+    "science_result_created": false,
+    "seed_or_arm_outcome_inspected": false
+  },
+  "root_causes": [
+    "The h100 node did not provide an allocatable CUDA context to JAX at task start.",
+    "The a40 task reached the first reverse-mode likelihood compilation, but XLA GPU autotuning failed redzone validation before producing a model value."
+  ],
+  "execution_only_repair": {
+    "exclude_h100": true,
+    "set_XLA_FLAGS": "--xla_gpu_autotune_level=0",
+    "require_single_task_preflight_before_array": true,
+    "preflight_scope": "N64 PMWD truth plus one N32 joint negative-log-posterior value/gradient for seed 2026083000; no optimizer, sampler, posterior, or science metric",
+    "science_contract_change": false,
+    "seed_arm_sampler_gate_or_diagnostic_change": false,
+    "new_output_root_required": true
+  }
+}
