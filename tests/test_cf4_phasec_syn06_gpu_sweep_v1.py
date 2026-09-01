@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROGRAM = ROOT / "config/cf4_phasec_syn06_gpu_sweep_v1.json"
 RUNNER = ROOT / "scripts/run_cf4_phasec_syn06_gpu_sweep_v1.sbatch"
 WORKER = ROOT / "scripts/run_cf4_phasec_syn06_gpu_sweep_worker_v1.sh"
+RESULT_RECORD = ROOT / "config/cf4_phasec_syn06_gpu_sweep_v1_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -71,3 +72,16 @@ def test_worker_records_device_and_runs_only_bound_mock_gate_tasks():
     for text in (RUNNER.read_text(), worker):
         for forbidden in ("pgrep", "renameat2", "/tmp", "counts_train", "blackjax"):
             assert forbidden not in text
+
+
+def test_result_record_confirms_device_dependent_failure_and_keeps_sampler_closed():
+    result = json.loads(RESULT_RECORD.read_text())
+    assert result["lineage"]["commit"] == "162ed7a7d13aee10668443c0dad412e8e927a1ed"
+    assert result["execution"]["valid_task_artifact_count"] == 6
+    assert result["devices"]["passing_device"]["passing_probe_count"] == 3
+    assert result["devices"]["failing_device"]["failing_probe_count"] == 3
+    assert result["devices"]["passing_device"]["uuid"] != result["devices"]["failing_device"]["uuid"]
+    assert result["hardware_health_audit"]["volatile_uncorrectable_ECC_total"] == 0
+    assert result["decision"]["device_dependent_failure_confirmed"] is True
+    assert result["decision"]["temporarily_exclude_entire_syn06_node"] is True
+    assert result["decision"]["run_sampler_mechanics_pilot"] is False
