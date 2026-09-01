@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROGRAM = ROOT / "config/cf4_phasec_same_gpu_repeatability_diagnostic_v1.json"
 SOURCE = ROOT / "src/cf4_phasec_same_gpu_repeatability_diagnostic.py"
 RUNNER = ROOT / "scripts/run_cf4_phasec_same_gpu_repeatability_diagnostic_v1.sbatch"
+RESULT_RECORD = ROOT / "config/cf4_phasec_same_gpu_repeatability_diagnostic_v1_result_record.json"
 
 
 def sha256(path: Path) -> str:
@@ -92,3 +93,19 @@ def test_source_records_device_and_never_releases_sampler():
     assert '"sampler_allowed": False' in source
     for forbidden in ("counts_train", "counts_holdout", "prepare_catalog", "blackjax", "run_four_chains"):
         assert forbidden not in source
+
+
+def test_result_record_preserves_exact_no_go_and_all_run_pass_evidence():
+    import json
+
+    result = json.loads(RESULT_RECORD.read_text())
+    assert result["lineage"]["commit"] == "6638fba5970f7bdd684775604c41f12a1898b450"
+    outcome = result["predeclared_outcome"]
+    assert outcome["valid_artifact_count"] == 8
+    assert outcome["all_eight_numerical_runs_pass"] is True
+    assert outcome["exact_science_signature_repeatability_pass"] is False
+    assert result["decision"]["run_sampler_mechanics_pilot"] is False
+    audit = result["posthoc_difference_audit"]
+    assert audit["largest_maximum_normalized_scalar_difference"] < 3e-15
+    assert audit["role"].startswith("magnitude characterization only")
+    assert "syn06" in result["decision"]["next_allowed_work"]
