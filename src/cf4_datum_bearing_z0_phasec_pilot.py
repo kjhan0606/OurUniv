@@ -74,6 +74,11 @@ def load_program(path: str | Path) -> tuple[dict[str, object], str]:
             binding_path = Path(str(binding.get("path", "")))
             if not binding_path.is_file() or sha256_file(binding_path) != binding.get("sha256"):
                 raise PhaseCError(f"Phase-C V2 amendment binding mismatch: {binding_name}")
+        if "prior_preflight_failure" in document:
+            binding = document["prior_preflight_failure"]
+            binding_path = Path(str(binding.get("path", "")))
+            if not binding_path.is_file() or sha256_file(binding_path) != binding.get("sha256"):
+                raise PhaseCError("Phase-C amendment prior-preflight binding mismatch")
         if document.get("authorization", {}).get("execution_only_retry_after_pre_science_failure") is not True:
             raise PhaseCError("Phase-C V2 execution-only repair is unauthorized")
         program = json.loads(Path(document["base_program"]["path"]).read_text())
@@ -83,6 +88,10 @@ def load_program(path: str | Path) -> tuple[dict[str, object], str]:
         program["input_bindings"]["V1_infrastructure_failure"] = dict(
             document["V1_infrastructure_failure"]
         )
+        if "prior_preflight_failure" in document:
+            program["input_bindings"]["prior_preflight_failure"] = dict(
+                document["prior_preflight_failure"]
+            )
         program["source_bindings"]["Phase_C_implementation"] = dict(
             document["Phase_C_implementation"]
         )
@@ -633,7 +642,14 @@ def build_inference_model(
 
     args = fixed.frozen_args(program["input_bindings"]["CF4_catalog"]["path"])
     A, _AT, growth_rate, _dtype = linear.build_forward(design["pos"], design["rhat"], args)
-    transfer_np, growth_check = fixed.build_density_transfer(args)
+    cpu_devices = jax.devices("cpu")
+    if not cpu_devices:
+        raise PhaseCError("no JAX CPU device is available for deterministic transfer construction")
+    # The transfer is a small, one-time cosmology table.  Construct it on the
+    # CPU so GPU kernel autotuning cannot alter or block this deterministic
+    # source calculation; the likelihood and every gradient remain on GPU.
+    with jax.default_device(cpu_devices[0]):
+        transfer_np, growth_check = fixed.build_density_transfer(args)
     if not math.isclose(growth_rate, growth_check, rel_tol=2e-13):
         raise PhaseCError("count and CF4 linear growth kernels disagree")
     n = fixed.N

@@ -6,11 +6,11 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v2.json"
+PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v3.json"
 SOURCE = ROOT / "src/cf4_datum_bearing_z0_phasec_pilot.py"
-PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
-RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
-AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v2.sbatch"
+PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
+RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
+AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
 
 
 def sha256(path: Path) -> str:
@@ -180,3 +180,8 @@ def test_v2_is_execution_only_and_binds_the_v1_failure():
     record = json.loads(failure.read_text())
     assert record["artifact_status"]["science_result_created"] is False
     assert record["execution_only_repair"]["science_contract_change"] is False
+    prior = Path(amendment["prior_preflight_failure"]["path"])
+    assert sha256(prior) == amendment["prior_preflight_failure"]["sha256"]
+    prior_record = json.loads(prior.read_text())
+    assert prior_record["failure_boundary"]["joint_likelihood_value_or_gradient_created"] is False
+    assert prior_record["execution_only_repair"]["likelihood_and_gradient_remain_GPU"] is True
