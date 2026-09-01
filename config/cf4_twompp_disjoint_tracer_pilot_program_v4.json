@@ -1,0 +1,85 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-program-v4",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_USER_COORDINATE_CONVENTION_CORRECTION_V4",
+  "authorization_basis": "After disclosure that V3 failed because the pilot sampled the official completeness maps in the wrong coordinate convention, the user explicitly approved the V4 correction on 2026-09-01.",
+  "frozen_v1_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+    "sha256": "695f362b8942e911ebac5a942217bc75128cdbc45ca042e535b9bd2123517ee5"
+  },
+  "failed_v3_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v3.json",
+    "sha256": "90a5a6a0c8d914c7437e877224781bc771f95718a4e7381f20461b4afe8ded2e"
+  },
+  "failed_v3_implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v3.py",
+    "sha256": "750869a08e8b1fac6f6c171adca9e9e6c47f63b9214e3fd5506e8acbbe927669"
+  },
+  "v3_failure_audit": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_v3_failure_audit_v1.json",
+    "sha256": "7f4b577b4317a7743b7590a413286a9fef811d7beeae3920f8128637e26ccbc5"
+  },
+  "coordinate_convention_evidence": {
+    "ARES_example_README": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/README.md",
+      "bytes": 1168,
+      "sha256": "88dbe607fc8ce4c9b0eff3cfa3daff744b180d43e4aeab4f5f3a0d47ff82e827"
+    },
+    "ARES_prepare_2mpp": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/prepare_2mpp.py",
+      "bytes": 633,
+      "sha256": "3ec762a46de353a9796bd486f6234df9cbd3d279b96d6f04c08cf55d48f9eaff"
+    },
+    "ARES_GalaxySurvey": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/libLSS/data/spectro_gals.hpp",
+      "bytes": 5019,
+      "sha256": "fcb6a92dd2c909921edfaf43acb14e3cef80c269a507558eb0b0e239f70dabfe"
+    },
+    "ARES_HEALPix_selection": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/libLSS/data/linear_selection.hpp",
+      "bytes": 5969,
+      "sha256": "c7f9d9c6d48389be967ef8f794c425261889dd0176a761a76fe6e76f3e82fe40"
+    }
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v4.py",
+    "sha256": "b43f3535c7b7516bdf44e2a4b8ed95de187c85ea2dc4655eebe4953ad98d3e71"
+  },
+  "coordinate_correction_v4": {
+    "failed_v3_Slurm_job_id": 329500,
+    "failed_v3_state": "FAILED",
+    "failed_v3_exit_code": "1:0",
+    "failed_v3_elapsed_seconds": 13,
+    "failed_v3_output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3",
+    "failed_v3_reason": "The official ARES completeness maps were queried after an unjustified ICRS-to-Galactic rotation.",
+    "v4_coordinate_convention": "Use catalogue ICRS RA as HEALPix longitude and DEC as latitude, converted from degrees to radians without a frame rotation.",
+    "official_ARES_example_declares_equatorial_angles": true,
+    "official_ARES_prepare_script_writes_RA_DEC": true,
+    "official_ARES_loader_applies_no_Galactic_rotation": true,
+    "failure_metrics_serialized_before_failed_gate_raise": true,
+    "input_changed": false,
+    "CF4_exclusion_policy_changed": false,
+    "selection_or_population_changed": false,
+    "numerical_threshold_changed": false,
+    "random_seed_changed": false,
+    "field_inference_added": false,
+    "information_calculation_added": false,
+    "automatic_follow_on_after_v4": false
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot",
+    "maximum_submissions": 1,
+    "requested_cpus": 1,
+    "expected_peak_memory_MiB": 700,
+    "requested_memory_MiB": 1024,
+    "memory_headroom_multiplier_minimum": 1.2,
+    "time_limit": "00:15:00",
+    "plain_same_filesystem_directory_rename_publication": true,
+    "refuse_overwrite": true,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}
