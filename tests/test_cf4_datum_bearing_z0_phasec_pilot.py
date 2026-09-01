@@ -6,11 +6,11 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v4.json"
+PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v5.json"
 SOURCE = ROOT / "src/cf4_datum_bearing_z0_phasec_pilot.py"
-PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
-RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
-AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
+PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
+RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
+AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v5.sbatch"
 
 
 def sha256(path: Path) -> str:

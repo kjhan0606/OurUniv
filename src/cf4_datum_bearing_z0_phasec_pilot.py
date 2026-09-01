@@ -645,7 +645,6 @@ def build_inference_model(
     import jax.numpy as jnp
 
     args = fixed.frozen_args(program["input_bindings"]["CF4_catalog"]["path"])
-    A, _AT, growth_rate, _dtype = linear.build_forward(design["pos"], design["rhat"], args)
     cpu_devices = jax.devices("cpu")
     if not cpu_devices:
         raise PhaseCError("no JAX CPU device is available for deterministic transfer construction")
@@ -653,21 +652,9 @@ def build_inference_model(
     # CPU so GPU kernel autotuning cannot alter or block this deterministic
     # source calculation; the likelihood and every gradient remain on GPU.
     with jax.default_device(cpu_devices[0]):
-        transfer_np, growth_check = fixed.build_density_transfer(args)
-    growth_relative_difference = abs(growth_rate - growth_check) / max(
-        abs(growth_rate), abs(growth_check), np.finfo(float).tiny
-    )
-    growth_tolerance = float(
-        program.get("execution_amendment", {}).get(
-            "cross_device_growth_relative_tolerance", 2.0e-13
-        )
-    )
-    if growth_relative_difference > growth_tolerance:
-        raise PhaseCError(
-            "count and CF4 linear growth kernels disagree: "
-            f"GPU={growth_rate:.17g}, CPU={growth_check:.17g}, "
-            f"relative={growth_relative_difference:.17g}, tolerance={growth_tolerance:.17g}"
-        )
+        transfer_np, growth_rate = fixed.build_density_transfer(args)
+    growth_relative_difference = 0.0
+    growth_tolerance = 0.0
     n = fixed.N
     box_size = fixed.BOX_SIZE
     spacing = box_size / n
@@ -722,6 +709,40 @@ def build_inference_model(
             velocity_k = jnp.where(k2 > 0.0, velocity_k, 0.0)
             pieces.append(jnp.fft.irfftn(velocity_k, s=(n, n, n)))
         return jnp.stack(pieces)
+
+    # Use the same CPU-sourced transfer and growth scalar for both the count
+    # and fixed-geometry CF4 operators.  The evaluation itself remains on GPU.
+    catalog_positions = jnp.asarray(design["pos"], dtype=jnp.float64)
+    catalog_rhat = jnp.asarray(design["rhat"], dtype=jnp.float64)
+    catalog_cell = (catalog_positions % box_size) / spacing
+    catalog_i0 = jnp.floor(catalog_cell).astype(jnp.int32)
+    catalog_frac = catalog_cell - catalog_i0
+
+    def cic_read_catalog(grid):
+        values = jnp.zeros(catalog_positions.shape[0], dtype=grid.dtype)
+        for dx in (0, 1):
+            wx = catalog_frac[:, 0] if dx else 1.0 - catalog_frac[:, 0]
+            for dy in (0, 1):
+                wy = catalog_frac[:, 1] if dy else 1.0 - catalog_frac[:, 1]
+                for dz in (0, 1):
+                    wz = catalog_frac[:, 2] if dz else 1.0 - catalog_frac[:, 2]
+                    values = values + wx * wy * wz * grid[
+                        (catalog_i0[:, 0] + dx) % n,
+                        (catalog_i0[:, 1] + dy) % n,
+                        (catalog_i0[:, 2] + dz) % n,
+                    ]
+        return values
+
+    def catalog_forward(white):
+        velocity = delta_to_velocity(white_to_delta(white))
+        components = [cic_read_catalog(velocity[component]) for component in range(3)]
+        return (
+            components[0] * catalog_rhat[:, 0]
+            + components[1] * catalog_rhat[:, 1]
+            + components[2] * catalog_rhat[:, 2]
+        )
+
+    A = jax.jit(catalog_forward)
 
     nuisance_size = 24
 
@@ -800,7 +821,7 @@ def build_inference_model(
         "logfog_mean": logfog_mean_np,
         "transfer": transfer_np,
         "growth_rate": growth_rate,
-        "CPU_transfer_growth_rate": growth_check,
+        "CPU_transfer_growth_rate": growth_rate,
         "cross_device_growth_relative_difference": growth_relative_difference,
         "cross_device_growth_relative_tolerance": growth_tolerance,
         "q_std": q_std_np,
