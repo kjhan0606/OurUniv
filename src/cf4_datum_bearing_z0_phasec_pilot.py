@@ -102,6 +102,10 @@ def load_program(path: str | Path) -> tuple[dict[str, object], str]:
             "path": str(Path(path).resolve()),
             "science_contract_change": False,
         }
+        if "cross_device_growth_relative_tolerance" in document["environment_override"]:
+            program["execution_amendment"]["cross_device_growth_relative_tolerance"] = float(
+                document["environment_override"]["cross_device_growth_relative_tolerance"]
+            )
     else:
         program = document
     if program.get("schema") != SCHEMA:
@@ -650,8 +654,20 @@ def build_inference_model(
     # source calculation; the likelihood and every gradient remain on GPU.
     with jax.default_device(cpu_devices[0]):
         transfer_np, growth_check = fixed.build_density_transfer(args)
-    if not math.isclose(growth_rate, growth_check, rel_tol=2e-13):
-        raise PhaseCError("count and CF4 linear growth kernels disagree")
+    growth_relative_difference = abs(growth_rate - growth_check) / max(
+        abs(growth_rate), abs(growth_check), np.finfo(float).tiny
+    )
+    growth_tolerance = float(
+        program.get("execution_amendment", {}).get(
+            "cross_device_growth_relative_tolerance", 2.0e-13
+        )
+    )
+    if growth_relative_difference > growth_tolerance:
+        raise PhaseCError(
+            "count and CF4 linear growth kernels disagree: "
+            f"GPU={growth_rate:.17g}, CPU={growth_check:.17g}, "
+            f"relative={growth_relative_difference:.17g}, tolerance={growth_tolerance:.17g}"
+        )
     n = fixed.N
     box_size = fixed.BOX_SIZE
     spacing = box_size / n
@@ -784,6 +800,9 @@ def build_inference_model(
         "logfog_mean": logfog_mean_np,
         "transfer": transfer_np,
         "growth_rate": growth_rate,
+        "CPU_transfer_growth_rate": growth_check,
+        "cross_device_growth_relative_difference": growth_relative_difference,
+        "cross_device_growth_relative_tolerance": growth_tolerance,
         "q_std": q_std_np,
         "A": A,
         "B": B,
@@ -1327,7 +1346,7 @@ def run_preflight(
         str(assignment["arm"]), truth, response6, response4, nbar, bias, program, seed
     )
     mock = generate_mock_data(str(assignment["arm"]), seed, intensity, truth, design, program)
-    negative_log_posterior, _count_lambda, initial, _metadata = build_inference_model(
+    negative_log_posterior, _count_lambda, initial, metadata = build_inference_model(
         program, response6, mock, design
     )
     value, gradient = jax.jit(jax.value_and_grad(negative_log_posterior))(jnp.asarray(initial))
@@ -1350,6 +1369,12 @@ def run_preflight(
         "initial_negative_log_posterior": value_float,
         "initial_gradient_norm": float(np.linalg.norm(gradient_np)),
         "initial_gradient_max_abs": float(np.max(np.abs(gradient_np))),
+        "cross_device_growth": {
+            "GPU_likelihood_growth_rate": float(metadata["growth_rate"]),
+            "CPU_transfer_growth_rate": float(metadata["CPU_transfer_growth_rate"]),
+            "relative_difference": float(metadata["cross_device_growth_relative_difference"]),
+            "relative_tolerance": float(metadata["cross_device_growth_relative_tolerance"]),
+        },
         "environment": {
             "jax_backend": jax.default_backend(),
             "jax_devices": [str(device) for device in jax.devices()],

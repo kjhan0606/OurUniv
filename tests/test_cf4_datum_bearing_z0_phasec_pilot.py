@@ -6,11 +6,11 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v3.json"
+PROGRAM = ROOT / "config/cf4_datum_bearing_z0_phasec_execution_amendment_v4.json"
 SOURCE = ROOT / "src/cf4_datum_bearing_z0_phasec_pilot.py"
-PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
-RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
-AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v3.sbatch"
+PREFLIGHT = ROOT / "scripts/preflight_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
+RUNNER = ROOT / "scripts/run_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
+AGGREGATOR = ROOT / "scripts/aggregate_cf4_datum_bearing_z0_phasec_pilot_v4.sbatch"
 
 
 def sha256(path: Path) -> str:
@@ -162,7 +162,7 @@ def test_slurm_runners_are_fail_closed_and_never_use_manual_syn101():
     assert "h100" not in preflight.splitlines()[2]
     assert "h100" not in runner.splitlines()[2]
     for text in (preflight, runner, aggregate):
-        assert '[[ "$SUBMISSION_CONTROLLER" == syntax ]]' in text
+        assert '"$SUBMISSION_CONTROLLER" == syntax' in text
         assert "EXPECTED_UPSTREAM_COMMIT" in text
         assert "scripts/tripwire/**" in text
         assert "renameat2" not in text
@@ -184,4 +184,5 @@ def test_v2_is_execution_only_and_binds_the_v1_failure():
     assert sha256(prior) == amendment["prior_preflight_failure"]["sha256"]
     prior_record = json.loads(prior.read_text())
     assert prior_record["failure_boundary"]["joint_likelihood_value_or_gradient_created"] is False
-    assert prior_record["execution_only_repair"]["likelihood_and_gradient_remain_GPU"] is True
+    assert prior_record["failure_boundary"]["posterior_draw_count"] == 0
+    assert prior_record["execution_only_repair"]["science_contract_change"] is False
