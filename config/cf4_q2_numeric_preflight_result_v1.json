@@ -1,0 +1,154 @@
+{
+  "schema": "ouruniv-cf4-q2-numeric-preflight-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q2.0",
+  "purpose": "Close the Q1 numerical evidence gaps and measure the real source/mesh/resource problem before any JAX implementation.",
+  "plan": "config/cf4_q2_jax_oracle_gradient_performance_plan_v1.json",
+  "authorization": {
+    "fable_plan_verdict": "GO_Q2_0_ONLY",
+    "q1_closure_tests_authorized": true,
+    "read_only_preflight_authorized": true,
+    "q2_1_jax_implementation_authorized": false,
+    "posterior_authorized": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false
+  },
+  "q1_closure": {
+    "status": "PASS_COMMIT_BOUND_DEVELOPMENT_ONLY",
+    "closure_commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "closure_tree": "4444868df93572389602b518239e239591db134a",
+    "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src pytest -q tests/test_cf4_q1_cell_integrated_convolution.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_verification_round.py tests/test_cf4_2mpp_crossmatch_manifest.py",
+    "tests_passed": 35,
+    "tests_skipped": 0,
+    "sigma_disp_definition": "h*sigma_total/(a*H(a)) in cMpc/h; sigma here is not km/s velocity sigma.",
+    "extreme_multiwrap": {
+      "sigma_disp_cMpc_h": 12.0,
+      "box_size_cMpc_h": 6.0,
+      "sigma_disp_over_box": 2.0,
+      "independent_adaptive_reference": "PASS; error <= 5e-10 on a separately constructed breakpoint partition."
+    },
+    "all_population_reference": "PASS; six populations and three sources per boundary/non-boundary fixture compared against adaptive reference.",
+    "pre_renormalization": {
+      "max_mass_defect": 3.3306690738754696e-16,
+      "max_dropped_sliver_probability": 1.7867505865783505e-12,
+      "max_clipped_negative_mass": 0.0,
+      "sliver_epsilon": 1e-10,
+      "negative_clip": 1e-13,
+      "interpretation": "Reported before per-particle renormalization; post-renormalization mass is by-construction only."
+    },
+    "tail_convergence": {
+      "relative_l1_6_vs_8": 2.0402011420785255e-09,
+      "relative_l1_8_vs_10": 2.194991015119427e-15,
+      "frozen_tail_tolerance": 1e-8,
+      "status": "PASS"
+    }
+  },
+  "numeric_preflight": {
+    "source_counts": {
+      "secure_cf4_objects": 16584,
+      "pm_source_particles_M_max": 7077888,
+      "pm_source_basis": "N_parent=192 cubic particle mesh from local conditioning/PM design; 192^3 exactly.",
+      "secure_and_pm_counts_are_not_interchangeable": true
+    },
+    "mesh": {
+      "operator_mesh_N": 32,
+      "operator_cell_spacing_cMpc_h": 12.0,
+      "parent_mesh_N": 192,
+      "parent_cell_spacing_cMpc_h": 2.0,
+      "box_size_cMpc_h": 384.0
+    },
+    "physical_bounds": {
+      "population_count": 6,
+      "max_sigma_fog_km_s": 300.0,
+      "max_sigma_redshift_km_s": 80.0,
+      "little_h": 0.746,
+      "scale_factor": 1.0,
+      "hubble_km_s_Mpc": 100.0,
+      "sigma_total_km_s": 310.4834939252005,
+      "max_displacement_component_cMpc_h": 2.316206864681996,
+      "bound_source": "Q1 RSD_FOG boundary stress contract; development bound, not a production catalog calibration."
+    },
+    "static_shape": {
+      "tail_cutoff_sigma": 8.0,
+      "K_max": 19,
+      "chunk_size_particles": 1024,
+      "padded_breaks_bytes": 163840,
+      "padded_polynomial_coefficients_bytes": 29417472,
+      "padded_interval_mask_bytes": 19456,
+      "padded_positions_bytes": 24576,
+      "padded_los_bytes": 24576,
+      "padded_masses_bytes": 49152,
+      "padded_output_bytes": 1572864,
+      "padded_array_bytes_total": 31271936,
+      "padded_array_MiB": 29.8232421875,
+      "overflow_policy": "reject; no truncation or silent recompilation"
+    },
+    "resource_ceiling": {
+      "max_host_memory_bytes": 68719476736,
+      "max_device_memory_bytes": 17179869184,
+      "max_jit_compile_seconds": 300.0,
+      "max_value_seconds_per_million_particles": 30.0,
+      "max_gradient_seconds_per_million_particles": 120.0,
+      "max_single_batch_gradient_seconds": 600.0,
+      "ceiling_source": "Q2 plan; mathematical operator cannot be weakened to meet it."
+    },
+    "ceiling_time_projection": {
+      "value_seconds_per_full_M_max_at_ceiling": 212.33664,
+      "gradient_seconds_per_full_M_max_at_ceiling": 849.34656,
+      "frozen_smc_gradient_calls_upper": 2097152,
+      "value_seconds_for_upper_smc_calls": 445302209.24928,
+      "gradient_seconds_for_upper_smc_calls": 1781208836.99712,
+      "value_years_for_upper_smc_calls": 14.110775510472278,
+      "gradient_years_for_upper_smc_calls": 56.44310204188911,
+      "interpretation": "This is a feasibility upper-bound projection, not an executed posterior run. It rules out naively applying a per-source JAX operator inside the frozen SMC call budget."
+    },
+    "status": "COMPLETE_NUMERIC_METADATA_BUT_DIRECT_JAX_POSTERIOR_INFEASIBLE"
+  },
+  "q1_baseline": {
+    "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "tree": "4444868df93572389602b518239e239591db134a",
+    "status": "IMMUTABLE_COMMITTED_35_TEST_CLOSURE",
+    "required_before_any_q2_1": true,
+    "sha256": {
+      "src/cf4_q1_cell_integrated_convolution.py": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+      "src/cf4_2mpp_boundary_stress.py": "e606a939b2935941709e825a41d4876dd714bb8a1bb91469a05aeb55dec2135c",
+      "tests/test_cf4_q1_cell_integrated_convolution.py": "d61a8bb1760161070f3827541803eb3863be583de34eadb17b318828f420d3bc"
+    }
+  },
+  "driver_decision": {
+    "status": "NO_GO_Q2_1_DIRECT_SOURCEWISE_JAX",
+    "reason": "The numerical Q1 closure passes, but a sourcewise operator over 7,077,888 PM particles within the frozen SMC budget is computationally infeasible under the declared ceilings. Secure-object count must not be substituted.",
+    "next_bundle_required": "Design and audit a source-compressed/analytic sufficient-statistic observation operator or a scientifically justified reduced-source representation, with exact Q1 oracle agreement and an explicit information-loss gate before JAX."
+  },
+  "independent_bundle_audit": {
+    "agy": {
+      "verdict": "GO",
+      "q2_1_direct_sourcewise_jax": "NO_GO_CONFIRMED",
+      "summary": "Q2.0 closes the documented Q1 numerical evidence and read-only numeric preflight. The 7,077,888-particle source basis, K_max=19, and 56.44-year gradient ceiling projection justify blocking naive direct sourcewise JAX. The next bundle must design a source-compressed or analytic representation with an explicit information-loss gate; secure CF4 object count must not replace the PM source count.",
+      "scope": "Document audit only; no commands, tests, hash verification, or implementation performed."
+    },
+    "opus5": {
+      "verdict": "CONDITIONAL-PASS",
+      "q2_1_direct_sourcewise_jax": "NO_GO_SUPPORTED",
+      "summary": "Q2.0 scope discipline and arithmetic are sound, and no JAX/posterior implementation is claimed. The direct sourcewise path is infeasible under the declared ceilings, but the time result is a ceiling-allowance projection rather than a measurement. The next plan must reconcile the Q1 hash conflict, make the resource ceilings simultaneously satisfiable, quantify compression information loss, explain the operator-change exemption, and re-derive K_max/chunk/memory at 2.0 and <=0.3 cMpc/h.",
+      "mandatory_next_plan_requirements": [
+        "Reconcile plan/result Q1 hashes, recompute one five-file SHA-256 manifest, and bind the closure tests to one immutable commit before Q2.1.",
+        "Label projected versus measured cost separately and repair the unsatisfiable 600-second single-batch gradient ceiling or require explicit gradient chunking.",
+        "Define the compression map and a quantitative oracle-agreement/posterior-information-loss gate; state when mathematically equivalent compression is exempt from the operator-change prohibition.",
+        "Re-derive K_max, chunk shape, and padded bytes at 2.0 cMpc/h and the <=0.3 cMpc/h target, declaring any resolution ceiling."
+      ],
+      "scope": "Document audit only; no commands, tests, hash verification, or implementation performed."
+    },
+    "audit_scope": "Q2.0 closure tests and read-only numeric preflight only",
+    "bundle_status": "GO_Q2_0_NO_GO_Q2_1_AGY_OPUS5"
+  },
+  "execution_policy": {
+    "gpfs_used": false,
+    "slurm_used": false,
+    "production_execution": false,
+    "shared_context_modified": false
+  }
+}
