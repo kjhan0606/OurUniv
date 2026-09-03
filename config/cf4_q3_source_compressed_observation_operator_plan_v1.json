@@ -13,6 +13,12 @@
     "authorized_scope": "Q3.0 baseline bookkeeping, Q3.1 mathematical candidate specification, and one development-only candidate evaluated on the 192 development mocks; held-out publication and Q2.1 promotion remain blocked.",
     "note": "Q2.0 is closed as a read-only preflight. Naive direct sourcewise JAX is blocked. The Q1 baseline is now immutably committed and its 35-test closure reproduced."
   },
+  "q3_2_preflight": {
+    "result": "config/cf4_q3_resolution_resource_preflight_result_v1.json",
+    "implementation_status": "COMPLETE_READ_ONLY_PROJECTION",
+    "candidate_implementation_authorized_after_result": true,
+    "deferred_0p3_status": "RESOURCE_PROJECTION_ONLY_NOT_OBSERVATIONAL_VALIDATION"
+  },
   "fable_audit": {
     "status": "GO",
     "last_verdict": "GO",
