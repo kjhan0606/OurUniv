@@ -19,6 +19,13 @@
     "candidate_implementation_authorized_after_result": true,
     "deferred_0p3_status": "RESOURCE_PROJECTION_ONLY_NOT_OBSERVATIONAL_VALIDATION"
   },
+  "q3_3_development_candidate": {
+    "result": "config/cf4_q3_development_candidate_result_v1.json",
+    "candidate": "exact_geometry_grouping",
+    "status": "DEVELOPMENT_ORACLE_EQUIVALENCE_ONLY_NOT_PROMOTED",
+    "heldout_evaluation": false,
+    "promotion_blocked": "Full PM compression ratio, information-loss and resource feasibility remain unmeasured."
+  },
   "fable_audit": {
     "status": "GO",
     "last_verdict": "GO",
