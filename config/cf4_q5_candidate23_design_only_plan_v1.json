@@ -1,0 +1,113 @@
+{
+  "schema": "ouruniv-cf4-q5-candidate23-design-only-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q5",
+  "owner": "driver",
+  "plan_status": "PENDING_USER_APPROVAL_AND_FABLE_AUDIT",
+  "prerequisite_bundle": "Q4",
+  "prerequisite_audit": {
+    "agy": "GO",
+    "opus5": "CONDITIONAL-PASS",
+    "q4_result": "config/cf4_q4_preflight_result_v1.json",
+    "exact_geometry_grouping": "TERMINAL_NO_GO_M_OVER_G_LE_1.01_ON_UNDISPLACED_PROCEDURAL_N192",
+    "implementation_authorized": false,
+    "heldout_authorized": false,
+    "note": "Q5 is a design-only bundle proposal. It must not start until the user approves this new bundle; then Fable audits the plan before any candidate implementation."
+  },
+  "fable_audit": {
+    "status": "PENDING_AFTER_USER_APPROVAL",
+    "approval_required_before_implementation": true,
+    "focus": "Evaluate whether candidate 2/3 preserves the Q1 operator and state-dependent mass/gradient information, is feasible for M=7,077,888, and directly advances the final CF4-to-z=0-posterior-to-IC goal."
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Design a mathematically controlled alternative to exact geometry grouping after its full-count terminal NO-GO, without implementing, sampling held-out mocks, or weakening the validated Q1 observation operator.",
+  "science_position": {
+    "direct_alignment": "A tractable Q1-equivalent observation operator is required before the CF4 z=0 posterior can be sampled; Q5 design alone does not create a posterior or IC.",
+    "resolution": "Q5 targets the N192, 2 cMpc/h low-k operator. <=0.3 cMpc/h remains a separate conditional high-resolution forward-model bundle and is not a Q5 pass criterion.",
+    "closed_branch": "The bitwise exact-geometry grouping branch is closed for the undisplaced procedural N192 lattice. Any displaced PM realization must independently re-measure grouping and may not inherit M/G=1."
+  },
+  "scope": {
+    "design_only": true,
+    "candidate_implementation": false,
+    "development_mocks": false,
+    "heldout_mocks": false,
+    "jax": false,
+    "gradient_timing": false,
+    "posterior": false,
+    "KF_EXPAND": false,
+    "IC_generation": false,
+    "PM_or_HOP": false,
+    "zoom": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false
+  },
+  "frozen_invariants": {
+    "q1_oracle": "src/cf4_q1_cell_integrated_convolution.py at commit 5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "source_count": 7077888,
+    "secure_cf4_object_substitution": "FORBIDDEN",
+    "populations": 6,
+    "operator_resolution_cMpc_h": 2.0,
+    "candidate_value_gate": "L1 <= 1e-12 + 5e-3*oracle_l1, total and per population",
+    "candidate_gradient_gate": "L1 <= 1e-8 + 1e-5*gradient_reference_l1 when differentiable",
+    "memory": "64 GiB host and 16 GiB device persistent+temporary ceilings, checked before allocation",
+    "heldout_seed_manifest": "config/cf4_q4_seed_manifest_v1.json; 256 seeds sealed and untouched"
+  },
+  "candidate_2_adaptive_moment": {
+    "status": "DESIGN_ONLY",
+    "map": "Partition source geometry into bounded spatial/LOS/dispersion bins. For each population and posterior state, retain mass, latent-field/bias mass derivatives, exposure, and adaptive moments of the exact Q1 interval-polynomial response through degree six. Split bins recursively until all development oracle gates pass or a fail-closed overflow occurs.",
+    "state_contract": "Mass and every latent-field/bias derivative are state-dependent sufficient statistics; no fiducial pre-summing is allowed.",
+    "error_control": "Each bin carries an a-posteriori upper bound on the omitted Taylor remainder over the full T=8 Gaussian support and periodic seam; bins are split rather than clipped.",
+    "risk": "Moment truncation may fail at TSC knots, seams, wide sigma or rapidly varying LOS. No commute or exactness assumption is permitted.",
+    "promotion_condition": "Only a candidate whose value, directional gradient, 175-summary information and spatial-strata gates pass may proceed to later implementation."
+  },
+  "candidate_3_deposit_then_convolve": {
+    "status": "DESIGN_ONLY",
+    "map": "Deposit the full PM source mass/derivative basis to an intermediate N192 mesh with an explicitly frozen conservative kernel, then apply an analytic anisotropic cell-integrated LOS convolution.",
+    "state_contract": "The intermediate field must retain six population mass fields and all latent-field/bias derivative fields; no secure-object or scalar-density replacement is allowed.",
+    "noncommutation_warning": "Deposit and anisotropic LOS convolution are not assumed to commute. The candidate must be compared directly to the Q1 sourcewise oracle on the same source realization and topology.",
+    "risk": "Intermediate deposition can erase subcell position, LOS and sigma information. A failure is a scientific NO-GO, not a tolerance to relax.",
+    "promotion_condition": "Only exact or quantitatively bounded Q1 agreement with the frozen information-loss gates can authorize a differentiable implementation."
+  },
+  "candidate_selection_firewall": {
+    "development_set": "If implementation is later authorized, use only the 192 cf4-q4-development-20260904 mocks to select exactly one candidate and freeze all hyperparameters.",
+    "heldout_set": "The 256 cf4-q4-heldout-20260904 mocks remain sealed; after a candidate is frozen they are one-shot accept/reject only. Failure is terminal for that candidate and forbids retuning or switching on held-out data.",
+    "displaced_pm": "Any displaced PM source realization receives a new independent M/G measurement; the Q4 procedural ratio is not a prior."
+  },
+  "required_design_gates": {
+    "oracle": "Specify exact total/per-population L1, local cellwise median/p95/max, topology and sigma_disp=2L fixtures before implementation.",
+    "gradient": "Specify scalar log-likelihood directional JVP/VJP for the 23 frozen directions, including latent mass and six bias coordinates; mass-basis summation alone is insufficient.",
+    "information": "Specify normalized KL(reference||candidate), normalizer/ESS/RSE diagnostics, 175 low-dimensional scientific summaries and coverage before candidate freeze.",
+    "resource": "Project persistent+temporary host/device memory and warm synchronized full-field timing at M=7,077,888 before any JIT or gradient launch; cold compile is separate.",
+    "resolution": "Q5 may release only the 2.0 cMpc/h low-k operator design. The 0.3 cMpc/h target requires a separate conditional forward-model/resource bundle."
+  },
+  "work_packages": [
+    {
+      "id": "Q5.0",
+      "task": "Freeze the candidate-2/3 mathematical contracts, exact source/derivative basis, and candidate-selection/held-out firewall.",
+      "acceptance": "Fable approves a falsifiable design; no implementation or mock is run in Q5 design-only mode."
+    },
+    {
+      "id": "Q5.1",
+      "task": "Derive source-compression error and state-dependent gradient bounds for adaptive moments and deposit-then-convolve without assuming operator commutation.",
+      "acceptance": "Each candidate has explicit failure conditions and Q1 oracle comparison equations."
+    },
+    {
+      "id": "Q5.2",
+      "task": "Produce analytic resolution/resource projections at the 2.0 cMpc/h release point, retaining the full PM count and both memory ceilings.",
+      "acceptance": "Projection distinguishes measured values from assumptions and does not authorize JAX, held-out, posterior or IC execution."
+    }
+  ],
+  "release_gates": [
+    "User explicitly approves Q5 before it starts.",
+    "Fable approves the Q5 design after user approval.",
+    "Exact geometry grouping remains terminally closed for the undisplaced procedural lattice.",
+    "No implementation, held-out evaluation, JAX, posterior, IC, PM/HOP/RAMSES, GPFS or Slurm action occurs in design-only Q5."
+  ],
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}
