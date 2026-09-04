@@ -2,9 +2,10 @@
   "schema": "ouruniv-cf4-bundle-b0-operator-result-v1",
   "date": "2026-09-04",
   "bundle": "B0-OPERATOR",
-  "status": "DEVELOPMENT_EXECUTION_COMPLETE_OPUS_CLOSURE_PENDING",
-  "implementation_commit": "89bb4d4",
+  "status": "DEVELOPMENT_EXECUTION_COMPLETE_OPUS_CLOSURE_TIMEOUT",
+  "implementation_commit": "263d292",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
+  "opus_closure_attempt": "config/cf4_bundle_b0_opus_closure_attempt_v1.json",
   "scope": {
     "development_only": true,
     "q7_2_fixtures_executed_as_one_bundle": true,
