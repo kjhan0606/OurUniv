@@ -4,12 +4,12 @@
   "bundle": "B1-Z0-POSTERIOR",
   "immutable_tag": "cf4-b1-cert-515630a",
   "source_test_certified_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
-  "metadata_binding_commit": "465f6db3e101717b018e990016541c2ffb0f2d11",
-  "certificate_generation_basis": "metadata-binding tree at 465f6db; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
+  "metadata_binding_commit": "8f2ebdc013082dd49dc381dbde61f20087e7031b",
+  "certificate_generation_basis": "metadata-binding tree at 8f2ebdc; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
   "record": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-    "bytes": 31604,
-    "sha256": "fe3466a60863babd781ced368d596bc76aa5da14d8c94849c5ab09f9e19a68e1"
+    "bytes": 31633,
+    "sha256": "20d77207d51f177edccd0ef47946b31829323f5976150e677a33993dbfb32836"
   },
   "receipt": {
     "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
