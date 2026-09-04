@@ -1,0 +1,19 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-hash-verification-receipt-v2",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "certified_commit": "3ba5b7ae60554a7f414088143441a564eac2ac2a",
+  "receipt_generation_commit": "PENDING_COMMIT_BINDING",
+  "receipt_generation_basis": "working tree derived from certified commit; receipt self-files are explicitly excluded",
+  "verified_record": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
+  "verified_entries_excluding_self": 60,
+  "record_pin_entries_including_self": 62,
+  "mismatches": 0,
+  "missing_paths": [],
+  "excluded_self_paths": [
+    "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
+    "config/cf4_bundle_b1_hash_verification_receipt_v2.txt"
+  ],
+  "scope_statement": "Every linked path carrying a path/bytes/sha256 pin in the result record was byte-verified; only these two receipt self-files are excluded to avoid a hash cycle.",
+  "supersedes": "config/cf4_bundle_b1_hash_verification_receipt_v1.json"
+}

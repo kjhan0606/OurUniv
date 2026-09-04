@@ -1,6 +1,8 @@
 {
-  "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
-  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v2",
+  "status": "SUPERSEDED_PRE_ANALYTIC_SIGMA_REPAIR",
+  "superseded_by": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+  "superseded_reason": "Historical draw-sigma width-repair diagnostic retained for provenance only; v3 uses analytic Laplace sigma and the repaired periodic sampler.",
   "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
   "source_artifact": {
     "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_integrated_joint_calibration_v3.py",

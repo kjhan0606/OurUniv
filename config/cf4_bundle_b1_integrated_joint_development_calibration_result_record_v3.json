@@ -27,8 +27,8 @@
     "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "hash_verification_receipt": {
-    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.json", "bytes": 722, "sha256": "37340cd23199435d34e88377086fb72903113a861068e39ed369285cb93668f2"},
-    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.txt", "bytes": 304, "sha256": "060db76dd9c93568efe6d44824e386a11ed37f97605198e790108e47fecbf670"}
+    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1014, "sha256": "518c7041f711d37cc93c59c428671fa12587de9dd7c96c97ddce512dab4cb428"},
+    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 584, "sha256": "0762d4e10ff40adbdd3fc3b72156c829c4ad3bfc4aedc1001c67c9ff13dcaf7c"}
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -50,7 +50,7 @@
   "primary_audit_current_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
   "primary_audit_current_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
   "primary_audit_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
-  "primary_audit_current_v18": "PENDING_POST_V17_REPAIR_AUDIT",
+  "primary_audit_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
   "primary_audit_current_v16_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.json", "bytes": 1792, "sha256": "5149966e907f4f790ce10b274735f033941c0fcc4ff44073dad362b8bb8ca452"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt", "bytes": 1233, "sha256": "a1c3967ba9d310071751557dd91965bf08d883099feed842c533f757b85eb92f"}
@@ -58,6 +58,10 @@
   "primary_audit_current_v17_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v17.json", "bytes": 1785, "sha256": "3c8e11225c633d83bf3c86a42e6516ce95ec66d0467f26015752e10ddbbded8a"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v17.txt", "bytes": 1209, "sha256": "4b24ad789272e8bf4ba370934385d15853095ae00a1032e4cb905bcd0b9eaddd"}
+  },
+  "primary_audit_current_v18_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.json", "bytes": 3265, "sha256": "792ef630be38eb827922a63c6013b47caaa79740b3a4ccc4bf8b9031ef389f66"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.txt", "bytes": 1696, "sha256": "3b9754b4fc5b8342e603d0bbcfaa0e076916e970dee2e71a363d5521f90031b5"}
   },
   "primary_audit_current_v15_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
@@ -105,9 +109,30 @@
   "mode_coverage_implementation": {
     "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 7260, "sha256": "e16a29be70cac89db72129eacb0301d5a45d0ac7ab25af35610082a738f7f6b5"},
     "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 1118, "sha256": "a5ca765ca4881e720c4a8daaff7af863fae72bd54b0e299fa683244d1e008391"},
-    "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
-    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"},
-    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 91180, "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"}
+    "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88546, "sha256": "ba37c12f25c272eace7ad86db2544b39b9e85d93f0437cb31e25a18754da86eb"},
+    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90887, "sha256": "52c1848c6021f272252efd7d45944c44b7a000dd51c00bcdde568396d326c78a"},
+    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 91180, "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"},
+    "current_result_provenance": {
+      "result": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+      "generator_source": "src/cf4_b1_mode_coverage_diagnosis_v1.py",
+      "generator_hash_pinned": true,
+      "dependency": "src/cf4_b1_integrated_joint_calibration_v3.py",
+      "dependency_hash_pinned": true
+    },
+    "historical_result_provenance": [
+      {
+        "result": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json",
+        "generator_source": "historical pre-analytic-sigma snapshot",
+        "generator_hash_available": false,
+        "status": "SUPERSEDED_PRE_ANALYTIC_SIGMA_AND_PERIODIC_RSD_REPAIR"
+      },
+      {
+        "result": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
+        "generator_source": "historical draw-sigma width-repair snapshot",
+        "generator_hash_available": false,
+        "status": "SUPERSEDED_PRE_ANALYTIC_SIGMA_REPAIR"
+      }
+    ]
   },
   "pooled_guard_implementation": {
     "source": {"path": "src/cf4_b1_pooled_coverage_guard_v1.py", "bytes": 5265, "sha256": "3d45ad7c4a2d8e8f9c24aa2265316c007ce30544382873f43a64dd91be904dee"},
@@ -126,11 +151,32 @@
   },
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72659, "sha256": "fe1ee9239f6f38d42670bf2c60a3044870db617980db7990e4d3f60e24bdf8a4"},
-    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 3375, "sha256": "8ff49b6b553c5566cdf6195a93d9b3229c06920c861c22044ee77764a29d59fe"},
-    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2299, "sha256": "f810c1b2d66b3ef4c5887bb401edfaf4adf141950a1657a9a21975e9792befd6"},
+    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 3379, "sha256": "7bf3eb26d309b3b24f61768e47da205e0eaf89a5eb2e7e84f10c00691b7d74d6"},
+    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2301, "sha256": "a05669c960849e18f7afeed9447d290349da85b37c2627533b2497b3f9103db9"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
-    "periodic_rsd_dependency": {"path": "src/cf4_b1_development_mock_calibration.py", "bytes": 13819, "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"}
+    "periodic_rsd_dependency": {"path": "src/cf4_b1_development_mock_calibration.py", "bytes": 13819, "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"},
+    "linked_artifact_hashes": {
+      "config/cf4_b1_calibration_diagnosis_result_v1.json": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"},
+      "config/cf4_b1_posterior_width_repair_result_v1.json": {"path": "config/cf4_b1_posterior_width_repair_result_v1.json", "bytes": 2307, "sha256": "c12e65e114a7b8634dad57a310ffc286fb55d56c4ae5bad9ec9f64a03771ab47"},
+      "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json": {"path": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json", "bytes": 3233, "sha256": "d3c54b47eb29d81490e9d873bfac05d08ec3911b9d2b93c717ab8cd89b2276d9"},
+      "config/cf4_bundle_b1_development_mock_calibration_result_v1.json": {"path": "config/cf4_bundle_b1_development_mock_calibration_result_v1.json", "bytes": 6607, "sha256": "7a819e4d96fc4770a9c4dde7b2eb3eff77c8643e650e9fc2d61285206933e883"},
+      "config/cf4_bundle_b1_development_mock_calibration_result_v2.json": {"path": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json", "bytes": 10407, "sha256": "62f2d2775cd9ce24df4dc1e1be4c325d6727c07df9b0b94a030df2d68a1d3d24"},
+      "config/cf4_bundle_b1_opus_auth_smoke_v1.json": {"path": "config/cf4_bundle_b1_opus_auth_smoke_v1.json", "bytes": 386, "sha256": "f8b958a5bf366e206a2fd29b6a9cdbb4be3307a0ccbb845c61748e07cef70bad"},
+      "config/cf4_bundle_b1_opus_scope_smoke_v1.json": {"path": "config/cf4_bundle_b1_opus_scope_smoke_v1.json", "bytes": 385, "sha256": "a1f25684c15d7b833afcaa25d6deee11b561786eeb7ebe6701ae7ecb7da28421"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v4.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v4.json", "bytes": 1138, "sha256": "9b805fb712a5778986d0e31104a90b8c091d9067343578de7e1efa6936e06c32"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v5.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v5.json", "bytes": 654, "sha256": "4fc4a6f7a6435a0b8b4f0f20e3c06796c257adfdbb2b28c0aa2635939347b8f0"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v6.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v6.json", "bytes": 1232, "sha256": "7cc83fcf9e518437287074e3376bd9ddc736091e90eba7ae505420a6172932a2"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v7.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v7.json", "bytes": 1464, "sha256": "068eefa833737dfaaabe9b6fd53d12e8b2005d4fe3f9606eeedd234ff1dc8d05"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v8.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v8.json", "bytes": 1760, "sha256": "7a6f8eced5f42c9d2ee42c2461aeace65e1031405d7b5abb56cb6208acc63ac7"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v10.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v10.json", "bytes": 2076, "sha256": "98b8e8d1c921367a6a77d4181d491ba20f72ce7b9562b00eccf9c57956d83125"},
+      "config/cf4_bundle_b1_opus_closure_attempt_v10.txt": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt", "bytes": 2442, "sha256": "b776cf335459b741f13636e21b7b2266ffa94c443391fef5ae6c85bc17620517"},
+      "config/cf4_bundle_b1_seed_firewall_repair_v1.json": {"path": "config/cf4_bundle_b1_seed_firewall_repair_v1.json", "bytes": 1700, "sha256": "1943288c52979efac8227abe0ede966ad5d98578d1b92af2d5f92f6020aaf8b7"},
+      "config/cf4_bundle_b1_sol_closure_audit_v3.json": {"path": "config/cf4_bundle_b1_sol_closure_audit_v3.json", "bytes": 1937, "sha256": "a621b617d084736302eef07b4bd6c522d1da1e906e48128e01bd76c3d3e72e3c"},
+      "tests/test_cf4_b1_development_mock_calibration.py": {"path": "tests/test_cf4_b1_development_mock_calibration.py", "bytes": 2463, "sha256": "4bc91cdb50264eeb57a5910d202950b8c5f5c87e6d72eb14e57c3bdcbdc0cd95"},
+      "tests/test_cf4_b1_development_mock_calibration_v2.py": {"path": "tests/test_cf4_b1_development_mock_calibration_v2.py", "bytes": 1492, "sha256": "cd85127031065418d3dd170f9ed76f95ad0395a886566c6d84312b5fa06a7cac"},
+      "tests/test_cf4_b1_joint_development_harness.py": {"path": "tests/test_cf4_b1_joint_development_harness.py", "bytes": 1291, "sha256": "5b671a7bfba59ab9ba5386918ecbe95ca92192fe58c94f8815ec3c12c047a81f"}
+    }
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -141,7 +187,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "26 B1 regression tests passed in 70.13s; targeted periodic/derivative checks and harness probes PASS",
+    "test_result": "26 B1 regression tests passed; exit status 0; wall elapsed 78.607s (pytest-reported 74.15s)",
     "test_selection": [
       "tests/test_cf4_b1_calibration_diagnosis_v1.py",
       "tests/test_cf4_b1_count_derivative_diagnosis_v2.py",
@@ -154,7 +200,15 @@
       "tests/test_cf4_b1_pooled_coverage_guard_v1.py"
     ],
     "regression_pass_count": 26,
-    "repaired_dependency_test_included": true
+    "repaired_dependency_test_included": true,
+    "regression_verification": {
+      "audited_commit": "3ba5b7ae60554a7f414088143441a564eac2ac2a",
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py",
+      "exit_status": 0,
+      "passed": 26,
+      "pytest_reported_seconds": 74.15,
+      "wall_elapsed_seconds": 78.607
+    }
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -193,8 +247,8 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_POST_V17_REPAIR_AUDIT",
-    "primary_record": "PENDING_POST_V17_REPAIR_AUDIT",
+    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
+    "primary_record": "PENDING_POST_V18_REPAIR_AUDIT_V19",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
@@ -209,5 +263,5 @@
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
   "dependent_result_status": "CURRENT_AFTER_PERIODIC_RSD_REPAIR_RECALIBRATED",
-  "next_action": "Obtain current Opus v17 closure audit of the completed v16 repairs and regenerated diagnostics; keep validation sealed and do not open B2."
+  "next_action": "Complete the v18 receipt/provenance repairs, then obtain Opus v19 closure audit; keep validation sealed and do not open B2."
 }

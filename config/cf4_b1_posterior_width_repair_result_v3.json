@@ -4,8 +4,8 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_PERIODIC_RSD_REPAIR_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
   "predecessor": "config/cf4_b1_posterior_width_repair_result_v2.json",
-  "closure_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
-  "closure_audit_next": "PENDING_POST_V17_REPAIR_AUDIT",
+  "closure_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
+  "closure_audit_next": "PENDING_POST_V18_REPAIR_AUDIT_V19",
   "periodic_rsd_repair": {
     "dependency": "src/cf4_b1_development_mock_calibration.py",
     "interpolation_mode": "grid-wrap",

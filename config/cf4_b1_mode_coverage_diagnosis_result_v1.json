@@ -1,6 +1,8 @@
 {
   "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
-  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "status": "SUPERSEDED_PRE_ANALYTIC_SIGMA_AND_PERIODIC_RSD_REPAIR",
+  "superseded_by": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+  "superseded_reason": "Historical draw-sigma diagnostic retained for provenance only; the periodic-RSD-repaired analytic-sigma result v3 is the current development diagnostic.",
   "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
   "source_artifact": {
     "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
