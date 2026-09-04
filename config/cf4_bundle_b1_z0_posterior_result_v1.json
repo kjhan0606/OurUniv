@@ -2,10 +2,11 @@
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "CONTRACT_AMENDMENT_COMPLETE_CALIBRATION_BLOCKED_OPUS_PENDING",
+  "status": "DEVELOPMENT_CALIBRATION_COMPLETE_TECHNICAL_GATE_FAIL_OPUS_PENDING",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v2.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
+  "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v1.json",
   "scope": {
     "kf_design_contract_validated": true,
     "kf_expand_executed": false,
@@ -26,6 +27,7 @@
     "amendment_command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_bundle_b1_likelihood_contract_amendment.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_joint_contract.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_jax.py",
     "amendment_result": "28 passed, 2 skipped",
     "amendment_interpretation": "Active likelihood and independent-mock contracts are frozen for development calibration; no external data or inference was run."
+    ,"development_calibration": "64 local synthetic N32 mocks completed; all strict low-k gates failed (0/64), so no posterior or frontier promotion is allowed."
   },
   "data_readiness": {
     "D_CF4_groups": "READY_GROUPED_DISTANCE_RADIAL_VELOCITY_LIKELIHOOD",
@@ -43,5 +45,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-  "next": "Run the frozen 64 development-mock calibration as one B1 bundle, record the dossier, then request the single B1 Opus closure audit; keep validation seeds sealed and do not start B2-IC-FORWARD."
+  "next": "Diagnose the failed technical estimator/information recovery and request one B1 closure audit with the calibration dossier; keep validation seeds sealed and do not start B2-IC-FORWARD."
 }
