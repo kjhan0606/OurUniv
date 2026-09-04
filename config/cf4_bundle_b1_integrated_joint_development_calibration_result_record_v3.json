@@ -30,7 +30,11 @@
   "primary_audit_current_v7": "config/cf4_bundle_b1_opus_closure_attempt_v7.json",
   "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "primary_audit_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
-  "primary_audit_current_v11": "PENDING_POST_PROVENANCE_FIX_AUDIT",
+  "primary_audit_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "primary_audit_current_v11_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v11.json", "bytes": 2188, "sha256": "81141d953d72e0c0626ee3786a0a6464856fc22e04871e07c01cad799b4337d5"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v11.txt", "bytes": 1891, "sha256": "1e5200b3a6b14ea3a3586d0cd89c0885d938ca8b995f20f7f6f0888295647378"}
+  },
   "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
   "width_repair": "config/cf4_b1_posterior_width_repair_result_v1.json",
@@ -49,6 +53,11 @@
     "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 530, "sha256": "5c8b6d6fe8554266495be1b4f934d5fe13276e800e882f64c40f22223014710d"},
     "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
     "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"}
+  },
+  "current_artifact_hashes": {
+    "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 70110, "sha256": "940a18ce093c79c67351dde2ff751a9a3d8620366fd9fd316a05b5b5db7553e1"},
+    "width_repair_v2": {"path": "config/cf4_b1_posterior_width_repair_result_v2.json", "bytes": 2689, "sha256": "0f512cf83f24364580171c06d86c6167119c7fa0062c722ccf9458b82c897955"},
+    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 1899, "sha256": "9b77c47330f165d669a949a66953be5e9e18afb8a4b4b4e8933b0f4f2d8258a7"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -98,12 +107,13 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_POST_PROVENANCE_FIX_AUDIT",
-    "primary_record": "PENDING_POST_PROVENANCE_FIX_AUDIT",
+    "primary": "CONDITIONAL_NO_GO_PROMOTION",
+    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+    "primary_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v11.txt",
     "historical_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
     "historical_v10_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Obtain current Opus closure audit after seed/provenance fixes; keep validation sealed and do not open B2. Then redesign the strict gate and add a mark-side misspecification arm inside B1 development calibration."
+  "next_action": "Within B1, replace draw-estimated sigma with analytic covariance, preregister and redesign the strict gate, then add a mark-side misspecification arm using development seeds only. Keep validation sealed and do not open B2."
 }

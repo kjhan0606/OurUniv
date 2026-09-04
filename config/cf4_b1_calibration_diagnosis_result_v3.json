@@ -1,5 +1,5 @@
 {
-  "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v1",
+  "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v3",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "source_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
   "seed_firewall": {

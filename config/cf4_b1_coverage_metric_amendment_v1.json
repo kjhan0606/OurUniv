@@ -4,6 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_CLOSURE_AUDIT",
   "historical_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
+  "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
   "motivation": "Opus identified legacy per-voxel coverage as a single-member spread statistic rather than a frequentist calibration frequency over independent truth seeds.",
   "legacy_metric": {
     "definition": "fraction of voxels in one member inside that member's 16-draw field standard deviation",

@@ -7,7 +7,7 @@
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "opus_closure_attempt_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
-  "opus_closure_attempt_current_v11": "PENDING_POST_PROVENANCE_FIX_AUDIT",
+  "opus_closure_attempt_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
