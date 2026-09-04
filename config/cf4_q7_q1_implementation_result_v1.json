@@ -59,7 +59,8 @@
     "status": "NOT_RETURNED",
     "attempts": [
       "claude -p --model claude-opus-5 ...: Not logged in; Please run /login",
-      "claude -p --model opus ...: no response before 180-second timeout"
+      "claude -p --model opus ...: no response before 180-second timeout",
+      "claude -p --model claude-opus-5 ...: auth status loggedIn, but no response before 300-second timeout"
     ],
     "verdict": "PENDING",
     "q7_2_authorized": false
