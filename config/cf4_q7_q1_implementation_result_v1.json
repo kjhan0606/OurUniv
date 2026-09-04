@@ -4,7 +4,7 @@
   "bundle": "Q7.0-Q7.1",
   "status": "CORRECTED_OPUS_AUDIT_PENDING",
   "user_approval": "RECEIVED_2026-09-04",
-  "implementation_commit": "1c98e963d4cb3a60605e992bbb47e63240fb138f",
+  "implementation_commit": "2d11235",
   "scope": {
     "development_only": true,
     "q7_2_started": false,
@@ -24,12 +24,12 @@
     "fixture_generator_sha256": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e"
   },
   "artifacts": {
-    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "5525bb78ab96506ea4774e95832ee933b70b8319b3d4f3a1ea9794ceddf9ae05",
+    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "02273c557661c1d0b38636fe2c4c4347b7b6116e6a53769b74db915632cfaae0",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
     "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
     "src/cf4_q7_topology_aware_approximate_operator.py": "73fb6847d3532e94ce652fdd24197c999f9fde0aa8126e756742c87d24033912",
     "tests/test_cf4_q7_topology_aware_approximate_operator.py": "925db12984e9fa55fcb059ada96b37de3078d9976aacf6f4b82f2d6a1ddd0f2d",
-    "config/cf4_q7_frozen_23_mass_basis_v1.json": "REGISTERED_IN_THIS_CORRECTIVE_COMMIT"
+    "config/cf4_q7_frozen_23_mass_basis_v1.json": "7bbbb9c1a51bd322b118f595bffb8a7ff6863d7671aa0e15f37d6e660e2cc1b9"
   },
   "implementation": {
     "route": "adaptive_topology_aware_response_atlas",
