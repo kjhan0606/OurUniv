@@ -1,0 +1,72 @@
+{
+  "schema": "ouruniv-cf4-q7-q1-implementation-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q7.0-Q7.1",
+  "status": "IMPLEMENTED_OPUS_AUDIT_PENDING",
+  "user_approval": "RECEIVED_2026-09-04",
+  "implementation_commit": "1c98e963d4cb3a60605e992bbb47e63240fb138f",
+  "scope": {
+    "development_only": true,
+    "q7_2_started": false,
+    "heldout_evaluated": false,
+    "jax": false,
+    "posterior": false,
+    "ic_generation": false,
+    "pm_hop_ramses": false,
+    "gpfs": false,
+    "slurm": false
+  },
+  "provenance": {
+    "q1_commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+    "q7_plan": "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json",
+    "q7_fixture_manifest": "config/cf4_q7_development_fixture_manifest_v1.json",
+    "fixture_generator_sha256": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e"
+  },
+  "artifacts": {
+    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "5525bb78ab96506ea4774e95832ee933b70b8319b3d4f3a1ea9794ceddf9ae05",
+    "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
+    "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
+    "src/cf4_q7_topology_aware_approximate_operator.py": "128cb43c609abd331611f5d1fadae23ee1e4ad48832293a6cdfd5c39a6424bc0",
+    "tests/test_cf4_q7_topology_aware_approximate_operator.py": "36f31b5c4449922a320beafc0c39f22830bce2a7aa11c419ce1f8faf44a6d2d9"
+  },
+  "implementation": {
+    "route": "adaptive_topology_aware_response_atlas",
+    "topology_key": [
+      "Q1 mode including sigma-zero branch",
+      "ordered interval count",
+      "sliver-merge activation bit",
+      "absolute 27-cell stencil mapping",
+      "negative-clip mask"
+    ],
+    "numeric_knot_coefficients_in_key": false,
+    "continuous_enclosure": "caller-supplied interval lower/upper arrays are checked against all fixture members; no internally generated geometry interval proof is claimed",
+    "finite_enclosure": "computed as a diagnostic hull over exact fixture responses and explicitly marked non-promotable",
+    "overflow": "bins without continuous certification use sourcewise Q1 fallback; no clipping or tolerance relaxation",
+    "state_basis": "population masses plus (23,M) or (P,M,23) directional mass basis; geometry derivatives excluded",
+    "conservation": "representatives must be finite, non-negative and sum to one"
+  },
+  "tests": {
+    "commands": [
+      "pytest -q tests/test_cf4_q1_cell_integrated_convolution.py tests/test_cf4_q6_knot_aligned_operator.py tests/test_cf4_q7_topology_aware_approximate_operator.py"
+    ],
+    "result": "26 passed in 34.15s",
+    "fixture_digest_reproducibility": "PASS for all seven frozen seeds",
+    "q6_regression": "PASS (6 tests)"
+  },
+  "audit": {
+    "required_auditor": "claude-opus-5",
+    "status": "NOT_RETURNED",
+    "attempts": [
+      "claude -p --model claude-opus-5 ...: Not logged in; Please run /login",
+      "claude -p --model opus ...: no response before 180-second timeout"
+    ],
+    "verdict": "PENDING",
+    "q7_2_authorized": false
+  },
+  "known_boundary_before_audit": {
+    "blocking_question": "Whether caller-supplied continuous enclosures satisfy the frozen Q7 interval-arithmetic contract must be independently audited; the implementation does not infer or prove geometry-cell bounds.",
+    "scientific_claim": "No z=0 posterior, IC, PM/HOP, zoom or <=0.3 cMpc/h claim is authorized."
+  },
+  "next": "Obtain Claude Opus 5 stage audit; only an explicit GO (and any required fixes) permits Q7.2 seven-fixture certified/measured execution."
+}
