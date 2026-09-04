@@ -106,7 +106,10 @@ def _spherical_rsd_field(eta: np.ndarray, velocity: np.ndarray) -> np.ndarray:
     displacement = LITTLE_H * radial_velocity / HUBBLE
     shifted = _RELATIVE + displacement[..., None] * _RHAT
     coordinates = ((shifted + BOX_SIZE / 2.0) / CELL_SIZE - 0.5) % GRID
-    return map_coordinates(eta, np.moveaxis(coordinates, -1, 0), order=1, mode="wrap")
+    # grid-wrap has period GRID. The legacy wrap mode aliases a boundary
+    # sample and is effectively period GRID-1 for interpolation, introducing
+    # a discontinuity in the RSD response near the upper edge.
+    return map_coordinates(eta, np.moveaxis(coordinates, -1, 0), order=1, mode="grid-wrap")
 
 
 def _positive_intensity(eta: np.ndarray, arm: str, velocity: np.ndarray) -> np.ndarray:

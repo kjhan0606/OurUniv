@@ -17,7 +17,7 @@ def test_guard_contract_is_clustered_and_two_level():
 def test_guard_reproduces_committed_development_result():
     root = Path(__file__).resolve().parents[1]
     result = guard.evaluate(root / "config/cf4_b1_mode_coverage_diagnosis_result_v3.json")
-    assert result["levels"]["coverage68"]["bootstrap_upper_97_5"] == 0.79296875
-    assert result["levels"]["coverage95"]["bootstrap_upper_97_5"] == 0.98046875
+    assert result["levels"]["coverage68"]["bootstrap_upper_97_5"] == 0.787109375
+    assert result["levels"]["coverage95"]["bootstrap_upper_97_5"] == 0.982421875
     assert result["overall_pass"] is False
     assert result["primary_reference_pass"] is False

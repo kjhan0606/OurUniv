@@ -1,4 +1,5 @@
 import sys
+import inspect
 from pathlib import Path
 
 import numpy as np
@@ -33,6 +34,12 @@ def test_harness_remains_pass_and_validation_firewall_closed():
     result = calibration.run_joint_harness()
     assert result["status"] == "PASS"
     assert result["validation_seeds_opened"] is False
+
+
+def test_rsd_interpolation_uses_grid_periodic_wrap():
+    source = inspect.getsource(calibration.base._spherical_rsd_field)
+    assert 'mode="grid-wrap"' in source
+    assert 'mode="wrap")' not in source
 
 
 def test_shared_group_mark_fisher_matches_direct_covariance_inverse():

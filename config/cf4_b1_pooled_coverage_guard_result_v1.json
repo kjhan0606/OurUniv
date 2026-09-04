@@ -3,8 +3,8 @@
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "input": {
     "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
-    "bytes": 90821,
-    "sha256": "38b924758195bb7fc59492403d3dd2b02483931b4091ddc392bc948dbefce1ef"
+    "bytes": 90754,
+    "sha256": "ce098db5075923001236328dd6ca9d275824a5d3efa1170ad494994cf5fa3e40"
   },
   "bootstrap": {
     "unit": "independent truth seed",
@@ -28,10 +28,10 @@
       "upper_limit": 0.7326894921370859,
       "member_count": 64,
       "mode_count": 8,
-      "pooled_count": 385,
+      "pooled_count": 381,
       "pooled_total": 512,
-      "mean": 0.751953125,
-      "bootstrap_upper_97_5": 0.79296875,
+      "mean": 0.744140625,
+      "bootstrap_upper_97_5": 0.787109375,
       "pass": false
     },
     "coverage95": {
@@ -40,10 +40,10 @@
       "upper_limit": 0.9744997361036416,
       "member_count": 64,
       "mode_count": 8,
-      "pooled_count": 495,
+      "pooled_count": 496,
       "pooled_total": 512,
-      "mean": 0.966796875,
-      "bootstrap_upper_97_5": 0.98046875,
+      "mean": 0.96875,
+      "bootstrap_upper_97_5": 0.982421875,
       "pass": false
     }
   },
@@ -67,31 +67,31 @@
     "B": {
       "coverage68": {
         "member_count": 16,
-        "mean": 0.671875,
-        "bootstrap_upper_97_5": 0.7421875,
+        "mean": 0.65625,
+        "bootstrap_upper_97_5": 0.75,
         "upper_limit": 0.7326894921370859,
         "pass": false
       },
       "coverage95": {
         "member_count": 16,
-        "mean": 0.9296875,
-        "bootstrap_upper_97_5": 0.9609375,
+        "mean": 0.9375,
+        "bootstrap_upper_97_5": 0.9765625,
         "upper_limit": 0.9744997361036416,
-        "pass": true
+        "pass": false
       }
     },
     "C": {
       "coverage68": {
         "member_count": 16,
-        "mean": 0.78125,
-        "bootstrap_upper_97_5": 0.859375,
+        "mean": 0.6875,
+        "bootstrap_upper_97_5": 0.7734375,
         "upper_limit": 0.7326894921370859,
         "pass": false
       },
       "coverage95": {
         "member_count": 16,
-        "mean": 0.96875,
-        "bootstrap_upper_97_5": 0.9921875,
+        "mean": 0.953125,
+        "bootstrap_upper_97_5": 0.984375,
         "upper_limit": 0.9744997361036416,
         "pass": false
       }
@@ -99,14 +99,14 @@
     "D": {
       "coverage68": {
         "member_count": 16,
-        "mean": 0.7421875,
-        "bootstrap_upper_97_5": 0.8203125,
+        "mean": 0.8203125,
+        "bootstrap_upper_97_5": 0.875,
         "upper_limit": 0.7326894921370859,
         "pass": false
       },
       "coverage95": {
         "member_count": 16,
-        "mean": 0.9765625,
+        "mean": 0.9921875,
         "bootstrap_upper_97_5": 1.0,
         "upper_limit": 0.9744997361036416,
         "pass": false

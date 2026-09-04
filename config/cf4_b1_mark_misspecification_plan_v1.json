@@ -10,12 +10,12 @@
   },
   "purpose": "Stress the CF4 mark factor with a preregistered heavy-tail distance-error model after count-side information diagnosis.",
   "count_side_decision": {
-    "diagnosis": "config/cf4_b1_count_information_diagnosis_result_v1.json",
-    "A_median_sandwich_to_expected_sigma": 0.997077771171671,
-    "B_median_sandwich_to_expected_sigma": 0.9979640029126331,
-    "C_median_sandwich_to_expected_sigma": 0.9969083686249577,
-    "D_median_sandwich_to_expected_sigma": 1.0680555518823254,
-    "interpretation": "A/B/C count-side expected information is close to empirical score information; D remains a mild discrepancy stress arm. This does not justify an A/C count repair."
+    "diagnosis": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
+    "A_median_sandwich_to_expected_sigma": 0.9970777711716712,
+    "B_median_sandwich_to_expected_sigma": 0.9977229026262668,
+    "C_median_sandwich_to_expected_sigma": 1.002582622709577,
+    "D_median_sandwich_to_expected_sigma": 1.002084280838897,
+    "interpretation": "After grid-wrap repair, all arm-stratified sandwich ratios are near one and the derivative ladder is stable; the prior D=1.068 figure was superseded. This does not justify an A/C count repair."
   },
   "arm": {
     "label": "E_MARK_HEAVY_TAIL",

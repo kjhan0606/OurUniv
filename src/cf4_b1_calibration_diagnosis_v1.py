@@ -79,7 +79,7 @@ def run_diagnosis() -> dict[str, object]:
         for name in row["gate_failures"]:
             failure_histogram[name] = failure_histogram.get(name, 0) + 1
     return {
-        "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v1",
+        "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v3",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
         "seed_firewall": {
@@ -101,13 +101,14 @@ def run_diagnosis() -> dict[str, object]:
         "members": members,
         "interpretation": {
             "primary_failure": "coverage calibration and member-level variance, not response/correlation or factor consistency",
+            "periodic_rsd_repair": "grid-wrap restores period GRID interpolation continuity; all dependent metrics were regenerated",
             "stress_arm_note": "D is an overdispersed model-discrepancy stress arm; its coverage failure is diagnostic, not a reason to discard the arm",
             "model_change_performed": False,
             "observational_posterior": "NOT_CREATED",
             "validation_opened": False,
             "B2_IC_FORWARD": "NOT_STARTED",
         },
-        "next_action": "Use development-only diagnosis to revise the declared uncertainty/stress-arm calibration, then rerun the same 64 seeds before any validation opening or promotion.",
+        "next_action": "Freeze a width policy and coverage-gate contract from the regenerated development diagnostics; do not execute the information-null mark arm, open validation, or promote a posterior.",
     }
 
 

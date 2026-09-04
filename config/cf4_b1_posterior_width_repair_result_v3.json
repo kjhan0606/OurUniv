@@ -1,0 +1,72 @@
+{
+  "schema": "ouruniv-cf4-b1-posterior-width-repair-result-v3",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_PERIODIC_RSD_REPAIR_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
+  "predecessor": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "periodic_rsd_repair": {
+    "dependency": "src/cf4_b1_development_mock_calibration.py",
+    "interpolation_mode": "grid-wrap",
+    "purpose": "restore period GRID continuity before any Fisher or width interpretation",
+    "mean_model_changed": false
+  },
+  "width_policy": {
+    "arm_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
+    "D_overdispersion_phi": 0.35,
+    "refit_after_periodic_repair": false,
+    "validation_opened": false
+  },
+  "calibration_after_repair": {
+    "member_count": 64,
+    "fit_success_count": 64,
+    "fit_abnormal_termination_count": 0,
+    "strict_gate_required_count": 64,
+    "strict_gate_pass_count": 8,
+    "failure_histogram": {"coverage68": 47, "coverage95": 47},
+    "per_arm_strict_pass_count": {"A": 2, "B": 2, "C": 2, "D": 2},
+    "per_arm_median_coverage68": {
+      "A": 0.7914886474609375,
+      "B": 0.6334991455078125,
+      "C": 0.6901092529296875,
+      "D": 0.7870025634765625
+    },
+    "per_arm_median_coverage95": {
+      "A": 0.9957122802734375,
+      "B": 0.947906494140625,
+      "C": 0.9790191650390625,
+      "D": 0.9928436279296875
+    },
+    "analytic_mode_coverage68_mean": 0.744140625,
+    "analytic_mode_coverage95_mean": 0.96875,
+    "pooled_guard_pass": false
+  },
+  "derivative_diagnosis": {
+    "result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
+    "step_ladder_max_relative_difference_by_arm": {
+      "A": 1.0288576017924913e-06,
+      "B": 1.0538408086718337e-06,
+      "C": 1.025186872025825e-06,
+      "D": 1.2118812016507404e-06
+    },
+    "sandwich_to_expected_sigma_median": {
+      "A": 0.9970777711716712,
+      "B": 0.9977229026262668,
+      "C": 1.002582622709577,
+      "D": 1.002084280838897
+    },
+    "direct_z_sd_mean": {
+      "A": 0.8076971716468494,
+      "B": 1.0084256408164192,
+      "C": 0.9355928100084121,
+      "D": 0.7256536578290296
+    }
+  },
+  "interpretation": "The periodic sampler repair removes the B/C/D derivative discontinuity. Count Fisher derivatives are now step-stable and the corrected sandwich ratios are near one; direct z covariance shows A/C/D widths remain broad, especially D after the frozen 1.5 multiplier. No width refit is authorized on these same development seeds.",
+  "scientific_disposition": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "B2_IC_FORWARD": "NOT_STARTED",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED"
+  },
+  "next_action": "Obtain current Opus repair audit; then freeze a width policy and gate contract using only development evidence. Do not open validation or B2."
+}

@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "DEVELOPMENT_NO_GO_D_WIDTH_REPAIR_STRICT_GATE_8_OF_64",
+  "status": "DEVELOPMENT_NO_GO_PERIODIC_RSD_REPAIR_STRICT_GATE_8_OF_64",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
@@ -12,12 +12,13 @@
   "opus_closure_attempt_current_v13": "PENDING_MACHINE_REPRODUCIBILITY_AND_GATE_POWER_AUDIT",
   "opus_closure_attempt_current_v14": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
   "opus_closure_attempt_current_v15": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+  "opus_closure_attempt_current_v16": "PENDING_PERIODIC_RSD_REPAIR_AUDIT",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
   "sol_closure_audit_current": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v3.json",
   "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
   "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
   "pooled_coverage_guard_result": "config/cf4_b1_pooled_coverage_guard_result_v1.json",
@@ -45,7 +46,7 @@
     "amendment_command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_bundle_b1_likelihood_contract_amendment.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_joint_contract.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_jax.py",
     "amendment_result": "28 passed, 2 skipped",
     "amendment_interpretation": "Active likelihood and independent-mock contracts are frozen for development calibration; no external data or inference was run."
-    ,"development_calibration": "64 local synthetic N32 mocks completed; fit_success 64/64 but the frozen strict low-k gate passes only 8/64 after D-arm width repair, so no posterior or frontier promotion is allowed."
+    ,"development_calibration": "64 local synthetic N32 mocks completed after grid-wrap RSD repair; fit_success 64/64 but the frozen strict low-k gate passes only 8/64, analytic mode coverage is 0.7441/0.9688 and the pooled guard fails, so no posterior or frontier promotion is allowed."
     ,"sol_audit": "NO-GO backup verdict: v2 is a repaired count-smoke plus interface probes, not an integrated 64-mock CF4+2M++ calibration."
   },
   "data_readiness": {
@@ -64,5 +65,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member calibration plus analytic-sigma mode diagnosis, machine guard, and count-side derivative/z-covariance check are complete (fit_success 64/64, strict gate 8/64; analytic mode coverage 0.75195/0.96680; pooled guard FAIL; A/B/C count ratios ~1, D ~1.068; derivative ladder unstable for RSD/FoG arms). Opus v14 rejects the information-null mark arm; obtain v15 audit of the replacement diagnosis and keep validation sealed/B2 closed."
+    "next": "The initial v3 validation-range attempt remains quarantined. The grid-wrap repair and dependent recalibration are complete; obtain Opus v16 closure audit before freezing width/gate policy. Validation and B2 remain closed."
 }

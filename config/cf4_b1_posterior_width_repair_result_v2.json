@@ -5,6 +5,7 @@
   "status": "COMPLETE_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
   "closure_audit_historical": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
   "closure_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "superseded_by": "config/cf4_b1_posterior_width_repair_result_v3.json",
   "predecessor": "config/cf4_b1_posterior_width_repair_result_v1.json",
   "repair": {
     "mean_model_changed": false,

@@ -26,8 +26,8 @@
     },
     "acceptance_construction": "central binomial quantiles at p=target, n=64, alpha=0.003125",
     "current_analytic_sigma_counts_by_mode": {
-      "coverage68": [47, 46, 49, 48, 52, 45, 49, 49],
-      "coverage95": [62, 63, 62, 61, 62, 60, 63, 62]
+      "coverage68": [48, 48, 50, 47, 46, 48, 47, 47],
+      "coverage95": [59, 64, 63, 61, 61, 63, 62, 63]
     },
     "current_result_is_in_sample": true,
     "promotion_ready": false,
@@ -45,16 +45,18 @@
         "percentile": 97.5,
         "pass_rule": "one-sided bootstrap upper percentile <= upper_limit"
       },
-      "current_analytic_sigma": {
-        "mean": 0.751953125,
-        "bootstrap_upper_97_5": 0.79296875,
-        "pass": false
+      "current_after_periodic_rsd_repair": {
+        "mean_coverage68": 0.744140625,
+        "bootstrap_upper_97_5_coverage68": 0.787109375,
+        "mean_coverage95": 0.96875,
+        "bootstrap_upper_97_5_coverage95": 0.982421875,
+        "pass": false,
+        "source": "config/cf4_b1_pooled_coverage_guard_result_v1.json"
       },
       "power_sensitivity": {
-        "alternative": "true interval width inflated 20%",
-        "nominal_independent_pair_coverage": 0.7698606595565836,
-        "approximate_rejection_power_n512": 0.9735,
-        "caveat": "power is a sensitivity calculation; final gate uses seed-cluster bootstrap because modes within a seed are correlated"
+        "status": "NOT_COMPUTED_AS_INDEPENDENT_N512_POWER",
+        "reason": "the eight modes are correlated within each truth seed; the adopted unit is the seed-cluster bootstrap, so an independent-pair n=512 power number is not a valid gate calibration",
+        "required_followup": "If power is needed, preregister a seed-cluster simulation at explicit seed counts (for example 64 and 256) and report the complete data-generating and resampling unit"
       }
     }
   },
@@ -76,8 +78,8 @@
   ],
   "required_before_adoption": [
     "freeze this contract before touching sealed validation seeds",
-    "add a mark-side misspecification arm",
-    "decide and record whether width is fixed or estimated by a discrepancy model",
+    "do not execute the mark-side misspecification arm unless a new information-adequacy calculation justifies it",
+    "decide and record whether width is fixed or estimated by a discrepancy model using the regenerated derivative and direct-z diagnostics",
     "run one untouched validation evaluation only after the above closure"
   ],
   "scientific_boundary": {

@@ -2,9 +2,9 @@
   "schema": "ouruniv-cf4-b1-coverage-metric-amendment-v1",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_GATE_REDESIGN_AUDIT",
+  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_PERIODIC_REPAIR_CLOSURE_AUDIT",
   "historical_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
-  "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "current_closure_audit": "PENDING_PERIODIC_RSD_REPAIR_AUDIT_V16",
   "motivation": "Opus identified legacy per-voxel coverage as a single-member spread statistic rather than a frequentist calibration frequency over independent truth seeds.",
   "legacy_metric": {
     "definition": "fraction of voxels in one member inside that member's 16-draw field standard deviation",
@@ -25,9 +25,9 @@
   "evidence": {
     "pre_repair": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json",
     "D_width_repair": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
-    "D_width_repair_result": "config/cf4_b1_posterior_width_repair_result_v2.json",
+    "D_width_repair_result": "config/cf4_b1_posterior_width_repair_result_v3.json",
     "aggregate_after_width_repair_draw_sigma": {"coverage68_frequency_mean": 0.72265625, "coverage95_frequency_mean": 0.951171875},
-    "aggregate_after_width_repair_analytic_sigma": {"coverage68_frequency_mean": 0.751953125, "coverage95_frequency_mean": 0.966796875},
+    "aggregate_after_width_repair_analytic_sigma": {"coverage68_frequency_mean": 0.744140625, "coverage95_frequency_mean": 0.96875},
     "analytic_sigma_result": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
     "gate_redesign_proposal": "config/cf4_b1_gate_redesign_proposal_v1.json"
   },
@@ -36,6 +36,6 @@
     "observational_z0_posterior": "NOT_AUTHORIZED",
     "frontier_promotion": "BLOCKED",
     "B2_IC_FORWARD": "BLOCKED",
-    "required_next": "primary Opus audit of the analytic-sigma gate redesign proposal before any contract adoption"
+    "required_next": "primary Opus audit of the periodic-RSD-repaired analytic-sigma gate redesign before any contract adoption"
   }
 }

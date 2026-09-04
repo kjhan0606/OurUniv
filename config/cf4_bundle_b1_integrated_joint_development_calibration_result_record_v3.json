@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-bundle-b1-integrated-joint-development-calibration-result-record-v3",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "COMPLETE_D_WIDTH_REPAIR_MODE_DIAGNOSIS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "status": "COMPLETE_PERIODIC_RSD_REPAIR_RECALIBRATED_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
     "source": {
@@ -12,14 +12,19 @@
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 2064,
-      "sha256": "da69a37db49bf1f16b08960ca9369a515ff56299da26d0d6b1413be67f039c41"
+      "bytes": 2285,
+      "sha256": "c2d77729bbca697267e8c69c9c4fc2e1590a6983267a88d747d8139d2237a52e"
     }
+  },
+  "dependency_base": {
+    "path": "src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "217e45b487aecf65bcff6cf8c2a334ed708ce90a8e4348d3f5b8885dde3df545"
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 9235,
-    "sha256": "1bd181dc4bc69c9482a5adb291aaad08711a762be03afa30802ea3ca76806e21"
+    "bytes": 9212,
+    "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -38,7 +43,12 @@
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v13.txt", "bytes": 1465, "sha256": "61c2e2d6aa5cb4b3f203842f1c7eab5076d22a26508aee79512fe1d8e97a5e79"}
   },
   "primary_audit_current_v14": "config/cf4_bundle_b1_opus_closure_attempt_v14.json",
-  "primary_audit_current_v15": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+  "primary_audit_current_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
+  "primary_audit_current_v16": "PENDING_PERIODIC_RSD_REPAIR_AUDIT",
+  "primary_audit_current_v15_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt", "bytes": 1252, "sha256": "5566f04cbd4fda23c5039ec934196ab599827a599ee119bb1a5c6a8e992a3036"}
+  },
   "primary_audit_current_v14_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v14.json", "bytes": 1478, "sha256": "801cab027756a7fb550beb6709acb9952c0526008924f0e39f279c7b578be686"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v14.txt", "bytes": 1373, "sha256": "59d78f537a887c6eddf4b97d2295c648f83805b4f5b3a349f1f0b328e26d1944"}
@@ -55,7 +65,7 @@
   "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
   "width_repair": "config/cf4_b1_posterior_width_repair_result_v1.json",
   "diagnosis_current": "config/cf4_b1_calibration_diagnosis_result_v3.json",
-  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v3.json",
   "mode_coverage_diagnosis_v1": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json",
   "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
   "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
@@ -65,21 +75,21 @@
   "count_derivative_diagnosis_result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
   "mark_misspecification_plan": "config/cf4_b1_mark_misspecification_plan_v1.json",
   "diagnosis_implementation": {
-    "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5827, "sha256": "5a2756c395016ba52298fdb344add12a6e3c787fa37d92dfa73206cedbb4f785"},
+    "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5980, "sha256": "2a01b52d051f0dbd7cd05189ed8ff900d940c2f3dd49aa5cf19cf3a40922c24e"},
     "test": {"path": "tests/test_cf4_b1_calibration_diagnosis_v1.py", "bytes": 853, "sha256": "2553daba8980d66b2d1594e9852121e7b89b0193580c517dc0352a80d8e0cd5d"},
-    "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"}
+    "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72232, "sha256": "b98fb1421ce1d527cc0b4c0c417318fb2e6a293f44244852607a1aa67f89032d"}
   },
   "mode_coverage_implementation": {
     "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 6723, "sha256": "496c1d7d0b98d7f1f538bb30ca1051d846efd88325632ae7728e46e757938e1f"},
     "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 1118, "sha256": "a5ca765ca4881e720c4a8daaff7af863fae72bd54b0e299fa683244d1e008391"},
     "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
     "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"},
-    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 90821, "sha256": "38b924758195bb7fc59492403d3dd2b02483931b4091ddc392bc948dbefce1ef"}
+    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 90754, "sha256": "ce098db5075923001236328dd6ca9d275824a5d3efa1170ad494994cf5fa3e40"}
   },
   "pooled_guard_implementation": {
     "source": {"path": "src/cf4_b1_pooled_coverage_guard_v1.py", "bytes": 4718, "sha256": "83c2e49058ceb3f0b9081498ac656a1a11553db8aab6b55beab5525dd248d256"},
-    "test": {"path": "tests/test_cf4_b1_pooled_coverage_guard_v1.py", "bytes": 919, "sha256": "0c77f16bc26c3677861927f75e18c4c11ee140ae05b7b60ff51e8605f91b1f07"},
-    "result": {"path": "config/cf4_b1_pooled_coverage_guard_result_v1.json", "bytes": 3298, "sha256": "56b35c0dcf420bc0a869a9c8104d7c064b6b2a237d92f1b5743022cdbcdeeda8"}
+    "test": {"path": "tests/test_cf4_b1_pooled_coverage_guard_v1.py", "bytes": 921, "sha256": "2129052dba1663d4f3bfeaf1652bac0c7c1305a9305678e11c01ece15b7fac09"},
+    "result": {"path": "config/cf4_b1_pooled_coverage_guard_result_v1.json", "bytes": 3284, "sha256": "142f94f3f1fa6603bec43656bc0217bf3339a408103674fdbcebb65d1b284722"}
   },
   "count_information_implementation": {
     "source": {"path": "src/cf4_b1_count_information_diagnosis_v1.py", "bytes": 5976, "sha256": "d57589dd9e610b4d1a85b3844208d2882d1091218d640e6ea9be2b6100c3c61c"},
@@ -89,16 +99,15 @@
   "count_derivative_implementation": {
     "source": {"path": "src/cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 8239, "sha256": "64a8397b023b5867f10ffb58a738de9a03e1d7d498931b10f752a33d89993989"},
     "test": {"path": "tests/test_cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 866, "sha256": "9da86a9556b116a3fda300a4d66de72d8d14b6f59e859104ac207dd295a73fd3"},
-    "result": {"path": "config/cf4_b1_count_derivative_diagnosis_result_v2.json", "bytes": 16446, "sha256": "9a1c58eb889bcff3d1da314356c96dfe5b66e40025456d07093ffd7e4de36811"}
+    "result": {"path": "config/cf4_b1_count_derivative_diagnosis_result_v2.json", "bytes": 16530, "sha256": "61a14f0ed5b1ac1eaca25f632027a4a87b27967a73915e9a32cceb19ee9beee9"}
   },
   "current_artifact_hashes": {
-    "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 70110, "sha256": "940a18ce093c79c67351dde2ff751a9a3d8620366fd9fd316a05b5b5db7553e1"},
-    "width_repair_v2": {"path": "config/cf4_b1_posterior_width_repair_result_v2.json", "bytes": 3023, "sha256": "3e2c7b3c6b52bdf7049e069705adb3b97f3e8767a4dc43e51bc89cc41fa0c0d1"},
-    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2313, "sha256": "5bdc98eff03107be2b5e11cf19b78c5e2beb58030fdf97a117dcca3d99811f80"},
-    "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3391, "sha256": "b04326a5ca88dd310ae100c93d3f105ad218349ea1ce133457abd64346821f96"},
-    "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 2915, "sha256": "09e3117bd8bb04b874e315fdaeff81191030f46dba287628cbe62fd765020582"}
-    ,"mark_misspecification_plan_v1_current": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3198, "sha256": "1fcec5e9ebee48caa091cdf4790a6dc669ed2568e24f23eaaab72509b411f819"}
-    ,"gate_redesign_proposal_v1_current": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3479, "sha256": "f062f6428919b556378323be211be097fa6f1c3020e35e3b9fcfa8983e0b3f11"}
+    "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72232, "sha256": "b98fb1421ce1d527cc0b4c0c417318fb2e6a293f44244852607a1aa67f89032d"},
+    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 2848, "sha256": "65f9fd013ac11737eb30cf1ab13e0c040ad751697f94dd4ee1810e2754740438"},
+    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2319, "sha256": "13f47a07c591a777614007a19ffd615a8488c9820999ccadda1570c02bbb8434"},
+    "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
+    "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
+    "periodic_rsd_dependency": {"path": "src/cf4_b1_development_mock_calibration.py", "bytes": 13819, "sha256": "217e45b487aecf65bcff6cf8c2a334ed708ce90a8e4348d3f5b8885dde3df545"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -109,7 +118,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "19 prior B1 tests plus 6 guard/count tests passed; harness probes PASS"
+    "test_result": "26 B1 regression tests passed in 68.47s; targeted periodic/derivative checks and harness probes PASS"
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -133,11 +142,11 @@
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,
-    "failure_histogram": {"coverage68": 50, "coverage95": 50},
+    "failure_histogram": {"coverage68": 47, "coverage95": 47},
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The exact grouped Fisher and declared D-arm width repair are numerically finite and factor-consistent; all 64 optimizers converge. Only 8/64 members pass the frozen per-voxel gate because coverage68/coverage95 fail (50/50 members respectively). The analytic across-seed latent-mode diagnostic is 0.7520/0.9668, but remains a development-only diagnostic and is not a promotion gate. This blocks promotion and is not an observational posterior claim."
+    "interpretation": "The grid-wrap periodic RSD repair restores derivative continuity; all 64 optimizers converge. Only 8/64 members pass the unchanged per-voxel gate because coverage68/coverage95 fail (47/47 members respectively). The regenerated analytic across-seed latent-mode diagnostic is 0.7441/0.9688, and the pooled guard fails both levels. This remains a development-only technical result, not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -148,8 +157,10 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
-    "primary_record": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+    "primary": "PENDING_PERIODIC_RSD_REPAIR_AUDIT",
+    "primary_record": "PENDING_PERIODIC_RSD_REPAIR_AUDIT",
+    "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
+    "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
     "historical_v13_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v13.txt",
     "historical_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
@@ -161,5 +172,6 @@
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Obtain Opus closure audit of the analytic-sigma diagnostic and gate redesign proposal; then add a mark-side misspecification arm using development seeds only. Keep validation sealed and do not open B2."
+  "dependent_result_status": "CURRENT_AFTER_PERIODIC_RSD_REPAIR_RECALIBRATED",
+  "next_action": "Obtain current Opus v16 closure audit of the grid-wrap repair and regenerated diagnostics; keep validation sealed and do not open B2."
 }
