@@ -32,7 +32,7 @@ POPULATIONS = base.POPULATIONS
 MOCK_COUNT = base.MOCK_COUNT
 POSTERIOR_DRAWS = 16
 MODE_COUNT = 8
-SEED_START = 2026083064
+SEED_START = 2026083000
 SEED_STOP = SEED_START + MOCK_COUNT
 MARK_MEASUREMENT_SIGMA = 120.0
 MARK_SHARED_SIGMA = 35.0
@@ -67,6 +67,7 @@ _RELATIVE = np.stack((_XX, _YY, _ZZ), axis=-1)
 
 def _manifest_arrays() -> dict[str, object]:
     manifest = build_secure_crossmatch_manifest(MAPPING, SUMMARY)
+    summary = json.loads(SUMMARY.read_text(encoding="utf-8"))
     entries = manifest["entries"]
     positions = np.empty((len(entries), 3), dtype=np.float64)
     for row, entry in enumerate(entries):
@@ -82,7 +83,10 @@ def _manifest_arrays() -> dict[str, object]:
         "rhat": rhat,
         "groups": np.asarray([int(x["group_index"]) for x in entries], dtype=np.int64),
         "secure_ids": [x["secure_object_id"] for x in entries],
-        "excluded_target_rows": int(manifest["counts"].get("mapping_rows", 0) - manifest["counts"]["secure_rows"]),
+        # The disjoint 2M++ tracer contract excludes every unique non-unmatched
+        # target, not every non-secure CF4 row (a CF4 group may have members
+        # that do not map to distinct 2M++ targets).
+        "excluded_target_rows": int(summary["mapping"]["unique_twompp_targets_in_non_unmatched"]),
     }
 
 
@@ -286,7 +290,9 @@ def run_calibration() -> dict[str, object]:
                                  "excluded_target_rows_before_binning": MARKS["excluded_target_rows"], "selection_and_ownership": "canonical_manifest",
                                  "rsd_fog_tsc_nuisance_probes": run_joint_harness()},
             "seed_firewall": {"development_count": MOCK_COUNT, "seed_start_inclusive": SEED_START, "seed_stop_exclusive": SEED_STOP,
-                              "untouched_validation_seed_start": 2026083320, "validation_opened": False},
+                              "untouched_validation_seed_start": 2026083320, "untouched_validation_seed_stop_exclusive": 2026083576,
+                              "contaminated_quarantine_start": 2026083064, "contaminated_quarantine_stop_exclusive": 2026083128,
+                              "validation_opened": False},
             "arms": by_arm,
             "aggregate": {"member_count": MOCK_COUNT, "strict_low_k_gate_pass_count": sum(x["strict_low_k_gate_pass_count"] for x in by_arm.values()),
                           "all_members_finite_joint": all(r["metrics"]["joint_log_likelihood_abs_error"] < 1.0e-7 for r in members),

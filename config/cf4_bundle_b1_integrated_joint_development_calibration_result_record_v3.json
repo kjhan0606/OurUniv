@@ -2,25 +2,26 @@
   "schema": "ouruniv-cf4-bundle-b1-integrated-joint-development-calibration-result-record-v3",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "COMPLETE_64_INTEGRATED_JOINT_MOCKS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "status": "COMPLETE_64_INTEGRATED_JOINT_MOCKS_RESEALED_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 17249,
-      "sha256": "244d64be31b33d0281caadc6bd68a207b01efec6dd308c261aabc93c266b58a9"
+      "bytes": 17719,
+      "sha256": "a7f9885d44b64e3823190ef6119bea478b6d57dbd93a9be0810cf0380520b527"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 1172,
-      "sha256": "65e8b6de68b22c8cc25f4b7b6dc2d9af1855afda9d80c236132da221f168ec8e"
+      "bytes": 1299,
+      "sha256": "1b44ebaf0acc354fda8af77d3a34e5cc25b4b95aedddd37cc9497a9c4ca62f58"
     }
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 7550,
-    "sha256": "95dfc57b6bd683e2e08a5e1c436893df367a54b9fb164d408a89c90946e8f515"
+    "bytes": 7764,
+    "sha256": "699f4785153a3f3c7578f92fef5bc99e1ec77d1c518cdfbe7b488c0a148f5a28"
   },
+  "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
     "backend": "local CPU",
@@ -36,7 +37,10 @@
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
     "secure_rows": 16584,
     "secure_groups": 11610,
-    "excluded_target_rows_before_binning": 39293,
+    "excluded_target_rows_before_binning": 17007,
+    "development_seed_range": [2026083000, 2026083064],
+    "contaminated_seed_quarantine": [2026083064, 2026083128],
+    "replacement_validation_range_sealed": [2026083320, 2026083576],
     "shared_redshift_covariance": "exact canonical group factor",
     "selection_rsd_fog_tsc_nuisance": "canonical local interfaces exercised",
     "canonical_vs_vectorized_joint_abs_error_max": 9.313225746154785e-10
@@ -56,5 +60,5 @@
     "B2_IC_FORWARD": "NOT_STARTED",
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
-  "next_action": "Obtain one Claude Opus 5 bundle-closure audit of this integrated result. If Opus returns no usable verdict, invoke gpt-5.6-sol only as the declared backup; do not open validation seeds or start B2."
+  "next_action": "The first v3 attempt used validation seeds and was quarantined; the corrected development-only result is now resealed. Obtain one Claude Opus 5 bundle-closure audit of this corrected result. If Opus returns no usable verdict, invoke gpt-5.6-sol only as the declared backup; do not open validation seeds or start B2."
 }

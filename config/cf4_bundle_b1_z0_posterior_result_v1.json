@@ -9,6 +9,7 @@
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
   "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
+  "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "scope": {
     "kf_design_contract_validated": true,
     "kf_expand_executed": false,
@@ -48,5 +49,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "Integrated 64-member same-truth joint calibration is complete but coverage gate fails. Obtain the single bundle-closure Opus audit; keep validation seeds sealed and do not start B2-IC-FORWARD."
+    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration is complete but coverage gate fails. Obtain the single bundle-closure audit; keep validation sealed and do not start B2-IC-FORWARD."
 }

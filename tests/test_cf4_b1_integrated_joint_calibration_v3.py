@@ -12,7 +12,9 @@ def test_manifest_binding_and_latent_basis():
     assert calibration.BASIS.shape == (calibration.MODE_COUNT, calibration.GRID, calibration.GRID, calibration.GRID)
     assert calibration.MARK_JAC.shape == (16584, calibration.MODE_COUNT)
     assert calibration.MARKS["manifest"]["counts"]["secure_cf4_groups"] == 11610
-    assert calibration.MARKS["excluded_target_rows"] == 39293
+    assert calibration.MARKS["excluded_target_rows"] == 17007
+    assert calibration.seed_schedule(0)["truth"] == 2026083000
+    assert calibration.seed_schedule(63)["truth"] == 2026083063
 
 
 def test_one_member_is_joint_and_canonical_factor_agrees():
