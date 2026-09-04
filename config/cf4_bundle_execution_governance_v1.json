@@ -69,7 +69,10 @@
     "gpfs": false,
     "slurm": false,
     "production": false,
-    "heldout_data": false,
-    "q7_2_started": true
+    "heldout_data": false
+  },
+  "historical_execution_state": {
+    "q7_2_started": true,
+    "does_not_authorize_current_bundle_execution": true
   }
 }

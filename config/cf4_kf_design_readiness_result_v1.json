@@ -3,6 +3,15 @@
   "status": "PASS_DESIGN_INTERNAL_CONSISTENCY_BLOCKED_BY_SCIENCE_INPUTS",
   "stage": "KF-DESIGN",
   "generated_by": "src/cf4_kf_design_readiness.py",
+  "record_form": "abridged",
+  "omitted_report_fields": [
+    "checks",
+    "blockers",
+    "baseline_binding",
+    "geometry_manifest.validated",
+    "geometry_manifest.body_sha256"
+  ],
+  "remaining_blockers_semantics": "science-input subset; execution and overclaim prohibitions are retained in purpose and authorization",
   "purpose": "Record-only local readiness result; no catalog, GPFS, Slurm, mock, posterior, IC, PM, HOP, or RAMSES execution.",
   "read_only_local_audit": true,
   "source_bindings": {
@@ -33,7 +42,7 @@
     },
     "baseline": {
       "path": "config/cf4_kf_design_baseline_amendment_v1.json",
-      "sha256": "69ea5475d6ea2333a03eff994d50aa003541759c8d367e07dd1c71b4be550885"
+      "sha256": "3b39b2139b64f74ccbf95b582512f3b8d3e03a76acc1ac17d489c5b913195484"
     }
   },
   "resolved_design_items": {
@@ -42,12 +51,15 @@
     "crossmatch_provenance": "COMPLETE"
   },
   "remaining_blockers": [
-    "angular empty-sky completeness and full K/evolution/extinction/luminosity-function selection contract",
-    "RSD/FoG and group-dispersion priors",
-    "luminosity-dependent bias, HOD/overdispersion and forward-model discrepancy calibration",
-    "CF4 group-member shared-redshift covariance source-resolution contract",
-    "structure-summary likelihood provenance, covariance and model-discrepancy contracts",
-    "independent development calibration followed by sealed 256-mock validation"
+    "2M++ raw provenance and CF4 crossmatch are complete, but angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance likelihood implementation remain pending",
+    "structure-summary likelihood provenance, covariance, and model-discrepancy contracts are partial",
+    "full angular selection/completeness map at empty-sky positions is absent from the current raw tables",
+    "K-correction, evolution-correction, extinction, and luminosity-function contract is incomplete",
+    "RSD and FoG/group-dispersion priors are incomplete",
+    "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",
+    "CF4 group-member covariance and shared-redshift source-resolution contract is incomplete",
+    "KF-DESIGN readiness is not a science inference or observational-resolution claim",
+    "no KF-EXPAND, all-D mock, Slurm, GPFS, catalog, IC, PM, HOP, or RAMSES execution is authorized by this audit"
   ],
   "geometry_manifest": {
     "native_bin_count": 38,

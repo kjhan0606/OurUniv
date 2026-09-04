@@ -40,6 +40,11 @@
       "role": "frozen independent-parent baseline and later conditional design"
     }
   },
+  "hash_provenance": {
+    "path": "config/cf4_independent_parent_architecture_design.json",
+    "json_pointer": "/sealed_CF4_parent_bank/manifest_sha256",
+    "semantics": "transcribed historical binding; not recomputed because external GPFS manifest was not read"
+  },
   "frozen_baseline": {
     "control": {
       "id": "WF15_archived_control",

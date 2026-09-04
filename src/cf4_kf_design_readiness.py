@@ -62,6 +62,15 @@ def _false_authority_flags(value: dict[str, Any], path: str) -> list[str]:
         "scientific_leakage",
         "final_manifest",
         "all_d_mock",
+        "posterior",
+        "catalog",
+        "observational",
+        "ic_pm",
+        "hop",
+        "ramses",
+        "heldout",
+        "external_artifact",
+        "mock",
     )
     findings: list[str] = []
     for key, item in authority.items():
@@ -86,6 +95,7 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
     values = {name: _load(path) for name, path in paths.items()}
     route = values["route"]
     design = values["design"]
+    design_authority = design.get("authority")
     likelihood = values["likelihood"]
     local_contract = values["local_contract"]
     crossmatch = values["crossmatch"]
@@ -145,6 +155,13 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
         findings.append({"id": "baseline_parent_bank", "status": "FAIL", "detail": "sealed parent-bank range/count changed"})
     if parent_bank.get("external_manifest_sha256") != "dcf5d24104b178a74371455497f4228eb03188189937915672219f10d4c11687":
         findings.append({"id": "baseline_parent_manifest", "status": "FAIL", "detail": "sealed parent-bank manifest binding changed"})
+    hash_provenance = baseline.get("hash_provenance", {})
+    if hash_provenance != {
+        "path": "config/cf4_independent_parent_architecture_design.json",
+        "json_pointer": "/sealed_CF4_parent_bank/manifest_sha256",
+        "semantics": "transcribed historical binding; not recomputed because external GPFS manifest was not read",
+    }:
+        findings.append({"id": "baseline_hash_provenance", "status": "FAIL", "detail": "external manifest hash provenance is absent or changed"})
     if likelihood.get("status") != "crossmatch_complete_likelihood_blocked":
         findings.append({"id": "likelihood_status", "status": "FAIL", "detail": "unexpected 2M++ likelihood status"})
 
@@ -172,7 +189,8 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
         findings.append({"id": f"required_output:{section}", "status": "BLOCKED", "detail": "required design output is absent or incomplete"})
 
     blockers = []
-    blockers.extend(str(item) for item in design.get("authority", {}).get("all_D_mock_blockers", []))
+    if isinstance(design_authority, dict):
+        blockers.extend(str(item) for item in design_authority.get("all_D_mock_blockers", []))
     blockers.extend(str(item) for item in likelihood.get("blockers", []))
     if manifest:
         blockers = [item for item in blockers if "immutable declared k-bin manifest" not in item]
@@ -227,9 +245,9 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
     }
 
 
-def main() -> int:
+def main(root: Path = ROOT) -> int:
     try:
-        report = audit_readiness()
+        report = audit_readiness(root)
     except (ReadinessError, OSError, KeyError, TypeError, ValueError) as exc:
         print(json.dumps({"schema": "ouruniv-cf4-kf-design-readiness-result-v1", "status": "FAIL_CONTRACT_INCONSISTENCY", "error": str(exc)}, sort_keys=True))
         return 1
