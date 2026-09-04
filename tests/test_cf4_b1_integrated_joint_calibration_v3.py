@@ -87,11 +87,17 @@ def test_width_repair_does_not_change_mean_model():
     # contract by perturbing one arm's draw scale and comparing the estimate.
     original = dict(calibration.ARM_WIDTH_SCALE)
     try:
-        baseline = calibration.run_mock(0, "A")
-        calibration.ARM_WIDTH_SCALE["A"] = 1.23
-        perturbed = calibration.run_mock(0, "A")
+        for arm in ("A", "D"):
+            baseline = calibration.run_mock(0, arm)
+            calibration.ARM_WIDTH_SCALE[arm] = 1.23
+            perturbed = calibration.run_mock(0, arm)
+            np.testing.assert_allclose(
+                baseline["_estimate_coeff"], perturbed["_estimate_coeff"], rtol=0.0, atol=1.0e-12
+            )
+            assert not np.allclose(
+                baseline["_draws_coeff"], perturbed["_draws_coeff"], rtol=0.0, atol=1.0e-12
+            )
+            calibration.ARM_WIDTH_SCALE[arm] = original[arm]
     finally:
         calibration.ARM_WIDTH_SCALE.clear()
         calibration.ARM_WIDTH_SCALE.update(original)
-    np.testing.assert_allclose(baseline["_estimate_coeff"], perturbed["_estimate_coeff"], rtol=0.0, atol=1.0e-12)
-    assert not np.allclose(baseline["_draws_coeff"], perturbed["_draws_coeff"], rtol=0.0, atol=1.0e-12)

@@ -10,9 +10,18 @@
   "record_pin_entries_including_self": 62,
   "mismatches": 0,
   "missing_paths": [],
+  "verification_tool": "Python hashlib.sha256 with os.stat byte counts",
+  "verification_command": "inline Python walk of every result-record path/bytes/sha256 entry, de-duplicated by path; missing/size/hash mismatch count emitted",
+  "verification_commit": "685363cc394f56e27aecefdb04725cec070fae48",
   "excluded_self_paths": [
     "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
     "config/cf4_bundle_b1_hash_verification_receipt_v2.txt"
+  ],
+  "excluded_untracked_paths": [
+    "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
+    "scripts/tripwire/",
+    "src/cf4_2mpp_joint_likelihood_jax.py",
+    "tests/test_cf4_2mpp_joint_likelihood_jax.py"
   ],
   "scope_statement": "Every linked path carrying a path/bytes/sha256 pin in the result record was byte-verified; only these two receipt self-files are excluded to avoid a hash cycle. Untracked user-owned paths are outside the declared B1 scope.",
   "supersedes": "config/cf4_bundle_b1_hash_verification_receipt_v1.json"

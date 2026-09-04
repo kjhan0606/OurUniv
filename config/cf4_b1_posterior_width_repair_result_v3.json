@@ -25,6 +25,7 @@
   "width_policy": {
     "arm_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
     "D_overdispersion_phi": 0.35,
+    "D_overdispersion_phi_role": "predeclared Gamma-Poisson count-variance stress parameter; not a posterior-width multiplier and not a mean-model parameter",
     "refit_after_periodic_repair": false,
     "validation_opened": false
   },
