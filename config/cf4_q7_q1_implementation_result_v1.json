@@ -4,7 +4,7 @@
   "bundle": "Q7.0-Q7.1",
   "status": "CORRECTED_OPUS_AUDIT_CONDITIONAL_GO",
   "user_approval": "RECEIVED_2026-09-04",
-  "implementation_commit": "2d11235",
+  "implementation_commit": "c8562ed",
   "scope": {
     "development_only": true,
     "q7_2_started": false,
