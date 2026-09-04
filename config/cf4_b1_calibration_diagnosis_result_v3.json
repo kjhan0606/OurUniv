@@ -2,6 +2,11 @@
   "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v3",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "source_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
   "seed_firewall": {
     "development_start_inclusive": 2026083000,
     "development_stop_exclusive": 2026083064,

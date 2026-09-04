@@ -1,10 +1,16 @@
 {
   "schema": "ouruniv-cf4-b1-count-information-diagnosis-result-v1",
-  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "status": "SUPERSEDED_PRE_PERIODIC_RSD_REPAIR",
+  "superseded_by": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
   "source_artifact": {
     "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_integrated_joint_calibration_v3.py",
     "bytes": 21546,
     "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
+  },
+  "dependency_artifact": {
+    "path": "src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13601,
+    "sha256": "feafa4f0c14fc721a39e6376e6303a14e80a4c90956089c56dcedec906187339"
   },
   "definition": {
     "expected_information": "declared count Fisher at MAP",
@@ -526,5 +532,5 @@
     "observational_z0_posterior": "NOT_CREATED",
     "B2_IC_FORWARD": "NOT_STARTED"
   },
-  "next_action": "Use the arm-stratified sandwich ratios to decide whether a count-side covariance repair is justified; keep validation sealed."
+  "next_action": "Historical pre-repair diagnostic only; use config/cf4_b1_count_derivative_diagnosis_result_v2.json for the repaired dependency and keep validation sealed."
 }

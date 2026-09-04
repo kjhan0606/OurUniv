@@ -6,10 +6,15 @@
     "bytes": 21546,
     "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
   },
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
   "mode_result_input": {
     "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
-    "bytes": 90754,
-    "sha256": "ce098db5075923001236328dd6ca9d275824a5d3efa1170ad494994cf5fa3e40"
+    "bytes": 90965,
+    "sha256": "eed2e8af8bc8c8d78dcb1b6aee6bc80dd78174645ae88e26c3b54a784ad1fc51"
   },
   "definition": {
     "purpose": "test derivative-scale stability and direct member z-covariance before mark-side stress",

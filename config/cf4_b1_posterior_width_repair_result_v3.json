@@ -10,6 +10,11 @@
     "purpose": "restore period GRID continuity before any Fisher or width interpretation",
     "mean_model_changed": false
   },
+  "dependency_artifact": {
+    "path": "src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
   "width_policy": {
     "arm_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
     "D_overdispersion_phi": 0.35,

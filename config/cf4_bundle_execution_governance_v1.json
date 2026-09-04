@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 remains development-only NO-GO. The Opus v15 periodic-boundary defect was repaired with grid-wrap and all dependent diagnostics were regenerated: 64/64 fits converge, strict gate 8/64, analytic mode coverage 0.7441/0.9688, pooled guard fails both levels, and count derivatives are step-stable. Await Opus v16 closure audit.",
-  "next_bundle_rule": "Remain inside B1 until the v16 closure audit. Freeze width/gate policy only after reviewing the repaired diagnostics. Do not run the information-null mark arm, open validation, promote a posterior/frontier or start B2.",
+  "current_status": "B1 remains development-only NO-GO. The Opus v15 periodic-boundary defect was repaired with grid-wrap; Opus v16-required provenance, numerical-boundary, stale-action and seed-range repairs are complete and all dependent diagnostics were regenerated. Await Opus v17 closure audit.",
+  "next_bundle_rule": "Remain inside B1 until the v17 closure audit. Freeze width/gate policy only after reviewing the repaired diagnostics. Do not run the information-null mark arm, open validation, promote a posterior/frontier or start B2.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,

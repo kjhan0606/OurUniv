@@ -3,8 +3,8 @@
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "input": {
     "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
-    "bytes": 90754,
-    "sha256": "ce098db5075923001236328dd6ca9d275824a5d3efa1170ad494994cf5fa3e40"
+    "bytes": 90965,
+    "sha256": "eed2e8af8bc8c8d78dcb1b6aee6bc80dd78174645ae88e26c3b54a784ad1fc51"
   },
   "bootstrap": {
     "unit": "independent truth seed",

@@ -9,6 +9,7 @@ posterior.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
@@ -78,10 +79,16 @@ def run_diagnosis() -> dict[str, object]:
     for row in members:
         for name in row["gate_failures"]:
             failure_histogram[name] = failure_histogram.get(name, 0) + 1
+    dependency = Path(integrated.base.__file__).resolve()
     return {
         "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v3",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
+        "dependency_artifact": {
+            "path": str(dependency),
+            "bytes": dependency.stat().st_size,
+            "sha256": hashlib.sha256(dependency.read_bytes()).hexdigest(),
+        },
         "seed_firewall": {
             "development_start_inclusive": integrated.SEED_START,
             "development_stop_exclusive": integrated.SEED_STOP,

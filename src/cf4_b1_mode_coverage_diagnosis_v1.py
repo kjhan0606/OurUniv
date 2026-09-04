@@ -85,6 +85,11 @@ def run_mode_coverage() -> dict[str, object]:
             "bytes": Path(integrated.__file__).stat().st_size,
             "sha256": hashlib.sha256(Path(integrated.__file__).read_bytes()).hexdigest(),
         },
+        "dependency_artifact": {
+            "path": str(Path(integrated.base.__file__).resolve()),
+            "bytes": Path(integrated.base.__file__).stat().st_size,
+            "sha256": hashlib.sha256(Path(integrated.base.__file__).read_bytes()).hexdigest(),
+        },
         "posterior_width_calibration": {
             "arm_scale": {key: float(value) for key, value in integrated.ARM_WIDTH_SCALE.items()},
             "D_overdispersion_phi": float(integrated.D_OVERDISPERSION_PHI),
@@ -137,7 +142,7 @@ def run_mode_coverage() -> dict[str, object]:
             "observational_z0_posterior": "NOT_CREATED",
             "B2_IC_FORWARD": "NOT_STARTED",
         },
-        "next_action": "Audit the analytic-sigma gate redesign proposal, then add a mark-side misspecification arm; retain validation firewall and frozen strict gate until contract adoption is authorized.",
+        "next_action": "Use the regenerated mode coverage and pooled guard to freeze a width/gate policy; do not execute the information-null mark arm, open validation, or alter the frozen strict gate.",
     }
 
 

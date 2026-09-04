@@ -7,6 +7,11 @@
     "bytes": 21546,
     "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
   },
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
   "posterior_width_calibration": {
     "arm_scale": {
       "A": 0.97,
@@ -4129,5 +4134,5 @@
     "observational_z0_posterior": "NOT_CREATED",
     "B2_IC_FORWARD": "NOT_STARTED"
   },
-  "next_action": "Audit the analytic-sigma gate redesign proposal, then add a mark-side misspecification arm; retain validation firewall and frozen strict gate until contract adoption is authorized."
+  "next_action": "Use the regenerated mode coverage and pooled guard to freeze a width/gate policy; do not execute the information-null mark arm, open validation, or alter the frozen strict gate."
 }
