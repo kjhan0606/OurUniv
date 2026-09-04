@@ -3,6 +3,7 @@
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
+  "closure_audit_historical": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
   "predecessor": "config/cf4_b1_posterior_width_repair_result_v1.json",
   "repair": {
     "mean_model_changed": false,
@@ -44,5 +45,5 @@
     "validation_opened": false,
     "B2_IC_FORWARD": "NOT_STARTED"
   },
-  "next_action": "Freeze a development-only mode-level coverage metric amendment, audit it, and then decide whether a non-Gaussian posterior or contract change is justified; do not open validation or B2."
+  "next_action": "Keep the mode-level coverage metric diagnostic-only; after seed/provenance repair obtain current Opus closure, then redesign the strict gate and add a mark-side misspecification arm. Do not open validation or B2."
 }

@@ -2,6 +2,21 @@
   "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
+  "source_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_integrated_joint_calibration_v3.py",
+    "bytes": 21546,
+    "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
+  },
+  "posterior_width_calibration": {
+    "arm_scale": {
+      "A": 0.97,
+      "B": 1.0,
+      "C": 0.97,
+      "D": 1.5
+    },
+    "D_overdispersion_phi": 0.35,
+    "mean_model_changed": false
+  },
   "metric_definition": {
     "coverage_unit": "independent development seed",
     "parameter_unit": "latent coefficient mode",
@@ -15,10 +30,46 @@
       2026083000,
       2026083064
     ],
+    "development_auxiliary_streams": {
+      "counts": [
+        2026400000,
+        2026400064
+      ],
+      "count_split": [
+        2026401000,
+        2026401064
+      ],
+      "marks": [
+        2026500000,
+        2026500064
+      ],
+      "posterior": [
+        2026600000,
+        2026600064
+      ]
+    },
     "contaminated_quarantine": [
       2026083064,
       2026083128
     ],
+    "contaminated_auxiliary_streams": {
+      "counts": [
+        2026400064,
+        2026400128
+      ],
+      "count_split": [
+        2026401064,
+        2026401128
+      ],
+      "marks": [
+        2026500064,
+        2026500128
+      ],
+      "posterior": [
+        2026600064,
+        2026600128
+      ]
+    },
     "replacement_validation_sealed": [
       2026083320,
       2026083576
@@ -170,6 +221,7 @@
       "seed": {
         "truth": 2026083000,
         "counts": 2026400000,
+        "count_split": 2026401000,
         "marks": 2026500000,
         "posterior": 2026600000
       },
@@ -230,6 +282,7 @@
       "seed": {
         "truth": 2026083001,
         "counts": 2026400001,
+        "count_split": 2026401001,
         "marks": 2026500001,
         "posterior": 2026600001
       },
@@ -290,6 +343,7 @@
       "seed": {
         "truth": 2026083002,
         "counts": 2026400002,
+        "count_split": 2026401002,
         "marks": 2026500002,
         "posterior": 2026600002
       },
@@ -350,6 +404,7 @@
       "seed": {
         "truth": 2026083003,
         "counts": 2026400003,
+        "count_split": 2026401003,
         "marks": 2026500003,
         "posterior": 2026600003
       },
@@ -410,6 +465,7 @@
       "seed": {
         "truth": 2026083004,
         "counts": 2026400004,
+        "count_split": 2026401004,
         "marks": 2026500004,
         "posterior": 2026600004
       },
@@ -470,6 +526,7 @@
       "seed": {
         "truth": 2026083005,
         "counts": 2026400005,
+        "count_split": 2026401005,
         "marks": 2026500005,
         "posterior": 2026600005
       },
@@ -530,6 +587,7 @@
       "seed": {
         "truth": 2026083006,
         "counts": 2026400006,
+        "count_split": 2026401006,
         "marks": 2026500006,
         "posterior": 2026600006
       },
@@ -590,6 +648,7 @@
       "seed": {
         "truth": 2026083007,
         "counts": 2026400007,
+        "count_split": 2026401007,
         "marks": 2026500007,
         "posterior": 2026600007
       },
@@ -650,6 +709,7 @@
       "seed": {
         "truth": 2026083008,
         "counts": 2026400008,
+        "count_split": 2026401008,
         "marks": 2026500008,
         "posterior": 2026600008
       },
@@ -710,6 +770,7 @@
       "seed": {
         "truth": 2026083009,
         "counts": 2026400009,
+        "count_split": 2026401009,
         "marks": 2026500009,
         "posterior": 2026600009
       },
@@ -770,6 +831,7 @@
       "seed": {
         "truth": 2026083010,
         "counts": 2026400010,
+        "count_split": 2026401010,
         "marks": 2026500010,
         "posterior": 2026600010
       },
@@ -830,6 +892,7 @@
       "seed": {
         "truth": 2026083011,
         "counts": 2026400011,
+        "count_split": 2026401011,
         "marks": 2026500011,
         "posterior": 2026600011
       },
@@ -890,6 +953,7 @@
       "seed": {
         "truth": 2026083012,
         "counts": 2026400012,
+        "count_split": 2026401012,
         "marks": 2026500012,
         "posterior": 2026600012
       },
@@ -950,6 +1014,7 @@
       "seed": {
         "truth": 2026083013,
         "counts": 2026400013,
+        "count_split": 2026401013,
         "marks": 2026500013,
         "posterior": 2026600013
       },
@@ -1010,6 +1075,7 @@
       "seed": {
         "truth": 2026083014,
         "counts": 2026400014,
+        "count_split": 2026401014,
         "marks": 2026500014,
         "posterior": 2026600014
       },
@@ -1070,6 +1136,7 @@
       "seed": {
         "truth": 2026083015,
         "counts": 2026400015,
+        "count_split": 2026401015,
         "marks": 2026500015,
         "posterior": 2026600015
       },
@@ -1130,6 +1197,7 @@
       "seed": {
         "truth": 2026083016,
         "counts": 2026400016,
+        "count_split": 2026401016,
         "marks": 2026500016,
         "posterior": 2026600016
       },
@@ -1190,6 +1258,7 @@
       "seed": {
         "truth": 2026083017,
         "counts": 2026400017,
+        "count_split": 2026401017,
         "marks": 2026500017,
         "posterior": 2026600017
       },
@@ -1250,6 +1319,7 @@
       "seed": {
         "truth": 2026083018,
         "counts": 2026400018,
+        "count_split": 2026401018,
         "marks": 2026500018,
         "posterior": 2026600018
       },
@@ -1310,6 +1380,7 @@
       "seed": {
         "truth": 2026083019,
         "counts": 2026400019,
+        "count_split": 2026401019,
         "marks": 2026500019,
         "posterior": 2026600019
       },
@@ -1370,6 +1441,7 @@
       "seed": {
         "truth": 2026083020,
         "counts": 2026400020,
+        "count_split": 2026401020,
         "marks": 2026500020,
         "posterior": 2026600020
       },
@@ -1430,6 +1502,7 @@
       "seed": {
         "truth": 2026083021,
         "counts": 2026400021,
+        "count_split": 2026401021,
         "marks": 2026500021,
         "posterior": 2026600021
       },
@@ -1490,6 +1563,7 @@
       "seed": {
         "truth": 2026083022,
         "counts": 2026400022,
+        "count_split": 2026401022,
         "marks": 2026500022,
         "posterior": 2026600022
       },
@@ -1550,6 +1624,7 @@
       "seed": {
         "truth": 2026083023,
         "counts": 2026400023,
+        "count_split": 2026401023,
         "marks": 2026500023,
         "posterior": 2026600023
       },
@@ -1610,6 +1685,7 @@
       "seed": {
         "truth": 2026083024,
         "counts": 2026400024,
+        "count_split": 2026401024,
         "marks": 2026500024,
         "posterior": 2026600024
       },
@@ -1670,6 +1746,7 @@
       "seed": {
         "truth": 2026083025,
         "counts": 2026400025,
+        "count_split": 2026401025,
         "marks": 2026500025,
         "posterior": 2026600025
       },
@@ -1730,6 +1807,7 @@
       "seed": {
         "truth": 2026083026,
         "counts": 2026400026,
+        "count_split": 2026401026,
         "marks": 2026500026,
         "posterior": 2026600026
       },
@@ -1790,6 +1868,7 @@
       "seed": {
         "truth": 2026083027,
         "counts": 2026400027,
+        "count_split": 2026401027,
         "marks": 2026500027,
         "posterior": 2026600027
       },
@@ -1850,6 +1929,7 @@
       "seed": {
         "truth": 2026083028,
         "counts": 2026400028,
+        "count_split": 2026401028,
         "marks": 2026500028,
         "posterior": 2026600028
       },
@@ -1910,6 +1990,7 @@
       "seed": {
         "truth": 2026083029,
         "counts": 2026400029,
+        "count_split": 2026401029,
         "marks": 2026500029,
         "posterior": 2026600029
       },
@@ -1970,6 +2051,7 @@
       "seed": {
         "truth": 2026083030,
         "counts": 2026400030,
+        "count_split": 2026401030,
         "marks": 2026500030,
         "posterior": 2026600030
       },
@@ -2030,6 +2112,7 @@
       "seed": {
         "truth": 2026083031,
         "counts": 2026400031,
+        "count_split": 2026401031,
         "marks": 2026500031,
         "posterior": 2026600031
       },
@@ -2090,6 +2173,7 @@
       "seed": {
         "truth": 2026083032,
         "counts": 2026400032,
+        "count_split": 2026401032,
         "marks": 2026500032,
         "posterior": 2026600032
       },
@@ -2150,6 +2234,7 @@
       "seed": {
         "truth": 2026083033,
         "counts": 2026400033,
+        "count_split": 2026401033,
         "marks": 2026500033,
         "posterior": 2026600033
       },
@@ -2210,6 +2295,7 @@
       "seed": {
         "truth": 2026083034,
         "counts": 2026400034,
+        "count_split": 2026401034,
         "marks": 2026500034,
         "posterior": 2026600034
       },
@@ -2270,6 +2356,7 @@
       "seed": {
         "truth": 2026083035,
         "counts": 2026400035,
+        "count_split": 2026401035,
         "marks": 2026500035,
         "posterior": 2026600035
       },
@@ -2330,6 +2417,7 @@
       "seed": {
         "truth": 2026083036,
         "counts": 2026400036,
+        "count_split": 2026401036,
         "marks": 2026500036,
         "posterior": 2026600036
       },
@@ -2390,6 +2478,7 @@
       "seed": {
         "truth": 2026083037,
         "counts": 2026400037,
+        "count_split": 2026401037,
         "marks": 2026500037,
         "posterior": 2026600037
       },
@@ -2450,6 +2539,7 @@
       "seed": {
         "truth": 2026083038,
         "counts": 2026400038,
+        "count_split": 2026401038,
         "marks": 2026500038,
         "posterior": 2026600038
       },
@@ -2510,6 +2600,7 @@
       "seed": {
         "truth": 2026083039,
         "counts": 2026400039,
+        "count_split": 2026401039,
         "marks": 2026500039,
         "posterior": 2026600039
       },
@@ -2570,6 +2661,7 @@
       "seed": {
         "truth": 2026083040,
         "counts": 2026400040,
+        "count_split": 2026401040,
         "marks": 2026500040,
         "posterior": 2026600040
       },
@@ -2630,6 +2722,7 @@
       "seed": {
         "truth": 2026083041,
         "counts": 2026400041,
+        "count_split": 2026401041,
         "marks": 2026500041,
         "posterior": 2026600041
       },
@@ -2690,6 +2783,7 @@
       "seed": {
         "truth": 2026083042,
         "counts": 2026400042,
+        "count_split": 2026401042,
         "marks": 2026500042,
         "posterior": 2026600042
       },
@@ -2750,6 +2844,7 @@
       "seed": {
         "truth": 2026083043,
         "counts": 2026400043,
+        "count_split": 2026401043,
         "marks": 2026500043,
         "posterior": 2026600043
       },
@@ -2810,6 +2905,7 @@
       "seed": {
         "truth": 2026083044,
         "counts": 2026400044,
+        "count_split": 2026401044,
         "marks": 2026500044,
         "posterior": 2026600044
       },
@@ -2870,6 +2966,7 @@
       "seed": {
         "truth": 2026083045,
         "counts": 2026400045,
+        "count_split": 2026401045,
         "marks": 2026500045,
         "posterior": 2026600045
       },
@@ -2930,6 +3027,7 @@
       "seed": {
         "truth": 2026083046,
         "counts": 2026400046,
+        "count_split": 2026401046,
         "marks": 2026500046,
         "posterior": 2026600046
       },
@@ -2990,6 +3088,7 @@
       "seed": {
         "truth": 2026083047,
         "counts": 2026400047,
+        "count_split": 2026401047,
         "marks": 2026500047,
         "posterior": 2026600047
       },
@@ -3050,6 +3149,7 @@
       "seed": {
         "truth": 2026083048,
         "counts": 2026400048,
+        "count_split": 2026401048,
         "marks": 2026500048,
         "posterior": 2026600048
       },
@@ -3110,6 +3210,7 @@
       "seed": {
         "truth": 2026083049,
         "counts": 2026400049,
+        "count_split": 2026401049,
         "marks": 2026500049,
         "posterior": 2026600049
       },
@@ -3170,6 +3271,7 @@
       "seed": {
         "truth": 2026083050,
         "counts": 2026400050,
+        "count_split": 2026401050,
         "marks": 2026500050,
         "posterior": 2026600050
       },
@@ -3230,6 +3332,7 @@
       "seed": {
         "truth": 2026083051,
         "counts": 2026400051,
+        "count_split": 2026401051,
         "marks": 2026500051,
         "posterior": 2026600051
       },
@@ -3290,6 +3393,7 @@
       "seed": {
         "truth": 2026083052,
         "counts": 2026400052,
+        "count_split": 2026401052,
         "marks": 2026500052,
         "posterior": 2026600052
       },
@@ -3350,6 +3454,7 @@
       "seed": {
         "truth": 2026083053,
         "counts": 2026400053,
+        "count_split": 2026401053,
         "marks": 2026500053,
         "posterior": 2026600053
       },
@@ -3410,6 +3515,7 @@
       "seed": {
         "truth": 2026083054,
         "counts": 2026400054,
+        "count_split": 2026401054,
         "marks": 2026500054,
         "posterior": 2026600054
       },
@@ -3470,6 +3576,7 @@
       "seed": {
         "truth": 2026083055,
         "counts": 2026400055,
+        "count_split": 2026401055,
         "marks": 2026500055,
         "posterior": 2026600055
       },
@@ -3530,6 +3637,7 @@
       "seed": {
         "truth": 2026083056,
         "counts": 2026400056,
+        "count_split": 2026401056,
         "marks": 2026500056,
         "posterior": 2026600056
       },
@@ -3590,6 +3698,7 @@
       "seed": {
         "truth": 2026083057,
         "counts": 2026400057,
+        "count_split": 2026401057,
         "marks": 2026500057,
         "posterior": 2026600057
       },
@@ -3650,6 +3759,7 @@
       "seed": {
         "truth": 2026083058,
         "counts": 2026400058,
+        "count_split": 2026401058,
         "marks": 2026500058,
         "posterior": 2026600058
       },
@@ -3710,6 +3820,7 @@
       "seed": {
         "truth": 2026083059,
         "counts": 2026400059,
+        "count_split": 2026401059,
         "marks": 2026500059,
         "posterior": 2026600059
       },
@@ -3770,6 +3881,7 @@
       "seed": {
         "truth": 2026083060,
         "counts": 2026400060,
+        "count_split": 2026401060,
         "marks": 2026500060,
         "posterior": 2026600060
       },
@@ -3830,6 +3942,7 @@
       "seed": {
         "truth": 2026083061,
         "counts": 2026400061,
+        "count_split": 2026401061,
         "marks": 2026500061,
         "posterior": 2026600061
       },
@@ -3890,6 +4003,7 @@
       "seed": {
         "truth": 2026083062,
         "counts": 2026400062,
+        "count_split": 2026401062,
         "marks": 2026500062,
         "posterior": 2026600062
       },
@@ -3950,6 +4064,7 @@
       "seed": {
         "truth": 2026083063,
         "counts": 2026400063,
+        "count_split": 2026401063,
         "marks": 2026500063,
         "posterior": 2026600063
       },

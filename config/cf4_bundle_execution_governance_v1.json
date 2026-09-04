@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 remains development-only NO-GO after D-arm posterior-width repair: fit_success 64/64, frozen per-voxel strict gate 8/64. Across-seed latent-mode coverage improves to mean 0.7227/0.9512, but this proposed diagnostic metric is not an adopted promotion gate; current Opus closure audit is pending.",
-  "next_bundle_rule": "Remain inside B1. Obtain a current Opus closure audit of the D-width repair and proposed mode-level coverage metric; keep validation sealed and do not promote a posterior/frontier or start B2 until the frozen 64/64 gate passes and the bundle closure is audited.",
+  "current_status": "B1 remains development-only NO-GO after D-arm posterior-width repair: fit_success 64/64, frozen per-voxel strict gate 8/64. Across-seed latent-mode coverage improves to mean 0.7227/0.9512, but this proposed diagnostic metric is not an adopted promotion gate. Opus v10 identified an undeclared split stream and missing mode-artifact provenance; these are being repaired before v11 closure.",
+  "next_bundle_rule": "Remain inside B1. After the seed/provenance repair, obtain Opus closure v11, then redesign the strict gate and add a mark-side misspecification arm using development seeds only. Keep validation sealed and do not promote a posterior/frontier or start B2 until the revised calibration contract is audited.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,

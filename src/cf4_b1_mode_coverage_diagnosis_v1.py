@@ -9,6 +9,7 @@ only and does not alter the frozen promotion gate.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
@@ -67,6 +68,16 @@ def run_mode_coverage() -> dict[str, object]:
         "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
+        "source_artifact": {
+            "path": str(Path(integrated.__file__).resolve()),
+            "bytes": Path(integrated.__file__).stat().st_size,
+            "sha256": hashlib.sha256(Path(integrated.__file__).read_bytes()).hexdigest(),
+        },
+        "posterior_width_calibration": {
+            "arm_scale": {key: float(value) for key, value in integrated.ARM_WIDTH_SCALE.items()},
+            "D_overdispersion_phi": float(integrated.D_OVERDISPERSION_PHI),
+            "mean_model_changed": False,
+        },
         "metric_definition": {
             "coverage_unit": "independent development seed",
             "parameter_unit": "latent coefficient mode",
@@ -77,7 +88,19 @@ def run_mode_coverage() -> dict[str, object]:
         },
         "seed_firewall": {
             "development": [2026083000, 2026083064],
+            "development_auxiliary_streams": {
+                "counts": [2026400000, 2026400064],
+                "count_split": [2026401000, 2026401064],
+                "marks": [2026500000, 2026500064],
+                "posterior": [2026600000, 2026600064],
+            },
             "contaminated_quarantine": [2026083064, 2026083128],
+            "contaminated_auxiliary_streams": {
+                "counts": [2026400064, 2026400128],
+                "count_split": [2026401064, 2026401128],
+                "marks": [2026500064, 2026500128],
+                "posterior": [2026600064, 2026600128],
+            },
             "replacement_validation_sealed": [2026083320, 2026083576],
             "validation_opened": False,
         },

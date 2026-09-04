@@ -15,6 +15,8 @@ def test_manifest_binding_and_latent_basis():
     assert calibration.MARKS["excluded_target_rows"] == 17007
     assert calibration.seed_schedule(0)["truth"] == 2026083000
     assert calibration.seed_schedule(63)["truth"] == 2026083063
+    assert calibration.seed_schedule(0)["count_split"] == 2026401000
+    assert calibration.seed_schedule(63)["count_split"] == 2026401063
 
 
 def test_one_member_is_joint_and_canonical_factor_agrees():

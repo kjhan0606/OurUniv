@@ -7,19 +7,19 @@
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 23229,
-      "sha256": "967c0227b264d171c642f929c9dd1b7468e8d098016db6544112ec10f030e8f9"
+      "bytes": 21546,
+      "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 1925,
-      "sha256": "44d0dc25f83af63488f27b3cb694cb0dad97e3f535b6a621d28abc97ff390582"
+      "bytes": 2064,
+      "sha256": "da69a37db49bf1f16b08960ca9369a515ff56299da26d0d6b1413be67f039c41"
     }
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 9093,
-    "sha256": "556fc59f1f98a094905b75e953def5654e36d6dbae2284f902068e9922819664"
+    "bytes": 9235,
+    "sha256": "1bd181dc4bc69c9482a5adb291aaad08711a762be03afa30802ea3ca76806e21"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -29,7 +29,8 @@
   "primary_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v6.json",
   "primary_audit_current_v7": "config/cf4_bundle_b1_opus_closure_attempt_v7.json",
   "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
-  "primary_audit_current_v10": "PENDING_CURRENT_D_WIDTH_REPAIR_AUDIT",
+  "primary_audit_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
+  "primary_audit_current_v11": "PENDING_POST_PROVENANCE_FIX_AUDIT",
   "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
   "width_repair": "config/cf4_b1_posterior_width_repair_result_v1.json",
@@ -44,10 +45,10 @@
     "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"}
   },
   "mode_coverage_implementation": {
-    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 4900, "sha256": "2bccbf5e4b9664090f97af7b25727b72b8fecee4f3ba101a0c57c5d56986c0d7"},
+    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 5993, "sha256": "1ece6d05792760ee2c9864b79e2c68531b234e12b52eff93d08e5c1658402821"},
     "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 530, "sha256": "5c8b6d6fe8554266495be1b4f934d5fe13276e800e882f64c40f22223014710d"},
-    "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 87430, "sha256": "70596586119fa14340d17993e34cde0e80b805ad93661daa0dca40634c3b6078"},
-    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 87367, "sha256": "33aee88a8724fa18b278046527e42db47173b41d7cc44baae84000f242772f3e"}
+    "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
+    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -58,7 +59,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "5 targeted tests passed; mode coverage test passed; prior 13-test B1 regression; harness probes PASS"
+    "test_result": "18 B1 tests passed; mode coverage test passed; harness probes PASS"
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -66,9 +67,9 @@
     "secure_groups": 11610,
     "excluded_target_rows_before_binning": 17007,
     "development_seed_range": [2026083000, 2026083064],
-    "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
+    "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "count_split": [2026401000, 2026401064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
     "contaminated_seed_quarantine": [2026083064, 2026083128],
-    "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
+    "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "count_split": [2026401064, 2026401128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
     "replacement_validation_range_sealed": [2026083320, 2026083576],
     "shared_redshift_covariance": "exact canonical group factor",
     "selection_rsd_fog_tsc_nuisance": "canonical local interfaces exercised",
@@ -97,10 +98,12 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_CURRENT_D_WIDTH_REPAIR_MODE_METRIC_AUDIT",
-    "primary_record": "PENDING_CURRENT_D_WIDTH_REPAIR_AUDIT",
+    "primary": "PENDING_POST_PROVENANCE_FIX_AUDIT",
+    "primary_record": "PENDING_POST_PROVENANCE_FIX_AUDIT",
+    "historical_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
+    "historical_v10_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Obtain a current Opus closure audit of the D-width repair and proposed mode-level metric amendment; keep validation sealed and do not open B2. If NO-GO, design any non-Gaussian width model only inside development seeds while preserving the frozen mean model and strict gate."
+  "next_action": "Obtain current Opus closure audit after seed/provenance fixes; keep validation sealed and do not open B2. Then redesign the strict gate and add a mark-side misspecification arm inside B1 development calibration."
 }

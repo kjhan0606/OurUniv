@@ -35,6 +35,7 @@ POSTERIOR_DRAWS = 16
 MODE_COUNT = 8
 SEED_START = 2026083000
 SEED_STOP = SEED_START + MOCK_COUNT
+COUNT_SPLIT_START = 2026401000
 MARK_MEASUREMENT_SIGMA = 120.0
 MARK_SHARED_SIGMA = 35.0
 PRIOR_SIGMA = 1.0
@@ -159,36 +160,6 @@ def _mark_jacobian() -> np.ndarray:
 MARK_JAC = _mark_jacobian()
 
 
-def _count_objective(coeff: np.ndarray, counts: np.ndarray, arm: str) -> tuple[float, np.ndarray]:
-    eta = _field_from_coeff(coeff)
-    velocity = _velocity_from_field(eta)
-    intensity = base._positive_intensity(eta, arm, velocity) * base.TRAIN_FRACTION
-    residual = counts.astype(np.float64) - intensity
-    value = float(np.sum(counts * np.log(np.maximum(intensity, 1.0e-300)) - intensity - gammaln(counts + 1.0))
-                   - 0.5 * np.sum(np.asarray(coeff) ** 2 / PRIOR_SIGMA**2))
-    # This is an analytic score for the A/B selection model; C/D convolution
-    # remains a declared stress arm and uses a finite-difference fallback.
-    if arm in ("A", "B"):
-        score = np.zeros(MODE_COUNT, dtype=np.float64)
-        # A conservative low-k score keeps the optimizer deterministic while
-        # retaining the exact joint likelihood value for the final candidate.
-        for mode in range(MODE_COUNT):
-            score[mode] = np.sum(residual * (base.BIAS[:, None, None, None] * intensity).sum(axis=0) * BASIS[mode])
-        score -= np.asarray(coeff) / PRIOR_SIGMA**2
-    else:
-        score = np.zeros(MODE_COUNT, dtype=np.float64)
-        for mode in range(MODE_COUNT):
-            step = 1.0e-4
-            plus = _field_from_coeff(coeff + np.eye(1, MODE_COUNT, mode)[0] * step)
-            minus = _field_from_coeff(coeff - np.eye(1, MODE_COUNT, mode)[0] * step)
-            p = base._positive_intensity(plus, arm, _velocity_from_field(plus)) * base.TRAIN_FRACTION
-            m = base._positive_intensity(minus, arm, _velocity_from_field(minus)) * base.TRAIN_FRACTION
-            lp = np.sum(counts * np.log(np.maximum(p, 1.0e-300)) - p)
-            lm = np.sum(counts * np.log(np.maximum(m, 1.0e-300)) - m)
-            score[mode] = (lp - lm) / (2.0 * step) - coeff[mode] / PRIOR_SIGMA**2
-    return -value, -score
-
-
 def _joint_value(coeff: np.ndarray, counts: np.ndarray, arm: str, observed: np.ndarray, sigma: np.ndarray) -> float:
     eta = _field_from_coeff(coeff)
     intensity = base._positive_intensity(eta, arm, _velocity_from_field(eta)) * base.TRAIN_FRACTION
@@ -310,6 +281,7 @@ def seed_schedule(index: int) -> dict[str, int]:
     if not isinstance(index, int) or not 0 <= index < MOCK_COUNT:
         raise ValueError("index outside sealed 64-member development range")
     return {"truth": SEED_START + index, "counts": 2026400000 + index,
+            "count_split": COUNT_SPLIT_START + index,
             "marks": 2026500000 + index, "posterior": 2026600000 + index}
 
 
@@ -319,7 +291,7 @@ def run_mock(index: int, arm: str) -> dict[str, object]:
     truth = _field_from_coeff(truth_coeff)
     velocity = _velocity_from_field(truth)
     all_counts = base._draw_counts(base._positive_intensity(truth, arm, velocity), arm, seeds["counts"])
-    train, holdout = base._split_counts(all_counts, seeds["counts"] + 1000)
+    train, holdout = base._split_counts(all_counts, seeds["count_split"])
     observed, sigma = _draw_marks(truth_coeff, seeds["marks"])
     objective = lambda x: _joint_vector_objective(x, train, arm, observed, sigma) - 0.0
     # Bounded optimizer over the shared eight-mode latent, using numerical
@@ -381,10 +353,10 @@ def run_calibration() -> dict[str, object]:
                                                                   "mean_model_changed": False},
                                  "disjoint_target_exclusion_probe": DISJOINT_TARGET_PROBE},
             "seed_firewall": {"development_count": MOCK_COUNT, "seed_start_inclusive": SEED_START, "seed_stop_exclusive": SEED_STOP,
-                              "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
+                              "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "count_split": [2026401000, 2026401064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
                               "untouched_validation_seed_start": 2026083320, "untouched_validation_seed_stop_exclusive": 2026083576,
                               "contaminated_quarantine_start": 2026083064, "contaminated_quarantine_stop_exclusive": 2026083128,
-                              "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
+                              "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "count_split": [2026401064, 2026401128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
                               "validation_opened": False},
             "arms": by_arm,
             "aggregate": {"member_count": MOCK_COUNT, "strict_low_k_gate_required_count": MOCK_COUNT,

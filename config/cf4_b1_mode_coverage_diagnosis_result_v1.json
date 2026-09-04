@@ -2,6 +2,17 @@
   "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
+  "source_artifact": {
+    "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
+    "bytes": 22960,
+    "sha256": "b5f2808cc3b60f7ef882ba00f78585f20b1dde8561bfb62b8a49bdb160960811",
+    "snapshot": "pre-D-width-repair commit 0ed3216"
+  },
+  "posterior_width_calibration": {
+    "arm_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.0},
+    "D_overdispersion_phi": 0.35,
+    "mean_model_changed": false
+  },
   "metric_definition": {
     "coverage_unit": "independent development seed",
     "parameter_unit": "latent coefficient mode",
@@ -15,10 +26,22 @@
       2026083000,
       2026083064
     ],
+    "development_auxiliary_streams": {
+      "counts": [2026400000, 2026400064],
+      "count_split": [2026401000, 2026401064],
+      "marks": [2026500000, 2026500064],
+      "posterior": [2026600000, 2026600064]
+    },
     "contaminated_quarantine": [
       2026083064,
       2026083128
     ],
+    "contaminated_auxiliary_streams": {
+      "counts": [2026400064, 2026400128],
+      "count_split": [2026401064, 2026401128],
+      "marks": [2026500064, 2026500128],
+      "posterior": [2026600064, 2026600128]
+    },
     "replacement_validation_sealed": [
       2026083320,
       2026083576
