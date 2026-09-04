@@ -1,6 +1,6 @@
 {
   "schema": "ouruniv-cf4-bundle-execution-governance-v1",
-  "date": "2026-09-04",
+  "date": "2026-09-05",
   "owner": "driver",
   "status": "USER_DIRECTED_CONSOLIDATION",
   "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 closure: corrected integrated joint calibration has fit_success 64/64 but only 11/64 strict gate passes. Opus primary v8 is NO-GO (normal authenticated mode); sol backup is supporting NO-GO; initial validation-seed attempt quarantined.",
-  "next_bundle_rule": "Remain inside B1. Diagnose coverage and stress-arm calibration using development seeds only; do not open replacement validation, promote a posterior/frontier, or start B2 until the frozen 64/64 gate passes and a new bundle closure is audited.",
+  "current_status": "B1 remains development-only NO-GO after D-arm posterior-width repair: fit_success 64/64, frozen per-voxel strict gate 8/64. Across-seed latent-mode coverage improves to mean 0.7227/0.9512, but this proposed diagnostic metric is not an adopted promotion gate; current Opus closure audit is pending.",
+  "next_bundle_rule": "Remain inside B1. Obtain a current Opus closure audit of the D-width repair and proposed mode-level coverage metric; keep validation sealed and do not promote a posterior/frontier or start B2 until the frozen 64/64 gate passes and the bundle closure is audited.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,

@@ -43,5 +43,5 @@ def test_shared_group_mark_fisher_matches_direct_covariance_inverse():
 
 
 def test_width_repair_does_not_change_mean_model():
-    assert calibration.ARM_WIDTH_SCALE == {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.0}
+    assert calibration.ARM_WIDTH_SCALE == {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5}
     assert calibration.D_OVERDISPERSION_PHI == 0.35

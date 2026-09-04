@@ -1,25 +1,25 @@
 {
   "schema": "ouruniv-cf4-bundle-b1-integrated-joint-development-calibration-result-record-v3",
-  "date": "2026-09-04",
+  "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "COMPLETE_WIDTH_REPAIR_64_INTEGRATED_JOINT_MOCKS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "status": "COMPLETE_D_WIDTH_REPAIR_MODE_DIAGNOSIS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 22960,
-      "sha256": "b5f2808cc3b60f7ef882ba00f78585f20b1dde8561bfb62b8a49bdb160960811"
+      "bytes": 23229,
+      "sha256": "967c0227b264d171c642f929c9dd1b7468e8d098016db6544112ec10f030e8f9"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
       "bytes": 1925,
-      "sha256": "165b42a7fd8e5ddcb2be824a81eae4d1a5ca5c74383dacfaebe8938a35229c6b"
+      "sha256": "44d0dc25f83af63488f27b3cb694cb0dad97e3f535b6a621d28abc97ff390582"
     }
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 9099,
-    "sha256": "3196fb1f09ee91381cdd905c693d463ae12da1c2ba417d1b1d524ed3c05d40a1"
+    "bytes": 9093,
+    "sha256": "556fc59f1f98a094905b75e953def5654e36d6dbae2284f902068e9922819664"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -29,14 +29,25 @@
   "primary_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v6.json",
   "primary_audit_current_v7": "config/cf4_bundle_b1_opus_closure_attempt_v7.json",
   "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
+  "primary_audit_current_v10": "PENDING_CURRENT_D_WIDTH_REPAIR_AUDIT",
   "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
   "width_repair": "config/cf4_b1_posterior_width_repair_result_v1.json",
-  "diagnosis_current": "config/cf4_b1_calibration_diagnosis_result_v2.json",
+  "diagnosis_current": "config/cf4_b1_calibration_diagnosis_result_v3.json",
+  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "mode_coverage_diagnosis_v1": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json",
+  "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
+  "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
   "diagnosis_implementation": {
     "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5827, "sha256": "5a2756c395016ba52298fdb344add12a6e3c787fa37d92dfa73206cedbb4f785"},
     "test": {"path": "tests/test_cf4_b1_calibration_diagnosis_v1.py", "bytes": 853, "sha256": "2553daba8980d66b2d1594e9852121e7b89b0193580c517dc0352a80d8e0cd5d"},
     "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"}
+  },
+  "mode_coverage_implementation": {
+    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 4900, "sha256": "2bccbf5e4b9664090f97af7b25727b72b8fecee4f3ba101a0c57c5d56986c0d7"},
+    "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 530, "sha256": "5c8b6d6fe8554266495be1b4f934d5fe13276e800e882f64c40f22223014710d"},
+    "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 87430, "sha256": "70596586119fa14340d17993e34cde0e80b805ad93661daa0dca40634c3b6078"},
+    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 87367, "sha256": "33aee88a8724fa18b278046527e42db47173b41d7cc44baae84000f242772f3e"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -47,7 +58,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "5 targeted tests passed; prior 13-test B1 regression; harness probes PASS"
+    "test_result": "5 targeted tests passed; mode coverage test passed; prior 13-test B1 regression; harness probes PASS"
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -67,15 +78,15 @@
   },
   "calibration_metrics": {
     "strict_low_k_gate_required_count": 64,
-    "strict_low_k_gate_pass_count": 11,
+    "strict_low_k_gate_pass_count": 8,
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,
-    "failure_histogram": {"coverage68": 49, "coverage95": 49},
+    "failure_histogram": {"coverage68": 50, "coverage95": 50},
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The exact grouped Fisher and declared width repair are numerically finite and factor-consistent; all 64 optimizers converge. Only 11/64 members pass because coverage68/coverage95 fail (49/49 members respectively), with A/C overcoverage and D stress-arm undercoverage. This blocks promotion and is not an observational posterior claim."
+    "interpretation": "The exact grouped Fisher and declared D-arm width repair are numerically finite and factor-consistent; all 64 optimizers converge. Only 8/64 members pass the frozen per-voxel gate because coverage68/coverage95 fail (50/50 members respectively). The separate across-seed latent-mode diagnostic improves to mean 0.7227/0.9512, but is not a promotion gate. This blocks promotion and is not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -86,10 +97,10 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_CURRENT_WIDTH_REPAIR_AUDIT",
-    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v9.json",
+    "primary": "PENDING_CURRENT_D_WIDTH_REPAIR_MODE_METRIC_AUDIT",
+    "primary_record": "PENDING_CURRENT_D_WIDTH_REPAIR_AUDIT",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Obtain current-width-repair Opus closure audit; if still NO-GO, design a non-Gaussian/arm-dependent width model using development seeds only, preserving the frozen mean model and gate."
+  "next_action": "Obtain a current Opus closure audit of the D-width repair and proposed mode-level metric amendment; keep validation sealed and do not open B2. If NO-GO, design any non-Gaussian width model only inside development seeds while preserving the frozen mean model and strict gate."
 }

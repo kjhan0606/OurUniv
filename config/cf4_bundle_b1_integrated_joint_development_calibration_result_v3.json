@@ -61,7 +61,7 @@
         "A": 0.97,
         "B": 1.0,
         "C": 0.97,
-        "D": 1.0
+        "D": 1.5
       },
       "D_overdispersion_phi": 0.35,
       "mean_model_changed": false
@@ -223,8 +223,8 @@
         "response": 1.00110976548932,
         "correlation_r": 0.9998908793758847,
         "residual_power_ratio": 0.0002199273071033571,
-        "coverage68": 0.5438232421875,
-        "coverage95": 0.8632354736328125,
+        "coverage68": 0.7404327392578125,
+        "coverage95": 0.9816436767578125,
         "heldout_log_score_improvement": 11578.460345297832,
         "joint_log_likelihood_abs_error": 3.637978807091713e-10,
         "count_total": 35033.0
@@ -233,8 +233,8 @@
         "response": 0.9745970858630799,
         "correlation_r": 0.9986542607453393,
         "residual_power_ratio": 9.104194499247967e-05,
-        "coverage68": 0.337066650390625,
-        "coverage95": 0.615509033203125,
+        "coverage68": 0.494049072265625,
+        "coverage95": 0.798858642578125,
         "heldout_log_score_improvement": 887.2539879974584,
         "joint_log_likelihood_abs_error": 2.9103830456733704e-11,
         "count_total": 11651.0
@@ -243,20 +243,20 @@
         "response": 1.0066961187865962,
         "correlation_r": 0.9999610517402228,
         "residual_power_ratio": 0.0032022059185524646,
-        "coverage68": 0.728424072265625,
-        "coverage95": 0.974609375,
+        "coverage68": 0.908538818359375,
+        "coverage95": 1.0,
         "heldout_log_score_improvement": 204832.27930068024,
         "joint_log_likelihood_abs_error": 6.984919309616089e-10,
         "count_total": 207242.0
       },
-      "strict_low_k_gate_pass_count": 4,
+      "strict_low_k_gate_pass_count": 1,
       "heldout_positive_count": 16
     }
   },
   "aggregate": {
     "member_count": 64,
     "strict_low_k_gate_required_count": 64,
-    "strict_low_k_gate_pass_count": 11,
+    "strict_low_k_gate_pass_count": 8,
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,

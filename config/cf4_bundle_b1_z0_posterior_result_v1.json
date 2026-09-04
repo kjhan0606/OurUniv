@@ -1,8 +1,8 @@
 {
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
-  "date": "2026-09-04",
+  "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "SOL_BACKUP_NO_GO_INTEGRATED_JOINT_STRICT_GATE_11_OF_64",
+  "status": "DEVELOPMENT_NO_GO_D_WIDTH_REPAIR_STRICT_GATE_8_OF_64",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
@@ -11,6 +11,9 @@
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
   "sol_closure_audit_current": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
+  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
+  "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "scope": {
     "kf_design_contract_validated": true,
@@ -32,7 +35,7 @@
     "amendment_command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_bundle_b1_likelihood_contract_amendment.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_joint_contract.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_jax.py",
     "amendment_result": "28 passed, 2 skipped",
     "amendment_interpretation": "Active likelihood and independent-mock contracts are frozen for development calibration; no external data or inference was run."
-    ,"development_calibration": "64 local synthetic N32 mocks completed; all strict low-k gates failed (0/64), so no posterior or frontier promotion is allowed."
+    ,"development_calibration": "64 local synthetic N32 mocks completed; fit_success 64/64 but the frozen strict low-k gate passes only 8/64 after D-arm width repair, so no posterior or frontier promotion is allowed."
     ,"sol_audit": "NO-GO backup verdict: v2 is a repaired count-smoke plus interface probes, not an integrated 64-mock CF4+2M++ calibration."
   },
   "data_readiness": {
@@ -51,5 +54,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration is complete (fit_success 64/64, strict gate 11/64). Backup closure audit is NO-GO; diagnose calibration with development seeds only, keep validation sealed and do not start B2-IC-FORWARD."
+    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration plus D-arm width repair and mode-level coverage diagnosis are complete (fit_success 64/64, strict gate 8/64). Obtain current Opus closure audit; keep validation sealed and do not start B2-IC-FORWARD."
 }

@@ -41,7 +41,7 @@ PRIOR_SIGMA = 1.0
 D_OVERDISPERSION_PHI = 0.35
 # Development-calibrated width factors are frozen before the next rerun.  They
 # alter only posterior draws, never the MAP/mean field or the strict gate.
-ARM_WIDTH_SCALE = {"A": 0.97, "B": 1.00, "C": 0.97, "D": 1.00}
+ARM_WIDTH_SCALE = {"A": 0.97, "B": 1.00, "C": 0.97, "D": 1.50}
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING = ROOT / "data/cf4_2mpp_crossmatch_v1.csv"
@@ -349,7 +349,11 @@ def run_mock(index: int, arm: str) -> dict[str, object]:
                     "secure_groups": int(MARKS["manifest"]["counts"]["secure_cf4_groups"]),
                     "excluded_target_rows_before_binning": MARKS["excluded_target_rows"],
                     "covariance_min_eigenvalue": float(np.min(np.linalg.eigvalsh(covariance)))})
-    return {"index": index, "arm": arm, "seed": seeds, "metrics": metrics}
+    return {"index": index, "arm": arm, "seed": seeds, "metrics": metrics,
+            # Private development payload for coverage diagnosis; run_calibration
+            # never serializes these arrays into the result artifact.
+            "_truth_coeff": truth_coeff, "_estimate_coeff": estimate_coeff,
+            "_draws_coeff": draws_coeff}
 
 
 def run_calibration() -> dict[str, object]:

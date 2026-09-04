@@ -1,0 +1,48 @@
+{
+  "schema": "ouruniv-cf4-b1-posterior-width-repair-result-v2",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
+  "predecessor": "config/cf4_b1_posterior_width_repair_result_v1.json",
+  "repair": {
+    "mean_model_changed": false,
+    "low_k_parameterization_changed": false,
+    "arm_width_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
+    "D_overdispersion_phi": 0.35,
+    "purpose": "test D-arm model-discrepancy width against the corrected grouped posterior covariance"
+  },
+  "per_voxel_gate_comparison": {
+    "strict_gate_required_count": 64,
+    "strict_gate_pass_count_before": 11,
+    "strict_gate_pass_count_after": 8,
+    "after_failure_histogram": {"coverage68": 50, "coverage95": 50},
+    "after_median_coverage68": {"A": 0.7914886474609375, "B": 0.63177490234375, "C": 0.7935028076171875, "D": 0.7404327392578125},
+    "after_median_coverage95": {"A": 0.9957122802734375, "B": 0.9678802490234375, "C": 0.9912261962890625, "D": 0.9816436767578125},
+    "fit_success_count": 64,
+    "fit_abnormal_termination_count": 0,
+    "all_members_finite_joint": true,
+    "all_arms_have_heldout_gain": true
+  },
+  "mode_level_diagnosis": {
+    "before_mean_coverage68": 0.66796875,
+    "before_mean_coverage95": 0.92578125,
+    "after_mean_coverage68": 0.72265625,
+    "after_mean_coverage95": 0.951171875,
+    "interpretation": "D width inflation moves across-seed mode coverage close to nominal, while the legacy per-voxel gate becomes less informative."
+  },
+  "seed_firewall": {
+    "development": [2026083000, 2026083064],
+    "contaminated_quarantine": [2026083064, 2026083128],
+    "replacement_validation_sealed": [2026083320, 2026083576],
+    "validation_opened": false
+  },
+  "interpretation": "A scalar per-arm width repair cannot make the legacy per-voxel metric pass: A/C remain over-covered and D becomes over-broad. The across-seed latent-mode metric is the scientifically relevant calibration diagnostic for this eight-mode posterior, but it is not yet a promotion gate.",
+  "scientific_disposition": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "validation_opened": false,
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Freeze a development-only mode-level coverage metric amendment, audit it, and then decide whether a non-Gaussian posterior or contract change is justified; do not open validation or B2."
+}
