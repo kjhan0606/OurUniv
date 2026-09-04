@@ -77,7 +77,7 @@ def run_mode_coverage() -> dict[str, object]:
     all68 = frequencies(rows, "coverage68_by_mode")
     all95 = frequencies(rows, "coverage95_by_mode")
     return {
-        "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v2",
+        "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v3",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
         "source_artifact": {
@@ -133,10 +133,11 @@ def run_mode_coverage() -> dict[str, object]:
         "interpretation": {
             "purpose": "separate a wrong per-voxel coverage estimator from genuine latent-mode interval miscalibration",
             "mean_model_changed": False,
+            "gate_redesign_proposal": "config/cf4_b1_gate_redesign_proposal_v1.json",
             "observational_z0_posterior": "NOT_CREATED",
             "B2_IC_FORWARD": "NOT_STARTED",
         },
-        "next_action": "Use the across-seed mode frequencies to design any non-Gaussian width repair; retain validation firewall and frozen strict gate until a contract amendment is explicitly audited.",
+        "next_action": "Audit the analytic-sigma gate redesign proposal, then add a mark-side misspecification arm; retain validation firewall and frozen strict gate until contract adoption is authorized.",
     }
 
 

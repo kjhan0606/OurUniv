@@ -1,5 +1,5 @@
 {
-  "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v2",
+  "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v3",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
   "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
   "source_artifact": {
