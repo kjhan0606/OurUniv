@@ -25,7 +25,7 @@
   },
   "artifacts": {
     "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "76525aaca7d1695b41a62a3442a1a8cecc859000bb59fca3d8c0d0c7df3c1254",
-    "config/cf4_bundle_execution_governance_v1.json": "07a6f06a2450fe2f1b7229abcbe154144185cf562189fe5fccca65ecb9b9683a",
+    "config/cf4_bundle_execution_governance_v1.json": "a9cbde28f7e6d1a79de1f683875e94465137b6974e032b6d0ac16ce1c9e80631",
     "config/cf4_bundle_b0_operator_result_v1.json": "09f5c2b77c65cb93823d8d74fa8d9cd9fac9d326e434b8bd6b02e1769fd38e73",
     "config/cf4_bundle_b0_opus_closure_attempt_v1.json": "b3e39051428597a824768182d733943c0df83c912f093a9e8354e03b8bd837a1",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
