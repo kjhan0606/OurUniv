@@ -196,11 +196,11 @@
   },
   "closure_decision": {
     "contract_amendment": "COMPLETE",
-    "development_calibration": "COMPLETE_TECHNICAL_GATE_FAIL",
+    "development_calibration": "COMPLETE_TECHNICAL_GATE_FAIL_V2_JOINT_PROBES_PASS",
     "actual_z0_posterior": "NOT_CREATED",
     "KF_EXPAND": "BLOCKED_PENDING_DIAGNOSTIC_REPAIR",
     "B2_IC_FORWARD": "NOT_STARTED",
-    "next_single_bundle_action": "Diagnose the failed technical estimator/information recovery without opening validation seeds; then update the B1 dossier and request closure audit.",
+    "next_single_bundle_action": "Diagnose the remaining information loss and estimator/field parameterization without opening validation seeds; then update the B1 dossier and request closure audit.",
     "requires_new_user_approval": true
   }
 }

@@ -1,0 +1,75 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-development-mock-calibration-result-record-v2",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_64_DEVELOPMENT_MOCKS_JOINT_HARNESS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "predecessor": "config/cf4_bundle_b1_count_only_smoke_relabel_v1.json",
+  "contract": {
+    "path": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
+    "bytes": 10840,
+    "sha256": "64b7ac8f7c0eb4665b2b6e960bb5dbf77872b9791d7fd30b1d1226b7ea32686d"
+  },
+  "implementation": {
+    "calibration_source": {
+      "path": "src/cf4_b1_development_mock_calibration_v2.py",
+      "bytes": 12254,
+      "sha256": "2f510cbac730bb864d853eb1b91eff8778d0ec87c762342cc0f0cd65030cfcd1"
+    },
+    "joint_harness_source": {
+      "path": "src/cf4_b1_joint_development_harness.py",
+      "bytes": 10601,
+      "sha256": "2cffd82e8d738465fb73140225115175516afe4a69dfd4c17855880d9e867bfe"
+    },
+    "calibration_test": {
+      "path": "tests/test_cf4_b1_development_mock_calibration_v2.py",
+      "bytes": 1492,
+      "sha256": "cd85127031065418d3dd170f9ed76f95ad0395a886566c6d84312b5fa06a7cac"
+    },
+    "joint_harness_test": {
+      "path": "tests/test_cf4_b1_joint_development_harness.py",
+      "bytes": 1291,
+      "sha256": "5b671a7bfba59ab9ba5386918ecbe95ca92192fe58c94f8815ec3c12c047a81f"
+    }
+  },
+  "result": {
+    "path": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+    "bytes": 10151,
+    "sha256": "3c98d5e7ae475fb167180fa5425604415706d3a36da3f75f2aaaceaea1803f6b"
+  },
+  "execution": {
+    "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_development_mock_calibration_v2.py --output config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+    "backend": "local CPU",
+    "external_data_read": false,
+    "GPFS": false,
+    "Slurm": false,
+    "development_member_count": 64,
+    "arm_assignment": "A-D, 16 members per arm",
+    "validation_seed_opened": false,
+    "test_result": "6 tests passed for harness/calibration modules"
+  },
+  "joint_harness": {
+    "status": "PASS",
+    "source_bound_secure_rows": 16584,
+    "source_bound_secure_groups": 11610,
+    "selection_support_probe": "PASS",
+    "spherical_rsd_fog_probe": "PASS",
+    "tsc_adjoint_probe": "PASS",
+    "nuisance_identifiability_probe": "PASS",
+    "independent_redshift_rejected": true
+  },
+  "calibration_metrics": {
+    "strict_low_k_gate_pass_count": 0,
+    "all_members_positive_support": true,
+    "all_arms_have_heldout_gain": false,
+    "interpretation": "The corrected technical proxy still fails the low-k response/correlation/residual gates; this blocks promotion but is not a claim about the full observational posterior."
+  },
+  "scientific_disposition": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "untouched_256_validation": "NOT_RUN",
+    "frontier_promotion": "NOT_ALLOWED",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Diagnose information loss and estimator/field parameterization; do not open validation seeds or start B2."
+}
