@@ -97,6 +97,6 @@ def test_no_external_execution_or_premature_promotion_is_authorized():
     decision = value["closure_decision"]
     assert decision["contract_amendment"] == "COMPLETE"
     assert decision["actual_z0_posterior"] == "NOT_CREATED"
-    assert decision["KF_EXPAND"] == "BLOCKED_PENDING_MOCK_CALIBRATION"
+    assert decision["KF_EXPAND"] == "BLOCKED_PENDING_DIAGNOSTIC_REPAIR"
     assert decision["B2_IC_FORWARD"] == "NOT_STARTED"
     assert decision["requires_new_user_approval"] is True
