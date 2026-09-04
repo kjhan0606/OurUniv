@@ -8,12 +8,12 @@
   "certificate_generation_basis": "metadata-binding tree at 7f0e9bb; source/test tree is anchored by immutable tag cf4-b1-cert-d34bda4; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
   "record": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-    "bytes": 35976,
+    "bytes": 40953,
     "sha256": "3ec5ddc71bbde670b6aa8c9b4970ad4d20989c2c6f753ecc40b128236a4bacf1"
   },
   "receipt": {
     "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
-    "bytes": 1615,
+    "bytes": 1701,
     "sha256": "118baa6897c00a23c03ab072ddb7732e4778381fef55e01740b66d6040021f88"
   },
   "receipt_raw_output": {
