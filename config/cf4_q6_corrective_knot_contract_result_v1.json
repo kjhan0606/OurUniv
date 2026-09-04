@@ -25,9 +25,18 @@
     "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
     "fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
     "fixture_manifest_file_sha256": "254815e64780e9dfb54c2b1b7aae0f4643dbab9b79ca8df6e43edaf1f9d18d9d",
-    "fixture_manifest_payload_sha256": "acdb27990d1ec913ccd5b68e5f66adac1f93551fbd45be08103c997d3e5b7531",
+    "fixture_manifest_payload_sha256": "1d6030ec44c2e7bb3325732045410cd6f98e61e8767e7c763105fc7ee54f88eb",
+    "fixture_generator": "scripts/cf4_q6_development_fixture.py",
+    "fixture_generator_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
+    "fixture_generator_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
     "executed_fixture_seed": 62006,
-    "executed_fixture_sha256": "1cf54156deeb079d5b26d7df23333ce95a2ca01e039ca2ffd62a7db9025058e6"
+    "executed_fixture_sha256": "e31366c9fdf791a2289bab54b3b9d7f38aef002e461aa171b1a89501e6e5021a",
+    "executed_fixture_generation": "generate_fixture(seed=62006, source_count=192, grid_size=8, box_size_cMpc_h=8.0, include_cold=False)",
+    "runtime": {
+      "python": "3.13.11",
+      "numpy": "2.3.3",
+      "scipy": "1.18.0"
+    }
   },
   "q6_0_provenance_and_fixture": {
     "status": "PASS",
@@ -38,13 +47,14 @@
   },
   "q6_1_exact_knot_contract": {
     "status": "PASS_ON_DEVELOPMENT_FIXTURE",
-    "contract": "absolute target cell and 27-stencil map; ordered breakpoints and midpoints; degree-six local epsilon coefficients; Q1 sliver merge, tiny-negative clip, T=8 tail and per-source renormalization; exact state-mass aggregation; exact transpose/scatter for arbitrary cotangent",
+    "contract": "absolute target cell and 27-stencil map; ordered breakpoints and midpoints; degree-six local epsilon coefficients; Q1 sliver merge, tiny-negative clip, T=8 tail and per-source renormalization; exact state-mass aggregation",
     "q1_value_gate": "PASS",
     "q1_value_absolute_l1": 1.9833787390233226e-13,
     "q1_value_relative_l1": 2.2055446905599428e-16,
     "q1_value_absolute_floor": 1e-12,
     "q1_value_relative_tolerance": 0.005,
-    "arbitrary_cotangent_transpose_test": "PASS",
+    "mass_gather_transpose_for_arbitrary_cotangent": "PASS",
+    "geometry_jacobian_vjp": "NOT_IMPLEMENTED_AND_NOT_CLAIMED",
     "targeted_unit_tests": "5 passed"
   },
   "q6_2_development_measurement": {
@@ -55,20 +65,21 @@
       "grid_size": 8,
       "box_size_cMpc_h": 8.0,
       "non_degenerate_los_and_sigma": true,
-      "includes_zero_and_near_zero_sigma": true
+      "includes_zero_and_near_zero_sigma": false,
+      "cold_zero_near_zero_fixture": "seed 62007, not executed"
     },
     "group_count_G": 192,
     "compression_ratio_M_over_G": 1.0,
     "compression_gate_M_over_G_le_1p01": true,
     "decision": "Immediate candidate-2 compression NO-GO per frozen Q6 gate. Exactness passes, but no compression is demonstrated.",
     "timing_seconds": {
-      "contract_build": 3.1808329727500677,
-      "grouped_operator": 2.139900740236044,
+      "contract_build": 3.1758188381791115,
+      "grouped_operator": 2.087412880733609,
       "scope": "8^3 development smoke only; not a full N192 performance claim"
     },
     "memory_rss_kib": {
-      "before": 60180,
-      "after_contract_build": 76024,
+      "before": 63112,
+      "after_contract_build": 77240,
       "scope": "development smoke only; not a 64/16 GiB production measurement"
     },
     "q1_gate": {
@@ -82,6 +93,27 @@
         3.375077994860476e-14
       ]
     },
+    "gradient_gate": {
+      "status": "SKIPPED_AFTER_TERMINAL_COMPRESSION_NO_GO",
+      "reason": "No geometry Jacobian/VJP implementation was authorized; the tested transpose is mass gather only.",
+      "authority": "frozen Q6 M/G<=1.01 early-termination rule"
+    },
+    "topology_gate": {
+      "status": "SKIPPED_FULL_GATE_AFTER_TERMINAL_COMPRESSION_NO_GO",
+      "reason": "No full cellwise median/p95/max, seam and TSC-knot fixture sweep was entered; the unit smoke only includes seam/near-coincident cases.",
+      "authority": "frozen Q6 early-termination rule"
+    },
+    "sigma_gate": {
+      "status": "SKIPPED_FULL_GATE_AFTER_TERMINAL_COMPRESSION_NO_GO",
+      "reason": "sigma_disp=2L and seed-62007 cold/near-zero fixture were not entered; exact zero-scale handling is unit-tested only.",
+      "authority": "frozen Q6 early-termination rule"
+    },
+    "K_h_gate": {
+      "status": "PASS_SMOKE_ONLY",
+      "interval_count_min": 2,
+      "interval_count_max": 34,
+      "reason": "Observed on executed seed 62006; full development distribution not entered after terminal gate."
+    },
     "full_N192_resource_gate": "SKIPPED_AFTER_TERMINAL_COMPRESSION_NO_GO",
     "heldout_gate": "NOT_ENTERED"
   },
@@ -90,8 +122,9 @@
     "reason": "Correct six-dimensional total-degree<=6 joint delta_x and sigma*LOS tensor requires 924 components: 292.36 GiB for six value fields and 6.57 TiB with 23 derivative directions, exceeding 64 GiB host and 16 GiB device ceilings absent a separately proven sparse representation."
   },
   "scientific_interpretation": {
-    "what_is_validated": "The exact knot-aligned contraction and arbitrary-cotangent transpose reproduce the frozen Q1 operator on a non-degenerate development smoke.",
+    "what_is_validated": "The exact knot-aligned contraction reproduces the frozen Q1 value operator on a non-degenerate development smoke, and the mass-gather incidence map has an exact transpose identity for arbitrary cotangents.",
     "what_is_not_validated": "No scalable compression, full N192 performance, z=0 posterior, q-corrected IC, or <=0.3 cMpc/h zoom capability is established.",
-    "next": "Write a Q7 plan for a new topology-aware observation-operator route; user approval and Fable plan audit are required before starting it."
+    "structural_no_go_reason": "The complete bitwise knot signature depends continuously on position, LOS and sigma, so continuous non-degenerate sources have G=M almost surely; the key is also O(K*27*10) bytes per source.",
+    "next": "Write a Q7 plan for a non-bitwise topology-aware approximate observation-operator route; user approval and Grok plan audit are required before starting it."
   }
 }

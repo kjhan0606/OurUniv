@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from scripts.cf4_q6_development_fixture import fixture_sha256, generate_fixture
 from cf4_2mpp_joint_likelihood_local import LikelihoodInputError
 from cf4_q1_cell_integrated_convolution import (
     cell_integrated_tsc_deposit,
@@ -118,3 +119,12 @@ def test_invalid_inputs_fail_closed() -> None:
     compressed = exact_knot_compress(positions, los, scales, 8, 8.0)
     with pytest.raises(LikelihoodInputError):
         scatter_group_cotangent(compressed, np.zeros(compressed.group_count + 1))
+
+
+def test_preregistered_fixture_generator_is_reproducible() -> None:
+    arrays = generate_fixture(
+        seed=62006, source_count=192, grid_size=8, box_size_cMpc_h=8.0
+    )
+    assert fixture_sha256(*arrays) == (
+        "e31366c9fdf791a2289bab54b3b9d7f38aef002e461aa171b1a89501e6e5021a"
+    )

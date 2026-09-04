@@ -16,7 +16,9 @@ or IC generation.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import math
+from pathlib import Path
 from typing import Iterable
 
 import numpy as np
@@ -38,6 +40,22 @@ DEGREE = 6
 POPULATIONS = 6
 DERIVATIVE_DIRECTIONS = 23
 FLOAT64_EPSILON = np.finfo(np.float64).eps
+Q1_SOURCE_SHA256 = "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2"
+
+
+def _assert_frozen_q1_provenance() -> None:
+    """Fail loudly if the imported Q1 oracle source is silently changed."""
+
+    q1_path = Path(__file__).with_name("cf4_q1_cell_integrated_convolution.py")
+    digest = hashlib.sha256(q1_path.read_bytes()).hexdigest()
+    if digest != Q1_SOURCE_SHA256:
+        raise RuntimeError(
+            "frozen Q1 source SHA256 mismatch: "
+            f"expected {Q1_SOURCE_SHA256}, got {digest}"
+        )
+
+
+_assert_frozen_q1_provenance()
 
 
 @dataclass(frozen=True)
@@ -115,8 +133,6 @@ def _merge_breakpoints(
     position: np.ndarray,
     displacement: np.ndarray,
     spacing: float,
-    box_size: float,
-    grid_size: int,
     tail_cutoff: float,
 ) -> tuple[np.ndarray, float]:
     """Reproduce Q1's sorted break/sliver rule byte-for-byte in float64."""
@@ -198,10 +214,10 @@ def _build_contract(
         )
 
     breaks, dropped_sliver_probability = _merge_breakpoints(
-        position, displacement, spacing, box_size, grid_size, tail_cutoff
+        position, displacement, spacing, tail_cutoff
     )
     interval_count = max(0, breaks.size - 1)
-    midpoints = np.empty(interval_count, dtype=np.float64)
+    midpoints = np.zeros(interval_count, dtype=np.float64)
     targets = np.empty((interval_count, 27, 3), dtype=np.int64)
     coefficients = np.zeros((interval_count, 27, 7), dtype=np.float64)
     clip_mask = np.zeros((interval_count, 27), dtype=np.bool_)
@@ -450,6 +466,7 @@ def candidate_metadata(compressed: KnotCompressedSources) -> dict[str, object]:
         "interval_count_min": min(interval_counts),
         "interval_count_max": max(interval_counts),
         "arbitrary_cotangent_transpose_preserved": True,
+        "frozen_probe_directions": DERIVATIVE_DIRECTIONS,
         "approximation": False,
         "science_claim_authorized": False,
     }
