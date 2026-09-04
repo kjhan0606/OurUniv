@@ -15,7 +15,7 @@
     "fable_audit_date": "2026-09-04",
     "fable_required_amendments_applied": true,
     "result": "config/cf4_q6_corrective_knot_contract_result_v1.json",
-    "result_sha256": "82461a268b8ad0d74069c0c754167657a7ab3fd42b042d8166cf95356e90dc90"
+    "result_sha256": "ea254896af78d63c1ae663fc1e188d401fbc75ef90432bc5a8feaf96e0d97fbe"
   },
   "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
   "purpose": "Resolve the Q5 audit blockers before any candidate implementation or posterior work: make the Q1 knot topology explicit, test whether exact aggregation offers any real compression, and close the manifest/fixture/resource contracts.",

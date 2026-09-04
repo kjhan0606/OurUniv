@@ -24,7 +24,7 @@
     "q1_source_mode": "100644",
     "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
     "fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
-    "fixture_manifest_file_sha256": "254815e64780e9dfb54c2b1b7aae0f4643dbab9b79ca8df6e43edaf1f9d18d9d",
+    "fixture_manifest_file_sha256": "eb85354da7d471a89a603874a3754a6b2916e0c890105bfcc1fe2a40bb61eef9",
     "fixture_manifest_payload_sha256": "1d6030ec44c2e7bb3325732045410cd6f98e61e8767e7c763105fc7ee54f88eb",
     "fixture_generator": "scripts/cf4_q6_development_fixture.py",
     "fixture_generator_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
