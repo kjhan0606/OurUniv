@@ -55,9 +55,9 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 remains development-only NO-GO. The Opus v15 periodic-boundary defect and v16/v17/v18 provenance, metric-scope and receipt findings are repaired through the certified 7739a4c tree; await the v19 closure audit.",
+  "current_status": "B1 remains development-only NO-GO. The Opus v15 periodic-boundary defect and v16/v17/v18 provenance, metric-scope, receipt and runtime-closure findings are repaired through the certified 493d845 tree; await the v19 closure audit.",
   "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
-  "next_closure_audit": "PENDING_POST_V18_PROVENANCE_REPAIR_AUDIT_V19",
+  "next_closure_audit": "PENDING_POST_V19_REPAIR_AUDIT",
   "next_bundle_rule": "Remain inside B1 until the v19 closure audit. Freeze width/gate policy only after reviewing the repaired diagnostics. Do not run the information-null mark arm, open validation, promote a posterior/frontier or start B2.",
   "execution_firewall": {
     "gpfs": false,

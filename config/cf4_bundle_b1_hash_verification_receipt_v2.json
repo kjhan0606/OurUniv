@@ -2,8 +2,8 @@
   "schema": "ouruniv-cf4-bundle-b1-hash-verification-receipt-v2",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "certified_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
-  "receipt_generation_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
+  "certified_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
+  "receipt_generation_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
   "receipt_generation_basis": "committed B1 tree at certified commit; receipt self-files are explicitly excluded",
   "verified_record": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
   "verified_entries_excluding_self": 60,
@@ -12,7 +12,7 @@
   "missing_paths": [],
   "verification_tool": "Python hashlib.sha256 with os.stat byte counts",
   "verification_command": "inline Python walk of every result-record path/bytes/sha256 entry, de-duplicated by path; missing/size/hash mismatch count emitted",
-  "verification_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
+  "verification_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
   "excluded_self_paths": [
     "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
     "config/cf4_bundle_b1_hash_verification_receipt_v2.txt"
