@@ -4,6 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_64_DEVELOPMENT_MOCKS_JOINT_HARNESS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "predecessor": "config/cf4_bundle_b1_count_only_smoke_relabel_v1.json",
+  "execution_grant": "config/cf4_bundle_b1_development_execution_amendment_v1.json",
   "contract": {
     "path": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
     "bytes": 10840,
@@ -71,5 +72,5 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED",
     "B2_IC_FORWARD": "NOT_STARTED"
   },
-  "next_action": "Diagnose information loss and estimator/field parameterization; do not open validation seeds or start B2."
+  "next_action": "Implement an integrated joint development harness; do not open validation seeds or start B2."
 }

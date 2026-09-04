@@ -2,12 +2,12 @@
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "DEVELOPMENT_CALIBRATION_NO_GO_SOL_AUDIT_REPAIR_REQUIRED",
+  "status": "SOL_BACKUP_NO_GO_INTEGRATED_JOINT_HARNESS_REQUIRED",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
-  "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v1.json",
+  "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
   "scope": {
     "kf_design_contract_validated": true,
     "kf_expand_executed": false,
@@ -29,7 +29,7 @@
     "amendment_result": "28 passed, 2 skipped",
     "amendment_interpretation": "Active likelihood and independent-mock contracts are frozen for development calibration; no external data or inference was run."
     ,"development_calibration": "64 local synthetic N32 mocks completed; all strict low-k gates failed (0/64), so no posterior or frontier promotion is allowed."
-    ,"sol_audit": "NO-GO: v1 was relabeled as count-only smoke; v2 repairs accounting and adds joint interface probes but still fails strict low-k gates and is not a full observational calibration."
+    ,"sol_audit": "NO-GO backup verdict: v2 is a repaired count-smoke plus interface probes, not an integrated 64-mock CF4+2M++ calibration."
   },
   "data_readiness": {
     "D_CF4_groups": "READY_GROUPED_DISTANCE_RADIAL_VELOCITY_LIKELIHOOD",
@@ -47,5 +47,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-  "next": "Stop at NO-GO. Diagnose the remaining information loss and estimator/field parameterization before any further 64-seed rerun; keep validation seeds sealed and do not start B2-IC-FORWARD."
+  "next": "Stop at NO-GO. Implement the integrated joint development harness before any further 64-seed rerun; keep validation seeds sealed and do not start B2-IC-FORWARD."
 }

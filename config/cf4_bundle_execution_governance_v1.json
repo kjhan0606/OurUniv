@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 development calibration received a sol NO-GO; repair is required before any rerun or downstream promotion.",
-  "next_bundle_rule": "Stop at the B1 NO-GO. Obtain approval for one consolidated repair bundle, then rerun only the 64 development seeds and repeat closure audit; Opus timeout is recorded, not converted to GO.",
+  "current_status": "B1 backup audit received NO-GO; v2 is a repaired count-smoke plus interface probes, not integrated joint calibration.",
+  "next_bundle_rule": "Stop at the B1 NO-GO. Obtain approval for one consolidated integrated-joint-harness repair, then rerun only the 64 development seeds and repeat primary Opus closure audit; Opus timeout is recorded, not converted to GO.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,
