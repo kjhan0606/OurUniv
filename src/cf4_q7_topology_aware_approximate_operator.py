@@ -18,7 +18,10 @@ scope; the directional basis covers only mass/state directions.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import json
 import math
+from pathlib import Path
 from typing import Iterable, Mapping
 
 import numpy as np
@@ -26,7 +29,6 @@ import numpy as np
 from cf4_2mpp_joint_likelihood_local import LikelihoodInputError
 from cf4_q1_cell_integrated_convolution import (
     Q1_DEFAULT_TAIL_CUTOFF,
-    cell_integrated_tsc_deposit,
     tsc_deposit,
 )
 from cf4_q6_knot_aligned_operator import (
@@ -40,6 +42,92 @@ Q7_ROUTE_NAME = "adaptive_topology_aware_response_atlas"
 Q7_DERIVATIVE_DIRECTIONS = 23
 Q7_CERTIFIED_COVERAGE = "continuous_topology_cell"
 Q7_FINITE_COVERAGE = "finite_source_set"
+Q7_Q1_SOURCE_SHA256 = "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2"
+Q7_Q6_SOURCE_SHA256 = "c7e18760312a17b608957ca344c00c4099846e9d80c878f34ccc07e8b7e1ffae"
+Q7_SIGMA_NEAR_ZERO_FACTOR = 64.0
+Q7_SUMMARY_COUNT = 175
+
+
+def _assert_frozen_q1_q6_provenance() -> None:
+    """Pin both frozen dependencies locally, rather than transitively."""
+
+    root = Path(__file__).resolve().parents[1]
+    q1 = root / "src" / "cf4_q1_cell_integrated_convolution.py"
+    q6 = root / "src" / "cf4_q6_knot_aligned_operator.py"
+    q1_sha = hashlib.sha256(q1.read_bytes()).hexdigest()
+    q6_sha = hashlib.sha256(q6.read_bytes()).hexdigest()
+    if q1_sha != Q7_Q1_SOURCE_SHA256:
+        raise RuntimeError(f"Q7 frozen Q1 SHA mismatch: expected {Q7_Q1_SOURCE_SHA256}, got {q1_sha}")
+    if q6_sha != Q7_Q6_SOURCE_SHA256:
+        raise RuntimeError(f"Q7 frozen Q6 SHA mismatch: expected {Q7_Q6_SOURCE_SHA256}, got {q6_sha}")
+
+
+_assert_frozen_q1_q6_provenance()
+
+
+@dataclass(frozen=True)
+class OutwardInterval:
+    """A small directed-rounding interval used for the Q7 certificate."""
+
+    lo: float
+    hi: float
+
+    def __post_init__(self) -> None:
+        if not (math.isfinite(self.lo) and math.isfinite(self.hi)) or self.lo > self.hi:
+            raise LikelihoodInputError("invalid finite interval")
+
+    @staticmethod
+    def point(value: float) -> "OutwardInterval":
+        value = float(value)
+        return OutwardInterval(np.nextafter(value, -math.inf), np.nextafter(value, math.inf))
+
+    @staticmethod
+    def _down(value: float) -> float:
+        return float(np.nextafter(float(value), -math.inf))
+
+    @staticmethod
+    def _up(value: float) -> float:
+        return float(np.nextafter(float(value), math.inf))
+
+    def __add__(self, other: "OutwardInterval") -> "OutwardInterval":
+        return OutwardInterval(self._down(self.lo + other.lo), self._up(self.hi + other.hi))
+
+    def __sub__(self, other: "OutwardInterval") -> "OutwardInterval":
+        return OutwardInterval(self._down(self.lo - other.hi), self._up(self.hi - other.lo))
+
+    def __mul__(self, other: "OutwardInterval") -> "OutwardInterval":
+        values = (self.lo * other.lo, self.lo * other.hi, self.hi * other.lo, self.hi * other.hi)
+        return OutwardInterval(self._down(min(values)), self._up(max(values)))
+
+    def __truediv__(self, other: "OutwardInterval") -> "OutwardInterval":
+        if other.lo <= 0.0 <= other.hi:
+            raise LikelihoodInputError("interval division crosses zero")
+        values = (self.lo / other.lo, self.lo / other.hi, self.hi / other.lo, self.hi / other.hi)
+        return OutwardInterval(self._down(min(values)), self._up(max(values)))
+
+    def widen(self, amount: float) -> "OutwardInterval":
+        if not math.isfinite(amount) or amount < 0.0:
+            raise LikelihoodInputError("interval widening must be finite and non-negative")
+        return OutwardInterval(self._down(self.lo - amount), self._up(self.hi + amount))
+
+
+def _frozen_direction_names() -> tuple[str, ...]:
+    """Load the registered 23-direction semantic contract and verify its hash."""
+
+    path = Path(__file__).resolve().parents[1] / "config" / "cf4_q7_frozen_23_mass_basis_v1.json"
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        names = tuple(payload["direction_names"])
+        expected = str(payload["direction_names_sha256"])
+    except (OSError, KeyError, TypeError, ValueError) as exc:
+        raise RuntimeError("frozen Q7 23-direction basis contract is unreadable") from exc
+    digest = hashlib.sha256(json.dumps(names, separators=(",", ":"), ensure_ascii=True).encode("utf-8")).hexdigest()
+    if len(names) != Q7_DERIVATIVE_DIRECTIONS or digest != expected:
+        raise RuntimeError("frozen Q7 23-direction basis contract hash/count mismatch")
+    return names
+
+
+FROZEN_DIRECTION_NAMES = _frozen_direction_names()
 
 
 @dataclass(frozen=True)
@@ -52,6 +140,7 @@ class TopologyBin:
     representative: int
     coverage: str
     continuous_certified: bool
+    certificate_method: str
 
 
 @dataclass(frozen=True)
@@ -66,6 +155,10 @@ class TopologyAwareResponseAtlas:
     upper_enclosures: tuple[np.ndarray, ...]
     finite_spread_l1: np.ndarray
     finite_spread_linf: np.ndarray
+    certified_spread_l1: np.ndarray
+    certified_spread_linf: np.ndarray
+    finite_lower_enclosures: tuple[np.ndarray, ...]
+    finite_upper_enclosures: tuple[np.ndarray, ...]
     q1_tail_cutoff: float
     max_host_bytes: int
 
@@ -98,6 +191,7 @@ class ApproximationResult:
     finite_value_linf_per_population: np.ndarray
     certified_gradient_l1: np.ndarray
     finite_gradient_l1: np.ndarray
+    certified_summary_l1_bounds: np.ndarray | None
     measured: Mapping[str, float] | None
 
 
@@ -108,7 +202,11 @@ def _topology_key(contract: object) -> tuple[object, ...]:
     target = np.asarray(getattr(contract, "target_cells"), dtype="<i8", order="C")
     clip = np.asarray(getattr(contract, "clip_mask"), dtype="|u1", order="C")
     if mode == "zero_scale_tsc":
-        return (mode, target.tobytes())
+        # The target neighborhood alone is insufficient at sigma=0: point-TSC
+        # weights vary continuously within a cell.  Include the exact unit
+        # deposit payload (via the frozen contract key) so distinct subcell
+        # responses cannot merge.
+        return (mode, target.tobytes(), hashlib.sha256(getattr(contract, "key")).digest())
     breaks = np.asarray(getattr(contract, "breaks"), dtype=np.float64)
     # The sliver merge rule is a discrete regime boundary even when the final
     # interval count happens to remain unchanged; retain its activation bit in
@@ -138,6 +236,100 @@ def _validate_enclosure(
     return lower.copy(), upper.copy()
 
 
+def _continuous_lipschitz_enclosure(
+    compressed: KnotCompressedSources,
+    source_members: list[int],
+    representative_exact_group: int,
+    representative: np.ndarray,
+    *,
+    grid_size: int,
+    box_size: float,
+    mode: str,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Construct a validated enclosure over the observed topology cell.
+
+    The response is a product of periodic TSC weights.  Away from a cell
+    seam, each component has coordinate derivative bounded by ``2 / dx``;
+    the Gaussian displacement has ``E|epsilon| <= 2`` under the frozen
+    truncation.  Directed-rounded geometry radii therefore give a conservative
+    componentwise Lipschitz enclosure.  If the observed hull touches a seam,
+    the sigma-zero branch, or a near-zero scale regime, no continuous claim is
+    made and the public evaluator uses sourcewise Q1.
+    """
+
+    if not source_members:
+        return None
+    source_array = np.asarray(source_members, dtype=np.int64)
+    groups = compressed.source_to_group[source_array]
+    positions = compressed.positions[groups]
+    scales = compressed.displacement_scales[groups]
+    los = compressed.los_unit_vectors[groups]
+    spacing = float(box_size / grid_size)
+    if mode == "zero_scale_tsc":
+        # The topology key deliberately includes the exact point-deposit field;
+        # distinct subcell locations must never be merged into one certificate.
+        return None
+    if np.any(scales <= Q7_SIGMA_NEAR_ZERO_FACTOR * np.finfo(np.float64).eps * spacing):
+        return None
+    d = scales[:, None] * los
+    position_lo = np.min(positions, axis=0)
+    position_hi = np.max(positions, axis=0)
+    # A topology cell is certified only while its z=0 position hull remains in
+    # one periodic grid cell.  This prevents an absolute stencil index from
+    # silently changing across a seam/boundary.
+    for axis in range(3):
+        lo_cell = math.floor(float(position_lo[axis] / spacing))
+        hi_cell = math.floor(float(position_hi[axis] / spacing))
+        if lo_cell != hi_cell or lo_cell < 0 or hi_cell >= grid_size:
+            return None
+        if position_lo[axis] <= lo_cell * spacing or position_hi[axis] >= (lo_cell + 1) * spacing:
+            return None
+    representative_position = compressed.positions[representative_exact_group]
+    representative_d = compressed.displacement_scales[representative_exact_group] * compressed.los_unit_vectors[representative_exact_group]
+    delta_position = np.max(np.abs(positions - representative_position[None, :]), axis=0)
+    delta_d = np.max(np.abs(d - representative_d[None, :]), axis=0)
+    try:
+        radius = OutwardInterval.point(0.0)
+        for axis in range(3):
+            radius = radius + (OutwardInterval.point(float(delta_position[axis])) + OutwardInterval.point(float(delta_d[axis]))) / OutwardInterval.point(spacing)
+        # The factor 4 is (TSC derivative <=2) times (truncated E|epsilon| <=2).
+        widening = (radius * OutwardInterval.point(4.0)).hi
+        lower = np.empty_like(representative)
+        upper = np.empty_like(representative)
+        for index, value in np.ndenumerate(representative):
+            interval = OutwardInterval.point(float(value)).widen(widening)
+            lower[index] = max(0.0, interval.lo)
+            upper[index] = min(1.0, interval.hi)
+    except (LikelihoodInputError, FloatingPointError):
+        return None
+    if not np.all(np.isfinite(lower)) or not np.all(np.isfinite(upper)) or np.any(upper < lower):
+        return None
+    return lower, upper
+
+
+def induced_summary_l1_bounds(
+    per_bin_response_l1: Iterable[float],
+    summary_operator_l1_norms: Iterable[Iterable[float]],
+) -> np.ndarray:
+    """Propagate certified per-bin response bounds through 175 fixed maps.
+
+    ``summary_operator_l1_norms`` is an externally frozen non-negative matrix
+    with shape ``(175, number_of_bins)``.  The Q7 module validates its shape
+    and finite values but does not invent those science-specific norms.
+    """
+
+    response = np.asarray(per_bin_response_l1, dtype=np.float64)
+    norms = np.asarray(summary_operator_l1_norms, dtype=np.float64)
+    if response.ndim != 1 or response.size == 0 or not np.all(np.isfinite(response)) or np.any(response < 0.0):
+        raise LikelihoodInputError("per_bin_response_l1 must be finite and non-negative with shape (G,)")
+    if norms.shape != (Q7_SUMMARY_COUNT, response.size) or not np.all(np.isfinite(norms)) or np.any(norms < 0.0):
+        raise LikelihoodInputError(f"summary_operator_l1_norms must have shape ({Q7_SUMMARY_COUNT}, {response.size}) and be non-negative")
+    result = norms @ response
+    if not np.all(np.isfinite(result)):
+        raise LikelihoodInputError("induced summary bounds are non-finite")
+    return result
+
+
 def build_topology_aware_atlas(
     positions: Iterable[Iterable[float]],
     los_unit_vectors: Iterable[Iterable[float]],
@@ -151,13 +343,17 @@ def build_topology_aware_atlas(
 ) -> TopologyAwareResponseAtlas:
     """Build one deterministic topology atlas.
 
-    ``continuous_enclosures`` is keyed by the prospective bin index and must
-    enclose every response component over that *continuous* topology cell.  If
-    omitted, bounds are constructed over the finite input source set solely as
-    a diagnostic; those bins are not certified and the evaluator falls back to
-    sourcewise Q1 unless explicitly asked to use the finite envelope.
+    A continuous enclosure is generated internally with directed-rounded
+    interval geometry and a frozen TSC Lipschitz bound.  Caller-supplied finite
+    arrays are rejected: a finite fixture hull is not a continuous certificate.
+    Bins that touch a cell seam or near-zero-sigma branch remain finite-only and
+    are evaluated sourcewise by the fail-closed public route.
     """
 
+    if continuous_enclosures is not None:
+        raise LikelihoodInputError(
+            "caller-supplied enclosures are not certification evidence; use the internal interval certificate"
+        )
     if not isinstance(max_host_bytes, int) or max_host_bytes <= 0:
         raise LikelihoodInputError("max_host_bytes must be a positive integer")
     if not math.isfinite(tail_cutoff) or tail_cutoff <= 0.0:
@@ -192,6 +388,10 @@ def build_topology_aware_atlas(
     finite_upper: list[np.ndarray] = []
     finite_l1: list[float] = []
     finite_linf: list[float] = []
+    certified_l1: list[float] = []
+    certified_linf: list[float] = []
+    finite_lower_diagnostic: list[np.ndarray] = []
+    finite_upper_diagnostic: list[np.ndarray] = []
     bins: list[TopologyBin] = []
     field_shape = (grid_size, grid_size, grid_size)
     estimated_bytes = len(members) * int(np.prod(field_shape)) * 3 * 8
@@ -239,40 +439,51 @@ def build_topology_aware_atlas(
             lower = np.minimum(lower, source_field)
             upper = np.maximum(upper, source_field)
         lower, upper = _validate_enclosure(lower, upper, field_shape, label=f"bin {bin_index}")
-        if continuous_enclosures is not None and bin_index in continuous_enclosures:
-            lower, upper = _validate_enclosure(
-                *continuous_enclosures[bin_index], field_shape, label=f"continuous bin {bin_index}"
-            )
-            # A declared continuous certificate must at least enclose the
-            # actual fixture members; otherwise fail closed immediately.
-            for source in source_members:
-                source_group = int(compressed.source_to_group[source])
-                source_contract = compressed.contracts[source_group]
-                source_field = (
-                    tsc_deposit(
-                        compressed.positions[source_group : source_group + 1],
-                        np.asarray([1.0], dtype=np.float64),
-                        grid_size,
-                        box_size_cMpc_h,
-                    )
-                    if source_contract.mode == "zero_scale_tsc"
-                    else contract_field(source_contract)
-                )
-                if np.any(source_field < lower) or np.any(source_field > upper):
-                    raise LikelihoodInputError(
-                        f"continuous enclosure for bin {bin_index} misses a fixture response"
-                    )
-            coverage = Q7_CERTIFIED_COVERAGE
-            continuous_certified = True
-        else:
+        # Keep the observed finite hull separately for diagnostics.  It is
+        # never used as a promoted certificate.
+        finite_lower_source = lower.copy()
+        finite_upper_source = upper.copy()
+        certified = _continuous_lipschitz_enclosure(
+            compressed,
+            source_members,
+            exact_group,
+            representative,
+            grid_size=grid_size,
+            box_size=box_size_cMpc_h,
+            mode=contract.mode,
+        )
+        if certified is None:
             coverage = Q7_FINITE_COVERAGE
             continuous_certified = False
-        spread = np.maximum(np.abs(lower - representative), np.abs(upper - representative))
+            certificate_method = "none_sourcewise_q1_fallback"
+            certified_lower = representative.copy()
+            certified_upper = representative.copy()
+        else:
+            coverage = Q7_CERTIFIED_COVERAGE
+            continuous_certified = True
+            certificate_method = "outward_lipschitz_interval"
+            certified_lower, certified_upper = _validate_enclosure(
+                *certified, field_shape, label=f"certified bin {bin_index}"
+            )
+        finite_spread = np.maximum(
+            np.abs(finite_lower_source - representative),
+            np.abs(finite_upper_source - representative),
+        )
+        certified_spread = np.maximum(
+            np.abs(certified_lower - representative),
+            np.abs(certified_upper - representative),
+        )
         representative_fields.append(representative)
-        finite_lower.append(lower)
-        finite_upper.append(upper)
-        finite_l1.append(float(np.sum(spread)))
-        finite_linf.append(float(np.max(spread)))
+        # Public lower/upper fields always refer to the certified enclosure;
+        # finite hulls are named explicitly and remain diagnostics only.
+        finite_lower.append(certified_lower)
+        finite_upper.append(certified_upper)
+        finite_lower_diagnostic.append(finite_lower_source)
+        finite_upper_diagnostic.append(finite_upper_source)
+        finite_l1.append(float(np.sum(finite_spread)))
+        finite_linf.append(float(np.max(finite_spread)))
+        certified_l1.append(float(np.sum(certified_spread)))
+        certified_linf.append(float(np.max(certified_spread)))
         bins.append(
             TopologyBin(
                 index=bin_index,
@@ -281,6 +492,7 @@ def build_topology_aware_atlas(
                 representative=representative_exact_group[bin_index],
                 coverage=coverage,
                 continuous_certified=continuous_certified,
+                certificate_method=certificate_method,
             )
         )
     return TopologyAwareResponseAtlas(
@@ -292,6 +504,10 @@ def build_topology_aware_atlas(
         upper_enclosures=tuple(finite_upper),
         finite_spread_l1=np.asarray(finite_l1, dtype=np.float64),
         finite_spread_linf=np.asarray(finite_linf, dtype=np.float64),
+        certified_spread_l1=np.asarray(certified_l1, dtype=np.float64),
+        certified_spread_linf=np.asarray(certified_linf, dtype=np.float64),
+        finite_lower_enclosures=tuple(finite_lower_diagnostic),
+        finite_upper_enclosures=tuple(finite_upper_diagnostic),
         q1_tail_cutoff=float(tail_cutoff),
         max_host_bytes=int(max_host_bytes),
     )
@@ -301,23 +517,48 @@ def _validate_mass_inputs(
     atlas: TopologyAwareResponseAtlas,
     population_masses: Iterable[Iterable[float]],
     directional_mass_basis: Iterable[Iterable[float]] | Iterable[Iterable[Iterable[float]]] | None,
-) -> tuple[np.ndarray, np.ndarray | None, str | None]:
+    *,
+    directional_basis_labels: Iterable[str] | None = None,
+    directional_basis_sha256: str | None = None,
+    directional_basis_content_sha256: str | None = None,
+    directional_basis_registry_id: str | None = None,
+) -> tuple[np.ndarray, np.ndarray | None, str | None, dict[str, str] | None]:
     masses = np.asarray(population_masses, dtype=np.float64)
     if masses.ndim != 2 or masses.shape[1] != atlas.source_count or masses.shape[0] == 0:
         raise LikelihoodInputError("population_masses must have shape (P, M)")
     if not np.all(np.isfinite(masses)) or np.any(masses < 0.0):
         raise LikelihoodInputError("population_masses must be finite and non-negative")
     if directional_mass_basis is None:
-        return masses, None, None
+        if any(value is not None for value in (directional_basis_labels, directional_basis_sha256, directional_basis_content_sha256, directional_basis_registry_id)):
+            raise LikelihoodInputError("basis metadata supplied without directional_mass_basis")
+        return masses, None, None, None
     basis = np.asarray(directional_mass_basis, dtype=np.float64)
     if not np.all(np.isfinite(basis)):
         raise LikelihoodInputError("directional_mass_basis must be finite")
+    if directional_basis_labels is None or directional_basis_sha256 is None:
+        raise LikelihoodInputError("directional basis semantic labels and their SHA256 are required")
+    labels = tuple(str(item) for item in directional_basis_labels)
+    if labels != FROZEN_DIRECTION_NAMES:
+        raise LikelihoodInputError("directional basis labels do not match the frozen 23-direction contract")
+    labels_digest = hashlib.sha256(json.dumps(labels, separators=(",", ":"), ensure_ascii=True).encode("utf-8")).hexdigest()
+    if str(directional_basis_sha256) != labels_digest:
+        raise LikelihoodInputError("directional basis semantic-label SHA256 mismatch")
+    if directional_basis_content_sha256 is None or directional_basis_registry_id is None or not str(directional_basis_registry_id).strip():
+        raise LikelihoodInputError("a registered numeric directional-basis digest and registry id are required")
+    canonical_basis_digest = hashlib.sha256(np.asarray(basis, dtype="<f8", order="C").tobytes()).hexdigest()
+    if str(directional_basis_content_sha256) != canonical_basis_digest:
+        raise LikelihoodInputError("directional basis numeric-content SHA256 mismatch")
+    metadata = {
+        "direction_names_sha256": labels_digest,
+        "numeric_basis_sha256": canonical_basis_digest,
+        "numeric_basis_registry_id": str(directional_basis_registry_id),
+    }
     if basis.ndim == 2 and basis.shape[1] == atlas.source_count:
         if basis.shape[0] != Q7_DERIVATIVE_DIRECTIONS:
             raise LikelihoodInputError("directional_mass_basis must have 23 directions")
-        return masses, basis, "direction_source"
+        return masses, basis, "direction_source", metadata
     if basis.ndim == 3 and basis.shape[:2] == masses.shape and basis.shape[2] == Q7_DERIVATIVE_DIRECTIONS:
-        return masses, basis, "population_direction_source"
+        return masses, basis, "population_direction_source", metadata
     raise LikelihoodInputError("directional_mass_basis must have shape (23,M) or (P,M,23)")
 
 
@@ -339,13 +580,28 @@ def evaluate_atlas(
     population_masses: Iterable[Iterable[float]],
     *,
     directional_mass_basis: Iterable[Iterable[float]] | Iterable[Iterable[Iterable[float]]] | None = None,
+    directional_basis_labels: Iterable[str] | None = None,
+    directional_basis_sha256: str | None = None,
+    directional_basis_content_sha256: str | None = None,
+    directional_basis_registry_id: str | None = None,
     allow_uncertified_finite_enclosure: bool = False,
     oracle_fields: Iterable[Iterable[Iterable[Iterable[float]]]] | None = None,
+    summary_operator_l1_norms: Iterable[Iterable[float]] | None = None,
 ) -> ApproximationResult:
     """Evaluate the route and return certified, finite and optional measured budgets."""
 
-    masses, basis, basis_mode = _validate_mass_inputs(
-        atlas, population_masses, directional_mass_basis
+    if allow_uncertified_finite_enclosure:
+        raise LikelihoodInputError(
+            "finite-source enclosures cannot be promoted; use sourcewise Q1 fallback"
+        )
+    masses, basis, basis_mode, _basis_metadata = _validate_mass_inputs(
+        atlas,
+        population_masses,
+        directional_mass_basis,
+        directional_basis_labels=directional_basis_labels,
+        directional_basis_sha256=directional_basis_sha256,
+        directional_basis_content_sha256=directional_basis_content_sha256,
+        directional_basis_registry_id=directional_basis_registry_id,
     )
     populations = masses.shape[0]
     field_shape = atlas.representative_fields.shape[1:]
@@ -364,35 +620,37 @@ def evaluate_atlas(
     finite_value_linf = np.zeros(populations, dtype=np.float64)
     cert_grad_l1 = np.zeros(Q7_DERIVATIVE_DIRECTIONS, dtype=np.float64)
     finite_grad_l1 = np.zeros(Q7_DERIVATIVE_DIRECTIONS, dtype=np.float64)
+    certified_bin_l1 = np.zeros(atlas.bin_count, dtype=np.float64)
     for bin_index, topology_bin in enumerate(atlas.bins):
         members = topology_bin.members
         certified = topology_bin.continuous_certified
-        approximate = certified or allow_uncertified_finite_enclosure
+        approximate = certified
         if approximate:
-            if not certified:
-                used_uncertified = True
             rep = atlas.representative_fields[bin_index]
             grouped_mass = np.sum(masses[:, members], axis=1)
             fields += grouped_mass[(slice(None),) + (None,) * 3] * rep[None, ...]
             spread_l1 = float(atlas.finite_spread_l1[bin_index])
             spread_linf = float(atlas.finite_spread_linf[bin_index])
+            certified_spread_l1 = float(atlas.certified_spread_l1[bin_index])
+            certified_spread_linf = float(atlas.certified_spread_linf[bin_index])
             finite_value_l1 += np.sum(masses[:, members], axis=1) * spread_l1
             finite_value_linf += np.sum(masses[:, members], axis=1) * spread_linf
             if certified:
-                cert_value_l1 += np.sum(masses[:, members], axis=1) * spread_l1
-                cert_value_linf += np.sum(masses[:, members], axis=1) * spread_linf
+                cert_value_l1 += np.sum(masses[:, members], axis=1) * certified_spread_l1
+                cert_value_linf += np.sum(masses[:, members], axis=1) * certified_spread_linf
+                certified_bin_l1[bin_index] = float(np.sum(masses[:, members]) * certified_spread_l1)
             if basis_mode == "direction_source":
                 grouped_basis = np.sum(basis[:, members], axis=1)
                 gradients += grouped_basis[(slice(None),) + (None,) * 3] * rep[None, ...]
                 finite_grad_l1 += np.sum(np.abs(basis[:, members]), axis=1) * spread_l1
                 if certified:
-                    cert_grad_l1 += np.sum(np.abs(basis[:, members]), axis=1) * spread_l1
+                    cert_grad_l1 += np.sum(np.abs(basis[:, members]), axis=1) * certified_spread_l1
             elif basis_mode == "population_direction_source":
                 grouped_basis = np.sum(basis[:, members, :], axis=1)
                 gradients += grouped_basis[(slice(None), slice(None)) + (None,) * 3] * rep[None, None, ...]
                 finite_grad_l1 += np.sum(np.abs(basis[:, members, :]), axis=(0, 1)) * spread_l1
                 if certified:
-                    cert_grad_l1 += np.sum(np.abs(basis[:, members, :]), axis=(0, 1)) * spread_l1
+                    cert_grad_l1 += np.sum(np.abs(basis[:, members, :]), axis=(0, 1)) * certified_spread_l1
             continue
         overflow += int(members.size)
         for source in members:
@@ -426,6 +684,11 @@ def evaluate_atlas(
         certificate_status = "CERTIFIED_WITH_SOURCEWISE_OVERFLOW"
     else:
         certificate_status = "CERTIFIED"
+    summary_bounds = None
+    if summary_operator_l1_norms is not None:
+        if overflow:
+            raise LikelihoodInputError("summary bounds require every source to be covered by a continuous certificate")
+        summary_bounds = induced_summary_l1_bounds(certified_bin_l1, summary_operator_l1_norms)
     return ApproximationResult(
         fields=fields,
         gradients=gradients,
@@ -439,6 +702,7 @@ def evaluate_atlas(
         finite_value_linf_per_population=finite_value_linf,
         certified_gradient_l1=cert_grad_l1,
         finite_gradient_l1=finite_grad_l1,
+        certified_summary_l1_bounds=summary_bounds,
         measured=measured,
     )
 
@@ -461,10 +725,15 @@ def candidate_metadata(atlas: TopologyAwareResponseAtlas) -> dict[str, object]:
             "absolute 27-cell stencil mapping",
             "negative-clip mask",
             "sliver-merge activation bit",
+            "exact zero-scale deposit payload hash",
         ],
         "numeric_knot_coefficients_in_key": False,
         "tail_cutoff_sigma": atlas.q1_tail_cutoff,
         "frozen_direction_count": Q7_DERIVATIVE_DIRECTIONS,
+        "frozen_direction_names": list(FROZEN_DIRECTION_NAMES),
+        "summary_bound_count": Q7_SUMMARY_COUNT,
+        "summary_bound_api": "induced_summary_l1_bounds",
+        "certificate_method": "outward_lipschitz_interval",
         "geometry_derivatives": False,
         "overflow_policy": "sourcewise Q1 fallback; no clipping or tolerance relaxation",
         "continuous_certificate_required_for_promotion": True,
@@ -500,7 +769,7 @@ def sourcewise_q1_fields(
 ) -> np.ndarray:
     """Return the frozen Q1 reference for the same atlas inputs."""
 
-    masses, _, _ = _validate_mass_inputs(atlas, population_masses, None)
+    masses, _, _, _ = _validate_mass_inputs(atlas, population_masses, None)
     result = np.zeros((masses.shape[0],) + atlas.representative_fields.shape[1:], dtype=np.float64)
     for source in range(atlas.source_count):
         result += masses[:, source, None, None, None] * _source_field(atlas, source)[None, ...]

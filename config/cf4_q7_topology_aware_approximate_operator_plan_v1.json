@@ -5,7 +5,7 @@
   "owner": "driver",
   "plan_status": "USER_APPROVED_IN_IMPLEMENTATION",
   "auditor_roles": {
-    "bundle_start_plan": "grok",
+    "bundle_start_plan": "claude-opus-5",
     "stage_and_bundle_end_result": "claude-opus-5",
     "agy": "removed"
   },
@@ -38,7 +38,7 @@
     "zoom": false,
     "gpfs": false,
     "slurm": false,
-    "grok": "plan_audit_only"
+    "grok": "removed_as_auditor"
   },
   "frozen_provenance": {
     "q1_commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
@@ -112,7 +112,7 @@
   ],
   "release_gates": [
     "User explicitly approves Q7 before any code change or development fixture execution.",
-    "Grok audits and approves this plan at bundle start.",
+    "Claude Opus 5 audits and approves this plan at bundle start.",
     "Claude Opus 5 audits each Q7 stage/result and the bundle closure.",
     "No posterior, q-corrected IC, PM/HOP/RAMSES, zoom, GPFS or Slurm action occurs in Q7."
   ],
