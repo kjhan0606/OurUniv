@@ -226,3 +226,18 @@ def test_directional_basis_requires_recomputed_content_provenance() -> None:
     metadata["directional_basis_content_sha256"] = "0" * 64
     with pytest.raises(LikelihoodInputError):
         evaluate_atlas(atlas, masses, directional_mass_basis=basis, **metadata)
+
+
+def test_randomized_interval_containment_harness() -> None:
+    rng = np.random.default_rng(20260904)
+    for _ in range(12):
+        base = np.asarray([1.4, 1.4, 1.4]) + rng.uniform(-0.05, 0.05, size=3)
+        positions = np.stack([base, base + rng.uniform(-1.0e-4, 1.0e-4, size=3)])
+        los = np.asarray([[0.0, 0.0, 1.0], [0.0, 0.0, 1.0]], dtype=np.float64)
+        scales = np.asarray([0.1, 0.1 + rng.uniform(-1.0e-4, 1.0e-4)], dtype=np.float64)
+        atlas = build_topology_aware_atlas(positions, los, scales, 8, 8.0)
+        assert atlas.bin_count == 1 and atlas.bins[0].continuous_certified
+        masses = np.asarray([[1.0, 1.0]], dtype=np.float64)
+        candidate = evaluate_atlas(atlas, masses)
+        oracle = sourcewise_q1_fields(atlas, masses)
+        assert np.sum(np.abs(candidate.fields - oracle)) <= 2.0 * atlas.certified_spread_l1[0] + 1.0e-14
