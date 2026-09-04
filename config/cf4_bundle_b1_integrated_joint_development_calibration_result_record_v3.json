@@ -200,7 +200,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "26 B1 regression tests passed; exit status 0; wall elapsed 78.607s (pytest-reported 74.15s)",
+    "test_result": "26 B1 regression tests passed; exit status 0; wall elapsed 71.993s (pytest-reported 71.68s)",
     "test_selection": [
       "tests/test_cf4_b1_calibration_diagnosis_v1.py",
       "tests/test_cf4_b1_count_derivative_diagnosis_v2.py",
@@ -215,12 +215,12 @@
     "regression_pass_count": 26,
     "repaired_dependency_test_included": true,
     "regression_verification": {
-      "audited_commit": "3ba5b7ae60554a7f414088143441a564eac2ac2a",
+      "audited_commit": "74ba7b14c2fffa983ae40dfcf572727444877640",
       "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py",
       "exit_status": 0,
       "passed": 26,
-      "pytest_reported_seconds": 74.15,
-      "wall_elapsed_seconds": 78.607
+      "pytest_reported_seconds": 71.68,
+      "wall_elapsed_seconds": 71.993
     }
   },
   "joint_contract": {
