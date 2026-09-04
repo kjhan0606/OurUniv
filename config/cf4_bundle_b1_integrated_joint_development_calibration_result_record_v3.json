@@ -192,7 +192,7 @@
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 73115, "sha256": "5f239351c044d7950232406ca6619fbd192b7d2ce7d3444b2dcef62726e825c5"},
     "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 4770, "sha256": "204b32d3102b00b30828bf2091b9a7a761bc7cca23995f76425dec209042dfe8"},
-    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2301, "sha256": "a05669c960849e18f7afeed9447d290349da85b37c2627533b2497b3f9103db9"},
+    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2421, "sha256": "f53ff8ad45eb2d1d9b769869b2aa3db87f4e4c4cb5629fcf80245d2bb659e430"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
     "periodic_rsd_dependency": {"path": "src/cf4_b1_development_mock_calibration.py", "bytes": 13819, "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"},
