@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 integrated same-truth joint 64-mock calibration complete; technical coverage gate fails, so closure audit is pending and science promotion remains blocked.",
-  "next_bundle_rule": "At the B1 boundary, obtain one primary Claude Opus 5 closure audit of the integrated result. If Opus returns no usable verdict, invoke gpt-5.6-sol only as the declared backup. Keep validation seeds sealed and do not start B2 until closure is GO.",
+  "current_status": "B1 closure: Opus unavailable (not logged in); sol backup NO-GO. Corrected integrated joint calibration has fit_success 64/64 but only 11/64 strict gate passes; initial validation-seed attempt quarantined.",
+  "next_bundle_rule": "Remain inside B1. Diagnose coverage and stress-arm calibration using development seeds only; do not open replacement validation, promote a posterior/frontier, or start B2 until the frozen 64/64 gate passes and a new bundle closure is audited.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,

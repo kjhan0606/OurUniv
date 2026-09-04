@@ -7,8 +7,8 @@
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 17719,
-      "sha256": "a7f9885d44b64e3823190ef6119bea478b6d57dbd93a9be0810cf0380520b527"
+      "bytes": 21771,
+      "sha256": "ac81b9d1fe9bb38af99d59b11584464bd8ba11a5ccbfb9584adf1fe8c9c57d91"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
@@ -18,10 +18,12 @@
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 7764,
-    "sha256": "699f4785153a3f3c7578f92fef5bc99e1ec77d1c518cdfbe7b488c0a148f5a28"
+    "bytes": 8391,
+    "sha256": "aab9f87fae09ceecc47b0b543211a4fdcdb4ce8c2d97f5dc3dead9ba40837328"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
+  "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
+  "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
     "backend": "local CPU",
@@ -43,14 +45,19 @@
     "replacement_validation_range_sealed": [2026083320, 2026083576],
     "shared_redshift_covariance": "exact canonical group factor",
     "selection_rsd_fog_tsc_nuisance": "canonical local interfaces exercised",
-    "canonical_vs_vectorized_joint_abs_error_max": 9.313225746154785e-10
+    "disjoint_target_exclusion_probe": "PASS; 17007 unique non-unmatched targets, zero overlap with synthetic count identities",
+    "canonical_vs_vectorized_joint_abs_error_max": 9.604264050722122e-10
   },
   "calibration_metrics": {
-    "strict_low_k_gate_pass_count": 0,
+    "strict_low_k_gate_required_count": 64,
+    "strict_low_k_gate_pass_count": 11,
+    "strict_low_k_gate_pass": false,
+    "fit_success_count": 64,
+    "fit_abnormal_termination_count": 0,
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The integrated same-truth joint calibration is numerically finite and factor-consistent, but the preregistered coverage gate fails (coverage is 1.0 rather than calibrated 68/95 percent). This blocks promotion and is not an observational posterior claim."
+    "interpretation": "The integrated same-truth joint calibration is numerically finite and factor-consistent, but only 11/64 members pass the preregistered joint low-k gate. This blocks promotion and is not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -60,5 +67,10 @@
     "B2_IC_FORWARD": "NOT_STARTED",
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
-  "next_action": "The first v3 attempt used validation seeds and was quarantined; the corrected development-only result is now resealed. Obtain one Claude Opus 5 bundle-closure audit of this corrected result. If Opus returns no usable verdict, invoke gpt-5.6-sol only as the declared backup; do not open validation seeds or start B2."
+  "closure_audit": {
+    "primary": "NO_USABLE_VERDICT_NOT_LOGGED_IN",
+    "backup": "NO-GO",
+    "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
+  },
+  "next_action": "Accept this as a valid technical gate failure. Diagnose coverage/stress-arm calibration using development seeds only; keep replacement validation sealed and do not start B2."
 }

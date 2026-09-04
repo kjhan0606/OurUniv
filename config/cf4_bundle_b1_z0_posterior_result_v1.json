@@ -2,12 +2,14 @@
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "INTEGRATED_JOINT_CALIBRATION_COMPLETE_TECHNICAL_GATE_FAIL",
+  "status": "SOL_BACKUP_NO_GO_INTEGRATED_JOINT_STRICT_GATE_11_OF_64",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
+  "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
+  "sol_closure_audit_current": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "scope": {
@@ -49,5 +51,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration is complete but coverage gate fails. Obtain the single bundle-closure audit; keep validation sealed and do not start B2-IC-FORWARD."
+    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration is complete (fit_success 64/64, strict gate 11/64). Backup closure audit is NO-GO; diagnose calibration with development seeds only, keep validation sealed and do not start B2-IC-FORWARD."
 }

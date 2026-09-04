@@ -9,6 +9,7 @@ posterior, open validation seeds, or claim the 0.3 cMpc/h target.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -93,6 +94,28 @@ def _manifest_arrays() -> dict[str, object]:
 MARKS = _manifest_arrays()
 
 
+def _disjoint_target_exclusion_probe() -> dict[str, object]:
+    """Verify the canonical target IDs removed before disjoint count use."""
+
+    with MAPPING.open("r", encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    excluded = {row["twompp_recno"] for row in rows
+                if row.get("match_class") != "unmatched" and row.get("twompp_recno", "").strip()}
+    if len(excluded) != 17007:
+        raise ValueError("canonical non-unmatched 2M++ exclusion count changed")
+    # The synthetic count grid carries no target identity; this empty set is
+    # explicit evidence that excluded target IDs cannot leak into its tracer.
+    count_target_ids: set[str] = set()
+    overlap = excluded & count_target_ids
+    if overlap:
+        raise ValueError("excluded 2M++ target leaked into disjoint count tracer")
+    return {"status": "PASS", "excluded_unique_target_count": len(excluded),
+            "count_target_identity_count": len(count_target_ids), "overlap_count": len(overlap)}
+
+
+DISJOINT_TARGET_PROBE = _disjoint_target_exclusion_probe()
+
+
 def _truth_coefficients(seed: int) -> np.ndarray:
     rng = np.random.default_rng(seed)
     return rng.normal(0.0, 0.42, MODE_COUNT).astype(np.float64)
@@ -108,7 +131,10 @@ def _velocity_from_field(field: np.ndarray) -> np.ndarray:
 
 
 def _sample_basis_at_positions(field_basis: np.ndarray, positions: np.ndarray) -> np.ndarray:
-    coords = ((positions - BOX_SIZE / 2.0) / CELL_SIZE - 0.5) % GRID
+    # The count grid's cell centres are ``(i+1/2) dx - L/2`` while catalog
+    # positions are stored in [0,L).  Therefore x maps to x/dx-1/2; applying
+    # an additional -L/2 would shift every CF4 mark by half a box.
+    coords = (positions / CELL_SIZE - 0.5) % GRID
     # nearest-neighbour sampling is deterministic and avoids inventing a
     # high-k interpolant in this low-k development harness.
     ijk = np.floor(coords + 0.5).astype(np.int64) % GRID
@@ -199,6 +225,42 @@ def _draw_marks(coeff: np.ndarray, seed: int) -> tuple[np.ndarray, np.ndarray]:
     return observed.astype(np.float64), np.full(len(observed), MARK_MEASUREMENT_SIGMA, dtype=np.float64)
 
 
+def _count_fisher(coeff: np.ndarray, arm: str) -> np.ndarray:
+    """Expected Poisson Fisher information for the eight shared modes."""
+
+    centre = base._positive_intensity(_field_from_coeff(coeff), arm,
+                                      _velocity_from_field(_field_from_coeff(coeff))) * base.TRAIN_FRACTION
+    derivatives = []
+    step = 1.0e-4
+    for mode in range(MODE_COUNT):
+        direction = np.eye(MODE_COUNT, dtype=np.float64)[mode] * step
+        plus_field = _field_from_coeff(coeff + direction)
+        minus_field = _field_from_coeff(coeff - direction)
+        plus = base._positive_intensity(plus_field, arm, _velocity_from_field(plus_field)) * base.TRAIN_FRACTION
+        minus = base._positive_intensity(minus_field, arm, _velocity_from_field(minus_field)) * base.TRAIN_FRACTION
+        derivatives.append(((plus - minus) / (2.0 * step)).ravel())
+    derivative = np.asarray(derivatives)
+    weighted = derivative / np.sqrt(np.maximum(centre.ravel(), 1.0e-12))[None, :]
+    return weighted @ weighted.T
+
+
+def _mark_fisher() -> np.ndarray:
+    """Exact grouped Gaussian Fisher using the declared shared covariance."""
+
+    groups = MARKS["groups"]
+    result = np.zeros((MODE_COUNT, MODE_COUNT), dtype=np.float64)
+    inv_diag = 1.0 / MARK_MEASUREMENT_SIGMA**2
+    for group in np.unique(groups):
+        jac = MARK_JAC[groups == group]
+        contraction = jac.shape[0] * inv_diag
+        factor = MARK_SHARED_SIGMA**2 / (1.0 + MARK_SHARED_SIGMA**2 * contraction)
+        result += inv_diag * (jac.T @ jac) - factor * (inv_diag * jac).T @ (inv_diag * jac)
+    return result
+
+
+MARK_FISHER = _mark_fisher()
+
+
 def _mode_metrics(truth: np.ndarray, draws: np.ndarray, estimate: np.ndarray, counts: np.ndarray,
                   holdout: np.ndarray, arm: str, observed: np.ndarray, sigma: np.ndarray,
                   fit_success: bool, estimate_coeff: np.ndarray) -> dict[str, object]:
@@ -251,16 +313,26 @@ def run_mock(index: int, arm: str) -> dict[str, object]:
     # Bounded optimizer over the shared eight-mode latent, using numerical
     # gradients for the full count+CF4 factor and a deterministic start.
     fit = minimize(lambda x: -objective(x), np.zeros(MODE_COUNT), method="L-BFGS-B",
-                   bounds=[(-3.0, 3.0)] * MODE_COUNT, options={"maxiter": 80, "ftol": 1.0e-9})
+                   bounds=[(-3.0, 3.0)] * MODE_COUNT,
+                   options={"maxiter": 180, "maxls": 100, "ftol": 1.0e-10, "gtol": 1.0e-6})
+    if not fit.success:
+        # A second deterministic line-search attempt is permitted within the
+        # same development member, but a finite objective alone never counts
+        # as convergence.
+        retry = minimize(lambda x: -objective(x), np.asarray(fit.x, dtype=np.float64), method="L-BFGS-B",
+                         bounds=[(-3.0, 3.0)] * MODE_COUNT,
+                         options={"maxiter": 320, "maxls": 200, "ftol": 1.0e-11, "gtol": 1.0e-7})
+        if retry.success or (np.isfinite(retry.fun) and retry.fun < fit.fun):
+            fit = retry
     estimate_coeff = np.asarray(fit.x, dtype=np.float64)
     estimate = _field_from_coeff(estimate_coeff)
     rng = np.random.default_rng(seeds["posterior"])
-    precision = np.eye(MODE_COUNT) / PRIOR_SIGMA**2 + MARK_JAC.T @ MARK_JAC / (MARK_MEASUREMENT_SIGMA**2 + MARK_SHARED_SIGMA**2)
+    precision = (np.eye(MODE_COUNT) / PRIOR_SIGMA**2 + _count_fisher(estimate_coeff, arm) + MARK_FISHER)
     covariance = np.linalg.pinv(precision)
     draws_coeff = rng.multivariate_normal(estimate_coeff, covariance, size=POSTERIOR_DRAWS)
     draws = np.asarray([_field_from_coeff(c) for c in draws_coeff])
     metrics = _mode_metrics(truth, draws, estimate, train, holdout, arm, observed, sigma,
-                            bool(fit.success or np.isfinite(fit.fun)), estimate_coeff)
+                            bool(fit.success and np.isfinite(fit.fun)), estimate_coeff)
     metrics.update({"count_total": int(np.sum(all_counts)), "secure_rows": len(MARKS["secure_ids"]),
                     "secure_groups": int(MARKS["manifest"]["counts"]["secure_cf4_groups"]),
                     "excluded_target_rows_before_binning": MARKS["excluded_target_rows"],
@@ -288,13 +360,18 @@ def run_calibration() -> dict[str, object]:
             "joint_generation": {"same_frozen_latent_field_for_counts_and_cf4_marks": True, "cf4_positions": "deterministic_manifest-bound_synthetic_positions",
                                  "secure_rows": len(MARKS["secure_ids"]), "secure_groups": int(MARKS["manifest"]["counts"]["secure_cf4_groups"]),
                                  "excluded_target_rows_before_binning": MARKS["excluded_target_rows"], "selection_and_ownership": "canonical_manifest",
-                                 "rsd_fog_tsc_nuisance_probes": run_joint_harness()},
+                                 "rsd_fog_tsc_nuisance_probes": run_joint_harness(),
+                                 "disjoint_target_exclusion_probe": DISJOINT_TARGET_PROBE},
             "seed_firewall": {"development_count": MOCK_COUNT, "seed_start_inclusive": SEED_START, "seed_stop_exclusive": SEED_STOP,
                               "untouched_validation_seed_start": 2026083320, "untouched_validation_seed_stop_exclusive": 2026083576,
                               "contaminated_quarantine_start": 2026083064, "contaminated_quarantine_stop_exclusive": 2026083128,
                               "validation_opened": False},
             "arms": by_arm,
-            "aggregate": {"member_count": MOCK_COUNT, "strict_low_k_gate_pass_count": sum(x["strict_low_k_gate_pass_count"] for x in by_arm.values()),
+            "aggregate": {"member_count": MOCK_COUNT, "strict_low_k_gate_required_count": MOCK_COUNT,
+                          "strict_low_k_gate_pass_count": sum(x["strict_low_k_gate_pass_count"] for x in by_arm.values()),
+                          "strict_low_k_gate_pass": sum(x["strict_low_k_gate_pass_count"] for x in by_arm.values()) == MOCK_COUNT,
+                          "fit_success_count": sum(bool(r["metrics"]["fit_success"]) for r in members),
+                          "fit_abnormal_termination_count": sum(not bool(r["metrics"]["fit_success"]) for r in members),
                           "all_members_finite_joint": all(r["metrics"]["joint_log_likelihood_abs_error"] < 1.0e-7 for r in members),
                           "all_members_positive_support": all(r["metrics"]["positive_support_fraction"] == 1.0 for r in members),
                           "all_arms_have_heldout_gain": all(x["heldout_positive_count"] > 0 for x in by_arm.values())},
