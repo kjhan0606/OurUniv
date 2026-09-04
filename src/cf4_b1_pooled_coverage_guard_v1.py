@@ -33,9 +33,19 @@ def evaluate(input_path: Path) -> dict[str, object]:
     rows = payload["members"]
     if len(rows) != 64:
         raise ValueError("guard requires exactly 64 development members")
+    implementation = Path(__file__).resolve()
+    dependency = payload.get("dependency_artifact")
+    if not isinstance(dependency, dict) or not {"path", "bytes", "sha256"} <= dependency.keys():
+        raise ValueError("guard input is missing the repaired base dependency artifact")
     result: dict[str, object] = {
         "schema": "ouruniv-cf4-b1-pooled-coverage-guard-result-v1",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+        "implementation_artifact": {
+            "path": str(implementation),
+            "bytes": implementation.stat().st_size,
+            "sha256": hashlib.sha256(implementation.read_bytes()).hexdigest(),
+        },
+        "dependency_artifact": dependency,
         "input": {
             "path": str(input_path),
             "bytes": input_path.stat().st_size,

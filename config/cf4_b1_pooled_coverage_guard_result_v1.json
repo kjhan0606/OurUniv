@@ -1,10 +1,20 @@
 {
   "schema": "ouruniv-cf4-b1-pooled-coverage-guard-result-v1",
   "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "implementation_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_pooled_coverage_guard_v1.py",
+    "bytes": 5265,
+    "sha256": "3d45ad7c4a2d8e8f9c24aa2265316c007ce30544382873f43a64dd91be904dee"
+  },
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
   "input": {
     "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
-    "bytes": 90965,
-    "sha256": "eed2e8af8bc8c8d78dcb1b6aee6bc80dd78174645ae88e26c3b54a784ad1fc51"
+    "bytes": 91180,
+    "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"
   },
   "bootstrap": {
     "unit": "independent truth seed",

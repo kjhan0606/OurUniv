@@ -45,10 +45,15 @@
   "primary_audit_current_v14": "config/cf4_bundle_b1_opus_closure_attempt_v14.json",
   "primary_audit_current_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
   "primary_audit_current_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
-  "primary_audit_current_v17": "PENDING_POST_V16_REPAIR_AUDIT",
+  "primary_audit_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
+  "primary_audit_current_v18": "PENDING_POST_V17_REPAIR_AUDIT",
   "primary_audit_current_v16_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.json", "bytes": 1792, "sha256": "5149966e907f4f790ce10b274735f033941c0fcc4ff44073dad362b8bb8ca452"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt", "bytes": 1233, "sha256": "a1c3967ba9d310071751557dd91965bf08d883099feed842c533f757b85eb92f"}
+  },
+  "primary_audit_current_v17_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v17.json", "bytes": 1785, "sha256": "3c8e11225c633d83bf3c86a42e6516ce95ec66d0467f26015752e10ddbbded8a"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v17.txt", "bytes": 1209, "sha256": "4b24ad789272e8bf4ba370934385d15853095ae00a1032e4cb905bcd0b9eaddd"}
   },
   "primary_audit_current_v15_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
@@ -78,24 +83,32 @@
   "pooled_coverage_guard_result": "config/cf4_b1_pooled_coverage_guard_result_v1.json",
   "count_information_diagnosis_result": "config/cf4_b1_count_information_diagnosis_result_v1.json",
   "count_information_diagnosis_result_status": "SUPERSEDED_PRE_PERIODIC_RSD_REPAIR",
+  "historical_base_result_v1": {
+    "path": "config/cf4_bundle_b1_development_mock_calibration_result_v1.json",
+    "status": "SUPERSEDED_PRE_PERIODIC_RSD_AND_SEED_FIREWALL_METADATA"
+  },
+  "historical_base_result_v2": {
+    "path": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+    "status": "SUPERSEDED_PRE_PERIODIC_RSD_AND_SEED_FIREWALL_METADATA"
+  },
   "count_derivative_diagnosis_result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
   "mark_misspecification_plan": "config/cf4_b1_mark_misspecification_plan_v1.json",
   "diagnosis_implementation": {
-    "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 6257, "sha256": "4f664c86329cd60e2c0fe6c75e6dbbbf335cc4772f90c21b6763e25c0930a65d"},
+    "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 6523, "sha256": "679181c782dae2c014e57c654054ab59a47f5ee1287aecd40ea1c1e1a1e56daf"},
     "test": {"path": "tests/test_cf4_b1_calibration_diagnosis_v1.py", "bytes": 853, "sha256": "2553daba8980d66b2d1594e9852121e7b89b0193580c517dc0352a80d8e0cd5d"},
-    "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72446, "sha256": "d3ab1922324e06c29b1a1fcd4371e5771e1cbc2dbad0cb0e82f4325d58fa6bd6"}
+    "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72659, "sha256": "fe1ee9239f6f38d42670bf2c60a3044870db617980db7990e4d3f60e24bdf8a4"}
   },
   "mode_coverage_implementation": {
-    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 6994, "sha256": "503a610903fc9a2f16bec1cd9f03401d0c8fa83a801daec8563599a10e252859"},
+    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 7260, "sha256": "e16a29be70cac89db72129eacb0301d5a45d0ac7ab25af35610082a738f7f6b5"},
     "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 1118, "sha256": "a5ca765ca4881e720c4a8daaff7af863fae72bd54b0e299fa683244d1e008391"},
     "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
     "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"},
-    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 90965, "sha256": "eed2e8af8bc8c8d78dcb1b6aee6bc80dd78174645ae88e26c3b54a784ad1fc51"}
+    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 91180, "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"}
   },
   "pooled_guard_implementation": {
-    "source": {"path": "src/cf4_b1_pooled_coverage_guard_v1.py", "bytes": 4718, "sha256": "83c2e49058ceb3f0b9081498ac656a1a11553db8aab6b55beab5525dd248d256"},
-    "test": {"path": "tests/test_cf4_b1_pooled_coverage_guard_v1.py", "bytes": 921, "sha256": "2129052dba1663d4f3bfeaf1652bac0c7c1305a9305678e11c01ece15b7fac09"},
-    "result": {"path": "config/cf4_b1_pooled_coverage_guard_result_v1.json", "bytes": 3284, "sha256": "28fc1ab86cab28c2b89192ca78d9fc2de7c3c6a12d2b02d7a4bcbba5777122cc"}
+    "source": {"path": "src/cf4_b1_pooled_coverage_guard_v1.py", "bytes": 5265, "sha256": "3d45ad7c4a2d8e8f9c24aa2265316c007ce30544382873f43a64dd91be904dee"},
+    "test": {"path": "tests/test_cf4_b1_pooled_coverage_guard_v1.py", "bytes": 1146, "sha256": "f82215a4b24eff8fa3fe931dd5ec3d8b52a091655f19782a8c477b371fddf228"},
+    "result": {"path": "config/cf4_b1_pooled_coverage_guard_result_v1.json", "bytes": 3711, "sha256": "9d8f5d6eed45501551357486b480862ec8f23d487043abb8078e06c6262c56f1"}
   },
   "count_information_implementation": {
     "source": {"path": "src/cf4_b1_count_information_diagnosis_v1.py", "bytes": 5976, "sha256": "d57589dd9e610b4d1a85b3844208d2882d1091218d640e6ea9be2b6100c3c61c"},
@@ -103,13 +116,13 @@
     "result": {"path": "config/cf4_b1_count_information_diagnosis_result_v1.json", "bytes": 16303, "sha256": "dd55b53c4184d2af9006387055750a2c772e6e4e29575be328d044c7e887fb12"}
   },
   "count_derivative_implementation": {
-    "source": {"path": "src/cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 8466, "sha256": "b4661c559dee4b518b7839515954605d73bcff1e37d86f7a8751e22ddd82e57b"},
+    "source": {"path": "src/cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 8685, "sha256": "a536faab190dc56904b37cd576c1aef1b5e44e8eb95e2c9a4133e0f1205518b6"},
     "test": {"path": "tests/test_cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 866, "sha256": "9da86a9556b116a3fda300a4d66de72d8d14b6f59e859104ac207dd295a73fd3"},
-    "result": {"path": "config/cf4_b1_count_derivative_diagnosis_result_v2.json", "bytes": 16744, "sha256": "960b7dddc44e0bee9c98b031177cf8efc8d7ba146a6bbfd3ef2c922b02497705"}
+    "result": {"path": "config/cf4_b1_count_derivative_diagnosis_result_v2.json", "bytes": 16962, "sha256": "d2f71f4a131e5a74c07de0910c9a6fac97a179ef136668c4416f567e0d44d9c2"}
   },
   "current_artifact_hashes": {
-    "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72446, "sha256": "d3ab1922324e06c29b1a1fcd4371e5771e1cbc2dbad0cb0e82f4325d58fa6bd6"},
-    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 3039, "sha256": "8079ef90e839ca1e1a1e42900bff470d512c4df02ee7c7d46c42d228623a36ce"},
+    "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72659, "sha256": "fe1ee9239f6f38d42670bf2c60a3044870db617980db7990e4d3f60e24bdf8a4"},
+    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 3375, "sha256": "8ff49b6b553c5566cdf6195a93d9b3229c06920c861c22044ee77764a29d59fe"},
     "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2299, "sha256": "f810c1b2d66b3ef4c5887bb401edfaf4adf141950a1657a9a21975e9792befd6"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
@@ -124,7 +137,20 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "26 B1 regression tests passed in 68.47s; targeted periodic/derivative checks and harness probes PASS"
+    "test_result": "26 B1 regression tests passed in 70.13s; targeted periodic/derivative checks and harness probes PASS",
+    "test_selection": [
+      "tests/test_cf4_b1_calibration_diagnosis_v1.py",
+      "tests/test_cf4_b1_count_derivative_diagnosis_v2.py",
+      "tests/test_cf4_b1_count_information_diagnosis_v1.py",
+      "tests/test_cf4_b1_development_mock_calibration.py",
+      "tests/test_cf4_b1_development_mock_calibration_v2.py",
+      "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
+      "tests/test_cf4_b1_joint_development_harness.py",
+      "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py",
+      "tests/test_cf4_b1_pooled_coverage_guard_v1.py"
+    ],
+    "regression_pass_count": 26,
+    "repaired_dependency_test_included": true
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -163,8 +189,8 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_POST_V16_REPAIR_AUDIT",
-    "primary_record": "PENDING_POST_V16_REPAIR_AUDIT",
+    "primary": "PENDING_POST_V17_REPAIR_AUDIT",
+    "primary_record": "PENDING_POST_V17_REPAIR_AUDIT",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",

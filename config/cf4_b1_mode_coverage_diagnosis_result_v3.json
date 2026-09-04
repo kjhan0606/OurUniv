@@ -7,6 +7,11 @@
     "bytes": 21546,
     "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
   },
+  "implementation_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_mode_coverage_diagnosis_v1.py",
+    "bytes": 7260,
+    "sha256": "e16a29be70cac89db72129eacb0301d5a45d0ac7ab25af35610082a738f7f6b5"
+  },
   "dependency_artifact": {
     "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
     "bytes": 13819,

@@ -79,11 +79,17 @@ def run_diagnosis() -> dict[str, object]:
     for row in members:
         for name in row["gate_failures"]:
             failure_histogram[name] = failure_histogram.get(name, 0) + 1
+    implementation = Path(__file__).resolve()
     dependency = Path(integrated.base.__file__).resolve()
     return {
         "schema": "ouruniv-cf4-b1-calibration-diagnosis-result-v3",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
+        "implementation_artifact": {
+            "path": str(implementation),
+            "bytes": implementation.stat().st_size,
+            "sha256": hashlib.sha256(implementation.read_bytes()).hexdigest(),
+        },
         "dependency_artifact": {
             "path": str(dependency),
             "bytes": dependency.stat().st_size,

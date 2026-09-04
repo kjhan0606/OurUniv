@@ -131,10 +131,12 @@ def run_diagnosis() -> dict[str, object]:
             "z_sd_mean": float(np.mean(np.std(errors / sigmas, axis=0, ddof=1))),
         }
     source = Path(integrated.__file__).resolve()
+    implementation = Path(__file__).resolve()
     return {
         "schema": "ouruniv-cf4-b1-count-derivative-diagnosis-result-v2",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source_artifact": {"path": str(source), "bytes": source.stat().st_size, "sha256": hashlib.sha256(source.read_bytes()).hexdigest()},
+        "implementation_artifact": {"path": str(implementation), "bytes": implementation.stat().st_size, "sha256": hashlib.sha256(implementation.read_bytes()).hexdigest()},
         "dependency_artifact": {"path": str(Path(integrated.base.__file__).resolve()), "bytes": Path(integrated.base.__file__).stat().st_size, "sha256": hashlib.sha256(Path(integrated.base.__file__).read_bytes()).hexdigest()},
         "mode_result_input": {"path": str(mode_path), "bytes": mode_path.stat().st_size, "sha256": hashlib.sha256(mode_path.read_bytes()).hexdigest()},
         "definition": {

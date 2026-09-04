@@ -76,6 +76,7 @@ def run_mode_coverage() -> dict[str, object]:
         }
     all68 = frequencies(rows, "coverage68_by_mode")
     all95 = frequencies(rows, "coverage95_by_mode")
+    implementation = Path(__file__).resolve()
     return {
         "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v3",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
@@ -84,6 +85,11 @@ def run_mode_coverage() -> dict[str, object]:
             "path": str(Path(integrated.__file__).resolve()),
             "bytes": Path(integrated.__file__).stat().st_size,
             "sha256": hashlib.sha256(Path(integrated.__file__).read_bytes()).hexdigest(),
+        },
+        "implementation_artifact": {
+            "path": str(implementation),
+            "bytes": implementation.stat().st_size,
+            "sha256": hashlib.sha256(implementation.read_bytes()).hexdigest(),
         },
         "dependency_artifact": {
             "path": str(Path(integrated.base.__file__).resolve()),

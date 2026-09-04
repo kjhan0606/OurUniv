@@ -1,6 +1,8 @@
 {
   "schema": "ouruniv-cf4-b1-development-mock-calibration-result-v2",
-  "status": "COMPLETE_64_DEVELOPMENT_MOCKS_JOINT_HARNESS_TECHNICAL_NO_SCIENCE_CLAIM",
+  "status": "SUPERSEDED_PRE_PERIODIC_RSD_AND_SEED_FIREWALL_METADATA",
+  "superseded_by": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
+  "superseded_reason": "This historical joint-harness result names the quarantined 2026083064..2026083320 block as untouched validation and predates the grid-wrap repair.",
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_v1.json",
   "grid": {
     "N": 32,

@@ -4,6 +4,8 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_PERIODIC_RSD_REPAIR_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
   "predecessor": "config/cf4_b1_posterior_width_repair_result_v2.json",
+  "closure_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
+  "closure_audit_next": "PENDING_POST_V17_REPAIR_AUDIT",
   "periodic_rsd_repair": {
     "dependency": "src/cf4_b1_development_mock_calibration.py",
     "interpolation_mode": "grid-wrap",
@@ -14,6 +16,11 @@
     "path": "src/cf4_b1_development_mock_calibration.py",
     "bytes": 13819,
     "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
+  "implementation_artifact": {
+    "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
+    "bytes": 21546,
+    "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
   },
   "width_policy": {
     "arm_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
