@@ -1,0 +1,28 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-hash-certificate-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "immutable_tag": "cf4-b1-cert-515630a",
+  "source_test_certified_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
+  "metadata_binding_commit": "465f6db3e101717b018e990016541c2ffb0f2d11",
+  "certificate_generation_basis": "metadata-binding tree at 465f6db; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
+  "record": {
+    "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
+    "bytes": 31604,
+    "sha256": "fe3466a60863babd781ced368d596bc76aa5da14d8c94849c5ab09f9e19a68e1"
+  },
+  "receipt": {
+    "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
+    "bytes": 1615,
+    "sha256": "92a5847bcaed17aeff5236e60d08163c5029e863284326762620eee1873b0d8e"
+  },
+  "receipt_raw_output": {
+    "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt",
+    "bytes": 950,
+    "sha256": "d266fe684fd5be3db92552be71a83f536f48e74dca530f177ea775c569819ec4"
+  },
+  "linked_pin_count": 62,
+  "linked_pin_mismatch_count": 0,
+  "one_way_anchor": true,
+  "scope": "The source/test/science tree is certified by the immutable tag; the result record and receipt metadata are anchored by these one-way hashes. Untracked user-owned JAX/tripwire paths remain excluded and are runtime-checked absent."
+}
