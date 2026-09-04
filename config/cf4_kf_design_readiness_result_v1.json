@@ -6,12 +6,14 @@
   "record_form": "abridged",
   "omitted_report_fields": [
     "checks",
-    "blockers",
     "baseline_binding",
     "geometry_manifest.validated",
     "geometry_manifest.body_sha256"
   ],
-  "remaining_blockers_semantics": "science-input subset; execution and overclaim prohibitions are retained in purpose and authorization",
+  "renamed_report_fields": {
+    "blockers": "remaining_blockers"
+  },
+  "remaining_blockers_semantics": "complete blocker list; execution and overclaim prohibitions are also listed explicitly",
   "purpose": "Record-only local readiness result; no catalog, GPFS, Slurm, mock, posterior, IC, PM, HOP, or RAMSES execution.",
   "read_only_local_audit": true,
   "source_bindings": {
@@ -43,6 +45,10 @@
     "baseline": {
       "path": "config/cf4_kf_design_baseline_amendment_v1.json",
       "sha256": "3b39b2139b64f74ccbf95b582512f3b8d3e03a76acc1ac17d489c5b913195484"
+    },
+    "parent_architecture": {
+      "path": "config/cf4_independent_parent_architecture_design.json",
+      "sha256": "b17e6ec0ec67cc7329614e98a989a447be5ec43edd1f6a370c481e19f9cd132b"
     }
   },
   "resolved_design_items": {

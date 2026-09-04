@@ -25,6 +25,7 @@ LIKELIHOOD_PATH = ROOT / "config/cf4_2mpp_joint_likelihood_v1.json"
 LOCAL_CONTRACT_PATH = ROOT / "config/cf4_2mpp_joint_likelihood_local_contract_v1.json"
 CROSSMATCH_PATH = ROOT / "config/cf4_2mpp_crossmatch_v1_result.json"
 BASELINE_PATH = ROOT / "config/cf4_kf_design_baseline_amendment_v1.json"
+PARENT_ARCHITECTURE_PATH = ROOT / "config/cf4_independent_parent_architecture_design.json"
 
 
 class ReadinessError(ValueError):
@@ -91,6 +92,7 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
         "local_contract": root / LOCAL_CONTRACT_PATH.relative_to(ROOT),
         "crossmatch": root / CROSSMATCH_PATH.relative_to(ROOT),
         "baseline": root / BASELINE_PATH.relative_to(ROOT),
+        "parent_architecture": root / PARENT_ARCHITECTURE_PATH.relative_to(ROOT),
     }
     values = {name: _load(path) for name, path in paths.items()}
     route = values["route"]
@@ -100,6 +102,7 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
     local_contract = values["local_contract"]
     crossmatch = values["crossmatch"]
     baseline = values["baseline"]
+    parent_architecture = values["parent_architecture"]
 
     findings: list[dict[str, str]] = []
 
@@ -150,11 +153,16 @@ def audit_readiness(root: Path = ROOT) -> dict[str, Any]:
         for key in ("external_artifact_read", "catalog_read", "GPFS_read", "GPFS_write", "Slurm_submission", "KF_EXPAND", "all_D_mock_execution", "observational_inference", "IC_PM_HOP_RAMSES", "network_access"):
             if baseline_authority.get(key) is not False:
                 findings.append({"id": "baseline_authority", "status": "FAIL", "detail": f"baseline authorization {key} is not false"})
+        for detail in _false_authority_flags(baseline, "authorization"):
+            findings.append({"id": "baseline_authority", "status": "FAIL", "detail": detail})
     parent_bank = baseline.get("frozen_baseline", {}).get("current_parent_bank", {})
     if parent_bank.get("seed_range_inclusive") != [3193, 3448] or parent_bank.get("count") != 256:
         findings.append({"id": "baseline_parent_bank", "status": "FAIL", "detail": "sealed parent-bank range/count changed"})
     if parent_bank.get("external_manifest_sha256") != "dcf5d24104b178a74371455497f4228eb03188189937915672219f10d4c11687":
         findings.append({"id": "baseline_parent_manifest", "status": "FAIL", "detail": "sealed parent-bank manifest binding changed"})
+    source_parent_hash = parent_architecture.get("sealed_CF4_parent_bank", {}).get("manifest_sha256")
+    if source_parent_hash != parent_bank.get("external_manifest_sha256"):
+        findings.append({"id": "baseline_parent_manifest", "status": "FAIL", "detail": "sealed parent-bank hash does not match tracked source contract"})
     hash_provenance = baseline.get("hash_provenance", {})
     if hash_provenance != {
         "path": "config/cf4_independent_parent_architecture_design.json",

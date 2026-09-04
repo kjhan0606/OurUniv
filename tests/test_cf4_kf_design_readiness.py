@@ -66,7 +66,8 @@ def test_tracked_result_record_matches_current_readiness_bindings():
     assert record["authorization"] == report["authorization"]
     assert record["record_form"] == "abridged"
     assert "checks" in record["omitted_report_fields"]
-    assert record["remaining_blockers_semantics"].startswith("science-input subset")
+    assert record["renamed_report_fields"] == {"blockers": "remaining_blockers"}
+    assert record["remaining_blockers_semantics"].startswith("complete blocker list")
     assert record["remaining_blockers"] == report["blockers"]
 
 
@@ -79,6 +80,7 @@ def _copy_audit_tree(tmp_path):
         "config/cf4_2mpp_joint_likelihood_local_contract_v1.json",
         "config/cf4_2mpp_crossmatch_v1_result.json",
         "config/cf4_kf_design_baseline_amendment_v1.json",
+        "config/cf4_independent_parent_architecture_design.json",
     ]
     for relative in paths:
         destination = tmp_path / relative
@@ -105,6 +107,11 @@ def test_tampered_route_and_authority_fail_closed(tmp_path):
     _edit_json(design, lambda value: value.__setitem__("authority", None))
     assert audit_readiness(tmp_path / "authority_case")["status"] == "FAIL_CONTRACT_INCONSISTENCY"
 
+    _copy_audit_tree(tmp_path / "forbidden_case")
+    design = tmp_path / "forbidden_case/config/cf4_kf_design_v1.json"
+    _edit_json(design, lambda value: value["authority"].__setitem__("posterior_inference", True))
+    assert audit_readiness(tmp_path / "forbidden_case")["status"] == "FAIL_CONTRACT_INCONSISTENCY"
+
 
 def test_tampered_baseline_and_corrupt_input_fail_closed_and_main_returns_nonzero(tmp_path, capsys):
     _copy_audit_tree(tmp_path)
@@ -114,6 +121,11 @@ def test_tampered_baseline_and_corrupt_input_fail_closed_and_main_returns_nonzer
         lambda value: value["frozen_baseline"]["current_parent_bank"].__setitem__("count", 255),
     )
     assert audit_readiness(tmp_path)["status"] == "FAIL_CONTRACT_INCONSISTENCY"
+
+    _copy_audit_tree(tmp_path / "hash_case")
+    baseline = tmp_path / "hash_case/config/cf4_kf_design_baseline_amendment_v1.json"
+    _edit_json(baseline, lambda value: value["hash_provenance"].__setitem__("json_pointer", "/tampered"))
+    assert audit_readiness(tmp_path / "hash_case")["status"] == "FAIL_CONTRACT_INCONSISTENCY"
 
     corrupt = tmp_path / "config/cf4_2mpp_joint_likelihood_v1.json"
     corrupt.write_text("not-json")
