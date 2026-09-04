@@ -55,8 +55,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 remains development-only NO-GO after D-arm posterior-width repair: fit_success 64/64, frozen per-voxel strict gate 8/64. Analytic-sigma mode coverage is 0.7520/0.9668 and remains diagnostic-only; it confirms broad intervals. Opus v12 is historical CONDITIONAL with promotion NO-GO; machine-reproducibility and pooled-guard fixes are pending v13.",
-  "next_bundle_rule": "Remain inside B1. Regenerate the mode result from code, audit the pooled overcoverage guard, then preregister a mark-side misspecification arm and width freeze policy. Keep validation sealed and do not promote a posterior/frontier or start B2 until the revised calibration contract is audited.",
+  "current_status": "B1 remains development-only NO-GO: fit_success 64/64, frozen legacy per-voxel strict gate 8/64, analytic mode coverage 0.7520/0.9668. The machine pooled guard fails (68/95), while count-side sandwich ratios are ~1 for A/B/C and ~1.068 for D. A fixed mark-side heavy-tail plan is prepared; Opus v14 audit is pending.",
+  "next_bundle_rule": "Remain inside B1. Obtain v14 audit of the machine guard, count-side diagnosis and fixed mark-side plan. Only after that audit may the development-only mark stress arm run; keep validation sealed and do not promote a posterior/frontier or start B2.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,

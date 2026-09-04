@@ -10,6 +10,7 @@
   "opus_closure_attempt_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
   "opus_closure_attempt_current_v12": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
   "opus_closure_attempt_current_v13": "PENDING_MACHINE_REPRODUCIBILITY_AND_GATE_POWER_AUDIT",
+  "opus_closure_attempt_current_v14": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
@@ -17,7 +18,10 @@
   "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
   "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v2.json",
   "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
-  "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
+  "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+  "pooled_coverage_guard_result": "config/cf4_b1_pooled_coverage_guard_result_v1.json",
+  "count_information_diagnosis_result": "config/cf4_b1_count_information_diagnosis_result_v1.json",
+  "mark_misspecification_plan": "config/cf4_b1_mark_misspecification_plan_v1.json",
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "scope": {
     "kf_design_contract_validated": true,
@@ -58,5 +62,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration plus D-arm width repair and analytic-sigma mode diagnosis are complete (fit_success 64/64, strict gate 8/64; analytic mode coverage 0.75195/0.96680). Opus v12 is historical CONDITIONAL/NO-GO; regenerate mode output and audit the pooled guard, then preregister mark-side misspecification while keeping validation sealed and B2-IC-FORWARD closed."
+    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member calibration plus analytic-sigma mode diagnosis, machine guard, and count-side information check are complete (fit_success 64/64, strict gate 8/64; analytic mode coverage 0.75195/0.96680; pooled guard FAIL; A/B/C count sandwich ratios ~1, D ~1.068). Obtain v14 audit of the guard and fixed mark-side plan; keep validation sealed and B2-IC-FORWARD closed."
 }

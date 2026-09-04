@@ -1,0 +1,68 @@
+{
+  "schema": "ouruniv-cf4-b1-mark-misspecification-plan-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_CLOSURE_AUDIT",
+  "purpose": "Stress the CF4 mark factor with a preregistered heavy-tail distance-error model after count-side information diagnosis.",
+  "count_side_decision": {
+    "diagnosis": "config/cf4_b1_count_information_diagnosis_result_v1.json",
+    "A_median_sandwich_to_expected_sigma": 0.997077771171671,
+    "B_median_sandwich_to_expected_sigma": 0.9979640029126331,
+    "C_median_sandwich_to_expected_sigma": 0.9969083686249577,
+    "D_median_sandwich_to_expected_sigma": 1.0680555518823254,
+    "interpretation": "A/B/C count-side expected information is close to empirical score information; D remains a mild discrepancy stress arm. This does not justify an A/C count repair."
+  },
+  "arm": {
+    "label": "E_MARK_HEAVY_TAIL",
+    "member_count": 16,
+    "paired_reference": "B",
+    "paired_indices": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+    "count_contract": "exactly B-arm positive-intensity, RSD/FoG and count stream",
+    "latent_truth": "reuse paired B truth coefficient and truth seed; no new truth draw",
+    "count_stream": "reuse paired B count stream; no count refit",
+    "count_split_stream": "reuse paired B count_split stream",
+    "mark_stream": [2026700016, 2026700032],
+    "posterior_stream": [2026800016, 2026800032],
+    "mark_generator": {
+      "independent_measurement_error": "0.95*N(0,120^2) + 0.05*N(0,360^2) mixture per secure CF4 row",
+      "shared_group_error": "N(0,35^2) once per secure group",
+      "fit_model": "unchanged Gaussian independent sigma=120 plus shared tau=35",
+      "outlier_mixture_seed_binding": "mark_stream only"
+    },
+    "width_policy": {
+      "ARM_WIDTH_SCALE_frozen": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5},
+      "refit_permitted": false,
+      "mean_model_changed": false
+    }
+  },
+  "evaluation": {
+    "analytic_sigma": true,
+    "coverage_unit": "paired development truth seed per latent mode",
+    "report": [
+      "fit success and finite joint factor",
+      "per-mode 68/95 coverage",
+      "held-out count log score",
+      "mark residual tail and robust-vs-Gaussian score"
+    ],
+    "promotion_gate": false,
+    "validation_opened": false
+  },
+  "firewall": {
+    "development_only": true,
+    "validation_range_sealed": [2026083320, 2026083576],
+    "GPFS": false,
+    "Slurm": false,
+    "external_data": false
+  },
+  "required_before_execution": [
+    "closure audit of this fixed form and seed allocation",
+    "no width refit and no post-hoc mixture fraction or scale changes",
+    "store the exact source and result hashes"
+  ],
+  "scientific_boundary": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "B2_IC_FORWARD": "NOT_STARTED",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED"
+  }
+}

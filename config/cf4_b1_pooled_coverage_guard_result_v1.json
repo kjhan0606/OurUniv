@@ -1,0 +1,125 @@
+{
+  "schema": "ouruniv-cf4-b1-pooled-coverage-guard-result-v1",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "input": {
+    "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+    "bytes": 90821,
+    "sha256": "38b924758195bb7fc59492403d3dd2b02483931b4091ddc392bc948dbefce1ef"
+  },
+  "bootstrap": {
+    "unit": "independent truth seed",
+    "replicates": 10000,
+    "rng": "PCG64(20260905)",
+    "percentile": 97.5
+  },
+  "guard_definition": {
+    "statistic": "per-seed mean of eight mode coverage indicators",
+    "tolerances": {
+      "coverage68": 0.05,
+      "coverage95": 0.02
+    },
+    "pass_rule": "one-sided bootstrap upper percentile <= target + tolerance",
+    "strict_promotion_gate_changed": false
+  },
+  "levels": {
+    "coverage68": {
+      "target": 0.6826894921370859,
+      "tolerance": 0.05,
+      "upper_limit": 0.7326894921370859,
+      "member_count": 64,
+      "mode_count": 8,
+      "pooled_count": 385,
+      "pooled_total": 512,
+      "mean": 0.751953125,
+      "bootstrap_upper_97_5": 0.79296875,
+      "pass": false
+    },
+    "coverage95": {
+      "target": 0.9544997361036416,
+      "tolerance": 0.02,
+      "upper_limit": 0.9744997361036416,
+      "member_count": 64,
+      "mode_count": 8,
+      "pooled_count": 495,
+      "pooled_total": 512,
+      "mean": 0.966796875,
+      "bootstrap_upper_97_5": 0.98046875,
+      "pass": false
+    }
+  },
+  "by_arm": {
+    "A": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.8125,
+        "bootstrap_upper_97_5": 0.8828125,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9921875,
+        "bootstrap_upper_97_5": 1.0,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    },
+    "B": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.671875,
+        "bootstrap_upper_97_5": 0.7421875,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9296875,
+        "bootstrap_upper_97_5": 0.9609375,
+        "upper_limit": 0.9744997361036416,
+        "pass": true
+      }
+    },
+    "C": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.78125,
+        "bootstrap_upper_97_5": 0.859375,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.96875,
+        "bootstrap_upper_97_5": 0.9921875,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    },
+    "D": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.7421875,
+        "bootstrap_upper_97_5": 0.8203125,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9765625,
+        "bootstrap_upper_97_5": 1.0,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    }
+  },
+  "scientific_boundary": {
+    "validation_opened": false,
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "primary_reference_arm": "B",
+  "primary_reference_pass": false,
+  "overall_pass": false
+}
