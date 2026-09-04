@@ -33,7 +33,8 @@
     "config/cf4_q7_q1_opus_audit_v2.json": "99c2ac86b76e0d348af6470fdf980ebf4c922eea9af03caf57e7d0b4fca92c05",
     "config/cf4_q7_development_directional_basis_registry_v1.json": "3aa06d9e1f8a49631f731529dfe27c1273adea44b6c1bd8da4aeff2b97a2e535",
     "config/cf4_q7_development_summary_operator_registry_v1.json": "9f245d01efe30766f17311a4d9121070f0b17dcb738222bfceaa14a1915e86fc",
-    "config/cf4_q7_q1_opus_reaudit_attempt_v3.json": "dbfc79929d47dd019c50fa191817e707fb76faae85d413254f7850148ea9b784"
+    "config/cf4_q7_q1_opus_reaudit_attempt_v3.json": "dbfc79929d47dd019c50fa191817e707fb76faae85d413254f7850148ea9b784",
+    "config/cf4_q7_q1r_redesign_plan_v1.json": "6a4d073f04df052352456f254cec888746781c307fece744dd909e87369bd049"
   },
   "implementation": {
     "route": "adaptive_topology_aware_response_atlas",
