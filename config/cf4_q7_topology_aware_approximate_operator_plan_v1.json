@@ -1,0 +1,125 @@
+{
+  "schema": "ouruniv-cf4-q7-topology-aware-approximate-operator-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q7",
+  "owner": "driver",
+  "plan_status": "PENDING_USER_APPROVAL_AFTER_GROK_GO",
+  "auditor_roles": {
+    "bundle_start_plan": "grok",
+    "stage_and_bundle_end_result": "claude-opus-5",
+    "agy": "removed"
+  },
+  "prerequisite": {
+    "q6_commit": "d2889cddbe83d15c93c90be295a06f653b4bd2a6",
+    "q6_result": "config/cf4_q6_corrective_knot_contract_result_v1.json",
+    "q6_result_sha256": "e5546fe7e3c4ac09fe6f21061136521b5b8875cfeaf2f4c2c91fcd2939a59e26",
+    "q6_stage_audit": "claude-opus-5: GO",
+    "user_approval": "PENDING",
+    "grok_plan_audit": "GO",
+    "grok_plan_audit_date": "2026-09-04",
+    "grok_audit_amendments_applied": true
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Test one non-bitwise, topology-aware approximation route for the frozen Q1 observation operator. Q7 does not produce a posterior, IC or <=0.3 cMpc/h claim; it only determines whether a scalable, error-certified z=0 operator is possible.",
+  "science_position": {
+    "why_this_route": "Q6 proved that bitwise complete knot signatures give G=M almost surely for continuous CF4 geometry and cannot scale. Q7 must obtain compression through bounded approximation while explicitly resolving TSC knots, seams and sigma regimes.",
+    "operator_first": "No posterior or IC work is scientifically admissible until the approximate operator passes a frozen Q1 value/gradient/error/resource contract on development fixtures.",
+    "geometry_gradient_scope": "Positions, LOS directions and sigma are fixed inputs in Q7. Only state-mass/latent/bias derivatives represented by the frozen 23 directions are in scope; geometry JVP/VJP is a separate future gate and must not be implied."
+  },
+  "scope": {
+    "topology_aware_approximation_design": true,
+    "candidate_implementation": "PENDING_USER_APPROVAL",
+    "development_mocks": "PENDING_USER_APPROVAL",
+    "heldout_mocks": false,
+    "jax": false,
+    "posterior": false,
+    "ic_generation": false,
+    "pm_or_hop": false,
+    "zoom": false,
+    "gpfs": false,
+    "slurm": false,
+    "grok": "plan_audit_only"
+  },
+  "frozen_provenance": {
+    "q1_commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "q1_tree_sha": "4444868df93572389602b518239e239591db134a",
+    "q1_source_git_blob_sha": "f4d34d656f4f8adac56617255da2665ca9825304",
+    "q1_source_mode": "100644",
+    "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+    "q6_fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
+    "q6_fixture_manifest_file_sha256": "d85adf644560ad648a5229ab140ff5be5e9810471fd357d3b7f1f14f3663d2a8",
+    "q6_fixture_manifest_payload_sha256": "94c77b71cb7c667daa9f6f8d39077d6464afd3058437398bc542817f4f1b79ab",
+    "q6_fixture_generator_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
+    "heldout_manifest_path": "config/cf4_q4_seed_manifest_v1.json",
+    "heldout_manifest_file_sha256": "f4318a86944e30f7e401f182ce0da38ad3fcdb29bb0a0317f8c56b34135c842a",
+    "heldout_manifest_payload_sha256": "fa746035fa7f493e598f0f8b77dbb6e9f5d8f94433bb0050cb4c4a8d577e3760",
+    "heldout_evaluated": false
+  },
+  "route": {
+    "name": "adaptive_topology_aware_response_atlas",
+    "representation": "For each bounded geometry bin, first split on all TSC knot surfaces so every epsilon interval has a common stencil topology. Within a topology cell, approximate the 27-cell response vector only by an interval-enclosed representation; a low-order surrogate is allowed only when its residual is itself enclosed over the full topology cell and T=8. Heuristic or merely empirically bounded surrogates are forbidden. Store state-mass and the frozen 23 directional mass basis; geometry is not differentiated.",
+    "knot_rule": "A bin may not straddle a TSC knot, periodic seam, sliver-merge boundary or sigma-zero policy boundary. If a split cannot establish this, fail closed to sourcewise evaluation and count the bin as overflow.",
+    "error_certificate": "For each bin b and population/direction (p,j), compute interval-arithmetic enclosures of every response component w_c(z) over z in b and T=8. The certified contribution bounds include E_L1[p,j,b]=sum_i|d_j m_i|*sup||w-w_ref||_1, E_Linf[p,j,b]=max_c sum_i|d_j m_i|*sup|w_c-w_ref,c|, each seam/knot stratum bound, and for each fixed scientific-summary map A_s an induced bound E_s<=||A_s|| applied to the same response enclosure. The sum over bins must be below every corresponding frozen gate before any timing/resource claim.",
+    "state_contract": "Mass and frozen directional mass derivatives are aggregated only after the certified response enclosure is formed. No fiducial pre-summing, secure-object substitution or mass-only anisotropic shortcut is allowed.",
+    "normalization": "Use the frozen Q1 T=8 tail normalization and per-source conservation convention; any bin surrogate must preserve non-negativity and total mass within the certified error budget.",
+    "overflow_policy": "If topology, interval arithmetic, cold-sigma handling or resource limits fail, retain the sourcewise Q1 response for that bin and report overflow fraction; no clipping or tolerance relaxation.",
+    "certificate_status_contract": "Every gate is labeled CERTIFIED, MEASURED, or BOTH in the result. A measured pass without its certified counterpart cannot promote the route."
+  },
+  "approximate_error_gates": {
+    "reference": "frozen Q1 sourcewise oracle on identical positions, LOS, sigma, masses and exposure",
+    "value_total_and_per_population": "L1 <= max(1e-12, 1e-3*oracle_l1), plus certified bin-bound sum <= the same gate",
+    "value_cellwise": "Require both certified E_Linf <= max(1e-12, 1e-4*max(oracle_field)) and measured Linf <= the same threshold; require both certified seam/knot stratum enclosures and measured strata p95 <= 1e-3 relative.",
+    "gradient_23": "For frozen 23 state-mass/latent/bias directions, L1 <= max(1e-10, 1e-3*reference_gradient_l1), with the same bound certified before measurement",
+    "likelihood_budget": "For each of the 175 fixed scientific summaries s, use normalized perturbation delta_l_s=abs(logL_candidate_s-logL_Q1_s)/max(1,abs(logL_Q1_s)) computed with identical exposure/data; require certified induced bound <=0.01 and measured delta_l_s <=0.01, with no summary coverage loss. This is an operator budget, not a posterior claim.",
+    "topology_sigma": "All seven Q6 fixture families (seeds 62001-62007), including TSC knots, periodic seam/sliver/clip, translated cells, interval order, LOS/sigma variation and sigma=0/near-zero, must have explicit CERTIFIED/MEASURED PASS or terminal NO-GO dispositions.",
+    "approximation_not_exact": "The Q6 exactness gate is not inherited as an approximate-route acceptance criterion; every Q7 gate reports measured error and certified bound separately."
+  },
+  "resource_and_compression_gates": {
+    "release_resolution": "N192, 2.0 cMpc/h only",
+    "compression": "Require measured M/G > 1.01; M/G <= 1.01 is immediate terminal NO-GO.",
+    "memory": "Persistent+temporary peak <= 64 GiB host and <= 16 GiB device before any device allocation or accelerator kernel; no JIT is in scope because jax=false.",
+    "timing": "After the full-N192 certified bound and measured Q1 comparison pass, warm synchronized full-field end-to-end <= 600 s at the 2.0 cMpc/h release point; no JIT is in scope because jax=false.",
+    "measurement_scope": "Development fixtures and, only after Q7.2 passes, full N192/2.0 cMpc/h. No extrapolation to 0.3 cMpc/h and no production allocation until all gates pass.",
+    "full_N192_order": "First compute certified bounds on the actual full source stream without device allocation; second perform a measured candidate-versus-Q1 sourcewise/full-field comparison; only then measure warm timing and persistent+temporary host/device peaks."
+  },
+  "development_firewall": {
+    "fixtures": "Reuse all seven Q6 seeds/topology unchanged: 62001, 62002, 62003, 62004, 62005, 62006, 62007. The six families not executed in Q6 (62001-62005, 62007) must be generated from a committed deterministic generator before the first run.",
+    "fixture_hash": "Record raw array digest with the Q6 generator's declared LE-float64 concatenation scope and a single project-wide canonical manifest digest.",
+    "selection": "One route and frozen hyperparameters; no candidate switching or retuning after seeing any fixture result.",
+    "heldout": "256 Q4 held-out seeds remain sealed and one-shot; no held-out evaluation in Q7."
+  },
+  "work_packages": [
+    {
+      "id": "Q7.0",
+      "task": "Freeze topology partition, interval-enclosure arithmetic, surrogate basis, cold-sigma/sliver/clip rules, mass-only gradient scope, fixture generator and error-budget accounting.",
+      "acceptance": "Grok approves the plan; no code or fixture execution before user approval."
+    },
+    {
+      "id": "Q7.1",
+      "task": "Implement the single adaptive topology-aware route with runtime Q1 provenance guard and deterministic overflow accounting.",
+      "acceptance": "Code has no GPFS/Slurm/JAX/posterior/IC path, preserves the Q1 guard, and exposes certified value/23-direction mass-gradient errors."
+    },
+    {
+      "id": "Q7.2",
+      "task": "Run all seven pre-registered development fixture families and evaluate certified and measured value, cellwise, topology, sigma, 23-direction mass-gradient, 175-summary likelihood-budget and overflow gates.",
+      "acceptance": "Every one of the seven fixture families receives explicit CERTIFIED/MEASURED PASS or terminal NO-GO; no held-out data are opened."
+    },
+    {
+      "id": "Q7.3",
+      "task": "Only if Q7.2 passes, first certify the bound on the actual full N192 source stream and perform a measured candidate-versus-Q1 comparison; only then measure compression, warm timing and host/device peaks. Otherwise stop without allocation.",
+      "acceptance": "Full-N192 certified and measured gates pass, M/G > 1.01, peak <=64/16 GiB and warm time <=600 s, or route is terminal NO-GO."
+    }
+  ],
+  "release_gates": [
+    "User explicitly approves Q7 before any code change or development fixture execution.",
+    "Grok audits and approves this plan at bundle start.",
+    "Claude Opus 5 audits each Q7 stage/result and the bundle closure.",
+    "No posterior, q-corrected IC, PM/HOP/RAMSES, zoom, GPFS or Slurm action occurs in Q7."
+  ],
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}
