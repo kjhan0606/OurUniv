@@ -1,13 +1,13 @@
 HASH_VERIFICATION_RECEIPT_V2
 CERTIFIED_COMMIT: 515630a93519903dbb5c4a800c9f1fd889aa89fd
-RECEIPT_GENERATION_COMMIT: 515630a93519903dbb5c4a800c9f1fd889aa89fd
+RECEIPT_GENERATION_COMMIT: 26217b137009ce04eb7a46d2551ee7da01e1e820
 VERIFIED_RECORD: config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json
-VERIFIED_ENTRIES_EXCLUDING_SELF: 62
-RECORD_PIN_ENTRIES: 62
+VERIFIED_ENTRIES_EXCLUDING_SELF: 64
+RECORD_PIN_ENTRIES: 64
 MISMATCHES: 0
 MISSING_PATHS: none
 VERIFICATION_TOOL: Python hashlib.sha256 with os.stat byte counts
-VERIFICATION_COMMIT: 515630a93519903dbb5c4a800c9f1fd889aa89fd
+VERIFICATION_COMMIT: 26217b137009ce04eb7a46d2551ee7da01e1e820
 RECEIPT_SELF_FILES_NOT_PINNED: config/cf4_bundle_b1_hash_verification_receipt_v2.json, config/cf4_bundle_b1_hash_verification_receipt_v2.txt
 EXCLUDED_UNTRACKED_PATHS: config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json, scripts/tripwire/, src/cf4_2mpp_joint_likelihood_jax.py, tests/test_cf4_2mpp_joint_likelihood_jax.py
 SCOPE: all linked path/bytes/sha256 pins in the result record; receipt self-files are not pinned, and unrelated untracked user paths are out of scope.
