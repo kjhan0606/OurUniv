@@ -92,7 +92,7 @@
     {
       "id": "Q7.0",
       "task": "Freeze topology partition, interval-enclosure arithmetic, surrogate basis, cold-sigma/sliver/clip rules, mass-only gradient scope, fixture generator and error-budget accounting.",
-      "acceptance": "Grok approves the plan; no code or fixture execution before user approval."
+      "acceptance": "Claude Opus 5 approves the plan; no code or fixture execution before user approval."
     },
     {
       "id": "Q7.1",

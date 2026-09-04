@@ -24,7 +24,7 @@
     "fixture_generator_sha256": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e"
   },
   "artifacts": {
-    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "02273c557661c1d0b38636fe2c4c4347b7b6116e6a53769b74db915632cfaae0",
+    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "ec54592b95fc59bf466d37ba3a3233fef5e56dbab227853346e93ee823dfe5a9",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
     "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
     "src/cf4_q7_topology_aware_approximate_operator.py": "ed21676784aa447b625bf3d87657df51e369d7126b382f75fe0e149ec0fe7e0b",
@@ -75,5 +75,5 @@
     "blocking_question": "Opus 5 requires a randomized wrapped/seam containment harness, registered induced norms with upward-rounded summary accumulation, and physical numeric-basis provenance (units/convention/values) before Q7.2.",
     "scientific_claim": "No z=0 posterior, IC, PM/HOP, zoom or <=0.3 cMpc/h claim is authorized."
   },
-  "next": "Obtain Claude Opus 5 stage audit; only an explicit GO (and any required fixes) permits Q7.2 seven-fixture certified/measured execution."
+  "next": "Resolve the three Opus 5 conditional blockers, then obtain an explicit Claude Opus 5 GO; Q7.2 seven-fixture certified/measured execution remains prohibited until then."
 }
