@@ -36,6 +36,8 @@
       "null_target": 0.6826894921370859,
       "maximum_tolerated_absolute_overcoverage": 0.05,
       "upper_limit": 0.7326894921370859,
+      "coverage95_tolerance": 0.02,
+      "coverage95_upper_limit": 0.9744997361036416,
       "bootstrap": {
         "unit": "independent truth seed",
         "replicates": 10000,

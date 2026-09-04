@@ -2,7 +2,12 @@
   "schema": "ouruniv-cf4-b1-mark-misspecification-plan-v1",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_CLOSURE_AUDIT",
+  "status": "REJECTED_INFORMATION_NULL_OPUS_V14",
+  "decision": {
+    "executed": false,
+    "reason": "Opus v14 found MARK_FISHER contributes approximately 0.005% of total precision, so this arm cannot diagnose the observed posterior-width defect.",
+    "replacement": "config/cf4_b1_count_derivative_diagnosis_result_v2.json"
+  },
   "purpose": "Stress the CF4 mark factor with a preregistered heavy-tail distance-error model after count-side information diagnosis.",
   "count_side_decision": {
     "diagnosis": "config/cf4_b1_count_information_diagnosis_result_v1.json",
@@ -55,9 +60,8 @@
     "external_data": false
   },
   "required_before_execution": [
-    "closure audit of this fixed form and seed allocation",
-    "no width refit and no post-hoc mixture fraction or scale changes",
-    "store the exact source and result hashes"
+    "not applicable: arm is rejected and must not be executed",
+    "if mark stress is revisited after an information rebalance, use a variance-matched mixture and obtain a new closure audit"
   ],
   "scientific_boundary": {
     "observational_z0_posterior": "NOT_CREATED",

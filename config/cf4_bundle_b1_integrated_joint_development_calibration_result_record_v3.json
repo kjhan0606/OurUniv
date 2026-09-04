@@ -37,7 +37,12 @@
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v13.json", "bytes": 1507, "sha256": "d3f6f66081870c87450f759906af0bc04fa833c214ed97d91d92c9e27d57c1a5"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v13.txt", "bytes": 1465, "sha256": "61c2e2d6aa5cb4b3f203842f1c7eab5076d22a26508aee79512fe1d8e97a5e79"}
   },
-  "primary_audit_current_v14": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
+  "primary_audit_current_v14": "config/cf4_bundle_b1_opus_closure_attempt_v14.json",
+  "primary_audit_current_v15": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+  "primary_audit_current_v14_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v14.json", "bytes": 1478, "sha256": "801cab027756a7fb550beb6709acb9952c0526008924f0e39f279c7b578be686"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v14.txt", "bytes": 1373, "sha256": "59d78f537a887c6eddf4b97d2295c648f83805b4f5b3a349f1f0b328e26d1944"}
+  },
   "primary_audit_current_v12_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v12.json", "bytes": 1397, "sha256": "5cdf390d891256113af0e33c2ba6e6369b19b9d45304c8bed8dd14e217949ad6"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v12.txt", "bytes": 1905, "sha256": "08575a343838506d0a9f76e4e97cd4e59f7c8f1963fbfa0315e724596f5ad511"}
@@ -57,6 +62,7 @@
   "gate_redesign_proposal": "config/cf4_b1_gate_redesign_proposal_v1.json",
   "pooled_coverage_guard_result": "config/cf4_b1_pooled_coverage_guard_result_v1.json",
   "count_information_diagnosis_result": "config/cf4_b1_count_information_diagnosis_result_v1.json",
+  "count_derivative_diagnosis_result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
   "mark_misspecification_plan": "config/cf4_b1_mark_misspecification_plan_v1.json",
   "diagnosis_implementation": {
     "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5827, "sha256": "5a2756c395016ba52298fdb344add12a6e3c787fa37d92dfa73206cedbb4f785"},
@@ -80,12 +86,19 @@
     "test": {"path": "tests/test_cf4_b1_count_information_diagnosis_v1.py", "bytes": 771, "sha256": "391a78f789dd3023145e997dbd9b3d659fc683d49a7699cb342677a6c97ae012"},
     "result": {"path": "config/cf4_b1_count_information_diagnosis_result_v1.json", "bytes": 16013, "sha256": "b5647fd318ceae80bd3ec3fdb6f9b76fb8ec768241f5cbb21d97ee866493f454"}
   },
+  "count_derivative_implementation": {
+    "source": {"path": "src/cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 8239, "sha256": "64a8397b023b5867f10ffb58a738de9a03e1d7d498931b10f752a33d89993989"},
+    "test": {"path": "tests/test_cf4_b1_count_derivative_diagnosis_v2.py", "bytes": 866, "sha256": "9da86a9556b116a3fda300a4d66de72d8d14b6f59e859104ac207dd295a73fd3"},
+    "result": {"path": "config/cf4_b1_count_derivative_diagnosis_result_v2.json", "bytes": 16446, "sha256": "9a1c58eb889bcff3d1da314356c96dfe5b66e40025456d07093ffd7e4de36811"}
+  },
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 70110, "sha256": "940a18ce093c79c67351dde2ff751a9a3d8620366fd9fd316a05b5b5db7553e1"},
     "width_repair_v2": {"path": "config/cf4_b1_posterior_width_repair_result_v2.json", "bytes": 3023, "sha256": "3e2c7b3c6b52bdf7049e069705adb3b97f3e8767a4dc43e51bc89cc41fa0c0d1"},
     "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2313, "sha256": "5bdc98eff03107be2b5e11cf19b78c5e2beb58030fdf97a117dcca3d99811f80"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3391, "sha256": "b04326a5ca88dd310ae100c93d3f105ad218349ea1ce133457abd64346821f96"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 2915, "sha256": "09e3117bd8bb04b874e315fdaeff81191030f46dba287628cbe62fd765020582"}
+    ,"mark_misspecification_plan_v1_current": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3198, "sha256": "1fcec5e9ebee48caa091cdf4790a6dc669ed2568e24f23eaaab72509b411f819"}
+    ,"gate_redesign_proposal_v1_current": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3479, "sha256": "f062f6428919b556378323be211be097fa6f1c3020e35e3b9fcfa8983e0b3f11"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -135,8 +148,8 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
-    "primary_record": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
+    "primary": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+    "primary_record": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
     "historical_v13_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v13.txt",
     "historical_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
