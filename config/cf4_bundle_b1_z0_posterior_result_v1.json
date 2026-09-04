@@ -16,7 +16,7 @@
   "opus_closure_attempt_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
   "opus_closure_attempt_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
   "opus_closure_attempt_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
-  "opus_closure_attempt_current_v20": "PENDING_POST_V19_ANCHOR_REPAIR_AUDIT",
+  "opus_closure_attempt_current_v20": "PENDING_POST_V19_ANCHOR_REPAIR_AUDIT_V20",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",

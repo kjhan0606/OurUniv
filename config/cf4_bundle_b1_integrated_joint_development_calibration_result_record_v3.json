@@ -15,7 +15,7 @@
     "excluded_untracked_reason": "User-owned unrelated work; none is imported by the B1 source/test closure and none is staged by B1 commits.",
     "import_closure_assertion": "B1 imports only tracked source modules listed in this record; excluded untracked JAX/tripwire paths are not runtime dependencies.",
     "import_closure_check": {
-      "command": "rg -n 'cf4_2mpp_joint_likelihood_jax|tripwire' src/cf4_b1_*.py tests/test_cf4_b1_*.py -g '!tests/test_cf4_b1_integrated_joint_calibration_v3.py'",
+      "command": "rg -n 'cf4_2mpp_joint_likelihood_jax|tripwire' --glob 'src/cf4_b1_*.py' --glob 'tests/test_cf4_b1_*.py' --glob '!tests/test_cf4_b1_integrated_joint_calibration_v3.py'",
       "exit_status": 1,
       "match_count": 0,
       "result": "PASS; excluded untracked JAX/tripwire paths are not referenced by the B1 source/test closure"
@@ -313,7 +313,7 @@
   },
   "closure_audit": {
     "primary": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
-    "primary_record": "PENDING_POST_V19_REPAIR_AUDIT_V20",
+    "primary_record": "PENDING_POST_V19_ANCHOR_REPAIR_AUDIT_V20",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
