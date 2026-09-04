@@ -67,10 +67,20 @@
     "development_count": 64,
     "seed_start_inclusive": 2026083000,
     "seed_stop_exclusive": 2026083064,
+    "development_auxiliary_streams": {
+      "counts": [2026400000, 2026400064],
+      "marks": [2026500000, 2026500064],
+      "posterior": [2026600000, 2026600064]
+    },
     "untouched_validation_seed_start": 2026083320,
     "untouched_validation_seed_stop_exclusive": 2026083576,
     "contaminated_quarantine_start": 2026083064,
     "contaminated_quarantine_stop_exclusive": 2026083128,
+    "contaminated_auxiliary_streams": {
+      "counts": [2026400064, 2026400128],
+      "marks": [2026500064, 2026500128],
+      "posterior": [2026600064, 2026600128]
+    },
     "validation_opened": false
   },
   "arms": {

@@ -7,23 +7,35 @@
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 21771,
-      "sha256": "ac81b9d1fe9bb38af99d59b11584464bd8ba11a5ccbfb9584adf1fe8c9c57d91"
+      "bytes": 22365,
+      "sha256": "0ce2c271ebb872287429cf6138ed5cdedc2a75d2b4ad2e8143e32d930f7663b0"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 1299,
-      "sha256": "1b44ebaf0acc354fda8af77d3a34e5cc25b4b95aedddd37cc9497a9c4ca62f58"
+      "bytes": 1734,
+      "sha256": "676a5b5c2d365430d4e6ae47bc6316c81fa429a427ca12c16f395f9917c6c141"
     }
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 8391,
-    "sha256": "aab9f87fae09ceecc47b0b543211a4fdcdb4ce8c2d97f5dc3dead9ba40837328"
+    "bytes": 8738,
+    "sha256": "59f6bd5783e4e8a9395f06a16440b9f703b4185fa275f525404de10ab0af3e38"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
+  "primary_audit_attempt_v5": "config/cf4_bundle_b1_opus_closure_attempt_v5.json",
+  "primary_auth_smoke": "config/cf4_bundle_b1_opus_auth_smoke_v1.json",
+  "primary_scope_smoke": "config/cf4_bundle_b1_opus_scope_smoke_v1.json",
+  "primary_audit_current": "config/cf4_bundle_b1_opus_closure_attempt_v6.json",
+  "primary_audit_current_v7": "config/cf4_bundle_b1_opus_closure_attempt_v7.json",
+  "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
+  "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
+  "diagnosis_implementation": {
+    "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5827, "sha256": "5a2756c395016ba52298fdb344add12a6e3c787fa37d92dfa73206cedbb4f785"},
+    "test": {"path": "tests/test_cf4_b1_calibration_diagnosis_v1.py", "bytes": 853, "sha256": "2553daba8980d66b2d1594e9852121e7b89b0193580c517dc0352a80d8e0cd5d"},
+    "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"}
+  },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
     "backend": "local CPU",
@@ -33,7 +45,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "3 targeted tests passed; harness probes PASS"
+    "test_result": "5 targeted tests passed; prior 13-test B1 regression; harness probes PASS"
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -41,12 +53,15 @@
     "secure_groups": 11610,
     "excluded_target_rows_before_binning": 17007,
     "development_seed_range": [2026083000, 2026083064],
+    "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
     "contaminated_seed_quarantine": [2026083064, 2026083128],
+    "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
     "replacement_validation_range_sealed": [2026083320, 2026083576],
     "shared_redshift_covariance": "exact canonical group factor",
     "selection_rsd_fog_tsc_nuisance": "canonical local interfaces exercised",
     "disjoint_target_exclusion_probe": "PASS; 17007 unique non-unmatched targets, zero overlap with synthetic count identities",
-    "canonical_vs_vectorized_joint_abs_error_max": 9.604264050722122e-10
+    "canonical_vs_vectorized_joint_abs_error_max": 7.566995918750763e-10,
+    "mark_fisher": "exact grouped Sherman-Morrison rank-1 term"
   },
   "calibration_metrics": {
     "strict_low_k_gate_required_count": 64,
@@ -54,10 +69,11 @@
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,
+    "failure_histogram": {"coverage68": 50, "coverage95": 49},
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The integrated same-truth joint calibration is numerically finite and factor-consistent, but only 11/64 members pass the preregistered joint low-k gate. This blocks promotion and is not an observational posterior claim."
+    "interpretation": "The integrated same-truth joint calibration is numerically finite and factor-consistent; all 64 optimizers converge. Only 11/64 members pass because coverage68/coverage95 fail (50/49 members respectively), with A/C overcoverage and D stress-arm undercoverage. This blocks promotion and is not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -68,9 +84,10 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "NO_USABLE_VERDICT_NOT_LOGGED_IN",
-    "backup": "NO-GO",
+    "primary": "NO-GO",
+    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
+    "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Accept this as a valid technical gate failure. Diagnose coverage/stress-arm calibration using development seeds only; keep replacement validation sealed and do not start B2."
+  "next_action": "Revise uncertainty and stress-arm calibration using development seeds only, preserving the frozen mean model and gate; rerun the same 64 seeds before any validation opening or B2."
 }

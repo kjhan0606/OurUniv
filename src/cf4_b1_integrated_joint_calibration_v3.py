@@ -244,17 +244,24 @@ def _count_fisher(coeff: np.ndarray, arm: str) -> np.ndarray:
     return weighted @ weighted.T
 
 
+def _single_group_mark_fisher(jac: np.ndarray, sigma: float, tau: float) -> np.ndarray:
+    """Exact J^T C^-1 J for C=sigma^2 I + tau^2 11^T."""
+
+    jac = np.asarray(jac, dtype=np.float64)
+    inv_diag = 1.0 / sigma**2
+    contraction = jac.shape[0] * inv_diag
+    factor = tau**2 * inv_diag**2 / (1.0 + tau**2 * contraction)
+    row_sum = np.sum(jac, axis=0)
+    return inv_diag * (jac.T @ jac) - factor * np.outer(row_sum, row_sum)
+
+
 def _mark_fisher() -> np.ndarray:
     """Exact grouped Gaussian Fisher using the declared shared covariance."""
 
     groups = MARKS["groups"]
     result = np.zeros((MODE_COUNT, MODE_COUNT), dtype=np.float64)
-    inv_diag = 1.0 / MARK_MEASUREMENT_SIGMA**2
     for group in np.unique(groups):
-        jac = MARK_JAC[groups == group]
-        contraction = jac.shape[0] * inv_diag
-        factor = MARK_SHARED_SIGMA**2 / (1.0 + MARK_SHARED_SIGMA**2 * contraction)
-        result += inv_diag * (jac.T @ jac) - factor * (inv_diag * jac).T @ (inv_diag * jac)
+        result += _single_group_mark_fisher(MARK_JAC[groups == group], MARK_MEASUREMENT_SIGMA, MARK_SHARED_SIGMA)
     return result
 
 
@@ -363,8 +370,10 @@ def run_calibration() -> dict[str, object]:
                                  "rsd_fog_tsc_nuisance_probes": run_joint_harness(),
                                  "disjoint_target_exclusion_probe": DISJOINT_TARGET_PROBE},
             "seed_firewall": {"development_count": MOCK_COUNT, "seed_start_inclusive": SEED_START, "seed_stop_exclusive": SEED_STOP,
+                              "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},
                               "untouched_validation_seed_start": 2026083320, "untouched_validation_seed_stop_exclusive": 2026083576,
                               "contaminated_quarantine_start": 2026083064, "contaminated_quarantine_stop_exclusive": 2026083128,
+                              "contaminated_auxiliary_streams": {"counts": [2026400064, 2026400128], "marks": [2026500064, 2026500128], "posterior": [2026600064, 2026600128]},
                               "validation_opened": False},
             "arms": by_arm,
             "aggregate": {"member_count": MOCK_COUNT, "strict_low_k_gate_required_count": MOCK_COUNT,

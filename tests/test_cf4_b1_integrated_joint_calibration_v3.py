@@ -31,3 +31,12 @@ def test_harness_remains_pass_and_validation_firewall_closed():
     result = calibration.run_joint_harness()
     assert result["status"] == "PASS"
     assert result["validation_seeds_opened"] is False
+
+
+def test_shared_group_mark_fisher_matches_direct_covariance_inverse():
+    jac = np.array([[1.0, 2.0], [3.0, -1.0], [0.5, 4.0]], dtype=float)
+    sigma, tau = 7.0, 3.0
+    covariance = sigma**2 * np.eye(3) + tau**2 * np.ones((3, 3))
+    expected = jac.T @ np.linalg.inv(covariance) @ jac
+    actual = calibration._single_group_mark_fisher(jac, sigma, tau)
+    np.testing.assert_allclose(actual, expected, rtol=1.0e-12, atol=1.0e-12)

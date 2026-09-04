@@ -5,7 +5,12 @@
   "status": "REPAIRED_DEVELOPMENT_RANGE_RESEALED_VALIDATION_QUARANTINED",
   "incident": {
     "runner": "src/cf4_b1_integrated_joint_calibration_v3.py",
-    "incorrect_range_consumed": [2026083064, 2026083128],
+    "incorrect_truth_range_consumed": [2026083064, 2026083128],
+    "incorrect_auxiliary_streams_consumed": {
+      "counts": [2026400064, 2026400128],
+      "marks": [2026500064, 2026500128],
+      "posterior": [2026600064, 2026600128]
+    },
     "classification": "validation_seed_contamination",
     "observational_data_opened": false,
     "posterior_or_frontier_promotion": false,
@@ -16,7 +21,12 @@
       "seed_start_inclusive": 2026083000,
       "seed_stop_exclusive": 2026083064,
       "count": 64,
-      "assignment": "16 mocks per arm A-D, each seed exactly once"
+      "assignment": "16 mocks per arm A-D, each truth seed exactly once",
+      "auxiliary_streams": {
+        "counts": [2026400000, 2026400064],
+        "marks": [2026500000, 2026500064],
+        "posterior": [2026600000, 2026600064]
+      }
     },
     "replacement_validation": {
       "seed_start_inclusive": 2026083320,

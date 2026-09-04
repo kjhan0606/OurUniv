@@ -13,12 +13,13 @@
     "network_forbidden": true,
     "file_modification_forbidden": true
   },
-  "status": "NO_USABLE_VERDICT_NOT_LOGGED_IN",
+  "status": "NO_USABLE_VERDICT_BARE_MODE_AUTH_DISABLED",
   "exit_code": 1,
   "stdout_bytes": 35,
   "stderr_bytes": 0,
   "raw_output": "Not logged in · Please run /login",
+  "failure_cause": "The --bare option disables OAuth/keychain authentication and requires an API key; it bypassed the existing Claude login. A normal-mode auth smoke subsequently returned OPUS_SMOKE_OK.",
   "verdict": "NOT-RECEIVED",
-  "interpretation": "The primary auditor was unavailable; this is not a scientific GO or NO-GO verdict. The configured backup-only audit was therefore requested.",
-  "driver_action": "Record the backup-only verdict separately and keep B1 promotion and B2 blocked."
+  "interpretation": "The invocation was malformed for the authenticated environment; this is not a scientific GO or NO-GO verdict.",
+  "driver_action": "Retry the primary Opus audit without --bare before relying on the backup auditor."
 }

@@ -55,7 +55,7 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 closure: Opus unavailable (not logged in); sol backup NO-GO. Corrected integrated joint calibration has fit_success 64/64 but only 11/64 strict gate passes; initial validation-seed attempt quarantined.",
+  "current_status": "B1 closure: corrected integrated joint calibration has fit_success 64/64 but only 11/64 strict gate passes. Opus primary v8 is NO-GO (normal authenticated mode); sol backup is supporting NO-GO; initial validation-seed attempt quarantined.",
   "next_bundle_rule": "Remain inside B1. Diagnose coverage and stress-arm calibration using development seeds only; do not open replacement validation, promote a posterior/frontier, or start B2 until the frozen 64/64 gate passes and a new bundle closure is audited.",
   "execution_firewall": {
     "gpfs": false,
