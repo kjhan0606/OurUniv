@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-bundle-b1-integrated-joint-development-calibration-result-record-v3",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "COMPLETE_PERIODIC_RSD_REPAIR_POST_REPAIR_FITS_WIDTHS_FROZEN_PRE_REPAIR_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "status": "CLOSED_DEVELOPMENT_ONLY_NO_GO_PERIODIC_RSD_REPAIR_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "repository_scope": {
     "certified_tree_commit": "d34bda42db11017bc1e3d062d0c318b3e5dabb6c",
     "tracked_bundle_scope": true,
@@ -26,6 +26,12 @@
       "scope": "runtime modules loaded by the B1 test process"
     },
     "post_certification_diff_policy": "Any commit after certified_tree_commit must be restricted to this record, receipt metadata, and audit/config provenance until the next audit."
+    ,"certificate_audit_snapshot": {
+      "path": "config/cf4_bundle_b1_hash_certificate_v1.json",
+      "sha256_at_v21_packet": "ad807e1b705507319ac5f3bcd32c7273cf1111df59a05618e970477940e3c884",
+      "tag": "cf4-b1-cert-d34bda4",
+      "note": "Snapshot hash supplied to Opus v21; the one-way certificate is refreshed after these record-only edits and is intentionally not self-pinned."
+    }
   },
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
@@ -83,6 +89,7 @@
   "primary_audit_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
   "primary_audit_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
   "primary_audit_current_v20": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
+  "primary_audit_current_v21": "config/cf4_bundle_b1_opus_closure_attempt_v21.json",
   "primary_audit_current_v16_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.json", "bytes": 1792, "sha256": "5149966e907f4f790ce10b274735f033941c0fcc4ff44073dad362b8bb8ca452"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt", "bytes": 1233, "sha256": "a1c3967ba9d310071751557dd91965bf08d883099feed842c533f757b85eb92f"}
@@ -102,6 +109,10 @@
   "primary_audit_current_v20_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.json", "bytes": 3224, "sha256": "f060812d3327b2d1089d295819a6e8afd4a8e33d02a150e7c499fbb085bd8d8f"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.txt", "bytes": 3070, "sha256": "1ad80f93ea09ec063b575f1c3a174939dce787e434f8d9ec72cc5e525fa46fc2"}
+  },
+  "primary_audit_current_v21_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v21.json", "bytes": 1690, "sha256": "d44010811a929ac6638a787319f1349b17dd7e125d589ef6a388a7fba5cf786f"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v21.txt", "bytes": 2668, "sha256": "4a60573661ac7b75665b38f836ef5adaf0a0fcdead9ed4314a1848e6ef3cdaba"}
   },
   "primary_audit_current_v15_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
@@ -272,7 +283,40 @@
       "exit_status": 0,
       "passed": 30,
       "pytest_reported_seconds": 85.98,
-      "scope": "B1 original 26 tests plus coverage-denominator and arm-isolation diagnostic tests"
+      "scope": "B1 original 26 tests plus coverage-denominator and arm-isolation diagnostic tests",
+      "selection_expression": "tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py tests/test_cf4_b1_coverage_contract_adjudication_v1.py tests/test_cf4_b1_arm_isolation_diagnosis_v1.py",
+      "test_node_ids": [
+        "tests/test_cf4_b1_calibration_diagnosis_v1.py::test_frozen_gate_decomposition_is_named_and_fail_closed",
+        "tests/test_cf4_b1_count_derivative_diagnosis_v2.py::test_derivative_ladder_and_seed_sample_are_frozen",
+        "tests/test_cf4_b1_count_derivative_diagnosis_v2.py::test_derivative_fisher_is_finite_for_zero_coefficients",
+        "tests/test_cf4_b1_count_information_diagnosis_v1.py::test_count_information_diagnosis_is_development_only_and_stratified",
+        "tests/test_cf4_b1_count_information_diagnosis_v1.py::test_sandwich_ratio_is_finite_for_one_member",
+        "tests/test_cf4_b1_development_mock_calibration.py::test_seed_firewall_and_arm_assignment_are_exact",
+        "tests/test_cf4_b1_development_mock_calibration.py::test_synthetic_intensity_is_positive_and_counts_are_int64",
+        "tests/test_cf4_b1_development_mock_calibration.py::test_single_member_is_reproducible_and_holdout_is_a_partition",
+        "tests/test_cf4_b1_development_mock_calibration.py::test_full_calibration_consumes_only_64_development_seeds",
+        "tests/test_cf4_b1_development_mock_calibration.py::test_result_json_round_trip",
+        "tests/test_cf4_b1_development_mock_calibration_v2.py::test_posterior_draw_count_and_correlated_draws_are_finite",
+        "tests/test_cf4_b1_development_mock_calibration_v2.py::test_corrected_member_uses_train_conditioned_holdout_and_draw_coverage",
+        "tests/test_cf4_b1_development_mock_calibration_v2.py::test_full_v2_calibration_runs_64_and_keeps_validation_closed",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_manifest_binding_and_latent_basis",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_one_member_is_joint_and_canonical_factor_agrees",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_harness_remains_pass_and_validation_firewall_closed",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_rsd_interpolation_is_periodic_and_edge_continuous",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_shared_group_mark_fisher_matches_direct_covariance_inverse",
+        "tests/test_cf4_b1_integrated_joint_calibration_v3.py::test_width_repair_does_not_change_mean_model",
+        "tests/test_cf4_b1_joint_development_harness.py::test_joint_harness_passes_all_declared_local_probes",
+        "tests/test_cf4_b1_joint_development_harness.py::test_selection_support_rejects_positive_count_outside_support",
+        "tests/test_cf4_b1_joint_development_harness.py::test_individual_joint_probes_are_finite_and_conservative",
+        "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py::test_mode_coverage_metric_is_seed_frequency_not_gate_mutation",
+        "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py::test_mode_sigma_uses_analytic_laplace_covariance",
+        "tests/test_cf4_b1_pooled_coverage_guard_v1.py::test_guard_contract_is_clustered_and_two_level",
+        "tests/test_cf4_b1_pooled_coverage_guard_v1.py::test_guard_reproduces_committed_development_result",
+        "tests/test_cf4_b1_coverage_contract_adjudication_v1.py::test_legacy_failure_counts_have_explicit_64_member_denominator",
+        "tests/test_cf4_b1_coverage_contract_adjudication_v1.py::test_checker_does_not_change_science_boundary",
+        "tests/test_cf4_b1_arm_isolation_diagnosis_v1.py::test_fresh_seed_block_is_disjoint_from_all_sealed_ranges",
+        "tests/test_cf4_b1_arm_isolation_diagnosis_v1.py::test_controls_are_explicit_and_do_not_change_the_mean_model_contract"
+      ]
     },
     "mean_model_invariance_test": {
       "test_path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
@@ -321,7 +365,7 @@
     },
     "per_arm_median_metric_scope": "legacy single-member per-voxel diagnostic; not the 512-instance latent-mode coverage metric",
     "coverage_denominator_adjudication": "PASS; 47/64 members fail each legacy coverage component, with 9+38=47 and 9+9+38+8=64",
-    "arm_isolation_diagnosis": "INCONCLUSIVE; common-random-number fresh block completed, D native pass 1/16 versus no_phi 2/16, no_discrepancy 0/16, and both removed 0/16; no single D mechanism is isolated",
+    "arm_isolation_diagnosis": "NO D MECHANISM RESOLVABLE AT N=16 WITH CONFOUNDED CONTROLS; attribution deferred; no D-only width or gate repair authorized",
     "per_arm_width_direction": "A/C/D over-cover while B under-covers; pooled scalar shrinkage cannot fix all arms",
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
@@ -337,10 +381,11 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
-    "primary_record": "CONDITIONAL_POST_V20_ARM_ISOLATION_BLOCK; COVERAGE_DENOMINATOR_ADJUDICATED",
+    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v21.json",
+    "primary_record": "CLOSED_DEVELOPMENT_ONLY_NO_GO_AFTER_V21_RECORD_ONLY_EDITS",
     "driver_adjudication": "config/cf4_bundle_b1_opus_v20_driver_adjudication_v1.json",
     "arm_isolation_diagnosis": "config/cf4_b1_arm_isolation_diagnosis_result_v1.json",
+    "v21_record_only_edits": "30 selected-test node IDs and selection expression pinned; arm finding scoped to n=16 confounded controls; certificate snapshot SHA recorded",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
@@ -383,5 +428,5 @@
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
   "dependent_result_status": "CURRENT_AFTER_PERIODIC_RSD_REPAIR_RECALIBRATED",
-  "next_action": "Coverage denominator is adjudicated as internally consistent; resolve the remaining arm-level causal-isolation question with a predeclared fresh-seed intervention or retain the no-attribution disposition. Keep widths diagnostic-only and do not open validation or B2 until a separately audited gate amendment exists."
+  "next_action": "B1 is closed as development-only NO-GO under Opus v21. Retain no-attribution for D, keep widths diagnostic-only, and await user approval before entering any next bundle; validation and B2 remain closed."
 }
