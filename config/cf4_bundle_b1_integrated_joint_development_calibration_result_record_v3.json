@@ -4,7 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_PERIODIC_RSD_REPAIR_POST_REPAIR_FITS_WIDTHS_FROZEN_PRE_REPAIR_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "repository_scope": {
-    "certified_tree_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
+    "certified_tree_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
     "tracked_bundle_scope": true,
     "excluded_untracked_paths": [
       "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
@@ -57,7 +57,7 @@
   },
   "external_hash_certificate": {
     "path": "config/cf4_bundle_b1_hash_certificate_v1.json",
-    "tag": "cf4-b1-cert-493d845",
+    "tag": "cf4-b1-cert-515630a",
     "binding": "one-way external anchor for result record and receipt; certificate is not referenced by a hash from either file"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
@@ -237,7 +237,7 @@
     "regression_pass_count": 26,
     "repaired_dependency_test_included": true,
     "regression_verification": {
-      "audited_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
+      "audited_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
       "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py",
       "exit_status": 0,
       "passed": 26,
@@ -245,10 +245,10 @@
       "wall_elapsed_seconds": 90.558
     },
     "regression_equivalence": {
-      "source_test_tree_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
-      "audited_head": "HEAD",
-      "post_source_test_commit_diff": "none; command below is scoped to src/tests and is evaluated against current HEAD",
-      "diff_command": "git diff --name-status 493d845e774ffcd4f9320fb75efb18328e32b3de..HEAD -- src tests",
+      "source_test_tree_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
+      "audited_head": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
+      "post_source_test_commit_diff": "none; source/test regression was run on the immutable certified tree",
+      "diff_command": "git diff --name-status 515630a93519903dbb5c4a800c9f1fd889aa89fd..HEAD -- src tests",
       "diff_paths": []
     },
     "mean_model_invariance_test": {
@@ -354,5 +354,5 @@
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
   "dependent_result_status": "CURRENT_AFTER_PERIODIC_RSD_REPAIR_RECALIBRATED",
-  "next_action": "Obtain Opus v19 closure audit. Keep the pre-repair width policy diagnostic-only, do not refit these same seeds, and do not open validation or B2 until a separately audited gate amendment exists."
+  "next_action": "Obtain Opus v20 closure audit after the one-way certificate/tag binding. Keep per-arm widths diagnostic-only, do not refit these same seeds, and do not open validation or B2 until a separately audited gate amendment exists."
 }
