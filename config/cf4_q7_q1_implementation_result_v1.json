@@ -27,8 +27,8 @@
     "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "02273c557661c1d0b38636fe2c4c4347b7b6116e6a53769b74db915632cfaae0",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
     "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
-    "src/cf4_q7_topology_aware_approximate_operator.py": "141b8672787f47319c4e806d1b5530f6c6ff359f8f6a1e65898a85624d88db7c",
-    "tests/test_cf4_q7_topology_aware_approximate_operator.py": "859b17bdbae4f0c4c943c9efbcf95ffed44af2816dd47d91f04614b09aac1e84",
+    "src/cf4_q7_topology_aware_approximate_operator.py": "ed21676784aa447b625bf3d87657df51e369d7126b382f75fe0e149ec0fe7e0b",
+    "tests/test_cf4_q7_topology_aware_approximate_operator.py": "9f5359cb87ae218f1da2a095183e7bff6ac8bed7fffd095f5828921a9f2d15c9",
     "config/cf4_q7_frozen_23_mass_basis_v1.json": "7bbbb9c1a51bd322b118f595bffb8a7ff6863d7671aa0e15f37d6e660e2cc1b9"
     ,"config/cf4_q7_q1_opus_audit_v2.json": "99c2ac86b76e0d348af6470fdf980ebf4c922eea9af03caf57e7d0b4fca92c05"
   },
@@ -46,7 +46,7 @@
     "finite_enclosure": "computed as a diagnostic hull over exact fixture responses and explicitly marked non-promotable",
     "overflow": "bins without continuous certification use sourcewise Q1 fallback; no clipping or tolerance relaxation",
     "state_basis": "population masses plus semantically frozen 23-direction basis with registered label/content digests; geometry derivatives excluded",
-    "summary_bounds": "175-map induced L1 API requires a frozen non-negative (175,G) operator-norm matrix",
+    "summary_bounds": "175-map induced L1 API requires a frozen non-negative (175,G) operator-norm matrix, an internally checked numeric digest/registry id, and upward-rounded accumulation",
     "conservation": "representatives must be finite, non-negative and sum to one"
   },
   "tests": {

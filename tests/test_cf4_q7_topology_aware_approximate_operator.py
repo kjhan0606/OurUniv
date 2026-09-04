@@ -165,11 +165,25 @@ def test_zero_scale_subcell_positions_are_not_merged() -> None:
 def test_summary_bound_api_requires_175_fixed_maps() -> None:
     per_bin = np.asarray([0.5, 1.0], dtype=np.float64)
     norms = np.ones((Q7_SUMMARY_COUNT, 2), dtype=np.float64)
-    result = induced_summary_l1_bounds(per_bin, norms)
+    digest = hashlib.sha256(np.asarray(norms, dtype="<f8", order="C").tobytes()).hexdigest()
+    result = induced_summary_l1_bounds(
+        per_bin,
+        norms,
+        summary_operator_l1_norms_sha256=digest,
+        summary_operator_registry_id="q7-development-summary-v1",
+    )
     assert result.shape == (Q7_SUMMARY_COUNT,)
-    assert np.all(result == 1.5)
+    assert np.all(result >= 1.5)
+    assert np.all(result <= np.nextafter(1.5, np.inf) * 2.0)
     with pytest.raises(LikelihoodInputError):
-        induced_summary_l1_bounds(per_bin, np.ones((174, 2)))
+        induced_summary_l1_bounds(
+            per_bin,
+            np.ones((174, 2)),
+            summary_operator_l1_norms_sha256=digest,
+            summary_operator_registry_id="q7-development-summary-v1",
+        )
+    with pytest.raises(LikelihoodInputError):
+        induced_summary_l1_bounds(per_bin, norms)
 
 
 def test_interval_certificate_contains_sourcewise_response_and_rejects_wrap_hull() -> None:

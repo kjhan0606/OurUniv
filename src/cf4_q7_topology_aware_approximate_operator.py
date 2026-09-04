@@ -327,6 +327,9 @@ def _continuous_lipschitz_enclosure(
 def induced_summary_l1_bounds(
     per_bin_response_l1: Iterable[float],
     summary_operator_l1_norms: Iterable[Iterable[float]],
+    *,
+    summary_operator_l1_norms_sha256: str | None = None,
+    summary_operator_registry_id: str | None = None,
 ) -> np.ndarray:
     """Propagate certified per-bin response bounds through 175 fixed maps.
 
@@ -341,7 +344,22 @@ def induced_summary_l1_bounds(
         raise LikelihoodInputError("per_bin_response_l1 must be finite and non-negative with shape (G,)")
     if norms.shape != (Q7_SUMMARY_COUNT, response.size) or not np.all(np.isfinite(norms)) or np.any(norms < 0.0):
         raise LikelihoodInputError(f"summary_operator_l1_norms must have shape ({Q7_SUMMARY_COUNT}, {response.size}) and be non-negative")
-    result = norms @ response
+    if summary_operator_l1_norms_sha256 is None or summary_operator_registry_id is None or not str(summary_operator_registry_id).strip():
+        raise LikelihoodInputError("registered summary-operator digest and registry id are required")
+    norms_digest = hashlib.sha256(np.asarray(norms, dtype="<f8", order="C").tobytes()).hexdigest()
+    if str(summary_operator_l1_norms_sha256) != norms_digest:
+        raise LikelihoodInputError("summary operator numeric-content SHA256 mismatch")
+    # Accumulate each non-negative product with a nextafter-upward step.  A
+    # plain BLAS matmul is not an upper bound in floating point and cannot
+    # serve as a certified induced norm propagation.
+    result = np.zeros(Q7_SUMMARY_COUNT, dtype=np.float64)
+    for row in range(Q7_SUMMARY_COUNT):
+        total = 0.0
+        for column in range(response.size):
+            term = float(norms[row, column] * response[column])
+            term = float(np.nextafter(term, math.inf))
+            total = float(np.nextafter(total + term, math.inf))
+        result[row] = total
     if not np.all(np.isfinite(result)):
         raise LikelihoodInputError("induced summary bounds are non-finite")
     return result
@@ -604,6 +622,8 @@ def evaluate_atlas(
     allow_uncertified_finite_enclosure: bool = False,
     oracle_fields: Iterable[Iterable[Iterable[Iterable[float]]]] | None = None,
     summary_operator_l1_norms: Iterable[Iterable[float]] | None = None,
+    summary_operator_l1_norms_sha256: str | None = None,
+    summary_operator_registry_id: str | None = None,
 ) -> ApproximationResult:
     """Evaluate the route and return certified, finite and optional measured budgets."""
 
@@ -611,6 +631,10 @@ def evaluate_atlas(
         raise LikelihoodInputError(
             "finite-source enclosures cannot be promoted; use sourcewise Q1 fallback"
         )
+    if summary_operator_l1_norms is None and any(
+        value is not None for value in (summary_operator_l1_norms_sha256, summary_operator_registry_id)
+    ):
+        raise LikelihoodInputError("summary-operator metadata supplied without summary norms")
     masses, basis, basis_mode, _basis_metadata = _validate_mass_inputs(
         atlas,
         population_masses,
@@ -705,7 +729,12 @@ def evaluate_atlas(
     if summary_operator_l1_norms is not None:
         if overflow:
             raise LikelihoodInputError("summary bounds require every source to be covered by a continuous certificate")
-        summary_bounds = induced_summary_l1_bounds(certified_bin_l1, summary_operator_l1_norms)
+        summary_bounds = induced_summary_l1_bounds(
+            certified_bin_l1,
+            summary_operator_l1_norms,
+            summary_operator_l1_norms_sha256=summary_operator_l1_norms_sha256,
+            summary_operator_registry_id=summary_operator_registry_id,
+        )
     return ApproximationResult(
         fields=fields,
         gradients=gradients,
@@ -750,6 +779,7 @@ def candidate_metadata(atlas: TopologyAwareResponseAtlas) -> dict[str, object]:
         "frozen_direction_names": list(FROZEN_DIRECTION_NAMES),
         "summary_bound_count": Q7_SUMMARY_COUNT,
         "summary_bound_api": "induced_summary_l1_bounds",
+        "summary_operator_provenance": "registered numeric digest and registry id required; accumulation rounded upward",
         "certificate_method": "outward_lipschitz_interval",
         "geometry_derivatives": False,
         "overflow_policy": "sourcewise Q1 fallback; no clipping or tolerance relaxation",
