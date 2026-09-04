@@ -2,18 +2,19 @@
   "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "SOL_BACKUP_NO_GO_INTEGRATED_JOINT_HARNESS_REQUIRED",
+  "status": "INTEGRATED_JOINT_CALIBRATION_COMPLETE_TECHNICAL_GATE_FAIL",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
   "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
+  "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
   "scope": {
     "kf_design_contract_validated": true,
     "kf_expand_executed": false,
     "new_z0_posterior_generated": false,
     "frozen_bgc_wf_baseline_reused_as_control": true,
-    "independent_truth_mocks_executed": false,
+    "independent_truth_mocks_executed": true,
     "heldout_data_opened": false,
     "frontier_promoted": false,
     "ic": false,
@@ -47,5 +48,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-  "next": "Stop at NO-GO. Implement the integrated joint development harness before any further 64-seed rerun; keep validation seeds sealed and do not start B2-IC-FORWARD."
+    "next": "Integrated 64-member same-truth joint calibration is complete but coverage gate fails. Obtain the single bundle-closure Opus audit; keep validation seeds sealed and do not start B2-IC-FORWARD."
 }
