@@ -1,0 +1,145 @@
+{
+  "schema": "ouruniv-cf4-q5-candidate23-design-only-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q5.0-Q5.2",
+  "status": "COMPLETE_DESIGN_ONLY_WITH_BLOCKERS",
+  "user_approval": "RECEIVED",
+  "fable_audit": {
+    "verdict": "CONDITIONAL-GO",
+    "amendments_applied": true,
+    "implementation_authorized": false,
+    "heldout_authorized": false
+  },
+  "scope_firewall": {
+    "candidate_implementation": false,
+    "development_mocks": false,
+    "heldout_mocks": false,
+    "jax": false,
+    "posterior": false,
+    "ic_generation": false,
+    "pm_hop_ramses": false,
+    "gpfs": false,
+    "slurm": false,
+    "grok": false
+  },
+  "scientific_contract": {
+    "final_goal": "CF4 constraints -> statistically valid z=0 local density/velocity posterior -> exact q-corrected IC with conditional high-k -> <=0.3 cMpc/h zoom forward validation",
+    "q1_reference": {
+      "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+      "tree_sha": "4444868df93572389602b518239e239591db134a",
+      "source": "src/cf4_q1_cell_integrated_convolution.py",
+      "source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+      "operator": "periodic_torus_expected_cell_response",
+      "source_count": 7077888,
+      "populations": 6,
+      "resolution_cMpc_h": 2.0
+    },
+    "heldout_manifest": {
+      "path": "config/cf4_q4_seed_manifest_v1.json",
+      "sha256_active_file": "f4318a86944e30f7e401f182ce0da38ad3fcdb29bb0a0317f8c56b34135c842a",
+      "count": 256,
+      "sealed": true,
+      "evaluated": false,
+      "historical_q4_recorded_manifest_digest": "fa746035fa7f493e598f0f8b77dbb6e9f5d8f94433bb0050cb4c4a8d577e3760",
+      "historical_digest_scope": "canonical sorted JSON payload with manifest_sha256 field omitted",
+      "active_file_digest_scope": "raw on-disk file bytes",
+      "historical_sha_mismatch": false,
+      "resolution": "Dual-hash scope is reconciled and recorded; do not evaluate held-out data until this convention remains pinned."
+    }
+  },
+  "candidate_2_adaptive_moment": {
+    "promotion_role": "EXACT_KNOT_ALIGNED_DESIGN_BRANCH_UNPROMOTED",
+    "frozen_order": 6,
+    "source_geometry": "For source i define d_i=sigma_i*u_i, where u_i is the unit LOS vector. A knot signature is the exact periodic TSC nearest-node tuple and ordered epsilon breakpoints in [-8,8]; sources share a bin only when this topology and all interval boundaries are identical.",
+    "response_definition": "On each fixed signature interval r, W_{c,i}(epsilon)=sum_{k=0}^6 a_{c,i,r,k} epsilon^k exactly, and R_{c,i}=Z_T^-1*sum_r sum_{k=0}^6 a_{c,i,r,k} mu_k(r), where mu_k(r)=integral_{break_r}^{break_{r+1}} epsilon^k phi(epsilon)d epsilon and T=8.",
+    "retained_statistics": "For signature h, population p, interval r, polynomial coefficient k=0..6 and frozen derivative direction j in {0..22}, retain C[p,h,j,r,k]=sum_{i in (p,h)} d_j m_i(theta) a_{c,i,r,k}. j=0 is value/mass; j=1..22 are the frozen likelihood JVP/VJP directions. This is a one-dimensional epsilon-moment contraction, not a multi-dimensional Taylor expansion.",
+    "evaluation_equation": "Rhat[p,c,j]=Z_T^-1*sum_h sum_r sum_{k=0}^6 C[p,h,j,r,k]*mu_k(h,r).",
+    "certified_error_bound": "Residual is exactly zero for a common exact knot signature because the Q1 integrand is degree six in epsilon on every fixed interval. No seventh-order derivative or cross-knot Taylor certificate is asserted; a non-signature bin is singleton/overflow and fails closed.",
+    "heldout_rule": "Exact signature topology, singleton policy, coefficient basis, T=8 normalization and tolerances are frozen before any one-shot held-out evaluation; no held-out split or retuning is allowed.",
+    "cold_particle_rule": "Use the exact Q1 zero-scale TSC branch when sigma=0. For 0<sigma<64*eps_float64*cell_spacing, use sourcewise exact evaluation; no regularization or derivative extrapolation is permitted.",
+    "failure_conditions": [
+      "a common exact knot signature cannot be established",
+      "sigma_disp=2L fixture is not reproduced by the exact Q1 interval contract",
+      "any negative/NaN response or conservation failure",
+      "Q1 total or per-population value/gradient gate fails",
+      "measured compression ratio or streamed resource use is not demonstrated"
+    ]
+  },
+  "candidate_3_deposit_then_convolve": {
+    "promotion_role": "TERMINAL_FALSIFICATION_ONLY_UNLESS_SEPARATE_SPARSE_PROOF",
+    "frozen_order": 6,
+    "deposit_definition": "For intermediate mesh cell m and population p, deposit D[p,m,j,alpha,r]=sum_i d_j m_i(theta) delta_x_i^alpha tensor d_i^{tensor r} for |alpha|+r<=6, where delta_x_i=x_i-x_m and d_i=sigma_i*u_unit_i. The complete six-dimensional total-degree basis has 924 components; joint LOS/sigma statistics are not reduced to six scalar mass fields.",
+    "convolution_definition": "The analytic cell-integrated LOS kernel is applied to the retained joint delta_x/u moments; no single kernel is defined from mass-only fields.",
+    "noncommutation_contract": "deposit(convolve(source)) and convolve(deposit(source)) are not assumed equal. Any later implementation must compare candidate output directly with the Q1 sourcewise oracle on identical source realization, topology, T=8 tail normalization and derivative directions.",
+    "falsification_conditions": [
+      "joint LOS/sigma tensor statistics cannot be retained under the 64 GiB host and 16 GiB device ceilings",
+      "a certified truncation bound is unavailable",
+      "any mass-only or scalar-density substitution is attempted",
+      "Q1 value/gradient/topology/sigma_disp gates fail"
+    ],
+    "promotion_rule": "If any condition above occurs, candidate-3 is terminally NO-GO and cannot be rescued by tolerance relaxation or held-out retuning."
+  },
+  "frozen_gates": {
+    "value": "L1 <= 1e-12 + 5e-3*oracle_l1, total and each population",
+    "gradient": "L1 <= 1e-8 + 1e-5*gradient_reference_l1 for every frozen direction",
+    "topology": "local cellwise median/p95/max plus periodic seam and TSC-knot fixtures",
+    "sigma": "sigma_disp=2L fixture is mandatory",
+    "information": "normalized KL(reference||candidate), normalizer, ESS, RSE, and 175 scientific summaries/coverage",
+    "selection": "192 development mocks select exactly one frozen candidate; 256 held-out mocks are one-shot accept/reject"
+  },
+  "resource_projection_2cMpc_h": {
+    "measured_inputs": {
+      "N": 192,
+      "cells": 7077888,
+      "box_cMpc_h": 384.0,
+      "cell_spacing_cMpc_h": 2.0,
+      "kernel_intervals_K": 64,
+      "chunk_size": 1024,
+      "chunk_count": 6912,
+      "source_count_M": 7077888
+    },
+    "float64_dense_bytes": {
+      "one_scalar_field": 56623104,
+      "six_population_mass_fields": 339738624,
+      "six_populations_times_23_directions": 7813988352,
+      "candidate_2_one_interval_seven_coefficients_times_six_populations_times_23_directions": 54697918464,
+      "candidate_2_one_interval_gibbs_worst_case_64_intervals": 3500666781696,
+      "candidate_3_joint_delta_x_and_d_moments_total_degree_le_6_components": 924,
+      "candidate_3_joint_924_components_times_six_populations": 313918488576,
+      "candidate_3_joint_924_components_times_six_populations_times_23_directions": 7220125237248
+    },
+    "ceilings_bytes": {
+      "host": 68719476736,
+      "device": 17179869184
+    },
+    "interpretation": [
+      "Candidate-2's seven coefficients are per common-knot interval, not a global seven-field bound. In the exact-signature worst case G=M and K=64, the projected 3.18 TiB representation is infeasible; no compression or device feasibility claim is made.",
+      "Candidate-3's six-dimensional total-degree<=6 joint basis has 924 components: 292.36 GiB for six value fields and 6.57 TiB with 23 directions. It fails both host and device ceilings absent a separately proven sparse representation.",
+      "These are analytic projections, not allocations or timing measurements. Cold JIT and gradient launches are not authorized in Q5."
+    ],
+    "resource_decision": "CANDIDATE_2_EXACTNESS_DESIGN_BUT_COMPRESSION_UNPROVEN; CANDIDATE_3_TERMINAL_FALSIFICATION_UNLESS_SEPARATE_SPARSE_PROOF"
+  },
+  "independent_bundle_audit": {
+    "agy": {
+      "verdict": "CONDITIONAL-GO",
+      "findings": "Scientific scope and provenance pass; candidate-2 one-dimensional/multidimensional contract and cold-particle handling require correction; candidate-3 is over device budget."
+    },
+    "opus5": {
+      "verdict": "CONDITIONAL-GO",
+      "findings": "Q1 gates and dual-hash provenance pass, but the former multi-dimensional Taylor certificate and both resource counts were invalid; Q4 constant LOS/sigma fixtures do not test anisotropy."
+    },
+    "blocking_amendments_for_Q6": [
+      "Use exact knot-aligned epsilon moments or another topology-aware error term; do not use a generic seventh-order derivative bound across TSC knots.",
+      "Correct all component counts and retract candidate-2 feasibility claims until compression and device projections are measured.",
+      "Freeze non-degenerate LOS/dispersion development fixtures and retain the exact dual seed hash scopes.",
+      "Keep candidate-3 terminally falsification-only unless a dated sparse contract proves both memory ceilings."
+    ]
+  },
+  "work_package_status": {
+    "Q5.0": "COMPLETE_CONTRACTS_FROZEN",
+    "Q5.1": "COMPLETE_CORRECTED_EXACT_KNOT_CONTRACT; IMPLEMENTATION_BLOCKED",
+    "Q5.2": "COMPLETE_CORRECTED_ANALYTIC_PROJECTION; FEASIBILITY_UNPROVEN",
+    "candidate_selected": false,
+    "next_bundle": "Q6 corrective design plan after AGY/Opus audit; user approval required before Q6 starts"
+  }
+}

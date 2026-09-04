@@ -3,7 +3,7 @@
   "date": "2026-09-04",
   "bundle": "Q5",
   "owner": "driver",
-  "plan_status": "PENDING_USER_APPROVAL_AND_FABLE_AUDIT",
+  "plan_status": "Q5_DESIGN_COMPLETE_WITH_AGY_OPUS_CONDITIONS",
   "prerequisite_bundle": "Q4",
   "prerequisite_audit": {
     "agy": "GO",
@@ -12,12 +12,30 @@
     "exact_geometry_grouping": "TERMINAL_NO_GO_M_OVER_G_LE_1.01_ON_UNDISPLACED_PROCEDURAL_N192",
     "implementation_authorized": false,
     "heldout_authorized": false,
-    "note": "Q5 is a design-only bundle proposal. It must not start until the user approves this new bundle; then Fable audits the plan before any candidate implementation."
+    "note": "User approval received on 2026-09-04. Q5 remains design-only; candidate implementation and all downstream execution remain blocked."
   },
   "fable_audit": {
-    "status": "PENDING_AFTER_USER_APPROVAL",
+    "status": "CONDITIONAL-GO",
+    "auditor": "fable",
+    "audited_at": "2026-09-04",
+    "verdict": "Q5 is scientifically aligned and feasible as a design-only bundle, conditional on the amendments below.",
+    "amendments": [
+      "Candidate-3 must retain joint LOS/sigma sufficient moments/tensor fields, or be explicitly falsification-only; six mass fields alone are insufficient to define a later anisotropic kernel.",
+      "Replace materialization of all latent derivative fields with an exact linearized operator JVP/VJP contract or the frozen 23 directional derivative fields.",
+      "Candidate-2 remainder bounds must be mathematically certified before observing held-out results; adaptive splitting is development-only and held-out splitting is frozen.",
+      "Pin the Q1 commit, exact source/tree SHA, and the Q4 seed-manifest path/SHA.",
+      "Freeze the deposition kernel, retained LOS/sigma statistics, and degree-six moment basis in Q5.0."
+    ],
     "approval_required_before_implementation": true,
-    "focus": "Evaluate whether candidate 2/3 preserves the Q1 operator and state-dependent mass/gradient information, is feasible for M=7,077,888, and directly advances the final CF4-to-z=0-posterior-to-IC goal."
+    "focus": "Evaluate whether candidate 2/3 preserves the Q1 operator and state-dependent mass/gradient information, is feasible for M=7,077,888, and directly advances the final CF4-to-z=0-posterior-to-IC goal.",
+    "implementation_authorized": false,
+    "heldout_authorized": false,
+    "post_audit_conditions": [
+      "Replace the ill-posed multi-dimensional seventh-order Taylor certificate with a knot-aligned exact epsilon-moment contract.",
+      "Correct candidate-2 and candidate-3 component counts and remove unsupported feasibility claims.",
+      "Freeze non-degenerate LOS/dispersion fixtures for development mocks and document the dual seed hash convention.",
+      "Resolve all conditions in a separately approved Q6 plan before implementation."
+    ]
   },
   "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
   "purpose": "Design a mathematically controlled alternative to exact geometry grouping after its full-count terminal NO-GO, without implementing, sampling held-out mocks, or weakening the validated Q1 observation operator.",
@@ -44,6 +62,8 @@
   },
   "frozen_invariants": {
     "q1_oracle": "src/cf4_q1_cell_integrated_convolution.py at commit 5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "q1_tree_sha": "4444868df93572389602b518239e239591db134a",
+    "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
     "source_count": 7077888,
     "secure_cf4_object_substitution": "FORBIDDEN",
     "populations": 6,
@@ -51,20 +71,23 @@
     "candidate_value_gate": "L1 <= 1e-12 + 5e-3*oracle_l1, total and per population",
     "candidate_gradient_gate": "L1 <= 1e-8 + 1e-5*gradient_reference_l1 when differentiable",
     "memory": "64 GiB host and 16 GiB device persistent+temporary ceilings, checked before allocation",
-    "heldout_seed_manifest": "config/cf4_q4_seed_manifest_v1.json; 256 seeds sealed and untouched"
+    "heldout_seed_manifest": "config/cf4_q4_seed_manifest_v1.json; 256 seeds sealed and untouched",
+    "heldout_seed_manifest_sha256": "f4318a86944e30f7e401f182ce0da38ad3fcdb29bb0a0317f8c56b34135c842a"
   },
   "candidate_2_adaptive_moment": {
-    "status": "DESIGN_ONLY",
-    "map": "Partition source geometry into bounded spatial/LOS/dispersion bins. For each population and posterior state, retain mass, latent-field/bias mass derivatives, exposure, and adaptive moments of the exact Q1 interval-polynomial response through degree six. Split bins recursively until all development oracle gates pass or a fail-closed overflow occurs.",
-    "state_contract": "Mass and every latent-field/bias derivative are state-dependent sufficient statistics; no fiducial pre-summing is allowed.",
-    "error_control": "Each bin carries an a-posteriori upper bound on the omitted Taylor remainder over the full T=8 Gaussian support and periodic seam; bins are split rather than clipped.",
-    "risk": "Moment truncation may fail at TSC knots, seams, wide sigma or rapidly varying LOS. No commute or exactness assumption is permitted.",
-    "promotion_condition": "Only a candidate whose value, directional gradient, 175-summary information and spatial-strata gates pass may proceed to later implementation."
+    "status": "DESIGN_ONLY_EXACT_KNOT_ALIGNED_UNPROMOTED",
+    "map": "Partition sources by an exact knot signature: periodic TSC nearest-node tuple, ordered epsilon breakpoints in [-8,8], and the fixed interval topology. Within a signature, retain interval polynomial coefficient sums through degree six for each population and frozen derivative direction. Sources with no shared signature remain singleton/overflow and are not approximated.",
+    "state_contract": "For signature h, population p, derivative direction j and interval r, retain C[p,h,j,r,k]=sum_i d_j m_i(theta) a[i,r,k] for k=0..6, where a[i,r,k] are the exact local-epsilon TSC product coefficients. j=0 is value/mass; j=1..22 are the frozen 23 JVP/VJP directions. No fiducial pre-summing is allowed.",
+    "evaluation_equation": "Rhat[p,c,j]=Z_T^-1 * sum_h sum_r sum_{k=0}^6 C[p,h,j,r,k] * mu_k(h,r), with mu_k(h,r)=integral_{break_r}^{break_{r+1}} epsilon^k phi(epsilon) d epsilon.",
+    "error_control": "Residual is exactly zero for a common exact knot signature because the Q1 integrand is degree six in epsilon on each fixed interval. There is no generic Taylor certificate across a knot; any non-signature bin is fail-closed/singleton rather than clipped or assigned a spurious seventh-order bound.",
+    "cold_particle_rule": "Use the exact Q1 zero-scale TSC branch when sigma=0. For 0<sigma<64*eps_float64*cell_spacing, use sourcewise exact evaluation; no regularization or derivative extrapolation is permitted.",
+    "risk": "Exact knot signatures can give G approximately M, so compression and full-field resource feasibility are unproven. This branch may reproduce Q1 exactly while providing no scalable speedup.",
+    "promotion_condition": "Only after a separately approved implementation demonstrates non-degenerate LOS/sigma development coverage, exact Q1 gates and a measured resource-safe compression ratio may this branch be considered for promotion."
   },
   "candidate_3_deposit_then_convolve": {
-    "status": "DESIGN_ONLY",
-    "map": "Deposit the full PM source mass/derivative basis to an intermediate N192 mesh with an explicitly frozen conservative kernel, then apply an analytic anisotropic cell-integrated LOS convolution.",
-    "state_contract": "The intermediate field must retain six population mass fields and all latent-field/bias derivative fields; no secure-object or scalar-density replacement is allowed.",
+    "status": "DESIGN_ONLY_TERMINAL_FALSIFICATION_UNLESS_SEPARATE_SPARSE_PROOF",
+    "map": "Deposit the full PM source mass/derivative basis to an intermediate N192 mesh with an explicitly frozen conservative kernel, retain joint LOS/sigma sufficient moments/tensor fields, then apply an analytic anisotropic cell-integrated LOS convolution. If joint statistics cannot be retained under the resource contract, candidate-3 is falsification-only and cannot be promoted.",
+    "state_contract": "The intermediate field must retain six population mass fields plus joint LOS/sigma moments sufficient for the anisotropic kernel and the exact JVP/VJP or frozen 23 directional derivative basis; no secure-object or scalar-density replacement is allowed.",
     "noncommutation_warning": "Deposit and anisotropic LOS convolution are not assumed to commute. The candidate must be compared directly to the Q1 sourcewise oracle on the same source realization and topology.",
     "risk": "Intermediate deposition can erase subcell position, LOS and sigma information. A failure is a scientific NO-GO, not a tolerance to relax.",
     "promotion_condition": "Only exact or quantitatively bounded Q1 agreement with the frozen information-loss gates can authorize a differentiable implementation."
@@ -84,24 +107,26 @@
   "work_packages": [
     {
       "id": "Q5.0",
-      "task": "Freeze the candidate-2/3 mathematical contracts, exact source/derivative basis, and candidate-selection/held-out firewall.",
-      "acceptance": "Fable approves a falsifiable design; no implementation or mock is run in Q5 design-only mode."
+    "task": "Freeze the candidate-2/3 mathematical contracts, exact source/derivative basis, kernel, joint LOS/sigma statistics, and candidate-selection/held-out firewall.",
+    "acceptance": "Fable approves a falsifiable design; exact knot-aligned epsilon moments and the joint LOS/sigma tensor contract are frozen; no implementation or mock is run in Q5 design-only mode."
     },
     {
       "id": "Q5.1",
       "task": "Derive source-compression error and state-dependent gradient bounds for adaptive moments and deposit-then-convolve without assuming operator commutation.",
-      "acceptance": "Each candidate has explicit failure conditions and Q1 oracle comparison equations."
+      "acceptance": "Candidate-2 has an exact knot-aligned residual-zero contract; generic cross-knot Taylor bounds are rejected; candidate-3 has explicit terminal memory-falsification conditions."
     },
     {
       "id": "Q5.2",
       "task": "Produce analytic resolution/resource projections at the 2.0 cMpc/h release point, retaining the full PM count and both memory ceilings.",
-      "acceptance": "Projection distinguishes measured values from assumptions and does not authorize JAX, held-out, posterior or IC execution."
+      "acceptance": "Corrected component counts distinguish measured values from assumptions, retract unsupported feasibility claims, and do not authorize JAX, held-out, posterior or IC execution."
     }
   ],
   "release_gates": [
     "User explicitly approves Q5 before it starts.",
     "Fable approves the Q5 design after user approval.",
-    "Exact geometry grouping remains terminally closed for the undisplaced procedural lattice.",
+    "Exact geometry grouping remains terminally closed for the undisplaced procedural lattice; candidate-2 exact knot signatures do not inherit a compression claim.",
+    "The active manifest raw-file SHA and its internal payload SHA are both recorded with their scopes; no held-out use occurs until metadata reconciliation is documented.",
+    "Non-degenerate LOS/dispersion variation is required in any future development fixtures; Q4's constant procedural LOS/sigma cannot validate anisotropic machinery.",
     "No implementation, held-out evaluation, JAX, posterior, IC, PM/HOP/RAMSES, GPFS or Slurm action occurs in design-only Q5."
   ],
   "execution_policy": {
