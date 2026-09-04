@@ -24,11 +24,11 @@
     "q1_source_mode": "100644",
     "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
     "fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
-    "fixture_manifest_file_sha256": "eb85354da7d471a89a603874a3754a6b2916e0c890105bfcc1fe2a40bb61eef9",
-    "fixture_manifest_payload_sha256": "1d6030ec44c2e7bb3325732045410cd6f98e61e8767e7c763105fc7ee54f88eb",
+    "fixture_manifest_file_sha256": "d85adf644560ad648a5229ab140ff5be5e9810471fd357d3b7f1f14f3663d2a8",
+    "fixture_manifest_payload_sha256": "94c77b71cb7c667daa9f6f8d39077d6464afd3058437398bc542817f4f1b79ab",
     "fixture_generator": "scripts/cf4_q6_development_fixture.py",
-    "fixture_generator_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
-    "fixture_generator_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
+    "fixture_generator_source_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
+    "executed_fixture_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
     "executed_fixture_seed": 62006,
     "executed_fixture_sha256": "e31366c9fdf791a2289bab54b3b9d7f38aef002e461aa171b1a89501e6e5021a",
     "executed_fixture_generation": "generate_fixture(seed=62006, source_count=192, grid_size=8, box_size_cMpc_h=8.0, include_cold=False)",
@@ -40,8 +40,9 @@
   },
   "q6_0_provenance_and_fixture": {
     "status": "PASS",
-    "q4_manifest_payload_digest_scope": "canonical sorted JSON with manifest_sha256 field omitted",
+    "q4_manifest_payload_digest_scope": "cf4_q4_preflight.canonical_sha256: json.dumps(sort_keys=True, separators=(',', ':')).encode('utf-8'), no newline, with manifest_sha256 omitted",
     "q4_manifest_raw_file_digest_scope": "raw on-disk file bytes",
+    "canonical_json_digest_rule": "cf4_q4_preflight.canonical_sha256 is the single project-wide manifest digest convention",
     "non_degenerate_los_sigma_fixture": true,
     "heldout_sealed": true
   },
@@ -55,7 +56,7 @@
     "q1_value_relative_tolerance": 0.005,
     "mass_gather_transpose_for_arbitrary_cotangent": "PASS",
     "geometry_jacobian_vjp": "NOT_IMPLEMENTED_AND_NOT_CLAIMED",
-    "targeted_unit_tests": "5 passed"
+    "targeted_unit_tests": "6 passed"
   },
   "q6_2_development_measurement": {
     "status": "TERMINAL_COMPRESSION_NO_GO",
@@ -115,6 +116,14 @@
       "reason": "Observed on executed seed 62006; full development distribution not entered after terminal gate."
     },
     "full_N192_resource_gate": "SKIPPED_AFTER_TERMINAL_COMPRESSION_NO_GO",
+    "unexecuted_fixture_families": [
+      "same_knot_different_coefficient (seed 62001)",
+      "translated_cell (seed 62002)",
+      "near_coincident (seed 62003)",
+      "interval_permutation (seed 62004)",
+      "seam_sliver_clip (seed 62005)",
+      "cold_zero_near_zero (seed 62007)"
+    ],
     "heldout_gate": "NOT_ENTERED"
   },
   "candidate_3": {
@@ -126,5 +135,14 @@
     "what_is_not_validated": "No scalable compression, full N192 performance, z=0 posterior, q-corrected IC, or <=0.3 cMpc/h zoom capability is established.",
     "structural_no_go_reason": "The complete bitwise knot signature depends continuously on position, LOS and sigma, so continuous non-degenerate sources have G=M almost surely; the key is also O(K*27*10) bytes per source.",
     "next": "Write a Q7 plan for a non-bitwise topology-aware approximate observation-operator route; user approval and Grok plan audit are required before starting it."
+  },
+  "workspace_hygiene": {
+    "untracked_preserved_outside_commit": [
+      "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
+      "src/cf4_2mpp_joint_likelihood_jax.py",
+      "tests/test_cf4_2mpp_joint_likelihood_jax.py",
+      "scripts/tripwire/"
+    ],
+    "disposition": "User-owned workspace files were not modified or staged; none are part of the Q6 commit and none were executed."
   }
 }

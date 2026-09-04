@@ -18,6 +18,7 @@
     "generator_source": "scripts/cf4_q6_development_fixture.py",
     "generator_source_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
     "array_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
+    "canonical_json_digest": "cf4_q4_preflight.canonical_sha256: json.dumps(payload, sort_keys=True, separators=(',', ':')).encode('utf-8'), no newline",
     "development_namespace": "cf4-q6-development-20260904",
     "heldout_namespace": "cf4-q4-heldout-20260904",
     "heldout_touched": false
@@ -80,6 +81,6 @@
     "heldout_split_or_retuning": "forbidden",
     "resource_claim": "none; this manifest specifies fixtures only"
   },
-  "manifest_payload_sha256": "1d6030ec44c2e7bb3325732045410cd6f98e61e8767e7c763105fc7ee54f88eb",
-  "manifest_hash_scope": "SHA256 of canonical sorted JSON payload with manifest_payload_sha256 field omitted"
+  "manifest_payload_sha256": "94c77b71cb7c667daa9f6f8d39077d6464afd3058437398bc542817f4f1b79ab",
+  "manifest_hash_scope": "cf4_q4_preflight.canonical_sha256 over canonical sorted JSON payload with manifest_payload_sha256 omitted; separators=(',', ':'), UTF-8, no newline"
 }

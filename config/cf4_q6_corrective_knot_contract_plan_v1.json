@@ -15,7 +15,7 @@
     "fable_audit_date": "2026-09-04",
     "fable_required_amendments_applied": true,
     "result": "config/cf4_q6_corrective_knot_contract_result_v1.json",
-    "result_sha256": "ea254896af78d63c1ae663fc1e188d401fbc75ef90432bc5a8feaf96e0d97fbe"
+    "result_sha256": "aa763cd52b41fde25a10a53d6a3a142ab21677b1907b4b65934055f366866108"
   },
   "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
   "purpose": "Resolve the Q5 audit blockers before any candidate implementation or posterior work: make the Q1 knot topology explicit, test whether exact aggregation offers any real compression, and close the manifest/fixture/resource contracts.",
@@ -46,8 +46,8 @@
     "q1_source_mode": "100644",
     "q5_plan_sha256": "63d2030148bc0e7475b95a7e9d9d76e8f99357a8ab32ff9c22f64e1ff63d1c24",
     "development_fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
-    "development_fixture_manifest_file_sha256": "eb85354da7d471a89a603874a3754a6b2916e0c890105bfcc1fe2a40bb61eef9",
-    "development_fixture_manifest_payload_sha256": "1d6030ec44c2e7bb3325732045410cd6f98e61e8767e7c763105fc7ee54f88eb",
+    "development_fixture_manifest_file_sha256": "d85adf644560ad648a5229ab140ff5be5e9810471fd357d3b7f1f14f3663d2a8",
+    "development_fixture_manifest_payload_sha256": "94c77b71cb7c667daa9f6f8d39077d6464afd3058437398bc542817f4f1b79ab",
     "development_fixture_generator_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
     "heldout_manifest_path": "config/cf4_q4_seed_manifest_v1.json",
     "heldout_manifest_file_sha256": "f4318a86944e30f7e401f182ce0da38ad3fcdb29bb0a0317f8c56b34135c842a",
