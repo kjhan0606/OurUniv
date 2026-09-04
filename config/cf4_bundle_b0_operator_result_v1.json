@@ -1,0 +1,46 @@
+{
+  "schema": "ouruniv-cf4-bundle-b0-operator-result-v1",
+  "date": "2026-09-04",
+  "bundle": "B0-OPERATOR",
+  "status": "DEVELOPMENT_EXECUTION_COMPLETE_OPUS_CLOSURE_PENDING",
+  "implementation_commit": "89bb4d4",
+  "governance": "config/cf4_bundle_execution_governance_v1.json",
+  "scope": {
+    "development_only": true,
+    "q7_2_fixtures_executed_as_one_bundle": true,
+    "heldout_evaluated": false,
+    "physical_basis": false,
+    "physical_summary_maps": false,
+    "posterior": false,
+    "ic": false,
+    "pm_hop_ramses": false,
+    "gpfs": false,
+    "slurm": false
+  },
+  "tests": {
+    "command": "pytest -q tests/test_cf4_q1_cell_integrated_convolution.py tests/test_cf4_q6_knot_aligned_operator.py tests/test_cf4_q7_topology_aware_approximate_operator.py",
+    "result": "31 passed in 33.71s",
+    "containment_harness": "PASS",
+    "expected_periodic_seam_failure": "PASS",
+    "finite_hull_promotion": "REJECTED"
+  },
+  "fixture_results": [
+    {"family": "same_knot_different_coefficient", "source_count": 32, "bin_count": 16, "compression_ratio": 2.0, "certified_bins": 16, "overflow_source_count": 0, "measured_l1": 1.60854431095627e-14},
+    {"family": "translated_cell", "source_count": 32, "bin_count": 32, "compression_ratio": 1.0, "certified_bins": 32, "overflow_source_count": 0, "measured_l1": 0.0},
+    {"family": "near_coincident", "source_count": 32, "bin_count": 31, "compression_ratio": 1.032258064516129, "certified_bins": 30, "overflow_source_count": 2, "measured_l1": 0.0},
+    {"family": "interval_permutation", "source_count": 32, "bin_count": 32, "compression_ratio": 1.0, "certified_bins": 32, "overflow_source_count": 0, "measured_l1": 0.0},
+    {"family": "seam_sliver_clip", "source_count": 32, "bin_count": 32, "compression_ratio": 1.0, "certified_bins": 30, "overflow_source_count": 2, "measured_l1": 0.0},
+    {"family": "los_sigma_variation", "source_count": 192, "bin_count": 192, "compression_ratio": 1.0, "certified_bins": 192, "overflow_source_count": 0, "measured_l1": 0.0},
+    {"family": "cold_zero_near_zero", "source_count": 32, "bin_count": 32, "compression_ratio": 1.0, "certified_bins": 30, "overflow_source_count": 2, "measured_l1": 0.0}
+  ],
+  "aggregate": {
+    "source_count": 384,
+    "bin_count": 367,
+    "compression_ratio": 1.0463215258855586,
+    "summary_175": "NOT_RUN: physical fixed summary maps are not registered",
+    "gradient_23": "DEVELOPMENT_ONLY: basis manifest is explicitly non-physical",
+    "scientific_promotion": "NOT_AUTHORIZED"
+  },
+  "interpretation": "Compression is concentrated in the duplicated same-knot development family; most independent continuous geometries remain singleton sourcewise fallbacks. This is a viability diagnostic, not evidence for CF4 high-k information or an IC/posterior claim.",
+  "next": "One Opus 5 closure audit for the complete B0 dossier; no B1 transition until the user approves after that audit."
+}

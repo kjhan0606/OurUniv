@@ -8,7 +8,14 @@
   "coordinate_convention": "direction-major (23,M) or population-major (P,M,23), source-major little-endian float64",
   "allowed_content_sha256": [
     "5b507efcc739013717682ea0cb3c55d8c0d6eda3b65a448dbf0cae41116b0fb6",
-    "52bcbf59ab05aec66558cf7b111a807e2e2ab8999c4f82c9794cae77917b8e89"
+    "52bcbf59ab05aec66558cf7b111a807e2e2ab8999c4f82c9794cae77917b8e89",
+    "fb9d508c89319511a9a96039a2b47a613855cb9cf0b0656b88125e9f59552c09",
+    "2944fbbb2681e6c6594d03b4f6b06ac7de19257a763dae9e0c11fe1aa781dbfe",
+    "4c6a1b93122dfc66e26030bee17d2eb61c3d7033773a4b165d91549eb0df827f",
+    "f98f8a7ea5f7132dd6abb9ea37e52c2f8dc3bf27e2522fadcc8b59c20a0af916",
+    "b32836e1e8ce55e90ae1b892cbe780b4b8c59c5e647d6dc0a18369f69cfa42df",
+    "7e9f34391dc48aea91fe779e2288be6ee7ffe0c2658739bf33fb67b9339d916a",
+    "ee155247390c2b909b775fc9a87b1f8989de365520da3d18960bb8e4bed01db7"
   ],
   "science_use": "development regression only; not a physical CF4 posterior basis"
 }
