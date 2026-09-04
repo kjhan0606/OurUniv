@@ -15,7 +15,8 @@
   "opus_closure_attempt_current_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
   "opus_closure_attempt_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
   "opus_closure_attempt_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
-  "opus_closure_attempt_current_v19": "PENDING_POST_V18_PROVENANCE_REPAIR_AUDIT",
+  "opus_closure_attempt_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
+  "opus_closure_attempt_current_v20": "PENDING_POST_V19_ANCHOR_REPAIR_AUDIT",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
@@ -68,5 +69,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt remains quarantined. The v18-required provenance, metric-scope and receipt repairs are complete; obtain Opus v19 closure audit before freezing width/gate policy. Validation and B2 remain closed."
+    "next": "The initial v3 validation-range attempt remains quarantined. Opus v19 found anchor/import-evidence and gate-contract issues after the v18 repairs; repair them and obtain Opus v20 before freezing width/gate policy. Validation and B2 remain closed."
 }

@@ -1,3 +1,4 @@
+import inspect
 import sys
 from pathlib import Path
 
@@ -47,6 +48,9 @@ def test_harness_remains_pass_and_validation_firewall_closed():
 
 
 def test_rsd_interpolation_is_periodic_and_edge_continuous():
+    production_source = inspect.getsource(calibration.base._spherical_rsd_field)
+    assert 'mode="grid-wrap"' in production_source
+    assert 'mode="wrap"' not in production_source
     grid = calibration.base.GRID
     axis = np.indices((grid, grid, grid), dtype=np.float64)
     eta = (
@@ -103,7 +107,7 @@ def test_width_repair_does_not_change_mean_model():
     # contract by perturbing one arm's draw scale and comparing the estimate.
     original = dict(calibration.ARM_WIDTH_SCALE)
     try:
-        for arm in ("A", "D"):
+        for arm in ("A", "B", "C", "D"):
             baseline = calibration.run_mock(0, arm)
             calibration.ARM_WIDTH_SCALE[arm] = 1.23
             perturbed = calibration.run_mock(0, arm)

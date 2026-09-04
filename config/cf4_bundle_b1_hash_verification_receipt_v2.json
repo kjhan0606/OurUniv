@@ -6,14 +6,14 @@
   "receipt_generation_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
   "receipt_generation_basis": "committed B1 tree at certified commit; receipt self-files are explicitly excluded",
   "verified_record": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-  "verified_entries_excluding_self": 60,
-  "record_pin_entries_including_self": 62,
+  "verified_entries_excluding_self": 62,
+  "record_pin_entries": 62,
   "mismatches": 0,
   "missing_paths": [],
   "verification_tool": "Python hashlib.sha256 with os.stat byte counts",
   "verification_command": "inline Python walk of every result-record path/bytes/sha256 entry, de-duplicated by path; missing/size/hash mismatch count emitted",
   "verification_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
-  "excluded_self_paths": [
+  "excluded_self_paths_not_pinned": [
     "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
     "config/cf4_bundle_b1_hash_verification_receipt_v2.txt"
   ],
@@ -23,6 +23,6 @@
     "src/cf4_2mpp_joint_likelihood_jax.py",
     "tests/test_cf4_2mpp_joint_likelihood_jax.py"
   ],
-  "scope_statement": "Every linked path carrying a path/bytes/sha256 pin in the result record was byte-verified; only these two receipt self-files are excluded to avoid a hash cycle. Untracked user-owned paths are outside the declared B1 scope.",
+  "scope_statement": "Every linked path carrying a path/bytes/sha256 pin in the result record was byte-verified. Receipt self-files are not pinned in the record, so there is no mutual hash cycle. Untracked user-owned paths are outside the declared B1 scope.",
   "supersedes": "config/cf4_bundle_b1_hash_verification_receipt_v1.json"
 }

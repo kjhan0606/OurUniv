@@ -15,7 +15,7 @@
     "excluded_untracked_reason": "User-owned unrelated work; none is imported by the B1 source/test closure and none is staged by B1 commits.",
     "import_closure_assertion": "B1 imports only tracked source modules listed in this record; excluded untracked JAX/tripwire paths are not runtime dependencies.",
     "import_closure_check": {
-      "command": "rg -n 'cf4_2mpp_joint_likelihood_jax|tripwire' src/cf4_b1_*.py tests/test_cf4_b1_*.py",
+      "command": "rg -n 'cf4_2mpp_joint_likelihood_jax|tripwire' src/cf4_b1_*.py tests/test_cf4_b1_*.py -g '!tests/test_cf4_b1_integrated_joint_calibration_v3.py'",
       "exit_status": 1,
       "match_count": 0,
       "result": "PASS; excluded untracked JAX/tripwire paths are not referenced by the B1 source/test closure"
@@ -36,8 +36,8 @@
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 5254,
-      "sha256": "4d53fd6f67c95c240f5ad399e95c95510432c42307d3433e961cace5cab57e9d"
+      "bytes": 5461,
+      "sha256": "61082d95634e5c6f6747e754b0c9866ec710ecdb6899c3a265bc917d3ee5848f"
     }
   },
   "dependency_base": {
@@ -51,8 +51,14 @@
     "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "hash_verification_receipt": {
-    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1606, "sha256": "c699c443fea6b1f5877a7ddfa574e5f6debe81f9f743f53106cd97bf9886795a"},
-    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 959, "sha256": "da07a0a758d5d009929231ecf350e079aa780d55f35eb9e18cb7507ae0ba4e55"}
+    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json"},
+    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt"},
+    "pin_policy": "Receipt is deliberately not mutually pinned; immutable git certificate/tag below anchors the record and receipt together."
+  },
+  "external_hash_certificate": {
+    "path": "config/cf4_bundle_b1_hash_certificate_v1.json",
+    "tag": "cf4-b1-cert-493d845",
+    "binding": "one-way external anchor for result record and receipt; certificate is not referenced by a hash from either file"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -75,6 +81,7 @@
   "primary_audit_current_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
   "primary_audit_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
   "primary_audit_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
+  "primary_audit_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
   "primary_audit_current_v16_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.json", "bytes": 1792, "sha256": "5149966e907f4f790ce10b274735f033941c0fcc4ff44073dad362b8bb8ca452"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt", "bytes": 1233, "sha256": "a1c3967ba9d310071751557dd91965bf08d883099feed842c533f757b85eb92f"}
@@ -86,6 +93,10 @@
   "primary_audit_current_v18_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.json", "bytes": 3265, "sha256": "792ef630be38eb827922a63c6013b47caaa79740b3a4ccc4bf8b9031ef389f66"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.txt", "bytes": 1696, "sha256": "3b9754b4fc5b8342e603d0bbcfaa0e076916e970dee2e71a363d5521f90031b5"}
+  },
+  "primary_audit_current_v19_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v19.json", "bytes": 2800, "sha256": "b346022c25747229860eaaaba157b0d75e85408718ffd66f9ebb24c517b61d02"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v19.txt", "bytes": 1584, "sha256": "e89e7c0d29e914d4d569e692c32cb7b1a12a8722f6306d43b294af809f798157"}
   },
   "primary_audit_current_v15_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
@@ -175,7 +186,7 @@
   },
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 73115, "sha256": "5f239351c044d7950232406ca6619fbd192b7d2ce7d3444b2dcef62726e825c5"},
-    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 4444, "sha256": "59649e55a7d22fb1fcf85efd55e61edacb02638331f9013386c2d78a564eaf39"},
+    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 4770, "sha256": "204b32d3102b00b30828bf2091b9a7a761bc7cca23995f76425dec209042dfe8"},
     "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2301, "sha256": "a05669c960849e18f7afeed9447d290349da85b37c2627533b2497b3f9103db9"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
@@ -211,7 +222,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "26 B1 regression tests passed; exit status 0; wall elapsed 77.314s (pytest-reported 77.01s)",
+    "test_result": "26 B1 regression tests passed; exit status 0; wall elapsed 90.558s (pytest-reported 89.43s)",
     "test_selection": [
       "tests/test_cf4_b1_calibration_diagnosis_v1.py",
       "tests/test_cf4_b1_count_derivative_diagnosis_v2.py",
@@ -230,8 +241,8 @@
       "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py",
       "exit_status": 0,
       "passed": 26,
-      "pytest_reported_seconds": 77.01,
-      "wall_elapsed_seconds": 77.314
+      "pytest_reported_seconds": 89.43,
+      "wall_elapsed_seconds": 90.558
     },
     "regression_equivalence": {
       "source_test_tree_commit": "493d845e774ffcd4f9320fb75efb18328e32b3de",
@@ -242,8 +253,9 @@
     },
     "mean_model_invariance_test": {
       "test_path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "arms_exercised": ["A", "D"],
-      "result": "PASS; perturbing ARM_WIDTH_SCALE changes posterior draws but leaves deterministic estimate coefficients unchanged"
+      "arms_exercised": ["A", "B", "C", "D"],
+      "rationale": "A/D bracket the calibrated extremes; B is the identity-scale under-covering arm and C is the smoothing arm, so all four arms are now exercised.",
+      "result": "PASS; perturbing ARM_WIDTH_SCALE changes posterior draws but leaves deterministic estimate coefficients unchanged in every arm"
     }
   },
   "joint_contract": {
@@ -284,10 +296,12 @@
       "neither_coverage_component": 8,
       "union_members_failing_either_coverage_component": 56
     },
+    "per_arm_median_metric_scope": "legacy single-member per-voxel diagnostic; not the 512-instance latent-mode coverage metric",
+    "per_arm_width_direction": "A/C/D over-cover while B under-covers; pooled scalar shrinkage cannot fix all arms",
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The grid-wrap periodic RSD repair restores derivative continuity; all 64 optimizers converge. Only 8/64 members pass the unchanged composite gate; the legacy per-voxel coverage diagnostic flags 47/47 members at 68/95%, while the analytic latent-mode diagnostic uses 512 member-mode instances and gives 0.7441/0.9688. The pooled guard fails both levels. Because the D width multiplier was frozen before the periodic repair, this gate failure is not clean evidence about the scientific method. This remains a development-only technical result, not an observational posterior claim."
+    "interpretation": "The grid-wrap periodic RSD repair restores derivative continuity; all 64 optimizers converge. Only 8/64 members pass the unchanged composite gate; the legacy per-voxel coverage diagnostic flags 47/47 members at 68/95%, with 38 failing both and 56 failing at least one, while the analytic latent-mode diagnostic uses 512 member-mode instances and gives 0.7441/0.9688. The pooled guard fails both levels. The uniform 2/16 strict-pass count across arms shows that no arm-specific causal attribution is justified; widths were frozen before the repair, so this is a confounded development diagnostic rather than evidence about the scientific method. This remains a development-only technical result, not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -298,8 +312,8 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
-    "primary_record": "PENDING_POST_V18_REPAIR_AUDIT_V19",
+    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
+    "primary_record": "PENDING_POST_V19_REPAIR_AUDIT_V20",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
