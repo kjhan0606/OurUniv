@@ -24,7 +24,8 @@
     "fixture_generator_sha256": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e"
   },
   "artifacts": {
-    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "ec54592b95fc59bf466d37ba3a3233fef5e56dbab227853346e93ee823dfe5a9",
+    "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "76525aaca7d1695b41a62a3442a1a8cecc859000bb59fca3d8c0d0c7df3c1254",
+    "config/cf4_bundle_execution_governance_v1.json": "6f57facb8e5f129af000373fbcda763e06f177ab8f90ab70555ab36a3e8d9a80",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
     "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
     "src/cf4_q7_topology_aware_approximate_operator.py": "d9ea4e00fe8ffcd879ddb3727bbbb8bf27f5c9f503d82e83f768ca058f293959",

@@ -1,0 +1,65 @@
+{
+  "schema": "ouruniv-cf4-bundle-execution-governance-v1",
+  "date": "2026-09-04",
+  "owner": "driver",
+  "status": "USER_DIRECTED_CONSOLIDATION",
+  "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
+  "policy": {
+    "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
+    "audit_frequency": "One independent Claude Opus 5 audit at bundle closure only; no audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
+    "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
+    "roles": {
+      "driver": "Plan the bundle, implement, execute, analyze, commit, report and stop at the bundle boundary.",
+      "claude_opus_5": "Independent bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
+      "grok": "Not an auditor in this workflow.",
+      "fable": "Not an auditor in this workflow unless the user explicitly reassigns the role."
+    },
+    "stop_conditions": [
+      "data or provenance integrity failure",
+      "non-finite or non-conservative physics result",
+      "resource/safety risk",
+      "a preregistered terminal NO-GO"
+    ],
+    "non_stop_conditions": [
+      "a small test failure that can be fixed in the same bundle",
+      "an audit CLI timeout without a physics or safety failure",
+      "a need to add a regression test or update a manifest within the declared bundle"
+    ]
+  },
+  "bundles": [
+    {
+      "id": "B0-OPERATOR",
+      "scope": "Q1/Q6/Q7 operator implementation, registry contracts, seven development fixtures, containment/error/resource measurements",
+      "deliverable": "One consolidated operator viability dossier and one Opus closure audit",
+      "scientific_boundary": "development-only; no posterior, IC, PM/HOP/RAMSES or 0.3 cMpc/h claim"
+    },
+    {
+      "id": "B1-Z0-POSTERIOR",
+      "scope": "CF4 provenance/selection/covariance, independent truth mocks, low-k parent posterior, and data-driven constraint-frontier measurement",
+      "deliverable": "One z=0 posterior/frontier dossier and one Opus closure audit",
+      "scientific_boundary": "no high-k promotion or zoom selection before frontier gates"
+    },
+    {
+      "id": "B2-IC-FORWARD",
+      "scope": "conditional high-k completion, q-corrected IC proposal, PM forward evolution, and z=0 density/velocity reproduction",
+      "deliverable": "One IC-to-z=0 forward-validation dossier and one Opus closure audit",
+      "scientific_boundary": "high-k is labelled conditional/prior-dominated until independent gates pass"
+    },
+    {
+      "id": "B3-ZOOM",
+      "scope": "phase-consistent Lagrangian masks, HOP/RAMSES target validation, and <=0.3 cMpc/h numerical zoom hierarchy",
+      "deliverable": "One zoom validation dossier and one Opus closure audit",
+      "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
+    }
+  ],
+  "current_bundle": "B0-OPERATOR",
+  "current_status": "Q7.1R redesign implemented; consolidate remaining development execution before the single closure audit.",
+  "next_bundle_rule": "Do not begin B1 until the B0 dossier is complete and the user approves the transition after the Opus closure result.",
+  "execution_firewall": {
+    "gpfs": false,
+    "slurm": false,
+    "production": false,
+    "heldout_data": false,
+    "q7_2_started": false
+  }
+}
