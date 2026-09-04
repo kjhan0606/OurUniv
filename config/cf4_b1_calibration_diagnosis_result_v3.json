@@ -42,7 +42,16 @@
   },
   "failure_histogram": {
     "coverage95": 47,
-    "coverage68": 47
+    "coverage68": 47,
+    "metric_scope": "legacy single-member per-voxel diagnostic; not latent-mode instance counts",
+    "coverage_failure_contingency": {
+      "coverage68_only": 9,
+      "coverage95_only": 9,
+      "both_coverage68_and_coverage95": 38,
+      "neither_coverage_component": 8,
+      "union_members_failing_either_coverage_component": 56,
+      "scope": "64-member legacy per-voxel gate failures; joint identity computed from serialized gate_failures"
+    }
   },
   "by_arm": {
     "A": {

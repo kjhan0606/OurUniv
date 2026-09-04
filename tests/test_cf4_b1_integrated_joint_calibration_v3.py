@@ -34,6 +34,16 @@ def test_harness_remains_pass_and_validation_firewall_closed():
     result = calibration.run_joint_harness()
     assert result["status"] == "PASS"
     assert result["validation_seeds_opened"] is False
+    # PYTHONPATH=src makes unrelated user files importable, so assert the
+    # runtime module table does not actually load them during B1 tests.
+    excluded = ("cf4_2mpp_joint_likelihood_jax.py", "/tripwire/")
+    loaded = [
+        str(getattr(module, "__file__"))
+        for module in tuple(sys.modules.values())
+        if getattr(module, "__file__", None)
+        and any(token in str(getattr(module, "__file__")) for token in excluded)
+    ]
+    assert loaded == []
 
 
 def test_rsd_interpolation_is_periodic_and_edge_continuous():
@@ -56,7 +66,13 @@ def test_rsd_interpolation_is_periodic_and_edge_continuous():
 
     # The repaired RSD sampler must have a finite, continuous response as a
     # radial displacement crosses both periodic box faces.
-    for point in ((0, grid // 2, grid // 2), (grid - 1, grid // 2, grid // 2)):
+    face_points = (
+        (0, grid // 2, grid // 2), (grid - 1, grid // 2, grid // 2),
+        (grid // 2, 0, grid // 2), (grid // 2, grid - 1, grid // 2),
+        (grid // 2, grid // 2, 0), (grid // 2, grid // 2, grid - 1),
+        (0, 0, 0), (grid - 1, grid - 1, grid - 1),
+    )
+    for point in face_points:
         values = []
         for sign in (-1.0, 1.0):
             velocity = np.zeros((grid, grid, grid, 3), dtype=np.float64)

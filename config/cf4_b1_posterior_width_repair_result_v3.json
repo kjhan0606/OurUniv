@@ -59,7 +59,14 @@
     "analytic_mode_coverage_denominator": 512,
     "analytic_mode_coverage_scope": "64 independent members x 8 latent modes",
     "strict_gate_failure_count": 56,
-    "strict_gate_failure_scope": "members failing at least one unchanged composite gate; not equal to per-metric legacy failure histogram"
+    "strict_gate_failure_scope": "members failing at least one unchanged composite gate; not equal to per-metric legacy failure histogram",
+    "coverage_failure_contingency": {
+      "coverage68_only": 9,
+      "coverage95_only": 9,
+      "both_coverage68_and_coverage95": 38,
+      "neither_coverage_component": 8,
+      "union_members_failing_either_coverage_component": 56
+    }
   },
   "derivative_diagnosis": {
     "result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
