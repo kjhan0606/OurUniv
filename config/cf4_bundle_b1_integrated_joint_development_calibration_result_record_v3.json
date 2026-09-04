@@ -31,6 +31,7 @@
   "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "primary_audit_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
   "primary_audit_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "primary_audit_current_v12": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
   "primary_audit_current_v11_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v11.json", "bytes": 2188, "sha256": "81141d953d72e0c0626ee3786a0a6464856fc22e04871e07c01cad799b4337d5"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v11.txt", "bytes": 1891, "sha256": "1e5200b3a6b14ea3a3586d0cd89c0885d938ca8b995f20f7f6f0888295647378"}
@@ -49,15 +50,17 @@
     "result": {"path": "config/cf4_b1_calibration_diagnosis_result_v1.json", "bytes": 70438, "sha256": "3890a24b98580ba1bf2308304814b2cba9e85535c83aef675dfef14897bd6e25"}
   },
   "mode_coverage_implementation": {
-    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 5993, "sha256": "1ece6d05792760ee2c9864b79e2c68531b234e12b52eff93d08e5c1658402821"},
-    "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 530, "sha256": "5c8b6d6fe8554266495be1b4f934d5fe13276e800e882f64c40f22223014710d"},
+    "source": {"path": "src/cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 6634, "sha256": "bd493904e7caf5c289c430a5d5cfe2f207aeaffebdc9b421f1ae2fb3247b0487"},
+    "test": {"path": "tests/test_cf4_b1_mode_coverage_diagnosis_v1.py", "bytes": 1118, "sha256": "a5ca765ca4881e720c4a8daaff7af863fae72bd54b0e299fa683244d1e008391"},
     "result_before_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json", "bytes": 88281, "sha256": "7499a8070c456031411dfb92c51c22adc13f7dc9ef74e117a7951e3e4dc194a4"},
-    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"}
+    "result_after_width": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json", "bytes": 90650, "sha256": "51c85f3e421d6c815327587f37cb8850048d605e366274f98463ea130aabe26a"},
+    "result_analytic_sigma": {"path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json", "bytes": 90821, "sha256": "6352360c012c5907ee87b526c4771efa3373226118714e9d2c64581171cee5ec"}
   },
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 70110, "sha256": "940a18ce093c79c67351dde2ff751a9a3d8620366fd9fd316a05b5b5db7553e1"},
-    "width_repair_v2": {"path": "config/cf4_b1_posterior_width_repair_result_v2.json", "bytes": 2689, "sha256": "0f512cf83f24364580171c06d86c6167119c7fa0062c722ccf9458b82c897955"},
-    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 1899, "sha256": "9b77c47330f165d669a949a66953be5e9e18afb8a4b4b4e8933b0f4f2d8258a7"}
+    "width_repair_v2": {"path": "config/cf4_b1_posterior_width_repair_result_v2.json", "bytes": 3023, "sha256": "3e2c7b3c6b52bdf7049e069705adb3b97f3e8767a4dc43e51bc89cc41fa0c0d1"},
+    "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2313, "sha256": "5bdc98eff03107be2b5e11cf19b78c5e2beb58030fdf97a117dcca3d99811f80"},
+    "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 2410, "sha256": "09a3d11958dea2db8a3dcf68e5a8708891863b885c9a260181f3511d8d31d47a"}
   },
   "execution": {
     "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_integrated_joint_calibration_v3.py --output config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
@@ -68,7 +71,7 @@
     "development_member_count": 64,
     "arm_assignment": "A-D, 16 members per arm",
     "validation_seed_opened": false,
-    "test_result": "18 B1 tests passed; mode coverage test passed; harness probes PASS"
+    "test_result": "19 B1 tests passed; analytic-sigma mode test passed; harness probes PASS"
   },
   "joint_contract": {
     "same_frozen_latent_field_generates_counts_and_cf4_marks": true,
@@ -107,13 +110,14 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "CONDITIONAL_NO_GO_PROMOTION",
-    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
-    "primary_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v11.txt",
+    "primary": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
+    "primary_record": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
+    "historical_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+    "historical_v11_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v11.txt",
     "historical_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
     "historical_v10_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Within B1, replace draw-estimated sigma with analytic covariance, preregister and redesign the strict gate, then add a mark-side misspecification arm using development seeds only. Keep validation sealed and do not open B2."
+  "next_action": "Obtain Opus closure audit of the analytic-sigma diagnostic and gate redesign proposal; then add a mark-side misspecification arm using development seeds only. Keep validation sealed and do not open B2."
 }

@@ -8,6 +8,7 @@
   "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "opus_closure_attempt_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
   "opus_closure_attempt_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "opus_closure_attempt_current_v12": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
@@ -56,5 +57,5 @@
     "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
   ],
   "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
-    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration plus D-arm width repair and mode-level coverage diagnosis are complete (fit_success 64/64, strict gate 8/64). Opus v10 is historical NO-GO; after provenance/stream fixes obtain v11, then redesign the strict gate and add mark-side misspecification while keeping validation sealed and B2-IC-FORWARD closed."
+    "next": "The initial v3 validation-range attempt is quarantined; corrected development-only 64-member same-truth calibration plus D-arm width repair and analytic-sigma mode diagnosis are complete (fit_success 64/64, strict gate 8/64; analytic mode coverage 0.75195/0.96680). Obtain v12 audit of the gate proposal, then add mark-side misspecification while keeping validation sealed and B2-IC-FORWARD closed."
 }

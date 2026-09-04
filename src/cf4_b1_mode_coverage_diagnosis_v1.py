@@ -23,6 +23,18 @@ TARGET_68 = 0.6826894921370859
 TARGET_95 = 0.9544997361036416
 
 
+def analytic_posterior_sigma(estimate: np.ndarray, arm: str) -> np.ndarray:
+    """Return the exact Laplace posterior sigma used by the coverage metric."""
+
+    precision = (
+        np.eye(integrated.MODE_COUNT) / integrated.PRIOR_SIGMA**2
+        + integrated._count_fisher(estimate, arm)
+        + integrated.MARK_FISHER
+    )
+    covariance = np.linalg.pinv(precision) * integrated.ARM_WIDTH_SCALE[arm] ** 2
+    return np.sqrt(np.maximum(np.diag(covariance), 0.0))
+
+
 def run_mode_coverage() -> dict[str, object]:
     arms = ("A", "B", "C", "D")
     rows = []
@@ -32,7 +44,7 @@ def run_mode_coverage() -> dict[str, object]:
         truth = np.asarray(member["_truth_coeff"], dtype=np.float64)
         estimate = np.asarray(member["_estimate_coeff"], dtype=np.float64)
         draws = np.asarray(member["_draws_coeff"], dtype=np.float64)
-        posterior_sigma = np.std(draws, axis=0, ddof=1)
+        posterior_sigma = analytic_posterior_sigma(estimate, arm)
         rows.append({
             "index": index,
             "arm": arm,
@@ -65,7 +77,7 @@ def run_mode_coverage() -> dict[str, object]:
     all68 = frequencies(rows, "coverage68_by_mode")
     all95 = frequencies(rows, "coverage95_by_mode")
     return {
-        "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v1",
+        "schema": "ouruniv-cf4-b1-mode-coverage-diagnosis-result-v2",
         "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
         "source": "src/cf4_b1_integrated_joint_calibration_v3.py",
         "source_artifact": {
@@ -81,8 +93,10 @@ def run_mode_coverage() -> dict[str, object]:
         "metric_definition": {
             "coverage_unit": "independent development seed",
             "parameter_unit": "latent coefficient mode",
-            "interval68": "posterior mean +/- one posterior draw standard deviation",
-            "interval95": "posterior mean +/- 1.96 posterior draw standard deviations",
+            "interval68": "posterior mean +/- analytic sqrt(diag(Laplace covariance))",
+            "interval95": "posterior mean +/- 1.96 analytic sqrt(diag(Laplace covariance))",
+            "sigma_source": "analytic_sqrt_diag_laplace_covariance",
+            "posterior_draws_retained_for_cross_check": integrated.POSTERIOR_DRAWS,
             "legacy_per_voxel_metric_replaced_for_diagnosis": True,
             "strict_promotion_gate_changed": False,
         },

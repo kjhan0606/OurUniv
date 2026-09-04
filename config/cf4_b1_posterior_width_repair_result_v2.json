@@ -32,6 +32,12 @@
     "after_mean_coverage95": 0.951171875,
     "interpretation": "D width inflation moves across-seed mode coverage close to nominal, while the legacy per-voxel gate becomes less informative."
   },
+  "analytic_sigma_diagnosis": {
+    "result": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+    "coverage68_frequency_mean": 0.751953125,
+    "coverage95_frequency_mean": 0.966796875,
+    "interpretation": "Replacing 16-draw sample sigma with exact Laplace sigma removes Monte-Carlo width noise but reveals broad intervals remain; this is diagnostic only."
+  },
   "seed_firewall": {
     "development": [2026083000, 2026083064],
     "contaminated_quarantine": [2026083064, 2026083128],
@@ -46,5 +52,5 @@
     "validation_opened": false,
     "B2_IC_FORWARD": "NOT_STARTED"
   },
-  "next_action": "Keep the mode-level coverage metric diagnostic-only; after seed/provenance repair obtain current Opus closure, then redesign the strict gate and add a mark-side misspecification arm. Do not open validation or B2."
+  "next_action": "Keep the mode-level coverage metric diagnostic-only; audit the analytic-sigma gate redesign proposal, then add a mark-side misspecification arm. Do not open validation or B2."
 }

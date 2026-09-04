@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-b1-coverage-metric-amendment-v1",
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_CLOSURE_AUDIT",
+  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_GATE_REDESIGN_AUDIT",
   "historical_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
   "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
   "motivation": "Opus identified legacy per-voxel coverage as a single-member spread statistic rather than a frequentist calibration frequency over independent truth seeds.",
@@ -13,8 +13,9 @@
   },
   "proposed_metric": {
     "definition": "for each latent coefficient mode, fraction of independent development seeds whose truth coefficient lies inside the member posterior interval",
-    "interval68": "posterior mean +/- one posterior draw standard deviation",
-    "interval95": "posterior mean +/- 1.96 posterior draw standard deviations",
+    "interval68": "posterior mean +/- analytic sqrt(diag(Laplace covariance))",
+    "interval95": "posterior mean +/- 1.96 analytic sqrt(diag(Laplace covariance))",
+    "sigma_source": "analytic_sqrt_diag_laplace_covariance",
     "development_member_count": 64,
     "mode_count": 8,
     "target68": 0.6826894921370859,
@@ -25,13 +26,16 @@
     "pre_repair": "config/cf4_b1_mode_coverage_diagnosis_result_v1.json",
     "D_width_repair": "config/cf4_b1_mode_coverage_diagnosis_result_v2.json",
     "D_width_repair_result": "config/cf4_b1_posterior_width_repair_result_v2.json",
-    "aggregate_after_width_repair": {"coverage68_frequency_mean": 0.72265625, "coverage95_frequency_mean": 0.951171875}
+    "aggregate_after_width_repair_draw_sigma": {"coverage68_frequency_mean": 0.72265625, "coverage95_frequency_mean": 0.951171875},
+    "aggregate_after_width_repair_analytic_sigma": {"coverage68_frequency_mean": 0.751953125, "coverage95_frequency_mean": 0.966796875},
+    "analytic_sigma_result": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+    "gate_redesign_proposal": "config/cf4_b1_gate_redesign_proposal_v1.json"
   },
   "contract_boundary": {
     "strict_promotion_gate_changed": false,
     "observational_z0_posterior": "NOT_AUTHORIZED",
     "frontier_promotion": "BLOCKED",
     "B2_IC_FORWARD": "BLOCKED",
-    "required_next": "post-provenance primary Opus audit before any contract adoption"
+    "required_next": "primary Opus audit of the analytic-sigma gate redesign proposal before any contract adoption"
   }
 }
