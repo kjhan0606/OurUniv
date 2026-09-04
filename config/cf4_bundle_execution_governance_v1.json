@@ -6,12 +6,12 @@
   "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
   "policy": {
     "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
-    "audit_frequency": "One Claude Opus 5 primary audit at bundle closure only; if it times out or fails to return a verdict, gpt-5.6-sol is used only as the backup auditor. No audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
+    "audit_frequency": "One Claude Opus 5 primary audit at bundle closure only. gpt-5.6-sol is called only as backup when Opus does not inspect/return a usable verdict, or when the driver explicitly doubts the Opus result and requests a check. No audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
     "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
     "roles": {
       "driver": "Plan the bundle, implement, execute, analyze, commit, report and stop at the bundle boundary.",
       "claude_opus_5": "Primary bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
-      "gpt_5_6_sol": "Backup bundle-closure audit only when the primary Opus audit times out or fails; not an independent parallel re-audit.",
+      "gpt_5_6_sol": "Backup bundle-closure audit only when Opus does not inspect/return a usable verdict or the driver explicitly requests a check because the Opus result is not trusted; not an independent parallel re-audit.",
       "grok": "Not an auditor in this workflow.",
       "fable": "Not an auditor in this workflow unless the user explicitly reassigns the role."
     },

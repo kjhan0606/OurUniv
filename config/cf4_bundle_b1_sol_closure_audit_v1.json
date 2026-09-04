@@ -5,7 +5,7 @@
   "auditor": "gpt-5.6-sol",
   "auditor_role": "backup_auditor",
   "primary_auditor": "claude-opus-5",
-  "audit_trigger": "Primary Claude Opus 5 closure request timed out without a verdict",
+  "audit_trigger": "Primary Claude Opus 5 closure request timed out without a verdict (backup condition: primary did not inspect/return a usable verdict)",
   "commit_audited": "6e972dd",
   "verdict": "NO-GO",
   "scope": "64-run local development mock artifact and its claimed relationship to the frozen B1 active joint likelihood contract",
