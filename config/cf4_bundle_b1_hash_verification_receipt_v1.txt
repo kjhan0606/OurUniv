@@ -1,4 +1,4 @@
-HEAD 1f86d7b52ff529e04975503af80c4b0ac39b6753
+HEAD 366159cb4bfa87f30036bf91b94065ef51747448
 COMMAND inline_sha256_wc_verifier
 SCOPE result_record_v3 implementation dependency current_artifact and audit artifact pins
 HASH_ENTRIES 43

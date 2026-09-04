@@ -27,8 +27,8 @@
     "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "hash_verification_receipt": {
-    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.json", "bytes": 722, "sha256": "fe931543e1668cfa7ce11d2100282367f95648d79a52a0914eab10e5f752a762"},
-    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.txt", "bytes": 304, "sha256": "84080452ca3ce57fe607a527ee795fa98d4f4b11f168e7b0c1b0da3be0a2a4d8"}
+    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.json", "bytes": 722, "sha256": "37340cd23199435d34e88377086fb72903113a861068e39ed369285cb93668f2"},
+    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v1.txt", "bytes": 304, "sha256": "060db76dd9c93568efe6d44824e386a11ed37f97605198e790108e47fecbf670"}
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
