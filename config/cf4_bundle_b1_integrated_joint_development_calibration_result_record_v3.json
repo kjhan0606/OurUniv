@@ -3,6 +3,19 @@
   "date": "2026-09-05",
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_PERIODIC_RSD_REPAIR_RECALIBRATED_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "repository_scope": {
+    "certified_tree_commit": "685363cc394f56e27aecefdb04725cec070fae48",
+    "tracked_bundle_scope": true,
+    "excluded_untracked_paths": [
+      "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
+      "scripts/tripwire/",
+      "src/cf4_2mpp_joint_likelihood_jax.py",
+      "tests/test_cf4_2mpp_joint_likelihood_jax.py"
+    ],
+    "excluded_untracked_reason": "User-owned unrelated work; none is imported by the B1 source/test closure and none is staged by B1 commits.",
+    "import_closure_assertion": "B1 imports only tracked source modules listed in this record; excluded untracked JAX/tripwire paths are not runtime dependencies.",
+    "post_certification_diff_policy": "Any commit after certified_tree_commit must be restricted to this record, receipt metadata, and audit/config provenance until the next audit."
+  },
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
     "source": {
@@ -12,8 +25,8 @@
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 3609,
-      "sha256": "e9b858f86d5b867e8f9f756df08575b4ffbd9331ba765fcb96e4058940e88b4c"
+      "bytes": 4366,
+      "sha256": "a99926c2daf44fa4a72d6d2d3e985716981eade3b9e85b5301c02320a4abb388"
     }
   },
   "dependency_base": {
@@ -27,8 +40,8 @@
     "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "hash_verification_receipt": {
-    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1014, "sha256": "518c7041f711d37cc93c59c428671fa12587de9dd7c96c97ddce512dab4cb428"},
-    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 584, "sha256": "0762d4e10ff40adbdd3fc3b72156c829c4ad3bfc4aedc1001c67c9ff13dcaf7c"}
+    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1089, "sha256": "2db004bfe195400d3d24451f19f7a47f5e4993406d6366b9dda15856da57990f"},
+    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 651, "sha256": "addb84ed6cdd442d5f3780dd2677baee3b0cb71131add13d3c62918ccd898bbc"}
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -151,7 +164,7 @@
   },
   "current_artifact_hashes": {
     "diagnosis_v3": {"path": "config/cf4_b1_calibration_diagnosis_result_v3.json", "bytes": 72659, "sha256": "fe1ee9239f6f38d42670bf2c60a3044870db617980db7990e4d3f60e24bdf8a4"},
-    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 3379, "sha256": "7bf3eb26d309b3b24f61768e47da205e0eaf89a5eb2e7e84f10c00691b7d74d6"},
+    "width_repair_v3": {"path": "config/cf4_b1_posterior_width_repair_result_v3.json", "bytes": 4041, "sha256": "6d64f76546d512f10a382220cca7815d92c02b3f737d184b9e91c93ddb6e3c19"},
     "coverage_metric_amendment_v1": {"path": "config/cf4_b1_coverage_metric_amendment_v1.json", "bytes": 2301, "sha256": "a05669c960849e18f7afeed9447d290349da85b37c2627533b2497b3f9103db9"},
     "gate_redesign_proposal_v1": {"path": "config/cf4_b1_gate_redesign_proposal_v1.json", "bytes": 3949, "sha256": "5d5dcb2ba33ee83ff3ddb9ec3936d9108830e01f379d3842b75c9784920d76e0"},
     "mark_misspecification_plan_v1": {"path": "config/cf4_b1_mark_misspecification_plan_v1.json", "bytes": 3226, "sha256": "9e711c9ac50ade9b2f6f6d369be5589c7cc23f6f469e041abb1709135909b782"},
@@ -232,11 +245,19 @@
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,
-    "failure_histogram": {"coverage68": 47, "coverage95": 47},
+    "failure_histogram": {
+      "coverage68_members_failing_legacy_per_voxel": 47,
+      "coverage95_members_failing_legacy_per_voxel": 47,
+      "metric_scope": "legacy single-member per-voxel diagnostic; not latent-mode instance counts"
+    },
+    "analytic_mode_coverage_denominator": 512,
+    "analytic_mode_coverage_scope": "64 independent members x 8 latent modes",
+    "strict_gate_failure_count": 56,
+    "strict_gate_failure_scope": "members failing at least one unchanged composite gate; not equal to per-metric legacy failure histogram",
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The grid-wrap periodic RSD repair restores derivative continuity; all 64 optimizers converge. Only 8/64 members pass the unchanged per-voxel gate because coverage68/coverage95 fail (47/47 members respectively). The regenerated analytic across-seed latent-mode diagnostic is 0.7441/0.9688, and the pooled guard fails both levels. This remains a development-only technical result, not an observational posterior claim."
+    "interpretation": "The grid-wrap periodic RSD repair restores derivative continuity; all 64 optimizers converge. Only 8/64 members pass the unchanged composite gate; the legacy per-voxel coverage diagnostic flags 47/47 members at 68/95%, while the analytic latent-mode diagnostic uses 512 member-mode instances and gives 0.7441/0.9688. The pooled guard fails both levels. Because the D width multiplier was frozen before the periodic repair, this gate failure is not clean evidence about the scientific method. This remains a development-only technical result, not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -259,6 +280,12 @@
     "historical_v12_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v12.txt",
     "historical_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
     "historical_v10_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt",
+    "historical_v14": "config/cf4_bundle_b1_opus_closure_attempt_v14.json",
+    "historical_v14_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v14.txt",
+    "historical_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
+    "historical_v16_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt",
+    "historical_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
+    "historical_v17_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v17.txt",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },

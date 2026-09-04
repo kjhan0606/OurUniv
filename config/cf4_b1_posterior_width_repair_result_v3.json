@@ -34,7 +34,11 @@
     "fit_abnormal_termination_count": 0,
     "strict_gate_required_count": 64,
     "strict_gate_pass_count": 8,
-    "failure_histogram": {"coverage68": 47, "coverage95": 47},
+    "failure_histogram": {
+      "coverage68_members_failing_legacy_per_voxel": 47,
+      "coverage95_members_failing_legacy_per_voxel": 47,
+      "metric_scope": "legacy single-member per-voxel diagnostic; not latent-mode instance counts"
+    },
     "per_arm_strict_pass_count": {"A": 2, "B": 2, "C": 2, "D": 2},
     "per_arm_median_coverage68": {
       "A": 0.7914886474609375,
@@ -50,7 +54,11 @@
     },
     "analytic_mode_coverage68_mean": 0.744140625,
     "analytic_mode_coverage95_mean": 0.96875,
-    "pooled_guard_pass": false
+    "pooled_guard_pass": false,
+    "analytic_mode_coverage_denominator": 512,
+    "analytic_mode_coverage_scope": "64 independent members x 8 latent modes",
+    "strict_gate_failure_count": 56,
+    "strict_gate_failure_scope": "members failing at least one unchanged composite gate; not equal to per-metric legacy failure histogram"
   },
   "derivative_diagnosis": {
     "result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
@@ -73,7 +81,7 @@
       "D": 0.7256536578290296
     }
   },
-  "interpretation": "The periodic sampler repair removes the B/C/D derivative discontinuity. Count Fisher derivatives are now step-stable and the corrected sandwich ratios are near one; direct z covariance shows A/C/D widths remain broad, especially D after the frozen 1.5 multiplier. No width refit is authorized on these same development seeds.",
+  "interpretation": "The periodic sampler repair removes the B/C/D derivative discontinuity. Count Fisher derivatives are now step-stable and the corrected sandwich ratios are near one; direct z covariance shows A/C/D widths remain broad, especially D after the frozen 1.5 multiplier. The unchanged composite gate failure is a development diagnostic and is not clean evidence about the scientific method because the D multiplier was frozen before this repair. No width refit is authorized on these same development seeds.",
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
     "frontier_promotion": "BLOCKED",

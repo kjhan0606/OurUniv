@@ -82,3 +82,16 @@ def test_shared_group_mark_fisher_matches_direct_covariance_inverse():
 def test_width_repair_does_not_change_mean_model():
     assert calibration.ARM_WIDTH_SCALE == {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.5}
     assert calibration.D_OVERDISPERSION_PHI == 0.35
+    # Width calibration is allowed to change posterior draws, but it must not
+    # move the deterministic MAP/mean latent estimate.  Exercise that
+    # contract by perturbing one arm's draw scale and comparing the estimate.
+    original = dict(calibration.ARM_WIDTH_SCALE)
+    try:
+        baseline = calibration.run_mock(0, "A")
+        calibration.ARM_WIDTH_SCALE["A"] = 1.23
+        perturbed = calibration.run_mock(0, "A")
+    finally:
+        calibration.ARM_WIDTH_SCALE.clear()
+        calibration.ARM_WIDTH_SCALE.update(original)
+    np.testing.assert_allclose(baseline["_estimate_coeff"], perturbed["_estimate_coeff"], rtol=0.0, atol=1.0e-12)
+    assert not np.allclose(baseline["_draws_coeff"], perturbed["_draws_coeff"], rtol=0.0, atol=1.0e-12)
