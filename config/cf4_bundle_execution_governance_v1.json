@@ -41,6 +41,12 @@
       "scientific_boundary": "no high-k promotion or zoom selection before frontier gates"
     },
     {
+      "id": "KF-DESIGN-READINESS",
+      "scope": "Record-only closure of the active KF-DESIGN baseline binding, geometry-only bin manifest validation, and source-bound likelihood readiness gaps",
+      "deliverable": "One local readiness dossier and one Opus closure audit",
+      "scientific_boundary": "no catalog or external-artifact read, no mock truth opening, no posterior/frontier inference, no KF-EXPAND, IC, PM, HOP or RAMSES execution"
+    },
+    {
       "id": "B2-IC-FORWARD",
       "scope": "conditional high-k completion, q-corrected IC proposal, PM forward evolution, and z=0 density/velocity reproduction",
       "deliverable": "One IC-to-z=0 forward-validation dossier and one Opus closure audit",
@@ -53,12 +59,12 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "B1-Z0-POSTERIOR",
-  "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 CLOSED as development-only NO-GO after Opus v21 conditional audit and record-only edits. Coverage denominator is adjudicated; D mechanism is unresolved at n=16 with confounded controls and remains no-attribution.",
+  "current_bundle": "KF-DESIGN-READINESS",
+  "last_bundle_result": "config/cf4_kf_design_readiness_result_v1.json",
+  "current_status": "KF-DESIGN-READINESS in progress after user approval. Baseline binding and geometry-only manifest validation are complete locally; source-bound likelihood inputs remain explicit blockers. No external artifact or compute execution has occurred.",
   "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v21.json",
-  "next_closure_audit": "NONE_B1_CLOSED; NEXT_AUDIT_ONLY_AT_NEXT_BUNDLE",
-  "next_bundle_rule": "B1 closure is complete. Await user approval before entering the next bundle. Keep widths diagnostic-only and frozen; do not run the information-null mark arm, open validation, promote a posterior/frontier or start B2 without a new bundle plan and audit.",
+  "next_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
+  "next_bundle_rule": "Close KF-DESIGN-READINESS with the one Opus audit, then await user approval before entering another bundle. Keep widths diagnostic-only and frozen; do not open validation, promote a posterior/frontier or start KF-EXPAND/B2.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,
