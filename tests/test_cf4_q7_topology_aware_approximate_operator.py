@@ -63,6 +63,7 @@ def _basis_metadata(basis: np.ndarray) -> dict[str, str | tuple[str, ...]]:
             np.asarray(basis, dtype="<f8", order="C").tobytes()
         ).hexdigest(),
         "directional_basis_registry_id": "q7-development-fixture-v1",
+        "directional_basis_registry_manifest": "config/cf4_q7_development_directional_basis_registry_v1.json",
     }
 
 
@@ -171,6 +172,7 @@ def test_summary_bound_api_requires_175_fixed_maps() -> None:
         norms,
         summary_operator_l1_norms_sha256=digest,
         summary_operator_registry_id="q7-development-summary-v1",
+        summary_operator_registry_manifest="config/cf4_q7_development_summary_operator_registry_v1.json",
     )
     assert result.shape == (Q7_SUMMARY_COUNT,)
     assert np.all(result >= 1.5)
@@ -181,6 +183,7 @@ def test_summary_bound_api_requires_175_fixed_maps() -> None:
             np.ones((174, 2)),
             summary_operator_l1_norms_sha256=digest,
             summary_operator_registry_id="q7-development-summary-v1",
+            summary_operator_registry_manifest="config/cf4_q7_development_summary_operator_registry_v1.json",
         )
     with pytest.raises(LikelihoodInputError):
         induced_summary_l1_bounds(per_bin, norms)

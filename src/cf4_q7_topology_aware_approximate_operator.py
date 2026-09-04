@@ -130,6 +130,28 @@ def _frozen_direction_names() -> tuple[str, ...]:
 FROZEN_DIRECTION_NAMES = _frozen_direction_names()
 
 
+def _read_registered_manifest(value: str | Path, *, label: str) -> dict[str, object]:
+    """Read a repository-owned registry manifest, never an arbitrary caller map."""
+
+    root = Path(__file__).resolve().parents[1]
+    path = (root / value).resolve() if not Path(value).is_absolute() else Path(value).resolve()
+    config_root = (root / "config").resolve()
+    try:
+        path.relative_to(config_root)
+    except ValueError as exc:
+        raise LikelihoodInputError(f"{label} manifest must be inside the repository config directory") from exc
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, TypeError, ValueError) as exc:
+        raise LikelihoodInputError(f"{label} manifest is unreadable") from exc
+    if not isinstance(payload, dict):
+        raise LikelihoodInputError(f"{label} manifest must contain a JSON object")
+    status = str(payload.get("status", ""))
+    if status not in {"REGISTERED", "REGISTERED_DEVELOPMENT"}:
+        raise LikelihoodInputError(f"{label} manifest status is not registered: {status!r}")
+    return payload
+
+
 @dataclass(frozen=True)
 class TopologyBin:
     """A deterministic set of sources sharing the discrete Q1 topology."""
@@ -330,6 +352,7 @@ def induced_summary_l1_bounds(
     *,
     summary_operator_l1_norms_sha256: str | None = None,
     summary_operator_registry_id: str | None = None,
+    summary_operator_registry_manifest: str | Path | None = None,
 ) -> np.ndarray:
     """Propagate certified per-bin response bounds through 175 fixed maps.
 
@@ -349,6 +372,19 @@ def induced_summary_l1_bounds(
     norms_digest = hashlib.sha256(np.asarray(norms, dtype="<f8", order="C").tobytes()).hexdigest()
     if str(summary_operator_l1_norms_sha256) != norms_digest:
         raise LikelihoodInputError("summary operator numeric-content SHA256 mismatch")
+    if summary_operator_registry_manifest is None:
+        raise LikelihoodInputError("repository-owned summary-operator registry manifest is required")
+    manifest = _read_registered_manifest(summary_operator_registry_manifest, label="summary operator")
+    if str(manifest.get("registry_id", "")) != str(summary_operator_registry_id):
+        raise LikelihoodInputError("summary operator registry id does not match manifest")
+    if tuple(manifest.get("matrix_shape", ())) != norms.shape:
+        raise LikelihoodInputError("summary operator shape does not match its registry manifest")
+    if str(manifest.get("matrix_sha256", "")) != norms_digest:
+        raise LikelihoodInputError("summary operator digest does not match its registry manifest")
+    if str(manifest.get("norm_definition", "")) != "max_column_absolute_sum_induced_l1_norm":
+        raise LikelihoodInputError("summary operator manifest does not define the required induced L1 norm")
+    if not str(manifest.get("units", "")).strip() or not str(manifest.get("coordinate_convention", "")).strip():
+        raise LikelihoodInputError("summary operator manifest must declare units and coordinate convention")
     # Accumulate each non-negative product with a nextafter-upward step.  A
     # plain BLAS matmul is not an upper bound in floating point and cannot
     # serve as a certified induced norm propagation.
@@ -557,6 +593,7 @@ def _validate_mass_inputs(
     directional_basis_sha256: str | None = None,
     directional_basis_content_sha256: str | None = None,
     directional_basis_registry_id: str | None = None,
+    directional_basis_registry_manifest: str | Path | None = None,
 ) -> tuple[np.ndarray, np.ndarray | None, str | None, dict[str, str] | None]:
     masses = np.asarray(population_masses, dtype=np.float64)
     if masses.ndim != 2 or masses.shape[1] != atlas.source_count or masses.shape[0] == 0:
@@ -564,7 +601,7 @@ def _validate_mass_inputs(
     if not np.all(np.isfinite(masses)) or np.any(masses < 0.0):
         raise LikelihoodInputError("population_masses must be finite and non-negative")
     if directional_mass_basis is None:
-        if any(value is not None for value in (directional_basis_labels, directional_basis_sha256, directional_basis_content_sha256, directional_basis_registry_id)):
+        if any(value is not None for value in (directional_basis_labels, directional_basis_sha256, directional_basis_content_sha256, directional_basis_registry_id, directional_basis_registry_manifest)):
             raise LikelihoodInputError("basis metadata supplied without directional_mass_basis")
         return masses, None, None, None
     basis = np.asarray(directional_mass_basis, dtype=np.float64)
@@ -580,13 +617,24 @@ def _validate_mass_inputs(
         raise LikelihoodInputError("directional basis semantic-label SHA256 mismatch")
     if directional_basis_content_sha256 is None or directional_basis_registry_id is None or not str(directional_basis_registry_id).strip():
         raise LikelihoodInputError("a registered numeric directional-basis digest and registry id are required")
+    if directional_basis_registry_manifest is None:
+        raise LikelihoodInputError("repository-owned directional-basis registry manifest is required")
     canonical_basis_digest = hashlib.sha256(np.asarray(basis, dtype="<f8", order="C").tobytes()).hexdigest()
     if str(directional_basis_content_sha256) != canonical_basis_digest:
         raise LikelihoodInputError("directional basis numeric-content SHA256 mismatch")
+    manifest = _read_registered_manifest(directional_basis_registry_manifest, label="directional basis")
+    if str(manifest.get("registry_id", "")) != str(directional_basis_registry_id):
+        raise LikelihoodInputError("directional basis registry id does not match manifest")
+    allowed = tuple(str(item) for item in manifest.get("allowed_content_sha256", ()))
+    if canonical_basis_digest not in allowed:
+        raise LikelihoodInputError("directional basis content digest is not registered in the manifest")
+    if not str(manifest.get("units", "")).strip() or not str(manifest.get("coordinate_convention", "")).strip():
+        raise LikelihoodInputError("directional basis manifest must declare units and coordinate convention")
     metadata = {
         "direction_names_sha256": labels_digest,
         "numeric_basis_sha256": canonical_basis_digest,
         "numeric_basis_registry_id": str(directional_basis_registry_id),
+        "numeric_basis_registry_status": str(manifest.get("status")),
     }
     if basis.ndim == 2 and basis.shape[1] == atlas.source_count:
         if basis.shape[0] != Q7_DERIVATIVE_DIRECTIONS:
@@ -619,11 +667,13 @@ def evaluate_atlas(
     directional_basis_sha256: str | None = None,
     directional_basis_content_sha256: str | None = None,
     directional_basis_registry_id: str | None = None,
+    directional_basis_registry_manifest: str | Path | None = None,
     allow_uncertified_finite_enclosure: bool = False,
     oracle_fields: Iterable[Iterable[Iterable[Iterable[float]]]] | None = None,
     summary_operator_l1_norms: Iterable[Iterable[float]] | None = None,
     summary_operator_l1_norms_sha256: str | None = None,
     summary_operator_registry_id: str | None = None,
+    summary_operator_registry_manifest: str | Path | None = None,
 ) -> ApproximationResult:
     """Evaluate the route and return certified, finite and optional measured budgets."""
 
@@ -632,7 +682,7 @@ def evaluate_atlas(
             "finite-source enclosures cannot be promoted; use sourcewise Q1 fallback"
         )
     if summary_operator_l1_norms is None and any(
-        value is not None for value in (summary_operator_l1_norms_sha256, summary_operator_registry_id)
+        value is not None for value in (summary_operator_l1_norms_sha256, summary_operator_registry_id, summary_operator_registry_manifest)
     ):
         raise LikelihoodInputError("summary-operator metadata supplied without summary norms")
     masses, basis, basis_mode, _basis_metadata = _validate_mass_inputs(
@@ -643,6 +693,7 @@ def evaluate_atlas(
         directional_basis_sha256=directional_basis_sha256,
         directional_basis_content_sha256=directional_basis_content_sha256,
         directional_basis_registry_id=directional_basis_registry_id,
+        directional_basis_registry_manifest=directional_basis_registry_manifest,
     )
     populations = masses.shape[0]
     field_shape = atlas.representative_fields.shape[1:]
@@ -734,6 +785,7 @@ def evaluate_atlas(
             summary_operator_l1_norms,
             summary_operator_l1_norms_sha256=summary_operator_l1_norms_sha256,
             summary_operator_registry_id=summary_operator_registry_id,
+            summary_operator_registry_manifest=summary_operator_registry_manifest,
         )
     return ApproximationResult(
         fields=fields,
@@ -777,6 +829,7 @@ def candidate_metadata(atlas: TopologyAwareResponseAtlas) -> dict[str, object]:
         "tail_cutoff_sigma": atlas.q1_tail_cutoff,
         "frozen_direction_count": Q7_DERIVATIVE_DIRECTIONS,
         "frozen_direction_names": list(FROZEN_DIRECTION_NAMES),
+        "directional_basis_provenance": "repository-owned registry manifest with units, convention and consumed-array digest",
         "summary_bound_count": Q7_SUMMARY_COUNT,
         "summary_bound_api": "induced_summary_l1_bounds",
         "summary_operator_provenance": "registered numeric digest and registry id required; accumulation rounded upward",

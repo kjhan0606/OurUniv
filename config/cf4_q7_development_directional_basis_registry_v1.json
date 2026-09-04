@@ -1,0 +1,14 @@
+{
+  "schema": "ouruniv-cf4-q7-directional-basis-registry-v1",
+  "date": "2026-09-04",
+  "status": "REGISTERED_DEVELOPMENT",
+  "registry_id": "q7-development-fixture-v1",
+  "direction_names_contract": "config/cf4_q7_frozen_23_mass_basis_v1.json",
+  "units": "dimensionless source-state derivative coefficients",
+  "coordinate_convention": "direction-major (23,M) or population-major (P,M,23), source-major little-endian float64",
+  "allowed_content_sha256": [
+    "5b507efcc739013717682ea0cb3c55d8c0d6eda3b65a448dbf0cae41116b0fb6",
+    "52bcbf59ab05aec66558cf7b111a807e2e2ab8999c4f82c9794cae77917b8e89"
+  ],
+  "science_use": "development regression only; not a physical CF4 posterior basis"
+}
