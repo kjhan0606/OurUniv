@@ -4,7 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "COMPLETE_PERIODIC_RSD_REPAIR_RECALIBRATED_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "repository_scope": {
-    "certified_tree_commit": "685363cc394f56e27aecefdb04725cec070fae48",
+    "certified_tree_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
     "tracked_bundle_scope": true,
     "excluded_untracked_paths": [
       "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
@@ -46,8 +46,8 @@
     "sha256": "b2d157d3e8d1eeeb444dc36559f6faa9a754e4077f58c7059bad8dc850700778"
   },
   "hash_verification_receipt": {
-    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1606, "sha256": "f6a2dc2385402edcd2720dd9932899b7a5c0855921dd58c0d67414e666732b31"},
-    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 959, "sha256": "3cf30e670b66d55118894426a0e46ed6b06296162f43aacf194b40559cc1efb5"}
+    "json": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json", "bytes": 1606, "sha256": "e816cee13dee1faa5dead6aec60bb833d4764816de19516968006c0d10be6074"},
+    "raw_output": {"path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt", "bytes": 959, "sha256": "31f74da9f6d5e03dfce25596fe9cbc50a2a8656bd78a798d304a5617efca19fb"}
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -221,23 +221,19 @@
     "regression_pass_count": 26,
     "repaired_dependency_test_included": true,
     "regression_verification": {
-      "audited_commit": "b2893fb085df4e6d69312477d50a4ef95c95aabd",
+      "audited_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
       "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_b1_calibration_diagnosis_v1.py tests/test_cf4_b1_count_derivative_diagnosis_v2.py tests/test_cf4_b1_count_information_diagnosis_v1.py tests/test_cf4_b1_development_mock_calibration.py tests/test_cf4_b1_development_mock_calibration_v2.py tests/test_cf4_b1_integrated_joint_calibration_v3.py tests/test_cf4_b1_joint_development_harness.py tests/test_cf4_b1_mode_coverage_diagnosis_v1.py tests/test_cf4_b1_pooled_coverage_guard_v1.py",
       "exit_status": 0,
       "passed": 26,
-      "pytest_reported_seconds": 71.68,
-      "wall_elapsed_seconds": 71.993
+      "pytest_reported_seconds": 77.77,
+      "wall_elapsed_seconds": 78.151
     },
     "regression_equivalence": {
-      "source_test_tree_commit": "74ba7b14c2fffa983ae40dfcf572727444877640",
-      "audited_head": "b2893fb085df4e6d69312477d50a4ef95c95aabd",
-      "post_source_test_commit_diff": "metadata-only; no src/ or tests/ paths changed",
-      "diff_command": "git diff --name-status 74ba7b14c2fffa983ae40dfcf572727444877640..b2893fb085df4e6d69312477d50a4ef95c95aabd",
-      "diff_paths": [
-        "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-        "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-        "config/cf4_bundle_execution_governance_v1.json"
-      ]
+      "source_test_tree_commit": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
+      "audited_head": "7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
+      "post_source_test_commit_diff": "none; regression was run on the certified source/test tree",
+      "diff_command": "git diff --name-status 7739a4c61a5ff4cac6d2a1b268e78b494048f1cc..7739a4c61a5ff4cac6d2a1b268e78b494048f1cc",
+      "diff_paths": []
     },
     "mean_model_invariance_test": {
       "test_path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
