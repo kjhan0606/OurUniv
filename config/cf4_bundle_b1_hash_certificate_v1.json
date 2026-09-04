@@ -4,24 +4,24 @@
   "bundle": "B1-Z0-POSTERIOR",
   "immutable_tag": "cf4-b1-cert-515630a",
   "source_test_certified_commit": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
-  "metadata_binding_commit": "8f2ebdc013082dd49dc381dbde61f20087e7031b",
-  "certificate_generation_basis": "metadata-binding tree at 8f2ebdc; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
+  "metadata_binding_commit": "3786a787a67db1811daccebcfa2172aca4e8a3ba",
+  "certificate_generation_basis": "metadata-binding tree at 3786a78; certificate is a one-way external anchor and is not hash-pinned by the record or receipt",
   "record": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
-    "bytes": 31633,
-    "sha256": "20d77207d51f177edccd0ef47946b31829323f5976150e677a33993dbfb32836"
+    "bytes": 32577,
+    "sha256": "84bf0ee833fc89280b496770cb32a54404dfa85a4a72c97e9afcc0f0703c2862"
   },
   "receipt": {
     "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.json",
     "bytes": 1615,
-    "sha256": "92a5847bcaed17aeff5236e60d08163c5029e863284326762620eee1873b0d8e"
+    "sha256": "a22a50f8fd196b9209cf7a5ed62a0ae51fc28551b41e02961b66b2973acf4db4"
   },
   "receipt_raw_output": {
     "path": "config/cf4_bundle_b1_hash_verification_receipt_v2.txt",
     "bytes": 950,
-    "sha256": "d266fe684fd5be3db92552be71a83f536f48e74dca530f177ea775c569819ec4"
+    "sha256": "02ea1533209c16f6542a64f09f6d02cf9e27677b89db32e6a98f349ac8cf5e06"
   },
-  "linked_pin_count": 62,
+  "linked_pin_count": 64,
   "linked_pin_mismatch_count": 0,
   "one_way_anchor": true,
   "scope": "The source/test/science tree is certified by the immutable tag; the result record and receipt metadata are anchored by these one-way hashes. Untracked user-owned JAX/tripwire paths remain excluded and are runtime-checked absent."
