@@ -1,0 +1,100 @@
+{
+  "schema": "ouruniv-cf4-q6-corrective-knot-contract-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q6",
+  "owner": "driver",
+  "plan_status": "COMPLETE_TERMINAL_CANDIDATE2_COMPRESSION_NO_GO",
+  "prerequisite": {
+    "q5_commit": "896f037",
+    "q5_result": "config/cf4_q5_candidate23_design_result_v1.json",
+    "q5_result_sha256": "6689471431020b4d0cda69720c3a687bb01b5912e4d2d19f7a59f6c1d28c1282",
+    "agy": "CONDITIONAL-GO",
+    "opus5": "CONDITIONAL-GO",
+    "user_approval": "RECEIVED",
+    "fable_audit": "CONDITIONAL-GO",
+    "fable_audit_date": "2026-09-04",
+    "fable_required_amendments_applied": true,
+    "result": "config/cf4_q6_corrective_knot_contract_result_v1.json",
+    "result_sha256": "74629e1c91dac176e63d4173c67d15e58e0e195a71c9c7b3e456e935af6a9ef2"
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Resolve the Q5 audit blockers before any candidate implementation or posterior work: make the Q1 knot topology explicit, test whether exact aggregation offers any real compression, and close the manifest/fixture/resource contracts.",
+  "science_position": {
+    "direct_alignment": "A Q1-equivalent, scalable z=0 observation operator remains the prerequisite for a statistically valid posterior; Q6 must not claim an IC or <=0.3 cMpc/h result.",
+    "candidate_priority": "Candidate-2 exact knot-aligned epsilon moments is the only live design branch. Candidate-3 remains terminal falsification-only unless a new sparse proof satisfies both memory ceilings.",
+    "no_random_substitution": "No secure CF4-object substitution, arbitrary high-k boost, or random phase replacement may be used to hide operator error."
+  },
+  "scope": {
+    "design_contract": true,
+    "candidate_2_implementation": "DEVELOPMENT_SMOKE_ONLY",
+    "development_mocks": "ONE_PRE_REGISTERED_NON_DEGENERATE_SMOKE; FULL_SUITE_NOT_ENTERED_AFTER_TERMINAL_GATE",
+    "heldout_mocks": false,
+    "jax": false,
+    "posterior": false,
+    "ic_generation": false,
+    "pm_or_hop": false,
+    "zoom": false,
+    "gpfs": false,
+    "slurm": false,
+    "grok": false
+  },
+  "frozen_provenance": {
+    "q1_commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "q1_tree_sha": "4444868df93572389602b518239e239591db134a",
+    "q1_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+    "q1_source_git_blob_sha": "f4d34d656f4f8adac56617255da2665ca9825304",
+    "q1_source_mode": "100644",
+    "q5_plan_sha256": "63d2030148bc0e7475b95a7e9d9d76e8f99357a8ab32ff9c22f64e1ff63d1c24",
+    "development_fixture_manifest_path": "config/cf4_q6_non_degenerate_fixture_manifest_v1.json",
+    "development_fixture_manifest_file_sha256": "254815e64780e9dfb54c2b1b7aae0f4643dbab9b79ca8df6e43edaf1f9d18d9d",
+    "development_fixture_manifest_payload_sha256": "acdb27990d1ec913ccd5b68e5f66adac1f93551fbd45be08103c997d3e5b7531",
+    "heldout_manifest_path": "config/cf4_q4_seed_manifest_v1.json",
+    "heldout_manifest_file_sha256": "f4318a86944e30f7e401f182ce0da38ad3fcdb29bb0a0317f8c56b34135c842a",
+    "heldout_manifest_payload_sha256": "fa746035fa7f493e598f0f8b77dbb6e9f5d8f94433bb0050cb4c4a8d577e3760",
+    "heldout_manifest_payload_scope": "canonical sorted JSON with manifest_sha256 field omitted",
+    "heldout_evaluated": false
+  },
+  "work_packages": [
+    {
+      "id": "Q6.0",
+      "task": "Close provenance and fixture contracts: record both seed-hash scopes, verify the canonical payload digest read-only, and freeze a hashed development fixture manifest with non-degenerate LOS and sigma variation while leaving the 256 held-out seeds sealed.",
+      "acceptance": "The two hash scopes are reproducible and the pre-registered development fixture manifest/hash exercises changing LOS, sigma, TSC knots, periodic seams, sigma=0/near-zero branches, same-knot/different-coefficient, translated-cell, near-coincident, interval-permutation, seam/sliver and clip cases."
+    },
+    {
+      "id": "Q6.1",
+      "task": "Freeze the exact knot-aligned candidate-2 operator: absolute target-cell and 27-stencil mapping, per-signature interval boundaries and order/midpoints, degree-six epsilon coefficient tensor, sliver merge/clip/tail truncation and per-source renormalization rules, exact JVP/VJP transpose/scatter, singleton overflow and cold-particle policy.",
+      "acceptance": "The retained coefficient contraction and its transpose are algebraically identical to Q1 for every common signature and arbitrary cotangent; the 23 directions are probes only. No cross-knot Taylor remainder or dimensional multi-index shortcut is used."
+    },
+    {
+      "id": "Q6.2",
+      "task": "If Q6 implementation is approved, measure development-only signature count G/M, interval-count distribution K_h, exact value/gradient/topology gates, streamed host/device peaks and warm full-field end-to-end time. Do not run held-out, JAX, posterior or IC.",
+      "acceptance": "M/G <= 1.01 was observed on the pre-registered non-degenerate smoke, so candidate-2 compression is terminated immediately; full-N192 resource and warm-time measurements are not entered."
+    },
+    {
+      "id": "Q6.3",
+      "task": "Keep candidate-3 closed unless a dated sparse joint (delta_x, sigma*LOS) moment proof satisfies 64 GiB host and 16 GiB device ceilings before any allocation.",
+      "acceptance": "No mass-only deposition or tolerance relaxation; absent the proof, candidate-3 is recorded terminal NO-GO."
+    }
+  ],
+  "gates": {
+    "value": "L1 <= 1e-12 + 5e-3*oracle_l1, total and per population",
+    "gradient": "L1 <= 1e-8 + 1e-5*gradient_reference_l1 for all frozen directions",
+    "topology": "local cellwise median/p95/max, periodic seam and TSC-knot fixtures",
+    "sigma": "sigma_disp=2L and sigma=0/near-zero policy fixtures",
+    "resource": "64 GiB host and 16 GiB device persistent+temporary peaks measured before JIT/gradient launch; warm synchronized full-field end-to-end <=600 s",
+    "compression": "M/G <= 1.01 is immediate compression NO-GO; no posterior work follows",
+    "firewall": "192 development mocks only after Q6 approval; 256 held-out mocks remain sealed and one-shot"
+  },
+  "release_gates": [
+    "User explicitly approves Q6 before any implementation or development mock execution.",
+    "Fable audits and approves this Q6 plan for final-goal alignment and feasibility.",
+    "AGY and Claude Opus 5 audit the Q6 result at bundle end.",
+    "No GPFS, Slurm, posterior, IC, PM/HOP/RAMSES or <=0.3 cMpc/h claim occurs in Q6."
+  ],
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}
