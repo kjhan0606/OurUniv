@@ -82,6 +82,7 @@
   "primary_audit_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
   "primary_audit_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
   "primary_audit_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
+  "primary_audit_current_v20": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
   "primary_audit_current_v16_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.json", "bytes": 1792, "sha256": "5149966e907f4f790ce10b274735f033941c0fcc4ff44073dad362b8bb8ca452"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt", "bytes": 1233, "sha256": "a1c3967ba9d310071751557dd91965bf08d883099feed842c533f757b85eb92f"}
@@ -97,6 +98,10 @@
   "primary_audit_current_v19_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v19.json", "bytes": 2800, "sha256": "b346022c25747229860eaaaba157b0d75e85408718ffd66f9ebb24c517b61d02"},
     "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v19.txt", "bytes": 1584, "sha256": "e89e7c0d29e914d4d569e692c32cb7b1a12a8722f6306d43b294af809f798157"}
+  },
+  "primary_audit_current_v20_artifacts": {
+    "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.json", "bytes": 3224, "sha256": "f060812d3327b2d1089d295819a6e8afd4a8e33d02a150e7c499fbb085bd8d8f"},
+    "raw_output": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.txt", "bytes": 3070, "sha256": "1ad80f93ea09ec063b575f1c3a174939dce787e434f8d9ec72cc5e525fa46fc2"}
   },
   "primary_audit_current_v15_artifacts": {
     "json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v15.json", "bytes": 1183, "sha256": "7f4bc382af888577a3f0478ff25db967702555bd34a046d227a2e5f5fa7a2a59"},
@@ -312,8 +317,8 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
-    "primary_record": "PENDING_POST_V19_ANCHOR_REPAIR_AUDIT_V20",
+    "primary": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
+    "primary_record": "CONDITIONAL_POST_V20_DENOMINATOR_AND_ARM_ISOLATION_BLOCKS",
     "historical_v15": "config/cf4_bundle_b1_opus_closure_attempt_v15.json",
     "historical_v15_raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
     "historical_v13": "config/cf4_bundle_b1_opus_closure_attempt_v13.json",
@@ -349,10 +354,12 @@
       "config/cf4_bundle_b1_opus_closure_attempt_v17.txt": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v17.txt", "bytes": 1209, "sha256": "4b24ad789272e8bf4ba370934385d15853095ae00a1032e4cb905bcd0b9eaddd"},
       "config/cf4_bundle_b1_opus_closure_attempt_v18.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.json", "bytes": 3265, "sha256": "792ef630be38eb827922a63c6013b47caaa79740b3a4ccc4bf8b9031ef389f66"},
       "config/cf4_bundle_b1_opus_closure_attempt_v18.txt": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v18.txt", "bytes": 1696, "sha256": "3b9754b4fc5b8342e603d0bbcfaa0e076916e970dee2e71a363d5521f90031b5"}
+      ,"config/cf4_bundle_b1_opus_closure_attempt_v20.json": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.json", "bytes": 3224, "sha256": "f060812d3327b2d1089d295819a6e8afd4a8e33d02a150e7c499fbb085bd8d8f"}
+      ,"config/cf4_bundle_b1_opus_closure_attempt_v20.txt": {"path": "config/cf4_bundle_b1_opus_closure_attempt_v20.txt", "bytes": 3070, "sha256": "1ad80f93ea09ec063b575f1c3a174939dce787e434f8d9ec72cc5e525fa46fc2"}
     },
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
   "dependent_result_status": "CURRENT_AFTER_PERIODIC_RSD_REPAIR_RECALIBRATED",
-  "next_action": "Obtain Opus v20 closure audit after the one-way certificate/tag binding. Keep per-arm widths diagnostic-only, do not refit these same seeds, and do not open validation or B2 until a separately audited gate amendment exists."
+  "next_action": "Resolve the v20 legacy-coverage denominator contradiction and arm-level causal-isolation defect on fresh disjoint development seeds; keep widths diagnostic-only and do not open validation or B2 until a separately audited gate amendment exists."
 }

@@ -4,7 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_PERIODIC_REPAIR_CLOSURE_AUDIT",
   "historical_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
-  "current_closure_audit": "PENDING_POST_V18_REPAIR_AUDIT_V19",
+  "current_closure_audit": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
   "motivation": "Opus identified legacy per-voxel coverage as a single-member spread statistic rather than a frequentist calibration frequency over independent truth seeds.",
   "legacy_metric": {
     "definition": "fraction of voxels in one member inside that member's 16-draw field standard deviation",
@@ -36,6 +36,6 @@
     "observational_z0_posterior": "NOT_AUTHORIZED",
     "frontier_promotion": "BLOCKED",
     "B2_IC_FORWARD": "BLOCKED",
-    "required_next": "primary Opus v19 audit of the completed v18 provenance repairs before any contract adoption"
+    "required_next": "reconcile the legacy 47/47 denominator with the 64-member contingency and establish arm-level causal isolation on fresh disjoint seeds before any contract adoption; obtain Opus v21 closure audit"
   }
 }
