@@ -1,0 +1,9 @@
+HEAD 1f86d7b52ff529e04975503af80c4b0ac39b6753
+COMMAND inline_sha256_wc_verifier
+SCOPE result_record_v3 implementation dependency current_artifact and audit artifact pins
+HASH_ENTRIES 43
+MISMATCHES 0
+MISSING_FILES 0
+VALIDATION_OPENED false
+OBSERVATIONAL_Z0_POSTERIOR NOT_CREATED
+B2_IC_FORWARD NOT_STARTED
