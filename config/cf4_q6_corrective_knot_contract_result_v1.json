@@ -72,6 +72,7 @@
     "group_count_G": 192,
     "compression_ratio_M_over_G": 1.0,
     "compression_gate_M_over_G_le_1p01": true,
+    "compression_gate_disposition": "FIRED_TERMINAL_NO_GO",
     "decision": "Immediate candidate-2 compression NO-GO per frozen Q6 gate. Exactness passes, but no compression is demonstrated.",
     "timing_seconds": {
       "contract_build": 3.1758188381791115,
@@ -129,6 +130,11 @@
   "candidate_3": {
     "status": "TERMINAL_NO_GO",
     "reason": "Correct six-dimensional total-degree<=6 joint delta_x and sigma*LOS tensor requires 924 components: 292.36 GiB for six value fields and 6.57 TiB with 23 derivative directions, exceeding 64 GiB host and 16 GiB device ceilings absent a separately proven sparse representation."
+  },
+  "stage_audit": {
+    "opus5": "GO",
+    "scope": "Final corrected Q6 stage audit; no code execution or held-out access.",
+    "agy": "REMOVED_FROM_CURRENT_AUDITOR_LIST; historical audit artifacts are retained only as provenance"
   },
   "scientific_interpretation": {
     "what_is_validated": "The exact knot-aligned contraction reproduces the frozen Q1 value operator on a non-degenerate development smoke, and the mass-gather incidence map has an exact transpose identity for arbitrary cotangents.",

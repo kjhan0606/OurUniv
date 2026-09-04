@@ -15,7 +15,7 @@
     "fable_audit_date": "2026-09-04",
     "fable_required_amendments_applied": true,
     "result": "config/cf4_q6_corrective_knot_contract_result_v1.json",
-    "result_sha256": "aa763cd52b41fde25a10a53d6a3a142ab21677b1907b4b65934055f366866108"
+    "result_sha256": "e5546fe7e3c4ac09fe6f21061136521b5b8875cfeaf2f4c2c91fcd2939a59e26"
   },
   "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
   "purpose": "Resolve the Q5 audit blockers before any candidate implementation or posterior work: make the Q1 knot topology explicit, test whether exact aggregation offers any real compression, and close the manifest/fixture/resource contracts.",
@@ -64,7 +64,7 @@
     {
       "id": "Q6.1",
       "task": "Freeze the exact knot-aligned candidate-2 operator: absolute target-cell and 27-stencil mapping, per-signature interval boundaries and order/midpoints, degree-six epsilon coefficient tensor, sliver merge/clip/tail truncation and per-source renormalization rules, exact JVP/VJP transpose/scatter, singleton overflow and cold-particle policy.",
-      "acceptance": "The retained coefficient contraction and its transpose are algebraically identical to Q1 for every common signature and arbitrary cotangent; the 23 directions are probes only. No cross-knot Taylor remainder or dimensional multi-index shortcut is used."
+      "acceptance": "The retained coefficient contraction is algebraically identical to Q1 for every common signature; the mass-gather incidence map has an exact transpose for arbitrary cotangents. Geometry Jacobian VJP is explicitly out of Q6 scope. No cross-knot Taylor remainder or dimensional multi-index shortcut is used."
     },
     {
       "id": "Q6.2",
