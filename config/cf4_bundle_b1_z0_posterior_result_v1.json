@@ -4,7 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "CONTRACT_AMENDMENT_COMPLETE_CALIBRATION_BLOCKED_OPUS_PENDING",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
-  "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v1.json",
+  "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v2.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "scope": {
     "kf_design_contract_validated": true,
