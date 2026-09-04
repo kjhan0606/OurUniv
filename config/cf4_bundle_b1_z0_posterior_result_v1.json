@@ -4,7 +4,7 @@
   "bundle": "B1-Z0-POSTERIOR",
   "status": "DEVELOPMENT_CALIBRATION_NO_GO_SOL_AUDIT_REPAIR_REQUIRED",
   "governance": "config/cf4_bundle_execution_governance_v1.json",
-  "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v2.json",
+  "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
   "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
   "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v1.json",

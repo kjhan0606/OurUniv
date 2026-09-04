@@ -1,0 +1,23 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v3",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "requested_scope": "B1 repair bundle at commit 28a5d20",
+  "request": {
+    "timeout_seconds": 240,
+    "external_compute_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true,
+    "network_forbidden": true,
+    "file_modification_forbidden": true
+  },
+  "status": "TIMEOUT_NO_VERDICT",
+  "exit_code": 124,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "verdict": "NOT-RECEIVED",
+  "interpretation": "The primary auditor did not return a usable inspection or verdict. This is not GO, CONDITIONAL-GO, or NO-GO.",
+  "driver_action": "Invoke the configured backup auditor once, record its result separately, and keep downstream promotion blocked until a usable closure decision is available."
+}
