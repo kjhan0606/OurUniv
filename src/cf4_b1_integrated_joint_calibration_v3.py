@@ -38,6 +38,10 @@ SEED_STOP = SEED_START + MOCK_COUNT
 MARK_MEASUREMENT_SIGMA = 120.0
 MARK_SHARED_SIGMA = 35.0
 PRIOR_SIGMA = 1.0
+D_OVERDISPERSION_PHI = 0.35
+# Development-calibrated width factors are frozen before the next rerun.  They
+# alter only posterior draws, never the MAP/mean field or the strict gate.
+ARM_WIDTH_SCALE = {"A": 0.97, "B": 1.00, "C": 0.97, "D": 1.00}
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING = ROOT / "data/cf4_2mpp_crossmatch_v1.csv"
@@ -240,7 +244,8 @@ def _count_fisher(coeff: np.ndarray, arm: str) -> np.ndarray:
         minus = base._positive_intensity(minus_field, arm, _velocity_from_field(minus_field)) * base.TRAIN_FRACTION
         derivatives.append(((plus - minus) / (2.0 * step)).ravel())
     derivative = np.asarray(derivatives)
-    weighted = derivative / np.sqrt(np.maximum(centre.ravel(), 1.0e-12))[None, :]
+    variance = centre if arm != "D" else centre + D_OVERDISPERSION_PHI * centre**2
+    weighted = derivative / np.sqrt(np.maximum(variance.ravel(), 1.0e-12))[None, :]
     return weighted @ weighted.T
 
 
@@ -335,7 +340,7 @@ def run_mock(index: int, arm: str) -> dict[str, object]:
     estimate = _field_from_coeff(estimate_coeff)
     rng = np.random.default_rng(seeds["posterior"])
     precision = (np.eye(MODE_COUNT) / PRIOR_SIGMA**2 + _count_fisher(estimate_coeff, arm) + MARK_FISHER)
-    covariance = np.linalg.pinv(precision)
+    covariance = np.linalg.pinv(precision) * ARM_WIDTH_SCALE[arm] ** 2
     draws_coeff = rng.multivariate_normal(estimate_coeff, covariance, size=POSTERIOR_DRAWS)
     draws = np.asarray([_field_from_coeff(c) for c in draws_coeff])
     metrics = _mode_metrics(truth, draws, estimate, train, holdout, arm, observed, sigma,
@@ -368,6 +373,8 @@ def run_calibration() -> dict[str, object]:
                                  "secure_rows": len(MARKS["secure_ids"]), "secure_groups": int(MARKS["manifest"]["counts"]["secure_cf4_groups"]),
                                  "excluded_target_rows_before_binning": MARKS["excluded_target_rows"], "selection_and_ownership": "canonical_manifest",
                                  "rsd_fog_tsc_nuisance_probes": run_joint_harness(),
+                                 "posterior_width_calibration": {"arm_scale": ARM_WIDTH_SCALE, "D_overdispersion_phi": D_OVERDISPERSION_PHI,
+                                                                  "mean_model_changed": False},
                                  "disjoint_target_exclusion_probe": DISJOINT_TARGET_PROBE},
             "seed_firewall": {"development_count": MOCK_COUNT, "seed_start_inclusive": SEED_START, "seed_stop_exclusive": SEED_STOP,
                               "development_auxiliary_streams": {"counts": [2026400000, 2026400064], "marks": [2026500000, 2026500064], "posterior": [2026600000, 2026600064]},

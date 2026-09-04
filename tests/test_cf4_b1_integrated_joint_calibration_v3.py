@@ -40,3 +40,8 @@ def test_shared_group_mark_fisher_matches_direct_covariance_inverse():
     expected = jac.T @ np.linalg.inv(covariance) @ jac
     actual = calibration._single_group_mark_fisher(jac, sigma, tau)
     np.testing.assert_allclose(actual, expected, rtol=1.0e-12, atol=1.0e-12)
+
+
+def test_width_repair_does_not_change_mean_model():
+    assert calibration.ARM_WIDTH_SCALE == {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.0}
+    assert calibration.D_OVERDISPERSION_PHI == 0.35

@@ -2,24 +2,24 @@
   "schema": "ouruniv-cf4-bundle-b1-integrated-joint-development-calibration-result-record-v3",
   "date": "2026-09-04",
   "bundle": "B1-Z0-POSTERIOR",
-  "status": "COMPLETE_64_INTEGRATED_JOINT_MOCKS_RESEALED_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "status": "COMPLETE_WIDTH_REPAIR_64_INTEGRATED_JOINT_MOCKS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
   "predecessor": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
   "implementation": {
     "source": {
       "path": "src/cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 22365,
-      "sha256": "0ce2c271ebb872287429cf6138ed5cdedc2a75d2b4ad2e8143e32d930f7663b0"
+      "bytes": 22960,
+      "sha256": "b5f2808cc3b60f7ef882ba00f78585f20b1dde8561bfb62b8a49bdb160960811"
     },
     "test": {
       "path": "tests/test_cf4_b1_integrated_joint_calibration_v3.py",
-      "bytes": 1734,
-      "sha256": "676a5b5c2d365430d4e6ae47bc6316c81fa429a427ca12c16f395f9917c6c141"
+      "bytes": 1925,
+      "sha256": "165b42a7fd8e5ddcb2be824a81eae4d1a5ca5c74383dacfaebe8938a35229c6b"
     }
   },
   "result": {
     "path": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
-    "bytes": 8738,
-    "sha256": "59f6bd5783e4e8a9395f06a16440b9f703b4185fa275f525404de10ab0af3e38"
+    "bytes": 9099,
+    "sha256": "3196fb1f09ee91381cdd905c693d463ae12da1c2ba417d1b1d524ed3c05d40a1"
   },
   "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
   "primary_audit_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v4.json",
@@ -31,6 +31,8 @@
   "primary_audit_current_v8": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
   "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
   "diagnosis": "config/cf4_b1_calibration_diagnosis_result_v1.json",
+  "width_repair": "config/cf4_b1_posterior_width_repair_result_v1.json",
+  "diagnosis_current": "config/cf4_b1_calibration_diagnosis_result_v2.json",
   "diagnosis_implementation": {
     "source": {"path": "src/cf4_b1_calibration_diagnosis_v1.py", "bytes": 5827, "sha256": "5a2756c395016ba52298fdb344add12a6e3c787fa37d92dfa73206cedbb4f785"},
     "test": {"path": "tests/test_cf4_b1_calibration_diagnosis_v1.py", "bytes": 853, "sha256": "2553daba8980d66b2d1594e9852121e7b89b0193580c517dc0352a80d8e0cd5d"},
@@ -69,11 +71,11 @@
     "strict_low_k_gate_pass": false,
     "fit_success_count": 64,
     "fit_abnormal_termination_count": 0,
-    "failure_histogram": {"coverage68": 50, "coverage95": 49},
+    "failure_histogram": {"coverage68": 49, "coverage95": 49},
     "all_members_finite_joint": true,
     "all_members_positive_support": true,
     "all_arms_have_heldout_gain": true,
-    "interpretation": "The integrated same-truth joint calibration is numerically finite and factor-consistent; all 64 optimizers converge. Only 11/64 members pass because coverage68/coverage95 fail (50/49 members respectively), with A/C overcoverage and D stress-arm undercoverage. This blocks promotion and is not an observational posterior claim."
+    "interpretation": "The exact grouped Fisher and declared width repair are numerically finite and factor-consistent; all 64 optimizers converge. Only 11/64 members pass because coverage68/coverage95 fail (49/49 members respectively), with A/C overcoverage and D stress-arm undercoverage. This blocks promotion and is not an observational posterior claim."
   },
   "scientific_disposition": {
     "observational_z0_posterior": "NOT_CREATED",
@@ -84,10 +86,10 @@
     "0p3_cMpc_h_claim": "NOT_ALLOWED"
   },
   "closure_audit": {
-    "primary": "NO-GO",
-    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
+    "primary": "PENDING_CURRENT_WIDTH_REPAIR_AUDIT",
+    "primary_record": "config/cf4_bundle_b1_opus_closure_attempt_v9.json",
     "backup": "NO-GO_SUPPORTING",
     "backup_record": "config/cf4_bundle_b1_sol_closure_audit_v3.json"
   },
-  "next_action": "Revise uncertainty and stress-arm calibration using development seeds only, preserving the frozen mean model and gate; rerun the same 64 seeds before any validation opening or B2."
+  "next_action": "Obtain current-width-repair Opus closure audit; if still NO-GO, design a non-Gaussian/arm-dependent width model using development seeds only, preserving the frozen mean model and gate."
 }
