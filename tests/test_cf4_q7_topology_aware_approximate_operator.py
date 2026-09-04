@@ -170,3 +170,45 @@ def test_summary_bound_api_requires_175_fixed_maps() -> None:
     assert np.all(result == 1.5)
     with pytest.raises(LikelihoodInputError):
         induced_summary_l1_bounds(per_bin, np.ones((174, 2)))
+
+
+def test_interval_certificate_contains_sourcewise_response_and_rejects_wrap_hull() -> None:
+    # A small same-topology perturbation stays away from the periodic seam.  The
+    # internally generated bound must contain the exact sourcewise difference.
+    positions = np.asarray(
+        [[1.5, 1.5, 1.5], [1.5001, 1.5001, 1.5001]], dtype=np.float64
+    )
+    los = np.asarray([[0.0, 0.0, 1.0], [0.0, 0.0, 1.0]], dtype=np.float64)
+    scales = np.asarray([0.1, 0.1001], dtype=np.float64)
+    atlas = build_topology_aware_atlas(positions, los, scales, 8, 8.0)
+    assert atlas.bin_count == 1
+    assert atlas.bins[0].continuous_certified
+    masses = np.asarray([[1.0, 2.0]], dtype=np.float64)
+    candidate = evaluate_atlas(atlas, masses)
+    oracle = sourcewise_q1_fields(atlas, masses)
+    measured_l1 = float(np.sum(np.abs(candidate.fields - oracle)))
+    assert measured_l1 <= 2.0 * atlas.certified_spread_l1[0] + 1.0e-14
+
+    # The same perturbation with a displacement support crossing x=0 must fail
+    # the certificate and use sourcewise fallback until a wrapped union bound is
+    # implemented.
+    seam_positions = np.asarray(
+        [[0.1, 1.5, 1.5], [0.1001, 1.5, 1.5]], dtype=np.float64
+    )
+    seam_los = np.asarray([[1.0, 0.0, 0.0], [1.0, 0.0, 0.0]], dtype=np.float64)
+    seam_atlas = build_topology_aware_atlas(seam_positions, seam_los, scales, 8, 8.0)
+    assert seam_atlas.bin_count == 1
+    assert not seam_atlas.bins[0].continuous_certified
+
+
+def test_directional_basis_requires_recomputed_content_provenance() -> None:
+    positions, los, scales = _geometry()
+    atlas = build_topology_aware_atlas(positions, los, scales, 8, 8.0)
+    masses = np.ones((6, positions.shape[0]), dtype=np.float64)
+    basis = np.ones((Q7_DERIVATIVE_DIRECTIONS, positions.shape[0]), dtype=np.float64)
+    with pytest.raises(LikelihoodInputError):
+        evaluate_atlas(atlas, masses, directional_mass_basis=basis)
+    metadata = _basis_metadata(basis)
+    metadata["directional_basis_content_sha256"] = "0" * 64
+    with pytest.raises(LikelihoodInputError):
+        evaluate_atlas(atlas, masses, directional_mass_basis=basis, **metadata)

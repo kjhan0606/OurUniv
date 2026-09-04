@@ -27,8 +27,8 @@
     "config/cf4_q7_topology_aware_approximate_operator_plan_v1.json": "02273c557661c1d0b38636fe2c4c4347b7b6116e6a53769b74db915632cfaae0",
     "config/cf4_q7_development_fixture_manifest_v1.json": "7bfa95fa9be2547fb0ad4c25b509af3d2cf877c6f5717d62b907cba05b77e142",
     "scripts/cf4_q7_development_fixture.py": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
-    "src/cf4_q7_topology_aware_approximate_operator.py": "73fb6847d3532e94ce652fdd24197c999f9fde0aa8126e756742c87d24033912",
-    "tests/test_cf4_q7_topology_aware_approximate_operator.py": "925db12984e9fa55fcb059ada96b37de3078d9976aacf6f4b82f2d6a1ddd0f2d",
+    "src/cf4_q7_topology_aware_approximate_operator.py": "141b8672787f47319c4e806d1b5530f6c6ff359f8f6a1e65898a85624d88db7c",
+    "tests/test_cf4_q7_topology_aware_approximate_operator.py": "859b17bdbae4f0c4c943c9efbcf95ffed44af2816dd47d91f04614b09aac1e84",
     "config/cf4_q7_frozen_23_mass_basis_v1.json": "7bbbb9c1a51bd322b118f595bffb8a7ff6863d7671aa0e15f37d6e660e2cc1b9"
   },
   "implementation": {
@@ -52,7 +52,7 @@
     "commands": [
       "pytest -q tests/test_cf4_q1_cell_integrated_convolution.py tests/test_cf4_q6_knot_aligned_operator.py tests/test_cf4_q7_topology_aware_approximate_operator.py"
     ],
-    "result": "28 passed in 33.41s",
+    "result": "30 passed in 33.39s",
     "fixture_digest_reproducibility": "PASS for all seven frozen seeds",
     "q6_regression": "PASS (6 tests)"
   },

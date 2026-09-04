@@ -248,13 +248,14 @@ def _continuous_lipschitz_enclosure(
 ) -> tuple[np.ndarray, np.ndarray] | None:
     """Construct a validated enclosure over the observed topology cell.
 
-    The response is a product of periodic TSC weights.  Away from a cell
-    seam, each component has coordinate derivative bounded by ``2 / dx``;
-    the Gaussian displacement has ``E|epsilon| <= 2`` under the frozen
-    truncation.  Directed-rounded geometry radii therefore give a conservative
-    componentwise Lipschitz enclosure.  If the observed hull touches a seam,
-    the sigma-zero branch, or a near-zero scale regime, no continuous claim is
-    made and the public evaluator uses sourcewise Q1.
+    The response is a product of periodic TSC weights.  Each component has
+    coordinate derivative bounded by ``2 / dx``.  For the normalized frozen
+    Gaussian on ``[-T,T]``, ``E|epsilon| <= min(T, 1)``; this is an upper bound,
+    not the truncated expectation used as a lower estimate.  Directed-rounded
+    geometry radii therefore give a conservative componentwise Lipschitz
+    enclosure.  If the observed hull touches a periodic seam, the sigma-zero
+    branch, or a near-zero scale regime, no continuous claim is made and the
+    public evaluator uses sourcewise Q1.
     """
 
     if not source_members:
@@ -285,15 +286,31 @@ def _continuous_lipschitz_enclosure(
         if position_lo[axis] <= lo_cell * spacing or position_hi[axis] >= (lo_cell + 1) * spacing:
             return None
     representative_position = compressed.positions[representative_exact_group]
-    representative_d = compressed.displacement_scales[representative_exact_group] * compressed.los_unit_vectors[representative_exact_group]
+    representative_scale = float(compressed.displacement_scales[representative_exact_group])
+    representative_los = compressed.los_unit_vectors[representative_exact_group]
+    representative_d = representative_scale * representative_los
     delta_position = np.max(np.abs(positions - representative_position[None, :]), axis=0)
-    delta_d = np.max(np.abs(d - representative_d[None, :]), axis=0)
+    delta_scale = float(np.max(np.abs(scales - representative_scale)))
+    # Bound changes in sigma explicitly in addition to the observed vector
+    # displacement hull.  The extra term remains valid when LOS and sigma vary
+    # together, rather than assuming a fixed direction.
+    delta_d = np.max(np.abs(d - representative_d[None, :]), axis=0) + delta_scale
+    if np.any(delta_position > 0.0) or np.any(delta_d > 0.0):
+        # A raw support crossing 0/L would require a union of wrapped interval
+        # branches.  Refuse certification until that union is represented.
+        for position, displacement in zip(positions, d):
+            support_lo = position - float(compressed.contracts[representative_exact_group].tail_cutoff) * np.abs(displacement)
+            support_hi = position + float(compressed.contracts[representative_exact_group].tail_cutoff) * np.abs(displacement)
+            if np.any(support_lo < 0.0) or np.any(support_hi >= box_size):
+                return None
     try:
         radius = OutwardInterval.point(0.0)
         for axis in range(3):
             radius = radius + (OutwardInterval.point(float(delta_position[axis])) + OutwardInterval.point(float(delta_d[axis]))) / OutwardInterval.point(spacing)
-        # The factor 4 is (TSC derivative <=2) times (truncated E|epsilon| <=2).
-        widening = (radius * OutwardInterval.point(4.0)).hi
+        # The factor 2*min(T,1) is a directed-rounded upper bound for the
+        # expected displacement contribution under the normalized Q1 tail.
+        epsilon_abs_bound = min(float(compressed.contracts[representative_exact_group].tail_cutoff), 1.0)
+        widening = (radius * OutwardInterval.point(2.0 * epsilon_abs_bound)).hi
         lower = np.empty_like(representative)
         upper = np.empty_like(representative)
         for index, value in np.ndenumerate(representative):
