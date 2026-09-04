@@ -54,8 +54,8 @@
   ],
   "current_bundle": "B1-Z0-POSTERIOR",
   "last_bundle_result": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
-  "current_status": "B1 design/contract validation complete; data-likelihood contracts block posterior promotion.",
-  "next_bundle_rule": "Do not begin B2 until the B1 dossier is complete and the user approves the transition at this bundle boundary; Opus timeout is recorded, not converted to GO.",
+  "current_status": "B1 likelihood contract amendment complete; development calibration blocks posterior promotion.",
+  "next_bundle_rule": "Complete the frozen B1 development calibration and one Opus closure audit before requesting the B2 boundary approval; Opus timeout is recorded, not converted to GO.",
   "execution_firewall": {
     "gpfs": false,
     "slurm": false,
