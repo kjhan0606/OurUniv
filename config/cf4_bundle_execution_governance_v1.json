@@ -72,24 +72,25 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z0-DENSITY-LIKELIHOOD-REPAIR",
+  "current_bundle": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR development materialization completed. GPFS is available as shared project storage; the official completeness maps and 36,635-row metadata-consistent subset are source-bound and validated. The initial Phase-C v5 pilot failed sampler/PMWD mechanics, but the subsequent generator v3 (8/8 seeds), sampler-mechanics v5/v6, and the repaired balanced posterior materializer all pass for eight development mocks. The resulting N32 mock-only density/velocity posterior is available for calibration; no observational field inference, parent promotion, high-k completion, IC, PM, HOP, RAMSES or 0.3 cMpc/h claim has run.",
+  "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR closed conditionally after the Opus audit and record-only corrections. The repaired balanced N32 mock-only posterior materializer passes all eight development mocks, while its wide 68-percent coverage (0.9287 mean) and low high-k response remain calibration diagnostics rather than a promotion result. Z1 now addresses calibration adjudication and the Q0 cell-integrated/analytic LOS operator repair; no observational field inference, parent promotion, high-k completion, IC, PM, HOP, RAMSES or 0.3 cMpc/h claim has run.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
-    "sha256": "c445ddc809eeda7c97321179e6c649be3ab57a9d113093b509cfa911f5ffd543",
-    "status": "PASS_BALANCED_DEVELOPMENT_Z0_POSTERIOR",
+    "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
+    "status": "PASS_BALANCED_DEVELOPMENT_Z0_MOCK_MECHANICS",
     "task_count": 8,
     "valid_artifact_count": 8,
     "passing_task_count": 8,
     "density_global_68_mean": 0.9287033081054688,
     "density_global_95_mean": 0.9806251525878906,
-    "actual_CF4_posterior": false
+    "actual_CF4_posterior": false,
+    "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "current_closure_audit": null,
-  "next_closure_audit": "AT_Z0_DENSITY_LIKELIHOOD_REPAIR_BUNDLE_CLOSURE_ONLY",
-  "next_bundle_rule": "Complete the minimum numerical repair and one development-only z=0 posterior stability check, then stop at the bundle boundary for the single Opus closure audit. Keep actual CF4 inference, parent promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
+  "current_closure_audit": "config/cf4_z0_density_likelihood_repair_opus_closure_audit_v1.json",
+  "next_closure_audit": "AT_Z1_CALIBRATION_ADJUDICATION_OPERATOR_REPAIR_BUNDLE_CLOSURE_ONLY",
+  "next_bundle_rule": "In Z1, preregister and adjudicate calibration using the stored development draws, repair the Q0 cell-integrated/analytic LOS operator against a NumPy oracle, extend field convergence monitoring and harden provenance. Stop at the Z1 boundary for one Opus closure audit. Keep actual CF4 inference, parent promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,

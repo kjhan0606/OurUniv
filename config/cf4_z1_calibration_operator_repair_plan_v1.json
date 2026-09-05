@@ -1,0 +1,43 @@
+{
+  "schema": "ouruniv-cf4-z1-calibration-operator-repair-plan-v1",
+  "date": "2026-09-05",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
+  "status": "AUTHORIZED_DEVELOPMENT_ONLY",
+  "basis": "Opus conditional closure audit of Z0-DENSITY-LIKELIHOOD-REPAIR and user instruction to proceed.",
+  "objective": "Decide whether the repaired mock posterior is statistically calibrated and repair the unresolved GH/TSC line-of-sight operator before any actual CF4 inference.",
+  "work_packages": [
+    {
+      "id": "Z1-A-CALIBRATION",
+      "method": "Use the stored eight-task posterior summaries to adjudicate interval width, truth-minus-mean z spread, field correlation, and k-shell information; preregister the future calibration gate.",
+      "execution": "CPU read-only analysis of existing GPFS artifacts",
+      "deliverable": "calibration adjudication record",
+      "promotion": false
+    },
+    {
+      "id": "Z1-B-LOS-OPERATOR",
+      "method": "Implement a cell-integrated or analytic Gaussian LOS convolution; compare current point-deposit GH/TSC, converged quadrature and a NumPy oracle on the frozen boundary and non-boundary fixtures.",
+      "execution": "Slurm-only numerical execution; no actual CF4 datum",
+      "deliverable": "Q1 operator result record",
+      "promotion": false
+    },
+    {
+      "id": "Z1-C-CONVERGENCE-PROVENANCE",
+      "method": "Extend field convergence beyond eight white coordinates, surface k-shell/ROI summaries, bind task and aggregate commits, and preserve failed-run directories without broad deletion.",
+      "execution": "Minimal code/record changes only",
+      "deliverable": "provenance and convergence notes",
+      "promotion": false
+    }
+  ],
+  "entry_constraints": {
+    "actual_CF4_observational_inference": false,
+    "actual_2Mpp_counts": false,
+    "observed_CF4_velocity_datum": false,
+    "validation_seed": false,
+    "parent_posterior_promotion": false,
+    "high_k_frontier_claim": false,
+    "IC_PM_HOP_RAMSES": false,
+    "resolution_0p3_cMpc_h_claim": false,
+    "GPFS_specific_implementation": false
+  },
+  "closure_rule": "After Z1 work packages finish, obtain one Opus bundle-closure audit; do not enter actual CF4 inference or B2/IC without a separate explicit promotion decision."
+}

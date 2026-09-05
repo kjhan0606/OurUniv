@@ -1,0 +1,46 @@
+{
+  "schema": "ouruniv-cf4-z1-calibration-adjudication-result-v1",
+  "date": "2026-09-05",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
+  "status": "CALIBRATION_NOT_YET_ACCEPTABLE",
+  "input_aggregate": {
+    "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
+    "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
+    "task_count": 8
+  },
+  "field_calibration_summary": {
+    "nominal_density_global_68": 0.68,
+    "measured_density_global_68_mean": 0.9287033081054688,
+    "measured_density_global_95_mean": 0.9806251525878906,
+    "truth_std_mean": 0.6833087599179185,
+    "posterior_cell_std_mean": 0.9412511305868634,
+    "truth_minus_mean_z_std_mean": 0.7285562534924286,
+    "truth_mean_posterior_mean_correlation_mean": 0.3450412029563948,
+    "truth_minus_mean_z_mean_mean": 0.0006610030461177382
+  },
+  "ranges_over_eight_mocks": {
+    "truth_minus_mean_z_std": [0.6888543153958655, 0.7968828011925431],
+    "truth_mean_posterior_mean_correlation": [0.2939682962396464, 0.38536985250207534],
+    "posterior_cell_std_mean": [0.9377813193173097, 0.9458057418651151]
+  },
+  "mean_density_k_shell": {
+    "k_h_Mpc": [0.0231761490, 0.0418869041, 0.0570658262, 0.0838263084, 0.1157676534, 0.1477697921, 0.1801895825, 0.2130958158, 0.2458237939],
+    "cross_correlation": [0.7040496257, 0.5440270961, 0.5112849888, 0.4457205960, 0.3987328427, 0.3331760530, 0.2762179829, 0.2261852713, 0.1827106325],
+    "posterior_variance_reduction": [0.5044916789, 0.2786212142, 0.2241259271, 0.1836326231, 0.1347869073, 0.1028406198, 0.0710523479, 0.0484206038, 0.0319142121]
+  },
+  "adjudication": {
+    "interval_calibration": "FAIL_WIDE_INTERVAL_DIAGNOSTIC",
+    "information_frontier": "MOCK_ONLY_LOW_K_RESPONSE_DECAYS; NO_OBSERVATIONAL_FRONTIER",
+    "interpretation": "The posterior mean is nearly unbiased in aggregate, but intervals are too wide and the recovered field correlation is modest; this is not a calibrated or promotable observational posterior.",
+    "next_action": "Diagnose model mismatch and nuisance/gauge width, then repair the unresolved LOS operator against a NumPy oracle."
+  },
+  "firewall": {
+    "actual_CF4_observational_inference": false,
+    "actual_2Mpp_counts": false,
+    "observed_CF4_velocity_datum": false,
+    "validation_seed": false,
+    "parent_posterior_promotion": false,
+    "IC_PM_HOP_RAMSES": false,
+    "resolution_0p3_cMpc_h_claim": false
+  }
+}
