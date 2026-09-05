@@ -25,7 +25,7 @@ readonly aggregate_output=/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_poster
 : "${SLURM_JOB_ID:?}" "${SLURM_SUBMIT_HOST:?}"
 : "${OUTPUT_ROOT:?}" "${AGGREGATE_OUTPUT:?}" "${EXPECTED_COMMIT:?}" "${EXPECTED_UPSTREAM_COMMIT:?}"
 : "${SUBMISSION_CONTROLLER:?}" "${CONTROLLER_ACTION:?}"
-[[ "$OUTPUT_ROOT" == "$output_root" && "$AGGREGATE_OUTPUT" == "$aggregate_output ]]
+[[ "$OUTPUT_ROOT" == "$output_root" && "$AGGREGATE_OUTPUT" == "$aggregate_output" ]]
 [[ "$SUBMISSION_CONTROLLER" == syntax && "$CONTROLLER_ACTION" == cf4_z0_posterior_aggregate_v1 ]]
 [[ "$SLURM_SUBMIT_HOST" == syntax || "$SLURM_SUBMIT_HOST" == syntax.* ]]
 [[ "$(scontrol show config | awk '$1 == "ClusterName" {print $3}')" == syntax ]]
