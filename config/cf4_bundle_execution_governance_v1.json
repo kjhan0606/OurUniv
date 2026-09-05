@@ -8,6 +8,13 @@
     "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
     "audit_frequency": "One Claude Opus 5 primary audit at bundle closure only. gpt-5.6-sol is called only as backup when Opus does not inspect/return a usable verdict, or when the driver explicitly doubts the Opus result and requests a check. No audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
     "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
+    "storage_semantics": {
+      "gpfs": "shared POSIX storage mounted on login and compute nodes; treat it like /home for declared project artifacts",
+      "gpfs_read_write": "allowed only for explicitly declared inputs and new output directories under normal filesystem permissions",
+      "gpfs_specific_implementation": false,
+      "gpfs_specific_integrity_experiments": false,
+      "network_access": false
+    },
     "roles": {
       "driver": "Plan the bundle, implement, execute, analyze, commit, report and stop at the bundle boundary.",
       "claude_opus_5": "Primary bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
@@ -47,6 +54,12 @@
       "scientific_boundary": "no catalog or external-artifact read, no mock truth opening, no posterior/frontier inference, no KF-EXPAND, IC, PM, HOP or RAMSES execution"
     },
     {
+      "id": "Z0-DENSITY-LIKELIHOOD-REPAIR",
+      "scope": "Use the source-bound GPFS artifacts and existing Phase-A/B/C records to repair the datum-bearing z=0 density-likelihood route after the Phase-C sampler/PMWD NO-GO",
+      "deliverable": "One concise repair decision record; only the minimum implementation or execution needed to establish a stable development-mock z=0 posterior",
+      "scientific_boundary": "z=0 density/velocity posterior development only; no actual CF4 posterior, parent promotion, high-k completion, IC, PM, HOP, RAMSES or 0.3 cMpc/h claim"
+    },
+    {
       "id": "B2-IC-FORWARD",
       "scope": "conditional high-k completion, q-corrected IC proposal, PM forward evolution, and z=0 density/velocity reproduction",
       "deliverable": "One IC-to-z=0 forward-validation dossier and one Opus closure audit",
@@ -59,14 +72,17 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "KF-DESIGN-READINESS",
-  "last_bundle_result": "config/cf4_kf_design_readiness_result_v1.json",
-  "current_status": "KF-DESIGN-READINESS CLOSED with Opus GO on the record-only scope. Baseline binding and geometry-only manifest validation are complete locally; source-bound likelihood inputs remain explicit blockers. No external artifact or compute execution occurred.",
-  "current_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "next_closure_audit": "NONE_KF_DESIGN_READINESS_CLOSED; NEXT_AUDIT_ONLY_AT_NEXT_BUNDLE",
-  "next_bundle_rule": "KF-DESIGN-READINESS closure is complete. Await explicit user approval before entering a new scientific bundle. The next bundle must address source-bound selection/likelihood inputs; keep validation, posterior/frontier promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
+  "current_bundle": "Z0-DENSITY-LIKELIHOOD-REPAIR",
+  "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
+  "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR entered with user approval. GPFS is available as shared project storage; the official completeness maps and 36,635-row metadata-consistent subset are already source-bound and validated. The existing Phase-C v5 development pilot is a terminal sampler/PMWD NO-GO, so repair must target numerical stability and sampler identifiability before any observational field inference.",
+  "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
+  "current_closure_audit": null,
+  "next_closure_audit": "AT_Z0_DENSITY_LIKELIHOOD_REPAIR_BUNDLE_CLOSURE_ONLY",
+  "next_bundle_rule": "Complete the minimum numerical repair and one development-only z=0 posterior stability check, then stop at the bundle boundary for the single Opus closure audit. Keep actual CF4 inference, parent promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
   "execution_firewall": {
-    "gpfs": false,
+    "gpfs": true,
+    "gpfs_shared_storage": true,
+    "gpfs_specific_implementation": false,
     "slurm": false,
     "production": false,
     "heldout_data": false
