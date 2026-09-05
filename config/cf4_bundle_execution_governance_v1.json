@@ -6,10 +6,19 @@
   "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
   "policy": {
     "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
-    "audit_frequency": "One Claude Opus 5 primary audit at bundle closure only. gpt-5.6-sol is called only as backup when Opus does not inspect/return a usable verdict, or when the driver explicitly doubts the Opus result and requests a check. No audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
+    "audit_frequency": "When the driver is Astra, omit Fable pre-bundle and Opus closure audits under astra_driver_exception. Otherwise retain one Opus closure audit and the existing sol backup rule. No audit pauses an internal step except for a safety or physics-failure stop condition.",
+    "astra_driver_exception": {
+      "condition": "The active driver is Astra (gpt-6-astra).",
+      "fable_pre_bundle_audit": "SKIP",
+      "opus_bundle_closure_audit": "SKIP",
+      "automatic_backup_audit": false,
+      "driver_responsibility": "Assess design proportionality, final CF4 goal contribution, feasibility and mandatory/deferred scope; review code and results and record the closure judgment.",
+      "approval_before_next_bundle": "Still required from the user.",
+      "precedence": "Overrides external-audit requirements in project plans while Astra drives; earlier audit records remain historical. For other drivers, the ordinary audit policy applies unless the user directs otherwise."
+    },
     "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
     "pre_bundle_design_audit": {
-      "required": true,
+      "required_when": "The active driver is not Astra; see astra_driver_exception.",
       "auditor": "fable",
       "timing": "After the driver writes a bundle design and before that bundle begins execution; internal work already authorized inside the current bundle may continue only within its declared scope.",
       "questions": [
@@ -18,7 +27,7 @@
         "Is the plan feasible under the declared data, memory, GPU, wall-time and model contracts?",
         "Which items are mandatory for the next scientific gate and which must be deferred?"
       ],
-      "decision": "The driver records Fable's advice and may enter the next bundle only after resolving its mandatory changes; this is a design audit, not the Opus bundle-closure audit."
+      "decision": "For non-Astra drivers, record Fable's advice and resolve mandatory changes. Astra performs the design assessment directly. Both require user approval before entering the next bundle."
     },
     "storage_semantics": {
       "gpfs": "shared POSIX storage mounted on login and compute nodes; treat it like /home for declared project artifacts",
@@ -28,11 +37,11 @@
       "network_access": false
     },
     "roles": {
-      "driver": "Plan the bundle, implement, execute, analyze, commit, report and stop at the bundle boundary.",
-      "claude_opus_5": "Primary bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
-      "gpt_5_6_sol": "Backup bundle-closure audit only when Opus does not inspect/return a usable verdict or the driver explicitly requests a check because the Opus result is not trusted; not an independent parallel re-audit.",
+      "driver": "Plan, implement, execute, analyze, commit, report and await user approval at the next bundle boundary. Astra also performs the design assessment and closure review directly.",
+      "claude_opus_5": "Primary closure auditor for non-Astra drivers; skipped when Astra drives.",
+      "gpt_5_6_sol": "Backup only when an applicable Opus audit is unavailable or doubted; no automatic substitute for audits waived under the Astra exception.",
       "grok": "Not an auditor in this workflow.",
-      "fable": "Pre-bundle design auditor: assess over-measurement, contribution to the CF4-to-z=0-posterior-to-IC-to-forward-validation goal, feasibility, and mandatory versus deferred scope. The user approves entry into the next bundle. Opus remains the closure auditor."
+      "fable": "Pre-bundle design auditor for non-Astra drivers: assess over-measurement, final-goal contribution, feasibility and mandatory/deferred scope. Skipped when Astra drives."
     },
     "stop_conditions": [
       "data or provenance integrity failure",
@@ -102,8 +111,8 @@
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
   "current_closure_audit": "config/cf4_z1_opus_closure_audit_v1.json",
-  "next_closure_audit": "AT_NEXT_APPROVED_BUNDLE_CLOSURE",
-  "next_bundle_rule": "Prepare a necessity-first comparison of the active operator against Q1; obtain Fable design advice on the correct CF4 goal and user approval before starting the next bundle. Keep actual CF4 inference, parent promotion and IC/forward runs closed until their scientific gates pass.",
+  "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
+  "next_bundle_rule": "Prepare a necessity-first comparison of the active operator against Q1. Astra assesses the design directly; other drivers obtain Fable design advice. Obtain user approval before starting the next bundle. Actual CF4 inference, parent promotion and IC/forward runs still require their scientific gates.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,
