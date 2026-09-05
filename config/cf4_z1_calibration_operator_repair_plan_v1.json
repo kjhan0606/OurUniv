@@ -4,6 +4,17 @@
   "bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
   "status": "AUTHORIZED_DEVELOPMENT_ONLY",
   "basis": "Opus conditional closure audit of Z0-DENSITY-LIKELIHOOD-REPAIR and user instruction to proceed.",
+  "pre_bundle_design_audit": {
+    "auditor": "fable",
+    "status": "REQUESTED",
+    "required_questions": [
+      "over-measurement versus scientific value",
+      "contribution to final RT, stellar feedback, AGN feedback and dust-aware zoom/hydro objective",
+      "feasibility under current compute/data contracts",
+      "mandatory versus deferred work"
+    ],
+    "entry_rule": "Do not start a new bundle until the advice is recorded and mandatory changes are resolved."
+  },
   "objective": "Adjudicate the repaired mock posterior calibration and promote the already validated NumPy Q1 line-of-sight oracle into a tested differentiable likelihood path before any actual CF4 inference.",
   "work_packages": [
     {

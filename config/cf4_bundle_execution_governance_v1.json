@@ -8,6 +8,18 @@
     "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
     "audit_frequency": "One Claude Opus 5 primary audit at bundle closure only. gpt-5.6-sol is called only as backup when Opus does not inspect/return a usable verdict, or when the driver explicitly doubts the Opus result and requests a check. No audit is allowed to pause an in-bundle step unless a safety or physics-failure stop condition is observed.",
     "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
+    "pre_bundle_design_audit": {
+      "required": true,
+      "auditor": "fable",
+      "timing": "After the driver writes a bundle design and before that bundle begins execution; internal work already authorized inside the current bundle may continue only within its declared scope.",
+      "questions": [
+        "Is the proposed measurement/verification burden proportionate, or is the project becoming over-instrumented relative to the density/velocity reconstruction goal?",
+        "What is the direct contribution of this bundle to the final RT, stellar-feedback, AGN-feedback and dust-aware zoom/hydro objective?",
+        "Is the plan feasible under the declared data, memory, GPU, wall-time and model contracts?",
+        "Which items are mandatory for the next scientific gate and which must be deferred?"
+      ],
+      "decision": "The driver records Fable's advice and may enter the next bundle only after resolving its mandatory changes; this is a design audit, not the Opus bundle-closure audit."
+    },
     "storage_semantics": {
       "gpfs": "shared POSIX storage mounted on login and compute nodes; treat it like /home for declared project artifacts",
       "gpfs_read_write": "allowed only for explicitly declared inputs and new output directories under normal filesystem permissions",
@@ -20,7 +32,7 @@
       "claude_opus_5": "Primary bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
       "gpt_5_6_sol": "Backup bundle-closure audit only when Opus does not inspect/return a usable verdict or the driver explicitly requests a check because the Opus result is not trusted; not an independent parallel re-audit.",
       "grok": "Not an auditor in this workflow.",
-      "fable": "Not an auditor in this workflow unless the user explicitly reassigns the role."
+      "fable": "Pre-bundle design auditor when explicitly assigned by the user: assess over-measurement, final RT/stellar/AGN/dust contribution, feasibility, and mandatory versus deferred scope. Fable does not replace the Opus closure audit unless explicitly reassigned."
     },
     "stop_conditions": [
       "data or provenance integrity failure",
