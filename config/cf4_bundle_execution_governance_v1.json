@@ -109,11 +109,11 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z2-OPERATOR-NECESSITY",
-  "active_work_package": "FULL_N32_FORWARD_COMPARISON",
-  "current_plan": "config/cf4_z2_operator_necessity_plan_v1.json",
+  "current_bundle": "Z3-FIELD-DEFINITION-CALIBRATION",
+  "active_work_package": "STORED_FIELD_RESPONSE_DIAGNOSTIC",
+  "current_plan": "config/cf4_z3_field_definition_plan_v1.json",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "Z2 completed: both CPU array tasks 332552 passed their reference gates. Four N32 plug-in states have joint Poisson KL 0.0000962 to 0.02490 nat, below the predeclared 1-nat diagnostic threshold. Astra reviewed and closed the diagnostic; dynamic Q1 is deferred as the immediate calibration repair, not globally validated. Await user approval for Z3 field-definition/calibration diagnosis.",
+  "current_status": "User approved Z3 after clarifying Local Group-only 0.3 cMpc/h and 1-2 cMpc/h surroundings. Diagnose field definitions with the eight stored development results, fixed coarse-graining responses and PMWD linear normalization; no new posterior or nonlinear PM evolution. Astra reviews directly and awaits user approval at the next bundle boundary.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
