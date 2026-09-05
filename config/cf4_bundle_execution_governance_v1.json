@@ -74,7 +74,7 @@
   ],
   "current_bundle": "Z0-DENSITY-LIKELIHOOD-REPAIR",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR entered with user approval. GPFS is available as shared project storage; the official completeness maps and 36,635-row metadata-consistent subset are already source-bound and validated. The existing Phase-C v5 development pilot is a terminal sampler/PMWD NO-GO, so repair must target numerical stability and sampler identifiability before any observational field inference.",
+  "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR entered with user approval. GPFS is available as shared project storage; the official completeness maps and 36,635-row metadata-consistent subset are already source-bound and validated. The initial Phase-C v5 pilot failed sampler/PMWD mechanics, but the subsequent generator v3 (8/8 seeds) and sampler-mechanics v5/v6 repair gates pass for all eight development indices in aggregate. A balanced full posterior aggregate is still not present; no observational field inference has run.",
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
   "current_closure_audit": null,
   "next_closure_audit": "AT_Z0_DENSITY_LIKELIHOOD_REPAIR_BUNDLE_CLOSURE_ONLY",
