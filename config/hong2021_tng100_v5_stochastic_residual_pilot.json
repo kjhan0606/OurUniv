@@ -1,0 +1,124 @@
+{
+  "schema": "hong2021-tng100-v5-stochastic-residual-pilot-v1",
+  "status": "ensemble_evaluation_complete_gate_failed_hop_not_run",
+  "purpose": "Learn an ensemble of unresolved high-k present-density residuals around the frozen v4 conditional mean",
+  "scientific_interpretation": "High-k phases absent from the observables are sampled from a TNG-conditioned distribution and are not claimed to be uniquely observed",
+  "data": {
+    "train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "cross_split_overlap": false,
+    "minimum_cross_split_Linf_mpc_h": 20.048943519592285,
+    "within_split_spatial_reuse_warning": true
+  },
+  "conditional_mean": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v4_split00_l0_groupnorm_std_cosine/minimum_validation_loss.pt",
+    "epoch": 7,
+    "frozen": true
+  },
+  "residual": {
+    "field": "target normalized log density minus frozen conditional mean",
+    "k_transition_h_mpc": [2.0, 4.0],
+    "filter": "cosine high-pass",
+    "training_scale": "RMS fitted only on training residuals",
+    "training_residual_rms": 0.08698488601426044,
+    "validation_residual_rms_diagnostic": 0.08685149659530657,
+    "low_k_preservation": "generated residual is high-pass filtered again after sampling",
+    "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v5/tng100_train_residual_k2_4.h5",
+    "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v5/tng100_validation_residual_k2_4.h5"
+  },
+  "conditioning_channels": [
+    "training-standardized galaxy count",
+    "training-standardized mean radial peculiar velocity",
+    "frozen deterministic conditional mean",
+    "observer-centred radial geometry"
+  ],
+  "augmentation": {
+    "training": "uniform random signed axis permutation per access",
+    "axis_permutations": 6,
+    "axis_reflections": 8,
+    "total": 48,
+    "proper_rotations": 24,
+    "mirror_isometries": 24,
+    "translations": 0,
+    "validation": "none",
+    "note": "Translations are not exact because radial velocity is defined relative to the central observer"
+  },
+  "model": {
+    "type": "conditional 3D DDPM epsilon predictor",
+    "normalization": "GroupNorm",
+    "base_channels": 32,
+    "diffusion_steps": 200,
+    "parameters": 3600801
+  },
+  "pilot": {
+    "epochs": 50,
+    "batch": 6,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "weight_decay": 0.0001,
+    "seed": 2021,
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v5_stochastic_residual"
+  },
+  "launch": {
+    "time_kst": "2026-08-02T04:45:18+09:00",
+    "tmux_session": "hong2021_v5",
+    "log": "/home/kjhan/BACKUP/CF4/logs/hong2021_v5_lageunha_20260802.log",
+    "epoch_1": {
+      "train_epsilon_mse": 0.5396234140627914,
+      "validation_epsilon_mse": 0.426406571941991,
+      "elapsed_seconds": 22.36243176460266
+    }
+  },
+  "acceptance": {
+    "individual_high_k_phase_match_required": false,
+    "ensemble_power_spectrum_relative_error_maximum": 0.1,
+    "low_k_conditional_mean_must_be_preserved": true,
+    "density_pdf_required": true,
+    "two_point_function_required": true,
+    "peak_and_void_abundance_required": true,
+    "ensemble_coverage_required": true,
+    "HOP_halo_statistics_required_before_CF4": true
+  },
+  "ensemble_evaluation": {
+    "status": "complete",
+    "checkpoint_epochs": [21, 50],
+    "validation_selection": "16-point greedy farthest sampling in standardized occupancy, velocity, truth and conditional-mean feature space",
+    "validation_indices": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+    "ensemble_per_object": 16,
+    "shared_seed": 777,
+    "x0_clip_training_residual_rms": 8.0,
+    "sampling_stability_note": "Unbounded ancestral cosine-DDPM sampling was rejected after a smoke sample produced residual std 5.09 and density overflow; broad x0 support clipping stabilized residual std to 0.0768 normalized-log-density units",
+    "metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v5_stochastic_residual/ensemble_evaluation/metrics.json",
+    "diagnostic_plot": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v5_stochastic_residual/ensemble_evaluation/diagnostics.png",
+    "result": {
+      "low_k_preservation": "passed for both checkpoints at below 4e-17 residual power fraction",
+      "epoch021": {
+        "generated_total_power_over_truth_k3_6": 0.7403777098477274,
+        "generated_total_power_over_truth_k6_10": 0.8091489184411332,
+        "generated_over_truth_residual_rms": 0.870724603764787,
+        "coverage_68": 0.5278315544128418,
+        "coverage_95": 0.7891829013824463,
+        "density_pdf_total_variation": 0.19347556192993529
+      },
+      "epoch050": {
+        "generated_total_power_over_truth_k3_6": 0.7071008246976648,
+        "generated_total_power_over_truth_k6_10": 0.8083307327413933,
+        "generated_over_truth_residual_rms": 0.8590766240213816,
+        "coverage_68": 0.5346512794494629,
+        "coverage_95": 0.7960538864135742,
+        "density_pdf_total_variation": 0.1848564883592866
+      },
+      "deterministic_reference": {
+        "total_power_over_truth_k3_6": 0.16744354374595335,
+        "total_power_over_truth_k6_10": 0.06611249520086696,
+        "density_pdf_total_variation": 0.4113039970397949
+      },
+      "preferred_checkpoint_for_refinement": "epoch 21 because the precommitted high-k power and peak-abundance diagnostics are closer to truth, although neither checkpoint is accepted",
+      "gate": "failed because high-k power remains 19-29 percent low and ensemble coverage is strongly underdispersed",
+      "HOP": "not run because the statistical gate preceding HOP failed"
+    }
+  }
+}

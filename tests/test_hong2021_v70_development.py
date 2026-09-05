@@ -1,0 +1,315 @@
+import copy
+import hashlib
+import json
+from pathlib import Path
+
+import h5py
+import numpy as np
+import pytest
+
+import hong2021_v70_development_sample as development
+import hong2021_v70_seal as sealing
+from hong2021_v15_development_gate import canonical_digest
+from hong2021_v18_init import sha256_file
+from hong2021_v70_development_gate import _validate_frozen_gate_sources
+
+
+REPO = Path(__file__).resolve().parents[1]
+PROGRAM = REPO / "config/hong2021_v70_locked_development_program.json"
+
+
+def test_development_program_is_byte_bound_and_single_use() -> None:
+    assert hashlib.sha256(PROGRAM.read_bytes()).hexdigest() == development.PROGRAM_SHA256
+    program = json.loads(PROGRAM.read_text())
+    assert program["status"] == (
+        "frozen_during_fixed_training_before_train_gate_result_or_development_access"
+    )
+    assert program["fixed_sampling"]["noise_seed"] == 170073
+    assert program["fixed_sampling"]["members_per_query"] == 16
+    assert program["unchanged_development_gate"][
+        "diagnostic_control_excluded_from_selection"
+    ] is True
+    assert program["firewall"]["second_development_attempt"] == "forbidden"
+
+
+def test_program_load_does_not_touch_development_artifacts(monkeypatch) -> None:
+    visited: list[Path] = []
+    original = development.sha256_file
+
+    def traced(path: str | Path) -> str:
+        resolved = Path(path).resolve()
+        visited.append(resolved)
+        return original(resolved)
+
+    monkeypatch.setattr(development, "sha256_file", traced)
+    development.load_program(PROGRAM, REPO)
+    assert visited
+    assert all(path.is_relative_to(REPO) for path in visited)
+    assert not any("development_candidate" in str(path) for path in visited)
+
+
+def _passing_gate(program: dict, path: Path) -> dict:
+    parent = program["parent_programs"]
+    gate = {
+        "schema": parent["required_train_gate_schema"],
+        "status": parent["required_train_gate_status"],
+        "program_sha256": parent["v70_train_gate_program_sha256"],
+        "train_mechanism_pass": parent["required_train_mechanism_pass"],
+        "candidate_selected": parent["required_candidate_selected"],
+        "classification": parent["required_classification"],
+        "next": parent["required_next"],
+        "code_commit": "0" * 40,
+        "validation_accessed": False,
+        "development_accessed": False,
+        "historical_EAGLE_accessed": False,
+        "independent_EAGLE_accessed": False,
+        "independent_gate_locked": True,
+    }
+    gate["decision_digest_sha256"] = canonical_digest(gate)
+    path.write_text(json.dumps(gate) + "\n")
+    return gate
+
+
+def test_train_gate_authorization_accepts_only_canonical_pass(tmp_path, monkeypatch) -> None:
+    program = copy.deepcopy(development.load_program(PROGRAM, REPO))
+    path = tmp_path / "decision.json"
+    program["parent_programs"]["required_train_gate_decision"] = str(path)
+    expected = _passing_gate(program, path)
+    monkeypatch.setattr(development, "_is_ancestor", lambda *_: True)
+    actual = development.authorize_train_gate(
+        program, REPO, path, sha256_file(path), "f" * 40
+    )
+    assert actual == expected
+
+    rejected = dict(expected)
+    rejected["candidate_selected"] = False
+    rejected["decision_digest_sha256"] = canonical_digest(rejected)
+    path.write_text(json.dumps(rejected) + "\n")
+    with pytest.raises(ValueError, match="authorization"):
+        development.authorize_train_gate(
+            program, REPO, path, sha256_file(path), "f" * 40
+        )
+
+
+def test_v70_ensemble_schema_has_fixed_shapes(tmp_path) -> None:
+    path = tmp_path / "ensemble.h5"
+    with h5py.File(path, "w") as handle:
+        datasets = development._new_ensemble(handle)
+        assert datasets["sample"].shape == (16, 16, 1, 64, 64, 64)
+        assert datasets["conditional_mean"].shape == (16, 1, 64, 64, 64)
+        assert datasets["truth"].shape == (16, 1, 64, 64, 64)
+        assert datasets["initial_latent_sha256"].shape == (16, 16, 32)
+        assert datasets["maximum_inverse_CDF_error"].shape == (16, 16)
+        assert all(dataset.dtype == np.dtype("float32") for name, dataset in datasets.items() if name not in ("initial_latent_sha256",))
+        assert datasets["initial_latent_sha256"].dtype == np.dtype("uint8")
+
+
+def test_unchanged_gate_implementations_remain_at_frozen_hashes() -> None:
+    program = development.load_program(PROGRAM, REPO)
+    _validate_frozen_gate_sources(program, REPO)
+
+
+def test_train_gate_runner_auto_advances_only_on_pass() -> None:
+    source = (REPO / "scripts/hong2021_v70_train_gate_lageunha.sh").read_text()
+    pass_status = "complete_V70_train_only_gate_pass_locked_development_authorized"
+    development_runner = "hong2021_v70_development_lageunha.sh"
+    failure_status = "complete_V70_train_only_gate_rejection_development_locked"
+    assert source.index(pass_status) < source.index(development_runner)
+    assert source.index(development_runner) < source.index(failure_status)
+
+
+def test_terminal_seal_rejection_never_validates_development(monkeypatch) -> None:
+    program = development.load_program(PROGRAM, REPO)
+    train = {
+        "candidate_selected": False,
+        "classification": (
+            "query_aligned_latent_spatial_score_does_not_learn_cross_domain_joint_structure"
+        ),
+        "next": (
+            "stop_before_development_without_posthoc_training_sampling_or_gate_tuning"
+        ),
+    }
+    monkeypatch.setattr(sealing, "load_program", lambda *_: program)
+    monkeypatch.setattr(sealing, "git_state", lambda *_: ("f" * 40, True))
+    monkeypatch.setattr(
+        sealing, "validate_train_gate", lambda *_: (train, "1" * 64)
+    )
+    monkeypatch.setattr(
+        sealing,
+        "validate_development",
+        lambda *_: pytest.fail("rejected train gate touched development"),
+    )
+    result = sealing.seal(PROGRAM, REPO, Path("train.json"), None)
+    assert result["status"] == "sealed_train_gate_rejection_development_not_accessed"
+    assert result["development_accessed"] is False
+    assert result["development_decision"] is None
+    assert result["independent_gate_locked"] is True
+    assert result[
+        "literal_precompletion_checkpoint_access_firewall_satisfied"
+    ] is False
+    assert result["train_and_development_gate_selection_blinding_preserved"]
+    assert result["protocol_deviation_sha256"] == sealing.DEVIATION_SHA256
+
+
+@pytest.mark.parametrize("passed", [False, True])
+def test_terminal_seal_preserves_locked_development_branch(monkeypatch, passed) -> None:
+    program = development.load_program(PROGRAM, REPO)
+    train = {"candidate_selected": True}
+    branch = (
+        {
+            "development_pass": True,
+            "classification": "V70_is_development_sufficient",
+            "next": (
+                "seal_V70_and_await_explicit_user_approval_before_independent_EAGLE_access"
+            ),
+        }
+        if passed
+        else {
+            "development_pass": False,
+            "classification": (
+                "V70_joint_spatial_model_is_not_development_sufficient"
+            ),
+            "next": (
+                "seal_the_failure_and_stop_before_independent_EAGLE_without_sampler_threshold_or_model_tuning"
+            ),
+        }
+    )
+    monkeypatch.setattr(sealing, "load_program", lambda *_: program)
+    monkeypatch.setattr(sealing, "git_state", lambda *_: ("f" * 40, True))
+    monkeypatch.setattr(
+        sealing, "validate_train_gate", lambda *_: (train, "1" * 64)
+    )
+    monkeypatch.setattr(
+        sealing, "validate_development", lambda *_: (branch, "2" * 64)
+    )
+    result = sealing.seal(
+        PROGRAM, REPO, Path("train.json"), Path("development.json")
+    )
+    assert result["development_accessed"] is True
+    assert result["development_pass"] is passed
+    assert result["explicit_user_approval_required_before_EAGLE"] is passed
+    assert result["independent_EAGLE_accessed"] is False
+
+
+def test_independent_eagle_readiness_audit_is_code_only_and_hash_bound() -> None:
+    path = REPO / "config/hong2021_v70_independent_eagle_readiness_audit.json"
+    audit = json.loads(path.read_text())
+    assert audit["status"] == "complete_code_only_gate_not_authorized"
+    for row in audit["local_evidence"].values():
+        assert sha256_file(REPO / row["path"]) == row["sha256"]
+    assert audit["findings"]["historical_runner_compatibility"] is False
+    assert audit["findings"][
+        "velocity_dispersion_feasible_without_new_catalog_information"
+    ] is True
+    assert audit["authorization_state"]["independent_EAGLE_access_authorized"] is False
+    assert audit["firewall"]["GPFS_EAGLE_file_opened_by_this_audit"] is False
+    assert audit["firewall"][
+        "new_or_reserved_EAGLE_target_or_metric_read_by_this_audit"
+    ] is False
+
+
+def test_checkpoint_access_deviation_is_disclosed_and_hash_bound() -> None:
+    deviation, path = sealing.load_checkpoint_access_deviation(REPO)
+    assert path == (
+        REPO / "config/hong2021_v70_intermediate_checkpoint_access_deviation.json"
+    ).resolve()
+    assert sha256_file(path) == sealing.DEVIATION_SHA256
+    assessment = deviation["assessment"]
+    assert assessment[
+        "literal_precompletion_checkpoint_access_firewall_satisfied"
+    ] is False
+    assert assessment[
+        "posthoc_model_checkpoint_sampler_seed_metric_or_threshold_tuning_occurred"
+    ] is False
+    assert assessment["train_or_development_target_information_disclosed"] is False
+    assert assessment["train_and_development_gate_selection_blinding_preserved"]
+    assert deviation["corrective_actions"]["further_precompletion_checkpoint_access"] == (
+        "forbidden"
+    )
+
+
+def test_progress_monitor_is_read_only_and_tracks_all_terminal_branches() -> None:
+    source = (
+        REPO / "scripts/hong2021_v70_progress_monitor_lageunha.sh"
+    ).read_text()
+    for value in (
+        "complete_V70_train_only_gate_rejection_development_locked",
+        "complete_V70_development_pass_waiting_explicit_EAGLE_approval",
+        "complete_V70_development_failure_independent_gate_locked",
+        "failed_V70_",
+    ):
+        assert value in source
+    assert "progress.json.partial" not in source
+    assert "os.replace(partial, output)" in source
+    assert '"EAGLE_accessed": False' in source
+    assert "hong2021_v70_train_gate.py" not in source
+    assert "hong2021_v70_development_sample.py" not in source
+
+
+def test_v70_terminal_result_binds_narrow_rejection_and_locked_branch() -> None:
+    result = json.loads(
+        (REPO / "config/hong2021_v70_result_record.json").read_text()
+    )
+    assert result["status"] == (
+        "complete_train_gate_rejection_development_unopened_failure_audited"
+    )
+    for name in ("training_program", "train_gate_program", "locked_development_program"):
+        path = REPO / result["frozen_programs"][name]
+        assert sha256_file(path) == result["frozen_programs"][f"{name}_sha256"]
+    gate = result["train_only_gate"]
+    assert gate["candidate_selected"] is False
+    assert gate["one_point_pass"] is False
+    assert gate["spectral_pass"] is True
+    assert gate["phase_sensitive_energy_score_pass"] is True
+    assert gate["stream_reproducibility_pass"] is True
+    assert gate["numerical_pass"] is True
+    failure = result["sole_gate_failure"]
+    assert failure["stream_A"]["value"] > failure["frozen_interval"][1]
+    assert failure["stream_B"]["value"] > failure["frozen_interval"][1]
+    evidence = result[
+        "passed_joint_structure_evidence_not_used_to_override_rejection"
+    ]
+    assert evidence[
+        "all_12_domain_stream_band_candidate_energy_scores_better_than_paired_independent_voxel_control"
+    ]
+    assert result["firewall"]["development_accessed"] is False
+    assert result["firewall"]["independent_EAGLE_accessed"] is False
+    assert result["authorization"]["modify_or_rerun_V70"] is False
+    assert result["authorization"]["automatic_followup_model_authorized"] is False
+
+
+def test_v71_feasibility_audit_has_no_fresh_train_gate_or_candidate() -> None:
+    audit = json.loads(
+        (REPO / "config/hong2021_v71_feasibility_audit.json").read_text()
+    )
+    assert audit["status"] == (
+        "complete_code_only_no_candidate_or_followup_authorized"
+    )
+    for name in (
+        "v70_result_record",
+        "v70_program",
+        "v70_train_gate_program",
+        "v70_development_program",
+        "v70_cache_record",
+    ):
+        path = REPO / audit["bound_evidence"][name]
+        assert sha256_file(path) == audit["bound_evidence"][f"{name}_sha256"]
+    partition = audit["train_partition_exhaustion"]
+    assert all(
+        partition[domain]["untouched_objects_remaining"] == 0
+        for domain in ("TNG100", "SIMBA", "Swift")
+    )
+    assert partition["fresh_internal_train_only_gate_available"] is False
+    coupling = audit["ensemble_copula_coupling_property"]
+    assert coupling["training_required"] is False
+    assert coupling["guarantees_field_or_phase_gate_pass"] is False
+    assert audit["statistically_valid_next_paths"]["recommended_given_current_assets"] == (
+        "path_B"
+    )
+    authorization = audit["authorization"]
+    assert authorization["V71_program_frozen"] is False
+    assert authorization["V71_code_implemented"] is False
+    assert authorization["development_access_authorized"] is False
+    assert authorization["explicit_user_scope_decision_required"] is True
+    assert audit["firewall"]["target_payload_read_by_this_audit"] is False
+    assert audit["firewall"]["independent_EAGLE_accessed"] is False

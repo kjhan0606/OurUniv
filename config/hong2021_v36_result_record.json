@@ -1,0 +1,102 @@
+{
+  "schema": "hong2021-v36-local-conditional-scale-tail-sufficiency-result-record-v1",
+  "status": "complete_development_only_joint_transport_coupling_supported",
+  "program": "config/hong2021_v36_local_tail_sufficiency_program.json",
+  "program_sha256": "6813b6ec10a042f20baf13b7243cc86e70a71f6e9171bcb7521b200a1cf19deb",
+  "implementation_commit": "c7164cdd22b6b962a352250cbb0e7fc5dfb87619",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v36_local_tail_sufficiency/audit.json",
+    "sha256": "7f102f81d63873bf4b6fcc0fe79b25311fd753a33cb2f0b45ffa5de415fcd766",
+    "decision_digest_sha256": "3f2a86c5b5f987945a66998ea740377e474b44cacbc77e57e1c4b5cafa1b7132",
+    "classification": "tail_failure_is_joint_donor_query_coupling_not_marginal_tail_prediction",
+    "next": "replace_donor_transport_with_joint_query_aligned_conditional_stochastic_field"
+  },
+  "sampling": {
+    "train_rows": 786432,
+    "train_selection_sha256": {
+      "TNG100": "bbdf300ebca51b15a4a86bfb869ed59a11f5763cffd40d8d984d05ccefb1048f",
+      "SIMBA": "ba7dc017b6532e3044800a5a63122cfe67aaabf85d8ecf78479c03fcf0184a97",
+      "Swift": "5624c0d5d3c07c21b94f990085ae0e2bd94d6e3464cabcf20f66c31a0612287e"
+    },
+    "validation_selection_sha256": {
+      "TNG100": "cf3169fd68c4bde56db837ad9f109fbe1c141d7a8f05600dd2c0766f3f0cc7cc",
+      "SIMBA": "d3d4d410e30c70b2a9959a118a06203ef5f51ab702fa5f2a24999287d256682e",
+      "Swift": "aa1cecae7e878865cf4d93fbcd11e882bc54703f1f4049e6ed0dc031937a7843"
+    }
+  },
+  "conditional_tail": {
+    "nonlinear_scalar_ratio_gate_passed": false,
+    "local_multiscale_ratio_gate_passed": false,
+    "nonlinear_scalar_tail_supported": false,
+    "local_multiscale_tail_supported": false,
+    "q0_999_pinball_ratios": {
+      "TNG100": {
+        "scalar_over_V31": 1.0092053745628968,
+        "local_over_scalar": 0.9768103816873422
+      },
+      "SIMBA": {
+        "scalar_over_V31": 1.0032593194447368,
+        "local_over_scalar": 0.9859777266930937
+      },
+      "Swift": {
+        "scalar_over_V31": 0.9982327769448072,
+        "local_over_scalar": 0.9819460343598653
+      }
+    }
+  },
+  "translated_tail_causal_control": {
+    "material": true,
+    "translation_mpc_h": 5.0,
+    "TNG100": {
+      "delta_q99_999_dex": 0.33394718541090507,
+      "generated_max_above_truth_max_dex": 1.131518840789795,
+      "generated_over_truth_mean_delta_squared": 6.972638882522436,
+      "Q3_pass": false,
+      "Q4_pass": false
+    },
+    "SIMBA": {
+      "delta_q99_999_dex": 0.32189057170539437,
+      "generated_max_above_truth_max_dex": 0.6546274423599243,
+      "generated_over_truth_mean_delta_squared": 4.33554376976187,
+      "Q3_pass": false,
+      "Q4_pass": false
+    },
+    "Swift": {
+      "delta_q99_999_dex": 0.22713307430664464,
+      "generated_max_above_truth_max_dex": 1.53814896941185,
+      "generated_over_truth_mean_delta_squared": 18.953795794380582,
+      "Q3_pass": false,
+      "Q4_pass": false
+    }
+  },
+  "scientific_conclusion": [
+    "Neither a smooth nonlinear scalar conditional quantile nor the frozen 221-feature oriented multiscale conditional quantile reduces tail pinball loss by the preregistered ten percent in all three development domains.",
+    "At q=0.999 the local model improves over the nonlinear scalar model by only 1.4 to 2.3 percent, so adding a local marginal scale or extreme-value tail continuation is not supported as the primary repair.",
+    "Rolling the V31 donor conditional-quantile field by 5 Mpc/h while keeping the query backbone fixed makes Q3 and Q4 fail in every domain and raises mean delta squared by factors of 4.34 to 18.95.",
+    "The remaining failure is therefore attributed to joint donor-query spatial coupling rather than marginal conditional tail prediction. The next generator must produce a query-aligned conditional stochastic field instead of transporting a donor field independently of query structure."
+  ],
+  "next_experiment_boundary": {
+    "primary": "freeze a joint query-aligned conditional stochastic-field model and compare it with unchanged V31 donor transport on the same development sources",
+    "required_controls": [
+      "retain the exact V31 backbone and residual-mean projection",
+      "use training data only for fitting and model selection",
+      "evaluate unchanged Q1 through Q5 and field gates on the fixed validation objects",
+      "include a matched phase-scrambled or query-shuffled ablation to prove query alignment is causal"
+    ],
+    "forbidden": [
+      "validation-based hyperparameter choice",
+      "validation extrema in tail fitting",
+      "field clipping",
+      "post-hoc A(k)",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "validation_used_for_fit_or_early_stopping": false,
+    "validation_extrema_used_for_tail_fit": false,
+    "field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

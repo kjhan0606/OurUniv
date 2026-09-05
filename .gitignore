@@ -46,6 +46,22 @@ __pycache__/
 /recon/linear_cr/gate_v1/*
 !/recon/linear_cr/gate_v1/CR_GATE_REPORT.md
 !/recon/linear_cr/gate_v1/cr_gate_result.json
+!/recon/linear_cr/p1_parent_v1/
+/recon/linear_cr/p1_parent_v1/*
+!/recon/linear_cr/p1_parent_v1/P1_REPORT.md
+!/recon/linear_cr/p1_parent_v1/p1_result.json
+!/recon/linear_cr/p2_screen_v1/
+/recon/linear_cr/p2_screen_v1/*
+!/recon/linear_cr/p2_screen_v1/P2_SCREEN_REPORT.md
+!/recon/linear_cr/p2_screen_v1/p2_screen_result.json
+!/recon/linear_cr/v2_local_dev_v1/
+/recon/linear_cr/v2_local_dev_v1/*
+!/recon/linear_cr/v2_local_dev_v1/V2_LOCAL_REPORT.md
+!/recon/linear_cr/v2_local_dev_v1/v2_local_result.json
+!/recon/linear_cr/v2_local_validation_v1/
+/recon/linear_cr/v2_local_validation_v1/*
+!/recon/linear_cr/v2_local_validation_v1/V2_LOCAL_VALIDATION_REPORT.md
+!/recon/linear_cr/v2_local_validation_v1/v2_local_validation_result.json
 
 # Generated plots and manuscript build products
 *.png

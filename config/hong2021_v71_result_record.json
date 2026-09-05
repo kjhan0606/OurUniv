@@ -1,0 +1,168 @@
+{
+  "schema": "hong2021-v71-terminal-result-record-v1",
+  "status": "complete_single_use_development_failure_sealed_independent_gate_locked",
+  "purpose": "Bind the Path-B V71 ECC program, code-only preflight, single-use development decision, exact failure modes, and terminal seal without changing or repeating the candidate after development disclosure.",
+  "record_base_commit": "9ca76b70b2453f7f691a04bd5f56a64dc6bd9af6",
+  "frozen_program": {
+    "path": "config/hong2021_v71_locked_ecc_development_program.json",
+    "sha256": "23665bf5d06212113de6feee7cd756c0252a59eac204def9805c5f4595ddf008",
+    "freeze_commit": "375cfa237fa10a5dfb361cffb462a3fcc7310b06",
+    "preimplementation_erratum": "config/hong2021_v71_preimplementation_tie_threshold_erratum.json",
+    "preimplementation_erratum_sha256": "15c6d0dc5e0d511fa7dfbcf3a3b845ea1f19f6a2f27fd8444f4f4c8c36bb765d",
+    "implementation_commit": "9ca76b70b2453f7f691a04bd5f56a64dc6bd9af6"
+  },
+  "code_only_preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_sequence/preflight.json",
+    "sha256": "bf0300f2698d20b173f702518fbfaf0251bdf166e0feb744eb7e6a6372f23fd6",
+    "decision_digest_sha256": "29de62eae15b23a6683a26863cf2a7c23d941db0b4359c72b6b62883473d840e",
+    "status": "complete_code_only_path_B_preflight_development_authorized",
+    "development_payload_semantics_accessed": false,
+    "development_truth_or_source_index_read": false,
+    "preflight_pass": true
+  },
+  "sampling": {
+    "development_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_development",
+    "log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_sequence/development_sample.log",
+    "log_sha256": "4b002ecf3a29a8ecd2e1638f834f8bc862f6e4af88e0b87f80ddcef57c6206da",
+    "domains": 3,
+    "queries_per_domain": 16,
+    "members_per_query": 16,
+    "maximum_inverse_CDF_error": 9.5367431640625e-07,
+    "maximum_absolute_residual_DC": 3.5236570605778894e-18,
+    "maximum_control_tied_voxel_fraction": 7.62939453125e-06,
+    "frozen_maximum_control_tied_voxel_fraction": 2e-05,
+    "maximum_pre_inverse_sorted_latent_multiset_error": 0.0,
+    "maximum_pre_DC_sorted_residual_multiset_error": 0.0,
+    "maximum_candidate_rank_disagreement_fraction_excluding_control_ties": 0.0,
+    "maximum_post_DC_sorted_residual_multiset_error_diagnostic_only": 0.0026918649673461914,
+    "peak_allocated_bytes": 1490805760,
+    "numerical_and_ECC_invariants_pass": true
+  },
+  "development_gate": {
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_development/development_decision.json",
+    "decision_sha256": "7fec9e1e9b55c9ba0e109bf2d49be22b064379765f66e94c52c092e3fe852ddb",
+    "decision_digest_sha256": "ef68186c051efcc63a8edaf210fbdbc03b7be411111a0f8966db373afd33e59d",
+    "status": "complete_single_locked_V71_ECC_three_domain_development_gate",
+    "development_pass": false,
+    "classification": "V71_tail_preserving_ECC_is_not_development_sufficient",
+    "candidate_Q3_all_domains": false,
+    "candidate_Q4_all_domains": true,
+    "candidate_high_k_power_and_residual_RMS_all_domains": false,
+    "candidate_all_three_field_pass": false
+  },
+  "Q3_extreme_maximum_failure": {
+    "frozen_requirements": {
+      "absolute_q99_999_error_dex_maximum": 0.1,
+      "generated_max_above_truth_max_dex_maximum": 0.3
+    },
+    "TNG100": {
+      "q99_999_error_dex": 0.06880005660564148,
+      "generated_max_above_truth_max_dex": 0.6781394183635712,
+      "q99_999_pass": true,
+      "maximum_pass": false
+    },
+    "SIMBA": {
+      "q99_999_error_dex": -0.02377538682391478,
+      "generated_max_above_truth_max_dex": 0.5056934952735901,
+      "q99_999_pass": true,
+      "maximum_pass": false
+    },
+    "Swift": {
+      "q99_999_error_dex": -0.008224968784633635,
+      "generated_max_above_truth_max_dex": 0.49316489696502686,
+      "q99_999_pass": true,
+      "maximum_pass": false
+    },
+    "interpretation": "The finite-ensemble body and q99.999 quantile are calibrated, but the inherited V63 local marginal produces isolated maxima above the unchanged 0.3 dex allowance in every domain. ECC cannot alter this pre-DC member-voxel multiset by construction."
+  },
+  "Q4_physical_moment_pass": {
+    "frozen_maximum_generated_over_truth_mean_delta_squared": 1.5,
+    "TNG100": 1.358105397000471,
+    "SIMBA": 0.7824980306221595,
+    "Swift": 1.0848860438769428,
+    "all_domains_pass": true
+  },
+  "spectral_failure": {
+    "frozen_total_power_ratio_interval": [0.9, 1.1],
+    "candidate": {
+      "TNG100": {
+        "3_6_h_mpc": 0.9309726852772062,
+        "6_10_h_mpc": 1.608577609397102
+      },
+      "SIMBA": {
+        "3_6_h_mpc": 0.9398182777093499,
+        "6_10_h_mpc": 1.6365902767905454
+      },
+      "Swift": {
+        "3_6_h_mpc": 0.9493299964365997,
+        "6_10_h_mpc": 1.636505914362815
+      }
+    },
+    "paired_independent_control_6_10_h_mpc": {
+      "TNG100": 3.5316977014409403,
+      "SIMBA": 3.6434460233096644,
+      "Swift": 3.585221414116988
+    },
+    "all_candidate_3_6_h_mpc_rows_pass": true,
+    "all_candidate_6_10_h_mpc_rows_pass": false,
+    "interpretation": "ECC transfers useful V70 spatial dependence and cuts the independent-control high-k excess by more than half, but leaves a common 61-64 percent excess in the 6-10 h/Mpc band."
+  },
+  "field_morphology_failure": {
+    "TNG100": {
+      "two_point_improves_deterministic_all_scales": false,
+      "failing_scale": "0-1_mpc_h",
+      "generated_KS": 0.19010416666666666,
+      "deterministic_KS": 0.1875,
+      "all_selected_peak_void_statistics_improve_deterministic": true
+    },
+    "SIMBA": {
+      "two_point_improves_deterministic_all_scales": false,
+      "failing_scale": "0-1_mpc_h",
+      "generated_KS": 0.3229166666666667,
+      "deterministic_KS": 0.2916666666666667,
+      "all_selected_peak_void_statistics_improve_deterministic": false,
+      "failing_environment_statistic": "local_peak_count_rho_gt_10",
+      "generated_absolute_error": 183.58203125,
+      "deterministic_absolute_error": 157.25
+    },
+    "Swift": {
+      "two_point_improves_deterministic_all_scales": true,
+      "all_selected_peak_void_statistics_improve_deterministic": false,
+      "failing_environment_statistic": "local_peak_count_rho_gt_10",
+      "generated_absolute_error": 210.09765625,
+      "deterministic_absolute_error": 149.8125
+    },
+    "shared_passes": "residual RMS, rank histogram, finite-ensemble coverage, density PDF improvement, and exact DC pass in all three domains"
+  },
+  "scientific_conclusion": {
+    "ECC_transfers_nontrivial_joint_structure": true,
+    "evidence": "Relative to the paired independent control, candidate 6-10 h/Mpc power drops from 3.53-3.64 to 1.61-1.64 and peak/void count errors improve substantially; Swift two-point statistics pass all scales and TNG all selected environment statistics pass.",
+    "ECC_is_development_sufficient": false,
+    "reason": "A rank-only ensemble coupling cannot repair the inherited marginal extreme maximum and does not suppress enough V70 copula power at 6-10 h/Mpc or the remaining sub-Mpc peak morphology error.",
+    "no_posthoc_override": true
+  },
+  "terminal_seal": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v71_tail_preserving_ecc_sequence/sealed_result.json",
+    "sha256": "eca2437db4c381cdec70d9be6e95f3398ddc396365a10db498c0fcd1396e5179",
+    "decision_digest_sha256": "b05e8a9565b62e6de18a12025297093e8ca813828dbc48c52718c1baa05ad990",
+    "status": "sealed_development_failure_independent_gate_locked",
+    "single_development_attempt_consumed": true
+  },
+  "firewall": {
+    "V70_gate_used_as_V71_selection_evidence": false,
+    "fresh_train_only_V71_screen_available": false,
+    "development_attempts": 1,
+    "development_repetition_or_posthoc_tuning": false,
+    "training_or_gradient_during_development": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  },
+  "authorization": {
+    "rerun_or_modify_V71": false,
+    "open_independent_EAGLE": false,
+    "automatic_followup_model_authorized": false,
+    "required_next": "stop at the sealed V71 failure; any new candidate must be a separately frozen scientific program and cannot reuse this consumed development result as independent selection evidence"
+  }
+}

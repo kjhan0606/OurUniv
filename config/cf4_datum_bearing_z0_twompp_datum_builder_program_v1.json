@@ -1,0 +1,155 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-twompp-datum-builder-program-v1",
+  "date": "2026-09-01",
+  "status": "USER_AUTHORIZED_PHASE_A_ACTUAL_DATUM_BUILDER_ONLY",
+  "authorization": {
+    "basis": "After the independent Antigravity audit and correction review, the user instructed Codex to apply the corrections and continue on 2026-09-01.",
+    "Phase_A_datum_builder": true,
+    "single_Slurm_CPU_validation": true,
+    "GPFS_read": true,
+    "GPFS_write_new_output_only": true,
+    "field_inference": false,
+    "mock_seed_access": false,
+    "Phase_B_or_later": false,
+    "resolution_increase": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "bindings": {
+    "corrected_redesign": {
+      "path": "config/cf4_datum_bearing_z0_density_likelihood_redesign_v2.json",
+      "bytes": 6169,
+      "sha256": "b0ce8036a8e0fb57fc62648a3777c4d539b931c642288782522a4240f5198600"
+    },
+    "tracer_program": {
+      "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+      "bytes": 8167,
+      "sha256": "695f362b8942e911ebac5a942217bc75128cdbc45ca042e535b9bd2123517ee5"
+    },
+    "selection_program": {
+      "path": "config/cf4_twompp_joint_information_budget_pilot_program_v1.json",
+      "bytes": 10365,
+      "sha256": "7ffa68d6996572ec9088bd349e4adf7809d3678635ebab69fecba23c87a1b7f2"
+    },
+    "subset_result_record": {
+      "path": "config/cf4_twompp_metadata_consistent_subset_v1_result_record.json",
+      "bytes": 4197,
+      "sha256": "117500c9a01d254d968beb8066671c010a524ae3885a21e6c54f1181e402f885"
+    },
+    "twompp_catalog": {
+      "path": "data/2mpp_catalog.csv",
+      "bytes": 7528160,
+      "sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d"
+    },
+    "crossmatch": {
+      "path": "data/cf4_2mpp_crossmatch_v1.csv",
+      "bytes": 2924366,
+      "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"
+    },
+    "excluded_recnos": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/excluded_recnos.csv",
+      "bytes": 40183,
+      "sha256": "b0ddbb700612e8aaf937b647405e17b058f04aef2f97a93f207cb32b5d6ac60f"
+    },
+    "completeness_11_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz",
+      "bytes": 459473,
+      "sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace"
+    },
+    "completeness_12_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz",
+      "bytes": 1008380,
+      "sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9"
+    },
+    "tracer_implementation": {
+      "path": "src/cf4_twompp_disjoint_tracer_pilot.py",
+      "bytes": 23962,
+      "sha256": "695a21be6d5bb4cf51fee4f2c5c8d7ce5c1629dab7c744caf8a8960765fa84ec"
+    },
+    "selection_implementation": {
+      "path": "src/cf4_twompp_joint_information_budget_pilot_v1.py",
+      "bytes": 35147,
+      "sha256": "d318031ef47a4063671f77d564565afd63ca97bb0920580cb779f2004e83df22"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_twompp_datum_builder_v1.py",
+      "bytes": 23480,
+      "sha256": "10e2c112cdf48e5c9ce0d9e5b7fbbcebf74967afb2bfae9a1b731712a6ba1ac3"
+    }
+  },
+  "frozen_subset": {
+    "excluded_recno_count_exact": 319,
+    "retained_count_exact": 36635,
+    "population_order": [
+      "apparent_0_absolute_0",
+      "apparent_0_absolute_1",
+      "apparent_0_absolute_2",
+      "apparent_1_absolute_0",
+      "apparent_1_absolute_1",
+      "apparent_1_absolute_2"
+    ],
+    "population_counts_exact": [9617, 3463, 527, 15671, 6197, 1160],
+    "outcome_adaptive_row_selection_allowed": false,
+    "reintroduction_of_excluded_recno_allowed": false
+  },
+  "crossmatch_policy": {
+    "excluded_unique_targets_exact": 17007,
+    "meaning": "remove direct same-object reuse only; shared cosmic-field and catalog-systematic dependence are not asserted absent"
+  },
+  "datum": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "population_count": 6,
+    "observed_assignment": "integer NGP/floor assignment in observed redshift space",
+    "predicted_intensity_assignment": "not implemented in Phase A; later differentiable continuous deposition is not constrained to NGP",
+    "selection": "raw eight-subpoint integrated exposure, not normalized to observed totals",
+    "required_NPZ_keys": [
+      "counts_all",
+      "counts_train",
+      "counts_holdout",
+      "raw_selection_exposure"
+    ],
+    "required_shape": [6, 32, 32, 32],
+    "count_dtype": "int64",
+    "exposure_dtype": "float64"
+  },
+  "split": {
+    "method": "SHA256 of salt colon decimal recno, first 64 big-endian bits",
+    "salt": "ouruniv-cf4-z0-twompp-datum-v1-holdout-20260901",
+    "holdout_fraction_numerator": 1,
+    "holdout_fraction_denominator": 5,
+    "applied_before_voxelization": true,
+    "semantics": "fixed predictive partition; no exact conditional independent-Poisson claim"
+  },
+  "publication": {
+    "output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1",
+    "files": [
+      "datum.npz",
+      "row_manifest.csv",
+      "result.json",
+      "manifest.json",
+      "COMPLETE"
+    ],
+    "plain_same_filesystem_directory_rename": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "failed_staging_preserved": true,
+    "COMPLETE_written_last": true
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "cpus_per_task": 1,
+    "expected_peak_memory_MiB": 768,
+    "requested_memory_MiB": 1024,
+    "memory_headroom_multiplier": 1.3333333333333333,
+    "time_limit": "00:20:00",
+    "maximum_submissions": 1,
+    "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+    "monitoring_loop_allowed": false,
+    "automatic_follow_on_allowed": false
+  },
+  "next_after_completion": "audit the Phase-A result and stop for a separate Phase-B design and approval"
+}

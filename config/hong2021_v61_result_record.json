@@ -1,0 +1,145 @@
+{
+  "schema": "hong2021-v61-reachable-support-result-record-v1",
+  "status": "complete_train_only_mechanism_failure_selected_objective_gradient_audit",
+  "program": "config/hong2021_v61_reachable_support_model_program.json",
+  "program_sha256": "327d750774a82885888ff08313e829462d43c877d45effc990f1035358f04cd1",
+  "code_commit": "86b1bdcd8ca240f79ac566a9ef41d457814c9ebb",
+  "grid": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid/grid.json",
+    "sha256": "d9c9aa2d91c746139589b10a858ff749b114b3eb8cec0fb134f823b39db0a2db",
+    "threshold_count": 134,
+    "existing_16_cell_weight_sum": 1.674638e-10,
+    "appended_118_cell_weight_sum": 0.9999999998325366
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence/preflight.json",
+    "sha256": "d900088be814bc969a94e4e4e2ff8b85d358665ab52dc9c31539e17bacb43063",
+    "decision_digest_sha256": "02ba6a5fb7111bc2babc5f37a2701c2a7761b085298026035e9d6e5b9074e64c",
+    "status": "pass",
+    "real_source_balanced_reachable_grid_score": 6.384162967339205e-11,
+    "real_source_balanced_appended_118_weighted_score": 2.4331803286796456e-12,
+    "appended_score_parameter_gradient_maximum_absolute": 9.185919386256458e-12,
+    "peak_allocated_bytes": 9169972224,
+    "retrospective_defect": "The frozen preflight required only a finite nonzero appended-score gradient. It did not require an optimization-relevant gradient magnitude relative to the retained NLL and V54 objectives, so an effectively inert score passed."
+  },
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v61/reachable_support_grid_step12000.pt",
+    "checkpoint_sha256": "aad42e91ffe6bc1287dedcc74358c2875a825a292b285929209b402dea18fb86",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v61/reachable_support_grid_step12000.json",
+    "report_sha256": "b88c8ad0e34d7caefed8798cd515ead16a17ca02fec7cd4ea960ba790a4d3b14",
+    "report_decision_digest_sha256": "87afdc7498ca8dd840f3f0fb440e7b8a672c46777133cadad77fbf3f7e433791",
+    "steps": 12000,
+    "fixed_validation_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "AMP_overflow_count": 6,
+    "AMP_overflow_steps": [
+      1,
+      1936,
+      5984,
+      8033,
+      10099,
+      11201
+    ],
+    "peak_allocated_bytes": 8538243584,
+    "final_validation": {
+      "TNG100": {
+        "composite": 1.497525642125842,
+        "bounded_NLL": 1.3900757207665393,
+        "V54_tail_score": 1.0744991868894587,
+        "reachable_grid_score": 5.2580320573688025e-08
+      },
+      "SIMBA": {
+        "composite": 1.4142898792203564,
+        "bounded_NLL": 1.359268244355917,
+        "V54_tail_score": 0.5502163933124393,
+        "reachable_grid_score": 5.390543924520793e-09
+      },
+      "Swift": {
+        "composite": 1.4018524454105978,
+        "bounded_NLL": 1.35022355253632,
+        "V54_tail_score": 0.5162889562748574,
+        "reachable_grid_score": 3.881179702449105e-09
+      }
+    }
+  },
+  "train_only_mechanism_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_train_high_backbone_gate/decision.json",
+    "sha256": "3aab86f7c91b1a998d4f07b85d496a9ad268284dc26efeba68776f630ac9bb4e",
+    "decision_digest_sha256": "9eb5e4eb87b327d1af900c70019f0984f427669b079b0784f38fb38cf597b908",
+    "train_mechanism_pass": false,
+    "classification": "reachable_support_survival_grid_does_not_calibrate_train_high_backbone_physical_moments",
+    "next": "stop_before_development_sampling_and_audit_reachable_grid_optimization_response"
+  },
+  "train_only_physical_moment_ratios": {
+    "definition": "predicted 64-point quadrature mean delta-squared divided by empirical truth mean delta-squared in the fixed train-backbone strata",
+    "allowed_top_backbone_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "TNG100": {
+      "V61_q99_9_and_above": 128.5497289330452,
+      "V56_q99_9_and_above": 8.176958714802524,
+      "V54_q99_9_and_above": 107.69606342937506,
+      "top_backbone_pass": false
+    },
+    "SIMBA": {
+      "V61_q99_9_and_above": 4.461146548207971,
+      "V56_q99_9_and_above": 1.2286124898532462,
+      "V54_q99_9_and_above": 5.26119499358814,
+      "top_backbone_pass": false
+    },
+    "Swift": {
+      "V61_q99_9_and_above": 16.83990481231896,
+      "V56_q99_9_and_above": 1.3453022621835105,
+      "V54_q99_9_and_above": 21.143516089392783,
+      "top_backbone_pass": false
+    },
+    "maximum_32_to_64_quadrature_relative_difference": 9.29242886079705e-11,
+    "quadrature_limit": 0.005
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_training": true,
+    "preflight_pytest_passed": 452,
+    "training_pytest_passed": 458,
+    "sequence_status": "complete_train_gate_failure_development_locked",
+    "sequence_status_sha256": "5402bd6f0392a44cf601fd126f440fe8dfe5b5219cdb5926acf6987deddaa284",
+    "preflight_pytest_log_sha256": "936b8bd12dcb191b5ac3d715f494cbec900b1d47fcba56602b7d3693f8066922",
+    "training_pytest_log_sha256": "9f2dfa5cdcef5bcef0747681dbeb94b2ccbc7a84e3bc55c4a2bbc9b3f312c60e",
+    "preflight_log_sha256": "724dd7ad58a5e8fa53515fde00080f10e6b2499d402406959a2007f9e253f2a5",
+    "training_log_sha256": "b6590dc2c59bde9ecccd660af78a7fd8cc01c22a96a5aeb2312a63982a542cc3",
+    "train_gate_log_sha256": "6467c3aab49679a8c48f9ac565da31bfc8fc80eec8d173d3b898e34b5c27212f",
+    "monitor_log_sha256": "0c9a15ea48b16f21d311f27c2427193f4fc0101780bc3ded88c157a8275ca893"
+  },
+  "scientific_conclusion": [
+    "The V61 full-support renormalization assigns only 1.67e-10 of the survival-grid weight to the effective V56 interval, thereby removing the V56 repair in practice.",
+    "At the real preflight batch the appended objective is 2.43e-12 and its maximum absolute parameter gradient is 9.19e-12. The merely nonzero preflight condition was insufficient to establish optimization relevance.",
+    "V61 consequently returns close to the V54 failure regime rather than improving V56: the q99.9-and-above ratios are 128.55, 4.46, and 16.84 for TNG100, SIMBA, and Swift.",
+    "The 32-versus-64 quadrature controls converge far inside tolerance, so the failure is not caused by moment-integration resolution.",
+    "A further survival-horizon extension or posthoc coefficient tuning is rejected. The next step is a no-refit train-only audit of gradient-bearing conditional physical-moment objectives, retaining development and independent data locks."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only objective-gradient audit before authorizing one new model",
+    "requirements": [
+      "compare retained V56 and V61 objectives against a direct conditional physical-moment objective on identical real train batches and sealed checkpoints",
+      "measure objective and parameter-gradient scale relative to bounded NLL rather than checking only nonzero gradients",
+      "require finite stable gradients and a causal path to the fixed q99.9 train gate",
+      "do not use validation, development, Astrid, or historical EAGLE data for objective selection"
+    ]
+  },
+  "firewall": {
+    "new_development_sample_generated": false,
+    "development_accessed": false,
+    "validation_used_for_selection": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

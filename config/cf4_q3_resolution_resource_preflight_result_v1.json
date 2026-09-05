@@ -1,0 +1,73 @@
+{
+  "schema": "ouruniv-cf4-q3-resolution-resource-preflight-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q3.2",
+  "purpose": "Read-only static-shape and memory projection for the full N192 PM source basis at the Q3 low-k release point, with a separate deferred 0.3 cMpc/h projection.",
+  "plan": "config/cf4_q3_source_compressed_observation_operator_plan_v1.json",
+  "source_basis": {
+    "pm_source_particles": 7077888,
+    "derivation": "N_parent=192 cubic particle mesh; 192^3 exactly.",
+    "secure_cf4_objects": 16584,
+    "substitution_forbidden": true
+  },
+  "formulae": {
+    "K_max": "1 + 3*(ceil(2*T*dmax/cell_spacing)+2), T=8, dmax=2.316206864681996 cMpc/h",
+    "padded_arrays": "breaks=(K+1)*chunk*8; polynomial_coefficients=K*27*7*chunk*8; interval_mask=K*chunk; positions=3*chunk*8; los=3*chunk*8; masses=6*chunk*8; output=6*N^3*8 bytes",
+    "chunk": 1024,
+    "host_ceiling_bytes": 68719476736,
+    "device_ceiling_bytes": 17179869184
+  },
+  "points": [
+    {
+      "label": "development_12_cMpc_h",
+      "cell_spacing_cMpc_h": 12.0,
+      "grid_size": 32,
+      "K_max": 19,
+      "padded_array_bytes_total": 31271936,
+      "padded_array_MiB": 29.8232421875,
+      "fits_device": true,
+      "fits_host": true,
+      "release_gate": "diagnostic_only"
+    },
+    {
+      "label": "q3_release_2_cMpc_h",
+      "cell_spacing_cMpc_h": 2.0,
+      "grid_size": 192,
+      "K_max": 64,
+      "padded_array_bytes_total": 439525376,
+      "padded_array_MiB": 419.1640625,
+      "fits_device": true,
+      "fits_host": true,
+      "release_gate": "Q3 low-k operator point; no posterior or resolution claim"
+    },
+    {
+      "label": "deferred_0p3_cMpc_h_projection",
+      "cell_spacing_cMpc_h": 0.3,
+      "grid_size": 1280,
+      "K_max": 379,
+      "padded_array_bytes_total": 101253696512,
+      "padded_array_MiB": 96563.0498046875,
+      "fits_device": false,
+      "fits_host": false,
+      "release_gate": "separate conditional high-resolution forward-model/resource projection only; not observational-information validation"
+    }
+  ],
+  "status": "COMPLETE_READ_ONLY_PROJECTION",
+  "authorization": {
+    "q3_design_preflight": true,
+    "candidate_implementation": false,
+    "heldout_evaluation": false,
+    "q2_1_jax": false,
+    "posterior": false,
+    "IC_PM_HOP_RAMSES": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false
+  },
+  "execution": {
+    "jax_executed": false,
+    "production_executed": false,
+    "gpfs_used": false,
+    "slurm_used": false
+  }
+}

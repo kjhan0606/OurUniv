@@ -1,0 +1,166 @@
+{
+  "schema": "hong2021-v26-conditional-haar-spline-flow-development-program-v1",
+  "status": "frozen_before_candidate_training_or_development_evaluation",
+  "purpose": "Test whether a proper explicitly conditional multiscale spatial likelihood with direct sampling fixes the joint high-density and morphology failures left by V24/V25.",
+  "design_audit": {
+    "path": "config/hong2021_v26_design_audit.json",
+    "sha256": "4f134592209ea2f142b726a0bb296279cba6a2d204323f4b61e42c514ff33b2e",
+    "selected_likelihood": "coarse_to_fine_conditional_haar_rational_quadratic_spline_flow"
+  },
+  "parent_evidence": {
+    "v25_registry": "config/hong2021_v25_development_program.json",
+    "v25_registry_sha256": "aa4b00027e959a857275e6d2f5617a442238ef335f0207b9db8fafa9e6d350ea",
+    "v25_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v25_e13_unweighted/development_decision.json",
+    "v25_decision_sha256": "a1279cbba28e32843e141e277c89618f2f07d53085c101be3009d0dd2487d9e2",
+    "v25_decision_digest_sha256": "ace330eafcc2fe9321799a3fb8073cff910ef386a87d8a833546087b7737790f",
+    "failure_classification": "target_tail_reweighting_not_the_primary_remaining_mechanism",
+    "required_next": "stop_edm_loss_variants_and_design_an_explicitly_conditional_alternative_likelihood"
+  },
+  "single_coherent_change": {
+    "from": "V25 base-48 conditional-affine EDM with a proper unweighted denoising objective and 40-step probability-flow sampling",
+    "to": "an exact coarse-to-fine conditional normalizing-flow likelihood on the same frozen V21 conditional-affine latent, with direct ancestral sampling",
+    "edm_model_loss_noise_schedule_initializer_and_ode_sampler_removed": true,
+    "training_from_scratch": true,
+    "continuation_checkpoint": null
+  },
+  "inherited_unchanged": [
+    "TNG100, SIMBA, and Swift train/validation data and the same 16-object development subsets",
+    "six frozen V21 conditional-affine caches, V21 profile, G21 transform, and V14 physical inverse",
+    "four target-free condition channels: preprocessed count, preprocessed velocity, corrected deterministic mean, and radius",
+    "eight train-only source-balanced observable context features",
+    "all 48 signed cube isometries",
+    "equal-source batch balance",
+    "training, validation, and sampling seed lineage",
+    "16-member ensembles",
+    "field evaluator and all Q3/Q4/Q5 thresholds",
+    "smallest-passing-candidate selection rule",
+    "Astrid and historical-EAGLE firewall"
+  ],
+  "coordinate_system": {
+    "input_target": "frozen V21 exact-zero-DC conditional-affine Gaussianized latent",
+    "transform": "six-level orthonormal 3-D Haar",
+    "coarsest_dc": "fixed to zero and excluded from the likelihood",
+    "detail_dimensions_fine_to_coarse": [229376, 28672, 3584, 448, 56, 7],
+    "modeled_dimensions": 262143,
+    "standardization": "42 train-only equal-source Haar level/channel means and standard deviations",
+    "standardization_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v26/design/haar_detail_moments.json",
+    "standardization_artifact_sha256": "32975f030ee014e15edb749dec8b26a0885e71ebab491f45f5d51e0f38782a24",
+    "post_sample_dc_operation": "one numerical roundoff-only cube centering before the unchanged V21/V14 inverse; report the pre-centering DC"
+  },
+  "likelihood": {
+    "factorization": "p(d_coarse|c) times product over finer levels p(d_level|c, reconstructed_coarser_latent)",
+    "base": "independent standard normal for every standardized Haar detail coefficient",
+    "levels": 6,
+    "detail_channels_per_level": 7,
+    "coupling_layers_per_level": 4,
+    "alternating_passive_channel_masks": [[0, 1, 2], [3, 4, 5, 6]],
+    "transform": "monotonic rational-quadratic spline",
+    "bins": 8,
+    "tail_bound_standardized_units": 6.0,
+    "outside_tail_bound": "identity linear tails",
+    "conditioner": {
+      "hidden_channels": 32,
+      "residual_blocks": 2,
+      "convolutions": "periodic 3x3x3",
+      "normalization": "per-voxel channel normalization",
+      "local_inputs": "passive Haar details, four adaptively pooled condition fields, and reconstructed coarser latent",
+      "global_inputs": "eight standardized observable context features broadcast at every scale",
+      "output_initialization": "exact identity spline"
+    },
+    "parameters": 3206424,
+    "objective": "equal-source mean exact negative log likelihood per non-DC dimension",
+    "target_or_density_dependent_weights": false,
+    "auxiliary_field_or_tail_losses": false
+  },
+  "training_protocol": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "batch": 6,
+    "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift": 2},
+    "steps": 30000,
+    "candidate_steps": [10000, 20000, 30000],
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "minimum_learning_rate": 0.00001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "ema_decay": 0.999,
+    "validation_every": 500,
+    "mixed_precision": "CUDA autocast plus GradScaler; spline algebra and log-determinants in float32",
+    "augmentation": "uniform random one of 48 signed cube isometries applied jointly before Haar analysis",
+    "seed": 144021,
+    "validation_seeds": [99173, 99174, 99175],
+    "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777}
+  },
+  "hard_preflight": [
+    "full pytest",
+    "exact registry and all parent/artifact hashes",
+    "Haar forward/inverse and Parseval checks",
+    "all 262143 non-DC dimensions covered exactly once and the sole DC excluded",
+    "fixed-batch spline forward/inverse roundtrip and log-determinant cancellation",
+    "identity initialization",
+    "parameter count 3206424",
+    "finite real-data loss and gradients on a 2/2/2 source-balanced batch",
+    "Ada peak memory below 8 GiB",
+    "direct-sampling RNG reproducibility and pre-centering DC audit",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "diagnostics_and_selection": {
+    "selection": "smallest candidate passing every unchanged field check plus Q3 and Q4 independently in TNG100, SIMBA, and Swift",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+      "generated_max_above_truth_max_dex": 0.3
+    },
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "Q5": "unchanged no-harm checks",
+    "new_nonselection_diagnostics": [
+      "train and fixed validation NLL by source and Haar scale",
+      "base-z mean, standard deviation, skewness, and excess kurtosis by Haar scale",
+      "spline forward/inverse roundtrip and logdet cancellation",
+      "pre-centering and final DC",
+      "V24/V25-to-V26 field/Q3/Q4 comparisons",
+      "per-object maxima and 2PCF/high-k/peak/void changes"
+    ]
+  },
+  "failure_classification_at_step_30000": [
+    {
+      "condition": "all-domain field plus Q3/Q4 pass",
+      "classification": "explicit_conditional_spatial_likelihood_sufficient",
+      "next": "seal_v26_and_await_explicit_user_approval_before_independent_data"
+    },
+    {
+      "condition": "Q3 and Q4 pass in every domain but any unchanged field check fails",
+      "classification": "conditional_flow_calibrates_marginals_but_spatial_morphology_remains_insufficient",
+      "next": "stop_without_posthoc_losses_and_audit_condition_representation_or_deterministic_backbone"
+    },
+    {
+      "condition": "field gates pass but Q3 or Q4 fails in any domain",
+      "classification": "conditional_flow_spatial_fit_without_tail_calibration",
+      "next": "stop_and_audit_exact_base_z_tail_calibration_without_threshold_or_spline_tuning"
+    },
+    {
+      "condition": "no all-domain pass and balanced validation NLL improves by less than 0.5 percent from step 25000 to 30000",
+      "classification": "conditional_haar_flow_insufficient_at_nll_convergence",
+      "next": "stop_flow_capacity_and_horizon_scaling_and_reassess_the_observation_to_density_representation"
+    },
+    {
+      "condition": "no all-domain pass without the frozen NLL plateau condition",
+      "classification": "conditional_haar_flow_failed_without_nll_convergence",
+      "next": "audit_optimization_and_scale_resolved_nll_without_extending_or_tuning"
+    }
+  ],
+  "fixed_decision_order": [
+    "freeze this registry before candidate training or development evaluation",
+    "implement and test the exact registered conditional Haar flow only",
+    "commit the implementation and run the Lageunha Ada hard preflight",
+    "train once from scratch to 30000 with no interventions",
+    "evaluate 10000, 20000, and 30000 in ascending order",
+    "select the smallest all-domain pass or apply the frozen failure classification",
+    "do not change spline bins/bounds, masks, capacity, loss, horizon, seeds, sampler, thresholds, or add post-hoc clipping after seeing results"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  }
+}

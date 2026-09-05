@@ -1,0 +1,145 @@
+{
+  "schema": "ouruniv-cf4-bundle-execution-governance-v1",
+  "date": "2026-09-05",
+  "owner": "driver",
+  "status": "USER_DIRECTED_CONSOLIDATION",
+  "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
+  "project_goal": {
+    "authority": "User clarification: 0.3 cMpc/h applies to the Local Group only; 1-2 cMpc/h is sufficient elsewhere.",
+    "purpose": "Simulate Local Group formation and evolution inside a cosmological-scale environment using CF4-informed, LCDM-consistent zoom initial conditions.",
+    "route": "CF4-informed z=0 density/velocity posterior, then consistent IC construction and forward validation, with additional Local Group observational constraints where needed.",
+    "resolution": {
+      "Local_Group_target_cMpc_h": 0.3,
+      "surrounding_environment_acceptable_cMpc_h": [1.0, 2.0],
+      "uniform_box_0p3_required": false,
+      "CF4_observational_information_at_0p3_required": false,
+      "meaning": "Regional numerical reconstruction/IC target; later force or AMR resolution is a separate simulation choice."
+    },
+    "small_scale_completion": "Outside the Local Group, additional fine structure may be sampled from the LCDM conditional prior while preserving constrained large-scale modes and nested phases; it need not reproduce each observed 0.3 cMpc/h feature.",
+    "local_group_priority": "Seek consistency with MW/M31/M33 and other applicable Local Group observations rather than requiring CF4 alone to determine all local small-scale phases. Quantify constrained versus prior-dominated structure.",
+    "zoom_requirement": "Refine the Local Group progenitor Lagrangian region and a suitable buffer, not merely the present-day spatial box.",
+    "precedence": "This spatially differentiated goal overrides older wording implying uniform or observationally determined 0.3 cMpc/h reconstruction across the full volume. It does not authorize a new simulation bundle."
+  },
+  "policy": {
+    "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
+    "audit_frequency": "When the driver is Astra, omit Fable pre-bundle and Opus closure audits under astra_driver_exception. Otherwise retain one Opus closure audit and the existing sol backup rule. No audit pauses an internal step except for a safety or physics-failure stop condition.",
+    "astra_driver_exception": {
+      "condition": "The active driver is Astra (gpt-6-astra).",
+      "fable_pre_bundle_audit": "SKIP",
+      "opus_bundle_closure_audit": "SKIP",
+      "automatic_backup_audit": false,
+      "driver_responsibility": "Assess design proportionality, final CF4 goal contribution, feasibility and mandatory/deferred scope; review code and results and record the closure judgment.",
+      "approval_before_next_bundle": "Still required from the user.",
+      "precedence": "Overrides external-audit requirements in project plans while Astra drives; earlier audit records remain historical. For other drivers, the ordinary audit policy applies unless the user directs otherwise."
+    },
+    "approval_frequency": "User approval is requested only before entering the next bundle, not before each script, test, patch or diagnostic.",
+    "pre_bundle_design_audit": {
+      "required_when": "The active driver is not Astra; see astra_driver_exception.",
+      "auditor": "fable",
+      "timing": "After the driver writes a bundle design and before that bundle begins execution; internal work already authorized inside the current bundle may continue only within its declared scope.",
+      "questions": [
+        "Is the proposed measurement/verification burden proportionate, or is the project becoming over-instrumented relative to the density/velocity reconstruction goal?",
+        "How does this bundle advance Local Group formation/evolution simulations with 0.3 cMpc/h local zoom ICs embedded in a CF4-informed 1-2 cMpc/h cosmological environment? Apply project_goal: outside-LG fine structure may be prior-generated, and numerical resolution is not a demand for CF4 information at that scale.",
+        "Is the plan feasible under the declared data, memory, GPU, wall-time and model contracts?",
+        "Which items are mandatory for the next scientific gate and which must be deferred?"
+      ],
+      "decision": "For non-Astra drivers, record Fable's advice and resolve mandatory changes. Astra performs the design assessment directly. Both require user approval before entering the next bundle."
+    },
+    "storage_semantics": {
+      "gpfs": "shared POSIX storage mounted on login and compute nodes; treat it like /home for declared project artifacts",
+      "gpfs_read_write": "allowed only for explicitly declared inputs and new output directories under normal filesystem permissions",
+      "gpfs_specific_implementation": false,
+      "gpfs_specific_integrity_experiments": false,
+      "network_access": false
+    },
+    "roles": {
+      "driver": "Plan, implement, execute, analyze, commit, report and await user approval at the next bundle boundary. Astra also performs the design assessment and closure review directly.",
+      "claude_opus_5": "Primary closure auditor for non-Astra drivers; skipped when Astra drives.",
+      "gpt_5_6_sol": "Backup only when an applicable Opus audit is unavailable or doubted; no automatic substitute for audits waived under the Astra exception.",
+      "grok": "Not an auditor in this workflow.",
+      "fable": "Pre-bundle design auditor for non-Astra drivers: assess over-measurement, final-goal contribution, feasibility and mandatory/deferred scope. Skipped when Astra drives."
+    },
+    "stop_conditions": [
+      "data or provenance integrity failure",
+      "non-finite or non-conservative physics result",
+      "resource/safety risk",
+      "a preregistered terminal NO-GO"
+    ],
+    "non_stop_conditions": [
+      "a small test failure that can be fixed in the same bundle",
+      "an audit CLI timeout without a physics or safety failure",
+      "a need to add a regression test or update a manifest within the declared bundle"
+    ]
+  },
+  "bundles": [
+    {
+      "id": "B0-OPERATOR",
+      "scope": "Q1/Q6/Q7 operator implementation, registry contracts, seven development fixtures, containment/error/resource measurements",
+      "deliverable": "One consolidated operator viability dossier and one Opus closure audit",
+      "scientific_boundary": "development-only; no posterior, IC, PM/HOP/RAMSES or 0.3 cMpc/h claim"
+    },
+    {
+      "id": "B1-Z0-POSTERIOR",
+      "scope": "CF4 provenance/selection/covariance, independent truth mocks, low-k parent posterior, and data-driven constraint-frontier measurement",
+      "deliverable": "One z=0 posterior/frontier dossier and one Opus closure audit",
+      "scientific_boundary": "no high-k promotion or zoom selection before frontier gates"
+    },
+    {
+      "id": "KF-DESIGN-READINESS",
+      "scope": "Record-only closure of the active KF-DESIGN baseline binding, geometry-only bin manifest validation, and source-bound likelihood readiness gaps",
+      "deliverable": "One local readiness dossier and one Opus closure audit",
+      "scientific_boundary": "no catalog or external-artifact read, no mock truth opening, no posterior/frontier inference, no KF-EXPAND, IC, PM, HOP or RAMSES execution"
+    },
+    {
+      "id": "Z0-DENSITY-LIKELIHOOD-REPAIR",
+      "scope": "Use the source-bound GPFS artifacts and existing Phase-A/B/C records to repair the datum-bearing z=0 density-likelihood route after the Phase-C sampler/PMWD NO-GO",
+      "deliverable": "One concise repair decision record; only the minimum implementation or execution needed to establish a stable development-mock z=0 posterior",
+      "scientific_boundary": "z=0 density/velocity posterior development only; no actual CF4 posterior, parent promotion, high-k completion, IC, PM, HOP, RAMSES or 0.3 cMpc/h claim"
+    },
+    {
+      "id": "B2-IC-FORWARD",
+      "scope": "conditional high-k completion, q-corrected IC proposal, PM forward evolution, and z=0 density/velocity reproduction",
+      "deliverable": "One IC-to-z=0 forward-validation dossier and one Opus closure audit",
+      "scientific_boundary": "high-k is labelled conditional/prior-dominated until independent gates pass"
+    },
+    {
+      "id": "B3-ZOOM",
+      "scope": "phase-consistent Lagrangian masks, HOP/RAMSES target validation, and <=0.3 cMpc/h numerical zoom hierarchy",
+      "deliverable": "One zoom validation dossier and one Opus closure audit",
+      "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
+    }
+  ],
+  "current_bundle": "Z4-PHYSICAL-FIELD-RECOVERY",
+  "active_work_package": "POSITIVE_PHYSICAL_FIELD_AND_TWO_DEVELOPMENT_MAP_FITS",
+  "current_plan": "config/cf4_z4_physical_field_plan_v1.json",
+  "last_bundle_result": "config/cf4_z4_physical_field_result_v1.json",
+  "current_status": "Z4 completed and driver-reviewed: positive physical-field code, five passing tests, two joint MAP candidates and two conditional fixed-bias fits. Joint fits did not converge and drove biases high; conditional fits converged and improved observed-support density correlations from 0.370/0.344 to 0.577/0.573. This is development-only, N32=12 cMpc/h, not a calibrated posterior or final resolution. All Z4 Slurm tasks ended; waiting for user approval before a posterior-marginalization bundle.",
+  "latest_development_posterior_aggregate": {
+    "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
+    "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
+    "status": "PASS_BALANCED_DEVELOPMENT_Z0_MOCK_MECHANICS",
+    "task_count": 8,
+    "valid_artifact_count": 8,
+    "passing_task_count": 8,
+    "density_global_68_mean": 0.9287033081054688,
+    "density_global_95_mean": 0.9806251525878906,
+    "actual_CF4_posterior": false,
+    "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
+  },
+  "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
+  "current_closure_audit": "config/cf4_z4_physical_field_result_v1.json",
+  "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
+  "next_bundle_rule": "After Z4 driver closure, await user approval before new sampling, actual-data inference, resolution increase or IC work. No post-hoc spectrum rescaling or MAP-to-posterior claim. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and the active driver audit policy.",
+  "execution_firewall": {
+    "gpfs": true,
+    "gpfs_shared_storage": true,
+    "gpfs_specific_implementation": false,
+    "slurm": true,
+    "production": false,
+    "heldout_data": false
+  },
+  "historical_execution_state": {
+    "q7_2_started": true,
+    "does_not_authorize_current_bundle_execution": true
+  }
+}

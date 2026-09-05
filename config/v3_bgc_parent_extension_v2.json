@@ -1,0 +1,32 @@
+{
+  "schema": "cf4-v3-bgc-parent-extension-v2",
+  "frozen_date": "2026-08-02",
+  "frozen_before_sampling": true,
+  "activation_condition": "Run only if the frozen 32-member N576 small-scale ensemble for P1 parent 3023 produces no P2 screen pass.",
+  "reason": "A zero P2 success rate across 32 high-k realizations indicates that exploring more posterior parent modes has higher priority than adding further high-k phases to parent 3023.",
+  "base_configuration": "config/v3_bgc_parent_all_v1.json",
+  "model": {
+    "N": 192,
+    "box_size_mpc_h": 384.0,
+    "velocity_estimator": "bgc",
+    "error_scale": 0.9,
+    "sigma_nl_km_s": 0.0,
+    "bgc_window": 801,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "holdout_fraction": 0.0,
+    "sample_seed_range_inclusive": [3065, 3192],
+    "n_samples": 128
+  },
+  "selection_policy": {
+    "all_samples_receive_the_same_P0_gate": true,
+    "all_P0_samples_receive_config_p1_targets_v2_observer": true,
+    "no_seed_is_selected_before_forwarding": true,
+    "no_threshold_retuning_after_results": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v2",
+    "gate_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_gate_v2",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v2"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "schema": "hong2021-v46-train-only-mixture-tail-occupancy-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_diagnostic_execution",
+  "purpose": "Determine whether V45's extreme-density failure is caused by unsupported logistic-mixture component mass, a globally overdispersed train likelihood, component collapse, or a calibrated likelihood coupled to an incompatible empirical rank copula, without fitting, resampling development fields, or changing any threshold.",
+  "parent_evidence": {
+    "v45_record": "config/hong2021_v45_result_record.json",
+    "v45_record_sha256": "ad5f7ffaaab6e12f52674e3991c401a2ece4292ccbf0e749359e2c09b464a6d2",
+    "required_classification": "identifiable_mixture_body_is_supported_but_extreme_likelihood_is_insufficient",
+    "required_next": "audit_train_only_mixture_tail_NLL_and_component_occupancy_without_threshold_tuning",
+    "required_development_pass": false,
+    "required_high_k_power_and_residual_RMS_all_domains": true
+  },
+  "frozen_inputs": {
+    "v45_program": "config/hong2021_v45_identifiable_mixture_copula_program.json",
+    "v45_program_sha256": "30a5461d2c9bbd2464b08787ca6381467645a8d08f77efac2a0fb5a1932567ac",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "3a55117a05b25481fac9211ee21a100c20df00b52b418048fdc687edb112df1d",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.json",
+    "training_report_sha256": "a6867ebca7e6238846c79f02c8e991b5530d40118cb42db87aeeba034de3d6d3",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v45_identifiable_mixture_sequence/preflight.json",
+    "preflight_sha256": "19a0960589aa92d2aa3d431004814004b737fa7a2ea83a6b416bb324902abb70",
+    "development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v45_e24_identifiable_mixture_copula/development_decision.json",
+    "development_decision_sha256": "0690e28e5ed9cac7ab59ae528dcdfdaf6bf2c8a6599d1dc6dd3ef8aa15b91804"
+  },
+  "audit_population": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "split": "train only",
+    "objects": "every frozen V35 training object: 432 TNG100, 202 SIMBA, and 409 Swift",
+    "model": "V45 EMA checkpoint in evaluation mode",
+    "augmentation": false,
+    "validation_inputs_opened": false,
+    "validation_truth_opened": false,
+    "development_ensemble_role": "no arrays reopened; only the already sealed V45 decision classification and summary metrics are inherited"
+  },
+  "exact_streaming_diagnostics": {
+    "scope": "every native voxel of every train cube",
+    "metrics": [
+      "mean exact logistic-mixture NLL",
+      "mean NLL within empirical standardized-target upper q99 and q99.9 subsets",
+      "PIT fractions below and above 0.01, 0.001, and 0.0001 tails",
+      "mean predicted mixture weights by component",
+      "mean posterior truth responsibilities by component",
+      "mean posterior truth responsibilities within target upper q99 and q99.9 subsets",
+      "mean per-voxel mixture-weight entropy and effective component count",
+      "global effective component count from mean posterior responsibilities"
+    ],
+    "PIT_expected_tail_fraction": {"0.01": 0.01, "0.001": 0.001, "0.0001": 0.0001},
+    "responsibility_definition": "softmax(log mixture weight plus component log density of the observed standardized train residual)"
+  },
+  "fixed_voxel_probe": {
+    "seed": 146046,
+    "voxels_per_object": 4096,
+    "selection": "one independently seeded sample without replacement from the 64^3 flat native voxels for each domain and object",
+    "target_quantile_thresholds": [0.99, 0.999],
+    "stored_parameter_summaries": [
+      "component weight quantiles",
+      "component location quantiles",
+      "component scale quantiles",
+      "component conditional upper-q99.99 standardized-residual endpoint quantiles",
+      "component posterior-responsibility quantiles"
+    ],
+    "summary_quantiles": [0.5, 0.9, 0.99, 0.999, 1.0]
+  },
+  "train_posterior_predictive_check": {
+    "members_per_probed_voxel": 4,
+    "uniform_seeds": [146046, 146047, 146048, 146049],
+    "sampling": "independent fixed uniform ranks transformed through the exact V45 28-step local mixture inverse",
+    "comparisons": [
+      "standardized residual q99, q99.9, and q99.99 versus probed train truth",
+      "full log10rho q99, q99.9, and q99.99 versus probed train truth after adding the frozen backbone",
+      "mean delta squared ratio versus probed train truth"
+    ],
+    "density_definition": "log10rho=4.5*y and delta=10**log10rho-1",
+    "new_development_sample": false
+  },
+  "fixed_thresholds": {
+    "minimum_supported_component_mean_weight": 0.02,
+    "minimum_responsibility_to_weight_ratio": 0.5,
+    "minimum_effective_responsibility_components": 3.0,
+    "PIT_tail_observed_over_expected_lower": 0.5,
+    "PIT_tail_observed_over_expected_upper": 2.0,
+    "posterior_predictive_absolute_q99_99_log10rho_max_dex": 0.10,
+    "posterior_predictive_mean_delta_squared_ratio_min": 0.6666666666666666,
+    "posterior_predictive_mean_delta_squared_ratio_max": 1.5
+  },
+  "fixed_branches": [
+    {
+      "condition": "any domain has a component with mean weight at least 0.02 but posterior responsibility divided by weight below 0.5, and that component's median conditional upper-q99.99 standardized-residual endpoint exceeds the pooled probed train-truth q99.99 standardized residual",
+      "classification": "unsupported_low_responsibility_component_mass_drives_the_train_tail",
+      "next": "replace_free_logistic_mixture_with_a_proper_train_only_distribution_that_cannot_hide_mass_in_unoccupied_components"
+    },
+    {
+      "condition": "all domains overpredict train posterior-predictive q99.99 log10rho by more than 0.10 dex or mean delta squared by more than 1.5, while upper PIT observed-over-expected is below 0.5 at 0.001 in at least two domains",
+      "classification": "mixture_likelihood_is_globally_overdispersed_in_the_train_upper_tail",
+      "next": "replace_logistic_tail_shape_with_a_train_only_tail_identifiable_proper_likelihood"
+    },
+    {
+      "condition": "any domain has global effective posterior-responsibility component count below 3.0",
+      "classification": "identifiable_initialization_did_not_prevent_component_collapse",
+      "next": "stop_finite_mixture_parameterization_and_use_a_monotone_train_only_conditional_quantile_model"
+    },
+    {
+      "condition": "every domain passes PIT 0.001 ratio in [0.5,2], absolute train posterior-predictive q99.99 log10rho within 0.10 dex, and mean delta squared ratio in [2/3,1.5]",
+      "classification": "train_mixture_tail_is_calibrated_but_empirical_rank_copula_breaks_development_extremes",
+      "next": "audit_only_the_train_empirical_conditional_rank_tail_and_query_coupling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "mixture_tail_failure_is_mixed_or_not_identified",
+      "next": "compare_train_tail_NLL_PIT_occupancy_and_posterior_predictive_failures_before_any_new_generator"
+    }
+  ],
+  "hard_checks": [
+    "clean committed worktree and exact V45 record, program, checkpoint, report, cache, preflight, and decision hashes",
+    "full pytest before execution",
+    "Lageunha Ada GPU and V45 parameter count",
+    "all train object counts and voxel-probe counts exactly match the frozen program",
+    "all NLL, PIT, weights, responsibilities, parameters, and posterior-predictive values are finite",
+    "mixture weights and posterior responsibilities each sum to one within 1e-5",
+    "posterior-predictive inverse-CDF maximum error below 2e-6",
+    "no validation data, Astrid, or historical EAGLE access"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v46_mixture_tail_occupancy_audit/audit.json",
+  "firewall": {
+    "training_or_refit": false,
+    "new_development_sampling": false,
+    "development_threshold_change": false,
+    "posthoc_scale_or_clipping": false,
+    "donor_change": false,
+    "validation_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

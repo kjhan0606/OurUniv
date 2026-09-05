@@ -1,0 +1,81 @@
+{
+  "schema": "ouruniv-cf4-twompp-completeness-outlier-audit-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_TECHNICAL_OUTLIER_ZERO_EXPOSURE_AUDIT_ONLY",
+  "authorization": {
+    "authorization_basis": "The user approved the equatorial completeness outlier and zero-exposure audit on 2026-09-01 after the V4 technical input gate passed.",
+    "technical_audit": true,
+    "single_Slurm_submission": true,
+    "GPFS_read": true,
+    "GPFS_write": true,
+    "network_access": false,
+    "field_inference": false,
+    "likelihood_datum_consumption": false,
+    "joint_information_budget": false,
+    "resolution_increase": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "parent_v4_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v4.json",
+    "bytes": 3927,
+    "sha256": "3cbd089d9e64cabe550259e4738dd2810102a6e4d3ec4c0e5d582748f0a206d9"
+  },
+  "parent_v4_implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v4.py",
+    "bytes": 15580,
+    "sha256": "b43f3535c7b7516bdf44e2a4b8ed95de187c85ea2dc4655eebe4953ad98d3e71"
+  },
+  "parent_v4_result_record": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_v4_result_record_v1.json",
+    "bytes": 5626,
+    "sha256": "ba9e3f6e830bcf745f7ad9b94c83c00cfc5726c9915246ce4dc8dc575834752d"
+  },
+  "parent_v4_result": {
+    "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/result.json",
+    "bytes": 6192,
+    "sha256": "9456064288e1abeb205419183d8a790ed63a775dffd0814516af38e93a3ed7e2"
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_completeness_outlier_audit_v1.py",
+    "sha256": "4c2a942834377fd70bdcc2704dd5474ef29f06a1692491cc0dadc00261918fed"
+  },
+  "frozen_gates": {
+    "assigned_map_rule": "Ksmag <= 11.5 uses completeness_11_5; 11.5 < Ksmag <= 12.5 uses completeness_12_5",
+    "zero_exposure_max_count_inclusive": 0,
+    "near_zero_exposure_strictly_less_than": 0.05,
+    "large_absolute_difference_strictly_greater_than": 0.05,
+    "large_difference_fraction_max_inclusive": 0.01,
+    "large_difference_fraction_reason": "Require the inherited 0.05 agreement tolerance through at least the p99 level; a larger tail indicates a systematic map-version or coordinate-boundary mismatch.",
+    "usable_tracer_count_min_inclusive": 20000,
+    "all_six_usable_populations_must_be_nonempty": true,
+    "large_or_zero_rows_future_status": "exclude_from_any_count_likelihood_pending_this_audit; never silently retain",
+    "N32_angular_footprint_role": "voxel-centre diagnostic only; not a volume-integrated likelihood response"
+  },
+  "implementation_contract": {
+    "equatorial_map_sampling": true,
+    "RING_ordering": true,
+    "large_or_zero_rows_written_to_csv": true,
+    "neighbor_pixel_reconciliation_is_diagnostic_not_gate": true,
+    "failed_measurements_preserved_before_raise": true,
+    "parent_eligible_count_must_reproduce_exactly": 36954,
+    "no_random_number_generator": true,
+    "no_threshold_adaptation_after_result": true
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/audit",
+    "maximum_submissions": 1,
+    "requested_cpus": 1,
+    "expected_peak_memory_MiB": 500,
+    "requested_memory_MiB": 768,
+    "memory_headroom_multiplier": 1.536,
+    "time_limit": "00:15:00",
+    "plain_same_filesystem_directory_rename_publication": true,
+    "refuse_overwrite": true,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}

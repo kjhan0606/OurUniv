@@ -1,0 +1,12 @@
+VERDICT: NO-GO
+
+- Seeds agree: source `SEED_START=2026083000`, `SEED_STOP=+64` (`src/cf4_b1_integrated_joint_calibration_v3.py:36`) matches both the resealed development range and the result/record `[2026083000, 2026083064]`; contaminated `[2026083064,2026083128]` quarantined, validation `[2026083320,2026083576]` marked sealed, `validation_opened: false` in all three.
+- 17,007 exclusion agrees: `_disjoint_target_exclusion_probe` hard-fails unless the unique non-unmatched 2M++ target count is exactly 17007; result reports 17007 with `overlap_count: 0`, and record repeats it.
+- Same-latent joint generation holds structurally: one `truth_coeff` drives both `base._draw_counts` and `_draw_marks` via `MARK_JAC @ coeff` (`run_mock`, lines 306–311); result flag `same_frozen_latent_field_for_counts_and_cf4_marks: true`.
+- Optimizer: `fit_success_count: 64`, `fit_abnormal_termination_count: 0`, and success is only credited via `fit.success and np.isfinite(fit.fun)` — a finite objective alone does not count. Consistent.
+- Grouped likelihood consistency is verified: `joint_log_likelihood_abs_error < 1e-7` on all 64 members (max reported 7.6e-10 per-arm).
+- Discrepancy: the record's `canonical_vs_vectorized_joint_abs_error_max: 9.604e-10` exceeds every per-arm max in the result file (largest 7.567e-10), so the record's number does not come from this result JSON.
+- Fisher concern: `_mark_fisher` (line 257) subtracts `(inv·J)ᵀ(inv·J)` summed element-wise instead of the rank-1 `(Σᵢ Jᵢ)(Σᵢ Jᵢ)ᵀ/σ⁴` implied by the shared-group covariance, so it is not exact for groups with more than one member — and it feeds the posterior covariance, i.e. exactly the coverage metrics that fail.
+- Gate blocks promotion: `strict_low_k_gate_pass_count: 11` vs required 64, `strict_low_k_gate_pass: false`; all disposition fields (`frontier_promotion`, `KF_EXPAND`, `observational_z0_posterior`, `0p3_cMpc_h_claim`) are NOT_ALLOWED/NOT_CREATED, and the firewall record blocks B1 promotion and B2.
+
+NEXT: Diagnose the coverage failure starting with the grouped mark-Fisher rank-1 term (source line 257) and the record's mismatched abs-error figure, using development seeds only.

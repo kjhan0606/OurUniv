@@ -1,0 +1,123 @@
+{
+  "schema": "hong2021-v54-physical-tail-brier-result-record-v1",
+  "status": "complete_train_only_mechanism_gate_failure_development_unopened",
+  "program": "config/hong2021_v54_physical_tail_brier_program.json",
+  "program_sha256": "84e06be3980deeb63456fb53a56d05d22eca68fea663d023b6be5e75460fbd90",
+  "code_commit": "207b5ea393b48fcaf8f2a1c1de6f8f870afc0a88",
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.pt",
+    "checkpoint_sha256": "2a0489130b249700345ebb3bc97f648b00da003786713cdb16301d0dfcaa5206",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.json",
+    "report_sha256": "96884ebac44d53d461a93e837b872e1b3d28f5e6eda6a3c13f4b58ddf810da07",
+    "report_decision_digest_sha256": "a7fd0a11d2e0461f62fb4fc6fba5bc5fff4671dbb637ca7122d9a3bd56ff6edf",
+    "steps": 12000,
+    "fixed_validation_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "AMP_overflow_count": 6,
+    "AMP_overflow_steps": [
+      1,
+      274,
+      4280,
+      6445,
+      8595,
+      10918
+    ],
+    "final_validation": {
+      "TNG100": {
+        "composite": 1.498332872185656,
+        "bounded_NLL": 1.390359692676093,
+        "tail_score": 1.079731812960999
+      },
+      "SIMBA": {
+        "composite": 1.4135580249130726,
+        "bounded_NLL": 1.3586806878447533,
+        "tail_score": 0.5487733103800565
+      },
+      "Swift": {
+        "composite": 1.401704789013476,
+        "bounded_NLL": 1.349837615683272,
+        "tail_score": 0.5186717301808499
+      }
+    }
+  },
+  "train_only_mechanism_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_train_high_backbone_gate/decision.json",
+    "sha256": "e01611d46dfe9328558b8beb9292ac8f3c152c0b0c9613d14c8f9cebd80e6624",
+    "decision_digest_sha256": "ed634eff7ff03c3ab703926d656bc8a46907d4565c944aab051ca40273b3c1d7",
+    "train_mechanism_pass": false,
+    "classification": "proper_exceedance_tail_score_does_not_calibrate_train_high_backbone_physical_moments",
+    "next": "stop_before_development_sampling_and_audit_which_fixed_threshold_or_beyond_threshold_amplitudes_dominate_the_remaining_train_moment"
+  },
+  "train_only_physical_moment_ratios": {
+    "definition": "predicted quadrature mean delta-squared divided by the empirical truth mean delta-squared in fixed V51 train-backbone strata",
+    "allowed_top_backbone_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "TNG100": {
+      "below_q90": 0.9472640439876518,
+      "q90_to_q99": 3.3881041670279464,
+      "q99_to_q99_9": 5.687170195054986,
+      "q99_9_and_above": 107.69606342937506,
+      "V50_q99_9_and_above": 47.876897528517105,
+      "V52_q99_9_and_above": 12.798747843350304,
+      "top_backbone_pass": false
+    },
+    "SIMBA": {
+      "below_q90": 0.6722303019208778,
+      "q90_to_q99": 3.424087526062112,
+      "q99_to_q99_9": 3.6451342343247655,
+      "q99_9_and_above": 5.26119499358814,
+      "V50_q99_9_and_above": 5.225048329093988,
+      "V52_q99_9_and_above": 4.346255342497351,
+      "top_backbone_pass": false
+    },
+    "Swift": {
+      "below_q90": 1.1282310679158076,
+      "q90_to_q99": 1.81610287360656,
+      "q99_to_q99_9": 2.127801600797334,
+      "q99_9_and_above": 21.143516089392783,
+      "V50_q99_9_and_above": 6.536330258125933,
+      "V52_q99_9_and_above": 3.525056047833776,
+      "top_backbone_pass": false
+    },
+    "maximum_32_to_64_quadrature_relative_difference": 2.353005274160286e-10,
+    "quadrature_limit": 0.005,
+    "interpretation": "V54 improves the middle high-density strata relative to V50 and usually V52, but the q99.9-and-above physical second moment remains uncalibrated in every domain and is worse than both parents. The failure is physical tail amplitude rather than quadrature resolution."
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_training": true,
+    "pytest_passed": 419,
+    "sequence_status": "complete_train_gate_failure",
+    "sequence_status_sha256": "ad85577558bf81e890b53dd04447c7839aa372a38d4734573fbdc1446ad147e6",
+    "pytest_log_sha256": "1e50c68e5c1949c0549cec4931a3d755d2e9a2794f4b07e71552abd0403af26d",
+    "threshold_log_sha256": "2e168ccc024c648137d7f47b361f751776b2dd1e3b59af8557346f60d2155507",
+    "preflight_log_sha256": "bdaa8b177ebbe3425aaca112e51b0002cf2c4fa5c80b7ab6cd18684de00c73ee",
+    "preflight_sha256": "2151b72fbdb882dcd12d685af7ef431abd7e749b0c9f229c730326aa752c33ca",
+    "training_log_sha256": "eeb1aa9ba0f88274091518d3f1a7d8fc3b0f2caf1355f97ac0a2a0301d56fb1f",
+    "train_gate_log_sha256": "c0b764dadca3804b96aa8afea77915efdfdc8bbb80f3ddcac6a0990c8201f1c8",
+    "runtime_only_affinity_change": "The V54 Python main thread was moved from logical CPU 0 to idle logical CPU 100 after step 11300 because an unrelated process was pinned to CPU 0. No model, data, objective, optimizer, RNG, threshold, checkpoint selection, or gate condition changed. The same runtime-only move was applied to the train-gate main thread."
+  },
+  "scientific_conclusion": [
+    "The fixed proper exceedance Brier terms improve q90-to-q99.9 train-backbone moments but do not constrain the amplitudes far beyond the highest threshold strongly enough.",
+    "The top q99.9-and-above ratios are 107.70, 5.26, and 21.14 in TNG100, SIMBA, and Swift, so V54 fails the predeclared mechanism gate in all three domains.",
+    "The maximum 32-versus-64 quadrature discrepancy is only 2.36e-10, excluding numerical integration as the cause.",
+    "The next sealed action is a train-only decomposition of fixed-threshold exceedance probability versus beyond-threshold amplitude contribution. No development or independent data may be opened before that audit."
+  ],
+  "firewall": {
+    "new_development_sample_generated": false,
+    "development_accessed": false,
+    "validation_used_for_selection": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

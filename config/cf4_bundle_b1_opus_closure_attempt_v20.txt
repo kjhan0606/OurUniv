@@ -1,0 +1,15 @@
+VERDICT: CONDITIONAL
+
+1. Provenance and receipt repairs are sufficient to close the v19 findings on that axis. The certificate chain is self-consistent: 19/19 linked artifact pins verify with missing=0 and mismatches=0, the receipt excludes itself and its raw output so there is no mutual hash cycle, and the record/receipt/raw/certificate digests are each pinned with byte counts. The metadata-only refresh at commit 8f2ebdc against an immutable source/test tag (cf4-b1-cert-515630a) with an empty tag..HEAD src/test diff means the tested tree and the certified tree are the same tree. That is auditable.
+
+2. The test evidence is genuine and targets the v19 defects, not proxies for them. Periodic RSD repair is checked against exact SciPy whole-grid +/-box translations plus six-face/two-corner production probes, and the implementation actively rejects the legacy wrap rather than merely tolerating the new one. The width-perturbation test across arms A/B/C/D shows deterministic coefficients invariant while posterior draws move. 26 passed, exit 0, 89.43 s on the tagged tree is a complete and reproducible statement.
+
+3. The NO-GO is scientifically honest and reports the weakest link. The packet leads with the failure: strict composite low-k gate passes 8/64, so technical gate FAIL. It does not turn 64/64 optimizer convergence into a success claim and explicitly refuses observational posterior, validation opening, frontier promotion, B2 IC forward, and the 0.3 cMpc/h claim. Widths are diagnostic-only and frozen before repair with no same-seed refit.
+
+4. The coverage evidence is internally contradictory in a way the packet names rather than hides. Legacy per-voxel flags read 47/47 at both 68% and 95%, but the contingency table (68-only=9, 95-only=9, both=38, neither=8, union=56) is arithmetically incompatible with 47/47 at both levels. The legacy flag is reporting on a different denominator than the contingency and is a vacuous pass artifact of that mismatch. Minimum blocking item: reconcile the 47/47 legacy coverage flag against the 64-population contingency and retire or re-scope the legacy flag before any gate is re-run.
+
+5. Uniform 2/16 strict-pass across all four arms plus the stated non-isolation of D means the arms are not independent evidence. The directional split (A/C/D over-cover while B under-covers) correctly rules out pooled scalar width shrinkage. Second blocking item: establish arm-level causal isolation, especially D, and explain the uniform 2/16 before any per-arm width model is fit.
+
+6. Nothing here authorizes forward motion. A clean certificate chain establishes that the failing result is trustworthy, not that it is closer to passing. Verdict is CONDITIONAL because the closure package is auditable and honest as a development-only NO-GO while items 4 and 5 remain open against the gate itself.
+
+NEXT: Reconcile the 47/47 legacy coverage flag against the 64-population contingency and establish arm-level causal isolation for D, keeping widths frozen and the development-only NO-GO in force until both are resolved.

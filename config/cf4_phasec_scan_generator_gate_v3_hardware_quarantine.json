@@ -1,0 +1,103 @@
+{
+  "schema": "ouruniv-cf4-phasec-scan-generator-gate-v3-hardware-quarantine",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_EXACT_GATE_RERUN_WITH_SYN06_QUARANTINED_WAITING_EXECUTION",
+  "authorization": {
+    "basis": "The physical-GPU sweep reproduced 3/3 failures on one syn06 A40 and 3/3 passes on another A40 under identical concurrent execution. The exact all-eight gate may be rerun without changing science inputs while temporarily quarantining syn06.",
+    "Slurm_GPU_array": true,
+    "Slurm_CPU_aggregate": true,
+    "GPFS_read_bound_mock_inputs": true,
+    "GPFS_write_new_outputs_only": true,
+    "sampler": false,
+    "actual_observational_data": false,
+    "validation_seed": false,
+    "Phase_D_or_later": false
+  },
+  "lineage": {
+    "exact_gate_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_scan_generator_gate_v2.json",
+      "sha256": "07b1c0434b954a364f66d78ab6e6b8c63cfe5ba609909ad16b8b2fd897980cf7"
+    },
+    "exact_gate_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_scan_generator_gate_v2.py",
+      "sha256": "5552198373b2c1507d981c467de9b9a469e053a8af189e51aea20495bf3c8f4b"
+    },
+    "device_capture_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_same_gpu_repeatability_diagnostic_v1.json",
+      "sha256": "46aba82ea404d13934abe5a1115dca01167a0ffaca322bf7a0e8ac4cb48ee911"
+    },
+    "device_capture_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_same_gpu_repeatability_diagnostic.py",
+      "sha256": "79a5080bfb667f5b6294ae741f4246fc516a9b087d498aa4643cd4a7a8d0a8db"
+    },
+    "failed_all_eight_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_scan_generator_gate_v2_result_record.json",
+      "sha256": "1b834807fb3c85ad61544ea55c2600b716d235fd95fb3ecf4a3aa0ff8ae7ccb1"
+    },
+    "same_GPU_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_same_gpu_repeatability_diagnostic_v1_result_record.json",
+      "sha256": "1f4d8bd5796874f17fcf714a247c37957a91e42b12638bede1e35cf6bc99fe39"
+    },
+    "syn06_GPU_sweep_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_syn06_gpu_sweep_v1_result_record.json",
+      "sha256": "55d09f3cdb42eb2b04dd9de8ffb099aebdf13879e09392b7b058c538023605e9"
+    }
+  },
+  "assignments": [
+    {"index": 0, "seed": 2026083000, "arm": "A"},
+    {"index": 1, "seed": 2026083001, "arm": "A"},
+    {"index": 2, "seed": 2026083002, "arm": "B"},
+    {"index": 3, "seed": 2026083003, "arm": "B"},
+    {"index": 4, "seed": 2026083004, "arm": "C"},
+    {"index": 5, "seed": 2026083005, "arm": "C"},
+    {"index": 6, "seed": 2026083006, "arm": "D"},
+    {"index": 7, "seed": 2026083007, "arm": "D"}
+  ],
+  "unchanged_science_contract": {
+    "white_fields_cosmology_grid_and_high_k_tag": "exactly inherited from bound v2 gate program",
+    "a_nbody_maxsteps": [0.0078125, 0.00390625],
+    "density_cross_correlation_min": 0.999,
+    "density_relative_L2_max": 0.03,
+    "velocity_cross_correlation_min": 0.995,
+    "velocity_relative_L2_max": 0.05,
+    "all_eight_seeds_must_pass": true,
+    "seed_replacement_or_threshold_relaxation": false
+  },
+  "hardware_quarantine": {
+    "excluded_node": "syn06",
+    "known_failing_UUID": "GPU-906578dd-9007-fdbd-3c6a-a0c5821e24d6",
+    "allowed_partition": "a40",
+    "expected_nodes": ["syn05", "syn07"],
+    "physical_GPU_identity_recorded_per_task": true,
+    "runner_refuses_known_failing_UUID": true
+  },
+  "decision_rule": {
+    "generator_gate_PASS": "all eight task artifacts valid, all eight seeds pass the unchanged exact v2 gate, all device records valid, and no task ran on syn06 or the known failing UUID",
+    "sampler_mechanics_pilot_indices_after_PASS": [0, 6],
+    "sampler_release_by_this_execution": false,
+    "actual_observational_posterior_allowed": false,
+    "validation_or_Phase_D_allowed": false
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v3",
+    "device_root": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v3_devices",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v3_aggregate",
+    "array": "0-7",
+    "expected_peak_host_memory_MiB_per_task": 7031,
+    "requested_host_memory_MiB_per_task": 9216,
+    "time_limit": "01:00:00",
+    "aggregate_expected_peak_host_memory_MiB": 512,
+    "aggregate_requested_host_memory_MiB": 1024,
+    "manual_syntax_syn06_or_syn101_numerical_execution": false,
+    "monitoring_loop": false
+  },
+  "scope_firewall": {
+    "actual_2Mpp_or_CF4_datum_read": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

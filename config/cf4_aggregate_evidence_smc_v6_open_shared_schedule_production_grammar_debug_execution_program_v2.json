@@ -1,0 +1,439 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-program-v2",
+  "status": "frozen_grammar_debug_slurm_program_execution_disabled_until_sealed_pair_grant_and_audits",
+  "date": "2026-08-21",
+  "purpose": "Freeze the canonical grammar-debug one-shot Slurm wrapper while all runtime actions remain disabled.",
+  "lineage": {
+    "design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_design_v2.json",
+      "commit": "b24b494633d91d991bdb67850b1a6d8cf2f6d9ad",
+      "sha256": "c7b8375641307655f53a9fcae8c0d142c1cf66425cf188fa58a9b3a137bce37a",
+      "mode": "0644"
+    },
+    "base_execution_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_design.json",
+      "commit": "e9c3489b0f1f26f0a2594ac0291566e62aade63e",
+      "sha256": "08d99219b88a232dc809b3a2c945381cbbcda1fac0c7202c1c2681a09be609aa",
+      "mode": "0644"
+    },
+    "base_implementation_commit": "7eb25554abec278a3710b99aed90e73c39f37b9b",
+    "base_implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_implementation_result_record.json",
+      "commit": "7d13151f6f6ed6a99b6219bd2dca923bf8a1b9c2",
+      "sha256": "57ccc0ac99ead2a3903e96e22f0b40182e2a6db3a3b3184a5257d8d8530ba867",
+      "mode": "0644"
+    },
+    "protected_science_hard_pins": {
+      "capability_result_record": {
+        "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_capability_implementation_result_record.json",
+        "sha256": "6322bd38b3b1b432019eb84fec29cf42ced2b01b70f086a0878b7b9192f9abda",
+        "mode": "0644"
+      },
+      "shared_schedule_capability_source": {
+        "path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+        "sha256": "64c60886b8ab62bca45dbe7e223f87662ae8285c177cb7386373b1ee98f74bbb",
+        "mode": "0644"
+      },
+      "shared_schedule_capability_test": {
+        "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+        "sha256": "b4ec360204c2cabc388e2ebc1571abb3e800be51c5108128e06b8235068e85a2",
+        "mode": "0644"
+      },
+      "production_design": {
+        "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_design.json",
+        "sha256": "aa1425834627e6f5aa7e5b542b9354319fad3f3eff61a21b137dca36e7c371cc",
+        "mode": "0644"
+      },
+      "pooling_erratum": {
+        "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_design_erratum_v1.json",
+        "sha256": "eeb32687e9dce54b89dc3a10241bfcc054719ab41934e74a2de732a86bcc9282",
+        "mode": "0644"
+      },
+      "base_production_program": {
+        "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+        "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+        "mode": "0644"
+      },
+      "production_capability_design": {
+        "path": "config/cf4_aggregate_evidence_smc_production_capability_design.json",
+        "sha256": "2a253e049da3c02ef3cff4fc68a72a1f70efde616670538274a01d733460c888",
+        "mode": "0644"
+      },
+      "smc_source": {
+        "path": "src/cf4_aggregate_evidence_smc.py",
+        "sha256": "392c75d823fb055e7b592299aa90540b1176d4cfd3c11442b446e42fd11f8337",
+        "mode": "0644"
+      },
+      "production_capability_source": {
+        "path": "src/cf4_aggregate_evidence_smc_capability.py",
+        "sha256": "aeb385bcb55767c94867ae6037ba56cbc0150b8512c3d778797870e300929b1c",
+        "mode": "0644"
+      },
+      "shared_annealing_source": {
+        "path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py",
+        "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060",
+        "mode": "0644"
+      },
+      "oracle_source": {
+        "path": "src/cf4_aggregate_evidence_oracle.py",
+        "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f",
+        "mode": "0644"
+      },
+      "parallel_oracle_source": {
+        "path": "src/cf4_aggregate_evidence_parallel_oracle.py",
+        "sha256": "1d4d587a2e54c676f71c5c68fcd0744db21ec3006501f4185b3854f7c3b19e3c",
+        "mode": "0644"
+      },
+      "pilot_result_record": {
+        "path": "config/cf4_aggregate_evidence_smc_v6_open_disposable_pilot_result_record.json",
+        "sha256": "0ff9c60ca1351b82337e1620fab3ee53952ed81709efebb42972013b7746d4bf",
+        "mode": "0644"
+      },
+      "receipt_schedule_manifest": {
+        "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/pilot/schedule_manifest.json",
+        "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+        "mode": "0444"
+      },
+      "pilot_schedule_manifest": {
+        "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/schedule_manifest.json",
+        "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+        "mode": "0444"
+      },
+      "response_atlas_manifest": {
+        "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+        "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211",
+        "mode": "0600"
+      },
+      "density_filter": {
+        "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+        "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+        "mode": "0600"
+      },
+      "physical_model": {
+        "path": "config/p2_lg_z0_forward_importance_v8.json",
+        "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+        "mode": "0644"
+      },
+      "CF4_calibration": {
+        "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+        "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+        "mode": "0600"
+      },
+      "oracle_regression_postmortem": {
+        "path": "config/cf4_aggregate_evidence_oracle_regression_postmortem_result_record.json",
+        "sha256": "de0b6b047f251679b2542868ed2546488bb2bbe40d34393899ff3094df3c2310",
+        "mode": "0644"
+      },
+      "v5_postmortem": {
+        "path": "config/cf4_aggregate_evidence_smc_production_v5_postmortem_result_record.json",
+        "sha256": "f8eb0d38a49e2a7e6a16a4a2178418dd635f120145f1bad63213a42ae2746743",
+        "mode": "0644"
+      }
+    },
+    "implementation_files_exact": [
+      "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_program_v2.json",
+      "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v2.py",
+      "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.sbatch",
+      "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.sh",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v2.py",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.py"
+    ],
+    "future_implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_implementation_result_record_v2.json",
+      "schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-implementation-result-record-v2",
+      "status": "complete_pass_postcommit_grammar_debug_slurm_implementation",
+      "exact_keys": [
+        "schema",
+        "status",
+        "implementation_commit",
+        "implementation_parent_commit",
+        "design_commit",
+        "implementation_files",
+        "independent_audits",
+        "authorization"
+      ],
+      "independent_audits_exact": {
+        "precommit": "COMMIT GO",
+        "postcommit": "LINEAGE GO"
+      },
+      "authorization_exact": {
+        "pair_creation_authorized": false,
+        "grant_creation_authorized": false,
+        "Slurm_submission_authorized": false,
+        "receipt_creation_authorized": false,
+        "cache_population_authorized": false,
+        "production_execution_authorized": false,
+        "retry_resume_requeue_retune_or_scale_up_authorized": false,
+        "conditional_bank_authorized": false,
+        "candidate_selection_authorized": false,
+        "PM_authorized": false,
+        "HOP_authorized": false,
+        "RAMSES_authorized": false,
+        "downstream_execution_authorized": false,
+        "automatic_follow_on_authorized": false
+      }
+    }
+  },
+  "canonical_paths": {
+    "future_grant": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_grant_v2.json",
+    "future_external_release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_release_v2.json",
+    "future_external_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_manifest_v2.json",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_receipts",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_cache",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_run",
+    "slurm_combined_log_template": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_slurm-%j.log"
+  },
+  "fixed_science": {
+    "master_seeds": [
+      2026082301,
+      2026082302,
+      2026082303,
+      2026082304
+    ],
+    "replicates_sequential": true,
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [
+      3193,
+      3448
+    ],
+    "parent_count": 256,
+    "beta": [
+      0.0,
+      0.1531397846993059,
+      0.3181984675451238,
+      0.5129471527439684,
+      0.7369993853258423,
+      1.0
+    ],
+    "schedule_sha256": "c1b96d871e8c66d04e5028ed32773dc19656ad5b60149a047e025d75a69221b6",
+    "stage_count_exact": 5,
+    "MH_sweeps_per_stage": 4,
+    "resampling_ESS_fraction": 0.5,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "P_pool": "evidence_weighted",
+    "P_pool_formula": "a=exp(log_I_bar-max(log_I_bar));P_pool=sum(a[:,None]*P_rep,axis=0)/sum(a)",
+    "adaptive_beta": false,
+    "runtime_override": false,
+    "reuse_forbidden": [
+      "pilot_posterior",
+      "pilot_particles",
+      "pilot_cache",
+      "pilot_RNG_state",
+      "v5_particles",
+      "v5_cache",
+      "v5_result"
+    ]
+  },
+  "resource_contract": {
+    "backend": "Slurm_one_shot_CPU_batch",
+    "partition": "debug",
+    "nodelist": "grammar-debug",
+    "hostname_casefold_exact": "grammar-debug",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 12,
+    "memory": "96G",
+    "memory_MiB": 98304,
+    "time": "12:00:00",
+    "signal": "B:TERM@300",
+    "no_requeue": true,
+    "batch_shebang": "/bin/bash",
+    "slurm_export": "NONE",
+    "command": "/home/kjhan/BACKUP/CF4/scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.sbatch",
+    "workdir": "/home/kjhan/BACKUP/CF4",
+    "stdout_stderr_template": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_slurm-%j.log",
+    "scontrol_memory_exact": [
+      "96G",
+      "98304M"
+    ],
+    "maximum_expected_RSS_GiB": 80,
+    "requested_memory_GiB": 96,
+    "memory_margin_fraction": 0.2,
+    "cgroup_memory_limit_minimum_bytes": 103079215104,
+    "cgroup_membership_source": "/proc/self/cgroup",
+    "cgroup_mount_source": "/proc/self/mountinfo",
+    "minimum_CPU_affinity_count": 12,
+    "minimum_MemAvailable_GiB": 80,
+    "minimum_free_GPFS_GiB": 40,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "timeout_argv": [
+      "/usr/bin/timeout",
+      "--foreground",
+      "--signal=TERM",
+      "--kill-after=240s",
+      "12h"
+    ],
+    "CUDA_VISIBLE_DEVICES": "",
+    "MALLOC_ARENA_MAX": "2",
+    "Slurm_submission": true,
+    "syn101_execution": false,
+    "manual_node_execution": false,
+    "process_table_polling": false
+  },
+  "pair_grant_contract": {
+    "canonical_JSON": "sort_keys_true_compact_separators_ensure_ascii_true_single_trailing_newline",
+    "manifest_schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-manifest-v2",
+    "manifest_status": "sealed_one_shot_grammar_debug_execution_manifest",
+    "manifest_exact_keys": [
+      "schema",
+      "status",
+      "manifest_id",
+      "release_id",
+      "release_payload_sha256",
+      "design_sha256",
+      "implementation_result_record_sha256",
+      "canonical_paths_digest",
+      "resource_contract_digest",
+      "release_path",
+      "one_shot"
+    ],
+    "release_schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-release-v2",
+    "release_status": "sealed_one_shot_grammar_debug_execution_release",
+    "release_exact_keys": [
+      "schema",
+      "status",
+      "release_id",
+      "payload",
+      "payload_sha256",
+      "manifest_id",
+      "manifest_path",
+      "manifest_sha256"
+    ],
+    "payload_schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-payload-v2",
+    "payload_status": "sealed_grammar_debug_execution_payload",
+    "payload_exact_keys": [
+      "schema",
+      "status",
+      "release_id",
+      "design_commit",
+      "design_sha256",
+      "implementation_commit",
+      "implementation_result_record_sha256",
+      "implementation_file_sha256_map",
+      "fixed_science_digest",
+      "canonical_paths_digest",
+      "resource_contract_digest",
+      "one_shot",
+      "authorization"
+    ],
+    "grant_schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-grant-v2",
+    "grant_status": "sealed_one_shot_grammar_debug_slurm_authorization",
+    "grant_exact_keys": [
+      "schema",
+      "status",
+      "grant_id",
+      "one_shot",
+      "design_commit",
+      "design_sha256",
+      "implementation_commit",
+      "implementation_result_record_path",
+      "implementation_result_record_sha256",
+      "implementation_file_sha256_map",
+      "fixed_science_digest",
+      "canonical_paths_digest",
+      "resource_contract_digest",
+      "release_path",
+      "release_id",
+      "release_payload_sha256",
+      "release_sha256",
+      "manifest_path",
+      "manifest_id",
+      "manifest_sha256",
+      "receipt_root",
+      "cache_root",
+      "data_root",
+      "state_root",
+      "slurm_combined_log_template",
+      "authorization"
+    ],
+    "manifest_mode": "0444",
+    "release_mode": "0444",
+    "grant_mode": "0644",
+    "one_shot": true,
+    "fixed_science_digest": "ab956efa29cc0bebfe10b2d0c307cae1b1cc40669de0b9a93f198c79423cea4b",
+    "canonical_paths_digest": "872763f084865ee2e8ea599938fefe5f5f37b5e5be8bb0124d4a802d47f92906",
+    "resource_contract_digest": "8950490d1bb860b755401f2474a008aa01c5ce46dffb1c688cbd7864571edaf1",
+    "future_runtime_authorization_exact": {
+      "Slurm_submission_authorized": true,
+      "receipt_creation_authorized": true,
+      "cache_population_authorized": true,
+      "production_execution_authorized": true,
+      "retry_resume_requeue_retune_or_scale_up_authorized": false,
+      "conditional_bank_authorized": false,
+      "candidate_selection_authorized": false,
+      "PM_authorized": false,
+      "HOP_authorized": false,
+      "RAMSES_authorized": false,
+      "downstream_execution_authorized": false,
+      "automatic_follow_on_authorized": false
+    },
+    "construction_order": [
+      "payload",
+      "manifest_without_release_full_SHA256",
+      "manifest_full_SHA256",
+      "release",
+      "release_full_SHA256",
+      "grant"
+    ]
+  },
+  "receipt_contract": {
+    "path_template": "<receipt_root>/<grant_id>/production",
+    "exclusive_atomic_mkdir": true,
+    "release_anchor_hardlink": true,
+    "snapshot_after_post_link_stat": true,
+    "scheduler_log_checkpoint_keys": [
+      "path",
+      "dev",
+      "ino",
+      "size_bytes",
+      "sha256_of_exact_prefix_size_bytes"
+    ],
+    "snapshot_binds_Slurm_job_partition_node_allocation_submit_start_and_log_prefix": true,
+    "snapshot_mode": "0444",
+    "terminal_marker_mode": "0444",
+    "reservation_order": [
+      "STATE",
+      "CACHE",
+      "DATA"
+    ],
+    "revalidate_before_science_after_science_and_before_terminal_marker": true,
+    "reuse_retry_resume_requeue": false
+  },
+  "artifact_and_postcheck_contract": {
+    "science_entry": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution._execute_reserved_canonical_private",
+    "postcheck": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.validate_published_bundle",
+    "scientific_COMPLETE_statuses": [
+      "complete_pass_production_smc",
+      "complete_scientific_fail_production_smc"
+    ],
+    "exact_artifact_tree_no_extra_entry_or_symlink": true,
+    "invalid_provenance_resource_execution_or_postcheck_routes_to_FAILED": true
+  },
+  "authorization": {
+    "implementation_authorized": false,
+    "implementation_result_record_authorized": false,
+    "pair_creation_authorized": false,
+    "grant_creation_authorized": false,
+    "Slurm_submission_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "retry_resume_requeue_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "next": {
+    "authorized_now": "exact_six_file_implementation_and_fake_tests_only",
+    "pair_grant_or_Slurm_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

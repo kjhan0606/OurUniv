@@ -1,0 +1,76 @@
+{
+  "schema": "hong2021-tng100-v2-pilot-v1",
+  "status": "pilot_complete_bn_pass_spectral_gate_failed",
+  "purpose": "Literal L0-paper pilot on a feature-balanced spatial split",
+  "selection": {
+    "observer": "4e10 < SubhaloMassType[:,4]*1e10 < 1e11",
+    "target": "M_B < -15",
+    "target_variant": "L0-paper",
+    "additional_mass_or_resolution_cut": false
+  },
+  "data": {
+    "metadata": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/center_metadata.h5",
+    "split_manifest": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/joint_balanced_splits_v1.json",
+    "split_index": 0,
+    "train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "deep_validation_passed": true,
+    "maximum_abs_standardized_mean_difference": 0.08580800099499887,
+    "maximum_feature_ks_distance": 0.14829749103942647,
+    "minimum_cross_split_Linf_mpc_h": 20.048943519592285
+  },
+  "model": {
+    "implementation": "Hong2021Net literal PyTorch transcription",
+    "channels": [128, 256, 512, 1024, 2048],
+    "normalization": "BatchNorm3d matching Keras epsilon/momentum convention",
+    "input_channels": ["Ngal", "mean_radial_vpec_kms"]
+  },
+  "training": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "epochs": 20,
+    "batch": 6,
+    "seed": 2021,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v2_split00_l0_bn"
+  },
+  "acceptance": {
+    "inference_train_mse_to_logged_train_mse_ratio": [0.9, 1.1],
+    "sample_mse_above_0.05": 0,
+    "maximum_abs_standardized_mean_difference": 0.25,
+    "report_tanh_saturation_both_tails": true,
+    "paper_style_projection_required": true,
+    "two_point_gate_deferred_until_normalization_frozen": true
+  },
+  "result": {
+    "accepted_checkpoint_epoch": 7,
+    "batchnorm_inference_fidelity_passed": true,
+    "epoch_20_batchnorm_inference_fidelity_passed": false,
+    "evaluation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v2_split00_l0_bn/epoch007",
+    "density_mean_cosmic_units": {
+      "truth": 1.5683357603988155,
+      "prediction": 2.9720680185930335,
+      "prediction_over_truth": 1.8950457508137541
+    },
+    "raw_cosmic_mean_2pcf_ks": {
+      "0-1_mpc_h": 0.6845878136200717,
+      "1-3_mpc_h": 0.4531490015360983,
+      "3-10_mpc_h": 0.3479960899315737
+    },
+    "own_ensemble_mean_2pcf_ks_diagnostic_only": {
+      "0-1_mpc_h": 0.5197132616487457,
+      "1-3_mpc_h": 0.19201228878648235,
+      "3-10_mpc_h": 0.23313782991202342
+    },
+    "log_density_fourier": {
+      "k_3-6_h_mpc": {"transfer": 0.39301907776156064, "r": 0.3578856693061236},
+      "k_6-10_h_mpc": {"transfer": 0.258774131242377, "r": 0.1762890824005994},
+      "first_k_with_transfer_below_0.5_h_mpc": 4.098134068841904,
+      "first_k_with_r_below_0.5_h_mpc": 3.7790641842680586
+    },
+    "linear_density_high_k_interpretation": "spurious compact-peak power excess with low phase correlation, not recovered filaments",
+    "gate_passed": false,
+    "decision": "freeze epoch 7 as the literal Hong baseline; do not apply it directly to CF4 or IC generation"
+  }
+}

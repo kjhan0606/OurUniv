@@ -1,0 +1,114 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-twompp-datum-publisher-program-v3",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_PHASE_A_ORDER6_DATUM_PUBLICATION_ONLY",
+  "authorization": {
+    "basis": "The user authorized applying corrections and continuing. The completed global quadrature diagnostic shows order4 and order6 both remove all undefined occupied likelihood cells; the driver selected the globally evaluated order6 exposure for Phase-A publication only.",
+    "Phase_A_datum_publication": true,
+    "single_Slurm_CPU_submission": true,
+    "GPFS_read": true,
+    "GPFS_write_new_output_only": true,
+    "field_inference": false,
+    "mock_seed_access": false,
+    "Phase_B_or_later": false,
+    "resolution_increase": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "bindings": {
+    "failed_builder_program": {
+      "path": "config/cf4_datum_bearing_z0_twompp_datum_builder_program_v2.json",
+      "bytes": 7614,
+      "sha256": "04130777cd15b4ffc99f23cdd845ce4520ec08043eb9e3649d25e4555bb5c33a"
+    },
+    "failed_builder_result_record": {
+      "path": "config/cf4_datum_bearing_z0_twompp_datum_builder_v2_failure_result_record.json",
+      "bytes": 3257,
+      "sha256": "411afd3cc3d279f776cadc94e17c409467cdebff0f49d27b858f1fc3cfe517a8"
+    },
+    "quadrature_result_record": {
+      "path": "config/cf4_twompp_selection_quadrature_diagnostic_v1_result_record.json",
+      "bytes": 3846,
+      "sha256": "1bc2d8608072b3de124c148a30e51f16bf936b41cbec57d63388d9dd8242f554"
+    },
+    "failed_datum": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/datum.npz",
+      "bytes": 169122,
+      "sha256": "a87e57e768de0c8a164be1a9b2d6a21b3962880054a0030b5d1840b805d3c5e7"
+    },
+    "failed_row_manifest": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/row_manifest.csv",
+      "bytes": 1429117,
+      "sha256": "49bf6d5c76d318e5e17003156152ad12ea05426eddc98656318f538c98381644"
+    },
+    "failed_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/result.json",
+      "bytes": 2864,
+      "sha256": "2067851fd1ef8124a72dc0c1a19a806a3c166933e20c8072e05c970523b1242b"
+    },
+    "quadrature_arrays": {
+      "path": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1/selection_orders.npz",
+      "bytes": 308172,
+      "sha256": "2b952bbde598da2ee1e50937807e2767daf7eaf8f88de849cea594940cc6da80"
+    },
+    "quadrature_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1/result.json",
+      "bytes": 13550,
+      "sha256": "24e2d4c07e77bc32bc5a79d296db8fedd98e03efc236f49ea3fe15c1a22b97c3"
+    },
+    "quadrature_COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1/COMPLETE",
+      "bytes": 463,
+      "sha256": "09c12d7de4827fd522251293e7bcae0761f8e1ad113508ade717274c97d6a6cb"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_twompp_datum_publisher_v3.py",
+      "bytes": 15360,
+      "sha256": "6112d5a67b518cff4f0f14d3a130f4b19eeaa3f63373f627f8e6381da5c79f74"
+    }
+  },
+  "frozen_subset": {
+    "retained_count_exact": 36635,
+    "population_counts_exact": [9617, 3463, 527, 15671, 6197, 1160]
+  },
+  "datum": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "required_shape": [6, 32, 32, 32],
+    "count_source": "V2 staging arrays that passed every count, subset, and split gate",
+    "row_manifest_source": "V2 staging manifest re-read and used to reconstruct all three count arrays",
+    "selection_source": "globally integrated raw_selection_order6 from the completed diagnostic",
+    "selection_quadrature_order_per_axis": 6,
+    "selection_subpoints_per_voxel": 216,
+    "selection_normalized_to_observed_totals": false,
+    "epsilon_floor_or_occupied_override_used": false,
+    "order4_to_order6_difference_retained": true,
+    "final_selection_convergence_claim": false
+  },
+  "publication": {
+    "output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1",
+    "staging": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.v3.staging",
+    "failed_V2_staging_preserved": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging",
+    "files": ["datum.npz", "row_manifest.csv", "result.json", "manifest.json", "COMPLETE"],
+    "plain_same_filesystem_directory_rename": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "cpus_per_task": 1,
+    "expected_peak_memory_MiB": 384,
+    "requested_memory_MiB": 512,
+    "memory_headroom_multiplier": 1.3333333333333333,
+    "time_limit": "00:10:00",
+    "maximum_submissions": 1,
+    "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+    "monitoring_loop_allowed": false,
+    "automatic_follow_on_allowed": false
+  },
+  "next_after_completion": "audit and record the Phase-A datum result; stop before Phase B"
+}

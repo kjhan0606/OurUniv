@@ -1,0 +1,77 @@
+{
+  "schema": "hong2021-v70-query-aligned-train-only-latent-cache-result-record-v1",
+  "status": "complete_full_scan_pass_authorized_fixed_training",
+  "program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+  "program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+  "preflight_result_record": "config/hong2021_v70_preflight_result_record.json",
+  "preflight_result_record_sha256": "2049b216d00e734c6c8ffa45966112880ff01bfdd191754c7fb6a6c22e693050",
+  "code_commit": "60887645c14b35d58ad7241195003e1b98f6de1d",
+  "cache": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v70/train_latent.h5",
+    "sha256": "0ddc9a592bc0eb1ab08d11ce71a5da1864b1fedb241663b2cc9f309094943ad3",
+    "bytes": 1093793160,
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v70/train_latent.json",
+    "report_sha256": "97bf049e8d5d2d0467a873aa2bf5b02a1939577c35e606be7c5b33899476769d",
+    "decision_digest_sha256": "352fc58b00720393e51e3788e1640a245ffc84f08f33471c66b04bbb4515291f",
+    "complete_scan_pass": true,
+    "fixed_training_authorized": true
+  },
+  "domains": {
+    "TNG100": {
+      "objects": 432,
+      "fit_objects": 416,
+      "mechanism_holdout_objects": 16,
+      "rank_clamp_fraction": 3.249556929976852e-06,
+      "latent_mean": -0.008700442638733881,
+      "latent_standard_deviation": 1.0041942406016522,
+      "fit_holdout_disjoint_and_complete": true
+    },
+    "SIMBA": {
+      "objects": 202,
+      "fit_objects": 186,
+      "mechanism_holdout_objects": 16,
+      "rank_clamp_fraction": 5.38212237971844e-06,
+      "latent_mean": 0.014886676860216589,
+      "latent_standard_deviation": 0.9960784007240068,
+      "fit_holdout_disjoint_and_complete": true
+    },
+    "Swift": {
+      "objects": 409,
+      "fit_objects": 393,
+      "mechanism_holdout_objects": 16,
+      "rank_clamp_fraction": 5.969208435207824e-06,
+      "latent_mean": -0.010182887548341174,
+      "latent_standard_deviation": 0.9995460832899397,
+      "fit_holdout_disjoint_and_complete": true
+    }
+  },
+  "roundoff_recovery": {
+    "failed_partial": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/cache_attempt1_strict_CDF_range/train_latent.h5.partial",
+    "failed_partial_sha256": "b8700f0fd1a5a3f3586350c0832dd505e27e9c41b065376d6a00f955e1bddd5b",
+    "reason_sha256": "e8e15f683fe2d9e85827a64e664016c3a0011d8515d909c9ff4270d88e8e0379",
+    "observation": "TNG100 train object 7 had one finite bounded-mixture CDF value 1.000000119 while every condition, target, mixture parameter, location, and scale was finite.",
+    "correction": "Project only CDF values within 5e-7 of the mathematical [0,1] range, consistent with the inherited float32 normal-CDF error bound, before applying the already frozen [1e-7,1-1e-7] rank clamp. Larger excursions and all nonfinite values remain fatal.",
+    "scientific_model_or_gate_changed": false
+  },
+  "integrity": {
+    "cache_source_sha256": "ed637adbf3e57d41fdbf593917c95c7060a0bf2265ae3fd6579272a5dac7c1ce",
+    "gaussianization_source_sha256": "381b4bde1abcacd7a3e06968cc748c25df5944caeb404e2b15a8ceb3ac1b0f7d",
+    "cache_runner_sha256": "e06e23fa3e2360cfa58d8ae10f8f3aed6a3f2260adf5395c80ebd4bec2b30301",
+    "recovery_runner_sha256": "7ae74f65c8fffdbf14539a92b275b0edc25ff7a9275e4905e148575574149141",
+    "pytest_passed": 530,
+    "pytest_log_sha256": "8d85205cfd177fe2e55c1722c79e66192aa8d12ac813d21f0c6e2252de9a30f1",
+    "cache_log_sha256": "a79f5238fa593577cb559b5f6b9d929fc68d7027037cdb37dc00357775dd13d8",
+    "sequence_status_sha256": "282b6a1d3742a1677312731d01b931a814bc7ff1432b45dba13501f2c8638cd8"
+  },
+  "next": "run_the_single_fixed_30000_step_source_balanced_V70_fit_and_then_the_predeclared_train_only_joint_structure_gate",
+  "firewall": {
+    "optimizer_constructed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

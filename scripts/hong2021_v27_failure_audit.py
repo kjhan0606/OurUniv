@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+"""Write the frozen automatic summary after a failed V27 gate."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--decision", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+    decision = json.loads(args.decision.read_text())
+    if decision.get("development_pass") is not False:
+        raise ValueError("V27 failure audit requires a failed decision")
+    report = {
+        "schema": "hong2021-v27-automatic-failure-audit-v1",
+        "decision": str(args.decision.resolve()),
+        "decision_digest_sha256": decision["decision_digest_sha256"],
+        "candidate_summary": {
+            str(candidate["step"]): {
+                "balanced_validation_nll": candidate["balanced_validation_nll"],
+                "domains": {
+                    domain: {
+                        "field_pass": row["field_gate"]["pass"],
+                        "failed_field_checks": [
+                            key for key, passed in row["field_gate"]["checks"].items()
+                            if not passed
+                        ],
+                        "Q3_delta_q99_999_dex": row["mechanism_Q3_Q4"]["delta_q99_999_dex"],
+                        "Q3_generated_max_above_truth_max_dex": row["mechanism_Q3_Q4"]["generated_max_above_truth_max_dex"],
+                        "Q4_generated_over_truth_mean_delta_squared": row["mechanism_Q3_Q4"]["generated_over_truth_mean_delta_squared"],
+                        "comparison_to_v26": candidate["comparison_to_v26"][domain],
+                    }
+                    for domain, row in candidate["domains"].items()
+                },
+                "physical_tail_improvement_over_v26": candidate[
+                    "physical_tail_improvement_over_v26"
+                ],
+            }
+            for candidate in decision["candidates"]
+        },
+        "nll_plateau_diagnostic": decision["nll_plateau_diagnostic"],
+        "classification": decision["failure_classification"],
+        "next": decision["next"],
+        "context_or_capacity_tuned_after_results": False,
+        "horizon_extended_after_results": False,
+        "thresholds_changed_after_results": False,
+        "posthoc_clipping_or_Ak_applied": False,
+        "Astrid_accessed": False,
+        "historical_EAGLE_accessed": False,
+    }
+    if args.out.exists():
+        raise RuntimeError(f"refusing to overwrite V27 failure audit: {args.out}")
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    partial = args.out.with_suffix(args.out.suffix + ".partial")
+    partial.write_text(json.dumps(report, indent=2) + "\n")
+    os.replace(partial, args.out)
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()

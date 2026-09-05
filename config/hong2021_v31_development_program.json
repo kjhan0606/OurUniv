@@ -1,0 +1,125 @@
+{
+  "schema": "hong2021-v31-train-only-physical-conditional-copula-development-program-v1",
+  "status": "frozen_before_implementation_fit_sampling_or_development_evaluation",
+  "purpose": "Test whether preserving the train-only physical residual distribution conditional on the local V14 backbone removes the V28/V29 tail explosion without A(k), clipping, or validation-target sampling.",
+  "parent_evidence": {
+    "v30_record": "config/hong2021_v30_audit_record.json",
+    "v30_record_sha256": "64db2574e760dc5230d77fa9636045c03149faf5bebb02c18082246ca3037b79",
+    "v30_output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v30_backbone_condition_audit/audit.json",
+    "v30_output_sha256": "2ecede75ab5e794d6a5972add384ec29956c1ce87468165dea0e0a5f1235e0ff",
+    "v30_decision_digest_sha256": "2fe3ce4054144928a64ff5745affdfd491e03e75da6c397e45ddacd8146491fc",
+    "required_classification": "global_backbone_improves_but_local_residual_coupling_is_unmodeled",
+    "required_next": "retain_improved_low_k_backbone_and_build_explicitly_local_conditional_residual_model"
+  },
+  "train_only_fit": {
+    "domains": {
+      "TNG100": {
+        "objects": 432,
+        "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5",
+        "data_sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+        "cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"
+      },
+      "SIMBA": {
+        "objects": 202,
+        "data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5",
+        "data_sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+        "cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"
+      },
+      "Swift": {
+        "objects": 409,
+        "data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5",
+        "data_sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+        "cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"
+      }
+    },
+    "source_weight": "exactly one third per source in every weighted empirical quantile",
+    "backbone_coordinate": "m=V14 corrected conditional_mean plus train-only predicted residual DC",
+    "physical_residual": "r=train truth y minus m, where y=log10(rho/box_mean)/4.5",
+    "deterministic_voxel_lattice": "for cube i use each axis offset ((i),(i//2),(i//4)) mod 2 and stride 2, yielding exactly 32^3 fit voxels per cube",
+    "backbone_bins": 32,
+    "backbone_edges": "equal-source weighted quantiles q=0,1/32,...,1 from deterministic train lattice values; strict monotonic repair by the next representable float",
+    "residual_quantile_levels": {
+      "central": "0,1/4096,...,1",
+      "two_sided_tail": "10^x and 1-10^x for 1024 linearly spaced x from -7 to -1",
+      "combination": "sorted unique union including exact 0 and 1"
+    },
+    "per_backbone_bin_table": "equal-source weighted physical-residual quantiles from the deterministic lattice",
+    "tail_anchors": "replace q=0 and q=1 in every backbone bin by the exact minimum and maximum from all train voxels in that bin",
+    "monotonic_repair": "cumulative maximum followed by nextafter for ties, using train-derived finite support only",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.json"
+  },
+  "frozen_v28_selections": {
+    "TNG100": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/tng/ensemble16.h5",
+      "sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840"
+    },
+    "SIMBA": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/simba_dev/ensemble16.h5",
+      "sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504"
+    },
+    "Swift": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/swift_dev/ensemble16.h5",
+      "sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88"
+    },
+    "reused_exactly": ["source_index", "donor_source", "donor_index", "donor_isometry", "donor_distance"],
+    "aggregate_donor_counts": {"TNG100": 256, "SIMBA": 256, "Swift": 256}
+  },
+  "conditional_transport": {
+    "donor_forward": "u=F_train(r_donor | m_donor) by piecewise-linear interpolation in the donor backbone bin",
+    "orientation": "apply the frozen V28 signed cube isometry to the complete u cube",
+    "query_inverse": "r_query=F_train^-1(u_oriented | m_query) by piecewise-linear interpolation in the query backbone bin",
+    "dc_projection": "subtract the transported query residual cube mean exactly",
+    "sample": "query V14 backbone m_query plus projected r_query",
+    "new_random_numbers": false,
+    "donor_reselection": false,
+    "validation_truth_used_for_fit_or_sampling": false,
+    "posthoc_Ak": false,
+    "field_clipping": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "paired_comparison": "V28 and V29 with exact donor selections"
+  },
+  "fixed_branches": [
+    {
+      "condition": "field plus Q3/Q4 pass all three domains",
+      "classification": "physical_conditional_copula_control_sufficient",
+      "next": "seal V31 and await explicit approval before Astrid"
+    },
+    {
+      "condition": "Q3/Q4 pass all domains but any field check fails",
+      "classification": "local_conditional_copula_repairs_tails_but_spatial_innovation_or_descriptor_limits_morphology",
+      "next": "replace empirical donor retrieval with a learned local conditional innovation model while retaining this coordinate"
+    },
+    {
+      "condition": "any Q3 or Q4 fails",
+      "classification": "backbone_only_conditional_copula_is_insufficient",
+      "next": "include local observable patches and multiscale backbone context in the conditional residual representation"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact program, V30 record/output, train data/cache, and V28 ensemble hashes",
+    "fit artifact is train-only, source-balanced, finite, strictly monotone, and exactly reproducible",
+    "conditional forward/inverse roundtrip on train-lattice values",
+    "exact V28 selection reuse and source balance",
+    "one real sample is finite and exact residual DC is below 1e-7",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain V31 pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  },
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_e18_physical_conditional_copula"
+}

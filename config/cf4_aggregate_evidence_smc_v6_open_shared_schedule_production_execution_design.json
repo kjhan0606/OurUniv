@@ -1,0 +1,432 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-execution-design-v1",
+  "status": "prospective_execution_design_only_all_runtime_unauthorized",
+  "frozen_date": "2026-08-20",
+  "purpose": "Define the sole future one-shot execution boundary for four fresh fixed-schedule production replicates without authorizing implementation or execution.",
+  "lineage": {
+    "design_parent_commit": "39127f775c9b9a8b218e3fd1ce6e903996ccd2a8",
+    "branch": "agent/freeze-zoom-pipeline",
+    "remote": "origin",
+    "capability_commit": "0cd14a7ccf95096ccc3d60adc206c773179f30bd",
+    "capability_result_record_sha256": "6322bd38b3b1b432019eb84fec29cf42ced2b01b70f086a0878b7b9192f9abda"
+  },
+  "hard_pins": {
+    "capability_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_capability_implementation_result_record.json",
+      "sha256": "6322bd38b3b1b432019eb84fec29cf42ced2b01b70f086a0878b7b9192f9abda",
+      "mode": "0644",
+      "role": "postcommit_execution_free_capability_lineage"
+    },
+    "shared_schedule_capability_source": {
+      "path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+      "sha256": "64c60886b8ab62bca45dbe7e223f87662ae8285c177cb7386373b1ee98f74bbb",
+      "mode": "0644",
+      "role": "fixed_schedule_execution_free_capability"
+    },
+    "shared_schedule_capability_test": {
+      "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+      "sha256": "b4ec360204c2cabc388e2ebc1571abb3e800be51c5108128e06b8235068e85a2",
+      "mode": "0644",
+      "role": "audited_capability_regression_contract"
+    },
+    "production_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_design.json",
+      "sha256": "aa1425834627e6f5aa7e5b542b9354319fad3f3eff61a21b137dca36e7c371cc",
+      "mode": "0644",
+      "role": "frozen_shared_schedule_production_design"
+    },
+    "pooling_erratum": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_design_erratum_v1.json",
+      "sha256": "eeb32687e9dce54b89dc3a10241bfcc054719ab41934e74a2de732a86bcc9282",
+      "mode": "0644",
+      "role": "evidence_weighted_pooling_correction"
+    },
+    "base_production_program": {
+      "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+      "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+      "mode": "0644",
+      "role": "frozen_target_proposal_resampling_MH_oracle_program"
+    },
+    "production_capability_design": {
+      "path": "config/cf4_aggregate_evidence_smc_production_capability_design.json",
+      "sha256": "2a253e049da3c02ef3cff4fc68a72a1f70efde616670538274a01d733460c888",
+      "mode": "0644",
+      "role": "frozen_base_capability_contract"
+    },
+    "smc_source": {
+      "path": "src/cf4_aggregate_evidence_smc.py",
+      "sha256": "392c75d823fb055e7b592299aa90540b1176d4cfd3c11442b446e42fd11f8337",
+      "mode": "0644",
+      "role": "frozen_SMC_core"
+    },
+    "production_capability_source": {
+      "path": "src/cf4_aggregate_evidence_smc_capability.py",
+      "sha256": "aeb385bcb55767c94867ae6037ba56cbc0150b8512c3d778797870e300929b1c",
+      "mode": "0644",
+      "role": "frozen_gate_artifact_and_firewall_contract"
+    },
+    "shared_annealing_source": {
+      "path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py",
+      "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060",
+      "mode": "0644",
+      "role": "frozen_schedule_and_coherence_diagnostics"
+    },
+    "oracle_source": {
+      "path": "src/cf4_aggregate_evidence_oracle.py",
+      "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f",
+      "mode": "0644",
+      "role": "frozen_exact_parent_oracle"
+    },
+    "parallel_oracle_source": {
+      "path": "src/cf4_aggregate_evidence_parallel_oracle.py",
+      "sha256": "1d4d587a2e54c676f71c5c68fcd0744db21ec3006501f4185b3854f7c3b19e3c",
+      "mode": "0644",
+      "role": "frozen_8_by_32_parent_evaluator"
+    },
+    "pilot_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_disposable_pilot_result_record.json",
+      "sha256": "0ff9c60ca1351b82337e1620fab3ee53952ed81709efebb42972013b7746d4bf",
+      "mode": "0644",
+      "role": "sole_pilot_lineage_anchor"
+    },
+    "receipt_schedule_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/pilot/schedule_manifest.json",
+      "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+      "mode": "0444",
+      "role": "sealed_read_only_schedule_source"
+    },
+    "pilot_schedule_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/schedule_manifest.json",
+      "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+      "mode": "0444",
+      "role": "sealed_read_only_schedule_duplicate"
+    },
+    "response_atlas_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211",
+      "mode": "0600",
+      "role": "frozen_256_parent_response_atlas"
+    },
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+      "mode": "0600",
+      "role": "frozen_exact_density_filter"
+    },
+    "physical_model": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+      "mode": "0644",
+      "role": "frozen_physical_likelihood_model"
+    },
+    "CF4_calibration": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+      "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+      "mode": "0600",
+      "role": "post_terminal_only_CF4_calibration"
+    },
+    "oracle_regression_postmortem": {
+      "path": "config/cf4_aggregate_evidence_oracle_regression_postmortem_result_record.json",
+      "sha256": "de0b6b047f251679b2542868ed2546488bb2bbe40d34393899ff3094df3c2310",
+      "mode": "0644",
+      "role": "sealed_exact_oracle_regression_evidence"
+    },
+    "v5_postmortem": {
+      "path": "config/cf4_aggregate_evidence_smc_production_v5_postmortem_result_record.json",
+      "sha256": "f8eb0d38a49e2a7e6a16a4a2178418dd635f120145f1bad63213a42ae2746743",
+      "mode": "0644",
+      "role": "historical_diagnostic_only_never_runtime_input"
+    }
+  },
+  "fixed_science": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "replicates_sequential": true,
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "beta": [0.0, 0.1531397846993059, 0.3181984675451238, 0.5129471527439684, 0.7369993853258423, 1.0],
+    "stage_count_exact": 5,
+    "MH_sweeps_per_stage": 4,
+    "resampling_ESS_fraction": 0.5,
+    "P_pool": "evidence_weighted",
+    "P_pool_formula": "a=exp(log_I_bar-max(log_I_bar));P_pool=sum(a[:,None]*P_rep,axis=0)/sum(a)",
+    "adaptive_beta": false,
+    "runtime_override": false
+  },
+  "evaluator_factory": {
+    "sealed_oracle_control_first": true,
+    "sealed_oracle_control_rows": 24,
+    "control_evaluator_and_cache_disposed_before_production": true,
+    "production_cache_initial_state": "new_empty_namespace",
+    "replicate_evaluator_and_covariance_cache_identity": "fresh_and_distinct_for_each_of_four_replicates",
+    "multiprocessing_start_method": "fork",
+    "parent_blocks": 8,
+    "parents_per_block": 32,
+    "parent_order_exact": "3193_through_3448",
+    "cross_replicate_shared_state": "deterministic_oracle_evidence_memoization_only",
+    "lease_terminal_accessor": "terminal_parent_log_z(master_seed,final_int16_keys)",
+    "terminal_accessor_call_count_per_lease": 1,
+    "terminal_keys_contract": "validated_copy_int16_shape_2048x6",
+    "lease_close_order": "after_terminal_accessor",
+    "lease_close_count_success_or_exception": 1
+  },
+  "information_firewall": {
+    "sole_pilot_value_visible_to_production": "fixed_beta_schedule",
+    "pilot_posterior_particle_ancestor_RNG_or_cache_input": false,
+    "v5_artifact_namespace_or_cache_input": false,
+    "CF4_controls_annealing_resampling_MH_cache_or_stopping": false,
+    "terminal_seal_order": [
+      "four_replicate_artifacts_atomic_seal_and_rehash",
+      "terminal_parent_artifact_atomic_seal_and_rehash",
+      "open_pinned_CF4_calibration",
+      "compute_post_terminal_CF4_gates"
+    ],
+    "post_hoc_threshold_seed_draw_count_or_priority_change": false
+  },
+  "artifact_isolation": {
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_run",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_receipts",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_cache",
+    "grant_path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant.json",
+    "release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_release.json",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_manifest.json",
+    "receipt_path_template": "<receipt_root>/<authorization_id>/production",
+    "all_roots_grant_release_manifest_currently_absent": true,
+    "all_roots_must_be_absent_before_future_execution": true,
+    "pilot_and_v5_roots_read_only_never_reused": true
+  },
+  "resource_contract": {
+    "canonical_backend": "Lageunha_local_one_shot_CPU_runner",
+    "host_casefold_exact": "lageunha",
+    "device": "CPU",
+    "CUDA_VISIBLE_DEVICES": "",
+    "worker_processes": 8,
+    "cpus_required": 8,
+    "threads_per_worker": 1,
+    "multiprocessing_start_method": "fork",
+    "estimated_peak_RSS_upper_bound_GiB": 64,
+    "required_MemAvailable_GiB": 80,
+    "memory_margin_over_estimate": 0.25,
+    "minimum_free_disk_GiB": 40,
+    "wall_time_limit": "12:00:00",
+    "wall_time_enforcement": {
+      "mechanism": "/usr/bin/timeout --foreground --signal=TERM --kill-after=300s 12h",
+      "scope": "science_child_after_RUNNING_and_EXIT_trap_installation",
+      "timeout_classification": "lifecycle_error_FAILED",
+      "process_table_polling": false
+    },
+    "replicates_concurrent": 1,
+    "Slurm_submission": false,
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONSAFEPATH": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "MALLOC_ARENA_MAX": "2"
+    }
+  },
+  "lifecycle": {
+    "read_only_preflight_before_any_root_creation": true,
+    "preflight_contracts": ["hashes", "host", "git", "resources", "authorization", "root_absence"],
+    "root_reservation_condition": "all_four_roots_absent",
+    "receipt_creation": "O_EXCL_one_shot",
+    "release_anchor": "hardlink_with_dev_ino_size_nlink_and_content_hash_snapshot",
+    "state_reservation": "atomic_mkdir_then_flock",
+    "marker_sequence": "RUNNING_to_exactly_one_of_COMPLETE_or_FAILED",
+    "retry_resume_import_delete_reuse_or_marker_promotion": false,
+    "scientific_fail_marker": "COMPLETE",
+    "invalid_lineage_nonfinite_artifact_or_lifecycle_marker": "FAILED",
+    "terminal_marker_and_complete_artifact_mode": "0444",
+    "complete_directory_mode": "0555",
+    "partial_failure_artifact_deletion_or_reuse": false,
+    "automatic_follow_on": false
+  },
+  "artifact_contracts": {
+    "cache_shard": {
+      "format": "uncompressed_NPZ",
+      "arrays": {
+        "keys": "int16[n,6]",
+        "log_Z": "float64[n,256]",
+        "log_Z_bar": "float64[n]"
+      }
+    },
+    "replicate": {
+      "count": 4,
+      "exact_array_keys": [
+        "master_seed", "midpoint_mpc_h", "axis", "keys", "weights",
+        "log_Z_bar", "ancestor_labels", "beta_history",
+        "conditional_ESS_history", "particle_ESS_history",
+        "log_normalizer_increment", "log_I_bar", "genealogical_ESS",
+        "resampling_ancestors", "move_proposal_count",
+        "move_acceptance_count", "q_scale_proposal_count",
+        "q_scale_acceptance_count", "axis_scale_proposal_count",
+        "axis_scale_acceptance_count"
+      ],
+      "beta_shape": [6],
+      "conditional_ESS_shape": [5],
+      "particle_ESS_shape": [6],
+      "move_stage_and_sweep_prefix_shape": [5, 4]
+    },
+    "terminal_parent": {
+      "master_seed": "int64[4]",
+      "parent_seed": "int32[256]",
+      "log_I_bar": "float64[4]",
+      "P_rep": "float64[4,256]",
+      "P_pool": "float64[256]"
+    },
+    "post_terminal_CF4": "exact_pinned_capability_NPZ_and_JSON_schema",
+    "cache_manifest_schema": "ouruniv-cf4-aggregate-evidence-cache-manifest-v1",
+    "result_schema": "ouruniv-cf4-aggregate-evidence-smc-production-result-v1",
+    "manifest_schema": "ouruniv-cf4-aggregate-evidence-smc-production-manifest-v1",
+    "manifest_artifact_record_contract": {
+      "common_required_fields": ["path", "sha256", "mode", "kind", "byte_count", "lineage"],
+      "NPZ_required_fields": ["arrays"],
+      "NPZ_array_record_exact_fields": ["name", "dtype", "shape", "finite"],
+      "JSON_required_fields": ["schema", "status"]
+    }
+  },
+  "postcheck": {
+    "complete_requires_result_and_manifest": true,
+    "manifest_binds_all_cache_shards_replicates_terminal_CF4_control_and_result": true,
+    "all_artifacts_rehashed_immediately_before_COMPLETE": true,
+    "all_NPZ_array_key_dtype_shape_finite_and_normalization_contracts_recomputed": true,
+    "parent_seed_and_terminal_key_order_recomputed": true,
+    "release_receipt_and_git_lineage_revalidated": true,
+    "read_only_modes_revalidated": true,
+    "valid_science_statuses": ["complete_pass_production_smc", "complete_scientific_fail_production_smc"],
+    "all_other_or_missing_statuses": "FAILED_invalid_provenance_or_execution"
+  },
+  "prospective_gates": {
+    "validity_exact_keys": [
+      "lineage_and_authorization", "finite_and_artifact_contract",
+      "terminal_phase_complete_and_sealed", "pilot_and_v5_state_reuse_absent",
+      "shared_schedule_stage_parity", "all_replicates_reach_beta_one",
+      "temperature_stagnation_absent", "maximum_temperature_stages"
+    ],
+    "pre_CF4_science_exact_keys": [
+      "replicate_log_I_bar_range", "replicate_log_I_bar_sample_SE",
+      "replicate_parent_probability_L1_null_tail", "genealogical_ESS",
+      "pooled_parent_ESS", "maximum_pooled_parent_probability"
+    ],
+    "CF4_exact_keys": [
+      "weighted_CF4_Q99_exceedance_mass", "weighted_CF4_Q90",
+      "weighted_CF4_one_sided_KS_permutation"
+    ],
+    "L1_null": {
+      "bit_generator": "PCG64DXSM",
+      "seed": 2026081801,
+      "draws": 20000,
+      "tail_probability_min_inclusive": 0.001,
+      "quantile_method": "higher",
+      "old_L1_0p2": "diagnostic_only_not_a_gate"
+    },
+    "thresholds": {
+      "replicate_log_I_bar_range_max_inclusive": 0.2,
+      "replicate_log_I_bar_sample_SE_max_inclusive": 0.1,
+      "genealogical_ESS_each_min_inclusive": 128,
+      "pooled_parent_ESS_min_inclusive": 32,
+      "maximum_P_pool_max_inclusive": 0.1,
+      "weighted_CF4_Q99_exceedance_mass_max_inclusive": 0.05,
+      "weighted_CF4_Q90_le_reference_Q99p5": true,
+      "weighted_CF4_one_sided_KS_permutation_p_min_inclusive": 0.01
+    }
+  },
+  "failure_semantics": {
+    "channel_mapping": {
+      "replicate_parent_probability_L1": "replicate_parent_probability_L1_null_tail"
+    },
+    "primary_priority": [
+      "invalid_lineage_or_authorization",
+      "nonfinite_or_artifact_contract",
+      "incomplete_or_unsealed_terminal_phase",
+      "pilot_or_v5_state_reuse_detected",
+      "shared_schedule_stage_parity_architecture_failure",
+      "SMC_terminal_beta_not_one",
+      "SMC_temperature_stagnation",
+      "SMC_maximum_temperature_stages",
+      "paired_incoherence",
+      "replicate_log_I_bar_range",
+      "replicate_log_I_bar_sample_SE",
+      "replicate_parent_probability_L1_null_tail",
+      "genealogical_ESS",
+      "pooled_parent_ESS",
+      "maximum_pooled_parent_probability",
+      "weighted_CF4_Q99_exceedance_mass",
+      "weighted_CF4_Q90",
+      "weighted_CF4_one_sided_KS_permutation"
+    ],
+    "paired_incoherence_condition": "both_replicate_log_I_bar_range_and_replicate_parent_probability_L1_null_tail_fail",
+    "preserve_all_failed_channels": true,
+    "invalid_failure_classes": [
+      "invalid_lineage_or_authorization",
+      "nonfinite_or_artifact_contract",
+      "incomplete_or_unsealed_terminal_phase",
+      "pilot_or_v5_state_reuse_detected",
+      "shared_schedule_stage_parity_architecture_failure",
+      "lifecycle_error"
+    ],
+    "lifecycle_error_handled_before_scientific_classification": true,
+    "scientific_COMPLETE_failure_classes": [
+      "SMC_terminal_beta_not_one",
+      "SMC_temperature_stagnation",
+      "SMC_maximum_temperature_stages",
+      "paired_incoherence",
+      "replicate_log_I_bar_range",
+      "replicate_log_I_bar_sample_SE",
+      "replicate_parent_probability_L1_null_tail",
+      "genealogical_ESS",
+      "pooled_parent_ESS",
+      "maximum_pooled_parent_probability",
+      "weighted_CF4_Q99_exceedance_mass",
+      "weighted_CF4_Q90",
+      "weighted_CF4_one_sided_KS_permutation"
+    ],
+    "invalid_failures_use_FAILED": true,
+    "scientific_failures_use_COMPLETE": true
+  },
+  "forbidden_actions": [
+    "pilot_posterior_particle_ancestor_RNG_or_cache_reuse",
+    "v5_artifact_namespace_or_cache_reuse",
+    "shared_beta_seed_N_parent_threshold_or_priority_change",
+    "adaptive_beta_reactivation",
+    "runtime_override",
+    "retry_resume_import_delete_or_marker_promotion",
+    "automatic_or_manual_scale_up",
+    "syn101_or_non_lageunha_execution",
+    "pgrep_ps_or_process_table_polling",
+    "conditional_bank_or_candidate_selection",
+    "PM_HOP_or_RAMSES_execution",
+    "automatic_follow_on"
+  ],
+  "authorization": {
+    "execution_design_creation_authorized": true,
+    "design_commit_before_precommit_audit_authorized": false,
+    "program_source_runner_launcher_status_or_test_implementation_authorized": false,
+    "grant_creation_authorized": false,
+    "release_creation_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "Slurm_submission_authorized": false,
+    "retry_resume_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "audit_requirements": {
+    "precommit_independent_design_audit_required": true,
+    "commit_scope": "this_single_design_file_only",
+    "postcommit_lineage_audit_required": true,
+    "implementation_requires_separate_future_authorization": true,
+    "execution_requires_separate_program_grant_release_and_preexecution_audits": true
+  },
+  "next_step": "independent_precommit_audit_then_one_file_commit_push_then_postcommit_lineage_audit_only"
+}

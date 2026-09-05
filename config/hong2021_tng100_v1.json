@@ -1,0 +1,92 @@
+{
+  "status": "training_complete_2pcf_normalization_under_audit",
+  "reference": {
+    "paper": "Hong, Jeong, Hwang & Kim 2021, ApJ 913, 76",
+    "arxiv": "2008.01738",
+    "doi": "10.3847/1538-4357/abf040"
+  },
+  "simulation": {
+    "name": "TNG100-1",
+    "snapshot": 99,
+    "box_mpc_h": 75.0,
+    "center_stellar_mass_msun": [
+      40000000000.0,
+      100000000000.0
+    ],
+    "target_absolute_B_magnitude_max": -15.0,
+    "candidate_centers_reported": 988,
+    "nonoverlapping_train": 432,
+    "nonoverlapping_validation": 93
+  },
+  "cube": {
+    "box_mpc_h": 20.0,
+    "grid": 64,
+    "voxel_mpc_h": 0.3125,
+    "input_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s"
+    ],
+    "galactic_mask_abs_b_deg": 10.0,
+    "target": "log10(rho_dm/rho_dm_mean)/4.5"
+  },
+  "augmentation": {
+    "cyclic_axis_permutations": 3,
+    "axis_direction_flips": 8,
+    "factor": 24,
+    "train_after_augmentation": 10368,
+    "validation_after_augmentation": 2232
+  },
+  "training": {
+    "epochs": 200,
+    "batch_size": 6,
+    "batches_per_epoch": 1728,
+    "loss": "mean_squared_error",
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-07,
+    "batch_norm_epsilon": 0.001,
+    "model_selection": "minimum_training_loss_after_2pCF_comparison"
+  },
+  "required_local_inputs": {
+    "tng100_1_snapshot_099_dark_matter_coordinates": true,
+    "tng100_1_group_catalog_099": true,
+    "eagle_RefL0100N1504_z0_independent_test": false,
+    "author_weights_or_training_cubes": false
+  },
+  "local_run": {
+    "raw_root": "/scratch/kjhan/IllustrisTNG/TNG100-1",
+    "raw_root_host": "syntax",
+    "portable_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1",
+    "download_validation_passed": true,
+    "dark_matter_particles_read": 6028568000,
+    "prepared_train_file": "derived/hong2021/tng100_train.h5",
+    "prepared_validation_file": "derived/hong2021/tng100_validation.h5",
+    "prepared_voxel_deep_validation_passed": true,
+    "tmux_session": null,
+    "training_output": "training/tng100_v1",
+    "training_log": "logs/hong2021_train_lageunha_20260731.log",
+    "training_complete": true,
+    "completed_epochs": 200,
+    "evaluation": {
+      "script": "src/hong2021_evaluate.py",
+      "output": "evaluation/tng100_v1",
+      "validation_samples_unaugmented": 93,
+      "selected_checkpoint": "minimum_training_loss.pt",
+      "selected_epoch": 200,
+      "log10_density_residual_mean_std": [
+        0.028434429571570587,
+        0.5529255999318418
+      ],
+      "ks_2pcf_mean_std": {
+        "0-1_mpc_h": [0.7813620071684588, 0.18877697608980207],
+        "1-3_mpc_h": [0.5898617511520737, 0.11195617301559814],
+        "3-10_mpc_h": [0.4887585532746824, 0.07966014753423008]
+      },
+      "published_tng100_2pcf_reproduced": false,
+      "gate_interpretation": "inconclusive_until_finite_cube_2pcf_normalization_is_frozen",
+      "cf4_application_enabled": false
+    }
+  }
+}

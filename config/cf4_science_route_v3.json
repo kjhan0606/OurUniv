@@ -1,0 +1,314 @@
+{
+  "schema": "ouruniv-cf4-science-route-v3",
+  "status": "active_constraint_frontier_hybrid_route_KF_DESIGN",
+  "effective_date": "2026-08-29",
+  "authority": {
+    "supersedes_record": "config/cf4_science_route_v2.json",
+    "supersedes_scope": "committed_v2_route_and_history_as_active_authority",
+    "v2_record_is_preserved_unchanged_as_history": true,
+    "route_change_requires_explicit_user_approval": true,
+    "route_change_requires_prior_committed_record_update": true,
+    "historical_status_or_result_cannot_change_route": true
+  },
+  "objective": {
+    "primary": "maximize the independently calibrated constraint frontier toward high-k",
+    "fixed_or_artificial_low_k_high_k_cutoff_predeclared": false,
+    "information_measurement_scope": "all_modeled_modes_and_all_declared_regions",
+    "information_measurement": "prior_to_posterior_information",
+    "numerical_grid_or_force_resolution_cMpc_h_max": 0.3,
+    "final_target": "p(IC|D) proportional_to p(IC) product_j L_j(D_j|F_z0(IC))",
+    "final_products": [
+      "materially_expanded_calibrated_global_and_ROI_constraint_frontiers",
+      "exact_all_data_forward_likelihood_initial_condition_posterior",
+      "phase_consistent_zoom_families_for_LG_Virgo_Coma"
+    ]
+  },
+  "data_model": {
+    "data_vector": "D = {D_CF4, D_galaxy_density, D_LG, D_clusters, D_voids, D_observer}",
+    "components": [
+      {
+        "id": "D_CF4",
+        "content": [
+          "CF4_distance_observations",
+          "CF4_radial_peculiar_velocities"
+        ],
+        "must_declare": [
+          "catalog_and_version_provenance",
+          "selection_function",
+          "distance_and_velocity_uncertainty_model",
+          "grouping_and_nuisance_model"
+        ]
+      },
+      {
+        "id": "D_galaxy_density",
+        "content": [
+          "galaxy_density_field"
+        ],
+        "must_declare": [
+          "catalog_and_version_provenance",
+          "selection_function",
+          "redshift_space_distortion_model",
+          "galaxy_bias_model",
+          "measurement_and_model_uncertainty"
+        ]
+      },
+      {
+        "id": "D_LG",
+        "content": [
+          "MW_M31_M33_positions",
+          "MW_M31_M33_masses",
+          "MW_M31_M33_distances",
+          "MW_M31_M33_relative_velocities"
+        ],
+        "must_declare": [
+          "provenance",
+          "selection",
+          "measurement_and_model_uncertainty"
+        ]
+      },
+      {
+        "id": "D_clusters",
+        "content": [
+          "Virgo_Coma_positions",
+          "Virgo_Coma_masses",
+          "Virgo_Coma_velocities",
+          "Virgo_Coma_environments"
+        ],
+        "must_declare": [
+          "provenance",
+          "selection",
+          "measurement_and_model_uncertainty"
+        ]
+      },
+      {
+        "id": "D_voids",
+        "content": [
+          "Local_Void_and_Bootes_Void_centres",
+          "Local_Void_and_Bootes_Void_sizes",
+          "Local_Void_and_Bootes_Void_profiles"
+        ],
+        "must_declare": [
+          "provenance",
+          "selection",
+          "measurement_and_model_uncertainty"
+        ]
+      },
+      {
+        "id": "D_observer",
+        "content": [
+          "Local_Sheet",
+          "local_mass_environment"
+        ],
+        "must_declare": [
+          "provenance",
+          "selection",
+          "measurement_and_model_uncertainty"
+        ]
+      }
+    ],
+    "likelihood_contract": {
+      "each_component_requires": [
+        "provenance",
+        "selection",
+        "uncertainty",
+        "overlap_and_crossmatch_treatment",
+        "joint_latent_treatment_when_dependencies_remain"
+      ],
+      "catalog_overlap_must_be_deduplicated_or_jointly_modeled": true,
+      "shared_latent_variables_and_cross_component_covariance_must_be_modeled": true,
+      "product_factors_are_conditional_or_joint_not_naively_independent": true,
+      "double_counting_forbidden": true,
+      "additional_conditions_may_be_attributed_to_CF4": false
+    },
+    "conditioning_contract": {
+      "candidate_generation_followed_by_seed_post_selection_allowed": false,
+      "physical_conditions_enter_as": [
+        "predeclared_likelihood",
+        "predeclared_ABC_kernel"
+      ],
+      "ABC_summary_and_tolerance_frozen_before_truth_or_candidate_viewing": true
+    }
+  },
+  "constraint_frontier_policy": {
+    "mode_and_region_classes": [
+      "observation_constrained",
+      "structure_conditioned",
+      "prior_dominated"
+    ],
+    "goal": "expand observation_constrained and structure_conditioned domains and move the onset of prior_dominated content toward high-k",
+    "baseline": {
+      "frozen_inputs": [
+        "existing_BGc_WF_products",
+        "current_artifacts"
+      ],
+      "must_be_frozen_before_truth_viewing": true
+    },
+    "validation": {
+      "requires_independent_selection_and_noise_truth_mocks": true,
+      "covers_all_declared_data_components": true
+    },
+    "GO_requires": {
+      "comparison_to_frozen_baseline": true,
+      "accepted_improvement_measures": [
+        "material_expansion_of_contiguous_global_frontier",
+        "material_expansion_of_contiguous_ROI_frontier",
+        "material_expansion_of_preregistered_information_volume"
+      ],
+      "material_threshold_frozen_in_KF_DESIGN_before_truth_viewing": true,
+      "narrow_low_k_only_pass_is_sufficient": false
+    },
+    "not_frontier_expansion_evidence": [
+      "power_only_completion",
+      "random_high_k_modes",
+      "super_resolution_without_information_gain",
+      "interpolation",
+      "zoom_numerical_dynamics"
+    ]
+  },
+  "effective_resolution_policy": {
+    "single_k_eff_is_sufficient": false,
+    "required_outputs": [
+      "k_eff_global",
+      "k_eff_ROI"
+    ],
+    "global_definition_must_be_predeclared": true,
+    "ROIs_frozen_before_truth_or_candidate_viewing": [
+      "Local_Group",
+      "Virgo",
+      "Coma",
+      "Local_Void",
+      "Bootes_Void",
+      "observer_environment"
+    ],
+    "selected_bins_or_locations_may_support_claim": false,
+    "numerical_resolution_is_observational_effective_resolution": false,
+    "CF4_only_0p3_observational_density_phase_claim_currently_allowed": false,
+    "observational_0p3_claim_gate": {
+      "requires_independent_truth_mocks": true,
+      "spatial_scope": "declared_volume_not_selected_locations",
+      "spectral_scope": "entire_preregistered_continuous_k_band_not_selected_bins",
+      "cell_scale_convention": {
+        "k_claim_formula": "pi / 0.3 cMpc/h",
+        "k_claim_h_Mpc_approx": 10.47
+      },
+      "thresholds": {
+        "cross_response_min": 0.8,
+        "cross_response_max": 1.2,
+        "r_of_k_min": 0.7,
+        "residual_power_ratio_max": 0.5,
+        "phase_coherence": "preregistered_significant_separation_from_mock_random_phase_null",
+        "information_gain": "material_posterior_variance_reduction_relative_to_prior",
+        "coverage_68_and_95_percent": "thresholds_preregistered_on_independent_mocks",
+        "held_out_prediction": "improvement_threshold_preregistered_on_independent_mocks"
+      }
+    },
+    "high_resolution_label_policy": {
+      "random_high_k": "prior_dominated_or_conditional_prior",
+      "power_only_completion": "prior_dominated",
+      "interpolation": "numerically_resolved_only",
+      "super_resolution": "prior_dominated_unless_independent_information_gate_passes",
+      "zoom_dynamics": "numerically_resolved_only",
+      "object_or_structure_conditioned_0p3_ensemble_allowed_without_full_phase_gate": true,
+      "object_or_structure_conditioned_0p3_label_scope": "only_within_support_of_its_declared_likelihood",
+      "object_or_structure_conditioned_0p3_label_is_global_observational_phase_claim": false
+    }
+  },
+  "hybrid_inference_policy": {
+    "z0_multiscale_posterior_roles": [
+      "IC_proposal",
+      "initialization",
+      "preconditioner",
+      "diagnostic"
+    ],
+    "z0_posterior_must_retain_full_ensemble_and_covariance": true,
+    "deterministic_z0_point_map_may_be_treated_as_truth": false,
+    "literal_reverse_of_deterministic_z0_map_allowed": false,
+    "final_likelihood": "all_declared_D_component_likelihoods_applied_directly_to_PM_forward_F_z0_of_IC",
+    "same_data_derived_z0_posterior_may_be_multiplied_as_independent_likelihood": false,
+    "posterior_correction_contract": {
+      "target_density": "p(IC) product_j L_j(D_j|F_z0(IC))",
+      "importance_weight": "w(IC) proportional_to p(IC) product_j L_j(D_j|F_z0(IC)) / q(IC)",
+      "importance_requires_evaluable_q_and_target_support": true,
+      "Metropolis_Hastings_acceptance": "min(1, target(IC_proposed) q(IC_current|IC_proposed) / (target(IC_current) q(IC_proposed|IC_current)))",
+      "Metropolis_Hastings_requires_exact_target_and_proposal_ratios": true,
+      "SMC_rule": "use_declared_normalized_target_sequence_and_reweight_resample_move",
+      "implicit_proposal_without_evaluable_q_or_proven_target_invariant_kernel_allowed": false
+    }
+  },
+  "mandatory_stage_order": [
+    {
+      "id": "KF-DESIGN",
+      "name": "constraint_frontier_design_and_preregistration",
+      "status": "active",
+      "production_compute_authorized": false,
+      "required_outputs": [
+        "data_inventory_provenance_selection_uncertainty_and_overlap",
+        "frozen_BGc_WF_and_current_artifact_baseline",
+        "independent_selection_and_noise_truth_mock_contract",
+        "all_modeled_mode_and_declared_region_scope",
+        "global_and_ROI_definitions",
+        "frontier_metrics",
+        "material_improvement_threshold_frozen_before_truth",
+        "likelihood_and_ABC_preregistration"
+      ]
+    },
+    {
+      "id": "KF-EXPAND",
+      "name": "multiscale_constraint_frontier_expansion",
+      "status": "blocked_by_KF_DESIGN",
+      "purpose": "Compare multiscale inference alternatives on independent mocks and maximize the calibrated global and ROI frontier.",
+      "narrow_low_k_only_pass_may_GO": false
+    },
+    {
+      "id": "Z0-PROP",
+      "name": "winning_calibrated_all_data_z0_posterior_proposal",
+      "status": "blocked_by_KF_EXPAND"
+    },
+    {
+      "id": "IC-HYBRID",
+      "name": "exact_q_corrected_all_data_forward_posterior",
+      "status": "blocked_by_Z0_PROP",
+      "allowed_correction_methods": [
+        "importance_reweighting_with_q",
+        "Metropolis_Hastings_accept_reject_with_proposal_ratio",
+        "SMC_reweight_resample_move_with_declared_targets"
+      ],
+      "required_gates": [
+        "proposal_target_support",
+        "effective_sample_size",
+        "independent_replicates",
+        "all_data_posterior_predictive_checks"
+      ]
+    },
+    {
+      "id": "HIRES/ZOOM",
+      "name": "remaining_high_k_and_zoom_validation",
+      "status": "blocked_by_IC_HYBRID",
+      "current_scientific_approval": "NO-GO",
+      "rules": [
+        "label_remaining_prior_dominated_high_k_explicitly",
+        "require_hybrid_closure_before_target_selection_HOP_or_RAMSES"
+      ]
+    }
+  ],
+  "historical_artifact_policy": {
+    "v2_RES_CAL_status": "superseded_historical",
+    "direct_CF4_to_IC_artifacts": "frozen_baseline_proposal_control_and_historical_evidence_only",
+    "Hong_model_family": "closed_negative_result_estimator_only",
+    "cannot_authorize": [
+      "parent_or_seed_selection",
+      "high_k_IC_production",
+      "zoom_promotion",
+      "HOP_execution",
+      "RAMSES_execution"
+    ]
+  },
+  "current_action": {
+    "name": "bounded_KF_DESIGN_preregistration",
+    "production_compute_authorized": false,
+    "Slurm_submission_authorized": false,
+    "model_training_authorized": false,
+    "IC_generation_authorized": false,
+    "PM_HOP_RAMSES_authorized": false
+  }
+}

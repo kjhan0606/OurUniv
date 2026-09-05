@@ -1,0 +1,84 @@
+{
+  "schema": "ouruniv-cf4-parent-response-atlas-program-v1",
+  "status": "frozen_before_response_atlas_construction",
+  "frozen_date": "2026-08-16",
+  "purpose": "Construct one immutable exact float64 N576 local parent-response atlas shard for each of the 256 sealed CF4 parent fields.",
+  "source_commit": "383b2f17b72d5baf510e5329db7c8a4b60d2681f",
+  "design": {
+    "path": "config/cf4_aggregate_evidence_annealed_smc_design.json",
+    "sha256": "47397a00b497dc09e0e517cebe61a285cebdf9aa4b0a0ef1688af588c2c58609"
+  },
+  "atlas": {
+    "prior_mean_mpc_h": [0.0, -6.0, 4.0],
+    "prior_sigma_mpc_h": [3.0, 3.0, 3.0],
+    "dx_mpc_h": 0.6666666666666666,
+    "sigma_extent": 10.0,
+    "padding_cells": 5,
+    "shape": [101, 101, 101],
+    "dtype": "float64",
+    "outside_atlas_policy": "evaluate by the exact full-response slow path for all outside keys in that batch; never reject, clip or approximate"
+  },
+  "parents": {
+    "seed_range_inclusive": [3193, 3448],
+    "count": 256
+  },
+  "density_filter": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+    "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+    "shape": [576, 576, 289],
+    "dtype": "float32"
+  },
+  "reference_calibration": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+    "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+    "status": "complete_reference_calibration_parent3429_pass"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "process_table_polling": false
+  },
+  "pinned_local_files": [
+    {
+      "path": "src/cf4_aggregate_evidence_oracle.py",
+      "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f"
+    },
+    {
+      "path": "src/cf4_parent_response_atlas.py",
+      "sha256": "5546965fe64951a95bde7ca486fe57f4601ad329558c8c878f126ef148c9d565"
+    },
+    {
+      "path": "src/cf4_peak_evidence_phase_cache.py",
+      "sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106"
+    },
+    {
+      "path": "src/cf4_projection_contract.py",
+      "sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f"
+    },
+    {
+      "path": "config/cf4_aggregate_evidence_annealed_smc_design.json",
+      "sha256": "47397a00b497dc09e0e517cebe61a285cebdf9aa4b0a0ef1688af588c2c58609"
+    }
+  ],
+  "information_firewall": {
+    "CF4_deviance_loaded": false,
+    "production_SMC_particles_loaded": false,
+    "old_adaptation_cache_imported": false,
+    "parent_response_only": true
+  },
+  "storage": {
+    "program": "/home/kjhan/BACKUP/CF4/config/cf4_parent_response_atlas_program.json",
+    "directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/shards",
+    "manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1_run",
+    "exclusive_create_and_atomic_publication": true
+  },
+  "decision": {
+    "response_atlas_construction_authorized": true,
+    "oracle_regression_authorized": false,
+    "production_SMC_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "PM_or_RAMSES_authorized": false
+  }
+}

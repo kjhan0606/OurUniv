@@ -1,0 +1,80 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-technical-pilot-program-v1",
+  "status": "frozen_four_field_technical_pilot_execution_unauthorized",
+  "frozen_date": "2026-08-25",
+  "purpose": "Validate exact N192-to-N576 posterior completion for one preregistered row from each bridge group, without persisting fields or running PM, halo finding, or science selection.",
+  "science_design": {
+    "path": "config/cf4_lg_highk_conditioning_design_v1.json",
+    "sha256": "a565b0f7d0fe1a3b495019848e70f7fd6f4c93f6067a7874b8d06b3ea1179676"
+  },
+  "schedule_result": {
+    "path": "config/cf4_lg_highk_joint_schedule_v1_result.json",
+    "sha256": "e0d70d112f2385c155a78d513fea6f1ef0e5b0db261a31f84f53be6a9e5959a8",
+    "required_status": "complete_pass_schedule_only_no_field_generated"
+  },
+  "inputs": {
+    "schedule": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_joint_schedule_v1/schedule.npz",
+      "sha256": "10c8526f3508a908a14981636ca9f730480838b65ea4bbcd3186c0730f330ccd"
+    },
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"
+    },
+    "parent_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"
+    }
+  },
+  "implementation": [
+    {"path": "src/cf4_lg_highk_conditional_field.py", "sha256": "d2c1ee27596f2f4af9b0328f2d3142e4eca02c6ffad3ba2bcd8eb1334431e317"},
+    {"path": "src/cf4_lg_highk_technical_pilot.py", "sha256": "a0d21634c5b90d289d3e78da6e22c4ecabc86ff1563c72052ca26b1caabca7eb"},
+    {"path": "scripts/run_cf4_lg_highk_technical_pilot_v1.sbatch", "sha256": "f2e6e044166333aaaf279dffb72500ae5d6cce75c3ff05cc9ec6b5feef92567f"}
+  ],
+  "pilot_rows": [
+    {"schedule_index": 0, "group_id": 0, "parent_seed": 3423},
+    {"schedule_index": 64, "group_id": 1, "parent_seed": 3405},
+    {"schedule_index": 128, "group_id": 2, "parent_seed": 3195},
+    {"schedule_index": 192, "group_id": 3, "parent_seed": 3367}
+  ],
+  "fixed_model": {
+    "coarse_mesh": 192,
+    "fine_mesh": 576,
+    "centre_target_delta_linear": 1.8,
+    "shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "constraint_count": 14,
+    "FFT_workers": 1,
+    "float_dtype": "float32",
+    "peak_evidence_reapplied": false
+  },
+  "gates": {
+    "coarse_roundtrip_relative_RMS_max": 2e-6,
+    "correction_restriction_relative_RMS_max": 2e-6,
+    "maximum_response_identity_error_max": 2e-5,
+    "null_subspace_mean_square_range": [0.95, 1.05],
+    "absolute_global_field_mean_max": 0.005,
+    "all_four_cases_must_pass": true
+  },
+  "execution": {
+    "scheduler": "Slurm only",
+    "partition_request": "a40,a100,h100,h200",
+    "cpus": 1,
+    "memory": "36G",
+    "memory_basis": "The prior exact N576 bridge peak was 30450900 KiB; 1.2 times that peak is 36541080 KiB, rounded upward to a 36 GiB Slurm request.",
+    "time_limit": "08:00:00",
+    "manual_syn101_forbidden": true,
+    "output": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_technical_pilot_v1",
+    "field_persistence": false,
+    "PM_or_halo_finder": false
+  },
+  "authorization": {
+    "implementation_complete": true,
+    "synthetic_and_reference_tests_passed": true,
+    "technical_pilot_execution_authorized": false,
+    "production_field_generation_authorized": false,
+    "PM_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "next": "Obtain user approval, then submit exactly scripts/run_cf4_lg_highk_technical_pilot_v1.sbatch once."
+}

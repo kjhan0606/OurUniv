@@ -1,0 +1,175 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-v3-result-record",
+  "date": "2026-09-01",
+  "status": "PASS_PHASE_B_TECHNICAL_SMOKE_STOP_BEFORE_PHASE_C",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "b8a01e6",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_phaseb_smoke_program_v3.json",
+      "bytes": 9754,
+      "sha256": "b2ed86a1902416d736cfd5a823e07d4e24794fc64c203fe3856f6afd4c7f52c3"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phaseb_smoke.py",
+      "bytes": 31192,
+      "sha256": "c895b4ed9abe67685001c87d52c5ce50ecf34cf2021e1b32abe9c6b4518d7824"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_datum_bearing_z0_phaseb_smoke_v3.sbatch",
+      "bytes": 4849,
+      "sha256": "fc2db07358ab5c9317bca66c2e9a83108dc8e154b43f5e719e5fa8784f4b4e6a"
+    }
+  },
+  "failure_lineage": {
+    "V1_job_329837": "failed the original mass-conservation and gradient gates; preserved as an implementation failure",
+    "V2_job_329849": "failed before CUDA context creation and before model execution; preserved as an infrastructure failure",
+    "gate_relaxation_after_failure": false,
+    "truth_seed_change_after_failure": false,
+    "validation_seed_access_after_failure": false
+  },
+  "execution": {
+    "Slurm_job_id": 329857,
+    "cluster": "syntax",
+    "partition": "a40",
+    "node": "syn06",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 103,
+    "requested_cpus": 8,
+    "requested_memory_MiB": 24576,
+    "expected_peak_memory_MiB": 19660,
+    "reported_batch_MaxRSS_KiB": 2464340,
+    "GPU_count": 1,
+    "XLA_PYTHON_CLIENT_PREALLOCATE": false,
+    "manual_numerical_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phaseb_smoke_v3",
+    "COMPLETE": {
+      "sha256": "bcaffcfbc258462b7542c1aecae48c61d7f60ae3fca9198530ea830490c93cb0"
+    },
+    "diagnostics.npz": {
+      "sha256": "966609b7e25465c1e1031946094a3f2a31fb18902526c29eeaba9e6f91377e08"
+    },
+    "manifest.json": {
+      "sha256": "050c989d08a0db0872c0e972af2334468b238af235da1dcce7d64846c869b882"
+    },
+    "result.json": {
+      "sha256": "8f54f460f7ae70c58f3cb36f25018484be61f397445e4eadf95a1e3b5a893524"
+    }
+  },
+  "mock_firewall": {
+    "truth_seed_reused": 2026083000,
+    "new_truth_seed_consumed": false,
+    "validation_seed_consumed": false,
+    "actual_2Mpp_count_arrays_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "mock_2Mpp_count_total": 36915,
+    "mock_2Mpp_population_totals": [6311, 4943, 804, 12277, 10350, 2230],
+    "CF4_train_row_count": 15346,
+    "CF4_holdout_row_count_not_used_for_fit": 3967,
+    "seed_or_parent_ranking": false
+  },
+  "gate_result": {
+    "passed_gate_count": 13,
+    "total_gate_count": 13,
+    "failed_gates": [],
+    "RSD_mass_relative_error": 2.946007583809966e-16,
+    "RSD_mass_relative_error_max": 2e-13,
+    "RSD_adjoint_relative_error": 0.0,
+    "RSD_adjoint_relative_error_max": 2e-12,
+    "directional_gradient_best_relative_errors": [
+      2.2260628331168275e-11,
+      8.674276355620969e-11,
+      1.0328973278263548e-10
+    ],
+    "directional_gradient_relative_error_max": 0.0002,
+    "radial_forward_relative_error": 3.2706672416178374e-09,
+    "radial_forward_relative_error_max": 5e-08,
+    "RSD_max_abs_displacement_cMpc_h": 10.453969318389886,
+    "boundary_strict_max_cMpc_h": 12.0,
+    "truth_intensity_finite_nonnegative": true,
+    "truth_intensity_positive_on_exposed_support": true,
+    "positive_mock_count_has_positive_intensity": true,
+    "nuisance_Hessian_rank": 16,
+    "nuisance_Hessian_dimension": 16
+  },
+  "mechanics_diagnostics": {
+    "initial_negative_log_posterior": 7800.371072214725,
+    "optimized_negative_log_posterior": -26293.601640500827,
+    "optimizer_relative_decrease": 4.370814208334245,
+    "optimizer_iterations": 32,
+    "optimizer_status": 1,
+    "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+    "optimized_gradient_norm": 1015.6323457313614,
+    "optimizer_convergence_claim": false,
+    "HMC_transition_count": 4,
+    "HMC_accepted": 4,
+    "HMC_accept_probability_min": 0.9999999288738789,
+    "HMC_accept_probability_max": 1.0,
+    "HMC_convergence_or_efficiency_claim": false,
+    "interpretation": "The optimizer and very-small-step HMC checks establish finite executable mechanics only. They do not establish a usable sampler, posterior convergence, calibration, or science readiness."
+  },
+  "model_and_selection_diagnostics": {
+    "eta_spatial_mean_at_truth": -4.336808689942018e-18,
+    "full_sky_position_dependent_LOS": true,
+    "plane_parallel_RSD": false,
+    "periodic_C1_TSC_mass_push": true,
+    "selection_applied_after_RSD": true,
+    "coherent_RSD_only_FoG_disabled": true,
+    "CF4_mean_velocity_and_sigma_factor": true,
+    "selection_order4_to_order6_truth_lambda_relative_L1": 0.015980211853748486,
+    "selection_convergence_claim": false,
+    "prior_dominated_proxy_voxel_count": 26384,
+    "total_field_voxel_count": 32768,
+    "prior_dominated_proxy_fraction": 0.80517578125,
+    "prior_dominated_proxy_is_science_frontier": false
+  },
+  "independent_driver_audit": {
+    "auditor": "Codex driver temporarily covering Fable duties until 2026-09-02 08:00 KST under the user role assignment",
+    "verdict": "TECHNICAL_GO_PHASE_B_ONLY",
+    "valid_findings": [
+      "The V1 failure was corrected by changing the operator rather than weakening tolerances.",
+      "The V2 failure did not evaluate the model and was correctly separated as infrastructure lineage.",
+      "The TSC forward push is mass conservative and its mass adjoint and full joint gradient pass at float64 precision.",
+      "The spherical RSD displacement remains inside the predeclared periodic-image safety margin for this truth.",
+      "The actual observational count and velocity values were not used as posterior data."
+    ],
+    "limitations": [
+      "Only one matched N32 truth was evaluated.",
+      "The optimizer did not converge and the HMC transitions were intentionally too short and too small-step for posterior inference.",
+      "FoG, redshift error, HOD/overdispersion, selection perturbations, and forward-model discrepancy were not tested.",
+      "The order4-order6 selection response changes truth intensity by about 1.60 percent and remains an explicit calibration stress.",
+      "The exposure-information proxy marks about 80.5 percent of N32 voxels prior dominated; it is not a recovered-resolution estimate.",
+      "No actual z=0 density/velocity posterior, IC, Local Group structure, or 0.3 cMpc/h product exists yet."
+    ]
+  },
+  "scientific_disposition": {
+    "Phase_B": "PASS_TECHNICAL_ONLY",
+    "present_day_observational_density_posterior": "NOT_CREATED",
+    "present_day_observational_velocity_posterior": "NOT_CREATED",
+    "observational_frontier_or_resolution_claim": "NOT_ALLOWED",
+    "target_0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "parent_or_seed_promotion": "NOT_ALLOWED",
+    "Phase_C": "BLOCKED_PENDING_SEPARATE_USER_APPROVAL",
+    "automatic_follow_on": false
+  },
+  "next_recommended": {
+    "stage": "Phase C eight-mock balanced development pilot only after separate approval",
+    "required_stress_arms": [
+      "matched positive Poisson real-space control",
+      "coherent spherical RSD",
+      "coherent RSD plus population-dependent FoG and redshift errors",
+      "overdispersed/HOD counts plus selection perturbations and smooth model discrepancy"
+    ],
+    "required_before_submission": [
+      "freeze a genuinely usable optimizer and multi-chain sampler tuning protocol rather than reuse the mechanics settings",
+      "carry order4-order6 selection discretization as a named stress or complete a higher-order operator study",
+      "freeze heldout predictive, coverage, nuisance-rank, posterior-predictive, and global/ROI reports",
+      "derive Phase-C memory and time requests without treating the V3 mechanics MaxRSS as a multi-chain estimate"
+    ],
+    "requires_user_approval": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "hong2021-v10-two-component-plan-v1",
+  "status": "frozen_before_smoke",
+  "model": "frozen V8 stochastic Laplacian residual plus a separately learned deterministic zero-DC low-pass residual mean",
+  "stochastic_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v8_observable_context/validation_checkpoints/step_010000.pt",
+  "lowpass_target": "truth - frozen deterministic mean - sigma2 Laplacian residual, followed by exact cube-mean projection",
+  "lowpass_model": {
+    "architecture": "4-channel conditional compact 3-D U-Net",
+    "base_channels": 16,
+    "initial_output": "exact zero correction",
+    "loss": "50 percent uniform MSE plus 50 percent train-only density-tail-balanced MSE",
+    "steps": 5000,
+    "batch": 6,
+    "source_balance": {"tng": 3, "simba": 3},
+    "learning_rate": 0.0001,
+    "minimum_learning_rate": 0.00001,
+    "ema_decay": 0.999
+  },
+  "development_candidates": [1000, 3000, 5000],
+  "development_rule": "Full ensemble16/40 gate on TNG and SIMBA development; select the smallest step passing all eight checks in both domains",
+  "independence": {
+    "historical_simba_cv0_15_used_for_fitting_or_selection": false,
+    "sealed_eagle_used_for_fitting_or_selection": false,
+    "eagle_opening": "only after development and historical SIMBA stress pass"
+  }
+}

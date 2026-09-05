@@ -1,0 +1,96 @@
+{
+  "schema": "ouruniv-cf4-twompp-selection-quadrature-diagnostic-v1-result-record",
+  "date": "2026-09-01",
+  "status": "COMPLETE_ORDER6_RECOMMENDED_FOR_PHASE_A_DATUM_ONLY",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "ee36ad92ff8b9dcd5d3db14f62dcb633bb8b2aba",
+    "remote_commit_at_submission": "ee36ad92ff8b9dcd5d3db14f62dcb633bb8b2aba",
+    "program": "config/cf4_twompp_selection_quadrature_diagnostic_program_v1.json",
+    "implementation": "src/cf4_twompp_selection_quadrature_diagnostic_v1.py",
+    "runner": "scripts/run_cf4_twompp_selection_quadrature_diagnostic_v1.sbatch"
+  },
+  "execution": {
+    "Slurm_job_id": 329831,
+    "cluster": "syntax",
+    "node": "syn04",
+    "partition": "a10",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 71,
+    "requested_cpus": 1,
+    "requested_memory_MiB": 1024,
+    "expected_peak_memory_MiB": 768,
+    "reported_batch_MaxRSS_KiB": 294780,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1",
+    "selection_orders.npz": {
+      "bytes": 308172,
+      "sha256": "2b952bbde598da2ee1e50937807e2767daf7eaf8f88de849cea594940cc6da80"
+    },
+    "result.json": {
+      "bytes": 13550,
+      "sha256": "24e2d4c07e77bc32bc5a79d296db8fedd98e03efc236f49ea3fe15c1a22b97c3"
+    },
+    "manifest.json": {
+      "bytes": 462,
+      "sha256": "d7ceeac22e10f90c23191f8ad47150ac68efd7d8d9822a698fca96788e6866dd"
+    },
+    "COMPLETE": {
+      "bytes": 463,
+      "sha256": "09c12d7de4827fd522251293e7bcae0761f8e1ad113508ade717274c97d6a6cb"
+    }
+  },
+  "measured_result": {
+    "order2": {
+      "subpoints_per_voxel": 8,
+      "positive_count_nonpositive_exposure_population_voxels": 30,
+      "galaxies_in_those_population_voxels": 40
+    },
+    "order4": {
+      "subpoints_per_voxel": 64,
+      "positive_count_nonpositive_exposure_population_voxels": 0,
+      "galaxies_in_those_population_voxels": 0
+    },
+    "order6": {
+      "subpoints_per_voxel": 216,
+      "positive_count_nonpositive_exposure_population_voxels": 0,
+      "galaxies_in_those_population_voxels": 0
+    },
+    "order4_to_order6": {
+      "maximum_absolute_voxel_difference": 0.12590921325891313,
+      "relative_L1_by_population": [
+        0.008797784889396029,
+        0.013837865870432219,
+        0.019658297860330905,
+        0.01460066041390447,
+        0.019909977490119572,
+        0.03222499260137641
+      ],
+      "relative_support_change_by_population": [
+        -0.0001836251345150887,
+        0.0008064028743693877,
+        0.0015193243424899622,
+        0.00017783906102744693,
+        0.000784974975595839,
+        -0.0013592766256028028
+      ]
+    }
+  },
+  "driver_evaluation": {
+    "failure_cause_confirmed": "two-point-per-axis quadrature under-resolved sharp angular-mask or radial-luminosity support in coarse N32 voxels",
+    "epsilon_floor_used": false,
+    "occupied_voxel_override_used": false,
+    "global_order4_and_order6_exposures_computed_independently_of_occupancy": true,
+    "recommended_Phase_A_exposure": "raw_selection_order6",
+    "reason": "order4 and order6 both remove every undefined occupied likelihood cell; order6 is the highest globally evaluated deterministic rule and its population support differs from order4 by at most 0.152 percent",
+    "order4_to_order6_spatial_difference_must_be_retained_as_selection_discretization_diagnostic": true,
+    "claim_of_final_selection_convergence": false,
+    "Phase_B_requires_selection_discretization_nuisance_or_higher_order_check": true,
+    "actual_field_inference_allowed": false,
+    "Phase_B_allowed": false
+  },
+  "authorized_next_under_existing_user_instruction": "publish Phase-A count datum with the bound global order6 raw exposure and stop before Phase B"
+}

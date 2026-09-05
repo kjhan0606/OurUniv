@@ -1,0 +1,263 @@
+{
+  "schema": "ouruniv-cf4-post-joint-nogo-science-gate-and-exact-covariance-audit-v1",
+  "date": "2026-09-01",
+  "status": "AUDIT_COMPLETE_GATE_ERROR_FOUND_EXACT_COVARIANCE_PILOT_RECOMMENDED",
+  "purpose": "Determine whether the increasing sequence of NO-GO labels reflects worsening reconstruction evidence, a decision-gate error, or a removable covariance approximation, and freeze the least-cost next decision before any z=0 field inference or IC construction.",
+  "authorization": {
+    "authorization_basis": "The user approved the post-NO-GO science-design audit on 2026-09-01 after noting that failures appeared to be increasing.",
+    "repository_read_and_audit_record": true,
+    "commit_and_push_audit_record": true,
+    "new_Slurm_submission": false,
+    "new_GPFS_output": false,
+    "observational_CF4_field_inference": false,
+    "untouched_256_mock_validation": false,
+    "parent_posterior_promotion": false,
+    "resolution_increase": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "audited_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "starting_commit": "ee40fab",
+    "gate_origin_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d",
+    "gate_origin_commit_subject": "add grouped CF4 population mock calibration",
+    "gate_origin_date": "2026-08-31T15:00:15+09:00",
+    "gate_origin_file": "config/cf4_bgc_population_calibration_program_v1.json",
+    "joint_pilot_program": "config/cf4_twompp_joint_information_budget_pilot_program_v1.json",
+    "joint_pilot_result": "config/cf4_twompp_joint_information_budget_pilot_v1_result_record.json",
+    "velocity_information_program": "config/cf4_same_truth_information_budget_program_v2.json",
+    "velocity_information_result": "config/cf4_same_truth_information_budget_v2_result.json",
+    "exact_velocity_operator_source": "src/cf4_same_truth_ablation.py",
+    "completed_velocity_geometry_members": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "completed_likelihood_ablation_members": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/members"
+  },
+  "failure_trend_audit": {
+    "finding": "The recent failures are not one monotonic deterioration. They mix one repaired numerical implementation failure, honest model-information NO-GOs, and an over-strong information decision gate copied without a recorded scientific derivation.",
+    "categories": {
+      "technical_failure": "The v1 low-noise covariance CG failure was a solver formulation problem and was corrected in v2; it is not evidence that the sky data became less informative.",
+      "model_calibration_failure": "The grouped-CF4 population and BGc development mocks exposed population-fidelity and likelihood-calibration limitations that remain scientifically real.",
+      "information_shortfall": "Velocity-only information is genuinely weak in the lowest N32 bin, with marginalized-s1 I=0.30409692861112125.",
+      "decision_gate_failure": "The later covariance-only programs treated 0.8 as a required information fraction even though it originated as a field-response lower bound and no user, paper, simulation, or loss-based derivation for an information threshold of 0.8 was recorded."
+    },
+    "conclusion": "The old artifacts and their preregistered classifications must remain immutable, but the phrase 'known ceiling insufficient' is too strong as a route-level scientific conclusion until the gate and velocity covariance approximation are corrected."
+  },
+  "gate_provenance_audit": {
+    "origin": {
+      "first_repository_occurrence": "commit 342bb7c introduced response_min_inclusive=0.8, response_max_inclusive=1.2, correlation_r_min_inclusive=0.7, and residual_power_ratio_max_inclusive=0.5 together in a new program file",
+      "recorded_external_or_user_derivation_for_0p8": false,
+      "original_metric_semantics": "mock truth-conditioned field response, not covariance recovered-information fraction",
+      "later_metric_semantics": "the same numeric 0.8 was reused as both expected response I and a robust lower bound on I in the covariance-only information-budget and joint 2M++ pilot"
+    },
+    "covariance_information_identities": {
+      "definition": "I = 1 - Tr(C_post)/Tr(C_prior) within a declared Fourier band",
+      "expected_posterior_mean_response": "I",
+      "expected_field_correlation": "sqrt(I)",
+      "expected_residual_power_ratio": "1-I",
+      "scope": "linear-Gaussian covariance expectation only; these identities do not make the separately measured truth-conditioned mock metrics numerically identical in a finite realization"
+    },
+    "inconsistency_in_covariance_gate": {
+      "correlation_r_min_0p7_implies_I_min": 0.49,
+      "residual_power_ratio_max_0p5_implies_I_min": 0.5,
+      "I_min_0p8_implies_correlation_r_min": 0.8944271909999159,
+      "I_min_0p8_implies_residual_power_ratio_max": 0.19999999999999996,
+      "finding": "Within the covariance-information pilot, I>=0.8 dominates and is inconsistent with presenting r>=0.7 and residual<=0.5 as coequal material-recovery thresholds."
+    },
+    "correction_policy": {
+      "outcome_aware_correction": true,
+      "blind_preregistration_claim_allowed": false,
+      "old_program_or_result_rewrite_allowed": false,
+      "old_0p8_classification": "retain as NO-GO under the original frozen strong-reconstruction threshold",
+      "corrected_scientific_interpretation": "inconclusive for route rejection pending exact velocity covariance and coherent development gates",
+      "anti_p_hacking_rule": "Every future result must report classifications under both the preserved 0.8 stretch gate and the corrected material-constraint gate; the corrected gate must be frozen before submission."
+    },
+    "recommended_gate_hierarchy": {
+      "technical_feasibility": [
+        "operator adjoint consistency",
+        "all CG solves converged at the frozen tolerance",
+        "trace-estimator numerical uncertainty reported",
+        "artifact validation complete"
+      ],
+      "development_material_constraint": {
+        "information_numerical_lower_min_inclusive": 0.5,
+        "expected_correlation_r_min_inclusive": 0.7,
+        "expected_residual_power_ratio_max_inclusive": 0.5,
+        "heldout_predictive_improvement_lower_min_exclusive": 0.0,
+        "interpretation": "route-development screen only; it does not promote a parent posterior or establish observational resolution"
+      },
+      "strong_reconstruction_stretch_goal": {
+        "information_and_lower_min_inclusive": 0.8,
+        "expected_correlation_r_min_consistent_with_I": 0.8944271909999159,
+        "expected_residual_power_ratio_max_consistent_with_I": 0.2,
+        "route_killing_hard_gate": false
+      },
+      "science_promotion": "Requires calibrated nuisance-bearing development mocks, positive heldout prediction, and a later locked independent validation set; no single information cutoff is sufficient."
+    }
+  },
+  "joint_pilot_reclassification": {
+    "preserved_original_status": "NO_GO_KNOWN_CEILING_INSUFFICIENT_NO_PARENT_PROMOTION",
+    "original_gate": {
+      "information_point_and_numerical_lower_min_inclusive": 0.8
+    },
+    "lowest_bin": {
+      "velocity_only_marginalized_s1_information": 0.30409692861112114,
+      "known_selection_reference_bias": {
+        "information": 0.5172811153231445,
+        "numerical_95_lower": 0.5012693120924485,
+        "expected_correlation_r": 0.7192225770393644,
+        "expected_residual_power_ratio": 0.48271888467685553,
+        "original_0p8_stretch_gate": false,
+        "corrected_0p5_material_gate": true,
+        "limit": "optimistic reference-bias and known-selection scenario, not a calibrated physical ceiling"
+      },
+      "normalization_marginalized_reference_bias": {
+        "information": 0.5105045033861877,
+        "numerical_95_lower": 0.4937760661941655,
+        "original_0p8_stretch_gate": false,
+        "corrected_0p5_material_gate": false,
+        "interpretation": "borderline rather than a decisive route failure"
+      }
+    },
+    "revised_route_disposition": "The independent 2M++ density tracer is materially informative and the route remains technically promising, but parent promotion remains NO-GO because the velocity covariance was isotropized and density nuisances were not calibrated."
+  },
+  "exact_velocity_covariance_audit": {
+    "stored_draw_limit": {
+      "posterior_draws_per_geometry": 16,
+      "full_grid_real_dimension": 32768,
+      "sample_covariance_rank_max": 15,
+      "conclusion": "The stored draws cannot estimate or materialize a full posterior covariance."
+    },
+    "operator_recovery": {
+      "recoverable_from_completed_geometry": true,
+      "required_inputs": [
+        "mock positions and directions",
+        "distance-error-derived diagonal noise variance",
+        "frozen train/holdout row indices",
+        "four nuisance templates and their prior variances",
+        "the existing FFT/CIC velocity forward operator and adjoint"
+      ],
+      "all_inputs_available_without_new_truth": true,
+      "new_truth_seed_required": false,
+      "observed_CF4_velocity_datum_required_for_covariance": false
+    },
+    "normalized_linear_Gaussian_model": {
+      "model": "y = A x + B q + epsilon",
+      "priors": "x~N(0,I), q~N(0,Lambda), epsilon~N(0,I) after row-noise normalization",
+      "marginal_data_noise": "R = I + B Lambda B^T",
+      "exact_velocity_precision": "Q_v = I + A^T R^{-1} A",
+      "exact_velocity_covariance": "C_v = Q_v^{-1} = I - A^T (I + A A^T + B Lambda B^T)^{-1} A",
+      "joint_density_velocity_precision": "Q_joint = I + A^T R^{-1} A + F_density",
+      "joint_covariance": "C_joint = Q_joint^{-1}"
+    },
+    "matrix_free_implementation": {
+      "materialize_full_covariance": false,
+      "R_inverse": "four-column Woodbury solve using the existing nuisance templates",
+      "Q_joint_action": "one A forward action, one R^{-1} action, one A^T adjoint action, plus the existing density-Fisher action",
+      "band_trace": "deterministic Hermitian Hutchinson probes and converged matrix-free CG solves",
+      "removes_previous_approximation": "replaces the binwise isotropic trace-matched velocity surrogate with its exact anisotropic geometry operator",
+      "mathematical_upper_bound_from_trace_only_available": false,
+      "upper_bound_limit": "The trace alone does not encode eigenvectors or their alignment with the density Fisher operator, so no tight complementarity bound can replace the exact solve."
+    }
+  },
+  "minimum_cost_next_pilot": {
+    "name": "N32_single_geometry_exact_joint_covariance_pilot_v1",
+    "objective": "Measure whether exact velocity-density complementarity materially changes the lowest-bin decision before repeating all 64 geometries or implementing a nonlinear field posterior.",
+    "authorization_required_before_submission": true,
+    "design": {
+      "geometry_index": 0,
+      "grid_N": 32,
+      "box_size_cMpc_h": 384.0,
+      "cell_size_cMpc_h": 12.0,
+      "velocity_nuisance": "exactly marginalized four-template prior via R^{-1}",
+      "density_scenarios": [
+        "known_selection_reference_bias",
+        "population_normalization_marginalized_reference_bias"
+      ],
+      "trace_probe_count": 32,
+      "new_truth_or_validation_seed_count": 0,
+      "observational_field_datum_consumed": false,
+      "classifications_to_report": [
+        "preserved I_lower>=0.8 strong-reconstruction stretch gate",
+        "frozen I_lower>=0.5 material-constraint development gate"
+      ]
+    },
+    "technical_gates": {
+      "adjoint_relative_error_max_inclusive": 5e-08,
+      "CG_relative_residual_max_inclusive": 3e-06,
+      "all_trace_probe_solves_must_converge": true,
+      "zero_density_regression": "with F_density=0, reproduce the exact matrix-free velocity-only trace for geometry 0; report the old 64-geometry isotropic surrogate only as a comparison and do not require equality",
+      "refuse_overwrite_and_COMPLETE_written_last": true
+    },
+    "execution_envelope": {
+      "controller": "syntax_submit_and_audit_only",
+      "backend": "Slurm_CPU_only",
+      "manual_syntax_or_syn101_execution_allowed": false,
+      "cpus_per_task": 4,
+      "expected_peak_memory_MiB": 2500,
+      "minimum_requested_memory_MiB": 3072,
+      "memory_headroom_multiplier_over_expected": 1.2288,
+      "time_limit": "01:00:00",
+      "runtime_estimate": "approximately 5 to 30 minutes, to be replaced by measured accounting; prior related members took 195 to 408 seconds but the exact joint trace requires additional CG solves"
+    },
+    "decision_tree": {
+      "technical_failure": "repair the implementation without treating it as a scientific NO-GO; preserve failed artifacts and do not consume validation",
+      "known_and_normalization_marginalized_material_gates_fail": "do not spend on the 64-geometry production; move to density-nuisance model redesign",
+      "known_passes_but_normalization_marginalized_fails": "the route is borderline and normalization calibration is the immediate bottleneck; implement minimum density mocks before any production inference",
+      "normalization_marginalized_material_gate_passes": "request separate approval for the exact 64-geometry development production and geometry bootstrap",
+      "strong_0p8_stretch_gate_passes": "record as strong information, but still require nuisance mocks and locked validation before parent promotion"
+    }
+  },
+  "minimum_density_nuisance_calibration_after_pilot": {
+    "activation": "only if the exact single-geometry pilot does not reject the material-constraint route",
+    "development_truths": "reuse the already consumed 64 LCDM/PM development truth fields; generate no new truth seeds",
+    "validation_firewall": "keep truth seeds 2026083064 through 2026083319 locked",
+    "catalog_model": {
+      "populations": "start with the frozen six apparent-by-absolute K populations; a later 16-population design requires a separate identifiability and cost audit",
+      "positive_intensity": "use a log-link or truncated nonlinear power-law intensity; do not use unconstrained 1+b*delta where negative Poisson rates are possible",
+      "bias": "infer or calibrate luminosity-dependent bias by population rather than freezing the current sensitivity vector",
+      "mean_density": "infer one population normalization per selection channel",
+      "redshift_space_distortions": "derive coherent RSD from the same truth velocity field",
+      "small_scale_velocity": "include a group/FoG dispersion nuisance",
+      "selection_uncertainty": "include angular-map and radial-selection calibration templates",
+      "count_noise": "compare Poisson with negative-binomial or HOD-like overdispersion",
+      "model_discrepancy": "include a colored discrepancy field or covariance calibrated only on development mocks"
+    },
+    "promotion_metrics": [
+      "calibration and coverage on the 64 development mocks",
+      "positive heldout count and velocity predictive improvement",
+      "stable low-k information frontier with geometry uncertainty",
+      "no opening of the 256 locked validation mocks until the full model and gates are frozen"
+    ],
+    "simulation_volume_limit": "TNG100 alone is too small to calibrate a 384 cMpc/h survey geometry and low-k cosmic variance; it may inform local galaxy-population nuisance components but cannot be the sole large-scale truth ensemble."
+  },
+  "science_route_alignment": {
+    "primary_science_product": "posterior for the present-day z=0 density and velocity fields constrained jointly by grouped CF4 velocities and independent density tracers",
+    "target_local_resolution_cMpc_h": 0.3,
+    "N32_role": "low-cost global-operator and information-frontier development only",
+    "0p3_resolution_reached": false,
+    "high_resolution_strategy": "retain a large global box for long modes and use nested or multiresolution inference in the local region; advance the constrained-to-random k boundary only where development calibration and locked validation support it",
+    "IC_role": "infer or sample ICs only after the z=0 likelihood and parent posterior pass; PM evolution is then a physical forward consistency test and part of the eventual nonlinear posterior, not a substitute for validating the z=0 data model",
+    "local_group_high_k": "MW, M31, M33 and other object-level constraints require a later explicit high-k likelihood or zoom conditioning stage; CF4 alone cannot uniquely determine those phases."
+  },
+  "literature_alignment": {
+    "Lavaux_and_Jasche_2016": {
+      "url": "https://arxiv.org/abs/1509.05040",
+      "relevance": "2M++ luminosity populations, selection, luminosity-dependent bias calibration, and a Bayesian present-density/initial-condition forward model at much coarser resolution than 0.3 cMpc/h",
+      "limitation_for_this_project": "the reported analysis used a roughly 2.3 cMpc/h grid and did not explicitly model redshift-space distortions in the final BORG likelihood"
+    },
+    "Jasche_and_Lavaux_2019": {
+      "url": "https://arxiv.org/abs/1806.11117",
+      "relevance": "nonlinear particle-mesh forward modeling with redshift-space distortions and joint marginalization of bias, selection, and noise",
+      "cost_implication": "scientifically closer to the final route, but too costly to adopt before the exact N32 covariance screen and minimum nuisance calibration establish feasibility"
+    }
+  },
+  "final_audit_decision": {
+    "old_results_invalidated": false,
+    "old_0p8_NO_GO_preserved": true,
+    "route_level_rejection_supported": false,
+    "exact_single_geometry_joint_covariance_pilot_recommended": true,
+    "64_geometry_production_authorized": false,
+    "z0_field_posterior_authorized": false,
+    "IC_or_high_resolution_execution_authorized": false,
+    "next_user_decision": "Approve or reject implementation, tests, commit/push, and one Slurm submission for the frozen single-geometry exact joint-covariance pilot."
+  }
+}

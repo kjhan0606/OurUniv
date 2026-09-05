@@ -1,0 +1,411 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-authorized-wrapper-design-v1",
+  "status": "prospective_additive_wrapper_design_only_all_implementation_issuance_and_runtime_unauthorized",
+  "date": "2026-08-20",
+  "purpose": "Freeze the exact additive file surface and fail-closed behavior of a future one-shot authorized wrapper around the audited canonical shared-schedule production core without implementing the wrapper, issuing a pair or grant, creating a receipt or cache, or running production.",
+  "lineage": {
+    "design_parent_commit": "3d0a2d2eed3dd9fbfc0cc88d4a705586c156021f",
+    "grant_release_manifest_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant_release_manifest_design_v1.json",
+      "commit": "3d0a2d2eed3dd9fbfc0cc88d4a705586c156021f",
+      "sha256": "ca9011f2135ed621ccd2f1bc9336aa924e6db1c82ed672bedff1b73270d48d9b",
+      "git_blob_oid": "fff6b37c6e499dde4cf4cfc655dbf864474f2d6b",
+      "mode": "100644"
+    },
+    "authorization_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorization_design_v1.json",
+      "commit": "e6ba2c3482855a6c8c16aa8068df83bbfb9c62e8",
+      "sha256": "eed1f831b629166eff68a51f87b4cb7fc796abf2a5e5e7a676451681ebc78cc1"
+    },
+    "implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_implementation_result_record.json",
+      "commit": "7d13151f6f6ed6a99b6219bd2dca923bf8a1b9c2",
+      "sha256": "57ccc0ac99ead2a3903e96e22f0b40182e2a6db3a3b3184a5257d8d8530ba867"
+    },
+    "implementation_commit": "7eb25554abec278a3710b99aed90e73c39f37b9b"
+  },
+  "protected_existing_files": {
+    "must_remain_byte_identical": true,
+    "rows": {
+      "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_program.json": "54ffb61a9053a6e7935a7355a6d5a948184c4ded8dc585cf85b45d209a9b2dbc",
+      "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py": "4c59d09252bb2f78fe1871211b9409e9a4b2b117d2a40f65cab7197d066fb564",
+      "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh": "e0bfac8b662e8805cfcc99a07bf5a2e2124149a6968b8645f9141cdc8b28d0d7",
+      "scripts/launch_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh": "4a84041de75554d7c8b41cd2d432ba8a5d534cd15acdd14e0d5bf03d92ace725",
+      "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.sh": "702b561c5a6fee2d943507524047a5b198328453855834691ef51e727364b2fe",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py": "5c980991133c3d490fc057bd345657ed38f7127c4960e2630988c2edb54b90be",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_runner.py": "f439f2e738a8a5ba93c7f3abe989ab7700e65a224d05da19b823f39cb8244974"
+    }
+  },
+  "future_additive_file_surface": {
+    "exact_file_count": 7,
+    "no_other_tracked_changes": true,
+    "files": [
+      {
+        "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_program_v1.json",
+        "mode": "100644",
+        "role": "canonical_authorized_program_with_no_runtime_override"
+      },
+      {
+        "path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_v1.py",
+        "mode": "100644",
+        "role": "sole_public_authorization_and_receipt_wrapper"
+      },
+      {
+        "path": "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_authorized_v1_lageunha.sh",
+        "mode": "100755",
+        "role": "one_shot_local_runner"
+      },
+      {
+        "path": "scripts/launch_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_authorized_v1_lageunha.sh",
+        "mode": "100755",
+        "role": "fail_closed_local_launcher"
+      },
+      {
+        "path": "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_authorized_v1.sh",
+        "mode": "100755",
+        "role": "read_only_fail_closed_status"
+      },
+      {
+        "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_v1.py",
+        "mode": "100644",
+        "role": "authorization_receipt_and_science_wiring_regression"
+      },
+      {
+        "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_authorized_v1_runner.py",
+        "mode": "100644",
+        "role": "runner_launcher_status_lifecycle_regression"
+      }
+    ]
+  },
+  "public_API_contract": {
+    "module": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_v1",
+    "sole_public_entry": "run_authorized_production(program_path: pathlib.Path) -> dict",
+    "canonical_program_path_only": true,
+    "positional_or_keyword_runtime_overrides": false,
+    "seed_particle_parent_schedule_kernel_resource_and_output_path_overrides": false,
+    "must_call_only": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution._execute_reserved_canonical_private",
+    "must_not_call": [
+      "_execute_reserved_synthetic_test_only",
+      "run_production_execution_public_refusal_entry",
+      "any_v5_or_pilot_execution_or_cache"
+    ],
+    "invalid_authorization_routes_to": "PermissionError_before_any_write_or_evaluator_creation"
+  },
+  "program_contract": {
+    "exact_top_level_keys": [
+      "schema",
+      "status",
+      "date",
+      "purpose",
+      "lineage",
+      "canonical_paths",
+      "fixed_science",
+      "resource_contract",
+      "grant_release_manifest_contract",
+      "receipt_contract",
+      "artifact_and_postcheck_contract",
+      "authorization",
+      "next"
+    ],
+    "status_before_future_grant": "frozen_authorized_wrapper_program_execution_disabled_until_separate_grant_pair_and_release_audits",
+    "must_pin_wrapper_design_commit_and_full_sha256": true,
+    "must_pin_grant_pair_design_commit_and_full_sha256": true,
+    "must_pin_implementation_result_record_and_all_seven_protected_file_sha256": true,
+    "must_copy_fixed_science_and_canonical_paths_without_change": true,
+    "authorization_at_wrapper_implementation_commit": "all_false"
+  },
+  "grant_and_pair_parser_contract": {
+    "grant_path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant.json",
+    "release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_release.json",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_manifest.json",
+    "exact_schemas_keysets_statuses_modes_and_paths_from_grant_pair_design": true,
+    "reject_duplicate_JSON_keys": true,
+    "reject_unknown_or_missing_keys": true,
+    "all_ID_and_SHA256_fields_are_lowercase_64hex": true,
+    "recompute_fixed_science_and_canonical_paths_digests": true,
+    "recompute_payload_manifest_release_grant_complete_hash_bindings": true,
+    "implementation_file_SHA_map_exact": true,
+    "authorization_matrix_exact": true,
+    "release_and_manifest_modes": "0444",
+    "grant_mode": "0644",
+    "grant_must_be_a_separately_audited_single_file_commit": true,
+    "local_tracking_and_remote_must_equal_grant_commit": true,
+    "pair_and_grant_must_pass_external_and_git_postcommit_audits": true
+  },
+  "prewrite_refusal_order": [
+    "canonical_wrapper_program_path_and_sha256",
+    "wrapper_program_schema_keyset_and_all_false_pregrant_authorization",
+    "wrapper_design_grant_pair_design_implementation_result_and_protected_file_hashes",
+    "grant_exact_schema_keyset_mode_path_and_git_single_addition_lineage",
+    "external_manifest_exact_schema_keyset_mode_path_id_payload_and_sha256",
+    "external_release_exact_schema_keyset_mode_path_id_payload_manifest_and_sha256",
+    "grant_pair_cross_binding_and_authorization_matrix",
+    "HEAD_local_tracking_and_remote_exact_equality",
+    "science_scoped_worktree_clean_with_user_tripwire_excluded",
+    "ASCII_casefolded_short_hostname_equals_lageunha",
+    "MemAvailable_at_least_80_GiB",
+    "free_disk_at_least_40_GiB",
+    "data_state_receipt_and_cache_roots_all_absent",
+    "only_then_create_one_shot_receipt_before_cache_data_or_state"
+  ],
+  "receipt_lifecycle_contract": {
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_receipts",
+    "authorization_identity": "grant_id",
+    "canonical_receipt_path_template": "<receipt_root>/<grant_id>/production",
+    "grant_id_path_component": "exact_lowercase_64hex_grant_id_with_no_other_path_selection",
+    "creation": "exclusive_atomic_mkdir_of_canonical_production_receipt_no_parent_or_receipt_reuse",
+    "parent_chain_transaction": "create_missing_receipt_root_and_grant_id_parent_exclusively_inside_the_same_signal_masked_transaction_and_remove_only_new_empty_parents_if_failure_precedes_production_receipt_mkdir",
+    "pre_receipt_failure": "zero_write_no_marker_no_parent_no_receipt",
+    "receipt_mkdir_mode": "0700",
+    "bootstrap_signal_policy": "block_INT_TERM_HUP_and_timeout_delivery_from_immediately_before_receipt_mkdir_until_anchor_snapshot_and_RUNNING_are_sealed_or_FAILED_is_sealed",
+    "bootstrap_exact_order": [
+      "atomic_mkdir_canonical_receipt",
+      "hardlink_external_release_as_release.anchor",
+      "read_actual_post_hardlink_release_and_anchor_dev_ino_size_nlink_then_revalidate_release_hash_mode_and_identity",
+      "exclusive_write_canonical_snapshot.json_mode0600_fsync_then_chmod0444",
+      "compute_sha256_from_the_sealed_post_hardlink_snapshot_file",
+      "exclusive_write_RUNNING_with_that_snapshot_sha256_mode0600_fsync_then_chmod0444",
+      "revalidate_grant_pair_anchor_snapshot_RUNNING_and_all_hashes",
+      "unmask_signals"
+    ],
+    "release_anchor": "hard_link_to_read_only_external_release",
+    "anchor_and_release_must_share_dev_and_ino": true,
+    "snapshot_schema": "ouruniv-cf4-v6-open-shared-schedule-production-receipt-snapshot-v1",
+    "snapshot_status": "sealed_preexecution_identity_snapshot",
+    "snapshot_exact_keys": [
+      "schema",
+      "status",
+      "grant_id",
+      "release_id",
+      "manifest_id",
+      "grant_path",
+      "grant_sha256",
+      "release_path",
+      "release_sha256",
+      "release_dev",
+      "release_ino",
+      "release_size",
+      "release_nlink",
+      "manifest_path",
+      "manifest_sha256",
+      "wrapper_program_sha256",
+      "wrapper_source_sha256",
+      "runner_sha256",
+      "wrapper_design_sha256",
+      "grant_pair_design_sha256",
+      "implementation_result_record_sha256",
+      "canonical_paths_digest"
+    ],
+    "mtime_and_ctime_excluded_from_identity": true,
+    "exact_revalidation_points": [
+      "after_receipt_and_anchor_creation",
+      "before_cache_data_and_state_reservation",
+      "immediately_before_science_core",
+      "immediately_after_science_core",
+      "immediately_before_terminal_marker"
+    ],
+    "delete_and_recreate_identical_bytes_must_fail": true,
+    "receipt_collision_reuse_or_restart_must_fail": true,
+    "marker_contract": {
+      "marker_names": ["RUNNING", "COMPLETE", "FAILED"],
+      "mutually_exclusive": true,
+      "nonempty_canonical_JSON": true,
+      "initial_write_mode": "0600",
+      "sealed_mode": "0444",
+      "RUNNING_exact_keys": [
+        "schema",
+        "status",
+        "grant_id",
+        "release_id",
+        "manifest_id",
+        "snapshot_sha256"
+      ],
+      "COMPLETE_exact_keys": [
+        "schema",
+        "status",
+        "grant_id",
+        "release_id",
+        "manifest_id",
+        "snapshot_sha256",
+        "result_manifest_sha256"
+      ],
+      "FAILED_exact_keys": [
+        "schema",
+        "status",
+        "grant_id",
+        "release_id",
+        "manifest_id",
+        "snapshot_sha256",
+        "failure_class",
+        "failed_at_checkpoint"
+      ],
+      "RUNNING_status": "running_authorized_shared_schedule_production",
+      "COMPLETE_status": "complete_valid_provenance_and_scientific_postcheck",
+      "FAILED_status": "failed_invalid_lifecycle_provenance_execution_or_postcheck",
+      "RUNNING_snapshot_sha256_is_computed_from_the_sealed_post_hardlink_snapshot_immediately_before_RUNNING": true,
+      "FAILED_snapshot_sha256_type_by_checkpoint": {
+        "before_snapshot_sealed": "JSON_null",
+        "after_snapshot_sealed": "lowercase_64hex_matching_snapshot.json"
+      }
+    },
+    "allowed_entry_sets": {
+      "bootstrap_after_mkdir_before_anchor": [],
+      "bootstrap_after_anchor_before_snapshot": ["release.anchor"],
+      "bootstrap_after_snapshot_before_RUNNING": ["release.anchor", "snapshot.json"],
+      "steady_RUNNING": ["RUNNING", "release.anchor", "snapshot.json"],
+      "COMPLETE": ["COMPLETE", "release.anchor", "snapshot.json"],
+      "FAILED_after_mkdir": ["FAILED"],
+      "FAILED_after_anchor": ["FAILED", "release.anchor"],
+      "FAILED_after_snapshot_before_RUNNING": ["FAILED", "release.anchor", "snapshot.json"],
+      "FAILED_after_RUNNING_or_later": ["FAILED", "release.anchor", "snapshot.json"]
+    },
+    "entry_type_and_mode_contract": {
+      "release.anchor": "regular_read_only_hardlink_same_dev_ino_as_external_release_mode0444",
+      "snapshot.json": "regular_non_symlink_canonical_JSON_mode0444",
+      "markers": "regular_non_symlink_canonical_JSON_mode0444",
+      "directories_symlinks_sockets_devices_and_unlisted_entries": "forbidden"
+    },
+    "failure_transition": {
+      "triggers": [
+        "any_exception_after_receipt_mkdir",
+        "INT",
+        "TERM",
+        "HUP",
+        "timeout_TERM_or_KILL_boundary_detected_by_runner",
+        "grant_release_manifest_anchor_or_snapshot_revalidation_failure",
+        "science_or_postcheck_failure"
+      ],
+      "action": "inside_signal_mask_remove_RUNNING_or_partial_terminal_marker_then_exclusive_write_and_seal_exact_FAILED; preserve only checkpoint_allowed_forensic_entries",
+      "state_action": "if_state_directory_exists_remove_RUNNING_or_COMPLETE_and_publish_exact_state_FAILED_mode0444",
+      "state_absent_action": "do_not_create_state_only_receipt_FAILED_is_authoritative",
+      "receipt_directory_terminal_mode": "0555"
+    },
+    "success_transition": {
+      "preconditions": "science_complete_all_artifacts_read_only_full_postcheck_passed_and_final_snapshot_revalidation_passed",
+      "action": "inside_signal_mask_publish_state_COMPLETE_then_receipt_COMPLETE; on_any_intermediate_error_replace_any_partial_COMPLETE_with_FAILED_in_both_existing_lifecycles",
+      "remove_RUNNING_before_terminal_marker": true,
+      "state_and_receipt_terminal_marker_contents_bind_same_result_manifest_sha256": true,
+      "state_data_cache_and_receipt_directory_terminal_mode": "0555"
+    }
+  },
+  "reservation_runner_and_resource_contract": {
+    "host_casefold_exact": "lageunha",
+    "backend": "local_CPU_one_shot",
+    "Slurm_submission": false,
+    "syn101_execution": false,
+    "CUDA_VISIBLE_DEVICES": "",
+    "workers": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "MemAvailable_minimum_GiB": 80,
+    "free_disk_minimum_GiB": 40,
+    "timeout_command_exact": "/usr/bin/timeout --foreground --signal=TERM --kill-after=300s 12h",
+    "reservation_order": "receipt_then_atomic_state_cache_data",
+    "state_data_cache_directory_initial_mode": "0700",
+    "completion_state_data_cache_directory_mode": "0555",
+    "terminal_marker_mode": "0444",
+    "flock": true,
+    "no_process_table_polling": true,
+    "no_loop_retry_resume_or_follow_on": true,
+    "RUNNING_COMPLETE_FAILED_mutually_exclusive": true,
+    "all_failure_paths_close_evaluator_and_publish_FAILED_when_state_exists": true
+  },
+  "science_and_postcheck_contract": {
+    "sealed_24_row_control_before_production": true,
+    "four_fresh_sequential_replicates": true,
+    "raw_parent_log_Z_to_P_rep_to_evidence_weighted_P_pool_to_CF4_recomputed": true,
+    "terminal_seed_exactly_bound_to_each_replicate": true,
+    "pinned_calibration_open_only_after_terminal_artifacts_are_read_only": true,
+    "exact_artifact_tree_no_extra_file_directory_or_symlink": true,
+    "postcheck": "validate_published_bundle_from_audited_execution_module",
+    "postcheck_revalidates_program_grant_pair_receipt_and_all_artifacts": true,
+    "scientific_COMPLETE_statuses": [
+      "complete_pass_production_smc",
+      "complete_scientific_fail_production_smc"
+    ],
+    "invalid_lineage_hash_mode_receipt_evidence_or_postcheck_routes_to_FAILED": true,
+    "scientific_failure_never_authorizes_retry_retune_scale_up_or_follow_on": true
+  },
+  "launcher_and_status_contract": {
+    "launcher_backend": "local_exec_without_tmux_ssh_or_Slurm",
+    "launcher_must_run_full_read_only_authorization_preflight_before_process_action": true,
+    "status_read_only": true,
+    "status_no_pgrep_ps_squeue_or_process_scan": true,
+    "status_fail_closed_for_absent_orphan_markerless_empty_conflicting_or_mode_invalid_state": true,
+    "COMPLETE_requires_manifest_hash_marker_binding_and_full_postcheck": true,
+    "FAILED_requires_read_only_terminal_marker": true
+  },
+  "test_contract": {
+    "public_refusal_before_loader_factory_or_write": true,
+    "canonical_program_only_and_no_override": true,
+    "exact_program_design_implementation_grant_pair_pins": true,
+    "grant_manifest_release_schema_keyset_mode_hash_ID_and_cross_binding_mutations_rejected": true,
+    "wrong_git_parent_extra_commit_dirty_science_or_remote_mismatch_rejected": true,
+    "receipt_O_EXCL_anchor_snapshot_and_revalidation": true,
+    "identical_bytes_new_inode_attack_rejected": true,
+    "release_manifest_grant_removal_or_mutation_after_receipt_rejected": true,
+    "all_exception_paths_close_exactly_once": true,
+    "timeout_resource_and_reservation_order_static_and_fake_lifecycle_tests": true,
+    "pass_scientific_fail_invalid_and_timeout_marker_paths": true,
+    "receipt_interruption_injection_checkpoints": [
+      "immediately_after_receipt_mkdir",
+      "immediately_after_release_anchor_link",
+      "immediately_after_snapshot_seal",
+      "immediately_after_RUNNING_seal",
+      "immediately_after_state_reservation"
+    ],
+    "each_receipt_interruption_checkpoint_must_produce_the_exact_FAILED_entry_set_and_no_orphan_RUNNING": true,
+    "receipt_marker_empty_conflicting_unknown_mode_symlink_and_extra_entry_cases_fail_closed": true,
+    "postcheck_parent_evidence_and_extra_artifact_adversarial_regressions_retained": true,
+    "no_real_runtime_paths_or_processes_in_tests": true
+  },
+  "audit_sequence": [
+    "wrapper_design_precommit_DESIGN_GO",
+    "wrapper_design_commit_push_postcommit_LINEAGE_GO",
+    "exact_seven_file_wrapper_implementation_precommit_COMMIT_GO",
+    "wrapper_implementation_commit_push_postcommit_LINEAGE_GO",
+    "wrapper_implementation_result_record_one_file_audits",
+    "separate_pair_and_grant_issuance_authority_and_artifact_audits",
+    "separate_preexecution_EXECUTION_GO",
+    "one_shot_production_execution",
+    "separate_result_audit_before_any_downstream_design"
+  ],
+  "authorization": {
+    "wrapper_design_creation_and_precommit_audit_authorized": true,
+    "wrapper_design_commit_authorized_before_precommit_audit": false,
+    "wrapper_implementation_authorized": false,
+    "pair_creation_authorized": false,
+    "grant_creation_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "retry_resume_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "runtime_state": {
+    "observed_read_only": true,
+    "wrapper_files_present": false,
+    "grant_present": false,
+    "release_present": false,
+    "manifest_present": false,
+    "receipt_root_present": false,
+    "cache_root_present": false,
+    "data_root_present": false,
+    "state_root_present": false,
+    "production_executed": false,
+    "downstream_execution_occurred": false
+  },
+  "next": {
+    "authorized_now": "precommit_audit_this_single_wrapper_design_file_only",
+    "after_lineage_go": "exact_seven_file_additive_wrapper_implementation_and_fake_tests_only",
+    "pair_or_grant_creation_authorized": false,
+    "production_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

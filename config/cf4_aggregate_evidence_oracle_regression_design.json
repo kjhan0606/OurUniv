@@ -1,0 +1,357 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-oracle-regression-design-v1",
+  "status": "frozen_scientific_design_before_implementation",
+  "frozen_date": "2026-08-16",
+  "scientific_scope": "Exact atlas, outside slow path, historical evidence banks, and all 27 covariance phases only.",
+  "authorization": {
+    "implementation_and_tests_authorized": true,
+    "canonical_program_and_runner_design_authorized": true,
+    "regression_execution_authorized": false,
+    "production_SMC_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "fixed_lineage": {
+    "atlas_result_record": {
+      "path": "config/cf4_parent_response_atlas_v1_result_record.json",
+      "sha256": "a0677aaa9af7c1c820766d4db2b83533c5cf176bc3680548a34adfb0ce414ab7",
+      "required_status": "complete_pass_exact_parent_response_atlas"
+    },
+    "atlas_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"
+    },
+    "atlas_complete": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1_run/COMPLETE",
+      "sha256": "54663110db956f78b20941799469ec6159be5dc6d47c88918c80d7249bf4eb69"
+    },
+    "reference_calibration": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+      "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+      "required_status": "complete_reference_calibration_parent3429_pass"
+    },
+    "physical_model": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+      "shape": [576, 576, 289],
+      "dtype": "float32"
+    },
+    "phase_control_record": {
+      "path": "config/cf4_peak_evidence_phase_control_v2_result_record.json",
+      "sha256": "5e5cded4689c9b7df8b647d8209770826aebbe8574b48c8f465ec79482e5d509",
+      "required_status": "complete_pass_exact_N576_phase_cache"
+    },
+    "adaptation_2048": {
+      "record": "config/cf4_peak_evidence_adaptation_v1_result_record.json",
+      "record_sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238",
+      "result": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/result.json",
+      "result_sha256": "520e2b57fe178baed4e9634ca322aca57870026f1254042ae3608f96aaf770a8",
+      "arrays": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/arrays.npz",
+      "arrays_sha256": "53effa951768bcebdbc5aeaf9c8bc5aa6c19b18e749f61562f1151b41911da90",
+      "complete": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/COMPLETE",
+      "complete_sha256": "d498be087a52079f3f2057b752bc56f4f01174a73028d31b57a0473460226f68"
+    },
+    "adaptation_8192": {
+      "record": "config/cf4_peak_evidence_adaptation_fallback_result_record.json",
+      "record_sha256": "d890b7ba4baa2887e6518bb6cd02cbaa3c23dbeeb7c31aeea5dbeccbe35618c0",
+      "result": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/result.json",
+      "result_sha256": "4b893b7d81014c45f1897c7125bbc686780ecb675c0858e03a1784bec4807f0d",
+      "arrays": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/arrays.npz",
+      "arrays_sha256": "471906ce74f8606f54328ce7d5d06a48a857d68b1fa548c671cbc2f4c1256083",
+      "complete": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/COMPLETE",
+      "complete_sha256": "05a2da45e0a0de1d32df01586507ca87a03d43f9bf7d751735b93e17e5b459f9"
+    },
+    "pinned_existing_sources": {
+      "oracle": {
+        "path": "src/cf4_aggregate_evidence_oracle.py",
+        "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f"
+      },
+      "phase_cache": {
+        "path": "src/cf4_peak_evidence_phase_cache.py",
+        "sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106"
+      },
+      "projection": {
+        "path": "src/cf4_projection_contract.py",
+        "sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f"
+      },
+      "exact_peak_reference": {
+        "path": "src/cf4_peak_evidence.py",
+        "sha256": "22e2b8027039c0f8d5e1318003e201e2ec3c93ea896a438dd08d391fac3fe50f"
+      },
+      "legacy_geometry": {
+        "path": "src/cf4_lg_peak_cr.py",
+        "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"
+      }
+    }
+  },
+  "mesh_and_parent_contract": {
+    "fine_N": 576,
+    "coarse_N": 192,
+    "refinement_ratio": 3,
+    "box_size_mpc_h": 384.0,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "parent_order": "strictly ascending",
+    "likelihood_dimension": 14,
+    "sigma_delta": 0.25
+  },
+  "random_atlas_control": {
+    "master_seed": 2026082501,
+    "bit_generator": "PCG64DXSM",
+    "inside_count": 1024,
+    "outside_count": 64,
+    "candidate_limit_each": 1000000,
+    "inside_sampling": {
+      "candidate_rng": "SeedSequence(master_seed, spawn_key=(0,candidate_index))",
+      "draw_order": "three relative-midpoint integer draws followed by z and phi uniform draws",
+      "relative_midpoint": "independent discrete uniform inclusive over relative_min through relative_max: [-45,-54,-39] through [45,36,51]",
+      "axis": "z=2U-1 and phi=2*pi*V; canonical RP2 axis and canonical rint(3*a) offset",
+      "acceptance": "accept iff the key is unique and all 14 points are inside padded atlas bounds",
+      "final_order": "lexicographic key order"
+    },
+    "outside_sampling": {
+      "candidate_rng": "SeedSequence(master_seed, spawn_key=(1,candidate_index))",
+      "draw_order": "face, excursion, other coordinates in ascending dimension order, then z and phi",
+      "face": "uniform integer 0 through 5; dimension=floor(face/2), even=negative, odd=positive",
+      "excursion_cells": "uniform integer inclusive 1 through 9",
+      "other_coordinates": "independent uniform over core relative bounds",
+      "selected_coordinate": "padded_min[d]-excursion for a negative face; padded_max[d]+excursion for a positive face",
+      "axis": "the same isotropic RP2 rule as inside",
+      "acceptance": "accept iff the key is unique and at least one of 14 points is outside the atlas",
+      "final_order": "lexicographic key order"
+    },
+    "coverage": "Every selected key is evaluated for all 256 parents.",
+    "outside_slow_path_required": true,
+    "outside_full_response_parent_count": 256
+  },
+  "atlas_vs_direct_control": {
+    "cached_path": "verified immutable float64 response-atlas shards",
+    "direct_path": "one exact N576 full-response evaluation per parent for the combined 1088 control keys",
+    "outside_path": "public atlas evaluator outside slow path, with mandatory parent path, SHA, and internal-seed verification",
+    "inside_diagnostics_required": {
+      "inside_key_count": 1024,
+      "outside_key_count": 0
+    },
+    "outside_diagnostics_required": {
+      "inside_key_count": 0,
+      "outside_key_count": 64,
+      "full_response_parent_evaluations": 256
+    },
+    "gates": {
+      "all_parent_hashes_verified": true,
+      "all_values_finite": true,
+      "inside_log_Z_max_abs_difference": 1e-10,
+      "outside_log_Z_max_abs_difference": 1e-10
+    }
+  },
+  "historical_bank_regression": {
+    "rows_used": "all rows in original order; no sampling and no weighting",
+    "required_input_arrays": [
+      "parent_seed",
+      "log_Z_peak",
+      "midpoint_offset_mpc_h",
+      "axis",
+      "midpoint_grid",
+      "points",
+      "point_kinds",
+      "logmean_parent_Z_by_geometry",
+      "covariance_log_determinant"
+    ],
+    "forbidden_gate_inputs": [
+      "normalized_geometry_weight",
+      "log_importance",
+      "geometry ESS",
+      "parent rank",
+      "CF4 deviance"
+    ],
+    "key_contract": {
+      "formula": "key=(stored midpoint_grid, canonical_axis_offset(stored axis))",
+      "continuous_check": "geometry_key(stored midpoint_offset_mpc_h, stored axis) must equal the reconstructed key exactly",
+      "points_check": "historical and canonical points must be exactly equal after treating the two ordered seven-point peak blocks as an unordered pair; row order within each seven-point block remains exact",
+      "point_kinds": "exactly [centre, six shells, centre, six shells]",
+      "key_dtype": "int16"
+    },
+    "bank_2048": {
+      "draw_count": 2048,
+      "log_Z_shape": [256, 2048],
+      "unique_geometry_key_count": 2016,
+      "unique_covariance_key_count": 1146
+    },
+    "bank_8192": {
+      "draw_count": 8192,
+      "log_Z_shape": [256, 8192],
+      "unique_geometry_key_count": 7756,
+      "unique_covariance_key_count": 1755
+    },
+    "evaluation": {
+      "unique_keys_evaluated_once": true,
+      "inverse_map_restores_every_historical_row": true,
+      "parent_orientation": "atlas output [geometry,parent] is transposed to historical [parent,geometry]",
+      "second_identical_evaluation": "must be bitwise identical and add zero new covariance-cache keys"
+    },
+    "gates_each_bank": {
+      "parent_seed_array_exact": true,
+      "key_array_exact": true,
+      "point_block_equivalence_exact": true,
+      "all_values_finite": true,
+      "historical_log_Z_max_abs_difference": 1e-10,
+      "historical_log_Z_bar_max_abs_difference": 1e-10,
+      "historical_covariance_logdet_max_abs_difference": 1e-10
+    }
+  },
+  "dense_27_phase_control": {
+    "phase_order": "lexicographic (px,py,pz), each coordinate 0,1,2",
+    "geometry_keys": "midpoint=(288+px,288+py,288+pz), canonical offset=(3,0,0)",
+    "geometry_count": 27,
+    "unique_covariance_key_count": 27,
+    "control_parent_seeds": [3193, 3429],
+    "cached_matrix": "ExactCovarianceCache.terms over all 27 keys",
+    "dense_reference": "Explicitly construct every 14x14 matrix from phase_response_grid: for each column use its absolute point phase, translation, and all 14 row displacements; hold one N576 phase grid at a time; fill all entries and symmetrize only after recording pre-symmetry error.",
+    "phase_coverage": "Exactly all 27 response phases must be used.",
+    "observation_covariance": "signal plus 0.25 squared times I14",
+    "scalar_log_Z_reference": "normalized_gaussian_logpdf with direct parent means",
+    "vector_log_Z": "vectorized_log_evidence with cached Cholesky and logdet",
+    "gates": {
+      "phase_count_exact": 27,
+      "response_grids_held_simultaneously": 1,
+      "phase_imaginary_relative_RMS_max": 1e-10,
+      "phase_imaginary_absolute_max": 1e-15,
+      "pre_symmetry_max_abs": 1e-8,
+      "signal_covariance_max_abs_difference": 1e-12,
+      "signal_covariance_relative_Frobenius_difference": 1e-10,
+      "cholesky_max_abs_difference": 1e-12,
+      "logdet_max_abs_difference": 1e-10,
+      "normalized_log_Z_max_abs_difference": 1e-10,
+      "all_values_finite": true
+    }
+  },
+  "information_firewall": {
+    "CF4_catalog_or_deviance_loaded": false,
+    "adaptation_weights_used": false,
+    "old_rows_used_for_fitting_or_estimation": false,
+    "old_rows_used_to_initialize_production_cache": false,
+    "regression_cache_namespace_separate": true,
+    "regression_cache_exported": false,
+    "parent_ranking_or_selection_computed": false,
+    "SMC_particles_or_seeds_loaded": false,
+    "physical_targets_or_tolerances_changed": false,
+    "automatic_follow_on": false
+  },
+  "execution": {
+    "host": "LagEunha",
+    "device": "CPU",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "multiprocessing_start_method": "fork",
+    "parent_blocks": "eight contiguous ascending blocks of 32 parents",
+    "geometry_batch_size": 256,
+    "dense_phase_stage": "serial and one phase grid in memory",
+    "stage_order": [
+      "lineage and schema preflight",
+      "deterministic key generation",
+      "dense 27-phase control",
+      "1024 inside and 64 outside atlas/direct control",
+      "full 2048 historical bank",
+      "full 8192 historical bank",
+      "atomic artifacts and decision"
+    ],
+    "CUDA_VISIBLE_DEVICES": "",
+    "process_table_polling": false,
+    "automatic_retry_or_scaling": false
+  },
+  "storage": {
+    "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1_run",
+    "result": "result.json",
+    "arrays": "arrays.npz",
+    "manifest": "manifest.json",
+    "publication_order": [
+      "arrays.npz",
+      "result.json",
+      "manifest.json",
+      "COMPLETE marker"
+    ],
+    "exclusive_create": true,
+    "atomic_publication": true,
+    "no_cache_shards_written": true
+  },
+  "arrays_contract": {
+    "parent_seed": ["int32", [256]],
+    "inside_keys": ["int16", [1024, 6]],
+    "inside_candidate_index": ["int32", [1024]],
+    "inside_cached_log_Z": ["float64", [1024, 256]],
+    "inside_direct_log_Z": ["float64", [1024, 256]],
+    "outside_keys": ["int16", [64, 6]],
+    "outside_candidate_index": ["int32", [64]],
+    "outside_slow_log_Z": ["float64", [64, 256]],
+    "outside_direct_log_Z": ["float64", [64, 256]],
+    "bank_2048_keys": ["int16", [2048, 6]],
+    "bank_2048_new_log_Z": ["float64", [256, 2048]],
+    "bank_2048_new_log_Z_bar": ["float64", [2048]],
+    "bank_8192_keys": ["int16", [8192, 6]],
+    "bank_8192_new_log_Z": ["float64", [256, 8192]],
+    "bank_8192_new_log_Z_bar": ["float64", [8192]],
+    "dense_phase": ["int8", [27, 3]],
+    "dense_keys": ["int16", [27, 6]],
+    "dense_signal_cached": ["float64", [27, 14, 14]],
+    "dense_signal_direct": ["float64", [27, 14, 14]],
+    "dense_cholesky_cached": ["float64", [27, 14, 14]],
+    "dense_cholesky_direct": ["float64", [27, 14, 14]],
+    "dense_logdet_cached": ["float64", [27]],
+    "dense_logdet_direct": ["float64", [27]],
+    "dense_control_parent_seed": ["int32", [2]],
+    "dense_log_Z_cached": ["float64", [27, 2]],
+    "dense_log_Z_direct": ["float64", [27, 2]]
+  },
+  "result_schema": {
+    "schema": "ouruniv-cf4-aggregate-evidence-oracle-regression-result-v1",
+    "statuses": [
+      "complete_pass_exact_oracle_regression",
+      "complete_fail_exact_oracle_regression"
+    ],
+    "required_sections": [
+      "lineage",
+      "execution",
+      "selection",
+      "dense_phase",
+      "atlas_direct",
+      "historical_banks",
+      "gates",
+      "information_firewall",
+      "decision"
+    ]
+  },
+  "failure_priority": [
+    "invalid_lineage_or_input_contract",
+    "nonfinite_or_numerical_failure",
+    "dense_27_phase_mismatch",
+    "inside_atlas_mismatch",
+    "outside_slow_path_or_lineage_mismatch",
+    "historical_2048_mismatch",
+    "historical_8192_mismatch"
+  ],
+  "failure_actions": {
+    "invalid_lineage_or_input_contract": "Publish FAILED marker and no scientific result.",
+    "scientific_regression_mismatch": "Publish an immutable complete_fail result, close this oracle architecture, and do not retune seed, sample, tolerance, target, or ordering.",
+    "pass": "Authorize only prospective production-SMC program and runner design plus independent pre-execution audit; do not execute SMC automatically."
+  },
+  "required_implementation_tests": [
+    "RNG sample-selection golden SHA and bitwise candidate-index reproduction",
+    "exact key, antipodal axis, ties-to-even, and peak-block permutation",
+    "N12 synthetic inside and outside slow-path comparison",
+    "parent-block reassembly order",
+    "27-phase explicit dense matrix and cache comparison",
+    "historical geometry-parent to parent-geometry orientation",
+    "duplicate-key inverse mapping and fixed unique counts",
+    "hash, schema, status, dtype, shape, and finite hard gates",
+    "scientific failure publishes COMPLETE complete_fail while execution or lineage failure publishes FAILED",
+    "marker conflicts and marker-free state fail closed",
+    "runner has no polling, automatic retry, threshold changes, or follow-on execution"
+  ]
+}

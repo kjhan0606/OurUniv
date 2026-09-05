@@ -1,0 +1,105 @@
+{
+  "schema": "hong2021-v70-terminal-result-record-v1",
+  "status": "complete_train_gate_rejection_development_unopened_failure_audited",
+  "purpose": "Bind the fixed V70 fit, train-only gate, terminal seal, and exact rejection cause without reinterpreting or tuning the frozen decision.",
+  "record_base_commit": "883de873d0c359a9dba8556debeb5c5d309f8063",
+  "frozen_programs": {
+    "training_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "training_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "train_gate_program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "train_gate_program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728",
+    "locked_development_program": "config/hong2021_v70_locked_development_program.json",
+    "locked_development_program_sha256": "5417fceb29b42108b3f75cc00f0c2c3d9a8f3cc1977b778dbb9386cce1caa7fd"
+  },
+  "fixed_training": {
+    "status": "complete_fixed_30000_step_fit",
+    "steps": 30000,
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "checkpoint_sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json",
+    "training_report_sha256": "831697545e4b73ea1f875a5cbf07ba4eb82b5602964b0165851433a7553ef519",
+    "training_initial_and_completion_code_commit": "ee3769bbee768baca03382dbb1b2ff6d7bbce407",
+    "EMA_parameters": 8771649,
+    "EMA_nonfinite_values": 0,
+    "history_rows": 601,
+    "all_logged_losses_finite": true,
+    "AMP_overflow_events": 10,
+    "peak_allocated_bytes": 5573922816
+  },
+  "train_only_gate": {
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_train_joint_structure_gate/decision.json",
+    "decision_sha256": "2097e14bb96e8423d4fd0e8be0b97c35e8e872652936715284631e24c2715ffa",
+    "decision_digest_sha256": "928674ed5ee1a937886e5592e2ed65220e82923ff9ad2a59ca316e844ed7e285",
+    "gate_code_commit": "883de873d0c359a9dba8556debeb5c5d309f8063",
+    "candidate_selected": false,
+    "train_mechanism_pass": false,
+    "one_point_pass": false,
+    "spectral_pass": true,
+    "phase_sensitive_energy_score_pass": true,
+    "stream_reproducibility_pass": true,
+    "numerical_pass": true,
+    "classification": "query_aligned_latent_spatial_score_does_not_learn_cross_domain_joint_structure",
+    "next": "stop_before_development_without_posthoc_training_sampling_or_gate_tuning"
+  },
+  "sole_gate_failure": {
+    "metric": "TNG100 q99.9 physical moment candidate-over-truth",
+    "frozen_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "stream_A": {
+      "value": 1.5419756598703893,
+      "absolute_excess_above_upper_bound": 0.041975659870389315,
+      "relative_excess_above_upper_bound": 0.02798377324692621
+    },
+    "stream_B": {
+      "value": 1.519871149907308,
+      "absolute_excess_above_upper_bound": 0.019871149907307872,
+      "relative_excess_above_upper_bound": 0.013247433271538581
+    },
+    "both_frozen_noise_streams_fail": true,
+    "SIMBA_and_Swift_tail_rows_pass": true,
+    "all_latent_mean_and_standard_deviation_rows_pass": true,
+    "interpretation": "The rejection is a reproducible TNG100 high-density one-point tail over-amplitude, not a power, phase-structure, stream-stability, or numerical failure."
+  },
+  "passed_joint_structure_evidence_not_used_to_override_rejection": {
+    "total_power_candidate_over_truth_range": [
+      0.973349048820557,
+      1.0167660866251818
+    ],
+    "all_12_domain_stream_band_candidate_energy_scores_better_than_paired_independent_voxel_control": true,
+    "minimum_control_minus_candidate_energy_score": 0.2958112262315282,
+    "maximum_control_minus_candidate_energy_score": 1.5637420401202888,
+    "maximum_stream_absolute_log_ratio": 0.006163747191071553,
+    "frozen_stream_absolute_log_ratio_limit": 0.13976194237515863,
+    "maximum_inverse_CDF_error": 7.748603820800781e-07,
+    "maximum_absolute_residual_DC": 4.7704895589362195e-18,
+    "peak_allocated_bytes": 1402724864,
+    "note": "These passes establish that V70 learned useful joint spatial structure, but the frozen conjunction still requires rejection because the TNG100 physical-tail row failed."
+  },
+  "terminal_seal": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/sealed_result.json",
+    "sha256": "57ba8e263a56a2f514568c61a2e10cc2c9ae6dbe11353107ff2157855d145ecf",
+    "status": "sealed_train_gate_rejection_development_not_accessed",
+    "binds_train_gate_sha256": true,
+    "protocol_deviation_disclosed": true,
+    "literal_precompletion_checkpoint_access_firewall_satisfied": false,
+    "train_and_development_gate_selection_blinding_preserved": true
+  },
+  "firewall": {
+    "posthoc_training_sampling_threshold_or_gate_tuning": false,
+    "development_directory_created": false,
+    "development_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  },
+  "authorization": {
+    "modify_or_rerun_V70": false,
+    "open_locked_V70_development": false,
+    "open_independent_EAGLE": false,
+    "automatic_followup_model_authorized": false,
+    "reason": "The frozen V70 terminal branch requires stopping before development. Any new model would be a new scientific program, not a continuation or tuning of V70, and requires an explicit scope decision."
+  }
+}

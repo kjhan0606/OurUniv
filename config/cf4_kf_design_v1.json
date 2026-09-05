@@ -1,0 +1,564 @@
+{
+  "schema": "ouruniv-cf4-kf-design-v1",
+  "status": "user_approved_design_frozen_crossmatch_complete_blocked_by_likelihood_and_bin_manifest",
+  "date": "2026-08-30",
+  "authority": {
+    "science_route": "config/cf4_science_route_v3.json",
+    "driver_audit_required": false,
+    "user_approval_required": false,
+    "user_approval_granted": true,
+    "ROI_leakage_execution_authorized": false,
+    "final_bin_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "all_D_mock_blockers": [
+      "2M++ raw provenance and CF4 crossmatch are complete, but angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance likelihood implementation remain pending",
+      "structure-summary likelihood provenance, covariance, and model-discrepancy contracts are partial"
+    ],
+    "production_compute_authorized": false,
+    "Slurm_submission_authorized": false,
+    "GPFS_read_authorized": false,
+    "GPFS_write_authorized": false,
+    "network_access_authorized": false
+  },
+  "driver_audit": {
+    "date": "2026-08-30",
+    "verdict": "PASS",
+    "targeted_test": "tests/test_cf4_constraint_frontier.py",
+    "expected_result": "20 passed",
+    "scope": [
+      "config/cf4_kf_design_v1.json",
+      "src/cf4_constraint_frontier.py",
+      "tests/test_cf4_constraint_frontier.py"
+    ],
+    "scope_is_exact_three_new_files": true,
+    "compute_or_slurm_executed": false
+  },
+  "user_approval": {
+    "date": "2026-08-30",
+    "decision": "approve_KF_DESIGN_metric_threshold_ROI_source_and_mock_firewall_contract",
+    "scope": "Freeze the KF-DESIGN scientific and validation contract only; this is not approval to execute KF-EXPAND, all-D mocks, production compute, Slurm, or GPFS work.",
+    "execution_approval": false
+  },
+  "frozen_contract": {
+    "material_thresholds": {
+      "frozen": true
+    },
+    "mock_seed_ranges": {
+      "frozen": true
+    },
+    "ROI_sources": {
+      "frozen": true
+    },
+    "science_fields": {
+      "frozen": true,
+      "fields": [
+        "z0_matter_density_delta",
+        "z0_velocity_divergence_theta",
+        "joint_z0_frontier",
+        "separate_later_IC_frontier"
+      ]
+    },
+    "change_before_untouched_validation_truth_opening_allowed": false
+  },
+  "objective": {
+    "primary": "discover and materially extend the calibrated constraint frontier toward high-k",
+    "arbitrary_low_k_high_k_cutoff_input_allowed": false,
+    "evaluation_scope": "all declared k bins from the lowest bin through the analysis Nyquist and every predeclared global or ROI domain",
+    "frontier_rule": "strict all-gate contiguous prefix from the lowest evaluation bin",
+    "isolated_high_k_pass_after_first_failure_counts": false
+  },
+  "data_inventory": [
+    {
+      "id": "D_CF4_groups",
+      "status": "confirmed",
+      "provenance": "data/PROVENANCE.md",
+      "artifact": "cf4_groups.csv",
+      "catalog_provenance_status": "confirmed",
+      "likelihood_readiness": "ready_grouped_CF4_distance_and_radial_velocity_field_likelihood",
+      "note": "CF4 grouped catalog is confirmed by the repository provenance record."
+    },
+    {
+      "id": "D_CF4_galaxies",
+      "status": "confirmed",
+      "provenance": "data/PROVENANCE.md",
+      "artifact": "cf4_galaxies.csv",
+      "catalog_provenance_status": "confirmed",
+      "likelihood_readiness": "diagnostic_only_not_independent_density_likelihood",
+      "likelihood_blockers": [
+        "individual-galaxy selection function",
+        "galaxy bias model",
+        "joint covariance with grouped CF4 and any density product"
+      ],
+      "note": "Catalog provenance is confirmed, but individual-galaxy positions/count density are not an independent likelihood until the blockers are complete."
+    },
+    {
+      "id": "D_galaxy_density_external",
+      "status": "raw_2Mpp_and_CF4_crossmatch_COMPLETE_but_likelihood_blocked",
+      "provenance": "data/PROVENANCE.md#2m-galaxy-density-source",
+      "source": {
+        "catalog": "CDS/VizieR J/MNRAS/416/2840",
+        "publication_DOI": "10.1111/j.1365-2966.2011.19233.x",
+        "VizieR_DOI": "10.26093/cds/vizier.74162840",
+        "download_date": "2026-08-30"
+      },
+      "artifacts": {
+        "catalog": {
+          "path": "data/2mpp_catalog.csv",
+          "rows": 72973,
+          "observed_local_raw_sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d",
+          "canonical_recno_sorted_sha256": "e761a9973f92e74520b81d36c5c7e76f739e47e2279da0567cdb2a92cf9d02ce",
+          "validator_binding": "canonical_recno_sorted_sha256"
+        },
+        "groups": {
+          "path": "data/2mpp_groups.csv",
+          "rows": 4002,
+          "observed_local_raw_sha256": "e83bcad0ebe97f6048f36b3235f66babaadf995fc2257302313160f35980057a",
+          "canonical_recno_sorted_sha256": "c2959d7fbda188ae2496ce76743a9243b6fb260099550025db988d1df381f6fa",
+          "validator_binding": "canonical_recno_sorted_sha256"
+        },
+        "ReadMe": {
+          "path": "data/2mpp_ReadMe.txt",
+          "sha256": "0a4206da2c0e9997ff508909434816dfa095595d23eb6be4bee85fb8aee6c2d9"
+        },
+        "CF4_crossmatch_mapping": {
+          "path": "data/cf4_2mpp_crossmatch_v1.csv",
+          "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
+          "publication_status": "COMPLETE"
+        },
+        "CF4_crossmatch_result": {
+          "path": "config/cf4_2mpp_crossmatch_v1_result.json",
+          "raw_sha256": "3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a",
+          "status": "COMPLETE",
+          "mapping_sha256_binding": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"
+        }
+      },
+      "validated_counts_and_linkage": {
+        "real_galaxies": 69160,
+        "fake_ZoA_rows": 3813,
+        "cloned_redshift_rows": 1840,
+        "group_unique_GIDs": 4002,
+        "known_orphan_GID": 5000,
+        "known_orphan_rows": 3,
+        "other_orphan_GIDs": 0
+      },
+      "verified_CF4_crossmatch": {
+        "CF4_individual_rows": 55877,
+        "2Mpp_real_rows": 69160,
+        "secure_joint_mark_rows": 16584,
+        "coordinate_redshift_conflict_rows": 188,
+        "nonreciprocal_collision_rows": 5,
+        "extended_review_candidate_rows": 273,
+        "unmatched_rows": 38827,
+        "secure_unique_CF4_1PGC_groups": 11610,
+        "quarantine_auto_promotion_allowed": false
+      },
+      "imputation_policy": {
+        "normalized_Ref_equals_zoa": "imputed_latent_forbidden_as_independent_observation",
+        "Cln_equals_1": "imputed_latent_forbidden_as_independent_observation"
+      },
+      "required_contract": [
+        "2M++ angular and radial selection function",
+        "redshift_space_distortion_model",
+        "luminosity-dependent galaxy bias model",
+        "forward-model discrepancy",
+        "CF4 group-member covariance and shared-redshift source resolution",
+        "joint uncertainty and cross-covariance with CF4"
+      ],
+      "raw_catalog_is_published_4_Mpc_h_density_map": false,
+      "likelihood_readiness": "crossmatch_COMPLETE_but_blocked_pending_angular_empty_sky_selection_K_evolution_extinction_LF_RSD_FoG_luminosity_bias_HOD_model_discrepancy_and_CF4_group_member_shared_redshift_covariance"
+    },
+    {
+      "id": "D_LG",
+      "status": "partial",
+      "available_evidence": "existing Local Group target configs and references",
+      "available_observables": [
+        "MW_M31_M33 target positions",
+        "mass and separation targets",
+        "relative velocity targets"
+      ],
+      "blocking_gaps": [
+        "joint observational covariance",
+        "forward-model discrepancy",
+        "complete provenance binding"
+      ]
+    },
+    {
+      "id": "D_clusters",
+      "status": "partial",
+      "available_evidence": "existing Virgo and Coma object positions and target configs",
+      "blocking_gaps": [
+        "full mass-likelihood provenance",
+        "full velocity-likelihood provenance",
+        "environment covariance and model discrepancy"
+      ]
+    },
+    {
+      "id": "D_voids",
+      "status": "partial",
+      "available_evidence": "existing Local Void and Bootes Void citations and target configs",
+      "blocking_gaps": [
+        "profile uncertainty",
+        "selection function",
+        "joint covariance and model discrepancy"
+      ]
+    },
+    {
+      "id": "D_observer",
+      "status": "constructed_prior_or_gate_not_independent_likelihood",
+      "available_evidence": "current Local Sheet and observer-environment physical prior/gate",
+      "blocking_gaps": [
+        "independent observational likelihood provenance",
+        "selection function",
+        "uncertainty and covariance"
+      ]
+    }
+  ],
+  "likelihood_subsets": {
+    "non_CF4_is_not_synonymous_with_structure_summary": true,
+    "field_observation_subset": {
+      "definition": "Field-level observations only",
+      "eligible_components": [
+        "D_CF4",
+        "provenance-confirmed independent D_galaxy_density_external"
+      ],
+      "current_components": [
+        "grouped CF4 distance/radial-velocity field likelihood"
+      ],
+      "diagnostic_only_components": [
+        "D_CF4_galaxies positions and counts"
+      ],
+      "current_exclusions": [
+        "2M++ raw data and CF4 crossmatch are COMPLETE, but the independent galaxy-density likelihood remains blocked pending angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance implementation"
+      ],
+      "CF4_derived_density_rule": "A density field derived from CF4 galaxies remains inside the joint or de-duplicated D_CF4 factor and is not an independent field-observation factor."
+    },
+    "structure_summary_subset": {
+      "definition": "Predeclared object, environment, or structural summary likelihoods and ABC kernels",
+      "components": [
+        "D_LG",
+        "D_clusters",
+        "D_voids",
+        "D_observer"
+      ]
+    }
+  },
+  "overlap_policy": {
+    "each_likelihood_requires": [
+      "provenance",
+      "selection",
+      "uncertainty",
+      "catalog_crossmatch",
+      "overlap_or_joint_latent_treatment"
+    ],
+    "double_counting_allowed": false,
+    "non_CF4_information_may_be_attributed_to_CF4": false,
+    "candidate_seed_post_selection_allowed": false,
+    "ABC_summary_and_tolerance_freeze_time": "before truth or candidate inspection"
+  },
+  "binning": {
+    "box_size_cMpc_h": 384.0,
+    "fundamental_formula": "k_f = 2*pi/L",
+    "fundamental_h_Mpc_approx": 0.016362461737446838,
+    "native_spacing": "quarter_octave",
+    "delta_log2_k": 0.25,
+    "adjacent_native_bin_ratio": 1.189207115002721,
+    "lowest_bin_starts_at_fundamental": true,
+    "highest_bin_limit": "declared analysis Nyquist",
+    "bins_above_analysis_Nyquist_allowed": false,
+    "user_supplied_science_cutoff_allowed": false,
+    "low_mode_merge": {
+      "truth_blind": true,
+      "canonical_independent_mode_count_min": 32,
+      "DC_mode_included": false,
+      "rule": "Starting at the lowest native bin, greedily merge consecutive bins until the canonical independent Fourier-mode count is at least 32, then start the next group. If the terminal group is underfilled at Nyquist, merge it into the preceding group. Mode counts depend only on L, the declared grid/Nyquist, and integer Fourier wavevectors; no truth, candidate, or gate value may enter merging."
+    }
+  },
+  "declared_bin_manifest_contract": {
+    "status": "design_frozen_ROI_leakage_pending_blocking",
+    "design_path": "config/cf4_kf_bin_manifest_design_v1.json",
+    "design_status": "user_approved_design_frozen_ROI_leakage_and_manifest_materialization_pending",
+    "ROI_geometry_approved_and_frozen": true,
+    "future_manifest_path": "config/cf4_kf_bin_manifest_v1.json",
+    "immutability_binding": "canonical manifest bytes and SHA256",
+    "evaluation_inputs_must_bind_to_manifest_SHA256": true,
+    "required_records": [
+      "every native quarter-octave bin",
+      "every deterministic merged evaluation bin and native-bin membership",
+      "fundamental k_f",
+      "declared analysis Nyquist",
+      "each ROI supported-lowest-scale and leakage-test identity",
+      "canonical independent mode count for every native and merged bin",
+      "global and ROI bin order"
+    ],
+    "forbidden_input_mutations": [
+      "prefix omission",
+      "suffix omission",
+      "failed-bin omission",
+      "bin reordering",
+      "shortened analysis Nyquist",
+      "unrecorded ROI scale removal"
+    ],
+    "manifest_or_SHA256_binding_missing_semantics": "KF_EXPAND_fail_closed",
+    "truth_or_candidate_may_change_manifest": false,
+    "future_execution_route_is_authorization": false,
+    "future_execution_route": {
+      "mode_if_separately_authorized": "Slurm_only",
+      "controller": "syntax_controller_submit_and_audit_only",
+      "manual_syn101_or_manual_syntax_allowed": false,
+      "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1",
+      "memory_request_rule": "measured preflight peak memory times at least 1.2",
+      "refuse_overwrite": true,
+      "COMPLETE_last": true,
+      "current_execution_authorized": false
+    }
+  },
+  "strict_bin_gates": {
+    "combination": "logical_AND_fail_closed",
+    "response": {
+      "minimum_inclusive": 0.8,
+      "maximum_inclusive": 1.2
+    },
+    "r_of_k": {
+      "minimum_inclusive": 0.7
+    },
+    "residual_power_ratio": {
+      "maximum_inclusive": 0.5
+    },
+    "phase_coherence": {
+      "candidate_numeric_proposal_frozen": true,
+      "null": "mock random-phase null",
+      "test": "one-sided max-statistic familywise test per domain, including correlated bins",
+      "familywise_p_max_inclusive": 0.05,
+      "upstream_boolean_gate_required": true
+    },
+    "prior_to_posterior_variance_reduction": {
+      "candidate_numeric_proposal_frozen": true,
+      "posterior_to_prior_variance_ratio_median_max_inclusive": 0.8,
+      "mock_bootstrap_95_percent_upper_bound_max_exclusive": 1.0,
+      "combination": "both conditions required",
+      "upstream_boolean_gate_required": true
+    },
+    "coverage": {
+      "candidate_numeric_proposal_frozen": true,
+      "minimum_untouched_validation_mocks": 256,
+      "levels_percent": [
+        68,
+        95
+      ],
+      "absolute_error_max_inclusive": {
+        "68": 0.05,
+        "95": 0.025
+      },
+      "Wilson_interval_confidence_level": 0.95,
+      "nominal_must_lie_inside_Wilson_interval": true,
+      "combination": "absolute-error and Wilson-interval conditions required at both levels",
+      "upstream_boolean_gate_required_for_each_level": true
+    },
+    "held_out_prediction": {
+      "candidate_numeric_proposal_frozen": true,
+      "statistic": "paired candidate-minus-baseline held-out log predictive density",
+      "mock_bootstrap_95_percent_lower_bound_min_exclusive": 0.0,
+      "missing_component_semantics": "not_applicable_and_fail",
+      "upstream_boolean_gate_required": true
+    },
+    "nonfinite_or_missing_value_passes": false
+  },
+  "evaluation_fields": {
+    "z0_matter_density_delta": {
+      "required_outputs": [
+        "k_eff_global_delta",
+        "k_eff_ROI_delta"
+      ]
+    },
+    "z0_velocity_divergence_theta": {
+      "required_outputs": [
+        "k_eff_global_theta",
+        "k_eff_ROI_theta"
+      ],
+      "theta_normalization_must_be_predeclared": true
+    },
+    "joint_z0_frontier": {
+      "rule": "minimum of the separately evaluated delta and theta k_eff values in the same domain",
+      "density_success_may_mask_velocity_failure": false,
+      "velocity_success_may_mask_density_failure": false
+    },
+    "IC_frontier": {
+      "part_of_KF_EXPAND_result": false,
+      "measurement_stage": "IC-HYBRID",
+      "must_be_measured_separately": true
+    }
+  },
+  "z0_posterior_product_contract": {
+    "matter_density_delta": {
+      "required": [
+        "per-cell posterior mean delta",
+        "full posterior ensemble",
+        "covariance or declared covariance operator retaining spatial dependence"
+      ],
+      "mean_only_product_allowed": false
+    },
+    "velocity_vector": {
+      "required": [
+        "per-cell three-vector posterior mean <v>",
+        "full per-cell 3x3 covariance or full posterior velocity ensemble"
+      ],
+      "scalar_sigma_v_is_sufficient": false,
+      "component_cross_covariance_must_be_retained": true
+    },
+    "theta_frontier_source": "velocity-divergence theta computed for the posterior velocity ensemble, not only from the mean velocity field",
+    "ensemble_and_covariance_provenance_required": true
+  },
+  "domains": {
+    "global": {
+      "metric": "k_eff_global",
+      "lowest_scale": "declared analysis volume fundamental k_f=2*pi/L before deterministic mode-count merging",
+      "contiguous_evaluation": true
+    },
+    "ROIs": [
+      {
+        "id": "Local_Group",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/0",
+        "geometry_source": [
+          "config/p1_targets_v2_observer.json observer-centred radii",
+          "existing Local Group target configs/references"
+        ]
+      },
+      {
+        "id": "Virgo",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/1",
+        "geometry_source": "config/p1_targets_v2_observer.json#/clusters/Virgo"
+      },
+      {
+        "id": "Coma",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/2",
+        "geometry_source": "config/p1_targets_v2_observer.json#/clusters/Coma"
+      },
+      {
+        "id": "Local_Void",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/3",
+        "geometry_source": "config/p1_targets_v2_observer.json#/local_void"
+      },
+      {
+        "id": "Bootes_Void",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/4",
+        "geometry_source": "config/p1_targets_v2_observer.json#/bootes_void"
+      },
+      {
+        "id": "observer_environment",
+        "metric": "k_eff_ROI",
+        "geometry_status": "approved_frozen",
+        "geometry_design_binding": "config/cf4_kf_bin_manifest_design_v1.json#/ROI_geometry/ROIs/5",
+        "geometry_source": "config/p1_targets_v2_observer.json#/observer_environment"
+      }
+    ],
+    "ROI_freeze_time": "before truth or candidate inspection",
+    "ROI_window_and_leakage_model_required": true,
+    "ROI_lowest_scale_rule": "Use the lowest scale supported by a preregistered localized-window or wavelet leakage test; no arbitrary ROI k_min is allowed.",
+    "ROI_contiguous_evaluation_from_supported_lowest_scale": true,
+    "ROI_leakage_failure_semantics": "A failed scale is excluded from the evaluation domain with the leakage failure recorded; the exclusion rule and result are independent of truth and candidate values.",
+    "ROI_overlap_covariance_required": true,
+    "Local_Group_observer_overlap_reported_separately": true,
+    "Local_Group_observer_scores_may_be_summed": false,
+    "pool_ROI_scores_into_one_undifferentiated_score": false,
+    "ROI_only_improvement_supports_global_claim": false,
+    "selected_bins_or_locations_support_claim": false
+  },
+  "classification": {
+    "classes": [
+      "observation_constrained",
+      "structure_conditioned",
+      "prior_dominated"
+    ],
+    "observation_constrained": "all-D strict pass AND field-observation-only strict pass",
+    "structure_conditioned": "all-D strict pass AND field-observation-only strict fail AND preregistered structure-summary leave-one-out attribution pass",
+    "prior_dominated": "all remaining cases, including attribution failure or conflicting all-D failure"
+  },
+  "material_frontier_extension": {
+    "baseline": "frozen existing BGc/WF/current artifacts",
+    "baseline_is_scientific_promotion_evidence": false,
+    "minimum_new_contiguous_native_quarter_octave_bins": 2,
+    "minimum_k_eff_ratio_inclusive": 1.4142135623730951,
+    "bootstrap_statistic": "log2(k_eff_candidate/k_eff_baseline)",
+    "bootstrap_source": "independent selection/noise truth mocks",
+    "bootstrap_confidence_level": 0.95,
+    "bootstrap_lower_bound_must_be_strictly_greater_than": 0.0,
+    "isolated_high_k_pass_counts": false,
+    "ROI_only_improvement_supports_global_GO": false,
+    "narrow_low_k_pass_supports_GO": false,
+    "power_only_random_high_k_super_resolution_or_interpolation_counts": false,
+    "material_threshold_freeze_time": "KF-DESIGN before truth inspection"
+  },
+  "route_level_KF_EXPAND_GO": {
+    "primary_density_method_GO": "material extension of the z0 matter-density delta frontier",
+    "separate_velocity_method_GO": "material extension of the z0 velocity-divergence theta frontier",
+    "joint_frontier_role": "reported coupled frontier equal to min(k_eff_delta, k_eff_theta), not the density-method GO gate",
+    "individual_delta_frontier_must_be_reported": true,
+    "individual_theta_frontier_must_be_reported": true,
+    "joint_frontier_must_be_reported": true,
+    "density_GO_requires_theta_GO": false,
+    "theta_GO_requires_density_GO": false,
+    "one_field_GO_may_be_copied_to_other_field_claim": false,
+    "posterior_product_requires_delta_and_velocity_uncertainty": true,
+    "each_k_eff_must_be_reported_without_cross_field_promotion": true,
+    "IC_frontier_is_a_later_IC_HYBRID_result": true
+  },
+  "independent_mock_firewall": {
+    "development": {
+      "count": 64,
+      "seed_start_inclusive": 2026083000,
+      "seed_stop_exclusive": 2026083064,
+      "purpose": "method development only"
+    },
+    "untouched_validation": {
+      "count": 256,
+      "seed_start_inclusive": 2026083064,
+      "seed_stop_exclusive": 2026083320,
+      "purpose": "one-time validation only"
+    },
+    "seed_ranges_are_disjoint": true,
+    "seed_assignment": "deterministic contiguous integer ranges with no redraw, replacement, or extension",
+    "method_and_threshold_freeze_time": "before opening any untouched validation truth",
+    "validation_truth_reuse_allowed": false,
+    "validation_seed_extension_allowed": false,
+    "post_validation_retuning_allowed": false,
+    "all_D_mock_and_KF_EXPAND_execution_blocked_until": [
+      "the provenance-confirmed and CF4-crossmatched 2M++ source has an implemented and validated angular empty-sky selection, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy likelihood with CF4 group-member shared-redshift covariance",
+      "partial structure-summary likelihood and ABC covariance/model-discrepancy contracts are complete",
+      "driver audit passes",
+      "user approval is recorded"
+    ]
+  },
+  "implementation_contract": {
+    "module": "src/cf4_constraint_frontier.py",
+    "dependencies": [
+      "Python_standard_library",
+      "NumPy"
+    ],
+    "required_functions": [
+      "strict_gate_mask",
+      "contiguous_frontier",
+      "classify_bins",
+      "evaluate_field_frontiers",
+      "material_field_extensions",
+      "material_frontier_extension"
+    ],
+    "validation": [
+      "one-dimensional shape equality",
+      "finite numeric inputs",
+      "strictly increasing positive k",
+      "exact boolean gate dtype",
+      "fail-closed hole handling"
+    ]
+  }
+}
