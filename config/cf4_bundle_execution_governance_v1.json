@@ -4,6 +4,22 @@
   "owner": "driver",
   "status": "USER_DIRECTED_CONSOLIDATION",
   "problem": "Micro-implementations and per-stage audits have become the critical path and are delaying the scientific objective.",
+  "project_goal": {
+    "authority": "User clarification: 0.3 cMpc/h applies to the Local Group only; 1-2 cMpc/h is sufficient elsewhere.",
+    "purpose": "Simulate Local Group formation and evolution inside a cosmological-scale environment using CF4-informed, LCDM-consistent zoom initial conditions.",
+    "route": "CF4-informed z=0 density/velocity posterior, then consistent IC construction and forward validation, with additional Local Group observational constraints where needed.",
+    "resolution": {
+      "Local_Group_target_cMpc_h": 0.3,
+      "surrounding_environment_acceptable_cMpc_h": [1.0, 2.0],
+      "uniform_box_0p3_required": false,
+      "CF4_observational_information_at_0p3_required": false,
+      "meaning": "Regional numerical reconstruction/IC target; later force or AMR resolution is a separate simulation choice."
+    },
+    "small_scale_completion": "Outside the Local Group, additional fine structure may be sampled from the LCDM conditional prior while preserving constrained large-scale modes and nested phases; it need not reproduce each observed 0.3 cMpc/h feature.",
+    "local_group_priority": "Seek consistency with MW/M31/M33 and other applicable Local Group observations rather than requiring CF4 alone to determine all local small-scale phases. Quantify constrained versus prior-dominated structure.",
+    "zoom_requirement": "Refine the Local Group progenitor Lagrangian region and a suitable buffer, not merely the present-day spatial box.",
+    "precedence": "This spatially differentiated goal overrides older wording implying uniform or observationally determined 0.3 cMpc/h reconstruction across the full volume. It does not authorize a new simulation bundle."
+  },
   "policy": {
     "unit_of_work": "A bundle is the smallest auditable unit. Internal coding, tests, diagnostics and commits are continuous work, not separate approval stages.",
     "audit_frequency": "When the driver is Astra, omit Fable pre-bundle and Opus closure audits under astra_driver_exception. Otherwise retain one Opus closure audit and the existing sol backup rule. No audit pauses an internal step except for a safety or physics-failure stop condition.",
@@ -23,7 +39,7 @@
       "timing": "After the driver writes a bundle design and before that bundle begins execution; internal work already authorized inside the current bundle may continue only within its declared scope.",
       "questions": [
         "Is the proposed measurement/verification burden proportionate, or is the project becoming over-instrumented relative to the density/velocity reconstruction goal?",
-        "How does this bundle advance the CF4-constrained z=0 local density/velocity posterior, the highest empirically supported constraint wavenumber, LCDM-consistent zoom ICs and forward reproduction of observed structures at <=0.3 cMpc/h numerical resolution? Distinguish numerical resolution from observational information. RT/feedback/dust is not an assigned CF4 project objective.",
+        "How does this bundle advance Local Group formation/evolution simulations with 0.3 cMpc/h local zoom ICs embedded in a CF4-informed 1-2 cMpc/h cosmological environment? Apply project_goal: outside-LG fine structure may be prior-generated, and numerical resolution is not a demand for CF4 information at that scale.",
         "Is the plan feasible under the declared data, memory, GPU, wall-time and model contracts?",
         "Which items are mandatory for the next scientific gate and which must be deferred?"
       ],
