@@ -209,7 +209,9 @@ def _materialize_field_samples(
     growth_rate = float(model_meta["growth_rate"])
     for start in range(0, total, chunk_size):
         stop = min(start + chunk_size, total)
-        white = flat_draws[start:stop, :field_size].reshape((-1, n, n, n))
+        # density_velocity_samples preserves the first two axes as
+        # (chain, draw); represent this flat chunk as one synthetic chain.
+        white = flat_draws[start:stop, :field_size].reshape((1, stop - start, n, n, n))
         density_chunk, velocity_chunk = phasec.density_velocity_samples(
             white, transfer, growth_rate, phasec.fixed.BOX_SIZE
         )
