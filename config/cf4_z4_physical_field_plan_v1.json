@@ -1,6 +1,7 @@
 {
   "bundle": "Z4-PHYSICAL-FIELD-RECOVERY",
-  "status": "USER_APPROVED_IMPLEMENTATION_AND_TWO_DEVELOPMENT_MAP_FITS",
+  "status": "COMPLETED_DRIVER_REVIEWED_WAITING_FOR_NEXT_BUNDLE_APPROVAL",
+  "result": "config/cf4_z4_physical_field_result_v1.json",
   "driver_design_review": "GO for a bounded physical-field prototype and two N32 MAP fits; no production or uncertainty-calibration claim. Astra performs design and closure review under user exception.",
   "goal_contribution": "Replace ambiguous linear-density exports with explicit positive z=0 density and a common coordinate/observation model before extending CF4-informed surroundings to 1-2 cMpc/h and an LG-only 0.3 cMpc/h zoom hierarchy.",
   "reference": "https://arxiv.org/abs/0911.1407 (Poisson-lognormal reconstruction precedent, NOT exact replication or a guarantee of nonlinear/void recovery)",
