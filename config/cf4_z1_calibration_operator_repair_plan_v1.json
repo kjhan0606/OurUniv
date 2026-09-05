@@ -1,10 +1,10 @@
 {
   "schema": "ouruniv-cf4-z1-calibration-operator-repair-plan-v1",
   "date": "2026-09-05",
-  "bundle": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
   "status": "AUTHORIZED_DEVELOPMENT_ONLY",
   "basis": "Opus conditional closure audit of Z0-DENSITY-LIKELIHOOD-REPAIR and user instruction to proceed.",
-  "objective": "Decide whether the repaired mock posterior is statistically calibrated and repair the unresolved GH/TSC line-of-sight operator before any actual CF4 inference.",
+  "objective": "Adjudicate the repaired mock posterior calibration and promote the already validated NumPy Q1 line-of-sight oracle into a tested differentiable likelihood path before any actual CF4 inference.",
   "work_packages": [
     {
       "id": "Z1-A-CALIBRATION",
@@ -14,10 +14,10 @@
       "promotion": false
     },
     {
-      "id": "Z1-B-LOS-OPERATOR",
-      "method": "Implement a cell-integrated or analytic Gaussian LOS convolution; compare current point-deposit GH/TSC, converged quadrature and a NumPy oracle on the frozen boundary and non-boundary fixtures.",
+      "id": "Z1-B-Q1-INTEGRATION",
+      "method": "Reuse the sealed Q1 NumPy cell-integrated oracle and its boundary/non-boundary result record; implement only the JAX counterpart and compare it against that oracle before touching the likelihood.",
       "execution": "Slurm-only numerical execution; no actual CF4 datum",
-      "deliverable": "Q1 operator result record",
+      "deliverable": "Q1 JAX-versus-NumPy result record",
       "promotion": false
     },
     {
@@ -38,6 +38,11 @@
     "IC_PM_HOP_RAMSES": false,
     "resolution_0p3_cMpc_h_claim": false,
     "GPFS_specific_implementation": false
+  },
+  "baseline_bindings": {
+    "q1_plan": "config/cf4_q1_cell_integrated_convolution_plan_v1.json",
+    "q1_numpy_implementation": "src/cf4_q1_cell_integrated_convolution.py",
+    "q1_result_record": "config/cf4_q1_cell_integrated_convolution_result_record_v1.json"
   },
   "closure_rule": "After Z1 work packages finish, obtain one Opus bundle-closure audit; do not enter actual CF4 inference or B2/IC without a separate explicit promotion decision."
 }
