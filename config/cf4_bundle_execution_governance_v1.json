@@ -113,7 +113,7 @@
   "active_work_package": "STORED_FIELD_RESPONSE_DIAGNOSTIC",
   "current_plan": "config/cf4_z3_field_definition_plan_v1.json",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "User approved Z3 after clarifying Local Group-only 0.3 cMpc/h and 1-2 cMpc/h surroundings. Diagnose field definitions with the eight stored development results, fixed coarse-graining responses and PMWD linear normalization; no new posterior or nonlinear PM evolution. Astra reviews directly and awaits user approval at the next bundle boundary.",
+  "current_status": "Z3 completed on Slurm CPU job 332592. FFT normalization agrees with PMWD; assignment/block sensitivity reduces posterior cell SD 0.939 to 0.681, but nominal 68-percent coverage remains 86-87 percent and mean-field correlation remains about 0.34. Physical versus linear-latent field definitions remain unresolved. Astra closed the diagnostic and awaits user approval before implementing a consistent physical-field model.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -127,9 +127,9 @@
     "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "current_closure_audit": "config/cf4_z2_operator_necessity_result_v1.json",
+  "current_closure_audit": "config/cf4_z3_field_definition_result_v1.json",
   "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
-  "next_bundle_rule": "Await user approval for Z3: diagnose truth versus inferred field definitions, coarse-graining and transfer normalization before more sampling. Apply the active driver audit policy. Actual CF4 inference, parent promotion and IC/forward runs retain their scientific gates.",
+  "next_bundle_rule": "Await user approval to define and implement consistent physical z=0 density/velocity and observation mappings, then test matched-model recovery and independent nonlinear mocks. No post-hoc spectrum rescaling or filtered-draw calibration claim. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and the active driver audit policy.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,

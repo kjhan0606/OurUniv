@@ -1,6 +1,7 @@
 {
   "bundle": "Z3-FIELD-DEFINITION-CALIBRATION",
-  "status": "USER_APPROVED",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z3_field_definition_result_v1.json",
   "driver_design_review": "GO: diagnose the unresolved interval-width discrepancy with stored development fields and a linear response check; no new sampling or nonlinear PM evolution.",
   "goal": "Reliable CF4-informed 1-2 cMpc/h surroundings feeding a Local Group-only 0.3 cMpc/h zoom IC hierarchy. This diagnostic remains N32 and makes no resolution attainment claim.",
   "inputs": {
