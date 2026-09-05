@@ -31,9 +31,11 @@ def metrics(truth, fitted, support):
 def main():
     start = time.perf_counter()
     task = int(os.environ["SLURM_ARRAY_TASK_ID"])
+    fixed_bias = os.environ.get("Z4_FIXED_BIAS", "0") == "1"
     plan = json.loads((ROOT / "config/cf4_z4_physical_field_plan_v1.json").read_text())
     case = plan["experiments"][task]
-    out = Path(plan["output_root"]) / f"task_{task}_{os.environ['SLURM_JOB_ID']}"
+    label = "fixed_bias" if fixed_bias else "joint"
+    out = Path(plan["output_root"]) / f"task_{task}_{os.environ['SLURM_JOB_ID']}_{label}"
     out.mkdir(parents=True, exist_ok=False)
     base = json.loads((ROOT / plan["inputs"]["base_program"]).read_text())
     with np.load(base["input_bindings"]["Phase_A_datum"]["path"], allow_pickle=False) as data:
@@ -73,10 +75,18 @@ def main():
     counts_j, data_j = jnp.asarray(counts_train), jnp.asarray(radial_data)
     value_grad = jax.jit(jax.value_and_grad(model.nlp))
     evaluations = 0
+    free = np.arange(model.size)
+    if fixed_bias:
+        free = np.delete(free, np.arange(model.n**3 + 6, model.n**3 + 12))
+
+    def expand(x):
+        full = initial.copy()
+        full[free] = x
+        return full
 
     def objective(x):
         nonlocal evaluations
-        value, grad = value_grad(jnp.asarray(x), counts_j, data_j)
+        value, grad = value_grad(jnp.asarray(expand(x)), counts_j, data_j)
         value, grad = float(value), np.asarray(grad)
         if not np.isfinite(value) or not np.isfinite(grad).all():
             raise FloatingPointError("non-finite MAP objective/gradient")
@@ -85,13 +95,16 @@ def main():
             print(json.dumps({"task": task, "evaluations": evaluations, "nlp": value,
                               "gradient_inf": float(np.max(abs(grad))),
                               "elapsed_s": time.perf_counter() - start}), flush=True)
-        return value, grad
+        return value, grad[free]
 
-    initial_value, _ = objective(initial)
-    options = {k: plan["optimizer"][k] for k in ("maxiter", "maxfun", "gtol", "ftol")}
-    fit = minimize(objective, initial, method="L-BFGS-B", jac=True, options=options)
-    latent, rho, vel = (np.asarray(a) for a in model.fields(jnp.asarray(fit.x)))
-    lam, radial_fit = (np.asarray(a) for a in jax.jit(model.forward)(jnp.asarray(fit.x)))
+    initial_value, _ = objective(initial[free])
+    optimizer = plan["fixed_bias_comparison"]["optimizer"] if fixed_bias else plan["optimizer"]
+    options = {k: optimizer[k] for k in ("maxiter", "maxfun", "gtol", "ftol")}
+    options["maxcor"] = optimizer.get("maxcor", 10)
+    fit = minimize(objective, initial[free], method="L-BFGS-B", jac=True, options=options)
+    fitted_vector = expand(fit.x)
+    latent, rho, vel = (np.asarray(a) for a in model.fields(jnp.asarray(fitted_vector)))
+    lam, radial_fit = (np.asarray(a) for a in jax.jit(model.forward)(jnp.asarray(fitted_vector)))
     lam0, radial0 = (np.asarray(a) for a in jax.jit(model.forward)(jnp.asarray(initial)))
     if not np.isfinite(rho).all() or not np.isfinite(vel).all() or rho.min() <= 0 or abs(rho.mean() - 1) > 1e-10:
         raise ValueError("invalid final physical field")
@@ -105,6 +118,7 @@ def main():
     report = {"bundle": plan["bundle"], "task": task, "case": case, "truth": truth_metadata,
               "commit": os.environ["EXPECTED_COMMIT"], "Slurm_job_id": os.environ["SLURM_JOB_ID"],
               "grid_N": model.n, "dx_cMpc_h": 12., "actual_observational_inference": False,
+              "fit_mode": label,
               "optimizer": {"success": bool(fit.success), "message": str(fit.message),
                             "iterations": int(fit.nit), "evaluations": evaluations,
                             "initial_nlp": initial_value, "final_nlp": float(fit.fun),
@@ -115,16 +129,17 @@ def main():
               "heldout": {"count_log_score_gain_vs_homogeneous": count_score(lam) - count_score(lam0),
                           "velocity_log_score_gain_vs_homogeneous": velocity_score(radial_fit) - velocity_score(radial0),
                           "velocity_rows": int(hold.sum()), "count_support_cells": int(use.sum())},
-              "nuisance_standardized_MAP": fit.x[model.n**3:].tolist(),
+              "nuisance_standardized_MAP": fitted_vector[model.n**3:].tolist(),
               "limitations": ["two development MAP fits, not posterior means or coverage",
                               "independent PM dynamics but shared coarse mock observation map",
                               "velocity closure remains approximate; no IC consistency shown",
-                              "N32=12 cMpc/h only; no achieved LG or surroundings target resolution"],
+                              "N32=12 cMpc/h only; no achieved LG or surroundings target resolution",
+                              "fixed-bias comparison conditions on generator bias; not an inference of unknown real-data bias"],
               "elapsed_s": time.perf_counter() - start,
               "process_peak_MiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024}
     np.savez_compressed(out / "fields.npz", truth_density=truth_rho - 1, truth_velocity=truth_v,
                         fitted_physical_density=rho - 1, fitted_velocity_approximation=vel,
-                        fitted_log_density_latent=latent, MAP_vector=fit.x, observed_support=support)
+                        fitted_log_density_latent=latent, MAP_vector=fitted_vector, observed_support=support)
     # Fixed shared colour scale, with no fitted spectrum or display normalization.
     import matplotlib
     matplotlib.use("Agg")
@@ -134,7 +149,7 @@ def main():
         im = ax.imshow(np.log10(field[:, :, model.n // 2]).T, origin="lower", extent=(0, 384, 0, 384), vmin=-1, vmax=1, cmap="RdBu_r")
         ax.set_title(name); ax.set_xlabel("cMpc/h"); ax.set_ylabel("cMpc/h")
     fig.colorbar(im, ax=axes, label="log10(rho / mean rho)")
-    fig.suptitle(f"{case['name']} — development N32, 12 cMpc/h")
+    fig.suptitle(f"{case['name']} ({label}) — development N32, 12 cMpc/h")
     fig.savefig(out / "density_slice.png", dpi=130)
     plt.close(fig)
     (out / "result.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")

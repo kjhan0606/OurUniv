@@ -27,6 +27,13 @@
   "PM_remap": "Conservative positive trilinear shift of density AND momentum by +0.25 coarse cell per axis: legacy coarse origin3 -> target6 cMpc/h. This adds smoothing; not a fresh independent validation simulation.",
   "mock_contract": "New synthetic Poisson counts and Gaussian radial velocities with CF4 design. Matched nuisance=0. PM arm has independent field dynamics but the same coarse observation generator, so it tests field-model mismatch only, not independent tracer/RSD/selection systematics. Counts holdout=.2; velocity holdout uses frozen row mask. Holdout does not enter optimization.",
   "optimizer": {"method": "L-BFGS-B", "maxiter": 200, "maxfun": 600, "gtol": 0.001, "ftol": 1e-12, "initial": "zero standardized latent/nuisance", "meaning": "latent-coordinate MAP candidate, not posterior mean or credible intervals"},
+  "fixed_bias_comparison": {
+    "basis": "Within-bundle failure analysis after job332636: both joint fits hit 200 iterations, all six biases in the matched case rose 5.8-10.6 prior SD while density contrast collapsed. Test the same two mock data sets with ONLY the six bias parameters fixed at the generator values; no new seeds or simulations.",
+    "interpretation": "Conditional MAP diagnostic, not posterior calibration, not evidence to fix unknown real-data bias. Prior-driven joint-mode collapse is a hypothesis tested by this contrast.",
+    "optimizer": {"maxiter": 400, "maxfun": 600, "maxcor": 40, "gtol": 0.001, "ftol": 1e-12},
+    "resources": {"cpus_per_task": 2, "estimated_peak_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:15:00", "basis": "first two process peaks 1459-1464 MiB; allowance for increased L-BFGS history plus 20 percent request margin"},
+    "stop": "Close and report at this bounded comparison; no further optimizer variants or posterior campaign in Z4."
+  },
   "measurements": ["positivity and mass normalization", "independent interpolation/deposition references and gradients", "optimizer convergence and objective reduction", "truth vs fitted physical density/velocity and observed-support metrics", "heldout log-score improvement over homogeneous baseline", "saved 3D truth/reconstruction maps and one common-scale central slice"],
   "decision": "Report numerical failures separately from poor recovery. No posterior/frontier promotion from two MAP cases, even if both fit. Finish this bundle and request user approval before any sampling, actual-data inference, resolution increase or IC work.",
   "resources": {"backend": "syntax Slurm CPU array2", "cpus_per_task": 2, "estimated_peak_MiB": 4000, "requested_MiB": 4800, "margin": 0.2, "time_limit": "00:25:00", "GPUs": 0},
