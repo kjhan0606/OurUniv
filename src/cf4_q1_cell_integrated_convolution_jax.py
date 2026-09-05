@@ -22,7 +22,6 @@ try:  # JAX is optional in the lightweight test environment.
     import jax
     import jax.numpy as jnp
 
-    jax.config.update("jax_enable_x64", True)
 except ImportError:  # pragma: no cover - exercised by the skip path in tests.
     jax = None  # type: ignore[assignment]
     jnp = None  # type: ignore[assignment]
@@ -43,6 +42,8 @@ class JaxOperatorInputError(ValueError):
 def require_jax() -> None:
     if jax is None or jnp is None:
         raise JaxUnavailable("JAX is required for the differentiable Q1 contraction path")
+    if not jax.config.jax_enable_x64:
+        raise JaxOperatorInputError("Enable JAX x64 before using the Q1 contraction")
 
 
 def assert_q1_numpy_provenance(expected_sha256: str = Q1_NUMPY_SOURCE_SHA256) -> str:
@@ -61,6 +62,8 @@ def _validate_response_basis(response_basis: Iterable[object]) -> np.ndarray:
         raise JaxOperatorInputError("response_basis must have shape (M, N, N, N) with M > 0")
     if len(set(response.shape[1:])) != 1 or response.shape[1] < 2:
         raise JaxOperatorInputError("response_basis must be a cubic grid with N >= 2")
+    if response.nbytes > 64 * 1024**2:
+        raise JaxOperatorInputError("response_basis exceeds the 64 MiB development limit")
     if not np.all(np.isfinite(response)) or np.any(response < 0.0):
         raise JaxOperatorInputError("response_basis must be finite and non-negative")
     totals = np.sum(response, axis=(1, 2, 3))
@@ -88,13 +91,18 @@ def contract_mass_field_from_jax(response_basis, masses):
     require_jax()
     response = jnp.asarray(response_basis, dtype=jnp.float64)
     mass = jnp.asarray(masses, dtype=jnp.float64)
+    if response.ndim != 4 or response.shape[0] == 0 or len(set(response.shape[1:])) != 1 or response.shape[1] < 2:
+        raise JaxOperatorInputError("response_basis must have shape (M, N, N, N)")
+    if mass.shape != (response.shape[0],):
+        raise JaxOperatorInputError("masses must have one entry per response basis element")
+    if response.size * 8 > 64 * 1024**2:
+        raise JaxOperatorInputError("response_basis exceeds the 64 MiB development limit")
     return jnp.einsum("mxyz,m->xyz", response, mass, precision=jax.lax.Precision.HIGHEST)
 
 
 def mass_gradient_basis(response_basis: Iterable[object]):
-    """Return the exact field Jacobian with respect to source masses."""
+    """Return the mass-first Jacobian (M,N,N,N); jacfwd uses (N,N,N,M)."""
 
     require_jax()
     response = _validate_response_basis(response_basis)
     return jnp.asarray(response)
-
