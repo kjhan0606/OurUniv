@@ -6,22 +6,23 @@
   "basis": "Opus conditional closure audit of Z0-DENSITY-LIKELIHOOD-REPAIR and user instruction to proceed.",
   "pre_bundle_design_audit": {
     "auditor": "fable",
-    "status": "REQUESTED",
+    "status": "RECEIVED_CONDITIONAL_GO",
+    "record": "config/cf4_z1_fable_pre_bundle_design_audit_v1.json",
     "required_questions": [
       "over-measurement versus scientific value",
-      "contribution to final RT, stellar feedback, AGN feedback and dust-aware zoom/hydro objective",
+      "contribution to the CF4-to-z=0-posterior-to-q-corrected-IC-to-PMWD/HOP/RAMSES forward-validation objective",
       "feasibility under current compute/data contracts",
       "mandatory versus deferred work"
     ],
-    "entry_rule": "Do not start a new bundle until the advice is recorded and mandatory changes are resolved."
+    "entry_rule": "Do not start a new bundle until the advice is recorded and mandatory changes are resolved. Downstream RT/stellar/AGN/dust physics remains deferred unless separately promoted."
   },
-  "objective": "Adjudicate the repaired mock posterior calibration and promote the already validated NumPy Q1 line-of-sight oracle into a tested differentiable likelihood path before any actual CF4 inference.",
+  "objective": "Complete the minimal development-fixture Q1 response-basis JAX value/gradient bridge before any actual CF4 inference; retain the repaired mock calibration as a recorded diagnostic, not a second analysis campaign.",
   "work_packages": [
     {
       "id": "Z1-A-CALIBRATION",
-      "method": "Use the stored eight-task posterior summaries to adjudicate interval width, truth-minus-mean z spread, field correlation, and k-shell information; preregister the future calibration gate.",
-      "execution": "CPU read-only analysis of existing GPFS artifacts",
-      "deliverable": "calibration adjudication record",
+      "method": "Keep the existing eight-task calibration adjudication as a diagnostic record; do not launch a second GPFS reanalysis in Z1.",
+      "execution": "record-only",
+      "deliverable": "existing calibration diagnostic record",
       "promotion": false
     },
     {
@@ -33,9 +34,9 @@
     },
     {
       "id": "Z1-C-CONVERGENCE-PROVENANCE",
-      "method": "Extend field convergence beyond eight white coordinates, surface k-shell/ROI summaries, bind task and aggregate commits, and preserve failed-run directories without broad deletion.",
-      "execution": "Minimal code/record changes only",
-      "deliverable": "provenance and convergence notes",
+      "method": "Defer broad k-shell/ROI and provenance expansion; retain existing aggregate/task hashes and failed-run directories.",
+      "execution": "deferred",
+      "deliverable": "none in Z1",
       "promotion": false
     }
   ],

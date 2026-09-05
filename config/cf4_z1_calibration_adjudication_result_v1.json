@@ -43,6 +43,16 @@
     "q1_numpy_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
     "production_scope": "development fixture only; no full PM sourcewise allocation, posterior, IC or 0.3 cMpc/h claim"
   },
+  "fable_pre_bundle_audit": {
+    "record": "config/cf4_z1_fable_pre_bundle_design_audit_v1.json",
+    "verdict": "CONDITIONAL-GO",
+    "active_scope": "Z1-B-Q1-INTEGRATION only",
+    "deferred_scope": [
+      "new calibration reanalysis",
+      "broad k-shell/ROI/provenance expansion",
+      "actual CF4/IC/PMWD/HOP/RAMSES"
+    ]
+  },
   "firewall": {
     "actual_CF4_observational_inference": false,
     "actual_2Mpp_counts": false,

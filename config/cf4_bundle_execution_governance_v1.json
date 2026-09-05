@@ -14,7 +14,7 @@
       "timing": "After the driver writes a bundle design and before that bundle begins execution; internal work already authorized inside the current bundle may continue only within its declared scope.",
       "questions": [
         "Is the proposed measurement/verification burden proportionate, or is the project becoming over-instrumented relative to the density/velocity reconstruction goal?",
-        "What is the direct contribution of this bundle to the final RT, stellar-feedback, AGN-feedback and dust-aware zoom/hydro objective?",
+        "What is the direct contribution of this bundle to the final CF4-to-z=0-density/velocity-posterior-to-q-corrected-IC-to-PMWD/HOP/RAMSES-forward-validation objective, including the observed local structures and the <=0.3 cMpc/h zoom target? If RT, stellar feedback, AGN feedback or dust is downstream optional physics, mark it deferred rather than treating it as the current acceptance goal.",
         "Is the plan feasible under the declared data, memory, GPU, wall-time and model contracts?",
         "Which items are mandatory for the next scientific gate and which must be deferred?"
       ],
@@ -32,7 +32,7 @@
       "claude_opus_5": "Primary bundle-closure audit and GO/CONDITIONAL-GO/NO-GO judgment.",
       "gpt_5_6_sol": "Backup bundle-closure audit only when Opus does not inspect/return a usable verdict or the driver explicitly requests a check because the Opus result is not trusted; not an independent parallel re-audit.",
       "grok": "Not an auditor in this workflow.",
-      "fable": "Pre-bundle design auditor when explicitly assigned by the user: assess over-measurement, final RT/stellar/AGN/dust contribution, feasibility, and mandatory versus deferred scope. Fable does not replace the Opus closure audit unless explicitly reassigned."
+      "fable": "Pre-bundle design auditor when explicitly assigned by the user: assess over-measurement, contribution to the CF4-to-z=0-posterior-to-IC-to-forward-validation goal, feasibility, and mandatory versus deferred scope. Downstream RT/stellar/AGN/dust physics is marked optional/deferred unless the user explicitly makes it an acceptance target. Fable does not replace the Opus closure audit unless explicitly reassigned."
     },
     "stop_conditions": [
       "data or provenance integrity failure",
@@ -85,6 +85,7 @@
     }
   ],
   "current_bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
+  "active_work_package": "Z1-B-Q1-INTEGRATION",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
   "current_status": "Z0-DENSITY-LIKELIHOOD-REPAIR closed conditionally after the Opus audit and record-only corrections. The repaired balanced N32 mock-only posterior materializer passes all eight development mocks, while its wide 68-percent coverage (0.9287 mean) and low high-k response remain calibration diagnostics rather than a promotion result. Z1 now adjudicates that calibration and integrates the already validated NumPy Q1 cell-integrated LOS oracle into a tested differentiable path; no observational field inference, parent promotion, high-k completion, IC, PM, HOP, RAMSES or 0.3 cMpc/h claim has run.",
   "latest_development_posterior_aggregate": {
@@ -102,7 +103,7 @@
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
   "current_closure_audit": "config/cf4_z0_density_likelihood_repair_opus_closure_audit_v1.json",
   "next_closure_audit": "AT_Z1_CALIBRATION_ADJUDICATION_OPERATOR_REPAIR_BUNDLE_CLOSURE_ONLY",
-  "next_bundle_rule": "In Z1, preregister and adjudicate calibration using the stored development draws, reuse the sealed Q1 NumPy oracle, implement and test its JAX counterpart, extend field convergence monitoring and harden provenance. Stop at the Z1 boundary for one Opus closure audit. Keep actual CF4 inference, parent promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
+  "next_bundle_rule": "In Z1, perform only the minimal Z1-B development-fixture Q1 response-basis JAX value/gradient and fail-closed checks. Treat the existing calibration record as a diagnostic, and defer new GPFS calibration reanalysis and broad k-shell/ROI/provenance expansion. Stop at the Z1 boundary for one Opus closure audit. Keep actual CF4 inference, parent promotion, KF-EXPAND/B2, IC, PM, HOP and RAMSES closed.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,
