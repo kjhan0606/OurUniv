@@ -97,7 +97,7 @@
   "active_work_package": "FULL_N32_FORWARD_COMPARISON",
   "current_plan": "config/cf4_z2_operator_necessity_plan_v1.json",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "User approved Z2. Astra performs design and closure review directly. Compare the active GH2 rule with a converged Gaussian integral on two stored N32 development field means at prior-median and +1 log-sigma FoG settings. No new posterior sampling or actual count datum. Stop for approval at the next bundle boundary.",
+  "current_status": "Z2 completed: both CPU array tasks 332552 passed their reference gates. Four N32 plug-in states have joint Poisson KL 0.0000962 to 0.02490 nat, below the predeclared 1-nat diagnostic threshold. Astra reviewed and closed the diagnostic; dynamic Q1 is deferred as the immediate calibration repair, not globally validated. Await user approval for Z3 field-definition/calibration diagnosis.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -111,9 +111,9 @@
     "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "current_closure_audit": "config/cf4_z1_opus_closure_audit_v1.json",
+  "current_closure_audit": "config/cf4_z2_operator_necessity_result_v1.json",
   "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
-  "next_bundle_rule": "Prepare a necessity-first comparison of the active operator against Q1. Astra assesses the design directly; other drivers obtain Fable design advice. Obtain user approval before starting the next bundle. Actual CF4 inference, parent promotion and IC/forward runs still require their scientific gates.",
+  "next_bundle_rule": "Await user approval for Z3: diagnose truth versus inferred field definitions, coarse-graining and transfer normalization before more sampling. Apply the active driver audit policy. Actual CF4 inference, parent promotion and IC/forward runs retain their scientific gates.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,
