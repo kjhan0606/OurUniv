@@ -93,10 +93,11 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
-  "active_work_package": "Z1-B-Q1-INTEGRATION",
+  "current_bundle": "Z2-OPERATOR-NECESSITY",
+  "active_work_package": "FULL_N32_FORWARD_COMPARISON",
+  "current_plan": "config/cf4_z2_operator_necessity_plan_v1.json",
   "last_bundle_result": "config/cf4_datum_bearing_z0_phasec_v5_result_record.json",
-  "current_status": "Z1 closed only as a fixed-geometry mass-contraction bridge after 4/4 Slurm CPU tests (332521) and Opus CONDITIONAL-GO with record corrections. The bridge is not integrated into the posterior and does not validate dynamic geometry or repair calibration. Await user approval before the next bundle; no new numerical job is pending from Z1.",
+  "current_status": "User approved Z2. Astra performs design and closure review directly. Compare the active GH2 rule with a converged Gaussian integral on two stored N32 development field means at prior-median and +1 log-sigma FoG settings. No new posterior sampling or actual count datum. Stop for approval at the next bundle boundary.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
