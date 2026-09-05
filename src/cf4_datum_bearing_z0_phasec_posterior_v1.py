@@ -304,7 +304,7 @@ def _summary_fields(
         "posterior_velocity_mean": velocity_mean.astype(np.float32),
         "posterior_velocity_std": velocity_std.astype(np.float32),
         "posterior_velocity_quantiles": velocity_quantiles,
-        "posterior_white_thinned": white[:, :: int(program["diagnostics"]["stored_white_thinning"]), :].astype(np.float32),
+        "posterior_white_thinned": draws[:, :: int(program["diagnostics"]["stored_white_thinning"]), :field_size].astype(np.float32),
         "roi_names": np.asarray(roi_names),
         "roi_weights": roi_weights.astype(np.float32),
     }
