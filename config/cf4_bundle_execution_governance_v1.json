@@ -95,7 +95,7 @@
     "gpfs": true,
     "gpfs_shared_storage": true,
     "gpfs_specific_implementation": false,
-    "slurm": false,
+    "slurm": true,
     "production": false,
     "heldout_data": false
   },

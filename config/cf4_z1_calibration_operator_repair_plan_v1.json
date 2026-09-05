@@ -15,9 +15,9 @@
     },
     {
       "id": "Z1-B-Q1-INTEGRATION",
-      "method": "Reuse the sealed Q1 NumPy cell-integrated oracle and its boundary/non-boundary result record; implement only the JAX counterpart and compare it against that oracle before touching the likelihood.",
+      "method": "Reuse the sealed Q1 NumPy cell-integrated oracle and its boundary/non-boundary result record; implement a static source-response-basis JAX contraction counterpart and compare value/mass gradients against that oracle on development fixtures. The direct 7,077,888-source JAX route remains closed by Q2.0.",
       "execution": "Slurm-only numerical execution; no actual CF4 datum",
-      "deliverable": "Q1 JAX-versus-NumPy result record",
+      "deliverable": "Q1 JAX-versus-NumPy response-basis result record",
       "promotion": false
     },
     {

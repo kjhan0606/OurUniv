@@ -1,8 +1,8 @@
 {
   "schema": "ouruniv-cf4-z1-calibration-adjudication-result-v1",
   "date": "2026-09-05",
-  "bundle": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
-  "status": "CALIBRATION_NOT_YET_ACCEPTABLE",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
+  "status": "CALIBRATION_NOT_YET_ACCEPTABLE_JAX_FIXTURE_PENDING",
   "input_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -32,7 +32,16 @@
     "interval_calibration": "FAIL_WIDE_INTERVAL_DIAGNOSTIC",
     "information_frontier": "MOCK_ONLY_LOW_K_RESPONSE_DECAYS; NO_OBSERVATIONAL_FRONTIER",
     "interpretation": "The posterior mean is nearly unbiased in aggregate, but intervals are too wide and the recovered field correlation is modest; this is not a calibrated or promotable observational posterior.",
-    "next_action": "Diagnose model mismatch and nuisance/gauge width, then repair the unresolved LOS operator against a NumPy oracle."
+    "next_action": "Complete the development-only Q1 response-basis JAX value/gradient check; direct sourcewise JAX remains infeasible and no observational posterior is promoted."
+  },
+  "q1_jax_integration": {
+    "status": "IMPLEMENTED_AWAITING_SLURM_FIXTURE_TEST",
+    "implementation": "src/cf4_q1_cell_integrated_convolution_jax.py",
+    "test": "tests/test_cf4_q1_cell_integrated_convolution_jax.py",
+    "runner": "scripts/run_cf4_z1_q1_jax_fixture_tests.sbatch",
+    "representation": "static source-major Q1 response basis contracted with state-dependent masses",
+    "q1_numpy_source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+    "production_scope": "development fixture only; no full PM sourcewise allocation, posterior, IC or 0.3 cMpc/h claim"
   },
   "firewall": {
     "actual_CF4_observational_inference": false,
