@@ -1,0 +1,35 @@
+{
+  "bundle": "Z4-PHYSICAL-FIELD-RECOVERY",
+  "status": "USER_APPROVED_IMPLEMENTATION_AND_TWO_DEVELOPMENT_MAP_FITS",
+  "driver_design_review": "GO for a bounded physical-field prototype and two N32 MAP fits; no production or uncertainty-calibration claim. Astra performs design and closure review under user exception.",
+  "goal_contribution": "Replace ambiguous linear-density exports with explicit positive z=0 density and a common coordinate/observation model before extending CF4-informed surroundings to 1-2 cMpc/h and an LG-only 0.3 cMpc/h zoom hierarchy.",
+  "reference": "https://arxiv.org/abs/0911.1407 (Poisson-lognormal reconstruction precedent, NOT exact replication or a guarantee of nonlinear/void recovery)",
+  "model": {
+    "latent": "N32 LCDM white-to-Gaussian transfer from existing PMWD-normalized code, with fixed cubic cell-average sinc window; no fitted power correction",
+    "physical_density": "rho/rhobar = exp(g)/mean(exp(g)); discrete coarse-cell model, not an exact average of a fine lognormal density",
+    "velocity": "100*f*i*k/k^2 times g, with own-axis Nyquist derivative zero; approximate potential flow, NOT dynamically evolved nonlinear mass-weighted velocity",
+    "coordinates": "All coarse fields at (i+0.5)*dx; CIC catalog read subtracts 0.5",
+    "tracers": "nbar*exp(alpha)*rho^bias/mean(rho^bias), then GH2 RSD/FoG TSC and selection; nbar from published population priors, never observed totals",
+    "nuisance": "24 standardized parameters with existing priors: amplitude6, bias6, FoG6, selection2, velocity4",
+    "scope": "Approximate z=0 model only: its nonlinear density spectrum is not the LCDM linear spectrum, and its Gaussian latent is not an IC. No time reversal is implemented."
+  },
+  "inputs": {
+    "base_program": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "selection": "Only raw_selection_exposure from the base-program Phase_A_datum",
+    "CF4": "Existing fixed-design geometry/error/BGc/holdout construction; discard observed vobs before generating mock velocities",
+    "nonlinear_truth": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1/posterior_v1_00_mock_00_seed_2026083000_arm_A/posterior_summary.npz",
+    "nonlinear_members": ["truth_coarse_density", "truth_coarse_velocity"]
+  },
+  "experiments": [
+    {"task": 0, "name": "matched_positive_model", "seed": 2026090504},
+    {"task": 1, "name": "nonlinear_PM_field_model_mismatch", "seed": 2026090505}
+  ],
+  "PM_remap": "Conservative positive trilinear shift of density AND momentum by +0.25 coarse cell per axis: legacy coarse origin3 -> target6 cMpc/h. This adds smoothing; not a fresh independent validation simulation.",
+  "mock_contract": "New synthetic Poisson counts and Gaussian radial velocities with CF4 design. Matched nuisance=0. PM arm has independent field dynamics but the same coarse observation generator, so it tests field-model mismatch only, not independent tracer/RSD/selection systematics. Counts holdout=.2; velocity holdout uses frozen row mask. Holdout does not enter optimization.",
+  "optimizer": {"method": "L-BFGS-B", "maxiter": 200, "maxfun": 600, "gtol": 0.001, "ftol": 1e-12, "initial": "zero standardized latent/nuisance", "meaning": "latent-coordinate MAP candidate, not posterior mean or credible intervals"},
+  "measurements": ["positivity and mass normalization", "independent interpolation/deposition references and gradients", "optimizer convergence and objective reduction", "truth vs fitted physical density/velocity and observed-support metrics", "heldout log-score improvement over homogeneous baseline", "saved 3D truth/reconstruction maps and one common-scale central slice"],
+  "decision": "Report numerical failures separately from poor recovery. No posterior/frontier promotion from two MAP cases, even if both fit. Finish this bundle and request user approval before any sampling, actual-data inference, resolution increase or IC work.",
+  "resources": {"backend": "syntax Slurm CPU array2", "cpus_per_task": 2, "estimated_peak_MiB": 4000, "requested_MiB": 4800, "margin": 0.2, "time_limit": "00:25:00", "GPUs": 0},
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1",
+  "deferred": ["HMC credible intervals", "large new PM simulation", "actual CF4 or 2Mpp observational inference", "LG constraint installation", "IC/time reversal/zoom", "any GPFS-specific test or implementation"]
+}
