@@ -426,13 +426,81 @@ def aggregate(program_path: str | Path, output_root: str | Path, aggregate_outpu
             result = validate_task(task_dir)
             if result.get("assignment") != assignment or result.get("program", {}).get("sha256") != program_sha or result.get("implementation", {}).get("commit") != implementation_commit:
                 raise PosteriorError("posterior task lineage mismatch")
-            outcomes.append({"assignment": assignment, "artifact_status": "VALID", "pilot_pass": bool(result["pilot_pass"]), "result_sha256": sha256_file(task_dir / "result.json"), "coverage": result.get("coverage"), "checks": result.get("checks"), "sampler": result.get("sampler"), "predictive": result.get("predictive")})
+            outcomes.append({
+                "assignment": assignment,
+                "artifact_status": "VALID",
+                "pilot_pass": bool(result["pilot_pass"]),
+                "result_sha256": sha256_file(task_dir / "result.json"),
+                "coverage": result.get("coverage"),
+                "k_shells": result.get("k_shells"),
+                "velocity_k_shells_by_component": result.get("velocity_k_shells_by_component"),
+                "ROI": result.get("ROI"),
+                "checks": result.get("checks"),
+                "sampler": result.get("sampler"),
+                "predictive": result.get("predictive"),
+            })
         except Exception as exc:
             outcomes.append({"assignment": assignment, "artifact_status": "MISSING_OR_INVALID", "pilot_pass": False, "error": f"{type(exc).__name__}: {exc}"})
     all_pass = bool(len(outcomes) == 8 and all(row["pilot_pass"] for row in outcomes))
     global68 = [row["coverage"]["density"]["global_68"] for row in outcomes if row["artifact_status"] == "VALID" and row.get("coverage")]
     global95 = [row["coverage"]["density"]["global_95"] for row in outcomes if row["artifact_status"] == "VALID" and row.get("coverage")]
-    result = {"schema": AGGREGATE_SCHEMA, "status": "PASS_BALANCED_DEVELOPMENT_Z0_POSTERIOR" if all_pass else "NO_GO_BALANCED_DEVELOPMENT_Z0_POSTERIOR", "program": {"path": str(Path(program_path).resolve()), "sha256": program_sha}, "implementation_commit": implementation_commit, "task_count": len(outcomes), "valid_artifact_count": sum(row["artifact_status"] == "VALID" for row in outcomes), "passing_task_count": sum(row["pilot_pass"] for row in outcomes), "balanced_mock_count": 8, "outcomes": outcomes, "coverage_summary": {"density_global_68_mean": float(np.mean(global68)) if global68 else None, "density_global_68_min": float(np.min(global68)) if global68 else None, "density_global_95_mean": float(np.mean(global95)) if global95 else None, "density_global_95_min": float(np.min(global95)) if global95 else None}, "scientific_disposition": {"development_z0_posterior": "AVAILABLE_FOR_CALIBRATION" if all_pass else "NOT_AVAILABLE", "actual_CF4_posterior": "NOT_CREATED", "parent_posterior_promotion": "NO_GO", "IC_PM_HOP_RAMSES": "NOT_RUN", "observational_0p3_cMpc_h": "NOT_ALLOWED"}, "scope_firewall": {"actual_observational_field_inference": False, "actual_2Mpp_count_read": False, "actual_CF4_velocity_datum_used": False, "validation_seed_read": False, "IC_PM_HOP_RAMSES": False}}
+    valid_rows = [row for row in outcomes if row["artifact_status"] == "VALID"]
+    velocity68 = [row["coverage"]["velocity_components"]["global_68"] for row in valid_rows]
+    velocity95 = [row["coverage"]["velocity_components"]["global_95"] for row in valid_rows]
+    roi_names = valid_rows[0]["ROI"]["names"] if valid_rows else []
+    roi68 = {
+        name: [row["coverage"]["density"]["ROI_68"][name] for row in valid_rows]
+        for name in roi_names
+    }
+    shell_summary = {}
+    if valid_rows and all(row.get("k_shells") for row in valid_rows):
+        for metric in ("k_mean", "mode_count", "response", "cross_correlation", "residual_power", "posterior_variance_reduction"):
+            values = np.asarray([row["k_shells"][metric] for row in valid_rows], dtype=np.float64)
+            shell_summary[metric] = {
+                "mean": np.mean(values, axis=0).tolist(),
+                "min": np.min(values, axis=0).tolist(),
+                "max": np.max(values, axis=0).tolist(),
+            }
+    result = {
+        "schema": AGGREGATE_SCHEMA,
+        "status": "PASS_BALANCED_DEVELOPMENT_Z0_MOCK_MECHANICS" if all_pass else "NO_GO_BALANCED_DEVELOPMENT_Z0_MOCK_MECHANICS",
+        "program": {"path": str(Path(program_path).resolve()), "sha256": program_sha},
+        "implementation_commit": implementation_commit,
+        "task_count": len(outcomes),
+        "valid_artifact_count": sum(row["artifact_status"] == "VALID" for row in outcomes),
+        "passing_task_count": sum(row["pilot_pass"] for row in outcomes),
+        "balanced_mock_count": 8,
+        "outcomes": outcomes,
+        "coverage_summary": {
+            "density_global_68_mean": float(np.mean(global68)) if global68 else None,
+            "density_global_68_min": float(np.min(global68)) if global68 else None,
+            "density_global_95_mean": float(np.mean(global95)) if global95 else None,
+            "density_global_95_min": float(np.min(global95)) if global95 else None,
+            "velocity_global_68_mean_by_component": np.mean(np.asarray(velocity68), axis=0).tolist() if velocity68 else None,
+            "velocity_global_95_mean_by_component": np.mean(np.asarray(velocity95), axis=0).tolist() if velocity95 else None,
+            "density_ROI_68_mean_by_name": {name: float(np.mean(values)) for name, values in roi68.items()},
+        },
+        "calibration_disposition": {
+            "nominal_density_global_68": 0.68,
+            "measured_density_global_68_mean": float(np.mean(global68)) if global68 else None,
+            "interpretation": "coverage is a development diagnostic only; no calibration gate or posterior promotion is established",
+        },
+        "k_shell_summary": shell_summary,
+        "scientific_disposition": {
+            "development_z0_posterior": "AVAILABLE_FOR_CALIBRATION_ONLY" if all_pass else "NOT_AVAILABLE",
+            "actual_CF4_posterior": "NOT_CREATED",
+            "parent_posterior_promotion": "NO_GO",
+            "IC_PM_HOP_RAMSES": "NOT_RUN",
+            "observational_0p3_cMpc_h": "NOT_ALLOWED",
+        },
+        "scope_firewall": {
+            "actual_observational_field_inference": False,
+            "actual_2Mpp_count_read": False,
+            "actual_CF4_velocity_datum_used": False,
+            "validation_seed_read": False,
+            "IC_PM_HOP_RAMSES": False,
+        },
+    }
     staging.mkdir(mode=0o700)
     (staging / "aggregate.json").write_text(json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n")
     (staging / "manifest.json").write_text(json.dumps(_artifact_manifest(staging, "ouruniv-cf4-datum-bearing-z0-phasec-posterior-aggregate-manifest-v1"), indent=2, sort_keys=True) + "\n")
