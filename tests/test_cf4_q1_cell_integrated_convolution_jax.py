@@ -81,9 +81,13 @@ class Q1ContractionTests(unittest.TestCase):
             jax.eval_shape(contract_mass_field_from_jax, jax.ShapeDtypeStruct(basis.shape, np.float64), jax.ShapeDtypeStruct((2,), np.float64))
         with self.assertRaises(JaxOperatorInputError):
             jax.eval_shape(contract_mass_field_from_jax, jax.ShapeDtypeStruct((2, 256, 256, 256), np.float64), jax.ShapeDtypeStruct((2,), np.float64))
-        with jax.experimental.enable_x64(False):
+        previous_x64 = jax.config.jax_enable_x64
+        try:
+            jax.config.update("jax_enable_x64", False)
             with self.assertRaises(JaxOperatorInputError):
                 contract_mass_field(basis, [.7, 1.2, .3])
+        finally:
+            jax.config.update("jax_enable_x64", previous_x64)
 
     def test_representative_timing(self):
         basis = jnp.asarray(self.cases[0][-1])
