@@ -57,12 +57,13 @@ def load_mock(task, plan):
     transfer, growth = fixed.build_density_transfer(fixed.frozen_args(base["input_bindings"]["CF4_catalog"]["path"]))
     nbar, bias = phasec._published_prior_arrays(base)
     args = (transfer, growth, 384., response, design, nbar, bias, base["inference_model"])
+    channels = dict(use_counts=case.get("use_counts", True), use_radial=case.get("use_radial", True))
     if case["model"] == "PM_calibrated_joint":
         with np.load(root / "covariance.npz", allow_pickle=False) as data:
             covariance = {key: data[key] for key in data.files}
-        model = PMCalibratedFieldModel(*args, covariance=covariance, origin_fraction=.25)
+        model = PMCalibratedFieldModel(*args, covariance=covariance, origin_fraction=.25, **channels)
     elif case["model"] == "old_loglinear_native_origin":
-        model = PhysicalFieldModel(*args, origin_fraction=.25)
+        model = PhysicalFieldModel(*args, origin_fraction=.25, **channels)
     else:
         raise ValueError("unknown Z6 model")
     rho, velocity = read_native(plan, case["truth_index"])

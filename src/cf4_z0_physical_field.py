@@ -64,11 +64,14 @@ def recenter_old_pm_fields(rho, velocity):
 class PhysicalFieldModel:
     """White field + 24 standard-normal nuisance parameters, same old priors."""
 
-    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings, *, origin_fraction=0.5):
+    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings, *, origin_fraction=0.5, use_counts=True, use_radial=True):
         self.n = n = transfer.shape[0]
         self.box, self.size = box, n**3 + 24
         self.field_size = n**3
         self.origin_fraction = origin_fraction
+        if type(use_counts) is not bool or type(use_radial) is not bool:
+            raise ValueError("likelihood channel switches must be boolean")
+        self.use_counts, self.use_radial = use_counts, use_radial
         if transfer.shape != (n,) * 3 or response.shape != (6, n, n, n):
             raise ValueError("invalid transfer/response shape")
         if not np.isfinite(response).all() or np.any(response < 0):
@@ -132,19 +135,28 @@ class PhysicalFieldModel:
             return self.response[p] * selection * pushed
 
         intensity = jax.lax.map(population, jnp.arange(6))
+        return intensity, self.radial_prediction(velocity, nuisance)
+
+    def radial_prediction(self, velocity, nuisance):
         sampled = jnp.stack([read_centred(velocity[a], self.positions, self.box, self.origin_fraction) for a in range(3)], axis=-1)
         radial_signal = jnp.sum(sampled * self.rhat, axis=-1) + self.B @ (self.qstd * nuisance[20:24])
-        return intensity, radial_signal
+        return radial_signal
 
     def forward(self, vector):
         _, rho, velocity = self.fields(vector)
         return self.observe(rho, velocity, vector[self.field_size:])
 
     def nlp(self, vector, counts, radial_data):
-        intensity, radial_model = self.forward(vector)
-        lam = 0.8 * intensity
-        support = self.response > 0
-        safe = jnp.where(support, lam, 1.0)
-        count_nll = jnp.sum(jnp.where(support, lam - counts * jnp.log(safe), 0.0))
-        velocity_nll = 0.5 * jnp.sum(jnp.where(self.train, (radial_model - radial_data)**2 / self.variance, 0))
+        count_nll = velocity_nll = 0.0
+        if self.use_counts:
+            intensity, radial_model = self.forward(vector)
+            lam = 0.8 * intensity
+            support = self.response > 0
+            safe = jnp.where(support, lam, 1.0)
+            count_nll = jnp.sum(jnp.where(support, lam - counts * jnp.log(safe), 0.0))
+        elif self.use_radial:
+            _, _, velocity = self.fields(vector)
+            radial_model = self.radial_prediction(velocity, vector[self.field_size:])
+        if self.use_radial:
+            velocity_nll = 0.5 * jnp.sum(jnp.where(self.train, (radial_model - radial_data)**2 / self.variance, 0))
         return 0.5 * jnp.sum(vector**2) + count_nll + velocity_nll

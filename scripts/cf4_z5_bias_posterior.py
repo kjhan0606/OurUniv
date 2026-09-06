@@ -35,6 +35,9 @@ def main():
         dump(root / "aggregate.json", {"bundle": plan["bundle"], "tasks": rows,
              "next_bundle_started": False, "disposition": "DRIVER_REVIEW_THEN_USER_APPROVAL_REQUIRED"})
         print(json.dumps({"tasks": [{"task": r["task"], "status": r["status"]} for r in rows]}), flush=True)
+        if plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
+            from cf4_z7_information_sources import compare
+            compare(plan)
         return
     task = int(os.environ["SLURM_ARRAY_TASK_ID"])
     out = root / f"task_{task}"
@@ -44,7 +47,10 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        if plan["bundle"] == "Z6-NATIVE-PM-Z0-JOINT-PRIOR":
+        if plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
+            from cf4_z7_information_sources import load_mock as load_channels
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_channels(task, plan)
+        elif plan["bundle"] == "Z6-NATIVE-PM-Z0-JOINT-PRIOR":
             from cf4_z6_native_physics import load_mock as load_native
             model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_native(task, plan)
         else:
