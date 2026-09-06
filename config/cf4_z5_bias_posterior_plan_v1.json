@@ -1,6 +1,7 @@
 {
   "bundle": "Z5-BIAS-MARGINALIZED-PHYSICAL-POSTERIOR",
-  "status": "USER_APPROVED",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z5_bias_posterior_result_v1.json",
   "date": "2026-09-06",
   "driver_design_review": "GO for two bounded development posterior runs; reuse Z4 physical model, data and BlackJAX HMC machinery. No new simulator or generic validation framework. Astra performs design/closure review under user exception.",
   "purpose": "Determine whether the Z4 high-bias/low-density joint-MAP pathology persists in a sampled physical z=0 posterior with all 24 nuisance parameters free.",

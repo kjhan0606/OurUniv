@@ -1,6 +1,7 @@
 {
   "bundle": "Z5-BIAS-MARGINALIZED-PHYSICAL-POSTERIOR",
-  "status": "RUNNING_NOT_YET_REVIEWED",
+  "status": "COMPLETED_DRIVER_REVIEWED_SEE_RESULT",
+  "result": "config/cf4_z5_bias_posterior_result_v1.json",
   "date": "2026-09-06",
   "implementation_commit": "9bcad1708ee80e68f997e90990561e48618e1143",
   "Slurm_array": 332955,

@@ -24,7 +24,7 @@ def dump(path, value):
 
 def main():
     begin = time.perf_counter()
-    plan = json.loads((ROOT / "config/cf4_z5_bias_posterior_plan_v1.json").read_text())
+    plan = json.loads((ROOT / os.environ.get("CF4_POSTERIOR_PLAN", "config/cf4_z5_bias_posterior_plan_v1.json")).read_text())
     root = Path(plan["output_root"])
     if len(sys.argv) > 1 and sys.argv[1] == "aggregate":
         root.mkdir(parents=True, exist_ok=True)
@@ -44,19 +44,24 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial = load_mock(task)
+        if plan["bundle"] == "Z6-NATIVE-PM-Z0-JOINT-PRIOR":
+            from cf4_z6_native_physics import load_mock as load_native
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_native(task, plan)
+        else:
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial = load_mock(task)
+            with np.load(plan["data"]["conditional_start_files"][task], allow_pickle=False) as data:
+                candidate = data["MAP_vector"].copy()
         initial_nlp = float(jax.jit(model.nlp)(jnp.zeros(model.size), jnp.asarray(counts), jnp.asarray(radial)))
-    if abs(initial_nlp - plan["data"]["initial_objective_reference"][task]) > plan["data"]["initial_objective_absolute_tolerance"]:
+    if "initial_objective_reference" in plan["data"] and abs(initial_nlp - plan["data"]["initial_objective_reference"][task]) > plan["data"]["initial_objective_absolute_tolerance"]:
         raise ValueError("regenerated Z4 datum does not match the fixed reference")
     np.savez_compressed(out / "mock.npz", counts_train=counts, counts_holdout=holdcounts,
                         radial_mock=radial, truth_density=truth_rho - 1, truth_velocity=truth_v)
-    with np.load(plan["data"]["conditional_start_files"][task], allow_pickle=False) as data:
-        candidate = data["MAP_vector"].copy()
     counts_j, radial_j = jnp.asarray(counts), jnp.asarray(radial)
     logdensity = lambda x: -model.nlp(x, counts_j, radial_j)
     initialize, warm, sample, final_step = make_chunks(logdensity, model.size, cfg)
-    field_size = model.n**3
-    probes = np.array([0, 1, 31, 32, 1024, 4096, 16384, 32767])
+    field_size = model.field_size
+    probes = np.concatenate([np.array([0, 1, 31, 32, 1024, 4096, 16384, 32767]) + offset
+                             for offset in range(0, field_size, model.n**3)])
     names = [f"nuisance_{i}" for i in range(24)] + [f"white_{i}" for i in probes] + ["white_RMS", "logdensity"]
     saved, traces, projections = [], [], []
     for chain in range(cfg["chain_count"]):
@@ -163,8 +168,9 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     fig, axes = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
+    edge = (model.origin_fraction - .5) * model.box / model.n
     for ax, rho, title in zip(axes, (truth_rho, 1 + mean), ("Development truth", "Joint posterior mean (provisional)")):
-        im = ax.imshow(np.log10(rho[:, :, 16]).T, origin="lower", vmin=-1, vmax=1, cmap="RdBu_r", extent=(0, 384, 0, 384))
+        im = ax.imshow(np.log10(rho[:, :, 16]).T, origin="lower", vmin=-1, vmax=1, cmap="RdBu_r", extent=(edge, model.box+edge, edge, model.box+edge))
         ax.set_title(title); ax.set_xlabel("cMpc/h")
     fig.colorbar(im, ax=axes, label="log10(rho / mean rho)")
     fig.savefig(out / "density_slice.png", dpi=130); plt.close(fig)

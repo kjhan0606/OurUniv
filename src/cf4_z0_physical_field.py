@@ -20,15 +20,15 @@ def unit_mean_density(log_density):
     return jnp.exp(log_density - logsumexp(log_density) + jnp.log(log_density.size))
 
 
-def centres(n, box):
-    axis = (np.arange(n) + 0.5) * box / n
+def centres(n, box, origin_fraction=0.5):
+    axis = (np.arange(n) + origin_fraction) * box / n
     return np.stack(np.meshgrid(axis, axis, axis, indexing="ij"), axis=-1)
 
 
-def read_centred(grid, positions, box):
+def read_centred(grid, positions, box, origin_fraction=0.5):
     """Periodic CIC read, including exactly at centres and across the seam."""
     n = grid.shape[0]
-    cell = jnp.asarray(positions) / (box / n) - 0.5
+    cell = jnp.asarray(positions) / (box / n) - origin_fraction
     low = jnp.floor(cell).astype(jnp.int32)
     frac = cell - low
     out = jnp.zeros(cell.shape[:-1], dtype=grid.dtype)
@@ -64,9 +64,11 @@ def recenter_old_pm_fields(rho, velocity):
 class PhysicalFieldModel:
     """White field + 24 standard-normal nuisance parameters, same old priors."""
 
-    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings):
+    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings, *, origin_fraction=0.5):
         self.n = n = transfer.shape[0]
         self.box, self.size = box, n**3 + 24
+        self.field_size = n**3
+        self.origin_fraction = origin_fraction
         if transfer.shape != (n,) * 3 or response.shape != (6, n, n, n):
             raise ValueError("invalid transfer/response shape")
         if not np.isfinite(response).all() or np.any(response < 0):
@@ -87,7 +89,7 @@ class PhysicalFieldModel:
                 sl[axis] = n // 2
                 derivative_k[(axis, *sl)] = 0.0
         self.vkernel = jnp.asarray(1j * 100 * growth * derivative_k / np.where(k2 > 0, k2, 1))
-        self.coords = jnp.asarray(centres(n, box))
+        self.coords = jnp.asarray(centres(n, box, origin_fraction))
         relative = self.coords - box / 2
         radius = jnp.linalg.norm(relative, axis=-1, keepdims=True)
         self.radial = relative / jnp.where(radius > 0, radius, 1)
@@ -130,13 +132,13 @@ class PhysicalFieldModel:
             return self.response[p] * selection * pushed
 
         intensity = jax.lax.map(population, jnp.arange(6))
-        sampled = jnp.stack([read_centred(velocity[a], self.positions, self.box) for a in range(3)], axis=-1)
+        sampled = jnp.stack([read_centred(velocity[a], self.positions, self.box, self.origin_fraction) for a in range(3)], axis=-1)
         radial_signal = jnp.sum(sampled * self.rhat, axis=-1) + self.B @ (self.qstd * nuisance[20:24])
         return intensity, radial_signal
 
     def forward(self, vector):
         _, rho, velocity = self.fields(vector)
-        return self.observe(rho, velocity, vector[self.n**3:])
+        return self.observe(rho, velocity, vector[self.field_size:])
 
     def nlp(self, vector, counts, radial_data):
         intensity, radial_model = self.forward(vector)
