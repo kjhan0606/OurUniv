@@ -113,8 +113,8 @@
   "active_work_package": "NATIVE_COORDINATES_AND_PM_CALIBRATED_Z0_JOINT_COVARIANCE",
   "current_plan": "config/cf4_z6_native_physics_plan_v1.json",
   "last_bundle_result": "config/cf4_z5_bias_posterior_result_v1.json",
-  "current_status": "Z5 closed: MCMC passed, PM physical mismatch remains. User approved Z6: use native PM field coordinates without truth reinterpolation, calibrate an approximate z=0 log-density/velocity covariance on four separate development simulations, and compare three bounded posterior cases. No IC power rescaling or actual-data/resolution promotion.",
-  "current_execution": "PENDING_Z6_SUBMISSION",
+  "current_status": "Z6 CPU calibration job332988 completed in51s; eight tests passed and prior covariance fitted on development truths1-4 only. GPU array332989: baseline on syn05 A40 and first repaired case on syn102 A100 are warming up with no recent divergences; second repaired case is resource-pending. Afterany CPU job332990 will aggregate. No new PM evolution, IC power rescaling or actual-data/resolution promotion; driver closure awaits results.",
+  "current_execution": "config/cf4_z6_native_physics_execution_v1.json",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
