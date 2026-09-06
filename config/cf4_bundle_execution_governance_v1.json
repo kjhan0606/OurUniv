@@ -113,7 +113,8 @@
   "active_work_package": "TWO_DEVELOPMENT_POSTERIOR_CASES_WITH_FREE_BIAS",
   "current_plan": "config/cf4_z5_bias_posterior_plan_v1.json",
   "last_bundle_result": "config/cf4_z4_physical_field_result_v1.json",
-  "current_status": "User approved Z5 on 2026-09-06. Implement and submit two Z4-data physical posterior cases with all 24 nuisances free, four HMC chains each; no forced joint MAP and no actual-data or resolution promotion. Afterany aggregation records completion/failure; driver reviews and waits before the next bundle.",
+  "current_status": "Z5 Slurm array332955 is running on allocated A40 GPUs on syn07; both exact Z4 mock-reference checks passed and first-chain warmups completed. Gaussian HMC regression passed. Afterany CPU job332956 will aggregate completion/failure. Results and driver closure are pending; no actual-data, resolution or next-bundle promotion.",
+  "current_execution": "config/cf4_z5_bias_posterior_execution_v1.json",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -127,7 +128,7 @@
     "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "current_closure_audit": "config/cf4_z4_physical_field_result_v1.json",
+  "current_closure_audit": "PENDING_Z5_COMPLETION_AND_DRIVER_REVIEW",
   "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
   "next_bundle_rule": "After the approved Z5 posterior pilot and driver closure, await user approval before any extension, actual-data inference, resolution increase or IC work. No post-hoc spectrum rescaling or failed-chain promotion. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and active driver audit policy.",
   "execution_firewall": {
