@@ -1,0 +1,45 @@
+{
+  "bundle": "Z5-BIAS-MARGINALIZED-PHYSICAL-POSTERIOR",
+  "status": "USER_APPROVED",
+  "date": "2026-09-06",
+  "driver_design_review": "GO for two bounded development posterior runs; reuse Z4 physical model, data and BlackJAX HMC machinery. No new simulator or generic validation framework. Astra performs design/closure review under user exception.",
+  "purpose": "Determine whether the Z4 high-bias/low-density joint-MAP pathology persists in a sampled physical z=0 posterior with all 24 nuisance parameters free.",
+  "goal": "CF4-informed z=0 density/velocity posterior supporting 1-2 cMpc/h cosmological surroundings and an LG-only 0.3 cMpc/h zoom IC hierarchy. This pilot remains N32=12 cMpc/h; no IC or achieved-resolution claim.",
+  "data": {
+    "generator": "scripts/cf4_z4_physical_recovery.py:load_mock, unchanged RNG order; generate on CPU to reproduce the previous CPU mock",
+    "tasks": [0, 1],
+    "mock_seeds": [2026090504, 2026090505],
+    "initial_objective_reference": [13109.41193300964, 14665.638546213102],
+    "initial_objective_absolute_tolerance": 0.000001,
+    "conditional_start_files": ["/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_0_332646_fixed_bias/fields.npz", "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_1_332645_fixed_bias/fields.npz"],
+    "reads": "Only existing selection exposure, CF4 fixed geometry/error design, existing development truth and Z4 conditional initializer. No observed count or velocity datum; no new truth simulation.",
+    "limitations": "Matched nuisance truths are fixed at prior centres, not sampled from the joint prior. PM truth was conservatively recentered with added smoothing. Both cases share the coarse observation model. Two cases cannot establish population calibration or an information frontier."
+  },
+  "sampler": {
+    "implementation": "BlackJAX static HMC and dual averaging as in existing V6; chunked logging/checkpoints, no forced MAP optimization",
+    "chain_count": 4,
+    "warmup_steps": 512,
+    "draws_per_chain": 1024,
+    "integration_steps": 32,
+    "initial_step_size": 0.0005,
+    "maximum_step_size": 0.04,
+    "target_acceptance": 0.9,
+    "inverse_mass": "identity",
+    "divergence_threshold": 1000.0,
+    "chunk_steps": 64,
+    "stored_field_thinning": 4,
+    "initialization": "Z4 conditional candidate plus independent 0.5-standard-deviation jitter in ALL standardized coordinates, including bias; no truth field or fixed-bias likelihood is used in sampling",
+    "adaptation": "warmup only; retain raw and capped step sizes, acceptance, divergence and energy; final averaged step frozen during posterior sampling",
+    "budgets": "Exactly two cases/four chains; no automatic seed substitution, extension, threshold relaxation or next bundle. Finite logdensity/gradient checks at chunk boundaries."
+  },
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "projections": "24 nuisances, eight white coordinates, white RMS, logdensity; also physical-density RMS from the retained field samples",
+    "science": ["physical-density posterior mean, SD and 68/95-percent intervals vs truth, whole box and selected support", "approximate velocity mean and SD", "bias posterior intervals vs generator value and Z4 joint-mode drift", "heldout pointwise log posterior predictive scores from a fixed subset of 32 draws versus the homogeneous baseline", "common-scale truth/posterior-mean slice"],
+    "interpretation": "MCMC gate is distinct from science recovery. Coverage from these two fixed-nuisance development mocks is diagnostic, not a calibration certificate. Posterior-mean smoothing does not imply absent small-scale posterior variance. No fit of A(k)."
+  },
+  "resources": {"backend": "syntax Slurm GPU array 0-1", "partitions": "a40,a100,h100,h200", "excluded_node": "syn06 (existing GPU quarantine)", "GPUs_per_task": 1, "CPUs_per_task": 4, "estimated_host_peak_MiB": 5120, "requested_host_MiB": 6144, "request_margin": 0.2, "estimated_GPU_peak_GiB": 12, "time_limit": "02:00:00", "output_budget_GiB_total": 2},
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z5_bias_posterior_v1",
+  "completion": "An afterany Slurm CPU job reports both tasks as completed or missing/failed and aggregates available results. It never launches the next science bundle. Driver reviews when results are available and asks for approval before the next bundle.",
+  "deferred": ["actual CF4/2Mpp posterior", "resolution increase", "new PM evolution", "IC/high-k completion/zoom", "GPFS-specific implementation or tests", "external audits waived for Astra"]
+}

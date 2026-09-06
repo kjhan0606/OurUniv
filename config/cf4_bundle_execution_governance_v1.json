@@ -109,11 +109,11 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z4-PHYSICAL-FIELD-RECOVERY",
-  "active_work_package": "POSITIVE_PHYSICAL_FIELD_AND_TWO_DEVELOPMENT_MAP_FITS",
-  "current_plan": "config/cf4_z4_physical_field_plan_v1.json",
+  "current_bundle": "Z5-BIAS-MARGINALIZED-PHYSICAL-POSTERIOR",
+  "active_work_package": "TWO_DEVELOPMENT_POSTERIOR_CASES_WITH_FREE_BIAS",
+  "current_plan": "config/cf4_z5_bias_posterior_plan_v1.json",
   "last_bundle_result": "config/cf4_z4_physical_field_result_v1.json",
-  "current_status": "Z4 completed and driver-reviewed: positive physical-field code, five passing tests, two joint MAP candidates and two conditional fixed-bias fits. Joint fits did not converge and drove biases high; conditional fits converged and improved observed-support density correlations from 0.370/0.344 to 0.577/0.573. This is development-only, N32=12 cMpc/h, not a calibrated posterior or final resolution. All Z4 Slurm tasks ended; waiting for user approval before a posterior-marginalization bundle.",
+  "current_status": "User approved Z5 on 2026-09-06. Implement and submit two Z4-data physical posterior cases with all 24 nuisances free, four HMC chains each; no forced joint MAP and no actual-data or resolution promotion. Afterany aggregation records completion/failure; driver reviews and waits before the next bundle.",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -129,7 +129,7 @@
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
   "current_closure_audit": "config/cf4_z4_physical_field_result_v1.json",
   "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
-  "next_bundle_rule": "After Z4 driver closure, await user approval before new sampling, actual-data inference, resolution increase or IC work. No post-hoc spectrum rescaling or MAP-to-posterior claim. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and the active driver audit policy.",
+  "next_bundle_rule": "After the approved Z5 posterior pilot and driver closure, await user approval before any extension, actual-data inference, resolution increase or IC work. No post-hoc spectrum rescaling or failed-chain promotion. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and active driver audit policy.",
   "execution_firewall": {
     "gpfs": true,
     "gpfs_shared_storage": true,

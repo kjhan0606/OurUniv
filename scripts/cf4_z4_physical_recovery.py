@@ -28,15 +28,10 @@ def metrics(truth, fitted, support):
     return {"whole_box": one(np.ones(truth.shape, dtype=bool)), "observed_support": one(support)}
 
 
-def main():
-    start = time.perf_counter()
-    task = int(os.environ["SLURM_ARRAY_TASK_ID"])
-    fixed_bias = os.environ.get("Z4_FIXED_BIAS", "0") == "1"
+def load_mock(task):
+    """Regenerate the fixed Z4 development datum; no observed counts or vobs."""
     plan = json.loads((ROOT / "config/cf4_z4_physical_field_plan_v1.json").read_text())
     case = plan["experiments"][task]
-    label = "fixed_bias" if fixed_bias else "joint"
-    out = Path(plan["output_root"]) / f"task_{task}_{os.environ['SLURM_JOB_ID']}_{label}"
-    out.mkdir(parents=True, exist_ok=False)
     base = json.loads((ROOT / plan["inputs"]["base_program"]).read_text())
     with np.load(base["input_bindings"]["Phase_A_datum"]["path"], allow_pickle=False) as data:
         response = data["raw_selection_exposure"].astype(float)
@@ -72,6 +67,21 @@ def main():
     counts_train = rng.poisson(.8 * intensity)
     counts_hold = rng.poisson(.2 * intensity)
     radial_data = signal + rng.normal(size=signal.size) * np.sqrt(design["variance"])
+    return model, design, truth_rho, truth_v, truth_metadata, counts_train, counts_hold, radial_data
+
+
+def main():
+    start = time.perf_counter()
+    task = int(os.environ["SLURM_ARRAY_TASK_ID"])
+    fixed_bias = os.environ.get("Z4_FIXED_BIAS", "0") == "1"
+    plan = json.loads((ROOT / "config/cf4_z4_physical_field_plan_v1.json").read_text())
+    case = plan["experiments"][task]
+    label = "fixed_bias" if fixed_bias else "joint"
+    out = Path(plan["output_root"]) / f"task_{task}_{os.environ['SLURM_JOB_ID']}_{label}"
+    out.mkdir(parents=True, exist_ok=False)
+    model, design, truth_rho, truth_v, truth_metadata, counts_train, counts_hold, radial_data = load_mock(task)
+    initial = np.zeros(model.size)
+    response = np.asarray(model.response)
     counts_j, data_j = jnp.asarray(counts_train), jnp.asarray(radial_data)
     value_grad = jax.jit(jax.value_and_grad(model.nlp))
     evaluations = 0
