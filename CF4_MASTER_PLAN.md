@@ -60,9 +60,17 @@ the original 24-nuisance PM-calibrated model for one actual-data **model-stress
 diagnostic**, per `config/cf4_actual_data_preview_v1.json`. It is not a
 scientific promotion of the baseline. No new mock series is authorized.
 
-Actual-data preflight333862 passed; fit333872 and dependent aggregation333990
-are submitted. Read their final artifacts before claiming completion. No
-Bundle B execution is active.
+Actual-data preflight333862 passed; fit333872 and aggregation333990 completed.
+The actual-data result is NO_GO_SAMPLER_NOT_VALIDATED (max Rhat1.325,
+minimum bulk ESS11.1), not a usable posterior. Saved-chain diagnostic334240
+completed without refitting. It confirms field/H0 coupling and identifies a
+physical-Mpc versus Mpc/h magnitude convention mismatch in the imported
+2M++ population/selection setup. See
+[ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
+No input repair, second actual-data fit or Bundle B execution is active.
+The next proposed work is a focused observation-model correction and
+field-aware sampler adjustment, not further prior-family experiments;
+obtain authorization for another actual-data fit before submitting it.
 
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10

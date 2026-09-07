@@ -30,8 +30,9 @@ Output: `/gpfs/kjhan/CF4/z0_density/actual_data_preview_v1`.
 | Job | Scope | State at submission record |
 | --- | --- | --- |
 | 333862 | Regression and actual-input preflight | COMPLETED in1m40s; all10 tests and input checks pass; peak RSS1272176 KiB |
-| 333872 | One actual-data fit, four chains on one GPU | Submitted afterok:333862 |
-| 333990 | Result aggregation/failure reporting | Submitted afterany:333872 |
+| 333872 | One actual-data fit, four chains on one GPU | COMPLETED on syn07, 20m54s; ended 2026-09-07 18:43:14 KST |
+| 333990 | Result aggregation/failure reporting | COMPLETED in8s; scientific status NO_GO_SAMPLER_NOT_VALIDATED |
+| 334240 | Saved-chain/observation-model diagnosis only | COMPLETED in36s, exit0; peak RSS958896 KiB; no new fit |
 
 CF4:19,313 retained observations (15,346 training /3,967 heldout), using
 actual BGc velocities. 2M++:36,635 galaxies (29,257 training /7,378 heldout).
@@ -44,6 +45,15 @@ while the homogeneous nuisance-prior-centre model predicts about2020/3026.
 This is not a posterior predictive test or proof of a particular cause.
 Inspect normalization/bias excursions and spatial/heldout residuals; do not
 silently normalize away the discrepancy or call the map validated.
+
+Final fit: sampling divergences0, mean acceptance .919, max Rhat1.325,
+minimum bulk ESS11.1. H0 is the worst-mixing nuisance; density-RMS mixing
+alone does not certify the field posterior. Held-out moment-residual SDs
+are1.114 (velocity) and1.080 (counts), descriptive only, not truth recovery.
+Mean/sample fields and posterior uncertainties exist but are not scientifically
+promoted. Follow-up diagnosis found an imported magnitude-convention mismatch
+and field-dependent H0 mixing: [ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
+No repair/refit has been launched. The submission notes below are historical.
 
 ## Historical comparison submission/startup
 
