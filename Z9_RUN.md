@@ -27,6 +27,17 @@ cases; it does not launch another bundle. Outputs are in
 `/gpfs/kjhan/CF4/z0_density/z10_fixed_truth_v1/`. Inspect these exact job IDs,
 `task_0/progress.json`, `task_1/progress.json`, and `comparison.json` for status.
 
+Z10 initially completed at 14:25:01 KST but failed the full sampler gate through
+radial nuisance 20. Its other 21 nonradial coordinates passed. User-approved
+exact-block repair then completed as CPU Slurm job `333743` at 15:43:53 KST,
+taking 1m10s. It retained every nonradial sample and drew the independent four-
+dimensional Gaussian radial posterior exactly. Both repaired joint and retained
+marginal pass the original gates: worst Rhat 1.02396, minimum bulk ESS 134.18.
+Curvature intervals remain [-0.03326, 0.05823] for truth 0 and [0.14418, 0.22921]
+for truth 0.2. This validates the conditional diagnostic, not real-data recovery
+or the free-field model. Full closure: `config/cf4_z10_exact_radial_result_v1.json`.
+No next bundle has started; user approval is required before that transition.
+
 ## Original execution record
 
 Implementation commit: `3c370a5` (pushed). Project: OurUniv/CF4;

@@ -1,6 +1,7 @@
 {
   "bundle": "Z10-EXACT-RADIAL-REPAIR",
-  "status": "USER_APPROVED_SAMPLER_REPAIR",
+  "status": "COMPLETED_DRIVER_REVIEWED_CONDITIONAL_DIAGNOSTIC_ONLY",
+  "result": "config/cf4_z10_exact_radial_result_v1.json",
   "purpose": "Complete the fixed-truth Z10 diagnostic using the exact independent Gaussian radial-calibration posterior. No new physical model or data.",
   "Z10_plan": "config/cf4_z10_fixed_truth_plan_v1.json",
   "factorization": {
