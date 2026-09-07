@@ -60,7 +60,11 @@ NO_GO_SAMPLER_NOT_VALIDATED. The user approved one unchanged-model2048-sample
 check: input reuse334357 passed, fit334358 and aggregation334359 submitted,
 sourcec3fc8e6. See [ACTUAL_CORRECTION_RUN.md](ACTUAL_CORRECTION_RUN.md) for changed
 magnitude/selection semantics, independent calibration split and exact radial
-coordinates and the current length check. No longer-run result yet.
+coordinates and the length check. Job334358 now completed: all frozen sampler
+gates pass, max Rhat1.03183/min ESS113.59; actual-data diagnostic, not scientific
+calibration. Bundle A closes with its limited12 cMpc/h products, not a validated
+LG parent. Further sampling stops. [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md)
+records the next bounded design, awaiting execution approval.
 The submission notes below are historical.
 
 ## Historical comparison submission/startup

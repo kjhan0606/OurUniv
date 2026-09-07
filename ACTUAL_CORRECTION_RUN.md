@@ -132,9 +132,16 @@ the GPU submission. GPU and aggregation explicitly bind c3fc8e6.
 | Job | Purpose | State at submission |
 | --- | --- | --- |
 | 334357 | Input reuse and unchanged-model/gates check | COMPLETED/PASS |
-| 334358 | Four chains, each512 warmup +2048 samples | Submitted afterok:334357;9600 MiB host memory |
-| 334359 | Automatic aggregation and incomplete-result reporting | Submitted afterany:334358 |
+| 334358 | Four chains, each512 warmup +2048 samples | COMPLETED in36m33s on syn05, ended2026-09-07 22:24:15 KST |
+| 334359 | Automatic aggregation and incomplete-result reporting | COMPLETED in8s, ended22:24:23 KST |
 
-Status: approved longer run submitted; no result yet. Automatic work ends at
-the result aggregation, not at another scientific-model change or launch.
-No next-bundle launch or automatic additional fit beyond this approved check.
+Final status: MECHANICS_PASS_ACTUAL_DATA_DIAGNOSTIC. Max Rhat1.03183,
+min bulk ESS113.59, min tail ESS316.88; no failed monitored diagnostics.
+H0 bulk ESS134.57 and field-conditional H0 mean ESS113.59. Sampling divergence0,
+acceptance.91059. Density-RMS Rhat1.00115, ESS835.39. Residual SDs:
+counts.99628, velocity1.11173. Model-reported peak host memory7373.68 MiB
+versus9600 MiB requested (Slurm sampled MaxRSS is smaller).
+
+End the sampling-length check. Scientific label remains
+MODEL_STRESS_DIAGNOSTIC_NOT_CALIBRATED. The user accepted next-bundle design;
+see [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md). No next-bundle jobs launched.

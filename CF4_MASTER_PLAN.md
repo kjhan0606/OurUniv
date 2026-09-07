@@ -48,17 +48,18 @@ its target and correction before calling its output an IC posterior.
 
 ## Current state and bounded immediate work
 
-**Bundle A is user approved and active. B–D require user approval before
-starting each bundle.** Routine fixes/tests within A do not need a new
-approval. No automatic next-bundle launch.
+**Bundle A is closed as a diagnostic delivery, not scientific certification.
+Bundle B design is prepared; execution awaits approval. B–D require user
+approval before starting each bundle.** No automatic next-bundle launch.
+Current design: [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md).
 
 Current execution record: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
-Current substep: the four-fit comparison completed and failed the frozen
-quantile-prior adoption rule. That repair series is closed. Proceed with
-the original 24-nuisance PM-calibrated model for one actual-data **model-stress
-diagnostic**, per `config/cf4_actual_data_preview_v1.json`. It is not a
-scientific promotion of the baseline. No new mock series is authorized.
+Completed A history, not instructions to rerun: the four-fit comparison
+failed the frozen quantile-prior adoption rule. That repair series closed.
+The original24-nuisance PM-calibrated model then supplied an actual-data
+model-stress diagnostic, followed by the approved observation-model correction
+and length check below. None scientifically promotes the baseline.
 
 Actual-data preflight333862 passed; fit333872 and aggregation333990 completed.
 The actual-data result is NO_GO_SAMPLER_NOT_VALIDATED (max Rhat1.325,
@@ -84,6 +85,15 @@ each,512 warmup, unchanged model/data/gates. Reuse frozen actual inputs,
 preserve old chains, and do not claim exact continuation or pool the runs.
 No automatic further extension or Bundle B launch.
 
+Final length-check job334358 completed2026-09-07 22:24:15 KST in36m33s;
+aggregation334359 completed22:24:23. All predefined sampler gates pass:
+max Rhat1.03183, min bulk ESS113.59, min tail ESS316.88, divergences0.
+Heldout count/velocity moment-residual SDs .99628/1.11173 are diagnostic,
+not scientific calibration. Product remains12 cMpc/h and contains no
+resolved LG. Stop adding samples. The user accepted preparing the next
+bundle: actual environment comparison, explicit LG observational likelihood
+contract, and a bounded coarse z=0→IC→forward-z=0 mock bridge. No B jobs yet.
+
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10
 fixed-field and Z11 prior-compatible controls recover the injected tracer
@@ -91,6 +101,9 @@ curvature; Z9 free-field PM cases do not. This supports a field/observation
 model mismatch but neither isolates its sole cause nor proves a quantile
 transform will fix it. Z11 completed all four fits; its results are at
 `/gpfs/kjhan/CF4/z0_density/z11_prior_control_v1/comparison.json`.
+
+The following is the historical Bundle A scope, now completed at diagnostic
+level; it does not authorize another comparison or actual-data fit:
 
 1. Finish ONE training-only non-Gaussian-prior comparison against the saved
    native-PM controls, with at most four new mock fits. Reuse existing
