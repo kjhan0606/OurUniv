@@ -123,5 +123,18 @@ run, approximately35-45min execution is expected, excluding queue time.
 Old products are preserved; new outputs:
 `/gpfs/kjhan/CF4/z0_density/actual_data_longer_v3`.
 
-Status: approved longer-run implementation ready for CPU input-reuse check.
+Source c3fc8e6 committed and pushed before submission. CPU job334357 completed
+in11s, exit0: all4 input/plan regressions pass and frozen arrays match exactly.
+The initial CPU submission used EXPECTED_COMMIT=HEAD; HEAD was c3fc8e6 and
+an explicit diff against c3fc8e6 confirmed no executable/config changes before
+the GPU submission. GPU and aggregation explicitly bind c3fc8e6.
+
+| Job | Purpose | State at submission |
+| --- | --- | --- |
+| 334357 | Input reuse and unchanged-model/gates check | COMPLETED/PASS |
+| 334358 | Four chains, each512 warmup +2048 samples | Submitted afterok:334357;9600 MiB host memory |
+| 334359 | Automatic aggregation and incomplete-result reporting | Submitted afterany:334358 |
+
+Status: approved longer run submitted; no result yet. Automatic work ends at
+the result aggregation, not at another scientific-model change or launch.
 No next-bundle launch or automatic additional fit beyond this approved check.

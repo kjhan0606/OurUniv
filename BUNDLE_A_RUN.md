@@ -54,10 +54,14 @@ Mean/sample fields and posterior uncertainties exist but are not scientifically
 promoted. Follow-up diagnosis found an imported magnitude-convention mismatch
 and field-dependent H0 mixing: [ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
 The user subsequently approved repair and one refit. Corrected preflight334344
-passed; GPU fit334345 and afterany aggregation334346 are submitted with source
-600c682. See [ACTUAL_CORRECTION_RUN.md](ACTUAL_CORRECTION_RUN.md) for changed
+passed; GPU fit334345 and aggregation334346 completed with source600c682.
+Max Rhat1.034 passes but min bulk ESS85.1 misses100; formal status remains
+NO_GO_SAMPLER_NOT_VALIDATED. The user approved one unchanged-model2048-sample
+check: input reuse334357 passed, fit334358 and aggregation334359 submitted,
+sourcec3fc8e6. See [ACTUAL_CORRECTION_RUN.md](ACTUAL_CORRECTION_RUN.md) for changed
 magnitude/selection semantics, independent calibration split and exact radial
-coordinates. No new posterior result yet. The submission notes below are historical.
+coordinates and the current length check. No longer-run result yet.
+The submission notes below are historical.
 
 ## Historical comparison submission/startup
 
