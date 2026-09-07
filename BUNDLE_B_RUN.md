@@ -32,4 +32,34 @@ adapter extends PMWD's placeholder guard to all-string metadata trees only.
 No numerical array conversion or installed library files are changed.
 Retry2 must pass unchanged-forward and finite-difference checks again;
 time limit3h57m plus prior2m15s stays below4 GPU-hours.
+
+## Active calculation and available products
+
+- GPU retry334402: submitted from e4834d4, 1 GPU/4 CPUs/12000 MiB,
+  partitions a40,a100,h100,h200, exclude syn06; Slurm time limit3h57m.
+  Output `/gpfs/kjhan/CF4/z0_density/bundle_b_v1/bridge_retry2`.
+  Check this fixed job ID and its scalar logs/results. No scan/monitor loop.
+- Environment334398: completed29s. Products at
+  `/gpfs/kjhan/CF4/z0_density/bundle_b_v1/environment/`:
+  `environment.png`, `structures.csv`, `apertures.npz`, `result.json`.
+- LG contract: LG_OBSERVATION_CONTRACT.md and
+  config/cf4_lg_observation_contract_v1.json. Four CPU tests passed334401
+  (15s including trace check). The interface is not actual LG conditioning.
+
+At R12 cMpc/h, Virgo delta mean0.585 (95% interval0.422..0.765),
+Coma0.648 (0.516..0.783), Bootes-0.315 (-0.540..-0.054).
+All six secondary cluster apertures have positive model-conditional signs.
+Local Void Lacerta/Andromeda/Aquila R12 intervals cross zero; UrsaMinor R12
+is positive (0.123..0.498). Larger apertures mix surrounding material:
+three Local Void R24 probes have positive intervals and Lacerta is uncertain.
+This does not establish the absence of small voids in the real universe.
+Virgo/Coma native maximum offsets within the fixed R24 searches are typically
+18/22 cMpc/h, so positive aperture mass is NOT precise cluster localization.
+Bootes R31 coverage is97%; missing coverage is not observed zero density.
+Gauss aperture volume quadrature differs from analytic sphere volume by up
+to about5% for R12; windows are normalized and uncertainty is from draws.
+Interpret borderline small-aperture signs at this numerical/coarse-field limit.
+
+Status: B still open while the dynamics bridge runs. No parent-posterior
+promotion, high-resolution LG claim, or Bundle C execution is authorized.
 All calculations use Slurm. No new training ensemble or full RAMSES outputs.
