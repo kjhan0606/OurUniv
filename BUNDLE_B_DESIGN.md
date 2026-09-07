@@ -1,6 +1,6 @@
 # Bundle B — local structure, LG constraints and a small dynamics bridge
 
-2026-09-07. **Design approved in principle; execution awaits user approval.**
+2026-09-07. **Execution approved by the user; Bundle B in progress.**
 Authority: CF4_MASTER_PLAN.md and the user's acceptance of the recommendation
 after the2048-sample result. Astra driver: no external audit call is required.
 This is one outcome-based bundle, not a new series of per-step approval gates.
@@ -160,5 +160,5 @@ Conversely, acknowledge diagnostic adequacy without reopening endless prior
 repairs. State what contributes to the final LG<=0.3 cMpc/h, surroundings1-2
 cMpc/h objective, what is unresolved, and the concrete multiresolution test.
 
-**No Bundle B jobs have been submitted. Request user approval to execute this
-bounded design; do not silently launch Bundle C afterward.**
+Execution and fixed job IDs are recorded in BUNDLE_B_RUN.md.
+**Bundle C still requires user approval.**

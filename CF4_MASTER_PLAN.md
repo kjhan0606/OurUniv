@@ -49,11 +49,12 @@ its target and correction before calling its output an IC posterior.
 ## Current state and bounded immediate work
 
 **Bundle A is closed as a diagnostic delivery, not scientific certification.
-Bundle B design is prepared; execution awaits approval. B–D require user
+Bundle B execution is approved and in progress. C–D require user
 approval before starting each bundle.** No automatic next-bundle launch.
 Current design: [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md).
 
-Current execution record: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
+Current execution record: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
+Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison
 failed the frozen quantile-prior adoption rule. That repair series closed.
