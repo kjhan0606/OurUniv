@@ -253,3 +253,78 @@ No new full snapshot pass, GPU job, simulation, IC, or Bundle D. Slurm2 CPU,
 estimated3000 MiB peak +20%=3600 MiB,15min cap, <0.5 GiB new fields/reports in
 `bundle_c_v1/continuous_transport_v1`. This is not an approved global extension
 of the N32 prior to fine scales or a density reconstruction delivery.
+
+## Native population calibration and actual LG mark conditioning
+
+User approved progressing toward a physical continuous prior and real LG-on/off
+comparison. Next implement the marked population and observational link, not
+another inverse toy. This is an intermediate scientific product: full angular
+remainder/profile fields are still absent, and the result MUST NOT be named a
+0.1875 density posterior. No painted-halo or stale-catalogue map is delivered.
+
+Use existing full TNG catalogue and50^3 total-matter moments. Population policy
+is fixed before outcomes: two distinct FoF primaries with M200c2e11..5e12 Msun,
+>=1000 DM particles, separation200..3000 physical kpc. Third valid subhalo has
+bound mass1e9..1e12, <=half second-host M200c, >=1000 DM and100 type4 members,
+and separation50..1500 physical kpc from the second host. Treat third-object
+membership as TWO conditional alternatives: satellite of second FoF, or a
+different FoF primary. Satellites of a fourth host and shared-FoF primary pairs
+are outside this pilot's population definition, not proven impossible for LG.
+No observed mass likelihood, isolation/binding/first-infall cut or best-pair
+choice. Broad eligibility is an explicit astrophysical prior assumption.
+
+Probability sampling measure: uniform retained MW-role observer, uniform its
+eligible M31-role companions, then uniform eligible M33-role candidates. Do
+not overweight rich hosts by counting every triple equally. Fit branches
+separately. Training uses all three native x<50 cMpc/h, heldout all x>=50;
+omit straddling triples. Native identities cannot overlap; long modes and
+shell-field voxels may still overlap, so this is NOT independent-universe
+validation. Require>=30 distinct observers in each split and>=100/50 rows.
+
+Continuous coordinates:3 log masses, log r31/log r32/atanh triangle cosine,
+six asinh relative-velocity components in the oriented triangle frame, and
+six native matter-shell summaries at2..4 and4..8 cMpc/h (log density/mean,
+radial flow/100km/s, log physical dispersion/100km/s). One weighted Gaussian
+in these18 coordinates, frozen5% diagonal covariance shrinkage, truncated to
+declared mass/distance eligibility. This is NOT Gaussian fine z0 density.
+Report heldout score against diagonal with both truncation normalizers
+estimated using131072 proposals each. No tuning or scientific GO by sampler
+success alone. Shell summaries do not replace32 full environmental features.
+
+Calibrate a stellar-minus-native-halo COM proxy on fixed-seed32 training
+centrals and32 satellites. Read at most20m requested type4 rows through ONE
+SSH I/O-only source process on syntax; all calculations stay in Slurm. Source
+ordering/units: https://www.tng-project.org/data/docs/specifications/ . Use
+native stellar half-mass radius, exclude formation-time<=0 wind particles,
+and measure star COM inside1x and2x half-mass radii. Keep position AND velocity
+offsets and their cross-covariance, isotropized with zero vector mean. This
+is a pooled central/satellite proxy, not a calibrated disk/Gaia fit, gas LOS,
+mass-dependent COM relation or a new observational error. Physical particle
+dispersion and error in mean velocity are not interchangeable.
+
+Use actual B-contract eight distance/LOS/PM values and conditioned stellar
+sky directions. Explicitly opt into its partial covariance and fixed solar
+reference; do not change the saved contract or falsely set resolved_halos=True.
+Marginalize joint6D position/velocity COM offsets for all three identities;
+share the SAME MW draw between M31 and M33, retaining induced correlations.
+Other cross-halo offsets remain independent by assumption. Apply Hubble and
+solar reflex at each sampled distance, not a constant PM velocity conversion.
+Missing Gaia cross-covariances, LMC/solar and PM reduction-distance systematics
+remain limits, not solved by the TNG proxy. Compare both stellar apertures.
+
+Within each branch/aperture use65536 proposals from the observational Gaussian
+and COM proxy, integrate masses/shells via Gaussian conditionals, enforce
+selection support, and retain importance weights and4096 resampled states.
+The invariant-to-Cartesian and fixed-sky DM/PM Jacobians MUST be present:
+variable log factor5sum(logD)-3(logr31+logr32)-log(1-cos^2)-sum(logcosh(v_asinh)).
+Report proposal ESS, max weight, unique resamples, actual observable predictions,
+prior/posterior mark/shell quantiles. ESS<1000 is proposal NO-GO. No posterior
+branch odds without population/model selection normalizers. No CF4 factor is
+used at this stage and no old CF4 posterior is multiplied again.
+
+Two focused coordinate/conditional checks plus ONE native population/calibration/
+actual-data run, Slurm2 CPUs, estimated6000 MiB+20%=7200 MiB,30min cap,<0.2 GiB
+outputs in `bundle_c_v1/lg_population_v1`. It advances actual LG observational
+conditioning of a physical reference population, not full-field reconstruction.
+Profile/remainder-field calibration and joint CF4/environment coupling remain
+required before the promised spatial LG information comparison can be claimed.

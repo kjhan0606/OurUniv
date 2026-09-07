@@ -287,3 +287,27 @@ NOT provide flexible control of all32 environmental summaries and therefore
 do not by themselves replace the failed conditional prior. Existing total
 TNG matter/catalogue remain source data for that work, not observed LG truth.
 No downstream job is queued; Bundle C is still in progress.
+
+### Physical-reference population and actual LG mark conditioning
+
+User authorized the next work. Implemented native two-primary/third-object
+population extraction, uniformly observer/pair/companion-weighted continuous
+mark/shell-summary Gaussian with explicit nonlinear coordinates and hard
+eligibility support. M33 satellite and separate-primary scenarios remain
+separate conditional models. No finite field bank, selection of a best LG
+analogue, arbitrary matter painting or fine-prior promotion is involved.
+
+One bounded job will calibrate a joint stellar/halo position+velocity COM
+proxy on32 central and32 satellite objects (at most20m source type4 rows),
+then use the actual B-contract LG observations in four conditional runs
+(two membership cases ×1/2 stellar half-mass apertures). Physical COM offsets
+are latent variables, not particle sigma_v or new observational errors; the
+same MW nuisance appears in both relative galaxy observations. Probability
+Jacobians, fixed partial-covariance opt-in, selection truncation, importance
+support and all unresolved systematics are explicit. See BUNDLE_C_DESIGN.md.
+
+This prepares actual LG-conditioned marks and environmental shell statistics,
+NOT a CF4-conditioned high-resolution matter map. The arbitrary continuous
+remainder compensation from335878 is not calibrated by this covariance fit.
+No new simulation or source full pass. Slurm2 CPUs/7200 MiB/30min, estimated
+6000 MiB peak plus20%, <0.2 GiB outputs in `lg_population_v1`.
