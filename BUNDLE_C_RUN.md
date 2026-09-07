@@ -29,3 +29,18 @@ TNG raw group catalog is available under /scratch, not the derived-only /gpfs
 TNG root, if later needed for resolved-operator calibration. No TNG training,
 template insertion or halo selection has been run. Fine-field prior and LG
 halo/subhalo operator remain to be specified; C has not been completed.
+
+## Active job
+
+Selection334409 is RUNNING on syn05 under Slurm, source commit66804dd.
+2 CPUs,3600 MiB,30min limit; no GPU. Initial rotation/radial-tabulation
+checks passed, all3 multiresolution tests passed again, and x40/256 was
+written21.7s after integration started. Subsequent slabs near the survey
+centre contain more active volume: do not extrapolate the edge speed blindly.
+Output: `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/selection_1p5_v1`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_C_selection_334409.{out,err}`.
+Only trust result.json after completion; selection.h5 is partial while running.
+No downstream field inference is queued automatically. Next in the approved
+C bundle is review of selection support followed by the resolved LG operator
+and scale-dependent field-prior specification, then the bounded inference.
+No new user approval is needed for ordinary work inside C; D remains gated.

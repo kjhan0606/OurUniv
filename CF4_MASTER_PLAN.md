@@ -65,6 +65,12 @@ or bridge extensions: next work must bring LG observations into the fine z=0
 field while retaining its coarse mass/momentum environment. C now begins with
 native observations at1.5 cMpc/h, an LG0.1875 layout and conservative coupling;
 these are not yet a high-resolution posterior or an evaluated LG operator.
+Native-data334408 and conservative/JAX tests passed. Selected actual inputs
+contain no direct CF4 or count rows inside LG R2 cMpc/h (CF4 minimum radius
+15.8152). LG observations must supply that information explicitly. Selection
+integration334409 is now running on N256, reusing source masks/LF rather than
+interpolating N32 exposure. This prepares fine inference; it is not a matter
+density reconstruction. See the C run record for current products and limits.
 
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
