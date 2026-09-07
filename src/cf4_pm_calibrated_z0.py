@@ -24,29 +24,35 @@ def wave_geometry(n, box):
     return np.sqrt(np.sum(raw**2, axis=0)), direction, norm > 0
 
 
-def fit_covariance(fields, box, bins=10):
+def fit_covariance(fields, box, bins=10, density_coordinates=None):
     """Fit isotropic Fourier covariance using training fields only (ortho FFT).
 
     u=-i*khat.v is the longitudinal scalar; E[v|g]=i*khat*C_ug/P_g*g.
     Residual velocity has nonnegative longitudinal and transverse spectra.
     """
+    if density_coordinates is not None and len(density_coordinates) != len(fields):
+        raise ValueError("one density coordinate per training field required")
     n = fields[0][0].shape[0]
     kmag, direction, regular = wave_geometry(n, box)
     edges = np.geomspace(2*np.pi/box * .99, kmag.max() * (1 + 1e-8), bins + 1)
     labels = np.clip(np.searchsorted(edges, kmag, side="right") - 1, 0, bins-1)
     gg = np.zeros_like(kmag); uu = gg.copy(); ug = gg.copy(); vv = gg.copy()
     rows = []
-    for rho, velocity in fields:
+    for index, (rho, velocity) in enumerate(fields):
         if rho.shape != (n,)*3 or velocity.shape != (3,n,n,n) or np.any(rho <= 0) or not np.isfinite(rho).all() or not np.isfinite(velocity).all():
             raise ValueError("invalid native physical training fields")
-        g = np.log(rho); g -= g.mean()
+        g = np.log(rho) if density_coordinates is None else np.array(density_coordinates[index], dtype=float, copy=True)
+        if g.shape != rho.shape or not np.isfinite(g).all():
+            raise ValueError("invalid supplied density coordinate")
+        g -= g.mean()
         gk = np.fft.fftn(g, norm="ortho")
         vk = np.fft.fftn(velocity, axes=(1,2,3), norm="ortho")
         uk = -1j * np.sum(direction * vk, axis=0)
         gg += abs(gk)**2; uu += abs(uk)**2
         ug += (uk * gk.conj()).real
         vv += np.sum(abs(vk)**2, axis=0)
-        rows.append({"density_SD": float(rho.std()), "log_density_SD": float(g.std()),
+        rows.append({"density_SD": float(rho.std()), "log_density_SD": float(np.log(rho).std()),
+                     "covariance_coordinate_SD": float(g.std()),
                      "velocity_RMS": float(np.sqrt(np.mean(velocity**2)))})
     pg = np.zeros_like(gg); coupling = pg.copy(); pl = pg.copy(); pt = pg.copy()
     shell_rows = []
@@ -83,6 +89,7 @@ def fit_covariance(fields, box, bins=10):
     arrays = dict(log_density_amplitude=np.sqrt(pg), coupling=coupling,
                   velocity_longitudinal_amplitude=np.sqrt(pl), velocity_transverse_amplitude=np.sqrt(pt))
     return arrays, {"training_field_statistics": rows, "shells": shell_rows,
+                    "density_coordinate": "logrho" if density_coordinates is None else "supplied transformed density coordinate",
                     "native_origin_fraction": .25, "FFT": "ortho", "new_IC_power_rescaling": False}
 
 

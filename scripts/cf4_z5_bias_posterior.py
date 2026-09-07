@@ -35,7 +35,10 @@ def main():
         dump(root / "aggregate.json", {"bundle": plan["bundle"], "tasks": rows,
              "next_bundle_started": False, "disposition": "DRIVER_REVIEW_THEN_USER_APPROVAL_REQUIRED"})
         print(json.dumps({"tasks": [{"task": r["task"], "status": r["status"]} for r in rows]}), flush=True)
-        if plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
+        if plan["bundle"] == "A-PRIOR-TO-ACTUAL-DATA":
+            from cf4_bundle_a_prior_to_data import compare
+            compare(plan)
+        elif plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
             from cf4_z7_information_sources import compare
             compare(plan)
         elif plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
@@ -53,7 +56,10 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        if plan["bundle"] == "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL":
+        if plan["bundle"] == "A-PRIOR-TO-ACTUAL-DATA":
+            from cf4_bundle_a_prior_to_data import load_mock as load_bundle_a
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_bundle_a(task, plan)
+        elif plan["bundle"] == "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL":
             from cf4_z11_prior_control import load_mock as load_prior_control
             model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_prior_control(task, plan)
         elif plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
@@ -168,7 +174,7 @@ def main():
     velocity_lppd = logsumexp(velocity_scores, axis=0) - np.log(len(velocity_scores))
     count_gain = float(np.sum(count_lppd - zero_count))
     velocity_gain = float(np.sum(velocity_lppd - zero_v))
-    if plan["bundle"] in ("Z9-TRACER-RESPONSE-CONTROL", "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL"):
+    if plan["bundle"] in ("Z9-TRACER-RESPONSE-CONTROL", "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL", "A-PRIOR-TO-ACTUAL-DATA"):
         count_map = np.zeros(support_pop.shape)
         count_map[support_pop] = count_lppd
         np.savez_compressed(out / "heldout_scores.npz", count_lppd=count_map,
