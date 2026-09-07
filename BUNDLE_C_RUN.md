@@ -147,3 +147,18 @@ Diffuse/external matter, galaxy/halo COM systematics, cosmology/model
 dependence and actual joint CF4/LG field conditioning remain. This catalogue
 must not be reused as if unchanged after freely modifying the deposited
 field. No background/fine actual-data posterior or new simulation is running.
+
+## Full matter and finite conditional prior — implementation
+
+Implemented `cf4_empirical_field_prior.py`: explicitly normalized coarse-summary
+kernel conditioning, one new likelihood factor, support/ESS reporting and
+separate mean-velocity posterior variance versus physical velocity dispersion.
+Whole components retain their native field/catalogue relationship. This does
+not yet define a continuous LG posterior or exact coarse-cell conditional.
+
+Implemented one-process native I/O stream and Slurm-only400^3 total-matter
+builder, including non-FoF material and all massive particle/cell species.
+Source and budget are specified in BUNDLE_C_DESIGN.md. Before a full read,
+run2-file timing plus focused regressions. Partial chunks cannot be used as
+spatial training data. No actual CF4/LG fine inference is authorized by a
+timing pass alone; it still needs the joint observation model in C.

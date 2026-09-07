@@ -137,3 +137,39 @@ map and continue treating the old SUBFIND catalogue as its resolved halos.
 A changing field needs a jointly defined halo state or recomputed physical
 readout. Passing this fixture settles implementation units/moments, not the
 conditional prior or its cosmological/statistical validity.
+
+## Total-matter conditional-prior development
+
+User authorized the next implementation after the native operator check.
+Implement a finite whole-patch mixture, not independent shuffled cells or
+arbitrary NFW/point-peak insertion. Each component carries unchanged density,
+momentum, second moments and the linked native SUBFIND catalogue. A diagonal
+Gaussian kernel on8 parent log masses and24 parent bulk-velocity components
+defines p(component | coarse summaries); its bandwidth is a declared PRIOR
+hyperparameter (training SD), not an invented observational uncertainty.
+New observation factors reweight that distribution only once. Report ESS and
+zero support; do not force a seed or interpret a collapsed bank as a posterior.
+
+The first support baseline has27 disjoint24-cMpc/h patches from one75-cMpc/h
+TNG box (18 training,9 spatially nonoverlap checks). These are not independent
+universes, a continuous LG prior, or exact conditioning on every parent cell.
+Actual CF4/LG weighting remains disabled until its joint field/observer model
+is specified. This finite model is a support baseline, not C completion.
+
+The required new physical source includes ALL gas, DM, stars/winds and BH
+dynamical mass, including unbound/diffuse and external-halo matter. Stream
+existing snapshot arrays once from syntax-local storage into a Slurm CPU job;
+source process performs I/O only, with one SSH connection. No whole raw
+snapshot is copied and no new simulation/download is requested. Deposit at
+400^3 (0.1875) and conservatively restrict to50^3 (1.5), cross-check against
+direct deposition. Velocity moments describe bulk particle/cell kinematics,
+not gas thermal broadening or posterior uncertainty. Partial file streams
+are timing checks ONLY and cannot train a spatial prior.
+
+First run a bounded2-file timing/resource check, then at most one full448-file
+source pass if feasible. Slurm2 CPUs, estimated8000 MiB peak (including a
+full absolute-moment reduction temporary) +20%=9600 MiB; timing cap15min,
+full cap4h, estimated<8 GiB permanent new products. The full pass reads
+several hundred GiB of existing raw fields; runtime must be estimated from
+the timing check, with source-order/spatial-occupancy caveats. No GPU, IC or
+RAMSES job, phase rescaling, GPFS investigation or process-scan loop.
