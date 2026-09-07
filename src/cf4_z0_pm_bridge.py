@@ -3,12 +3,34 @@ import jax
 import jax.numpy as jnp
 
 
+def enable_pmwd_type_description_compatibility():
+    """Process-local compatibility; never edit the installed PMWD package.
+
+    JAX custom_derivatives._flatten_fwd builds string-valued type trees even
+    when input/output types AGREE. PMWD constructors otherwise cast those
+    strings (e.g. 'int16[262144,3]') to arrays. Extend its existing placeholder
+    guard only for an all-string metadata tree; retain normal array conversion.
+    """
+    from pmwd.particles import Particles
+    from pmwd.cosmology import Cosmology
+    for cls in (Particles,Cosmology):
+        if getattr(cls,"_cf4_type_description_guard",False):
+            continue
+        original=cls._is_transforming
+        def transforming(self,original=original):
+            leaves=jax.tree_util.tree_leaves(self)
+            return original(self) or bool(leaves and all(isinstance(x,str) for x in leaves))
+        cls._is_transforming=transforming
+        cls._cf4_type_description_guard=True
+
+
 def block_sum(field):
     n = field.shape[0]//2
     return field.reshape((n,2,n,2,n,2)+field.shape[3:]).sum(axis=(1,3,5))
 
 
 def make_forward(program):
+    enable_pmwd_type_description_compatibility()
     from pmwd import Configuration, SimpleLCDM, boltzmann, linear_modes, lpt, nbody, scatter
     c = program["cosmology"]
     n = program["grid"]["truth_N"]

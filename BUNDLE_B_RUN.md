@@ -22,4 +22,14 @@ LG source table and callable identity/frame/covariance interface are implemented
 Partial covariance explicitly requires opt-in; production mass/environment
 priors are disabled pending resolved operators and astrophysical calibration.
 Tests are submitted with the trace diagnosis, not on the login node.
+
+CPU334401 passed all4 focused tests and PM gradient tracing. Source inspection
+established that JAX custom_derivatives.py:862 reconstructs string-valued type
+trees BEFORE checking whether outputs agree; PMWD tries to convert those
+strings to numbers. Thus the string constructor itself is the established
+failure, not evidence of a hidden physical/type mismatch. The process-local
+adapter extends PMWD's placeholder guard to all-string metadata trees only.
+No numerical array conversion or installed library files are changed.
+Retry2 must pass unchanged-forward and finite-difference checks again;
+time limit3h57m plus prior2m15s stays below4 GPU-hours.
 All calculations use Slurm. No new training ensemble or full RAMSES outputs.

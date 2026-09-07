@@ -52,7 +52,7 @@ def main():
     program=json.loads((ROOT/config["PM_program"]).read_text())
     settings=config["bridge"]
     output_name=os.environ.get("CF4_B_BRIDGE_OUTPUT_NAME","bridge")
-    if output_name not in ("bridge","bridge_retry1"):
+    if output_name not in ("bridge","bridge_retry1","bridge_retry2"):
         raise ValueError("unapproved output attempt")
     out=Path(config["output_root"])/output_name
     out.mkdir(parents=True,exist_ok=False)
