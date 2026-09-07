@@ -1,6 +1,8 @@
 {
   "schema": "ouruniv-cf4-science-route-v3",
-  "status": "active_constraint_frontier_hybrid_route_KF_DESIGN",
+  "status": "HISTORICAL_SUPERSEDED_2026_09_07",
+  "superseded_by": "CF4_MASTER_PLAN.md",
+  "historical_scope": "All authority, route order and permission fields below are preserved history, not active execution instructions.",
   "effective_date": "2026-08-29",
   "authority": {
     "supersedes_record": "config/cf4_science_route_v2.json",

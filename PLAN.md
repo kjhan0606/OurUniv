@@ -1,5 +1,9 @@
 # CF4 — Local-Universe Density Reconstruction from Cosmicflows-4
 
+> Historical plan. Active authority since 2026-09-07:
+> [CF4_MASTER_PLAN.md](CF4_MASTER_PLAN.md). Methods and next actions below
+> are not authorization to restart an earlier route.
+
 > **2026-07-30 status correction.** The high-resolution PMWD sub-cube run below
 > is not a Hong et al. reproduction.  A 0.3125-Mpc/h array spacing alone is not
 > evidence of that information resolution, and it cannot identify MW/M31/M33

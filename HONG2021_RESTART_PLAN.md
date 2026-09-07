@@ -1,5 +1,8 @@
 # Hong et al. TNG100 reproduction: restart audit and plan
 
+> Historical study; not the active project route. Follow
+> [CF4_MASTER_PLAN.md](CF4_MASTER_PLAN.md), approved 2026-09-07.
+
 Date: 2026-08-01
 
 ## Executive diagnosis

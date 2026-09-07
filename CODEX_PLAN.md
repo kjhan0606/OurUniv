@@ -1,4 +1,8 @@
-# OurUniv / CF4 hybrid IC-inference plan
+# Historical OurUniv / CF4 hybrid IC-inference plan
+
+> Superseded on 2026-09-07 by [CF4_MASTER_PLAN.md](CF4_MASTER_PLAN.md).
+> All authority, current-state and next-action language below is historical.
+> Do not use it to override the approved LG-focused present-field route.
 
 ## Scientific objective
 

@@ -1,5 +1,18 @@
 # Z11 — prior-compatible field control
 
+## Closure — 2026-09-07
+
+All four fits and aggregation completed (final job 333746 at 16:36:26 KST).
+All four pass the declared mechanics gates; all injected curvature values
+fall inside their 95% intervals. Median gamma values for tasks 0–3 are
+0.01463, 0.16840, -0.03181 and 0.17664 (truth 0, .2, 0, .2).
+Observed-support density correlations are approximately .554–.590.
+This supports a field/observation coupling mismatch on native PM fields,
+not its unique cause or actual-data calibration. No LG/IC milestone passed.
+Follow `CF4_MASTER_PLAN.md`, Bundle A. The startup record below is historical.
+
+## Historical submission/startup record
+
 User-approved next bundle after Z10 exact-block closure. Source `832ccaf` was
 committed and pushed before submission from syntax. All compute uses Slurm.
 
