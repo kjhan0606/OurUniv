@@ -67,10 +67,14 @@ completed without refitting. It confirms field/H0 coupling and identifies a
 physical-Mpc versus Mpc/h magnitude convention mismatch in the imported
 2M++ population/selection setup. See
 [ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
-No input repair, second actual-data fit or Bundle B execution is active.
-The next proposed work is a focused observation-model correction and
-field-aware sampler adjustment, not further prior-family experiments;
-obtain authorization for another actual-data fit before submitting it.
+The user subsequently approved the focused observation-model correction,
+field-aware sampler adjustment and ONE corrected actual-data refit.
+Active correction plan: `config/cf4_actual_data_corrected_v2.json`, documented
+in [ACTUAL_CORRECTION_RUN.md](ACTUAL_CORRECTION_RUN.md). Preserve the old fit.
+The disjoint sample is retained; calibrate its survival from a separate20%
+parent mark sample, retain the old20% heldout, and use60% for field fitting.
+This supersedes the earlier one-fit cap only for this approved refit, not for
+further prior-family experiments. No Bundle B execution is active.
 
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10

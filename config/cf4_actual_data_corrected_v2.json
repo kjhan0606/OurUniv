@@ -1,0 +1,30 @@
+{
+  "extends": "config/cf4_actual_data_preview_v1.json",
+  "status": "USER_APPROVED_CORRECTION_AND_ONE_ACTUAL_REFIT",
+  "data": {
+    "counts": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2/corrected_counts.npz",
+    "count_result": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2/corrected_counts.json",
+    "counts_contract": "Magnitude M_phys-5log10(h), disjoint survivors, calibration-only independent 20% parent mark sample; old heldout hash preserved, training fraction now .6. Totals bound in corrected_counts.json, not inherited historical totals. No observed-total centring.",
+    "limitations": "Survival mark model conditions on population/radius and assumes ignorable residual environment/sky dependence. Uncertain survival marginalized; field model, LF and imported parent bias/density priors still approximate. Real-data diagnostic, not calibrated science."
+  },
+  "selection_correction": {
+    "tracer_program": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+    "old_builder_program": "config/cf4_datum_bearing_z0_twompp_datum_builder_program_v2.json",
+    "radius_edges_cMpc_h": [5,30,60,90,120,150,180],
+    "quadrature_order": 6,
+    "conditional_survival_prior": "36 Beta(1,1) probabilities, updated by calibration-only parent survival marks, then jointly sampled with fields; no holdout or density-fit count used for calibration",
+    "fixed_partition": "same recno hash: [0,.2) heldout; [.2,.4) selection calibration; [.4,1) field training",
+    "CF4_crossmatch_exclusion": "unchanged; no reintroduction of same-object velocity/count measurements",
+    "metadata_exclusion": "retain frozen exclusions; apply the same <=.05 map-mark discrepancy and positive map support to new magnitude-admitted rows"
+  },
+  "sampler": {
+    "radial_conditional_whitening": true,
+    "warmup_steps": 512,
+    "draws_per_chain": 1024
+  },
+  "resources": {
+    "preflight": {"CPUs": 2, "estimated_MiB": 3500, "requested_MiB": 4200, "time_limit": "00:20:00"},
+    "fit": {"GPUs": 1, "CPUs": 4, "estimated_MiB": 7000, "requested_MiB": 8400, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"}
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2"
+}

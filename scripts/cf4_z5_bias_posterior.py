@@ -24,7 +24,8 @@ def dump(path, value):
 
 def main():
     begin = time.perf_counter()
-    plan = json.loads((ROOT / os.environ.get("CF4_POSTERIOR_PLAN", "config/cf4_z5_bias_posterior_plan_v1.json")).read_text())
+    from cf4_actual_data_preview import read_plan
+    plan = read_plan(ROOT / os.environ.get("CF4_POSTERIOR_PLAN", "config/cf4_z5_bias_posterior_plan_v1.json"))
     actual = plan["bundle"] == "A-ACTUAL-DATA-PREVIEW"
     root = Path(plan["output_root"])
     if len(sys.argv) > 1 and sys.argv[1] == "aggregate":
@@ -89,13 +90,21 @@ def main():
         np.savez_compressed(out / "mock.npz", counts_train=counts, counts_holdout=holdcounts,
                             radial_mock=radial, truth_density=truth_rho - 1, truth_velocity=truth_v)
     counts_j, radial_j = jnp.asarray(counts), jnp.asarray(radial)
-    logdensity = lambda x: -model.nlp(x, counts_j, radial_j)
+    coordinates = None
+    if cfg.get("radial_conditional_whitening", False):
+        from cf4_actual_corrected_model import RadialCoordinates
+        coordinates = RadialCoordinates(model, radial_j)
+        to_physical = jax.jit(jax.vmap(coordinates.transform))
+    objective = model.nlp if coordinates is None else coordinates.nlp
+    logdensity = lambda x: -objective(x, counts_j, radial_j)
     initialize, warm, sample, final_step = make_chunks(logdensity, model.size, cfg)
     field_size = model.field_size
     probes = np.concatenate([np.array([0, 1, 31, 32, 1024, 4096, 16384, 32767]) + offset
                              for offset in range(0, field_size, model.n**3)])
     nuisance_size = model.size - field_size
     names = [f"nuisance_{i}" for i in range(nuisance_size)] + [f"white_{i}" for i in probes] + ["white_RMS", "log_posterior"]
+    if coordinates is not None:
+        names += [f"field_conditional_radial_mean_{i}" for i in range(4)]
     saved, traces, projections = [], [], []
     for chain in range(cfg["chain_count"]):
         seed = 2026090600 + 100 * task + chain
@@ -118,10 +127,16 @@ def main():
                 if phase == "warmup":
                     warm_trace.append(trace)
                 else:
+                    means = None
+                    if coordinates is not None:
+                        # Only output representation changes. HMC state stays in whitened coordinates.
+                        pos, means = (np.asarray(a) for a in to_physical(jnp.asarray(pos)))
                     chain_saved.append(pos[::cfg["stored_field_thinning"]].copy())
                     chain_trace.append(trace)
-                    chain_projection.append(np.column_stack((pos[:, field_size:], pos[:, probes],
-                        np.sqrt(np.mean(pos[:, :field_size]**2, axis=1)), ld)))
+                    columns = [pos[:, field_size:], pos[:, probes], np.sqrt(np.mean(pos[:, :field_size]**2, axis=1)), ld]
+                    if means is not None:
+                        columns.append(means)
+                    chain_projection.append(np.column_stack(columns))
                 progress = {"task": task, "chain": chain, "phase": phase, "steps": offset + len(part),
                             "acceptance": float(accept.mean()), "divergences": int(div.sum()),
                             "step": float(used_step[-1]), "elapsed_s": time.perf_counter() - begin}
@@ -229,6 +244,11 @@ def main():
                 mean_posterior_SD_km_s=float(sd_v.mean()), physical_velocity_dispersion_field_available=False),
             nuisance_unit_quantiles025_50_975=np.quantile(nuisance, [.025,.5,.975], axis=(0,1)).tolist(),
             predictive_baseline="Homogeneous field at nuisance prior centres; not prior predictive evidence or a calibrated reconstruction baseline.")
+        if coordinates is not None:
+            report["radial_reparameterization"] = "Exact field-conditional whitening; physical q stored; field-conditional means included in convergence gates; target unchanged by coordinate transform."
+        if hasattr(model, "survival_logits"):
+            probabilities = jax.nn.sigmoid(jax.vmap(model.survival_logits)(jnp.asarray(nuisance.reshape(-1, nuisance_size))))
+            report["survival_probability_quantiles025_50_975"] = np.quantile(np.asarray(probabilities), [.025,.5,.975], axis=0).tolist()
         report["predictive_diagnostics"] = predictive_products(out, model, design, counts, holdcounts, radial,
             lam_sum, lam_sq, signal_sum, signal_sq, len(count_scores))
         np.savez_compressed(out / "posterior_fields.npz", density_mean=mean, density_SD=sd, density_quantiles=quantiles,
