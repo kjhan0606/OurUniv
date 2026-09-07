@@ -48,3 +48,8 @@ actual `vobs`; `prepare_fixed_design` deliberately discards it. Preserve raw
 exposure and the existing splits. The current BGc target cut is cz=1500–18000
 km/s, so this is not a direct LG velocity catalog. Explicit LG observations
 must enter Bundle B. Do not report mock truth metrics for real data.
+
+Actual-data input/output preparation is recorded in `ACTUAL_DATA_PREVIEW.md`.
+At the subsequent approval check, tasks0/1 had reached chain0 sampling192
+with zero divergences; tasks2/3 and comparison were still pending. No actual
+fit or next bundle was launched, and running scientific code was unchanged.
