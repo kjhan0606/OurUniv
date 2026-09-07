@@ -5,7 +5,7 @@ from pathlib import Path
 import h5py
 
 RAW = Path('/scratch/kjhan/IllustrisTNG/TNG100-1/output')
-OUT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1/tng_operator_v1')
+OUT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1/tng_operator_v2')
 FIELDS = {
     'Group': ('GroupFirstSub', 'GroupNsubs', 'GroupLenType', 'Group_M_Crit200', 'GroupPos'),
     'Subhalo': ('SubhaloPos', 'SubhaloVel', 'SubhaloMass', 'SubhaloLenType', 'SubhaloGrNr', 'SubhaloFlag'),
@@ -21,9 +21,11 @@ def stage_catalog():
                 source.copy('Header', chunk)
                 for group, fields in FIELDS.items():
                     dest = chunk.create_group(group)
-                    if group in source:
-                        for field in fields:
-                            source.copy(source[group][field], dest, name=field)
+                    count_field = 'Ngroups_ThisFile' if group == 'Group' else 'Nsubgroups_ThisFile'
+                    if source['Header'].attrs[count_field] == 0:
+                        continue  # Valid empty native chunks need not contain datasets.
+                    for field in fields:
+                        source.copy(source[group][field], dest, name=field)
             # Only headers are staged here, not the multi-TB snapshot.
             with h5py.File(RAW / f'snapdir_099/snap_099.{index}.hdf5', 'r') as source:
                 source.copy('Header', chunk, name='SnapshotHeader')

@@ -109,3 +109,9 @@ syntax-local /scratch path is not visible in the initial Slurm read on syn07;
 ordinary I/O-only staging will copy the selected native fields to the shared
 project output, with no filesystem tests. No numerical calculation runs on
 the login node. Output root: `bundle_c_v1/tng_operator_v1`.
+
+Initial I/O staging stopped on native chunk1, whose header correctly declares
+zero groups/subhalos and whose empty groups omit field datasets. Added the
+header-zero case; nonempty chunks still require every field. Preserve the
+partial v1 staging and retry into `bundle_c_v1/tng_operator_v2`. No numerical
+calculation or model fitting had started.
