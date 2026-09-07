@@ -11,6 +11,15 @@ submission host: `syntax`; compute exclusively through Slurm.
 
 This is a submission record, not a completion certificate. Read these fixed job
 IDs and their named logs when checking status; do not add process-scan loops.
+
+Verified startup: job 333695 completed in 2m39s, peak RSS 964644 KiB.
+All eight regression tests and the full-size paired-data/nested-response checks
+passed. Tasks 333696_0 and 333696_1 then started on syn05 under Slurm; both
+reached chain 0 warmup step 128 with zero divergences and acceptance about 0.90.
+Tasks 2/3 await the two-task concurrency limit. The GPU logs contain hwloc CPU
+binding warnings; sampling nevertheless advanced. This is not a completion or
+final convergence assessment.
+
 Outputs: `/gpfs/kjhan/CF4/z0_density/z9_tracer_response_v1/`.
 Logs: `/gpfs/kjhan/CF4/logs/cf4_z9_{tests,tracer,finish}_*.{out,err}`.
 The detailed frozen plan is `config/cf4_z9_tracer_response_plan_v1.json`.
@@ -26,6 +35,12 @@ probe established physical bias–density identifiability. The old smoothing /
 missing nonlinear physics inference is withdrawn; original artifacts remain
 preserved. Corrected statistics are written to the distinct
 `z8_count_tracer_identifiability_corrected_v2` directory by job 333695.
+
+Corrected count-only whole-box examples (truths 0 and 5): truth spatial SD
+0.675/0.681; posterior-mean spatial SD 0.209/0.200; quadratic-mean individual-draw
+spatial RMS 0.564/0.561; mean pointwise uncertainty 0.513/0.514. Individual draws
+also have less amplitude than these truths, but these numbers alone do not
+identify its cause, certify coverage, or establish missing tracer nonlinearity.
 
 Z9 compares the existing nonlinear power-law tracer link to one additional
 common log-density-curvature coefficient. Both the matched-null generator and
