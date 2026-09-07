@@ -188,6 +188,7 @@ def measure_stars(request, h):
     path = OUTPUT / 'stellar_request.json'
     path.write_text(json.dumps(request, indent=2))
     command = ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=15', 'syntax',
+        'env', f'PYTHONPATH={REPO / "src"}:{REPO / "scripts"}',
         '/home/kjhan/miniconda3/bin/python3.13', str(Path(__file__).resolve()), 'serve-stars', '--request', str(path)]
     source = subprocess.Popen(command, stdout=subprocess.PIPE)
     records = []
