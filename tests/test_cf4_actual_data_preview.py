@@ -4,10 +4,19 @@ from types import SimpleNamespace
 import unittest
 
 import numpy as np
-from cf4_actual_data_preview import validate_counts, bound_arrays, predictive_products
+from cf4_actual_data_preview import ROOT, read_plan, validate_counts, bound_arrays, predictive_products
 
 
 class ActualDataTest(unittest.TestCase):
+    def test_longer_plan_preserves_model_and_gates(self):
+        old = read_plan(ROOT/"config/cf4_actual_data_corrected_v2.json")
+        new = read_plan(ROOT/"config/cf4_actual_data_longer_v3.json")
+        for key in ("data", "grid", "selection_correction", "model_decision", "assessment"):
+            self.assertEqual(old[key], new[key])
+        self.assertEqual(new["sampler"], {**old["sampler"], "draws_per_chain": 2048})
+        self.assertEqual(new["input_root"], old["output_root"])
+        self.assertNotEqual(new["input_root"], new["output_root"])
+
     def inputs(self):
         train = np.ones((6,2,2,2), dtype=np.int64)
         held = np.zeros_like(train); held[:,0,0,0] = 1

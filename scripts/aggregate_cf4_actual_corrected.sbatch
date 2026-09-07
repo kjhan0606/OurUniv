@@ -13,5 +13,5 @@ cd /home/kjhan/BACKUP/CF4
 git diff --quiet "$EXPECTED_COMMIT" -- src scripts config tests
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 export JAX_PLATFORMS=cpu JAX_ENABLE_X64=1
-export CF4_POSTERIOR_PLAN=config/cf4_actual_data_corrected_v2.json
+export CF4_POSTERIOR_PLAN="${CF4_POSTERIOR_PLAN:-config/cf4_actual_data_corrected_v2.json}"
 exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_z5_bias_posterior.py aggregate

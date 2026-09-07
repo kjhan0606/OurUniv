@@ -110,7 +110,7 @@ def bound_arrays(result):
 def load_data(task, plan):
     if task != 0:
         raise ValueError("one actual-data fit only")
-    root = Path(plan["output_root"])
+    root = Path(plan.get("input_root", plan["output_root"]))
     if json.loads((root / "preflight.json").read_text())["status"] != "PASS":
         raise ValueError("actual inputs not checked")
     result = prepare(plan)
@@ -118,6 +118,28 @@ def load_data(task, plan):
         for key, value in bound_arrays(result).items():
             np.testing.assert_array_equal(f[key], value)
     return result
+
+
+def check_reuse(plan):
+    """Check unchanged data/model and frozen arrays; do not regenerate a catalog."""
+    reference = read_plan(ROOT/plan["input_reference_plan"])
+    for key in ("data", "grid", "selection_correction", "model_decision", "assessment"):
+        if plan[key] != reference[key]:
+            raise ValueError(f"sampling-only run changed {key}")
+    for key, value in reference["sampler"].items():
+        if key != "draws_per_chain" and plan["sampler"][key] != value:
+            raise ValueError(f"sampling-only run changed sampler {key}")
+    if plan["input_root"] != reference["output_root"] or plan["output_root"] == plan["input_root"]:
+        raise ValueError("require frozen input root and distinct new output root")
+    root = Path(plan["output_root"])
+    root.mkdir(parents=True, exist_ok=False)
+    result = load_data(0, plan)
+    report = dict(status="PASS", input_root=plan["input_root"], metadata=result[4],
+        unchanged_data_model_and_gates=True, exact_frozen_array_equality=True,
+        draws_per_chain=plan["sampler"]["draws_per_chain"],
+        execution="fresh longer chains, not an exact continuation or pooling with old samples")
+    (root/"preflight.json").write_text(json.dumps(report, indent=2)+"\n")
+    print(json.dumps({k: v for k, v in report.items() if k != "metadata"}), flush=True)
 
 
 def preflight(plan):
@@ -204,6 +226,7 @@ def plot_preview(out, model, mean, sd, sample, counts):
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] != ["preflight"]:
-        raise SystemExit("use preflight")
-    preflight(read_plan(ROOT/os.environ.get("CF4_POSTERIOR_PLAN", str(PLAN))))
+    if sys.argv[1:] not in (["preflight"], ["check-reuse"]):
+        raise SystemExit("use preflight or check-reuse")
+    command = preflight if sys.argv[1] == "preflight" else check_reuse
+    command(read_plan(ROOT/os.environ.get("CF4_POSTERIOR_PLAN", str(PLAN))))

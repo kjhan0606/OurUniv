@@ -76,6 +76,14 @@ parent mark sample, retain the old20% heldout, and use60% for field fitting.
 This supersedes the earlier one-fit cap only for this approved refit, not for
 further prior-family experiments. No Bundle B execution is active.
 
+Corrected fit334345 completed in22m22s. Max Rhat1.034 passes, but H0 and
+its field-dependent conditional mean have bulk ESS97.1/85.1 (<100); retain
+NO_GO_SAMPLER_NOT_VALIDATED. The user now approved ONE sampling-length check:
+`config/cf4_actual_data_longer_v3.json`, four fresh chains with2048 samples
+each,512 warmup, unchanged model/data/gates. Reuse frozen actual inputs,
+preserve old chains, and do not claim exact continuation or pool the runs.
+No automatic further extension or Bundle B launch.
+
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10
 fixed-field and Z11 prior-compatible controls recover the injected tracer

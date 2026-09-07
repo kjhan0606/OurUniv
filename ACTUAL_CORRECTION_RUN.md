@@ -84,8 +84,8 @@ uncertain Beta(1,1) prior, never an invented measured completeness.
 | Job | Purpose | State at submission |
 | --- | --- | --- |
 | 334344 | CPU regression + corrected actual-input preflight | COMPLETED/PASS |
-| 334345 | One corrected actual-data four-chain GPU fit | Submitted afterok:334344, source600c682 |
-| 334346 | Result aggregation, including failed/incomplete fit reporting | Submitted afterany:334345 |
+| 334345 | One corrected actual-data four-chain GPU fit | COMPLETED in22m22s on syn05/A40, 2026-09-07 20:31:18 KST; source600c682 |
+| 334346 | Result aggregation, including failed/incomplete fit reporting | COMPLETED in14s, 20:31:32 KST |
 
 The corrected initial homogeneous full-survivor rate expectations are
 [4623.5,7339.9,1699.5,4437.8,13483.5,4161.2]. Compare with the observed
@@ -96,5 +96,32 @@ not the previous4.76/5.18. This is descriptive, not a controlled single-cause
 test or fitted-posterior result; magnitude membership and calibration split
 changed. Remaining discrepancies must be evaluated in the actual fit.
 
-Status: one corrected actual-data fit submitted after preflight success.
-No next-bundle launch, no automatic additional fit if scientific gates fail.
+## Completed result and approved sampling-length check
+
+Fit334345: exit0, peak RSS3593488 KiB, sampling acceptance .91081,
+divergences0. Maximum Rhat1.03403; minimum bulk ESS85.089 and tail ESS257.368.
+Only H0 (bulk ESS97.089) and its field-dependent conditional mean (85.089)
+miss the frozen minimum100. Density-RMS Rhat1.00641, bulk ESS412.09.
+Formal status remains NO_GO_SAMPLER_NOT_VALIDATED. Heldout moment residual SDs
+are.99896 for counts and1.11195 for velocity; these are not independent
+calibration tests or evidence of target-resolution recovery. Large tracer-bias
+and some selection shifts remain despite improved rate normalization.
+
+The user approved proceeding with the recommended unchanged-model sampling
+length check. Plan: `config/cf4_actual_data_longer_v3.json`. Four fresh chains,
+512 warmup and2048 samples each; no data/selection regeneration, new prior,
+new mock, gate change or repeated automatic extensions. Previous files store
+thinned physical vectors, not the exact terminal HMC state, so this is NOT
+an exact continuation. Do not pool runs or claim independent replication of
+shared random initialization/warmup. Frozen input arrays are checked exactly.
+
+Reuse the established GPU and aggregation scripts with explicit plan override.
+CPU check:2400 MiB (2000+20%); GPU:9600 MiB (8000+20%) to cover doubled retained
+field arrays and processing copies. Same four CPUs/one GPU, partitions
+a40/a100/h100/h200, exclude syn06; two-hour limit. Based on the prior22m22s
+run, approximately35-45min execution is expected, excluding queue time.
+Old products are preserved; new outputs:
+`/gpfs/kjhan/CF4/z0_density/actual_data_longer_v3`.
+
+Status: approved longer-run implementation ready for CPU input-reuse check.
+No next-bundle launch or automatic additional fit beyond this approved check.
