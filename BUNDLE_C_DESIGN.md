@@ -199,3 +199,13 @@ coarse-feature residuals. If insufficient, STOP this finite-bank repair;
 design continuous coupled matter/halo states rather than expanding the bank
 again or widening the kernel. CPU2, estimated1500 MiB+20%=1800 MiB,10min,
 <0.1 GiB new outputs. No new simulation, actual-data inference or Bundle D.
+
+Closure:335875 returned NO_GO_FINITE_BANK_SUPPORT_CLOSE_THIS_REPAIR. Grouped
+support fails4/9 targets despite improved coarse-feature matching. The
+single bank-enrichment allowance is exhausted; preserve the full TNG source
+for continuous joint matter/halo-model calibration instead of another bank
+variant. The next model must couple changing halo marks and diffuse density/
+momentum/second moments; the old catalogue cannot remain fixed while a new
+field is freely changed. Priors and discrepancy calibration are outstanding,
+not solved by the current support test or by declaring three imposed peaks
+resolved. No automatic new fit follows this closure.

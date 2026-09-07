@@ -197,3 +197,40 @@ source-group concentration prevents simply claiming rotation/overlap counts
 as independent information. Two focused symmetry tests plus a real fine-field
 rotation/summary consistency check; no new validation framework or raw pass.
 Output `bundle_c_v1/patch_support_v1`. No actual CF4/LG fit is launched.
+
+### Bounded support comparison completed — bank expansion closed
+
+Slurm335875 completed normally, source5832f7c. Two focused tests pass, the
+original9 baseline ESS values reproduce, and the actual shifted/rotated128^3
+fine field agrees with its independently computed coarse summaries. The
+scientific comparison took7.17s. No raw TNG particle reread.
+
+Dense+rotation bank:23275 native origins ×24 rotations=558600 hypotheses.
+Raw ESS231.64–2439.33 is misleading if called independent support. The
+spatial-group ESS values are4.242,1.704,3.714,4.955,3.158,5.032,4.210,5.346,
+1.803. Zero-based targets1,2,4,8 fail the frozen grouped criterion. Targets1
+and8 assign72.5%/72.6% of probability to a single native source group.
+The others fail ESS>=4 despite a less dominant largest group. Spatial-group
+ESS is still only a concentration diagnostic, not independent-universe ESS.
+
+Nearest standardized coarse-feature RMS improves from0.792–1.508 in the
+original bank to0.481–0.781 with translations/rotations; therefore there is
+real improvement in representation, not just duplicate weights. It still
+does not establish adequate conditional support. No bandwidth or heldout
+condition changed and native train/test voxels do not overlap.
+
+Result: NO_GO_FINITE_BANK_SUPPORT_CLOSE_THIS_REPAIR. Preserve all four
+comparisons in `patch_support_v1/result.json` and the conditional weights,
+origins and rotations in `conditionals.h5`. No job remains queued from this
+step. Do NOT add another rotation/translation/template-bank expansion.
+
+Next substantive design: a joint continuous present-day matter/halo state,
+not a prettier catalogue-selected map. Halo positions/masses/velocities and
+diffuse matter must jointly determine density, momentum and velocity second
+moments. Define priors and model discrepancy before activating the LG
+likelihood; keep observational errors distinct and retain coarse environment
+conservation. An analytic/subgrid component must be tested and labelled as
+such, never asserted to be a resolved N-body halo. Existing full TNG fields
+and native catalogue are calibration/reference data, not CF4 truth. A new
+continuous model and actual LG-on/off inference are NOT implemented by the
+support result itself; C remains in progress and D remains unapproved.

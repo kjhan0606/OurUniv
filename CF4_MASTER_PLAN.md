@@ -114,6 +114,19 @@ not count correlated/rotated copies as independent universes. If grouped
 support still fails, close finite-bank expansion and move to a continuous
 joint matter/halo-model design, not repeated kernel/seed tuning.
 
+That bounded comparison335875 has now completed:23275 native anchors and24
+proper rotations (558600 correlated hypotheses). Raw component ESS rises to
+231.6–2439.3, but native spatial-group concentration ESS is only1.70–5.35;
+4/9 heldout targets still fail ESS>=4/max-group-weight<=0.5. Conditions and
+bandwidth were unchanged; original results reproduced and the transformed
+actual fine field passed its summary check. Status
+NO_GO_FINITE_BANK_SUPPORT_CLOSE_THIS_REPAIR. CLOSE this finite-bank expansion.
+The next C design must vary matter and halo state jointly and continuously,
+with a defined diffuse component and calibrated physical/model discrepancy;
+no further bank densification, kernel widening, N32 extension or fake LG map.
+This result does not prove that every finite prior fails, nor that a continuous
+model will automatically succeed. No actual CF4/LG fine inference is running.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
