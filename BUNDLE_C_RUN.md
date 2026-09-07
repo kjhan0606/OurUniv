@@ -69,3 +69,8 @@ the test strip's pixel-centre selection unintentionally included an old Gauss
 node's entire HEALPix pixel. Moved the synthetic strip farther toward the cube
 face, leaving a full-pixel margin. Production masks/geometry/Sobol settings
 are unchanged; this corrects the test fixture, not the scientific algorithm.
+
+Retry334508 is RUNNING on syn07 under Slurm (source854d057). All3 focused
+regressions passed. Started2026-09-08 00:45:51 KST; first x-slab completed.
+The full support result and convergence controls are still pending. No
+downstream inference is queued, and no selection pass is claimed yet.
