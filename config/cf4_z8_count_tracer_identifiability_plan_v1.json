@@ -1,0 +1,14 @@
+{
+  "bundle": "Z8-COUNT-TRACER-IDENTIFIABILITY",
+  "status": "USER_APPROVED_START",
+  "date": "2026-09-07",
+  "purpose": "Quantify bias-density degeneracy and count-channel identifiability using completed Z7 synthetic posterior chains before any actual CF4 inference or grid increase.",
+  "goal": "Protect the CF4-informed z=0 posterior route: identify what the count likelihood constrains, which density modes remain prior-dominated, and whether tracer bias is separately identified.",
+  "inputs": {"Z7_root": "/gpfs/kjhan/CF4/z0_density/z7_information_sources_v1", "cases": [{"task": 1, "truth_index": 0, "channel": "counts_only"}, {"task": 3, "truth_index": 5, "channel": "counts_only"}, {"task": 0, "truth_index": 0, "channel": "velocity_only"}, {"task": 2, "truth_index": 5, "channel": "velocity_only"}], "read_contract": "existing chain and posterior_fields artifacts only; no observed CF4 count or velocity datum"},
+  "measurements": ["bias-unit/white-RMS and bias-unit/logdensity correlations", "bias posterior width and cross-chain consistency", "posterior physical-density variance reduction by k shell from saved chains", "count-only versus velocity-only structure and heldout scores", "mode-wise count information proxy relative to prior"],
+  "interpretation": "This is an identifiability audit, not a new posterior or calibration. Correlation is not causation; finite thinned MCMC samples are correlated. No A(k) fit, cutoff selection or power rescaling.",
+  "resources": {"backend": "syntax Slurm CPU", "CPUs": 2, "estimated_MiB": 1200, "requested_MiB": 1440, "time_limit": "00:10:00", "margin": 0.2},
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z8_count_tracer_identifiability_v1",
+  "next_bundle_requires_user_approval": true,
+  "deferred": ["actual CF4 count inference", "resolution increase", "IC/zoom", "new HMC", "GPFS-specific tests"]
+}

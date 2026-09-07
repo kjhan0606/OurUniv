@@ -109,12 +109,12 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z7-DATA-SOURCE-STRUCTURE-RECOVERY",
-  "active_work_package": "CHANNEL_ABLATION_COUNTS_VELOCITY_INFORMATION",
-  "current_plan": "config/cf4_z7_information_sources_plan_v1.json",
+  "current_bundle": "Z8-COUNT-TRACER-IDENTIFIABILITY",
+  "active_work_package": "COMPLETED_Z7_CHAIN_IDENTIFIABILITY_AUDIT",
+  "current_plan": "config/cf4_z8_count_tracer_identifiability_plan_v1.json",
   "last_bundle_result": "config/cf4_z7_information_sources_result_v1.json",
-  "current_status": "Z7 completed: all four channel-ablation fits passed mechanics; counts-only density correlation 0.564-0.569, velocity-only 0.217-0.265, joint 0.565-0.579. Counts dominate density structure in this model; velocity mainly improves velocity prediction. Await user approval before count/tracer likelihood audit.",
-  "current_execution": "config/cf4_z7_information_sources_result_v1.json",
+  "current_status": "User approved Z8: audit completed Z7 chains for count-channel bias-density identifiability using CPU-only postprocessing. No new posterior, actual data or resolution change.",
+  "current_execution": "PENDING_Z8_SUBMISSION",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
