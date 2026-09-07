@@ -5,6 +5,7 @@ No density painting, fixed-field catalogue inheritance, CF4 multiplication,
 native full snapshot rescan or claim of a .1875-cMpc/h posterior.
 """
 import argparse
+from contextlib import nullcontext
 from itertools import product
 import json
 import os
@@ -27,6 +28,9 @@ from cf4_lg_observation_contract import basis, solar_reference, approximate_cova
 ROOT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1')
 OUTPUT = ROOT / 'lg_population_v1'
 REPO = Path(__file__).resolve().parents[1]
+# Native TNG100-1 DM mass, checked against the staged source below. Requiring
+# 1000 DM members implies this bound-mass floor even before stars/gas count.
+RESOLVED_M33_MASS_FLOOR = 1000*.0005055742964369746*1e10/.6774
 
 
 def delta(x, y, box=75.):
@@ -279,7 +283,7 @@ def observables_to_kinematics(values, contract, h, offsets=None):
 
 
 def bounds(features):
-    lo = np.log([2e11, 2e11, 1e9, 200, 50])
+    lo = np.log([2e11, 2e11, max(1e9, RESOLVED_M33_MASS_FLOOR), 200, 50])
     hi = np.log([5e12, 5e12, 1e12, 3000, 1500])
     return np.all((features[:, :5] >= lo) & (features[:, :5] <= hi), axis=1) & (features[:, 2] <= features[:, 1]+np.log(.5))
 
@@ -329,6 +333,8 @@ def run():
     started = time.monotonic()
     cat, header, _, counts = load_catalog()
     h = float(header['HubbleParam'])
+    if not np.isclose(h, .6774, rtol=0, atol=1e-10):
+        raise ValueError('fixed native resolution floor requires TNG100-1 h=.6774')
     with h5py.File(ROOT / 'total_matter_v1/matter_moments.h5', 'r') as f:
         if f.attrs['status'] != 'NATIVE_TOTAL_MATTER_NOT_OBSERVED_LOCAL_UNIVERSE':
             raise ValueError('complete native source required')
@@ -420,13 +426,14 @@ def run():
     print(json.dumps(report), flush=True)
 
 
-def summarize():
+def summarize(enforce_resolved_support=False):
     """Read saved draws only: physical units and local reference-coverage check."""
     if 'SLURM_JOB_ID' not in os.environ:
         raise RuntimeError('numerical summaries require Slurm')
     result = json.loads((OUTPUT / 'result.json').read_text())
     request = json.loads((NATIVE / 'particle_request.json').read_text())
     resolution_mass = 1000*request['DM_mass_native']*1e10/request['h']
+    np.testing.assert_allclose(resolution_mass, RESOLVED_M33_MASS_FLOOR, rtol=1e-12)
     names = ['MW_host_M200c_Msun', 'M31_host_M200c_Msun', 'M33_bound_mass_Msun',
         'MW_M31_kpc', 'M31_M33_kpc', 'triangle_cosine'] + [
         f'peculiar_v{p}_{a}_km_s' for p in ('31', '32') for a in ('r', 't', 'n')] + [
@@ -442,7 +449,12 @@ def summarize():
         x[:, 16:] = 100*np.exp(x[:, 16:])
         return x
     cases = []
-    with h5py.File(OUTPUT / 'population_and_marks.h5', 'r') as f:
+    support_context = h5py.File(OUTPUT / 'resolved_support_samples.h5', 'x') if enforce_resolved_support else nullcontext(None)
+    with h5py.File(OUTPUT / 'population_and_marks.h5', 'r') as f, support_context as corrected:
+        if corrected is not None:
+            corrected.attrs.update(status='MASS_SUPPORT_CORRECTED_LG_MARKS_NOT_SPATIAL_MAP',
+                method='Reject/re-normalize existing posterior and prior Monte Carlo draws below native1000-DM mass floor; no new fit',
+                mass_floor_Msun=resolution_mass, source=str(OUTPUT / 'population_and_marks.h5'))
         rows, kind, split = f['features'][:], f['branch'][:], f['heldout'][:]
         for report in result['cases']:
             if 'proposal_ESS' not in report:
@@ -459,11 +471,24 @@ def summarize():
             held_dist = tree.query(white(rows[held]))[0]
             draws = group[f'aperture_{aperture}']
             post, prior = draws['features'][:], draws['prior_features'][:]
+            valid_post = np.exp(post[:, 2]) >= resolution_mass
+            valid_prior = np.exp(prior[:, 2]) >= resolution_mass
+            support_info = dict(original_posterior_below_floor=float(np.mean(~valid_post)),
+                original_prior_below_floor=float(np.mean(~valid_prior)),
+                applied=enforce_resolved_support)
+            if enforce_resolved_support:
+                out = corrected.create_group(f'branch_{branch}/aperture_{aperture}')
+                for name in ('features', 'prior_features', 'observables', 'stellar_halo_offsets', 'proposal_ids'):
+                    out.create_dataset(name, data=draws[name][:][valid_prior if name == 'prior_features' else valid_post], compression='gzip')
+                post, prior = post[valid_post], prior[valid_prior]
+                support_info.update(retained_posterior=len(post), retained_prior=len(prior),
+                    distinct_original_proposal_ids=int(len(np.unique(draws['proposal_ids'][:][valid_post]))),
+                    caveat='Original proposal ESS precedes this restriction; it is not reestimated from resampled draws. No independent new realizations.')
             posterior_dist = tree.query(white(post))[0]
             cutoff = float(np.quantile(held_dist, .95))
             posterior_q, prior_q = np.quantile(physical(post), [.16, .5, .84], axis=0), np.quantile(physical(prior), [.16, .5, .84], axis=0)
             cases.append(dict(branch=report['branch'], aperture_halfmass_radii=aperture,
-                proposal_ESS=report['proposal_ESS'], physical_quantiles={name: dict(
+                original_proposal_ESS=report['proposal_ESS'], mass_support_correction=support_info, physical_quantiles={name: dict(
                     prior_16_50_84=prior_q[:, i].tolist(), posterior_16_50_84=posterior_q[:, i].tolist(),
                     interval_width_ratio=float((posterior_q[2, i]-posterior_q[0, i])/(prior_q[2, i]-prior_q[0, i]))) for i, name in enumerate(names)},
                 native_nearest_neighbor_coverage=dict(metric='Euclidean in9 training-covariance-whitened kinematic coordinates; not template weighting or independent validation',
@@ -475,7 +500,8 @@ def summarize():
     summary = dict(status='LG_MARKS_AND_REFERENCE_COVERAGE_REVIEW_NOT_SPATIAL_MAP', source_job=result['job_id'],
         summary_job=os.environ['SLURM_JOB_ID'], cases=cases,
         limits='Nearest-neighbor distances only disclose local extrapolation; no new bank/support tuning. Interval shrinkage is not independent accuracy or spatial information resolution. Masses are native host M200c/bound definitions, not extra measurements or isolated-M33 M200c.')
-    with (OUTPUT / 'physical_summary.json').open('x') as f:
+    filename = 'physical_summary_v2.json' if enforce_resolved_support else 'physical_summary.json'
+    with (OUTPUT / filename).open('x') as f:
         json.dump(summary, f, indent=2, allow_nan=False)
     print(json.dumps(summary), flush=True)
 
@@ -484,10 +510,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('action', choices=['run', 'serve-stars', 'summarize'])
     parser.add_argument('--request')
+    parser.add_argument('--enforce-resolved-support', action='store_true')
     args = parser.parse_args()
     if args.action == 'run':
         run()
     elif args.action == 'summarize':
-        summarize()
+        summarize(args.enforce_resolved_support)
     else:
         serve_stars(args.request)
