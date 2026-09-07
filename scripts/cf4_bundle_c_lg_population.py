@@ -420,9 +420,74 @@ def run():
     print(json.dumps(report), flush=True)
 
 
+def summarize():
+    """Read saved draws only: physical units and local reference-coverage check."""
+    if 'SLURM_JOB_ID' not in os.environ:
+        raise RuntimeError('numerical summaries require Slurm')
+    result = json.loads((OUTPUT / 'result.json').read_text())
+    request = json.loads((NATIVE / 'particle_request.json').read_text())
+    resolution_mass = 1000*request['DM_mass_native']*1e10/request['h']
+    names = ['MW_host_M200c_Msun', 'M31_host_M200c_Msun', 'M33_bound_mass_Msun',
+        'MW_M31_kpc', 'M31_M33_kpc', 'triangle_cosine'] + [
+        f'peculiar_v{p}_{a}_km_s' for p in ('31', '32') for a in ('r', 't', 'n')] + [
+        'density_2_4_over_mean', 'density_4_8_over_mean', 'flow_2_4_km_s',
+        'flow_4_8_km_s', 'physical_sigma_2_4_km_s', 'physical_sigma_4_8_km_s']
+    def physical(x):
+        x = x.copy()
+        x[:, :5] = np.exp(x[:, :5])
+        x[:, 5] = np.tanh(x[:, 5])
+        x[:, 6:12] = 100*np.sinh(x[:, 6:12])
+        x[:, 12:14] = np.exp(x[:, 12:14])
+        x[:, 14:16] *= 100
+        x[:, 16:] = 100*np.exp(x[:, 16:])
+        return x
+    cases = []
+    with h5py.File(OUTPUT / 'population_and_marks.h5', 'r') as f:
+        rows, kind, split = f['features'][:], f['branch'][:], f['heldout'][:]
+        for report in result['cases']:
+            if 'proposal_ESS' not in report:
+                continue
+            branch = 0 if report['branch'] == 'M33_satellite_of_M31' else 1
+            aperture = report['aperture_halfmass_radii']
+            group = f[f'branch_{branch}']
+            covariance = group['covariance'][:][3:12, 3:12]
+            L = np.linalg.cholesky(covariance)
+            train, held = (kind == branch) & (split == 0), (kind == branch) & (split == 1)
+            def white(x):
+                return np.linalg.solve(L, x[:, 3:12].T).T
+            tree = cKDTree(white(rows[train]))
+            held_dist = tree.query(white(rows[held]))[0]
+            draws = group[f'aperture_{aperture}']
+            post, prior = draws['features'][:], draws['prior_features'][:]
+            posterior_dist = tree.query(white(post))[0]
+            cutoff = float(np.quantile(held_dist, .95))
+            posterior_q, prior_q = np.quantile(physical(post), [.16, .5, .84], axis=0), np.quantile(physical(prior), [.16, .5, .84], axis=0)
+            cases.append(dict(branch=report['branch'], aperture_halfmass_radii=aperture,
+                proposal_ESS=report['proposal_ESS'], physical_quantiles={name: dict(
+                    prior_16_50_84=prior_q[:, i].tolist(), posterior_16_50_84=posterior_q[:, i].tolist(),
+                    interval_width_ratio=float((posterior_q[2, i]-posterior_q[0, i])/(prior_q[2, i]-prior_q[0, i]))) for i, name in enumerate(names)},
+                native_nearest_neighbor_coverage=dict(metric='Euclidean in9 training-covariance-whitened kinematic coordinates; not template weighting or independent validation',
+                    heldout_distance_50_95=np.quantile(held_dist, [.5, .95]).tolist(),
+                    posterior_distance_50_95=np.quantile(posterior_dist, [.5, .95]).tolist(),
+                    posterior_fraction_beyond_heldout_95=float(np.mean(posterior_dist > cutoff))),
+                minimum_mass_of1000_native_DM_particles_Msun=resolution_mass,
+                posterior_M33_fraction_below_that_mass=float(np.mean(np.exp(post[:, 2]) < resolution_mass))))
+    summary = dict(status='LG_MARKS_AND_REFERENCE_COVERAGE_REVIEW_NOT_SPATIAL_MAP', source_job=result['job_id'],
+        summary_job=os.environ['SLURM_JOB_ID'], cases=cases,
+        limits='Nearest-neighbor distances only disclose local extrapolation; no new bank/support tuning. Interval shrinkage is not independent accuracy or spatial information resolution. Masses are native host M200c/bound definitions, not extra measurements or isolated-M33 M200c.')
+    with (OUTPUT / 'physical_summary.json').open('x') as f:
+        json.dump(summary, f, indent=2, allow_nan=False)
+    print(json.dumps(summary), flush=True)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['run', 'serve-stars'])
+    parser.add_argument('action', choices=['run', 'serve-stars', 'summarize'])
     parser.add_argument('--request')
     args = parser.parse_args()
-    (run() if args.action == 'run' else serve_stars(args.request))
+    if args.action == 'run':
+        run()
+    elif args.action == 'summarize':
+        summarize()
+    else:
+        serve_stars(args.request)
