@@ -181,3 +181,19 @@ the partial timing output remains separate. The job itself writes the final
 conservation and finite-prior support diagnostics. No subsequent job is queued.
 The finite mixture is not a calibrated continuous model: if support collapses,
 report that failure instead of relaxing the physical target or forcing a seed.
+
+### Total-matter completion and next support comparison
+
+334528 completed2026-09-08 03:27:20 KST, elapsed1h58m04s, exit0.
+All448 chunks and11935938442 massive particles/cells are present. Global
+moment relative errors<=6.90e-13; direct/restricted coarse errors<=7.62e-13.
+Absolute box mass versus native cosmology differs by4.8093e-5 (0.0048093%).
+All5 regressions passed. Status TOTAL_MATTER_PRIOR_SOURCE_NOT_CF4_POSTERIOR.
+The18-template finite prior fails the9 heldout support checks: ESS1.00–2.06.
+
+Next authorized implementation is the single translation/isotropy support
+comparison in BUNDLE_C_DESIGN.md. Original conditions and bandwidth are fixed;
+source-group concentration prevents simply claiming rotation/overlap counts
+as independent information. Two focused symmetry tests plus a real fine-field
+rotation/summary consistency check; no new validation framework or raw pass.
+Output `bundle_c_v1/patch_support_v1`. No actual CF4/LG fit is launched.

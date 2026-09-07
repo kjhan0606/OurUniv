@@ -102,6 +102,18 @@ Hong retraining, actual CF4/LG weighting or automatic downstream inference.
 See BUNDLE_C_RUN.md. Do not broaden prior kernels or narrow the science target
 just to disguise insufficient support from a small finite patch collection.
 
+Update2026-09-08:334528 completed03:27:20 KST in1h58m04s. All448 files,
+11935938442 massive particles/cells processed; conservation passes, absolute
+native cosmological mass error4.8093e-5. The18-component prior fails support
+on all9 heldout targets (ESS1.00–2.06). This is not a CF4/LG posterior.
+User authorized the next C step: ONE bounded support comparison using dense
+native translations and24 exact proper rotations, unchanged32-dimensional
+conditioning and prior bandwidth, strict heldout spatial exclusion. Report
+raw, distinct-anchor and source-spatial-group concentration separately; do
+not count correlated/rotated copies as independent universes. If grouped
+support still fails, close finite-bank expansion and move to a continuous
+joint matter/halo-model design, not repeated kernel/seed tuning.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

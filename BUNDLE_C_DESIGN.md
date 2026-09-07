@@ -173,3 +173,29 @@ full cap4h, estimated<8 GiB permanent new products. The full pass reads
 several hundred GiB of existing raw fields; runtime must be estimated from
 the timing check, with source-order/spatial-occupancy caveats. No GPU, IC or
 RAMSES job, phase rescaling, GPFS investigation or process-scan loop.
+
+## One bounded translation/isotropy support comparison
+
+The completed full source passes physical/moment checks but the18-component
+coarse-summary prior has heldout ESS1.00–2.06. User authorized continuation.
+Reuse the50^3 coarse moments and ONE fine patch; do not reread raw particles.
+Freeze original9 validation targets,32 conditioning features and bandwidth.
+Compare original18, rotations-only, dense native origins and dense+rotations
+in a single run. Origins: x0..18,y/z0..34 in coarse cells; each24-Mpc/h patch
+ends before heldout x=34. No training/validation native voxels overlap.
+
+23275 native anchors ×24 proper cube rotations yield558600 component
+hypotheses, NOT558600 independent simulations. Rotate mass, polar momentum,
+diagonal second moments and catalogue coordinates consistently, by exact
+axis permutations/signs. No interpolation, amplitude changes or phase draws.
+Report raw ESS, rotation-collapsed anchor ESS and concentration grouped by
+native patch-centre24-Mpc/h tiles. Spatial groups can still be correlated or
+overlap; grouped ESS is not an independence certificate.
+
+Retain the old support threshold on the grouped diagnostic: all9 require
+ESS>=4 and max source-group weight<=0.5 to count as improved finite support.
+Neither outcome is an actual LG GO. Also report standardized nearest/mean
+coarse-feature residuals. If insufficient, STOP this finite-bank repair;
+design continuous coupled matter/halo states rather than expanding the bank
+again or widening the kernel. CPU2, estimated1500 MiB+20%=1800 MiB,10min,
+<0.1 GiB new outputs. No new simulation, actual-data inference or Bundle D.
