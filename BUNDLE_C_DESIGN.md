@@ -80,3 +80,13 @@ Initial native-data build and coupling tests: Slurm2 CPUs, estimated3000 MiB
 RAMSES output, filesystem investigation or process-monitor loop for this work.
 Record later inference resource estimates before submission; do not silently
 launch a uniform2048^3 box or an unbounded training ensemble under C approval.
+
+Next within C3: stream N256 angular/LF/shell selection in x-slabs of8,
+4^3 Gauss points per cell, float32 compressed HDF5 (<3 GiB new product).
+Reuse the unchanged source completeness masks/LF conventions; verify radial
+tabulation error <=1e-6 and rotation before integration. CPU2, estimated
+3000 MiB+20%=3600 MiB,30min cap. No old-exposure interpolation, count-driven
+support insertion or promotion to calibrated selection. Report unresolved
+positive-count support if present. The N256 density/count origin offset is
+exactly2 whole cells: use a cyclic field permutation, not interpolating either
+the field or survey mask. A numerical integration finish is not field inference.

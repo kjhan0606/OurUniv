@@ -12,6 +12,18 @@ def child_origin(parent_origin,ratio):
     return ratio*(parent_origin-.5)+.5
 
 
+def to_count_grid(field,origin,*,xp=np):
+    """Exact periodic permutation when native density and count cells align.
+
+    C's N256 origin=-1.5 differs from count origin=.5 by TWO WHOLE cells,
+    so no interpolation/smoothing is needed. Survey masks themselves never wrap.
+    """
+    shift=.5-origin
+    if abs(shift-round(shift))>1e-12:
+        raise ValueError("not an integer cell offset; no implicit interpolation")
+    return xp.roll(field,(-int(round(shift)),)*3,axis=(-3,-2,-1))
+
+
 def _blocks(field,ratio,xp):
     if field.ndim!=3 or len(set(field.shape))!=1 or field.shape[0]%ratio:
         raise ValueError("cubic grid divisible by ratio required")

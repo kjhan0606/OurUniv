@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from cf4_multires_z0 import cell_axis,child_origin,refine,restrict
+from cf4_multires_z0 import cell_axis,child_origin,refine,restrict,to_count_grid
 
 
 class MultiresTest(unittest.TestCase):
@@ -10,6 +10,9 @@ class MultiresTest(unittest.TestCase):
         np.testing.assert_allclose(axis.reshape(32,8).mean(axis=1),(np.arange(32)+.25)*12)
         local=cell_axis(128,.1875,177.)
         np.testing.assert_allclose(local.reshape(2,64).mean(axis=1),[183.,195.])
+        grid=np.arange(8**3).reshape((8,)*3)
+        self.assertEqual(to_count_grid(grid,-1.5)[0,0,0],grid[2,2,2])
+        with self.assertRaises(ValueError): to_count_grid(grid,.25)
 
     def test_mass_and_momentum(self):
         rng=np.random.default_rng(2026090709)

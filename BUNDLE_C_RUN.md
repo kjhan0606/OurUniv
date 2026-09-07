@@ -14,3 +14,18 @@ The current task is C1–2; C3–5 remain. Do not call input preparation or
 zero-detail cell refinement a reconstruction. Do not claim0.1875 information
 resolution from the configured cell size. Continue within C after the native
 inputs and geometry tests; D still needs separate user approval.
+
+Native-data retry334408 completed11s; all3 geometry/conservation/JAX tests pass.
+Counts:24998 training,8378 heldout,32162 occupied population/cell keys at1.5.
+CF4:19313 rows, minimum retained radius15.8152 cMpc/h and cz1501 km/s.
+Inside R2 cMpc/h: ZERO direct CF4 rows and ZERO retained galaxy-count rows.
+The buffered LG patch has59 CF4 and56 count rows, but these are NOT direct
+MW/M31/M33 measurements. Explicit LG likelihood is therefore indispensable.
+Native data: `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/native_data_v2`.
+
+Next execution integrates N256 selection directly (not old-grid interpolation),
+with the same2 CPUs/3600 MiB and30min cap, <3 GiB compressed output. Existing
+TNG raw group catalog is available under /scratch, not the derived-only /gpfs
+TNG root, if later needed for resolved-operator calibration. No TNG training,
+template insertion or halo selection has been run. Fine-field prior and LG
+halo/subhalo operator remain to be specified; C has not been completed.
