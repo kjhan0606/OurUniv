@@ -63,3 +63,9 @@ reference. Counts are read only after all replacement integrals are fixed.
 New output selection_1p5_v2; v1 remains untouched. Three focused regression
 tests and the repair will run in one Slurm job,2 CPUs,3600 MiB (3000+20%),
 30min limit, <3 GiB output. No new field inference or LG halo operator yet.
+
+Job334507 stopped in the synthetic strip regression before creating v2:
+the test strip's pixel-centre selection unintentionally included an old Gauss
+node's entire HEALPix pixel. Moved the synthetic strip farther toward the cube
+face, leaving a full-pixel margin. Production masks/geometry/Sobol settings
+are unchanged; this corrects the test fixture, not the scientific algorithm.

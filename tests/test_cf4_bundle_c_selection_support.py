@@ -23,7 +23,9 @@ class SelectionSupportTests(unittest.TestCase):
         ids = hp.query_disc(NSIDE, center[0] / np.linalg.norm(center[0]), .1)
         vec = np.array(hp.pix2vec(NSIDE, ids))
         ratio = vec[1] / vec[0]
-        mask[ids[(ratio > .0965) & (ratio < .0975)]] = .5
+        # Leave a full pixel-width gap from the outermost order4 node;
+        # selecting pixel centres too close to that node includes its pixel.
+        mask[ids[(ratio > .098) & (ratio < .0995)]] = .5
         maps = [mask, mask]
         nodes, _ = np.polynomial.legendre.leggauss(4)
         old = np.array(np.meshgrid(nodes, nodes, nodes, indexing="ij")).reshape(3, -1).T / 2
