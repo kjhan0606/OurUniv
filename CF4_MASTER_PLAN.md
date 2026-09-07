@@ -54,6 +54,12 @@ approval. No automatic next-bundle launch.
 
 Current execution record: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
+Current substep: the four-fit comparison completed and failed the frozen
+quantile-prior adoption rule. That repair series is closed. Proceed with
+the original 24-nuisance PM-calibrated model for one actual-data **model-stress
+diagnostic**, per `config/cf4_actual_data_preview_v1.json`. It is not a
+scientific promotion of the baseline. No new mock series is authorized.
+
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10
 fixed-field and Z11 prior-compatible controls recover the injected tracer

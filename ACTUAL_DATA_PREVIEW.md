@@ -5,6 +5,12 @@ Authority: `CF4_MASTER_PLAN.md`. This document does not claim a fit has run.
 Choose and record the field model after job333765's paired comparison;
 do not launch another mock-repair series or advance Bundle B automatically.
 
+Model decision after completed comparison: retain the original PM-calibrated
+lognormal joint prior and24 nuisance parameters, without curvature, solely
+for a model-stress preview. The quantile candidate failed adoption criteria;
+no claim that the baseline is calibrated. Execution plan:
+`config/cf4_actual_data_preview_v1.json`.
+
 ## Inputs and likelihood
 
 - CF4: `data/cf4_clean.npz`, through the existing

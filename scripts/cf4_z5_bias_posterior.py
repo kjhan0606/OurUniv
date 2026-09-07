@@ -25,6 +25,7 @@ def dump(path, value):
 def main():
     begin = time.perf_counter()
     plan = json.loads((ROOT / os.environ.get("CF4_POSTERIOR_PLAN", "config/cf4_z5_bias_posterior_plan_v1.json")).read_text())
+    actual = plan["bundle"] == "A-ACTUAL-DATA-PREVIEW"
     root = Path(plan["output_root"])
     if len(sys.argv) > 1 and sys.argv[1] == "aggregate":
         root.mkdir(parents=True, exist_ok=True)
@@ -56,7 +57,10 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        if plan["bundle"] == "A-PRIOR-TO-ACTUAL-DATA":
+        if actual:
+            from cf4_actual_data_preview import load_data
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_data(task, plan)
+        elif plan["bundle"] == "A-PRIOR-TO-ACTUAL-DATA":
             from cf4_bundle_a_prior_to_data import load_mock as load_bundle_a
             model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_bundle_a(task, plan)
         elif plan["bundle"] == "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL":
@@ -78,8 +82,12 @@ def main():
         initial_nlp = float(jax.jit(model.nlp)(jnp.zeros(model.size), jnp.asarray(counts), jnp.asarray(radial)))
     if "initial_objective_reference" in plan["data"] and abs(initial_nlp - plan["data"]["initial_objective_reference"][task]) > plan["data"]["initial_objective_absolute_tolerance"]:
         raise ValueError("regenerated Z4 datum does not match the fixed reference")
-    np.savez_compressed(out / "mock.npz", counts_train=counts, counts_holdout=holdcounts,
-                        radial_mock=radial, truth_density=truth_rho - 1, truth_velocity=truth_v)
+    if actual:
+        if truth_rho is not None or truth_v is not None:
+            raise ValueError("actual data must not carry mock truth")
+    else:
+        np.savez_compressed(out / "mock.npz", counts_train=counts, counts_holdout=holdcounts,
+                            radial_mock=radial, truth_density=truth_rho - 1, truth_velocity=truth_v)
     counts_j, radial_j = jnp.asarray(counts), jnp.asarray(radial)
     logdensity = lambda x: -model.nlp(x, counts_j, radial_j)
     initialize, warm, sample, final_step = make_chunks(logdensity, model.size, cfg)
@@ -149,12 +157,17 @@ def main():
     mean_v = velocity_sum / count_draws
     sd_v = np.sqrt(np.maximum(velocity_square / count_draws - mean_v**2, 0))
     field_convergence = phasec.chain_diagnostics(density_rms[..., None], ["physical_density_RMS"])
-    density_summary = metrics(truth_rho - 1, mean, support)
-    for name, mask in (("whole_box", np.ones(support.shape, bool)), ("observed_support", support)):
-        truth = (truth_rho - 1)[mask]
-        density_summary[name].update(coverage68=float(np.mean((truth >= quantiles[1][mask]) & (truth <= quantiles[2][mask]))),
-                                     coverage95=float(np.mean((truth >= quantiles[0][mask]) & (truth <= quantiles[3][mask]))),
-                                     mean_posterior_SD=float(sd[mask].mean()))
+    if actual:
+        density_summary = {name: dict(posterior_mean_spatial_SD=float(mean[mask].std()),
+            mean_posterior_SD=float(sd[mask].mean())) for name, mask in
+            (("whole_box", np.ones(support.shape, bool)), ("observed_support", support))}
+    else:
+        density_summary = metrics(truth_rho - 1, mean, support)
+        for name, mask in (("whole_box", np.ones(support.shape, bool)), ("observed_support", support)):
+            truth = (truth_rho - 1)[mask]
+            density_summary[name].update(coverage68=float(np.mean((truth >= quantiles[1][mask]) & (truth <= quantiles[2][mask]))),
+                                         coverage95=float(np.mean((truth >= quantiles[0][mask]) & (truth <= quantiles[3][mask]))),
+                                         mean_posterior_SD=float(sd[mask].mean()))
     density_summary["whole_box"].update(
         posterior_mean_spatial_SD=float(mean.std()),
         posterior_draw_spatial_SD_quantiles025_50_975=np.quantile(density_rms, [.025, .5, .975]).tolist(),
@@ -165,16 +178,22 @@ def main():
     def scores(x):
         lam, pred = (np.asarray(v) for v in forward(jnp.asarray(x)))
         mu = .2 * lam[support_pop]
-        return xlogy(holdcounts[support_pop], mu) - mu, -.5 * (radial[held] - pred[held])**2 / design["variance"][held]
+        return xlogy(holdcounts[support_pop], mu) - mu, -.5 * (radial[held] - pred[held])**2 / design["variance"][held], lam, pred
     count_scores, velocity_scores = [], []
+    if actual:
+        lam_sum = np.zeros_like(counts, dtype=float); lam_sq = lam_sum.copy()
+        signal_sum = np.zeros_like(radial); signal_sq = signal_sum.copy()
     for x in draws[:, ::plan.get("heldout_retained_draw_stride", 32)].reshape(-1, model.size):
-        a, b = scores(x); count_scores.append(a); velocity_scores.append(b)
-    zero_count, zero_v = scores(np.zeros(model.size))
+        a, b, lam, signal = scores(x); count_scores.append(a); velocity_scores.append(b)
+        if actual:
+            lam_sum += lam; lam_sq += lam**2
+            signal_sum += signal; signal_sq += signal**2
+    zero_count, zero_v, _, _ = scores(np.zeros(model.size))
     count_lppd = logsumexp(count_scores, axis=0) - np.log(len(count_scores))
     velocity_lppd = logsumexp(velocity_scores, axis=0) - np.log(len(velocity_scores))
     count_gain = float(np.sum(count_lppd - zero_count))
     velocity_gain = float(np.sum(velocity_lppd - zero_v))
-    if plan["bundle"] in ("Z9-TRACER-RESPONSE-CONTROL", "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL", "A-PRIOR-TO-ACTUAL-DATA"):
+    if actual or plan["bundle"] in ("Z9-TRACER-RESPONSE-CONTROL", "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL", "A-PRIOR-TO-ACTUAL-DATA"):
         count_map = np.zeros(support_pop.shape)
         count_map[support_pop] = count_lppd
         np.savez_compressed(out / "heldout_scores.npz", count_lppd=count_map,
@@ -193,13 +212,33 @@ def main():
               "sampling_divergence_fraction": divergence, "sampling_mean_acceptance": float(traces[:, :, 1].mean()),
               "bias_unit_mean": nuisance[:, :, 6:12].mean(axis=(0, 1)).tolist(),
               "bias_unit_quantiles025_50_975": np.quantile(nuisance[:, :, 6:12], [.025, .5, .975], axis=(0, 1)).tolist(),
-              "density": density_summary, "velocity": [metrics(truth_v[a], mean_v[a], support) for a in range(3)],
+              "density": density_summary, "velocity": None if actual else [metrics(truth_v[a], mean_v[a], support) for a in range(3)],
               "heldout_pointwise_log_predictive_gain": {"count": count_gain, "velocity": velocity_gain, "posterior_samples": len(count_scores)},
               "elapsed_s": time.perf_counter() - begin, "peak_host_MiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
               "actual_observational_posterior": False, "calibration_certified": False, "dx_cMpc_h": 12.}
     if model.tracer_curvature_sigma > 0:
         report["tracer_curvature_quantiles025_50_975"] = np.quantile(
             nuisance[:, :, 24] * model.tracer_curvature_sigma, [.025, .5, .975]).tolist()
+    if actual:
+        from cf4_actual_data_preview import predictive_products, plot_preview
+        report.pop("truth")
+        report.update(observations=truth_meta, actual_observational_posterior=True,
+            science_status="MODEL_STRESS_DIAGNOSTIC_NOT_CALIBRATED",
+            status="MECHANICS_PASS_ACTUAL_DATA_DIAGNOSTIC" if passed else "NO_GO_SAMPLER_NOT_VALIDATED",
+            velocity=dict(mean_field_RMS_km_s=float(np.sqrt(np.mean(mean_v**2))),
+                mean_posterior_SD_km_s=float(sd_v.mean()), physical_velocity_dispersion_field_available=False),
+            nuisance_unit_quantiles025_50_975=np.quantile(nuisance, [.025,.5,.975], axis=(0,1)).tolist(),
+            predictive_baseline="Homogeneous field at nuisance prior centres; not prior predictive evidence or a calibrated reconstruction baseline.")
+        report["predictive_diagnostics"] = predictive_products(out, model, design, counts, holdcounts, radial,
+            lam_sum, lam_sq, signal_sum, signal_sq, len(count_scores))
+        np.savez_compressed(out / "posterior_fields.npz", density_mean=mean, density_SD=sd, density_quantiles=quantiles,
+            density_samples=density_samples[:,0], velocity_mean=mean_v, velocity_posterior_SD=sd_v,
+            observed_support=support, field_origin_fraction=model.origin_fraction, dx_cMpc_h=model.box/model.n)
+        plot_preview(out, model, mean, sd, density_samples[0,0], counts+holdcounts)
+        dump(out / "result.json", report)
+        print(json.dumps({"status": report["status"], "science_status": report["science_status"],
+            "max_Rhat": worst_rhat, "min_bulk_ESS": min_bulk, "sampling_divergence_fraction": divergence}), flush=True)
+        return
     np.savez_compressed(out / "posterior_fields.npz", density_mean=mean, density_SD=sd, density_quantiles=quantiles,
                         velocity_mean_approximation=mean_v, velocity_SD_approximation=sd_v,
                         truth_density=truth_rho-1, truth_velocity=truth_v, observed_support=support)

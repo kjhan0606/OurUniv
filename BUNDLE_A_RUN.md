@@ -5,6 +5,26 @@ Plan: `config/cf4_bundle_a_prior_to_data_v1.json`.
 Source submitted to Slurm: `a007513` (committed and pushed).
 Outputs: `/gpfs/kjhan/CF4/z0_density/bundle_a_prior_to_data_v1`.
 
+## Comparison closure and actual-data decision
+
+All four mock fits and job333765 completed by 2026-09-07 17:57:20 KST.
+All fits pass mechanics (divergences0, maximum Rhat1.02227). The quantile
+extension improves support density RMSE by only1.1–1.4%, with correlation
+gains .0041/.0037/.0098 and paired count predictive changes +.218/-1.158/-3.340.
+Both truth fields fail the frozen adequacy rule. Improved curvature recovery
+and one-point shape are not enough to adopt it. The prior-repair series ends.
+
+The user instructed proceeding to the actual-data preview. Use the baseline
+PM-calibrated lognormal density/velocity prior, with the original24 nuisance
+parameters and no added curvature, for a **model-stress diagnostic**, not a
+validated local density reconstruction. Plan:
+`config/cf4_actual_data_preview_v1.json`. Reuse the sampler with actual-data
+inputs and no truth metrics; no new PM simulation or additional mock fits.
+This is still Bundle A. Implementation/preflight submission follows; no fit
+is claimed started by this paragraph.
+
+## Historical comparison submission/startup
+
 | Job | Purpose | Dependency |
 | --- | --- | --- |
 | 333760 | Initial CPU regression check; failed before any input/fit creation | None |
