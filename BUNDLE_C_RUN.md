@@ -162,3 +162,13 @@ Source and budget are specified in BUNDLE_C_DESIGN.md. Before a full read,
 run2-file timing plus focused regressions. Partial chunks cannot be used as
 spatial training data. No actual CF4/LG fine inference is authorized by a
 timing pass alone; it still needs the joint observation model in C.
+
+Timing job334524 completed with all5 regressions passing. Two native files
+contained53449478 massive particles/cells: streamed/deposited in31.5s;
+total including full-grid conservation reductions55.30s. Max tested global
+relative moment error7.33e-14; direct/restricted coarse error8.77e-13.
+These incomplete source chunks are explicitly NOT a spatial prior sample.
+The full448-file pass is estimated at2–3h (4h cap), with occupancy and I/O
+variation caveats. It will also check absolute box mass against native Omega_m
+without rescaling, write the full moment source and linked finite-patch model,
+and exercise the component reader. No actual-data inference follows it.

@@ -149,7 +149,7 @@ def build(max_files):
 def write_prior_source(out, fine, coarse, h, omega):
     """Keep full moments plus linked patch/catalogue identities; never paste halos."""
     with h5py.File(out / 'matter_moments.h5', 'x') as f:
-        f.attrs.update(status='NATIVE_TOTAL_MATTER_NOT_OBSERVED_LOCAL_UNIVERSE', h=h, Omega_m=omega,
+        f.attrs.update(status='INCOMPLETE', h=h, Omega_m=omega,
             field_order='mass_Msun, momentum_xyz_Msun_km_s, diagonal_second_xyz_Msun_km2_s2',
             source_catalogue=str(CATALOG_ROOT / 'native_catalog.h5'))
         for name, value, dx in (('fine', fine, .1875), ('coarse', coarse, 1.5)):
@@ -180,6 +180,7 @@ def write_prior_source(out, fine, coarse, h, omega):
         f.create_dataset('prior_bandwidth', data=bandwidth)
         f.create_dataset('patch_train', data=train)
         f.attrs['prior_limits'] = 'Equal component weights with diagonal Gaussian coarse-summary kernel; bandwidth=train SD. 18 train and9 nonoverlap check patches share one box. Condition summaries approximately, NEVER enforce exact parent cells by rescaling fields or reusing stale halo catalogues.'
+        f.attrs['status'] = 'NATIVE_TOTAL_MATTER_NOT_OBSERVED_LOCAL_UNIVERSE'
     from cf4_empirical_field_prior import conditional_weights, read_component
     first = read_component(out / 'matter_moments.h5', 0)
     if first['integrals']['mass'].shape != (128,) * 3:
