@@ -328,3 +328,14 @@ outputs in `bundle_c_v1/lg_population_v1`. It advances actual LG observational
 conditioning of a physical reference population, not full-field reconstruction.
 Profile/remainder-field calibration and joint CF4/environment coupling remain
 required before the promised spatial LG information comparison can be claimed.
+
+Completion amendment:335879 and saved-output reviews335880/335881 completed.
+The marked Gaussian initially leaked below the physically necessary mass of
+1000 native DM particles. Enforce that lower bound in future targets; the
+existing Monte Carlo posterior/prior have both been restricted to it and
+saved separately, with rejected fractions and original IDs retained. This
+fix does not establish a new particle-resolved halo or model discrete counts.
+The separate-primary LG case lies outside the heldout NN reference range in
+kinematic coordinates and is not scientifically adopted despite high proposal
+ESS. Retain satellite-conditional results as development only, not membership
+odds or a calibrated field. Detailed decision/products: BUNDLE_C_RUN.md.

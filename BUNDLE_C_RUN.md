@@ -311,3 +311,80 @@ NOT a CF4-conditioned high-resolution matter map. The arbitrary continuous
 remainder compensation from335878 is not calibrated by this covariance fit.
 No new simulation or source full pass. Slurm2 CPUs/7200 MiB/30min, estimated
 6000 MiB peak plus20%, <0.2 GiB outputs in `lg_population_v1`.
+
+Submitted Slurm335879, source7a4c8ea (committed/pushed),2 CPU/7200 MiB/30min.
+Logs `/gpfs/kjhan/CF4/logs/cf4_C_LG_population_335879.{out,err}`. The job has
+no automatic downstream map or simulation submission. All native calculations
+and inference stay on Slurm; one syntax SSH process is scoped to stellar I/O.
+
+335879 completed in42s, exit0, two coordinate/conditional tests passed. Native
+population51971 triples,5601 distinct MW-role observers (not independent
+universes). Satellite-case train/held rows10015/4193 and observers2860/1080;
+separate-primary rows28161/9602 and observers3792/1507. Native object identity
+overlap is0 within each split. Shared long modes/shell voxels remain. Weighted
+heldout joint logscore gains over the normalized diagonal alternatives are
+4.172/4.212 nats per weighted row. These are useful diagnostic comparisons,
+not independent simulation validation or calibrated coverage.
+
+Stellar calibration read189453 type4 rows across64 native objects, excluding
+wind particles. Isotropized1D stellar-minus-halo COM offsets (NOT particle
+dispersion): central6.07/5.52 km/s and satellite4.73/4.03 km/s at1x/2x stellar
+half-mass radius. Position offsets0.116..0.167 physical kpc and their velocity
+cross-covariance are retained. This pooled central/satellite proxy ignores
+mass dependence and cross-halo/LMC response, uses only32 objects per class,
+and is not a calibrated observational disk-fit error. Covariance parameter
+uncertainty is also not marginalized in this development model.
+
+Four actual-LG observational importance calculations completed; original
+proposal ESS28918..29267 out of65536. This is proposal efficiency, not the
+number of independent physical LGs or a scientific pass. Raw weighted/resampled
+products are preserved in `lg_population_v1/population_and_marks.h5` and
+`result.json`; no CF4 likelihood or fine-field reconstruction is included.
+
+Read-only numerical summary335880 (source895eb27,2 CPUs/1800 MiB/5min cap;
+estimated1500 MiB+20%) completed in3s. It reveals an important distinction:
+in9-dimensional training-covariance-whitened kinematics, the satellite posterior
+NN distances have median/95th1.46/1.62, within the heldout reference95th1.85.
+The separate-primary posterior has2.19/2.38 versus heldout95th1.76:100% of its
+draws exceed that reference. This local-extrapolation diagnostic is not template
+weighting, an independence guarantee, posterior branch odds, or proof that M33
+is a satellite. The apparently efficient separate-primary Gaussian calculation
+is NOT accepted as a scientifically supported LG inference.
+
+The same summary caught a real approximation defect: original Gaussian tails
+allowed mass below that of1000 native DM particles, despite the calibration
+particle-count selection. Posterior leakage was0.586%/0.854% in satellite
+cases and0%/0.049% in separate-primary cases; satellite priors leaked2.20%/2.73%.
+Driver corrected the model support without requesting new permission: require
+the native1000-DM mass floor, in addition to all previous mass/distance bounds.
+Source2b18aef fixes future inference bounds. Existing posterior AND prior draws
+were restricted/re-normalized to this support, not regenerated or overwritten.
+Correction335881 completed3s (same bounded summary resources); all retained
+samples meet the floor. This is conditioning existing Monte Carlo samples,
+not refitting the covariance or creating independent draws. Original proposal
+ESS is preserved as PRE-correction efficiency, not recomputed from resamples.
+
+Current preferred development artifacts:
+- `lg_population_v1/resolved_support_samples.h5`: corrected posterior/prior
+  samples, latent stellar offsets, observables and original proposal identities.
+- `lg_population_v1/physical_summary_v2.json`: physical units, interval widths,
+  corrected support and local-extrapolation diagnostics. Preserve v1 history.
+
+Conditional satellite example,1x aperture: MW–M31 separation765.9 kpc with
+16–84%754.8..777.0, versus prior1239..2438; M31–M33 separation220.6 kpc with
+216.8..224.3, versus prior112.9..386.0. Agreement with these input distances
+is expected conditioning, not heldout evidence of a reconstructed universe.
+Halo masses remain broad and strongly prior dependent; M33 is bound mass,
+NOT isolated M200c. Surrounding2..4/4..8-cMpc/h shell-density interval widths
+are still roughly90–96% of prior widths in the satellite cases (raw summaries);
+no well-determined surrounding field or high-k density information is implied.
+
+Driver decision: retain the corrected SATELLITE-CONDITIONAL mark posterior as
+a development input; separate-primary tail inference is NO-GO for scientific
+adoption pending physical calibration. Do not infer membership odds, discard
+the alternative physically, tune Gaussian widths to pass, or claim a0.1875
+map. The unresolved profile/remainder spatial prior, mass constraints/LMC and
+joint CF4/galaxy environment connection are the next substantive target. More
+mark-only fitting or generic coverage tests must not replace that spatial
+work. No follow-up calculation is running or queued. C remains in progress;
+actual fine spatial information gain and Bundle D remain undelivered.

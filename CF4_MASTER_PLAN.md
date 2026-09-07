@@ -141,6 +141,28 @@ coarse environmental features. Do not promote the precise numerical inverse
 error to astronomical accuracy or restart bank expansion. Actual LG-on/off
 information comparison remains undelivered; see BUNDLE_C_RUN.md.
 
+Actual LG MARK conditioning has now run (335879,42s):51971 native two-primary/
+third-object triples from5601 distinct observer candidates; separate M33
+satellite and independent-primary alternatives. A continuous transformed-mark/
+shell-summary distribution and measured stellar-minus-halo COM proxy connect
+actual distances/LOS/proper motions, including shared MW nuisances and required
+probability Jacobians. This is NOT a CF4-conditioned .1875 matter-field prior
+or spatial map. Review335880 exposes separate-primary extrapolation despite
+high proposal ESS; that alternative is NO-GO for scientific adoption, not
+proof of physical impossibility. Gaussian leakage below the1000-DM particle
+mass floor was fixed and existing draws restricted/re-normalized in335881,
+preserving original outputs. Corrected satellite-conditional marks are usable
+as a development input, with broad prior-dominated masses/environment, not a
+calibrated LG reconstruction. Current products: `resolved_support_samples.h5`
+and `physical_summary_v2.json` in `bundle_c_v1/lg_population_v1`.
+
+Next substantive requirement is the SPATIAL profile/remainder-field model and
+its joint connection to actual CF4/galaxy environment, not more mark-only
+fits. Native membership/force resolution, missing mass/LMC/stellar-disk priors,
+one-box covariance calibration and the32 environmental-feature support problem
+are not solved by the marked Gaussian. The desired spatial LG-on/off map and
+information gain remain undelivered. No job from this step remains active.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
