@@ -2,7 +2,7 @@
 
 Authority: user approval after [ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
 Plan: `config/cf4_actual_data_corrected_v2.json` (inherits unchanged baseline
-settings from V1). Output: `/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2`.
+settings from V1). Output: `/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1`.
 Old sources/data products/results remain available; no historical builder edits.
 
 ## Scientific changes fixed before inspecting the new fit
@@ -59,6 +59,13 @@ and exclusion of heldout velocities. Reuse the existing physical/model/data
 tests. Full actual-data preflight also checks finite gradients and exact
 radial-block energy before a GPU submission.
 
-Status: implementation prepared; tests and input preflight not yet submitted.
+Initial CPU job334332: all14 regressions passed in86.2s. Input preparation
+then failed before catalog loading because the JAX/circle environment lacks
+healpy. Fix: use the already established Python3.13 astronomy environment
+for catalog/selection preparation and circle/Python3.11 for inference checks.
+No package installation or scientific-model change. Preserve the initial
+failed log and empty output directory; retry uses the new run1 output above.
+
+Status: environment-corrected CPU preflight ready for resubmission.
 One corrected actual-data fit is authorized only after preflight success.
 No next-bundle launch, no automatic additional fit if scientific gates fail.

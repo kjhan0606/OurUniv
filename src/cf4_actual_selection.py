@@ -152,3 +152,14 @@ def build(plan, root):
         bindings=bindings)
     (root/"corrected_counts.json").write_text(json.dumps(report, indent=2)+"\n")
     return report
+
+
+if __name__ == "__main__":
+    import sys
+    # Catalog preparation uses the existing astronomy environment, not the JAX environment.
+    plan = json.loads(Path(sys.argv[1]).read_text())
+    parent = json.loads(Path(plan["extends"]).read_text())
+    parent.update(plan)
+    root = Path(parent["output_root"])
+    root.mkdir(parents=True, exist_ok=False)
+    build(parent, root)

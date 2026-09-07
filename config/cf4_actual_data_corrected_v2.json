@@ -2,8 +2,8 @@
   "extends": "config/cf4_actual_data_preview_v1.json",
   "status": "USER_APPROVED_CORRECTION_AND_ONE_ACTUAL_REFIT",
   "data": {
-    "counts": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2/corrected_counts.npz",
-    "count_result": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2/corrected_counts.json",
+    "counts": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1/corrected_counts.npz",
+    "count_result": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1/corrected_counts.json",
     "counts_contract": "Magnitude M_phys-5log10(h), disjoint survivors, calibration-only independent 20% parent mark sample; old heldout hash preserved, training fraction now .6. Totals bound in corrected_counts.json, not inherited historical totals. No observed-total centring.",
     "limitations": "Survival mark model conditions on population/radius and assumes ignorable residual environment/sky dependence. Uncertain survival marginalized; field model, LF and imported parent bias/density priors still approximate. Real-data diagnostic, not calibrated science."
   },
@@ -26,5 +26,5 @@
     "preflight": {"CPUs": 2, "estimated_MiB": 3500, "requested_MiB": 4200, "time_limit": "00:20:00"},
     "fit": {"GPUs": 1, "CPUs": 4, "estimated_MiB": 7000, "requested_MiB": 8400, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"}
   },
-  "output_root": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2"
+  "output_root": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1"
 }

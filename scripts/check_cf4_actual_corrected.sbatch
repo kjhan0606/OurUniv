@@ -15,4 +15,5 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_PLATFORMS=cpu JAX_ENABLE_X64=1 PYTHONPATH=src:scripts:tests
 export CF4_POSTERIOR_PLAN=config/cf4_actual_data_corrected_v2.json
 /home/kjhan/miniconda3/envs/circle/bin/python3.11 -m unittest test_cf4_actual_corrections test_cf4_actual_data_preview test_cf4_pm_calibrated_z0 test_cf4_z0_physical_field
+/home/kjhan/miniconda3/bin/python3.13 src/cf4_actual_selection.py "$CF4_POSTERIOR_PLAN"
 exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_actual_data_preview.py preflight

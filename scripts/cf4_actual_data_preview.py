@@ -122,10 +122,11 @@ def load_data(task, plan):
 
 def preflight(plan):
     root = Path(plan["output_root"])
-    root.mkdir(parents=True, exist_ok=False)
     if "selection_correction" in plan:
-        from cf4_actual_selection import build
-        build(plan, root)
+        if not (root/"corrected_counts.json").is_file() or (root/"preflight.json").exists():
+            raise ValueError("fresh prepared count inputs required")
+    else:
+        root.mkdir(parents=True, exist_ok=False)
     result = prepare(plan)
     model, design = result[:2]
     zero = jnp.zeros(model.size)
