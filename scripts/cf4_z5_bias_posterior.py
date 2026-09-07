@@ -41,6 +41,9 @@ def main():
         elif plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
             from cf4_z9_tracer_response import compare
             compare(plan)
+        elif plan["bundle"] == "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL":
+            from cf4_z11_prior_control import compare
+            compare(plan)
         return
     task = int(os.environ["SLURM_ARRAY_TASK_ID"])
     out = root / f"task_{task}"
@@ -50,7 +53,10 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        if plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
+        if plan["bundle"] == "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL":
+            from cf4_z11_prior_control import load_mock as load_prior_control
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_prior_control(task, plan)
+        elif plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
             from cf4_z9_tracer_response import load_mock as load_response
             model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_response(task, plan)
         elif plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
@@ -162,7 +168,7 @@ def main():
     velocity_lppd = logsumexp(velocity_scores, axis=0) - np.log(len(velocity_scores))
     count_gain = float(np.sum(count_lppd - zero_count))
     velocity_gain = float(np.sum(velocity_lppd - zero_v))
-    if plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
+    if plan["bundle"] in ("Z9-TRACER-RESPONSE-CONTROL", "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL"):
         count_map = np.zeros(support_pop.shape)
         count_map[support_pop] = count_lppd
         np.savez_compressed(out / "heldout_scores.npz", count_lppd=count_map,
