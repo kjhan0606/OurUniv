@@ -109,12 +109,12 @@
       "scientific_boundary": "no production run without B2 closure and explicit output/resource audit"
     }
   ],
-  "current_bundle": "Z6-NATIVE-PM-Z0-JOINT-PRIOR",
-  "active_work_package": "NATIVE_COORDINATES_AND_PM_CALIBRATED_Z0_JOINT_COVARIANCE",
-  "current_plan": "config/cf4_z6_native_physics_plan_v1.json",
-  "last_bundle_result": "config/cf4_z5_bias_posterior_result_v1.json",
-  "current_status": "Z6 CPU calibration job332988 completed in51s; eight tests passed and prior covariance fitted on development truths1-4 only. GPU array332989: baseline on syn05 A40 and first repaired case on syn102 A100 are warming up with no recent divergences; second repaired case is resource-pending. Afterany CPU job332990 will aggregate. No new PM evolution, IC power rescaling or actual-data/resolution promotion; driver closure awaits results.",
-  "current_execution": "config/cf4_z6_native_physics_execution_v1.json",
+  "current_bundle": "Z7-DATA-SOURCE-STRUCTURE-RECOVERY",
+  "active_work_package": "CHANNEL_ABLATION_COUNTS_VELOCITY_INFORMATION",
+  "current_plan": "config/cf4_z7_information_sources_plan_v1.json",
+  "last_bundle_result": "config/cf4_z7_information_sources_result_v1.json",
+  "current_status": "Z7 completed: all four channel-ablation fits passed mechanics; counts-only density correlation 0.564-0.569, velocity-only 0.217-0.265, joint 0.565-0.579. Counts dominate density structure in this model; velocity mainly improves velocity prediction. Await user approval before count/tracer likelihood audit.",
+  "current_execution": "config/cf4_z7_information_sources_result_v1.json",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",
@@ -128,7 +128,7 @@
     "calibration_disposition": "AVAILABLE_FOR_CALIBRATION_ONLY"
   },
   "previous_bundle_closure_audit": "config/cf4_kf_design_readiness_opus_closure_attempt_v1.json",
-  "current_closure_audit": "PENDING_Z6_COMPLETION_AND_DRIVER_REVIEW",
+  "current_closure_audit": "config/cf4_z7_information_sources_result_v1.json",
   "next_closure_audit": "DRIVER_REVIEW_IF_ASTRA_OTHERWISE_OPUS_AT_BUNDLE_CLOSURE",
   "next_bundle_rule": "After Z6 driver closure, await user approval before extending sampling, changing resolution, actual-data inference or IC work. Empirical z=0 covariance is not a changed LCDM IC spectrum or an IC. Preserve the regional LG 0.3 / surroundings 1-2 cMpc/h goal and active driver audit policy.",
   "execution_firewall": {

@@ -1,6 +1,7 @@
 {
   "bundle": "Z7-DATA-SOURCE-STRUCTURE-RECOVERY",
-  "status": "USER_APPROVED_START",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z7_information_sources_result_v1.json",
   "date": "2026-09-06",
   "driver_design_review": "GO for a controlled channel-ablation bundle. Z6 improved intervals but not mean-field correlation. Distinguish what the velocity and galaxy-count data actually constrain before changing the model or grid again; reuse all joint baselines and calibrated prior.",
   "goal": "Maximize genuinely constrained structure in a CF4-informed z=0 posterior, eventually supporting 1-2 cMpc/h surroundings and LG-only 0.3 cMpc/h zoom ICs. Numerical grid resolution is not observational information. This remains N32=12 cMpc/h development work.",
