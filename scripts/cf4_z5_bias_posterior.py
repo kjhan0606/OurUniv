@@ -38,6 +38,9 @@ def main():
         if plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
             from cf4_z7_information_sources import compare
             compare(plan)
+        elif plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
+            from cf4_z9_tracer_response import compare
+            compare(plan)
         return
     task = int(os.environ["SLURM_ARRAY_TASK_ID"])
     out = root / f"task_{task}"
@@ -47,7 +50,10 @@ def main():
     cfg = plan["sampler"]
     # CPU mock generation preserves the previous discrete Poisson RNG draw.
     with jax.default_device(jax.devices("cpu")[0]):
-        if plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
+        if plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
+            from cf4_z9_tracer_response import load_mock as load_response
+            model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_response(task, plan)
+        elif plan["bundle"] == "Z7-DATA-SOURCE-STRUCTURE-RECOVERY":
             from cf4_z7_information_sources import load_mock as load_channels
             model, design, truth_rho, truth_v, truth_meta, counts, holdcounts, radial, candidate = load_channels(task, plan)
         elif plan["bundle"] == "Z6-NATIVE-PM-Z0-JOINT-PRIOR":
@@ -68,7 +74,8 @@ def main():
     field_size = model.field_size
     probes = np.concatenate([np.array([0, 1, 31, 32, 1024, 4096, 16384, 32767]) + offset
                              for offset in range(0, field_size, model.n**3)])
-    names = [f"nuisance_{i}" for i in range(24)] + [f"white_{i}" for i in probes] + ["white_RMS", "logdensity"]
+    nuisance_size = model.size - field_size
+    names = [f"nuisance_{i}" for i in range(nuisance_size)] + [f"white_{i}" for i in probes] + ["white_RMS", "log_posterior"]
     saved, traces, projections = [], [], []
     for chain in range(cfg["chain_count"]):
         seed = 2026090600 + 100 * task + chain
@@ -136,6 +143,10 @@ def main():
         density_summary[name].update(coverage68=float(np.mean((truth >= quantiles[1][mask]) & (truth <= quantiles[2][mask]))),
                                      coverage95=float(np.mean((truth >= quantiles[0][mask]) & (truth <= quantiles[3][mask]))),
                                      mean_posterior_SD=float(sd[mask].mean()))
+    density_summary["whole_box"].update(
+        posterior_mean_spatial_SD=float(mean.std()),
+        posterior_draw_spatial_SD_quantiles025_50_975=np.quantile(density_rms, [.025, .5, .975]).tolist(),
+        posterior_draw_spatial_RMS_quadratic_mean=float(np.sqrt(np.mean(density_rms**2))))
     forward = jax.jit(model.forward)
     support_pop = np.asarray(model.response) > 0
     held = design["holdout"]
@@ -144,12 +155,19 @@ def main():
         mu = .2 * lam[support_pop]
         return xlogy(holdcounts[support_pop], mu) - mu, -.5 * (radial[held] - pred[held])**2 / design["variance"][held]
     count_scores, velocity_scores = [], []
-    for x in draws[:, ::32].reshape(-1, model.size):
+    for x in draws[:, ::plan.get("heldout_retained_draw_stride", 32)].reshape(-1, model.size):
         a, b = scores(x); count_scores.append(a); velocity_scores.append(b)
     zero_count, zero_v = scores(np.zeros(model.size))
-    count_gain = float(np.sum(logsumexp(count_scores, axis=0) - np.log(len(count_scores)) - zero_count))
-    velocity_gain = float(np.sum(logsumexp(velocity_scores, axis=0) - np.log(len(velocity_scores)) - zero_v))
-    nuisance = projections[:, :, :24]
+    count_lppd = logsumexp(count_scores, axis=0) - np.log(len(count_scores))
+    velocity_lppd = logsumexp(velocity_scores, axis=0) - np.log(len(velocity_scores))
+    count_gain = float(np.sum(count_lppd - zero_count))
+    velocity_gain = float(np.sum(velocity_lppd - zero_v))
+    if plan["bundle"] == "Z9-TRACER-RESPONSE-CONTROL":
+        count_map = np.zeros(support_pop.shape)
+        count_map[support_pop] = count_lppd
+        np.savez_compressed(out / "heldout_scores.npz", count_lppd=count_map,
+                            count_support=support_pop, velocity_lppd=velocity_lppd)
+    nuisance = projections[:, :, :nuisance_size]
     gate = plan["assessment"]["mechanics_gates"]
     worst_rhat = max(convergence["max_Rhat"], field_convergence["max_Rhat"])
     min_bulk = min(convergence["min_bulk_ESS"], field_convergence["min_bulk_ESS"])
@@ -167,6 +185,9 @@ def main():
               "heldout_pointwise_log_predictive_gain": {"count": count_gain, "velocity": velocity_gain, "posterior_samples": len(count_scores)},
               "elapsed_s": time.perf_counter() - begin, "peak_host_MiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
               "actual_observational_posterior": False, "calibration_certified": False, "dx_cMpc_h": 12.}
+    if model.tracer_curvature_sigma > 0:
+        report["tracer_curvature_quantiles025_50_975"] = np.quantile(
+            nuisance[:, :, 24] * model.tracer_curvature_sigma, [.025, .5, .975]).tolist()
     np.savez_compressed(out / "posterior_fields.npz", density_mean=mean, density_SD=sd, density_quantiles=quantiles,
                         velocity_mean_approximation=mean_v, velocity_SD_approximation=sd_v,
                         truth_density=truth_rho-1, truth_velocity=truth_v, observed_support=support)

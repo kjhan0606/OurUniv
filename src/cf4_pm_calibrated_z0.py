@@ -89,8 +89,9 @@ def fit_covariance(fields, box, bins=10):
 class PMCalibratedFieldModel(PhysicalFieldModel):
     def __init__(self, *args, covariance, **kwargs):
         super().__init__(*args, **kwargs)
+        nuisance_size = self.size - self.field_size
         self.field_size = 4 * self.n**3
-        self.size = self.field_size + 24
+        self.size = self.field_size + nuisance_size
         _, direction, _ = wave_geometry(self.n, self.box)
         self.direction = jnp.asarray(direction)
         self.covariance = {name: jnp.asarray(value) for name, value in covariance.items()}

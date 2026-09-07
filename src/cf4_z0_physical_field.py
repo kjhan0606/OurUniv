@@ -64,10 +64,14 @@ def recenter_old_pm_fields(rho, velocity):
 class PhysicalFieldModel:
     """White field + 24 standard-normal nuisance parameters, same old priors."""
 
-    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings, *, origin_fraction=0.5, use_counts=True, use_radial=True):
+    def __init__(self, transfer, growth, box, response, design, nbar, bias, settings, *, origin_fraction=0.5, use_counts=True, use_radial=True, tracer_curvature_sigma=0.0):
         self.n = n = transfer.shape[0]
         self.box, self.size = box, n**3 + 24
         self.field_size = n**3
+        if not np.isfinite(tracer_curvature_sigma) or tracer_curvature_sigma < 0:
+            raise ValueError("invalid tracer curvature prior scale")
+        self.tracer_curvature_sigma = float(tracer_curvature_sigma)
+        self.size += int(self.tracer_curvature_sigma > 0)
         self.origin_fraction = origin_fraction
         if type(use_counts) is not bool or type(use_radial) is not bool:
             raise ValueError("likelihood channel switches must be boolean")
@@ -127,7 +131,7 @@ class PhysicalFieldModel:
         displacement = jnp.einsum("aijk,ijka->ijk", velocity, self.radial) / 100
 
         def population(p):
-            mass = self.nbar[p] * jnp.exp(alpha[p]) * unit_mean_density(bias[p] * jnp.log(rho))
+            mass = self.nbar[p] * jnp.exp(alpha[p]) * unit_mean_density(self.tracer_log_response(rho, bias[p], nuisance))
             pushed = jnp.zeros_like(rho)
             for node, weight in zip(s["Gaussian_radial_quadrature_offsets_sigma"], s["Gaussian_radial_quadrature_weights"], strict=True):
                 positions = (self.coords + (displacement + node * sigma[p])[..., None] * self.radial) % self.box
@@ -136,6 +140,20 @@ class PhysicalFieldModel:
 
         intensity = jax.lax.map(population, jnp.arange(6))
         return intensity, self.radial_prediction(velocity, nuisance)
+
+    def tracer_log_response(self, rho, bias, nuisance):
+        """Nested development link; sigma=0 preserves the original rho**bias.
+
+        One optional common curvature coefficient has N(0, sigma**2) prior.
+        This is a controlled misspecification experiment, not measured galaxy
+        physics. Population normalization remains in observe(), after this link.
+        """
+        log_rho = jnp.log(rho)
+        response = bias * log_rho
+        if self.tracer_curvature_sigma > 0:
+            centered = log_rho - jnp.mean(log_rho)
+            response = response + self.tracer_curvature_sigma * nuisance[24] * centered**2
+        return response
 
     def radial_prediction(self, velocity, nuisance):
         sampled = jnp.stack([read_centred(velocity[a], self.positions, self.box, self.origin_fraction) for a in range(3)], axis=-1)

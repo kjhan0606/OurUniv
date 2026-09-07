@@ -1,0 +1,43 @@
+{
+  "bundle": "Z9-TRACER-RESPONSE-CONTROL",
+  "status": "USER_APPROVED_IMPLEMENTATION_AND_BOUNDED_EXPERIMENT",
+  "goal": "Improve defensible CF4-informed z=0 density/velocity recovery before IC inversion. Ultimately LG-only 0.3 cMpc/h, surroundings 1-2 cMpc/h. This experiment remains N32, dx=12 cMpc/h.",
+  "reason": "Z8 confused posterior uncertainty with spatial density amplitude and white-field/log-posterior probes with physical density. Those conclusions are withdrawn. The existing count link is already nonlinear and matched its mock generator. Test a specified model error with a matched null control; do not presume this explains Z6/Z7 recovery.",
+  "data": {
+    "Z6_plan": "config/cf4_z6_native_physics_plan_v1.json",
+    "Z6_case": 1,
+    "tasks": [0, 1, 2, 3],
+    "cases": [
+      {"task": 0, "generator_curvature": 0.0, "fit": "baseline", "train_seed": 2026090710, "heldout_seed": 2026090810},
+      {"task": 1, "generator_curvature": 0.0, "fit": "curvature", "train_seed": 2026090710, "heldout_seed": 2026090810},
+      {"task": 2, "generator_curvature": 0.2, "fit": "baseline", "train_seed": 2026090711, "heldout_seed": 2026090811},
+      {"task": 3, "generator_curvature": 0.2, "fit": "curvature", "train_seed": 2026090711, "heldout_seed": 2026090811}
+    ],
+    "contract": "Reuse native non-calibration PM truth 0 and fixed Z6 covariance trained on 1,2,3,4. Previously inspected development truth, not a virgin test universe. Separate seeded Poisson train(.8 lambda) and heldout(.2 lambda) realizations; each baseline/extension pair gets exactly identical data. Same Z6 synthetic radial velocities in all four fits. Six populations use published count/tracer priors and fixed selection; they are not a volume-complete CF4 galaxy-count catalog.",
+    "independence_limit": "Heldout noise is independent conditional on the same truth and specified intensity. Shared observation machinery is intentional for a controlled link test; no independent galaxy-formation or selection-systematics validation."
+  },
+  "model": {
+    "link": "tracer_p proportional to exp(b_p log(rho) + gamma * (log(rho)-mean(log(rho)))^2), normalized per population to model expectation",
+    "curvature_prior_sigma": 0.2,
+    "curvature": "One common gamma across populations, gamma=0.2*q with q~N(0,1); baseline fixes gamma=0. All original 24 nuisance priors remain free and unchanged.",
+    "frozen": ["native truth/coordinates", "PM-calibrated z=0 covariance", "LCDM IC spectrum", "RSD/FoG/selection", "HMC settings"],
+    "scope": "A toy nested tracer-link stress test, not a measured bias law. No stochastic residual field or physical prior change."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero plus .5 standardized jitter, no truth initializer", "inverse_mass": "identity"},
+  "heldout_retained_draw_stride": 8,
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "required": ["baseline and gamma=0 extended predictions agree; mass and gradients tested", "same-data pair identity and heldout separation", "all nuisance coordinates including curvature enter convergence diagnostics", "heldout pointwise log-predictive comparison, total and six populations", "density correlation/RMSE/coverage, posterior-mean spatial SD, individual-draw spatial SD and pointwise uncertainty separately", "compare both injected-curvature and matched-null pairs; inconclusive or adverse results are acceptable outcomes"],
+    "interpretation": "Mechanics pass is not scientific success. A promising extension needs better perturbed-case heldout prediction with density recovery/coverage considered jointly and no material null-control degradation. One truth and one chosen perturbation cannot establish population realism, significances, calibration or production readiness. No forced power matching or selection of the best seed.",
+    "stop": "Four fits and one aggregate only; report failures without promotion. No next bundle without user approval."
+  },
+  "resources": {
+    "tests": {"CPUs": 2, "estimated_MiB": 2400, "requested_MiB": 2880, "time_limit": "00:15:00"},
+    "posterior": {"CPUs": 4, "GPUs": 1, "estimated_MiB": 6144, "requested_MiB": 7373, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregate": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "output_budget_GiB": 5,
+    "no_new_PM": true
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z9_tracer_response_v1",
+  "next_bundle_requires_user_approval": true
+}

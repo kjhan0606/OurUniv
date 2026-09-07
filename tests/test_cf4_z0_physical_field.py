@@ -82,6 +82,27 @@ class PhysicalFieldTests(unittest.TestCase):
         changed = data.copy(); changed[design["holdout"]] += 1e6
         np.testing.assert_allclose(model.nlp(jnp.asarray(x), counts, changed), model.nlp(jnp.asarray(x), counts, data), rtol=1e-12)
 
+        # A zero optional curvature must reproduce the original likelihood,
+        # including its default prior and normalization, exactly up to roundoff.
+        extended = PhysicalFieldModel(transfer, .5, 48., np.ones((6, 4, 4, 4)), design,
+                                      np.arange(1, 7), np.ones(6), settings, tracer_curvature_sigma=.2)
+        self.assertEqual(extended.size, model.size + 1)
+        y = np.concatenate((x, [0.]))
+        np.testing.assert_allclose(extended.forward(jnp.asarray(y))[0], intensity, rtol=1e-12)
+        np.testing.assert_allclose(extended.nlp(jnp.asarray(y), counts, data), model.nlp(jnp.asarray(x), counts, data), rtol=1e-12)
+        y[-1] = 1.0
+        curvy_intensity, curvy_radial = extended.forward(jnp.asarray(y))
+        self.assertGreater(np.max(np.abs(np.asarray(curvy_intensity) - intensity)), 1e-6)
+        np.testing.assert_allclose(curvy_intensity.sum(axis=(1, 2, 3)), 64 * np.arange(1, 7), rtol=1e-12)
+        np.testing.assert_allclose(curvy_radial, radial, rtol=1e-12)
+        curved_fn = jax.jit(lambda vector: extended.nlp(vector, counts, jnp.asarray(data)))
+        direction = rng.normal(size=extended.size)
+        direction /= np.linalg.norm(direction)
+        grad = jax.grad(curved_fn)(jnp.asarray(y))
+        self.assertTrue(np.isfinite(grad).all())
+        numeric = (curved_fn(y + eps * direction) - curved_fn(y - eps * direction)) / (2 * eps)
+        self.assertAlmostEqual(float(jnp.dot(grad, direction)), float(numeric), places=6)
+
 
 if __name__ == "__main__":
     unittest.main()

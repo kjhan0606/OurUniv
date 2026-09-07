@@ -1,14 +1,15 @@
 {
   "bundle": "Z8-COUNT-TRACER-IDENTIFIABILITY",
-  "status": "CLOSED_DRIVER_REVIEWED",
+  "status": "INTERPRETATION_WITHDRAWN_CORRECTED_BY_DRIVER",
   "job": 333687,
   "result": "/gpfs/kjhan/CF4/z0_density/z8_count_tracer_identifiability_v1/result.json",
   "mechanics": "CPU postprocessing completed successfully; four Z7 chain sets read; no observed CF4 data read.",
   "findings": {
-    "bias_density_degeneracy": "Posterior bias-unit correlations with white-field RMS are within about 0.06 in counts-only and 0.04 in velocity-only cases; correlations with log-density are within about 0.10 and 0.04. The Z4 joint-MAP bias runaway is not a simple posterior linear correlation in these chains.",
-    "density_amplitude": "Counts-only posterior physical-density SD is about 0.756-0.760 of the PM truth SD; velocity-only is about 0.800-0.805. Both are smooth relative to truth, with counts still providing much stronger structure correlation.",
-    "interpretation": "The remaining missing structure is more consistent with prior/likelihood model smoothing or missing nonlinear tracer physics than with a single unconstrained bias-amplitude direction. This does not prove the model is correct.",
+    "bias_density_degeneracy": "Not established. white_RMS combines all four standardized latent blocks, three of which drive velocity residuals. The projection named logdensity is scalar log posterior, not physical log density. Their weak bias correlations do not rule out physical bias-density degeneracy.",
+    "density_amplitude": "The 0.756-0.760 count-only and 0.800-0.805 velocity-only ratios measure mean pointwise posterior uncertainty divided by truth spatial SD. They are NOT recovered density amplitude ratios. The previous amplitude interpretation is withdrawn.",
+    "interpretation": "These statistics do not establish smoothing or missing nonlinear tracer physics. The original rho**bias response is already nonlinear and identical in the Z6/Z7 generator and fitted likelihood. Posterior-mean shrinkage also differs from the structure in individual posterior draws.",
     "scope": "Development-only chain audit, not an actual CF4 information frontier or calibration certificate."
   },
-  "next_recommendation": {"purpose": "Test a count/tracer likelihood with an explicit nonlinear response or stochastic residual field against heldout synthetic populations, while preserving the LCDM latent prior and z=0-to-IC route.", "mandatory": ["keep bias priors and population normalization explicit", "separate density amplitude recovery from structure correlation", "use independent heldout tracer realizations before actual CF4 inference"], "deferred": ["actual CF4 count inference", "resolution increase", "IC/zoom", "high-k completion"], "user_approval_required": true, "started": false}
+  "correction": {"historical_artifact": "The linked original result.json is retained unchanged as history, not endorsed scientific interpretation.", "corrected_statistics": "/gpfs/kjhan/CF4/z0_density/z8_count_tracer_identifiability_corrected_v2/result.json", "execution": "Scheduled with the approved Z9 preflight; verify the Slurm result before calling it completed."},
+  "next_recommendation": {"purpose": "User-approved Z9 nested tracer-link stress test with a matched null control and independent heldout Poisson noise; not a claimed explanation of previous underrecovery.", "mandatory": ["keep bias priors and population normalization explicit", "separate posterior-mean amplitude, individual-draw amplitude, uncertainty and structure correlation", "compare baseline and extension on identical data for both null and specified nonlinear-generator cases"], "deferred": ["actual CF4 count inference", "resolution increase", "IC/zoom", "high-k completion"], "user_approval_received": true, "plan": "config/cf4_z9_tracer_response_plan_v1.json"}
 }
