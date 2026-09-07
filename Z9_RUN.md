@@ -36,7 +36,8 @@ marginal pass the original gates: worst Rhat 1.02396, minimum bulk ESS 134.18.
 Curvature intervals remain [-0.03326, 0.05823] for truth 0 and [0.14418, 0.22921]
 for truth 0.2. This validates the conditional diagnostic, not real-data recovery
 or the free-field model. Full closure: `config/cf4_z10_exact_radial_result_v1.json`.
-No next bundle has started; user approval is required before that transition.
+Z10 closed before any next bundle. The user subsequently approved Z11, the
+prior-compatible field control; see `Z11_RUN.md` for its active execution record.
 
 ## Original execution record
 
