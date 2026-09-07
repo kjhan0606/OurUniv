@@ -1,6 +1,7 @@
 {
   "status": "USER_APPROVED_BUNDLE_C_IN_PROGRESS",
   "output_root": "/gpfs/kjhan/CF4/z0_density/bundle_c_v1",
+  "native_data_subdir": "native_data_v2",
   "frozen_inputs": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1",
   "parent_fields": "/gpfs/kjhan/CF4/z0_density/actual_data_longer_v3/task_0/posterior_fields.npz",
   "tracer_program": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",

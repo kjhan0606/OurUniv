@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def main():
     cfg=json.loads((ROOT/"config/cf4_bundle_c_v1.json").read_text())
-    out=Path(cfg["output_root"])/"native_data"
+    out=Path(cfg["output_root"])/cfg["native_data_subdir"]
     out.mkdir(parents=True,exist_ok=False)
     frozen=Path(cfg["frozen_inputs"])
     tracer=json.loads((ROOT/cfg["tracer_program"]).read_text())
@@ -30,7 +30,7 @@ def main():
     coarse=np.floor(position/(cfg["box_cMpc_h"]/cfg["parent_N"])).astype(int)
     np.testing.assert_array_equal(cells//8,coarse)
     flat=np.ravel_multi_index(coarse.T,(32,)*3)
-    key=rows["population"]*32**3+flat
+    key=rows["population"].astype(np.int64)*32**3+flat
     with np.load(frozen/"corrected_counts.npz",allow_pickle=False) as f:
         for name,mask in (("counts_all",used),("counts_train",used&rows["train"]),
                           ("counts_holdout",used&rows["holdout"])):
