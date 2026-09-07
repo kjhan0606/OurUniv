@@ -9,6 +9,12 @@ committed and pushed before submission from syntax. All compute uses Slurm.
 | 333745 | Four free-field GPU fits; after successful 333744, at most two concurrent |
 | 333746 | After-any aggregation and comparison with existing PM results |
 
+Verified startup: 333744 completed in 2m08s (batch peak RSS 1082068 KiB), with
+all input/gradient checks passing. Tasks 333745_0/1 reached chain 0 warmup step
+128 with zero divergences and acceptance about 0.90; tasks 2/3 await the two-
+task concurrency limit. Logs include hwloc binding warnings but sampling is
+advancing. Final convergence and science outcomes are not yet available.
+
 Outputs: `/gpfs/kjhan/CF4/z0_density/z11_prior_control_v1/`.
 Plan: `config/cf4_z11_prior_control_plan_v1.json`.
 Read these fixed job IDs and their specific logs/progress files, not process
