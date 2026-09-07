@@ -130,3 +130,10 @@ and joint CF4/LG conditioning remain to be implemented. A single fixture
 cannot establish that prior. The LG-on/off inference cannot be claimed from
 this check. Two bounded CPU jobs:2 cores, estimated3000 MiB+20%=3600 MiB,
 10min each; catalogue staging plus selected particles/products <2 GiB estimate.
+
+The fixed native-catalogue readout belongs to the original particle
+realization. Do NOT alter fine density/momentum with the generic conservative
+map and continue treating the old SUBFIND catalogue as its resolved halos.
+A changing field needs a jointly defined halo state or recomputed physical
+readout. Passing this fixture settles implementation units/moments, not the
+conditional prior or its cosmological/statistical validity.

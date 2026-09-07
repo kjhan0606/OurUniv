@@ -81,6 +81,15 @@ is the physically specified fine-field prior and LG halo/subhalo operator,
 then the bounded LG-on/off comparison, not another coarse sampler extension.
 See the C run record for current products and limits.
 
+Native resolved-operator jobs334521/334522 now completed. A real TNG FoF
+fixture with989815 particles supplies mass/mean-velocity/physical-dispersion
+fields at0.1875 and1.5, with conservative restriction and particle/SUBFIND
+mass/COM agreement. This is a simulated FoF component, NOT a reconstructed
+LG or full matter map. The catalogue readout is valid for that unmodified
+particle realization; arbitrary changes to fine cells cannot inherit its
+halo catalogue. A full-matter conditional fine prior and actual joint LG
+conditioning remain outstanding. No new high-resolution posterior is running.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

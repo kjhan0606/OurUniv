@@ -115,3 +115,35 @@ zero groups/subhalos and whose empty groups omit field datasets. Added the
 header-zero case; nonempty chunks still require every field. Preserve the
 partial v1 staging and retry into `bundle_c_v1/tng_operator_v2`. No numerical
 calculation or model fitting had started.
+
+### Completed native-particle result
+
+Jobs334521 (prepare) and334522 (measure) both completed under Slurm. Both
+focused tests passed. Native group468, subhalos392368/392369/392370 were
+selected by the frozen engineering-fixture rule, without CF4/LG scoring.
+Only989815 particles were staged:233820 gas,604989 DM,151001 stars/winds,
+5 BH particles. No full snapshot copy or additional download.
+
+- Particle/SUBFIND member-mass relative differences: max3.97e-8.
+- Particle COM versus SubhaloVel: max component difference6.54e-6 km/s.
+- All selected FoF mass is inside the24 cMpc/h cube. Direct1.5 deposition
+  agrees with restriction of0.1875 fields in mass, momentum and second
+  velocity moment; integer particle counts agree exactly.
+- Saved mass/density, mean peculiar velocity, three-component physical
+  sigma_v, raw moments and validity mask. Empty cells remain undefined in
+  velocity, not forced to a measured zero. Dispersion includes intra-cell
+  spread and coarse-graining includes between-cell velocity variation.
+- The identity-preserving observational projection ran on simulated sky
+  directions only. Actual LG sky/data on disk are unchanged. There was no
+  actual LG likelihood evaluation or claimed LG analogue selection.
+
+Result: NATIVE_RESOLVED_OPERATOR_AND_MOMENTS_PASS_NOT_LG_CONDITIONING.
+Products in `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/tng_operator_v2/`:
+`fof_component_moments.h5`, `result.json`, native catalogue/particle subsets
+and the exact particle slice request. Preserve the incomplete staging v1.
+
+This delivers a real-particle physical readout, not a conditional fine prior.
+Diffuse/external matter, galaxy/halo COM systematics, cosmology/model
+dependence and actual joint CF4/LG field conditioning remain. This catalogue
+must not be reused as if unchanged after freely modifying the deposited
+field. No background/fine actual-data posterior or new simulation is running.
