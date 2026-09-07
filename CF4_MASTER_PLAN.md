@@ -52,6 +52,8 @@ its target and correction before calling its output an IC posterior.
 starting each bundle.** Routine fixes/tests within A do not need a new
 approval. No automatic next-bundle launch.
 
+Current execution record: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
+
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10
 fixed-field and Z11 prior-compatible controls recover the injected tracer
