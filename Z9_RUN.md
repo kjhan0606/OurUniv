@@ -19,6 +19,14 @@ This isolates whether the curvature displacement persists conditional on true
 fields. It does not by itself distinguish a wrong field prior from other
 field–observation coupling or establish calibrated real-data reconstruction.
 
+Z10 implementation `3227f5b` was committed and pushed before submission.
+Slurm array `333719` (tasks 0/1) runs on allocated GPUs, with four CPUs and
+4916 MiB requested host RAM per task (4096 MiB estimate plus 20%), one-hour
+limits. After-any aggregation job `333721` reports results or missing/failed
+cases; it does not launch another bundle. Outputs are in
+`/gpfs/kjhan/CF4/z0_density/z10_fixed_truth_v1/`. Inspect these exact job IDs,
+`task_0/progress.json`, `task_1/progress.json`, and `comparison.json` for status.
+
 ## Original execution record
 
 Implementation commit: `3c370a5` (pushed). Project: OurUniv/CF4;
