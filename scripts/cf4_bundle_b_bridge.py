@@ -1,5 +1,6 @@
 """Two bounded regularized MAP development bridges, never an IC posterior."""
 import json
+import os
 from pathlib import Path
 import sys
 import time
@@ -50,7 +51,10 @@ def main():
     plan=json.loads((ROOT/config["native_plan"]).read_text())
     program=json.loads((ROOT/config["PM_program"]).read_text())
     settings=config["bridge"]
-    out=Path(config["output_root"])/"bridge"
+    output_name=os.environ.get("CF4_B_BRIDGE_OUTPUT_NAME","bridge")
+    if output_name not in ("bridge","bridge_retry1"):
+        raise ValueError("unapproved output attempt")
+    out=Path(config["output_root"])/output_name
     out.mkdir(parents=True,exist_ok=False)
     fields=[read_native(plan,i) for i in settings["training"]]
     # Fixed before reading either target: residual scales are engineering weights,

@@ -23,6 +23,11 @@ def make_forward(program):
     def forward(white):
         modes = linear_modes(white.reshape((n,)*3), cosmo, conf)
         particles, observables = lpt(modes, cosmo, conf)
+        # LPT leaves acc=None. PMWD's custom reverse rule returns an array
+        # cotangent for acc, so its input/output tree would otherwise differ.
+        # Initial force overwrites this constant; it adds no physical force or
+        # gradient path. Check unchanged forward values and directional derivative.
+        particles = particles.replace(acc=jnp.zeros_like(particles.disp))
         particles, observables = nbody(particles, observables, cosmo, conf)
         mass = scatter(particles, conf)
         momentum = scatter(particles, conf, val=particles.vel*100.)
