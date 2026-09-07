@@ -90,6 +90,18 @@ particle realization; arbitrary changes to fine cells cannot inherit its
 halo catalogue. A full-matter conditional fine prior and actual joint LG
 conditioning remain outstanding. No new high-resolution posterior is running.
 
+The next C implementation is a finite whole-patch coarse-summary conditional
+prior, plus a total-matter source including diffuse/non-FoF matter. It retains
+native field/catalogue consistency and separates physical sigma_v from
+posterior uncertainty in mean velocity. This finite support baseline does
+NOT yet define a continuous LG posterior or exact full-parent conditioning.
+Two-file timing334524 and5 regressions passed; full source job334528 submitted
+(2 CPUs,9600 MiB,4h cap, estimated2–3h). It builds native400^3/50^3 moments
+and18 train/9 nonoverlap check patches from existing TNG. No new simulation,
+Hong retraining, actual CF4/LG weighting or automatic downstream inference.
+See BUNDLE_C_RUN.md. Do not broaden prior kernels or narrow the science target
+just to disguise insufficient support from a small finite patch collection.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

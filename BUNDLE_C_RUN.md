@@ -172,3 +172,12 @@ The full448-file pass is estimated at2–3h (4h cap), with occupancy and I/O
 variation caveats. It will also check absolute box mass against native Omega_m
 without rescaling, write the full moment source and linked finite-patch model,
 and exercise the component reader. No actual-data inference follows it.
+
+Full source job334528 submitted, source33e855f, Slurm2 CPUs/9600 MiB/4h.
+Output: `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/total_matter_v1`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_C_total_334528.{out,err}`.
+Only a successful final result.json denotes complete total-matter processing;
+the partial timing output remains separate. The job itself writes the final
+conservation and finite-prior support diagnostics. No subsequent job is queued.
+The finite mixture is not a calibrated continuous model: if support collapses,
+report that failure instead of relaxing the physical target or forcing a seed.
