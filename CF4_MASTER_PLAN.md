@@ -68,8 +68,11 @@ these are not yet a high-resolution posterior or an evaluated LG operator.
 Native-data334408 and conservative/JAX tests passed. Selected actual inputs
 contain no direct CF4 or count rows inside LG R2 cMpc/h (CF4 minimum radius
 15.8152). LG observations must supply that information explicitly. Selection
-integration334409 is now running on N256, reusing source masks/LF rather than
-interpolating N32 exposure. This prepares fine inference; it is not a matter
+integration334409 completed, but order4 missed the positive angular footprint
+of one occupied population/cell. Native row positions have valid source-mask
+and LF support. A geometry-only zero-support cubature repair is implemented:
+apply the same rule to occupied and empty cells, preserve v1, and verify before
+using the count likelihood. This prepares fine inference; it is not a matter
 density reconstruction. See the C run record for current products and limits.
 
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
