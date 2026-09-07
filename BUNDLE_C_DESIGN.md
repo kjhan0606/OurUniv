@@ -90,3 +90,10 @@ support insertion or promotion to calibrated selection. Report unresolved
 positive-count support if present. The N256 density/count origin offset is
 exactly2 whole cells: use a cyclic field permutation, not interpolating either
 the field or survey mask. A numerical integration finish is not field inference.
+
+Completed implementation amendment: order4 missed one occupied footprint.
+The geometry-only v2 zero-support repair and preservation checks are complete;
+see BUNDLE_C_RUN.md. The repaired selection is an input for likelihood
+development, not calibrated selection: finite thin-boundary cubature error
+remains explicitly measured in the controls. Do not remove observed rows,
+insert a probability floor, or label this selection product a matter map.

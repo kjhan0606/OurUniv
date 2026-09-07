@@ -10,7 +10,8 @@ population array by32768 without explicit promotion. Corrected to int64,
 matching the existing fine-key construction. Preserve the first directory;
 retry uses native_data_v2. No scientific selection or input rows changed.
 
-The current task is C1–2; C3–5 remain. Do not call input preparation or
+The first delivery covered C1–2; the current work is C3 selection, with the
+fine prior/LG operator and C4–5 still remaining. Do not call input preparation or
 zero-detail cell refinement a reconstruction. Do not claim0.1875 information
 resolution from the configured cell size. Continue within C after the native
 inputs and geometry tests; D still needs separate user approval.
@@ -70,7 +71,30 @@ node's entire HEALPix pixel. Moved the synthetic strip farther toward the cube
 face, leaving a full-pixel margin. Production masks/geometry/Sobol settings
 are unchanged; this corrects the test fixture, not the scientific algorithm.
 
-Retry334508 is RUNNING on syn07 under Slurm (source854d057). All3 focused
-regressions passed. Started2026-09-08 00:45:51 KST; first x-slab completed.
-The full support result and convergence controls are still pending. No
-downstream inference is queued, and no selection pass is claimed yet.
+Retry334508 COMPLETED on syn07 under Slurm (source854d057),2026-09-08
+00:45:51–00:55:39 KST,9m48s, MaxRSS967352K. All3 focused regressions passed.
+Status: SUPPORT_REPAIRED_NOT_SELECTION_CALIBRATION.
+
+- Geometry-selected candidate population/cells:305732. Added positive
+  exposure:70261 entries, of which70260 have no observed galaxy count.
+- Occupied zero-support keys:1→0 across all32162 occupied population/cells.
+  The failed key40599936 now has exposure0.0154009052 (previously exactly0).
+  The earlier order64 diagnostic was0.0157118549; neither is exact truth.
+- Preservation check334512, afterok334508, completed00:55:48 KST in9s.
+  All15862681 originally positive population/shell/cell entries are bitwise
+  unchanged, and no entry decreased. The observed-support check passes.
+-120 occupancy-blind geometry control cells compared against an independent
+ 32768-point Sobol rule: max/mean tested shell-L1 absolute differences
+ 9.37195e-4/4.66319e-5. In33 population/cell control entries, the denser rule
+ found tiny positive support missed by2048 points. Thus neither full support
+ completeness nor global quadrature precision has been certified. No
+ occupied entry remains in that zero-support class.
+
+Outputs: `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/selection_1p5_v2/`
+contains selection.h5, support_changes.npz and result.json. Preserve v1.
+This resolves the immediate actual-count likelihood impossibility; it does
+not calibrate the source angular mask, survival/bias, or high-resolution
+matter prior. No C calculation or downstream inference remains queued.
+Next work within C is specifying the physical fine-field prior and explicit
+LG operator, then the bounded LG-on/off field inference. Additional generic
+validation infrastructure is not the deliverable; D is still unapproved.

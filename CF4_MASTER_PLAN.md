@@ -70,10 +70,16 @@ contain no direct CF4 or count rows inside LG R2 cMpc/h (CF4 minimum radius
 15.8152). LG observations must supply that information explicitly. Selection
 integration334409 completed, but order4 missed the positive angular footprint
 of one occupied population/cell. Native row positions have valid source-mask
-and LF support. A geometry-only zero-support cubature repair is implemented:
-apply the same rule to occupied and empty cells, preserve v1, and verify before
-using the count likelihood. This prepares fine inference; it is not a matter
-density reconstruction. See the C run record for current products and limits.
+and LF support. Geometry-only repair334508 and preservation check334512
+completed: occupied zero-support keys1→0;70260 unoccupied population/cells
+also repaired; all prior positive entries unchanged. The v2 selection is a
+development input, NOT precision-certified:120 geometry controls still find
+33 tiny-support population/cell entries missed by2048-point cubature, with
+maximum tested shell-L1 absolute error9.37e-4. Preserve v1 and this limitation.
+No high-resolution posterior inference is running. Next substantive C work
+is the physically specified fine-field prior and LG halo/subhalo operator,
+then the bounded LG-on/off comparison, not another coarse sampler extension.
+See the C run record for current products and limits.
 
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
