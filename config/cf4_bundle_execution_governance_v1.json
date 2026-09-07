@@ -113,8 +113,8 @@
   "active_work_package": "COMPLETED_Z7_CHAIN_IDENTIFIABILITY_AUDIT",
   "current_plan": "config/cf4_z8_count_tracer_identifiability_plan_v1.json",
   "last_bundle_result": "config/cf4_z7_information_sources_result_v1.json",
-  "current_status": "User approved Z8: audit completed Z7 chains for count-channel bias-density identifiability using CPU-only postprocessing. No new posterior, actual data or resolution change.",
-  "current_execution": "PENDING_Z8_SUBMISSION",
+  "current_status": "Z8 completed on CPU job333687: bias-field correlations are small, while posterior density amplitude remains 0.756-0.805 of PM truth SD. Remaining gap is likely model smoothing/nonlinear tracer response, not a single bias linear degeneracy. Await approval for heldout nonlinear tracer-response test.",
+  "current_execution": "config/cf4_z8_count_tracer_identifiability_result_v1.json",
   "latest_development_posterior_aggregate": {
     "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate/aggregate.json",
     "sha256": "57cc12f19d9889d1f5b81a56a7a1a9578cf6908f251ba7082dcce9777286dc9a",

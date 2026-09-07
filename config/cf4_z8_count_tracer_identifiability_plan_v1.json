@@ -1,6 +1,7 @@
 {
   "bundle": "Z8-COUNT-TRACER-IDENTIFIABILITY",
-  "status": "USER_APPROVED_START",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z8_count_tracer_identifiability_result_v1.json",
   "date": "2026-09-07",
   "purpose": "Quantify bias-density degeneracy and count-channel identifiability using completed Z7 synthetic posterior chains before any actual CF4 inference or grid increase.",
   "goal": "Protect the CF4-informed z=0 posterior route: identify what the count likelihood constrains, which density modes remain prior-dominated, and whether tracer bias is separately identified.",
