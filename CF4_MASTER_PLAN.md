@@ -127,6 +127,20 @@ no further bank densification, kernel widening, N32 extension or fake LG map.
 This result does not prove that every finite prior fails, nor that a continuous
 model will automatically succeed. No actual CF4/LG fine inference is running.
 
+Continuous-state implementation335878 now completed in24s: a native total-
+matter patch with three disjoint member components supports21 continuous
+position/member-mass/COM-velocity marks, coupled positive remainder mass and
+momentum compensation, and correct second-moment transport. Conservation and
+one noiseless same-generator inverse control pass. This is a KINEMATIC
+OPERATOR, not a calibrated continuous LCDM prior, resolved transformed halo,
+independent validation or actual LG posterior. Close the toy-control step.
+The next substantive requirement remains the physical joint distribution of
+environment, halo marks/profiles and remainder response with COM/model
+discrepancy. The21 local marks cannot by themselves fix support on all32
+coarse environmental features. Do not promote the precise numerical inverse
+error to astronomical accuracy or restart bank expansion. Actual LG-on/off
+information comparison remains undelivered; see BUNDLE_C_RUN.md.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

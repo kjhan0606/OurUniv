@@ -249,3 +249,41 @@ tests are ready for Slurm. Full details, bounds, resource limits and scientific
 limitations are in BUNDLE_C_DESIGN.md. This implementation has no calibrated
 LCDM prior, physical reservoir response or actual LG/CF4 likelihood. A pass
 will not promote it to an LG posterior or settle finite-bank support.
+
+Submitted Slurm335878, source902fd76 (committed/pushed),2 CPUs/3600 MiB/15min.
+Output `bundle_c_v1/continuous_transport_v1`; logs
+`/gpfs/kjhan/CF4/logs/cf4_C_continuous_335878.{out,err}`. No subsequent job is
+queued. This single control writes native/injected/recovered full moments and
+the scientific limitations into its final result, not just an optimizer log.
+
+335878 COMPLETED, exit0, elapsed24s. Both focused tests passed. Native
+decomposition and21-parameter fit/check took7.18s before field serialization.
+No native subtraction residual needed removal; zero-state moment relative
+error<=1.10e-16. Whole-patch mass/momentum relative error<=5.03e-17 and
+fine/coarse restriction error<=3.73e-16. The324 training cells constrain mass
+and momentum;327 complementary cells and unfit second moments reproduce the
+injected changes to<=4.34e-16 relative error. Dimensionless parameter error
+1.67e-15 in16 optimizer evaluations. This near-exact recovery is expected
+for a noiseless same-generator inverse problem, NOT independent astrophysical
+accuracy, uncertainty coverage, actual LG information gain or a success on
+the nine previously failed conditional-prior targets.
+
+Status KINEMATIC_CONTROL_PASS_NOT_PHYSICAL_PRIOR_OR_LG_POSTERIOR. Native,
+injected and recovered7-moment128^3 arrays are saved in
+`continuous_transport_v1/fields.h5`; identities and full diagnostics in
+`continuous_transport_v1/result.json`. The remainder mass multiplier for the
+test is0.9998552 with bulk shift[-0.02114,0.01465,0.03031] km/s. This is a
+small, global algebraic reservoir response, not evidence for physical halo
+accretion. Sub-grid profile shapes/membership stay fixed; transformed objects
+are never presented as newly resolved bound halos. No new native halo finder
+was run. Tiny MaxRSS from the batch accounting is not credible peak Python
+memory and is not used as a resource measurement.
+
+Close this implementation control; do not grow a new toy-test series. The
+remaining scientific work is a physical joint environment/halo/remainder
+distribution and profile/COM discrepancy calibration, then actual LG-on/off
+conditioning. The present21 local marks and a global compensation factor do
+NOT provide flexible control of all32 environmental summaries and therefore
+do not by themselves replace the failed conditional prior. Existing total
+TNG matter/catalogue remain source data for that work, not observed LG truth.
+No downstream job is queued; Bundle C is still in progress.
