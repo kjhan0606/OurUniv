@@ -64,7 +64,7 @@ class QuantilePriorTest(unittest.TestCase):
         finite = float((fn(x+eps*direction)-fn(x-eps*direction))/(2*eps))
         np.testing.assert_allclose(grad, finite, rtol=1e-5, atol=1e-5)
         changed = np.zeros(8); changed[design["holdout"]] = 1e6
-        np.testing.assert_allclose(model.nlp(x, counts, changed), fn(x), atol=1e-10)
+        np.testing.assert_allclose(model.nlp(jnp.asarray(x), counts, jnp.asarray(changed)), fn(x), atol=1e-10)
 
 
 if __name__ == "__main__":
