@@ -1,0 +1,31 @@
+{
+  "bundle": "Z10-EXACT-RADIAL-REPAIR",
+  "status": "USER_APPROVED_SAMPLER_REPAIR",
+  "purpose": "Complete the fixed-truth Z10 diagnostic using the exact independent Gaussian radial-calibration posterior. No new physical model or data.",
+  "Z10_plan": "config/cf4_z10_fixed_truth_plan_v1.json",
+  "factorization": {
+    "domain": "Only the fixed native density/velocity experiment with the current independent nuisance priors. This independence does not apply when fields are inferred as in Z9.",
+    "coordinates": "u=(nuisance_0:20,nuisance_24); q=nuisance_20:24. Counts depend only on u and fixed fields; radial velocities depend only on q and fixed fields. p(u,q|D,fixed fields)=p(u|counts)*p(q|radial).",
+    "Gaussian": "A=B*diag(q_std), r=radial_data-radial_prediction(fixed_velocity,q=0), W=diag(1/variance), using training rows only. Precision P=I+A^T W A; mean=P^-1 A^T W r; covariance=P^-1.",
+    "reuse": "Retain every saved post-warmup u sample from all four Z10 chains, with no thinning, chain selection, bias correction or rescaling. Replace only q by independently seeded exact Gaussian draws. Recompute full log posterior through the analytic quadratic difference and verify against the original objective.",
+    "prediction": "Integrate the four-dimensional q posterior exactly for each heldout radial row, including its added predictive variance. Keep the original pointwise score convention, which omits fixed Gaussian observation constants. This is not a joint predictive evidence."
+  },
+  "checks": [
+    "saved Z9 mock and frozen regenerated data agreement",
+    "original objective/count invariance validates factorization at two parameter settings",
+    "Gaussian precision positive definite, solution residuals, and heldout exclusion",
+    "retained 21-coordinate marginal and reconstructed 25-coordinate joint plus log posterior pass unchanged Rhat/ESS gates",
+    "independent Gaussian draws agree with exact mean/covariance within fixed Monte Carlo tolerances",
+    "all retained nonradial samples and curvature quantiles remain unchanged",
+    "direct original objective agrees with repaired log posterior at checked stored draws"
+  ],
+  "seed": 2026090719,
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "scope": "A correction of one exactly soluble block, not a relaxation of convergence gates. If the retained marginal or reconstructed joint fails, report NO_GO; no automatic rerun or promotion.",
+    "science": "Compare curvature recovery with Z9 to localize field-inference/coupling effects. Does not isolate field-prior error alone, validate galaxies or reconstruct real CF4 density."
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z10_fixed_truth_exact_radial_v1",
+  "resources": {"backend": "syntax Slurm CPU", "CPUs": 2, "estimated_MiB": 2048, "requested_MiB": 2458, "time_limit": "00:10:00", "output_budget_MiB": 30, "no_new_HMC": true, "no_GPU": true},
+  "next_bundle_requires_user_approval": true
+}
