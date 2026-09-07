@@ -20,8 +20,30 @@ parameters and no added curvature, for a **model-stress diagnostic**, not a
 validated local density reconstruction. Plan:
 `config/cf4_actual_data_preview_v1.json`. Reuse the sampler with actual-data
 inputs and no truth metrics; no new PM simulation or additional mock fits.
-This is still Bundle A. Implementation/preflight submission follows; no fit
-is claimed started by this paragraph.
+This is still Bundle A.
+
+## Actual-data execution
+
+Source `bc645ac` committed and pushed before submission.
+Output: `/gpfs/kjhan/CF4/z0_density/actual_data_preview_v1`.
+
+| Job | Scope | State at submission record |
+| --- | --- | --- |
+| 333862 | Regression and actual-input preflight | COMPLETED in1m40s; all10 tests and input checks pass; peak RSS1272176 KiB |
+| 333872 | One actual-data fit, four chains on one GPU | Submitted afterok:333862 |
+| 333990 | Result aggregation/failure reporting | Submitted afterany:333872 |
+
+CF4:19,313 retained observations (15,346 training /3,967 heldout), using
+actual BGc velocities. 2M++:36,635 galaxies (29,257 training /7,378 heldout).
+No synthetic velocity substitution or truth arrays. GPU job requests7373 MiB
+(6144 estimate +20%), four CPUs, one GPU, two-hour limit. Preflight requests
+3000 MiB; aggregation1200 MiB. Scientific success has not been established.
+
+A recorded diagnostic warning: population0/3 observed totals are9617/15671,
+while the homogeneous nuisance-prior-centre model predicts about2020/3026.
+This is not a posterior predictive test or proof of a particular cause.
+Inspect normalization/bias excursions and spatial/heldout residuals; do not
+silently normalize away the discrepancy or call the map validated.
 
 ## Historical comparison submission/startup
 

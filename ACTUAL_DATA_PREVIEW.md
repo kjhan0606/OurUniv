@@ -1,9 +1,10 @@
 # Bundle A — actual-data preview input/output contract
 
 2026-09-07. Implementation preparation within the approved Bundle A.
-Authority: `CF4_MASTER_PLAN.md`. This document does not claim a fit has run.
-Choose and record the field model after job333765's paired comparison;
-do not launch another mock-repair series or advance Bundle B automatically.
+Authority: `CF4_MASTER_PLAN.md`. Job333765's paired comparison is complete;
+the model decision follows. Actual-input preflight333862 passed; fit333872
+and aggregation333990 are submitted. See `BUNDLE_A_RUN.md` for execution
+state. Do not launch another mock-repair series or Bundle B automatically.
 
 Model decision after completed comparison: retain the original PM-calibrated
 lognormal joint prior and24 nuisance parameters, without curvature, solely

@@ -60,6 +60,10 @@ the original 24-nuisance PM-calibrated model for one actual-data **model-stress
 diagnostic**, per `config/cf4_actual_data_preview_v1.json`. It is not a
 scientific promotion of the baseline. No new mock series is authorized.
 
+Actual-data preflight333862 passed; fit333872 and dependent aggregation333990
+are submitted. Read their final artifacts before claiming completion. No
+Bundle B execution is active.
+
 Z4–Z11 were N32, 12 cMpc/h development experiments, not actual-data maps.
 Z8's amplitude interpretation was erroneous and has been withdrawn. Z10
 fixed-field and Z11 prior-compatible controls recover the injected tracer
