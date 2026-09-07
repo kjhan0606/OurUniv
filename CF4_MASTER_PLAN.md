@@ -49,9 +49,20 @@ its target and correction before calling its output an IC posterior.
 ## Current state and bounded immediate work
 
 **Bundle A is closed as a diagnostic delivery, not scientific certification.
-Bundle B execution is approved and in progress. C–D require user
+Bundle B is closed as a development/diagnostic delivery. C–D require user
 approval before starting each bundle.** No automatic next-bundle launch.
 Current design: [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md).
+
+Bundle B: environment334398 and four LG interface tests334401 completed;
+bounded dynamics retry334402 passed both fixed development cases in4m58s.
+Density RMS residuals0.964/0.972 became0.118/0.118; velocity333/300 became
+17.8/18.1 km/s, with conservative readout. These are regularized mock IC
+candidates, NOT actual-data IC posterior samples. The actual map's Local
+Void and precise cluster localization remain unresolved. The source-backed
+LG interface still needs a resolved fine-field operator and covariance/model
+discrepancy calibration before actual conditioning. No further N32 sampling
+or bridge extensions: next work must bring LG observations into the fine z=0
+field while retaining its coarse mass/momentum environment. C has not begun.
 
 Current execution record: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

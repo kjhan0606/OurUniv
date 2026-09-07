@@ -33,9 +33,9 @@ No numerical array conversion or installed library files are changed.
 Retry2 must pass unchanged-forward and finite-difference checks again;
 time limit3h57m plus prior2m15s stays below4 GPU-hours.
 
-## Active calculation and available products
+## Calculation record and available products
 
-- GPU retry334402: submitted from e4834d4, 1 GPU/4 CPUs/12000 MiB,
+- GPU retry334402: completed4m58s from e4834d4, 1 GPU/4 CPUs/12000 MiB,
   partitions a40,a100,h100,h200, exclude syn06; Slurm time limit3h57m.
   Output `/gpfs/kjhan/CF4/z0_density/bundle_b_v1/bridge_retry2`.
   Check this fixed job ID and its scalar logs/results. No scan/monitor loop.
@@ -60,6 +60,42 @@ Gauss aperture volume quadrature differs from analytic sphere volume by up
 to about5% for R12; windows are normalized and uncertainty is from draws.
 Interpret borderline small-aperture signs at this numerical/coarse-field limit.
 
-Status: B still open while the dynamics bridge runs. No parent-posterior
-promotion, high-resolution LG claim, or Bundle C execution is authorized.
+## Closure judgement
+
+Both targets passed the fixed development gate at the200-evaluation cap:
+
+| Target | Density RMS start -> final | Velocity RMS start -> final (km/s) | Final density/velocity correlation |
+| --- | --- | --- | --- |
+| 0 | 0.964423 ->0.117889 | 332.732 ->17.766 | 0.98472 /0.99715 |
+| 5 | 0.971773 ->0.118383 | 300.068 ->18.115 | 0.98490 /0.99656 |
+
+Both final density fields are positive/unit mean, and conservative mass and
+momentum readout errors were zero at reported precision. Directional adjoint
+relative errors1.50e-6/2.23e-5 pass the2% engineering tolerance. Each final
+forward run was recomputed from the fitted white field. Optimization hit its
+cap; this is not a claim of a unique or fully converged MAP solution.
+GPU time including failed starts:7m13s, below4h. Successful job MaxRSS
+3300384 KiB; host memory request12000 MiB included the required20% margin.
+
+Saved candidates retain LCDM transfer/cosmology but are not posterior draws.
+Initial/final prior penalties and linear P(k) are saved without rescaling.
+The white second moments are about0.896/0.903; some resolved k bins have
+P(k) about30% lower than the fixed initial realization (not an ensemble/theory
+comparison). Do not hide this with amplitude boosting. Optimization does not preserve
+an unconditional Gaussian realization distribution. This is not high-k phase
+recovery or statistical certification of LCDM IC samples. Actual z=0 draws
+from the empirical field model still need a correctly defined dynamical
+joint target/proposal correction; multiplying CF4 likelihood again is invalid.
+
+Summary/visualization job334405 completed5s, reading saved outputs only. Products:
+`/gpfs/kjhan/CF4/z0_density/bundle_b_v1/bridge.png` and `summary.json`.
+
+**B is closed at development/diagnostic level.** The bridge supports continuing
+the z=0-first route; no evidence here promotes the actual coarse posterior or
+recovers the LG. Stop N32 sampling/bridge extensions. Next substantive work is
+the LG-conditioned multiresolution z=0 field, retaining coarse mass/momentum,
+not another direct-CF4 IC search. Its resolved object operator, shared-data
+covariance and numerical discrepancy must be explicit. Surroundings1–2 and
+LG<=0.3 cMpc/h remain unachieved; zoom force/particle resolution is separate.
+**No Bundle C calculations submitted; wait for the user's next-bundle approval.**
 All calculations use Slurm. No new training ensemble or full RAMSES outputs.

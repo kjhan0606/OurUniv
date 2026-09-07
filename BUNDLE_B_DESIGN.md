@@ -1,6 +1,6 @@
 # Bundle B — local structure, LG constraints and a small dynamics bridge
 
-2026-09-07. **Execution approved by the user; Bundle B in progress.**
+2026-09-07. **Executed and closed at development/diagnostic level; see BUNDLE_B_RUN.md.**
 Authority: CF4_MASTER_PLAN.md and the user's acceptance of the recommendation
 after the2048-sample result. Astra driver: no external audit call is required.
 This is one outcome-based bundle, not a new series of per-step approval gates.
