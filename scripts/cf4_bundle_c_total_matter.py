@@ -128,10 +128,17 @@ def build(max_files):
     if complete:
         expected = np.asarray(header['NumPart_Total'], np.uint64) + (np.asarray(header['NumPart_Total_HighWord'], np.uint64) << np.uint64(32))
         np.testing.assert_array_equal(counts[[0, 1, 4, 5]], expected[[0, 1, 4, 5]])
+        # rho_crit = 2.77536627e11 h^2 Msun/Mpc^3; physical volume=(L/h)^3.
+        # Check the absolute total-matter normalization; never rescale to pass.
+        expected_mass = 2.77536627e11 * float(header['Omega0']) * box**3 / h
+        cosmological_mass_error = float(source_totals[0] / expected_mass - 1)
+        if abs(cosmological_mass_error) > 1e-3:
+            raise ValueError('full-box mass disagrees with native Omega_m by >0.1%; do not renormalize')
         write_prior_source(out, acc, coarse, h, float(header['Omega0']))
     report = dict(status='TOTAL_MATTER_PRIOR_SOURCE_NOT_CF4_POSTERIOR' if complete else 'TIMING_ONLY_INCOMPLETE_SPATIAL_SAMPLE',
         files=files, particle_counts=counts.tolist(), fine_dx_cMpc_h=.1875, coarse_dx_cMpc_h=1.5,
         global_moment_relative_error=global_error.tolist(), restriction_error=restriction_error.tolist(),
+        native_cosmological_mass_relative_error=cosmological_mass_error if complete else None,
         elapsed_seconds=time.monotonic()-start, peak_grid_memory_bytes=int(acc.nbytes + direct.nbytes),
         limits='Includes gas, DM, stars/winds, BH dynamical mass, both FoF and unbound matter. Partial chunks are NOT spatially representative and never train the prior. Full run supplies one TNG cosmology/box only; no CF4/LG conditioning or validated continuous fine-field prior.')
     with (out / 'result.json').open('x') as f:
@@ -173,7 +180,10 @@ def write_prior_source(out, fine, coarse, h, omega):
         f.create_dataset('prior_bandwidth', data=bandwidth)
         f.create_dataset('patch_train', data=train)
         f.attrs['prior_limits'] = 'Equal component weights with diagonal Gaussian coarse-summary kernel; bandwidth=train SD. 18 train and9 nonoverlap check patches share one box. Condition summaries approximately, NEVER enforce exact parent cells by rescaling fields or reusing stale halo catalogues.'
-    from cf4_empirical_field_prior import conditional_weights
+    from cf4_empirical_field_prior import conditional_weights, read_component
+    first = read_component(out / 'matter_moments.h5', 0)
+    if first['integrals']['mass'].shape != (128,) * 3:
+        raise ValueError('whole-patch reader geometry mismatch')
     support = [conditional_weights(features[train], value, bandwidth)['ess'] for value in features[~train]]
     with (out / 'prior_support.json').open('x') as f:
         json.dump(dict(status='FINITE_PATCH_PRIOR_SUPPORT_DIAGNOSTIC_ONLY', training_components=18,

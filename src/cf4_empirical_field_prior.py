@@ -7,6 +7,32 @@ import numpy as np
 from scipy.special import logsumexp
 
 
+def read_component(source_path, index):
+    """Read an unchanged whole patch with its native catalogue/geometry link.
+
+    Never rescale the mass or shift halo positions to match a requested parent.
+    The caller must infer observer identity/orientation and likelihood separately.
+    """
+    import h5py
+    from cf4_resolved_moments import derived
+    with h5py.File(source_path, 'r') as f:
+        if f.attrs['status'] != 'NATIVE_TOTAL_MATTER_NOT_OBSERVED_LOCAL_UNIVERSE':
+            raise ValueError('a complete native total-matter source is required')
+        origins = f['patch_origins_coarse'][:]
+        if not isinstance(index, (int, np.integer)) or not 0 <= index < len(origins):
+            raise ValueError('invalid whole-patch component index')
+        origin = origins[index] * 8
+        x, y, z = origin
+        values = f['fine'][:, x:x + 128, y:y + 128, z:z + 128]
+        dx = float(f['fine'].attrs['dx_cMpc_h'])
+        metadata = dict(index=int(index), lower_cMpc_h=(origin * dx).tolist(),
+            dx_cMpc_h=dx, source_catalogue=f.attrs['source_catalogue'],
+            cosmology_h=float(f.attrs['h']), native_unmodified=True,
+            limits='Native TNG axes. Catalogue membership/observer orientation must be read from the linked source; not an assigned MW/M31/M33 system.')
+    integrals = dict(mass=values[0], momentum=values[1:4], second_moment=values[4:7])
+    return dict(metadata=metadata, integrals=integrals, fields=derived(integrals, dx))
+
+
 def conditional_weights(features, condition, bandwidth, *, log_data=None):
     """p(j|c) proportional to exp(-||[C_j-c]/bandwidth||²/2).
 
