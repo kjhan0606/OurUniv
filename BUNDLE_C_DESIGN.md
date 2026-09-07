@@ -97,3 +97,36 @@ see BUNDLE_C_RUN.md. The repaired selection is an input for likelihood
 development, not calibrated selection: finite thin-boundary cubature error
 remains explicitly measured in the controls. Do not remove observed rows,
 insert a probability floor, or label this selection product a matter map.
+
+## Resolved physical operator implementation (approved C continuation)
+
+The next implemented component uses existing TNG100-1 z0 particles and native
+SUBFIND catalogue, not retraining Hong networks or inventing LG grid peaks.
+Native metadata/selected catalogue fields and one bounded FoF particle set
+are copied from syntax-local /scratch to the project output directory by
+I/O-only staging. All numerical selection, projection and tests use Slurm.
+No new download, simulation, storage investigation, or full snapshot copy.
+
+Native positions are ckpc/h, particle velocities need sqrt(a), whereas
+SubhaloVel is already peculiar km/s. Bound SubhaloMass is NOT host M200c;
+only a FoF primary exposes Group_M_Crit200 as its host mass. Definitions:
+https://www.tng-project.org/data/docs/specifications/ . Explicit identity
+assignments and frame rotations are required; no best anonymous pair search.
+
+Use one predeclared MW-mass-range FoF group with three particle-resolved
+subhalos as an engineering fixture, not an LG analogue or observational prior.
+Check native member masses/COM velocities against the catalogue. Deposit
+actual FoF particle mass, momentum and diagonal second moments on a24 cMpc/h
+cube at0.1875; aggregate to1.5 and compare direct particle deposition.
+Save density, mean velocity, physical sigma_v and an empty-cell validity mask.
+Physical sigma_v is not posterior uncertainty. The product lacks external
+diffuse matter and is therefore explicitly a FoF component, not a total
+matter map or an actual CF4-conditioned map. No component is pasted into CF4.
+
+This implements a particle-backed readout and moment representation, NOT a
+calibrated fine-field prior. The conditional ensemble distribution of these
+components plus diffuse matter, cosmology dependence, stellar/halo COM offsets
+and joint CF4/LG conditioning remain to be implemented. A single fixture
+cannot establish that prior. The LG-on/off inference cannot be claimed from
+this check. Two bounded CPU jobs:2 cores, estimated3000 MiB+20%=3600 MiB,
+10min each; catalogue staging plus selected particles/products <2 GiB estimate.

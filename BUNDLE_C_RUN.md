@@ -98,3 +98,14 @@ matter prior. No C calculation or downstream inference remains queued.
 Next work within C is specifying the physical fine-field prior and explicit
 LG operator, then the bounded LG-on/off field inference. Additional generic
 validation infrastructure is not the deliverable; D is still unapproved.
+
+## Native resolved operator — in implementation
+
+The next C component is a real TNG/SUBFIND catalogue readout and conservative
+particle density/mean-velocity/physical-dispersion representation. See the
+design amendment. This does not revive the Hong CNN or an IC/peak seed bank.
+The source snapshot includes velocities and all relevant matter types. The
+syntax-local /scratch path is not visible in the initial Slurm read on syn07;
+ordinary I/O-only staging will copy the selected native fields to the shared
+project output, with no filesystem tests. No numerical calculation runs on
+the login node. Output root: `bundle_c_v1/tng_operator_v1`.
