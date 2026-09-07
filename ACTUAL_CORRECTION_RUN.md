@@ -66,6 +66,35 @@ for catalog/selection preparation and circle/Python3.11 for inference checks.
 No package installation or scientific-model change. Preserve the initial
 failed log and empty output directory; retry uses the new run1 output above.
 
-Status: environment-corrected CPU preflight ready for resubmission.
-One corrected actual-data fit is authorized only after preflight success.
+Environment-corrected CPU job334344 (source600c682) completed in3m32s,
+exit0, peak RSS1202496 KiB. All14 regressions passed again; full corrected
+input, finite-gradient, heldout exclusion and radial energy checks passed.
+An Astropy log-distance warning occurs on source rows with invalid/zero
+redshift; these are rejected by the pre-existing finite/positive-redshift
+catalog cuts and do not enter the field input.
+
+Corrected parent:57249 eligible rows. Calibration-only parent sample:11504
+rows,8321 survivors. Field counts:24998 training and8378 heldout (33376 total),
+population totals[5895,6338,1455,6264,10607,2817]. CF4 remains19313 rows,
+15346 training and3967 heldout. No calibration or old heldout row is used
+as a training density count. Previously rejected CF4/metadata objects remain
+excluded from the density likelihood. Empty calibration strata retain the
+uncertain Beta(1,1) prior, never an invented measured completeness.
+
+| Job | Purpose | State at submission |
+| --- | --- | --- |
+| 334344 | CPU regression + corrected actual-input preflight | COMPLETED/PASS |
+| 334345 | One corrected actual-data four-chain GPU fit | Submitted afterok:334344, source600c682 |
+| 334346 | Result aggregation, including failed/incomplete fit reporting | Submitted afterany:334345 |
+
+The corrected initial homogeneous full-survivor rate expectations are
+[4623.5,7339.9,1699.5,4437.8,13483.5,4161.2]. Compare with the observed
+training+heldout totals only after multiplying these predictions by.8
+(the separate.2 calibration subset is not in those observed totals).
+The brightest populations' observed/reference ratios are now about1.59/1.76,
+not the previous4.76/5.18. This is descriptive, not a controlled single-cause
+test or fitted-posterior result; magnitude membership and calibration split
+changed. Remaining discrepancies must be evaluated in the actual fit.
+
+Status: one corrected actual-data fit submitted after preflight success.
 No next-bundle launch, no automatic additional fit if scientific gates fail.

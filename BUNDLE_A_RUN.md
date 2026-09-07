@@ -53,7 +53,11 @@ are1.114 (velocity) and1.080 (counts), descriptive only, not truth recovery.
 Mean/sample fields and posterior uncertainties exist but are not scientifically
 promoted. Follow-up diagnosis found an imported magnitude-convention mismatch
 and field-dependent H0 mixing: [ACTUAL_PREVIEW_DIAGNOSIS.md](ACTUAL_PREVIEW_DIAGNOSIS.md).
-No repair/refit has been launched. The submission notes below are historical.
+The user subsequently approved repair and one refit. Corrected preflight334344
+passed; GPU fit334345 and afterany aggregation334346 are submitted with source
+600c682. See [ACTUAL_CORRECTION_RUN.md](ACTUAL_CORRECTION_RUN.md) for changed
+magnitude/selection semantics, independent calibration split and exact radial
+coordinates. No new posterior result yet. The submission notes below are historical.
 
 ## Historical comparison submission/startup
 
