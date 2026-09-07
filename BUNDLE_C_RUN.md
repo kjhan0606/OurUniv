@@ -234,3 +234,18 @@ such, never asserted to be a resolved N-body halo. Existing full TNG fields
 and native catalogue are calibration/reference data, not CF4 truth. A new
 continuous model and actual LG-on/off inference are NOT implemented by the
 support result itself; C remains in progress and D remains unapproved.
+
+### Continuous joint component/matter implementation
+
+User authorized continuation. Implemented a21-parameter continuous kinematic
+transport of the three native member components inside a full total-matter
+patch. Remainder positivity, whole-patch mass/momentum compensation, updated
+component positions/member masses/COM velocities and extensive second moments
+are coupled; no fixed native catalogue is attached to an independently edited
+field. `resolved_halos=False`, host M200c unavailable for transformed states.
+
+One noiseless native-source inverse control and two focused algebra/regression
+tests are ready for Slurm. Full details, bounds, resource limits and scientific
+limitations are in BUNDLE_C_DESIGN.md. This implementation has no calibrated
+LCDM prior, physical reservoir response or actual LG/CF4 likelihood. A pass
+will not promote it to an LG posterior or settle finite-bank support.

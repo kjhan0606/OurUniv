@@ -209,3 +209,47 @@ momentum/second moments; the old catalogue cannot remain fixed while a new
 field is freely changed. Priors and discrepancy calibration are outstanding,
 not solved by the current support test or by declaring three imposed peaks
 resolved. No automatic new fit follows this closure.
+
+## Continuous coupled-state prototype — authorized continuation
+
+Following user approval to proceed, implement ONE kinematic inverse control
+on the existing total-matter source, not another template-support repair.
+Subtract the three explicitly identified, disjoint native SUBFIND member
+components from an integer-aligned24-cMpc/h total-matter patch. The remainder
+includes diffuse matter AND every other structure; do not call it pure diffuse
+matter. Separately summed near-empty subtraction residuals may be removed
+only at1e-10 relative roundoff, with the removed moments reported.
+
+Each component has7 continuous marks:3 translations, log member-mass scale,
+and3 COM-velocity boosts. Exact overlap remapping of piecewise-constant cells
+changes mass, momentum and second moments together. Transformed catalogue
+positions/COM/member masses derive from that same state. Do not carry over
+host M200c, unrelated native catalogue marks, or `resolved_halos=True`.
+Native memberships/profile shapes are fixed; force resolution, gravitational
+binding and a newly identified halo are not established by this operation.
+
+Let the remaining mass fraction be alpha=(M_patch-sum M_components)/M_rem.
+Reject alpha<=0. A common remainder bulk-velocity change preserves total
+patch momentum. This positive reservoir construction is a declared algebraic
+response, NOT calibrated halo accretion or diffuse response. Individual parent
+cells may change; report exact fine/coarse restriction. Second moments transform
+with bulk boosts and preserve realizable component dispersions; kinetic energy
+need not remain constant when changing the state. Mean-velocity posterior
+uncertainty remains unavailable because this experiment is not a posterior.
+
+The bounded test injects21 dimensionless marks inside[-1,1], with unit scales
+0.1875 cMpc/h,0.2 log mass,30 km/s. These are numerical test amplitudes/bounds,
+NOT astrophysical priors or observational uncertainties. Fit only mass/momentum
+on alternating fine support cells, reserve complementary cells and all second
+moments for prediction. Require parameter error<0.02 in these units and all
+heldout moment errors<2% of injected changes, in addition to1e-8 conservation
+and restriction. A noiseless same-generator recovery is implementation evidence
+only; it cannot settle the failed nine-condition support test or physical prior.
+
+After this ONE control, the next substantive requirement is physical response/
+profile/COM-discrepancy and prior calibration, not additional toy-control
+variations. Do not activate actual LG likelihood until those choices exist.
+No new full snapshot pass, GPU job, simulation, IC, or Bundle D. Slurm2 CPU,
+estimated3000 MiB peak +20%=3600 MiB,15min cap, <0.5 GiB new fields/reports in
+`bundle_c_v1/continuous_transport_v1`. This is not an approved global extension
+of the N32 prior to fine scales or a density reconstruction delivery.
