@@ -9,13 +9,17 @@ coarse aperture means; Bootes negative. Local Void probes are uncertain or
 positive, especially at24 cMpc/h. This is not a calibrated environment pass.
 
 Bridge334399 failed after1m09s at its first gradient (before any optimizer
-step). Unchanged-forward regression had passed. PMWD LPT supplied acc=None
-but its custom reverse returned an acc array; JAX's error formatting also
-hit PMWD's constructor, hiding the original tree mismatch. The local adapter
-now initializes a constant zero acc array, overwritten by PMWD's initial
-force as before. No installed library, physics, weights or seeds changed.
-Retry must recheck forward equivalence and finite differences, use a fresh
-bridge_retry1 directory, and request at most3h58m to keep total below4h.
+step). Unchanged-forward regression had passed. An initial hypothesis was an
+acc=None versus array tree mismatch. A constant initial acc array did NOT
+resolve the error: retry334400 failed after1m06s at the same first gradient.
+Do not present that hypothesis as the established cause. A trace-only CPU
+diagnostic now exposes JAX's underlying message, which PMWD's constructor
+otherwise masks by attempting to cast type-description strings to arrays.
+Total GPU use so far2m15s; no optimizer evaluations completed. No installed
+library, physics, weights or seeds changed. Preserve both failed directories.
 
-Implementation of the LG contract is in progress.
+LG source table and callable identity/frame/covariance interface are implemented.
+Partial covariance explicitly requires opt-in; production mass/environment
+priors are disabled pending resolved operators and astrophysical calibration.
+Tests are submitted with the trace diagnosis, not on the login node.
 All calculations use Slurm. No new training ensemble or full RAMSES outputs.
