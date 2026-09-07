@@ -1,5 +1,26 @@
 # Z9 — approved controlled tracer-response experiment
 
+## Completed result and next approved diagnostic
+
+All four fits completed (20m29s to 20m40s each); aggregation job 333697 finished
+2026-09-07 12:59:35 KST. All sampler gates passed, divergence fraction zero,
+maximum Rhat 1.01944. **The extended model is not approved for promotion.**
+In the null case gamma=0, its posterior median was 0.28957 (95% interval
+0.15992–0.41560). In the gamma=0.2 case, median was 0.45186 (0.31953–0.58354).
+Observed-support correlation improved only 0.61218 to 0.61388 in the perturbed
+case, and RMSE worsened 0.53864 to 0.54070. Heldout count log-predictive differences
+were -0.366 (null) and +7.850 (perturbed); velocity differences -1.116 and -2.436.
+These sums alone do not certify predictive significance or physical recovery.
+
+The user approved the next calculation: Z10 fixes the exact native mock density
+and velocity while retaining all 25 observation nuisance parameters and the same
+saved observations. Its plan is `config/cf4_z10_fixed_truth_plan_v1.json`.
+This isolates whether the curvature displacement persists conditional on true
+fields. It does not by itself distinguish a wrong field prior from other
+field–observation coupling or establish calibrated real-data reconstruction.
+
+## Original execution record
+
 Implementation commit: `3c370a5` (pushed). Project: OurUniv/CF4;
 submission host: `syntax`; compute exclusively through Slurm.
 
