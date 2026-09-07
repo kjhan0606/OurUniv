@@ -49,9 +49,9 @@ its target and correction before calling its output an IC posterior.
 ## Current state and bounded immediate work
 
 **Bundle A is closed as a diagnostic delivery, not scientific certification.
-Bundle B is closed as a development/diagnostic delivery. C–D require user
-approval before starting each bundle.** No automatic next-bundle launch.
-Current design: [BUNDLE_B_DESIGN.md](BUNDLE_B_DESIGN.md).
+Bundle B is closed as a development/diagnostic delivery. Bundle C entry is
+approved and implementation is in progress. D requires user approval.**
+Current design: [BUNDLE_C_DESIGN.md](BUNDLE_C_DESIGN.md).
 
 Bundle B: environment334398 and four LG interface tests334401 completed;
 bounded dynamics retry334402 passed both fixed development cases in4m58s.
@@ -62,9 +62,12 @@ Void and precise cluster localization remain unresolved. The source-backed
 LG interface still needs a resolved fine-field operator and covariance/model
 discrepancy calibration before actual conditioning. No further N32 sampling
 or bridge extensions: next work must bring LG observations into the fine z=0
-field while retaining its coarse mass/momentum environment. C has not begun.
+field while retaining its coarse mass/momentum environment. C now begins with
+native observations at1.5 cMpc/h, an LG0.1875 layout and conservative coupling;
+these are not yet a high-resolution posterior or an evaluated LG operator.
 
-Current execution record: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
+Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
+Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison
