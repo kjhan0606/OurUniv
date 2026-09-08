@@ -4,6 +4,12 @@ Designed after user-approved diagnosis336263,2026-09-08. DESIGN ONLY; no new
 training or inference authorized by the diagnosis approval. Request approval
 for the bounded implementation pilot below. C remains open, D unentered.
 
+Subsequent user approval2026-09-08 authorizes the one implementation/GPU pilot.
+Frozen implementation details BUNDLE_C_FLOW_PILOT_RUN.md supersede the tentative
+interior chart/architecture mechanics below: equivalent binary-tree moment
+coordinates explicitly handle atoms and inactive states. Larger scope remains
+unchanged; no actual-data or global inference is authorized by this pilot.
+
 ## Decision and evidence
 
 Choose ONE conditional3D multiscale normalizing-flow candidate, not another
