@@ -150,3 +150,10 @@ criteria. A strict-FP32 and FP64 pass with default-FP32 failure would support a
 reduced-precision backend explanation; other outcomes require review. Slurm
 GPU1/CPU2/9600 MiB host (estimated8000+20%),30m cap, output<1 MiB in
 `flow_precision_diagnosis_v1`. No automatic downstream job in this diagnostic.
+
+Submitted337268, sourcea8ba6e9 committed/pushed. Initial state PENDING(Resources),
+scheduler estimated2026-09-09 06:15:09 KST, not a guaranteed start. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_C_flow_precision_337268.{out,err}`. Final evidence:
+`bundle_c_v1/flow_precision_diagnosis_v1/result.json`. After completion inspect
+the three mode results before choosing a numerical correction; no training
+has yet been authorized by the failed checkpoint gate.
