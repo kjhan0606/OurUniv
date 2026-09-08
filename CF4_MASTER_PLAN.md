@@ -171,6 +171,15 @@ and joint CF4/LG target. Do not reinterpret this as entry to D or completion
 of the .1875 spatial deliverable. Source calibration alone does not close the
 new execution bundle.
 
+C-spatial first source calculation335916 completed4m08s:93 native member
+profiles from16638729 massive rows,32 full member/remainder decompositions
+at0.1875 with1.5 restriction and native mass/COM checks passing. These are
+spatial CALIBRATION INPUTS, not a fitted conditional field or bundle closure.
+Current record BUNDLE_C_SPATIAL_RUN.md. Whole source patches can overlap even
+when halo IDs are disjoint; spatial fitting must prevent heldout-voxel leakage.
+Next remains the continuous spatial distribution and actual observation-space
+connection, not IC generation or another mark-only fit. No current job.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).

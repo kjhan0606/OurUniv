@@ -40,6 +40,13 @@ population frequencies from this small selected set; the existing full native
 population supplies mark statistics. The satellite-only scope is conditional,
 not a claim that the separate-primary case has been physically disproved.
 
+The object-level split is suitable for separate MEMBER-PROFILE checks, not
+automatically a whole-field ML holdout: a training patch may contain voxels
+of a retained patch. Before learning/testing a remainder-field distribution,
+exclude shared native voxels (including periodic wrapping) from its heldout
+score or choose a genuinely separated spatial subset. Do not report the
+32-patch labels as leak-free full-field validation without that separation.
+
 For each unique selected subhalo stream gas/DM/stars+wind/BH DYNAMICAL mass
 members using existing catalogue offsets. Type4 wind mass belongs in total
 matter, unlike the stellar-COM proxy where it was excluded. Check bound mass
