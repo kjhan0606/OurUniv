@@ -76,3 +76,10 @@ convergence within the cap. Estimated artifacts<3 GiB in
 representation checks, fitting and final evaluation; no extra audit stages.
 
 Current state: implemented, numerical verification awaits the one Slurm job.
+
+Submitted336268, source1dc835b committed/pushed. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_C_flow_pilot_336268.{out,err}`.
+Output progression: request.json→representation.json→status.json/training.jsonl
+→checkpoint.pt→mock_fields.h5/result.json. A failure before the main program
+(e.g. regression) is in Slurm stderr; main-program failures write failure.json.
+No downstream inference, independent audit or automatic replacement job queued.

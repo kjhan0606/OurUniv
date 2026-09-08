@@ -211,6 +211,14 @@ conditioned multiscale flow with lossless conservative moment coordinates,
 explicitly identifying the missing1.5 environment prior/inference and joint
 member-field readout. This is DESIGN, not validated ML or an actual map. Current
 approval ends at diagnosis/design; replacement pilot awaits approval. No job.
+Subsequent user approval authorizes the implementation/one-GPU4h pilot.
+Implementation/source1dc835b submitted as336268: shared multiscale spatial
+conditional flow, explicit atom/continuous branches and conservative binary
+moment coordinates retaining all directional variances. Frozen configuration,
+within-fit spatial split/history limits and gates: BUNDLE_C_FLOW_PILOT_RUN.md.
+One job includes native roundtrip, fixed learning and environment/fine mock
+generation/evaluation. q_S, actual1.5/CF4/LG posterior and global384 inference
+remain outside this pilot; no automatic follow-up science job.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
