@@ -197,6 +197,20 @@ nonlinear environment/halo–matter spatial dependence before observation
 conditioning. Do not close C or enter D on these diagnostic generated fields.
 
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
+
+User-approved cause separation336263 completed42s; no new fit/draws. Native
+density encode/decode is exact to2.6e-16 L1, and quantile+conservation roundtrip
+power changes<=0.0944%, unlike the large stochastic generation failure. This
+localizes the problem to the generative path/conditioning interaction without
+uniquely identifying random phases as cause. Separate confirmed defect: scalar
+fine sigma loses directional variance, changing mean velocity by3.4–16.8 km/s
+per-axis RMS even for native input. Retain three fine variances in the next
+representation. Details BUNDLE_C_SPATIAL_DIAGNOSIS.md and its comparison PNG.
+Proposed next implementation BUNDLE_C_CONDITIONAL_FLOW_DESIGN.md: one spatially
+conditioned multiscale flow with lossless conservative moment coordinates,
+explicitly identifying the missing1.5 environment prior/inference and joint
+member-field readout. This is DESIGN, not validated ML or an actual map. Current
+approval ends at diagnosis/design; replacement pilot awaits approval. No job.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
