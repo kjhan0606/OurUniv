@@ -339,3 +339,6 @@ The separate-primary LG case lies outside the heldout NN reference range in
 kinematic coordinates and is not scientifically adopted despite high proposal
 ESS. Retain satellite-conditional results as development only, not membership
 odds or a calibrated field. Detailed decision/products: BUNDLE_C_RUN.md.
+
+Next execution bundle within C: BUNDLE_C_SPATIAL_DESIGN.md, authorized by the
+user. Its source/profile/remainder calculation does not by itself close C.

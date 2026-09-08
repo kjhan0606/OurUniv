@@ -163,6 +163,14 @@ one-box covariance calibration and the32 environmental-feature support problem
 are not solved by the marked Gaussian. The desired spatial LG-on/off map and
 information gain remain undelivered. No job from this step remains active.
 
+User authorized the next execution bundle, C-spatial, within the unfinished
+master C. Scope/first calculation: BUNDLE_C_SPATIAL_DESIGN.md. Start with
+native disjoint member profiles plus remaining total matter for16 training
+and16 retained spatial cases; then define the continuous spatial distribution
+and joint CF4/LG target. Do not reinterpret this as entry to D or completion
+of the .1875 spatial deliverable. Source calibration alone does not close the
+new execution bundle.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
