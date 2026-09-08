@@ -78,3 +78,63 @@ Reuse the existing moment/transport checks. Completion of this first job is
 DATA/PROFILE CALIBRATION INPUT, not completion of this spatial bundle. Review
 the actual particle read/mass/COM/remaining-matter report, then implement the
 joint spatial distribution; do not substitute another mark-only fit.
+
+## Next calculation: one bounded conditional remainder model
+
+Use the saved spatial calibration only; no raw source pass. The first missing
+piece tested here is p(fine remainder | native coarse remainder), alongside a
+separate stochastic member-profile regression. This is NOT yet the complete
+joint spatial law: coarse-field probability, changing halo profiles and their
+mass-budget feasibility normalization, and actual CF4/LG likelihood coupling
+remain requirements. Native coarse moments and unchanged native member fields
+are oracle conditions, not an inferred LG. Do not claim that they were recovered.
+
+Choose three mutually nonoverlapping heldout24 cubes and retain original
+training cubes disjoint from all three, maximizing training count using ONLY
+geometry; require at least eight or stop without relaxing the split. Account
+for native75-cube periodicity. Training overlaps and common long modes remain;
+this is not independent-box validation. Separate profile fits use the same
+selected identities, with no heldout tuning.
+
+Candidate: five empirical marginal channels (child mass ratio, three normalized
+velocity residuals, scalar physical dispersion), a joint stationary Gaussian
+copula with complex cross-spectral covariance from training cubes, and fixed5%
+spectral diagonal shrinkage. Sample independent coefficients at each Fourier
+mode, not whole-template weights. Fixed1025 quantile knots from32768 uniformly
+sampled cells per training cube bound the empirical tails. Randomized atoms
+handle zero-mass placeholders without a density floor. Unit latent variance
+sets the copula coordinate convention; it is not a physical P(k) boost.
+
+The generative mapping normalizes child masses and mass-weighted velocity/
+internal-dispersion allocation to preserve ALL seven parent extensive moments
+exactly. Reject zero conditional support rather than repairing amplitudes.
+This is a restricted conditional model, not a certified LCDM law. A Gaussian
+copula omits higher-order phase dependence; cosmological non-Gaussian copula
+limitations are established in [Qin, Yu & Zhang2020](https://arxiv.org/abs/2006.06182).
+Conditional remainder adequacy is an empirical question, not implied by that
+paper or by matching two-point statistics.
+
+One job, three retained cases, four draws each. Require realizable moments and
+coarse conservation<=1e-8. Predeclare broad morphology checks on EACH DRAW:
+eight logarithmic k bands from2pi/24 to pi/.1875, last four power ratios within
+[.5,2], top1%cell mass fraction ratio within[.5,2], and largest6-neighbor
+nonperiodic hot-component fraction ratio within[.5,2], relative to the retained
+native field. Apply to both total and remainder fields, so fixed native halos
+cannot conceal a poor generated remainder. All12 must pass for a development
+diagnostic pass. These broad checks are not calibrated coverage, precise phase
+recovery, or a complete filament/topology test. Four-draw variance is diagnostic
+scatter only, distinct from physical sigma_v and not a measured observation-
+conditioned uncertainty.
+
+Fit log positive cumulative-radius increments and log scalar member dispersion
+against log mass, plus bound/host mass ratio for primaries, with fixed10%
+diagonal residual covariance shrinkage. Record heldout residuals. This profile
+regression is not rendered or coupled into the generated fields in this job;
+it does not supply triaxial shape or environmental response. A pass cannot
+therefore close C-spatial. No automatic copula variants, bandwidth changes,
+best-draw selection, seeds or A(k) repairs on failure. Report missing physics.
+
+Resources: Slurm2 CPUs, estimated6000 MiB peak+20%=7200 MiB,30min cap,
+<4 GiB outputs in `bundle_c_v1/spatial_conditional_v1`. Two focused regression
+tests share the same job, followed immediately by fitting and retained-field
+generation; no separate audit micro-stages. No new simulations or ICs.

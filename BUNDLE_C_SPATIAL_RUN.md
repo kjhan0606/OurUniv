@@ -53,3 +53,12 @@ Next authorized work within C-spatial: implement the joint spatial probability
 law for member profiles and remaining matter, then actual CF4/LG-on/off maps
 with measured uncertainty. Do not close this bundle on the successful source
 decomposition or substitute another catalogue-only fit. D remains unentered.
+
+Next within-bundle calculation implemented: `cf4_bundle_c_spatial_model.py`
+and `cf4_spatial_copula.py`, with two focused tests and a Slurm runner. Fits a
+conditional remainder distribution and generates heldout0.1875 fields under
+fixed native1.5 moment/halo conditions; profile regression saved separately.
+This does not yet implement the FULL joint prior or actual observation fit.
+Predeclared split, morphology criteria, limitations and stop rule are in the
+design. Slurm request2 CPUs/7200 MiB/30min (6000 MiB estimated+20%), <4 GiB
+output, no source re-read. Implementation awaits the single test/fit job.
