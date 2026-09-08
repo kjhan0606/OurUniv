@@ -180,6 +180,22 @@ when halo IDs are disjoint; spatial fitting must prevent heldout-voxel leakage.
 Next remains the continuous spatial distribution and actual observation-space
 connection, not IC generation or another mark-only fit. No current job.
 
+C-spatial conditional remainder candidate335968 completed2m46s, two focused
+tests and all12 realizable/conservative draws passed numerical checks. A
+geometry-only split provided13 training cubes and three disjoint retained
+cubes without training/test voxel leakage. However all12 draws fail the
+predeclared small-scale power criterion, both with and without the fixed
+native member halos. Status NO_GO_CONDITIONAL_REMAINDER_MORPHOLOGY. This
+stationary five-channel Gaussian-copula candidate is CLOSED, not adopted
+or patched by amplitude/seed tuning. Native coarse7 moments and halos were
+oracle conditions; no actual CF4/LG spatial inference was run. The fitted
+profile regression is separate and not a joint halo/field law. Conserving
+mass/momentum/second moments does not certify cosmological spatial structure.
+See BUNDLE_C_SPATIAL_RUN.md for quantitative results. No active or downstream
+job remains. C-spatial is not complete: the next design must supply missing
+nonlinear environment/halo–matter spatial dependence before observation
+conditioning. Do not close C or enter D on these diagnostic generated fields.
+
 Current execution record: [BUNDLE_C_RUN.md](BUNDLE_C_RUN.md).
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
