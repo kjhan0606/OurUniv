@@ -228,6 +228,11 @@ paired diagnosis and, ONLY if confirmed, one full-context6000-step correction
 with unchanged model/seeds/gates. This is not an automatic longer-training
 or prior-family series. All v1 products remain preserved. No actual CF4/LG or
 global384 posterior launch; source/representation success is not C completion.
+The gated repair337195 stopped after39s before training: crop-context mismatch
+is confirmed, but trained-flow inverse/logdet errors exceed numerical limits.
+User now authorizes cause separation and necessary correction/reverification:
+one frozen same-input default-FP32/strict-FP32/FP64 comparison, not additional
+training or relaxed morphology criteria. See BUNDLE_C_FLOW_PILOT_RUN.md.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

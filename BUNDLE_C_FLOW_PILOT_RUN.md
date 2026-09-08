@@ -132,3 +132,21 @@ Submitted337195, sourcead9fc7a committed/pushed. Logs:
 `/gpfs/kjhan/CF4/logs/cf4_C_flow_context_337195.{out,err}`. Stage evidence in
 `flow_checkpoint_audit_v1/result.json`; corrected fit artifacts appear only
 if audit permits it. No follow-up job outside this bounded pipeline queued.
+
+337195 stopped2026-09-09 01:54:43 KST after39s, exit2. Three regressions
+passed. All four padded/full logp differences were zero, and crop differences
+were0.303–0.358, confirming context dependence. But trained flow inverse errors
+0.00125–0.00347 and logdet errors0.00207–0.00378 fail the unchanged numerical
+gate. Therefore v2 training did NOT start. No conclusion yet whether these are
+floating-point/backend effects or an implementation error.
+
+User authorized diagnosis/correction after this report. ONE frozen precision
+comparison now tests the same checkpoint and four full64^3 inputs under default
+FP32, TF32-disabled FP32, and TF32-disabled FP64. FP64 uses the same already
+FP32-quantized inputs/weights; only computation precision changes. Record whole
+flow and single-layer inverse/logdet errors, backend and original gate results.
+No fit, no loosened thresholds, no changes to model architecture or morphology
+criteria. A strict-FP32 and FP64 pass with default-FP32 failure would support a
+reduced-precision backend explanation; other outcomes require review. Slurm
+GPU1/CPU2/9600 MiB host (estimated8000+20%),30m cap, output<1 MiB in
+`flow_precision_diagnosis_v1`. No automatic downstream job in this diagnostic.
