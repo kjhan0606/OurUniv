@@ -127,3 +127,8 @@ GPU1/CPU2/host24 GiB (estimated20+20%),4h total with original3h preparation/
 training stop. Audit outputs<5 MiB, corrected run<3 GiB. Pipeline audit dir
 `flow_checkpoint_audit_v1`. No GPFS/inode checks or process-scanning monitors.
 No actual CF4/LG inference or further correction series is authorized here.
+
+Submitted337195, sourcead9fc7a committed/pushed. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_C_flow_context_337195.{out,err}`. Stage evidence in
+`flow_checkpoint_audit_v1/result.json`; corrected fit artifacts appear only
+if audit permits it. No follow-up job outside this bounded pipeline queued.
