@@ -83,3 +83,47 @@ Output progression: request.json→representation.json→status.json/training.js
 →checkpoint.pt→mock_fields.h5/result.json. A failure before the main program
 (e.g. regression) is in Slurm stderr; main-program failures write failure.json.
 No downstream inference, independent audit or automatic replacement job queued.
+
+## V1 outcome and authorized continuation2026-09-09
+
+336268 COMPLETED on H100 NVL,2026-09-08 21:22:03–21:26:26 KST,4m23s,
+exit0,6000 steps complete. All representation checks passed: maximum moment
+error3.45e-15, velocity RMS1.11e-12 and physical-sigma RMS2.80e-12 km/s.
+Both focused tests passed. Numerical directional-variance loss is resolved.
+But all16 environment/fine regular draws failed development morphology gates.
+Fine high-band power ratios0.256–0.558; environment additionally shows poor
+connectivity/boundary contrasts. Status NO_GO_CONDITIONAL_FLOW_DEVELOPMENT.
+Products/checkpoint preserved. Four hours was a cap, not actual training time;
+low GPU memory use is not proof of a GPU problem or of sufficient optimization.
+
+User requested continued work after this report. Code review identifies a
+training/evaluation context mismatch: training crops parent fields to24^3,
+but finest generation evaluates64^3. Zero-padded convolution contexts differ.
+This is a concrete implementation mismatch, not evidence that it is the ONLY
+failure cause. Scope now: frozen-checkpoint diagnosis and ONE conditional
+same-pilot correction if the paired numerical evidence confirms the mismatch.
+
+Frozen audit: first original train and first original heldout cube, finest
+nodes0/3. Compare likelihood on identical target indices20:44 in native64^3,
+isolated24^3 crop and48^3 context with12-cell margins. Require inverse relative
+error<1e-4, forward/inverse logdet error<1e-3, padded/full same-cell maximum
+logp difference<1e-3, but isolated-crop mean absolute difference>1e-3 on all
+four pairs. These are numerical cause-separation rules, not revised scientific
+gates. Also record native train/held NLL, inverse-latent moments, permuted-root
+NLL and one finest truth-parent refinement. They do NOT alone distinguish
+underoptimization from model capacity. Save a native/one-step/old-rollout plot.
+
+If that audit exits0, use full parent extents at every scale during one fresh
+6000-step fit. Architecture, initialization/data/sample seeds, record sequence,
+learning rate and scientific gates are unchanged. Old crop RNG draws are still
+consumed so record order is identical. Full fields change context AND number
+of scored cells per update; improvement would not isolate padding from data
+exposure. No optimizer continuation, longer fit, best checkpoint or amplitude
+repair. Preserve v1, write `conditional_flow_v2_full_context`. Abort without
+fitting if paired evidence does not justify the correction.
+
+Single Slurm job runs tests→frozen audit→conditional correction/evaluation,
+GPU1/CPU2/host24 GiB (estimated20+20%),4h total with original3h preparation/
+training stop. Audit outputs<5 MiB, corrected run<3 GiB. Pipeline audit dir
+`flow_checkpoint_audit_v1`. No GPFS/inode checks or process-scanning monitors.
+No actual CF4/LG inference or further correction series is authorized here.

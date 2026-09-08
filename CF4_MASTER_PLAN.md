@@ -219,6 +219,15 @@ within-fit spatial split/history limits and gates: BUNDLE_C_FLOW_PILOT_RUN.md.
 One job includes native roundtrip, fixed learning and environment/fine mock
 generation/evaluation. q_S, actual1.5/CF4/LG posterior and global384 inference
 remain outside this pilot; no automatic follow-up science job.
+336268 has now completed6000 steps in4m23s: native seven-moment/directional-
+variance roundtrip passes, all16 generated cases fail development gates. No
+actual-data adoption. User requested continued work2026-09-09. One identified
+implementation mismatch is cropped24-parent training versus full64-parent
+generation context. BUNDLE_C_FLOW_PILOT_RUN.md now freezes checkpoint-based
+paired diagnosis and, ONLY if confirmed, one full-context6000-step correction
+with unchanged model/seeds/gates. This is not an automatic longer-training
+or prior-family series. All v1 products remain preserved. No actual CF4/LG or
+global384 posterior launch; source/representation success is not C completion.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

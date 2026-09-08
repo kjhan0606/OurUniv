@@ -17,8 +17,8 @@ from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_spatial_copula import expand
 
 ROOT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1')
-OUT = ROOT / 'conditional_flow_v1'
-CONFIG = Path('config/cf4_bundle_c_flow_pilot_v1.json')
+OUT = ROOT / os.environ.get('CF4_FLOW_OUTPUT_NAME', 'conditional_flow_v1')
+CONFIG = Path(os.environ.get('CF4_FLOW_CONFIG', 'config/cf4_bundle_c_flow_pilot_v1.json'))
 CREATED_OUTPUT = False
 
 
@@ -122,11 +122,15 @@ def prepare(cfg):
     return data, location, spread
 
 
-def tensors(record, rng=None):
+def tensors(record, rng=None, full_context=False):
     z, mask, context, valid = record
     n = z.shape[-1]
     side = min(n, 24)
     starts = [0]*3 if rng is None else rng.integers(0, n-side+1, 3)
+    # Consume the same RNG draws as v1, preserving record/step selection, but
+    # do not substitute artificial crop faces for the evaluated field faces.
+    if full_context:
+        starts, side = [0]*3, n
     slices = (slice(None),)+tuple(slice(int(s), int(s)+side) for s in starts)
     return tuple(torch.from_numpy(np.ascontiguousarray(x[slices]))[None].to('cuda')
                  for x in (z, mask.astype(np.int64), context, valid))
@@ -220,7 +224,7 @@ def run():
         for step in range(1, cfg['steps']+1):
             level = (step-1) % 6  # Equal scale exposure, not fine-voxel dominance.
             record = data[level][int(rng.integers(len(data[level])))]
-            z, mask, context, valid = tensors(record, rng)
+            z, mask, context, valid = tensors(record, rng, full_context=cfg.get('full_context_training', False))
             optimizer.zero_grad(set_to_none=True)
             loss = -model.log_prob(z, mask, context, valid).mean()
             if not torch.isfinite(loss):
@@ -258,7 +262,8 @@ def run():
                 'One six-block masked affine flow with explicit boundary laws and per-direction variances. No model/seed search.',
                 'Global384-domain normalized evaluation, q_S member readout and actual1.5 posterior remain absent.',
                 'Four draws per case do not calibrate posterior uncertainty or prove conditional phase accuracy.',
-                'A gate failure stops adoption; no automatic longer training or amplitude repair.'])
+                'A gate failure stops adoption; no automatic longer training or amplitude repair.'],
+        full_context_training=cfg.get('full_context_training', False))
     dump('result.json', report)
     dump('status.json', {k: v for k, v in report.items() if k not in ('comparisons', 'history')})
     print(report['status'], flush=True)

@@ -6,6 +6,22 @@ from cf4_conditional_split_flow import condition, ConditionalSplitFlow
 
 
 class SplitFlowTests(unittest.TestCase):
+    def test_full_context_preserves_old_sampler_rng(self):
+        from cf4_bundle_c_flow_pilot import tensors
+        from unittest.mock import patch
+        record = (np.zeros((7, 32, 32, 32), np.float32),
+                  np.zeros((7, 32, 32, 32), np.uint8),
+                  np.zeros((22, 32, 32, 32), np.float32),
+                  np.zeros((4, 32, 32, 32), bool))
+        a, b = np.random.default_rng(91), np.random.default_rng(91)
+        # Test only slicing/RNG here; numerical GPU checks run in the same job.
+        with patch.object(torch.Tensor, 'to', lambda self, *args, **kwargs: self):
+            cropped = tensors(record, a)
+            full = tensors(record, b, full_context=True)
+        self.assertEqual(cropped[0].shape[-1], 24)
+        self.assertEqual(full[0].shape[-1], 32)
+        np.testing.assert_array_equal(a.integers(10000, size=20), b.integers(10000, size=20))
+
     def test_roundtrip_including_empty_cold_and_single_child(self):
         rng = np.random.default_rng(18)
         mass = rng.uniform(1, 4, (4,)*3)
