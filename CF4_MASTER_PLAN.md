@@ -306,6 +306,11 @@ consistent physical scale determinants, explicit unsupported-context labels)
 are incorporated. Design bundle COMPLETE; proposed single2-CPU/1200MiB/10min
 implementation now awaits user approval. No active job or new fit from this
 design turn. No additional audit micro-stage for these accepted report items.
+User now approved the concrete composite-proxy implementation and single Slurm
+CPU diagnostic. Sources: src/cf4_lg_composite_proxy.py and
+scripts/cf4_bundle_c_composite_proxy.py. Three focused tests run in the same
+job before the one14-coefficient fit and frozen13/3 native evaluation. No new
+neural training, simulation, actual-data weighting or extra audit is requested.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

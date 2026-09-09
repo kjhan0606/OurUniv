@@ -1,6 +1,7 @@
 # C — smallest next implementation: composite LG observation proxy
 
 Proposed2026-09-09 after Fable5 DESIGN CONDITIONAL GO. Awaiting user approval.
+Subsequent user approval authorizes this one implementation/execution bundle.
 This is the simpler baseline recommended by Q-LEAN, NOT learned cell membership,
 a calibrated LG posterior, or a replacement fine-density prior. One deliverable:
 field-only candidate mixture + native heldout joint-kinematic diagnostic report.
@@ -90,6 +91,11 @@ Output one report with field-context score matrix, role/pair ambiguity and
 native versus proxy relative-kinematic plots. Physical sigma and posterior
 uncertainty remain distinct. Original samples are native calibration cases,
 not actual CF4 or observed LG posterior realizations.
+
+Implementation detail frozen before execution: each eligible unique ordered
+MW/host pair receives equal training weight; pooled covariance uses ML3N
+denominator before the fixed10% shrinkage. Distinct pairs can share companions;
+report repeated member IDs rather than treating them as independent objects.
 
 Fable5 follow-up audit returned **GO for this bounded diagnostic design**,
 not a scientific posterior/model certification. It explicitly agreed that
