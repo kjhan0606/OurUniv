@@ -239,6 +239,12 @@ cause of all morphology failures. User now approves strict-FP32 paired gate
 and, only on pass, the previously blocked single full-context6000-step fit.
 Keep existing numerical/science thresholds and preserve all earlier outputs.
 The current repair changes context and precision; no actual CF4/LG inference.
+337279 completed9m30s,6000 steps, all numerical gates pass but all16 generated
+fields still fail development morphology gates (fine high-band ratio0.235–0.593).
+User approved ONE frozen analysis covering before/after quality, train/heldout
+fixed likelihood, teacher-parent versus rollout losses, and likelihood/quality
+alignment; driver then judges model viability AND actual CF4/LG connection.
+Scope BUNDLE_C_FLOW_DECISION.md. No new training or replacement model authorized.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
