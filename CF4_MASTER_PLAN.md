@@ -286,6 +286,26 @@ report for counts and limitations. Recommend an explicit unresolved-member/
 assignment observation-link design (or justified finer LOCAL information),
 with Fable5 plan audit and user bundle approval before implementation. Do not
 resume paired learning or new simulations automatically.
+User subsequently approved the unresolved-member/observation-link DESIGN bundle.
+Current proposal: BUNDLE_C_UNRESOLVED_MEMBER_DESIGN.md, with Fable5 plan audit
+requested before any numerical implementation. It must address MW/M31 role
+ambiguity as well as M33, normalized same-field component budgets and actual
+field information, not repeat native-known-member transport or mark-only fits.
+No new training, simulation, actual LG weighting or q_F promotion is implied.
+Fable5 returned DESIGN CONDITIONAL GO (normal completion105402ms). Driver
+adopts its Q-LEAN recommendation: a14-parameter composite-aperture kinematic
+proxy first, not a high-dimensional cell-member learner. Exact finite pair
+mixture, joint MW/M31/M33 uncertainty and fixed heldout field cross-scoring are
+specified in BUNDLE_C_COMPOSITE_PROXY_PLAN.md. This is the NEXT proposed CPU
+implementation, awaiting approval; no job submitted. Cell-member anchor measure
+and p(E|F,O)/E-conditioned field prior remain unresolved and explicitly deferred,
+not declared solved by conditional covariance or deterministic anchor encoding.
+Fable5 follow-up on the concrete14-coefficient composite design returned GO.
+Three required disclosures/tests (K spectrum/condition and sample counts,
+consistent physical scale determinants, explicit unsupported-context labels)
+are incorporated. Design bundle COMPLETE; proposed single2-CPU/1200MiB/10min
+implementation now awaits user approval. No active job or new fit from this
+design turn. No additional audit micro-stage for these accepted report items.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
