@@ -107,3 +107,37 @@ only supports get/set. No scientific evaluation/output directory was created.
 Use the already-tested explicit save/configure/restore pattern instead. This
 is a test-harness defect; preserve338388 logs and retry the same evaluation
 without retraining, criteria changes or a new scientific experiment.
+
+## Evaluation completed — code corrected, scientific criterion still fails
+
+Corrected source18b84f8, Slurm **338389**, syn101 A100-SXM4-80GB through Slurm
+(not manual). COMPLETED exit0,2026-09-10 08:14:20--08:19:14 KST,4m54s. All
+**8 tests passed**, including the actual FP64-native/FP32-model regression.
+Both saved models pass the unchanged inverse/Jacobian checks:
+control1.53e-6/2.86e-6, repair1.56e-6/3.34e-6 (limits1e-4/1e-3).
+Additional training updates **0**. Original checkpoints and failed-run outputs
+remain preserved. Sampled host MaxRSS2187624 KiB; GPU peak294758912 bytes.
+
+Retained .1875 diagnostics, identical2 cases x2 draws in each mode:
+
+| Quantity | NLL control | NLL + structural ES |
+| --- | ---: | ---: |
+| True-parent high-band P/native mean | 0.654972 | 0.664406 |
+| Full-rollout high-band P/native mean | 0.436332 | 0.462160 |
+| True-parent high-band log-ratio RMS | 0.550199 | 0.521605 |
+| Full-rollout high-band log-ratio RMS | 0.873808 | 0.801201 |
+| Original development draws passing ALL criteria | 0/16 | 0/16 |
+
+The ES branch modestly improves these one-step/rollout summaries, but both
+branches fail the unchanged development criteria. Decision:
+**CLOSE_THIS_REPAIR_LINE_BOTH_FAIL**. This is scientific non-adoption, NOT an
+evaluation software failure. The original evaluator now completed successfully.
+Close this bounded objective/current-architecture repair; no extra steps,
+coefficients, seeds, member diagnostic, alternative prior or IC run submitted.
+No actual CF4/LG spatial posterior is delivered; this does not prove that all
+learned priors or the final scientific goal are impossible.
+
+Full results, all scales/cases and comparison image:
+`field_recovery_evaluation_v1/result.json`, per-branch `*_development.json`,
+`*_paired_generation.json` and `density_comparison.png`, below the output root
+given above. Next bundle remains subject to a new plan and user approval.

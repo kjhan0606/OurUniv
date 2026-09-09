@@ -378,6 +378,16 @@ The correction adds the missing network dtype conversion and one regression,
 plus evaluation-only resumption using unchanged checkpoints/criteria into a
 new output directory. No retraining, new model trial or additional plan audit.
 Details BUNDLE_C_FIELD_RECOVERY_RUN.md; evaluation-only execution via Slurm.
+Evaluation-only338389 now COMPLETED4m54s,8 tests pass, both saved-model inverse
+checks pass, additional training updates0. Intermediate338388 test cleanup
+defect is corrected/preserved in the run record. Fixed evaluation source18b84f8.
+Both branches pass0/16 original morphology cases. Retained .1875 true-parent
+P/native control/repair0.654972/0.664406; rollout0.436332/0.462160. ES modestly
+improves both summaries but remains below acceptance: CLOSE_THIS_REPAIR_LINE_
+BOTH_FAIL. Close this objective/current-architecture repair without more
+steps/seeds/weights. No actual high-resolution LG posterior, no next-bundle
+launch or automatic prior-fine-IC fallback. Detailed results and preserved
+checkpoints: BUNDLE_C_FIELD_RECOVERY_RUN.md. Evaluation code error is resolved.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
