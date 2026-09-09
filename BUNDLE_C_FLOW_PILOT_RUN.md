@@ -184,3 +184,9 @@ scored-cell exposure; precision also changes, so any morphology improvement
 cannot be uniquely attributed to one change. Completion automatically runs
 the original16-draw morphology evaluation, not another training or actual-data
 posterior job. Any gate failure stops the pipeline without automatic retry.
+
+Submitted337279, source9204ec2 committed/pushed. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_C_flow_context_337279.{out,err}`. First inspect
+`flow_checkpoint_audit_v2_strict/result.json`; only its exit0 permits
+`conditional_flow_v2_full_context` preparation/training/evaluation. The job
+itself handles those stages after allocation; no external polling launcher.
