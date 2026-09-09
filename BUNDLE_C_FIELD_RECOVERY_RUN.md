@@ -46,6 +46,11 @@ claim that the new high-dimensional score estimator will finish or learn.
 Source commit and job ID will be recorded after submission. The runner refuses
 changes against the submitted source and creates a new output directory.
 
+Submitted as Slurm **338194**, pushed source **43692a1**. Initial scheduler
+check: PENDING(Resources); no node assigned, tests/training not started and
+no run logs yet. Queue delay is outside the4h allocation cap. This is a
+submission report, not a numerical-test pass or completed comparison.
+
 Output `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/field_recovery_v1`;
 logs `/gpfs/kjhan/CF4/logs/cf4_C_field_recovery_JOBID.{out,err}`.
 Two final checkpoints, original16 full development fields per branch and small

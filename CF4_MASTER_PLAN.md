@@ -365,6 +365,11 @@ experiment. BUNDLE_C_FIELD_RECOVERY_RUN.md records source/configuration:
 all-trace energy-score gradient, bounded8-pair screen, equal1000-step branches,
 unchanged morphology gates and terminal comparison. No new Fable request or
 standalone M33 diagnostic; no actual-data fine posterior or automatic follow-up.
+Implementation source43692a1 pushed and submitted as Slurm338194. Initial
+state PENDING(Resources), no node/tests/training yet. One job runs the7 focused
+regressions, fixed feasibility segment, matched learning and final evaluation.
+Execution status belongs in BUNDLE_C_FIELD_RECOVERY_RUN.md, not inferred from
+submission success. No new scientific output or next-bundle authorization.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
