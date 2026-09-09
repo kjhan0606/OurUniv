@@ -92,3 +92,11 @@ proxy-likelihood design and native calibration before the paired training.
 This would change the approved bundle's order/scope, so it is not assumed.
 No new numerical job or fitted Gaussian proxy was submitted. No additional
 generic gate framework, audit ladder or GPFS work is proposed.
+
+### Subsequent user approval
+
+The user approved the field-only identification/readout priority and required
+explicit MW/M31/M33 identification scrutiny in all future plans/audit requests.
+The executable replacement scope and its successful Fable5 conditional plan
+audit are recorded in `BUNDLE_C_LG_IDENTIFICATION.md`. Paired learning remains
+deferred; no fitted proxy likelihood is part of this identification job.

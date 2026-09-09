@@ -266,6 +266,17 @@ component inputs are not that operator. See BUNDLE_C_STRUCTURE_LG_PLAN_AUDIT.md.
 No Astra fallback/no new fit. Ask before prioritizing the field-only LG proxy
 connection ahead of the approved paired learning experiment; do not silently
 claim that a Gaussian covariance supplies the missing joint physical q_S.
+User now approves prioritizing field-only LG identification/readout before
+paired learning. Every future bundle plan AND audit request must explicitly
+cover MW/M31/M33 identification, ambiguous/unresolved cases and field-observation
+connection. Current bounded implementation plan: BUNDLE_C_LG_IDENTIFICATION.md.
+Native labels are for evaluation/calibration after blind candidates are frozen,
+not inference inputs. Fable5 plan audit first, Astra fallback on invocation failure.
+Fable5 completed the identification plan audit normally: CONDITIONAL GO, with
+Q-GOAL direct/Q-LEAN proportionate. All four disclosure conditions (support
+source, boundary truth counts, velocity/residual convention, role completeness/
+shared peaks/aperture overlap) are implemented in the single CPU job. No extra
+auditor/gate, new training or proxy likelihood is authorized by that result.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
@@ -365,6 +376,8 @@ shared generator/inference code are never independent validation.
   and essential/deferred scope. Do not turn these two questions into a new
   gate framework or per-step audit series. Prior Astra closure-audit waiver
   remains unless changed by the user; this instruction concerns plan audits.
+  Explicitly audit the MW/M31/M33 identification plan in every bundle; require
+  no oracle component access on new fields and honest unresolved-M33 handling.
 - Commit/push coherent changes. Preserve unrelated user work and all failed
   scientific results. Keep run summaries current; do not confuse submission,
   sampler pass, scientific acceptance and final-goal completion.

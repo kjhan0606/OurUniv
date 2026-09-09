@@ -14,3 +14,8 @@ Astra backup if Fable cannot complete a usable audit. Ask Q-GOAL (alignment
 with the CF4/LG reconstruction goal) and Q-LEAN (proportionate implementation,
 instrumentation and gates) explicitly. Applies even when Astra is the driver.
 Do not bypass an adverse substantive verdict by treating it as tool failure.
+Every bundle plan and audit request must explicitly address MW/M31/M33
+identification from the available NEW field/state, role ambiguity and unresolved
+members (especially M33), and how their observables constrain that same field.
+Native truth identities may label calibration/evaluation, never seed or select
+generated-field candidates. Do not assume known components inside g(F).
