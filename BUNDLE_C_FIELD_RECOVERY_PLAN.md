@@ -8,6 +8,8 @@ Fable5 review completed normally in137035ms: CONDITIONAL GO. The three
 indispensable corrections are incorporated below. Driver disposition and
 limits of the auditor's causal/fallback claims: BUNDLE_C_FIELD_RECOVERY_AUDIT.md.
 Design COMPLETE; implementation and one Slurm run await user approval.
+Subsequent user approval authorizes that exact implementation/one Slurm run.
+Execution details and frozen choices: BUNDLE_C_FIELD_RECOVERY_RUN.md.
 
 ## Decision: one central repair, not another member diagnostic
 

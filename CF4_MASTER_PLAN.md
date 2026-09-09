@@ -360,6 +360,11 @@ overstrong causal classification or its coarse-posterior/prior-fine-IC fallback
 as an automatic route change. See BUNDLE_C_FIELD_RECOVERY_AUDIT.md. DESIGN
 complete; one1000-update-per-branch/4h Slurm implementation awaits approval.
 No numerical job submitted, no high-resolution observed LG posterior exists.
+User now approves the exact field-recovery implementation and one Slurm GPU
+experiment. BUNDLE_C_FIELD_RECOVERY_RUN.md records source/configuration:
+all-trace energy-score gradient, bounded8-pair screen, equal1000-step branches,
+unchanged morphology gates and terminal comparison. No new Fable request or
+standalone M33 diagnostic; no actual-data fine posterior or automatic follow-up.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
