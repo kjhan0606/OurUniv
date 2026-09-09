@@ -140,3 +140,58 @@ For actual inference, p(E|F,O) or an E-conditioned field prior is still missing,
 q_F morphology is not validated, published covariance/stellar/LMC systematics
 and actual CF4 overlap remain unresolved. Sharper M33 labels alone do not achieve
 the project goal of an LG-conditioned density/velocity field.
+
+## Execution and result (2026-09-09)
+
+Approved implementation/source commitdd55182 was pushed. Slurm337991 executed
+on syn05 through the scheduler,23:01:11–23:01:22 KST, COMPLETED exit0 in11s.
+CPU2/1200M/10min, no GPU. The three focused tests passed. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_lg_composite_337991.{out,err}`.
+Products in `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/composite_proxy_v1/`:
+`result.json`, `field_context_scores.png`, `native_proxy_kinematics.png`.
+Slurm reports3504K batch MaxRSS for this short job; that sampled value is not
+a reliable Python peak-memory measurement and is not used to certify a smaller
+memory request. No extra memory-monitoring job is warranted.
+
+All13 distinct training pairs were eligible, exclusions0. K eigenvalues after
+fixed shrinkage:[.012384,.157142,.257306,.621265], condition number50.17.
+Mock coordinate/observable roundtrip max absolute error7.82e-13; this only
+checks coordinate conventions, not astronomical accuracy. All9 field-context
+scores are supported; none were replaced by an arbitrary low score.
+
+Own-field score minus MEAN score of the other two retained fields, in nats:
+
+| Native target fixture | All12 kinematics | MW–host marginal | M33 conditional addition |
+|---|---:|---:|---:|
+|16|+23.429|+22.950|+0.479|
+|17|+8.774|+10.132|-1.358|
+|20|+14.943|+14.966|-0.023|
+
+All12 and host-only scores favor the original field over EACH alternative for
+all3 cases. The conditional M33 term does NOT rank the original field first
+in any of the3 cases; the positive first-row average contrast is not a win
+against both alternatives. This is a pointwise same-box cross-score test, not
+Bayes factors for cosmologies, calibrated information gain or reconstructed
+phases. The first two plot panels and M33 panel use DIFFERENT color scales.
+
+With all native target kinematics supplied, pair mixture ESS is approximately
+1.000/1.000/1.004 (prior candidate counts1352/883/634). This is concentration
+of a finite assignment mixture under a noiseless diagnostic, NOT MCMC ESS,
+independent universe count or evidence of calibrated unique halo identities.
+Equal-pair predictive plots remain broad; they are not LG posterior maps.
+
+**Driver judgement:** implementation/normalization and host-related field
+dependence demonstrated at diagnostic level. Incremental M33 field discrimination
+is weak/inconsistent with this frozen low-dimensional proxy. Do not promote it
+to a useful M33 field constraint merely because the full score prefers the
+source field. This does not show that M33 observations are uninformative for a
+better physical model. No mass likelihood, separate M33 spatial component,
+LG-conditioned field, q_F repair or actual-data posterior has been delivered.
+
+Close this bounded trial without further coefficient/shrinkage/seed tuning.
+Preserve the host proxy as a reusable diagnostic. Next design should isolate
+what M33 mass/subcell structure or finer LOCAL information can constrain in
+the same field, while retaining the missing population-selection/q_F caveats;
+do not simply retrain this proxy or launch high-dimensional learning. Plan
+audit must ask Q-GOAL/Q-LEAN and all3 identification questions. Await next-bundle
+approval; no automatic downstream job remains.

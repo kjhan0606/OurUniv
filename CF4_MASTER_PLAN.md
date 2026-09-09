@@ -311,6 +311,16 @@ CPU diagnostic. Sources: src/cf4_lg_composite_proxy.py and
 scripts/cf4_bundle_c_composite_proxy.py. Three focused tests run in the same
 job before the one14-coefficient fit and frozen13/3 native evaluation. No new
 neural training, simulation, actual-data weighting or extra audit is requested.
+Composite diagnostic337991 now COMPLETED11s, tests3/3,13 training pairs and all
+9 cross-field scores valid. Full/host-only scores prefer the source field in
+all3 retained cases; incremental conditional-M33 contrasts versus other-field
+means are[+.479,-1.358,-.023] nats and never rank the original field first.
+Thus host field dependence is demonstrated diagnostically, but consistent
+incremental M33 information is NOT established. No observed posterior/physical
+member partition is promoted. See BUNDLE_C_COMPOSITE_PROXY_PLAN.md for full
+results/limitations. Close this14-coefficient trial; no automatic refit or
+neural model. Next design/approval must address the missing M33 mass/subcell
+or finer-local-field connection and retain unresolved q_F/selection caveats.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
