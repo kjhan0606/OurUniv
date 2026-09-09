@@ -321,6 +321,17 @@ member partition is promoted. See BUNDLE_C_COMPOSITE_PROXY_PLAN.md for full
 results/limitations. Close this14-coefficient trial; no automatic refit or
 neural model. Next design/approval must address the missing M33 mass/subcell
 or finer-local-field connection and retain unresolved q_F/selection caveats.
+User approved the next M33 mass/subcell DESIGN. BUNDLE_C_MEMBER_BUDGET_PLAN.md
+now specifies one no-fit necessary mass/momentum/diagonal-second-moment budget
+test over seven support unions, preventing host/satellite double counting.
+Fable5 DESIGN CONDITIONAL GO received normally; four essential conditions are
+incorporated (identical cell masks, congruent PSD scaling, unavailable contexts,
+common BOX velocity convention). Native supplied mock positions/COMs/masses
+are explicit stronger conditioning, not recovered identities or actual masses.
+If hosts exclude every alternative, report inconclusive M33 conditional power,
+not no M33 information. No posterior/support likelihood or sufficient physical
+decomposition is claimed. Design complete; single2-CPU/1200MiB/10min diagnostic
+implementation awaits approval. No new numerical job/ML/simulation launched.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
