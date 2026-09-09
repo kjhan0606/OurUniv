@@ -3,6 +3,14 @@
 2026-09-09. User accepted withholding v1/v2 adoption and approved continuing
 the redesign. This document is a proposal for the next execution bundle, NOT
 approval of the new paired fits. No new job was submitted during redesign.
+Subsequent user approval authorizes this bundle with Fable5 plan audit first,
+explicit Q-GOAL/Q-LEAN questions, Astra fallback only on audit unavailability.
+Implementation/execution must incorporate the audit, not preempt its verdict.
+Fable5 returned CONDITIONAL GO; see BUNDLE_C_STRUCTURE_LG_PLAN_AUDIT.md.
+The driver identified a circular field-to-member assumption in the proposed
+Gaussian proxy and a shared-parameter issue in the suggested gradient fallback.
+Do not treat either as an implemented fix. Execution is held pending the user
+decision on prioritizing a field-only LG observational connection; no new job.
 The target remains CF4/count/LG→present-field posterior→IC→forward/zoom, with
 surroundings1–2 and LG<=.3 cMpc/h. Do not substitute TNG image realism for it.
 

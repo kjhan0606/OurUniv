@@ -253,6 +253,19 @@ BUNDLE_C_STRUCTURE_LG_REDESIGN.md, matched-update native-NLL control versus
 structural-score repair plus a separately labelled LG member-state readout.
 This is DESIGN, not a new fit authorization or a completed q_S/global law.
 No actual LG posterior, direct-CF4 IC restart or amplitude repair is allowed.
+Subsequent user approval authorizes entry to this next bundle, with a renewed
+plan audit FIRST: Fable5 primary, Astra backup only if Fable audit cannot be
+completed. Ask Q-GOAL (final-goal contribution) and Q-LEAN (excessive versus
+necessary instrumentation/gates), feasibility, and essential/deferred scope.
+An adverse scientific verdict is evidence to address, not an invocation failure
+to bypass by seeking approval elsewhere. Preserve existing bundle boundaries.
+Fable5 plan audit completed normally with CONDITIONAL GO (Q-GOAL conditional,
+Q-LEAN broadly proportionate). Driver review found the suggested Gaussian
+proxy circular unless its g(F) can infer members from total field alone; native
+component inputs are not that operator. See BUNDLE_C_STRUCTURE_LG_PLAN_AUDIT.md.
+No Astra fallback/no new fit. Ask before prioritizing the field-only LG proxy
+connection ahead of the approved paired learning experiment; do not silently
+claim that a Gaussian covariance supplies the missing joint physical q_S.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
@@ -345,9 +358,13 @@ shared generator/inference code are never independent validation.
 - GPFS is ordinary shared storage. Read/write scoped project artifacts;
   do not implement storage/inode/renameat2 probes or process-scan monitoring.
 - Use fixed job IDs and final artifacts for bounded checks; no pgrep loops.
-- The Astra driver plans, implements, runs, evaluates and commits. The user
-  waived Fable pre-audits and Opus closure audits while Astra is the driver.
-  Other drivers follow the user's applicable audit policy.
+- The driver plans, implements, runs, evaluates and commits. New user policy
+  reinstates plan/design audits even for an Astra driver: Fable5 primary;
+  Astra backup if the Fable audit invocation fails or produces no usable audit.
+  Every plan audit must explicitly answer Q-GOAL and Q-LEAN plus feasibility
+  and essential/deferred scope. Do not turn these two questions into a new
+  gate framework or per-step audit series. Prior Astra closure-audit waiver
+  remains unless changed by the user; this instruction concerns plan audits.
 - Commit/push coherent changes. Preserve unrelated user work and all failed
   scientific results. Keep run summaries current; do not confuse submission,
   sampler pass, scientific acceptance and final-goal completion.
