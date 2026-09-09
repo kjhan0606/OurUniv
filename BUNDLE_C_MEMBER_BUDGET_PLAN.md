@@ -180,3 +180,49 @@ Approved DESIGN is complete. No numerical job, source-particle request, new
 inference code or refit has run in this turn. Next approval is for the exact
 single2-CPU/1200MiB/10min implementation above; no further planning audit of
 these accepted four recording requirements is needed.
+
+## Execution
+
+Slurm job338040 submitted from pushed source974377e; scheduler allocated syn05,
+CPU2/1200M/10min, no GPU or manual-node execution. The two focused tests precede
+both radii and all18 fixed comparisons. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_member_budget_338040.{out,err}`; output directory
+`/gpfs/kjhan/CF4/z0_density/bundle_c_v1/member_budget_v1/`.
+Submission is not a completed result or scientific acceptance.
+
+### Completed result and decision
+
+338040 COMPLETED exit0,2026-09-09 23:56:03–23:56:14 KST (11s). Tests2/2 pass;
+all18 comparisons complete. Only783 cached total-field cell reads including
+repeated contexts; no raw particles,3D field copies or training. Short-job
+Slurm batch MaxRSS3512K is a sampled accounting value, not a reliable Python
+peak-memory measurement. No extra profiling job or memory claim is warranted.
+
+For BOTH R=dx and R=2dx, in BOTH mass-only and full-moment tests:
+
+- Original-field controls3/3 not excluded; construction-control failures0.
+- Alternative contexts6/6 available; none clipped or zero-member unavailable.
+- Host-only MW/M31 conditions already exclude all6 alternatives.
+- Host-compatible alternatives0, hence no conditional M33 test opportunity.
+
+**Decision: INCONCLUSIVE_NO_HOST_COMPATIBLE_ALTERNATIVES.** Do not interpret
+added-M33-exclusions0 as no M33 information, lack of M33 mass, or a weak budget.
+The fixed alternative contexts are already incompatible at the host-mass stage.
+The moment operator, union accounting and own-field controls work; this neither
+establishes a sufficient physical decomposition nor independently validates it.
+The three source mocks retain essentially100% of M33's native bound mass already
+at R=dx (roundoff in the reported fractions); M33 was not silently dropped.
+
+Outputs `result.json` and `member_budget_tables.png` are in the directory above;
+driver inspected the figure and raw statuses. There is no LG posterior, actual
+mass-observation likelihood, new candidate field or IC output from this job.
+
+Close the approved one-shot test. Do NOT add contexts, change radii/thresholds,
+turn necessary tests into probability factors or start a membership network
+to make this diagnostic positive. Preserve the physical operator for eventual
+uncertain-observation use. The next recommended design returns to the central
+missing present-field prior/inference and MW–M31 conditioning, not another
+M33-only micro-test; M33 remains explicit in that design with its unresolved
+mass/subcell/assignment uncertainties. q_F morphology and selected-population
+normalization are still unresolved. Await next-bundle planning approval; no
+downstream job or automatic audit is running.

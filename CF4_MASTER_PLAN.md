@@ -336,6 +336,16 @@ User now approves that exact member-budget implementation/one CPU execution.
 Sources src/cf4_member_budget.py and scripts/cf4_bundle_c_member_budget.py:
 two focused tests then cached fixed16/17/20 mocks and both radii in one job.
 No new plan audit, fit, actual-data weighting or automatic downstream task.
+Member-budget338040 completed11s, tests2/2,18 comparisons,783 cached cell reads.
+Both fixed radii and mass/moment modes: own-field controls3/3 pass, all6
+alternatives already fail host-only mass requirements, unavailable0. Decision
+INCONCLUSIVE_NO_HOST_COMPATIBLE_ALTERNATIVES, NOT no M33 information. The
+necessary union-budget operator is implemented but not a posterior or physical
+allocation. Close this one-shot test without further contexts/radii/refits.
+Recommend next planning return to the missing present-field prior/inference
+with MW/M31 conditions and explicit unresolved M33, rather than more standalone
+M33 diagnostic variants. No next bundle is authorized by this result; no job
+remains active. See BUNDLE_C_MEMBER_BUDGET_PLAN.md for results and limitations.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
