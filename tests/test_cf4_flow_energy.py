@@ -1,12 +1,11 @@
 import unittest
-from unittest.mock import patch
 
 import numpy as np
 import torch
 
 from cf4_flow_energy import (energy_coefficients, sample_trace, trace_backward,
                              device_record, normalize_groups)
-from cf4_conditional_split_flow import ConditionalSplitFlow
+from cf4_conditional_split_flow import ConditionalSplitFlow, configure_precision
 from cf4_continuous_matter import restrict
 
 
@@ -27,11 +26,19 @@ class EnergyTests(unittest.TestCase):
         self.assertEqual(native.dtype, np.float64)
         seen = []
         hook = model.layers[0].net[0].register_forward_pre_hook(lambda module, args: seen.append(args[0].dtype))
+        old_precision = torch.get_float32_matmul_precision()
+        old_cudnn = torch.backends.cudnn.allow_tf32
+        old_matmul = torch.backends.cuda.matmul.allow_tf32
         try:
-            with patch.object(torch.backends.cudnn, 'allow_tf32', False), patch.object(torch.backends.cuda.matmul, 'allow_tf32', False):
-                result = trained_inverse(model, native)
+            configure_precision(True)
+            result = trained_inverse(model, native)
         finally:
             hook.remove()
+            # PyTorch backend descriptors have setters but no deleters;
+            # mock.patch restoration attempts delattr and is not compatible.
+            torch.set_float32_matmul_precision(old_precision)
+            torch.backends.cudnn.allow_tf32 = old_cudnn
+            torch.backends.cuda.matmul.allow_tf32 = old_matmul
         self.assertTrue(result['passed'], result)
         self.assertTrue(seen)
         self.assertEqual(set(seen), {torch.float32})

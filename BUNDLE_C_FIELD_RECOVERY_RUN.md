@@ -99,3 +99,11 @@ rounded request is conservative for this evaluation-only job, which retains
 only2 training cubes and no prepared training dataset. Peak GPU allocation
 in338194 was2621341184 bytes (~2.44 GiB). No new memory/storage probe.
 Submission and actual test/evaluation outcomes are recorded separately below.
+
+First correction submitted as338388, source62d1d0f. Slurm assigned syn101
+(scheduled allocation, NOT manual execution). It stopped in the new test's
+cleanup: unittest.mock.patch tried deleting a PyTorch backend descriptor that
+only supports get/set. No scientific evaluation/output directory was created.
+Use the already-tested explicit save/configure/restore pattern instead. This
+is a test-harness defect; preserve338388 logs and retry the same evaluation
+without retraining, criteria changes or a new scientific experiment.
