@@ -388,6 +388,20 @@ BOTH_FAIL. Close this objective/current-architecture repair without more
 steps/seeds/weights. No actual high-resolution LG posterior, no next-bundle
 launch or automatic prior-fine-IC fallback. Detailed results and preserved
 checkpoints: BUNDLE_C_FIELD_RECOVERY_RUN.md. Evaluation code error is resolved.
+User now approves designing the recommended conditional3D U-Net diffusion
+replacement, with augmentation and an explicit same-field LG connection plan.
+BUNDLE_C_DIFFUSION_PLAN.md is the next proposed implementation, not a launch.
+Fable5 plan audit completed normally121178ms: CONDITIONAL GO, Q-GOAL/Q-LEAN
+accept ONE bounded field-prior attempt. Five conditions are incorporated:
+pre-submission sizing, legal-branch identity before optimization, invalid draws
+count as failures, budget-short runs are inconclusive, and no further field
+training after failure/inconclusive until native-data member identifiability/
+learnability is addressed. Disposition BUNDLE_C_DIFFUSION_AUDIT.md. The member
+q_S, selection, global environment and efficient actual-data inference remain
+unimplemented; neither morphology nor a normalized diffusion sampler solves
+them. No repeated closed member diagnostics or direct-IC fallback. DESIGN
+complete; proposed1-GPU/4-CPU/48GiB/24h,30,000-update implementation awaits
+user approval at the next bundle boundary. No numerical job submitted.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
