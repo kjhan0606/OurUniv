@@ -245,6 +245,14 @@ User approved ONE frozen analysis covering before/after quality, train/heldout
 fixed likelihood, teacher-parent versus rollout losses, and likelihood/quality
 alignment; driver then judges model viability AND actual CF4/LG connection.
 Scope BUNDLE_C_FLOW_DECISION.md. No new training or replacement model authorized.
+337496 analysis completed2m43s: v2 heldout fine high-band mean0.650 with true
+parent versus0.390 in rollout; training0.676 versus0.297. Both one-step and
+accumulated deficiencies remain. User accepted withholding current-model
+adoption and authorized continued redesign. Candidate proposal:
+BUNDLE_C_STRUCTURE_LG_REDESIGN.md, matched-update native-NLL control versus
+structural-score repair plus a separately labelled LG member-state readout.
+This is DESIGN, not a new fit authorization or a completed q_S/global law.
+No actual LG posterior, direct-CF4 IC restart or amplitude repair is allowed.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

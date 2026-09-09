@@ -82,3 +82,31 @@ Submitted337496, source4a21709 committed/pushed. Logs:
 `/gpfs/kjhan/CF4/logs/cf4_C_flow_decision_337496.{out,err}`. Evidence directory:
 `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/flow_decision_v1`.
 Read result.json and inspect all three figures before final driver judgment.
+
+## Completed evidence and driver decision2026-09-09
+
+337496 completed16:35:09–16:37:52 KST,2m43s, A10080GB; four regressions
+passed. All128 diagnostic generation comparisons and48 fixed native likelihood
+records completed; three figures inspected. No optimizer/fit was run.
+
+At .1875, v2 heldout high-band mean power/native is0.650 with the true .375
+parent, versus0.390 after1.5→.1875 rollout. Training counterparts are0.676 and
+0.297. Means cover two cubes/two draws/four upper bands, not confidence limits.
+The heldout v2 rollout declines0.766→0.571→0.390 at .75/.375/.1875; teacher
+parent values0.766→0.729→0.650. Within-step underproduction and additional
+rollout deterioration both occur; heldout-only overfitting is not enough to
+explain the observed training failures.
+
+At .1875, mean native NLL improves39.912→39.222 heldout and40.763→39.295
+training. However training rollout high-band log-error worsens1.184→1.230;
+heldout improves1.051→0.985 only modestly. Different models/contexts/precision
+and only final checkpoints do not establish convergence, a unique causal
+defect, or impossibility of likelihood learning. Native-parent visual success
+partly inherits the supplied fine .375 skeleton; it is not recovered LG detail.
+
+DECISION: retain v1/v2 as failed development baselines; actual-field adoption
+ON HOLD. User accepted this hold and approved continuing the redesign.
+No autonomous longer fit, amplitude patch or diffusion-family switch. The next
+design must address one-step and rollout errors AND supply an honest member/
+field LG observation interface. See BUNDLE_C_STRUCTURE_LG_REDESIGN.md. This
+analysis bundle is closed; C and the actual high-resolution posterior are not.
