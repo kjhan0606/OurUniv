@@ -15,6 +15,8 @@ cd /home/kjhan/BACKUP/CF4
 git diff --quiet "$EXPECTED_COMMIT" -- src scripts config tests
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=src:scripts:tests
 /home/kjhan/miniconda3/bin/python3.13 -m unittest test_cf4_split_flow -v
+export CF4_FLOW_STRICT_FP32=1
+export CF4_FLOW_AUDIT_OUTPUT_NAME=flow_checkpoint_audit_v2_strict
 /home/kjhan/miniconda3/bin/python3.13 scripts/cf4_bundle_c_flow_checkpoint_audit.py
 # Only exit0 (paired evidence plus inverse/Jacobian checks) permits this repair.
 export CF4_FLOW_OUTPUT_NAME=conditional_flow_v2_full_context

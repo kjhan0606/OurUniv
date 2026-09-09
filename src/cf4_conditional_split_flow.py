@@ -11,6 +11,18 @@ import torch.nn.functional as F
 from cf4_split_moments import state
 
 
+def configure_precision(strict_fp32=False):
+    """Explicit runtime policy; importing the model never changes the backend."""
+    if strict_fp32:
+        torch.set_float32_matmul_precision('highest')
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+    return dict(strict_fp32_requested=bool(strict_fp32),
+                cudnn_allow_tf32=torch.backends.cudnn.allow_tf32,
+                matmul_allow_tf32=torch.backends.cuda.matmul.allow_tf32,
+                float32_matmul_precision=torch.get_float32_matmul_precision())
+
+
 def condition(parent, root, child_dx, node):
     fields = []
     # Fixed units, not training/heldout normalization fitted to observations.

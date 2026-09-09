@@ -2,10 +2,26 @@ import unittest
 import numpy as np
 import torch
 from cf4_split_moments import roundtrip, encode_tree, decode_tree
-from cf4_conditional_split_flow import condition, ConditionalSplitFlow
+from cf4_conditional_split_flow import condition, ConditionalSplitFlow, configure_precision
 
 
 class SplitFlowTests(unittest.TestCase):
+    def test_strict_precision_disables_both_tf32_paths(self):
+        old_cudnn = torch.backends.cudnn.allow_tf32
+        old_matmul = torch.backends.cuda.matmul.allow_tf32
+        old_precision = torch.get_float32_matmul_precision()
+        try:
+            torch.backends.cudnn.allow_tf32 = True
+            torch.backends.cuda.matmul.allow_tf32 = True
+            policy = configure_precision(True)
+            self.assertFalse(policy['cudnn_allow_tf32'])
+            self.assertFalse(policy['matmul_allow_tf32'])
+            self.assertEqual(policy['float32_matmul_precision'], 'highest')
+        finally:
+            torch.set_float32_matmul_precision(old_precision)
+            torch.backends.cuda.matmul.allow_tf32 = old_matmul
+            torch.backends.cudnn.allow_tf32 = old_cudnn
+
     def test_full_context_preserves_old_sampler_rng(self):
         from cf4_bundle_c_flow_pilot import tensors
         from unittest.mock import patch

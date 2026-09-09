@@ -233,6 +233,12 @@ is confirmed, but trained-flow inverse/logdet errors exceed numerical limits.
 User now authorizes cause separation and necessary correction/reverification:
 one frozen same-input default-FP32/strict-FP32/FP64 comparison, not additional
 training or relaxed morphology criteria. See BUNDLE_C_FLOW_PILOT_RUN.md.
+337268 completed41s: all strict-FP32/FP64 cases pass, all default-FP32 cases
+fail. TF32 convolution is supported as the inversion error source, not the
+cause of all morphology failures. User now approves strict-FP32 paired gate
+and, only on pass, the previously blocked single full-context6000-step fit.
+Keep existing numerical/science thresholds and preserve all earlier outputs.
+The current repair changes context and precision; no actual CF4/LG inference.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

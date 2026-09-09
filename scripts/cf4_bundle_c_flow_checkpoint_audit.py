@@ -13,13 +13,13 @@ import numpy as np
 import torch
 
 from cf4_split_moments import encode_tree
-from cf4_conditional_split_flow import ConditionalSplitFlow, condition
+from cf4_conditional_split_flow import ConditionalSplitFlow, condition, configure_precision
 from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_bundle_c_flow_pilot import ROOT, refine, metrics
 from cf4_continuous_matter import restrict
 
 SOURCE = ROOT / 'conditional_flow_v1'
-OUT = ROOT / 'flow_checkpoint_audit_v1'
+OUT = ROOT / os.environ.get('CF4_FLOW_AUDIT_OUTPUT_NAME', 'flow_checkpoint_audit_v1')
 
 
 def device_tuple(record):
@@ -39,6 +39,8 @@ def run():
     OUT.mkdir(exist_ok=False)
     start = time.monotonic()
     torch.set_num_threads(2)
+    precision = configure_precision(os.environ.get('CF4_FLOW_STRICT_FP32') == '1')
+    print(json.dumps(dict(precision=precision)), flush=True)
     # This is our own checkpoint from336268, not an untrusted external pickle.
     checkpoint = torch.load(SOURCE / 'checkpoint.pt', map_location='cpu', weights_only=False)
     state = checkpoint['model']
@@ -119,7 +121,7 @@ def run():
     report = dict(status='CONTEXT_MISMATCH_CONFIRMED_CORRECTION_JUSTIFIED' if justified else 'STOP_REVIEW_NO_AUTOMATIC_REFIT',
         source_checkpoint_commit=checkpoint['source_commit'], source_steps=checkpoint['step'],
         job_id=os.environ['SLURM_JOB_ID'], source_commit=os.environ['EXPECTED_COMMIT'], comparisons=reports,
-        elapsed_seconds=time.monotonic()-start,
+        elapsed_seconds=time.monotonic()-start, precision=precision,
         limits=['No optimizer/fit in this audit. Existing checkpoint and used source data only.',
                 'Crop/full differences test deterministic likelihood-context mismatch, not sole cause of morphology failure.',
                 'Train/held NLL and latent moments do not distinguish insufficient optimization from model capacity by themselves.',

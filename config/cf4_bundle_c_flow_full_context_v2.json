@@ -10,6 +10,7 @@
   "training_deadline_seconds": 10800,
   "gpu_peak_limit_GiB": 20,
   "full_context_training": true,
-  "development_gate": "Unchanged v1 gates; context correction only, no longer fit or retuning.",
-  "scope": "One context-corrected native q_E/q_F fit only after frozen checkpoint confirms the mismatch; same seeds, record order, architecture, steps, gates."
+  "strict_fp32": true,
+  "development_gate": "Unchanged v1 gates; matched context and TF32-disabled computation, no longer fit or retuning.",
+  "scope": "One context/precision-corrected native q_E/q_F fit only after frozen checkpoint passes unchanged gates; same seeds, record order, architecture, steps, gates."
 }

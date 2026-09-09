@@ -12,7 +12,7 @@ from scipy.ndimage import label
 
 from cf4_continuous_matter import restrict, check_realizable
 from cf4_split_moments import NODES, state, encode_tree, decode, merge_octets, roundtrip
-from cf4_conditional_split_flow import condition, ConditionalSplitFlow
+from cf4_conditional_split_flow import condition, ConditionalSplitFlow, configure_precision
 from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_spatial_copula import expand
 
@@ -208,6 +208,9 @@ def run():
     cfg = json.loads(CONFIG.read_text())
     if not torch.cuda.is_available():
         raise RuntimeError('allocated GPU unavailable; never train on login/CPU fallback')
+    precision = configure_precision(cfg.get('strict_fp32', False))
+    dump('precision.json', precision)
+    print(json.dumps(dict(precision=precision)), flush=True)
     torch.ones(1, device='cuda').sum().item()
     torch.set_num_threads(2)
     torch.manual_seed(cfg['training_seed'])
@@ -218,7 +221,7 @@ def run():
     training_started = time.monotonic()
     dump('status.json', dict(status='TRAINING', job_id=os.environ['SLURM_JOB_ID'],
         gpu=torch.cuda.get_device_name(), parameters=sum(p.numel() for p in model.parameters()),
-        preparation_seconds=training_started-started))
+        preparation_seconds=training_started-started, precision=precision))
     history = []
     with (OUT / 'training.jsonl').open('x', buffering=1) as log:
         for step in range(1, cfg['steps']+1):
@@ -246,7 +249,7 @@ def run():
                 break
     torch.save(dict(model=model.state_dict(), optimizer=optimizer.state_dict(), step=step, config=cfg,
         coordinate_space='mixed binary split coordinates, not physical-field Lebesgue density',
-        source_commit=os.environ['EXPECTED_COMMIT']), OUT / 'checkpoint.pt')
+        source_commit=os.environ['EXPECTED_COMMIT'], precision=precision), OUT / 'checkpoint.pt')
     del data, optimizer, z, mask, context, valid, loss
     torch.cuda.empty_cache()
     dump('status.json', dict(status='EVALUATING', steps=step, training_seconds=time.monotonic()-training_started))
@@ -263,7 +266,7 @@ def run():
                 'Global384-domain normalized evaluation, q_S member readout and actual1.5 posterior remain absent.',
                 'Four draws per case do not calibrate posterior uncertainty or prove conditional phase accuracy.',
                 'A gate failure stops adoption; no automatic longer training or amplitude repair.'],
-        full_context_training=cfg.get('full_context_training', False))
+        full_context_training=cfg.get('full_context_training', False), precision=precision)
     dump('result.json', report)
     dump('status.json', {k: v for k, v in report.items() if k not in ('comparisons', 'history')})
     print(report['status'], flush=True)

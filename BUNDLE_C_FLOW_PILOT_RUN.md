@@ -157,3 +157,30 @@ scheduler estimated2026-09-09 06:15:09 KST, not a guaranteed start. Logs:
 `bundle_c_v1/flow_precision_diagnosis_v1/result.json`. After completion inspect
 the three mode results before choosing a numerical correction; no training
 has yet been authorized by the failed checkpoint gate.
+
+## Precision diagnosis result and authorized gated fit
+
+337268 completed2026-09-09 06:04:50–06:05:31 KST on A40,41s. All three
+regressions passed. All four default-FP32 cases fail; all strict-FP32 and FP64
+cases pass unchanged inverse/logdet gates. Maximum inverse errors are3.472e-3,
+4.411e-6 and4.525e-15 respectively; strict-FP32 logdet max3.815e-6. This supports
+TF32 convolution as the numerical error source, not an explanation/cure of
+the failed morphology. Native chart representation and flow inversion are
+different numerical checks.
+
+User now explicitly approves disabling TF32, repeating the original paired
+checkpoint gate and, on pass ONLY, the one full-context6000-step v2 fit.
+`configure_precision` is called explicitly by the audit and pilot; imports do
+not change global backend state. cuDNN and matmul TF32 are disabled, matmul
+precision highest; policy saved in audit and pilot/checkpoint results. No AMP,
+no FP64 training. Added one policy regression; four focused tests run on Slurm.
+
+Use existing repair runner, GPU1/CPU2/24 GiB host (20 estimated+20%),4h cap.
+New audit directory `flow_checkpoint_audit_v2_strict` preserves the failed v1.
+The still-unused `conditional_flow_v2_full_context` receives the single fit.
+Both directories refuse existing outputs. Same architecture,6000 steps, seeds,
+sample order and scientific gates. Full-context training changes context AND
+scored-cell exposure; precision also changes, so any morphology improvement
+cannot be uniquely attributed to one change. Completion automatically runs
+the original16-draw morphology evaluation, not another training or actual-data
+posterior job. Any gate failure stops the pipeline without automatic retry.
