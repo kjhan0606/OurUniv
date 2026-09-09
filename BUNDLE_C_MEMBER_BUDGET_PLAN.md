@@ -3,6 +3,7 @@
 2026-09-09: user approved this DESIGN bundle. Proposed next implementation
 requires approval. One small physical diagnostic, not another proxy refit,
 membership learner, particle simulation or posterior claim.
+Subsequent user approval authorizes this exact implementation and one Slurm run.
 
 ## Evidence and goal
 

@@ -332,6 +332,10 @@ If hosts exclude every alternative, report inconclusive M33 conditional power,
 not no M33 information. No posterior/support likelihood or sufficient physical
 decomposition is claimed. Design complete; single2-CPU/1200MiB/10min diagnostic
 implementation awaits approval. No new numerical job/ML/simulation launched.
+User now approves that exact member-budget implementation/one CPU execution.
+Sources src/cf4_member_budget.py and scripts/cf4_bundle_c_member_budget.py:
+two focused tests then cached fixed16/17/20 mocks and both radii in one job.
+No new plan audit, fit, actual-data weighting or automatic downstream task.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
