@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -10,6 +11,33 @@ from cf4_continuous_matter import restrict
 
 
 class EnergyTests(unittest.TestCase):
+    def test_trained_inverse_accepts_native_float64_without_mutation(self):
+        from cf4_bundle_c_field_recovery import trained_inverse
+        torch.manual_seed(184)
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        model = ConditionalSplitFlow(np.zeros(7), np.ones(7)).to(device)
+        for layer in model.layers:
+            torch.nn.init.normal_(layer.net[-1].weight, std=.001)
+        rng = np.random.default_rng(194)
+        mass = rng.uniform(1, 4, (4, 4, 4))
+        velocity = rng.normal(size=(3, 4, 4, 4))*100
+        variance = rng.uniform(10, 100, velocity.shape)
+        native = np.concatenate([mass[None], mass*velocity, mass*(velocity**2+variance)])
+        before = native.copy()
+        self.assertEqual(native.dtype, np.float64)
+        seen = []
+        hook = model.layers[0].net[0].register_forward_pre_hook(lambda module, args: seen.append(args[0].dtype))
+        try:
+            with patch.object(torch.backends.cudnn, 'allow_tf32', False), patch.object(torch.backends.cuda.matmul, 'allow_tf32', False):
+                result = trained_inverse(model, native)
+        finally:
+            hook.remove()
+        self.assertTrue(result['passed'], result)
+        self.assertTrue(seen)
+        self.assertEqual(set(seen), {torch.float32})
+        np.testing.assert_array_equal(native, before)
+        self.assertTrue(all(p.grad is None for p in model.parameters()))
+
     def test_mixed_atom_continuous_energy_gradient(self):
         # Exact atom plus Gauss-Legendre integration of Beta(a,1) on fixed(0,1).
         # Both mixture probability and continuous shape have nonzero gradients.

@@ -370,6 +370,14 @@ state PENDING(Resources), no node/tests/training yet. One job runs the7 focused
 regressions, fixed feasibility segment, matched learning and final evaluation.
 Execution status belongs in BUNDLE_C_FIELD_RECOVERY_RUN.md, not inferred from
 submission success. No new scientific output or next-bundle authorization.
+338194 subsequently finished both1000-step branches and saved checkpoints,
+but failed at evaluation entry on2026-09-10 02:04:45 KST: FP64 native split
+coordinates were passed to FP32 convolution. Seven tests and the operational
+screen passed; morphology remains unevaluated. User requests this code fix.
+The correction adds the missing network dtype conversion and one regression,
+plus evaluation-only resumption using unchanged checkpoints/criteria into a
+new output directory. No retraining, new model trial or additional plan audit.
+Details BUNDLE_C_FIELD_RECOVERY_RUN.md; evaluation-only execution via Slurm.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

@@ -65,3 +65,37 @@ No actual CF4/LG weighting or member assignment occurs here. M33 can remain
 unresolved/shared-cell; same-field member/selection and global environment laws
 are still missing. This trial cannot deliver an observed high-resolution LG
 posterior or authorize the auditor's prior-fine-IC fallback.
+
+## Completed learning, evaluation dtype correction
+
+338194 ran on syn08/H100 NVL,2026-09-10 00:50:14--02:04:45 KST (1h14m31s).
+All7 tests passed; the bounded screen passed its operational checks. BOTH
+branches finished1000 updates and saved final checkpoints. Evaluation then
+failed before morphology measurement: `trained_inverse` passed the FP64 output
+of `encode_tree` through the training-record adapter, which preserved its
+dtype. The FP32 convolution rejected the resulting double input. This is a
+driver implementation defect, not a numerical inverse failure, OOM, failed
+learning criterion or evidence against the scientific model.
+
+User requests fixing the evaluation error. The fix reuses `device_record`,
+which converts network z/context to FP32, masks to int64 and validity to bool;
+native physical moments/decoder stay FP64. One regression calls the actual
+evaluation function on FP64 native input with nonidentity FP32 layers and
+checks finite passing inverse, input dtype, no native mutation or gradients.
+Eight tests run in the evaluation allocation. Original thresholds unchanged.
+
+`--evaluate-only` reads the two completed checkpoints without creating an
+optimizer, preparing training records, recomputing the screen or taking any
+optimizer updates. New outputs go to
+`/gpfs/kjhan/CF4/z0_density/bundle_c_v1/field_recovery_evaluation_v1`.
+The failed result/logs and original checkpoints remain untouched. Original
+16-draw evaluation and paired teacher/rollout metrics are reused for both
+branches, followed by the same frozen terminal decision. No new trial/audit.
+
+Runner `scripts/run_cf4_bundle_c_field_evaluation.sbatch`: one GPU,2 CPUs,
+9 GiB host memory,1h cap (application3500s), same partitions/exclusion. Prior
+whole-run sampled MaxRSS7078212 KiB (~6.75 GiB), plus20% gives~8.10 GiB;9 GiB
+rounded request is conservative for this evaluation-only job, which retains
+only2 training cubes and no prepared training dataset. Peak GPU allocation
+in338194 was2621341184 bytes (~2.44 GiB). No new memory/storage probe.
+Submission and actual test/evaluation outcomes are recorded separately below.

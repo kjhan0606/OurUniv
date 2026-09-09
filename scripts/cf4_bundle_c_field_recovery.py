@@ -1,4 +1,5 @@
 """Single approved control/energy-score experiment with a terminal decision."""
+import argparse
 import copy
 import itertools
 import json
@@ -17,9 +18,8 @@ from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_conditional_split_flow import ConditionalSplitFlow, configure_precision
 from cf4_continuous_matter import restrict
 from cf4_flow_energy import (sample_trace, trace_backward, feature_groups,
-                             normalize_groups, energy_coefficients)
+                             normalize_groups, energy_coefficients, device_record)
 from cf4_split_moments import encode_tree
-from cf4_conditional_split_flow import condition
 
 ROOT = pilot.ROOT
 SOURCE = ROOT / 'conditional_flow_v2_full_context'
@@ -27,6 +27,7 @@ OUT = ROOT / 'field_recovery_v1'
 CFG = json.loads(Path('config/cf4_field_recovery_v1.json').read_text())
 START = float(os.environ.get('CF4_JOB_START', time.time()))
 CREATED = False
+EVALUATION_DEADLINE = None
 RESULT = dict(status='NOT_STARTED', branches={}, end_state=None,
               limits=CFG['limits'], actual_high_resolution_LG_posterior=False)
 
@@ -48,6 +49,8 @@ def event(status, **values):
 
 def check(learning=True):
     cap = CFG['learning_deadline_seconds'] if learning else CFG['total_deadline_seconds']
+    if EVALUATION_DEADLINE is not None:
+        cap = min(cap, EVALUATION_DEADLINE)
     if time.time()-START > cap:
         raise TrialStop('INCOMPLETE_TIME_CAP')
     if torch.cuda.max_memory_allocated() > CFG['gpu_peak_limit_GiB']*2**30:
@@ -250,8 +253,10 @@ def trained_inverse(model, native):
     # Reuse the original trained-flow inverse/Jacobian check, one fixed record.
     tree = encode_tree(native)
     z, mask, parent = tree[0]
-    context, valid = condition(parent, parent, .1875, 0)
-    data = pilot.tensors((z, mask, context, valid), full_context=True)
+    # encode_tree returns FP64 physical coordinates. Convert ONLY network inputs
+    # using the same FP32/int64/bool adapter as the trained trace likelihood.
+    # Keep native moments and the conservative physical decoder in FP64.
+    data = device_record(z, mask, parent, parent, .1875, 0, next(model.parameters()).device)
     active = data[1] == 2
     original = ((data[0]-model.location)/model.spread)*active
     x, jac = original.clone(), torch.zeros_like(original[:, 0])
@@ -269,12 +274,19 @@ def trained_inverse(model, native):
 
 
 @torch.no_grad()
-def evaluate_branch(name, checkpoint, fields, request):
-    model, optimizer = make_model(checkpoint)
-    del optimizer
-    saved = torch.load(OUT / name / 'checkpoint.pt', map_location='cpu', weights_only=False)
-    model.load_state_dict(saved['model'])
+def evaluate_branch(name, fields, request, checkpoint_root=None):
+    checkpoint_path = (OUT if checkpoint_root is None else checkpoint_root) / name / 'checkpoint.pt'
+    saved = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
+    if saved['new_steps'] != 1000 or saved['step'] != 7000:
+        raise ValueError('evaluation requires the completed1000-update branch')
+    if saved['source_commit'] != RESULT.get('training_source_commit', os.environ['EXPECTED_COMMIT']):
+        raise ValueError('saved branch source differs from recorded training run')
+    state = saved['model']
+    model = ConditionalSplitFlow(state['location'].flatten().numpy(), state['spread'].flatten().numpy()).cuda()
+    model.load_state_dict(state)
+    del state
     del saved
+    (OUT / name).mkdir(exist_ok=True)
     model.eval()
     inverse = trained_inverse(model, fields[0][0])
     dump(f'{name}_inverse.json', inverse)
@@ -391,7 +403,11 @@ def run():
     for name in ['control', 'repair']:
         train_branch(name, checkpoint, data, fields, targets, scales, coefficient, schedule)
     del data
-    reports = {name: evaluate_branch(name, checkpoint, fields, request) for name in ['control', 'repair']}
+    finish_evaluation(fields, request)
+
+
+def finish_evaluation(fields, request, checkpoint_root=None):
+    reports = {name: evaluate_branch(name, fields, request, checkpoint_root) for name in ['control', 'repair']}
     control, repair = reports['control'], reports['repair']
     contrasts = []
     for mode in ('teacher', 'rollout'):
@@ -411,9 +427,44 @@ def run():
     RESULT.update(status=verdict, end_state=reports, heldout_contrasts=contrasts)
 
 
+def run_evaluation_only():
+    """Resume ONLY evaluation into a new directory; no optimizer/fit or old writes."""
+    global OUT, CREATED, EVALUATION_DEADLINE
+    if 'SLURM_JOB_ID' not in os.environ or not torch.cuda.is_available():
+        raise RuntimeError('Slurm GPU required; no CPU/login fallback')
+    trained = ROOT / 'field_recovery_v1'
+    previous = json.loads((trained / 'result.json').read_text())
+    if any(previous['branches'][name]['steps'] != 1000 for name in ('control', 'repair')):
+        raise ValueError('both training branches must already be complete')
+    OUT = ROOT / 'field_recovery_evaluation_v1'
+    OUT.mkdir(exist_ok=False)
+    CREATED = True
+    EVALUATION_DEADLINE = 3500
+    torch.set_num_threads(2)
+    RESULT.update(status='EVALUATION_ONLY', job_id=os.environ['SLURM_JOB_ID'],
+        source_commit=os.environ['EXPECTED_COMMIT'], training_job_id=previous['job_id'],
+        training_source_commit=previous['source_commit'], precision=configure_precision(True),
+        additional_training_updates=0, evaluation_deadline_seconds=EVALUATION_DEADLINE,
+        checkpoint_root=str(trained), config=CFG,
+        branches={name: dict(steps=1000, evaluation=None, checkpoint=str(trained / name / 'checkpoint.pt'))
+                  for name in ('control', 'repair')})
+    for key in ('starting_high_band', 'starting_native_likelihood', 'starting_development_passed_draws', 'screen'):
+        RESULT[key] = previous[key]
+    dump('result.json', RESULT)
+    event('EVALUATION_ONLY', training_job=previous['job_id'], additional_training_updates=0)
+    request = json.loads((SOURCE / 'request.json').read_text())
+    with h5py.File(ROOT / 'total_matter_v1/matter_moments.h5', 'r') as source:
+        # Evaluation only uses the original FIRST TWO training cases, not all12.
+        fields = [levels_at(source, o) for o in request['train_origins_1p5_cells'][:2]]
+    finish_evaluation(fields, request, trained)
+
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--evaluate-only', action='store_true', help='Read completed branch checkpoints; never retrain.')
+    args = parser.parse_args()
     try:
-        run()
+        run_evaluation_only() if args.evaluate_only else run()
     except TrialStop as exc:
         RESULT.update(status=str(exc), terminal_trial=True, end_state=RESULT.get('end_state'))
     except Exception:
