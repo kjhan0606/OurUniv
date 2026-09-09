@@ -346,6 +346,20 @@ Recommend next planning return to the missing present-field prior/inference
 with MW/M31 conditions and explicit unresolved M33, rather than more standalone
 M33 diagnostic variants. No next bundle is authorized by this result; no job
 remains active. See BUNDLE_C_MEMBER_BUDGET_PLAN.md for results and limitations.
+User approved the next central-work DESIGN on2026-09-10. Proposed plan:
+BUNDLE_C_FIELD_RECOVERY_PLAN.md. It closes standalone member diagnostics and
+asks Fable5 whether ONE bounded matched generative-objective repair is the
+right immediate bottleneck, explicitly retaining the missing member/selection
+and global environment laws. No actual-data fine inference or numerical run
+is authorized by this planning approval. Fable5 review completed normally in
+137035ms: CONDITIONAL GO, Q-GOAL/Q-LEAN accept one terminal matched experiment.
+Three essential corrections are incorporated: training-gradient-based frozen
+weight, worst-case full-rollout gradient/memory screen before training, and
+one-step/rollout reporting even on failure. Driver does not adopt the audit's
+overstrong causal classification or its coarse-posterior/prior-fine-IC fallback
+as an automatic route change. See BUNDLE_C_FIELD_RECOVERY_AUDIT.md. DESIGN
+complete; one1000-update-per-branch/4h Slurm implementation awaits approval.
+No numerical job submitted, no high-resolution observed LG posterior exists.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
