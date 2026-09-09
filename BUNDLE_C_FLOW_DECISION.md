@@ -77,3 +77,8 @@ four regression tests plus inline pairing/conservation/finite-score checks.
 
 Completion produces evidence for a driver report, not an automatic scientific
 GO or downstream fit. Next bundle remains subject to user approval.
+
+Submitted337496, source4a21709 committed/pushed. Logs:
+`/gpfs/kjhan/CF4/logs/cf4_C_flow_decision_337496.{out,err}`. Evidence directory:
+`/gpfs/kjhan/CF4/z0_density/bundle_c_v1/flow_decision_v1`.
+Read result.json and inspect all three figures before final driver judgment.
