@@ -109,3 +109,50 @@ node execution. Focused tests run before32 cached-field fixtures. Outputs:
 `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/lg_identification_v1/`;
 logs `/gpfs/kjhan/CF4/logs/cf4_lg_identify_337986.{out,err}`.
 Submission/running state is not evidence of completed tests or scientific success.
+
+### Completed result and driver judgement
+
+Job337986 COMPLETED exit0 in1m13s; batch MaxRSS293664K. Both focused tests
+passed and all32 fixtures finished. `result.json`, `candidates.h5`, frozen
+`conventions.json` and `first_fixture_maps.png` are in the output directory.
+Driver inspected the fixed first train/heldout maps and numerical report.
+
+| Evaluation association, radius1 cell | Train16 | Heldout16 |
+|---|---:|---:|
+| MW matched |16|16|
+| M31 matched |16|14|
+| M33 matched |0|2|
+| All3 matched distinctly |0|0|
+| M31/M33 share nearest peak |16|16|
+| Truth objects excluded by patch boundary |0|0|
+
+The two heldout M33 associations (fixtures20,23) are NOT distinct M33 detection:
+the shared M31/M33 nearest peak is assigned to M33 while M31 is unmatched.
+All32 have shared-nearest pair[1,2]. This is already present in the full interior
+peak catalogue, not repaired by removing role-neighbour pruning. The fixed
+observer-cell input and many possible role assignments remain explicit:
+matching against native truth does not mean inference identified the real LG.
+
+MW/M31 matched-only calibration has16/15 unique training objects, respectively,
+with rank7 sample covariance. This small, selected calibration is not a validated
+observation law. M33 has ZERO training matches: no M33 mean/covariance/precision
+was fabricated. Physical aperture dispersions are saved separately from mean
+velocities, not called posterior uncertainties. Aperture overlap and native
+boundary exclusions are reported per fixture; no boundary truth loss explains
+the missing third component. Maps show cached native TNG, NOT observed LG.
+
+**Decision:** the implementation/diagnostic is complete; identification of
+three separate physical components from this .1875 grid by this fixed finder
+is NOT established. The native field itself exhibits the M31/M33 confusion,
+so a better ML image alone cannot be assumed to solve the component operator.
+This does not prove that no method or finer local representation can identify
+M33. No observed posterior, q_S or fine-model adoption is promoted.
+
+**Next recommendation, awaiting bundle approval:** design an explicit unresolved
+M33/member-state branch, with uncertain role assignments, connected to the same
+total field and LG distance/velocity/mass observations. Native subhalo labels
+may calibrate this branch but cannot supply new-field member identities. Treat
+local finer resolution as an alternative to assess, not an automatic global
+refinement run. Require Fable5 Q-GOAL/Q-LEAN and MW/M31/M33 identification scrutiny
+on the actual next plan. Paired training, new simulations and arbitrary peak
+tuning remain deferred; no next-bundle calculation has been launched.

@@ -277,6 +277,15 @@ Q-GOAL direct/Q-LEAN proportionate. All four disclosure conditions (support
 source, boundary truth counts, velocity/residual convention, role completeness/
 shared peaks/aperture overlap) are implemented in the single CPU job. No extra
 auditor/gate, new training or proxy likelihood is authorized by that result.
+Identification job337986 completed1m13s, tests2/2, all32 cached native fixtures.
+All32 show a shared M31/M33 nearest peak; distinct three-way matching0/32.
+Two heldout M33 matches replace M31 on the shared peak, not a third detection.
+No boundary truth loss; M33 training calibration unavailable. This closes the
+bounded diagnostic, NOT q_S or an observed LG posterior. See the identification
+report for counts and limitations. Recommend an explicit unresolved-member/
+assignment observation-link design (or justified finer LOCAL information),
+with Fable5 plan audit and user bundle approval before implementation. Do not
+resume paired learning or new simulations automatically.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
