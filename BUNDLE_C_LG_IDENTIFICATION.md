@@ -100,3 +100,12 @@ matched triplet's membership in the field-only role adjacency separately.
 Matching minimizes distance with dummy cost1.001dx; it does not force maximal
 completeness. Fixed first train/heldout maps use the observer z slab; red truth
 positions are projected evaluation-only overlays, not candidate inputs.
+
+## Execution
+
+Slurm job **337986**, submitted2026-09-09 22:35:43 KST, source commit79f11b6
+(pushed). Allocated syn05 via a40 partition, CPU-only2 cores/4800M/30m; no manual
+node execution. Focused tests run before32 cached-field fixtures. Outputs:
+`/gpfs/kjhan/CF4/z0_density/bundle_c_v1/lg_identification_v1/`;
+logs `/gpfs/kjhan/CF4/logs/cf4_lg_identify_337986.{out,err}`.
+Submission/running state is not evidence of completed tests or scientific success.
