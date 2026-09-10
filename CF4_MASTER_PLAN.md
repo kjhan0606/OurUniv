@@ -402,6 +402,15 @@ unimplemented; neither morphology nor a normalized diffusion sampler solves
 them. No repeated closed member diagnostics or direct-IC fallback. DESIGN
 complete; proposed1-GPU/4-CPU/48GiB/24h,30,000-update implementation awaits
 user approval at the next bundle boundary. No numerical job submitted.
+User now approves this implementation and single Slurm diffusion experiment.
+Execution record BUNDLE_C_DIFFUSION_RUN.md; source/model config and static
+sizing are implemented.34,095,557 parameters; concrete bounded-cache sizing
+reduces host request from provisional48GiB to15GiB (12GiB estimated peak+20%,
+rounded), within the approved envelope. One allocation runs8 focused tests,
+native identity,32 real largest-scale operational updates, then the same fit
+and fixed evaluation. Only the8 original fine draws are comparable here; the
+old8 environment draws are explicitly out of scope, not declared passing.
+No new audit, q_S learner, observed posterior or automatic follow-up launched.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

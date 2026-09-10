@@ -1,0 +1,59 @@
+{
+  "parameters": 34095557,
+  "parameter_breakdown": {
+    "stem": 14496,
+    "embedding": 49728,
+    "down": 21437280,
+    "stride": 2613408,
+    "upconv": 2613072,
+    "up": 6763344,
+    "attention": 592128,
+    "head": 12101
+  },
+  "fp32_model_gradient_adam2_ema_GiB": 0.635079238563776,
+  "source_slab_GiB": 2.13623046875,
+  "largest_parent_shape": [
+    64,
+    64,
+    64
+  ],
+  "input_channels": 301,
+  "output_channels": 245,
+  "host_GiB": {
+    "slab": 2.1363,
+    "native_encoded_temporary_buffers": 3.5,
+    "HDF5_and_evaluation_buffers": 1,
+    "python_libraries": 1,
+    "allocator_retention": 2,
+    "checkpoint_and_miscellaneous": 2.3637,
+    "total_engineering_peak": 12,
+    "with_twenty_percent": 14.4,
+    "slurm_request": 15
+  },
+  "gpu_GiB": {
+    "parameter_states": 0.635079238563776,
+    "modalities_and_loss_buffers": 3,
+    "checkpointed_activations_and_gradients": 4,
+    "convolution_workspace": 8,
+    "allocator_and_miscellaneous": 4.36493,
+    "total_engineering_peak": 20,
+    "with_twenty_percent": 24
+  },
+  "predicted_worst_scale_update_seconds": [
+    2,
+    12
+  ],
+  "predicted_balanced_update_seconds": [
+    1,
+    6
+  ],
+  "prediction_limit": "Engineering range, not hardware measurements; 30k balanced updates could take8.3-50h, stopped at22h learning budget. No convergence forecast.",
+  "evaluation_forward_calls": 5200,
+  "predicted_evaluation_seconds": [
+    900,
+    6500
+  ],
+  "measurement": "First32 full64^3 forward/backward/Adam/EMA updates included in same fit; actual parameter count must equal this static layer sum. Compare max RSS and GPU max reserved with engineering peaks, stop if exceeded.",
+  "storage_output_cap_estimate_GiB": 6,
+  "storage_policy": "New run directory, checkpoints at10000/20000/30000 or stopped final update, fixed8 fine fields, small JSON/slab/PNG; no epoch fields."
+}
