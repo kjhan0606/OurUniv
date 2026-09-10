@@ -39,3 +39,15 @@ If healthy plumbing but failed denoising is found, this does not uniquely
 identify capacity, encoding or optimization as the root cause. Report that
 uncertainty. The next scientific bundle still requires a concrete proposal
 and user approval; further field training first requires member learnability.
+
+## Submitted, not yet evaluated
+
+Implementation3240750 committed and pushed; static Python compilation,
+shell syntax and git whitespace checks pass. Slurm **338746**, submitted
+2026-09-10 18:41:37 KST. Initial scheduler state PENDING(Priority), no
+allocation or numerical diagnosis yet. ReqTRES1 GPU/2 CPUs/6GiB,20min;
+partitions a40,a100,h100,h200, excluded syn06. Backfill at18:41:38 estimates
+20:35:50 KST, not a start promise. SchedNodeList syn101 is only a possible
+ordinary Slurm allocation; no manual execution. Numerical output will be
+`/gpfs/kjhan/CF4/z0_density/bundle_c_v1/diffusion_frozen_diagnosis_v1/result.json`.
+No separate monitoring daemon or automatic scientific follow-up was created.

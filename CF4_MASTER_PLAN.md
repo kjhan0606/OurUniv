@@ -430,6 +430,9 @@ exists: do not trust seed reconstruction as proof of weight updates.
 Check actual normalization, simple denoising baselines, raw/EMA gradients
 and unchanged failed reverse chain. No further field training before
 member learnability is addressed and a new concrete plan is approved.
+Frozen diagnostic implementation3240750 pushed; Slurm338746 submitted
+2026-09-10 18:41:37 KST, initial PENDING(Priority), no numerical result yet.
+1 GPU/2 CPUs/6GiB host/20min; no automatic additional training or bundle.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
