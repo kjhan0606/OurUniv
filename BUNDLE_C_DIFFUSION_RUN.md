@@ -87,3 +87,18 @@ No GPFS/inode/rename/process-scan diagnostic or monitoring framework.
 Submission/job ID and measured results will be recorded below, separately
 from this implementation description. Source syntax checks passed; numerical
 tests have not yet run at the time this initial record is written.
+
+## Submitted
+
+Pushed implementation source **341b419**, Slurm **338402**, submitted
+2026-09-10 09:03:02 KST. Bounded scheduler check: **PENDING(Priority)**;
+no allocation, numerical tests or learning yet. ReqTRES confirms1 GPU,
+4 CPUs,15GiB,24h; excluded syn06. Backfill estimate at09:03:06 was13:01 KST
+with SchedNodeList=syn101; this is an estimate, NOT an allocation/start promise.
+If Slurm assigns syn101, it is an ordinary scheduled job, not manual execution.
+
+After allocation the same job performs8 tests, native identity, the32-update
+operational segment, bounded learning and fixed evaluation. There is no
+separate polling daemon and no automatic launch of a subsequent science bundle.
+Current source syntax/shell checks pass; numerical results remain UNAVAILABLE
+until this scheduled job actually executes. No observed LG product is claimed.

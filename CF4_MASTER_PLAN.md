@@ -411,6 +411,11 @@ native identity,32 real largest-scale operational updates, then the same fit
 and fixed evaluation. Only the8 original fine draws are comparable here; the
 old8 environment draws are explicitly out of scope, not declared passing.
 No new audit, q_S learner, observed posterior or automatic follow-up launched.
+Implementation341b419 pushed; Slurm338402 submitted2026-09-10 09:03:02 KST.
+Initial state PENDING(Priority), no allocation/tests/training yet. One job
+will execute the approved test/fit/evaluation sequence when resources arrive.
+Actual run state/results belong in BUNDLE_C_DIFFUSION_RUN.md; submission is
+not a numerical pass or scientific result. No separate monitoring daemon.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
