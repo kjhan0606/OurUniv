@@ -102,3 +102,28 @@ operational segment, bounded learning and fixed evaluation. There is no
 separate polling daemon and no automatic launch of a subsequent science bundle.
 Current source syntax/shell checks pass; numerical results remain UNAVAILABLE
 until this scheduled job actually executes. No observed LG product is claimed.
+
+## Completed — generation failure, not a usable fine field
+
+338402 ran2026-09-10 09:23:04–18:26:01 KST on Slurm-allocated syn101 A100,
+9h02m57s, COMPLETED/exit0. All8 focused tests passed and all30,000 optimizer
+updates finished. Host peak4.143GiB; GPU allocated2.444/reserved3.619GiB.
+Final300-update means: continuous loss1.000238, categorical loss0.002355.
+
+Scientific result: **0/8 usable retained fields; all8 generation/support
+failures**. All12 rollout cases, including training cases, fail at the first
+1.5->.75 refinement with `continuous fraction exceeds float64 support; no floor`.
+True-parent diagnostics fail at all three scales too. The automatic
+`NO_GO_DIFFUSION_MORPHOLOGY` label is broader than the actual evidence: no
+valid new field exists on which to measure fine morphology. Preserve that
+machine record, but do not report it as8 measured poor-morphology fields.
+No observed LG posterior, member assignment or IC deliverable is produced.
+
+User 'next proceed' authorizes ONE frozen30k-checkpoint cause diagnosis,
+not another fit. Plan `BUNDLE_C_DIFFUSION_DIAGNOSIS.md`; accepted Fable5
+conditions `BUNDLE_C_DIFFUSION_DIAGNOSIS_AUDIT.md`. Initialization comparison
+is unavailable without original step0 evidence. Check normalization,
+denoising baselines, raw/EMA behavior, no-step gradients and one failed
+reverse chain.1 GPU/2 CPU/6GiB/20min through Slurm, separate output directory.
+Further field training requires addressing member learnability first and
+new plan/approval. No training extension is running automatically.

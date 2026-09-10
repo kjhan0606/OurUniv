@@ -417,6 +417,20 @@ will execute the approved test/fit/evaluation sequence when resources arrive.
 Actual run state/results belong in BUNDLE_C_DIFFUSION_RUN.md; submission is
 not a numerical pass or scientific result. No separate monitoring daemon.
 Previous B delivery: [BUNDLE_B_RUN.md](BUNDLE_B_RUN.md).
+Update2026-09-10 18:26 KST:338402 COMPLETED/exit0 after9h02m57s;
+8 tests passed and30k updates finished, but all8 retained draws are
+GENERATION/SUPPORT FAILURES, not valid fields with measured bad morphology.
+All12 rollout cases fail first refinement; all native-parent scales fail too.
+Continuous loss1.000238 is consistent with a zero predictor, not proof of
+its cause. No fine-field or observed-LG promotion. User 'next proceed'
+authorizes ONE20min Slurm frozen-checkpoint diagnosis, zero optimizer steps.
+Fable5 CONDITIONAL GO; plan and incorporated conditions:
+`BUNDLE_C_DIFFUSION_DIAGNOSIS{,_AUDIT}.md`. No verifiable original step0
+exists: do not trust seed reconstruction as proof of weight updates.
+Check actual normalization, simple denoising baselines, raw/EMA gradients
+and unchanged failed reverse chain. No further field training before
+member learnability is addressed and a new concrete plan is approved.
+
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison
