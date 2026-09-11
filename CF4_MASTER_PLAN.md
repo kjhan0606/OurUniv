@@ -481,6 +481,18 @@ Proposed smaller combination: unchanged backbone/four-way output, TRAINING
 mass-fraction initialization, separated mass/shape objective, one-field learning
 segment then conditional continuation. This is a comparison recommendation,
 not Fable approval of a combined execution plan or user launch authorization.
+User now approves that final smaller combination. Frozen concrete plan:
+`BUNDLE_C_MEMBER_REPAIR_PLAN.md`; implementation/run disposition:
+`BUNDLE_C_MEMBER_REPAIR_RUN.md`. Fable5 returned CONDITIONAL GO normally126851ms
+(Q-GOAL/Q-LEAN pass), requiring all16 fixtures' four integrated target masses
+positive before optimization; incorporated using existing target validation.
+Keep flat head/backbone; TRAINING integrated-fraction initialization plus
+log-mass-squared/spatial-KL objective. One300-step single-field screen then,
+ONLY on pass, the SAME optimizer continues1700 steps on13 fields. Failed
+screen is short-budget inconclusive, not fundamental M33 unidentifiability.
+1GPU/2CPU/6GiB/90min Slurm, new member_mass_repair_v2 output, preserve v1.
+No automatic density fit/IC/next bundle; actual-data member-to-field link
+and joint uncertainty remain unimplemented. Launch record belongs in run file.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

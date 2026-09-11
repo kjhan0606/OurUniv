@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import sys
 import time
 import traceback
 import unittest
@@ -19,10 +20,11 @@ from matplotlib.colors import LogNorm
 from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_bundle_c_spatial_model import overlaps
 from cf4_conditional_split_flow import configure_precision
-from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, metrics, ROLES
+from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, ROLES
 
 ROOT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1')
-CFG = json.loads(Path('config/cf4_member_mass_pilot_v1.json').read_text())
+CFG = json.loads(Path(sys.argv[1] if len(sys.argv) > 1 else 'config/cf4_member_mass_pilot_v1.json').read_text())
+REPAIR = CFG.get('repair') == 'training_fraction_initialization_and_mass_shape_loss'
 OUT = ROOT / CFG['output_name']
 START = time.monotonic()
 CREATED = False
@@ -110,6 +112,20 @@ def prepare():
             means += case['input'][:7].numpy().mean((1, 2, 3), dtype=np.float64)/len(CFG['train'])
             cases.append(case)
             event('PREPARING', fixtures=len(cases))
+        if REPAIR:
+            # Audit condition: all 16 target roles available BEFORE optimizing.
+            # Development targets never enter pi, gradients or fit choices.
+            availability = {str(c['index']): c['truth'].numpy().sum((1, 2, 3), dtype=np.float64).tolist() for c in cases}
+            for i in CFG['development']:
+                check()
+                development_case = load_case(native, source, i)
+                availability[str(i)] = development_case['truth'].numpy().sum((1, 2, 3), dtype=np.float64).tolist()
+                del development_case
+            if not all(np.isfinite(v).all() and (np.asarray(v) > 0).all() for v in availability.values()):
+                raise ValueError('INCONCLUSIVE_TARGET_UNAVAILABLE before fit')
+            dump('target_availability.json', dict(integrated_mass_in_units=availability,
+                mass_unit_Msun=CFG['mass_unit_Msun'], all_roles_positive=True,
+                development_use='availability assertion ONLY, not initialization or optimization'))
     baseline = baseline.astype(np.float32)
     dump('input_semantics.json', dict(feature_means=means.tolist(), observer_center_cells=CFG['observer_center_cells'],
          observer='coarse1.5-cell center, not a true subcell galaxy position',
@@ -122,13 +138,57 @@ def prepare():
     return cases, baseline, means
 
 
-def learn(cases):
+@torch.no_grad()
+def single_field_snapshot(model, case, baseline, step, save_maps=False):
+    model.eval()
+    check()
+    logits = model.logits(case['input'][None].cuda())
+    loss, mt, st = mass_shape_loss(logits, case['total'][None].cuda(), case['truth'][None].cuda())
+    total = case['total'][0].numpy().astype(np.float64)*CFG['mass_unit_Msun']
+    truth = case['truth'].numpy().astype(np.float64)*CFG['mass_unit_Msun']
+    predicted = logits.softmax(1)[0].cpu().numpy().astype(np.float64)*total
+    summary = metrics(predicted, truth, total)
+    ratio = np.array(summary['predicted_mass_Msun'])/summary['true_bound_or_remainder_mass_Msun']
+    criteria = dict(member_mass_ratio=((ratio[:3] >= CFG['screen_mass_ratio'][0]) &
+        (ratio[:3] <= CFG['screen_mass_ratio'][1])).tolist(),
+        member_overlap=(np.array(summary['overlap'][:3]) >= CFG['screen_overlap_min']).tolist(),
+        member_L1=(np.array(summary['map_L1'][:3]) <= CFG['screen_L1_max']).tolist(),
+        positive_remainder=[summary['predicted_mass_Msun'][3] > 0],
+        conserved=[summary['conservation_relative_max'] <= 1e-6])
+    value = dict(step=step, fixture=case['index'], predicted=summary, mass_ratio=ratio.tolist(),
+        loss=float(loss), mass_terms=mt[0].cpu().tolist(), shape_terms=st[0].cpu().tolist(),
+        criteria=criteria, passed=all(all(v) for v in criteria.values()),
+        limitation='Fixed-input learning only; neither outcome establishes new-field identifiability.')
+    dump(f'single_field_step{step}.json', value)
+    if save_maps:
+        base = baseline.astype(np.float64)*total
+        with h5py.File(OUT / 'single_field_mass_maps.h5', 'x') as out:
+            out.attrs.update(step=step, fixture=case['index'], dx_cMpc_h=.1875,
+                roles=json.dumps(ROLES), status='TRAINING_FIELD_NOT_OBSERVED_LG')
+            for name, a in [('native', truth), ('predicted', predicted), ('baseline', base)]:
+                out.create_dataset(name, data=a, compression='gzip', compression_opts=1)
+        plot_case(case['index'], truth, predicted, base)
+    model.train()
+    check()
+    return value
+
+
+def learn(cases, baseline):
     torch.manual_seed(CFG['seed'])
     rng = np.random.default_rng(CFG['seed'])
     model = MemberMassNet().cuda()
     count = sum(p.numel() for p in model.parameters())
     if count != CFG['parameters'] or count > 1000000:
         raise ValueError('model size differs from submitted static sizing')
+    if REPAIR:
+        pi = np.mean([case['truth'].numpy().sum((1, 2, 3), dtype=np.float64)/
+            case['total'].numpy().sum(dtype=np.float64) for case in cases], axis=0)
+        model.initialize_mass_fractions(pi)
+        dump('initialization.json', dict(training_integrated_fractions=pi.tolist(),
+            train=CFG['train'], head_weights_zero=True, spatial_template=False,
+            limitation='First-update backbone gradient is zero; subsequent gradients tested in regression.'))
+        screen_case = next(case for case in cases if case['index'] == CFG['screen_fixture'])
+        single_field_snapshot(model, screen_case, baseline, 0)
     optimizer = torch.optim.AdamW(model.parameters(), lr=CFG['learning_rate'], weight_decay=CFG['weight_decay'], foreach=False)
     history = []
     started = time.monotonic()
@@ -138,17 +198,33 @@ def learn(cases):
             check()
             if time.monotonic()-started >= CFG['learning_seconds']:
                 break
-            if (step-1) % len(cases) == 0:
-                rng.shuffle(order)
-            case = cases[order[(step-1) % len(cases)]]
-            symmetry = int(rng.integers(48))
-            x = transform(case['input'].cuda(), symmetry, True)[None]
-            mass = transform(case['total'].cuda(), symmetry)[None]
-            target = transform(case['truth'].cuda(), symmetry)[None]
+            in_screen = REPAIR and step <= CFG['screen_steps']
+            offset = step-1-(CFG['screen_steps'] if REPAIR else 0)
+            if in_screen:
+                case, symmetry = screen_case, None
+                x = case['input'][None].cuda()
+                mass = case['total'][None].cuda()
+                target = case['truth'][None].cuda()
+            else:
+                if offset % len(cases) == 0:
+                    rng.shuffle(order)
+                case = cases[order[offset % len(cases)]]
+                symmetry = int(rng.integers(48))
+                x = transform(case['input'].cuda(), symmetry, True)[None]
+                mass = transform(case['total'].cuda(), symmetry)[None]
+                target = transform(case['truth'].cuda(), symmetry)[None]
             tick = time.monotonic()
             optimizer.zero_grad(set_to_none=True)
-            predicted = model(x)*mass
-            loss, errors = map_loss(predicted, target)
+            terms = {}
+            if REPAIR:
+                logits = model.logits(x)
+                loss, mass_terms, shape_terms = mass_shape_loss(logits, mass, target)
+                with torch.no_grad():
+                    _, errors = map_loss(logits.softmax(1)*mass, target)
+                    terms = dict(mass_terms=mass_terms[0].cpu().tolist(), shape_terms=shape_terms[0].cpu().tolist())
+            else:
+                predicted = model(x)*mass
+                loss, errors = map_loss(predicted, target)
             if not bool(torch.isfinite(loss)):
                 raise ValueError('nonfinite supervised loss')
             loss.backward()
@@ -157,12 +233,26 @@ def learn(cases):
             torch.cuda.synchronize()
             RESULT['updates'] = step
             history.append(dict(step=step, fixture=case['index'], symmetry=symmetry, loss=float(loss.detach()),
-                role_L1=errors[0].detach().cpu().tolist(), gradient_norm=float(norm), seconds=time.monotonic()-tick))
-            del x, mass, target, predicted, loss, errors
+                role_L1=errors[0].detach().cpu().tolist(), gradient_norm=float(norm), seconds=time.monotonic()-tick, **terms))
+            del x, mass, target, loss, errors
+            if REPAIR:
+                del logits, mass_terms, shape_terms
+            else:
+                del predicted
             if step == 1 or step % 50 == 0:
                 check()
                 dump('history.json', history)
-                event('TRAINING', updates=step, target=CFG['steps'], last=history[-1], memory=memory())
+                event('SINGLE_FIELD_LEARNING' if in_screen else 'TRAINING', updates=step,
+                    target=CFG['steps'], last=history[-1], memory=memory())
+            if REPAIR and step == CFG['screen_steps']:
+                screen = single_field_snapshot(model, screen_case, baseline, step, save_maps=True)
+                RESULT.update(screen=screen, screen_passed=screen['passed'])
+                torch.save(dict(model=model.state_dict(), optimizer=optimizer.state_dict(), config=CFG,
+                    updates=step, source_commit=os.environ['EXPECTED_COMMIT'], screen=screen), OUT / 'checkpoint_screen.pt')
+                event('SINGLE_FIELD_SCREEN_PASS' if screen['passed'] else 'SINGLE_FIELD_SCREEN_STOP',
+                    updates=step, criteria=screen['criteria'])
+                if not screen['passed']:
+                    break
     finally:
         dump('history.json', history)
         torch.save(dict(model=model.state_dict(), optimizer=optimizer.state_dict(), config=CFG,
@@ -232,6 +322,12 @@ def evaluate(model, cases, baseline, means):
         development_M33_each_improves=(dp[:, 2] < db[:, 2]).tolist(),
         development_MW_M31_median_nonworsening=(np.median(dp[:, :2], axis=0) <= np.median(db[:, :2], axis=0)).tolist())
     success = all(all(v) for v in checks.values())
+    if REPAIR:
+        checks.update(development_M33_each_beats_baseline_and_zero=(dp[:, 2] <
+            CFG['development_M33_improvement']*np.minimum(db[:, 2], 1)).tolist(),
+            development_host_median_overlap=(np.median([r['predicted']['overlap'][:2] for r in rows
+                if r['split'] == 'development'], axis=0) >= CFG['development_host_overlap_min']).tolist())
+        success = all(all(v) for v in checks.values())
     RESULT.update(criteria=checks, training_mean_predicted_L1=tp.mean(0).tolist(), training_mean_baseline_L1=tb.mean(0).tolist(),
         status=('INCONCLUSIVE_BUDGET' if not RESULT['training_complete'] else
             'PASS_MASS_MAP_FEASIBILITY_ONLY' if success else 'NO_GO_MEMBER_MASS_READOUT'),
@@ -255,12 +351,18 @@ def run():
     if not tested.wasSuccessful():
         raise ValueError('focused regression failed before training')
     cases, baseline, means = prepare()
-    model, history = learn(cases)
+    model, history = learn(cases, baseline)
     dump('result.json', RESULT)
-    evaluate(model, cases, baseline, means)
+    if REPAIR and not RESULT.get('screen_passed', False):
+        RESULT.update(status='INCONCLUSIVE_SINGLE_FIELD_LEARNING' if 'screen' in RESULT else 'INCONCLUSIVE_BUDGET',
+            criteria=RESULT.get('screen', {}).get('criteria', {}), development_evaluated=False,
+            caution='Stopped before multi-field continuation. This short learning budget does not prove fundamental unidentifiability.')
+    else:
+        evaluate(model, cases, baseline, means)
+        RESULT['development_evaluated'] = True
     fig, ax = plt.subplots()
     ax.plot([r['step'] for r in history], [r['loss'] for r in history])
-    ax.set(xlabel='optimizer updates', ylabel='mean role-normalized map L1', yscale='log')
+    ax.set(xlabel='optimizer updates', ylabel='mass/shape loss' if REPAIR else 'mean role-normalized map L1', yscale='log')
     fig.savefig(OUT / 'learning_curve.png', dpi=130)
     plt.close(fig)
     RESULT.update(seconds=time.monotonic()-START, memory=memory())

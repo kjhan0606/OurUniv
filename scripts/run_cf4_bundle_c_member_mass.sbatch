@@ -14,4 +14,4 @@ set -euo pipefail
 cd /home/kjhan/BACKUP/CF4
 git diff --quiet "$EXPECTED_COMMIT" -- src scripts config tests
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH=src:scripts:tests
-exec /home/kjhan/miniconda3/bin/python3.13 scripts/cf4_bundle_c_member_mass.py
+exec /home/kjhan/miniconda3/bin/python3.13 scripts/cf4_bundle_c_member_mass.py "${1:-config/cf4_member_mass_pilot_v1.json}"
