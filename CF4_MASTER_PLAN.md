@@ -538,6 +538,10 @@ evaluation-only diagnosis and observation-aware redesign, no retraining:
 six fixed fields/all48 orientations and existing small selection tables in
 one15min Slurm GPU allocation. Do not revive closed prior/peak/proxy repairs
 or claim a high-resolution observed field; next training awaits approval.
+Fable5 normal78825ms CONDITIONAL GO; incorporated tolerance/material-spread
+criteria and positive finite mass-denominator guard plus absolute errors.
+Frozen diagnostic sourcedd006b5 committed/pushed, Slurm343469 submitted,
+initial PENDING(Priority). Runtime results belong in BUNDLE_C_MEMBER_DIAGNOSIS_RUN.md.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
