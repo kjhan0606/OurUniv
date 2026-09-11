@@ -51,3 +51,13 @@ Original source `member_mass_repair_v2/checkpoint_final.pt` stays untouched.
 
 Static py_compile/bash-n/diff checks pass. Numerical tests and execution are
 pending submission; not a successful run or scientific result yet.
+
+## Submission
+
+Implementation787497f committed/pushed. Slurm **342086**, cf4_C_member_5000,
+submitted2026-09-11 23:09:46 KST and started23:09:47 on **syn05** through the
+scheduler. Allocated1GPU/2CPUs/6GiB,90min limit. Initial RUNNING at6s; tests
+and actual checkpoint restoration must be confirmed from subsequent outputs.
+Logs `/gpfs/kjhan/CF4/logs/cf4_C_member_5000_342086.{out,err}`.
+Source budget300 remains completed; target5000 cumulative,4700 new updates.
+No second science job or polling daemon is launched.

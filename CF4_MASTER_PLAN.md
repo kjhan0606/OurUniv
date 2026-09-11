@@ -508,6 +508,10 @@ no automatic13-field learning afterward. Frozen plan/run:
 Q-LEAN accepted; hard-abort on incomplete/mismatched resume state incorporated.
 One1GPU/2CPU/6GiB/90min Slurm job; source outputs preserved, new directory
 member_mass_single5000_v3. Launch/results recorded in its run file.
+Implementation787497f pushed; single5000 continuation Slurm342086 started
+2026-09-11 23:09:47 KST on syn05 via Slurm, initial RUNNING with no numerical
+pass yet. One allocation runs six tests, validates/restores300 then trains
+4700 additional updates; report endpoint and wait before another bundle.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
