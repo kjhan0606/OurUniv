@@ -61,3 +61,14 @@ and actual checkpoint restoration must be confirmed from subsequent outputs.
 Logs `/gpfs/kjhan/CF4/logs/cf4_C_member_5000_342086.{out,err}`.
 Source budget300 remains completed; target5000 cumulative,4700 new updates.
 No second science job or polling daemon is launched.
+
+## Completed342086
+
+COMPLETED/exit0,2026-09-11 23:48:12 KST after38m25s. Six tests pass; source300
+state/metrics restored,4700 new updates,5000 cumulative, no multi-field fit or
+development evaluation. PASS_SINGLE_FIELD_LEARNING_ONLY, all endpoint criteria.
+MW/M31/M33 mass ratios1.008794/1.006867/1.016018, overlaps.988665/.998279/1,
+map-L1 .031465/.010308/.016018. Final loss.0077098 versus.468869 at300.
+Conservation2.05e-8, host/GPU peaks3.336/2.244GiB. One-field fitting may be
+memorization; no observed LG or posterior. User now approves13-field learning
+and3-field evaluation; next frozen plan/run `BUNDLE_C_MEMBER_MULTI_{PLAN,RUN}.md`.

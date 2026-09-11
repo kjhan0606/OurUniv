@@ -11,6 +11,18 @@ from cf4_spatial_diffusion import SYMMETRIES
 ROLES = ('MW', 'M31', 'M33', 'remainder')
 
 
+def member_schedule(field_count, updates, seed):
+    """Equal field exposure in complete shuffled cycles, with signed symmetry."""
+    if field_count <= 0 or updates < 0:
+        raise ValueError('invalid field count or update budget')
+    rng = np.random.default_rng(seed)
+    order = np.arange(field_count)
+    for step in range(updates):
+        if step % field_count == 0:
+            rng.shuffle(order)
+        yield int(order[step % field_count]), int(rng.integers(48))
+
+
 def features(moments, observer_center_cells=(68., 68., 68.), dx=.1875):
     """No labels/centers from the halo catalogue accepted by this interface."""
     n = moments.shape[-1]

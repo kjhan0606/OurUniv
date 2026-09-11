@@ -2,12 +2,22 @@ import unittest
 import io
 import numpy as np
 import torch
-from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, restore_member_fit
+from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, restore_member_fit, member_schedule
 from cf4_spatial_diffusion import augment, SYMMETRIES
 from test_cf4_spatial_diffusion import fixture
 
 
 class MemberMassTests(unittest.TestCase):
+    def test_equal_exposure_signed_augmentation_schedule(self):
+        sequence = list(member_schedule(13, 130, 912013))
+        self.assertEqual(len(sequence), 130)
+        self.assertEqual(sequence, list(member_schedule(13, 130, 912013)))
+        for start in range(0, 130, 13):
+            self.assertEqual(sorted(i for i, _ in sequence[start:start+13]), list(range(13)))
+        self.assertTrue(all(0 <= symmetry < 48 for _, symmetry in sequence))
+        with self.assertRaises(ValueError):
+            list(member_schedule(0, 1, 1))
+
     def test_optimizer_continuation_matches_uninterrupted_update(self):
         torch.manual_seed(53)
         model = MemberMassNet()

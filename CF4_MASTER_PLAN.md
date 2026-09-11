@@ -512,6 +512,17 @@ Implementation787497f pushed; single5000 continuation Slurm342086 started
 2026-09-11 23:09:47 KST on syn05 via Slurm, initial RUNNING with no numerical
 pass yet. One allocation runs six tests, validates/restores300 then trains
 4700 additional updates; report endpoint and wait before another bundle.
+342086 completed38m25s/exit0,6 tests pass,5000 cumulative updates. All single-
+field criteria pass: MW/M31/M33 L1 .03147/.01031/.01602, mass errors<1.7%,
+overlap>=.9886. PASS_SINGLE_FIELD_LEARNING_ONLY, not generalization. User
+approves next13-field learning/3-development evaluation. Frozen plan/run:
+`BUNDLE_C_MEMBER_MULTI_{PLAN,RUN}.md`. Fable5 CONDITIONAL GO98118ms; primary
+training gate excludes pretrained fixture0, existing13-field memory accounting
+and48-symmetry tests resolve remaining conditions. One13000-new-update fit
+from full5000 model/Adam state,1000 new exposures per training field, unchanged
+model/loss/LR, signed augmentations. Same retained development criteria, no
+best-epoch choice or actual CF4/LG posterior claim.1GPU/2CPU/6GiB/3h Slurm;
+new member_mass_multifield_v4, no automatic downstream science bundle.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

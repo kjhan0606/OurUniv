@@ -20,7 +20,7 @@ from matplotlib.colors import LogNorm
 from cf4_bundle_c_continuous import read_periodic_patch
 from cf4_bundle_c_spatial_model import overlaps
 from cf4_conditional_split_flow import configure_precision
-from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, ROLES, restore_member_fit
+from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, ROLES, restore_member_fit, member_schedule
 
 ROOT = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1')
 CFG = json.loads(Path(sys.argv[1] if len(sys.argv) > 1 else 'config/cf4_member_mass_pilot_v1.json').read_text())
@@ -175,7 +175,6 @@ def single_field_snapshot(model, case, baseline, step, save_maps=False):
 
 def learn(cases, baseline):
     torch.manual_seed(CFG['seed'])
-    rng = np.random.default_rng(CFG['seed'])
     model = MemberMassNet().cuda()
     count = sum(p.numel() for p in model.parameters())
     if count != CFG['parameters'] or count > 1000000:
@@ -189,7 +188,7 @@ def learn(cases, baseline):
             saved = torch.load(path, map_location='cpu', weights_only=True)
             previous = json.loads((path.parent / 'result.json').read_text())
             if saved['source_commit'] != CFG['resume_source_commit'] or previous['job_id'] != CFG['resume_job_id'] or \
-                    previous['status'] != 'INCONCLUSIVE_SINGLE_FIELD_LEARNING' or previous['updates'] != CFG['resume_updates']:
+                    previous['status'] != CFG.get('resume_status', 'INCONCLUSIVE_SINGLE_FIELD_LEARNING') or previous['updates'] != CFG['resume_updates']:
                 raise ValueError('incorrect source checkpoint/result')
             for key in ['repair', 'train', 'development', 'seed', 'screen_fixture', 'screen_mass_ratio',
                         'screen_overlap_min', 'screen_L1_max', 'learning_rate', 'weight_decay', 'gradient_clip',
@@ -206,9 +205,14 @@ def learn(cases, baseline):
                 np.testing.assert_allclose(restored['predicted'][name], previous['screen']['predicted'][name], rtol=1e-4, atol=1e-5)
             if restored['fixture'] != previous['screen']['fixture']:
                 raise ValueError('restored fixture differs from saved screen')
+            if CFG.get('multi_field_only'):
+                if not restored['passed'] or not previous['screen_passed']:
+                    raise ValueError('multi-field continuation requires the saved single-field pass')
+                RESULT.update(screen_passed=True, source_screen=restored, multi_field_training=True)
             dump('resume.json', dict(path=str(path), source_commit=saved['source_commit'], updates=start_step,
-                model_and_adam_restored=True, step300_metrics_reproduced=True,
-                stochastic_augmentation=False, bitwise_cross_device_continuation_claimed=False))
+                model_and_adam_restored=True, restored_step_metrics_reproduced=True,
+                stochastic_augmentation=bool(CFG.get('multi_field_only')),
+                augmentation_seed=CFG.get('augmentation_seed'), bitwise_cross_device_continuation_claimed=False))
             del saved
         else:
             pi = np.mean([case['truth'].numpy().sum((1, 2, 3), dtype=np.float64)/
@@ -220,24 +224,22 @@ def learn(cases, baseline):
             single_field_snapshot(model, screen_case, baseline, 0)
     history = []
     started = time.monotonic()
-    order = np.arange(len(cases))
+    multi_updates = CFG['steps']-max(start_step, CFG['screen_steps'] if REPAIR else 0)
+    schedule = member_schedule(len(cases), multi_updates, CFG.get('augmentation_seed', CFG['seed']))
     try:
         for step in range(start_step+1, CFG['steps']+1):
             check()
             if time.monotonic()-started >= CFG['learning_seconds']:
                 break
             in_screen = REPAIR and step <= CFG['screen_steps']
-            offset = step-1-(CFG['screen_steps'] if REPAIR else 0)
             if in_screen:
                 case, symmetry = screen_case, None
                 x = case['input'][None].cuda()
                 mass = case['total'][None].cuda()
                 target = case['truth'][None].cuda()
             else:
-                if offset % len(cases) == 0:
-                    rng.shuffle(order)
-                case = cases[order[offset % len(cases)]]
-                symmetry = int(rng.integers(48))
+                case_index, symmetry = next(schedule)
+                case = cases[case_index]
                 x = transform(case['input'].cuda(), symmetry, True)[None]
                 mass = transform(case['total'].cuda(), symmetry)[None]
                 target = transform(case['truth'].cuda(), symmetry)[None]
@@ -267,11 +269,11 @@ def learn(cases, baseline):
                 del logits, mass_terms, shape_terms
             else:
                 del predicted
-            if step == start_step+1 or step % 50 == 0:
+            if step == start_step+1 or (step-start_step) % CFG.get('history_every', 50) == 0:
                 check()
                 dump('history.json', history)
                 event('SINGLE_FIELD_LEARNING' if in_screen else 'TRAINING', updates=step,
-                    target=CFG['steps'], last=history[-1], memory=memory())
+                    new_updates=step-start_step, target=CFG['steps'], last=history[-1], memory=memory())
             if REPAIR and step in CFG.get('report_steps', []):
                 progress = single_field_snapshot(model, screen_case, baseline, step)
                 event('SINGLE_FIELD_PROGRESS', updates=step, loss=progress['loss'],
@@ -294,6 +296,7 @@ def learn(cases, baseline):
     RESULT['training_seconds'] = time.monotonic()-started
     RESULT['training_complete'] = RESULT['updates'] == CFG['steps']
     RESULT['new_updates'] = RESULT['updates']-start_step
+    RESULT['new_training_exposure'] = dict(Counter(r['fixture'] for r in history))
     return model.eval(), history
 
 
@@ -335,6 +338,11 @@ def evaluate(model, cases, baseline, means):
                 if max(row['predicted']['conservation_relative_max'], row['baseline']['conservation_relative_max']) > 1e-6:
                     raise ValueError('allocation mass conservation failed')
                 if split == 'development':
+                    row['native_M33_context'] = dict(
+                        occupied_cells=int(np.count_nonzero(truth[2])),
+                        mass_fraction_in_M31_occupied_cells=float(truth[2][truth[1] > 0].sum()/truth[2].sum()),
+                        same_peak_cell_as_M31=bool(np.argmax(truth[1]) == np.argmax(truth[2])),
+                        interpretation='Native grid co-occupancy, not a theorem of member identifiability or physical resolution.')
                     x[:, :7] = torch.as_tensor(means, device='cuda', dtype=x.dtype)[None, :, None, None, None]
                     ablated = model(x)[0].cpu().numpy().astype(np.float64)*total
                     row['mean_field_ablation_OOD'] = metrics(ablated, truth, total)
@@ -355,13 +363,22 @@ def evaluate(model, cases, baseline, means):
     checks = dict(training_each_role_20percent=(tp.mean(0) <= .8*tb.mean(0)).tolist(),
         development_M33_each_improves=(dp[:, 2] < db[:, 2]).tolist(),
         development_MW_M31_median_nonworsening=(np.median(dp[:, :2], axis=0) <= np.median(db[:, :2], axis=0)).tolist())
-    success = all(all(v) for v in checks.values())
     if REPAIR:
         checks.update(development_M33_each_beats_baseline_and_zero=(dp[:, 2] <
             CFG['development_M33_improvement']*np.minimum(db[:, 2], 1)).tolist(),
             development_host_median_overlap=(np.median([r['predicted']['overlap'][:2] for r in rows
                 if r['split'] == 'development'], axis=0) >= CFG['development_host_overlap_min']).tolist())
-        success = all(all(v) for v in checks.values())
+    if CFG.get('multi_field_only'):
+        unpretrained = [r for r in rows if r['split'] == 'training' and r['fixture'] != CFG['screen_fixture']]
+        unpretrained_p = np.mean([r['predicted']['map_L1'] for r in unpretrained], axis=0)
+        unpretrained_b = np.mean([r['baseline']['map_L1'] for r in unpretrained], axis=0)
+        RESULT.update(training_without_pretrained_fixture_mean_predicted_L1=unpretrained_p.tolist(),
+            training_without_pretrained_fixture_mean_baseline_L1=unpretrained_b.tolist(),
+            original_13field_training_each_role_20percent=checks['training_each_role_20percent'],
+            training_gate_fixtures=[r['fixture'] for r in unpretrained],
+            development_independent_validation=False, pretrained_fixture=CFG['screen_fixture'], pretrained_updates=CFG['resume_updates'])
+        checks['training_each_role_20percent'] = (unpretrained_p <= .8*unpretrained_b).tolist()
+    success = all(all(v) for v in checks.values())
     RESULT.update(criteria=checks, training_mean_predicted_L1=tp.mean(0).tolist(), training_mean_baseline_L1=tb.mean(0).tolist(),
         status=('INCONCLUSIVE_BUDGET' if not RESULT['training_complete'] else
             'PASS_MASS_MAP_FEASIBILITY_ONLY' if success else 'NO_GO_MEMBER_MASS_READOUT'),
@@ -374,6 +391,10 @@ def run():
         raise RuntimeError('Slurm required')
     if CFG.get('single_field_only') and (not REPAIR or CFG['screen_steps'] != CFG['steps']):
         raise ValueError('single-field-only request cannot enter multi-field training')
+    if CFG.get('multi_field_only') and (not REPAIR or CFG.get('single_field_only') or
+            not CFG.get('resume_from') or CFG['screen_steps'] != CFG['resume_updates'] or
+            CFG['steps'] <= CFG['resume_updates'] or (CFG['steps']-CFG['resume_updates']) % len(CFG['train'])):
+        raise ValueError('multi-field continuation must start after the saved screen with complete equal-exposure cycles')
     OUT.mkdir(exist_ok=False)
     CREATED = True
     RESULT.update(job_id=os.environ['SLURM_JOB_ID'], source_commit=os.environ['EXPECTED_COMMIT'])
@@ -419,7 +440,7 @@ if __name__ == '__main__':
     except Exception as exc:
         if CREATED:
             status = 'INCONCLUSIVE_TARGET_UNAVAILABLE' if 'INCONCLUSIVE_TARGET_UNAVAILABLE' in str(exc) else 'INCOMPLETE_EXECUTION'
-            if CFG.get('single_field_only') and isinstance(exc, TimeoutError):
+            if REPAIR and isinstance(exc, TimeoutError):
                 status = 'INCONCLUSIVE_BUDGET'
             RESULT.update(status=status, error=str(exc), traceback=traceback.format_exc(), memory=memory())
             dump('result.json', RESULT)
