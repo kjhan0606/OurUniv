@@ -82,3 +82,13 @@ Complete this one pilot, then report result and wait at the next bundle
 boundary. A pass allows proposing joint-member-state/denoiser repair, not
 automatically executing it. Failure does not establish scientific impossibility.
 Submission and measured result will be recorded separately below.
+
+## Submitted
+
+Implementation **ee1c8e7** committed/pushed. Static Python compilation, shell
+syntax and git whitespace checks pass; numerical tests have NOT yet executed.
+Slurm **341713**, submitted2026-09-11 14:57:49 KST. At14:57:56:
+PENDING(Priority), no allocated node or known start time. Requested resources
+confirmed:1 GPU,2 CPUs,6GiB host memory,90min, excluded syn06. Queue wait is
+additional. Three in-job tests precede the one fit and fixed mass-map evaluation.
+No further field-prior training or next bundle will launch on completion.

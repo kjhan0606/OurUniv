@@ -461,6 +461,9 @@ U-Net,13/3 fixed fixtures, equal-role normalized map-L1, <=2000 updates/70min
 within one90min Slurm job,1GPU/2CPU/6GiB. Three focused/reused tests run in the
 same allocation; no new audit ladder. Mass-readout only, no member velocities,
 observed fine field, diffusion repair/training or automatic next bundle.
+Implementationee1c8e7 pushed; Slurm341713 submitted2026-09-11 14:57:49 KST,
+initial PENDING(Priority), no allocation or numerical test/fit result yet.
+Execution record `BUNDLE_C_MEMBER_MASS_RUN.md`; no separate polling daemon.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
