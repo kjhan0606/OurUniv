@@ -56,3 +56,14 @@ The member-to-SAME-field observational conditioning direction remains absent.
 Implementation complete; py_compile, bash -n and git diff --check pass.
 Numerical regressions have NOT run locally and no scientific result exists
 yet. Commit and submit once with source pin; actual job state is recorded below.
+
+Implementation `8dbaeae` committed/pushed. Slurm **342013**, job name
+cf4_C_member_repair, started2026-09-11 18:26:28 KST on **syn05** (scheduler
+allocation, NOT manual execution). Initial RUNNING at8s; allocated1GPU,
+2CPUs and6GiB,90min. No claim of numerical pass from this startup state.
+
+Outputs `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/member_mass_repair_v2/`;
+logs `/gpfs/kjhan/CF4/logs/cf4_C_member_repair_342013.{out,err}`.
+One job contains the tests, target-availability assertion,300-step screen and
+conditional same-fit continuation. No monitoring/process-scan daemon or
+additional science job is launched. Next bundle still requires approval.

@@ -493,6 +493,10 @@ screen is short-budget inconclusive, not fundamental M33 unidentifiability.
 1GPU/2CPU/6GiB/90min Slurm, new member_mass_repair_v2 output, preserve v1.
 No automatic density fit/IC/next bundle; actual-data member-to-field link
 and joint uncertainty remain unimplemented. Launch record belongs in run file.
+Implementation8dbaeae pushed; Slurm342013 started2026-09-11 18:26:28 KST on
+syn05,1GPU/2CPU/6GiB/90min, initial RUNNING. Numerical/scientific outcomes
+not established at submission; single-field continuation is gated inside
+that same allocation. No automatic downstream science job.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
