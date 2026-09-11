@@ -107,6 +107,24 @@ def mass_shape_loss(logits, total_mass, true_mass):
     return (mass_term+shape_term).mean(), mass_term.flatten(1), shape_term.flatten(1)
 
 
+def restore_member_fit(model, optimizer, checkpoint, expected_updates):
+    """Restore this pilot's complete Adam state, not weights-only fine-tuning."""
+    if checkpoint['updates'] != expected_updates:
+        raise ValueError('unexpected checkpoint update count')
+    state = checkpoint['optimizer']
+    identifiers = {i for group in state['param_groups'] for i in group['params']}
+    if set(state['state']) != identifiers or not identifiers:
+        raise ValueError('incomplete optimizer state')
+    for value in state['state'].values():
+        if not {'step', 'exp_avg', 'exp_avg_sq'} <= value.keys() or float(value['step']) != expected_updates:
+            raise ValueError('incomplete optimizer moments or inconsistent steps')
+        if not bool(torch.isfinite(value['exp_avg']).all() and torch.isfinite(value['exp_avg_sq']).all()):
+            raise ValueError('nonfinite optimizer moments')
+    model.load_state_dict(checkpoint['model'], strict=True)
+    optimizer.load_state_dict(state)
+    return expected_updates
+
+
 def map_loss(predicted_mass, true_mass):
     totals = true_mass.sum(dim=(-3, -2, -1))
     if not bool(torch.isfinite(totals).all() and (totals > 0).all()):

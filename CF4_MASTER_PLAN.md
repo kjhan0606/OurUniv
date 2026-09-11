@@ -497,6 +497,17 @@ Implementation8dbaeae pushed; Slurm342013 started2026-09-11 18:26:28 KST on
 syn05,1GPU/2CPU/6GiB/90min, initial RUNNING. Numerical/scientific outcomes
 not established at submission; single-field continuation is gated inside
 that same allocation. No automatic downstream science job.
+342013 now closed: COMPLETED3m09s/exit0,5 tests pass,300 single-field updates;
+screen failed and no multi-field learning/evaluation ran. Final mass ratios
+MW/M31/M33=2.064/1.146/.957; overlap=.915/.838/.789; L1=1.235/.469/.379.
+INCONCLUSIVE_SINGLE_FIELD_LEARNING, not fundamental impossibility. User now
+explicitly requests5000 cumulative updates on the single field. Resume300
+model AND Adam state, add4700, unchanged computation/criteria, fixed endpoint;
+no automatic13-field learning afterward. Frozen plan/run:
+`BUNDLE_C_MEMBER_5000_{PLAN,RUN}.md`. Fable5 CONDITIONAL GO58623ms, Q-GOAL/
+Q-LEAN accepted; hard-abort on incomplete/mismatched resume state incorporated.
+One1GPU/2CPU/6GiB/90min Slurm job; source outputs preserved, new directory
+member_mass_single5000_v3. Launch/results recorded in its run file.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

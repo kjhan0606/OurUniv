@@ -1,12 +1,46 @@
 import unittest
+import io
 import numpy as np
 import torch
-from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics
+from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, restore_member_fit
 from cf4_spatial_diffusion import augment, SYMMETRIES
 from test_cf4_spatial_diffusion import fixture
 
 
 class MemberMassTests(unittest.TestCase):
+    def test_optimizer_continuation_matches_uninterrupted_update(self):
+        torch.manual_seed(53)
+        model = MemberMassNet()
+        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, foreach=False)
+        x = torch.randn(1, 10, 8, 8, 8)
+        mass = torch.ones(1, 1, 8, 8, 8)
+        target = mass*torch.tensor([.004, .006, .00002, .98998])[None, :, None, None, None]
+        def advance(net, opt):
+            opt.zero_grad(set_to_none=True)
+            loss, _, _ = mass_shape_loss(net.logits(x), mass, target)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(net.parameters(), 10, error_if_nonfinite=True)
+            opt.step()
+        advance(model, optimizer)
+        buffer = io.BytesIO()
+        torch.save(dict(model=model.state_dict(), optimizer=optimizer.state_dict(), updates=1), buffer)
+        buffer.seek(0)
+        saved = torch.load(buffer, weights_only=True)
+        resumed = MemberMassNet()
+        resumed_optimizer = torch.optim.AdamW(resumed.parameters(), lr=1e-4, foreach=False)
+        restore_member_fit(resumed, resumed_optimizer, saved, 1)
+        advance(model, optimizer)
+        advance(resumed, resumed_optimizer)
+        for first, second in zip(model.parameters(), resumed.parameters()):
+            torch.testing.assert_close(first, second, rtol=0, atol=0)
+            for name in ['step', 'exp_avg', 'exp_avg_sq']:
+                torch.testing.assert_close(optimizer.state[first][name], resumed_optimizer.state[second][name], rtol=0, atol=0)
+        with self.assertRaises(ValueError):
+            restore_member_fit(resumed, resumed_optimizer, saved, 5)
+        saved['optimizer']['state'] = {}
+        with self.assertRaises(ValueError):
+            restore_member_fit(resumed, resumed_optimizer, saved, 1)
+
     def test_training_fraction_start_and_backbone_learning(self):
         torch.manual_seed(19)
         model = MemberMassNet()
