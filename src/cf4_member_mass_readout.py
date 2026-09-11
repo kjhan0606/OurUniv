@@ -53,6 +53,14 @@ def transform(value, symmetry, vector_features=False):
     return out.contiguous()
 
 
+def inverse_symmetry(symmetry):
+    """Index of the inverse signed axis permutation (no interpolation)."""
+    axes, signs = SYMMETRIES[symmetry]
+    inverse_axes = tuple(axes.index(a) for a in range(3))
+    inverse_signs = tuple(signs[a] for a in inverse_axes)
+    return SYMMETRIES.index((inverse_axes, inverse_signs))
+
+
 class Block(nn.Sequential):
     def __init__(self, a, b):
         super().__init__(nn.Conv3d(a, b, 3, padding=1), nn.GroupNorm(8, b), nn.SiLU(),

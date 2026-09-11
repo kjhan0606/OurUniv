@@ -4,10 +4,18 @@ import numpy as np
 import torch
 from cf4_member_mass_readout import MemberMassNet, features, transform, map_loss, mass_shape_loss, metrics, restore_member_fit, member_schedule
 from cf4_spatial_diffusion import augment, SYMMETRIES
+from cf4_member_mass_readout import inverse_symmetry
 from test_cf4_spatial_diffusion import fixture
 
 
 class MemberMassTests(unittest.TestCase):
+    def test_inverse_signed_transform(self):
+        value = torch.arange(10*6*8*10, dtype=torch.float32).reshape(10, 6, 8, 10)
+        for symmetry in range(48):
+            for vectors in (False, True):
+                restored = transform(transform(value, symmetry, vectors), inverse_symmetry(symmetry), vectors)
+                torch.testing.assert_close(restored, value, rtol=0, atol=0)
+
     def test_equal_exposure_signed_augmentation_schedule(self):
         sequence = list(member_schedule(13, 130, 912013))
         self.assertEqual(len(sequence), 130)

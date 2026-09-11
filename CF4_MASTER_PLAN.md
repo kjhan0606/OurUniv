@@ -527,6 +527,18 @@ Implementation20253e1 pushed; Slurm342129 submitted2026-09-12 00:30:11 KST,
 initial PENDING(Resources), no numerical tests/learning yet. Allocation will
 execute the full one-fit/evaluation sequence; run record contains actual state.
 
+342129 COMPLETED1h44m53s/exit0,7 tests pass,13000 new updates (1000/field).
+NO_GO_MEMBER_MASS_READOUT: training/development criteria fail; formerly fitted
+fixture0 also degrades. Same field/symmetry log comparisons nevertheless show
+learning improvement, not total learning failure. Source random companion
+selection is not encoded in field-only inputs, but neither unique cause nor
+duplicate-input contradictions are established. User approves ONE frozen
+evaluation-only diagnosis and observation-aware redesign, no retraining:
+`BUNDLE_C_MEMBER_DIAGNOSIS_PLAN.md`. Fable5 plan audit first; two saved models,
+six fixed fields/all48 orientations and existing small selection tables in
+one15min Slurm GPU allocation. Do not revive closed prior/peak/proxy repairs
+or claim a high-resolution observed field; next training awaits approval.
+
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison

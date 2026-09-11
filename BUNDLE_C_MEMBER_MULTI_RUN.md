@@ -81,3 +81,24 @@ Logs `/gpfs/kjhan/CF4/logs/cf4_C_member_multi_342129.{out,err}`;
 outputs `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/member_mass_multifield_v4/`.
 Source-pinned allocation will perform tests, restore5000 and run13000 new
 updates plus endpoint evaluation. No manual run or polling daemon launched.
+
+## Completed result and subsequent inspection
+
+342129 COMPLETED/exit0 on syn05,2026-09-12 00:30:28–02:15:21 KST,1h44m53s.
+Seven tests pass; full5000-step restoration reproduced the source metrics.
+13000 new updates completed, exactly1000 per each13 fields,18000 cumulative.
+Host/GPU reserved peaks4.064/2.150GiB. NO_GO_MEMBER_MASS_READOUT: primary12-
+training mean L1 MW/M31/M33=.994/.878/1.630; all three role criteria fail.
+Development16/17/20 M33 L1=1.063/1.155/1.858; all fail. Pretrained fixture0
+now2.816/.957/1.066 versus.0315/.0103/.0160 before continuation.
+
+Read-only follow-up found98.2% of624 identical field/symmetry combinations
+improve first-to-last recorded loss (means4.714->1.733); these are different
+training times, not a controlled causal experiment. Quality failure is not
+absence of learning. Development20 M33 mass ratio.9474/overlap.04453 demonstrates
+spatial misallocation, not only normalization. Random native M31/M33 selection
+is absent from field-only inputs; a population-level assignment ambiguity is
+not proof of duplicate-input conflicts in the fixed13-field training set.
+Source labels, augmentation and finite optimization effects remain distinct.
+User approves the bounded frozen-model diagnosis/redesign described in
+`BUNDLE_C_MEMBER_DIAGNOSIS_PLAN.md`. No additional training authorized.
