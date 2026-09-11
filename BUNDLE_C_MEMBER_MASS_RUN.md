@@ -92,3 +92,28 @@ PENDING(Priority), no allocated node or known start time. Requested resources
 confirmed:1 GPU,2 CPUs,6GiB host memory,90min, excluded syn06. Queue wait is
 additional. Three in-job tests precede the one fit and fixed mass-map evaluation.
 No further field-prior training or next bundle will launch on completion.
+
+## Completed — no member readout adoption
+
+341713 ran on Slurm syn05 from2026-09-11 14:57:57 to15:15:31 KST,
+17m34s allocation, COMPLETED/exit0. Three tests passed;2000 updates finished
+in948.32s. Host peak3.990GiB/GPU reserved2.197GiB, within submitted sizing.
+All fixed training/development criteria failed: `NO_GO_MEMBER_MASS_READOUT`.
+
+Training mean normalized map-L1 MW/M31/M33/remainder:
+13.436/6.293/17.586/.006656 versus geometry baseline
+.9365/.9658/.9474/.001515. Retained M33 L1 at16/17/20:
+10.499/5.631/9.436 versus1.010/1.003/1.079. Mass-overlap fractions
+8.16e-6/1.23e-6/1.66e-6, while predicted M33 integrated mass is about
+9.50/4.63/8.44 times native. Thus this is both excess mass and misplaced
+component structure, not just a normalization mismatch or failed holdout
+generalization. Per-role maps and original metrics are preserved in output.
+Tests/conservation do not establish correct member identification. Closed
+this candidate; no automatic extension, alternative seed or new field fit.
+
+User now requests independent DRIVER and FABLE next plans, followed by a
+comparison. This authorizes planning, not implementation/Slurm execution.
+Driver draft is frozen in `MEMBER_REPAIR_DRIVER_INDEPENDENT.md` before the
+fresh Fable call. Fable receives existing evidence/source only, not that draft
+or the driver's preceding suggested fix. Comparison will preserve the two
+originals and explicitly distinguish recommendations from approved execution.

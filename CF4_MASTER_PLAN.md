@@ -464,6 +464,23 @@ observed fine field, diffusion repair/training or automatic next bundle.
 Implementationee1c8e7 pushed; Slurm341713 submitted2026-09-11 14:57:49 KST,
 initial PENDING(Priority), no allocation or numerical test/fit result yet.
 Execution record `BUNDLE_C_MEMBER_MASS_RUN.md`; no separate polling daemon.
+341713 completed2026-09-11 15:15:31 KST,17m34s,3 tests passed,2000 updates.
+NO_GO_MEMBER_MASS_READOUT: training and all development criteria fail, with
+large member mass excess and near-zero native overlap. No accepted mass
+readout, member velocities or observed LG; no automatic follow-up. User now
+requests independent driver/Fable plans and comparison, DESIGN ONLY. Driver
+draft frozen before fresh Fable call in `MEMBER_REPAIR_DRIVER_INDEPENDENT.md`;
+Fable receives current failed source/results, not the driver's new proposal.
+Independent Fable proposal completed normally123782ms. Original driver/Fable
+drafts preserved in `MEMBER_REPAIR_{DRIVER,FABLE}_INDEPENDENT.md`; comparison
+and driver recommendation `MEMBER_REPAIR_COMPARISON.md`. Both favor correcting
+training conditioning. Driver rejects Fable's unsupported permanent M33 waiver,
+exact-baseline-with-epsilon claim and universal learnability failure inference;
+also defers the driver's own unnecessary hierarchical architecture change.
+Proposed smaller combination: unchanged backbone/four-way output, TRAINING
+mass-fraction initialization, separated mass/shape objective, one-field learning
+segment then conditional continuation. This is a comparison recommendation,
+not Fable approval of a combined execution plan or user launch authorization.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
