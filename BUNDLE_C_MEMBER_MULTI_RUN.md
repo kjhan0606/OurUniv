@@ -71,3 +71,13 @@ actual LG-to-SAME-field conditioning remain deferred.
 
 Static py_compile/bash-n/diff checks pass. Numerical tests run only in the
 allocation; no numerical pass/result or submission is claimed yet.
+
+## Submission
+
+Implementation20253e1 committed/pushed. Slurm **342129**, cf4_C_member_multi,
+submitted2026-09-12 00:30:11 KST. Initial **PENDING(Resources)**, no node or
+numerical test/learning result yet. Request1GPU/2CPU/6GiB,3h as planned.
+Logs `/gpfs/kjhan/CF4/logs/cf4_C_member_multi_342129.{out,err}`;
+outputs `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/member_mass_multifield_v4/`.
+Source-pinned allocation will perform tests, restore5000 and run13000 new
+updates plus endpoint evaluation. No manual run or polling daemon launched.

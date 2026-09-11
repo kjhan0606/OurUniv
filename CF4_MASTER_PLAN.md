@@ -523,6 +523,9 @@ from full5000 model/Adam state,1000 new exposures per training field, unchanged
 model/loss/LR, signed augmentations. Same retained development criteria, no
 best-epoch choice or actual CF4/LG posterior claim.1GPU/2CPU/6GiB/3h Slurm;
 new member_mass_multifield_v4, no automatic downstream science bundle.
+Implementation20253e1 pushed; Slurm342129 submitted2026-09-12 00:30:11 KST,
+initial PENDING(Resources), no numerical tests/learning yet. Allocation will
+execute the full one-fit/evaluation sequence; run record contains actual state.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
