@@ -455,6 +455,12 @@ member posterior or a member-velocity model. Stable v-prediction and separated
 category gradients remain a deferred repair hypothesis, not code or a job.
 Await user approval; do not revive closed peak/proxy/budget tests or launch a
 long density fit automatically. A pass leads to joint-member/denoiser design.
+User approved the single native member-mass implementation/pilot. Source and
+fixed choices are recorded in `BUNDLE_C_MEMBER_MASS_RUN.md`. One530804-parameter
+U-Net,13/3 fixed fixtures, equal-role normalized map-L1, <=2000 updates/70min
+within one90min Slurm job,1GPU/2CPU/6GiB. Three focused/reused tests run in the
+same allocation; no new audit ladder. Mass-readout only, no member velocities,
+observed fine field, diffusion repair/training or automatic next bundle.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
