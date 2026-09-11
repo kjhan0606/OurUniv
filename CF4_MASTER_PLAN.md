@@ -434,6 +434,28 @@ Frozen diagnostic implementation3240750 pushed; Slurm338746 submitted
 2026-09-10 18:41:37 KST, initial PENDING(Priority), no numerical result yet.
 1 GPU/2 CPUs/6GiB host/20min; no automatic additional training or bundle.
 
+338746 completed2026-09-10 18:42:44 KST in36s, zero optimizer steps. On both
+native tested scales raw/EMA epsilon RMS~.005, MSE~1 and near-zero correlation;
+at t100 the algebraic reference MSE~2.4e-7. Reverse latent RMS rises1->2032 and
+fails fraction support. Normalization agrees; continuous gradients are nonzero
+and checkpoint/plain backward agrees. Failed denoising is established, but its
+unique architectural/optimization cause is not. No new morphology or actual LG
+product. Frozen diagnosis CLOSED, not another monitoring/diagnostic series.
+User requested next repair PROPOSAL2026-09-11; `BUNDLE_C_REPAIR_PROPOSAL.md`
+is design only, with Fable5 plan review. No new implementation/learning job
+authorized or submitted. Next bundle requires user approval.
+Fable5 repair-plan review returned CONDITIONAL GO111090ms. Current proposed
+implementation specification is `BUNDLE_C_REPAIR_DISPOSITION.md`; submitted
+plan preserved separately. Next proposed bundle is ONE native field-only
+MW/M31/M33/remainder mass-allocation learner,13/3 development fixtures,
+<=2000 updates/90min Slurm. No further total-field-prior learning in that job.
+Driver corrects the proposed class-balanced CE to per-field/per-role normalized
+map-L1 to avoid biasing small-member mass fractions. Pilot is not a calibrated
+member posterior or a member-velocity model. Stable v-prediction and separated
+category gradients remain a deferred repair hypothesis, not code or a job.
+Await user approval; do not revive closed peak/proxy/budget tests or launch a
+long density fit automatically. A pass leads to joint-member/denoiser design.
+
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison

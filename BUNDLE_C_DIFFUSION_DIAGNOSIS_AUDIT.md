@@ -51,3 +51,28 @@ partitions a40,a100,h100,h200, excluded syn06. Backfill at18:41:38 estimates
 ordinary Slurm allocation; no manual execution. Numerical output will be
 `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/diffusion_frozen_diagnosis_v1/result.json`.
 No separate monitoring daemon or automatic scientific follow-up was created.
+
+## Completed and interpreted2026-09-11
+
+338746 completed2026-09-10 18:42:44 KST,36s Slurm elapsed,19.699s application,
+exit0, zero optimizer updates, host peak2.357GiB/GPU reserved3.061GiB.
+Raw and EMA predictions have epsilon RMS about.005 versus target1, almost
+zero noise correlation and MSE about1. At t100 the direct algebraic reference
+MSE is2.36–2.37e-7. The tested model has failed to learn useful denoising even
+on native training input, not merely to extrapolate through a reverse chain.
+The unchanged seed99803 chain amplifies latent RMS1.001 ->772 ->1429 ->1871
+->2032, then the first mass split has2707/4096 active fractions failing support.
+
+Training-record/checkpoint normalization is identical. No missing parameter
+gradients; continuous-head gradient RMS5.35e-4 is nonzero. Plain/checkpointed
+continuous relative gradient difference9.90e-10; categorical2.77e-8. Thus no
+gradient disconnection/checkpointing mismatch is detected in this fixed case.
+Stem continuous gradient RMS4.43e-8 is small, but does not isolate architecture,
+loss competition or optimization as the cause. Both raw and EMA fail. Original
+step0 weight evidence is unavailable; saved optimizer counters are all30000.
+The probe's categorical majority fraction99.923–100% makes low category loss
+weak evidence of learning. None of these checks establishes cosmic morphology.
+
+Close this frozen diagnosis. No field generated/promoted and no automatic
+training extension. User now requests a modification PROPOSAL; see
+`BUNDLE_C_REPAIR_PROPOSAL.md` and its Fable5 audit/disposition when available.
