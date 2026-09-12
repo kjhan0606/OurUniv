@@ -628,6 +628,18 @@ field-sensitivity projection. No training, field selection, density painting,
 posterior or IC. Missing selection, offsets, physical field/mass/COM joint law
 remain explicit. Execution/results: BUNDLE_C_POSITION_LINK_RUN.md. Autonomous
 approval replaces another wait; closed model repairs remain closed.
+Position-link347086 completed14s but an unweighted worst-case quadrature error
+estimate was too loose. Correction01971b8 weights each rectangle error by the
+same qA*qT used in the integral; old worst-case estimate remains visible,
+threshold unchanged, numerical estimates distinguished from exact tail bounds.
+347087 COMPLETED15s/exit0, all3 tests and integrals/conservative derivatives
+pass. All208 mock +8 actual-data logL values unchanged EXACTLY. Eight mock
+source fields rank first both in joint score and incremental M33 score;
+development evidence only. CLOSE position diagnostics: usable observation-
+likelihood component, NOT field selection, masses/COM or observed posterior.
+Next autonomous design targets a physically conservative joint-field prior;
+old field diffusion already used dense random native translations (unlike
+13-field member fits), so more data alone is not a justified repair.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

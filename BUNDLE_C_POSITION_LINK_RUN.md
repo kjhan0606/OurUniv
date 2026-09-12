@@ -55,3 +55,29 @@ already used dense translated native crops; it was the failed MEMBER learners
 that had13 fields. More observations alone is not new evidence sufficient to
 revive the closed diffusion line. Any next field-prior design must address
 its actual objective/representation/conditioning limitations explicitly.
+
+Correction source01971b8 pushed; Slurm347087 COMPLETED/exit0 in15s at19:58:49
+KST. PASS_POSITION_LIKELIHOOD_COMPONENT_ONLY. All3 tests pass, all208 mock
+cross-scores and8 actual-data logL values are EXACTLY unchanged (max change0).
+Actual relative integration estimates3.67e-12–1.06e-11 at ordinary tolerance;
+tighter estimates2.89e-14–3.17e-13. All mock integration estimates meet the
+unchanged1e-4 criterion. Native feature errors<5.96e-8. Conservative derivative
+checks pass: analytic[1.9417613,-1.5610575,-.8212249], two-step finite differences
+agree; parent seven-moment conservation error<=5.91e-14. Host1.276GiB,
+GPU reserved.463GiB, application8.13s, no optimizer steps.
+
+The8x8 mock cross comparison ranks each original field first in all8 cases
+for the joint observation score AND for incremental M33|MW/M31-data score.
+Thus this particular field-dependent signal is not solely the MW-cell term.
+These8 previously-used native fields/all26 alternatives are development
+evidence, not independent universes, precision/coverage, or actual-field
+selection. Actual LG logL values vary from-19.51 to-4.99 across unaligned
+native fields; do NOT choose the largest as a local-universe candidate.
+
+Driver accepts and CLOSES this likelihood-component bridge. The exact-zero
+stellar/halo offset, fixed solar reference, approximate distance covariance,
+uniform subcell law and archive selection remain limitations. The next
+autonomous bundle is a bounded physically conservative joint-field generator
+design with explicit remedies for the previous failed diffusion mechanism,
+not another native-member or position-score optimization sequence. Its result
+must supply valid generated fields before any actual LG posterior claim.
