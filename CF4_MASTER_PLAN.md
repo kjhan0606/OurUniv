@@ -655,6 +655,16 @@ no true fine buffer or native role parents passed to generated-field readout.
 Conditional-E/native-coarse development only; no observed posterior, IC or
 automatic continuation of this fit after a miss. Run record:
 BUNDLE_C_STABLE_FIELD_RUN.md.
+Generator source0bfd832 pushed, Slurm347088 started2026-09-12 20:19:41 KST
+on syn05/A40,1GPU/2CPU/6GiB/4h. All3 tests pass;64 normalization observers
+and192 native roundtrips pass,1388 training observers retained. Training400/
+24000 at application131s, early v-loss improves on its zero-v training
+reference but NO validation/generated-field result yet. Host3.030GiB,
+GPU reserved1.176GiB. Rough initial total runtime80–95min; hard Slurm limit
+00:19:41 KST next day. The same allocation automatically proceeds through
+checkpoint, heldout denoising,16 generated fields and role readout. Next
+driver action: read fixed347088/final artifacts and judge, continuing under
+autonomous authority without another routine approval request.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 

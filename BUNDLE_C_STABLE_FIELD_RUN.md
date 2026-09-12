@@ -33,7 +33,31 @@ learning3h inside application3h50. FP32, no manual syn101 or login-node
 numerics. Checkpoints and first8 full-field draws/projections expected<.5GiB.
 Output new /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_v1/.
 
-Status: implementation/static Python/shell checks prepared, no numerical test
-or field-generation outcome claimed yet. Conditional on native coarse field
-and archive satellite eligibility E; not q(coarse|CF4), calibrated member
-mass/COM/existence/observer selection, an actual LG posterior, or IC.
+Source0bfd832533c439528faa97c676d93780998e8866 committed/pushed; Slurm347088
+started2026-09-12 20:19:41 KST on syn05/A40.1GPU/2CPU/6GiB/4h allocated;
+scheduler end limit2026-09-13 00:19:41 KST. All3 numerical tests pass in.380s,
+including exact parameter count and isolated gradient paths. All64 native
+normalization observers/3scales processed:192 native roundtrips total.
+Buffered data guard passed for1388 train /8 test observers.
+
+Training started at application52.73s. First200 updates elapsed~40.5s; step400
+at131.07s. Steady200-step segment39.23s suggests roughly80min total learning,
+plus generation/evaluation: provisional80–95min from startup, not a guarantee.
+Step200 t59 v-MSE .7450 versus zero-v .9854; step400 t17 .9220 versus.9957.
+These are DIFFERENT native training cases/times and only evidence of an active
+learning path, not validation or successful generated structure. Peak host
+3.030GiB and GPU reserved1.176GiB, within requested/envelope limits.
+
+Status: RUNNING, source-frozen learning then final denoising/draws/role readout
+automatically continue inside this same allocation without user approval.
+No separate daemon/process scans or automatic extra training. Current artifacts
+are /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_v1/{status,history,
+representation,request,tests,population}.json; stdout/stderr
+/gpfs/kjhan/CF4/logs/cf4_C_stable_field_347088.{out,err}.
+Next check fixed job347088 and final result.json, not a broad process search.
+Driver evaluates the completed/incomplete outcome before another experiment;
+autonomous authority remains active, so do not request redundant approval.
+
+Conditional on native coarse field and archive satellite eligibility E;
+not q(coarse|CF4), calibrated member mass/COM/existence/observer selection,
+an actual LG posterior, or IC. No field-generation success claimed yet.
