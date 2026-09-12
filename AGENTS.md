@@ -9,10 +9,14 @@ Confirm cwd/repository before actions. Syntax is a Slurm login server.
 GPFS is ordinary shared storage, not a subject for filesystem diagnostics.
 Do not run pgrep/process-scan monitoring loops. Preserve unrelated work.
 
-Current plan/design audit policy (user update2026-09-09): Fable5 primary,
-Astra backup if Fable cannot complete a usable audit. Ask Q-GOAL (alignment
+Current audit policy (user update2026-09-13): external review ONLY for an
+important discovery, a goal revision, or a large calculation. Routine plans,
+code checks, diagnostics and evaluations are handled by the driver. This
+supersedes the prior every-bundle external planning-review requirement.
+When external review is warranted, Fable5 primary and Astra backup if Fable
+cannot complete a usable audit. Ask Q-GOAL (alignment
 with the CF4/LG reconstruction goal) and Q-LEAN (proportionate implementation,
-instrumentation and gates) explicitly. Applies even when Astra is the driver.
+instrumentation and gates) explicitly.
 Do not bypass an adverse substantive verdict by treating it as tool failure.
 Every bundle plan and audit request must explicitly address MW/M31/M33
 identification from the available NEW field/state, role ambiguity and unresolved

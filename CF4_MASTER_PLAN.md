@@ -754,6 +754,19 @@ New stable_field_eval_v2, one GPU/2CPU/6GiB/30min Slurm allocation runs four
 tests and the original fixed endpoint. No new model/advisory audit required
 for this same-bundle technical correction. See BUNDLE_C_STABLE_FIELD_RUN.md.
 
+Update2026-09-13:347108 COMPLETED2m23s, tests4/4, final EMA evaluation with
+zero optimizer steps. All16 draws valid/conservative, terminal latent RMS
+.926–1.077, but individual morphology0/16 and two-draw summary means2/8 pass.
+Boundary-gradient ratio fails16/16; power5/16; connected fraction2/16.
+NO_GO_E_CONDITIONAL_FIELD_GENERATOR: stable generation is progress, not
+scientific adoption. User approves saved-field boundary/metric diagnosis;
+no retraining, new samples or threshold change. BUNDLE_C_BOUNDARY_DIAGNOSIS.md.
+
+Latest audit policy2026-09-13: external review only for an important discovery,
+goal revision or large calculation. Driver handles all remaining evaluations
+and routine plans. This supersedes historical every-bundle external reviews;
+retain scientific goal/lean reasoning without another gate framework.
+
 ## Working rules
 
 - Prefer substantive scientific outputs over more generic validation code.
@@ -766,10 +779,11 @@ for this same-bundle technical correction. See BUNDLE_C_STABLE_FIELD_RUN.md.
 - GPFS is ordinary shared storage. Read/write scoped project artifacts;
   do not implement storage/inode/renameat2 probes or process-scan monitoring.
 - Use fixed job IDs and final artifacts for bounded checks; no pgrep loops.
-- The driver plans, implements, runs, evaluates and commits. New user policy
-  reinstates plan/design audits even for an Astra driver: Fable5 primary;
-  Astra backup if the Fable audit invocation fails or produces no usable audit.
-  Every plan audit must explicitly answer Q-GOAL and Q-LEAN plus feasibility
+- The driver plans, implements, runs, evaluates and commits. External review
+  is reserved for important discoveries, goal revisions or large calculations;
+  routine work is driver-reviewed. When required: Fable5 primary, Astra backup
+  if the invocation fails or produces no usable audit. Reviews answer
+  Q-GOAL and Q-LEAN plus feasibility
   and essential/deferred scope. Do not turn these two questions into a new
   gate framework or per-step audit series. Prior Astra closure-audit waiver
   remains unless changed by the user; this instruction concerns plan audits.
