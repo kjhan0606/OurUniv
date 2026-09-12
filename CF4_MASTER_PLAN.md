@@ -641,6 +641,21 @@ Next autonomous design targets a physically conservative joint-field prior;
 old field diffusion already used dense random native translations (unlike
 13-field member fits), so more data alone is not a justified repair.
 
+Autonomous next generator experiment: BUNDLE_C_STABLE_FIELD_PLAN.md, Fable5
+GO with driver corrections in REVIEW. Fresh1,490,406-parameter full-resolution
+v-parameterized joint moment model, independent continuous/category branches,
+explicit observer conditioning and matched archive-E native fields. This
+changes the unstable reverse reference and gradient paths, not just length.
+80^3 generated buffered field /inner64 at.1875, native1.5 parent, three scales;
+all physical seven moments retained. Source-backed v parameterization is a
+plausible remedy, not a proven cosmological reconstruction. One24k-step fit,
+1GPU/2CPU/6GiB/4h with tests and fixed evaluation in the same job. Sixteen
+draws/eight parents plus frozen field-only LG role/observation machinery;
+no true fine buffer or native role parents passed to generated-field readout.
+Conditional-E/native-coarse development only; no observed posterior, IC or
+automatic continuation of this fit after a miss. Run record:
+BUNDLE_C_STABLE_FIELD_RUN.md.
+
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison
