@@ -82,3 +82,19 @@ Tests and numerical evaluation run in that allocation, not on the login node.
 Correction source c04c3c4 committed/pushed; evaluation-only Slurm347108
 submitted with30min walltime. Initial PENDING(Priority); no numerical recovery
 pass inferred from submission. Logs cf4_C_stable_eval_347108.{out,err}.
+
+347108 COMPLETED2026-09-13 01:46:44 KST on syn07,2m23s, tests4/4 and
+zero added optimizer steps. Sixteen numerically valid/conservative fields;
+terminal latent RMS .926–1.077, inner moment conservation max8.37e-16.
+All fixed denoising scale/time mean MSE ratios improve on zero-v (.360–.905).
+But individual morphology0/16, two-draw summary means2/8 pass: boundary ratio
+fails16/16, high-k power5/16, connected fraction2/16. Status remains NO_GO.
+Generated role samples and actual-position diagnostic scores completed,
+not actual LG conditioning, physical members or independent validation.
+
+User-approved no-fit boundary diagnosis347159 now completed8s. Existing
+ratios reproduce; raw metric is extremely rare-peak sensitive (10 edges
+carry median85–87% of boundary squared-gradient energy), while log-density
+still supports modest grid-periodic roughness. Mixed evidence, not a pure
+metric bug or permission to promote the generator. Details/results:
+BUNDLE_C_BOUNDARY_DIAGNOSIS.md. No job from this bundle remains active.

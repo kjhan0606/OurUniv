@@ -762,6 +762,16 @@ NO_GO_E_CONDITIONAL_FIELD_GENERATOR: stable generation is progress, not
 scientific adoption. User approves saved-field boundary/metric diagnosis;
 no retraining, new samples or threshold change. BUNDLE_C_BOUNDARY_DIAGNOSIS.md.
 
+Boundary diagnosis347159 completed8s with two controls and all eight stored
+first draws; original24 axis-ratios reproduce. Raw squared-gradient boundary
+energy is dominated by10 edges (median85–87%); native ratios themselves vary
+widely. Log-density still shows modest grid-phase roughness: median boundary/
+internal .994 native versus1.141 generated. Mixed metric sensitivity and
+generated hierarchy artifact; not a pure code bug or significance claim.
+Close this diagnosis, retain original NO-GO/power failures, no blind longer
+training or current-model actual-LG promotion. BUNDLE_C_BOUNDARY_DIAGNOSIS.md
+records evidence and next model-design target; no active follow-up job.
+
 Latest audit policy2026-09-13: external review only for an important discovery,
 goal revision or large calculation. Driver handles all remaining evaluations
 and routine plans. This supersedes historical every-bundle external reviews;

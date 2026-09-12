@@ -35,3 +35,50 @@ frozen field-only position law, not native catalogue-seeded candidates.
 This diagnosis does not resolve member masses/COM or unresolved M33, and
 does not apply actual LG conditioning to failed fields. Next scientific
 decision follows the evidence, not automatic longer training.
+
+## Result and driver disposition
+
+Slurm347159 COMPLETED/exit0 on syn07 at2026-09-13 01:55:29 KST,8s wall,
+3.884s application, peak host.153GiB. Both controls pass, all eight saved
+first draws processed, all24 original axis-ratios reproduced to1e-12 relative.
+Source ce3528ed64f14ee26de51ee89b00d8a22f4233d9; submission mistakenly used
+the symbolic EXPECTED_COMMIT=HEAD, so result metadata says HEAD. Driver read
+the identical full HEAD immediately before submission and after completion;
+no intervening edits/commits. Record this provenance limitation rather than
+rewriting outputs or repeating science. Future submissions use literal hashes.
+
+Mixed result, not an arithmetic bug or an across-the-board seam catastrophe:
+
+- Balanced raw boundary/internal ratios vary widely even in native fields:
+  .0478–3.9879 across24 case/axes, versus generated.0406–5.2574. Original
+  full64 native ratios also vary .1458–4.1901. A ratio to one native realization
+  mixes stochastic peak geometry with possible grid effects.
+- Only10 out of13824 interior coarse-boundary cell-pair differences contribute
+  median85.23% of native squared-gradient sum and87.29% of generated sum.
+  Thus raw rho-squared is an extremely peak-concentrated seam screen. This is
+  NOT evidence that density peaks themselves are scientifically irrelevant.
+- In the log1p(rho/mean-rho) diagnostic, median coarse-boundary/internal ratio
+  is native.9937 versus generated1.1414. Generated/native comparison exceeds1
+  in22/24 axes (range.9058–1.2648); overlapping fields/axes are not independent,
+  so this is descriptive evidence, not a significance calculation.
+- Period2 log phase medians are native[1.009,.991], generated[1.061,.939];
+  period4/8 similarly show excess at refinement faces. This supports modest
+  hierarchical grid locking, not its unique architectural/training cause.
+- First stored projection524295 shows recognizable coarse structure and some
+  fine structure, with velocity/dispersion differences. It is one fixed example,
+  not proof of morphology or actual-LG reconstruction.
+
+Driver closes this bounded diagnosis. Keep original NO-GO and all power/
+connected-fraction failures. Do not replace the failed gate with log-density
+ratios and declare success, smooth/clip samples, or resume training blindly.
+The next model decision should target cross-parent fine structure and the
+partition of coarse velocity variance into fine bulk versus internal motions,
+while separating peak-sensitive realization scatter from grid-locked errors.
+No new learner or actual-data conditioning has been launched by this diagnosis.
+Use the existing seven-moment native/generated fields and learned model, not
+another standalone MW/M31/M33 identity diagnostic or a direct-IC route change.
+
+Artifacts: /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_boundary_v1/
+{tests,profiles,result}.json and phase_profiles.png. Original stable_field_v1
+and stable_field_eval_v2 preserved. Routine diagnostic findings evaluated by
+driver under the new selective external-review policy; no external call.
