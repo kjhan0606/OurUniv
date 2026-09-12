@@ -777,6 +777,14 @@ goal revision or large calculation. Driver handles all remaining evaluations
 and routine plans. This supersedes historical every-bundle external reviews;
 retain scientific goal/lean reasoning without another gate framework.
 
+User reconfirms continuous autonomous work without routine approval2026-09-13.
+Next bounded correction-localization uses saved rollout restrictions at three
+scales and sixteen frozen-model native-parent one-step draws; no fit, new
+full rollout, threshold change or actual posterior. It separates inherited
+parent error from one-step field/velocity-variance partition error before
+selecting one correction. BUNDLE_C_SCALE_LINK.md, driver review only,
+1GPU/2CPU/4GiB/10min Slurm. No further standalone role-identification checks.
+
 ## Working rules
 
 - Prefer substantive scientific outputs over more generic validation code.

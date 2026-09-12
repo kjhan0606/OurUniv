@@ -38,3 +38,7 @@ plan review, substantive result reports, preservation and scientific limits.
 This supersedes prior per-bundle approval waits, not the science route or
 resource/safety constraints. Seek input only for genuinely new authority,
 material goal changes or an impasse that cannot be resolved in scope.
+
+User confirmation2026-09-13: no approval procedure is needed when there is
+no major issue; continue work rather than stopping at routine boundaries.
+External-review triggers above and scientific/resource limits still apply.
