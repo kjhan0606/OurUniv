@@ -558,8 +558,14 @@ Driver backup review `BUNDLE_C_ROLE_LOCATION_REVIEW.md` is conditional feasibili
 GO, with explicit probability/selection/teacher-forcing/center-label caveats.
 User clarifies audits are advisory: driver verifies and decides with reasons;
 independent evidence and separate user bundle approval remain required.
-Design complete; proposed1GPU/2CPU/6GiB/4h,6500 joint updates awaits explicit
-implementation/one-fit approval. No new numerical job or native fit started.
+User now explicitly approves implementation and ONE1GPU/2CPU/6GiB/4h pilot,
+6500 joint updates (500 per13 fields). Code implements the fresh72,417-parameter
+location law, sequential factor gradients, native center-cell references,
+nonoracle autoregressive draws and before/after48-view probability tests.
+Static syntax checks pass; numerical tests and fit run only in the SAME Slurm
+allocation. See `BUNDLE_C_ROLE_LOCATION_RUN.md` for submission/current status.
+Approval ends at its fixed endpoint evaluation/report; no automatic new
+model, observed posterior, fine-field-prior fit or IC calculation.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
