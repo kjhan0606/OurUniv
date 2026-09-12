@@ -24,4 +24,13 @@ User clarification2026-09-12: plan audits are advice, not automatic authority.
 The driver independently checks their evidence (including existing verified
 code/results) and decides which recommendations to adopt, amend or reject,
 recording concrete reasons. A substantive disagreement is not an invocation
-failure. This does not remove separate user approval at new bundle boundaries.
+failure.
+
+User update2026-09-12 after population-location comparison347085: autonomous
+continuation is approved within the CF4/LG goal. Do not stop at each new bundle
+to request repetitive approval. Driver may plan, implement, submit via Slurm,
+evaluate and commit/push coherent work; retain bounded experiments, advisory
+plan review, substantive result reports, preservation and scientific limits.
+This supersedes prior per-bundle approval waits, not the science route or
+resource/safety constraints. Seek input only for genuinely new authority,
+material goal changes or an impasse that cannot be resolved in scope.

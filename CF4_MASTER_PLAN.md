@@ -48,6 +48,16 @@ its target and correction before calling its output an IC posterior.
 
 ## Current state and bounded immediate work
 
+**Latest authority2026-09-12, after347085:** user explicitly grants autonomous
+continuation without repeated per-bundle approval. Historical "wait for
+approval/no automatic next bundle" statements below preserve their original
+scope but no longer block driver-designed in-goal follow-up. Keep bounded
+experiments, Fable5 advisory planning, source-pinned Slurm, memory sizing,
+commit/push and honest outcome reports. Do not resurrect a failed repair line
+without new evidence or quietly switch to direct-CF4 IC generation. The
+scientific destination above remains unchanged; no promise of a validated
+posterior from position-score success.
+
 **Bundle A is closed as a diagnostic delivery, not scientific certification.
 Bundle B is closed as a development/diagnostic delivery. Bundle C entry is
 approved and implementation is in progress. D requires user approval.**
@@ -605,6 +615,19 @@ SAME-field likelihood and the remaining field/mass/COM model, working toward
 an LG-on/off field response, not another location-score repair loop. No new
 bundle is launched; user direction is required. See the run record for full
 proper scores, autoregressive caveats and preserved artifacts.
+
+Autonomous follow-up now implements BUNDLE_C_POSITION_LINK_PLAN.md: frozen
+location law -> joint LG distance/sky observation density on the SAME field,
+with shared distance covariance, within-cell integration and no native
+candidate parents supplied to inference. Fable5 PROCEED; driver disposition
+uses exact exponential tilting/cell-face intervals instead of GH aliasing,
+and finite differences at an interior conservative mixture to avoid cold/
+empty boundary nondifferentiability. One GPU/2CPU/6GiB/30min, eight fixed native
+test fields/all archived alternatives, actual-data interface scores and one
+field-sensitivity projection. No training, field selection, density painting,
+posterior or IC. Missing selection, offsets, physical field/mass/COM joint law
+remain explicit. Execution/results: BUNDLE_C_POSITION_LINK_RUN.md. Autonomous
+approval replaces another wait; closed model repairs remain closed.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
