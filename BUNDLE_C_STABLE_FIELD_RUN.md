@@ -78,3 +78,7 @@ checkpoint-contract regression joins the three existing tests. New output
 stable_field_eval_v2; no overwrite, refit, extra model or threshold change.
 One Slurm GPU/2CPU/6GiB/30min; prior measured host3.11GiB plus20% fits6GiB.
 Tests and numerical evaluation run in that allocation, not on the login node.
+
+Correction source c04c3c4 committed/pushed; evaluation-only Slurm347108
+submitted with30min walltime. Initial PENDING(Priority); no numerical recovery
+pass inferred from submission. Logs cf4_C_stable_eval_347108.{out,err}.
