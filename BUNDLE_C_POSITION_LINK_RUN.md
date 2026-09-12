@@ -29,6 +29,29 @@ Slurm1GPU/2CPU/6GiB/30min; estimated host4.5GiB+20% rounded6GiB. Application
 extraction, density painting/optimization or IC. Output new
 /gpfs/kjhan/CF4/z0_density/bundle_c_v1/position_link_v1/.
 
-Status: implementation prepared; static checks and source-pinned submission
-next. No numerical success claimed before execution. Autonomous approval
-allows a substantive next design after outcome review, not false promotion.
+Source1a7af09 committed/pushed. Slurm347086 COMPLETED/exit0 in14s at19:55:17
+KST on2026-09-12; three tests pass,26 native triples/208 field cross-scores,
+all8 actual observation interfaces evaluated. All native feature comparisons
+agree to<5.96e-8 scaled error. Three conservative derivatives pass against
+both finite differences; parent moment errors<=5.91e-14. No learning step.
+Application8.78s, host1.269GiB, GPU reserved.463GiB. Nevertheless retained
+INCONCLUSIVE_POSITION_LINK_NUMERICS because the original error estimate used
+sum(rectangle error) / sum(qA*qT*rectangle probability), replacing all qA*qT
+by the worst-case1 in the numerator. This valid but very loose worst-case
+estimate is not evidence of an inaccurate likelihood; actual16/32-replacement
+tolerance comparisons had identical logL in all8 cases.
+
+Correction: propagate each adaptive-integration error with its OWN frozen
+qA*qT factor. Keep the unweighted worst-case estimate visible and the genuine
+clipped-tail bound separate; quad error estimates are NOT formal certified
+bounds. Same1e-4 estimated-error threshold, model, measurements and tolerance.
+Add an analytic constant-cell-probability error-weighting regression to an
+existing test. Run the same tiny comparison once, new position_link_v2 output,
+preserving v1; compare all actual/mock logL to v1 and reject changes>1e-10.
+No refit, scientific gate relaxation or additional audit stage.
+
+Planning correction from direct old-source inspection: the old FIELD diffusion
+already used dense translated native crops; it was the failed MEMBER learners
+that had13 fields. More observations alone is not new evidence sufficient to
+revive the closed diffusion line. Any next field-prior design must address
+its actual objective/representation/conditioning limitations explicitly.

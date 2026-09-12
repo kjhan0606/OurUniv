@@ -42,7 +42,15 @@ class PositionLinkTests(unittest.TestCase):
         for role in range(3):
             logp = model.log_prob(features, [8.]*3, [[8, 8, 8]]*role, role)
             self.assertTrue(bool(torch.isfinite(logp).all()))
-            self.assertLess(abs(float(logp.exp().sum())-1), 1e-10)
+            self.assertLess(abs(float(logp.detach().exp().sum())-1), 1e-10)
+        # Error estimates must carry the SAME cell probabilities as the integral.
+        for probability in (.5, .001):
+            class Constant:
+                def log_prob(self, raw, observer, parents, role):
+                    return torch.full(raw.shape[1:], math.log(probability), dtype=raw.dtype)
+            _, report = log_likelihood(Constant(), features, kernel)
+            self.assertAlmostEqual(float(report['weighted_integration_relative_error_estimate']),
+                kernel['numerical_probability_error']/kernel['tilted_probability_in_field'], delta=1e-15)
 
     def test_interior_physical_direction_gradient(self):
         native = fixture()

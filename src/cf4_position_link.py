@@ -110,19 +110,23 @@ def observation_kernel(mw, observer, directions, modulus, covariance, h=.6774, n
     mean = modulus+covariance@tilt
     sigma = np.sqrt(np.diag(covariance))
     parts = [ray_segments(observer, directions[i], mean[i], sigma[i], h, n) for i in range(2)]
-    pairs, total_error = [], 0.
+    pairs, pair_errors, total_error, omitted_error = [], [], 0., 0.
     for first in parts[0]:
         for second in parts[1]:
             probability, error = rectangle_probability(first['limits'], second['limits'], mean, covariance, tolerance)
             total_error += error
             if probability > 0:
                 pairs.append((first['cell'], second['cell'], probability))
+                pair_errors.append(error)
+            else:
+                omitted_error += error
     # Host marginal uses ONLY its own Jacobian tilt, not the two-companion tilt.
     host_mean = modulus[0]+covariance[0, 0]*3*KAPPA
     host_parts = ray_segments(observer, directions[0], host_mean, sigma[0], h, n)
     hosts = [(part['cell'], normal_interval(*(part['limits']-host_mean)/sigma[0])) for part in host_parts]
     b = math.log(h/1000)-10*KAPPA
     return dict(mw=cell_w, observer=np.asarray(observer)/DX, pairs=pairs, hosts=hosts,
+        pair_errors=pair_errors, omitted_probability_error=omitted_error,
         log_jacobian=2*math.log(KAPPA)+6*b+float(tilt@modulus+.5*tilt@covariance@tilt),
         log_host_jacobian=math.log(KAPPA)+3*b+3*KAPPA*modulus[0]+.5*(3*KAPPA)**2*covariance[0, 0],
         numerical_probability_error=total_error, clipped_tail_probability_bound=float(4*ndtr(-12)),
@@ -138,13 +142,16 @@ def log_likelihood(model, features, kernel):
     logw = selected(model.log_prob(features, observer, [], 0), [w])[0]
     loga = model.log_prob(features, observer, [w], 1)
     grouped = {}
-    for a, t, probability in kernel['pairs']:
-        grouped.setdefault(a, []).append((t, probability))
-    terms = []
+    for (a, t, probability), error in zip(kernel['pairs'], kernel['pair_errors']):
+        grouped.setdefault(a, []).append((t, probability, error))
+    terms, error_terms = [], []
     for a, entries in grouped.items():
         logt = model.log_prob(features, observer, [w, a], 2)
-        weights = features.new_tensor([math.log(p) for _, p in entries])
-        terms.append(loga[a]+torch.logsumexp(selected(logt, [t for t, _ in entries])+weights, 0))
+        chosen = selected(logt, [t for t, _, _ in entries])
+        weights = features.new_tensor([math.log(p) for _, p, _ in entries])
+        terms.append(loga[a]+torch.logsumexp(chosen+weights, 0))
+        errors = features.new_tensor([math.log(e) if e > 0 else -math.inf for _, _, e in entries])
+        error_terms.append(loga[a]+torch.logsumexp(chosen+errors, 0))
     log_integral = torch.logsumexp(torch.stack(terms), 0)
     joint = logw+log_integral+kernel['log_jacobian']-9*math.log(DX)
     host = [(cell, p) for cell, p in kernel['hosts'] if p > 0]
@@ -154,6 +161,9 @@ def log_likelihood(model, features, kernel):
     return joint, dict(MW=mw_density, M31_given_MW=a_density,
         M33_given_MW_M31_data=joint-mw_density-a_density,
         log_weighted_cell_probability=log_integral,
+        weighted_integration_relative_error_estimate=(torch.exp(torch.logsumexp(torch.stack(error_terms), 0)-log_integral)
+            +kernel['omitted_probability_error']*torch.exp(-log_integral)),
+        clipped_tail_relative_error_bound=kernel['clipped_tail_probability_bound']*torch.exp(-log_integral),
         log_jacobian=features.new_tensor(kernel['log_jacobian']))
 
 

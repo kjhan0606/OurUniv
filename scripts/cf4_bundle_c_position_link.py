@@ -103,7 +103,7 @@ def make_inputs(contract):
 
 
 def kernel_report(kernel):
-    return {key: value for key, value in kernel.items() if key not in ('pairs', 'hosts', 'observer') } | dict(
+    return {key: value for key, value in kernel.items() if key not in ('pairs', 'hosts', 'observer', 'pair_errors') } | dict(
         cell_pairs=len(kernel['pairs']), M31_cells=len({a for a, _, _ in kernel['pairs']}),
         shared_cell_pairs=sum(a == t for a, t, _ in kernel['pairs']))
 
@@ -115,7 +115,8 @@ def detached_score(model, features, kernel):
         raise ValueError('nonfinite score; zero support must not be a finite score')
     # qA*qT <=1 gives a conservative absolute-to-relative integration bound.
     error = kernel['numerical_probability_error']+kernel['clipped_tail_probability_bound']
-    values['integration_relative_error_bound'] = error*math.exp(-values['log_weighted_cell_probability'])
+    values['unweighted_worst_case_relative_error_estimate'] = error*math.exp(-values['log_weighted_cell_probability'])
+    values['integration_relative_error_estimate'] = values['weighted_integration_relative_error_estimate']+values['clipped_tail_relative_error_bound']
     return values
 
 
@@ -148,7 +149,7 @@ def sensitivity(model, native, kernel):
                 minus, _ = log_likelihood(model, features_torch(middle-step*direction), kernel)
             finite.append(float((plus-minus)/(2*step)))
         passed = all(abs(analytic-fd) <= CFG['gradient_absolute_tolerance']+CFG['gradient_relative_tolerance']*abs(analytic) for fd in finite)
-        rows.append(dict(axis=axis, epsilon=CFG['gradient_mixture_interior'], log_L=float(loss),
+        rows.append(dict(axis=axis, epsilon=CFG['gradient_mixture_interior'], log_L=float(loss.detach()),
             derivative=analytic, finite_differences=finite, conservation_relative_max=conservation, passed=passed))
         del permuted, direction, middle, loss, derivative
     np.savez_compressed(OUT/'sensitivity_projection.npz', log_mass=np.log1p(native[0, 4:-4, 4:-4, 4:-4].sum(2)),
@@ -167,7 +168,7 @@ def sensitivity(model, native, kernel):
         ax.set(xlabel='native x [cMpc/h]', ylabel='native y [cMpc/h]')
     fig.savefig(OUT/'position_sensitivity.png', dpi=130)
     plt.close(fig)
-    report = dict(native_log_L=float(value), directions=rows, passed=all(r['passed'] for r in rows),
+    report = dict(native_log_L=float(value.detach()), directions=rows, passed=all(r['passed'] for r in rows),
         map='Derivative w.r.t. cellwise common scaling of M/P/Q; NOT a posterior or optimized field',
         cold_convention='zero derivative at cold/empty feature branches; direction checks at interior eps=.05',
         maximum_absolute_native_scaling_sensitivity=float(abs(scale_sensitivity).max()))
@@ -235,8 +236,18 @@ def run():
             cross.append(dict(observed_mw=observed['mw'], field_mw=candidate['mw'],
                 **{key: sum(r['weight']*r[key] for r in selected) for key in ('log_L', 'MW', 'M31_given_MW', 'M33_given_MW_M31_data')}))
     dump('cross_scores.json', cross)
-    integration_ok = all(r['absolute_log_L_difference'] < 1e-5 and r['tighter']['integration_relative_error_bound'] < 1e-4 for r in actual_rows)
-    integration_ok &= all(r['integration_relative_error_bound'] < 1e-4 for r in mock_rows)
+    original = ROOT/'position_link_v1'
+    old_actual = json.loads((original/'actual_scores.json').read_text())
+    old_mock = json.loads((original/'mock_scores.json').read_text())
+    if len(old_actual) != len(actual_rows) or len(old_mock) != len(mock_rows):
+        raise ValueError('error-estimator-only correction changed evaluation scope')
+    score_change = max([abs(a['ordinary']['log_L']-b['ordinary']['log_L']) for a, b in zip(old_actual, actual_rows)]
+        +[abs(a['log_L']-b['log_L']) for a, b in zip(old_mock, mock_rows)])
+    if score_change > 1e-10:
+        raise ValueError('error-estimator-only correction changed likelihood values')
+    RESULT['previous_log_L_max_change'] = score_change
+    integration_ok = all(r['absolute_log_L_difference'] < 1e-5 and r['tighter']['integration_relative_error_estimate'] < 1e-4 for r in actual_rows)
+    integration_ok &= all(r['integration_relative_error_estimate'] < 1e-4 for r in mock_rows)
     RESULT.update(status=('PASS_POSITION_LIKELIHOOD_COMPONENT_ONLY' if integration_ok and RESULT['sensitivity']['passed'] else
         'INCONCLUSIVE_POSITION_LINK_NUMERICS'), numerical_integration_pass=integration_ok,
         native_feature_scaled_errors=agreement, mock_triples=len(observations), mock_cross_scores=len(mock_rows),
