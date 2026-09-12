@@ -745,6 +745,15 @@ are required before scientific promotion, but not an unbounded prerequisite
 to viewing a clearly labelled diagnostic map. Reused development fields and
 shared generator/inference code are never independent validation.
 
+Update2026-09-12 21:57 KST:347088 completed24000 updates/final checkpoint,
+then FAILED at evaluation entry (duplicate status keyword in driver code).
+No generated quality verdict exists. Autonomous technical recovery fixes the
+assignment and adds evaluation-only final-EMA loading with identical saved
+normalization/config/seeds, zero optimizer steps, original outputs preserved.
+New stable_field_eval_v2, one GPU/2CPU/6GiB/30min Slurm allocation runs four
+tests and the original fixed endpoint. No new model/advisory audit required
+for this same-bundle technical correction. See BUNDLE_C_STABLE_FIELD_RUN.md.
+
 ## Working rules
 
 - Prefer substantive scientific outputs over more generic validation code.

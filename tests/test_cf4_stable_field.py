@@ -9,6 +9,17 @@ from test_cf4_spatial_diffusion import fixture
 
 
 class StableFieldTests(unittest.TestCase):
+    def test_completed_checkpoint_evaluation_contract(self):
+        from cf4_bundle_c_stable_field import CFG, validate_evaluation_checkpoint
+        saved = dict(config=CFG.copy(), source_commit='frozen', step=CFG['steps'], E_conditional=True,
+            location=np.zeros(49), spread=np.ones(49))
+        request = dict(source_commit='frozen')
+        previous = dict(source_commit='frozen', updates=CFG['steps'], training_complete=True)
+        validate_evaluation_checkpoint(saved, request, previous)
+        for change in (dict(step=CFG['steps']-1), dict(source_commit='different'), dict(spread=np.zeros(49))):
+            with self.assertRaises(ValueError):
+                validate_evaluation_checkpoint({**saved, **change}, request, previous)
+
     def test_v_identities_and_nonamplifying_reference(self):
         torch.manual_seed(912)
         clean, noise = torch.randn(1, 49, 4, 4, 4), torch.randn(1, 49, 4, 4, 4)

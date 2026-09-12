@@ -61,3 +61,20 @@ autonomous authority remains active, so do not request redundant approval.
 Conditional on native coarse field and archive satellite eligibility E;
 not q(coarse|CF4), calibrated member mass/COM/existence/observer selection,
 an actual LG posterior, or IC. No field-generation success claimed yet.
+
+## Evaluation-only recovery
+
+347088 FAILED2026-09-12 21:40:25 KST after1h20m44s. All24000 updates and
+the final model/EMA/Adam checkpoint completed; training4785.96s. Evaluation
+never started because `dict(**RESULT, status='EVALUATING')` duplicated the
+existing status key. This is a driver implementation error, not evidence of
+field-generation failure. Preserve stable_field_v1 and its failed result.
+
+Correction updates the status once and adds evaluation-only entry. It loads
+the exact final EMA, saved normalization, unchanged config/seeds and fixed
+eight cases, checks completed-step/source consistency, and executes the SAME
+denoising/16-draw/readout endpoint with ZERO optimizer steps. One focused
+checkpoint-contract regression joins the three existing tests. New output
+stable_field_eval_v2; no overwrite, refit, extra model or threshold change.
+One Slurm GPU/2CPU/6GiB/30min; prior measured host3.11GiB plus20% fits6GiB.
+Tests and numerical evaluation run in that allocation, not on the login node.

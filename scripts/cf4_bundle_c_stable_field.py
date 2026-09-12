@@ -1,5 +1,6 @@
 """One E-conditional field fit and fixed generated-state endpoint, Slurm only."""
 import copy
+import argparse
 import json
 import os
 from pathlib import Path
@@ -54,7 +55,7 @@ def event(status, **extra):
     print(json.dumps(value), flush=True)
 
 
-def cases_and_slab():
+def cases_and_slab(load_training=True):
     archive = ROOT/'population_locations_v1'
     sets = json.loads((archive/'cases.json').read_text())
     selected = json.loads((archive/'population.json').read_text())['rollout_observers_frozen_before_fit']
@@ -68,7 +69,7 @@ def cases_and_slab():
     with h5py.File(ROOT/'total_matter_v1/matter_moments.h5', 'r') as source:
         if source.attrs['status'] != 'NATIVE_TOTAL_MATTER_NOT_OBSERVED_LOCAL_UNIVERSE':
             raise ValueError('incorrect full-matter source')
-        slab = source['fine'][:, :184, :, :]
+        slab = source['fine'][:, :184, :, :] if load_training else None
     dump('population.json', dict(E_conditional=True, train_observers=len(train), test_observers=[c['mw'] for c in test],
         weighting='uniform archived eligible MW observer, not uniform unique volume',
         duplicates='overlapping and identical fields can recur under observer weighting; not independent universes',
@@ -324,8 +325,26 @@ def evaluate(model, cases, location, spread):
     return rows, ensembles
 
 
+def validate_evaluation_checkpoint(saved, request, previous):
+    if (saved['config'] != CFG or saved['source_commit'] != request['source_commit']
+            or previous['source_commit'] != request['source_commit']
+            or saved['step'] != CFG['steps'] or previous['updates'] != CFG['steps']
+            or not previous['training_complete'] or not saved['E_conditional']):
+        raise ValueError('evaluation requires the source-matched completed frozen fit')
+    for key in ('location', 'spread'):
+        value = np.asarray(saved[key])
+        if value.shape != (49,) or not np.isfinite(value).all() or (key == 'spread' and np.any(value <= 0)):
+            raise ValueError('invalid saved normalization')
+
+
 def run():
-    global CREATED
+    global CREATED, OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--evaluation-only', action='store_true')
+    args = parser.parse_args()
+    original = OUT
+    if args.evaluation_only:
+        OUT = ROOT/'stable_field_eval_v2'
     if 'SLURM_JOB_ID' not in os.environ or 'EXPECTED_COMMIT' not in os.environ:
         raise RuntimeError('source-pinned Slurm allocation required')
     OUT.mkdir(exist_ok=False)
@@ -338,11 +357,27 @@ def run():
     dump('tests.json', dict(tests=tested.testsRun, failures=len(tested.failures), errors=len(tested.errors)))
     if not tested.wasSuccessful():
         raise ValueError('stable field focused tests failed')
-    train, test, slab = cases_and_slab()
-    location, spread = normalize(slab, train)
-    model = learn(slab, train, location, spread)
-    del slab
-    dump('result.json', dict(**RESULT, status='EVALUATING'))
+    if args.evaluation_only:
+        previous = json.loads((original/'result.json').read_text())
+        request = json.loads((original/'request.json').read_text())
+        checkpoint = original/f'checkpoint_{CFG["steps"]:05d}.pt'
+        saved = torch.load(checkpoint, map_location='cpu', weights_only=False)
+        validate_evaluation_checkpoint(saved, request, previous)
+        model = StableField().cuda().eval().requires_grad_(False)
+        model.load_state_dict(saved['ema'], strict=True)
+        location, spread = saved['location'], saved['spread']
+        RESULT.update(updates=saved['step'], training_complete=True, additional_optimizer_steps=0,
+            training_seconds=previous['training_seconds'], training_job_id=previous['job_id'],
+            training_source_commit=saved['source_commit'], checkpoint=str(checkpoint), evaluation_only=True)
+        del saved
+        _, test, _ = cases_and_slab(load_training=False)
+    else:
+        train, test, slab = cases_and_slab()
+        location, spread = normalize(slab, train)
+        model = learn(slab, train, location, spread)
+        del slab
+    RESULT.update(status='EVALUATING')
+    dump('result.json', RESULT)
     denoising(model, test, location, spread)
     draws, ensembles = evaluate(model, test, location, spread)
     valid = sum(r['valid'] for r in draws)
