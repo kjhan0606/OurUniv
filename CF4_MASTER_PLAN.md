@@ -586,6 +586,25 @@ old three development volumes excluded from new test. No new raw snapshots,
 profile extraction, q_F learning, actual-data posterior or IC job. Execution
 record: `BUNDLE_C_POPULATION_LOCATION_RUN.md`. Approval covers this single
 comparison; next bundle still requires its concrete result and user direction.
+Slurm347085 started19:08:47 KST2026-09-12 on syn05/A40, pushed sourceaa024b4,
+1GPU/2CPU/10GiB/2h. Four numerical regressions pass. Fixed split counts are
+1388 training /87 calibration /127 test observers, with5006/261/449 native
+triples and no cross-split native-ID overlap. Population scope passes.
+347085 now COMPLETED/exit0 in3m11s at19:11:58 KST;12 epochs/2088 updates,
+all tests/symmetry checks and all five fixed location-feasibility criteria
+pass. Calibration alpha=1. Mean test joint NLL9.9064 versus density11.2234;
+M33 NLL3.4396 versus density3.8976/shared-cell3.7562. Training joint10.6850
+versus density12.0591; no comparable extreme train/test score gap here.
+Autonomous512 triples complete, with32 distinct draws per observer/law; broad
+weighted-target distances remain (e.g. M331.214–3.603 cMpc/h over8 testcases).
+.1875 cell size is NOT .1875 position accuracy. Driver accepts and CLOSES the
+bounded position comparison, not a physical halo/mass/COM model or q_F.
+These are correlated one-box samples, not independent universes or observed
+LG fields. Next proposed outcome: connect LG position observations to a
+SAME-field likelihood and the remaining field/mass/COM model, working toward
+an LG-on/off field response, not another location-score repair loop. No new
+bundle is launched; user direction is required. See the run record for full
+proper scores, autoregressive caveats and preserved artifacts.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
