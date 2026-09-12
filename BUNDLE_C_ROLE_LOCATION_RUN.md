@@ -37,8 +37,19 @@ refuse an existing directory and preserve all older runs. Artifacts include
 request/source/tests, pre/post symmetry, full model+Adam checkpoint/history,
 samples/plots, proper scores and final result. No extra full density snapshots.
 
-Status: implementation/static review complete, preparing source-pinned Slurm
-submission. Job ID and initial numerical status will be recorded here.
+Source commit `50841a2` committed and pushed. Slurm job **347007** accepted
+and RUNNING on **syn05**, start **2026-09-12 15:52:02 KST**,4h allocation.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_C_role_locations_347007.{out,err}`.
+Initial execution: **4/4 numerical tests pass**. All13 training fields loaded.
+Before-fit whole128^3,48-view check passes for all3 roles: maximum probability
+L1 differences[3.509e-6,1.402e-6,2.107e-6], below1e-4. Native labels use
+SubhaloPos center cells as planned, not previous member density peaks.
+
+Learning started; first13 joint updates complete, about1.4s/update. Initial
+host peak2.188GiB, GPU reserved peak2.469GiB. Estimated full learning about
+2.5h plus final evaluations; not a completion-time guarantee. Final scores,
+post-fit symmetry and autonomous draws are still pending. Initial tests and
+decreasing individual losses do NOT establish development/generalization success.
 
 Boundary: location-component FEASIBILITY ONLY, even if score criteria pass.
 This does not certify physical halos, masses/COM velocities, calibrated q_S,

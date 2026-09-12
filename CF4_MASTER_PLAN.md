@@ -563,7 +563,8 @@ User now explicitly approves implementation and ONE1GPU/2CPU/6GiB/4h pilot,
 location law, sequential factor gradients, native center-cell references,
 nonoracle autoregressive draws and before/after48-view probability tests.
 Static syntax checks pass; numerical tests and fit run only in the SAME Slurm
-allocation. See `BUNDLE_C_ROLE_LOCATION_RUN.md` for submission/current status.
+allocation. Job347007 submitted from pushed source50841a2 and RUNNING on
+syn05 from2026-09-12 15:52:02 KST. See `BUNDLE_C_ROLE_LOCATION_RUN.md`.
 Approval ends at its fixed endpoint evaluation/report; no automatic new
 model, observed posterior, fine-field-prior fit or IC calculation.
 
