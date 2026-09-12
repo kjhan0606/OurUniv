@@ -45,11 +45,24 @@ Before-fit whole128^3,48-view check passes for all3 roles: maximum probability
 L1 differences[3.509e-6,1.402e-6,2.107e-6], below1e-4. Native labels use
 SubhaloPos center cells as planned, not previous member density peaks.
 
-Learning started; first13 joint updates complete, about1.4s/update. Initial
-host peak2.188GiB, GPU reserved peak2.469GiB. Estimated full learning about
-2.5h plus final evaluations; not a completion-time guarantee. Final scores,
-post-fit symmetry and autonomous draws are still pending. Initial tests and
-decreasing individual losses do NOT establish development/generalization success.
+Job347007 COMPLETED/exit0 at2026-09-12 18:28:35 KST,2h36m33s. All6500
+updates,500 per field, final symmetry and all192 autonomous triples completed.
+Final native-fixture symmetry L1 maxima[5.195e-10,1.701e-9,3.519e-9] pass.
+Host application peak2.714GiB/GPU reserved2.469GiB.
+
+**NO_GO_ROLE_LOCATION_AT_FIXED_BUDGET.** Training mean joint NLL .0000387;
+development mean63.0029 vs geometry24.8393/density10.5120/shared10.1410.
+Per-development joint model/density NLL:16=155.215/9.940,
+17=23.312/11.151,20=10.481/10.445. All frozen aggregate criteria fail.
+Autonomous role median cell-position errors for16=[2.079,.265,.419],
+17=[1.779,1.769,2.0625],20=[0,1.993,2.226] cMpc/h. Each64-draw set has only
+8–10 distinct triples. Normalized probabilities/symmetry do not imply reliable
+uncertainty or generalization. Close this fit; preserve all results, no extension.
+
+User approved the recommended population-weighted SMALL location-model
+comparison next. Plan `BUNDLE_C_POPULATION_LOCATION_PLAN.md`; it fixes the
+inherited13-profile-subset limitation using existing catalogue positions and
+field volumes. No actual high-resolution posterior is promoted by either task.
 
 Boundary: location-component FEASIBILITY ONLY, even if score criteria pass.
 This does not certify physical halos, masses/COM velocities, calibrated q_S,

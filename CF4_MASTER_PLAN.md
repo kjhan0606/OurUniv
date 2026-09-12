@@ -565,8 +565,27 @@ nonoracle autoregressive draws and before/after48-view probability tests.
 Static syntax checks pass; numerical tests and fit run only in the SAME Slurm
 allocation. Job347007 submitted from pushed source50841a2 and RUNNING on
 syn05 from2026-09-12 15:52:02 KST. See `BUNDLE_C_ROLE_LOCATION_RUN.md`.
-Approval ends at its fixed endpoint evaluation/report; no automatic new
-model, observed posterior, fine-field-prior fit or IC calculation.
+347007 has now COMPLETED2h36m33s/exit0 at18:28:35 KST,6500 updates and final
+evaluation complete. Tests4/4 and symmetry before/after pass, but
+NO_GO_ROLE_LOCATION_AT_FIXED_BUDGET. Mean train joint NLL .0000387 versus
+development63.0029 (density reference10.5120). Autonomous positions fail too.
+Close the13-field U-Net pilot; no longer-training continuation or promotion.
+
+User approved the recommended next bundle: population-weighted multiple
+native center labels using existing total field/catalogue, ONE small density-
+anchored location model and spatially separated comparison. Concrete plan:
+`BUNDLE_C_POPULATION_LOCATION_PLAN.md`. Fable5 returned conditional approval
+normally138976ms; driver disposition in the corresponding REVIEW document.
+The adviser incorrectly added nested time caps; driver rejects that arithmetic,
+keeps110min TOTAL including70min-capped learning inside120min Slurm. Empty-
+cell/periodic-overlap/early-count conditions are incorporated without extra
+audit stages. Model21 ridge-regularized linear coefficients plus one scalar
+calibration weight,12 epochs with all alternatives and uniform-observer/
+M31/M33 hierarchical weights. Fixed spatial slabs include feature halos;
+old three development volumes excluded from new test. No new raw snapshots,
+profile extraction, q_F learning, actual-data posterior or IC job. Execution
+record: `BUNDLE_C_POPULATION_LOCATION_RUN.md`. Approval covers this single
+comparison; next bundle still requires its concrete result and user direction.
 
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
