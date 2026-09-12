@@ -19,3 +19,9 @@ identification from the available NEW field/state, role ambiguity and unresolved
 members (especially M33), and how their observables constrain that same field.
 Native truth identities may label calibration/evaluation, never seed or select
 generated-field candidates. Do not assume known components inside g(F).
+
+User clarification2026-09-12: plan audits are advice, not automatic authority.
+The driver independently checks their evidence (including existing verified
+code/results) and decides which recommendations to adopt, amend or reject,
+recording concrete reasons. A substantive disagreement is not an invocation
+failure. This does not remove separate user approval at new bundle boundaries.

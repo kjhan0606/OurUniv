@@ -543,6 +543,24 @@ criteria and positive finite mass-denominator guard plus absolute errors.
 Frozen diagnostic sourcedd006b5 committed/pushed, Slurm343469 submitted,
 initial PENDING(Priority). Runtime results belong in BUNDLE_C_MEMBER_DIAGNOSIS_RUN.md.
 
+343469 completed3m24s on syn07/A40,8 tests pass,576 frozen forwards and no
+saved-model updates. Both identity results reproduce. Orientation sensitivity
+pre-exists the multi-field fit; final multi model remains sensitive in6/6
+tested fields.12/16 source cases have companion alternatives, but unique-choice
+development16 also fails; no identical-origin/different-label pair found.
+Diagnosis closed, no unique failure-cause or accepted member/field claim.
+User requests next correction. Proposed `BUNDLE_C_ROLE_LOCATION_PLAN.md`
+replaces deterministic mass allocation with an autoregressive distribution
+over MW/M31/M33 center cells and structurally cubic-equivariant scalar kernels.
+It is LOCATION ONLY, not q_S masses/COM or an observed .1875 field posterior.
+Fable returned a read-intention preamble without a verdict; not an audit pass.
+Driver backup review `BUNDLE_C_ROLE_LOCATION_REVIEW.md` is conditional feasibility
+GO, with explicit probability/selection/teacher-forcing/center-label caveats.
+User clarifies audits are advisory: driver verifies and decides with reasons;
+independent evidence and separate user bundle approval remain required.
+Design complete; proposed1GPU/2CPU/6GiB/4h,6500 joint updates awaits explicit
+implementation/one-fit approval. No new numerical job or native fit started.
+
 Previous diagnostic delivery: [BUNDLE_A_RUN.md](BUNDLE_A_RUN.md).
 
 Completed A history, not instructions to rerun: the four-fit comparison

@@ -47,6 +47,23 @@ not a numerical pass. Logs `/gpfs/kjhan/CF4/logs/cf4_C_member_diag_343469.{out,e
 products `/gpfs/kjhan/CF4/z0_density/bundle_c_v1/member_mass_diagnosis_v5/`.
 No manual GPU launch, polling daemon or automatic next training.
 
+## Completed diagnosis
+
+343469 COMPLETED/exit0, syn07/A40,2026-09-12 12:58:39–13:02:03 KST,3m24s.
+Eight tests pass,576 forward passes, zero saved-model optimizer updates.
+Identity reproduction passes; host/GPU reserved peaks1.568/1.115GiB.
+Before multi-field learning, fixture0 canonical member L1=.03147/.01031/.01602
+versus48-view means1.00128/.98047/.98954. Strong orientation sensitivity
+therefore pre-existed multi-field updates. Final multi model is materially
+orientation-sensitive for all three roles in all six tested fields.
+
+Source selection has alternative M31 or conditional M33 choices in12/16
+records. Unique-choice fixtures0/3/14/16 remain; development16 fails too, so
+omitted assignment cannot alone explain all failures. No identical-origin/
+different-label collision among32 source patch records. These facts close
+the frozen diagnostic, not an accepted readout or isolated training cause.
+No further view sweeps/continuation of the deterministic mass learner.
+
 ## Redesign direction, not an approved training specification
 
 Use the diagnostic to distinguish orientation sensitivity from omitted role
