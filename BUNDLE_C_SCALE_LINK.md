@@ -38,3 +38,14 @@ moments, not paint a chosen LG or revive old standalone role diagnostics.
 
 Driver will select ONE justified correction or state remaining uncertainty
 after this comparison, not automatically launch more diagnostic variants.
+
+Implementation00c5035 committed/pushed; Slurm347160 submitted2026-09-13
+02:03:26 KST,1GPU/2CPU/4GiB/10min. Initial PENDING(Priority). At02:04 the
+scheduler estimated05:51:37 start; this is provisional, not reserved progress.
+Tests and all comparisons execute inside the allocation. No manual node
+execution, extra fit or approval wait. Artifacts will be in
+/gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_scale_link_v1/;
+logs /gpfs/kjhan/CF4/logs/cf4_C_scale_link_347160.{out,err}.
+Read result.json AND scores.json before selecting the correction. A finished
+scheduler job without complete result is not a scientific pass. There is no
+separate monitor daemon or automatically selected next learning job.
