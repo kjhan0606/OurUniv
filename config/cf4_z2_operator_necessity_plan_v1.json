@@ -1,0 +1,31 @@
+{
+  "bundle": "Z2-OPERATOR-NECESSITY",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z2_operator_necessity_result_v1.json",
+  "driver_design_review": "GO: one full-grid forward diagnostic connects directly to the current z=0 inference; no further toy contraction campaign or external audit when Astra drives.",
+  "goal": "Determine whether low-order LOS integration error matters for the current CF4-associated z=0 development inference before investing in dynamic Q1 differentiation. Preserve the goal of extending empirically constrained k and <=0.3 cMpc/h numerical zoom ICs.",
+  "inputs": {
+    "base_program": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "posterior_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1",
+    "tasks": ["posterior_v1_00_mock_00_seed_2026083000_arm_A", "posterior_v1_06_mock_06_seed_2026083006_arm_D"],
+    "npz_members": ["posterior_density_mean", "posterior_velocity_mean"],
+    "selection": "Only raw_selection_exposure from the declared Phase_A_datum; no observed count member read"
+  },
+  "method": {
+    "state": "Plug-in posterior field means, nuisance prior medians, zero selection calibration; these are not complete posterior draws or posterior predictive means.",
+    "fog_log_sigma_offsets": [0, 1],
+    "current_rule": "Use the actual program offsets/weights (GH2), not the historical GH3 assumption.",
+    "reference": "Gauss-Legendre integration on [-8,8] with normalized Gaussian weights at 128 and 256 points; numerical reference only after convergence and sourcewise sealed Q1 comparison.",
+    "q1_probe_indices": "8 evenly spaced flat source indices fixed before evaluation, all six populations at both FoG settings",
+    "geometry": "Keep the current pre-coherent-RSD LOS fixed for both rules. This isolates broadening integration; the Q1 selected-intensity post-RSD LOS convention is a separate model choice.",
+    "grid": "Full current N32, L384, 32768 Eulerian sources; not N192 PM particles.",
+    "statistics": ["per-population and total L1", "expected conditional-Poisson log-likelihood loss KL(reference || current)", "k-shell selected-intensity power ratio and residual power versus expected Poisson shot noise"],
+    "reference_gate": "128-to-256 full-field relative L1 <=1e-5; 256-to-Q1 per-source relative L1 <=1e-5; otherwise INCONCLUSIVE and no necessity decision.",
+    "decision": "Potentially material at the tested state if total Poisson KL >=1 nat. Smaller is BELOW_ONE_NAT_AT_TESTED_STATES_ONLY, never a global operator or posterior approval. Require reference self-KL <=0.01 nat and <=1 percent of legacy-to-reference KL when legacy KL >=1.",
+    "frontier": "Report the entire mesh Fourier range. No observational information frontier is assumed or inferred from two plug-in means."
+  },
+  "resources": {"backend": "Slurm CPU only", "array": "0-1%2", "cpus_each": 2, "estimated_peak_MiB": 1000, "requested_MiB": 1200, "time_limit_each": "00:30:00"},
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z2_operator_necessity_v1",
+  "deferred": ["dynamic geometry VJP implementation", "new sampling or PM truth generation", "actual CF4 inference", "IC/forward simulation", "0.3 cMpc/h claims"],
+  "boundary": "Driver evaluates the completed bundle and waits for user approval before the next bundle."
+}

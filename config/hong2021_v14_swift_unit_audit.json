@@ -1,0 +1,35 @@
+{
+  "schema": "hong2021-v14-swift-eagle-coordinate-unit-audit-v1",
+  "status": "frozen_before_any_swift_eagle_cic_grid_or_model_fit",
+  "suite": "CAMELS Swift-EAGLE L25n256 CV0-26",
+  "discovery": "The public Swift-EAGLE snapshot header is native SWIFT, not Gadget: Header/BoxSize is a three-vector in Mpc and cannot use the SIMBA x0.001 kpc/h conversion.",
+  "all_27_snapshot_headers": {
+    "Header/BoxSize": [37.252272406603936, 37.252272406603936, 37.252272406603936],
+    "Cosmology/h": 0.6711,
+    "Cosmology/Omega_m": 0.3,
+    "Units/Unit_length_in_cgs": 3.085677581491367e+24,
+    "PartType1/Coordinates_h_scale_exponent": 0.0,
+    "PartType1/Coordinates_shape": [16777216, 3],
+    "redshift": 2.220446049250313e-16,
+    "identical_geometry_and_cosmology_across_cv0_26": true
+  },
+  "exact_conversion": {
+    "snapshot_coordinate_scale_to_mpc_h": 0.6711,
+    "proof": "37.252272406603936 Mpc * 0.6711 = 25.0 Mpc/h",
+    "catalog_coordinate_schema": "Gadget kpc/h",
+    "catalog_coordinate_scale_to_mpc_h": 0.001,
+    "catalog_box": "25000 kpc/h = 25 Mpc/h"
+  },
+  "implementation": {
+    "validator": "src/hong2021_validate_camels_raw.py",
+    "grid_builder": "src/hong2021_build_particle_grid.py --coordinate-scale-to-mpc-h 0.6711",
+    "simba_scale_unchanged": 0.001,
+    "fail_closed_box_tolerance_mpc_h": 1e-7
+  },
+  "firewall": {
+    "swift_eagle_role": "development_only",
+    "density_target_or_cic_grid_inspected_before_this_audit": false,
+    "eagle_ref100_or_astrid_accessed": false,
+    "model_or_gate_threshold_changed": false
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "schema": "hong2021-v49-train-only-Gaussian-extreme-calibration-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine whether V48's common-domain extreme-density failure is already present in its train-only Gaussian-mixture likelihood through rare PIT overdispersion, unsupported component mass, or excessive but finite analytic physical moments, versus being introduced only by the empirical conditional-rank copula.",
+  "parent_evidence": {
+    "v48_record": "config/hong2021_v48_result_record.json",
+    "v48_record_sha256": "eff3a169c72230da44814c475a7f44f3b0c4310c35ae900cf81b166bf6f0ebb1",
+    "required_classification": "finite_moment_gaussian_mixture_body_is_supported_but_extreme_calibration_is_insufficient",
+    "required_next": "audit_train_only_Gaussian_mixture_PIT_extreme_quantiles_and_physical_moments_without_threshold_tuning",
+    "required_development_pass": false,
+    "required_high_k_power_and_residual_RMS_all_domains": true
+  },
+  "frozen_inputs": {
+    "v48_program": "config/hong2021_v48_identifiable_gaussian_mixture_copula_program.json",
+    "v48_program_sha256": "aa667f40d9db4723547a11916f56e0c5b2f99be0546f526356dfb5c52eecc4f9",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v48/identifiable_gaussian_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "55705df2bf7ced1eeec59b47e6e24289033b99e961360052971d3c526af2d32f",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v48/identifiable_gaussian_mixture_copula_step12000.json",
+    "training_report_sha256": "24c40798441688680166e892736c79da57f549ccc4d0338e9c9662c71ec18a1c",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v48_identifiable_gaussian_mixture_sequence/preflight.json",
+    "preflight_sha256": "a83c8de453c14b2bad7f0db256d9347efdd87a67d5a3a4888cd3bbdde04ba9c7",
+    "development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v48_e25_identifiable_gaussian_mixture_copula/development_decision.json",
+    "development_decision_sha256": "313ad3bce62cd562f482b4d7e650959cce1c409b25c1c3e34b32dd0d3e68e3bc"
+  },
+  "audit_population": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "split": "train only",
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "model": "unchanged V48 EMA checkpoint in evaluation mode",
+    "augmentation": false,
+    "validation_inputs_opened": false,
+    "validation_truth_opened": false,
+    "development_arrays_opened": false
+  },
+  "exact_native_voxel_diagnostics": {
+    "scope": "every 64^3 native train voxel in every frozen train object",
+    "PIT_tail_probabilities": [
+      0.01,
+      0.001,
+      0.0001,
+      0.00001
+    ],
+    "metrics": [
+      "mean exact Gaussian-mixture NLL",
+      "mean NLL within empirical standardized-target upper q99 and q99.9 subsets",
+      "PIT lower and upper observed-over-expected ratios through probability 1e-5",
+      "mean mixture weights and posterior truth responsibilities by component",
+      "upper q99 and q99.9 posterior truth responsibilities",
+      "global effective posterior-responsibility component count",
+      "exact Gaussian-mixture analytic E[rho], E[rho^2], and E[(rho-1)^2] averaged over native train conditions",
+      "empirical train E[(rho-1)^2] on the same native voxels",
+      "per-component contribution fractions to analytic E[rho^2] and E[(rho-1)^2]"
+    ],
+    "physical_definition": "y=backbone+target_mean+target_std*z, rho=10**(4.5*y), delta=rho-1; for Gaussian z~N(mu,sigma^2), E[exp(t*z)]=exp(t*mu+0.5*t^2*sigma^2)",
+    "moment_evaluation": "float64 analytic evaluation without clipping, scale caps, Monte Carlo, or posthoc DC correction"
+  },
+  "fixed_probe_posterior_predictive": {
+    "probe_indices": "reuse the V46 seed 146046 and exactly 4096 independently sampled native voxels without replacement per train object",
+    "probe_voxels": {
+      "TNG100": 1769472,
+      "SIMBA": 827392,
+      "Swift": 1675264
+    },
+    "members_per_probed_voxel": 16,
+    "uniform_seeds": "146049 plus member, 10000000 times domain index, and 10000 times object index",
+    "inverse": "unchanged V48 28-step Gaussian-mixture inverse with rank epsilon 1e-7",
+    "quantiles": [
+      0.99,
+      0.999,
+      0.9999,
+      0.99999
+    ],
+    "comparisons": [
+      "standardized residual posterior-predictive versus probed train truth",
+      "log10rho posterior-predictive versus probed train truth",
+      "sampled mean delta squared versus probed train truth",
+      "analytic probed mean delta squared versus probed train truth"
+    ],
+    "new_development_sample": false
+  },
+  "fixed_component_diagnostics": {
+    "summary_quantiles": [
+      0.5,
+      0.9,
+      0.99,
+      0.999,
+      1.0
+    ],
+    "quantities": [
+      "weight",
+      "posterior truth responsibility",
+      "location",
+      "scale",
+      "component conditional q99.999 standardized endpoint",
+      "component analytic rho-squared contribution"
+    ]
+  },
+  "fixed_thresholds": {
+    "minimum_supported_component_mean_weight": 0.02,
+    "minimum_responsibility_to_weight_ratio": 0.5,
+    "dominant_physical_second_moment_component_fraction": 0.5,
+    "minimum_effective_responsibility_components": 3.0,
+    "PIT_tail_observed_over_expected_lower": 0.5,
+    "PIT_tail_observed_over_expected_upper": 2.0,
+    "posterior_predictive_absolute_q99_999_log10rho_max_dex": 0.10,
+    "physical_mean_delta_squared_ratio_min": 0.6666666666666666,
+    "physical_mean_delta_squared_ratio_max": 1.5,
+    "inverse_CDF_maximum_error": 0.000002
+  },
+  "fixed_branches": [
+    {
+      "condition": "any domain has a component with mean weight at least 0.02, posterior responsibility divided by weight below 0.5, and at least 0.5 of the analytic rho-squared contribution",
+      "classification": "unsupported_Gaussian_component_mass_dominates_the_physical_train_tail",
+      "next": "freeze_a_train_only_monotone_bounded_support_conditional_spline_likelihood_with_support_and_gates_fixed_before_fit"
+    },
+    {
+      "condition": "every domain overpredicts posterior-predictive q99.999 log10rho by more than 0.10 dex or analytic mean delta squared by more than 1.5, while upper PIT observed-over-expected at 1e-5 is below 0.5 in at least two domains",
+      "classification": "Gaussian_mixture_is_globally_overdispersed_in_the_train_extreme_tail",
+      "next": "freeze_a_train_only_monotone_bounded_support_conditional_spline_likelihood_with_support_and_gates_fixed_before_fit"
+    },
+    {
+      "condition": "any domain has global effective posterior-responsibility component count below 3.0",
+      "classification": "V48_Gaussian_mixture_has_effective_component_collapse",
+      "next": "stop_finite_mixtures_and_freeze_a_train_only_monotone_bounded_support_conditional_spline_likelihood"
+    },
+    {
+      "condition": "all domains pass lower and upper PIT 1e-5 ratios in [0.5,2] and posterior-predictive q99.999 within 0.10 dex, but any domain has analytic mean delta squared outside [2/3,1.5]",
+      "classification": "voxel_log_score_calibrates_extreme_quantiles_but_not_the_physical_second_moment",
+      "next": "freeze_a_train_only_tail_weighted_strictly_proper_scoring_audit_before_changing_the_generator"
+    },
+    {
+      "condition": "every domain passes lower and upper PIT 1e-5 ratios in [0.5,2], posterior-predictive q99.999 within 0.10 dex, and analytic mean delta squared ratio in [2/3,1.5]",
+      "classification": "train_Gaussian_tail_is_calibrated_but_the_empirical_rank_copula_breaks_development_extremes",
+      "next": "audit_only_the_train_empirical_conditional_rank_tail_and_query_coupling_without_changing_the_Gaussian_likelihood"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "Gaussian_train_extreme_failure_is_mixed_or_not_identified",
+      "next": "seal_the_PIT_component_and_analytic_moment_evidence_before_selecting_one_new_likelihood"
+    }
+  ],
+  "hard_checks": [
+    "clean committed worktree and exact V48 record, program, checkpoint, report, cache, preflight, and decision hashes",
+    "full pytest before execution",
+    "Lageunha Ada GPU and exact V48 parameter count",
+    "all train object, native voxel, and fixed probe counts exactly match this program",
+    "all model parameters, NLL, PIT, responsibilities, finite Gaussian moments, sampled values, and reported ratios are finite",
+    "mixture weights and posterior responsibilities sum to one within 1e-5",
+    "maximum posterior-predictive inverse-CDF error below 2e-6",
+    "no validation data, development arrays, Astrid, or historical EAGLE access"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v49_gaussian_extreme_calibration_audit/audit.json",
+  "firewall": {
+    "training_or_refit": false,
+    "new_development_sampling": false,
+    "development_threshold_change": false,
+    "posthoc_scale_or_clipping": false,
+    "posthoc_DC_or_Ak": false,
+    "donor_change": false,
+    "validation_access": "forbidden",
+    "development_array_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

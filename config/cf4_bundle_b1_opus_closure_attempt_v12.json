@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v12",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "729e27e",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "NO-GO",
+  "risk_level": "MODERATE",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v12.txt",
+  "findings": {
+    "hashes_and_bytes": true,
+    "analytic_sigma_implementation": true,
+    "analytic_coverage68_mean": 0.751953125,
+    "analytic_coverage95_mean": 0.966796875,
+    "strict_gate_pass_count": 8,
+    "strict_gate_required_count": 64,
+    "strict_gate_unchanged": true,
+    "provenance_firewall_v10_blockers_closed": true,
+    "validation_opened": false,
+    "b2_opened": false,
+    "in_sample_width_tuning": true,
+    "proposed_per_mode_band_power_weak": true,
+    "mark_side_misspecification_arm_unspecified": true,
+    "d_sigma_expected_fisher_wording_issue": true,
+    "mode_v3_hand_edited_and_schema_mismatch": true
+  },
+  "required_next": [
+    "Add a pooled or directional overcoverage guard.",
+    "Preregister mark-side misspecification form, seeds, member allocation and width freeze policy.",
+    "Correct expected-Fisher covariance wording or implement sandwich covariance.",
+    "Regenerate mode result machine-reproducibly and refresh pointers.",
+    "Keep validation sealed and do not start B2."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-preflight-implementation-result-record-v6-open",
+  "status": "complete_pass_postcommit_v6_open_preflight_implementation",
+  "date": "2026-08-18",
+  "purpose": "Seal the additive v6-open read-only preflight boundary. The implementation verifies existing canonical authorization bytes only and does not execute, create, or mutate any v6-open runtime resource.",
+  "commit_lineage": {
+    "git_commit": "a67c7ae699b84aea120cf91d71ef2eb03fcdcaa6",
+    "parent_commit": "92d2b327070ac81f2c9bffbf1e9f0f53d08885c3",
+    "tree": "5f377cf4abde583c612c51ef7e7b0a2de5992cc3",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_url_fetch": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_url_push": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "HEAD_local_tracking_and_remote_ref_commit": "a67c7ae699b84aea120cf91d71ef2eb03fcdcaa6"
+  },
+  "committed_preflight_files": [
+    {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v6_open_preflight.json", "sha256": "fc202c6fcbca7a077221529a99a1195df39473837a8238534a9927bab88a7451", "git_blob_oid": "f21eba19eb6c80c3c2d0897cd90086800d6374d7", "git_mode": "100644"},
+    {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v6_open_preflight.json", "sha256": "facd7126b6a2abc312838ccd25f93d87b7077cc07c4c611e3d34003a8def5b17", "git_blob_oid": "c74406b616a3945ff8cf3ddbc9211e5039b96212", "git_mode": "100644"},
+    {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_preflight_lift_v6_open.json", "sha256": "cdd53e7454f8f1512e044a60a2522314820d075129778768cfe557c4ed419a9a", "git_blob_oid": "83007d4989423579eb1bb69249ac8e1b54cab183", "git_mode": "100644"},
+    {"path": "src/cf4_aggregate_evidence_smc_execution_authorized_v6_open_preflight.py", "sha256": "15d3d68675ebb516689f748186fb999c114735594f4bf653c4caa0d12515d3ec", "git_blob_oid": "9eb34614ddb425661636e5499a5e04ae50c1aa9b", "git_mode": "100644"},
+    {"path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v6_open_preflight_lageunha.sh", "sha256": "618f22b7fe7717ecd82041c9e2ac7b7e9a2bb1030d20a9a5c4e027ef527ad498", "git_blob_oid": "c30294be50f421a90e975b64494b70a1c937c35d", "git_mode": "100755"},
+    {"path": "scripts/launch_cf4_aggregate_evidence_smc_authorized_v6_open_preflight_lageunha.sh", "sha256": "fe0031d9946900e700bba9399a7341ff509646245102d664b7633fd0c3962598", "git_blob_oid": "116205f23e60afca883dc0acb45de23f19fb1e16", "git_mode": "100755"},
+    {"path": "scripts/status_cf4_aggregate_evidence_smc_authorized_v6_open_preflight.sh", "sha256": "fd8480077e77750b48e2a9ed04601fdf37aec8321894e9ce4b38384acf300897", "git_blob_oid": "df90f7f387a8375e9bb650f337733bfc00fc9778", "git_mode": "100755"},
+    {"path": "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v6_open_preflight.py", "sha256": "9aa0704b978de82df820a61c2845de06d99802cf557ef8d9382880f3a77b13cf", "git_blob_oid": "f541c94b3e153d991a57b46a8f689da7283495c0", "git_mode": "100644"},
+    {"path": "tests/test_cf4_aggregate_evidence_smc_authorized_v6_open_preflight_runner.py", "sha256": "fff792d161be3e0052dae9f978fe84ebe65363c1cf6d61b381d963988a8ca7fa", "git_blob_oid": "d04f402d418b2a9fd613f7131d71f93d92393a71", "git_mode": "100644"}
+  ],
+  "fable_audits": {"precommit_verdict": "COMMIT GO", "postcommit_verdict": "LINEAGE GO", "nine_additions_only": true, "modified_deleted_or_renamed_path_count": 0},
+  "sealed_grant_and_external_pair_read_only": {
+    "grant": {"path": "config/cf4_aggregate_evidence_smc_execution_grant_v6_open.json", "mode": "0644", "sha256": "384b9c1fc0a9ccfe46cf1ff6b3a7524995e0c12f7017a048bb06fcebef8ea4d8", "grant_id": "8f6689e85bd4e19fe114cda1dd1051f46af259b79c5f52d95ab6d697641b5f7d"},
+    "release": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_release.json", "mode": "0444", "sha256": "32da63e6a27622f1ae57bd4b431ddf9892a69db566a824fbc517a5201c2c5bc3", "release_id": "dc66fe4bd14d38ded3acf66d54673321e0a13516d23a53da48798eecd3317c35", "payload_sha256": "81cd280301abfe75a29c8fc8fba33a60ed492945b03cf9b14f09de574d9ced2a"},
+    "manifest": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_manifest.json", "mode": "0444", "sha256": "5c946a100dfd3fea1eca4dcec00f5347960252fabc4eddc62a9f0b3eb73ef23d", "manifest_id": "82fbc16750c505f718f0bebbaf1080f96ebb44a8a39ba305e5f25713f81d7e27", "release_id": "dc66fe4bd14d38ded3acf66d54673321e0a13516d23a53da48798eecd3317c35", "release_payload_sha256": "81cd280301abfe75a29c8fc8fba33a60ed492945b03cf9b14f09de574d9ced2a"},
+    "full_hash_and_id_binding_verified": true
+  },
+  "read_only_preflight_contract": {"public_result_status": "complete_preflight_only_v6_open", "canonical_bytes_schemas_ids_hashes_modes_and_paths_verified": true, "hostname_ascii_case_normalized_to_lageunha": true, "runtime_roots_only_checked_never_opened_or_created": true, "slurm_or_scientific_execution_in_public_routine": false, "runner_and_launcher_execute_read_only_preflight_then_exit": 65, "status_script_is_fail_closed": true},
+  "runtime_state": {
+    "receipt_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts", "present": false},
+    "pilot_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot", "present": false},
+    "data_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open", "present": false},
+    "state_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_run", "present": false},
+    "pilot_execution_occurred": false,
+    "production_execution_occurred": false,
+    "cache_population_occurred": false,
+    "downstream_execution_occurred": false,
+    "receipt_created": false
+  },
+  "verification": {"focused_test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_smc_execution_authorized_v6_open_preflight.py tests/test_cf4_aggregate_evidence_smc_authorized_v6_open_preflight_runner.py", "focused_test_result": "6 passed in 0.14s; exit 0", "static_checks": "JSON validation; py_compile with temporary bytecode prefix; bash -n all three preflight scripts; git diff --check: exit 0", "nine_file_sha256_blob_oid_and_mode_exact": true, "runtime_absence_and_read_only_contract_verified": true},
+  "scope_and_exclusions": {"this_result_record_addition_only": true, "excluded_user_owned_outside_scope": {"path": "scripts/tripwire/", "worktree_status": "untracked_user_owned", "touched": false}, "no_runtime_execution_write_pair_or_commit_by_this_record": true},
+  "next_step": "No pilot or production execution is authorized by this result record. Any later action requires separately bounded authorization."
+}

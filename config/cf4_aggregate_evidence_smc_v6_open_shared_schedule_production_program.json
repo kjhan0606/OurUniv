@@ -1,0 +1,98 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-program-v1",
+  "status": "frozen_unauthorized_v6_open_shared_schedule_production_program",
+  "frozen_date": "2026-08-20",
+  "purpose": "Freeze the sole future execution wiring while refusing every runtime action until a separately audited grant and release exist.",
+  "execution_design": {
+    "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_design.json",
+    "commit": "e9c3489b0f1f26f0a2594ac0291566e62aade63e",
+    "sha256": "08d99219b88a232dc809b3a2c945381cbbcda1fac0c7202c1c2681a09be609aa",
+    "mode": "0644"
+  },
+  "capability": {
+    "commit": "0cd14a7ccf95096ccc3d60adc206c773179f30bd",
+    "result_record_path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_capability_implementation_result_record.json",
+    "result_record_sha256": "6322bd38b3b1b432019eb84fec29cf42ced2b01b70f086a0878b7b9192f9abda",
+    "source_path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+    "source_sha256": "64c60886b8ab62bca45dbe7e223f87662ae8285c177cb7386373b1ee98f74bbb",
+    "test_path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+    "test_sha256": "b4ec360204c2cabc388e2ebc1571abb3e800be51c5108128e06b8235068e85a2"
+  },
+  "storage": {
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_run",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_receipts",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_cache",
+    "grant_path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant.json",
+    "release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_release.json",
+    "release_manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_manifest.json",
+    "all_runtime_paths_must_be_absent": true,
+    "restart_checkpoint_or_cache_import": false
+  },
+  "fixed_science": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "beta": [0.0, 0.1531397846993059, 0.3181984675451238, 0.5129471527439684, 0.7369993853258423, 1.0],
+    "stage_count_exact": 5,
+    "MH_sweeps_per_stage": 4,
+    "resampling_ESS_fraction": 0.5,
+    "P_pool": "evidence_weighted",
+    "adaptive_beta": false,
+    "runtime_override": false
+  },
+  "evaluator_factory": {
+    "control_rows": 24,
+    "control_evaluator_disposed_before_production": true,
+    "production_replicate_evaluators_fresh_and_distinct": 4,
+    "worker_processes_per_evaluator": 8,
+    "parent_blocks": 8,
+    "parents_per_block": 32,
+    "threads_per_worker": 1,
+    "multiprocessing_start_method": "fork",
+    "terminal_accessor": "terminal_parent_log_z(master_seed,final_int16_keys)",
+    "terminal_accessor_calls_per_replicate": 1,
+    "lease_close_count_success_or_exception": 1,
+    "cross_replicate_shared_state": "deterministic_parent_evidence_memoization_only"
+  },
+  "resource_contract": {
+    "backend": "Lageunha_local_one_shot_CPU_runner",
+    "host_casefold_exact": "lageunha",
+    "CUDA_VISIBLE_DEVICES": "",
+    "cpus_required": 8,
+    "required_MemAvailable_GiB": 80,
+    "minimum_free_disk_GiB": 40,
+    "timeout_command": "/usr/bin/timeout --foreground --signal=TERM --kill-after=300s 12h",
+    "Slurm_submission": false,
+    "syn101_execution": false,
+    "process_table_polling": false
+  },
+  "artifact_contracts": {
+    "replicate_count": 4,
+    "replicate_exact_array_key_count": 20,
+    "terminal_parent_arrays": ["master_seed", "parent_seed", "log_I_bar", "P_rep", "P_pool"],
+    "cache_manifest_schema": "ouruniv-cf4-aggregate-evidence-cache-manifest-v1",
+    "result_schema": "ouruniv-cf4-aggregate-evidence-smc-production-result-v1",
+    "manifest_schema": "ouruniv-cf4-aggregate-evidence-smc-production-manifest-v1",
+    "complete_artifact_mode": "0444",
+    "complete_directory_mode": "0555"
+  },
+  "authorization": {
+    "grant_present_and_valid": false,
+    "release_present_and_valid": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "Slurm_submission_authorized": false,
+    "retry_resume_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "next_step": "implementation_and_tests_then_independent_precommit_audit_only"
+}

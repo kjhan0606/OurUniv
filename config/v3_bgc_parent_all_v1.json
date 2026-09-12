@@ -1,0 +1,27 @@
+{
+  "schema": "cf4-v3-bgc-parent-all-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_all_data_run": true,
+  "authorization": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_n192_validation_v1/v3_bgc_n192_validation_result.json",
+  "model": {
+    "N": 192,
+    "box_size_mpc_h": 384.0,
+    "velocity_estimator": "bgc",
+    "error_scale": 0.9,
+    "sigma_nl_km_s": 0.0,
+    "bgc_window": 801,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "holdout_fraction": 0.0,
+    "sample_seeds": [3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015, 3016]
+  },
+  "p0_gate": {
+    "test_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_n192_validation_v1/manifest_v3_bgc_validation_n192.json",
+    "implementation": "src/cf4_cr_gate.py",
+    "policy": "All existing numerical, held-out, Gaussianity, and LCDM shell-power checks must pass before P1. No realization may be selected at P0."
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_all_v1",
+    "gate_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_gate_v1"
+  }
+}

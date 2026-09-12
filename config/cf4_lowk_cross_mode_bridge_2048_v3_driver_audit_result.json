@@ -1,0 +1,93 @@
+{
+  "schema": "ouruniv-cf4-lowk-cross-mode-bridge-2048-driver-audit-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_driver_science_go_for_independent_audit",
+  "scope": "Driver-only audit; not an independent Fable audit",
+  "execution": {
+    "bridge_job_id": 323615,
+    "bridge_elapsed": "02:22:27",
+    "bridge_max_rss_kib": 30450900,
+    "matched_analysis_job_id": 323616,
+    "driver_audit_job_id": 323848,
+    "driver_audit_elapsed": "00:00:24"
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/CF4/recon/linear_cr/lowk_cross_mode_bridge_2048_v3",
+    "pilot_result": "result.json",
+    "particle_matched_analysis": "analysis_v2.json",
+    "driver_audit": "driver_audit_v1.json"
+  },
+  "bridge_diagnostics": {
+    "cycles": [4, 8, 16],
+    "maximum_parent_l1": [
+      0.2881587645202007,
+      0.27052127428840494,
+      0.32557477784101757
+    ],
+    "minimum_exact_geometry_overlap": [
+      0.07177734375,
+      0.083984375,
+      0.0966796875
+    ],
+    "minimum_swap_acceptance_fraction": 0.709991455078125,
+    "maximum_swap_acceptance_fraction": 0.7359619140625,
+    "roundtrip_fraction_by_group": [
+      0.23193359375,
+      0.2548828125,
+      0.23583984375,
+      0.2431640625
+    ]
+  },
+  "familywise_checkpoint_null": {
+    "draws": 50000,
+    "observed_maximum_parent_l1": 0.32557477784101757,
+    "q99": 0.328125,
+    "q999": 0.341796875,
+    "tail_probability": 0.014899702005959881,
+    "passes_q999": true
+  },
+  "pooled_checkpoint_stationarity": {
+    "all_three_pairs_pass_q999": true,
+    "l1": [
+      0.12272136626424963,
+      0.1331531075002129,
+      0.1251086483936249
+    ],
+    "tail_probability": [
+      0.9244537773111344,
+      0.5480725963701815,
+      0.8303084845757712
+    ]
+  },
+  "final_parent": {
+    "ess": 40.68327087020466,
+    "top_five_parent_seeds": [3377, 3194, 3423, 3407, 3326],
+    "top_five_probability": [
+      0.07378722205097672,
+      0.05491489191082472,
+      0.0514291790981612,
+      0.04963677124072608,
+      0.04252309493834502
+    ]
+  },
+  "driver_gates": {
+    "particle_count_is_original_2048": true,
+    "matched_q999_passes_all_checkpoints": true,
+    "familywise_q999_pass": true,
+    "pooled_checkpoint_stationarity_q999_pass": true,
+    "exact_geometry_overlap_monotonic": true,
+    "bridge_l1_below_control_at_all_checkpoints": true,
+    "cross_mode_transport_demonstrated": true
+  },
+  "decision": {
+    "driver_science_go_for_independent_audit": true,
+    "parent_posterior_promotion_authorized": false,
+    "seed_selection_authorized": false,
+    "downstream_execution_authorized": false
+  },
+  "next": {
+    "required": "Independent final science audit before parent promotion",
+    "fable_automatic_schedule_present": false,
+    "fable_not_called_before_2026_08_26_0800_kst": true
+  }
+}

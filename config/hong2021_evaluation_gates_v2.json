@@ -1,0 +1,68 @@
+{
+  "schema": "hong2021-evaluation-gates-v2",
+  "status": "frozen_before_standardized_groupnorm_pilot",
+  "reason_for_revision": "The v1 linear mean-density-ratio gate conflated log-density scatter with bias through exponentiation and would reject a model matching Hong Table 2",
+  "supersedes": {
+    "invalid_primary_gate": "abs(mean(rho_prediction)/mean(rho_truth)-1) <= 0.20",
+    "preserved_for_diagnostic_only": "mean(rho_prediction)/mean(rho_truth)"
+  },
+  "one_point_density": {
+    "primary_bias_statistic": "mean(log10(rho_prediction/rho_truth))",
+    "maximum_absolute_mean_dex": 0.05,
+    "scatter_statistic": "std(log10(rho_prediction/rho_truth))",
+    "scatter_reference_hong_mean_std_dex": [-0.014, 0.543],
+    "jensen_note": "Linear mean ratios are reported but are not interpreted as bias without modeling the residual distribution and its correlation with truth density"
+  },
+  "two_point": {
+    "primary_contrast": "cosmic_mean",
+    "definition": "delta=rho/rho_cosmic_mean-1 for truth and prediction",
+    "boundary": "open_no_face_wrapping",
+    "estimator": "zero_padded_fft_with_exact_pair_count_normalization",
+    "paper_absolute_comparison": "diagnostic_only_because_finite_cube_mean_and_boundary_conventions_are_unpublished",
+    "own_ensemble_mean": "diagnostic_only"
+  },
+  "fourier": {
+    "primary_field": "centered_log10_density",
+    "primary_structure_statistic": "cross_correlation_r",
+    "secondary_amplitude_statistic": "transfer_sqrt_Pprediction_over_Ptruth",
+    "linear_density": "diagnostic_for_exponentiation_and_peak_tails_not_an_independent_failure_count",
+    "standardized_groupnorm_pilot_minimum_delta_r_3_6_h_mpc": 0.05
+  },
+  "normalization_invariance": {
+    "semantic_requirement": "no cross-sample normalization and exact train/eval mode invariance",
+    "cuda_batch_shape_note": "Absolute output differences must be compared with a deterministic CUDA test and the fixed-eval BN numerical baseline before attribution to normalization coupling",
+    "original_max_abs_1e_5_gate": "retained_as_formally_failed_not_retroactively_changed",
+    "deterministic_cuda_result": {
+      "batch_1_vs_6_max_abs": 0.00014465302228927612,
+      "batch_1_vs_6_rms_over_reference_rms": 0.0000624809965107147,
+      "batch_6_repeat_max_abs": 0.0,
+      "batch_6_reordered_max_abs": 0.0,
+      "train_vs_eval_max_abs": 0.0,
+      "interpretation": "The nonzero difference is batch-shape CUDA convolution roundoff; companion identity/order and normalization mode do not affect the GroupNorm function"
+    }
+  },
+  "training_density_audit": {
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v2_split00_l0_bn/density_field_environment_audit.json",
+    "random_cube_mean_density": 1.0223403267319375,
+    "training_cube_mean_density": 1.5092200911007378,
+    "random_volume_fraction_below_0.5_mean_density": 0.8193318386077881,
+    "training_volume_fraction_below_0.5_mean_density": 0.7784912409605803,
+    "void_bias_detected": false,
+    "observer_selection_bias": "Training cubes are denser and less void-rich than random-volume cubes, as expected for MW-mass-centered observers",
+    "training_unique_box_volume_fraction": 0.6433297887731482,
+    "training_unique_equivalent_20_mpc_h_cubes": 33.925594329833984,
+    "training_mean_voxel_reuse_when_covered": 12.733748915346238,
+    "loss_imbalance": {
+      "volume_fraction_below_0.5_mean_density": 0.780663562077348,
+      "fraction_of_mse_below_0.5_mean_density": 0.5397665224158084,
+      "mass_fraction_above_10_mean_density": 0.6914078486609893,
+      "fraction_of_mse_above_10_mean_density": 0.06842374230028462,
+      "interpretation": "Uniform voxel MSE strongly underweights the rare cells containing most mass and filament/peak structure"
+    }
+  },
+  "model_decision": {
+    "long_training_falsification": "v1 epoch-200 live-BN r(k=3-6)=0.248 < 0.40; long deterministic training is rejected",
+    "last_deterministic_pilot": "standardized GroupNorm with learning-rate decay",
+    "freeze_rule": "If delta r(k=3-6) is less than 0.05 versus unstandardized GroupNorm, freeze the deterministic mean model and proceed to conditional stochastic residuals"
+  }
+}

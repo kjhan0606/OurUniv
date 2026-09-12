@@ -1,0 +1,135 @@
+{
+  "schema": "hong2021-v41-two-stage-structure-amplitude-development-program-v1",
+  "status": "frozen_before_implementation_fit_sampling_or_development_evaluation",
+  "purpose": "Convert the V40 transferable supervised structure-location and object-amplitude information into a minimally invasive stochastic residual field while retaining the frozen V31 donor identities, isometries, conditional-rank multiset, conditional inverse, and exact residual-DC projection.",
+  "parent_evidence": {
+    "v40_record": "config/hong2021_v40_result_record.json",
+    "v40_record_sha256": "15d1c91becffa7909efcb5b00a6baffad7bcc43be09749c8f6588bfcc498eeaf",
+    "v40_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v40_object_structure_sufficiency/audit.json",
+    "v40_audit_sha256": "6b52c8a81f2345a3f2683daec432e3628049c839bc6e4d49be501a7108b1f409",
+    "required_classification": "object_amplitude_and_structure_location_are_transferably_observable",
+    "required_next": "freeze_two_stage_structure_seeded_amplitude_calibrated_stochastic_residual"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "selection_rule": "reuse every frozen V28/V31 query, donor identity, donor isometry, and 16-by-16 member pairing byte-for-byte"
+  },
+  "train_only_supervised_fit": {
+    "structure_target": "the exact V40 extreme label: a factor-4 block is positive when it contains a native voxel above its source train-only q99.99 log10-density threshold",
+    "structure_features": {
+      "full": "the exact V40 222-component factor-4 oriented multiscale descriptor",
+      "backbone_only": "the exact V40 57-component backbone/radius subset"
+    },
+    "structure_rows": "the exact V40 extreme positive/negative priority reservoirs and source-balanced common row count",
+    "structure_learner": "the exact frozen V40 HistGradientBoostingClassifier specification",
+    "object_target": "log10 cube mean delta squared with delta=10**(4.5*y)-1",
+    "object_features": "the exact V40 28 target-free factor-4 object summaries",
+    "object_rows": "all train objects with equal total sample weight per TNG100, SIMBA, and Swift source",
+    "object_learner": "the exact frozen V40 HistGradientBoostingRegressor specification",
+    "seed_block_count": "round to nearest integer the equal-source mean number of extreme-positive factor-4 train blocks per cube; fit once and store",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.joblib",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.json",
+    "validation_opened": false,
+    "simulation_identity_feature": false
+  },
+  "minimal_structure_seeding": {
+    "block_factor": 4,
+    "block_grid": "16^3 blocks of 4^3 native voxels at 1.25 Mpc/h",
+    "query_risk": "full train-only classifier probability on the actual query target-free descriptor",
+    "donor_carrier_score": "maximum frozen V31 conditional-rank value in each complete donor block after its frozen isometry",
+    "target_blocks": "the fixed seed_block_count highest-risk query blocks with deterministic flat-index tie breaking",
+    "carrier_blocks": "the same count of highest-score donor blocks with deterministic flat-index tie breaking",
+    "carrier_assignment": "one-to-one Hungarian assignment with periodic block-distance cost plus squared normalized target-rank/carrier-rank mismatch cost",
+    "completion": "assign unused donors to unused query blocks by identity wherever possible, then Hungarian periodic-distance matching between the remaining displaced query and donor indices",
+    "transport": "copy complete 4^3 conditional-rank blocks under the resulting exact permutation; all other blocks remain identity mapped",
+    "invariants": [
+      "complete block permutation",
+      "exact preservation of every donor conditional-rank value",
+      "at most twice seed_block_count nonidentity blocks",
+      "no donor translation or reselection"
+    ]
+  },
+  "object_amplitude_calibration": {
+    "prediction": "the train-only full object regressor prediction for log10 mean delta squared",
+    "uncalibrated_residual": "V31 conditional inverse of the seeded conditional-rank field at the actual query backbone, followed by exact residual-mean subtraction",
+    "scale_family": "query backbone plus s times the uncalibrated residual with s in [0,2]",
+    "fixed_solver": "evaluate the generated log10 mean delta squared at s=0,1,2; linearly interpolate s in the bracketing log-amplitude segment, choose the nearest boundary if the prediction is outside both segments, then evaluate once at the selected s",
+    "truth_used": false,
+    "density_clipping": false,
+    "Fourier_Ak": false,
+    "diagnostics": [
+      "predicted and achieved log10 mean delta squared",
+      "absolute calibration error",
+      "selected scale and boundary fraction"
+    ]
+  },
+  "matched_arms": {
+    "two_stage": "actual full structure-risk map and actual full object-amplitude prediction",
+    "backbone_risk_ablation": "backbone-only structure-risk map and unchanged actual full object-amplitude prediction",
+    "rolled_risk_control": "actual full risk map periodically rolled by the fixed factor-4 offset (3,5,7) and unchanged actual full object-amplitude prediction",
+    "shuffled_amplitude_control": "actual full structure-risk map and the next frozen query object's amplitude prediction cyclically within the same domain",
+    "common": "all four arms reuse identical query, donor identity, donor isometry, conditional-rank cube, seed count, conditional inverse, scale solver, and output evaluation"
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+    "Q3_generated_max_above_truth_max_dex": 0.30,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.50,
+    "primary_pass": "two_stage passes the complete field, Q3, and Q4 gates independently in all three domains",
+    "selection_role": "only two_stage can be selected; controls are causal diagnostics and cannot rescue it"
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "two_stage_structure_amplitude_model_sufficient",
+      "next": "seal_v41_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "supervised_tails_repaired_but_sparse_block_transport_limits_morphology",
+      "next": "freeze_overlap_consistent_seam_repair_without_changing_risk_or_amplitude_models"
+    },
+    {
+      "condition": "Q4 passes every domain but Q3 fails anywhere",
+      "classification": "object_amplitude_calibration_supported_but_structure_seeding_is_insufficient",
+      "next": "freeze_train_only_within_block_extreme_location_model_without_changing_object_amplitude"
+    },
+    {
+      "condition": "Q3 passes every domain but Q4 fails anywhere",
+      "classification": "structure_seeding_supported_but_object_amplitude_calibration_is_insufficient",
+      "next": "audit_predicted_to_achieved_amplitude_calibration_before_any_refit"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "two_stage_supervised_intervention_is_not_a_common_domain_repair",
+      "next": "audit_candidate_vs_backbone_roll_and_amplitude_controls_before_any_further_generator"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V40 parent audit, V35 data/cache, V31 copula, selection, and reference hashes",
+    "fit report proves train-only source-balanced structure and object models with validation unopened",
+    "synthetic and real seed permutations are complete bijections and preserve the conditional-rank multiset exactly",
+    "all four real-arm samples are finite with residual DC below 1e-7 and amplitude scale inside [0,2]",
+    "all arms use identical frozen donor selections and no validation truth for risk or amplitude prediction",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v41_e22_two_stage_structure_amplitude",
+  "firewall": {
+    "validation_used_for_fit_threshold_hyperparameter_or_sampling_prediction": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

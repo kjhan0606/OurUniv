@@ -1,0 +1,103 @@
+{
+  "schema": "ouruniv-cf4-2mpp-joint-likelihood-local-contract-v1",
+  "date": "2026-09-03",
+  "status": "KF_DESIGN_REFERENCE_ORACLE_AND_JAX_PATH_PENDING_RUNTIME_VALIDATION",
+  "stage": "KF-DESIGN",
+  "purpose": "Freeze a GPFS-independent in-memory reference/JAX likelihood contract before any inference execution.",
+  "authority": {
+    "local_unit_tests": true,
+    "real_catalog_inference": false,
+    "KF_EXPAND": false,
+    "Slurm_submission": false,
+    "GPFS_read": false,
+    "GPFS_write": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "coordinate_and_velocity_units": {
+    "position": "cMpc/h",
+    "velocity": "physical_peculiar_km_s_observer_subtracted",
+    "hubble": "km_s^-1_Mpc^-1",
+    "scale_factor": "a at the modeled epoch",
+    "coherent_and_FoG_displacement_cMpc_h": "h*v_r/(a*H(a))",
+    "observer_frame": "observer velocity is removed before the kernel; Hubble flow is not included in peculiar velocity"
+  },
+  "selection_exposure": {
+    "shape": "(6,N,N,N) with one common cubic spatial grid",
+    "units": "dimensionless_expected_detected_count_multiplier_per_cell",
+    "domain": "finite and non-negative",
+    "normalization": "raw exposure; never rescaled to observed population totals",
+    "required_science_inputs_before_inference": [
+      "angular completeness including empty-sky positions",
+      "radial selection",
+      "K/evolution/extinction correction",
+      "K-band luminosity function",
+      "population mean-density calibration"
+    ]
+  },
+  "redshift_space_model": {
+    "coherent_RSD": "observer-centred spherical line of sight",
+    "small_scale_broadening": "population-specific FoG and measurement-redshift sigma combined in quadrature",
+    "quadrature_family": "standard-normal Gauss-Hermite",
+    "default_order": 3,
+    "supported_orders": [3, 5, 7, 9, 11, 13, 15],
+    "convergence_gate": "GH3 must be compared with GH7 or GH9 on predeclared boundary-stress inputs before inference",
+    "preregistered_case_id": "RSD_FOG_boundary_v1",
+    "preregistered_low_order": 3,
+    "preregistered_high_orders": [7, 9],
+    "preregistered_relative_l1_tolerance": 0.005
+  },
+  "factor_ownership": {
+    "count_factor_owner": "2Mpp_grid_counts",
+    "redshift_factor_owner": "CF4_group_marks_shared_redshift",
+    "secure_object_ids_unique": true,
+    "independent_twompp_redshift_factor": false,
+    "ambiguous_matches": "quarantine_or_explicit_marginalization; never silently promote"
+  },
+  "implementations": {
+    "numpy": {
+      "path": "src/cf4_2mpp_joint_likelihood_local.py",
+      "role": "transparent reference oracle"
+    },
+    "jax": {
+      "path": "src/cf4_2mpp_joint_likelihood_jax.py",
+      "role": "future HMC/SMC differentiable path",
+      "value_and_gradient_must_match_numpy_oracle": true,
+      "entrypoint": "joint_log_likelihood_jax_checked",
+      "ownership_policy": "only the host checked bridge may call the JAX joint kernel"
+    },
+    "crossmatch_manifest": {
+      "path": "src/cf4_2mpp_crossmatch_manifest.py",
+      "schema": "ouruniv-cf4-2mpp-secure-object-manifest-v1",
+      "group_key": "CF4_1PGC",
+      "source_mapping": "data/cf4_2mpp_crossmatch_v1.csv",
+      "source_summary": "config/cf4_2mpp_crossmatch_v1_result.json",
+      "canonical_repo_relative_mapping_path": "data/cf4_2mpp_crossmatch_v1.csv",
+      "canonical_repo_relative_summary_path": "config/cf4_2mpp_crossmatch_v1_result.json",
+      "exact_source_path_equality_required": true,
+      "exact_group_count_from_manifest": 11610,
+      "all_group_indices_must_be_used": true,
+      "ambiguous_or_unmatched_rows_enter_manifest": false
+    }
+  },
+  "required_gates_before_KF_EXPAND": [
+    "unit conversion regression at z=0 and a<1",
+    "periodic TSC mass conservation and adjoint",
+    "GH3 versus GH7/9 convergence",
+    "finite log-domain likelihood and zero-support rejection",
+    "secure object/group identity and duplicate-factor negative tests",
+    "JAX value and gradient comparison on the same synthetic input",
+    "validated object-level CF4--2M++ manifest with source SHA256 binding",
+    "GH3 versus GH7/9 boundary-stress result recorded",
+    "independent development and untouched validation mock calibration"
+  ],
+  "mock_calibration": {
+    "status": "DESIGN_ONLY_NOT_RUN",
+    "required_components": [
+      "selection exposure including empty-sky completeness",
+      "population bias/HOD nuisance variation",
+      "Poisson or negative-binomial model-discrepancy comparison",
+      "independent development and untouched validation seeds"
+    ],
+    "KF_EXPAND_release": "forbidden until all components and coverage gates pass"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "hong2021-v68-train-only-domain-balanced-population-pair-objective-stability-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Test the scientifically appropriate population-level sub-Mpc pair objective by aggregating pair moments across frozen train cubes before taking log ratios, thereby separating ensemble structure error from individual-cube cosmic variance.",
+  "parent_evidence": {
+    "v67_result_record": "config/hong2021_v67_result_record.json",
+    "v67_result_record_sha256": "bebd660a176e661e136a3f2dc8be614d40900866042a837757d23f013e9bed51",
+    "required_status": "complete_no_refit_audit_selected_train_only_population_pair_objective_probe",
+    "required_classification": "target_free_global_context_does_not_predict_the_pair_correction_cross_domain",
+    "required_candidate_selected": false,
+    "required_training_or_refit_performed": false,
+    "required_new_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v65_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+    "v65_audit_sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "v65_audit_decision_digest_sha256": "e80016232d9efa9495a9ab8e45fdc62a4a04805b64e15a97820a25932234a47d",
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "v63_train_gate_sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "immutable_queries_and_folds": {
+    "source": "all sixteen sealed V65 immutable train queries per domain in their sealed order",
+    "fold_positions": {
+      "fold0": [0, 4, 8, 12],
+      "fold1": [1, 5, 9, 13],
+      "fold2": [2, 6, 10, 14],
+      "fold3": [3, 7, 11, 15]
+    },
+    "objects_per_domain_per_fold": 4,
+    "domains_per_fold": 3,
+    "objects_per_fold": 12
+  },
+  "rank_and_pair_probe": {
+    "rank_source": "the first eight members of the corresponding source_balanced V65 donor mapping",
+    "rank_members_per_query": 8,
+    "anchor_seed": 165069,
+    "anchors_per_query": 4096,
+    "offsets_cells": [1, 2, 3],
+    "separations_mpc_h": [0.3125, 0.625, 0.9375],
+    "rank8_population_reproduction": "the maximum absolute full-population log-ratio difference from the sealed V65 rank16 value over all domains and separations is at most ln(1.25)"
+  },
+  "population_objective": {
+    "construction": "for each domain and separation, arithmetic-mean predicted pair moments and arithmetic-mean truth pair moments across the objects in the fold, then take their natural-log ratio",
+    "score": "one half the equal-weight mean squared population log ratio across three domains and three separations",
+    "gradient": "exact final-output-layer weight-plus-bias gradient assembled from each object's predicted-pair-moment Jacobian before any optimizer step",
+    "bounded_NLL_reference": "equal-weight mean final-output-layer bounded-NLL gradient across the same fold objects",
+    "future_pair_coefficient": 0.1
+  },
+  "gradient_target": {
+    "parameters": "model.output.weight followed by model.output.bias",
+    "components": 495,
+    "all_other_parameters": "requires_grad false",
+    "optimizer_step": "forbidden"
+  },
+  "selection_rules": {
+    "population_value_stable": "rank8 full-population reproduction passes and the maximum absolute fold-minus-full population log-ratio difference over all domains and separations is at most ln(2)",
+    "population_gradient_coherent": "all four fold pair-gradient cosines to their leave-one-out mean are strictly positive, their median is at least 0.5, and their negative fraction is zero",
+    "optimization_safe": "in every fold the coefficient-0.1 pair-to-bounded-NLL gradient L2 ratio is in [0.01,100] and both first-order descent dot products for the bounded-NLL plus coefficient-0.1 pair update are strictly positive",
+    "select_population_pair_objective": "value stability, gradient coherence, optimization safety, exact ancestry, numerical and memory integrity, and all firewalls pass",
+    "no_model_selected": "any required condition fails"
+  },
+  "authorized_if_selected": {
+    "future_trainable_parameters": "only model.output.weight and model.output.bias",
+    "future_objective_change": "add coefficient 0.1 times the domain-balanced population pair score to the sealed V63 objective",
+    "authorization_is_not_training": true,
+    "a_new_model_program_must_be_frozen_before_any_refit": true
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v68_population_pair_objective_audit/audit.json",
+  "firewall": {
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "development_rank_or_selection_access": "forbidden",
+    "posthoc_fold_rank_coefficient_threshold_or_metric_tuning": "forbidden",
+    "training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

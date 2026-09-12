@@ -1,0 +1,171 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-host-gate-extension-result-record-v5",
+  "status": "complete_pass_postcommit_host_gate_extension",
+  "date": "2026-08-18",
+  "purpose": "Record the narrowly scoped v5 Lageunha host-gate ASCII-normalization extension at commit 1248235. The extension changes neither the sealed one-shot grant nor the paired external release/manifest, and no receipt, production data/state, cache, or scientific execution was created.",
+  "v4_tainted_and_read_only": true,
+  "extension_commit_lineage": {
+    "git_commit": "1248235893e76fde7d97047ea7b7e59efb272966",
+    "parent_commit": "f70fd9b2ce330c0859f7df1a0987243b83630a56",
+    "tree": "61d48aa3fbabf4bbe5ba9e8a26a23c9c1d8d421f",
+    "subject": "Normalize v5 Lageunha host gate",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "HEAD_commit": "1248235893e76fde7d97047ea7b7e59efb272966",
+    "local_ref_commit": "1248235893e76fde7d97047ea7b7e59efb272966",
+    "tracking_ref_commit": "1248235893e76fde7d97047ea7b7e59efb272966",
+    "remote_ref_commit": "1248235893e76fde7d97047ea7b7e59efb272966"
+  },
+  "extension_modified_files": [
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "0e89186e426edd32bbbce8ff8e59ec46693068f0bff49c04e490b0f74d626bc0",
+      "git_blob_oid": "c4fbed7a9e5a2a258be96a0dbf072607942d0b79",
+      "git_mode": "100755"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+      "sha256": "0cdf3359a6a184591fd3f5e772a130b860dd4c052680d412f23db131b875eba4",
+      "git_blob_oid": "1ff9bc259f47e5ca91864969850599af6038bdce",
+      "git_mode": "100644"
+    }
+  ],
+  "current_v5_authorization_file_set": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v5.json",
+      "sha256": "6f12a639a76510c509d0e7d8321865e62fb67a31821b63722a4d5f1076c56e64",
+      "git_blob_oid": "e106c00bd0493f83d96a56c664b0ce450529658c",
+      "git_mode": "100644"
+    },
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v5.json",
+      "sha256": "e5590144ac74c5be3ad0002166ee5c02610517377f489805369ea78e8e7e39e9",
+      "git_blob_oid": "689adaa4454580e3cc1dfa196ec8ae4d94337c62",
+      "git_mode": "100644"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "sha256": "55c4db460dd4c24c2467a3102b45963a433af46afe11ff69e81d309356039a03",
+      "git_blob_oid": "efdd1b228da6e0f57588832da5fe40206135ccec",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "sha256": "fded37c9997e2310274e827fff569c04101bf18595ac6a76ae3a77b77372ff18",
+      "git_blob_oid": "cc77a57e8a679751bc7bf91b8aa8832e1a93dbd1",
+      "git_mode": "100644"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "0e89186e426edd32bbbce8ff8e59ec46693068f0bff49c04e490b0f74d626bc0",
+      "git_blob_oid": "c4fbed7a9e5a2a258be96a0dbf072607942d0b79",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "3915da06eb32a212c4492e0c7309c926ca138fbb33cc3a2eacd1f89ed4152f86",
+      "git_blob_oid": "e114948d4c4cbbca439d7de5e68f52ff1b12929c",
+      "git_mode": "100755"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+      "sha256": "0cdf3359a6a184591fd3f5e772a130b860dd4c052680d412f23db131b875eba4",
+      "git_blob_oid": "1ff9bc259f47e5ca91864969850599af6038bdce",
+      "git_mode": "100644"
+    }
+  ],
+  "scope": {
+    "extension_commit_modified_path_count": 2,
+    "extension_commit_added_path_count": 0,
+    "extension_commit_deleted_path_count": 0,
+    "extension_commit_renamed_path_count": 0,
+    "extension_commit_exact_paths": [
+      "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py"
+    ],
+    "excluded_user_owned_outside_extension_scope": [
+      {
+        "path": "scripts/tripwire/",
+        "worktree_status": "untracked_user_owned",
+        "included_in_extension_commit": false,
+        "touched_by_extension": false
+      },
+      {
+        "path": "syn101_tripwire/",
+        "worktree_status": "untracked_user_owned",
+        "included_in_extension_commit": false,
+        "touched_by_extension": false
+      }
+    ]
+  },
+  "verification": {
+    "extension_commit_diff_command": "git diff-tree --no-commit-id --name-status -r 1248235893e76fde7d97047ea7b7e59efb272966",
+    "extension_commit_diff_result": "exactly two modifications: scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh and tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+    "focused_test_command": "PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_smc_execution_authorized_v5.py tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+    "focused_test_result": "13 passed in 0.35s; exit 0",
+    "shell_and_whitespace_command": "bash -n scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh scripts/launch_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh; git diff --check",
+    "shell_and_whitespace_result": "exit 0",
+    "host_gate_ascii_lowercase_normalization_test_pass": true,
+    "mixed_case_LagEunha_shortname_accepted": true,
+    "genuinely_different_host_rejected": true,
+    "current_seven_v5_files_rehashed_blob_checked_and_mode_checked": true
+  },
+  "runtime_state": {
+    "observed_read_only": true,
+    "grant": {
+      "path": "config/cf4_aggregate_evidence_smc_execution_grant_v5.json",
+      "present": true,
+      "mode": "100644",
+      "sha256": "7e10656d8b10e72c2e6136fdf859309661525ec8aa3ef409c8309227d31ee7f6",
+      "grant_id": "4e935e71e4deed7b805d24de9f3505928696413ea1d3aefe6060a6f3508cafd0",
+      "production_SMC_execution_authorized": true,
+      "oracle_cache_population_authorized": true,
+      "downstream_execution_authorized": false
+    },
+    "external_release": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+      "present": true,
+      "mode": "100444",
+      "sha256": "f7ce8b3478ea71678d68dde488fa37f4ce3eb9ccf8d0ff8c175325a849055593",
+      "release_id": "20d1eccec62a610ff63daf78ce2df49f825e1a92cf8d21976820d8f65107907b",
+      "payload_sha256": "d1a6eeaa36fc09b127e1d0c560ef0c1427e2dfec26822c506379d7ba9ab9ad2b"
+    },
+    "external_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+      "present": true,
+      "mode": "100444",
+      "sha256": "43d6b4fb2542b2675eeb702dc07ec993e8a8bc1d84ed53834147f78624260001",
+      "manifest_id": "7316ffadaf6c6beb838cc26bed50bbe346b4923eb902ca39bc50add86c0beac2"
+    },
+    "paired_binding": {
+      "grant_release_path_matches": true,
+      "grant_release_id_matches": true,
+      "grant_release_payload_sha256_matches": true,
+      "grant_manifest_path_matches": true,
+      "grant_manifest_sha256_matches": true,
+      "grant_manifest_id_matches": true,
+      "release_manifest_path_sha256_and_id_match": true,
+      "manifest_release_path_id_and_payload_sha256_match": true
+    },
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts",
+    "receipt_root_present": false,
+    "production_data_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5",
+    "production_data_present": false,
+    "production_state_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+    "production_state_present": false,
+    "production_SMC_executed": false,
+    "oracle_cache_populated": false,
+    "downstream_execution_occurred": false,
+    "automatic_follow_on_occurred": false
+  },
+  "authorization": {
+    "extension_implementation_authorized": true,
+    "grant_or_release_or_manifest_mutation_authorized": false,
+    "receipt_or_GPFS_runtime_creation_authorized": false,
+    "production_execution_or_cache_population_or_downstream_execution_authorized_by_this_extension": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  }
+}

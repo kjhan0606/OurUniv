@@ -1,0 +1,54 @@
+{
+  "schema": "cf4-v3-bgc-n64-comparison-v2",
+  "frozen_date": "2026-08-02",
+  "frozen_before_comparison": true,
+  "supersedes": "config/v3_bgc_n64_comparison_v1.json",
+  "reason": "V1 independently shuffled estimator-specific row arrays, making its preregistered common-holdout minimum impossible (observed overlap 756 approximately equals 0.2 squared times N). V2 keys assignment only by raw catalog index and uses entirely fresh split and CR seeds.",
+  "prerequisite": {
+    "config": "config/v3_bgc_mock_validation_v2.json",
+    "status": "complete_passed",
+    "selected_window": 801
+  },
+  "common_model": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "holdout_fraction": 0.2,
+    "holdout_assignment": "SplitMix64(raw_catalog_index, split_seed); a shared raw row has exactly the same assignment under both estimators.",
+    "split_seed": 20260817,
+    "sample_seeds": [91, 92, 93, 94, 95, 96, 97, 98],
+    "sigma_nl_km_s": 0.0,
+    "delta_h0_prior_km_s_mpc": 3.0
+  },
+  "control": {
+    "velocity_estimator": "wf15",
+    "error_scale": 0.9
+  },
+  "bgc": {
+    "velocity_estimator": "bgc",
+    "error_scale": 1.0,
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "redshift_neighbour_window": 801,
+    "holdout_policy": "Exclude every hash-held-out raw target row from the BGc median reference pool.",
+    "nearby_policy": "Rows below 1500 km/s are reference-only and never enter the Gaussian BGc likelihood."
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "each_model_abs_z_mean_max": 0.1,
+    "each_model_z_std_range": [0.9, 1.1],
+    "each_model_coverage_1sigma_range": [0.62, 0.75],
+    "each_model_coverage_2sigma_range": [0.92, 0.98],
+    "each_model_delta_log_score_min": 0.0,
+    "minimum_common_raw_holdout_rows": 3000,
+    "external_local_sheet_gate": {
+      "gaussian_radius_mpc_h": 5.0,
+      "bgc_posterior_mean_delta_min": -0.25,
+      "role": "Separately labelled observer-environment gate, not a peculiar-velocity calibration statistic."
+    },
+    "policy": {
+      "bgc_statistical_adoption": "Both estimators and all numerical gates must pass. Cross-estimator log densities are not subtracted.",
+      "N192_and_P2_authorization": "Statistical adoption plus the external Local-Sheet gate authorize a fresh N192 BGc validation; only that N192 pass can authorize P2."
+    }
+  }
+}

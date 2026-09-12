@@ -1,0 +1,83 @@
+{
+  "schema": "ouruniv-cf4-phasec-syn06-physical-gpu-sweep-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_TWO_DISTINCT_GPU_MOCK_ONLY_SWEEP_WAITING_EXECUTION",
+  "authorization": {
+    "basis": "The all-eight scan gate failed only on two syn06 tasks while an exact same-GPU syn05 rerun produced eight finite passes; physical GPU identity must be tested without changing the mock inputs or PMWD path.",
+    "Slurm_syn06_two_GPU_gang": true,
+    "GPFS_read_bound_mock_inputs": true,
+    "GPFS_write_new_outputs_only": true,
+    "sampler": false,
+    "actual_observational_data": false,
+    "validation_seed": false,
+    "Phase_D_or_later": false
+  },
+  "lineage": {
+    "same_GPU_result_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_same_gpu_repeatability_diagnostic_v1_result_record.json",
+      "sha256": "1f4d8bd5796874f17fcf714a247c37957a91e42b12638bede1e35cf6bc99fe39"
+    },
+    "device_capture_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_same_gpu_repeatability_diagnostic_v1.json",
+      "sha256": "46aba82ea404d13934abe5a1115dca01167a0ffaca322bf7a0e8ac4cb48ee911"
+    },
+    "device_capture_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_same_gpu_repeatability_diagnostic.py",
+      "sha256": "79a5080bfb667f5b6294ae741f4246fc516a9b087d498aa4643cd4a7a8d0a8db"
+    },
+    "scan_gate_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_scan_generator_gate_v2.json",
+      "sha256": "07b1c0434b954a364f66d78ab6e6b8c63cfe5ba609909ad16b8b2fd897980cf7"
+    },
+    "scan_gate_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_scan_generator_gate_v2.py",
+      "sha256": "5552198373b2c1507d981c467de9b9a469e053a8af189e51aea20495bf3c8f4b"
+    },
+    "worker": {
+      "path": "/home/kjhan/BACKUP/CF4/scripts/run_cf4_phasec_syn06_gpu_sweep_worker_v1.sh",
+      "sha256": "4591f3519b94ee98064bf9e57143359bc8916f4c473a92671d7e5ac22c01b5b5"
+    }
+  },
+  "gang": {
+    "node": "syn06",
+    "partition": "a40",
+    "GPU_count": 2,
+    "worker_count": 2,
+    "workers_concurrent": true,
+    "one_distinct_Slurm_GPU_per_worker": true,
+    "slots": [0, 1]
+  },
+  "probe_assignments_per_GPU": [
+    {"index": 1, "seed": 2026083001, "role": "prior_syn06_failure"},
+    {"index": 6, "seed": 2026083006, "role": "prior_syn06_failure"},
+    {"index": 2, "seed": 2026083002, "role": "prior_syn06_pass_control"}
+  ],
+  "audit_rule": {
+    "minimum_distinct_physical_GPU_UUIDs": 2,
+    "all_six_task_artifacts_must_be_valid": true,
+    "per_GPU_outcome": "record pass/fail and first nonfinite stage for both failure probes and the control",
+    "no_bitwise_equality_requirement": true,
+    "no_seed_replacement_or_threshold_relaxation": true,
+    "sampler_release_by_this_sweep": false
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/phasec_syn06_gpu_sweep_v1",
+    "requested_CPUs": 16,
+    "expected_peak_host_memory_MiB_per_worker": 7031,
+    "requested_host_memory_MiB_per_worker": 9216,
+    "requested_total_host_memory_MiB": 18432,
+    "requested_GPUs": 2,
+    "time_limit": "00:10:00",
+    "manual_syn06_or_syn101_execution": false,
+    "monitoring_loop": false
+  },
+  "scope_firewall": {
+    "actual_2Mpp_or_CF4_datum_read": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

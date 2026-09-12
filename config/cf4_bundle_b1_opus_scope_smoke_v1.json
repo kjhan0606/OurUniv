@@ -1,0 +1,8 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-scope-smoke-v1",
+  "date": "2026-09-04",
+  "invocation": {"bare": false, "model": "claude-opus-5", "effort": "low", "timeout_seconds": 60},
+  "status": "PASS",
+  "output": "OPUS_AUDIT_SCOPE_OK 11",
+  "interpretation": "The primary model invocation is available; unrestricted full-repository inspection was the source of the longer timeout."
+}

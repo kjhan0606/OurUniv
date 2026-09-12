@@ -1,0 +1,138 @@
+{
+  "schema": "hong2021-v63-conditional-log-physical-moment-result-record-v1",
+  "status": "complete_development_failure_selected_sampler_alignment_audit",
+  "program": "config/hong2021_v63_conditional_moment_model_program.json",
+  "program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+  "train_result_record": "config/hong2021_v63_train_result_record.json",
+  "code_commits": {
+    "training_and_train_gate": "879aafefa4725a0c662654f51898b236f1231e9c",
+    "development_sampling": "27ef1ba98396c7e54b192bb63678a35b319aa06c",
+    "development_evaluation_and_gate": "c2a85dcf71a2ba633952e32d0b205a77d0b8d850"
+  },
+  "train_only_mechanism_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "decision_digest_sha256": "f854d01a9db83439b08edc9be9a1df1698c913876f107f72a3c8bedfe3e65d4d",
+    "train_mechanism_pass": true,
+    "q99_9_physical_moment_ratios": {
+      "TNG100": 0.971268670477712,
+      "SIMBA": 0.9758004131258738,
+      "Swift": 0.9877040394459962
+    }
+  },
+  "development_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_e31_conditional_moment/development_decision.json",
+    "sha256": "e337b19ae92440d8e9ad620b2a22db816d402617d39ee289e85097b5129c328b",
+    "decision_digest_sha256": "031d6365db360ae225f601dfb7f4e3c5822de8c4e5b52123499cdd7733ea87a5",
+    "development_pass": false,
+    "classification": "conditional_moment_objective_improves_all_extremes_but_is_not_development_sufficient",
+    "next": "seal_the_train_and_development_effect_before_selecting_any_further_model",
+    "V63_strictly_improves_all_three_over_both_V50_and_V52_every_domain": true,
+    "a_sealed_reference_equals_or_improves_all_three_every_domain": false,
+    "rolled_parameter_control_improves_Q3_Q4_every_domain": false
+  },
+  "candidate_development_diagnostics": {
+    "TNG100": {
+      "delta_q99_999_dex": 0.07939633125605816,
+      "generated_max_above_truth_max_dex": 0.5571650862693787,
+      "generated_over_truth_mean_delta_squared": 1.4413433635115367,
+      "Q3_pass": false,
+      "Q4_pass": true,
+      "field_pass": false,
+      "field_failure": {
+        "check": "two_point_improves_deterministic_all_scales",
+        "scale": "0-1_mpc_h",
+        "generated_vs_truth_KS_mean": 0.19791666666666666,
+        "deterministic_vs_truth_KS_mean": 0.1875
+      },
+      "high_k_total_power_ratios": {
+        "3-6_h_mpc": 0.9684590777734774,
+        "6-10.0531_h_mpc": 1.0098145545755552
+      },
+      "residual_RMS_ratio": 0.9611986977727782
+    },
+    "SIMBA": {
+      "delta_q99_999_dex": 0.03962439381096683,
+      "generated_max_above_truth_max_dex": 0.22277730703353882,
+      "generated_over_truth_mean_delta_squared": 0.902312862450732,
+      "Q3_pass": true,
+      "Q4_pass": true,
+      "field_pass": true,
+      "high_k_total_power_ratios": {
+        "3-6_h_mpc": 0.999420898606228,
+        "6-10.0531_h_mpc": 1.0623965913368472
+      },
+      "residual_RMS_ratio": 1.007181406228654
+    },
+    "Swift": {
+      "delta_q99_999_dex": 0.10114481120318697,
+      "generated_max_above_truth_max_dex": 0.5612425804138184,
+      "generated_over_truth_mean_delta_squared": 1.5318530124311087,
+      "Q3_pass": false,
+      "Q4_pass": false,
+      "field_pass": true,
+      "high_k_total_power_ratios": {
+        "3-6_h_mpc": 1.0056336890940076,
+        "6-10.0531_h_mpc": 1.0518580816651604
+      },
+      "residual_RMS_ratio": 1.0063501884669541
+    }
+  },
+  "integrity": {
+    "development_pytest_passed": 479,
+    "development_pytest_log_sha256": "02b3629af4ecaede8d93cee515179cfafb8d55fb03478e203c36f3c89fd25283",
+    "development_sample_log_sha256": "7cecbcf5b41c7a080eb23e2dcae3b6dc03c9f36ebcf3bfd6773750fb116bf01d",
+    "development_monitor_log_sha256": "5dd2fdf6e81df4c187b6e7bee4ca50e1e5d102d5e2837b5300a7c23c3f5eab02",
+    "development_decision_log_sha256": "e337b19ae92440d8e9ad620b2a22db816d402617d39ee289e85097b5129c328b",
+    "sequence_status": "complete_development_gate_failure_independent_gate_locked",
+    "sequence_status_sha256": "cad9e85a0ef6763e5984dfe283efd04721eaf91b757a0e50b12034d83fe39864",
+    "maximum_absolute_sample_residual_DC": 4.2345460471437946e-11,
+    "maximum_inverse_CDF_error": 1.0132789611816406e-06,
+    "sample_shape_every_arm_and_domain": [
+      16,
+      16,
+      1,
+      64,
+      64,
+      64
+    ],
+    "frozen_selection_identical_every_arm_and_domain": true,
+    "artifact_hash_and_code_ancestry_pass": true
+  },
+  "evaluation_schema_recovery": {
+    "initial_failure": "V63 centered ensemble schema was absent from the evaluator CENTERED_SCHEMAS set, causing an attempted read of legacy high-pass attributes before any metric was written",
+    "initial_failure_status_preserved_in_monitor_log": true,
+    "fix_commit": "c2a85dcf71a2ba633952e32d0b205a77d0b8d850",
+    "fix": "register the V63 ensemble as the same DC-centered full-band residual family as V50 and V52",
+    "sample_values_modified": false,
+    "samples_regenerated": false,
+    "evaluation_only_resume": true
+  },
+  "scientific_conclusion": [
+    "The V63 conditional moment objective is causal and substantially better than V50 and V52: all three frozen extreme diagnostics improve against both references in every development domain, while the rolled-parameter control is much worse.",
+    "The repair is nevertheless not development sufficient. SIMBA passes Q3, Q4, and every field check, but TNG100 fails the maximum-excess part of Q3 and one 0-1 Mpc/h two-point comparison; Swift narrowly exceeds the q99.999 and mean-moment limits and also fails the maximum-excess part of Q3.",
+    "Every high-k power and residual-RMS check passes. The remaining failure is not the prior small-filament smoothing problem and is not a quadrature, DC, inverse-CDF, or provenance failure.",
+    "The train gate calibrates quadrature expectations, whereas the development gate measures fields produced by a finite frozen empirical-rank transport. The next justified question is whether this sampler-to-objective mismatch is measurable and gradient-bearing on train-only data before authorizing another fit."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only empirical-rank sampler-alignment audit",
+    "candidate_mechanism": "replace the Gauss-Hermite-only conditional moment term, in a future model only if selected, with a differentiable expectation over frozen train-only empirical conditional-rank fields and audit an accompanying train-only small-scale two-point statistic",
+    "required_evidence_before_any_new_training": [
+      "measure the difference between 64-point quadrature moments and frozen empirical-rank sampled moments on identical train objects and masks",
+      "measure candidate output-gradient scale relative to the retained V63 objective without fitting",
+      "test whether a train-only sampler-aligned moment score has a causal correction in all three domains",
+      "audit a differentiable 0-1 Mpc/h correlation statistic on train-only frozen ranks without using development values for coefficient tuning",
+      "require finite gradients, numerical convergence, and Ada memory below the frozen limit"
+    ]
+  },
+  "firewall": {
+    "development_used_for_training_stopping_or_hyperparameter_selection": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "new_training_or_refit_performed_after_development": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "bundle": "Z3-FIELD-DEFINITION-CALIBRATION",
+  "status": "CLOSED_DIAGNOSTIC_MODEL_DEFINITION_MISMATCH_UNRESOLVED",
+  "driver_review": "GO_FOR_DIAGNOSTIC_CLOSURE_NO_GO_FOR_PHYSICAL_POSTERIOR_PROMOTION",
+  "external_audits": "Skipped under user-directed Astra exception",
+  "implementation_commit": "73e4fb59d5b0ae24c0675ddd03a65b7c6dfcf1eb",
+  "output": "/gpfs/kjhan/CF4/z0_density/z3_field_definition_v1/result_332592.json",
+  "execution": {
+    "job_id": 332592,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 65,
+    "diagnostic_seconds": 51.15817962796427,
+    "CPUs": 2,
+    "GPUs": 0,
+    "requested_memory_MiB": 2400,
+    "estimated_memory_MiB": 2000,
+    "request_margin": 0.2,
+    "Slurm_MaxRSS_KiB": 799464,
+    "process_high_water_MiB": 831.12890625,
+    "memory_note": "Slurm sampled peak and process high-water differ; both are below the request."
+  },
+  "checks": {
+    "inference_vs_PMWD_linear_density_relative_RMS": 5.554122038510415e-16,
+    "explicit_block_vs_analytic_response_max_error": 1.7763568394002505e-15,
+    "development_tasks": 8,
+    "diagnostic_draws_per_task": 256,
+    "original_full_draw_coverage68_mean": 0.9287033081054688,
+    "raw_subsample_coverage68_mean": 0.9262161254882812
+  },
+  "truth_cell_sd_mean": 0.6833087599179185,
+  "mean_diagnostics": {
+    "raw": {
+      "coverage68": 0.9262161254882812,
+      "coverage95": 0.9794387817382812,
+      "standardized_residual_sd": 0.7329837015099434,
+      "mean_posterior_cell_sd": 0.9390836714296699,
+      "prior_expected_cell_sd": 0.9864636733789288,
+      "truth_posterior_mean_correlation": 0.33933402999209555,
+      "fraction_draw_cells_delta_below_minus_one": 0.1552736759185791,
+      "same_seed_linear_truth_correlation": 0.40637247469865956
+    },
+    "non_Nyquist_only": {
+      "coverage68": 0.922882080078125,
+      "mean_posterior_cell_sd": 0.918025751119858,
+      "truth_posterior_mean_correlation": 0.33908316026973595
+    },
+    "CIC6_plus_block12_centered": {
+      "coverage68": 0.8669242858886719,
+      "coverage95": 0.9610977172851562,
+      "standardized_residual_sd": 1.0244122459635132,
+      "mean_posterior_cell_sd": 0.6808938773692399,
+      "prior_expected_cell_sd": 0.7301707122722836,
+      "truth_posterior_mean_correlation": 0.3427864391894221,
+      "fraction_draw_cells_delta_below_minus_one": 0.0851576179265976,
+      "same_seed_linear_truth_correlation": 0.48589993665303677
+    },
+    "CIC6_plus_block12_native_phase": {
+      "coverage68": 0.8614730834960938,
+      "coverage95": 0.9591484069824219,
+      "standardized_residual_sd": 0.9973496830223032,
+      "mean_posterior_cell_sd": 0.6809650168543916,
+      "prior_expected_cell_sd": 0.7301707122722836,
+      "truth_posterior_mean_correlation": 0.3239154260283045,
+      "fraction_draw_cells_delta_below_minus_one": 0.08512453734874725,
+      "same_seed_linear_truth_correlation": 0.5232706511812579
+    }
+  },
+  "driver_findings": [
+    "No white-to-linear-density FFT normalization mismatch was detected against installed PMWD.",
+    "Assignment/block response explains a substantial change in field variance; the raw exported linear field and deposited coarse truth are different observables.",
+    "Windowing alone is insufficient: coverage remains 86-87 percent for nominal 68 percent and posterior mean correlation does not materially improve.",
+    "Residual SD near one with excessive central coverage suggests distribution-shape/tail mismatch; it is not a calibration pass.",
+    "About 15.5 percent of raw linear draw cells have delta<-1. This is admissible for a linear latent variable, but 1+delta cannot be promoted as a nonnegative physical matter density.",
+    "The native block phase improves same-seed linear-template agreement but worsens posterior-mean correlation. A physical coordinate convention must be chosen from the forward definitions, not by optimizing a correlation.",
+    "Truth uses nonlinear deposited mass and mass-weighted velocity; inference exports linear density/potential velocity and uses an exponential tracer link. These model definitions must be reconciled before a physical z=0 posterior claim."
+  ],
+  "scope_limits": [
+    "All windowed samples are sensitivity transformations of an existing posterior, not samples from a repaired likelihood.",
+    "The continuous CIC window neglects sampling aliases/nonlinearity and high-k truth power is not explained by it alone.",
+    "Eight development realizations and 256 thinned draws per realization do not establish independent calibration or an observational information frontier.",
+    "No numerical resolution beyond the existing N32 was achieved."
+  ],
+  "next_recommendation": {
+    "purpose": "Define and implement consistent z=0 physical density/velocity outputs and their observation map, separating latent linear variables from physical fields.",
+    "required": [
+      "Fix density averaging and coordinates for truth, likelihood and reported physical output.",
+      "Specify the nonnegative physical density and velocity model rather than merely rescaling linear density or shrinking LCDM power to improve coverage.",
+      "Use a small matched-model recovery check for internal consistency, then assess the physical model against independent nonlinear development truth."
+    ],
+    "target": "CF4-informed 1-2 cMpc/h surroundings followed by LG-constrained 0.3 cMpc/h zoom ICs",
+    "user_approval_required": true,
+    "started": false
+  }
+}

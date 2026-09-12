@@ -1,0 +1,58 @@
+{
+  "schema": "cf4-v2-local-likelihood-development-v1",
+  "frozen_date": "2026-07-29",
+  "frozen_before_comparison": true,
+  "purpose": "Test whether a direct low-redshift distance likelihood changes the shared observer cavity without degrading held-out calibration.",
+  "status": "development_only_not_a_parent_model",
+  "common": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "Omega_m": 0.31,
+    "Omega_b": 0.05,
+    "h": 0.746,
+    "A_s_1e9": 1.63,
+    "n_s": 0.96,
+    "cz_min_km_s": 1000.0,
+    "cz_max_km_s": 18000.0,
+    "wf_vmax_km_s": 6000.0,
+    "wf_error_scale": 0.9,
+    "wf_sigma_nl_km_s": 0.0,
+    "bulk_prior_1d_km_s": 150.0,
+    "delta_h0_prior_km_s_mpc": 3.0,
+    "holdout_fraction": 0.2,
+    "split_seed": 20260805,
+    "sample_seeds": [61, 62, 63, 64],
+    "cg_tolerance": 3e-05,
+    "cg_max_iterations": 500,
+    "preconditioner_probes": 4
+  },
+  "models": {
+    "v1_control": {
+      "local_distance_max_mpc": 0.0
+    },
+    "hybrid_primary": {
+      "local_distance_max_mpc": 15.0,
+      "local_max_distance_modulus_error_mag": 0.25,
+      "local_max_abs_velocity_km_s": 1500.0,
+      "local_error_scale": 1.0,
+      "local_sigma_nl_km_s": 200.0,
+      "estimator": "u = modified_cz - H0 * d_debiased"
+    }
+  },
+  "diagnostics": {
+    "report_global_and_per_likelihood_holdout": true,
+    "observer_linear_density_gaussian_radius_mpc_h": 5.0,
+    "observer_density_is_diagnostic_not_a_constraint": true
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "global_abs_z_mean_max": 0.1,
+    "global_z_std_range": [0.85, 1.15],
+    "global_coverage_1sigma_range": [0.62, 0.75],
+    "global_coverage_2sigma_range": [0.92, 0.98],
+    "hybrid_delta_log_score_may_degrade_from_control_by_at_most": 10.0,
+    "local_direct_metrics": "report separately; do not hard-gate if fewer than 30 held-out rows",
+    "promotion_policy": "A passing N64 result only authorizes an N192 held-out test. It does not authorize replacing parent_v1."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "ouruniv-cf4-z1-q1-contraction-result-v1",
+  "date": "2026-09-05",
+  "status": "CLOSED_NARROW_FIXED_GEOMETRY_CONTRACTION_BRIDGE_ONLY",
+  "closure_audit": "config/cf4_z1_opus_closure_audit_v1.json",
+  "implementation_commit": "1a96c2cd7355ff509b99745c50049e66ce9a23c8",
+  "scope": "Small static Q1 response matrix times source masses; geometry and LOS dispersion are fixed. No dynamic Q1 integration in JAX and no production likelihood integration.",
+  "execution": {
+    "job_id": 332521,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 9,
+    "test_seconds": 6.376,
+    "tests_passed": 4,
+    "tests_skipped": 0,
+    "cpu_only": true,
+    "cpus": 2,
+    "requested_memory_MiB": 2400,
+    "estimated_upper_memory_MiB": 2000,
+    "request_vs_estimate_margin": 0.2,
+    "stdout": "/gpfs/kjhan/CF4/logs/cf4_z1_q1_jax_332521.out",
+    "stderr": "/gpfs/kjhan/CF4/logs/cf4_z1_q1_jax_332521.err"
+  },
+  "measurements": {
+    "grid": [4, 4, 4],
+    "source_count": 3,
+    "compile_and_first_seconds": 0.02237510308623314,
+    "warm_seconds": 0.00003449246287345886,
+    "peak_host_MiB_at_timing_test": 430.72265625,
+    "full_run_peak_memory": "not resolved by short Slurm accounting; the Python measurement is a high-water mark at the timing test only",
+    "gpu_memory": "not applicable",
+    "production_scaling_claim": false
+  },
+  "checks": [
+    "Nondegenerate, seam/knot/near-coincident/cold and sigma=2L multiwrap fixtures; no independent geometry accuracy claim follows from contracting oracle-generated bases",
+    "Six scalar mass rescalings per fixture versus the sealed NumPy oracle; these are not six independent population likelihoods",
+    "Mass conservation and three-parameter mass Jacobian axis convention",
+    "Random cotangent VJP versus analytic transpose and scalar finite differences through the NumPy oracle",
+    "Invalid basis, masses, shapes, x64-disabled use and oversized traced response rejection"
+  ],
+  "failed_attempts": [
+    {"job_id": 332415, "cause": "pytest missing in circle environment; no tests executed"},
+    {"job_id": 332510, "cause": "test called removed jax.experimental.enable_x64; other three tests passed"}
+  ],
+  "limitations": [
+    "The oracle is exactly mass-linear: value, Jacobian, VJP and finite-difference matches are algebraic identities up to floating-point error, not independent physical operator validation.",
+    "Finite/nonnegative/unit-mass checks apply only to the host-validated entry. The differentiable entry lacks those numerical checks and requires prevalidated values.",
+    "A full-run peak-memory bound was not established; 2400 MiB was requested and the short job completed without an OOM report.",
+    "The tested contraction is simple linear algebra; it does not repair the wider posterior calibration problem.",
+    "Geometry, RSD, LOS and sigma derivatives are not implemented or certified.",
+    "Q2 full-source feasibility remains blocked; no new Q7 compression result.",
+    "Host validation checks numerical arrays, not their physical origin; the tracer kernel requires prevalidated values.",
+    "Static memory ceiling guards development input size, not total memory allocation or a topology certificate."
+  ],
+  "driver_call_path_inspection": {
+    "entry": "src/cf4_datum_bearing_z0_phasec_posterior_v1.py:run_task -> cf4_phasec_sampler_mechanics_pilot.build_standardized_model -> cf4_datum_bearing_z0_phasec_pilot.build_inference_model",
+    "finding": "The active count_lambda changes coherent RSD with latent density and changes dispersion with logfog, using point-quadrature TSC. A frozen response basis omits those derivatives and cannot replace that model unchanged.",
+    "resource_caution": "Historical Q2 N192 PM-source estimates must not be treated as measurements of the current N32 Eulerian inference source basis. Confirm the consumed source representation before projecting costs.",
+    "next_scientific_question": "On a few development states, how much do LOS integration error and omitted geometry/dispersion derivatives change the actual count likelihood and score?"
+  },
+  "next_bundle_requires_user_approval": true
+}

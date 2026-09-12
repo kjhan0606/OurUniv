@@ -1,0 +1,80 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-twompp-datum-builder-v2-failure-result-record",
+  "date": "2026-09-01",
+  "status": "FAILED_PREDECLARED_ZERO_EXPOSURE_OCCUPIED_VOXEL_GATE_NO_PUBLICATION",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "afc6e9b3d2d6fddac02e40f52e3123b05bb615dc",
+    "remote_commit_at_submission": "afc6e9b3d2d6fddac02e40f52e3123b05bb615dc",
+    "program": "config/cf4_datum_bearing_z0_twompp_datum_builder_program_v2.json",
+    "implementation": "src/cf4_datum_bearing_z0_twompp_datum_builder_v2.py",
+    "runner": "scripts/run_cf4_datum_bearing_z0_twompp_datum_builder_v2.sbatch"
+  },
+  "execution": {
+    "Slurm_job_id": 329828,
+    "cluster": "syntax",
+    "node": "syn04",
+    "partition": "a10",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 12,
+    "requested_cpus": 1,
+    "requested_memory_MiB": 1024,
+    "reported_batch_MaxRSS_KiB": 3692,
+    "automatic_follow_on_executed": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/z0_density/logs/datum-builder-v2-329828.out",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/z0_density/logs/datum-builder-v2-329828.err",
+      "bytes": 1054,
+      "sha256": "5ce74bc1fb78c704689eb8cbee583b02423b034e6a4bd7bdb63542419bd9dc6b"
+    }
+  },
+  "preserved_staging": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging",
+    "datum.npz": {
+      "bytes": 169122,
+      "sha256": "a87e57e768de0c8a164be1a9b2d6a21b3962880054a0030b5d1840b805d3c5e7"
+    },
+    "row_manifest.csv": {
+      "bytes": 1429117,
+      "sha256": "49bf6d5c76d318e5e17003156152ad12ea05426eddc98656318f538c98381644"
+    },
+    "result.json": {
+      "bytes": 2864,
+      "sha256": "2067851fd1ef8124a72dc0c1a19a806a3c166933e20c8072e05c970523b1242b"
+    },
+    "FAILED": {
+      "bytes": 297,
+      "sha256": "cc9390618a2badf144986cc8c55cda7716d554840856344975d13eba9a0bf0df"
+    }
+  },
+  "gate_result": {
+    "passed_gate_count": 11,
+    "total_gate_count": 12,
+    "failed_gates": ["no_positive_count_in_nonpositive_exposure"],
+    "retained_total": 36635,
+    "population_all": [9617, 3463, 527, 15671, 6197, 1160],
+    "population_train": [7640, 2730, 431, 12614, 4906, 936],
+    "population_holdout": [1977, 733, 96, 3057, 1291, 224],
+    "realized_holdout_fraction": 0.20139211136890953,
+    "positive_count_nonpositive_exposure_population_voxel_count": 30,
+    "selection_quadrature_subpoints_per_voxel": 8,
+    "raw_exposure_finite_in_unit_interval": true,
+    "count_arrays_integer_nonnegative_and_split_exhaustive": true
+  },
+  "scientific_interpretation": {
+    "Phase_A_datum_publication": "BLOCKED_AS_DESIGNED",
+    "cause_hypothesis": "two-point-per-axis quadrature under-resolves sharp angular-mask or radial-luminosity support inside some coarse N32 voxels",
+    "epsilon_floor_or_occupied_voxel_override_allowed": false,
+    "outcome_adaptive_selection_repair_allowed": false,
+    "required_next": "global deterministic quadrature convergence diagnostic independent of count-based exposure modification",
+    "field_inference_allowed": false,
+    "Phase_B_allowed": false
+  }
+}

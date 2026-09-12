@@ -1,0 +1,231 @@
+{
+  "schema": "ouruniv-cf4-phasec-sampler-mechanics-pilot-v6",
+  "date": "2026-09-03",
+  "status": "AUTHORIZED_MOCK_ONLY_V6_STEP_SIZE_CAP_DIAGNOSTIC_CODE_GO",
+  "audit": {
+    "auditor": "codex-pilot",
+    "verdict": "CODE_GO",
+    "scope": "V6 six-mock expanded raw-versus-used maximum-step-size pilot after V5 mock-only pilot gate",
+    "validation": "Syntax-local verification: schema freeze, local regression checks, and slurm script checks prepared; execution will be launched after final hash lock",
+    "execution_authorization": "mock-only Slurm pilot with six assignments permitted; actual observational posterior and Phase D remain forbidden"
+  },
+  "authorization": {
+    "basis": "The user approved proceeding after the Claude Opus 5 audit and the offline ACF audit confirmed the L=12 short-trajectory mechanism for the stored white probes, while leaving nuisance geometry unresolved. This is a new frozen mechanics configuration, not an observational posterior.",
+    "replacement_Phase_C_mock_sampler_mechanics_v5": true,
+    "Slurm_GPU_array_indices_0_and_6": true,
+    "Slurm_CPU_aggregate": true,
+    "GPFS_read_bound_mock_inputs": true,
+    "GPFS_write_new_outputs_only": true,
+    "actual_observational_field_inference": false,
+    "actual_2Mpp_count_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_seed_access": false,
+    "Phase_D_or_later": false
+  },
+  "lineage": {
+    "base_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_program_v1.json",
+      "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+    },
+    "replacement_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_redesign_v1.json",
+      "sha256": "f5817e71c8038e64825516f01ddfd8e61a077ef664cf5b73acbc4a4bd1c14a76"
+    },
+    "generator_gate_PASS_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_scan_generator_gate_v3_result_record.json",
+      "sha256": "1e7d166ea27fda8f1a183011f16ea3f23b328875f2868ede8c60031161d8b922"
+    },
+    "syn06_GPU_sweep_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_syn06_gpu_sweep_v1_result_record.json",
+      "sha256": "55d09f3cdb42eb2b04dd9de8ffb099aebdf13879e09392b7b058c538023605e9"
+    },
+    "previous_sampler_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_sampler_mechanics_pilot_v1.json",
+      "sha256": "2adb8db5b93428974fad3174f2b457a61279826ae3235a5a3c2b7c9588b76586"
+    },
+    "previous_sampler_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot.py",
+      "sha256": "4ce1acfde795e46a8cc9bd2af14887096fb462b0d2c8637ad5ebd11cf3466007"
+    },
+    "acf_audit_record": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_acf_audit_v1/audit.json",
+      "sha256": "d63e68ccc3b422e39e5f5a663765d15640f7bcbf2a40384e7bae7a18312acd42"
+    },
+    "V5_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "79225219fb170cbe19d5be617f070444b2edd351cecabb8941d7558e77744f11"
+    },
+    "fixed_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "linear_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "sampler_mechanics_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot_v6.py",
+      "sha256": "649134747364c0d85f3233fa426335571430bb1c82b9ce7349f97d48645a6331"
+    },
+    "failed_v2_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_sampler_mechanics_pilot_v2.json",
+      "sha256": "56eb9b2ca8513cb0bf2c50d68fb58835c811882f6c78c37c2a6ca47540a07360"
+    },
+    "failed_v2_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot_v2.py",
+      "sha256": "0805a2e52f1d4e7c181dd87ffc51d6b86e135d3d70db0a72ac4772a1bb905e8f"
+    },
+    "failed_v2_aggregate": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v2_aggregate/aggregate.json",
+      "sha256": "2594a3bde4bccccca16a3bac6174292a3f20ba3287e8f958adcf06f63ebd0e92"
+    },
+    "failed_v2_task_00_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v2/mechanics_v2_00_mock_00_seed_2026083000_arm_A/result.json",
+      "sha256": "650133028a5a4ca9961847bbec4a25040e8d953ab896163007b420893a35bdb0"
+    },
+    "failed_v2_task_01_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v2/mechanics_v2_01_mock_06_seed_2026083006_arm_D/result.json",
+      "sha256": "abba6a9b5b735954b2d8e2047f6b0970d35fe31e24151c31af332393d3c9b92c"
+    },
+    "failed_v3_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_sampler_mechanics_pilot_v3.json",
+      "sha256": "bdaedec04786d0ceef86a8610ecdad811febf775a463dcdc8e54cf098d774d6b"
+    },
+    "failed_v3_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot_v3.py",
+      "sha256": "b34bccbfb6a1769e322df83b684fad4f89563e049616430e53c26fce5e8475a7"
+    },
+    "failed_v3_aggregate": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v3_aggregate/aggregate.json",
+      "sha256": "d4a812b04214bafa03ab610f224c7ccd41e272961413cd551bf1c793d18d7eb5"
+    },
+    "failed_v3_task_00_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v3/mechanics_v3_00_mock_00_seed_2026083000_arm_A/result.json",
+      "sha256": "e3f4703ec4790d36e8d5899b33fcda3efe2cb00516d71b92e02c0607f0b415cd"
+    },
+    "failed_v3_task_01_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v3/mechanics_v3_01_mock_06_seed_2026083006_arm_D/result.json",
+      "sha256": "c0b3c971bbd8d0dc3a95e6fd3be58ca1328a8c0e539f166467a83194b55729ee"
+    },
+    "failed_v4_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_sampler_mechanics_pilot_v4.json",
+      "sha256": "bb5b826529dd45fac6680c9a0b1cd1dd6d4954115ecd9c47ebb92a17e8ed0f96"
+    },
+    "failed_v4_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot_v4.py",
+      "sha256": "be50a35d9090f7c9a9914b8fafeebf633c25f97b25c943215896e9525514d014"
+    },
+    "failed_v4_aggregate": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v4_aggregate/aggregate.json",
+      "sha256": "a41778fb9e7d57a94b916c0d376e89df606538b7034745d3eea8a260db5d5b99"
+    },
+    "failed_v4_task_00_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v4/mechanics_v4_00_mock_00_seed_2026083000_arm_A/result.json",
+      "sha256": "402bb805dccb6622b6573e5a0becd116b7629d57e19bcadb4898c15148870edf"
+    },
+    "failed_v4_task_01_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v4/mechanics_v4_01_mock_06_seed_2026083006_arm_D/result.json",
+      "sha256": "a1ae0bc336133808162c923dac20d20055c100d2838e58c47e6f77d40617161e"
+    }
+  },
+  "assignments": [
+    {"task_index": 0, "mock_index": 1, "seed": 2026083001, "arm": "A"},
+    {"task_index": 1, "mock_index": 2, "seed": 2026083002, "arm": "B"},
+    {"task_index": 2, "mock_index": 3, "seed": 2026083003, "arm": "B"},
+    {"task_index": 3, "mock_index": 4, "seed": 2026083004, "arm": "C"},
+    {"task_index": 4, "mock_index": 5, "seed": 2026083005, "arm": "C"},
+    {"task_index": 5, "mock_index": 7, "seed": 2026083007, "arm": "D"}
+  ],
+  "rng_tags": {
+    "high_k_white": 843927701,
+    "chain_initialization": 843927706
+  },
+  "truth_integrator": {
+    "lpt_order": 2,
+    "a_start": 0.015625,
+    "a_stop": 1.0,
+    "a_lpt_maxstep": 0.0078125,
+    "a_nbody_maxstep": 0.00390625,
+    "mesh_to_particle_ratio": 1,
+    "float_dtype": "float64"
+  },
+  "mechanics": {
+    "latent_dimension": 32792,
+    "parameterization": "all 32792 coordinates are standard normal before the likelihood",
+    "MAP": {
+      "optimizer": "SciPy L-BFGS-B with exact JAX gradient",
+      "maximum_iterations": 1536,
+      "maximum_line_search_steps": 80,
+      "objective_relative_tolerance": 1e-12,
+      "projected_gradient_infinity_tolerance": 0.25,
+      "require_optimizer_success": true,
+      "finite_value_and_gradient_required": true
+    },
+    "sampler": {
+      "algorithm": "BlackJAX static Euclidean HMC",
+      "chain_count": 4,
+      "warmup_steps": 1024,
+      "posterior_draws_per_chain": 2048,
+      "integration_steps": 32,
+      "initial_step_size": 0.0005,
+      "target_acceptance_rate": 0.9,
+      "chain_initial_jitter_std": 0.05,
+      "divergence_energy_threshold": 1000.0,
+      "inverse_mass_matrix": "identity",
+      "adaptation": "dual-averaging raw proposal with fixed maximum used step",
+      "maximum_step_size": 0.04
+    },
+    "field_probe_indices": [0, 1, 31, 32, 1024, 4096, 16384, 32767],
+    "host_projection_chunk_draws": 16
+  },
+  "gates": {
+    "MAP_gradient_RMS_max": 0.25,
+    "MAP_optimizer_success_required": true,
+    "derived_count_intensity_max": 1000000.0,
+    "rank_normalized_split_Rhat_max": 1.05,
+    "bulk_ESS_min": 100.0,
+    "tail_ESS_min": 100.0,
+    "warmup_divergence_fraction_max": 0.01,
+    "divergence_fraction_max": 0.01,
+    "all_draws_and_energies_finite": true,
+    "all_derived_count_intensities_finite_and_nonnegative": true,
+    "warmup_energy_trace_must_be_stored": true,
+    "clipping_allowed": false
+  },
+  "hardware_quarantine": {
+    "excluded_node": "syn06",
+    "known_failing_UUID": "GPU-906578dd-9007-fdbd-3c6a-a0c5821e24d6",
+    "allowed_partition": "a40",
+    "expected_nodes": ["syn05", "syn07"],
+    "physical_GPU_identity_recorded_per_task": true
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v6",
+    "device_root": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v6_devices",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v6_aggregate",
+    "array": "0-5",
+    "expected_peak_host_memory_MiB_per_task": 8192,
+    "requested_host_memory_MiB_per_task": 10240,
+    "time_limit": "03:00:00",
+    "aggregate_expected_peak_host_memory_MiB": 512,
+    "aggregate_requested_host_memory_MiB": 1024,
+    "manual_syntax_syn06_or_syn101_numerical_execution": false,
+    "monitoring_loop": false
+  },
+  "decision_rule": {
+    "both_indices_must_pass": [1, 2, 3, 4, 5, 7],
+    "remaining_mock_sampler_indices_after_PASS": [1, 2, 3, 4, 5, 7],
+    "threshold_relaxation_or_seed_replacement_after_outcomes": false,
+    "actual_observational_posterior_allowed": false,
+    "validation_or_Phase_D_allowed": false
+  },
+  "scope_firewall": {
+    "actual_2Mpp_count_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "actual_observational_posterior_created": false,
+    "validation_seed_read": false,
+    "Phase_D_or_later_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

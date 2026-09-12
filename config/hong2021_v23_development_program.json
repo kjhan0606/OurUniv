@@ -1,0 +1,107 @@
+{
+  "schema": "hong2021-v23-conditional-mean-penalty-development-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Test whether the low-dimensional conditional latent-mean bias that survived V22 is the causal, trainable defect, without changing representation, capacity, data, sampling, or field thresholds.",
+  "parent_evidence": {
+    "v22_registry": "config/hong2021_v22_development_program.json",
+    "v22_registry_sha256": "2f2d5337ceecab413e647f54bcaa75e1502d76db3b24daafd22d1c1a2bd7cfbe",
+    "v22_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v22_e10_long_horizon/development_decision.json",
+    "v22_decision_sha256": "4d40f0a30f612c31582286726035c9b209f962ee72536a3bc9b6aa8206d23796",
+    "v22_decision_digest_sha256": "f64787b0937ddc1c3aa9d1360f0eb75592d42604f8950a91fb17a4838184f7c6",
+    "v22_automatic_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v22_e10_long_horizon/automatic_failure_audit.json",
+    "v22_automatic_failure_audit_sha256": "d255d802f000fb85cc59023ee12082a7566ab6e135c7d9674c1e9b09b3705a0f",
+    "v21_registry": "config/hong2021_v21_development_program.json",
+    "v21_registry_sha256": "e44486a52f284ded1d17a83da491b571a7987f0380cd5ff0fdc1ef5f3c29a27d",
+    "v21_artifacts": "config/hong2021_v21_derived_artifacts.json",
+    "v21_artifacts_sha256": "5622fc5a22b7502eac433f50e6cc2b51e6253c6e89b179335b1f8eef4e6d5852",
+    "Astrid_used": false,
+    "historical_EAGLE_used": false
+  },
+  "single_change": {
+    "description": "Add one per-sample, per-frozen-m-bin conditional denoising-mean penalty to the byte-identical V22 objective.",
+    "model_schema": "hong2021-v23-conditional-mean-penalty-multiscale-edm-v1",
+    "lambda_conditional_mean": 1.0,
+    "m_channel": 2,
+    "m_bin_edges": "the 11 full edges defining the 10 frozen V21 conditional-profile bins",
+    "torch_bin_rule": "clamp(bucketize(m, edges_full11, right=True) - 1, 0, 9)",
+    "minimum_voxels_per_sample_bin": 64,
+    "per_sample_bin_error": "Delta_ib = mean over voxels in bin b of (D_i - x0_i)",
+    "conditional_loss": "batch mean of EDM_weight_i times mean over valid bins of Delta_ib squared",
+    "edm_weight": "(sigma_i^2 + sigma_data^2) / (sigma_i * sigma_data)^2",
+    "total_loss": "0.5 * L_unweighted + 0.5 * L_tail_weighted + 1.0 * L_conditional_mean",
+    "training_from_scratch": true,
+    "steps": 30000,
+    "candidate_steps": [10000, 20000, 30000],
+    "coefficient_sweep": false
+  },
+  "inherited_byte_identical": [
+    "V21 conditional-affine profile", "V21 G21 transform", "six V21 caches",
+    "architecture and base_channels=32", "batch and equal-source 2/2/2 balance",
+    "unweighted and tail-weighted loss terms", "noise distribution",
+    "initializer and band variances", "training/validation/sampling seeds",
+    "CosineAnnealingLR over 30000 steps and minimum learning rate",
+    "sampler and 16-member ensembles", "development subsets",
+    "field evaluator, Q3/Q4/Q5 definitions, and thresholds"
+  ],
+  "training_logging": [
+    "combined_loss", "unweighted_loss", "tail_weighted_loss", "conditional_mean_loss"
+  ],
+  "validation": {
+    "selection_metric": "the unchanged balanced validation metric and RNG stream",
+    "fixed_conditional_validation": {
+      "interval_steps": 500,
+      "per_domain": true,
+      "weights": "same EDM weight and max-bin absolute Delta definition as training diagnostic",
+      "model": "EMA",
+      "generator_seed": "validation_seed + 20",
+      "selection_role": "none"
+    }
+  },
+  "diagnostics_and_selection": {
+    "selection": "smallest candidate passing every unchanged V6 field check plus Q3, Q4, and the new Q6-std no-harm check independently in all three domains",
+    "Q3": {"absolute_delta_q99_999_log10rho_max_dex": 0.10, "generated_max_above_truth_max_dex": 0.30},
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "Q5": "unchanged no-harm checks",
+    "Q6_latent_mean": "original residual and forward-mapped latent conditional mean profiles; diagnostic only and selection_role none",
+    "Q6_std_no_harm": {
+      "definition": "per domain, maximum over frozen m bins of abs(generated_over_truth_std - 1)",
+      "baseline": "V22 step 30000",
+      "tolerance_above_baseline": 0.01,
+      "thresholds": {
+        "tng100_dev": 0.14431479323474017,
+        "simba_dev": 0.05165715288160554,
+        "swift_dev": 0.05865830422544426
+      }
+    },
+    "swift_no_harm": "Swift must retain the unchanged field gate and Q3/Q4 pass and satisfy Q6-std no-harm at the selected candidate"
+  },
+  "failure_classification_at_step_30000": [
+    {
+      "condition": "maximum absolute latent Q6 mean error <= 0.05 in every domain but Q3 or Q4 fails",
+      "classification": "conditional_mean_controlled_but_insufficient",
+      "next": "audit capacity or a frozen second-moment objective"
+    },
+    {
+      "condition": "maximum absolute latent Q6 mean error >= 0.10 in any domain",
+      "classification": "conditional_mean_penalty_failed_to_control_mean",
+      "next": "audit formula, binning, gradients, and optimization before any new experiment"
+    },
+    {
+      "condition": "maximum absolute latent Q6 mean error is strictly between those bounds",
+      "classification": "intermediate_conditional_mean_response",
+      "next": "classify by the frozen Q3/Q4 and Q6-std outcomes without tuning"
+    }
+  ],
+  "fixed_decision_order": [
+    "implement and unit-test the frozen binning and loss before execution",
+    "train one model from scratch on Lageunha Ada with no mid-run changes",
+    "evaluate 10000, 20000, 30000 in ascending order",
+    "select the smallest all-domain pass and stop before any independent-data access",
+    "otherwise apply the frozen failure classification and stop with Astrid unopened",
+    "never extend the horizon, tune lambda, alter thresholds, or rescue a near miss after results"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

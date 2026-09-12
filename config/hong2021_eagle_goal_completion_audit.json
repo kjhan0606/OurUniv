@@ -1,0 +1,125 @@
+{
+  "schema": "hong2021-eagle-goal-completion-audit-v1",
+  "status": "complete_negative_scientific_outcome_no_independent_gate_authorized",
+  "objective": "Audit V7 and the TNG/SIMBA development experiments, improve and validate the most promising model without post-hoc use of the sealed EAGLE failure, and follow the locked independent-gate sequence autonomously.",
+  "interpretation": {
+    "model_that_passes_EAGLE_claimed": false,
+    "historical_EAGLE_failure_solved_claimed": false,
+    "workflow_objective_completed": true,
+    "scientific_outcome": "No tested model was good enough on development data to be authorized for a new independent gate. The correct locked-sequence action was therefore to stop before Astrid or any EAGLE reuse."
+  },
+  "evidence": [
+    {
+      "role": "V7 TNG/SIMBA baseline audit",
+      "path": "config/hong2021_v7_tng_simba_multidomain_edm.json",
+      "sha256": "8898c1a50c292c9bafb2a023eb3eb963005a501b4b44fecfbf6033dd7af5dcda",
+      "assertions": {
+        "/status": "complete_failed_locked_simba_field_gate_grid_hop_skipped"
+      }
+    },
+    {
+      "role": "single historical EAGLE opening and immutable failure",
+      "path": "config/hong2021_v13_gate_result.json",
+      "sha256": "d64c7aa27c803c0121033698740d3ec95604c286766c27d752ff46cfab026781",
+      "assertions": {
+        "/EAGLE_confirmation32/opening": "first_and_only_confirmation32_opening",
+        "/EAGLE_confirmation32/field_gate_pass": false,
+        "/post_confirmation_policy": "no EAGLE-driven iteration; require non-EAGLE development data and a new untouched independent simulation family"
+      }
+    },
+    {
+      "role": "pre-development EAGLE seal",
+      "path": "config/hong2021_eagle_confirmation_seal_v1.json",
+      "sha256": "822473038ee51e596e178caa9fecc1a35ea5029224591da974948c4cd08258d7",
+      "assertions": {
+        "/status": "sealed_before_v8_development"
+      }
+    },
+    {
+      "role": "post-EAGLE cross-code data firewall",
+      "path": "config/hong2021_v14_data_firewall_v2.json",
+      "sha256": "96d22452dc1098c7f285054e0135d23079af77fc593923f5d9a4a3f5e0e7bf00",
+      "assertions": {
+        "/status": "frozen_before_swift_eagle_download_or_astrid_truth_access",
+        "/historical_eagle/confirmation32_state": "opened_once_and_failed_v13",
+        "/historical_eagle/role": "sealed_historical_failed_stress_only"
+      }
+    },
+    {
+      "role": "spatial quantile transport candidate",
+      "path": "config/hong2021_v72_result_record.json",
+      "sha256": "e047761ce216ca88ca3e77a902ac1dfb19b092e8d52f3414979993fb70812064",
+      "assertions": {
+        "/status": "complete_single_use_stage_A_failure_sealed_stage_B_unopened_independent_gate_locked",
+        "/firewall/Astrid_accessed": false,
+        "/firewall/historical_EAGLE_accessed": false,
+        "/firewall/independent_gate_locked": true
+      }
+    },
+    {
+      "role": "monotone calibration candidate",
+      "path": "config/hong2021_v80dr2_result_record.json",
+      "sha256": "41dad732cbf8266189a7adeec2c0bc9174df069cc10d756f50720cc42c4becc0",
+      "assertions": {
+        "/status": "complete_not_promising_stop_V80_without_V81_input_audit",
+        "/decision/stop_V80_model_path": true,
+        "/decision/acquire_or_open_independent_V81_inputs": false
+      }
+    },
+    {
+      "role": "conditional spline-flow candidate",
+      "path": "config/hong2021_v83r_result_record.json",
+      "sha256": "1338dada8caaec78612aad36dedb69abf32ea6a431ab85ba52a6c7e2dda651ba",
+      "assertions": {
+        "/status": "complete_V83_candidate_failed_consumed_gate_independent_validation_locked",
+        "/firewall/Astrid_accessed": false,
+        "/firewall/historical_EAGLE_accessed": false,
+        "/firewall/independent_gate_locked": true
+      }
+    },
+    {
+      "role": "V83 failure attribution",
+      "path": "config/hong2021_v84a1_result_record.json",
+      "sha256": "f960617c99fd974b8063e246c847d455be7796d4d37006eced7016d2c3b69c35",
+      "assertions": {
+        "/status": "complete_V84A1_attribution_V84B_design_recommended_but_training_not_started",
+        "/firewall/independent_validation_accessed": false,
+        "/firewall/historical_EAGLE_accessed": false
+      }
+    },
+    {
+      "role": "group-held-out spliced-tail candidate",
+      "path": "config/hong2021_v84b1_result_record.json",
+      "sha256": "10037a398e54cf773a5866c293e88c076477215b806edbd67d465c36ac7a1cc6",
+      "assertions": {
+        "/status": "complete_V84B1_group_gate_failure_all_other_payloads_locked",
+        "/firewall/checkpoint_or_hyperparameter_selected_on_holdout": false,
+        "/firewall/Astrid_accessed": false,
+        "/firewall/historical_EAGLE_accessed": false,
+        "/firewall/independent_gate_locked": true
+      }
+    },
+    {
+      "role": "unique-cell tail-shape feasibility audit",
+      "path": "config/hong2021_v84c0r_result_record.json",
+      "sha256": "1e7de5606f4f97c92979367910c1f555ec676101adc7eea0fbcb2978dd1ba86c",
+      "assertions": {
+        "/status": "complete_V84C0R_no_go_stop_tail_model_expansion",
+        "/decision/V84C_training_go": false,
+        "/decision/stop_tail_model_expansion": true,
+        "/firewall/training_or_refit_performed": false,
+        "/firewall/Astrid_accessed": false,
+        "/firewall/historical_EAGLE_accessed": false,
+        "/firewall/independent_gate_locked": true
+      }
+    }
+  ],
+  "locked_sequence_outcome": {
+    "development_candidate_passed": false,
+    "Astrid_independent_gate_opened": false,
+    "historical_EAGLE_reopened_after_V13": false,
+    "grid_HOP_authorized": false,
+    "RAMSES_promotion_authorized": false,
+    "terminal_action": "stop_Hong_ML_path_and_return_to_CF4_constrained_realization_pipeline"
+  }
+}

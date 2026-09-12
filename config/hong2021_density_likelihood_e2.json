@@ -1,0 +1,45 @@
+{
+  "schema": "hong2021-density-likelihood-wiener-self-consistency-e2-v1",
+  "status": "complete_failed_remove_hong_density_from_ic_path",
+  "purpose": "Test whether a train-fitted diagonal Fourier likelihood gives calibrated present-density posteriors on TNG validation mocks",
+  "scope_warning": "This is a linearized present-density self-consistency test, not an IC or forward-dynamics validation",
+  "calibration": {
+    "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "conditional_mean": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_train_laplacian_sigma2.h5",
+    "samples": 432
+  },
+  "evaluation": {
+    "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "conditional_mean": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_validation_laplacian_sigma2.h5",
+    "samples": 93,
+    "independence_caveat": "The validation split was used for historical deterministic checkpoint selection, so a pass is self-consistency evidence rather than a final independent gate"
+  },
+  "model": {
+    "field": "cube-mean-subtracted log10(rho/rho_bar)/4.5",
+    "basis": "orthonormal periodic rFFT of each 20 Mpc/h mock cube",
+    "k_edges_h_mpc": [0.3, 0.6, 1.0, 1.5, 2.0],
+    "likelihood": "mean_k = T_eff(k) truth_k + n_k; n_k Gaussian with diagonal band power P_n(k)",
+    "prior": "empirical TNG-train present-day log-density band power; only for this falsification test",
+    "posterior": "analytic Wiener mean and variance",
+    "dc_mode": "excluded"
+  },
+  "frozen_gate": {
+    "reduced_chi2_each_band": [0.9, 1.1],
+    "posterior_voxel_coverage_68": [0.55, 0.85],
+    "posterior_voxel_coverage_95": [0.85, 0.99],
+    "posterior_mean_mse_over_deterministic_mean_mse_maximum": 1.0,
+    "posterior_mean_correlation_must_not_decrease": true,
+    "failure_decision": "Remove the Hong density stage from the IC inference path and retain velocity-only constraints"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/hong2021_density_likelihood_e2",
+  "result": {
+    "pass": false,
+    "reduced_chi2_by_band": [2.4835779053853333, 1.4404999867699866, 1.1947654651732902, 1.1366215211755368],
+    "posterior_voxel_coverage_68": 0.6309373096753192,
+    "posterior_voxel_coverage_95": 0.9134217128958754,
+    "posterior_mean_mse_over_deterministic_mean_mse": 1.0001643848509176,
+    "posterior_mean_correlation": 0.8563386496719977,
+    "deterministic_mean_correlation": 0.8565182546087329,
+    "decision": "The global stationary Fourier likelihood is underdispersed on validation mocks; stop the Hong density-likelihood IC branch and retain velocity-only constraints"
+  }
+}

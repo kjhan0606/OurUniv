@@ -1,0 +1,96 @@
+{
+  "schema": "hong2021-v80-consumed-development-quantile-calibration-training-program-v1",
+  "status": "frozen_before_V80_calibration_implementation_or_consumed_V72_payload_reread",
+  "purpose": "Fit exactly one domain-wise monotone physical-density calibration layer for a new V80 candidate using only the already consumed V72 stage-A candidate and truth. Correct the identified one-point tail/Q4 failure while preserving the inherited spatial ordering, apply the identical map to the paired control, and stop before any V79 selected input or target access.",
+  "frozen_at": "2026-08-12T19:20:00+09:00",
+  "parent_evidence": {
+    "V79_program": "config/hong2021_v79_complete_candidate_agnostic_gate_program.json",
+    "V79_program_sha256": "1234ac864343b41cb08f6788892f7dcb2db60b68843bc00edad5d15284e3956d",
+    "V72_result_record": "config/hong2021_v72_result_record.json",
+    "V72_result_record_sha256": "e047761ce216ca88ca3e77a902ac1dfb19b092e8d52f3414979993fb70812064",
+    "required_V72_status": "complete_single_use_stage_A_failure_sealed_stage_B_unopened_independent_gate_locked",
+    "V72_verdict_changed": false
+  },
+  "scientific_hypothesis": {
+    "diagnosed_failure": "V72 solved high-k power and residual RMS but its hard within-stratum spatial rank allocation made the TNG100 physical upper tail and Q4 too large.",
+    "candidate_change": "Add a domain-wise pooled monotone y-space quantile-calibration layer trained on consumed development candidate-versus-truth histograms, then restore each cube residual DC relative to the unchanged conditional mean.",
+    "spatial_property": "A single monotone scalar map preserves total-field voxel ordering before the exact cube-DC correction and does not introduce a Fourier A(k), density clipping, target-conditioned inference, or a new learned spatial field.",
+    "paired_control": "Apply the identical frozen domain map and exact DC projection to the paired independent V63 marginal control, so maximum-energy comparison isolates inherited spatial coupling rather than one-point calibration.",
+    "limitations": "The calibration is trained on only sixteen already consumed queries per domain and may not transfer. V79 is the single target-unseen screen; no claim is made from the calibration-fit diagnostics."
+  },
+  "consumed_training_inputs": {
+    "TNG100": {
+      "candidate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/tng/ensemble16.h5",
+      "candidate_sha256": "2d316779c91cde2d1c8b2c60a567f97b57584694b8b1ea72dcc3487f547390a6",
+      "control": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/tng/ensemble16.h5",
+      "control_sha256": "55f553572a8bb4acdcc5eb117aa0721c1a1280cb5381531bdcd99ab3e4a370da"
+    },
+    "SIMBA": {
+      "candidate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/simba_dev/ensemble16.h5",
+      "candidate_sha256": "0edbeb09fc749d065a8a1b5a19ef10dad7834f79ce9a6b3a278fa8e27cbae80e",
+      "control": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/simba_dev/ensemble16.h5",
+      "control_sha256": "c3de317860613c079c52e8ac47106b8f176f7d51caf9595826bbf5f9b9fa7de3"
+    },
+    "Swift": {
+      "candidate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/swift_dev/ensemble16.h5",
+      "candidate_sha256": "1230296da0536126ced51207a0eb1b3789e29e2a8319f47fce68270e77c25873",
+      "control": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/swift_dev/ensemble16.h5",
+      "control_sha256": "a907c12f0ca85c18076906b497e792535df056a5f7aa05fbbe2076d102e00a6d"
+    }
+  },
+  "frozen_calibration_algorithm": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "stored_field": "y=log10(rho/rho_mean)/4.5",
+    "source_distribution": "all 16x16 generated candidate cubes in the consumed domain ensemble, pooled with equal voxel weight",
+    "reference_distribution": "the 16 unique truth cubes in the same consumed domain ensemble, each counted exactly once",
+    "histogram_minimum_y": -2.0,
+    "histogram_maximum_y": 2.0,
+    "histogram_bins": 65536,
+    "histogram_accumulation": "stream one query at a time in float64; values outside the frozen range or nonfinite values are fatal",
+    "source_probability": "mid-count empirical CDF at every occupied source bin center",
+    "truth_inverse": "linear interpolation of source probabilities against the mid-count empirical CDF at occupied truth bin centers",
+    "interior_map": "piecewise linear interpolation through occupied source-bin centers and their truth inverse-CDF values",
+    "outside_occupied_source_support": "unit-slope linear extrapolation anchored continuously at the first and last occupied source centers; no clipping",
+    "monotonicity": "mapped knots must be finite and nondecreasing; no isotonic repair or smoothing parameter is permitted",
+    "application": "apply the domain map to the complete generated y field, subtract the unchanged conditional mean, remove each residual cube mean in float64, and add the unchanged conditional mean",
+    "candidate_and_control_map_equality": "bitwise identical calibration knots and application code",
+    "posthoc_Ak": false,
+    "sample_clipping": false,
+    "trainable_neural_parameters": 0
+  },
+  "training_fit_diagnostics": {
+    "role": "report only; never choose, reject, tune, or refit the V80 calibration",
+    "report_before_and_after": [
+      "pooled histogram total variation to consumed truth",
+      "histogram-derived q99.999 y and dex error",
+      "mean physical delta squared ratio",
+      "maximum absolute residual DC",
+      "map occupied support and monotonicity"
+    ],
+    "second_fit_or_changed_bins_range_mapping_or_input": false
+  },
+  "implementation_contract": {
+    "calibration_source": "src/hong2021_v80_quantile_calibration.py",
+    "unit_test": "tests/test_hong2021_v80_quantile_calibration.py",
+    "implementation_must_descend_from_program_freeze": true,
+    "program_SHA256_must_be_hard_coded_after_freeze": true
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration",
+    "calibration": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/calibration.npz",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/training_report.json",
+    "refuse_existing_output": true
+  },
+  "authorization": {
+    "user_instruction": "The user explicitly approved the separately frozen V79 candidate design and single-use execution with '승인'.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "implement_and_run_exactly_one_consumed_development_calibration_fit": true,
+    "read_bound_consumed_V72_stage_A_candidate_control_truth": true,
+    "read_any_V79_selected_input_or_target_during_calibration": false,
+    "change_or_rerun_V72": false,
+    "candidate_design_change_after_training_diagnostics": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "modify_or_stop_RAMSES": false,
+    "next_after_fit": "If integrity checks pass, freeze one final V80 candidate program binding the calibration and all code/input hashes before any V79 selected payload access."
+  }
+}

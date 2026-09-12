@@ -1,0 +1,3784 @@
+{
+  "schema": "cf4-p1-result-v1",
+  "status": "complete",
+  "manifest": "/home/kjhan/BACKUP/CF4/recon/linear_cr/manifest_parent_v1_all.json",
+  "manifest_sha256": "7082b05281428f1a672b1c24fc54f3186ed1e9db60d34bbd0f5d337265003856",
+  "config": "/home/kjhan/BACKUP/CF4/config/p1_targets_v1.json",
+  "config_sha256": "1862fbf09f1fdee35058bab64e1739086e8c26e5b617ceae3f18e049a6c9f307",
+  "N": 192,
+  "spacing_mpc_h": 2.0,
+  "box_size_mpc_h": 384.0,
+  "cosmology": {
+    "Om": 0.31,
+    "Ob": 0.05,
+    "h": 0.746,
+    "A_s_1e9": 1.63,
+    "ns": 0.96
+  },
+  "members": [
+    {
+      "seed": 1001,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1001.npz",
+      "seconds": 23.42221975326538,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 0.8515431880950928,
+          "target_shell_percentile": 86.05510752688173,
+          "peak_delta": 3.7962541580200195,
+          "peak_shell_percentile": 99.73118279569893,
+          "peak_offset_mpc_h": [
+            -3.0,
+            15.0,
+            -3.0
+          ],
+          "peak_separation_mpc_h": 4.1769807277860584,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.358249306678772,
+          "target_shell_percentile": 74.99789615416982,
+          "peak_delta": 1.2095584869384766,
+          "peak_shell_percentile": 90.59686106202138,
+          "peak_offset_mpc_h": [
+            -5.0,
+            67.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 7.092561745288527,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.3230397701263428,
+          "target_shell_percentile": 36.73007246376812,
+          "peak_delta": 0.7458865642547607,
+          "peak_shell_percentile": 81.74818840579711,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": -0.2917810082435608,
+          "target_shell_percentile": 27.682962105872143,
+          "peak_delta": 1.429696798324585,
+          "peak_shell_percentile": 89.39470639282615,
+          "peak_offset_mpc_h": [
+            -21.0,
+            15.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 7.9652335100897815
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 4.542957782745361,
+          "target_shell_percentile": 98.97594889139421,
+          "peak_delta": 12.48745059967041,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -25.0,
+            17.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 6.450623352790411
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 0.7719312906265259,
+          "target_shell_percentile": 83.37040698632394,
+          "peak_delta": 6.595241069793701,
+          "peak_shell_percentile": 99.58189158016147,
+          "peak_offset_mpc_h": [
+            -43.0,
+            -3.0,
+            11.0
+          ],
+          "peak_separation_mpc_h": 9.315339521728594
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 2.6341984272003174,
+          "target_shell_percentile": 95.9605734767025,
+          "peak_delta": 32.45332336425781,
+          "peak_shell_percentile": 99.9910394265233,
+          "peak_offset_mpc_h": [
+            55.0,
+            -7.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 9.262846026164839
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.21809279918670654,
+          "target_shell_percentile": 76.82898843400037,
+          "peak_delta": 3.5829648971557617,
+          "peak_shell_percentile": 99.46147726577321,
+          "peak_offset_mpc_h": [
+            -119.0,
+            73.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 11.356835612715258
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5496839284896851,
+            "centre_delta": -0.6443982720375061,
+            "centre_shell_percentile": 2.73492286115007,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 1.112229347229004,
+            "centre_delta": 1.6461577415466309,
+            "centre_shell_percentile": 92.17078189300412,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.4053395390510559,
+            "centre_delta": -0.466425359249115,
+            "centre_shell_percentile": 24.47289156626506,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.28719407320022583,
+            "centre_delta": -0.3762967586517334,
+            "centre_shell_percentile": 20.72856710087852,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.03249704837799072,
+        "median_centre_shell_percentile": 22.600729333571792,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.42136716842651367,
+        "centre_shell_percentile": 83.67152317880794,
+        "mean_delta_profile": {
+          "12.0": 0.11133766174316406,
+          "24.0": 0.18151196837425232,
+          "31.0": 0.1635231077671051
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1002,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1002.npz",
+      "seconds": 1.0216052532196045,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.2512497901916504,
+          "target_shell_percentile": 96.53897849462365,
+          "peak_delta": 6.254429817199707,
+          "peak_shell_percentile": 99.8991935483871,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 1.1088125705718994,
+          "target_shell_percentile": 91.06496675923589,
+          "peak_delta": 1.521059513092041,
+          "peak_shell_percentile": 94.1576201295969,
+          "peak_offset_mpc_h": [
+            3.0,
+            77.0,
+            11.0
+          ],
+          "peak_separation_mpc_h": 7.366332071521039,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.18675613403320312,
+          "target_shell_percentile": 37.115036231884055,
+          "peak_delta": 0.9690552949905396,
+          "peak_shell_percentile": 82.76721014492753,
+          "peak_offset_mpc_h": [
+            1.0,
+            -7.0,
+            -11.0
+          ],
+          "peak_separation_mpc_h": 4.773446097635562
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.8115253448486328,
+          "target_shell_percentile": 81.42898466878796,
+          "peak_delta": 3.3108248710632324,
+          "peak_shell_percentile": 98.77061035579983,
+          "peak_offset_mpc_h": [
+            -27.0,
+            21.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 7.556553578511912
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 4.336132049560547,
+          "target_shell_percentile": 99.40811724915444,
+          "peak_delta": 9.21279525756836,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -25.0,
+            15.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 5.964616649026181
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 0.7335759401321411,
+          "target_shell_percentile": 83.46721041357719,
+          "peak_delta": 5.7270941734313965,
+          "peak_shell_percentile": 99.52834074806393,
+          "peak_offset_mpc_h": [
+            -49.0,
+            -3.0,
+            15.0
+          ],
+          "peak_separation_mpc_h": 9.751711783750848
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 1.727804183959961,
+          "target_shell_percentile": 93.3225806451613,
+          "peak_delta": 8.790665626525879,
+          "peak_shell_percentile": 99.89068100358422,
+          "peak_offset_mpc_h": [
+            49.0,
+            -17.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 9.969222391079828
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": -0.4206080436706543,
+          "target_shell_percentile": 33.291771209432305,
+          "peak_delta": 1.8429064750671387,
+          "peak_shell_percentile": 96.94990106684618,
+          "peak_offset_mpc_h": [
+            -113.0,
+            79.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 11.314854007009625
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5165995359420776,
+            "centre_delta": -0.5341625809669495,
+            "centre_shell_percentile": 10.641654978962132,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.27385807037353516,
+            "centre_delta": -0.3673591613769531,
+            "centre_shell_percentile": 24.12551440329218,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.2594231069087982,
+            "centre_delta": -0.3084716796875,
+            "centre_shell_percentile": 35.015060240963855,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.16994455456733704,
+            "centre_delta": -0.24810290336608887,
+            "centre_shell_percentile": 33.55801272341715,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 4,
+        "probe_mean_delta": -0.304956316947937,
+        "median_centre_shell_percentile": 28.841763563354665,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.5119656324386597,
+        "centre_shell_percentile": 22.72869757174393,
+        "mean_delta_profile": {
+          "12.0": -0.3751043677330017,
+          "24.0": -0.02120322175323963,
+          "31.0": 0.05302796885371208
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": true
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": true
+      },
+      "n_gates_passed": 4,
+      "pass": true
+    },
+    {
+      "seed": 1003,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1003.npz",
+      "seconds": 1.0070629119873047,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 1.513753890991211,
+          "target_shell_percentile": 89.68413978494624,
+          "peak_delta": 4.9758195877075195,
+          "peak_shell_percentile": 99.76478494623656,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.47166669368743896,
+          "target_shell_percentile": 79.3507531768072,
+          "peak_delta": 1.9407191276550293,
+          "peak_shell_percentile": 95.01598922830935,
+          "peak_offset_mpc_h": [
+            -1.0,
+            69.0,
+            3.0
+          ],
+          "peak_separation_mpc_h": 7.4945840901843415,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.334941029548645,
+          "target_shell_percentile": 14.87771739130435,
+          "peak_delta": 1.3797740936279297,
+          "peak_shell_percentile": 87.00181159420289,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.9983108043670654,
+          "target_shell_percentile": 81.46152733584032,
+          "peak_delta": 3.5783205032348633,
+          "peak_shell_percentile": 97.4544402661267,
+          "peak_offset_mpc_h": [
+            -21.0,
+            13.0,
+            -27.0
+          ],
+          "peak_separation_mpc_h": 7.884231648643273
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 0.4705771207809448,
+          "target_shell_percentile": 73.05524239007892,
+          "peak_delta": 5.42549991607666,
+          "peak_shell_percentile": 99.27658774896655,
+          "peak_offset_mpc_h": [
+            -23.0,
+            15.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 7.406175063209831
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 0.6268808841705322,
+          "target_shell_percentile": 72.75292469929148,
+          "peak_delta": 13.72287368774414,
+          "peak_shell_percentile": 99.92173339924206,
+          "peak_offset_mpc_h": [
+            -43.0,
+            -1.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 9.24308665282824
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 10.185619354248047,
+          "target_shell_percentile": 99.68279569892474,
+          "peak_delta": 17.04517936706543,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            47.0,
+            -9.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 6.198387682081103
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 1.125870943069458,
+          "target_shell_percentile": 93.48520082410298,
+          "peak_delta": 24.369253158569336,
+          "peak_shell_percentile": 99.99974501764478,
+          "peak_offset_mpc_h": [
+            -121.0,
+            65.0,
+            3.0
+          ],
+          "peak_separation_mpc_h": 11.630518667762136
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.305806040763855,
+            "centre_delta": -0.5357536673545837,
+            "centre_shell_percentile": 5.022791023842918,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.4334348440170288,
+            "centre_delta": 0.34507036209106445,
+            "centre_shell_percentile": 64.83539094650206,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.18355965614318848,
+            "centre_delta": -0.32085490226745605,
+            "centre_shell_percentile": 15.66265060240964,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.11556354910135269,
+            "centre_delta": -0.11893272399902344,
+            "centre_shell_percentile": 40.457437140260524,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.042873600497841835,
+        "median_centre_shell_percentile": 28.060043871335083,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.1911236047744751,
+        "centre_shell_percentile": 52.84061810154525,
+        "mean_delta_profile": {
+          "12.0": 0.006198285147547722,
+          "24.0": 0.30721530318260193,
+          "31.0": 0.2769247889518738
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1004,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1004.npz",
+      "seconds": 1.0128662586212158,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 1.6502325534820557,
+          "target_shell_percentile": 90.89381720430107,
+          "peak_delta": 6.02727746963501,
+          "peak_shell_percentile": 99.86559139784946,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": -0.09041094779968262,
+          "target_shell_percentile": 53.67226289657494,
+          "peak_delta": 2.4248123168945312,
+          "peak_shell_percentile": 97.20083312294875,
+          "peak_offset_mpc_h": [
+            -5.0,
+            69.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 7.672763116653773,
+          "pass": false
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": 0.27545166015625,
+          "target_shell_percentile": 63.74547101449275,
+          "peak_delta": 2.9127089977264404,
+          "peak_shell_percentile": 97.28260869565217,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.7820650339126587,
+          "target_shell_percentile": 80.81067399479316,
+          "peak_delta": 1.6740789413452148,
+          "peak_shell_percentile": 91.8571015331212,
+          "peak_offset_mpc_h": [
+            -25.0,
+            15.0,
+            -29.0
+          ],
+          "peak_separation_mpc_h": 7.728225678028363
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 0.7798105478286743,
+          "target_shell_percentile": 82.53945885005636,
+          "peak_delta": 4.836272239685059,
+          "peak_shell_percentile": 99.61010898158587,
+          "peak_offset_mpc_h": [
+            -25.0,
+            13.0,
+            -3.0
+          ],
+          "peak_separation_mpc_h": 6.327804799647102
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": -0.14567726850509644,
+          "target_shell_percentile": 51.76511781183062,
+          "peak_delta": 6.794783115386963,
+          "peak_shell_percentile": 99.48302850551985,
+          "peak_offset_mpc_h": [
+            -43.0,
+            -7.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 9.928846935975606
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 13.1771879196167,
+          "target_shell_percentile": 99.82974910394266,
+          "peak_delta": 27.88483428955078,
+          "peak_shell_percentile": 100.0,
+          "peak_offset_mpc_h": [
+            57.0,
+            -11.0,
+            -19.0
+          ],
+          "peak_separation_mpc_h": 7.769254375548299
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.8003405332565308,
+          "target_shell_percentile": 90.63908777512596,
+          "peak_delta": 5.780381679534912,
+          "peak_shell_percentile": 99.93370458764254,
+          "peak_offset_mpc_h": [
+            -127.0,
+            73.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 11.193827663970639
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.6218389272689819,
+            "centre_delta": -0.691371738910675,
+            "centre_shell_percentile": 0.28927068723702665,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.07573571056127548,
+            "centre_delta": -0.20987051725387573,
+            "centre_shell_percentile": 38.96090534979424,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.4227641522884369,
+            "centre_delta": -0.5124467015266418,
+            "centre_shell_percentile": 10.015060240963855,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.07463838905096054,
+            "centre_delta": -0.04748713970184326,
+            "centre_shell_percentile": 51.57528021811573,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 4,
+        "probe_mean_delta": -0.2987442947924137,
+        "median_centre_shell_percentile": 24.487982795379047,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.6792275905609131,
+        "centre_shell_percentile": 6.399116997792495,
+        "mean_delta_profile": {
+          "12.0": -0.6250534057617188,
+          "24.0": -0.501461923122406,
+          "31.0": -0.3305930495262146
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": true
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": false,
+        "LocalVoid": true,
+        "BootesVoid": true
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1005,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1005.npz",
+      "seconds": 1.0028860569000244,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 1.937864065170288,
+          "target_shell_percentile": 92.90994623655914,
+          "peak_delta": 6.539181232452393,
+          "peak_shell_percentile": 99.83198924731182,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": -0.5663767457008362,
+          "target_shell_percentile": 12.988092232601195,
+          "peak_delta": 3.38333797454834,
+          "peak_shell_percentile": 97.89089455524699,
+          "peak_offset_mpc_h": [
+            5.0,
+            67.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 7.613783104794354,
+          "pass": false
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.3698740601539612,
+          "target_shell_percentile": 16.870471014492754,
+          "peak_delta": 0.5611698627471924,
+          "peak_shell_percentile": 70.65217391304348,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": -0.15761655569076538,
+          "target_shell_percentile": 37.98814000578537,
+          "peak_delta": 1.5471508502960205,
+          "peak_shell_percentile": 90.35652299681804,
+          "peak_offset_mpc_h": [
+            -21.0,
+            13.0,
+            -27.0
+          ],
+          "peak_separation_mpc_h": 7.884231648643273
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 0.5728728771209717,
+          "target_shell_percentile": 75.2912438932732,
+          "peak_delta": 3.9241433143615723,
+          "peak_shell_percentile": 99.29068019541526,
+          "peak_offset_mpc_h": [
+            -35.0,
+            11.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 7.74631865284538
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 1.0571138858795166,
+          "target_shell_percentile": 86.2909869830285,
+          "peak_delta": 16.351011276245117,
+          "peak_shell_percentile": 99.9876421156698,
+          "peak_offset_mpc_h": [
+            -47.0,
+            1.0,
+            11.0
+          ],
+          "peak_separation_mpc_h": 9.836606652209959
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 4.3683905601501465,
+          "target_shell_percentile": 98.6021505376344,
+          "peak_delta": 14.3096284866333,
+          "peak_shell_percentile": 99.97132616487455,
+          "peak_offset_mpc_h": [
+            53.0,
+            -13.0,
+            -23.0
+          ],
+          "peak_separation_mpc_h": 9.877999807007358
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 1.7441802024841309,
+          "target_shell_percentile": 96.26782326662995,
+          "peak_delta": 6.195409297943115,
+          "peak_shell_percentile": 99.80442853354548,
+          "peak_offset_mpc_h": [
+            -113.0,
+            75.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 11.168032187712084
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.6713634133338928,
+            "centre_delta": -0.740690290927887,
+            "centre_shell_percentile": 0.07012622720897616,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.07604964822530746,
+            "centre_delta": -0.1490294337272644,
+            "centre_shell_percentile": 33.9917695473251,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.14817850291728973,
+            "centre_delta": -0.3320472836494446,
+            "centre_shell_percentile": 17.018072289156628,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.1539158672094345,
+            "centre_delta": 0.2258450984954834,
+            "centre_shell_percentile": 61.29960617994548,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.18541892431676388,
+        "median_centre_shell_percentile": 25.504920918240863,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 1.4181554317474365,
+        "centre_shell_percentile": 95.35629139072847,
+        "mean_delta_profile": {
+          "12.0": 0.5596432685852051,
+          "24.0": 0.022581838071346283,
+          "31.0": -0.016562670469284058
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": false,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1006,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1006.npz",
+      "seconds": 1.0057475566864014,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.56833553314209,
+          "target_shell_percentile": 97.14381720430107,
+          "peak_delta": 6.02384614944458,
+          "peak_shell_percentile": 99.93279569892472,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": -0.5309552550315857,
+          "target_shell_percentile": 17.32622233442733,
+          "peak_delta": 1.2113037109375,
+          "peak_shell_percentile": 91.27009172767819,
+          "peak_offset_mpc_h": [
+            3.0,
+            69.0,
+            3.0
+          ],
+          "peak_separation_mpc_h": 7.772642203816596,
+          "pass": false
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.5293092727661133,
+          "target_shell_percentile": 9.375,
+          "peak_delta": 0.41539955139160156,
+          "peak_shell_percentile": 69.58786231884058,
+          "peak_offset_mpc_h": [
+            1.0,
+            -7.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.547366855789789
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.15783250331878662,
+          "target_shell_percentile": 59.13002603413364,
+          "peak_delta": 1.458155632019043,
+          "peak_shell_percentile": 91.4015041943882,
+          "peak_offset_mpc_h": [
+            -21.0,
+            13.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 7.2435474629859025
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 2.2518980503082275,
+          "target_shell_percentile": 96.62251033446073,
+          "peak_delta": 8.983236312866211,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -23.0,
+            15.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 7.406175063209831
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": -0.5133215188980103,
+          "target_shell_percentile": 16.613115834569122,
+          "peak_delta": 1.3786625862121582,
+          "peak_shell_percentile": 89.9550996869336,
+          "peak_offset_mpc_h": [
+            -53.0,
+            -1.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 9.939030466345915
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 1.8620858192443848,
+          "target_shell_percentile": 93.96953405017922,
+          "peak_delta": 20.16086196899414,
+          "peak_shell_percentile": 99.99462365591398,
+          "peak_offset_mpc_h": [
+            53.0,
+            -17.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 9.723804974603299
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.33197271823883057,
+          "target_shell_percentile": 82.57399587948514,
+          "peak_delta": 3.8400025367736816,
+          "peak_shell_percentile": 99.58386879627929,
+          "peak_offset_mpc_h": [
+            -123.0,
+            65.0,
+            3.0
+          ],
+          "peak_separation_mpc_h": 11.417091579744499
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5241948962211609,
+            "centre_delta": -0.6456719636917114,
+            "centre_shell_percentile": 3.234572230014025,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.3597213327884674,
+            "centre_delta": 0.37451624870300293,
+            "centre_shell_percentile": 70.54526748971193,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": 0.06759830564260483,
+            "centre_delta": 0.06154370307922363,
+            "centre_shell_percentile": 53.38855421686747,
+            "underdense": false
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.1757076233625412,
+            "centre_delta": 0.1299680471420288,
+            "centre_shell_percentile": 57.19100272644653,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 1,
+        "probe_mean_delta": 0.019708091393113136,
+        "median_centre_shell_percentile": 55.289778471657,
+        "pass": false
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.6870126724243164,
+        "centre_shell_percentile": 89.23090507726269,
+        "mean_delta_profile": {
+          "12.0": 0.27303338050842285,
+          "24.0": -0.03841928765177727,
+          "31.0": -0.05263710394501686
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": false,
+        "LocalVoid": false,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 1,
+      "pass": false
+    },
+    {
+      "seed": 1007,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1007.npz",
+      "seconds": 1.0107026100158691,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.0794167518615723,
+          "target_shell_percentile": 95.63172043010752,
+          "peak_delta": 5.150859355926514,
+          "peak_shell_percentile": 99.83198924731182,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.37459564208984375,
+          "target_shell_percentile": 74.41618278212573,
+          "peak_delta": 1.7314674854278564,
+          "peak_shell_percentile": 94.43112008751999,
+          "peak_offset_mpc_h": [
+            -3.0,
+            65.0,
+            15.0
+          ],
+          "peak_separation_mpc_h": 7.791225600537186,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.3875783681869507,
+          "target_shell_percentile": 9.465579710144928,
+          "peak_delta": 0.4874091148376465,
+          "peak_shell_percentile": 69.13496376811594,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 4.960233082027591
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.1743260622024536,
+          "target_shell_percentile": 59.36144055539485,
+          "peak_delta": 2.5465950965881348,
+          "peak_shell_percentile": 96.74934914665896,
+          "peak_offset_mpc_h": [
+            -21.0,
+            15.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 7.9652335100897815
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 2.226863145828247,
+          "target_shell_percentile": 96.58962795941376,
+          "peak_delta": 10.932684898376465,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -23.0,
+            13.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 7.53774098766908
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": -0.22617089748382568,
+          "target_shell_percentile": 47.0691217663536,
+          "peak_delta": 3.1154699325561523,
+          "peak_shell_percentile": 96.83638161146811,
+          "peak_offset_mpc_h": [
+            -51.0,
+            -3.0,
+            15.0
+          ],
+          "peak_separation_mpc_h": 9.78312758073247
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 5.8072896003723145,
+          "target_shell_percentile": 98.88172043010752,
+          "peak_delta": 19.80432891845703,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            51.0,
+            -13.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 7.850774792421975
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 1.076751470565796,
+          "target_shell_percentile": 91.93006343960998,
+          "peak_delta": 11.577817916870117,
+          "peak_shell_percentile": 99.98623095281806,
+          "peak_offset_mpc_h": [
+            -113.0,
+            75.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 10.84578434433629
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5323224663734436,
+            "centre_delta": -0.6094241738319397,
+            "centre_shell_percentile": 1.1921458625525947,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.18633078038692474,
+            "centre_delta": 0.29611217975616455,
+            "centre_shell_percentile": 63.641975308641975,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.12870128452777863,
+            "centre_delta": -0.2744099497795105,
+            "centre_shell_percentile": 24.77409638554217,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.096687912940979,
+            "centre_delta": -0.027276337146759033,
+            "centre_shell_percentile": 46.020145410481675,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 2,
+        "probe_mean_delta": -0.09450126439332962,
+        "median_centre_shell_percentile": 35.39712089801192,
+        "pass": false
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.09242141246795654,
+        "centre_shell_percentile": 71.32273730684327,
+        "mean_delta_profile": {
+          "12.0": 0.06816643476486206,
+          "24.0": 0.243411585688591,
+          "31.0": 0.19761386513710022
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": false,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1008,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1008.npz",
+      "seconds": 1.035975694656372,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 0.626943826675415,
+          "target_shell_percentile": 78.42741935483872,
+          "peak_delta": 4.5742926597595215,
+          "peak_shell_percentile": 99.49596774193549,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": -0.042986392974853516,
+          "target_shell_percentile": 57.30034503071615,
+          "peak_delta": 1.2583365440368652,
+          "peak_shell_percentile": 91.84549356223177,
+          "peak_offset_mpc_h": [
+            -5.0,
+            65.0,
+            11.0
+          ],
+          "peak_separation_mpc_h": 7.52896073042773,
+          "pass": false
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.40195417404174805,
+          "target_shell_percentile": 23.233695652173914,
+          "peak_delta": 0.9403507709503174,
+          "peak_shell_percentile": 83.53713768115942,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 1.0526325702667236,
+          "target_shell_percentile": 84.93274515475846,
+          "peak_delta": 2.7036244869232178,
+          "peak_shell_percentile": 98.09444605148974,
+          "peak_offset_mpc_h": [
+            -25.0,
+            21.0,
+            -29.0
+          ],
+          "peak_separation_mpc_h": 6.327529128941048
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 2.151840925216675,
+          "target_shell_percentile": 95.85212326193161,
+          "peak_delta": 5.663290977478027,
+          "peak_shell_percentile": 99.97181510710259,
+          "peak_offset_mpc_h": [
+            -25.0,
+            11.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 5.831571290202341
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 2.4623820781707764,
+          "target_shell_percentile": 94.57900807381776,
+          "peak_delta": 7.0802202224731445,
+          "peak_shell_percentile": 99.03814466963256,
+          "peak_offset_mpc_h": [
+            -47.0,
+            1.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 8.662562751971612
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 15.995115280151367,
+          "target_shell_percentile": 99.69354838709677,
+          "peak_delta": 34.59071731567383,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            53.0,
+            -7.0,
+            -19.0
+          ],
+          "peak_separation_mpc_h": 7.061168540583678
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.6029592752456665,
+          "target_shell_percentile": 87.07213960793912,
+          "peak_delta": 4.547239780426025,
+          "peak_shell_percentile": 99.4408236950003,
+          "peak_offset_mpc_h": [
+            -117.0,
+            67.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 10.660401512268185
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.43255266547203064,
+            "centre_delta": -0.4754241108894348,
+            "centre_shell_percentile": 13.025946704067321,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.062144435942173004,
+            "centre_delta": -0.12898266315460205,
+            "centre_shell_percentile": 39.1358024691358,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.2226065695285797,
+            "centre_delta": -0.32581162452697754,
+            "centre_shell_percentile": 29.292168674698793,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.20353633165359497,
+            "centre_delta": 0.17306077480316162,
+            "centre_shell_percentile": 56.66843380793699,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.1284418348222971,
+        "median_centre_shell_percentile": 34.21398557191729,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.1105961799621582,
+        "centre_shell_percentile": 73.42671081677705,
+        "mean_delta_profile": {
+          "12.0": 0.4763772189617157,
+          "24.0": 0.5630659461021423,
+          "31.0": 0.3533385694026947
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": false,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1009,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1009.npz",
+      "seconds": 1.0111021995544434,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 1.8446805477142334,
+          "target_shell_percentile": 95.43010752688173,
+          "peak_delta": 6.086668014526367,
+          "peak_shell_percentile": 99.8991935483871,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 1.3430254459381104,
+          "target_shell_percentile": 93.08150298746108,
+          "peak_delta": 7.912168502807617,
+          "peak_shell_percentile": 99.8127577211142,
+          "peak_offset_mpc_h": [
+            -7.0,
+            69.0,
+            9.0
+          ],
+          "peak_separation_mpc_h": 7.657941262422886,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.08245611190795898,
+          "target_shell_percentile": 46.01449275362319,
+          "peak_delta": 0.7075842618942261,
+          "peak_shell_percentile": 81.11413043478261,
+          "peak_offset_mpc_h": [
+            1.0,
+            -7.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.547366855789789
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.6416760683059692,
+          "target_shell_percentile": 78.21087648249929,
+          "peak_delta": 2.2636685371398926,
+          "peak_shell_percentile": 97.32788544981197,
+          "peak_offset_mpc_h": [
+            -27.0,
+            21.0,
+            -29.0
+          ],
+          "peak_separation_mpc_h": 7.244705630099723
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 1.2977807521820068,
+          "target_shell_percentile": 93.17925591882751,
+          "peak_delta": 7.836915969848633,
+          "peak_shell_percentile": 99.98121007140173,
+          "peak_offset_mpc_h": [
+            -25.0,
+            19.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 7.811519928202794
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 1.7018861770629883,
+          "target_shell_percentile": 93.21964079749547,
+          "peak_delta": 10.993355751037598,
+          "peak_shell_percentile": 99.82698961937716,
+          "peak_offset_mpc_h": [
+            -53.0,
+            1.0,
+            9.0
+          ],
+          "peak_separation_mpc_h": 9.130187607060021
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 4.464252471923828,
+          "target_shell_percentile": 98.48387096774194,
+          "peak_delta": 6.730590343475342,
+          "peak_shell_percentile": 99.25448028673836,
+          "peak_offset_mpc_h": [
+            51.0,
+            -13.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 4.113541327229194
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": -0.09664875268936157,
+          "target_shell_percentile": 64.30527507496481,
+          "peak_delta": 2.220778465270996,
+          "peak_shell_percentile": 98.14117863043877,
+          "peak_offset_mpc_h": [
+            -131.0,
+            81.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 11.598224568711736
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5752997398376465,
+            "centre_delta": -0.6436495184898376,
+            "centre_shell_percentile": 1.3937587657784012,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.29045310616493225,
+            "centre_delta": 0.4807032346725464,
+            "centre_shell_percentile": 77.45884773662551,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.46418339014053345,
+            "centre_delta": -0.6033141016960144,
+            "centre_shell_percentile": 7.003012048192771,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.5467119216918945,
+            "centre_delta": -0.6171630024909973,
+            "centre_shell_percentile": 5.880793698879128,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.32393548637628555,
+        "median_centre_shell_percentile": 6.441902873535949,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.6003715991973877,
+        "centre_shell_percentile": 12.180353200883003,
+        "mean_delta_profile": {
+          "12.0": -0.2566795349121094,
+          "24.0": -0.061950549483299255,
+          "31.0": 0.011061737313866615
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": true
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": true
+      },
+      "n_gates_passed": 4,
+      "pass": true
+    },
+    {
+      "seed": 1010,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1010.npz",
+      "seconds": 1.0060832500457764,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.950589418411255,
+          "target_shell_percentile": 96.84139784946237,
+          "peak_delta": 8.092708587646484,
+          "peak_shell_percentile": 99.93279569892472,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.33078837394714355,
+          "target_shell_percentile": 78.72485904232937,
+          "peak_delta": 2.588674545288086,
+          "peak_shell_percentile": 98.17912143398132,
+          "peak_offset_mpc_h": [
+            7.0,
+            69.0,
+            9.0
+          ],
+          "peak_separation_mpc_h": 6.74553043738536,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.34666919708251953,
+          "target_shell_percentile": 18.161231884057973,
+          "peak_delta": 0.4291517734527588,
+          "peak_shell_percentile": 67.57246376811594,
+          "peak_offset_mpc_h": [
+            1.0,
+            -9.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 5.902933555734412
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.40311717987060547,
+          "target_shell_percentile": 66.33280300838878,
+          "peak_delta": 1.8857877254486084,
+          "peak_shell_percentile": 91.47743708417703,
+          "peak_offset_mpc_h": [
+            -29.0,
+            17.0,
+            -27.0
+          ],
+          "peak_separation_mpc_h": 7.669968470881299
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 12.405218124389648,
+          "target_shell_percentile": 99.98121007140173,
+          "peak_delta": 12.725296020507812,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -29.0,
+            13.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 1.221293981109878
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 2.5020792484283447,
+          "target_shell_percentile": 94.93532707200526,
+          "peak_delta": 11.307811737060547,
+          "peak_shell_percentile": 99.8496457406492,
+          "peak_offset_mpc_h": [
+            -41.0,
+            -3.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 9.7817494954583
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 17.459671020507812,
+          "target_shell_percentile": 99.97491039426524,
+          "peak_delta": 21.042728424072266,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            49.0,
+            -13.0,
+            -13.0
+          ],
+          "peak_separation_mpc_h": 3.2594916182835183
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.9694488048553467,
+          "target_shell_percentile": 92.69042082287906,
+          "peak_delta": 6.763437271118164,
+          "peak_shell_percentile": 99.93778430532608,
+          "peak_offset_mpc_h": [
+            -121.0,
+            65.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 9.806888373956365
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.4237721562385559,
+            "centre_delta": -0.5020763874053955,
+            "centre_shell_percentile": 13.183730715287517,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.12215951085090637,
+            "centre_delta": 0.04568779468536377,
+            "centre_shell_percentile": 51.75925925925926,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.034856293350458145,
+            "centre_delta": -0.10394012928009033,
+            "centre_shell_percentile": 32.454819277108435,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.25848376750946045,
+            "centre_delta": -0.27213507890701294,
+            "centre_shell_percentile": 26.575280218115722,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.14873817656189203,
+        "median_centre_shell_percentile": 29.51504974761208,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.1395511031150818,
+        "centre_shell_percentile": 57.76688741721854,
+        "mean_delta_profile": {
+          "12.0": 0.009613669477403164,
+          "24.0": -0.10108325630426407,
+          "31.0": -0.0992845892906189
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1011,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1011.npz",
+      "seconds": 1.0073418617248535,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.946035146713257,
+          "target_shell_percentile": 97.00940860215054,
+          "peak_delta": 7.620525360107422,
+          "peak_shell_percentile": 99.93279569892472,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 1.5402674674987793,
+          "target_shell_percentile": 92.97631069595221,
+          "peak_delta": 8.465935707092285,
+          "peak_shell_percentile": 99.96739038963224,
+          "peak_offset_mpc_h": [
+            -3.0,
+            67.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 7.034155306747118,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.15091657638549805,
+          "target_shell_percentile": 32.76721014492754,
+          "peak_delta": 1.2376291751861572,
+          "peak_shell_percentile": 87.45471014492753,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": -0.14034897089004517,
+          "target_shell_percentile": 43.45169221868672,
+          "peak_delta": 1.0859920978546143,
+          "peak_shell_percentile": 87.30474399768585,
+          "peak_offset_mpc_h": [
+            -27.0,
+            25.0,
+            -19.0
+          ],
+          "peak_separation_mpc_h": 7.950281762089175
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 2.6091132164001465,
+          "target_shell_percentile": 96.88087185268695,
+          "peak_delta": 6.934475421905518,
+          "peak_shell_percentile": 99.99060503570087,
+          "peak_offset_mpc_h": [
+            -25.0,
+            17.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 6.650949523199325
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 0.7448793649673462,
+          "target_shell_percentile": 83.10677212061294,
+          "peak_delta": 4.313268661499023,
+          "peak_shell_percentile": 98.53765035425936,
+          "peak_offset_mpc_h": [
+            -41.0,
+            -3.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 9.820540252912785
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 12.611674308776855,
+          "target_shell_percentile": 99.79569892473118,
+          "peak_delta": 32.090633392333984,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            55.0,
+            -7.0,
+            -15.0
+          ],
+          "peak_separation_mpc_h": 5.543478386237205
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": -0.51749187707901,
+          "target_shell_percentile": 21.45345042123085,
+          "peak_delta": 6.7495222091674805,
+          "peak_shell_percentile": 99.96940211737348,
+          "peak_offset_mpc_h": [
+            -123.0,
+            63.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 11.965445898401095
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.4000324308872223,
+            "centre_delta": -0.4804549217224121,
+            "centre_shell_percentile": 11.009817671809257,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.2939576208591461,
+            "centre_delta": 0.3185708522796631,
+            "centre_shell_percentile": 66.84156378600822,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": 0.130250483751297,
+            "centre_delta": 0.008064746856689453,
+            "centre_shell_percentile": 35.39156626506024,
+            "underdense": false
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.22124503552913666,
+            "centre_delta": -0.3225393295288086,
+            "centre_shell_percentile": 26.80248409572857,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 2,
+        "probe_mean_delta": -0.04926734045147896,
+        "median_centre_shell_percentile": 31.097025180394404,
+        "pass": false
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.535578727722168,
+        "centre_shell_percentile": 18.526490066225165,
+        "mean_delta_profile": {
+          "12.0": 0.12158122658729553,
+          "24.0": 0.5858237147331238,
+          "31.0": 0.47366613149642944
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": false,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1012,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1012.npz",
+      "seconds": 1.004448652267456,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.102083921432495,
+          "target_shell_percentile": 95.83333333333334,
+          "peak_delta": 6.427706718444824,
+          "peak_shell_percentile": 99.63037634408603,
+          "peak_offset_mpc_h": [
+            -7.0,
+            13.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.556024237219254,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.580844521522522,
+          "target_shell_percentile": 81.55242783808802,
+          "peak_delta": 1.243302822113037,
+          "peak_shell_percentile": 91.69822435411933,
+          "peak_offset_mpc_h": [
+            -5.0,
+            65.0,
+            9.0
+          ],
+          "peak_separation_mpc_h": 7.598524223635662,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": 0.23643290996551514,
+          "target_shell_percentile": 63.83605072463768,
+          "peak_delta": 1.1690962314605713,
+          "peak_shell_percentile": 87.9302536231884,
+          "peak_offset_mpc_h": [
+            3.0,
+            -11.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.354928361681523
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.23019278049468994,
+          "target_shell_percentile": 66.53529071449233,
+          "peak_delta": 2.01924204826355,
+          "peak_shell_percentile": 95.59589239224762,
+          "peak_offset_mpc_h": [
+            -23.0,
+            19.0,
+            -31.0
+          ],
+          "peak_separation_mpc_h": 7.834718594373532
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 3.9926328659057617,
+          "target_shell_percentile": 98.97125140924464,
+          "peak_delta": 8.530342102050781,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -25.0,
+            11.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.6020206882991666
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 4.552192211151123,
+          "target_shell_percentile": 98.80128521997034,
+          "peak_delta": 11.285048484802246,
+          "peak_shell_percentile": 99.85376503542594,
+          "peak_offset_mpc_h": [
+            -59.0,
+            -5.0,
+            3.0
+          ],
+          "peak_separation_mpc_h": 9.917095541996288
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 10.083457946777344,
+          "target_shell_percentile": 99.71505376344086,
+          "peak_delta": 26.177278518676758,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            51.0,
+            -13.0,
+            -19.0
+          ],
+          "peak_separation_mpc_h": 5.9395238484305635
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": -0.13148486614227295,
+          "target_shell_percentile": 60.80003263774147,
+          "peak_delta": 2.4911656379699707,
+          "peak_shell_percentile": 98.70927931787121,
+          "peak_offset_mpc_h": [
+            -129.0,
+            65.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 11.908801404512529
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.3767359256744385,
+            "centre_delta": -0.48345357179641724,
+            "centre_shell_percentile": 10.84326788218794,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.14161020517349243,
+            "centre_delta": -0.20675939321517944,
+            "centre_shell_percentile": 33.364197530864196,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.3387329578399658,
+            "centre_delta": -0.4163198471069336,
+            "centre_shell_percentile": 18.298192771084338,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.18830694258213043,
+            "centre_delta": -0.20810729265213013,
+            "centre_shell_percentile": 36.02317479551651,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 4,
+        "probe_mean_delta": -0.2613465078175068,
+        "median_centre_shell_percentile": 25.831195150974267,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 2.2419910430908203,
+        "centre_shell_percentile": 98.36622516556291,
+        "mean_delta_profile": {
+          "12.0": 1.8550111055374146,
+          "24.0": 0.568607747554779,
+          "31.0": 0.3491092026233673
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1013,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1013.npz",
+      "seconds": 0.9998714923858643,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 2.1428983211517334,
+          "target_shell_percentile": 96.23655913978494,
+          "peak_delta": 5.8333587646484375,
+          "peak_shell_percentile": 99.83198924731182,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 5.683893203735352,
+          "target_shell_percentile": 99.51927122780442,
+          "peak_delta": 12.861296653747559,
+          "peak_shell_percentile": 99.99894807708492,
+          "peak_offset_mpc_h": [
+            3.0,
+            71.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 5.905606418344608,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": 0.07464969158172607,
+          "target_shell_percentile": 53.645833333333336,
+          "peak_delta": 0.5124201774597168,
+          "peak_shell_percentile": 73.07518115942028,
+          "peak_offset_mpc_h": [
+            1.0,
+            -7.0,
+            -11.0
+          ],
+          "peak_separation_mpc_h": 4.773446097635562
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.4153841733932495,
+          "target_shell_percentile": 68.37575932889789,
+          "peak_delta": 1.8300750255584717,
+          "peak_shell_percentile": 92.38140005785364,
+          "peak_offset_mpc_h": [
+            -23.0,
+            15.0,
+            -29.0
+          ],
+          "peak_separation_mpc_h": 7.434873054823182
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 3.1203079223632812,
+          "target_shell_percentile": 97.63716647876738,
+          "peak_delta": 5.880888938903809,
+          "peak_shell_percentile": 99.92014280345735,
+          "peak_offset_mpc_h": [
+            -35.0,
+            11.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 7.74631865284538
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 0.8697196245193481,
+          "target_shell_percentile": 85.17877739331027,
+          "peak_delta": 4.648491859436035,
+          "peak_shell_percentile": 99.11023232822541,
+          "peak_offset_mpc_h": [
+            -53.0,
+            -13.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 9.824291415697319
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 3.956730842590332,
+          "target_shell_percentile": 98.72043010752688,
+          "peak_delta": 14.013872146606445,
+          "peak_shell_percentile": 99.99462365591398,
+          "peak_offset_mpc_h": [
+            51.0,
+            -17.0,
+            -19.0
+          ],
+          "peak_separation_mpc_h": 8.161627768908035
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 0.5289679765701294,
+          "target_shell_percentile": 86.29597331864635,
+          "peak_delta": 7.3175153732299805,
+          "peak_shell_percentile": 99.92452522285458,
+          "peak_offset_mpc_h": [
+            -121.0,
+            79.0,
+            -13.0
+          ],
+          "peak_separation_mpc_h": 10.828484609328102
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.4794406592845917,
+            "centre_delta": -0.5437275767326355,
+            "centre_shell_percentile": 8.59046283309958,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.13097018003463745,
+            "centre_delta": 0.08142292499542236,
+            "centre_shell_percentile": 55.205761316872426,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.43802186846733093,
+            "centre_delta": -0.5159671306610107,
+            "centre_shell_percentile": 13.629518072289157,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.350223571062088,
+            "centre_delta": -0.31297457218170166,
+            "centre_shell_percentile": 29.09345652832475,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 3,
+        "probe_mean_delta": -0.2841789796948433,
+        "median_centre_shell_percentile": 21.361487300306955,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.026820361614227295,
+        "centre_shell_percentile": 65.94128035320088,
+        "mean_delta_profile": {
+          "12.0": 0.012350878678262234,
+          "24.0": -0.12944911420345306,
+          "31.0": -0.17949379980564117
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 3,
+      "pass": false
+    },
+    {
+      "seed": 1014,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1014.npz",
+      "seconds": 1.005307912826538,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 0.6026177406311035,
+          "target_shell_percentile": 72.54704301075269,
+          "peak_delta": 3.390671730041504,
+          "peak_shell_percentile": 99.39516129032258,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            -1.0
+          ],
+          "peak_separation_mpc_h": 4.090361724005023,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 2.525716543197632,
+          "target_shell_percentile": 97.03568122527982,
+          "peak_delta": 4.220541477203369,
+          "peak_shell_percentile": 99.06168475974081,
+          "peak_offset_mpc_h": [
+            5.0,
+            73.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 7.517533922566867,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.1741679310798645,
+          "target_shell_percentile": 25.543478260869566,
+          "peak_delta": 1.8447990417480469,
+          "peak_shell_percentile": 93.84057971014492,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.49762606620788574,
+          "target_shell_percentile": 70.24153890656639,
+          "peak_delta": 4.212489604949951,
+          "peak_shell_percentile": 98.99479317327162,
+          "peak_offset_mpc_h": [
+            -29.0,
+            21.0,
+            -23.0
+          ],
+          "peak_separation_mpc_h": 6.264324833137333
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 3.543323516845703,
+          "target_shell_percentile": 98.42634347989477,
+          "peak_delta": 7.783635139465332,
+          "peak_shell_percentile": 99.83089064261556,
+          "peak_offset_mpc_h": [
+            -25.0,
+            13.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 5.671626734958492
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 1.4617235660552979,
+          "target_shell_percentile": 88.34033613445378,
+          "peak_delta": 3.2842817306518555,
+          "peak_shell_percentile": 97.40690393804582,
+          "peak_offset_mpc_h": [
+            -53.0,
+            -1.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 8.60371657737345
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 3.607053279876709,
+          "target_shell_percentile": 98.06272401433692,
+          "peak_delta": 17.976016998291016,
+          "peak_shell_percentile": 99.98566308243727,
+          "peak_offset_mpc_h": [
+            49.0,
+            -13.0,
+            -21.0
+          ],
+          "peak_separation_mpc_h": 8.249313352678033
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 1.6064622402191162,
+          "target_shell_percentile": 95.44499520633171,
+          "peak_delta": 9.114636421203613,
+          "peak_shell_percentile": 99.98393611162108,
+          "peak_offset_mpc_h": [
+            -123.0,
+            63.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 11.965445898401095
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.09973331540822983,
+            "centre_delta": -0.20215213298797607,
+            "centre_shell_percentile": 27.445652173913043,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.3153725564479828,
+            "centre_delta": 0.29820775985717773,
+            "centre_shell_percentile": 62.674897119341566,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.15468178689479828,
+            "centre_delta": -0.30675381422042847,
+            "centre_shell_percentile": 19.954819277108435,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.39498433470726013,
+            "centre_delta": 0.5618504285812378,
+            "centre_shell_percentile": 73.06119357770373,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 2,
+        "probe_mean_delta": 0.1139854472130537,
+        "median_centre_shell_percentile": 45.060274646627306,
+        "pass": false
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.217171311378479,
+        "centre_shell_percentile": 74.7578366445916,
+        "mean_delta_profile": {
+          "12.0": 0.20554035902023315,
+          "24.0": -0.026035882532596588,
+          "31.0": -0.09802127629518509
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": false,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1015,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1015.npz",
+      "seconds": 1.0154907703399658,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 0.6480053663253784,
+          "target_shell_percentile": 79.2002688172043,
+          "peak_delta": 4.052464962005615,
+          "peak_shell_percentile": 99.69758064516128,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": -0.1500927209854126,
+          "target_shell_percentile": 54.77993772616343,
+          "peak_delta": 1.4323797225952148,
+          "peak_shell_percentile": 93.32449718084659,
+          "peak_offset_mpc_h": [
+            -1.0,
+            67.0,
+            17.0
+          ],
+          "peak_separation_mpc_h": 7.568883984456461,
+          "pass": false
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": 0.08641469478607178,
+          "target_shell_percentile": 54.93659420289855,
+          "peak_delta": 1.6010136604309082,
+          "peak_shell_percentile": 93.09329710144928,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": -0.24914687871932983,
+          "target_shell_percentile": 29.859704946485394,
+          "peak_delta": 0.9826661348342896,
+          "peak_shell_percentile": 85.85117153601388,
+          "peak_offset_mpc_h": [
+            -23.0,
+            15.0,
+            -17.0
+          ],
+          "peak_separation_mpc_h": 7.739061936659917
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 4.073302268981934,
+          "target_shell_percentile": 99.46448703494927,
+          "peak_delta": 9.983716011047363,
+          "peak_shell_percentile": 99.99530251785043,
+          "peak_offset_mpc_h": [
+            -25.0,
+            11.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 6.062841567413051
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 1.404642105102539,
+          "target_shell_percentile": 91.61929477673422,
+          "peak_delta": 7.547946929931641,
+          "peak_shell_percentile": 99.62308452792882,
+          "peak_offset_mpc_h": [
+            -43.0,
+            -1.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 9.20186194226527
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 5.102287769317627,
+          "target_shell_percentile": 98.90143369175627,
+          "peak_delta": 42.95923614501953,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            53.0,
+            -13.0,
+            -23.0
+          ],
+          "peak_separation_mpc_h": 9.877999807007358
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 1.9948854446411133,
+          "target_shell_percentile": 97.95937621116619,
+          "peak_delta": 3.31838321685791,
+          "peak_shell_percentile": 99.34928502947596,
+          "peak_offset_mpc_h": [
+            -121.0,
+            75.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 10.694364602848184
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.5281628370285034,
+            "centre_delta": -0.6092522740364075,
+            "centre_shell_percentile": 1.6479663394109396,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": -0.12917470932006836,
+            "centre_delta": -0.20018577575683594,
+            "centre_shell_percentile": 35.63786008230453,
+            "underdense": true
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.32342883944511414,
+            "centre_delta": -0.4062749147415161,
+            "centre_shell_percentile": 15.512048192771086,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": -0.31334784626960754,
+            "centre_delta": -0.35892850160598755,
+            "centre_shell_percentile": 18.403514086640413,
+            "underdense": true
+          }
+        ],
+        "n_underdense": 4,
+        "probe_mean_delta": -0.32352855801582336,
+        "median_centre_shell_percentile": 16.95778113970575,
+        "pass": true
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": -0.2548865079879761,
+        "centre_shell_percentile": 48.677262693156734,
+        "mean_delta_profile": {
+          "12.0": -0.07251925021409988,
+          "24.0": 0.1671745628118515,
+          "31.0": 0.1477329581975937
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": false,
+        "LocalVoid": true,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    },
+    {
+      "seed": 1016,
+      "input": "/home/kjhan/BACKUP/CF4/recon/linear_cr/cf4_linear_cr_parent_v1_all_s1016.npz",
+      "seconds": 1.0225350856781006,
+      "clusters": {
+        "Virgo": {
+          "name": "Virgo",
+          "target_offset_mpc_h": [
+            -2.670170966471675,
+            11.67674542070266,
+            -0.49114372469898077
+          ],
+          "target_delta": 1.8568346500396729,
+          "target_shell_percentile": 95.29569892473118,
+          "peak_delta": 6.193375587463379,
+          "peak_shell_percentile": 99.76478494623656,
+          "peak_offset_mpc_h": [
+            -5.0,
+            15.0,
+            1.0
+          ],
+          "peak_separation_mpc_h": 4.323844808963579,
+          "pass": true
+        },
+        "Coma": {
+          "name": "Coma",
+          "target_offset_mpc_h": [
+            0.4693529820366692,
+            70.1213647408257,
+            10.263080174213776
+          ],
+          "target_delta": 0.9079277515411377,
+          "target_shell_percentile": 88.07750568038374,
+          "peak_delta": 5.038365364074707,
+          "peak_shell_percentile": 99.73281157956745,
+          "peak_offset_mpc_h": [
+            -5.0,
+            67.0,
+            7.0
+          ],
+          "peak_separation_mpc_h": 7.092561745288527,
+          "pass": true
+        }
+      },
+      "secondary_cluster_anchors": {
+        "Fornax": {
+          "name": "Fornax",
+          "target_offset_mpc_h": [
+            -1.4366947625771311,
+            -10.980600040535295,
+            -9.998436423210366
+          ],
+          "target_delta": -0.14776337146759033,
+          "target_shell_percentile": 35.552536231884055,
+          "peak_delta": 1.400158405303955,
+          "peak_shell_percentile": 90.03623188405797,
+          "peak_offset_mpc_h": [
+            3.0,
+            -9.0,
+            -7.0
+          ],
+          "peak_separation_mpc_h": 5.709435867131042
+        },
+        "Hydra": {
+          "name": "Hydra",
+          "target_offset_mpc_h": [
+            -22.8879663026997,
+            19.640653937744958,
+            -23.19232259658844
+          ],
+          "target_delta": 0.5100440979003906,
+          "target_shell_percentile": 74.25875036158519,
+          "peak_delta": 3.1847829818725586,
+          "peak_shell_percentile": 98.3584032398033,
+          "peak_offset_mpc_h": [
+            -21.0,
+            15.0,
+            -29.0
+          ],
+          "peak_separation_mpc_h": 7.670019723060341
+        },
+        "Centaurus": {
+          "name": "Centaurus",
+          "target_offset_mpc_h": [
+            -30.16254734412263,
+            13.1476745127139,
+            -6.656146980145079
+          ],
+          "target_delta": 1.4627909660339355,
+          "target_shell_percentile": 91.66666666666666,
+          "peak_delta": 5.969332695007324,
+          "peak_shell_percentile": 99.98121007140173,
+          "peak_offset_mpc_h": [
+            -23.0,
+            13.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 7.53774098766908
+        },
+        "Norma": {
+          "name": "Norma",
+          "target_offset_mpc_h": [
+            -49.84657436311419,
+            -7.0944843662670145,
+            6.190096916795393
+          ],
+          "target_delta": 2.184701681137085,
+          "target_shell_percentile": 94.34214862415554,
+          "peak_delta": 7.659396171569824,
+          "peak_shell_percentile": 99.50980392156863,
+          "peak_offset_mpc_h": [
+            -41.0,
+            -5.0,
+            5.0
+          ],
+          "peak_separation_mpc_h": 9.168700747325778
+        },
+        "Perseus": {
+          "name": "Perseus",
+          "target_offset_mpc_h": [
+            51.60412648733595,
+            -11.083221963483087,
+            -13.41081967618678
+          ],
+          "target_delta": 3.8779220581054688,
+          "target_shell_percentile": 97.83691756272401,
+          "peak_delta": 17.602985382080078,
+          "peak_shell_percentile": 99.99820788530465,
+          "peak_offset_mpc_h": [
+            49.0,
+            -19.0,
+            -9.0
+          ],
+          "peak_separation_mpc_h": 9.429325503839483
+        },
+        "ShapleyCore": {
+          "name": "ShapleyCore",
+          "target_offset_mpc_h": [
+            -123.22974608522269,
+            74.42232413367364,
+            -3.443369056370179
+          ],
+          "target_delta": 6.881220817565918,
+          "target_shell_percentile": 99.96889215266303,
+          "peak_delta": 8.51434326171875,
+          "peak_shell_percentile": 99.99056565285682,
+          "peak_offset_mpc_h": [
+            -127.0,
+            77.0,
+            -5.0
+          ],
+          "peak_separation_mpc_h": 4.825176405935927
+        }
+      },
+      "local_void": {
+        "probes": [
+          {
+            "name": "Lacerta-2.4",
+            "offset_mpc_h": [
+              16.5,
+              -7.0,
+              16.5
+            ],
+            "mean_delta": -0.37079527974128723,
+            "centre_delta": -0.45587867498397827,
+            "centre_shell_percentile": 21.467391304347828,
+            "underdense": true
+          },
+          {
+            "name": "Andromeda-2.3",
+            "offset_mpc_h": [
+              21.0,
+              -7.0,
+              -3.0
+            ],
+            "mean_delta": 0.6014276146888733,
+            "centre_delta": 0.8026796579360962,
+            "centre_shell_percentile": 81.10082304526749,
+            "underdense": false
+          },
+          {
+            "name": "Aquila-0.8",
+            "offset_mpc_h": [
+              -2.0,
+              -2.0,
+              7.0
+            ],
+            "mean_delta": -0.22170916199684143,
+            "centre_delta": -0.3063957095146179,
+            "centre_shell_percentile": 25.67771084337349,
+            "underdense": true
+          },
+          {
+            "name": "UrsaMinor-3.7",
+            "offset_mpc_h": [
+              31.0,
+              17.0,
+              12.0
+            ],
+            "mean_delta": 0.09580481052398682,
+            "centre_delta": -0.03248029947280884,
+            "centre_shell_percentile": 50.24235080278704,
+            "underdense": false
+          }
+        ],
+        "n_underdense": 2,
+        "probe_mean_delta": 0.02618199586868286,
+        "median_centre_shell_percentile": 37.96003082308026,
+        "pass": false
+      },
+      "bootes_void": {
+        "target_offset_mpc_h": [
+          40.966003459257855,
+          125.7547025894701,
+          80.8241383326169
+        ],
+        "centre_delta": 0.0878593921661377,
+        "centre_shell_percentile": 75.26379690949227,
+        "mean_delta_profile": {
+          "12.0": -0.13236798346042633,
+          "24.0": -0.08432810753583908,
+          "31.0": -0.1300312727689743
+        },
+        "nearest_box_face_mpc_h": 66.2452974105299,
+        "pass": false
+      },
+      "gates": {
+        "Virgo": true,
+        "Coma": true,
+        "LocalVoid": false,
+        "BootesVoid": false
+      },
+      "n_gates_passed": 2,
+      "pass": false
+    }
+  ],
+  "passing_seeds": [
+    1002,
+    1009
+  ]
+}

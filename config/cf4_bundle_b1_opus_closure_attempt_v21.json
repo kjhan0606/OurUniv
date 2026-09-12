@@ -1,0 +1,33 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v21",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "cb38076600d2905c375d9df35c7f7d983e66a78b",
+  "audit_mode": "packet_internal_no_tree_tools; tools explicitly disabled; no Task/subagents",
+  "status": "COMPLETE_DESK_AUDIT",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "CONDITIONAL_NO_GO_DEVELOPMENT_ONLY; validation and B2 remain closed",
+  "risk_level": "MODERATE_GATE_POWER_AND_AUDIT_SCOPE",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v21.txt",
+  "findings": {
+    "provenance_receipt_integrity": true,
+    "coverage_denominator_adjudicated": true,
+    "arm_no_attribution_auditable_at_n16": true,
+    "D_mechanism_resolved": false,
+    "controls_single_cause_clean": false,
+    "regression_scope_sufficient": true,
+    "exact_node_ids_pinned": false,
+    "science_boundary_sealed": true
+  },
+  "blocking_findings": [
+    "Pin the exact 30 selected-test node IDs and selection expression beside the certificate SHA in the closure record.",
+    "Use the scoped wording: no D mechanism resolvable at n=16 with confounded controls; attribution deferred; no D-only width or gate repair authorized."
+  ],
+  "required_next": [
+    "Make only the two record-only edits requested by this audit.",
+    "Close B1 as development-only NO-GO after those edits; retain validation, frontier promotion, and B2 closure.",
+    "Do not refit widths or alter the strict gate."
+  ],
+  "recommendation": "CONDITIONAL. Close B1 as an auditable development-only NO-GO after pinning the exact 30-test node IDs/selection and correcting the arm-attribution wording."
+}

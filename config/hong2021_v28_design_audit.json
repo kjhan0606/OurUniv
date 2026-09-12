@@ -1,0 +1,33 @@
+{
+  "schema": "hong2021-v28-train-only-empirical-joint-control-design-audit-v1",
+  "status": "selected_before_implementation_or_sampling",
+  "parent": {
+    "v27_corrected_latent_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/trained_flow_latent_audit_correction_v2.json",
+    "sha256": "00ffa15d05816501c532a63821c698d2ebbe29e5e22c54974ee5fcc10da38105",
+    "classification": "explicit_conditional_flow_remains_latent_miscalibrated_after_phase_repair",
+    "required_next": "freeze_and_test_train_only_empirical_joint_residual_control"
+  },
+  "question": "Can an observation-matched empirical distribution of intact train residual cubes reproduce validation density fields when a learned factorized likelihood cannot?",
+  "selected_control": {
+    "name": "source_balanced_observation_matched_full_cube_latent_knn",
+    "unit_resampled": "one complete exact-zero-DC V21 G21 latent cube, never voxels, Fourier modes, Haar scales, or marginal values independently",
+    "donors": "all 432 TNG100, 202 SIMBA, and 409 Swift train cubes only",
+    "query_information": "target-free preprocessed count, line-of-sight velocity, corrected deterministic mean, radius-invariant observable global features, and no validation density truth",
+    "orientation": "best of the same 48 observer-centred signed cube isometries, applied identically to donor condition and donor latent",
+    "interpretation": "a diagnostic conditional empirical control rather than a claim that the selected donor phases are uniquely observed"
+  },
+  "rejected_controls": {
+    "unconditional_train_cube_resampling": "preserves the joint field but does not test whether observables select the correct environment",
+    "per_scale_or_per_band_resampling": "breaks the cross-scale dependence whose failure is under test",
+    "voxelwise_empirical_cdf_sampling": "preserves marginals but destroys filaments, peaks, voids, and two-point structure",
+    "validation_residual_bootstrap": "leaks held-out density truth",
+    "same_domain_only_donors": "uses a simulation-family label unavailable for CF4 and can overstate transfer",
+    "another_learned_flow_or_diffusion_variant": "does not provide the requested decisive nonparametric control after V26 and V27"
+  },
+  "firewall": {
+    "validation_truth_used_for_selection": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "new_external_data": false
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "schema": "hong2021-v49-Gaussian-extreme-calibration-audit-result-record-v1",
+  "status": "complete_mixed_tail_evidence_sealed_and_one_likelihood_selected",
+  "program": "config/hong2021_v49_gaussian_extreme_calibration_audit_program.json",
+  "program_sha256": "7595330346f0a1fcc8a195f99ca8df805b47879b1d6cad1f9e3a9e85559b6c5a",
+  "audit_code_commit": "c8340843a0886aca1382f83203471a66515ed3cd",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v49_gaussian_extreme_calibration_audit/audit.json",
+    "sha256": "ee14f97d1cbe71aff71be8446212582ec7a41ab74586856f928af708cfd7858f",
+    "decision_digest_sha256": "931c514c6cdcc0762508a17c5bec50cbc0b82e2c1c5414587dc5085667b492ef",
+    "classification": "Gaussian_train_extreme_failure_is_mixed_or_not_identified",
+    "next": "seal_the_PIT_component_and_analytic_moment_evidence_before_selecting_one_new_likelihood"
+  },
+  "integrity": {
+    "worktree_clean_at_audit": true,
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "pytest_passed": 380,
+    "pytest_log_sha256": "50e9d0b6e304fc6563ab5c014d59186f76d177696755007dd4f4c0f6ff3d20ac",
+    "audit_log_sha256": "1cd7c652438e0b07f4e48e4e6d88e2997a83483a2af8c6e77a5e324b092277fc",
+    "decision_digest_independently_verified": true,
+    "maximum_inverse_CDF_error": 2.980232238769531e-7
+  },
+  "domain_summary": {
+    "TNG100": {
+      "train_objects": 432,
+      "native_voxels": 113246208,
+      "upper_PIT_1e_5_observed_over_expected": 1.4870255081741899,
+      "lower_PIT_1e_5_observed_over_expected": 0.10508078115957754,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.25414766130723354,
+      "sampled_over_truth_mean_delta_squared": 11.21549728195348,
+      "analytic_over_truth_mean_delta_squared": 2350756.96208675,
+      "component_five_rho_squared_fraction": 0.9999986987766694,
+      "component_five_mean_weight": 0.10634558749669465,
+      "component_five_responsibility_to_weight_ratio": 0.9946180101465409,
+      "component_five_scale_quantiles": [
+        1.0418073534965515,
+        1.236281001567841,
+        1.65174808382988,
+        2.0865833501815922,
+        3.3975369930267334
+      ],
+      "effective_responsibility_components": 4.77461815272552
+    },
+    "SIMBA": {
+      "train_objects": 202,
+      "native_voxels": 52953088,
+      "upper_PIT_1e_5_observed_over_expected": 0.7251701732673267,
+      "lower_PIT_1e_5_observed_over_expected": 3.0970809483292077,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.2498574477861517,
+      "sampled_over_truth_mean_delta_squared": 5.659861756527077,
+      "analytic_over_truth_mean_delta_squared": 12724.714550158704,
+      "component_five_rho_squared_fraction": 0.999831222961935,
+      "component_five_mean_weight": 0.09320698078936566,
+      "component_five_responsibility_to_weight_ratio": 1.0045266341372951,
+      "component_five_scale_quantiles": [
+        1.1581470966339111,
+        1.4019853591918947,
+        1.7237924218177783,
+        1.964990460872652,
+        3.3013460636138916
+      ],
+      "effective_responsibility_components": 4.68517558213031
+    },
+    "Swift": {
+      "train_objects": 409,
+      "native_voxels": 107216896,
+      "upper_PIT_1e_5_observed_over_expected": 0.8496795131991137,
+      "lower_PIT_1e_5_observed_over_expected": 4.283839741079615,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.20676904378525585,
+      "sampled_over_truth_mean_delta_squared": 8.358640890155861,
+      "analytic_over_truth_mean_delta_squared": 9566.950430721463,
+      "component_five_rho_squared_fraction": 0.9997710242556992,
+      "component_five_mean_weight": 0.09307518243588728,
+      "component_five_responsibility_to_weight_ratio": 0.9963677585829198,
+      "component_five_scale_quantiles": [
+        1.1435952186584473,
+        1.3708926320075987,
+        1.6920710968971235,
+        1.961836665868756,
+        3.408115863800049
+      ],
+      "effective_responsibility_components": 4.697435639804938
+    }
+  },
+  "evidence_seal": {
+    "component_collapse": false,
+    "unsupported_component_mass": false,
+    "upper_PIT_through_1e_5_within_frozen_factor_two_band_all_domains": true,
+    "lower_PIT_at_1e_5_within_frozen_factor_two_band_all_domains": false,
+    "posterior_predictive_q99_999_within_0_10_dex_all_domains": false,
+    "analytic_physical_second_moment_within_frozen_band_all_domains": false,
+    "interpretation": "The fifth component is occupied and locally supported, but its Gaussian asymptote assigns vanishingly rare probability to standardized residuals far beyond the train sample. Those ranks are too rare for PIT through 1e-5 or finite posterior draws to constrain, yet the exponential density transform makes them dominate the analytic physical second moment."
+  },
+  "selected_next_likelihood": {
+    "family": "proper train-only bounded-support monotone conditional transform likelihood",
+    "selection_rule": "fix the standardized-residual support and every development gate before fitting; train a normalized likelihood on unchanged V48 train information; sample by its exact monotone inverse",
+    "reason": "It removes the unconstrained asymptotic Gaussian contribution while retaining occupied multimodal conditional structure and exact probabilistic normalization.",
+    "forbidden_shortcuts": [
+      "posthoc V48 component-scale cap",
+      "sample clipping",
+      "global residual rescaling",
+      "development or EAGLE support selection",
+      "posthoc Fourier A(k)"
+    ],
+    "selection_used_only_sealed_V49_train_evidence": true
+  },
+  "scientific_conclusion": [
+    "V48 is not failing because of dead mixture components: all five components remain occupied, the fifth component carries about 9.3 to 10.6 percent mean weight, and its truth responsibility agrees with its weight within about 0.5 percent.",
+    "The train upper PIT is within the frozen factor-two band even at probability 1e-5, but the posterior-predictive q99.999 density is still high by 0.21 to 0.25 dex. The lower PIT is asymmetric and fails at 1e-5, so the pre-frozen V49 classifier correctly remains mixed rather than relabeling the result after inspection.",
+    "The decisive physical evidence lies beyond the sampled PIT range: the fifth Gaussian component contributes 99.983 to 99.9999 percent of analytic rho squared and inflates analytic mean delta squared by factors 9.6e3 to 2.35e6.",
+    "A posthoc scale cap would invalidate the trained likelihood. The selected next model is therefore a newly trained, normalized bounded-support conditional transform whose support is fixed from train-only information before any fit or development evaluation."
+  ],
+  "firewall": {
+    "new_fit_or_optimizer_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_arrays_accessed": false,
+    "threshold_changed_after_audit": false,
+    "posthoc_scale_cap_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

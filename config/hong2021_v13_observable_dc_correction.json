@@ -1,0 +1,57 @@
+{
+  "schema": "hong2021-v13-observable-dc-correction-plan-v1",
+  "status": "frozen_before_fit_or_v13_evaluation",
+  "reason": "All V11/V12 stochastic residuals are projected to exact zero cube DC, while the frozen corrected conditional mean has a train/validation-stable source-dependent DC residual (about +0.026 in SIMBA development). A target-free scalar conditional-mean correction is therefore required before judging nonlinear density thresholds.",
+  "parent": {
+    "model": "V12 Gaussianized full-band EDM",
+    "development_candidates": [2000, 5000, 10000],
+    "ensemble_members": 16,
+    "edm_sampling_steps": 40,
+    "resample_parent_ensembles": false
+  },
+  "dc_model": {
+    "form": "ridge regression with an unpenalized intercept",
+    "features": [
+      "log1p_occupied_cells",
+      "log1p_standardized_count_sum",
+      "occupied_standardized_count_mean",
+      "occupied_standardized_count_std",
+      "occupied_standardized_velocity_mean",
+      "occupied_standardized_velocity_std",
+      "deterministic_mean_cube_mean",
+      "deterministic_mean_cube_std"
+    ],
+    "target": "per-cube mean(truth - frozen V10-corrected conditional mean)",
+    "fit_data": [
+      "TNG training split only",
+      "SIMBA CV16-23 development-training split only"
+    ],
+    "source_weights": {"TNG": 0.5, "SIMBA_development_train": 0.5},
+    "regularization_candidates": [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0],
+    "selection": "five-fold source-balanced train-only CV with fold-local feature scaling",
+    "cv_seed": 13021,
+    "validation_or_test_fit": false,
+    "simulation_identity_feature": false,
+    "inference_target_feature": false
+  },
+  "application": {
+    "conditional_mean": "old conditional mean + predicted scalar DC",
+    "ensemble_member": "old member + the identical predicted scalar DC",
+    "stochastic_residual_changed": false,
+    "random_numbers_changed": false,
+    "truth_read_for_prediction": false
+  },
+  "development_rule": "Apply the one frozen train-only DC model to all six existing V12 development ensembles, evaluate with the eight unchanged field checks, and select the smallest of 2000/5000/10000 passing both TNG and SIMBA development.",
+  "postdevelopment_order": [
+    "historical SIMBA CV0-15 stress field gate",
+    "sealed EAGLE confirmation32 field gate opened once",
+    "unchanged grid-HOP gate"
+  ],
+  "stop_rules": {
+    "development_failure": "stop without historical SIMBA or EAGLE",
+    "historical_simba_failure": "stop without EAGLE",
+    "eagle_field_failure": "stop without grid-HOP",
+    "threshold_relaxation": false,
+    "posthoc_amplitude_or_seed_tuning": false
+  }
+}

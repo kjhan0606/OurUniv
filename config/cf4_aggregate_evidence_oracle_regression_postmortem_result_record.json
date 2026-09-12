@@ -1,0 +1,162 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-oracle-regression-postmortem-result-record-v1",
+  "status": "sealed_science_pass_with_failed_postcheck_lifecycle",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the read-only forensic disposition of the canonical exact aggregate-evidence oracle regression without changing its truthful FAILED lifecycle marker or any canonical execution artifact.",
+  "science": "exact_oracle_regression_pass",
+  "lifecycle": "failed_postcheck_due_to_truncated_frozen_sha_literal",
+  "original_execution_lineage": {
+    "host": "LagEunha",
+    "started_at": "2026-08-16T14:25:44+09:00",
+    "ended_at": "2026-08-16T18:44:59+09:00",
+    "git_commit": "251b4dd6ef7f1690ebf4021902ddf055fd5dd144",
+    "source_commit": "05b2cc373c94ba719492929f10409383257100b1",
+    "program": "config/cf4_aggregate_evidence_oracle_regression_program.json",
+    "program_sha256": "0576851112f83d9566006d1b9afca37eceebb8b21989ed87665fa8e6ffa30016",
+    "design": "config/cf4_aggregate_evidence_oracle_regression_design.json",
+    "design_sha256": "b735918021d6898bfbb4b29f7f4f3f732fea2804205a813761a52cc4b7616dd0",
+    "source": "src/cf4_aggregate_evidence_oracle_regression.py",
+    "source_sha256": "5e26b43a9560f9eab2ecd706e2062e99a307a77ba16aba654cbd2967fe5b05f0",
+    "runner": "scripts/run_cf4_aggregate_evidence_oracle_regression_lageunha.sh",
+    "runner_sha256": "6229e74fdc9f8ce25586c19c8e13e89e003fcb09a5161dca89249200c3fa8bd9"
+  },
+  "immutable_original_artifacts": {
+    "failed_marker": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1_run/FAILED",
+      "sha256": "7af3dd80641ce75673bc20d8e158b5878eb007d964014ddc90fb30dcc0bf63ba"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1/manifest.json",
+      "sha256": "16ad7a82faa799ee55999b75e6ee6749b87f14deefef5ef1bd27fd0dec4004cf"
+    },
+    "result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1/result.json",
+      "sha256": "e4d0314ba8e6b70b1882950ee179dbc45d87b6a5fa28f476d3d9a25b3a191594"
+    },
+    "arrays": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1/arrays.npz",
+      "sha256": "40c52c48ae7899219476fe6c9f0308b7f68e70ac2493c9fdea26cd37923572e2"
+    },
+    "run_log": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1_run/run.log",
+      "sha256": "bba602c43c60ca651bd9a9a17ba9b25a5adcc5bfa332fe934803b9966df30f15"
+    },
+    "environment": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1_run/environment.txt",
+      "sha256": "324b0e6255bb1f51d2cb758d2b5e53b6ccdf6e306896114da7fd5e91b440f0d3"
+    }
+  },
+  "failure_analysis": {
+    "scientific_computation_completed": true,
+    "canonical_result_status": "complete_pass_exact_oracle_regression",
+    "canonical_result_failure_class": null,
+    "runner_exit_code": 1,
+    "failed_postcheck_message": "oracle-regression deterministic selection mismatch",
+    "root_cause": "The frozen inside-selection SHA literal copied into the runner postcheck was truncated from 64 to 63 hexadecimal characters.",
+    "incorrect_inside_selection_literal": "d91f20f27fb2f43df78179b2e9f89bd9c29f802a41a107ca69ab5d375955b13",
+    "correct_inside_selection_sha256": "d91f20f27fb2f43df781f79b2e9f89bd9c29f802a41a107ca69ab5d375955b13",
+    "missing_character": "f",
+    "missing_character_zero_based_index": 20,
+    "outside_selection_literal_was_correct": true,
+    "scientific_failure": false,
+    "artifact_corruption_detected": false
+  },
+  "correction_lineage": {
+    "git_commit": "e4aab920a0bc8f571acbeeac242cbad70d76491f",
+    "runner": "scripts/run_cf4_aggregate_evidence_oracle_regression_lageunha.sh",
+    "runner_sha256": "5589d709a0dc8569142fe73a802803ea8cc4be6a04a75ec1d28a3573db7fdb1d",
+    "regression_test": "tests/test_cf4_aggregate_evidence_oracle_regression_runner.py",
+    "regression_test_sha256": "a6293e57b2bf6f43614ecf21c365ac2c72b44711d84b8650752b822947d24e68",
+    "correction": "Restore the missing hexadecimal character and require both frozen runner selection hashes to equal their exact 64-character golden values.",
+    "canonical_execution_artifacts_changed": false
+  },
+  "independent_read_only_recalculation": {
+    "method": "Re-hash all original artifacts and 20 frozen lineage inputs; validate the complete NPZ key/dtype/shape/finite contract; independently hash the selected key/index arrays; reconstruct both historical key banks; recompute all paired-array differences and historical log-mean evidence; then reapply the frozen design gates to the sealed metrics.",
+    "fixed_lineage_hash_check_count": 20,
+    "all_fixed_lineage_hashes_match": true,
+    "manifest_arrays_hash_matches": true,
+    "manifest_result_hash_matches": true,
+    "arrays_key_dtype_shape_contract_exact": true,
+    "all_arrays_finite": true,
+    "all_result_metrics_finite": true,
+    "dense_phase_lexicographic_27_exact": true,
+    "selection": {
+      "inside_count": 1024,
+      "inside_selection_sha256": "d91f20f27fb2f43df781f79b2e9f89bd9c29f802a41a107ca69ab5d375955b13",
+      "outside_count": 64,
+      "outside_selection_sha256": "3b5ab76f91b008a8671b33a46f33f36f4788251bebe53e35ce784cabc031aefc",
+      "canonical_result_exact_match": true
+    },
+    "recomputed_array_metrics": {
+      "dense_signal_covariance_max_abs_difference": 2.0599841277224584e-17,
+      "dense_signal_covariance_relative_Frobenius_difference": 2.7330554248944947e-14,
+      "dense_cholesky_max_abs_difference": 0.0,
+      "dense_logdet_max_abs_difference": 0.0,
+      "dense_normalized_log_Z_max_abs_difference": 2.842170943040401e-14,
+      "inside_log_Z_max_abs_difference": 0.0,
+      "outside_log_Z_max_abs_difference": 0.0
+    },
+    "historical_2048": {
+      "parent_seed_exact": true,
+      "key_array_exact": true,
+      "unique_geometry_key_count": 2016,
+      "unique_covariance_key_count": 1146,
+      "historical_log_Z_max_abs_difference": 9.094947017729282e-13,
+      "historical_log_Z_bar_max_abs_difference": 1.4210854715202004e-14,
+      "stored_new_log_Z_bar_self_consistency_max_abs_difference": 0.0
+    },
+    "historical_8192": {
+      "parent_seed_exact": true,
+      "key_array_exact": true,
+      "unique_geometry_key_count": 7756,
+      "unique_covariance_key_count": 1755,
+      "historical_log_Z_max_abs_difference": 1.1368683772161603e-12,
+      "historical_log_Z_bar_max_abs_difference": 1.4210854715202004e-14,
+      "stored_new_log_Z_bar_self_consistency_max_abs_difference": 0.0
+    },
+    "scientific_gates": {
+      "all_lineage_and_input_contracts": true,
+      "all_values_finite": true,
+      "dense_27_phase": true,
+      "inside_atlas": true,
+      "outside_slow_path": true,
+      "historical_2048": true,
+      "historical_8192": true,
+      "oracle_regression_pass": true
+    },
+    "recomputed_failure_class": null,
+    "canonical_gate_map_exact_match": true,
+    "corrected_postcheck_read_only_replay_pass": true,
+    "corrected_postcheck_summary": "complete_pass_exact_oracle_regression true none true"
+  },
+  "lifecycle_preservation": {
+    "original_failed_marker_preserved": true,
+    "original_artifacts_preserved": true,
+    "original_log_and_environment_preserved": true,
+    "scientific_computation_rerun": false,
+    "marker_mutation_authorized": false,
+    "rerun_authorized": false
+  },
+  "independent_artifact_audit": {
+    "status": "pending",
+    "scope": "Audit this postmortem record and the immutable original artifacts before opening any prospective production-SMC design or implementation work."
+  },
+  "decision": {
+    "exact_oracle_regression_science_pass_recorded": true,
+    "lifecycle_failure_reclassified_as_scientific_failure": false,
+    "artifact_independent_audit_authorized": true,
+    "prospective_after_independent_artifact_audit": {
+      "production_SMC_program_design_and_implementation_candidate": true,
+      "production_SMC_execution_authorized": false,
+      "conditional_field_bank_authorized": false,
+      "candidate_generation_authorized": false,
+      "parent_or_seed_selection_authorized": false,
+      "PM_authorized": false,
+      "HOP_authorized": false,
+      "RAMSES_authorized": false,
+      "downstream_execution_authorized": false,
+      "automatic_follow_on": false
+    },
+    "next": "Obtain an independent artifact audit of the sealed postmortem and immutable canonical artifacts; only after a GO may a new prospective production-SMC program design and implementation be frozen, with execution still separately forbidden."
+  }
+}

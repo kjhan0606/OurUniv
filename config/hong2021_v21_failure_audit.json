@@ -1,0 +1,44 @@
+{
+  "schema": "hong2021-v21-failure-audit-v1",
+  "date": "2026-08-07",
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v21_e9_conditional_affine/development_decision.json",
+    "sha256": "9f1c8bdb00f8d2639339e7484cee8f364313ab4a51e31cd63db45014333b6b65",
+    "decision_digest_sha256": "3a6f7b3050f85afa12df1931a73f7e063a024d51c7fdda81a7177fba923cc8f7",
+    "development_pass": false,
+    "next": "stop_unopened_and_audit_conditional_affine_failure"
+  },
+  "training_evidence": {
+    "balanced_validation": {"step_500": 0.7504525373283036, "step_5000": 0.534527, "step_10000": 0.5255510750632929},
+    "monotonically_improving_through_10000": true,
+    "Q3_delta_q99_999_dex": {
+      "TNG100": {"step_5000": 0.3328921961775446, "step_10000": 0.24177113375256098},
+      "SIMBA": {"step_5000": 0.3170365326729332, "step_10000": 0.1610330213888549},
+      "Swift": {"step_5000": 0.17917233205135297, "step_10000": 0.018773454634357645}
+    },
+    "Q4_generated_over_truth_mean_delta_squared": {
+      "TNG100": {"step_5000": 7.777709236548984, "step_10000": 6.165128730782044},
+      "SIMBA": {"step_5000": 5.688634909936937, "step_10000": 1.9336059739233757},
+      "Swift": {"step_5000": 3.200735093843509, "step_10000": 1.368585373290351}
+    },
+    "Q6_max_absolute_conditional_residual_mean_error": {
+      "TNG100": {"step_5000": 0.4436878711571366, "step_10000": 0.348087756811353},
+      "SIMBA": {"step_5000": 0.31884495463737317, "step_10000": 0.24060557627340012},
+      "Swift": {"step_5000": 0.5229893857684124, "step_10000": 0.43940146167287586}
+    }
+  },
+  "mechanism_audit": {
+    "target_latent_conditional_means_near_zero_and_standard_deviations_near_one": true,
+    "generated_latent_conditional_mean_bias": "shared monotonic trend approximately -0.05 to +0.10 across deterministic-mean bins",
+    "stored_latent_dc_standard_deviation": {"TNG100": 0.026110997578797517, "SIMBA": 0.013472311839809856, "Swift": 0.015207008718668095},
+    "stored_latent_dc_correlation_with_cube_mean_m": {"TNG100": 0.9795189220192864, "SIMBA": 0.9386294810934185, "Swift": 0.8897480245884057},
+    "physical_y_replay_rms_without_dc_restore": {"TNG100": 0.00039860735331705296, "SIMBA": 0.00034672084482672145, "Swift": 0.00024184562914849404},
+    "conclusion": "DC loss is measurable but too small to explain Q3/Q4. The representation target is normalized; generated conditional bias and every training-coupled diagnostic continue improving at the horizon. Primary classification: undertraining/score-model bias."
+  },
+  "independent_review": {
+    "reviewer": "Claude Fable",
+    "verdict": "primarily undertraining / residual score-model bias under the fixed 10000-step cosine horizon",
+    "recommendation": "one V22 from-scratch 30000-step cosine-horizon run with checkpoints 10000, 20000, 30000 and no other changes"
+  },
+  "firewall": {"Astrid_accessed": false, "historical_EAGLE_accessed": false}
+}

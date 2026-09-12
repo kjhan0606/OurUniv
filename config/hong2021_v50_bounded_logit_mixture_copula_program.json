@@ -1,0 +1,231 @@
+{
+  "schema": "hong2021-v50-bounded-logit-Gaussian-mixture-copula-development-program-v1",
+  "status": "frozen_before_model_implementation_training_sampling_or_development_evaluation",
+  "purpose": "Replace only V48's unconstrained Gaussian asymptote with a proper train-only bounded logit transform likelihood, while retaining the occupied five-component latent Gaussian structure and holding all information, data, architecture, optimization, donor ranks, controls, and development gates fixed.",
+  "parent_evidence": {
+    "v49_record": "config/hong2021_v49_result_record.json",
+    "v49_record_sha256": "febb27de8d667a6e55c376ea510cb8ab485765e1622f7a196ff86c117dcd0d43",
+    "required_status": "complete_mixed_tail_evidence_sealed_and_one_likelihood_selected",
+    "required_family": "proper train-only bounded-support monotone conditional transform likelihood",
+    "v50_support_record": "config/hong2021_v50_support_result_record.json",
+    "v50_support_record_sha256": "b14781f5a739b5d18ef0bc450a3e4cd4c9fe14c67ba231315d461ee7d7e5edfa",
+    "required_support_status": "complete_support_selected_before_model_implementation",
+    "v48_record": "config/hong2021_v48_result_record.json",
+    "v48_record_sha256": "eff3a169c72230da44814c475a7f44f3b0c4310c35ae900cf81b166bf6f0ebb1"
+  },
+  "immutable_inputs": {
+    "v48_program": "config/hong2021_v48_identifiable_gaussian_mixture_copula_program.json",
+    "v48_program_sha256": "aa667f40d9db4723547a11916f56e0c5b2f99be0546f526356dfb5c52eecc4f9",
+    "v45_conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "v45_conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "support_selection_decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce",
+    "rule": "inherit every V48 train input, split, cached array, channel, U-Net parameter, optimizer, schedule, augmentation, donor identity, donor isometry, member pairing, development threshold, control, and firewall except the explicitly replaced target-space Gaussian likelihood, its CDF/inverse transform, and its transformed identifiable output biases"
+  },
+  "conditioning": {
+    "channels": [
+      "log1p galaxy count",
+      "mean radial peculiar velocity",
+      "intrinsic radial velocity dispersion",
+      "frozen V14 corrected backbone",
+      "observer radius divided by 10 Mpc/h",
+      "V41 full extreme-structure block probability lifted from 16^3 to 64^3",
+      "V41 object log10 mean delta squared prediction broadcast over 64^3"
+    ],
+    "target_free_at_inference": true,
+    "standardization": "exact immutable V45 train-only scalar target mean and standard deviation",
+    "validation_truth_feature": false,
+    "simulation_identity_feature": false
+  },
+  "bounded_target_transform": {
+    "standardized_target": "z=(y_truth-backbone-target_mean)/target_std",
+    "open_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "support_source": "exact V50 train-only support selection artifact frozen before model implementation",
+    "forward": "x=logit((z-lower)/(upper-lower))",
+    "inverse": "z=lower+(upper-lower)*sigmoid(x)",
+    "log_absolute_forward_Jacobian": "-log(upper-lower)-log(s)-log(1-s), where s=(z-lower)/(upper-lower)",
+    "boundary_handling": "no clipping or epsilon adjustment of observed targets; any target outside or on the open support is a hard error",
+    "physical_property": "for every finite query backbone, generated residual z is strictly bounded and therefore every physical density moment is finite"
+  },
+  "latent_likelihood": {
+    "distribution": "five-component continuous Gaussian mixture independently parameterized in latent x at every native voxel",
+    "network_outputs_per_voxel": 15,
+    "objective": "equal-source mean exact transformed Gaussian-mixture negative log likelihood including the immutable log-Jacobian",
+    "target_density_or_tail_weight": false,
+    "field_or_fourier_auxiliary_loss": false,
+    "sample_clipping": false,
+    "component_scale_cap": false
+  },
+  "network": {
+    "architecture": "unchanged V48 three-dimensional residual U-Net",
+    "input_channels": 7,
+    "base_channels": 32,
+    "channel_multipliers_at_64_32_16_8": [
+      1,
+      2,
+      4,
+      4
+    ],
+    "residual_blocks_per_resolution": 2,
+    "normalization": "GroupNorm",
+    "activation": "SiLU",
+    "parameters": 8490415,
+    "output_weight_initialization": "exactly zero for all 15 one-by-one convolution output rows",
+    "mixture_logit_biases": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "latent_location_biases": [
+      0.0804059034222661,
+      0.20704198374122115,
+      0.2956685146367071,
+      0.3854638253283423,
+      0.5179828385810585
+    ],
+    "latent_scale_biases_after_softplus_plus_0_01": [
+      0.08043023276357575,
+      0.08116400024760286,
+      0.08206815944193456,
+      0.08332029605961505,
+      0.08580816082388276
+    ],
+    "raw_scale_biases": [
+      -2.6177108734287255,
+      -2.606975198588936,
+      -2.5938924693439107,
+      -2.576033685703158,
+      -2.5414058073807415
+    ],
+    "bias_construction": "map each V48 standardized location through the frozen logit transform and multiply each V48 component scale by the exact local derivative dx/dz at that location before the unchanged softplus(raw)+0.01 parameterization",
+    "quadrature_initial_standardized_mean": -0.0029472578587312003,
+    "quadrature_initial_standardized_variance": 0.9966385826992292,
+    "trainability": "all output weights and all 15 biases remain trainable; transformed locations identify components at initialization and no predicted parameter is capped"
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {
+      "TNG100": 1,
+      "SIMBA": 1,
+      "Swift": 1
+    },
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "CUDA autocast plus GradScaler; transformed Gaussian-mixture log probabilities and Jacobian remain float32",
+    "augmentation": "uniform one of the same 48 signed cube isometries applied jointly to all conditioning channels and target",
+    "seed": 144044,
+    "validation": "fixed diagnostic transformed NLL at steps 4000, 8000, and 12000; never used for stopping, selection, support, or hyperparameter changes",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json"
+  },
+  "sampling": {
+    "candidate": "same-voxel monotone bounded-mixture CDF inversion of the unchanged paired V31 donor conditional-rank field",
+    "inverse": "unchanged 28-step latent Gaussian-mixture inverse at rank epsilon 1e-7 followed by the exact frozen sigmoid support transform",
+    "post_sample": "undo the immutable V45 standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "sample_clipping": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16
+  },
+  "matched_arms": {
+    "bounded_query_local_mixture_copula": "actual query-local latent parameters and unchanged paired donor ranks; the only selectable arm",
+    "rolled_parameter_control": "periodically roll all 15 latent parameter fields by (16,8,4) native voxels while keeping query backbone and donor rank fixed",
+    "structure_risk_ablation": "set the standardized V41 block-risk input channel to zero while retaining every other input and donor rank",
+    "common": "identical query, donor, isometry, V31 rank field, backbone, fitted model, sampling arithmetic, frozen support, and exact DC rule except for the named control change"
+  },
+  "development_evaluation": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+    "Q3_generated_max_above_truth_max_dex": 0.30,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.50,
+    "primary_pass": "bounded_query_local_mixture_copula passes field, Q3, and Q4 independently in every domain",
+    "selection_role": "only bounded_query_local_mixture_copula can be selected",
+    "paired_references": [
+      "V31",
+      "V45",
+      "V48",
+      "V49"
+    ]
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "bounded_query_local_mixture_copula_sufficient",
+      "next": "seal_v50_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "bounded_local_marginal_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_bounded_marginal_likelihood"
+    },
+    {
+      "condition": "high-k power and residual RMS pass every domain but Q3 or Q4 fails anywhere",
+      "classification": "bounded_marginal_support_preserves_the_field_body_but_is_not_sufficient_for_extreme_calibration",
+      "next": "audit_train_only_support_boundary_occupancy_and_bounded_PIT_without_threshold_or_support_changes"
+    },
+    {
+      "condition": "rolled parameter control equals or improves candidate Q3 and Q4 jointly in every domain",
+      "classification": "query_local_parameter_alignment_is_not_causal",
+      "next": "stop_local_neural_likelihoods_and_reassess_the_observable_information_ceiling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "bounded_query_local_mixture_copula_is_not_a_common_domain_repair",
+      "next": "audit_candidate_vs_structure_ablation_and_V31_before_any_further_generator"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V49 record, V50 support record and artifact, V48 program, and immutable conditioning-cache hashes and decision digests",
+    "prove all source-balanced real train targets lie strictly inside the frozen open support with no clipping",
+    "prove forward and inverse support transforms and transformed likelihood Jacobian are finite and mutually consistent",
+    "prove the initial output biases equal the frozen values, all five latent locations are distinct, and 128-point Gauss-Hermite quadrature reproduces the frozen initial standardized mean and variance within 1e-6",
+    "prove same-role component gradients are nonidentical and at least two component locations and scales diverge after two deterministic optimizer steps",
+    "prove all physical residual moments are finite from the bounded support without parameter or sample caps",
+    "network shape, parameter count, finite likelihood, nonzero finite gradients, and CDF inverse consistency",
+    "one real source-balanced GPU step with peak allocated memory below 24 GiB",
+    "one real paired-donor bounded sample is finite, remains strictly inside support before DC projection, has no rank permutation, and residual DC below 1e-7 after projection",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula",
+  "firewall": {
+    "support_changed_after_train_scan": false,
+    "V48_or_V49_development_threshold_tuned": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

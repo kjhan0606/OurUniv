@@ -1,0 +1,117 @@
+{
+  "schema": "hong2021-v58-high-accuracy-grid-tail-audit-result-record-v1",
+  "status": "complete_numerically_unresolved_selected_256_128_interval_reaudit",
+  "program": "config/hong2021_v58_high_accuracy_grid_tail_audit_program.json",
+  "program_sha256": "ef14565fe5de172151dd8a4aa91c28a07ddeab990c1062b380eaa07023ab5db9",
+  "audit_code_commit": "314c5b37888919200c3dcfc806c55af948f5c3a4",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v58_high_accuracy_grid_tail_audit/audit.json",
+    "sha256": "4e36d6e3f8c7ad6da2950583c9f816e67dee049584c8249309c3fc6a8205032e",
+    "decision_digest_sha256": "558c9170debd8283fda09a710b69fc04a71d4bfb61bc940605c417df64a1b604",
+    "classification": "V58_high_accuracy_grid_tail_decomposition_is_numerically_unresolved",
+    "next": "freeze_only_the_minimal_train_only_numerical_repair_without_training_or_development_access"
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation for model inference and exact V56 reproduction; CPU float64 for interval quadrature",
+    "worktree_clean_at_audit": true,
+    "pytest_passed": 441,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "7e0d32027f1387c69dc591446598e23a14fd3dc9da087d62e9e756684d05808a",
+    "audit_log_sha256": "159f6cb3fbe6469069aa2aa4d3a3d0cf9b79a13a1ddd5ec774fe95eb97258078",
+    "exact_V56_gate_reproduction_relative_difference": {
+      "TNG100": 0.0,
+      "SIMBA": 0.0,
+      "Swift": 0.0
+    },
+    "decision_digest_independently_verified": true
+  },
+  "implementation_failures_before_completed_audit": [
+    {
+      "archived_sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v58_high_accuracy_grid_tail_audit_sequence_failed_c16d28f_nvrtc",
+      "code_commit": "c16d28fb90a5daa8e3af3417a038d2c611627c80",
+      "reason": "torch.special.ndtri on the Lageunha GPU attempted NVRTC JIT compilation but libnvrtc-builtins.so.13.0 was unavailable",
+      "audit_result_generated": false,
+      "development_or_independent_data_accessed": false,
+      "status_sha256": "3219d959df2f032b389a2d7e478a64fb7103dc575c42c88ed4658559d3769b6d",
+      "pytest_log_sha256": "bd1029dabd3279588070d52d4f39a6a6c67e3dc315d4f5ca5e5dfbe9de43a59a",
+      "audit_log_sha256": "cc9e1d60845d838ad8dc69e75e918a0a52f4e8b7f5eb1c5a7fdecfce6464eab7"
+    },
+    {
+      "archived_sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v58_high_accuracy_grid_tail_audit_sequence_failed_7278c40_nvrtc_erfinv",
+      "code_commit": "7278c40096e71362d85e3603be7f6e71105de6e9",
+      "reason": "torch.erfinv used the same unavailable GPU NVRTC JIT path; interval quadrature was therefore moved unchanged to CPU float64",
+      "audit_result_generated": false,
+      "development_or_independent_data_accessed": false,
+      "status_sha256": "3219d959df2f032b389a2d7e478a64fb7103dc575c42c88ed4658559d3769b6d",
+      "pytest_log_sha256": "b1d0a7fb4529d969a991d7b1e55f3822e3571ad57af92b9ce6597a50713205b2",
+      "audit_log_sha256": "ba716997716ee9036826a1819ed5d9f377111d98a5dcbbeaa62a86a5fa1ee614"
+    }
+  ],
+  "numerical_failure": {
+    "tail_GL64_to_GL128_limit": 0.005,
+    "maximum_tail_GL64_to_GL128_relative_difference": {
+      "TNG100": {
+        "threshold": "grid_16",
+        "value": 0.0009880158351425875
+      },
+      "SIMBA": {
+        "threshold": "grid_16",
+        "value": 0.00711784150746101
+      },
+      "Swift": {
+        "threshold": "grid_16",
+        "value": 0.004527263087671191
+      }
+    },
+    "partition_limit": 1e-12,
+    "reported_partition_relative_difference": {
+      "TNG100": 1.1726542947020304e-09,
+      "SIMBA": 8.923768683287303e-10,
+      "Swift": 4.96709732480346e-10
+    },
+    "partition_implementation_error": "The completed V58 implementation compared summed analytic bin probability against an exact count rather than against the summed raw float32 softmax mixture mass. The approximately 1e-9 difference is model mass-normalization roundoff, not failure of the exact CDF interval partition.",
+    "required_repair": "Use the raw summed mixture mass as the exact analytic probability-partition reference and increase only the CDF-interval primary/control orders from 128/64 to 256/128. Keep all thresholds, data, tolerances, and scientific classification branches unchanged."
+  },
+  "descriptive_findings_not_eligible_for_model_selection": {
+    "reason": "The frozen V58 program forbids scientific mechanism classification when any domain fails a numerical requirement.",
+    "TNG100": {
+      "exact_V56_over_truth": 8.176958714802522,
+      "high_accuracy_GL128_over_truth": 8.173157039637717,
+      "region_positive_excess_shares": {
+        "below_grid": 0.0,
+        "inside_grid": 0.03371570071426957,
+        "beyond_grid": 0.9662842992857305
+      },
+      "beyond_grid_highest_location_rank_moment_share": 0.9736998757952716,
+      "supported_grid_weighted_mean_absolute_log_probability_ratio": 0.6076973178985785,
+      "supported_grid_weighted_mean_absolute_log_conditional_amplitude_ratio": 2.8228148408554414
+    },
+    "provisional_interpretation": "V58 independently preserves the V57 signal that nearly all TNG100 positive excess lies beyond the final scored threshold and is carried by the highest-location component, but V59 must pass all numerical gates before that mechanism can select a model."
+  },
+  "selected_next_audit": {
+    "training_or_refit": false,
+    "population_thresholds_regions_and_component_ranking": "unchanged from V57 and V58",
+    "primary_interval_quadrature_order": 256,
+    "control_interval_quadrature_order": 128,
+    "probability_partition_reference": "summed raw mixture mass from the same ranked components",
+    "tolerances": "unchanged",
+    "classification_branches": "unchanged",
+    "posthoc_result_adoption": false
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "threshold_changed": false,
+    "support_changed": false,
+    "posthoc_tolerance_change": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

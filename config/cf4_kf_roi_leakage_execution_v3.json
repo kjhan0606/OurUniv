@@ -1,0 +1,137 @@
+{
+  "schema": "ouruniv-cf4-kf-roi-leakage-execution-v3",
+  "date": "2026-08-30",
+  "status": "user_approved_single_v3_preflight_only",
+  "authorization_basis": "current_user_approval_for_design_v2_and_one_v3_numerical_preflight",
+  "predecessors": {
+    "design_v1_raw_sha256": "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9",
+    "execution_v1_raw_sha256": "4511916c16b77e39985b7bfc22230d7773e02799cc8cccc08159d0f8f39586a9",
+    "execution_v2_raw_sha256": "86c39590be609c47f0333026d9eedcfcb71ba33a4b2309caca9e6b687b6d1607",
+    "failed_jobs": [
+      {
+        "Slurm_job_id": 327817,
+        "status": "FAILED_NUMERICAL_PRECHECK",
+        "artifact_or_COMPLETE_published": false
+      },
+      {
+        "Slurm_job_id": 327893,
+        "implementation_commit": "2eaac43236ba2a3960a4dfd4239d9c7f4d33afac",
+        "status": "PRECHECK_FAIL",
+        "artifact_or_COMPLETE_published": false,
+        "failure_summary": "R31 and Local Void shell tensor quadrature did not converge; Parseval passed"
+      }
+    ]
+  },
+  "scope": {
+    "design_path": "config/cf4_kf_bin_manifest_design_v2.json",
+    "design_raw_sha256": "c2b1949b4fea26e96c79da57ff3d39aa654292f908ed414b038d094bf4303402",
+    "implementation_path": "src/cf4_kf_roi_leakage.py",
+    "runner_path": "scripts/run_cf4_kf_roi_leakage_v3.sbatch",
+    "checker_path": "scripts/check_cf4_kf_roi_leakage_v3.py",
+    "execution_grant_path": "config/cf4_kf_roi_leakage_execution_v3.json",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3",
+    "preflight_output": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3/preflight"
+  },
+  "authorization": {
+    "v3_implementation_authorized": true,
+    "Slurm_preflight_authorized": true,
+    "maximum_preflight_submissions": 1,
+    "Slurm_production_authorized": false,
+    "GPFS_read_authorized_only_for_declared_inputs_and_output_root": true,
+    "GPFS_write_authorized_only_under_output_root": true,
+    "network_access_authorized": false,
+    "retry_authorized": false,
+    "numeric_retuning_authorized": false,
+    "replacement_run_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_science_inference_authorized": false,
+    "scientific_leakage_decision_authorized": false
+  },
+  "controller_contract": {
+    "controller": "syntax",
+    "allowed_actions": [
+      "submit",
+      "audit"
+    ],
+    "manual_controller_execution_allowed": false,
+    "manual_worker_execution_allowed": false,
+    "manual_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "worker_cluster_name_required": "syntax",
+    "worker_must_not_be_login_host_syntax_or_syn101": true
+  },
+  "source_integrity": {
+    "source_must_be_committed_and_pushed_before_submission": true,
+    "worker_HEAD_must_equal_expected_commit_and_upstream": true,
+    "execution_grant_raw_SHA256_must_match_runner_and_result": true,
+    "dirty_worktree_allowed": false,
+    "cleanliness_exclusion_only": "scripts/tripwire/**"
+  },
+  "Slurm": {
+    "partition": "a10",
+    "CPU_only": true,
+    "GPU_count": 0,
+    "cpus_per_task": 16,
+    "thread_environment": 16,
+    "memory_MiB": 4096,
+    "time_limit": "02:00:00",
+    "export_policy": "NONE_except_explicit_submission_variables"
+  },
+  "numerical_contract": {
+    "method": "analytic A(q), cumulative q-angular transform, exact u-v shell mapping, composite-v GL and inner-u GL",
+    "q_cumulative_max": "3*k_Ny",
+    "output_guards": "lower [0,k_f), analysis [k_f,k_Ny], upper [k_Ny,2*k_Ny], far tail beyond 2*k_Ny",
+    "clipping_or_renormalization_allowed": false,
+    "convergence_abs_tolerance": 0.0005,
+    "mode_count_convolution_rounding_abs_tolerance": 1e-05,
+    "coarse": {
+      "moment_order": 96,
+      "u_order": 6,
+      "v_period_samples": 16,
+      "v_panel_order": 4,
+      "q_period_samples": 16,
+      "q_panel_order": 4,
+      "parseval_tail_x": [
+        384.0,
+        768.0
+      ]
+    },
+    "fine": {
+      "moment_order": 160,
+      "u_order": 10,
+      "v_period_samples": 32,
+      "v_panel_order": 8,
+      "q_period_samples": 32,
+      "q_panel_order": 8,
+      "parseval_tail_x": [
+        512.0,
+        1024.0
+      ]
+    },
+    "all_windows_bins_orders_and_guards_required_before_PASS_or_FAIL": true,
+    "guard_decomposition_required": true,
+    "analysis_reciprocity_required": true,
+    "terminal_support_failure_allowed": true,
+    "post_result_tuning_allowed": false
+  },
+  "publication_contract": {
+    "output_directory_must_not_exist": true,
+    "sibling_staging_required": true,
+    "plain_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "publish_only_if_status_PRECHECK_PASS": true,
+    "on_PRECHECK_FAIL_print_detailed_JSON_to_stdout_and_stderr_exit_nonzero": true,
+    "on_PRECHECK_FAIL_publish_nothing": true,
+    "COMPLETE_marker_written_last_in_staging": true,
+    "PRECHECK_PASS_is_not_scientific_decision_or_k_claim": true
+  },
+  "run_sequence": [
+    "commit and push exact design v2, grant v3, implementation, runner, checker, and tests",
+    "syntax controller submits and audits exactly one v3 preflight",
+    "publish only PRECHECK_PASS",
+    "do not retry, retune, replace, run production, materialize final manifest, start KF-EXPAND/all-D, or make a science claim without new approval"
+  ]
+}

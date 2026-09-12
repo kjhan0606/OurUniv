@@ -1,0 +1,79 @@
+{
+  "schema": "cf4-p2-lg-targets-v2-bgc",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "supersedes_for_bgc_only": "config/p2_lg_targets_v1.json",
+  "change_from_v1": "Only the P1-survivor parent list changes from [1002,1009] to [3003]. Every physical screen, ranking weight, and small-scale seed is unchanged.",
+  "parent_seeds": [3003],
+  "paired_small_scale_seeds": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008],
+  "screen": {
+    "mesh_size": 576,
+    "box_size_mpc_h": 384.0,
+    "particle_spacing_mpc_h": 0.6666666666666666,
+    "central_half_width_mpc_h": 30.0,
+    "halo_finder": "FoF b=0.2, n_min=20 for screening only",
+    "mass_definition": "FoF mass, Msun/h",
+    "pair_member_mass_range_msun_h": [500000000000.0, 4000000000000.0],
+    "pair_mass_ratio_max": 4.0,
+    "pair_separation_range_mpc_h": [0.3, 1.2],
+    "pair_midpoint_max_offset_mpc_h": 5.0,
+    "isolation_mass_threshold_msun_h": 5000000000000.0,
+    "isolation_radius_mpc_h": 3.0,
+    "kinematics_status": "record and rank only; pair separation is below the reliable PM force scale",
+    "m33_status": "record a possible third halo but do not reject if FoF merges it with M31"
+  },
+  "ranking": {
+    "target_member_mass_msun_h": 1200000000000.0,
+    "target_separation_mpc_h": 0.574,
+    "target_total_radial_velocity_km_s": -109.0,
+    "target_tangential_velocity_km_s": 57.0,
+    "weights": {
+      "log_mass_each": 1.0,
+      "separation_per_0p30_mpc_h": 0.7,
+      "midpoint_per_2_mpc_h": 0.3,
+      "radial_velocity_per_80_km_s": 0.25,
+      "tangential_velocity_per_80_km_s": 0.1,
+      "m33_candidate_bonus": -0.25
+    }
+  },
+  "definitive_zoom_gate": {
+    "halo_finder": "user RAMSES HOP build; regroup douter=80, dsaddle=200, dpeak=240, followed by direct M200c",
+    "mass_definition": "M200c, Msun/h",
+    "pair_member_mass_range_msun_h": [500000000000.0, 3000000000000.0],
+    "pair_mass_ratio_max": 3.0,
+    "pair_separation_range_mpc_h": [0.45, 0.75],
+    "total_radial_velocity_range_km_s": [-200.0, -20.0],
+    "maximum_tangential_velocity_km_s": 120.0,
+    "pair_midpoint_max_offset_mpc_h": 5.0,
+    "isolation_mass_threshold_msun_h": 5000000000000.0,
+    "isolation_radius_mpc_h": 3.0,
+    "third_halo_mass_threshold": "no third halo more massive than the smaller pair member within 2.5 Mpc/h",
+    "maximum_contaminant_mass_fraction_within_r200c": 0.0001,
+    "require_p1_environment_after_recentering": true
+  },
+  "m33_subpeak_gate": {
+    "status": "required only at definitive zoom resolution",
+    "finder": "unmerged HOP density peak or RAMSES PHEW cross-check; standard regroup catalog alone is insufficient",
+    "mass_range_msun_h": [30000000000.0, 500000000000.0],
+    "m31_separation_range_mpc_h": [0.08, 0.35],
+    "maximum_mass_fraction_of_m31": 0.3
+  },
+  "observational_references": [
+    "van der Marel et al. 2018, arXiv:1805.04079",
+    "Brunthaler et al. 2005, arXiv:astro-ph/0503058",
+    "Patel et al. 2016, arXiv:1609.04823"
+  ],
+  "selection_policy": {
+    "apply_identical_small_scale_seeds_to_all_parents": true,
+    "screen_pass_requires": ["mass", "mass_ratio", "separation", "midpoint", "isolation"],
+    "do_not_promote_screen_kinematics_to_hard_gate": true,
+    "do_not_select_on_p1_secondary_anchors": true,
+    "no_threshold_retuning_after_results": true
+  },
+  "input": {
+    "p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_parent_v1/p1_result.json"
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p2_screen_v1"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-program-v3",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_ASSISTANT_ISOLATED_IMPORT_CORRECTION_V3",
+  "authorization_basis": "The user approved the independent z=0 density-tracer design. Standing instructions permit correction of the assistant-caused immediate V1 header and V2 isolated-import failures without another approval.",
+  "frozen_v1_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+    "sha256": "695f362b8942e911ebac5a942217bc75128cdbc45ca042e535b9bd2123517ee5"
+  },
+  "failed_v2_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v2.json",
+    "sha256": "7b2809e98dc9c377e6c4a76d76f41f1faab41c6d13e5a0e179226f526d7bb8cb"
+  },
+  "failed_v2_implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v2.py",
+    "sha256": "d19a8b6b65475fc3c9be2e870f6740da4ce566c3ed872a6852d5a66ffad5ad9f"
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v3.py",
+    "sha256": "750869a08e8b1fac6f6c171adca9e9e6c47f63b9214e3fd5506e8acbbe927669"
+  },
+  "implementation_correction_v3": {
+    "failed_v1_Slurm_job_id": 329498,
+    "failed_v1_reason": "incorrect _RA/_DE input-header assertion",
+    "failed_v2_Slurm_job_id": 329499,
+    "failed_v2_state": "FAILED",
+    "failed_v2_exit_code": "1:0",
+    "failed_v2_elapsed_seconds": 4,
+    "failed_v2_output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v2",
+    "failed_v2_reason": "normal sibling import was unavailable under python -I -P",
+    "failure_before_program_load": true,
+    "failure_before_scientific_or_numerical_gate": true,
+    "v3_correction": "load the frozen V1 implementation through an exact sibling file path using importlib.util.spec_from_file_location",
+    "pre_submission_exact_isolated_invocation_required": true,
+    "input_changed": false,
+    "exclusion_policy_changed": false,
+    "selection_or_population_changed": false,
+    "threshold_changed": false,
+    "random_seed_changed": false,
+    "scientific_design_changed": false,
+    "automatic_retry_after_v3_failure": false
+  },
+  "execution": {
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3/pilot",
+    "maximum_submissions": 1,
+    "requested_cpus": 1,
+    "expected_peak_memory_MiB": 700,
+    "requested_memory_MiB": 1024,
+    "time_limit": "00:15:00",
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}

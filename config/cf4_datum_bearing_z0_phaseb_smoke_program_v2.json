@@ -1,0 +1,181 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-program-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_FROZEN_PHASE_B_V1_IMPLEMENTATION_CORRECTION_ONLY",
+  "authorization": {
+    "basis": "The user approved Phase B. V1 job 329837 fail-closed on the mass-conservation and differentiability gates because of the rejected CIC implementation. V2 is an in-scope implementation correction, retains every numerical tolerance and the same truth, and cannot expand science scope.",
+    "Phase_B_matched_mock_smoke": true,
+    "single_Slurm_GPU_submission": true,
+    "GPFS_read": true,
+    "GPFS_write_new_output_only": true,
+    "actual_observational_field_inference": false,
+    "new_truth_seed": false,
+    "validation_seed_access": false,
+    "Phase_C_or_later": false,
+    "automatic_follow_on": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "purpose": "Correct only the rejected RSD deposition in the one-seed Phase-B mechanics smoke: use a conservative C1 TSC kernel and population-separated pushes. All original V1 scientific firewalls and numerical tolerances remain unchanged.",
+  "grid": {
+    "N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0
+  },
+  "input_bindings": {
+    "V1_failure_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phaseb_smoke_v1_failure_result_record.json",
+      "sha256": "f539f352c966b9fadc42c7ec672cdc0790ac4cb0d4133937dbb8e62b505edabe"
+    },
+    "Phase_A_datum": {
+      "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/datum.npz",
+      "sha256": "b170b51faefe3fc36f0650f303f26cb354c1eaf373d2f4ac98f2f1398202bf4a",
+      "read_contract": "read raw_selection_exposure only; counts_all, counts_train, and counts_holdout are forbidden"
+    },
+    "Phase_A_COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/COMPLETE",
+      "sha256": "a40d668049937102cbb007f37e3c1c63249cc85ff0394611e57567e8f4910539"
+    },
+    "quadrature_arrays": {
+      "path": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1/selection_orders.npz",
+      "sha256": "2b952bbde598da2ee1e50937807e2767daf7eaf8f88de849cea594940cc6da80"
+    },
+    "fixed_design_mock_fields": {
+      "path": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v2/smoke/fields.npz",
+      "sha256": "94dad04015ad6698328af0c98459db957a1deb8789f333200feec7323bb2e681"
+    },
+    "fixed_design_mock_COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v2/smoke/COMPLETE",
+      "sha256": "627682068cec56c83b62a8737ec2c621f54d3aa871a2ad8e04277ef568669105"
+    },
+    "CF4_catalog": {
+      "path": "/home/kjhan/BACKUP/CF4/data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37"
+    }
+  },
+  "source_bindings": {
+    "Phase_B_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phaseb_smoke.py",
+      "sha256": "c895b4ed9abe67685001c87d52c5ce50ecf34cf2021e1b32abe9c6b4518d7824"
+    },
+    "fixed_field_kernels": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "CF4_linear_likelihood": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    }
+  },
+  "external_population_prior": {
+    "source": "Lavaux and Jasche, Unmasking the Masked Universe: the 2M++ catalogue through Bayesian eyes, MNRAS 455 (2016) 3169, Table 1 in arXiv:1509.05040 source",
+    "source_url": "https://arxiv.org/abs/1509.05040",
+    "population_order": [
+      "K<=11.5, -25<M_K<-23.67",
+      "K<=11.5, -23.67<M_K<-22.33",
+      "K<=11.5, -22.33<M_K<-21",
+      "11.5<K<=12.5, -25<M_K<-23.67",
+      "11.5<K<=12.5, -23.67<M_K<-22.33",
+      "11.5<K<=12.5, -22.33<M_K<-21"
+    ],
+    "published_box_size_cMpc_h": 600.0,
+    "published_grid_N": 256,
+    "published_cell_size_cMpc_h": 2.34375,
+    "published_mean_count_per_original_voxel": [0.0112, 0.086, 0.124, 0.0104, 0.086, 0.137],
+    "published_bias": [1.7, 1.2, 1.15, 1.74, 1.21, 1.0],
+    "volume_rescaling": "multiply published mean count per 2.34375 cMpc/h voxel by (12/2.34375)^3 before taking alpha=log(Nbar)",
+    "alpha_log_sigma": 0.35,
+    "bias_log_sigma": 0.25,
+    "prior_width_semantics": "broad technical smoke prior covering resolution, sample-definition, and model differences; it is not frozen for actual inference",
+    "observed_population_totals_used_to_center_prior": false,
+    "ARES_example_nmean_equals_one_used_as_physical_prior": false
+  },
+  "mock": {
+    "truth_seed_reused": 2026083000,
+    "truth_source": "the completed fixed-design smoke fields are reused bit-for-bit",
+    "new_truth_seed_count": 0,
+    "validation_seed_count": 0,
+    "seed_or_parent_ranking": false,
+    "derived_streams": {
+      "twoMpp_Poisson": {"derivation": "numpy SeedSequence([2026083000,tag_uint32])", "tag_uint32": 843927632},
+      "operator_probes": {"derivation": "numpy SeedSequence([2026083000,tag_uint32])", "tag_uint32": 843927633},
+      "gradient_probes": {"derivation": "numpy SeedSequence([2026083000,tag_uint32])", "tag_uint32": 843927634},
+      "HMC_mechanics": {"derivation": "numpy SeedSequence([2026083000,tag_uint32])", "tag_uint32": 843927635}
+    }
+  },
+  "model": {
+    "eta_gauge": "eta=T*w-mean(T*w); the density monopole is fixed before alpha is applied",
+    "real_space_intensity": "m[p,x]=exp(alpha[p]+exp(logbias[p])*eta[x])",
+    "coherent_RSD": "s=x+rhat(x)*(v(x).rhat(x))/100 in cMpc/h at z=0",
+    "line_of_sight": "observer-centred and position dependent at every source cell; plane parallel is forbidden",
+    "deposition": "periodic conservative C1 triangular-shaped-cloud push; each population is scattered separately; an autodiff VJP adjoint is tested",
+    "boundary": "selection has radial support inside the observer-centred sphere; require maximum truth displacement strictly below the 12 cMpc/h sphere-to-periodic-face margin",
+    "selection_application": "raw order-6 angular-times-radial exposure is applied after the real-to-redshift-space mass push",
+    "selection_discretization_control": "evaluate order-4 and order-6 truth intensities and report their relative L1 difference; do not claim convergence",
+    "count_likelihood": "exact conditional Poisson, no Gaussian count approximation and no renormalization to observed totals",
+    "CF4_likelihood": "existing fixed-geometry BGc Gaussian radial-velocity mock factor using its per-row mean model and sigma_v, with four standardized nuisance parameters",
+    "FoG": "disabled in this matched coherent-RSD mechanics smoke; required in later stress arms",
+    "overdispersion": "disabled in this matched Poisson mechanics smoke; required as a later stress arm",
+    "RSD_differentiability": "TSC is C1 across nearest-cell boundaries and is tested by central finite differences at the zero-field initial state that exposed the V1 CIC cusp"
+  },
+  "mechanics": {
+    "directional_probe_count": 3,
+    "finite_difference_steps": [0.001, 0.0003, 0.0001],
+    "optimizer": "scipy L-BFGS-B using the exact JAX gradient",
+    "optimizer_max_iterations": 32,
+    "optimizer_max_line_search": 20,
+    "HMC_transition_count": 4,
+    "HMC_leapfrog_steps": 2,
+    "HMC_step_size": 0.00002,
+    "HMC_semantics": "mechanics-only transitions; no convergence, coverage, posterior, or promotion claim"
+  },
+  "gates": {
+    "radial_forward_relative_error_max": 5e-08,
+    "rsd_mass_relative_error_max": 2e-13,
+    "rsd_adjoint_relative_error_max": 2e-12,
+    "directional_gradient_relative_error_max": 0.0002,
+    "optimizer_relative_decrease_min": 1e-05,
+    "boundary_max_displacement_cMpc_h_strict": 12.0,
+    "prior_dominated_information_fraction_max": 0.01
+  },
+  "prior_dominated_label": {
+    "technical_information_proxy": "I[x]=sum_p bbar[p]^2*Nbar[p]*R[p,x]",
+    "label_rule": "prior_dominated[x] iff I[x] <= 0.01*max_x I[x]",
+    "semantics": "predeclared Phase-B exposure-information proxy only, not a recovered-mode or observational-resolution label"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_single_GPU",
+    "partitions": "h100,h200,a100,a100_pcie,a40,a10",
+    "cpus_per_task": 8,
+    "expected_peak_memory_MiB": 19660,
+    "requested_memory_MiB": 24576,
+    "memory_headroom_multiplier": 1.25,
+    "time_limit": "08:00:00",
+    "maximum_submissions": 1,
+    "output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phaseb_smoke_v2",
+    "refuse_overwrite": true,
+    "plain_same_filesystem_directory_rename": true,
+    "renameat2_required": false,
+    "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+    "monitoring_loop_allowed": false
+  },
+  "environment": {
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1",
+    "JAX_enable_x64": true,
+    "GPU_required": true
+  },
+  "success_semantics": {
+    "Phase_B_technical_pass_only": true,
+    "actual_present_day_density_posterior_created": false,
+    "actual_present_day_velocity_posterior_created": false,
+    "observational_frontier_or_resolution_claim": false,
+    "target_0p3_cMpc_h_reached": false,
+    "Phase_C_requires_separate_user_approval": true,
+    "automatic_follow_on": false
+  }
+}

@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+umask 077
+readonly repo=/home/kjhan/BACKUP/CF4
+readonly python=/home/kjhan/miniconda3/envs/circle/bin/python
+readonly program="$repo/config/cf4_projection_contract_control_program.json"
+readonly state=/gpfs/kjhan/CF4/recon/linear_cr/projection_contract_control
+readonly output="$state/result.json"
+readonly log="$state/run.log"
+readonly running="$state/RUNNING"
+readonly complete="$state/COMPLETE"
+readonly failed="$state/FAILED"
+readonly environment="$state/environment.txt"
+readonly lock="$state/.runner.lock"
+
+mkdir -p "$state"
+exec 9>"$lock"
+if ! flock -n 9; then
+    echo "another projection-contract control owns $lock" >&2
+    exit 75
+fi
+if [[ -e "$output" || -e "$running" || -e "$complete" || -e "$failed" \
+      || -e "$log" || -e "$environment" ]]; then
+    echo "refusing to overwrite a contract-control lifecycle or output file" >&2
+    exit 73
+fi
+if [[ ! -x "$python" || ! -f "$program" ]]; then
+    echo "missing Python environment or frozen contract program" >&2
+    exit 66
+fi
+
+exec >"$log" 2>&1
+started_at=$(date --iso-8601=seconds)
+host=$(hostname)
+commit=$(git -C "$repo" rev-parse HEAD)
+implementation_sha=$(sha256sum "$repo/src/cf4_projection_contract_control.py" | awk '{print $1}')
+program_sha=$(sha256sum "$program" | awk '{print $1}')
+readonly started_at host commit implementation_sha program_sha
+
+export PYTHONNOUSERSITE=1
+export PYTHONPATH="$repo/src"
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export MALLOC_ARENA_MAX=2
+
+finish() {
+    local rc=$?
+    local ended_at marker_tmp
+    ended_at=$(date --iso-8601=seconds)
+    if (( rc == 0 )) && [[ -s "$output" ]]; then
+        marker_tmp="$state/.COMPLETE.$$"
+        {
+            printf 'status=complete\nstarted_at=%s\nended_at=%s\n' "$started_at" "$ended_at"
+            printf 'host=%s\ngit_commit=%s\n' "$host" "$commit"
+            printf 'output=%s\noutput_sha256=%s\n' "$output" \
+                "$(sha256sum "$output" | awk '{print $1}')"
+            printf 'environment_sha256=%s\n' \
+                "$(sha256sum "$environment" | awk '{print $1}')"
+        } >"$marker_tmp"
+        mv "$marker_tmp" "$complete"
+    else
+        marker_tmp="$state/.FAILED.$$"
+        {
+            printf 'status=failed\nexit_code=%s\n' "$rc"
+            printf 'started_at=%s\nended_at=%s\n' "$started_at" "$ended_at"
+            printf 'host=%s\ngit_commit=%s\nlog=%s\n' "$host" "$commit" "$log"
+        } >"$marker_tmp"
+        mv "$marker_tmp" "$failed"
+    fi
+    rm -f "$running"
+}
+trap finish EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+running_tmp="$state/.RUNNING.$$"
+{
+    printf 'status=running\npid=%s\nstarted_at=%s\n' "$$" "$started_at"
+    printf 'host=%s\ngit_commit=%s\n' "$host" "$commit"
+    printf 'implementation_sha256=%s\nprogram_sha256=%s\n' \
+        "$implementation_sha" "$program_sha"
+    printf 'thread_limit=1\nlog=%s\n' "$log"
+} >"$running_tmp"
+mv "$running_tmp" "$running"
+
+printf '[runner] start=%s host=%s pid=%s commit=%s threads=1\n' \
+    "$started_at" "$host" "$$" "$commit"
+printf '[runner] implementation_sha256=%s program_sha256=%s\n' \
+    "$implementation_sha" "$program_sha"
+
+{
+    "$python" -c 'import platform, numpy, scipy; print(f"python={platform.python_version()}"); print(f"numpy={numpy.__version__}"); print(f"scipy={scipy.__version__}")'
+    printf 'host=%s\ncommit=%s\n' "$host" "$commit"
+    printf 'OMP_NUM_THREADS=%s\nOPENBLAS_NUM_THREADS=%s\nMKL_NUM_THREADS=%s\n' \
+        "$OMP_NUM_THREADS" "$OPENBLAS_NUM_THREADS" "$MKL_NUM_THREADS"
+} >"$environment"
+
+cd "$repo"
+nice -n 5 "$python" src/cf4_projection_contract_control.py \
+    --program "$program" \
+    --out "$output"
+test -s "$output"

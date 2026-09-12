@@ -1,0 +1,50 @@
+{
+  "schema": "hong2021-v61-reachable-support-preflight-record-v1",
+  "status": "complete_hard_preflight_pass_training_authorized",
+  "program": "config/hong2021_v61_reachable_support_model_program.json",
+  "program_sha256": "327d750774a82885888ff08313e829462d43c877d45effc990f1035358f04cd1",
+  "code_commit": "c439b11059a3f949f574e4743d4dc4fdbc14ac0a",
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence/preflight.json",
+    "sha256": "d900088be814bc969a94e4e4e2ff8b85d358665ab52dc9c31539e17bacb43063",
+    "decision_digest_sha256": "02ba6a5fb7111bc2babc5f37a2701c2a7761b085298026035e9d6e5b9074e64c",
+    "grid_cells": 134,
+    "existing_cells": 16,
+    "appended_cells": 118,
+    "score_checkpoint_chunk_cells": 8,
+    "peak_allocated_bytes": 9169972224,
+    "peak_allocated_bytes_limit": 30064771072,
+    "initial_output_maximum_error": 0.0,
+    "composite_identity_absolute_error": 6.351346529544999e-17,
+    "appended_score_parameter_gradient_finite": true,
+    "appended_score_parameter_gradient_maximum_absolute": 9.185919386256458e-12,
+    "base_score_absolute_differences_from_V56_preflight": {
+      "bounded_NLL": 0.0,
+      "V54_tail_score": 0.0,
+      "V54_Brier_components": 0.0
+    }
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_preflight": true,
+    "pytest_passed": 452,
+    "sequence_status": "complete_preflight_pass",
+    "sequence_status_sha256": "39b9303e65f9a81e092c372ee191b17b8fcfaddb3d0ae566dc80d90ca373ae14",
+    "pytest_log_sha256": "936b8bd12dcb191b5ac3d715f494cbec900b1d47fcba56602b7d3693f8066922",
+    "preflight_log_sha256": "724dd7ad58a5e8fa53515fde00080f10e6b2499d402406959a2007f9e253f2a5",
+    "first_failed_attempt_preserved_at": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence_failed_fffcbe7_oom",
+    "first_failed_status_sha256": "661247ec335ade3e0a6ee7a4ae25761fe924967e6095b4f29a46c76cc0518ad2",
+    "first_failed_preflight_log_sha256": "cf86c70f430753b0a713b1f638825f32c53efddf351cf3ec0a37737c4ed8c087",
+    "oom_repair": "Only algebraic score checkpointing in fixed eight-cell chunks was introduced; the frozen thresholds, weights, normalization, coefficients, data, model, initialization, and objective were unchanged."
+  },
+  "authorization": {
+    "training_allowed": true,
+    "training_steps": 12000,
+    "train_only_gate_required_before_development": true,
+    "development_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-phase-control-v2-result-record-v1",
+  "status": "complete_pass_exact_N576_phase_cache",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the full-size exact 27-phase Q-space covariance and normalized peak-evidence engineering pass.",
+  "execution": {
+    "host": "LagEunha",
+    "git_commit": "6b52c14a85a4d5920c231fbc5f77e528d4764593",
+    "started_at": "2026-08-16T10:27:29+09:00",
+    "ended_at": "2026-08-16T10:31:52+09:00",
+    "elapsed_seconds": 261.5303768161684,
+    "thread_limit": 1,
+    "JAX_platform": "cpu",
+    "process_table_polling_used": false,
+    "environment_sha256": "0e9ece40d06310296f489b1fd0b4cada31cb160e0b5fcf4453d12eda237c1b41"
+  },
+  "lineage": {
+    "program": "config/cf4_peak_evidence_phase_control_v2_program.json",
+    "program_sha256": "acc6dca50bb370c3b226d7fd2cbe8f56c4d19b40a3a7d0c0952a3d2774e6a099",
+    "phase_cache_implementation": "src/cf4_peak_evidence_phase_cache.py",
+    "phase_cache_implementation_sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106",
+    "control_implementation": "src/cf4_peak_evidence_phase_control.py",
+    "control_implementation_sha256": "b71436e6239b1251b4d92a4b21467b201ba9617f7ba22124c99d1270f87fd509",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/result.json",
+    "canonical_result_sha256": "eacbdc20ff142245758488e34f9c56a05fd13927ac058468625084a24496bd79",
+    "complete_marker_sha256": "4702594243f58c24e13c6106d2cced519b428ca2fe54af24eb73c87ff23817a6",
+    "density_filter_rfft": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+    "density_filter_rfft_sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"
+  },
+  "results": {
+    "refinement_ratio": 3,
+    "phase_count_used": 19,
+    "maximum_phase_count": 27,
+    "response_grids_held_simultaneously": 1,
+    "maximum_phase_response_imaginary_relative_RMS": 2.9433195497379115e-12,
+    "phase_response_imaginary_relative_RMS_limit": 1e-10,
+    "maximum_phase_response_absolute_imaginary": 6.459693395342282e-18,
+    "phase_response_absolute_imaginary_limit": 1e-15,
+    "maximum_covariance_asymmetry": 4.716279450311944e-17,
+    "coarse_translation_relative_error": 0.0,
+    "minimum_signal_covariance_eigenvalue": 9.003535175246535e-06,
+    "maximum_observation_condition_number": 1.011378067400775,
+    "normalized_log_evidence_controls": [
+      {"geometry_index": 0, "parent_seed": 3193, "log_Z_peak": -338.98159358077686},
+      {"geometry_index": 0, "parent_seed": 3429, "log_Z_peak": -902.5467571720975},
+      {"geometry_index": 1, "parent_seed": 3193, "log_Z_peak": -175.40598503598454},
+      {"geometry_index": 1, "parent_seed": 3429, "log_Z_peak": -411.23589381695706}
+    ]
+  },
+  "gates": {
+    "finite_normalized_evidence": true,
+    "covariance_numerics": true,
+    "coarse_translation_identity": true,
+    "bounded_phase_cache": true,
+    "phase_cache_pass": true
+  },
+  "interpretation": {
+    "exactness": "Q=I-R*R is not fully stationary on the N576 grid, but it is exactly equivariant under translations by one N192 cell. N576/N192=3 therefore reduces every required covariance to at most 27 absolute fine-cell phases without approximation.",
+    "memory": "The implementation evaluates all requested geometries while retaining only one N576 response grid at a time.",
+    "importance_weight": "The large parent- and geometry-dependent differences in normalized log Z_peak demonstrate that peak marginal evidence cannot be omitted when the peak-conditional proposal is used across independent CF4 parents.",
+    "v1_failure": "The preceding v1 run remains a sealed pre-scientific tolerance failure. v2 records both absolute and relative Hermitian residuals and passes the preregistered limits."
+  },
+  "decision": {
+    "exact_phase_cache_engineering_pass": true,
+    "freeze_all_256_parent_evidence_program_authorized": true,
+    "stationary_covariance_approximation_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_RAMSES_authorized": false,
+    "next": "Freeze the all-256-parent, 64-common-geometry, evidence-only ESS and CF4-compatibility feasibility program before reading any additional parent evidence."
+  }
+}

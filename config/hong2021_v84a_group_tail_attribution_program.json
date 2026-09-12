@@ -1,0 +1,126 @@
+{
+  "schema": "hong2021-v84a-group-tail-SQT-attribution-program-v1",
+  "status": "frozen_before_train_or_consumed_payload_audit",
+  "purpose": "Determine whether V83 failed because its random-object train holdout leaked simulation realizations or overlapping observer volumes, because the conditional marginal does not generalize to unseen realizations and extreme PIT tails, or because V72 SQT distorts an otherwise calibrated marginal.",
+  "engineering_only": true,
+  "statistically_independent": false,
+  "amendment": {
+    "revision": 1,
+    "reason": "Add the omitted validation object counts after the original frozen program terminated before model inference with KeyError validation_objects.",
+    "superseded_program_sha256": "549439e97d5c90665d5a3f40068b5d403459bbc40b61ed8f54e8155467a322c2",
+    "failed_preflight_status": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84a_group_tail_attribution/status",
+    "scientific_payload_accessed_before_failure": false
+  },
+  "single_audit": {
+    "group_provenance": "compare the exact V83 fit/holdout partition by realization and periodic observer-center distance, and compare against the already consumed validation realization set",
+    "direct_marginal": "run the frozen step-12000 V83 EMA CDF on the exact random-object holdout and the already consumed 32-query validation selection",
+    "tail_resolution": "measure direct PIT exceedance at 1e-2, 1e-3, and 1e-4 on both sides plus 100-bin PIT, coverage, and backbone-quartile means",
+    "covariate_shift": "compare fixed 4096-voxel probes of all seven standardized condition channels and the standardized target in fit, random holdout, and consumed validation",
+    "SQT_attribution": "compare paired candidate and independent-control rank, coverage, residual spectrum, density PDF, two-point KS, q99.999, and physical mean delta squared from the dataset-identical V83R artifacts",
+    "training_or_refit": false,
+    "sampling_or_resampling": false
+  },
+  "frozen_artifacts": {
+    "v83_program": {"path": "config/hong2021_v83_conditional_marginal_spline_program.json", "sha256": "035e52b3d7059816b61dbf2b23e0cca9f5c5592903f704f0103a913556cea174"},
+    "v83_result_record": {"path": "config/hong2021_v83r_result_record.json", "sha256": "1338dada8caaec78612aad36dedb69abf32ea6a431ab85ba52a6c7e2dda651ba"},
+    "v83_checkpoint": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline/step12000.pt", "sha256": "fc06559221e3430f95dfd3de0131e3646d364d631cab462faabec55e1eb9572d"},
+    "v83_train_gate": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_train_gate/decision.json", "sha256": "d615f5b5d1a89ee8e007d3ccab1d35ec222907484814d984ce08b50c2438d032"},
+    "conditioning_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5", "sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153"},
+    "v83r_recovery_record": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_sequence/recovery_record.json", "sha256": "57938fe7174dfefafe94c3d3b0954d9361bad228b88f0a77731c6759fda0c1b4"},
+    "v83r_consumed_gate": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_gate/decision.json", "sha256": "425560f865cd61809bd4e6e97198c4a39ee085aa76ca1782b45a71d5b46ac50a"}
+  },
+  "domains": {
+    "TNG100": {
+      "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+      "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+      "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500",
+      "train_objects": 432,
+      "validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+      "validation_data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+      "validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "validation_objects": 93,
+      "consumed_selection": [10, 11, 13, 20, 22, 25, 27, 28, 33, 36, 38, 41, 42, 45, 46, 54, 56, 61, 65, 68, 69, 70, 71, 72, 77, 80, 83, 84, 88, 89, 91, 92],
+      "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/tng/ensemble16.h5",
+      "candidate_ensemble_sha256": "761a773ecd56bc605497992e92d5645ae9b61da3a4cd23e05c2035d6f662be8a",
+      "control_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/control/tng/ensemble16.h5",
+      "control_ensemble_sha256": "49c465000302229109ce78c089d75cc602b0e643398c79d1dfedabcfcde88ac6",
+      "candidate_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/candidate/tng/metrics.json",
+      "candidate_metrics_sha256": "77c915db26330e47279d66aaffeac7bd485149a06fa81a12951240d2ecdf854d",
+      "control_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/control/tng/metrics.json",
+      "control_metrics_sha256": "70e161b39d18f5ff91bbbef597cc8a3067ccc3bbbbcd55ee4a1351a38adcc2cc"
+    },
+    "SIMBA": {
+      "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+      "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+      "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c",
+      "train_objects": 202,
+      "validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+      "validation_data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+      "validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "validation_objects": 64,
+      "consumed_selection": [1, 5, 6, 10, 11, 12, 17, 20, 21, 23, 26, 27, 28, 29, 30, 32, 33, 37, 38, 40, 42, 43, 44, 45, 46, 48, 49, 51, 53, 54, 57, 58],
+      "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/simba_dev/ensemble16.h5",
+      "candidate_ensemble_sha256": "cc15b3fb710899b86203a77c88a95d2afa0d449ccaa48d7909c292cdf9657f0e",
+      "control_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/control/simba_dev/ensemble16.h5",
+      "control_ensemble_sha256": "94e0b0ca0b4c61494756d71a9548371033fcd918f097a4fc2a7ec2138ce89e71",
+      "candidate_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/candidate/simba_dev/metrics.json",
+      "candidate_metrics_sha256": "15ea5b82d93b3bac0c1e86eca88e22f1f24105096b099da6ae321da69f5b6178",
+      "control_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/control/simba_dev/metrics.json",
+      "control_metrics_sha256": "cdb796c167d70a68dc25e3caac131e440450c7b2f01a64659cf9415e10488122"
+    },
+    "Swift": {
+      "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+      "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+      "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3",
+      "train_objects": 409,
+      "validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+      "validation_data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+      "validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "validation_objects": 148,
+      "consumed_selection": [1, 4, 6, 15, 26, 28, 31, 37, 41, 44, 51, 53, 55, 59, 60, 66, 75, 83, 85, 90, 93, 95, 96, 97, 104, 107, 110, 112, 125, 128, 132, 141],
+      "candidate_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/candidate/swift_dev/ensemble16.h5",
+      "candidate_ensemble_sha256": "67253742f2c727a5b1c116287a3770fd9c2f0e0c516237227a39b45716552019",
+      "control_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles/control/swift_dev/ensemble16.h5",
+      "control_ensemble_sha256": "d39f5e0c11f0751ac1e812381a849d0ee8d4cb5d3c28e7aba8e54ede7e6263e7",
+      "candidate_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/candidate/swift_dev/metrics.json",
+      "candidate_metrics_sha256": "cc10e958a89f1dc126990f8f79ac1127d56cbe32bdd6d7cf323271989b1441d3",
+      "control_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics/control/swift_dev/metrics.json",
+      "control_metrics_sha256": "63c9d7a3959ca0ab45a0523690fbe30fd9d725122fb13aeb08993af7a2055e58"
+    }
+  },
+  "implementation_sources": {
+    "audit": {"path": "src/hong2021_v84a_group_tail_attribution.py", "sha256": "d3c226ba1470930259c94687cf42e03a1805dc05c6ad56c93585c096213a5309"}
+  },
+  "fixed_numerics": {
+    "PIT_bins": 100,
+    "tail_probabilities_each_side": [0.01, 0.001, 0.0001],
+    "direct_tail_observed_over_expected_pass_interval": [0.8, 1.25],
+    "tail_probabilities_used_for_decision": [0.001, 0.0001],
+    "condition_probe_voxels_per_object": 4096,
+    "condition_probe_seed": 840084,
+    "maximum_candidate_control_rank_TV_difference_for_marginal_attribution": 0.005,
+    "TNG100_periodic_box_mpc_h": 75.0,
+    "CAMELS_periodic_box_mpc_h": 25.0
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84a1_group_tail_attribution/report.json",
+  "authorization": {
+    "user_approved_V84A_audit": true,
+    "training_or_refit": false,
+    "resampling": false,
+    "new_model_selection": false,
+    "independent_validation": false
+  },
+  "firewall": {
+    "allowed_payload": "immutable train data plus the already consumed V80/V83 32-query validation selections and their sealed V83R candidate/control artifacts",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_validation_locked": true,
+    "automatic_V84B_training": "forbidden_until_V84A_result_is_recorded_and_reviewed"
+  }
+}

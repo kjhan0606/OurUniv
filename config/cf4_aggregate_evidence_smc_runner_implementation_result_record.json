@@ -1,0 +1,240 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-runner-implementation-result-record-v1",
+  "status": "complete_pass_postcommit_runner_implementation",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the independently audited implementation and post-commit lineage of the fail-closed aggregate-evidence SMC production program, executor, runner, launcher, status checker, and tests without authorizing or executing production SMC, populating an oracle cache, reserving production GPFS paths, or opening any downstream stage.",
+  "commit_lineage": {
+    "git_commit": "3db0e219a2569ed300e3647eca94a7078cae073c",
+    "parent_commit": "6630b6b04ab02e513d47f1667617384894eb349f",
+    "tree": "a260df597db3455d9dbea071d99963717f9a6c61",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_url": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "local_ref_commit": "3db0e219a2569ed300e3647eca94a7078cae073c",
+    "tracking_ref_commit": "3db0e219a2569ed300e3647eca94a7078cae073c",
+    "remote_ref_commit": "3db0e219a2569ed300e3647eca94a7078cae073c"
+  },
+  "committed_runner_files": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+      "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+      "git_blob_oid": "36df434fb9e5b94dffa50af520361df67e1462c9",
+      "git_mode": "100644"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "sha256": "330000c2c74092b529541518e743fde751a1b91394412c2376448c5c250e3473",
+      "git_blob_oid": "688d1dd10ae10f9b2e071961057bdabadcd7a38e",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "sha256": "17d85585dfbba18ca9c5684141ba75ba9e1ccb93c0c89dc5231f5b0ba25fe4a6",
+      "git_blob_oid": "bc52f3b93849b62d1d3faf7905987557eeb700a5",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/status_cf4_aggregate_evidence_smc_production.sh",
+      "sha256": "5a122ee557783d838ceea2beba70c66d56bd7c97fa0a388c428922da34baab23",
+      "git_blob_oid": "dc2af65ff9b6329dfd8292264ef29d9dc9d4a16a",
+      "git_mode": "100755"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_execution.py",
+      "sha256": "64f68b8bd0ae69c02509fdd940f80a393439c7c94362c5e279b8edc7b1a08533",
+      "git_blob_oid": "683f6d8da86b72db86ecb1b95ac23e51100867f9",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_execution.py",
+      "sha256": "8d15adb282e0c8e16138ed9559a34e619cb7de2fc3ad57ec250b7c00fe339fbc",
+      "git_blob_oid": "00cd38427804032c1a8eaa650f66a28429be517b",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_production_runner.py",
+      "sha256": "679db0908ed135a3c969a1f50267f0d1fbccf25af9f01d8a47bbcc892b041786",
+      "git_blob_oid": "4fd7196e148e4d51e855073a958daec758cc41d8",
+      "git_mode": "100644"
+    }
+  ],
+  "protected_predecessor_lineage": {
+    "predecessor_commit": "6630b6b04ab02e513d47f1667617384894eb349f",
+    "base_SMC_design": {
+      "path": "config/cf4_aggregate_evidence_annealed_smc_design.json",
+      "sha256": "47397a00b497dc09e0e517cebe61a285cebdf9aa4b0a0ef1688af588c2c58609"
+    },
+    "production_capability_design": {
+      "path": "config/cf4_aggregate_evidence_smc_production_capability_design.json",
+      "sha256": "2a253e049da3c02ef3cff4fc68a72a1f70efde616670538274a01d733460c888"
+    },
+    "parallel_oracle_capability": {
+      "path": "src/cf4_aggregate_evidence_parallel_oracle.py",
+      "sha256": "1d4d587a2e54c676f71c5c68fcd0744db21ec3006501f4185b3854f7c3b19e3c"
+    },
+    "SMC_capability": {
+      "path": "src/cf4_aggregate_evidence_smc_capability.py",
+      "sha256": "aeb385bcb55767c94867ae6037ba56cbc0150b8512c3d778797870e300929b1c"
+    },
+    "capability_implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_capability_implementation_result_record.json",
+      "sha256": "0eba7e9ae0bf09613b53cf636dcda8cef615be58dea3c645abca1b8d8786fc30"
+    }
+  },
+  "commit_scope": {
+    "addition_count": 7,
+    "added_paths": [
+      "config/cf4_aggregate_evidence_smc_production_program.json",
+      "scripts/launch_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "scripts/run_cf4_aggregate_evidence_smc_production_lageunha.sh",
+      "scripts/status_cf4_aggregate_evidence_smc_production.sh",
+      "src/cf4_aggregate_evidence_smc_execution.py",
+      "tests/test_cf4_aggregate_evidence_smc_execution.py",
+      "tests/test_cf4_aggregate_evidence_smc_production_runner.py"
+    ],
+    "other_tracked_change_count": 0,
+    "modified_path_count": 0,
+    "deleted_path_count": 0,
+    "renamed_path_count": 0,
+    "excluded_user_owned_outside_science_scope": {
+      "path": "scripts/run_lg_v6_p2_manual_tripwire.sh",
+      "classification": "excluded_user_owned_outside_science_scope",
+      "worktree_status": "modified_user_owned",
+      "included_in_commit": false,
+      "touched_by_runner_implementation": false
+    }
+  },
+  "verification_environment": {
+    "python": "3.13.11",
+    "numpy": "2.3.3",
+    "scipy": "1.18.0",
+    "pytest": "9.0.2"
+  },
+  "focused_regression_test": {
+    "command": "PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_smc_execution.py tests/test_cf4_aggregate_evidence_smc_production_runner.py",
+    "test_files": [
+      "tests/test_cf4_aggregate_evidence_smc_execution.py",
+      "tests/test_cf4_aggregate_evidence_smc_production_runner.py"
+    ],
+    "result": "22 passed",
+    "passed": 22,
+    "failed": 0,
+    "elapsed_seconds": 26.39,
+    "exit_code": 0
+  },
+  "full_regression_test": {
+    "command": "PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_oracle.py tests/test_cf4_aggregate_evidence_oracle_regression.py tests/test_cf4_aggregate_evidence_oracle_regression_runner.py tests/test_cf4_aggregate_evidence_parallel_oracle.py tests/test_cf4_aggregate_evidence_smc.py tests/test_cf4_aggregate_evidence_smc_capability.py tests/test_cf4_aggregate_evidence_smc_design.py tests/test_cf4_aggregate_evidence_smc_execution.py tests/test_cf4_aggregate_evidence_smc_production.py tests/test_cf4_aggregate_evidence_smc_production_runner.py tests/test_cf4_aggregate_evidence_smc_validation.py",
+    "test_files": [
+      "tests/test_cf4_aggregate_evidence_oracle.py",
+      "tests/test_cf4_aggregate_evidence_oracle_regression.py",
+      "tests/test_cf4_aggregate_evidence_oracle_regression_runner.py",
+      "tests/test_cf4_aggregate_evidence_parallel_oracle.py",
+      "tests/test_cf4_aggregate_evidence_smc.py",
+      "tests/test_cf4_aggregate_evidence_smc_capability.py",
+      "tests/test_cf4_aggregate_evidence_smc_design.py",
+      "tests/test_cf4_aggregate_evidence_smc_execution.py",
+      "tests/test_cf4_aggregate_evidence_smc_production.py",
+      "tests/test_cf4_aggregate_evidence_smc_production_runner.py",
+      "tests/test_cf4_aggregate_evidence_smc_validation.py"
+    ],
+    "result": "95 passed",
+    "passed": 95,
+    "failed": 0,
+    "elapsed_seconds": 59.07,
+    "exit_code": 0
+  },
+  "sealed_execution_state": {
+    "canonical_program_path": "config/cf4_aggregate_evidence_smc_production_program.json",
+    "canonical_program_sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+    "program_production_execution_authorized": false,
+    "public_canonical_entry_refuses_unauthorized_execution_before_evaluator_core_or_output_creation": true,
+    "GPFS_data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v1",
+    "GPFS_data_directory_present": false,
+    "GPFS_state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v1_run",
+    "GPFS_state_directory_present": false,
+    "production_SMC_executed": false,
+    "oracle_cache_populated": false,
+    "production_output_populated": false
+  },
+  "current_authorization": {
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "gates": {
+    "local_tracking_and_remote_ref_equal_commit": true,
+    "seven_committed_paths_SHA256_blob_OID_and_mode_exact": true,
+    "commit_contains_exactly_seven_additions_and_no_other_tracked_changes": true,
+    "protected_predecessor_design_capability_and_result_hashes_exact": true,
+    "user_owned_tripwire_excluded": true,
+    "focused_22_test_suite_pass": true,
+    "full_95_test_suite_pass": true,
+    "program_production_execution_authorization_false": true,
+    "public_canonical_entry_refuses_unauthorized_execution_before_work": true,
+    "production_GPFS_data_and_state_paths_absent": true,
+    "production_SMC_not_executed": true,
+    "oracle_cache_not_populated": true,
+    "production_output_not_populated": true,
+    "all_execution_cache_selection_downstream_retry_retune_scale_up_and_follow_on_authorizations_closed": true,
+    "runner_implementation_pass": true
+  },
+  "independent_Fable_audit": {
+    "precommit": {
+      "verdict": "COMMIT GO",
+      "implementation_scope_tests_and_fail_closed_contract_pass": true
+    },
+    "postcommit": {
+      "verdict": "LINEAGE GO",
+      "commit_blob_mode_remote_and_protected_lineage_pass": true
+    }
+  },
+  "decision": {
+    "runner_implementation_accepted": true,
+    "existing_false_authorization_files_immutable": true,
+    "current_versioned_one_shot_execution_authorization_design_and_implementation_authorized": false,
+    "prospective_only_after_this_record_precommit_commit_and_postcommit_audit": {
+      "versioned_one_shot_execution_authorization_design_and_implementation_authorized": true,
+      "production_SMC_execution_authorized": false,
+      "oracle_cache_population_authorized": false,
+      "conditional_field_bank_authorized": false,
+      "candidate_generation_authorized": false,
+      "parent_or_seed_selection_authorized": false,
+      "PM_authorized": false,
+      "HOP_authorized": false,
+      "RAMSES_authorized": false,
+      "downstream_execution_authorized": false,
+      "automatic_retry_authorized": false,
+      "automatic_retune_authorized": false,
+      "automatic_scale_up_authorized": false,
+      "automatic_follow_on_authorized": false
+    },
+    "next_pins": {
+      "runner_commit": "3db0e219a2569ed300e3647eca94a7078cae073c",
+      "runner_file_SHA256": {
+        "config/cf4_aggregate_evidence_smc_production_program.json": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+        "scripts/launch_cf4_aggregate_evidence_smc_production_lageunha.sh": "330000c2c74092b529541518e743fde751a1b91394412c2376448c5c250e3473",
+        "scripts/run_cf4_aggregate_evidence_smc_production_lageunha.sh": "17d85585dfbba18ca9c5684141ba75ba9e1ccb93c0c89dc5231f5b0ba25fe4a6",
+        "scripts/status_cf4_aggregate_evidence_smc_production.sh": "5a122ee557783d838ceea2beba70c66d56bd7c97fa0a388c428922da34baab23",
+        "src/cf4_aggregate_evidence_smc_execution.py": "64f68b8bd0ae69c02509fdd940f80a393439c7c94362c5e279b8edc7b1a08533",
+        "tests/test_cf4_aggregate_evidence_smc_execution.py": "8d15adb282e0c8e16138ed9559a34e619cb7de2fc3ad57ec250b7c00fe339fbc",
+        "tests/test_cf4_aggregate_evidence_smc_production_runner.py": "679db0908ed135a3c969a1f50267f0d1fbccf25af9f01d8a47bbcc892b041786"
+      },
+      "authorization_flag_flips": false,
+      "production_execution_before_required_future_audits": false
+    },
+    "next": "Freeze this result record by pinning commit 3db0e219a2569ed300e3647eca94a7078cae073c and the seven recorded file SHA256 values without modifying any existing false-authorization program, source, runner, or result file; only after independent precommit, commit, and post-commit audits of this record may a new versioned one-shot execution-authorization design and implementation begin. Production execution, cache population, selection, downstream work, retries, retuning, scale-up, and follow-on remain unauthorized."
+  }
+}

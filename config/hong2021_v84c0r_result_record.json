@@ -1,0 +1,144 @@
+{
+  "schema": "hong2021-v84c0r-unique-cell-tail-shape-result-record-v1",
+  "status": "complete_V84C0R_no_go_stop_tail_model_expansion",
+  "recorded_at": "2026-08-13T12:49:16+09:00",
+  "superseded_report": {
+    "program_sha256": "8ffd8ec74ee0494c195c114069cc1eabccbce50f7d83091f2c3477f372a43489",
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0_unique_cell_tail_audit/report.json",
+    "sha256": "be56a9457a2ad85ca950bd27d1c6982454c6210229827b4f4746e63a9227ff68",
+    "decision_digest_sha256": "31b8ac6fbc8428bc4361a7c705f0bc0a255918cfae816ab56a56808e372b1cc8",
+    "error": "CAMELS provenance objects were initialized at the inner-domain count and then realization counts were added again",
+    "scientific_tail_statistics_or_decision_affected": false,
+    "outer_development_payload_accessed": false
+  },
+  "amended_program": {
+    "path": "config/hong2021_v84c0_unique_cell_tail_audit_program.json",
+    "sha256": "027b054a264e73739e07ad3b0163fe35cc970843097129b4b0160148c2ba10d7",
+    "freeze_commit": "75f1f1904c775cddb0c8c6ec194f70bb209add5c",
+    "execution_commit": "0e1d7e1de6db954d692330a0bb32cba6c2d408b8"
+  },
+  "report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0r_unique_cell_tail_audit/report.json",
+    "sha256": "5d40cb0ee59836ae6a59fa8d682aac8590599c8db20d29b64a718d91954c8382",
+    "decision_digest_sha256": "9a485b3ebccb024a03163d2465b7a20b1820d02673ab1fe06320298b86524e18",
+    "canonical_digest_reverified": true,
+    "runner_status_sha256": "70d83c8ec5dc4de9d7f351c6cb31f00fb4b1124c5d33b2c3be1a90f696d3362e",
+    "pytest_log_sha256": "991adc36a58181dc10b0469d778672275c281b9b3e977c24f3d4573d67d3b73c",
+    "tests_passed": 730
+  },
+  "prospective_outer_development": {
+    "qualification": "sequestered from V84C0 onward, not statistically independent of earlier model generations",
+    "TNG100": {
+      "inner_objects": 139,
+      "outer_objects": 32,
+      "cell_overlap_embargo_objects": 190,
+      "inner_unique_target_cells": 5557037,
+      "outer_unique_target_cells": 875601,
+      "inner_outer_target_cell_intersection": 0
+    },
+    "SIMBA": {
+      "inner_realizations": [16, 17, 18, 23],
+      "outer_realizations": [19, 22],
+      "inner_objects": 100,
+      "outer_objects": 46
+    },
+    "Swift": {
+      "inner_realizations": [1, 2, 3, 5, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19],
+      "outer_realizations": [0, 4, 16],
+      "inner_objects": 287,
+      "outer_objects": 61
+    },
+    "payload_accessed": false
+  },
+  "pseudoreplication_correction": {
+    "TNG100": {
+      "voxel_occurrences": 36438016,
+      "unique_physical_cells": 5557037,
+      "occurrences_per_unique_cell": 6.557094365216571,
+      "equal_weight_TNG_spatial_blocks": 38
+    },
+    "SIMBA": {
+      "voxel_occurrences": 26214400,
+      "unique_physical_cells": 2047892,
+      "occurrences_per_unique_cell": 12.80067503559758,
+      "equal_weight_realizations": 4
+    },
+    "Swift": {
+      "voxel_occurrences": 75235328,
+      "unique_physical_cells": 7151444,
+      "occurrences_per_unique_cell": 10.520298837549452,
+      "equal_weight_realizations": 14
+    },
+    "method": "each global target cell has total inverse-multiplicity weight one; uncertainty units are equally weighted nonoverlapping TNG blocks or CAMELS realizations"
+  },
+  "tail_shape_findings": {
+    "exponential_null": "far_over_near_scale equals one",
+    "lower": {
+      "TNG100": {
+        "median_far_over_near_scale": 0.8431065869466879,
+        "fraction_below_one": 0.8947368421052632,
+        "equal_unit_mean_90pct_interval": [0.821279117049701, 0.8801355407593872],
+        "decreasing_far_slope_evidence": true
+      },
+      "SIMBA": {
+        "median_far_over_near_scale": 0.9584499904979236,
+        "fraction_below_one": 1.0,
+        "equal_unit_mean_90pct_interval": [0.9128071119466725, 0.9738631633201612],
+        "decreasing_far_slope_evidence": false
+      },
+      "Swift": {
+        "median_far_over_near_scale": 0.9653736239338783,
+        "fraction_below_one": 0.6428571428571429,
+        "equal_unit_mean_90pct_interval": [0.9636994573378846, 1.0205907655730768],
+        "decreasing_far_slope_evidence": false
+      },
+      "cross_domain_two_slope_support": false
+    },
+    "upper": {
+      "TNG100": {
+        "median_far_over_near_scale": 0.9841075074047672,
+        "fraction_below_one": 0.5526315789473685,
+        "equal_unit_mean_90pct_interval": [0.9401190734526513, 1.024209559649977],
+        "decreasing_far_slope_evidence": false
+      },
+      "SIMBA": {
+        "median_far_over_near_scale": 1.0705129318245272,
+        "fraction_below_one": 0.25,
+        "equal_unit_mean_90pct_interval": [1.0139689014648936, 1.1397746151693768],
+        "decreasing_far_slope_evidence": false
+      },
+      "Swift": {
+        "median_far_over_near_scale": 1.0755887538862132,
+        "fraction_below_one": 0.14285714285714285,
+        "equal_unit_mean_90pct_interval": [1.0503271216159784, 1.115548745980356],
+        "decreasing_far_slope_evidence": false
+      },
+      "cross_domain_two_slope_support": false
+    },
+    "interpretation": "The inner-development physical residuals do not support a common steeper far upper tail. TNG100 is close to the single-exponential null while SIMBA and Swift trend toward a larger far scale. Therefore the V84B1 1e-4 upper calibration failure cannot be repaired defensibly by the proposed common steeper two-slope tail. Lower-tail curvature is also not cross-domain consistent under the frozen effect-size rule."
+  },
+  "decision": {
+    "upper_two_slope_candidate_supported": false,
+    "lower_two_slope_candidate_supported_with_cross_domain_consistency": false,
+    "V84C_training_go": false,
+    "stop_tail_model_expansion": true,
+    "next": "Return to the main constrained-realization pipeline: constrain CF4-supported low-k density/velocity modes, fill unresolved high-k modes from the LCDM conditional Gaussian field with correct power and random phases, then select realizations using forward PM/RAMSES plus halo/cluster/void diagnostics."
+  },
+  "gate_redesign_retained_for_future_models": {
+    "primary": "equal-group/block weighted NLL and 1e-3 calibration with uncertainty",
+    "secondary": "1e-4 point estimate plus group/block interval",
+    "pooled_voxel_only_pass_forbidden": true,
+    "TNG_spatial_holdout_target_cell_intersection_required": 0
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "outer_development_payload_accessed": false,
+    "V84B_burned_holdout_payload_accessed": false,
+    "validation_payload_accessed": false,
+    "consumed_development_payload_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true,
+    "automatic_V84C_training_authorized": false
+  }
+}

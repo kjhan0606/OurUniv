@@ -1,0 +1,106 @@
+{
+  "schema": "ouruniv-cf4-twompp-metadata-consistent-subset-v1-result-record",
+  "date": "2026-09-01",
+  "status": "PASS_METADATA_CONSISTENT_36635_TRACER_SUBSET_NO_FIELD_INFERENCE",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "8bbd31db66291fcd7c955ed0140922ec0d7818cf",
+    "remote": "origin",
+    "remote_commit_at_submission": "8bbd31db66291fcd7c955ed0140922ec0d7818cf",
+    "program": {
+      "path": "config/cf4_twompp_metadata_consistent_subset_program_v1.json",
+      "bytes": 3619,
+      "sha256": "439adb82f33ec6411742a01f33607606c39e959ef0f942d332a03e31e38e2444"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_metadata_consistent_subset_v1.py",
+      "bytes": 17291,
+      "sha256": "46e4435f4a991c03c26f3d3a1bea68d7537b37a4e16d199a2397697701001683"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_metadata_consistent_subset_v1.sbatch",
+      "bytes": 3244,
+      "sha256": "563b905164f42f9fc2680917b6f6379d0558c8f2bed8a5b31acddb5abf9a5e8c"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329555,
+    "controller": "syntax",
+    "cluster": "syntax",
+    "node": "syn04",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 6,
+    "partition": "a10",
+    "cpus": 1,
+    "requested_memory_MiB": 768,
+    "expected_peak_memory_MiB": 500,
+    "memory_headroom_multiplier": 1.536,
+    "reported_batch_MaxRSS_KiB": 3516,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation",
+    "result": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/result.json",
+      "bytes": 2610,
+      "sha256": "c62b9b1819d370212144bf207ea98b26a2ece07ae0f7aa84d628adf5b81f5dc3"
+    },
+    "excluded_recnos": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/excluded_recnos.csv",
+      "bytes": 40183,
+      "sha256": "b0ddbb700612e8aaf937b647405e17b058f04aef2f97a93f207cb32b5d6ac60f"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/manifest.json",
+      "bytes": 366,
+      "sha256": "32b31fcb18a1f99b7b7907dffcb6f5f68601121fcc232c47ae72f4302fa381eb"
+    },
+    "COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/COMPLETE",
+      "bytes": 427,
+      "sha256": "dfd1a32f543b450547970b09e197d06841d6ba882281a1dc837f2f7500fed4b2"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/logs/validation-329555.out",
+      "bytes": 1266,
+      "sha256": "cdeb98e45b3dde800d5593cafb4f173c7ab0ab887bf1bdd155f262e87ecdb967"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/logs/validation-329555.err",
+      "bytes": 216,
+      "sha256": "889da800d5e30dfd71a994640bba1787333a365847c4e5ac927f40f7c11008a9"
+    }
+  },
+  "gate_result": {
+    "passed_gate_count": 10,
+    "total_gate_count": 10,
+    "failed_gates": [],
+    "parent_eligible_count": 36954,
+    "excluded_recno_count": 319,
+    "retained_tracer_count": 36635,
+    "retained_zero_exposure_count": 0,
+    "retained_large_absolute_map_catalog_difference_count": 0,
+    "retained_minimum_assigned_exposure": 0.5,
+    "retained_six_population_counts": {
+      "apparent_0_absolute_0": 9617,
+      "apparent_0_absolute_1": 3463,
+      "apparent_0_absolute_2": 527,
+      "apparent_1_absolute_0": 15671,
+      "apparent_1_absolute_1": 6197,
+      "apparent_1_absolute_2": 1160
+    },
+    "density_outcomes_used_for_exclusion": false,
+    "likelihood_rows_consumed": 0
+  },
+  "scientific_decision": {
+    "metadata_consistent_36635_tracer_subset": "PASS",
+    "joint_velocity_density_information_budget": "NOT_RUN_IN_THIS_JOB",
+    "density_field_inference": "NOT_RUN",
+    "present_density_posterior": "NOT_CREATED",
+    "observational_resolution_0p3_cMpc_h": "NOT_ESTABLISHED",
+    "IC_inference": "NOT_RUN",
+    "authorized_next_step": "N32_joint_velocity_density_information_budget_technical_pilot_only"
+  }
+}

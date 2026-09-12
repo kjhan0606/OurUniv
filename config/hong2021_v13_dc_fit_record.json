@@ -1,0 +1,54 @@
+{
+  "schema": "hong2021-v13-observable-dc-fit-record-v1",
+  "model_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v13/observable_dc_ridge.json",
+  "model_sha256": "c743611fda5715222bd42db99e65359518f8c7b4e168453b55de52991577d5c3",
+  "fit_policy": {
+    "data": ["TNG training", "SIMBA CV16-23 development training"],
+    "source_weights": [0.5, 0.5],
+    "folds": 5,
+    "fold_seed": 13021,
+    "fold_local_feature_scaling": true,
+    "validation_or_test_used": false
+  },
+  "regularization_cv_balanced_mse": {
+    "0": 2.7119734617062926e-05,
+    "1e-6": 2.711732519185905e-05,
+    "1e-5": 2.721111920952001e-05,
+    "1e-4": 2.9029733650420755e-05,
+    "1e-3": 3.1128569602110234e-05,
+    "1e-2": 3.2025120625339604e-05,
+    "1e-1": 3.7766920570068726e-05,
+    "1": 5.827345931054207e-05
+  },
+  "selected_regularization": 1e-06,
+  "feature_names": [
+    "log1p_occupied_cells",
+    "log1p_standardized_count_sum",
+    "occupied_standardized_count_mean",
+    "occupied_standardized_count_std",
+    "occupied_standardized_velocity_mean",
+    "occupied_standardized_velocity_std",
+    "deterministic_mean_cube_mean",
+    "deterministic_mean_cube_std"
+  ],
+  "coefficients_intercept_then_standardized_features": [
+    0.014083092377699676,
+    0.1917016067476466,
+    -0.21716191104826438,
+    0.04767561038633285,
+    -0.005066787321288256,
+    -0.0027195392474179646,
+    0.0003737090703889098,
+    -0.012422397933706572,
+    -0.0043192415435851506
+  ],
+  "training_target_dc": {
+    "TNG": {"samples": 432, "mean": 0.0021839100999622367, "std": 0.0030087107791232116},
+    "SIMBA_CV16_23": {"samples": 202, "mean": 0.025982274655437114, "std": 0.004151868365649124}
+  },
+  "development_prediction_audit_after_freeze": {
+    "TNG_validation": {"samples": 93, "target_mean": 0.003414536813481821, "prediction_mean": 0.006280596349809516, "rmse": 0.006192438661901264},
+    "SIMBA_CV24_26": {"samples": 64, "target_mean": 0.02573119170847349, "prediction_mean": 0.023784977313575886, "rmse": 0.004922100811926195},
+    "used_to_refit_or_select": false
+  }
+}

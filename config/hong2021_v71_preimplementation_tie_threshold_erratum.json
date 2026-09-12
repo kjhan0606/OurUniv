@@ -1,0 +1,41 @@
+{
+  "schema": "hong2021-v71-preimplementation-float32-tie-threshold-erratum-v1",
+  "status": "disclosed_code_only_numerical_bound_correction_before_implementation_commit_or_development_access",
+  "purpose": "Correct an overly tight numerical monitoring bound in the first frozen V71 program without changing the candidate, data, seed, sampler, metrics, scientific gates, or single-use development rule.",
+  "original_program": "config/hong2021_v71_locked_ecc_development_program.json",
+  "original_program_sha256": "a6bdd2a7cecd5ca43f22cd5535b1d86ac8970d60ca5c7f4ac6b78ef7d5999500",
+  "original_program_commit": "5d7baba80295a65ce01e01ed86bf8a48ebb1a6e6",
+  "audit": {
+    "scope": "sequential torch CPU float32 standard-normal innovations only, with the frozen seed 170073 and the frozen 48-query, 16-member, 64^3 shape",
+    "development_or_target_payload_used": false,
+    "GPFS_input_opened": false,
+    "queries_simulated": 48,
+    "voxels_per_query": 262144,
+    "original_maximum_control_tied_voxel_fraction": 1e-05,
+    "original_maximum_whole_tied_voxels_allowed": 2,
+    "observed_maximum_whole_tied_voxels": 3,
+    "observed_maximum_control_tied_voxel_fraction": 1.1444091796875e-05,
+    "queries_at_observed_maximum_zero_based": [11, 23],
+    "pre_inverse_sorted_latent_multiset_equality": "bitwise exact",
+    "candidate_rank_disagreement_fraction_excluding_control_ties": 0.0
+  },
+  "correction": {
+    "maximum_control_tied_voxel_fraction": 2e-05,
+    "maximum_whole_tied_voxels_allowed_at_64_cubed": 5,
+    "reason": "The tie monitor must tolerate the deterministic float32 collision count while still being orders of magnitude below a material fraction; stable tie handling already makes ties harmless to the exact multiset invariant.",
+    "candidate_construction_changed": false,
+    "noise_seed_changed": false,
+    "sampler_changed": false,
+    "member_count_changed": false,
+    "development_metric_or_threshold_changed": false,
+    "field_Q3_or_Q4_gate_changed": false
+  },
+  "firewall": {
+    "implementation_committed_before_correction": false,
+    "development_payload_or_metric_read": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

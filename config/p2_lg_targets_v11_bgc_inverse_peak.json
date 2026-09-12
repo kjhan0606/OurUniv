@@ -1,0 +1,27 @@
+{
+  "schema": "cf4-p2-lg-targets-v11-bgc-inverse-peak",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "extends": "config/p2_lg_targets_v10_bgc_midk_peak.json",
+  "extends_sha256": "7a40de6d0a9093e3389311160164e97f5273ebbc8d12228f55f5c1fc51cc3241",
+  "change_from_v10": "The likelihood, frozen N64 modes, and all P1/P2 thresholds are unchanged. The peak midpoint is moved to the SHA-pinned pre-forward Lagrangian preimage [0,-6,+4] Mpc/h of the z=0 observer, and eight fresh proposal/geometry/noise seeds are used.",
+  "paired_small_scale_seeds": [5101, 5102, 5103, 5104, 5105, 5106, 5107, 5108],
+  "input": {
+    "p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3/p1_result.json",
+    "conditioned_proposal_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v3_inverse/lg_peak_proposals_manifest.json",
+    "conditioned_proposal_manifest_sha256": "1de4a817a433aa1fa8235f5202e3855c5128f4577113f830cce9ada1ffa66f61",
+    "conditioned_p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v3_inverse/p1_result.json",
+    "conditioned_p1_result_sha256": "9fae4c3405b625216d3b10fa6db177413db4fe1ea521e1786a66a314a397d18d"
+  },
+  "selection_policy_addendum": {
+    "information_label": "additional MW/M31 morphology at a pre-forward inverse-mapped Lagrangian location",
+    "lagrangian_origin_offset_mpc_h": [0.0, -6.0, 4.0],
+    "p1_revalidation_required": true,
+    "p1_survivors": [5101, 5102, 5103, 5104, 5105, 5106, 5107, 5108],
+    "P2_physical_thresholds_changed_from_v10": false,
+    "no_retuning_after_v11_forward": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v3_inverse"
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "schema": "hong2021-v70-train-only-query-aligned-latent-spatial-score-model-program-v1",
+  "status": "frozen_before_implementation_preflight_cache_training_sampling_or_development_evaluation",
+  "purpose": "Replace the empirically transported donor-rank field with one query-aligned joint spatial score model while retaining the sealed V63 bounded conditional marginal as an invertible tail-aware coordinate system. The model learns only from immutable TNG100, SIMBA, and Swift train density fields and uses no pair loss.",
+  "parent_evidence": {
+    "v69_result_record": "config/hong2021_v69_result_record.json",
+    "v69_result_record_sha256": "3451e31974b5c8442173bb968683109c5ae755c375f0600eb9fbcb5757396a0c",
+    "required_status": "complete_no_refit_pair_objective_closed_selected_joint_spatial_model_preflight",
+    "required_classification": "rank64_population_pair_estimator_is_not_train_only_reproducible",
+    "required_next": "stop_pair_objective_design_and_use_non_pair_training_evidence_only",
+    "required_candidate_selected": false,
+    "required_training_or_refit_performed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_result_record": "config/hong2021_v63_result_record.json",
+    "v63_result_record_sha256": "61cb4406d09272309f11a39b95d7cfa3fb33f532ad02f43148e7d9a6ca33346b",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "v63_train_gate_sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153"
+  },
+  "historical_V7_failure_control": {
+    "configuration": "config/hong2021_v7_tng_simba_multidomain_edm.json",
+    "configuration_sha256": "8898c1a50c292c9bafb2a023eb3eb963005a501b4b44fecfbf6033dd7af5dcda",
+    "training_run": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v7_multidomain_edm/run.json",
+    "training_run_sha256": "06c2522befc9ccc5c2ec166fb0fcd0f0d57ea98b1d6dae19876de7f7ebbec72d",
+    "training_history": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v7_multidomain_edm/history.json",
+    "training_history_sha256": "0932108bb1c54c99f1c7beb64410802599f76905e93c26da68696e8eee87e745",
+    "selected_checkpoint_sha256": "4f4db73486bbbcd21a510e9c661e6877bbc7e04de6f101bf13ff2adf04098fcd",
+    "frozen_observation": "V7 optimized a four-condition, two-scale, 3.60-million-parameter density-residual EDM epsilon loss. Its selected model passed TNG but produced a locked-SIMBA k=6-10 h/Mpc power ratio of 1.8401 even though its SIMBA denoising loss improved.",
+    "design_constraint": "V70 may not train directly on the V7 high-pass or Laplacian density residual, may not select by denoising validation loss, and must prove multiscale joint-field behavior with train-only spectral and phase-sensitive proper scores before development access."
+  },
+  "latent_representation": {
+    "condition": "the unchanged seven standardized target-free V63 channels: log1p count, radial velocity, intrinsic velocity dispersion, corrected backbone, observer radius, train-only block risk, and train-only object amplitude",
+    "physical_target_coordinate": "the unchanged V63 standardized full-band residual y=(truth-backbone-target_mean)/target_std on the frozen open bounded support",
+    "frozen_local_parameters": "the sealed V63 step-12000 EMA bounded five-component mixture evaluated in inference mode with no gradient and never updated by V70",
+    "conditional_rank": "u=bounded_mixture_CDF(V63_parameters,y)",
+    "rank_clamp": [
+      1e-07,
+      0.9999999
+    ],
+    "joint_latent": "z=Phi_inverse(clamp(u)); train-cache construction uses float64 scipy.special.ndtri on CPU because the installed Lageunha CUDA runtime cannot compile torch erfinv or ndtri, while sampling uses the already audited CUDA-portable standard-normal CDF",
+    "physical_inverse": "y=bounded_mixture_inverse(V63_parameters,Phi(z)), followed by the unchanged target standardization inverse and one exact full-band residual DC projection before adding the unchanged query backbone",
+    "interpretation": "V63 supplies a bounded tail-aware invertible local coordinate system; V70 learns the query-conditioned joint distribution of the complete latent cube, including any train-supported residual marginal correction, without donor ranks."
+  },
+  "immutable_train_partition": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "total_objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "mechanism_holdout": "the exact sixteen immutable V65 train query indices per domain; these objects are excluded from V70 optimizer batches and used only after the fixed fit",
+    "fit_objects": {
+      "TNG100": 416,
+      "SIMBA": 186,
+      "Swift": 393
+    },
+    "validation_split_access": "forbidden",
+    "development_split_access_before_train_gate_pass": "forbidden"
+  },
+  "latent_cache": {
+    "scope": "all 1043 immutable train objects, including a separately marked mechanism-holdout group; no validation or development truth",
+    "content": "float32 z cube, per-object rank-clamp count, source index, and exact source-data/cache/checkpoint/program provenance",
+    "construction": "V63 parameters and bounded CDF on the Ada GPU in no-grad inference, transfer u to CPU, float64 scipy.special.ndtri after the frozen clamp, then atomic HDF5 write",
+    "full_scan_requirements": {
+      "all_values_finite": true,
+      "maximum_rank_clamp_fraction_each_domain": 1e-05,
+      "maximum_absolute_latent_mean_each_domain": 0.1,
+      "latent_standard_deviation_interval_each_domain": [
+        0.9,
+        1.1
+      ],
+      "object_count_and_order_exact": true,
+      "mechanism_holdout_disjoint_from_fit": true
+    }
+  },
+  "joint_spatial_model": {
+    "family": "query-aligned conditional EDM denoiser in the complete 64^3 Gaussianized latent field",
+    "input": "one noisy latent channel concatenated with all seven V63 condition channels",
+    "architecture": "reflection-padded three-downsample 3-D residual U-Net with base width 32, two residual blocks per resolution, Fourier noise embedding width 128, skip connections, and one four-head self-attention block only at the 8^3 bottleneck",
+    "receptive_field": "the three-scale encoder-decoder and bottleneck attention expose every output voxel to cube-wide train-supported context",
+    "output": "one preconditioned denoised-latent channel",
+    "simulation_label_conditioning": false,
+    "density_or_residual_clipping": false,
+    "pair_or_2PCF_loss": false,
+    "Fourier_or_Ak_training_loss": false,
+    "V63_joint_finetuning": false
+  },
+  "hard_preflight": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "fixed_real_batch": "train objects 0,1,2,3 from each domain for representation checks; object zero from each domain with signed cube isometry 7 for the model forward/backward check",
+    "checks": [
+      "all frozen hashes, V69 conclusion, V63 fit ancestry, clean worktree, and independent-gate firewalls",
+      "the fixed representation batch has per-domain rank-clamp fraction at most 1e-5, absolute latent mean at most 0.1, latent standard deviation in [0.9,1.1], and normal-CDF roundtrip maximum error at most 2e-7",
+      "the frozen V63 model is inference-only and receives no gradient",
+      "the exact V70 architecture and source hash are recorded, every output and gradient is finite and nonzero on the fixed source-balanced 64^3 batch, and permuting the seven conditions changes the fixed network response",
+      "the EDM loss is finite under both full precision and AMP with relative difference at most 0.02 using identical frozen noise",
+      "peak allocated Ada memory is strictly below 28 GiB",
+      "no optimizer step, latent-cache write, validation, development, Astrid, historical EAGLE, or independent EAGLE access"
+    ],
+    "peak_allocated_bytes_limit": 30064771072,
+    "failure_action": "stop before latent-cache construction or training and preserve the failed hard preflight without changing this program"
+  },
+  "fixed_training": {
+    "authorization": "only a passed hash-bound hard preflight and passed complete latent-cache scan authorize training",
+    "initialization_seed": 170070,
+    "steps": 30000,
+    "batch": "one independently selected fit object from each domain per optimizer update",
+    "examples_per_domain": 30000,
+    "augmentation": "one independently uniform signed cube isometry from the frozen 48-element group per domain object, applied jointly to z and all condition channels",
+    "objective": "source-balanced arithmetic mean of the standard preconditioned EDM denoising squared error in z; no auxiliary one-point, pair, 2PCF, Fourier, morphology, validation, or development loss",
+    "sigma_data": 1.0,
+    "log_sigma_mean": -0.8,
+    "log_sigma_standard_deviation": 1.2,
+    "optimizer": "AdamW learning rate 1e-4, weight decay 1e-4, cosine schedule to 1e-5, gradient-norm clip 1.0, AMP, and EMA 0.9995",
+    "checkpoint_selection": "fixed step-30000 EMA only",
+    "training_diagnostics": "loss and numerical diagnostics may be recorded but cannot stop training or select a checkpoint",
+    "resume": "only exact deterministic recovery from the last atomic checkpoint with RNG and optimizer state; no changed seed, budget, schedule, or checkpoint selection"
+  },
+  "fixed_sampling": {
+    "method": "deterministic EDM probability-flow Heun sampler from independent standard-normal latent cubes",
+    "steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "members_per_query": 16,
+    "independent_reproducibility_streams": 2,
+    "sample_clipping": false,
+    "posthoc_global_scale_DC_or_Ak": "forbidden except the one predeclared exact residual DC projection inherited from V63"
+  },
+  "train_only_mechanism_gate": {
+    "population": "the sealed sixteen V65 train query indices per domain that are excluded from V70 optimizer batches",
+    "baseline": "independent standard-normal voxel ranks passed through the same frozen V63 local inverse and exact DC projection; this preserves the local V63 marginals but contains no learned joint spatial structure",
+    "candidate": "the fixed step-30000 V70 EMA sampled with the two predeclared independent sixteen-member noise streams",
+    "one_point_requirements": [
+      "per-domain generated latent mean differs from held-out truth by at most 0.1",
+      "per-domain generated latent standard deviation divided by held-out truth lies in [0.9,1.1]",
+      "per-domain q99.9-backbone physical mean-delta-squared predicted-over-truth lies in [2/3,1.5]"
+    ],
+    "spectral_requirements": "for every domain and both independent streams, physical total-power predicted-over-truth is in [0.8,1.25] separately at 3-6 and 6-10 h/Mpc",
+    "phase_sensitive_proper_score": "a Fourier energy score is computed from the complex residual Fourier coefficients, preserving amplitude and phase, separately in the 3-6 and 6-10 h/Mpc bands; the candidate must be lower than the local-marginal independent-voxel baseline in both bands for every domain",
+    "stream_reproducibility": "the two candidate streams' domain-and-band Fourier energy scores and total-power log ratios differ by at most ln(1.15)",
+    "selection": "all one-point, spectral, phase-sensitive proper-score, stream-reproducibility, ancestry, numerical, memory, and firewall requirements pass in all three domains",
+    "forbidden": "no pair loss, empirical donor rank, 2PCF, validation, development, or independent data may modify the model or these thresholds"
+  },
+  "fixed_branches": [
+    {
+      "condition": "hard preflight or complete latent-cache scan fails",
+      "classification": "V70_latent_spatial_model_is_not_preflight_safe",
+      "next": "stop_before_training_and_preserve_the_failed_artifacts"
+    },
+    {
+      "condition": "fixed training completes but any train-only mechanism requirement fails",
+      "classification": "query_aligned_latent_spatial_score_does_not_learn_cross_domain_joint_structure",
+      "next": "stop_before_development_without_posthoc_training_or_gate_tuning"
+    },
+    {
+      "condition": "all train-only mechanism requirements pass",
+      "classification": "query_aligned_latent_spatial_score_learns_cross_domain_joint_structure",
+      "next": "run_one_locked_development_sampling_and_the_unchanged_field_Q3_Q4_gates"
+    },
+    {
+      "condition": "the single locked development gate passes",
+      "classification": "V70_is_development_sufficient",
+      "next": "seal_V70_and_await_explicit_user_approval_before_independent_EAGLE_access"
+    }
+  ],
+  "output_roots": {
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/preflight.json",
+    "latent_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v70/train_latent.h5",
+    "latent_cache_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v70/train_latent.json",
+    "training": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial",
+    "train_mechanism": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_train_joint_structure_gate",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_development"
+  },
+  "firewall": {
+    "cache_or_training_before_preflight_pass": "forbidden",
+    "training_before_complete_cache_scan_pass": "forbidden",
+    "validation_access": "forbidden",
+    "development_access_before_train_gate_pass": "forbidden",
+    "posthoc_step_seed_loss_sampler_threshold_or_gate_tuning": "forbidden",
+    "pair_or_2PCF_training_loss": "forbidden",
+    "empirical_donor_rank_sampling": "forbidden",
+    "simulation_label_conditioning": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden without explicit user approval after a locked development pass",
+    "independent_gate_locked": true
+  }
+}

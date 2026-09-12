@@ -1,0 +1,82 @@
+{
+  "schema": "hong2021-v45-identifiable-mixture-copula-result-record-v1",
+  "status": "complete_development_failure_extreme_likelihood_audit_required",
+  "program": "config/hong2021_v45_identifiable_mixture_copula_program.json",
+  "program_sha256": "30a5461d2c9bbd2464b08787ca6381467645a8d08f77efac2a0fb5a1932567ac",
+  "code_commit": "e780bfb55c2c62c3b11397b525316ec353781403",
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "3a55117a05b25481fac9211ee21a100c20df00b52b418048fdc687edb112df1d",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.json",
+    "report_sha256": "a6867ebca7e6238846c79f02c8e991b5530d40118cb42db87aeeba034de3d6d3",
+    "report_decision_digest_sha256": "a93646bd2f38d872da8cd1ad8052b6be188232c0168f024dc1edd58a3fd34ab7",
+    "steps": 12000,
+    "parameters": 8490415,
+    "fixed_validation_NLL": {
+      "4000": {"TNG100": 1.3908052316275976, "SIMBA": 1.3594687059521675, "Swift": 1.3528918003713764},
+      "8000": {"TNG100": 1.3889023783386394, "SIMBA": 1.3571346700191498, "Swift": 1.3488472087963208},
+      "12000": {"TNG100": 1.3896643218173776, "SIMBA": 1.3583944719284773, "Swift": 1.3474003318193797}
+    },
+    "validation_used_for_stopping_selection_or_tuning": false
+  },
+  "integrity": {
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "preflight_sha256": "19a0960589aa92d2aa3d431004814004b737fa7a2ea83a6b416bb324902abb70",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditioning_cache_report_sha256": "f98abd092d98df9f4a617b479463916217171a3553c73f863a3484cd8a4b89ed",
+    "maximum_candidate_residual_DC": 2.0954757928848267e-9,
+    "maximum_candidate_inverse_CDF_error": 2.384185791015625e-7
+  },
+  "development_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v45_e24_identifiable_mixture_copula/development_decision.json",
+    "sha256": "0690e28e5ed9cac7ab59ae528dcdfdaf6bf2c8a6599d1dc6dd3ef8aa15b91804",
+    "decision_digest_sha256": "93ca885fbf356ebd669bf81789b07cbf6f78acef7f221fec01cf94c1f35b62c2",
+    "development_pass": false,
+    "classification": "identifiable_mixture_body_is_supported_but_extreme_likelihood_is_insufficient",
+    "next": "audit_train_only_mixture_tail_NLL_and_component_occupancy_without_threshold_tuning",
+    "candidate_high_k_power_and_residual_RMS_all_domains": true,
+    "candidate_Q3_all_domains": false,
+    "candidate_Q4_all_domains": false,
+    "candidate_all_three_field_pass": false,
+    "rolled_parameter_control_improves_Q3_Q4_every_domain": false
+  },
+  "candidate_Q3_Q4": {
+    "TNG100": {
+      "delta_q99_999_dex": 0.39746840373366066,
+      "generated_max_above_truth_max_dex": 3.3054551482200623,
+      "generated_over_truth_mean_delta_squared": 3067.760808307278,
+      "field_pass": false,
+      "failed_field_checks": ["two_point_improves_deterministic_all_scales"]
+    },
+    "SIMBA": {
+      "delta_q99_999_dex": 0.473153670178839,
+      "generated_max_above_truth_max_dex": 3.005392402410507,
+      "generated_over_truth_mean_delta_squared": 5250.081010283249,
+      "field_pass": false,
+      "failed_field_checks": ["two_point_improves_deterministic_all_scales"]
+    },
+    "Swift": {
+      "delta_q99_999_dex": 0.737628905712624,
+      "generated_max_above_truth_max_dex": 4.59995037317276,
+      "generated_over_truth_mean_delta_squared": 5594741.477064589,
+      "field_pass": true,
+      "failed_field_checks": []
+    }
+  },
+  "scientific_conclusion": [
+    "The identifiable mixture preserves the residual RMS and high-k total power in TNG100, SIMBA, and Swift, so V44's symmetric initialization defect was real and its repair supports the stochastic field body.",
+    "The candidate nevertheless overproduces the pooled q99.999 density by 0.40 to 0.74 dex, individual maxima by 3.01 to 4.60 dex, and mean delta squared by factors of about 3.1e3 to 5.6e6.",
+    "Rolling the parameter fields does not jointly improve Q3 and Q4 in every domain, so query-local alignment is not rejected by the fixed control.",
+    "The next action is strictly diagnostic: audit train-only tail negative log likelihood, probability-integral-transform calibration, mixture weight and responsibility occupancy, component locations and scales, and predicted upper quantiles. No threshold, model, sample, or development decision may be tuned during this audit."
+  ],
+  "firewall": {
+    "posthoc_generator_change": false,
+    "global_residual_scaling": false,
+    "density_or_residual_clipping": false,
+    "donor_reselection": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

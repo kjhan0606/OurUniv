@@ -1,0 +1,88 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-adaptation-fallback-result-record-v1",
+  "status": "complete_fail_insufficient_fallback_adaptation_support_stop",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the independent 8192-geometry last-chance adaptation bank, preserve its preregistered support failure, and close the fixed-proposal IID adaptation architecture without fitting or publishing a proposal.",
+  "lineage": {
+    "git_commit": "af7ef1fbb22326b05374bbc0460dceb9eacf7447",
+    "program": "config/cf4_peak_evidence_adaptation_fallback_program.json",
+    "program_sha256": "1d3451103ea9e9c01fd60a8276a0ada713fd652c1ee2aea4f196036443e581b0",
+    "fallback_implementation": "src/cf4_peak_evidence_adaptation_fallback.py",
+    "fallback_implementation_sha256": "b8a3a66d3ef4916cc157a70379ec7eaee8d336178e83870ab342681d1f2c3c4a",
+    "adaptation_core": "src/cf4_peak_evidence_adaptation.py",
+    "adaptation_core_sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d",
+    "proposal_implementation": "src/cf4_adaptive_geometry_proposal.py",
+    "proposal_implementation_sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc",
+    "runner_sha256": "54e333e6090dc8103c487b6d60154335998781e6b97dd8257f2b7d959cf8f0d6",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/result.json",
+    "canonical_result_sha256": "4b893b7d81014c45f1897c7125bbc686780ecb675c0858e03a1784bec4807f0d",
+    "canonical_arrays": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/arrays.npz",
+    "canonical_arrays_sha256": "471906ce74f8606f54328ce7d5d06a48a857d68b1fa548c671cbc2f4c1256083",
+    "complete_marker": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/COMPLETE",
+    "complete_marker_sha256": "05a2da45e0a0de1d32df01586507ca87a03d43f9bf7d751735b93e17e5b459f9",
+    "environment_sha256": "b6aada45d0f9667127d9e8ad0a3b0b473eb13b404921cc1ce00fdc4f0e4d3e04",
+    "run_log_sha256": "e926387b593ebd4a2ea994f974f3f0e941bddcf096e6320f20bff490f0ca5c4b"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "elapsed_seconds": 624.8412477467209,
+    "parent_count": 256,
+    "common_geometry_draws": 8192,
+    "normalized_log_Z_row_count": 2097152,
+    "master_seed": 2026082005,
+    "independent_of_2048_bank": true,
+    "continuous_geometry_overlap_with_2048_bank": 0
+  },
+  "gates": {
+    "all_parent_lineage": true,
+    "all_log_Z_and_importance_finite": true,
+    "real_evidence_scalar_vectorized_control": true,
+    "geometry_integration_support": false,
+    "EM_or_CV_executed": false,
+    "synthetic_validation_executed": false,
+    "adaptation_pass": false
+  },
+  "results": {
+    "geometry_marginal_ESS": 126.18910261640106,
+    "geometry_marginal_ESS_min": 128.0,
+    "maximum_normalized_geometry_weight": 0.0395050244869301,
+    "maximum_normalized_geometry_weight_max": 0.025,
+    "geometry_weight_entropy": 5.931032126871136,
+    "top_8_geometry_weight_mass": 0.188112018124658,
+    "top_64_geometry_weight_mass": 0.5313754674453249,
+    "top_128_geometry_weight_mass": 0.668005943443656,
+    "scalar_vectorized_log_Z_max_difference": 2.2737367544323206e-13,
+    "scalar_vectorized_log_weight_max_difference": 2.2737367544323206e-13,
+    "scalar_vectorized_tolerance": 1e-10
+  },
+  "independent_Fable_audit": {
+    "artifact_lineage_and_recalculation_pass": true,
+    "failure_classification_pass": true,
+    "failure_class": "insufficient_fallback_adaptation_support_stop",
+    "verified_exactly": [
+      "All canonical artifact hashes, all 2097152 log_Z values, and every stored array are finite and match the sealed lineage.",
+      "All parent seeds 3193 through 3448 and all 256 field hashes match the reference manifest.",
+      "Stored weights reconstructed from log_Z and p/g_A agree at zero maximum difference.",
+      "The master seed reproduces midpoint, component, and pipeline-normalized axis draws bitwise.",
+      "There are zero continuous geometry overlaps with the independent 2048 bank.",
+      "No fit, cross-validation, proposal artifact, conditional field, PM, halo finder, or RAMSES run was produced."
+    ],
+    "interpretation": "The sealed g_A IID importance architecture does not integrate the aggregate geometry evidence stably. The result cannot be interpreted as physical tension or preference for a parent seed."
+  },
+  "decision": {
+    "fixed_proposal_IID_adaptation_architecture_closed": true,
+    "additional_IID_adaptation_bank_authorized": false,
+    "retroactive_gate_relaxation_authorized": false,
+    "K4_proposal_fit_authorized": false,
+    "final_proposal_frozen": false,
+    "independent_8192_final_bank_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false,
+    "next": "Prospectively design and freeze an exact cached aggregate-evidence annealed SMC architecture; current adaptation rows may be used only for oracle regression and development, never in the production estimator."
+  }
+}

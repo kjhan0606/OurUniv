@@ -1,0 +1,185 @@
+{
+  "schema": "ouruniv-cf4-q4-real-pm-compression-and-gradient-feasibility-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q4",
+  "owner": "driver",
+  "plan_status": "COMPLETE_Q4_0_Q4_1_EXACT_GROUPING_TERMINAL_NO_GO_AWAIT_Q5_PLAN",
+  "prerequisite_bundle": "Q3",
+  "prerequisite_audit": {
+    "agy": "CONDITIONAL-GO",
+    "opus5": "CONDITIONAL-PASS",
+    "q3_result": "config/cf4_q3_development_candidate_result_v1.json",
+    "promotion_status": "NO_GO",
+    "implementation_authorized": false,
+    "authorized_scope": "Completed: Q4.0 seed preflight and Q4.1 read-only procedural full-PM geometry/grouping measurement only. Q4.2/Q4.3 gradient or held-out execution was not authorized and remains skipped.",
+    "note": "Q3 exact grouping is oracle-equivalent only on duplicated toy sources. Q4 must measure the real PM source basis and close topology, gradient, persistent-memory and seed-firewall gaps before selecting a viable compression candidate."
+  },
+  "q4_preflight_result": {
+    "result": "config/cf4_q4_preflight_result_v1.json",
+    "seed_manifest": "config/cf4_q4_seed_manifest_v1.json",
+    "status": "COMPLETE_Q4_0_Q4_1_TERMINAL_EXACT_GROUPING_NO_GO",
+    "q4_3_gradient_timing": "SKIPPED_BY_TERMINAL_BRANCH"
+  },
+  "independent_bundle_audit": {
+    "agy": {
+      "verdict": "GO",
+      "summary": "Seed digest, full packed-key streaming hash, analytic uniqueness label, independent memory limbs and terminal M/G=1 branch are consistent. No held-out, JAX or gradient timing was run.",
+      "scope": "Read-only final bundle audit."
+    },
+    "opus5": {
+      "verdict": "CONDITIONAL-PASS",
+      "summary": "Q4 artifacts are internally consistent and non-overclaiming. Memory/uniqueness remain analytic or projected rather than physical allocations/collision detection; the next candidate design must preserve terminal scope and keep held-out/Q4.2/Q4.3 blocked.",
+      "scope": "Read-only final bundle audit."
+    },
+    "bundle_status": "GO_AGY_CONDITIONAL_PASS_OPUS5_NO_EXACT_GROUPING_PROMOTION"
+  },
+  "fable_audit": {
+    "status": "GO",
+    "last_verdict": "GO",
+    "summary": "Q4.0 seed and Q4.1 GPFS-free procedural full-PM geometry preflight are approved. The exact-grouping branch must stop analytically/streamingly at G=M and skip the 6912-chunk gradient timing when M/G<=1.01; Q4.2/Q4.3 and held-out remain blocked.",
+    "approved_scope": ["Q4.0 seed manifest", "Q4.1 procedural N192 geometry uniqueness and memory preflight"],
+    "required_amendments": [
+      "Inherit numeric 64 GiB host and 16 GiB device persistent-memory ceilings from Q2.",
+      "Report cold JIT compile separately; define warm synchronized 6912-chunk full-field gradient walltime <=600 s with no ambiguous compilation amortization.",
+      "If M/G<=1.01, terminally stop exact-grouping acceleration and do not run Q4.3; write candidate-2/3 design-only instead.",
+      "Declare the GPFS-free procedural N192 lattice and local immutable M/N/L/observer/sigma metadata used for full-PM preflight.",
+      "Do not allocate a 7M-entry Python dictionary; use analytic or streaming uniqueness and compute projected dictionary memory before allocation.",
+      "Exercise and record a streaming SHA-256 over actual packed position+LOS+scale key payloads; analytic position refinement remains the uniqueness proof."
+    ],
+    "approval_required_before_implementation": true,
+    "focus": "Assess whether Q4 is the scientifically valid and feasible next bundle after Q3, preserves the Q1 operator and full PM source count, and advances the final CF4-to-z=0-posterior-to-IC goal without promoting a toy compression result."
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Establish, without unsafe dictionary allocation, whether exact geometry grouping can compress the GPFS-free procedural N192 PM basis; if injectivity implies no compression, close that line and select a mathematically controlled alternative without substituting the 16,584 secure CF4 objects for the 7,077,888 PM sources.",
+  "science_position": {
+    "direct_alignment": "A feasible Q1-equivalent observation operator is a prerequisite for a statistically valid CF4 z=0 posterior; Q4 does not itself infer that posterior or construct an IC.",
+    "resolution_scope": "Q4 release is still the N192, 2 cMpc/h low-k operator. The <=0.3 cMpc/h target remains a separate conditional high-resolution forward-model/resource bundle.",
+    "no_toy_extrapolation": "A compression ratio measured on duplicated four-source toys cannot be extrapolated to the PM basis; a ratio near one is a valid NO-GO result for exact geometry grouping."
+  },
+  "scope": {
+    "read_only_full_pm_preflight": true,
+    "candidate_implementation": false,
+    "jax": false,
+    "heldout_evaluation": false,
+    "posterior": false,
+    "KF_EXPAND": false,
+    "IC_generation": false,
+    "PM_or_HOP": false,
+    "zoom": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false,
+    "science_resolution_claim": false
+  },
+  "frozen_source_contract": {
+    "pm_source_particles_M": 7077888,
+    "basis": "N_parent=192 cubic particle mesh; positions, LOS directions, displacement scales and state-dependent population mass basis are retained.",
+    "secure_cf4_objects": 16584,
+    "count_substitution_forbidden": true,
+    "group_key": "Bitwise position+LOS+displacement-scale key from Q3 exact_geometry_grouping; no tolerance merge or quantisation in this triage.",
+    "full_basis_memory_accounting": "Include persistent positions, LOS, displacement scales, population masses/mass-basis coefficients, group dictionary/ownership map, and output buffers; chunk-resident bytes alone are insufficient."
+  },
+  "procedural_full_pm_geometry": {
+    "source": "Locally generated deterministic canonical N192 lattice with 7,077,888 unique particle positions; no GPFS input or external catalog is read.",
+    "purpose": "Lower-bound uniqueness/grouping preflight for the bitwise exact geometry key, not a physical PM evolution or a substitute for a later displaced PM realization.",
+    "immutable_metadata": {
+      "N_parent": 192,
+      "M": 7077888,
+      "box_size_cMpc_h": 384.0,
+      "observer": [192.0, 192.0, 192.0],
+      "operator_cell_spacing_cMpc_h": 2.0,
+      "sigma_total_bound_km_s": 310.4834939252005,
+      "displacement_bound_cMpc_h": 2.316206864681996,
+      "dtype": "float64",
+      "generation_order": "lexicographic z-major, then y, then x",
+      "los_formula": "[1.0,0.0,0.0] for every procedural source",
+      "displacement_scale_formula": "1.0 cMpc/h for every procedural source",
+      "metadata_hash_required": true
+    },
+    "interpretation": "A ratio near one on this full-count non-duplicated geometry is a valid terminal NO-GO for exact grouping acceleration; it does not claim that a physical PM catalog has been evolved."
+  },
+  "seed_firewall": {
+    "development_namespace": "cf4-q4-development-20260904",
+    "heldout_namespace": "cf4-q4-heldout-20260904",
+    "derivation": "seed_i = int.from_bytes(SHA256(namespace+':'+str(i)).digest()[:8], 'big') & ((1<<63)-1), i ascending.",
+    "manifest_hash_scope": "Canonical sorted JSON SHA-256 of the complete manifest payload with manifest_sha256 omitted; the emitted digest field is not self-included.",
+    "development_count": 192,
+    "heldout_count": 256,
+    "disjointness_check": "Materialize both seed sets and assert no duplicate within or across namespaces before candidate selection; record a hash manifest. Held-out data remain untouched until a candidate and all hyperparameters are frozen.",
+    "selection_rule": "Use development data only to select one candidate and freeze its manifest. Held-out is one-shot accept/reject; failure is NO-GO and forbids candidate switching or retuning."
+  },
+  "topology_and_gradient_contract": {
+    "fixtures": [
+      "RSD_FOG_boundary_v1 L=6",
+      "RSD_FOG_nonboundary_v1 L=6",
+      "periodic_seam at N192/2 cMpc/h",
+      "TSC_knot_left",
+      "TSC_knot_right",
+      "half_box_minimum_image_surface_rejection",
+      "observer_coincidence_rejection",
+      "sigma_disp_over_box=2 wrapped case"
+    ],
+    "populations": 6,
+    "sources_per_fixture": "At least three distinct sources plus duplicate and non-duplicate cases; all six populations.",
+    "gradient_test": "Compare candidate directional JVP/VJP or double-precision finite differences of the scalar Q1 likelihood with latent-field and six population-bias directions. Mass-basis summation alone is not a gradient-equivalence test.",
+    "finite_difference": "Central float64, relative step=1e-5, absolute step=1e-7; direction vectors and prior metric are inherited from Q3."
+  },
+  "resource_contract": {
+    "q3_release_resolution_cMpc_h": 2.0,
+    "grid_N": 192,
+    "chunk_size_particles": 1024,
+    "chunk_count_formula": "ceil(7077888/1024)=6912",
+    "persistent_host_memory_ceiling_bytes": 68719476736,
+    "persistent_device_memory_ceiling_bytes": 17179869184,
+    "full_field_gradient_ceiling_seconds": 600.0,
+    "performance_target_seconds": 0.1,
+    "performance_target_semantics": "0.1 s is aspiration only. Cold JIT compilation is reported separately. Pass/fail uses warm, synchronized steady-state wall time for all 6912 chunks, including launch and device-to-host synchronization but excluding cold compilation, and requires <=600 s.",
+    "memory": "Measure peak persistent+temporary host/device memory including full-PM source basis and group dictionary, not just 419.16 MiB chunk projection; both numeric ceilings above apply independently.",
+    "operator_change": "No operator weakening to meet speed. If exact grouping ratio is approximately one, declare it computationally NO-GO and proceed only to a separately audited adaptive-moment/deposit-then-convolve design."
+  },
+  "work_packages": [
+    {
+      "id": "Q4.0",
+      "task": "Materialize and hash disjoint 192/256 development/held-out seed sets; do not evaluate held-out mocks.",
+      "acceptance": "Collision-free, cross-namespace-disjoint manifest is recorded before candidate selection."
+    },
+    {
+      "id": "Q4.1",
+      "task": "Run a read-only full N192 PM geometry preflight for exact-group key injectivity and project dictionary/persistent memory before allocation; do not build a 7M-entry dictionary when position injectivity already implies G=M.",
+      "acceptance": "The construction-implied ratio is bound to M=7,077,888 and labelled non-measured. If M/G<=1.01 by the injective procedural lattice argument, exact_geometry_grouping is a terminal NO-GO for acceleration, Q4.3 is skipped, and only a candidate-2/3 design-only branch may follow. Timing/memory failure also blocks promotion."
+    },
+    {
+      "id": "Q4.2",
+      "task": "Run the complete frozen topology fixture set at L=6 and the 2.0 cMpc/h release geometry, including six populations, duplicates/non-duplicates, sigma_disp=2L, and exact half-box/observer rejection.",
+      "acceptance": "Q1 oracle agreement and fail-closed topology behavior pass without adding unregistered fixtures or dropping small strata."
+    },
+    {
+      "id": "Q4.3",
+      "task": "Execute the true scalar-likelihood latent/bias directional gradient equivalence and measure end-to-end chunked timing and persistent-memory peak.",
+      "acceptance": "Run only if Q4.1 compression ratio exceeds 1.01. Frozen gradient gates pass and warm synchronized sum over 6912 chunks fits 600 s; cold compile and persistent memory are separately reported."
+    },
+    {
+      "id": "Q4.4",
+      "task": "If exact grouping is non-viable, write a separate candidate-2/3 design preserving state-dependent mass/gradient information and the Q1 oracle; do not implement or evaluate held-out data in this bundle.",
+      "acceptance": "One next candidate is mathematically specified with a falsifiable oracle/information-loss gate and a driver decision; held-out and Q2.1 remain blocked."
+    }
+  ],
+  "release_gates": [
+    "Seed manifest is disjoint and hashed before selection; held-out remains untouched.",
+    "Full PM M=7,077,888 group count, timing and persistent memory are measured or exact grouping is declared NO-GO.",
+    "Topology and true scalar-likelihood directional gradient gates pass, not merely mass-basis summation.",
+    "Measured end-to-end chunked gradient fits the 600 s ceiling; 0.1 s remains aspiration only.",
+    "No Q2.1 JAX, held-out release, posterior, KF-EXPAND, IC, PM/HOP/RAMSES or <=0.3 cMpc/h claim is authorized by Q4 alone."
+  ],
+  "audit_request": {
+    "auditor": "fable",
+    "focus": "Approve or reject this Q4 next-bundle plan, emphasizing direct alignment with the final goal, full PM source-count realism, feasibility of the read-only preflight, and whether the fallback candidate design remains scientifically controlled.",
+    "approval_required_before_implementation": true
+  },
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}

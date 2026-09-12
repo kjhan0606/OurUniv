@@ -1,0 +1,198 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-streaming-forward-program-v1",
+  "status": "frozen_256_row_streaming_PM_production_authorized",
+  "frozen_date_kst": "2026-08-25",
+  "objective": "Forward the frozen 256-state CF4 plus explicit-LG posterior through N576 PM without storing N576 fields, then preserve halo catalogues for hard-P2, pair-recentered-P1, and normalized z=0 likelihood evaluation.",
+  "lineage": {
+    "science_design": {
+      "path": "config/cf4_lg_highk_conditioning_design_v1.json",
+      "sha256": "a565b0f7d0fe1a3b495019848e70f7fd6f4c93f6067a7874b8d06b3ea1179676"
+    },
+    "joint_schedule_result": {
+      "path": "config/cf4_lg_highk_joint_schedule_v1_result.json",
+      "sha256": "e0d70d112f2385c155a78d513fea6f1ef0e5b0db261a31f84f53be6a9e5959a8"
+    },
+    "highk_technical_pilot_result": {
+      "path": "config/cf4_lg_highk_technical_pilot_v1_result.json",
+      "sha256": "3e63c592a6fb581f7c5920a04b5b64a6bc36462453d893d070725dfc06d4ff95"
+    },
+    "p1_support_audit_result": {
+      "path": "config/cf4_lg_highk_p1_support_audit_v1_result.json",
+      "sha256": "c17dc962824b9424b5ff101e24eb741105ffc851a7d6322251a5962c35e51c77"
+    }
+  },
+  "inputs": {
+    "schedule": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_joint_schedule_v1/schedule.npz",
+      "sha256": "10c8526f3508a908a14981636ca9f730480838b65ea4bbcd3186c0730f330ccd",
+      "row_count": 256,
+      "unique_geometry_key_count": 250
+    },
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"
+    },
+    "parent_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"
+    },
+    "hard_p2_config": {
+      "path": "config/p2_lg_targets_v1.json",
+      "sha256": "1c066ae189dee4c077b8400c4427d108f6e7dfc3d6ebedbd1b571cf22d7b3273"
+    },
+    "z0_likelihood_source": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+      "reuse_only": [
+        "candidate_preselection",
+        "z0_likelihood",
+        "selection_policy.minimum_jointly_eligible_realizations",
+        "selection_policy.minimum_fresh_importance_ESS",
+        "selection_policy.maximum_fresh_single_weight"
+      ],
+      "explicitly_not_inherited": [
+        "parent_seed",
+        "seed_bank",
+        "protohalo midpoint proposal importance correction",
+        "selection_policy.parent_centered_P1_required"
+      ]
+    },
+    "p1_config_for_downstream_recenter_only": {
+      "path": "config/p1_targets_v2_observer.json",
+      "sha256": "34bf11486b084312d6a7e476f469e6973cfbf3a9392c7c7eab9b1a6b9a124e0a"
+    }
+  },
+  "fixed_model": {
+    "box_size_mpc_h": 384.0,
+    "coarse_mesh": 192,
+    "fine_mesh": 576,
+    "particle_spacing_mpc_h": 0.6666666666666666,
+    "centre_target_delta_linear": 1.8,
+    "shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "constraint_count": 14,
+    "FFT_workers": 1,
+    "field_dtype": "float32",
+    "highk_numerical_gates": {
+      "coarse_roundtrip_relative_RMS_max": 2e-6,
+      "correction_restriction_relative_RMS_max": 2e-6,
+      "maximum_response_identity_error_max": 2e-5,
+      "null_subspace_mean_square_range": [0.95, 1.05],
+      "absolute_global_field_mean_max": 0.005,
+      "maximum_field_imaginary_relative_RMS": 2e-5
+    },
+    "FoF": {
+      "linking_length_b": 0.2,
+      "minimum_particle_count": 20,
+      "central_half_width_mpc_h": 30.0,
+      "periodic": false
+    }
+  },
+  "probability_policy": {
+    "scheduled_rows_are_equal_weight_posterior_draws": true,
+    "peak_evidence_reapplied": false,
+    "midpoint_proposal_importance_correction_reapplied": false,
+    "only_new_scientific_weight": "For each row, sum the preregistered normalized z=0 likelihood over same-identity pairs passing hard-P2 and pair-recentered-P1, but retain the total loose-pair count as the mixture denominator; never renormalize over survivors.",
+    "parent_centered_P1_prefilter_authorized": false,
+    "forward_all_scheduled_states": true,
+    "hard_P2_after_forward_retained": true,
+    "pair_recentered_P1_after_forward_retained": true,
+    "M33_PM_hard_gate": false,
+    "M33_definitive_RAMSES_HOP_gate": true
+  },
+  "terminal_decision_rule": {
+    "status": "frozen_before_any_256_row_production_result_is_opened",
+    "pair_identity": "The sorted pair (halo_i, halo_j) must be identical in the loose likelihood catalogue, hard-P2 catalogue, and pair-recentered-P1 result.",
+    "row_log_evidence": "logsumexp(log_L_pair for jointly eligible loose pairs) - log(number of all loose pairs in that row); negative infinity if the row has no loose pair or no jointly eligible pair.",
+    "row_log_weight": "log(1/256) + row_log_evidence; normalize once across the 256 frozen rows.",
+    "minimum_jointly_eligible_rows": 8,
+    "minimum_normalized_row_weight_ESS": 8.0,
+    "maximum_single_normalized_row_weight": 0.25,
+    "grouped_support_gates": {
+      "minimum_parent_weight_ESS": 4.0,
+      "maximum_single_parent_normalized_weight": 0.5,
+      "minimum_geometry_key_weight_ESS": 8.0,
+      "maximum_single_geometry_key_normalized_weight": 0.25,
+      "minimum_bridge_group_weight_ESS": 2.0,
+      "maximum_single_bridge_group_normalized_weight": 0.5
+    },
+    "mandatory_reports": [
+      "distinct eligible parent count and parent-summed normalized weights",
+      "distinct eligible geometry-key count and geometry-key-summed normalized weights",
+      "distinct eligible fine-field seed count",
+      "bridge-group-summed normalized weights",
+      "row, parent, geometry-key, and bridge-group ESS",
+      "maximum normalized weight at every reported grouping"
+    ],
+    "covariance_phase_interpretation": "The 27 translation phases are deterministic components used to evaluate every exact AQA* matrix; they are not 27 posterior draws and must not receive a phase-grouped ESS.",
+    "deduplicate_repeated_posterior_rows": false,
+    "same_model_extension_after_failure": false,
+    "threshold_retuning_after_results": false,
+    "automatic_candidate_promotion": false
+  },
+  "covariance_cache": {
+    "artifact_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_covariance_cache_v1",
+    "cache_file": "cache.npz",
+    "result_file": "result.json",
+    "unique_geometry_key_count": 250,
+    "construction": "One exact AQA* 14-by-14 matrix per unique schedule geometry key using all required refinement phases, holding one N576 response grid at a time.",
+    "cache_contains_no_field_or_science_selection": true
+  },
+  "streaming_artifacts": {
+    "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_streaming_pm_pilot_v1",
+    "production_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_streaming_pm_production_v1",
+    "per_row": ["row_XXX/halos.npz", "row_XXX/result.json"],
+    "persisted": ["FoF halo positions", "FoF halo velocities", "FoF halo masses", "field diagnostics", "hard-P2 pairs", "loose z=0-likelihood pairs", "timings", "input hashes"],
+    "never_persisted": ["N576 initial white field", "full PM particle state"],
+    "restart": "A deterministic same-row replay may skip a completed row only after validating result status, schedule identity, and halo-catalogue SHA256. Partial or mismatched rows fail closed; seeds and thresholds never change."
+  },
+  "technical_pilot": {
+    "schedule_indices": [0, 64, 128, 192],
+    "purpose": "Exercise one frozen row per bridge group through conditional field, PM, central-particle extraction, FoF, hard-P2 enumeration, and normalized-likelihood pair enumeration.",
+    "science_selection_or_posterior_promotion": false,
+    "pass_requires": [
+      "all four high-k numerical gates remain passing",
+      "all four PM forwards and FoF catalogues complete",
+      "no N576 field is persisted",
+      "parent-centered P1 is never evaluated",
+      "every saved catalogue and row result validates against its SHA-pinned schedule identity"
+    ]
+  },
+  "production_batches": {
+    "array_task_count": 16,
+    "rows_per_task": 16,
+    "maximum_concurrent_tasks": 4,
+    "exact_coverage": "Each schedule index 0 through 255 appears in exactly one task.",
+    "result_dependent_early_allocation": false,
+    "same_model_seed_extension": false,
+    "automatic_follow_on_to_RAMSES": false
+  },
+  "slurm": {
+    "manual_syn101_execution_forbidden": true,
+    "partitions": "h200,h100,a100",
+    "gpu_per_forward_task": 1,
+    "covariance_cache": {
+      "cpus": 1,
+      "memory": "19G",
+      "time_limit": "00:30:00",
+      "memory_basis": "The four-field exact-cache plus field pilot measured 15728660 KiB; 1.2 times that is 18.0 GiB, rounded up to 19 GiB."
+    },
+    "streaming_forward": {
+      "cpus": 16,
+      "memory_pilot": "48G",
+      "memory_production": "21G",
+      "time_limit_pilot": "01:00:00",
+      "time_limit_production_task": "02:00:00",
+      "memory_basis": "The integrated H200 pilot measured 18025656 KiB = 17.19 GiB MaxRSS; 1.2 times this is 20.63 GiB, rounded upward to a 21 GiB production request."
+    }
+  },
+  "authorization": {
+    "implementation_and_synthetic_tests": true,
+    "covariance_cache_execution": true,
+    "integrated_four_row_PM_pilot_execution": true,
+    "production_256_forward_execution": true,
+    "pair_recentered_P1_aggregation_execution": false,
+    "RAMSES": false
+  },
+  "next": "Complete implementation and tests, then obtain user approval before submitting the covariance-cache job and its dependent four-row integrated PM pilot."
+}

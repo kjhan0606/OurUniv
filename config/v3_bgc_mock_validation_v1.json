@@ -1,0 +1,30 @@
+{
+  "schema": "cf4-v3-bgc-mock-validation-v1",
+  "frozen_date": "2026-07-29",
+  "frozen_before_validation_run": true,
+  "algorithm": {
+    "reference": "Hoffman et al. 2021, MNRAS 505, 3380, equations 23 and 36",
+    "h0_km_s_mpc": 74.6,
+    "cz_min_km_s": 1500.0,
+    "cz_max_km_s": 18000.0,
+    "sigma_d_mpc": 0.0,
+    "candidate_redshift_neighbour_windows": [101, 201, 401, 801, 1201, 1601],
+    "selection_rule": "Minimize development mean over seeds of abs(z_mean) + abs(z_std - 1) + max_abs_radial_bias_in_sigma; ties choose the larger window."
+  },
+  "mock": {
+    "catalog_sampling": "Use the actual grouped-CF4 cz and e_DM distributions inside the algorithm range; do not use observed peculiar velocities.",
+    "true_velocity_sigma_km_s": 275.0,
+    "development_seeds": [3101, 3102, 3103, 3104, 3105, 3106, 3107, 3108],
+    "validation_seeds": [4101, 4102, 4103, 4104, 4105, 4106, 4107, 4108, 4109, 4110, 4111, 4112, 4113, 4114, 4115, 4116],
+    "radial_bins": 8
+  },
+  "acceptance": {
+    "validation_abs_ensemble_z_mean_max": 0.05,
+    "validation_ensemble_z_std_range": [0.9, 1.1],
+    "validation_max_abs_radial_bias_in_sigma": 0.15,
+    "validation_each_seed_abs_z_mean_max": 0.1,
+    "required_seed_pass_fraction": 0.9,
+    "raw_to_bgc_abs_mean_bias_improvement_min": 0.8,
+    "policy": "All gates must pass before BGc can be wired into the N64 CF4 CR comparison. This does not validate rows below cz_min."
+  }
+}

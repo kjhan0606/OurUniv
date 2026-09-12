@@ -1,0 +1,192 @@
+{
+  "schema": "hong2021-v78-global-conditional-null-redesign-audit-program-v1",
+  "status": "frozen_before_V78_implementation_or_independent_holdout_bootstrap_draws",
+  "purpose": "Replace the unattainable conjunction of V77 sampling-sensitive hard checks with one candidate-agnostic global conditional-null p-value. Preserve the actual fresh 32-query group design, retain both sparse and dense anomaly sensitivity, allocate one family-wise error budget across the physical-energy and exact-label rank-coverage blocks, audit calibration on a new bootstrap seed, and stop before candidate construction or fresh payload access.",
+  "frozen_at": "2026-08-12T17:05:00+09:00",
+  "parent_evidence": {
+    "V77_result_record": "config/hong2021_v77_result_record.json",
+    "V77_result_record_sha256": "0f234602c1bda4274ebc3372dcac2f17a46d0a0e97007cd40a2a4dfffc3bbe8b",
+    "V76_result_record": "config/hong2021_v76_result_record.json",
+    "V76_result_record_sha256": "9e34791c3bb3ca0f9cfdfce7a819c2e79f98784ff2341f090ffaa0fd181ee8f7",
+    "V77_audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/audit_result.json",
+    "V77_audit_result_sha256": "79967b77b9c94517c426ec0e2adec0ebd19ceda566a252d8d57f66e1e9949314",
+    "V77_calibration_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/calibration_arrays.npz",
+    "V77_calibration_arrays_sha256": "a2829d63f2f73354c816f5515cd0ce2fbda386e1230db6fb745fa2c44ea23feb",
+    "V77_verification_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/verification_arrays.npz",
+    "V77_verification_arrays_sha256": "64c301110e0e9d226467508be61f592e328a974b02424ea08e918750f00d1872",
+    "V76_null_p_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking/power_arrays.npz",
+    "V76_null_p_arrays_sha256": "a5be3f1246610b60da09c597731ed0232765df06575a9b32c4f4beaf5e2596ff",
+    "V73_summary_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.json",
+    "V73_summary_record_sha256": "6b9d741be1bd3ce5c50a15c146e9dcbdb3d2008e1668d668ce2ecaa99131f24c",
+    "V73_summary_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+    "V73_summary_cache_sha256": "1d85f76c9df4ea9a26cb8c82bae746f586cb904d8cc65294aa92c6295c36a2b8",
+    "V77_decision_preserved": true,
+    "V76_exact_field_label_method_preserved": true,
+    "V72_verdict_preserved": true
+  },
+  "fresh_query_design": {
+    "queries_per_domain": 32,
+    "members_per_query": 16,
+    "TNG100_fit_train_analogue": "randomly permute quota multiset [6,8,9,9] over four fit-train x-z quadrants",
+    "SIMBA_fit_train_analogue": "choose three of eight fit-train realizations and randomly permute quotas [7,10,15]",
+    "Swift_fit_train_analogue": "choose seven of twenty fit-train realizations, assign quota 5 to four and quota 4 to three",
+    "future_fresh_indices": "the immutable metadata-only 32-index selections in V77",
+    "future_payload_access_in_this_audit": false
+  },
+  "physical_energy_block": {
+    "calibration_fit_phase": "immutable V77 calibration arrays",
+    "global_reference_phase": "immutable independent V77 verification arrays",
+    "independent_audit_phase": {
+      "seed": 780001,
+      "trials_per_domain": 20000,
+      "source": "immutable V73 fit-train summary cache only",
+      "query_and_oracle_sampling": "identical to V77 compatible design"
+    },
+    "families": {
+      "q99_999": {
+        "vector": "signed q_delta for TNG100, SIMBA, Swift",
+        "transform": "identity",
+        "score": "ridge Mahalanobis distance from the V77-calibration center"
+      },
+      "Q4": {
+        "vector": "log(q4_ratio) for all three domains",
+        "transform": "natural logarithm",
+        "score": "ridge Mahalanobis distance"
+      },
+      "high_k_power": {
+        "vector": "log(power ratio) for both frozen bands in all three domains",
+        "transform": "natural logarithm",
+        "score": "ridge Mahalanobis distance"
+      },
+      "residual_RMS": {
+        "vector": "log(rms_ratio) for all three domains",
+        "transform": "natural logarithm",
+        "score": "ridge Mahalanobis distance"
+      },
+      "density_PDF": {
+        "vector": "oracle/generated versus truth histogram TV for all three domains",
+        "transform": "identity",
+        "score": "ridge Mahalanobis distance"
+      },
+      "two_point": {
+        "vector": "oracle/generated versus truth KS in 0-1, 1-3, and 3-10 Mpc/h for all three domains",
+        "transform": "identity",
+        "score": "ridge Mahalanobis distance"
+      }
+    },
+    "ridge_covariance": "sample covariance plus identity times max(1e-12, 1e-6 times trace(covariance)/dimension); use Moore-Penrose inverse",
+    "family_p_value": "inclusive upper empirical tail of the family score against the V77 calibration family scores with add-one correction",
+    "environment_family": "upper empirical tail of the number of domains failing the unchanged environment comparison, using the V77 calibration counts; discrete and inclusive",
+    "energy_family": "upper empirical tail of the maximum across domains of standardized candidate-minus-control energy delta; calibration mean and population standard deviation are frozen from V77 calibration",
+    "number_of_family_p_values": 8,
+    "sparse_statistic": "maximum over the eight values of (-log family_p); parentheses are mandatory and tested",
+    "dense_statistic": "sum over the eight values of (-2 log family_p)",
+    "sparse_p_value": "inclusive upper empirical tail of the sparse statistic against all V77 verification sparse statistics with add-one correction",
+    "dense_p_value": "inclusive upper empirical tail of the dense statistic against all V77 verification dense statistics with add-one correction",
+    "block_p_value": "min(1, 2*min(sparse_p_value,dense_p_value))",
+    "block_alpha_within_complete_gate": 0.025,
+    "important_change_from_V77": "The old per-component hard intervals and strict candidate-better-than-deterministic conjunction are diagnostic only. Selection uses goodness-of-fit to the compatible truth-oracle null distribution."
+  },
+  "rank_coverage_block": {
+    "method": "V76 exact field-level truth-label randomization with separate rank and coverage conditional p-values in each of three domains",
+    "number_of_p_values": 6,
+    "block_p_value": "min(1, 6*minimum of the six exact-label p-values)",
+    "block_alpha_within_complete_gate": 0.025,
+    "implied_per_metric_threshold": 0.004166666666666667,
+    "relation_to_V76": "The exact statistic and randomization null are unchanged; only the threshold is tightened from 1/120 to 1/240 so the block receives half of one global 0.05 budget."
+  },
+  "complete_global_rule": {
+    "global_p_value": "min(1, 2*min(physical_energy_block_p, rank_coverage_block_p))",
+    "global_alpha": 0.05,
+    "statistical_pass": "global p-value strictly greater than 0.05",
+    "deterministic_requirements": [
+      "all values finite",
+      "maximum absolute residual DC <=1e-7",
+      "all frozen provenance, sampler, pairing, shape, and numerical invariants pass"
+    ],
+    "complete_candidate_pass": "statistical pass and every deterministic requirement pass",
+    "error_control": "Two-level Bonferroni. The physical-energy block adjusts its two omnibus paths; the rank-coverage block adjusts six exact tests; the final factor two allocates one global family-wise 0.05 budget across the two blocks. No independence assumption is required.",
+    "claim_boundary": "This is an empirical compatible-population conditional-null gate plus exact label randomization. Passing is failure to detect the named discrepancies, not proof that the field generator or cosmological inverse is correct."
+  },
+  "null_calibration_audit": {
+    "physical_energy": "Evaluate block-p rejection at 0.025 on the new 20,000-row independent audit phase.",
+    "rank_coverage_scenarios": [
+      "independent_normal_voxels",
+      "spatially_correlated_normal",
+      "perfect_within_field_dependence",
+      "rounded_heavy_tail_with_ties"
+    ],
+    "complete_trials_per_scenario": 100000,
+    "complete_pairing_seed": 780002,
+    "complete_pairing": "independently resample one physical-energy audit p-value and three rank/coverage p-value pairs from the immutable V76 scenario arrays for each trial",
+    "physical_energy_calibrated_if": "point rejection <=0.025 and Wilson 95-percent upper <=0.03",
+    "complete_calibrated_if": "every scenario has point rejection <=0.05 and Wilson 95-percent upper <=0.055",
+    "mathematical_FWER_upper": 0.05
+  },
+  "frozen_power_audit": {
+    "source": "Apply deterministic transformations to the new independent audit-phase continuous metrics; no new cosmological field or candidate is generated.",
+    "detection": "physical-energy block p <=0.025, equivalently complete global p <=0.05 when the rank-coverage block p is one",
+    "alternatives": {
+      "coherent_q99_999_bias": "add +0.15 dex to q_delta in all three domains",
+      "coherent_Q4_excess": "multiply q4_ratio by 1.5 in all three domains",
+      "coherent_high_k_excess": "multiply both high-k band ratios by 1.1 in all three domains",
+      "coherent_RMS_excess": "multiply rms_ratio by 1.1 in all three domains",
+      "coherent_PDF_TV_excess": "add 0.03 to PDF TV in all three domains",
+      "clear_two_point_KS_excess": "add 0.20 to all three two-point KS scales in all three domains",
+      "environment_failure_all_domains": "set the environment failure indicator in all three domains",
+      "coherent_energy_inferiority": "add +0.03 to candidate-minus-control energy delta in all three domains",
+      "diffuse_multimetric_shift": "simultaneously add q_delta +0.075 dex, multiply Q4 by sqrt(1.5), high-k and RMS by sqrt(1.1), add PDF TV +0.015, add two-point KS +0.05, and add energy delta +0.015 in all domains"
+    },
+    "minimum_detection_probability": 0.8,
+    "minimum_Wilson_95_lower": 0.78,
+    "power_sufficient_if": "every named alternative satisfies both minima"
+  },
+  "predeclared_decision": {
+    "select_global_rule_if_all": [
+      "physical-energy independent null calibration passes",
+      "all four complete null calibration scenarios pass",
+      "all named power alternatives pass",
+      "the implementation exactly satisfies the sparse-parentheses and global-p invariants"
+    ],
+    "selected_classification": "single_global_conditional_null_gate_selected_complete_specification_may_be_frozen",
+    "failed_classification": "global_conditional_null_gate_requires_additional_redesign",
+    "if_selected_next": "Freeze a complete candidate-agnostic V79 gate implementation bound to the V77 fresh indices, then stop for explicit approval before any candidate construction or fresh payload read.",
+    "if_failed_next": "Stop before a complete gate or candidate and report the failed frozen requirement."
+  },
+  "scope_limits": {
+    "this_is_not_a_generator": true,
+    "validation_input_or_target_payload_access": false,
+    "new_validation_metric": false,
+    "raw_fit_train_truth_reread": false,
+    "V72_stage_B_access": false,
+    "Astrid_access": false,
+    "historical_or_independent_EAGLE_access": false,
+    "model_checkpoint_access": false,
+    "training_or_model_sampling": false,
+    "post_result_threshold_or_alternative_change": false,
+    "V72_verdict_change": false,
+    "new_candidate_or_complete_gate_execution": false
+  },
+  "resource_and_execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "one process pinned to logical CPU 64 at nice 15",
+    "existing_RAMSES_run_must_not_be_modified_or_stopped": true,
+    "require_clean_worktree": true,
+    "require_program_freeze_commit_ancestor": true,
+    "refuse_existing_output": true
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v78_global_conditional_null",
+    "independent_audit_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v78_global_conditional_null/independent_audit_arrays.npz",
+    "p_value_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v78_global_conditional_null/p_value_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v78_global_conditional_null/audit_result.json"
+  },
+  "authorization": {
+    "implement_and_execute_this_target_free_audit_after_freeze": true,
+    "freeze_complete_candidate_agnostic_gate_after_exact_pass": true,
+    "construct_or_sample_a_candidate": false,
+    "read_selected_validation_input_or_target": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false
+  }
+}

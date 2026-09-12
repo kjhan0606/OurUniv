@@ -1,0 +1,155 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-adaptation-fallback-program-v1",
+  "status": "frozen_before_independent_8192_adaptation_fallback",
+  "adaptation_stage": "fallback_8192",
+  "frozen_date": "2026-08-16",
+  "purpose": "Execute the single preregistered last-chance 8192-geometry adaptation-only bank after the independent 2048 bank failed only its geometry-support gate.",
+  "scientific_design": {
+    "path": "config/cf4_peak_evidence_adaptive_integration_design.json",
+    "sha256": "bea518b304616ea9f55bf2ceee725b599c242aec2f5497ccd25fd0600b28a5c7",
+    "required_status": "frozen_Fable_scientific_design_before_implementation"
+  },
+  "fallback_prerequisite": {
+    "result_record": "config/cf4_peak_evidence_adaptation_v1_result_record.json",
+    "result_record_sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238",
+    "required_record_status": "complete_fail_insufficient_adaptation_support",
+    "canonical_result_sha256": "520e2b57fe178baed4e9634ca322aca57870026f1254042ae3608f96aaf770a8",
+    "canonical_arrays_sha256": "53effa951768bcebdbc5aeaf9c8bc5aa6c19b18e749f61562f1151b41911da90",
+    "complete_marker_sha256": "d498be087a52079f3f2057b752bc56f4f01174a73028d31b57a0473460226f68",
+    "required_raw_status": "complete_fail_adaptation",
+    "required_failure_class": "insufficient_adaptation_support_fallback_authorized",
+    "forbidden_2048_proposal_path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/proposal.json"
+  },
+  "implementation": {
+    "path": "src/cf4_peak_evidence_adaptation_fallback.py",
+    "sha256": "b8a3a66d3ef4916cc157a70379ec7eaee8d336178e83870ab342681d1f2c3c4a",
+    "imported_adaptation_core": {
+      "path": "src/cf4_peak_evidence_adaptation.py",
+      "sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d"
+    }
+  },
+  "adaptation_core": {
+    "path": "src/cf4_peak_evidence_adaptation.py",
+    "sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d"
+  },
+  "proposal_implementation": {
+    "path": "src/cf4_adaptive_geometry_proposal.py",
+    "sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc"
+  },
+  "pinned_local_files": [
+    {"path": "src/cf4_peak_evidence_adaptation_fallback.py", "sha256": "b8a3a66d3ef4916cc157a70379ec7eaee8d336178e83870ab342681d1f2c3c4a"},
+    {"path": "src/cf4_peak_evidence_adaptation.py", "sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d"},
+    {"path": "src/cf4_adaptive_geometry_proposal.py", "sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc"},
+    {"path": "src/cf4_all_parent_peak_evidence.py", "sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e"},
+    {"path": "src/cf4_peak_evidence_phase_cache.py", "sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106"},
+    {"path": "src/cf4_lg_peak_cr.py", "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"},
+    {"path": "config/cf4_peak_evidence_adaptive_integration_design.json", "sha256": "bea518b304616ea9f55bf2ceee725b599c242aec2f5497ccd25fd0600b28a5c7"},
+    {"path": "config/cf4_peak_evidence_adaptation_v1_result_record.json", "sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238"},
+    {"path": "config/p2_lg_z0_forward_importance_v8.json", "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"}
+  ],
+  "Local_Group_model": {
+    "source_program": "config/p2_lg_z0_forward_importance_v8.json",
+    "source_program_sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+    "changes_from_V8": "None. The target prior, sealed g_A proposal, targets, sigma=0.25, separation, shell probes, and isotropic axis remain unchanged."
+  },
+  "reference_calibration": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+    "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+    "required_status": "complete_reference_calibration_parent3429_pass"
+  },
+  "density_filter": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+    "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+    "shape": [576, 576, 289],
+    "dtype": "float32",
+    "gaussian_radius_mpc_h": 1.5
+  },
+  "mesh": {
+    "coarse_N": 192,
+    "fine_N": 576,
+    "refinement_ratio": 3,
+    "box_size_mpc_h": 384.0
+  },
+  "parents": {
+    "seed_range_inclusive": [3193, 3448],
+    "count": 256,
+    "uniform_parent_marginalization": true,
+    "parent_identity_available_to_proposal_fitter": false,
+    "CF4_deviance_available_to_proposal_fitter": false
+  },
+  "adaptation_bank": {
+    "draw_count": 8192,
+    "master_seed": 2026082005,
+    "bit_generator": "PCG64DXSM",
+    "seed_sequence": "SeedSequence(master_seed, spawn_key=(draw_index,))",
+    "proposal": "The same sealed g_A midpoint mixture times isotropic axis used by the independent 2048 bank.",
+    "common_random_geometries_for_every_parent": true,
+    "reuse_or_combine_any_2048_geometry": false,
+    "additional_fallback_after_this_bank": false
+  },
+  "weighted_EM": {
+    "master_seed": 2026082002,
+    "restart_count": 8,
+    "fold_count": 4,
+    "full_fit_fold_id": 4,
+    "component_count": 4,
+    "maximum_iterations": 200
+  },
+  "synthetic_validation": {
+    "master_seed": 2026082004,
+    "sampling_draw_count": 200000
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "multiprocessing_start_method": "fork after the read-only filter and point sets are prepared",
+    "process_table_polling": false
+  },
+  "gates": {
+    "all_256_parent_lineage_exact": true,
+    "all_2097152_log_Z_finite": true,
+    "real_scalar_vectorized_log_Z_and_log_weight_max_difference": 1e-10,
+    "geometry_marginal_ESS_min": 128.0,
+    "maximum_normalized_geometry_weight_max": 0.025,
+    "all_four_CV_holdout_delta_min": 0.0,
+    "all_CV_and_full_EM_fits_converged": true,
+    "all_synthetic_contracts_pass": true,
+    "pass_requires_all": true
+  },
+  "information_firewall": {
+    "evidence_only": true,
+    "adaptation_stage": "fallback_8192",
+    "independent_of_2048_rows": true,
+    "combine_or_reuse_2048_rows": false,
+    "adaptation_fitter_receives_only_q_axis_and_parent_marginal_logmean_Z": true,
+    "parent_seed_or_identity_passed_to_fitter": false,
+    "parent_specific_Z_passed_to_fitter": false,
+    "CF4_deviance_or_rank_loaded_for_fitting": false,
+    "adaptation_rows_authorized_for_final_scientific_gate": false,
+    "conditional_or_candidate_field_generated": false,
+    "parent_or_seed_selection_allowed": false,
+    "PM_or_halo_finder_run": false,
+    "RAMSES_authorized": false
+  },
+  "failure_actions": {
+    "invalid_numerical_or_lineage": "No scientific conclusion and no automatic fallback.",
+    "insufficient_fallback_adaptation_support_stop": "Stop adaptation. Do not combine banks or alter K, covariance bounds, kappa cap, physical targets, or sigma after reading the result.",
+    "proposal_family_fit_or_validation_failure": "Stop for a newly designed proposal family; no automatic fallback or hyperparameter retuning is authorized."
+  },
+  "storage": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1",
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/result.json",
+    "canonical_arrays": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/arrays.npz",
+    "canonical_proposal": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_fallback_v1/proposal.json",
+    "exclusive_create_and_atomic_publication": true,
+    "per_cell_JSON_dict_forbidden": true
+  },
+  "decision": {
+    "pass": "Freeze proposal.json and authorize only a separately frozen independent 8192-draw final evidence program.",
+    "additional_adaptation_fallback_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "PM_or_RAMSES_authorized": false
+  }
+}

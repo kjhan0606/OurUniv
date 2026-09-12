@@ -1,0 +1,230 @@
+{
+  "schema": "ouruniv-cf4-twompp-exact-joint-covariance-pilot-v1-result-record",
+  "date": "2026-09-01",
+  "status": "COMPLETE_EXACT_GEOMETRY0_MATERIAL_GATE_FAIL_NO_ROUTE_REJECTION",
+  "scope": "N32 covariance-only technical pilot replacing the previous binwise isotropic velocity surrogate with the exact anisotropic marginalized arm-A velocity precision for completed development geometry 0 and adding the frozen six-population 2M++ Gaussianized-Poisson density Fisher operator.",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "1339bed0635e765f5f2b6dc9b437d07a363bf6b9",
+    "remote": "origin",
+    "remote_commit_at_submission": "1339bed0635e765f5f2b6dc9b437d07a363bf6b9",
+    "program": {
+      "path": "config/cf4_twompp_exact_joint_covariance_pilot_program_v1.json",
+      "bytes": 11324,
+      "sha256": "4baddcb4d7e62a26d16e8ebfd9ecec8c09da5bec4aa8afb3bacd808b41776c08"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_exact_joint_covariance_pilot_v1.py",
+      "bytes": 43005,
+      "sha256": "39086333ad6f73463cea29a32c541bce2d34bde1ed2cbf4a965ad02056276faa"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_exact_joint_covariance_pilot_v1.sbatch",
+      "bytes": 3498,
+      "sha256": "4af854c8fe7259bf97dde5598a733d5fc5b0944c6af691614ddee8f28311f98a"
+    },
+    "tests": {
+      "path": "tests/test_cf4_twompp_exact_joint_covariance_pilot_v1.py",
+      "bytes": 8149,
+      "sha256": "ea49b37fed310cf62a3003bc7a3a8e4db3411a74c67e90cfa19c62cd3d7e381c"
+    },
+    "gate_audit": {
+      "path": "config/cf4_post_joint_nogo_science_gate_and_exact_covariance_audit_v1.json",
+      "bytes": 17955,
+      "sha256": "3db98b3996046b50a958f815cb904e42285ba31601c3c4f6fce264aa73d20701"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329618,
+    "controller": "syntax",
+    "cluster": "syntax",
+    "node": "syn04",
+    "partition": "a10",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 171,
+    "time_limit_seconds": 3600,
+    "requested_cpus": 4,
+    "requested_memory_MiB": 3072,
+    "expected_peak_memory_MiB": 2500,
+    "memory_headroom_multiplier_over_expected": 1.2288,
+    "reported_batch_MaxRSS_KiB": 848836,
+    "reported_batch_MaxRSS_MiB": 828.94140625,
+    "requested_memory_headroom_over_observed": 3.70593094896895,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/pilot",
+    "metrics": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/pilot/metrics.npz",
+      "bytes": 379988,
+      "sha256": "5e5aa40b3b7726d330d405785c0765ef28f4e0954c197367eeb1bd4e0d585e58"
+    },
+    "result": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/pilot/result.json",
+      "bytes": 30436,
+      "sha256": "bf6f084ef0f543f758620fff2fb1cd467890626e704103530d2c29e96d532bd9"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/pilot/manifest.json",
+      "bytes": 443,
+      "sha256": "ddfdeff6f23bece52c051e426adc7d39e6393de0384a3f87e708055749e69ac8"
+    },
+    "COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/pilot/COMPLETE",
+      "bytes": 278,
+      "sha256": "09cd185653b34d775bc2ac436ef71e80cd5f13de44d5383d1761382b0c2e92db"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/logs/pilot-329618.out",
+      "bytes": 323,
+      "sha256": "8cb9b0d2cba97673b10db0de98569c39bd4f814f3101a9cb4f48ea311920a73e"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_exact_joint_covariance_pilot_v1/logs/pilot-329618.err",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "geometry_and_firewall_audit": {
+    "geometry_index": 0,
+    "completed_development_truth_seed_lineage": 2026083000,
+    "selected_row_count": 20612,
+    "training_row_count": 16393,
+    "holdout_row_count": 4219,
+    "nuisance_template_count": 4,
+    "completed_geometry_member_aggregate_bound": true,
+    "new_truth_or_validation_seed_count": 0,
+    "truth_field_array_generated_or_deserialized": false,
+    "completed_development_true_geometry_deserialized": true,
+    "likelihood_datum_consumed_by_inference": false,
+    "galaxy_positions_consumed_as_field_likelihood_datum": false,
+    "observational_CF4_field_inference_executed": false,
+    "untouched_256_mock_validation_executed": false,
+    "present_density_posterior_created": false,
+    "IC_inference_executed": false,
+    "target_0p3_cMpc_h_reached": false
+  },
+  "numerical_audit": {
+    "velocity_A_AT_adjoint_relative_error": 4.4085944872117105e-15,
+    "velocity_A_AT_adjoint_max_inclusive": 5e-08,
+    "nuisance_Woodbury_relative_error": 2.9778690538197225e-14,
+    "nuisance_Woodbury_max_inclusive": 1e-10,
+    "maximum_joint_precision_symmetry_relative_error": 6.791317321853381e-14,
+    "joint_precision_symmetry_max_inclusive": 5e-08,
+    "maximum_CG_relative_residual_over_scenarios": 2.991590209277233e-06,
+    "CG_relative_residual_max_inclusive": 3e-06,
+    "maximum_CG_iterations_over_scenarios": 120,
+    "CG_max_iterations": 2000,
+    "trace_probe_count_per_scenario": 32,
+    "all_96_trace_probe_solves_converged": true,
+    "stderr_empty": true,
+    "pre_submission_related_tests_passed": 18
+  },
+  "lowest_joint_bin_information": {
+    "bin_id": 0,
+    "material_gate": {
+      "information_point_and_numerical_lower_min_inclusive": 0.5,
+      "expected_correlation_r_min_inclusive": 0.7,
+      "expected_residual_power_ratio_max_inclusive": 0.5
+    },
+    "strong_stretch_gate": {
+      "information_point_and_numerical_lower_min_inclusive": 0.8,
+      "expected_correlation_r_min_inclusive": 0.8944271909999159,
+      "expected_residual_power_ratio_max_inclusive": 0.2
+    },
+    "velocity_only_exact_marginalized_nuisance": {
+      "delta_and_theta_recovered_information_fraction": 0.3008155112221734,
+      "delta_and_theta_numerical_95_lower": 0.28547261194534074,
+      "delta_and_theta_expected_correlation_r": 0.5484665087516041,
+      "delta_and_theta_expected_residual_power_ratio": 0.6991844887778266,
+      "material_pass": false,
+      "strong_stretch_pass": false
+    },
+    "known_selection_reference_bias": {
+      "delta_and_theta_recovered_information_fraction": 0.44630716058716513,
+      "delta_and_theta_numerical_95_lower": 0.42399811896768863,
+      "delta_and_theta_expected_correlation_r": 0.6680622430486287,
+      "delta_and_theta_expected_residual_power_ratio": 0.5536928394128349,
+      "information_gain_over_exact_velocity_only": 0.1454916493649917,
+      "material_pass": false,
+      "strong_stretch_pass": false
+    },
+    "normalization_marginalized_reference_bias": {
+      "delta_and_theta_recovered_information_fraction": 0.4375224094350023,
+      "delta_and_theta_numerical_95_lower": 0.4144519364161476,
+      "delta_and_theta_expected_correlation_r": 0.6614547674898128,
+      "delta_and_theta_expected_residual_power_ratio": 0.5624775905649977,
+      "information_gain_over_exact_velocity_only": 0.1367068982128289,
+      "material_pass": false,
+      "strong_stretch_pass": false
+    },
+    "all_scenario_material_contiguous_prefix_bin_count": 0,
+    "all_scenario_strong_stretch_contiguous_prefix_bin_count": 0
+  },
+  "comparison_with_isotropic_64_geometry_mean_pilot": {
+    "comparison_limit": "The previous velocity surrogate used the equal-weight 64-geometry mean trace, whereas this pilot uses exact geometry 0. The difference cannot be attributed uniquely to covariance anisotropy without a 64-geometry exact run.",
+    "velocity_only": {
+      "previous_isotropic_64_geometry_mean_information": 0.30409692861112114,
+      "exact_geometry0_information": 0.3008155112221734,
+      "difference_exact_geometry0_minus_previous": -0.0032814173889477505
+    },
+    "known_selection_reference_bias": {
+      "previous_isotropic_information": 0.5172811153231445,
+      "previous_isotropic_numerical_95_lower": 0.5012693120924485,
+      "exact_geometry0_information": 0.44630716058716513,
+      "exact_geometry0_numerical_95_lower": 0.42399811896768863,
+      "difference_information": -0.07097395473597937,
+      "difference_numerical_95_lower": -0.07727119312475987
+    },
+    "normalization_marginalized_reference_bias": {
+      "previous_isotropic_information": 0.5105045033861877,
+      "previous_isotropic_numerical_95_lower": 0.4937760661941655,
+      "exact_geometry0_information": 0.4375224094350023,
+      "exact_geometry0_numerical_95_lower": 0.4144519364161476,
+      "difference_information": -0.0729820939511854,
+      "difference_numerical_95_lower": -0.0793241297780179
+    },
+    "interpretation": "The exact velocity-only trace is close to the prior 64-geometry mean, but exact joint information is lower by about 0.07. This is evidence that the isotropic surrogate overstated complementarity for geometry 0, while the single-geometry versus 64-mean mismatch prevents assigning the entire difference to anisotropy."
+  },
+  "scientific_interpretation": {
+    "technical_result": "PASS. The exact anisotropic velocity precision, nuisance Woodbury inverse, density Fisher addition, trace estimator, and all 96 CG solves satisfy their frozen numerical gates.",
+    "information_result": "Both the optimistic known-selection scenario and the normalization-marginalized scenario fail the corrected material gate in the lowest joint delta-theta bin. The known-selection point I=0.4463 is itself below 0.5, so its failure is not caused only by numerical trace uncertainty.",
+    "positive_evidence": "The independent 2M++ density Fisher still adds 0.1455 information over exact velocity alone in the optimistic scenario and 0.1367 after normalization marginalization. The density tracer is useful even though this frozen linear design does not cross the development gate.",
+    "route_scope": "This is a NO-GO for spending on an exact 64-geometry production of the same frozen linear Gaussianized-Poisson Fisher design under the preregistered decision tree. It is not a route-level rejection of a data-bearing nonlinear 2M++ count likelihood, other density tracers, or the requested z=0 density-posterior program.",
+    "gate_scope": "The 0.5 material gate is an outcome-aware development screen, not a literature-derived science threshold and not evidence that I=0.4463 is physically useless. It will not be lowered again in response to this result.",
+    "resolution_scope": "N32 has 12 cMpc/h cells. No present-density map, IC, PM evolution, or 0.3 cMpc/h result was produced."
+  },
+  "scientific_disposition": {
+    "single_geometry_exact_joint_covariance_pilot": "COMPLETE_TECHNICAL_PASS_MATERIAL_GATE_FAIL",
+    "exact_64_geometry_production_for_same_linear_design": "NO_GO",
+    "2Mpp_density_tracer_route_level_rejection": "NOT_ALLOWED",
+    "density_nuisance_calibration_without_model_change": "NOT_SUFFICIENT_TO_RAISE_THE_KNOWN_SELECTION_CEILING",
+    "present_z0_density_posterior": "NOT_CREATED",
+    "parent_posterior_promotion": "NO_GO",
+    "untouched_256_mock_validation": "NOT_OPENED",
+    "IC_PM_HOP_RAMSES": "NOT_RUN",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "automatic_follow_on": "STOPPED"
+  },
+  "recommended_next_stage_requiring_user_approval": {
+    "name": "datum_bearing_z0_density_likelihood_redesign",
+    "purpose": "Return to the requested present-day density-posterior route and design the smallest development-mock experiment that consumes galaxy counts/positions through an honest positive count likelihood while jointly retaining CF4 velocity constraints.",
+    "required_first_actions": [
+      "Freeze the z=0 density field as the primary product and keep IC generation downstream of its likelihood validation.",
+      "Replace the homogeneous datum-free density Fisher screen by a positive data-bearing Poisson or overdispersed count likelihood with six luminosity populations.",
+      "Include population normalizations, luminosity bias, coherent RSD, FoG/group dispersion, selection calibration, and model discrepancy in the development-mock identifiability design.",
+      "Use the already consumed 64 development truths only; keep the 256 validation truths locked.",
+      "Define heldout count and velocity predictive checks before any field posterior or resolution increase."
+    ],
+    "forbidden_shortcuts": [
+      "do not lower the 0.5 gate after this outcome",
+      "do not run the exact 64-geometry production for the unchanged linear Fisher model",
+      "do not infer an IC before validating the z=0 density likelihood",
+      "do not claim 0.3 cMpc/h from N32",
+      "do not open the locked 256 validation truths"
+    ],
+    "new_code_or_Slurm_authorized_by_this_record": false
+  }
+}

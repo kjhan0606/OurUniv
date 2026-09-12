@@ -1,0 +1,206 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-production-capability-design-v1",
+  "status": "frozen_capability_design_before_program_or_execution",
+  "frozen_date": "2026-08-16",
+  "method": "exact_cached_aggregate_evidence_annealed_SMC",
+  "base_design": {
+    "path": "config/cf4_aggregate_evidence_annealed_smc_design.json",
+    "sha256": "47397a00b497dc09e0e517cebe61a285cebdf9aa4b0a0ef1688af588c2c58609"
+  },
+  "authorization": {
+    "capability_implementation_and_unit_tests_authorized": true,
+    "production_program_authorized": false,
+    "production_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on": false
+  },
+  "hard_pinned_lineage": {
+    "response_atlas_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"
+    },
+    "parent_count": 256,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"
+    },
+    "physical_model": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "reference_calibration": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+      "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988"
+    },
+    "response_atlas_result_record": {
+      "path": "config/cf4_parent_response_atlas_v1_result_record.json",
+      "sha256": "a0677aaa9af7c1c820766d4db2b83533c5cf176bc3680548a34adfb0ce414ab7"
+    },
+    "oracle_regression_postmortem": {
+      "path": "config/cf4_aggregate_evidence_oracle_regression_postmortem_result_record.json",
+      "sha256": "de0b6b047f251679b2542868ed2546488bb2bbe40d34393899ff3094df3c2310"
+    },
+    "adaptation_2048_result_record": {
+      "path": "config/cf4_peak_evidence_adaptation_v1_result_record.json",
+      "sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238"
+    },
+    "adaptation_8192_result_record": {
+      "path": "config/cf4_peak_evidence_adaptation_fallback_result_record.json",
+      "sha256": "d890b7ba4baa2887e6518bb6cd02cbaa3c23dbeeb7c31aeea5dbeccbe35618c0"
+    },
+    "exact_oracle_source": {
+      "path": "src/cf4_aggregate_evidence_oracle.py",
+      "sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f"
+    },
+    "smc_core_source": {
+      "path": "src/cf4_aggregate_evidence_smc.py",
+      "sha256": "392c75d823fb055e7b592299aa90540b1176d4cfd3c11442b446e42fd11f8337"
+    },
+    "smc_validation_source": {
+      "path": "src/cf4_aggregate_evidence_smc_validation.py",
+      "sha256": "9e03019807ca6b532da28688dc8e2b382ff9b6b256824825506787bd74cd73f2"
+    },
+    "private_four_replicate_driver": {
+      "path": "src/cf4_aggregate_evidence_smc_production.py",
+      "sha256": "b8cd39fac8d33c400a084c6929726a66795c757066fbe60fcc2a463014b90527"
+    }
+  },
+  "fixed_smc": {
+    "replicate_count": 4,
+    "replicates_sequential": true,
+    "particles_per_replicate": 2048,
+    "bit_generator": "PCG64DXSM",
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "target_CESS_fraction": 0.8,
+    "resample_when_ESS_strictly_below_fraction": 0.5,
+    "resampling": "systematic",
+    "MH_sweeps_per_positive_temperature_stage": 4,
+    "move_names": ["q_local", "axis_local", "joint_local", "prior_independence"],
+    "move_probabilities": [0.4, 0.3, 0.2, 0.1],
+    "q_scales": [0.25, 0.6, 1.5],
+    "q_scale_probabilities": [0.5, 0.3, 0.2],
+    "vMF_kappa": [100.0, 10.0, 1.0],
+    "vMF_kappa_probabilities": [0.5, 0.3, 0.2],
+    "maximum_positive_temperature_stages": 256,
+    "runtime_override_allowed": false,
+    "particle_pooling_across_replicates": false,
+    "integral_averaging_across_replicates": true
+  },
+  "parallel_oracle": {
+    "worker_processes": 8,
+    "multiprocessing_start_method": "fork",
+    "parent_blocks": [[3193, 3224], [3225, 3256], [3257, 3288], [3289, 3320], [3321, 3352], [3353, 3384], [3385, 3416], [3417, 3448]],
+    "parents_per_block": 32,
+    "block_order": "ascending parent seed",
+    "filter_memory": "one immutable pre-fork shared array",
+    "worker_lifecycle": "one persistent fixed eight-process fork pool per evaluator, reused across all oracle calls and explicitly closed at phase disposal",
+    "reassembly": "exact ascending parent order",
+    "covariance_cache": "persistent for the full one-shot run",
+    "cache_shards": {
+      "format": "uncompressed_NPZ",
+      "keys": "sorted unique int16[n,6]",
+      "log_Z": "float64[n,256]",
+      "log_Z_bar": "float64[n]",
+      "publication": "exclusive atomic hard-link publication",
+      "manifest": "single immutable final JSON with ordered shard path, SHA256 and row count",
+      "cross_shard_duplicate_keys_allowed": false,
+      "nonfinite_allowed": false,
+      "restart_or_checkpoint_import_allowed": false
+    },
+    "control_to_production_transition": "close and discard the complete control evaluator and its covariance cache, then invoke the factory again; the production evaluator and covariance cache must have distinct object identities with zero cached keys and zero evaluation batches",
+    "control_worker_cleanup": "from evaluator construction onward, evaluator call, comparison, threshold, cache append/seal, and immutable summary publication are enclosed by one try/finally that closes the persistent pool exactly once; control_evaluator_discarded is true only after close returns"
+  },
+  "sealed_oracle_control": {
+    "regression_arrays": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_oracle_regression_v1/arrays.npz",
+    "regression_arrays_sha256": "40c52c48ae7899219476fe6c9f0308b7f68e70ac2493c9fdea26cd37923572e2",
+    "inside_rows": [0, 68, 136, 204, 272, 341, 409, 477, 545, 613, 682, 750, 818, 886, 954, 1023],
+    "outside_rows": [0, 9, 18, 27, 36, 45, 54, 63],
+    "sorted_selection_contract": "lexicographically sort all 24 globally unique keys while applying the identical permutation to inside/outside membership and source-row arrays",
+    "selection_sha256_contract": "hash dtype, shape and bytes of sorted int16[24,6] keys, bool[24] source membership and int64[24] source rows",
+    "immutable_control_summary_required": true,
+    "parent_columns": "all_256_in_seed_order",
+    "stored_exact_log_Z_max_abs_difference": 1e-10,
+    "control_namespace_discarded_after_pass": true,
+    "production_cache_starts_empty": true
+  },
+  "two_phase_information_firewall": {
+    "phase_one_order": ["complete_and_validate_all_four_replicates", "batch_register_histories_in_frozen_order", "seal_oracle", "atomically_publish_all_replicate_artifacts", "atomically_publish_terminal_parent_frozen", "verify_all_SHA256"],
+    "replicate_validation_before_registration": ["exact dtype shape and finite matrices", "normalized nonnegative weights", "ancestor range", "strict beta history ending exactly at one", "normalizer increment sum", "resampling ancestor row count equals the number of particle_ESS_history[1:] values strictly below 1024", "move totals and acceptance not exceeding proposals", "geometry keys reconstructed from midpoint and canonical axis", "genealogical ESS and history consistency", "terminal parent logmeanexp equals stored per-particle log_Z_bar with max absolute difference at most 1e-12"],
+    "terminal_parent_frozen_npz_exact_keys": ["master_seed", "parent_seed", "log_I_bar", "P_rep", "P_pool"],
+    "terminal_parent_frozen_shapes": {
+      "master_seed": [4],
+      "parent_seed": [256],
+      "log_I_bar": [4],
+      "P_rep": [4, 256],
+      "P_pool": [256]
+    },
+    "terminal_parent_frozen_contains_CF4": false,
+    "phase_two_open_condition": "all phase-one artifacts atomically published and SHA-verified",
+    "calibration_binding": "open_calibration takes no caller argument and internally loads only the canonical pinned calibration path and SHA, verifies schema/status, exact 3193..3448 seed join and linearly recomputed parent3429-excluded Q99 and Q99.5 thresholds; publish_cf4_gates takes no calibration argument, reloads the pinned file immediately before publication, exact-compares seed/deviance/threshold/source fields and non-writeable bound arrays, then uses only the same internally bound object",
+    "publish_revalidation": "immediately before CF4 gates, re-hash terminal_parent_frozen and all four replicate artifacts, reload log_I_bar/P_rep/P_pool from terminal NPZ, and reload ancestor/history arrays to recompute GESS and temperature-history gates",
+    "phase_two_outputs": ["post_terminal_cf4_gates.npz", "post_terminal_cf4_gates.json"],
+    "controller_return_values": ["canonical_geometry_key", "log_Z_bar"],
+    "controller_parent_specific_values_allowed": false,
+    "controller_CF4_values_allowed": false
+  },
+  "gates": {
+    "all_replicates_reach_beta_one": true,
+    "temperature_stagnation_absent": true,
+    "maximum_temperature_stages_each": 256,
+    "replicate_log_I_bar_range_max": 0.2,
+    "replicate_log_I_bar_sample_SE_max": 0.1,
+    "all_six_pairwise_P_rep_L1_max": 0.2,
+    "genealogical_ESS_each_min": 128.0,
+    "pooled_parent_ESS_min": 32.0,
+    "maximum_P_pool_max": 0.1,
+    "weighted_CF4_Q99_exceedance_mass_max": 0.05,
+    "weighted_CF4_Q90_le_reference_Q99p5": true,
+    "weighted_quantile": "stable_sort_then_cumsum_searchsorted_left",
+    "one_sided_KS": "supremum_of_F_uniform_minus_F_weighted_after_complete_tied_groups",
+    "CF4_permutation_bit_generator": "PCG64DXSM",
+    "CF4_permutation_seed": 2026081901,
+    "CF4_permutations": 100000,
+    "CF4_permutation_p_formula": "(exceedance_count+1)/100001",
+    "CF4_permutation_p_min": 0.01,
+    "all_boundaries_inclusive": true
+  },
+  "failure_priority": [
+    "invalid_lineage_or_authorization",
+    "nonfinite_or_artifact_contract",
+    "incomplete_or_unsealed_terminal_phase",
+    "SMC_terminal_beta_not_one",
+    "SMC_temperature_stagnation",
+    "SMC_maximum_temperature_stages",
+    "replicate_log_I_bar_range",
+    "replicate_log_I_bar_sample_SE",
+    "replicate_parent_probability_L1",
+    "genealogical_ESS",
+    "pooled_parent_ESS",
+    "maximum_pooled_parent_probability",
+    "weighted_CF4_Q99_exceedance_mass",
+    "weighted_CF4_Q90",
+    "weighted_CF4_one_sided_KS_permutation"
+  ],
+  "lifecycle_classification": {
+    "invalid_failed": "lineage, finite/artifact, or terminal-seal provenance gate failure; no scientific conclusion",
+    "complete_scientific_fail": "all provenance gates valid but one frozen SMC architecture, stability, parent-support, or CF4 gate failed",
+    "complete_pass": "all provenance and scientific gates passed",
+    "oracle_runtime_failure": "every RuntimeError crossing from oracle/evaluator methods is wrapped as typed OracleEvaluationFailure and is always invalid_failed, even when its message matches a valid SMC architecture stop",
+    "temperature_stagnation_or_stage_limit": "valid architecture-stop COMPLETE, never an invalid FAILED and never an automatic retune or scale-up"
+  },
+  "output_schemas": {
+    "cache_manifest": "ouruniv-cf4-aggregate-evidence-cache-manifest-v1",
+    "replicate_artifact": "ouruniv-cf4-aggregate-evidence-smc-replicate-v1",
+    "terminal_parent_frozen": "ouruniv-cf4-aggregate-evidence-terminal-parent-frozen-v1",
+    "post_terminal_cf4_gates": "ouruniv-cf4-aggregate-evidence-post-terminal-cf4-gates-v1",
+    "capability_result": "ouruniv-cf4-aggregate-evidence-smc-capability-result-v1"
+  }
+}

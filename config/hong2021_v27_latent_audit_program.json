@@ -1,0 +1,75 @@
+{
+  "schema": "hong2021-v27-frozen-latent-audit-program-v1",
+  "status": "frozen_before_v27_latent_audit_execution",
+  "purpose": "Determine whether V27 repaired the V26 latent calibration mechanism before designing the predeclared train-only empirical joint residual control.",
+  "parent_evidence": {
+    "v27_registry": "config/hong2021_v27_development_program.json",
+    "v27_registry_sha256": "2cc9710285987d53ce3b4f4b9f8cce78c087e51bd4b1f0e00f5e8c6d70347984",
+    "v27_training": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v27_e15_parent_aligned_haar_flow",
+    "v27_training_run_sha256": "d2919d66397451f84dae2f415b7bbc8febe2614fec8dcbb46c9f2fca2ed89433",
+    "v27_history_sha256": "a4b31403eaffad695117306295b2a5d82d078d8802b51d9dc177ffc451d0a16f",
+    "v27_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/development_decision.json",
+    "v27_decision_sha256": "275d61ee63c221154c50a4dbecbeb04b9bdedc247a3d1aacacfab2c730b531ad",
+    "v27_decision_digest_sha256": "ca2046ef081c1c6f984bcea88eec4cdbe8abb3b7fe61df2e689269eb3e7575e7",
+    "v27_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/automatic_failure_audit.json",
+    "v27_failure_audit_sha256": "5b588659fc6b9719442608c02582cc2fc07edc4fa8509f9b960cf322596faba4",
+    "v26_mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/trained_flow_mechanism_audit_v2.json",
+    "v26_mechanism_audit_sha256": "658076ff96a9ba53b8a2b53f4280dcf9180639fb86b95ac843656facd6977cb8"
+  },
+  "audit_scope": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "candidate_steps": [10000, 20000, 30000],
+    "objects_per_domain": 16,
+    "generated_members_per_object": 16,
+    "target_coordinate": "frozen V21 exact-zero-DC G21 latent",
+    "latent_decomposition": "the frozen six-level V27 orthonormal Haar transform and trained spline",
+    "independent_data": false,
+    "model_or_checkpoint_changes": false,
+    "selection_role": "diagnostic_and_predeclared_failure_classification_only"
+  },
+  "recorded_diagnostics": [
+    "truth and generated G21 latent moments, extrema, and absolute tail occupancy at 3, 4, 5, and 6",
+    "truth and generated standardized Haar-detail moments by coarse-to-fine scale",
+    "truth and generated trained-flow base-z moments by coarse-to-fine scale",
+    "trained-model forward/inverse latent roundtrip and log-determinant cancellation",
+    "one stored physical ensemble replay per object through the complete frozen inverse chain",
+    "scale-resolved NLL trajectory at steps 500, 10000, 20000, 25000, and 30000",
+    "V27 versus V26 final latent-support and first-two-scale base-z calibration"
+  ],
+  "fixed_scores": {
+    "coarse_base_z_score_per_domain": "mean over the first two scales of abs(log(truth base-z standard deviation)); lower is better because the fitted base density is standard normal",
+    "latent_support_score_per_domain": "abs(log(generated/truth occupancy at abs(G21 latent)>=5)); lower is better",
+    "strict_improvement": "V27 score must be numerically lower than V26 for every development domain",
+    "zero_occupancy_rule": "add one pooled coefficient to numerator and denominator before forming an occupancy ratio only if either count is zero"
+  },
+  "numerical_stability": {
+    "maximum_roundtrip_rms": 0.001,
+    "maximum_roundtrip_error_over_generated_tail_excess": 0.01,
+    "maximum_logdet_cancellation_per_dimension": 0.0001,
+    "maximum_stored_replay_difference_float32_eps": 2.0
+  },
+  "fixed_classification_order": [
+    {
+      "condition": "any numerical-stability check fails",
+      "classification": "v27_trained_flow_numerical_failure",
+      "next": "repair numerical inversion before any new statistical model"
+    },
+    {
+      "condition": "coarse base-z and latent-support scores strictly improve over V26 in every development domain",
+      "classification": "parent_aligned_context_repairs_latent_calibration_but_field_morphology_still_fails",
+      "next": "audit the deterministic current-density backbone before changing the residual density family"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "explicit_conditional_flow_remains_latent_miscalibrated_after_phase_repair",
+      "next": "freeze and test a train-only empirical joint residual control"
+    }
+  ],
+  "firewall": {
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "posthoc_clipping_or_Ak": false,
+    "training_extension": false,
+    "threshold_changes_after_audit": false
+  }
+}

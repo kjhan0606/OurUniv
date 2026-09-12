@@ -1,0 +1,95 @@
+{
+  "schema": "ouruniv-cf4-q3-development-candidate-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q3.3",
+  "plan": "config/cf4_q3_source_compressed_observation_operator_plan_v1.json",
+  "candidate": {
+    "name": "exact_geometry_grouping",
+    "source": "src/cf4_q3_source_compressed_operator.py",
+    "representation": "Bitwise-identical position, LOS direction and displacement-scale signatures are grouped in first-appearance order. Population masses and the complete state-dependent mass/gradient basis are summed per group.",
+    "approximation": false,
+    "q1_operator_changed": false,
+    "state_dependent_mass_preserved": true,
+    "latent_field_and_bias_gradient_basis_preserved": true,
+    "science_claim_authorized": false
+  },
+  "development_protocol": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python scripts/run_cf4_q3_development_candidate.py",
+    "mock_count": 192,
+    "seed_namespace": "cf4-q3-development-20260904",
+    "seed_derivation": "SHA256(namespace+':'+index) first 8 bytes, masked to 63 bits; ascending indices; collision checked.",
+    "source_count_per_mock": 4,
+    "group_count_per_mock": 2,
+    "compression_ratio": {
+      "min": 2.0,
+      "mean": 2.0,
+      "max": 2.0
+    },
+    "fixture": "Two exact geometry signatures, each duplicated once; six populations; grid N=8; box=8 cMpc/h.",
+    "heldout_split_firewall": "No held-out mock was evaluated; candidate and hyperparameters remain development-only."
+  },
+  "oracle_validation": {
+    "q1_candidate_oracle_gate": "PASS for all 192 development mocks and all six populations",
+    "max_relative_l1": 9.045365352407145e-17,
+    "max_absolute_l1": 2.2978612411454895e-15,
+    "mass_basis_checks": 192,
+    "interpretation": "Exact equality is expected from linearity under bitwise-identical geometry grouping; this does not establish compression for a non-duplicated PM catalog."
+  },
+  "resource_and_science_status": {
+    "full_pm_source_count_used": false,
+    "full_pm_compression_ratio_measured": false,
+    "performance_target_measured": false,
+    "posterior_information_gate_evaluated": false,
+    "L384_heldout_gate_evaluated": false,
+    "q2_1_jax": false,
+    "z0_posterior": false,
+    "IC_PM_HOP_RAMSES": false,
+    "resolution_le_0p3_claim": false,
+    "status": "DEVELOPMENT_ORACLE_EQUIVALENCE_ONLY_NOT_PROMOTED",
+    "promotion_decision": "NO_GO_UNTIL_FULL_PM_COMPRESSION_AND_INFORMATION_LOSS_FEASIBILITY_ARE_MEASURED"
+  },
+  "verification": {
+    "targeted_tests": "10 passed (Q3 operator and resolution preflight)",
+    "py_compile": "PASS",
+    "gpfs_used": false,
+    "slurm_used": false,
+    "production_execution": false
+  },
+  "sha256": {
+    "src/cf4_q3_source_compressed_operator.py": "a1d9964b968d67505650d5d319b3825a6eab223e5cacee1269e45c37fed3ed19",
+    "tests/test_cf4_q3_source_compressed_operator.py": "6f3916fcc7894e371dc88711f5169520ff7c5bc88dcbcc160b40ed52a9d6b39d",
+    "src/cf4_q3_resolution_resource_preflight.py": "fa106ef4bbbef792bb5dcf331b732d7eb546387dfd865f84e98e3cca2111f394",
+    "tests/test_cf4_q3_resolution_resource_preflight.py": "6e89a7ca7a655ccdca3eecf97cbf9229484cc2f94ae1e6031e0cfc2951b7c86c",
+    "scripts/run_cf4_q3_development_candidate.py": "b42234d149f2f96c53bc6127a44eb342c66644f15721f71307cd0de0dfb0b728",
+    "config/cf4_q3_resolution_resource_preflight_result_v1.json": "d98eb6208a65a37fdd2d2309975dd4bc4462c4ce2dcad5796cff8d1bd7de5510"
+  },
+  "bundle_audit": {
+    "agy": {
+      "verdict": "CONDITIONAL-GO",
+      "summary": "The exact-grouping candidate is oracle-equivalent on the executed 192 toy duplicate mocks and Q3.2 resource projections are internally consistent. Promotion is blocked because full-PM compression, end-to-end gradient timing and held-out information gates were not measured.",
+      "mandatory_next_checks": [
+        "Measure grouping on the full 7,077,888-particle N192 basis.",
+        "Measure chunked full-field gradient time against the 600-second end-to-end ceiling.",
+        "Freeze a viable candidate on development data, then run held-out KL/score/coverage/cellwise gates once."
+      ],
+      "scope": "Document audit plus evidence review; no files or external systems modified."
+    },
+    "opus5": {
+      "verdict": "CONDITIONAL-PASS",
+      "summary": "The Q3 artifacts are honest development-only results. The 9e-17 equality is a linearity identity for duplicated toy signatures, not evidence of full-PM acceleration; no topology, true gradient, timing or held-out gate was executed.",
+      "mandatory_next_checks": [
+        "Measure real non-duplicated N192 group count and compression ratio.",
+        "Run frozen seam/knot/half-box/observer/sigma=2L topology fixtures at L=6 and the 2.0 cMpc/h release geometry.",
+        "Test latent-field and bias directional gradient equivalence, including persistent source-basis memory and measured chunk_count timing.",
+        "Materialize and assert development/held-out seed disjointness before candidate freeze."
+      ],
+      "scope": "Read-only document audit; no commands, tests or implementation performed by the auditor."
+    },
+    "scope": "Q3.2 read-only resolution/resource preflight and Q3.3 development-only exact grouping; no held-out, posterior, JAX or production claim.",
+    "bundle_status": "CONDITIONAL_PASS_AGY_OPUS5_NO_PROMOTION"
+  },
+  "next_bundle": {
+    "plan": "config/cf4_q4_real_pm_compression_and_gradient_feasibility_plan_v1.json",
+    "status": "DRIVER_PLAN_REQUIRED"
+  }
+}

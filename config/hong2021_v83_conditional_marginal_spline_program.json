@@ -1,0 +1,248 @@
+{
+  "schema": "hong2021-v83-conditional-marginal-spline-flow-program-v1",
+  "status": "frozen_before_preflight_training_or_payload_evaluation",
+  "purpose": "Test exactly one mechanism selected by the V82 consumed-only audits: keep the frozen V70/V72 spatial copula and replace only the query-local residual marginal with a proper continuous-condition non-Gaussian spline likelihood.",
+  "freeze_commit": "cabdc20664433756c00e560488aa02432b7355f8",
+  "parent_evidence": {
+    "v82a_result": "config/hong2021_v82a_result_record.json",
+    "v82a_result_sha256": "19f5d5e00b00ded08b0550f21206c1456422343d63bc3bddce78eae5b5e02abd",
+    "v82a_required_finding": "V72 spatial transport is not the source of rank failure and retains the correct high-k residual power shape",
+    "v82b_result": "config/hong2021_v82b_result_record.json",
+    "v82b_result_sha256": "ce3c7d6ccf4cc1f569b6882036dcdf285769aca9d6a08b237a48a796beb936b3",
+    "v82b_required_finding": "stationary and quartile-scale Gaussian controls both fail exact rank and coverage calibration",
+    "v82c_result": "config/hong2021_v82c_result_record.json",
+    "v82c_result_sha256": "1c797f0da13e58ea019292c5893c9341cfe68a151447ff1b67f0a5520093f3d7",
+    "v82c_required_finding": "conditional location and scale alone are insufficient because the residual shape is conditionally skewed and non-Gaussian",
+    "v80_program": "config/hong2021_v80_single_candidate_program.json",
+    "v80_program_sha256": "43d41ae9722e2321d3a206492d543e39ba5e8b22868e4f3a755cd1b2147dc205",
+    "v79_gate_program": "config/hong2021_v79_complete_candidate_agnostic_gate_program.json",
+    "v79_gate_program_sha256": "1234ac864343b41cb08f6788892f7dcb2db60b68843bc00edad5d15284e3956d"
+  },
+  "single_model_change": {
+    "changed": "replace the V63 bounded Gaussian-mixture conditional marginal and the V80 global quantile map with one per-voxel monotone rational-quadratic spline conditional likelihood",
+    "unchanged": "the seven continuous condition channels, V48 U-Net body, source-balanced batches, all 48 signed cube isometries, target standardization, V70 spatial model, V72 conditioning-stratified spatial quantile transport, V80 consumed query subset, paired innovations, and frozen V79 physical/rank/global observation formulas",
+    "objective": "proper conditional negative log likelihood only",
+    "forbidden_objective_terms": [
+      "tail Brier score",
+      "survival grid score",
+      "physical moment heuristic",
+      "two-point statistic",
+      "power spectrum statistic",
+      "rank or coverage statistic"
+    ],
+    "posthoc_operations": {
+      "global_scale": false,
+      "quantile_calibration": false,
+      "sample_clipping": false,
+      "Fourier_Ak": false,
+      "phase_randomization": false,
+      "allowed_exact_residual_DC_projection": true
+    }
+  },
+  "model": {
+    "condition_channels": 7,
+    "condition_channel_semantics": [
+      "log1p tracer count",
+      "mean radial peculiar velocity",
+      "radial velocity dispersion sig_v",
+      "deterministic present-density backbone",
+      "observer radius",
+      "train-only block-risk predictor",
+      "train-only object-amplitude predictor"
+    ],
+    "domain_identity_condition": false,
+    "network": "V48 three-level 3D U-Net with base width 32 and a 47-channel scalar-spline head",
+    "trainable_parameters": 8491471,
+    "spline": {
+      "family": "unconstrained monotone rational-quadratic spline with linear tails",
+      "bins": 16,
+      "tail_bound_standardized_residual": 14.0,
+      "minimum_bin_width": 0.001,
+      "minimum_bin_height": 0.001,
+      "minimum_derivative": 0.001,
+      "base_distribution": "standard normal",
+      "identity_initialization": true
+    },
+    "spatial_factorization": "V83 learns no latent spatial transformation; V72 SQT supplies the multivariate standard-normal copula and the V83 inverse is monotone at each conditioned voxel"
+  },
+  "frozen_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "v70_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "v70_checkpoint_sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf",
+    "training_domains": {
+      "TNG100": {
+        "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+        "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+        "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"
+      },
+      "SIMBA": {
+        "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+        "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+        "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"
+      },
+      "Swift": {
+        "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+        "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+        "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"
+      }
+    }
+  },
+  "partition": {
+    "source": "only the immutable V35 train files; no V35 validation object belongs to this partition",
+    "seed": 830083,
+    "holdout_fraction": 0.1,
+    "algorithm": "NumPy default_rng(seed plus domain ordinal) permutation followed by ceil(0.1 N) holdout",
+    "counts": {
+      "TNG100": {"fit": 388, "holdout": 44},
+      "SIMBA": {"fit": 181, "holdout": 21},
+      "Swift": {"fit": 368, "holdout": 41}
+    },
+    "sha256": "cc61061e3fe74c17f5b9cd0e701e744a2c09e739d410d4f0d15b33041e12ec82",
+    "holdout_use": "one fixed post-training train-only calibration gate; never early stopping or checkpoint selection"
+  },
+  "training": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "CPU_affinity": "64-79",
+    "steps": 12000,
+    "seed": 830144,
+    "batch": "one uniformly sampled fit object from each of TNG100, SIMBA, and Swift",
+    "augmentation": "one independently uniform choice from all 48 signed cube isometries per source and step",
+    "objective": "proper_conditional_negative_log_likelihood_only",
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "final_cosine_learning_rate": 0.00002,
+    "weight_decay": 0.0001,
+    "gradient_norm_clip": 1.0,
+    "AMP": true,
+    "EMA_decay": 0.999,
+    "checkpoint_selection": "fixed_step_12000_EMA_only",
+    "validation_diagnostics_during_training": false
+  },
+  "hard_preflight": {
+    "scan": "all V35 train targets only",
+    "checks": [
+      "all frozen local implementation and train-input hashes",
+      "every standardized train target is finite and strictly inside (-14,14)",
+      "real three-domain batch finite NLL and nonzero finite gradients",
+      "AMP identity initialization and direct forward/inverse consistency",
+      "peak allocated GPU memory below 28 GiB",
+      "no holdout, validation, development, Astrid, or historical EAGLE payload access"
+    ],
+    "failure_action": "stop before training without modifying the frozen model"
+  },
+  "train_holdout_gate": {
+    "checkpoint": "fixed step-12000 EMA only",
+    "domains_must_pass_independently": true,
+    "NLL_improvement_over_standard_normal": "strictly positive",
+    "PIT_mean_interval": [0.47, 0.53],
+    "backbone_quartile_PIT_mean_interval": [0.43, 0.57],
+    "maximum_decile_PIT_bin_mass_error": 0.05,
+    "central_coverage_intervals": {
+      "50": [0.43, 0.57],
+      "80": [0.73, 0.87],
+      "95": [0.9, 0.985]
+    },
+    "failure_action": "stop before opening or sampling any validation/development payload",
+    "pass_action": "run exactly one consumed-development engineering sample with the already frozen V80 subset"
+  },
+  "consumed_development": {
+    "authorized": true,
+    "engineering_only": true,
+    "statistically_independent": false,
+    "selection_source": "the already consumed V80 32-query subset in each domain",
+    "selection": {
+      "TNG100": [10, 11, 13, 20, 22, 25, 27, 28, 33, 36, 38, 41, 42, 45, 46, 54, 56, 61, 65, 68, 69, 70, 71, 72, 77, 80, 83, 84, 88, 89, 91, 92],
+      "SIMBA": [1, 5, 6, 10, 11, 12, 17, 20, 21, 23, 26, 27, 28, 29, 30, 32, 33, 37, 38, 40, 42, 43, 44, 45, 46, 48, 49, 51, 53, 54, 57, 58],
+      "Swift": [1, 4, 6, 15, 26, 28, 31, 37, 41, 44, 51, 53, 55, 59, 60, 66, 75, 83, 85, 90, 93, 95, 96, 97, 104, 107, 110, 112, 125, 128, 132, 141]
+    },
+    "seeds": {
+      "TNG100": 180080,
+      "SIMBA": 180081,
+      "Swift": 180082
+    },
+    "pairing_sha256": {
+      "TNG100": "670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55",
+      "SIMBA": "3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed",
+      "Swift": "d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544"
+    },
+    "file_bindings": {
+      "TNG100": {
+        "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+        "data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+        "cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff"
+      },
+      "SIMBA": {
+        "data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+        "data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+        "cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e"
+      },
+      "Swift": {
+        "data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+        "data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+        "cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+        "cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46"
+      }
+    },
+    "sampler": {
+      "candidate": "40-step deterministic V70 EDM probability-flow Heun, V72 16-stratum SQT, direct V83 inverse spline",
+      "control": "paired independent standard-normal innovation, direct V83 inverse spline",
+      "members_per_query": 16,
+      "inference_batch": 4,
+      "global_residual_scale": 1.0,
+      "post_sample": "undo frozen standardization and apply one exact residual DC projection before adding the unchanged backbone"
+    },
+    "gate": {
+      "physical_block": "frozen V79 observation; strict p greater than 0.025",
+      "rank_coverage_block": "frozen V79 observation; strict p greater than 0.025",
+      "global": "frozen V78 conditional combination; strict p greater than 0.05",
+      "numerical_and_pairing": "exact residual DC and paired innovation proof",
+      "pass_action": "seal this one candidate and await explicit user approval before any independent validation",
+      "failure_action": "stop V83 without independent validation"
+    }
+  },
+  "implementation": {
+    "contract": {"path": "src/hong2021_v83_contract.py", "sha256": "9aebf5cc03f7ed9c6bde458d7aeef4708ced98ae32d16b56cafc72788b3423b2"},
+    "network": {"path": "src/hong2021_v83_network.py", "sha256": "8e7d7a91bfec6ae6b3f29f6f45bf47cbcb6e0a2d9cac2486c9988feb51a2fcba"},
+    "preflight": {"path": "src/hong2021_v83_preflight.py", "sha256": "0fde86209c61fdde3f6d03f10f4ab9389776058babcb3dffe48b62f4e9ca0d7e"},
+    "train": {"path": "src/hong2021_v83_train.py", "sha256": "af0aca290165ac8906f27bc8bc4c2efd788e90ee133707d9213653c587ace6a6"},
+    "train_gate": {"path": "src/hong2021_v83_train_gate.py", "sha256": "50bf823933d033f0083553deb8e00fe543c3a9cb6c7baf225c2d8b5beceed86c"},
+    "sample": {"path": "src/hong2021_v83_sample.py", "sha256": "9a3a6c07941d81c623b55e57f7a71896764ef7765ffd70be9cffc5297e850d68"},
+    "evaluate": {"path": "src/hong2021_v83_evaluate.py", "sha256": "9eba09883d364b0804a46ed794eafd2f0d3d3fa69a10d2f61874b7e6abc69fde"},
+    "development_gate": {"path": "src/hong2021_v83_development_gate.py", "sha256": "c9e12908087b5ef1ca5e6ef0bfdb8fbcc26e6c25996b0523fdd0f3bf931bec2c"}
+  },
+  "output_roots": {
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/preflight.json",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline/step12000.pt",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline/training_report.json",
+    "train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_train_gate/decision.json",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development",
+    "development_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics",
+    "development_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_gate/decision.json"
+  },
+  "authorization": {
+    "user_approved_V83_model_and_execution": true,
+    "approved_scope": "preflight, fixed training, train-only holdout gate, and only on pass one already-consumed development engineering gate",
+    "new_independent_validation_authorized": false
+  },
+  "firewall": {
+    "training_before_hard_preflight_pass": "forbidden",
+    "holdout_use_for_stopping_checkpoint_or_hyperparameter_selection": "forbidden",
+    "validation_payload_access": "forbidden",
+    "development_access_before_train_holdout_gate_pass": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true,
+    "automatic_independent_validation_after_consumed_gate_pass": "forbidden"
+  }
+}

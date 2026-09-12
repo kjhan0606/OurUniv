@@ -1,0 +1,80 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-fable-independent-audit-v1",
+  "status": "complete_independent_audit_v8_closed_autopsies_required",
+  "audit_date": "2026-08-15",
+  "auditor": "Fable",
+  "audited_terminal_record": {
+    "path": "config/cf4_lg_v8_result_record.json",
+    "sha256": "a726e656e165ae48524292af02955b938dd616c03c5c24536c18cb59a6551786"
+  },
+  "scientific_objective": {
+    "primary": "Produce a weighted constrained-realization ensemble, not one selected seed, that preserves the CF4 low/intermediate-k posterior, represents Virgo, Coma, Local Void, Bootes Void and surrounding cosmography, adds Local-Group information under an explicit separate likelihood, retains unconstrained high-k LCDM Gaussian power, and can be promoted to contamination-controlled RAMSES/HOP zooms.",
+    "scope_of_v8": "Low-resolution Local-Group proposal adequacy test only; not a final Local-Group implementation or final IC validation."
+  },
+  "v8_verdict": {
+    "gate_failure_is_correct": true,
+    "seed_5422_promotion_authorized": false,
+    "RAMSES_authorized": false,
+    "same_model_seed_extension_authorized": false,
+    "dominant_mechanism": "Almost-empty same-pair intersection of hard P2, pair-recentered P1, and the z=0 pair likelihood; not a long-tailed q importance ratio.",
+    "importance_ratio_evidence": "The defensive proposal guarantees p(q)/g(q) <= 2 and seed 5422 has log correction -0.6767. Other realizations receive zero final support from the physical gate intersection.",
+    "parent_3429_impossibility_established": false,
+    "midpoint_mixture_numerical_failure_established": false
+  },
+  "implementation_audit": {
+    "confirmed_correct": [
+      "normalized diagonal-Gaussian midpoint mixture and exact log p minus log g",
+      "50 percent defensive target-prior component and analytic bound two",
+      "same halo-index pair intersection between hard P2 and recentered P1",
+      "logmeanexp pair marginalization without a pair-count evidence bonus",
+      "Matheron update within the declared free Fourier subspace",
+      "N64 frozen-mode numerical preservation",
+      "hash-pinned program, runner stop before RAMSES, and no V8 seed extension"
+    ],
+    "material_findings": [
+      "The V8 proposal audit estimated soft-likelihood ESS but the final target additionally imposed the rare same-pair hard-P2 and recentered-P1 intersection; its claimed cluster bootstrap was an iid row bootstrap.",
+      "Only the midpoint q was transported although success also depends on small-scale phase, peak axis, conditioning noise, and peak morphology.",
+      "Freeing N64-N192 modes has not been shown to preserve the full CF4 distance-velocity likelihood or posterior covariance; five P1 summary gates are insufficient evidence.",
+      "The latent target must explicitly choose between a normalized design-prior mixture over P(field given peak constraints,q) and a peak-data posterior that requires q/axis-dependent marginal evidence.",
+      "Pair-midpoint recentering is not identical to the MW observer location and requires an explicit physical coordinate contract.",
+      "The uniform pair prior remains sensitive to loose preselection and PM halo fragmentation.",
+      "Lineage checks omit exact expected seed identity, explicit zero-weight P1 failures, projection-field rehashing, some manifest-P2 consistency checks, and several negative unit tests."
+    ]
+  },
+  "ordered_priorities": [
+    {
+      "priority": 0,
+      "action": "Seal V8 as terminal failure; forbid threshold changes, seed extension, seed 5422 promotion, and RAMSES."
+    },
+    {
+      "priority": 1,
+      "action": "Use only existing V8 artifacts for a complete 256-row joint-support funnel, gate-margin, weight-collapse, pair-prior-sensitivity, and lineage autopsy."
+    },
+    {
+      "priority": 2,
+      "action": "Audit N64-N192 mode release against the original CF4 constraints, posterior covariance, P(k), and structures not represented by P1."
+    },
+    {
+      "priority": 3,
+      "action": "Only after both audits pass, design a fresh V9 using defensive SMC, delayed-acceptance continuous margins, or a joint CF4+LG conditional sampler."
+    }
+  ],
+  "v9_go_conditions": [
+    "CF4 mode-release equivalence passes",
+    "latent statistical target is explicit",
+    "continuous near-support population is sufficient and not inferred from seed 5422 alone",
+    "cross-fitted conservative prediction supports at least eight joint survivors and ESS at least eight",
+    "maximum predicted normalized weight is at most 0.25",
+    "proposal controls or correctly weights the actual bottleneck latent variables",
+    "one fresh prospective bank has a terminal stop contract"
+  ],
+  "v9_stop_conditions": [
+    "N64-N192 changes materially damage the CF4 likelihood",
+    "gate margins have no reproducible relationship to controllable latent variables",
+    "success prediction depends on the single seed 5422",
+    "the method requires threshold changes or reuse of V8 seeds as fresh evidence",
+    "PM ranking has no evidence of predicting definitive zoom outcomes",
+    "expected joint support cannot reach eight within the compute budget"
+  ],
+  "next_authorized_work": "Consumed-data-only V8 joint-support funnel autopsy. No fresh phase or RAMSES calculation is authorized."
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "hong2021-v83r-metadata-recovery-consumed-gate-result-record-v1",
+  "status": "complete_V83_candidate_failed_consumed_gate_independent_validation_locked",
+  "recorded_at": "2026-08-13T06:30:00+09:00",
+  "recovery_program": {
+    "path": "config/hong2021_v83r_metadata_only_recovery_program.json",
+    "sha256": "a4387f50d7d58de479f080b10bc2426bd1b97cde44ec83c5661591ed6f92ddf4"
+  },
+  "recovery_record": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_sequence/recovery_record.json",
+    "sha256": "57938fe7174dfefafe94c3d3b0954d9361bad228b88f0a77731c6759fda0c1b4",
+    "all_six_scientific_dataset_manifests_unchanged": true,
+    "only_added_attribute": {"diagnostic_k_h_mpc": 1.0},
+    "sealed_originals_modified": false,
+    "sampling_repeated": false
+  },
+  "gate": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_gate/decision.json",
+    "sha256": "425560f865cd61809bd4e6e97198c4a39ee085aa76ca1782b45a71d5b46ac50a",
+    "decision_digest_sha256": "bf7259667fd5eb112562094acb59e58e12f3bce9911141a0dfb5edac8a56d563",
+    "engineering_only": true,
+    "statistically_independent": false,
+    "consumed_development_engineering_pass": false,
+    "deterministic_numerical_and_pairing_pass": true,
+    "physical_block_p": 0.0000999950002499875,
+    "rank_block_p": 0.00006000000000000001,
+    "complete_global_p": 0.00012000000000000002,
+    "required_physical_block_p_strictly_greater_than": 0.025,
+    "required_rank_block_p_strictly_greater_than": 0.025,
+    "required_complete_global_p_strictly_greater_than": 0.05
+  },
+  "scientific_findings": {
+    "retained_success": {
+      "high_k_residual_power_ratio_3_6_h_mpc": {
+        "TNG100": 1.0124522801678002,
+        "SIMBA": 1.0137372991069675,
+        "Swift": 1.0335919000828
+      },
+      "high_k_residual_power_ratio_6_10_h_mpc": {
+        "TNG100": 1.0088897015122353,
+        "SIMBA": 1.0220608279083832,
+        "Swift": 1.030208877857104
+      },
+      "interpretation": "The frozen V70/V72 spatial copula continues to preserve the desired high-k residual power shape. Replacing it or randomizing phase is not supported by this result."
+    },
+    "physical_tail_failure": {
+      "generated_minus_truth_q99_999_log10rho_dex": {
+        "TNG100": 0.4620582134723725,
+        "SIMBA": 0.2260488367874558,
+        "Swift": 0.1748809111771008
+      },
+      "generated_over_truth_mean_delta_squared": {
+        "TNG100": 15.266910404106277,
+        "SIMBA": 2.806870201810764,
+        "Swift": 2.9398742899363928
+      },
+      "interpretation": "Voxel-volume proper NLL and decile PIT calibration are insufficient for the exponentially amplified extreme physical-density tail, particularly in held-out TNG100."
+    },
+    "rank_coverage_failure": {
+      "TNG100": {"rank_tv": 0.019834020558525532, "rank_p": 0.00001, "coverage_p": 0.00029},
+      "SIMBA": {"rank_tv": 0.0030785588657154736, "rank_p": 0.00001, "coverage_p": 1.0},
+      "Swift": {"rank_tv": 0.0006902428234324756, "rank_p": 0.57082, "coverage_p": 0.34587},
+      "interpretation": "Swift rank and coverage calibrate, but TNG100 and SIMBA rank shape do not. Aggregate train-holdout PIT deciles hid this validation-selection and extreme-tail failure."
+    },
+    "two_point_failure": "The candidate failed the legacy two-point-improvement diagnostic in all three domains even though high-k power and residual RMS were close to truth.",
+    "primary_classification": "conditional_marginal_spline_preserves_spatial_power_but_overproduces_rare_physical_density_tails_and_does_not_generalize_rank_calibration_to_TNG100_and_SIMBA_consumed_validation",
+    "model_claim": "V83 is not suitable for independent validation or CF4 deployment in its present form."
+  },
+  "firewall": {
+    "independent_validation_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true,
+    "automatic_retry_or_posthoc_tail_scale_authorized": false
+  },
+  "next": "Stop V83. Any successor must be prospectively redesigned using train-only tail-sensitive calibration or a physically transformed target while retaining the validated V70/V72 spatial copula; do not tune on this consumed result as if independent."
+}

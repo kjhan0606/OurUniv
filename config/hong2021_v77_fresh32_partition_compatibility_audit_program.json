@@ -1,0 +1,179 @@
+{
+  "schema": "hong2021-v77-fresh32-partition-compatibility-audit-program-v1",
+  "status": "frozen_before_V77_implementation_or_compatible_design_bootstrap_draws",
+  "purpose": "Repair the discovered mismatch between the V74 fit-train group design and the actually available target-unseen validation groups. Recalibrate the unchanged 32-query physical, morphology, and maximum-energy rules using group-count and quota patterns that exactly match a target-free fresh partition, verify a conservative full-gate attainability lower bound after adding V76, and stop before candidate construction or fresh payload access.",
+  "frozen_at": "2026-08-12T16:40:00+09:00",
+  "parent_evidence": {
+    "V76_result_record": "config/hong2021_v76_result_record.json",
+    "V76_result_record_sha256": "9e34791c3bb3ca0f9cfdfce7a819c2e79f98784ff2341f090ffaa0fd181ee8f7",
+    "V74_result_record": "config/hong2021_v74_result_record.json",
+    "V74_result_record_sha256": "9c36f02be71a1a142531bf2c83389c83331737ff8aff8de24ace2b2b738145fb",
+    "V73_result_record": "config/hong2021_v73_result_record.json",
+    "V73_result_record_sha256": "2af963ef3ad9e940e4022e9440643202122efc867136c84584db831a16efa7a2",
+    "V72_result_record": "config/hong2021_v72_result_record.json",
+    "V72_result_record_sha256": "e047761ce216ca88ca3e77a902ac1dfb19b092e8d52f3414979993fb70812064",
+    "V72_feasibility_record": "config/hong2021_v72_feasibility_and_fresh_partition_audit.json",
+    "V72_feasibility_record_sha256": "8699a6776b7cfdad71cf58717ed8898a3dddabbd91ccf05d29b6f60c3983524e",
+    "V73_summary_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.json",
+    "V73_summary_record_sha256": "6b9d741be1bd3ce5c50a15c146e9dcbdb3d2008e1668d668ce2ecaa99131f24c",
+    "V73_summary_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+    "V73_summary_cache_sha256": "1d85f76c9df4ea9a26cb8c82bae746f586cb904d8cc65294aa92c6295c36a2b8",
+    "V74_source": "src/hong2021_v74_gate_redesign.py",
+    "V74_source_sha256": "5f1d0d50d3e510016e47ffca20e80ff57acb6d48cc602468c1454a20d4bf06cf",
+    "V72_decision_preserved": true,
+    "V74_original_design_result_preserved": true,
+    "V76_selected_rule_preserved": true
+  },
+  "discovered_compatibility_gap": {
+    "V74_fit_train_grouping": {
+      "TNG100": "four x-z quadrants with quota [8,8,8,8]",
+      "SIMBA": "eight realizations with quota [4,4,4,4,4,4,4,4]",
+      "Swift": "twenty realizations with quotas twelve times 2 and eight times 1"
+    },
+    "available_fresh_grouping_after_excluding_historical_development_and_consumed_V72_stage_A": {
+      "TNG100": "four x-z quadrants with available counts [6,25,20,10]",
+      "SIMBA": "three realizations 24-26 with available counts [7,10,15]",
+      "Swift": "seven realizations 20-26 with available counts [23,16,10,18,9,17,23]"
+    },
+    "finding": "No domain can execute the exact V74 32-query group design: TNG quadrant 0 contains only six untouched objects, and SIMBA/Swift expose three/seven rather than eight/twenty fresh realizations.",
+    "consequence": "V74 establishes that 32 queries can be sufficient under its fit-train group design, but cannot by itself establish attainability for the actual fresh partition. A compatible-design audit is required before a complete gate can be frozen."
+  },
+  "metadata_only_selection": {
+    "metadata_accessed": [
+      "validation dataset shapes and root attributes",
+      "TNG100 center_position_mpc_h",
+      "SIMBA realization identifiers",
+      "Swift realization identifiers"
+    ],
+    "input_voxels_read": false,
+    "target_voxels_read": false,
+    "validation_metric_computed": false,
+    "historical_development_indices_excluded": true,
+    "consumed_V72_stage_A_indices_excluded": true,
+    "old_V72_stage_B": "permanently remains forbidden as V72; its never-opened objects return to the untouched pool and may be assigned under this separately frozen program",
+    "hash_salt": "hong2021-v77-compatible32",
+    "index_order": "ascending sha256('<salt>|<domain>|<group>|<source_index>') within group",
+    "quota_assignment": "TNG group 0 uses all six and the one 8-object group among groups 1-3 is selected by the same salt with purpose quota8; Swift's four 5-object groups are selected by the same salt with purpose quota5; all other quotas are fixed below",
+    "TNG100": {
+      "validation_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+      "validation_sha256_from_V72_binding": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+      "group_definition": "2*(x>=37.5)+1*(z>=37.5)",
+      "available_counts": {"0": 6, "1": 25, "2": 20, "3": 10},
+      "quota": {"0": 6, "1": 9, "2": 8, "3": 9},
+      "selected_indices": [10,11,13,20,22,25,27,28,33,36,38,41,42,45,46,54,56,61,65,68,69,70,71,72,77,80,83,84,88,89,91,92]
+    },
+    "SIMBA": {
+      "validation_path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+      "validation_sha256_from_V72_binding": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+      "group_definition": "realization identifier",
+      "available_counts": {"24": 7, "25": 10, "26": 15},
+      "quota": {"24": 7, "25": 10, "26": 15},
+      "selected_indices": [1,5,6,10,11,12,17,20,21,23,26,27,28,29,30,32,33,37,38,40,42,43,44,45,46,48,49,51,53,54,57,58]
+    },
+    "Swift": {
+      "validation_path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+      "validation_sha256_from_V72_binding": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+      "group_definition": "realization identifier",
+      "available_counts": {"20": 23, "21": 16, "22": 10, "23": 18, "24": 9, "25": 17, "26": 23},
+      "quota": {"20": 5, "21": 5, "22": 5, "23": 4, "24": 5, "25": 4, "26": 4},
+      "selected_indices": [1,4,6,15,26,28,31,37,41,44,51,53,55,59,60,66,75,83,85,90,93,95,96,97,104,107,110,112,125,128,132,141]
+    },
+    "selection_role": "reserved target-unseen single-use screen only; payload access remains forbidden until a candidate and complete gate implementation are separately frozen and explicitly approved"
+  },
+  "compatible_fit_train_oracle_design": {
+    "queries": 32,
+    "members_per_query": 16,
+    "query_without_replacement": true,
+    "oracle": "For each query, draw sixteen donors with replacement from the same fit-train group after excluding all 32 query indices in the trial; retain duplicates.",
+    "TNG100": "randomly permute quota multiset [6,8,9,9] over all four fit-train quadrants each trial",
+    "SIMBA": "choose three of eight fit-train realizations without replacement and randomly permute quotas [7,10,15] over them each trial",
+    "Swift": "choose seven of twenty fit-train realizations without replacement, randomly designate four for quota 5 and use quota 4 for the remaining three",
+    "reason_for_group_randomization": "The fresh realization labels are disjoint from fit-train labels. Random subset/permutation auditing measures the group-count and quota design without post-hoc choosing a favorable fit-train analogue."
+  },
+  "unchanged_physical_and_morphology_gate": {
+    "q99_999": "absolute pooled generated-minus-truth log10rho q99.999 difference <=0.1 dex in every domain",
+    "Q4": "pooled generated-over-truth mean delta-squared ratio in [2/3,1.5] in every domain",
+    "high_k_power": "mean generated-over-truth log-density power in [0.9,1.1] in both 3-6 and 6-10.0531 h/Mpc bands in every domain",
+    "residual_RMS": "generated own-centered residual RMS over query residual RMS in [0.9,1.1] in every domain",
+    "density_PDF": "generated-query histogram TV strictly lower than deterministic-query histogram TV in every domain",
+    "two_point": "generated-query KS strictly lower than deterministic-query KS in each 0-1, 1-3, and 3-10 Mpc/h mean in every domain",
+    "environment": "every frozen generated mean peak/void statistic has strictly smaller absolute error than the deterministic query mean in every domain",
+    "threshold_or_statistic_changed_from_V74": false
+  },
+  "independent_monte_carlo": {
+    "calibration": {"seed": 770001, "trials_per_domain": 20000},
+    "verification": {"seed": 770002, "trials_per_domain": 20000},
+    "array_rows_per_phase": 60000,
+    "raw_truth_reread": false
+  },
+  "physical_morphology_attainability": {
+    "report": "verification probability and two-sided Wilson 95-percent interval for every component, domain absolute core, domain joint, and aligned all-three-domain joint",
+    "pass_if": [
+      "aligned all-three-domain joint Wilson lower bound >=0.8",
+      "every single-domain absolute-core Wilson lower bound >=0.8"
+    ]
+  },
+  "maximum_energy_recalibration": {
+    "statistic": "mean query-wise candidate-minus-paired-control unbiased scalar maximum-energy score",
+    "calibration_quantile": 0.9833333333333333,
+    "prospective_rule": "candidate-minus-control mean must not exceed the compatible-design domain margin",
+    "multiplicity": "one-sided 0.05/3 calibration over domains",
+    "calibrated_if": "verification three-domain family false-rejection point probability <=0.06 and Wilson upper <=0.065"
+  },
+  "conservative_complete_gate_attainability": {
+    "physical_morphology_failure_upper": "1 minus the aligned physical/morphology Wilson lower bound",
+    "energy_failure_upper": "the compatible-design energy family false-rejection Wilson upper bound",
+    "V76_rank_coverage_failure_upper": 0.05,
+    "union_bound_pass_lower": "1 minus the sum of the three failure uppers, floored at zero",
+    "required_lower_bound": 0.8,
+    "interpretation": "This is a conservative attainability guarantee for the conjunction, not a claim that the complete gate is a single family-wise-alpha-0.05 hypothesis test."
+  },
+  "predeclared_decision": {
+    "compatible_design_sufficient_if_all": [
+      "fresh metadata selection has 32 unique untouched indices per domain and exact frozen quotas",
+      "physical/morphology attainability passes",
+      "compatible maximum-energy recalibration passes",
+      "conservative complete-gate pass lower bound >=0.8"
+    ],
+    "selected_classification": "fresh32_partition_compatible_complete_gate_may_be_frozen",
+    "failed_classification": "fresh32_partition_or_gate_requires_additional_redesign",
+    "if_selected_next": "Freeze the complete candidate-agnostic V78 gate implementation and await explicit approval before constructing a candidate or reading any selected payload.",
+    "if_failed_next": "Stop before a complete gate or candidate and report the failed frozen requirement."
+  },
+  "scope_limits": {
+    "this_is_not_a_generator": true,
+    "validation_input_or_target_payload_access": false,
+    "new_validation_metric": false,
+    "V72_stage_B_access": false,
+    "Astrid_access": false,
+    "historical_or_independent_EAGLE_access": false,
+    "model_checkpoint_access": false,
+    "training_or_model_sampling": false,
+    "physical_morphology_threshold_relaxation": false,
+    "V76_rule_change": false,
+    "V72_verdict_change": false,
+    "new_candidate_or_complete_gate_execution": false
+  },
+  "resource_and_execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "one process pinned to logical CPU 64 at nice 15",
+    "existing_RAMSES_run_must_not_be_modified_or_stopped": true,
+    "require_clean_worktree": true,
+    "require_program_freeze_commit_ancestor": true,
+    "refuse_existing_output": true
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility",
+    "calibration_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/calibration_arrays.npz",
+    "verification_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/verification_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/audit_result.json"
+  },
+  "authorization": {
+    "implement_and_execute_this_target_free_audit_after_freeze": true,
+    "freeze_complete_gate_after_exact_pass": true,
+    "construct_or_sample_a_candidate": false,
+    "read_selected_validation_input_or_target": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "ouruniv-cf4-twompp-selection-quadrature-diagnostic-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_GLOBAL_ORDER4_ORDER6_SELECTION_DIAGNOSTIC_ONLY",
+  "authorization": {
+    "basis": "The user authorized applying corrections and continuing Phase A. Job 329828 reached and failed the predeclared zero-exposure occupied-voxel gate; a global quadrature convergence diagnostic is required before any repair.",
+    "quadrature_diagnostic": true,
+    "single_Slurm_CPU_submission": true,
+    "GPFS_read": true,
+    "GPFS_write_new_diagnostic_only": true,
+    "datum_publication": false,
+    "field_inference": false,
+    "mock_seed_access": false,
+    "Phase_B_or_later": false,
+    "selection_order_promotion": false,
+    "automatic_follow_on": false
+  },
+  "bindings": {
+    "failed_result_record": {
+      "path": "config/cf4_datum_bearing_z0_twompp_datum_builder_v2_failure_result_record.json",
+      "bytes": 3257,
+      "sha256": "411afd3cc3d279f776cadc94e17c409467cdebff0f49d27b858f1fc3cfe517a8"
+    },
+    "failed_result": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/result.json",
+      "bytes": 2864,
+      "sha256": "2067851fd1ef8124a72dc0c1a19a806a3c166933e20c8072e05c970523b1242b"
+    },
+    "failed_marker": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/FAILED",
+      "bytes": 297,
+      "sha256": "cc9390618a2badf144986cc8c55cda7716d554840856344975d13eba9a0bf0df"
+    },
+    "failed_datum": {
+      "path": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_twompp_v1.staging/datum.npz",
+      "bytes": 169122,
+      "sha256": "a87e57e768de0c8a164be1a9b2d6a21b3962880054a0030b5d1840b805d3c5e7"
+    },
+    "tracer_program": {
+      "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+      "bytes": 8167,
+      "sha256": "695f362b8942e911ebac5a942217bc75128cdbc45ca042e535b9bd2123517ee5"
+    },
+    "selection_program": {
+      "path": "config/cf4_twompp_joint_information_budget_pilot_program_v1.json",
+      "bytes": 10365,
+      "sha256": "7ffa68d6996572ec9088bd349e4adf7809d3678635ebab69fecba23c87a1b7f2"
+    },
+    "completeness_11_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz",
+      "bytes": 459473,
+      "sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace"
+    },
+    "completeness_12_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz",
+      "bytes": 1008380,
+      "sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9"
+    },
+    "tracer_implementation": {
+      "path": "src/cf4_twompp_disjoint_tracer_pilot.py",
+      "bytes": 23962,
+      "sha256": "695a21be6d5bb4cf51fee4f2c5c8d7ce5c1629dab7c744caf8a8960765fa84ec"
+    },
+    "selection_implementation": {
+      "path": "src/cf4_twompp_joint_information_budget_pilot_v1.py",
+      "bytes": 35147,
+      "sha256": "d318031ef47a4063671f77d564565afd63ca97bb0920580cb779f2004e83df22"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_selection_quadrature_diagnostic_v1.py",
+      "bytes": 17033,
+      "sha256": "66d07bff785f5c8569494076a1f1de8262c46a0c7ddd370e27d8b2c773820c93"
+    }
+  },
+  "design": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "failed_order_per_axis": 2,
+    "diagnostic_orders_per_axis": [4, 6],
+    "subpoints_per_voxel": {"2": 8, "4": 64, "6": 216},
+    "Gauss_weights_used": true,
+    "all_six_population_exposures_rebuilt_globally": true,
+    "count_occupancy_used_to_modify_exposure": false,
+    "epsilon_floor_allowed": false,
+    "outputs": [
+      "global support and positive-voxel summaries by order",
+      "occupied zero-exposure counts by population and order",
+      "order2-to-order4 and order4-to-order6 differences",
+      "the 30 failed order2 cells evaluated at all orders",
+      "order4 and order6 raw exposure arrays for audit"
+    ],
+    "promotion_or_repair_decision_in_this_job": false
+  },
+  "publication": {
+    "output": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1",
+    "files": ["selection_orders.npz", "result.json", "manifest.json", "COMPLETE"],
+    "plain_same_filesystem_directory_rename": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "cpus_per_task": 1,
+    "expected_peak_memory_MiB": 768,
+    "requested_memory_MiB": 1024,
+    "memory_headroom_multiplier": 1.3333333333333333,
+    "time_limit": "00:30:00",
+    "maximum_submissions": 1,
+    "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+    "monitoring_loop_allowed": false,
+    "automatic_follow_on_allowed": false
+  },
+  "next_after_completion": "audit convergence and stop before any selection-order promotion or Phase-A datum retry"
+}

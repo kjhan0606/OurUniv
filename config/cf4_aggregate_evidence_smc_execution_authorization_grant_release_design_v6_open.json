@@ -1,0 +1,63 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-grant-release-design-v6-open",
+  "status": "frozen_design_only_grant_release_and_execution_unauthorized",
+  "purpose": "Specify, without issuing, the future one-shot v6-open staged grant and paired external release/manifest. This design authorizes neither a pair nor any pilot, receipt, cache, production, or downstream execution.",
+  "closed_v6_and_v5_immutable_and_unreusable": true,
+  "canonical_paths": {
+    "local_grant": "config/cf4_aggregate_evidence_smc_execution_grant_v6_open.json",
+    "external_release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_release.json",
+    "external_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_manifest.json",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts",
+    "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_run"
+  },
+  "hard_pins": {
+    "open_authorization_design": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v6_open.json", "sha256": "162ee1122ad0d756420021a6855872dde0643d54a0d21131fd08a82da4cdca1e"},
+    "open_authorization_program": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v6_open.json", "sha256": "77f10acd607dfe55d8bced94ad6ae036a3997a291780f569ddf4028db03d1765"},
+    "open_authorization_source": {"path": "src/cf4_aggregate_evidence_smc_execution_authorized_v6_open.py", "sha256": "920b3b44a4580e19defd572c83ff53967e2e7bbb26661a75a1b73e2c27400e03"},
+    "open_authorization_implementation_record": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_open_implementation_result_record_v6.json", "sha256": "c480e718caecd499b221d6eb66e746a0213ff5e846255983ba48b77605e2cc39", "commit": "ea0576fd44c205b98c0737ae74e7f4619e24348a"},
+    "shared_annealing_design": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_design.json", "sha256": "5d17ad724e780b4c5f5d0f2de1b497a9207719f338627ca92441e4acbf7adb18"},
+    "shared_annealing_source": {"path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py", "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060"},
+    "shared_annealing_implementation_record": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_implementation_result_record.json", "sha256": "d025efa5338fe12b43a255131a5d781302f6f9c954d6ff663d3a9c35833c50ee"}
+  },
+  "fixed_science": {"master_seeds": [2026082301, 2026082302, 2026082303, 2026082304], "particles_per_replicate": 2048, "parent_seed_range_inclusive": [3193,3448], "parent_count": 256, "target_CESS_fraction": 0.8, "resampling_ESS_fraction": 0.5, "MH_sweeps_per_stage": 4, "worker_processes": 8, "threads_per_worker": 1, "replicates_sequential": true},
+  "future_grant": {
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v6-open",
+    "required_status": "sealed_one_shot_staged_execution_authorization",
+    "one_shot": true,
+    "canonical_path_only": true,
+    "must_be_a_separately_audited_single_file_addition": true,
+    "all_SHA256_fields_must_be_full_lowercase_64hex": true,
+    "must_bind_full_hashes_of_open_design_program_source_implementation_record_and_shared_artifacts": true,
+    "must_bind_exact_v6_open_paths": true,
+    "must_bind_release_path_release_id_payload_sha256_manifest_path_manifest_sha256_and_manifest_id": true,
+    "future_stage_authorization": {"pilot_stage_authorized": true, "production_stage_authorized": false, "cache_population_authorized": false, "downstream_execution_authorized": false, "automatic_retry_retune_scale_up_or_follow_on_authorized": false},
+    "pilot_only_does_not_authorize_production": true
+  },
+  "paired_external_objects": {
+    "release_schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-release-v6-open",
+    "manifest_schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-manifest-v6-open",
+    "release_status": "complete_pass_external_postcommit_lineage_audit",
+    "manifest_status": "complete_paired_external_manifest",
+    "mode": "0444",
+    "not_committed_in_grant_commit": true,
+    "acyclic_pairing": {"release_contains_manifest_path_manifest_sha256_manifest_id_and_payload_sha256": true, "manifest_contains_release_path_release_id_and_release_payload_sha256": true, "release_file_sha256_is_not_required_inside_manifest": true, "manifest_file_sha256_is_not_required_inside_release_payload": true},
+    "independent_precommit_and_postcommit_audit_required": true
+  },
+  "staged_execution_contract": {
+    "pilot_receipt_stage": "pilot",
+    "production_receipt_stage": "production",
+    "each_receipt_hardlinks_read_only_release_as_release_anchor": true,
+    "each_snapshot_binds_stage_release_dev_ino_size_nlink_release_manifest_grant_program_and_paths": true,
+    "pre_and_post_stage_snapshot_revalidation_required": true,
+    "pilot_is_disposable_and_must_close_evaluator_and_dispose_cache": true,
+    "only_immutable_schedule_may_cross_pilot_to_production": true,
+    "pilot_posterior_cache_scientific_result_or_namespace_reuse": false,
+    "all_four_masters_including_2026082301_rerun_under_shared_schedule": true,
+    "stage_parity_mismatch_is_architecture_failure": true
+  },
+  "audit_and_lifecycle": {"precommit_verdict_required": "DESIGN GO", "postcommit_verdict_required": "LINEAGE GO", "no_execution_before_both_audits_and_pair": true, "status_fail_closed": true, "only_scientific_COMPLETE_statuses": ["complete_pass_production_smc", "complete_scientific_fail_production_smc"], "manifest_read_only_postcheck_required": true},
+  "authorization": {"design_authorized": true, "future_grant_issuance_authorized": false, "future_release_or_manifest_issuance_authorized": false, "pilot_execution_authorized": false, "production_execution_authorized": false, "receipt_creation_authorized": false, "cache_population_authorized": false, "downstream_execution_authorized": false, "automatic_follow_on_authorized": false},
+  "runtime_state": {"grant_present": false, "release_present": false, "manifest_present": false, "receipt_present": false, "pilot_present": false, "data_present": false, "state_present": false, "execution_occurred": false}
+}

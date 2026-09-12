@@ -1,0 +1,137 @@
+{
+  "schema": "hong2021-v72-metadata-only-fresh-partition-and-gate-validity-audit-v1",
+  "status": "complete_metadata_only_two_fresh_stages_available_candidate_not_yet_frozen",
+  "purpose": "Determine whether V72 can be tested without reusing the V71 development selection, identify a statistically fair replacement for the sample-size-biased global-maximum check, and nominate one mechanism that directly preserves V70 within-field structure while restoring the V63 marginal.",
+  "audit_base_commit": "d2b474673c5880998dd7a865ad168e23b0cee669",
+  "parent_evidence": {
+    "v71_result_record": "config/hong2021_v71_result_record.json",
+    "v71_result_record_sha256": "2566625359b2eef8339405f34365d831408762acbf1d00dc2e8249910a927134",
+    "v35_development_definition": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_development_definition_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "required_V71_status": "complete_single_use_development_failure_sealed_independent_gate_locked",
+    "V71_development_may_be_used_as_model_development_evidence": true,
+    "V71_development_may_be_reused_as_V72_selection_evidence": false
+  },
+  "metadata_access": {
+    "historical_scan": "Read only source_index arrays from already disclosed ensemble*.h5 files below evaluation/**/development_candidate.",
+    "validation_scan": "Read only file attributes, dataset names/shapes, TNG center_position_mpc_h, and CAMELS realization identifiers.",
+    "validation_input_voxels_read": false,
+    "validation_target_voxels_read": false,
+    "validation_metric_computed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false
+  },
+  "historical_development_consumption": {
+    "ensemble_files_scanned_per_domain": 32,
+    "scan_errors": 0,
+    "distinct_source_index_sets_per_domain": 1,
+    "TNG100": [0, 4, 8, 12, 15, 21, 29, 32, 49, 53, 57, 62, 63, 74, 76, 79],
+    "SIMBA": [0, 4, 7, 8, 9, 13, 15, 16, 22, 25, 31, 34, 39, 52, 56, 62],
+    "Swift": [0, 27, 29, 36, 48, 49, 61, 67, 76, 80, 87, 88, 89, 101, 106, 121],
+    "finding": "Every historical development ensemble reused the same sixteen indices in each domain; no other validation index has appeared in a development_candidate ensemble."
+  },
+  "available_target_unseen_objects": {
+    "TNG100": {
+      "validation_objects": 93,
+      "consumed": 16,
+      "remaining_before_V72_reservation": 77
+    },
+    "SIMBA": {
+      "validation_objects": 64,
+      "consumed": 16,
+      "remaining_before_V72_reservation": 48,
+      "remaining_realization_counts": {"24": 10, "25": 15, "26": 23}
+    },
+    "Swift": {
+      "validation_objects": 148,
+      "consumed": 16,
+      "remaining_before_V72_reservation": 132,
+      "remaining_realization_counts": {"20": 26, "21": 18, "22": 11, "23": 21, "24": 10, "25": 20, "26": 26}
+    },
+    "two_disjoint_sixteen_object_stages_available_each_domain": true,
+    "simulation_realization_independence_caveat": "Indices are target-unseen, but multiple observers/cubes share the same parent simulation. SIMBA and Swift partitions are stratified by realization; TNG100 has only one parent box and is stratified spatially. Claims must be target-unseen confirmatory, not independent-simulation replication."
+  },
+  "target_free_selection_algorithm": {
+    "hash_key": "sha256('hong2021-v72|<domain>|<group>|<source_index>') ascending",
+    "consumed_indices_excluded_before_hash_sort": true,
+    "TNG100_groups": "four (x<37.5 or x>=37.5, z<37.5 or z>=37.5) spatial groups from center_position_mpc_h; screen and confirmatory allocations are respectively 2,6,5,3",
+    "SIMBA_groups": "realizations 24,25,26 with screen and confirmatory allocations respectively 3,5,8",
+    "Swift_groups": "realizations 20-26 with screen and confirmatory allocations respectively 3,2,1,3,1,3,3",
+    "target_or_input_used_for_selection": false
+  },
+  "fresh_stage_A_screen": {
+    "role": "single-use model screen; its outcome may not change the frozen V72 candidate",
+    "TNG100": [2, 6, 9, 14, 17, 26, 30, 39, 48, 51, 60, 64, 67, 82, 86, 87],
+    "SIMBA": [2, 3, 14, 18, 19, 24, 35, 36, 41, 47, 50, 55, 59, 60, 61, 63],
+    "Swift": [5, 16, 20, 32, 38, 56, 74, 77, 82, 94, 111, 114, 115, 122, 143, 145]
+  },
+  "fresh_stage_B_confirmatory": {
+    "role": "single-use target-unseen confirmation opened only after an exact stage-A pass",
+    "TNG100": [1, 25, 27, 31, 34, 36, 41, 43, 50, 59, 61, 66, 84, 85, 89, 90],
+    "SIMBA": [6, 12, 17, 20, 23, 26, 28, 30, 38, 42, 43, 44, 45, 51, 54, 58],
+    "Swift": [1, 9, 22, 37, 42, 55, 62, 73, 75, 97, 103, 110, 118, 132, 133, 142]
+  },
+  "partition_checks": {
+    "each_stage_has_sixteen_unique_indices_per_domain": true,
+    "stage_A_stage_B_disjoint_each_domain": true,
+    "both_stages_disjoint_from_all_historical_development_each_domain": true,
+    "unallocated_target_unseen_after_both_stages": {"TNG100": 45, "SIMBA": 16, "Swift": 100}
+  },
+  "V71_failure_reinterpretation_for_new_design_only": {
+    "V71_verdict_changed": false,
+    "marginal_body_and_Q4": "passed",
+    "global_maximum_Q3": "failed in every domain",
+    "high_k_3_6_h_mpc": "passed in every domain",
+    "high_k_6_10_h_mpc": "failed at 1.61-1.64 in every domain",
+    "small_scale_morphology": "remaining 0-1 Mpc/h two-point and rho>10 peak-count failures",
+    "mechanism_inference": "Member-axis ECC preserved a voxelwise ensemble copula but injected paired independent marginal values independently across spatial voxels, leaving too much 6-10 h/Mpc power. A successor should preserve the within-member spatial rank field rather than only the across-member rank at each voxel."
+  },
+  "global_maximum_gate_validity": {
+    "old_measurement": "one maximum pooled over 16 truth cubes versus one maximum pooled over 16 queries times 16 generated members, or 256 generated cubes",
+    "sample_size_ratio_generated_over_truth": 16,
+    "null_behavior": "Even for identical continuous cube-maximum distributions, the expected maximum of 256 draws exceeds the expected maximum of 16 draws; the old check therefore has a built-in rejection bias.",
+    "V71_still_fails_without_this_row": true,
+    "V71_other_failures": ["6-10 h/Mpc power in all domains", "field morphology checks in all domains"],
+    "V72_requirement": "Do not use the unequal-sample pooled maximum. Retain q99.999 and Q4, and compare per-query cube-maximum ensemble distributions with a proper score against the paired independent marginal control."
+  },
+  "recommended_V72_candidate": {
+    "name": "conditioning-stratified spatial quantile transport",
+    "abbreviation": "SQT",
+    "construction": "For each query and member, form target-free equal-occupancy strata from the frozen backbone-plus-target-mean field. Within each stratum, rank V70 raw latent voxels spatially, sort the paired independent standard-normal innovations over the same voxels, and assign those values by the V70 spatial rank.",
+    "marginal_property": "The candidate and paired control latent multisets are exactly equal within each query, member, and conditioning stratum before inverse transformation.",
+    "joint_structure_property": "Within every stratum and member, the complete V70 spatial rank order is retained; this is stronger for filaments and high-k coherence than V71 member-axis ECC.",
+    "training_required": false,
+    "guarantees_gate_pass": false,
+    "reason_preferred_before_a_new_large_fit": "V70 raw samples already passed the train-only spectral and phase-sensitive gate. V71 failed after replacing spatial marginal values via member-axis ECC. SQT changes that identified coupling mechanism without selecting an A(k), clipping density, or fitting to V71 metrics."
+  },
+  "required_next_program": {
+    "freeze_before_implementation_or_stage_A_access": [
+      "the exact number and definition of target-free conditioning strata",
+      "stable rank and tie rules",
+      "V70 checkpoint, sampler, seed, and member count",
+      "stage-A and stage-B selections above",
+      "fair tail proper score and every spectral/field threshold",
+      "single-use branches and EAGLE lock"
+    ],
+    "stage_A_failure": "seal and stop without stage-B access or candidate changes",
+    "stage_A_pass": "run stage B exactly once without changing the candidate",
+    "stage_B_pass": "seal and await explicit user approval before independent EAGLE",
+    "stage_B_failure": "seal and stop before independent EAGLE"
+  },
+  "authorization": {
+    "user_requested_next_stage": true,
+    "V72_candidate_program_frozen": false,
+    "V72_code_implemented": false,
+    "stage_A_payload_access_authorized": false,
+    "stage_B_payload_access_authorized": false,
+    "independent_EAGLE_access_authorized": false
+  },
+  "firewall": {
+    "V71_rerun_or_override": false,
+    "validation_input_or_target_voxels_read": false,
+    "new_stage_metric_read": false,
+    "model_sampler_seed_member_metric_or_threshold_changed_from_new_target_information": false,
+    "independent_gate_locked": true
+  }
+}

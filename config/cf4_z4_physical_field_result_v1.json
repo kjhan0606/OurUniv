@@ -1,0 +1,82 @@
+{
+  "bundle": "Z4-PHYSICAL-FIELD-RECOVERY",
+  "status": "CLOSED_DRIVER_REVIEWED_WAITING_FOR_NEXT_BUNDLE_APPROVAL",
+  "decision": "Positive-field implementation and conditional recovery demonstrated; NO-GO for joint-MAP promotion, calibrated physical posterior, actual-data reconstruction or resolution increase. Recommend a bounded posterior-marginalization pilot next.",
+  "auditor": "Astra driver; external audits skipped under explicit user exception",
+  "implementation_commits": ["799b88019e11aef66a287398ee5ae2c6ae8e400c", "ddce5eb39318f822b3dc159d20284be69257426a"],
+  "tests": {"passed": 5, "coverage": ["positive normalized density and log-offset invariance", "cell-centre and periodic interpolation", "conservative mass/momentum truth remap", "TSC NumPy reference and positional gradient", "full likelihood directional gradient, total tracer mass and exclusion of heldout velocity rows"]},
+  "execution": {
+    "submission_332634": "Cancelled while pending (elapsed zero) because submission preceded commit completion; no result used.",
+    "joint_array_332636": {"state": "COMPLETED", "exit_codes": ["0:0", "0:0"], "node": "syn05", "elapsed_seconds": [226, 186], "requested_MiB_per_task": 4800, "estimated_MiB_per_task": 4000},
+    "conditional_array_332645": {"state": "COMPLETED", "exit_codes": ["0:0", "0:0"], "node": "syn08", "elapsed_seconds": [159, 131], "requested_MiB_per_task": 2400, "estimated_MiB_per_task": 2000},
+    "CPU_per_task": 2,
+    "GPU_per_task": 0,
+    "maximum_process_peak_MiB": 1507.46484375,
+    "maximum_Slurm_MaxRSS_KiB": 1535444,
+    "Slurm_only": true,
+    "all_Z4_tasks_terminal": true,
+    "gpfs_specific_operations": false
+  },
+  "outputs": {
+    "joint_matched": "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_0_332637/result.json",
+    "joint_PM": "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_1_332636/result.json",
+    "conditional_matched": "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_0_332646_fixed_bias/result.json",
+    "conditional_PM": "/gpfs/kjhan/CF4/z0_density/z4_physical_field_v1/task_1_332645_fixed_bias/result.json",
+    "adjacent_files": ["fields.npz (truth, physical-density candidate, approximate velocity, separate Gaussian latent, support and parameter vector)", "density_slice.png (fixed common colour scale)"]
+  },
+  "recovery": {
+    "metric_region": "Union of cells with positive population selection response; this is not a claim that all these cells are strongly constrained.",
+    "matched": {
+      "density_correlation_joint": 0.3699900485954607,
+      "density_correlation_conditional": 0.5766762734210079,
+      "density_RMSE_joint": 0.8756165216449293,
+      "density_RMSE_conditional": 0.7545677968961418,
+      "truth_density_SD": 0.921970388932837,
+      "fitted_density_SD_joint": 0.16513933249201432,
+      "fitted_density_SD_conditional": 0.5666694976119823,
+      "conditional_velocity_component_correlations": [0.8202827856663113, 0.6662651722722659, 0.7689529240358111],
+      "heldout_count_gain_joint": 784.0776889464796,
+      "heldout_count_gain_conditional": 1028.2530101215689,
+      "heldout_velocity_gain_joint": 217.03582515066182,
+      "heldout_velocity_gain_conditional": 261.2861491430749
+    },
+    "PM": {
+      "density_correlation_joint": 0.3443906131698481,
+      "density_correlation_conditional": 0.5725306613895174,
+      "density_RMSE_joint": 0.46692491662111457,
+      "density_RMSE_conditional": 0.43729800529659824,
+      "truth_density_SD": 0.4953830924288644,
+      "fitted_density_SD_joint": 0.13854027241113584,
+      "fitted_density_SD_conditional": 0.4413422023235579,
+      "conditional_velocity_component_correlations": [0.7662522976841944, 0.778486682851908, 0.814587135653773],
+      "heldout_count_gain_joint": 115.9833872269437,
+      "heldout_count_gain_conditional": 476.643443336342,
+      "heldout_velocity_gain_joint": 266.57261424350145,
+      "heldout_velocity_gain_conditional": 294.99156825390355
+    },
+    "log_score_baseline": "Homogeneous density with zero mean velocity and nuisance prior centres, same geometry, errors, selection and heldout data. These are relative log scores, not coverage tests."
+  },
+  "optimizer_findings": {
+    "joint": "Both reached the 200-iteration limit without convergence; these are candidates, not certified modes. Standardized bias parameters rose 5.77-10.55 in the matched case and 1.98-12.67 in the PM case.",
+    "conditional": "Bias fixed to generator values only; all other parameters optimized. Both converged by projected-gradient criterion in 139/137 iterations; max free-coordinate gradients 0.00079874/0.00037092. Physical rho minima 0.16090/0.28718 and mean unity to floating-point precision.",
+    "comparison_caveat": "Conditional runs also use larger L-BFGS history (40 vs10) and a higher iteration cap (400 vs200). Improved results support, but do not isolate or prove, bias degeneracy as the sole cause. Neither a failed joint optimizer nor a successful conditional mode calibrates the joint posterior.",
+    "analytic_mechanism": "Real-space normalized tracer mass is proportional to exp(b*g)/mean(exp(b*g)). Under g->c*g and b->b/c it is invariant, while the physical density exp(g)/mean(exp(g)) changes. Gaussian-white prior cost falls as c^2 but only six bias priors compensate. Velocity/RSD partially break this degeneracy. A high-dimensional joint MAP need not represent the marginal field or bias posterior.",
+    "scientific_response": "Do not tune A(k), shrink LCDM power, silently fix observational bias, or treat the lower joint objective as better physical recovery. Test posterior uncertainty/marginalization explicitly."
+  },
+  "remaining_limits": [
+    "All data used for inference were synthetic. CF4 supplied fixed geometry/error/BGc design; observed vobs was discarded. Actual galaxy-count members were never read.",
+    "Independent PM dynamics were used, but both cases share the same coarse observation generator; independent tracer, selection, FoG and RSD systematics remain untested here.",
+    "Legacy PM truth recentering adds smoothing: whole-box density SD fell from 0.67547 to 0.48827. The PM comparison is against this explicitly remapped field, not native high-resolution truth.",
+    "The lognormal coarse model and potential-flow velocity are approximations, not dynamically consistent nonlinear gravity. There is no IC or reverse evolution implementation in Z4.",
+    "MAP maps lack posterior small-scale realizations and are especially smooth where data are weak. Missing structure cannot be attributed solely to a model defect or solely to absent information from these fits.",
+    "N32 on a 384 cMpc/h box means 12 cMpc/h. Neither the 1-2 cMpc/h surroundings nor LG-only 0.3 cMpc/h targets have been achieved."
+  ],
+  "next_recommendation": {
+    "bundle_purpose": "Test a joint z=0 physical-field posterior with bias uncertainty marginalized by sampling, rather than selecting a joint MAP. Reuse these two development data sets and the existing sampler machinery; assess whether bias remains pathological, mean-field recovery, interval calibration and heldout prediction together.",
+    "mandatory": ["separate physical density draws from Gaussian latent draws", "retain the generator-matched case to diagnose sampler versus model errors", "report independent-PM field mismatch separately", "use convergence and predictive/coverage evidence before any actual-data or finer-grid claim"],
+    "deferred": ["new test-framework proliferation", "resolution increase", "actual-data production", "IC/zoom generation", "GPFS-specific work"],
+    "user_approval_required": true,
+    "started": false,
+    "goal": "CF4-informed z=0 reconstruction supporting LG-only 0.3 cMpc/h zoom ICs within 1-2 cMpc/h cosmological surroundings; do not revert silently to direct CF4->IC."
+  }
+}

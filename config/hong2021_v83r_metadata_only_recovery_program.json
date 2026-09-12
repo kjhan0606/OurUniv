@@ -1,0 +1,82 @@
+{
+  "schema": "hong2021-v83r-metadata-only-copy-recovery-program-v1",
+  "status": "frozen_before_copy_recovery_evaluation_or_gate",
+  "purpose": "Recover the V83 consumed-development evaluator omission without resampling or modifying any sealed source ensemble: make byte-exact copies, add only diagnostic_k_h_mpc=1.0, prove every scientific dataset byte-identical, then run the same frozen evaluator and V79 observation formulas once.",
+  "engineering_only": true,
+  "statistically_independent": false,
+  "parent_failure": {
+    "v83_program": "config/hong2021_v83_conditional_marginal_spline_program.json",
+    "v83_program_sha256": "035e52b3d7059816b61dbf2b23e0cca9f5c5592903f704f0103a913556cea174",
+    "classification": "all_six_evaluators_failed_before_metric_computation_because_diagnostic_k_h_mpc_was_absent",
+    "model_training_failed": false,
+    "train_holdout_gate_failed": false,
+    "sampling_failed": false,
+    "scientific_dataset_defect_observed": false
+  },
+  "frozen_failure_state": {
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/status",
+    "status": "failed_V83_sequence exit=1 previous=evaluating_six_consumed_development_ensembles",
+    "status_sha256": "8039a747617b394f3db52ddbec21cac01ef359804edcd08e353e227cddd973c9",
+    "original_ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development",
+    "artifacts": {
+      "preflight": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/preflight.json", "sha256": "189a233efa8d9a29e5ed862d845c2da84bd16e61e502ae3cac114a5143e50030"},
+      "training_log": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/train.log", "sha256": "9444daf930551e75ee547bc520f1e66d112fcf2afd4bbc3ea5b065b5292a6fb7"},
+      "train_gate_log": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/train_gate.log", "sha256": "5ee9e7ea7a2884b224402868ff7185ef035725fdc33f00f8b3900488004d39db"},
+      "sample_log": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_sequence/sample.log", "sha256": "ada98cb5a3967bc5e033237468b96675c2ebc8595312eb31bcea2288ca66a72b"},
+      "checkpoint": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline/step12000.pt", "sha256": "fc06559221e3430f95dfd3de0131e3646d364d631cab462faabec55e1eb9572d"},
+      "training_report": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v83_conditional_marginal_spline/training_report.json", "sha256": "b4ab42d7c029981da67b9b67989235ab170e5a7fef4ad95e3f298569abd19b3b"},
+      "train_gate": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_train_gate/decision.json", "sha256": "d615f5b5d1a89ee8e007d3ccab1d35ec222907484814d984ce08b50c2438d032"},
+      "candidate_tng_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/candidate/tng/evaluate.log", "sha256": "39ef6156e24ec8d595560b3538d5b4a475a6b8938039e153905fca8b949860bb"},
+      "candidate_simba_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/candidate/simba_dev/evaluate.log", "sha256": "ffbaeb3f0cf3b3b91a2d11b3d5051a4c640326638773ab00992e17c227abc055"},
+      "candidate_swift_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/candidate/swift_dev/evaluate.log", "sha256": "15537171b598452e28ced9c33aa9a9696f96d81eb3fee806cf817fef5a77e484"},
+      "control_tng_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/control/tng/evaluate.log", "sha256": "b2a5be0454128e6af7ba1df73101e5d4e8d5744a72a7231b2684e59acc119afe"},
+      "control_simba_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/control/simba_dev/evaluate.log", "sha256": "e7c701fdfb24cad905015fc5afbe23ebb1e024df27c8af6e1558fb0e8122906c"},
+      "control_swift_evaluator_failure": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_metrics/control/swift_dev/evaluate.log", "sha256": "4cb3d55068a70b6b714ba5c9edecc57620e6560f6f6e82fa20e560905e1280f0"}
+    }
+  },
+  "sealed_source_ensembles": {
+    "candidate/tng": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/candidate/tng/ensemble16.h5", "bytes": 606548712, "sha256": "30cc964c3c79cf57d478b47e299fa54a3cb9183652f25cf8ba61777a0d13f076"},
+    "candidate/simba_dev": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/candidate/simba_dev/ensemble16.h5", "bytes": 606649567, "sha256": "ce1bb8086296f04b6a37ab7cd1e98ea8e78225a898a44d2835c1282d818147b2"},
+    "candidate/swift_dev": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/candidate/swift_dev/ensemble16.h5", "bytes": 606474939, "sha256": "ef58eea00bc0570fa21191d549eb483294ccc6def7a0aaca14bc27f93849e3a1"},
+    "control/tng": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/control/tng/ensemble16.h5", "bytes": 606548712, "sha256": "0baa5c3ea96f2993ee5e95b3378fd8ce93943d378491a4cfe529988a9d63aef3"},
+    "control/simba_dev": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/control/simba_dev/ensemble16.h5", "bytes": 606649567, "sha256": "b226b4f9da8da7911446a1cf718a6bc4fa4db0dfd5e066246612e2a0fd1982bd"},
+    "control/swift_dev": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83_conditional_marginal_spline_consumed_development/control/swift_dev/ensemble16.h5", "bytes": 606474939, "sha256": "cf34773898010bcaf3f069ffbee449c6c39c66234635ef6558e0765b770bb427"}
+  },
+  "only_authorized_mutation": {
+    "operation": "copy each sealed source ensemble to a new root, then add one HDF5 root attribute",
+    "attribute": {"diagnostic_k_h_mpc": 1.0},
+    "scientific_role": "diagnostic reporting boundary consumed by the unchanged centered-field evaluator; it does not alter a field, metric value, selection, seed, model, or gate threshold",
+    "modify_original_ensembles": false,
+    "required_proof": "all dataset shapes, dtypes, and raw C-order bytes SHA256 identical before and after; every other HDF5 attribute identical; sealed source size and SHA256 unchanged"
+  },
+  "implementation_sources": {
+    "recovery": {"path": "src/hong2021_v83r_metadata_recovery.py", "sha256": "816eda5c683b8c7d903e2563bf3633087163bd32f553fa99d1febc57c2b3d7f8"},
+    "recovered_gate": {"path": "src/hong2021_v83r_development_gate.py", "sha256": "b4de0efb5bd3283e5bcf24d968f2afdfaed75d7c4a8c19cab9c0b7a991f1b9c5"},
+    "unchanged_evaluator": {"path": "src/hong2021_v83_evaluate.py", "sha256": "9eba09883d364b0804a46ed794eafd2f0d3d3fa69a10d2f61874b7e6abc69fde"},
+    "unchanged_gate": {"path": "src/hong2021_v83_development_gate.py", "sha256": "c9e12908087b5ef1ca5e6ef0bfdb8fbcc26e6c25996b0523fdd0f3bf931bec2c"}
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_sequence",
+    "recovery_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_sequence/recovery_record.json",
+    "recovered_ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_ensembles",
+    "metrics_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_metrics",
+    "development_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v83r_metadata_recovery_gate/decision.json"
+  },
+  "authorization": {
+    "user_approved_next_metadata_recovery_action": true,
+    "resampling": false,
+    "model_or_checkpoint_change": false,
+    "selection_seed_metric_formula_or_threshold_change": false,
+    "independent_validation": false,
+    "single_recovery_evaluation_and_consumed_gate": true
+  },
+  "firewall": {
+    "original_ensemble_mutation": "forbidden",
+    "evaluation_before_dataset_identity_proof": "forbidden",
+    "additional_recovery_or_retry_after_result_disclosure": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_validation_locked": true,
+    "pass_action": "await explicit user approval before any independent validation"
+  }
+}

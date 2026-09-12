@@ -1,0 +1,42 @@
+{
+  "bundle": "Z11-PRIOR-COMPATIBLE-FIELD-CONTROL",
+  "status": "USER_APPROVED_BOUNDED_COMPARISON",
+  "purpose": "Test whether the Z9 curvature displacement persists on fields drawn from the exact fitted z=0 prior, rather than native PM truth. Compare with existing Z9 free-field and Z10 fixed-field results.",
+  "goal_alignment": "Identify the source of bias in present-day density/velocity inference before extending the model. Final target: LG-only 0.3 cMpc/h, 1-2 cMpc/h surroundings, then IC inversion and forward validation. This experiment remains N32=12 cMpc/h.",
+  "data": {
+    "Z9_plan": "config/cf4_z9_tracer_response_plan_v1.json",
+    "Z9_extended_case": 1,
+    "tasks": [0, 1, 2, 3],
+    "cases": [
+      {"task": 0, "field_seed": 2026091100, "generator_curvature": 0.0, "train_seed": 2026091110, "holdout_seed": 2026091120, "radial_seed": 2026091130, "PM_reference_task": 1},
+      {"task": 1, "field_seed": 2026091100, "generator_curvature": 0.2, "train_seed": 2026091111, "holdout_seed": 2026091121, "radial_seed": 2026091130, "PM_reference_task": 3},
+      {"task": 2, "field_seed": 2026091101, "generator_curvature": 0.0, "train_seed": 2026091112, "holdout_seed": 2026091122, "radial_seed": 2026091131, "PM_reference_task": 1},
+      {"task": 3, "field_seed": 2026091101, "generator_curvature": 0.2, "train_seed": 2026091113, "holdout_seed": 2026091123, "radial_seed": 2026091131, "PM_reference_task": 3}
+    ],
+    "generation": "Draw all four whitened field blocks as independent standard normals using frozen field seeds, pass through the existing PMCalibratedFieldModel.fields, and generate observations using the unchanged extended observation map. All generator nuisance units zero except gamma/0.2. Never seed inference from the truth vector.",
+    "heldout": "Independent Poisson .8/.2 training/heldout streams; fixed CF4 radial train/holdout mask with new independent Gaussian noise. Two gamma cases sharing a field share the radial noise, since gamma affects only counts. All noisy data and truth arrays are frozen before GPU fits.",
+    "references": "Reuse Z9 tasks 1/3 on native PM truth and the completed Z10 conditional diagnostic. These are different field/noise realizations; raw log-predictive scores must not be subtracted across datasets."
+  },
+  "model": {
+    "unchanged": ["Z6 independently trained z=0 covariance", "six population priors", "all 25 nuisance priors", "native origin", "RSD/FoG/selection", "LCDM IC spectrum"],
+    "fit": "Existing extended free-field model, not fixed-truth conditioning. No exact independent radial-block substitution: that Z10 factorization does not hold when fields are inferred.",
+    "limitations": "Prior-compatible mocks share code and are intentionally idealized, not independent galaxies. Nuisances are fixed at specified values rather than drawn jointly from their priors; this is not simulation-based calibration. Two field seeds cannot establish frequentist coverage or uniquely identify field-prior misspecification."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero plus .5 standardized jitter, never truth", "inverse_mass": "identity"},
+  "heldout_retained_draw_stride": 8,
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "outputs": ["curvature intervals and displacement versus generator truth", "physical density mean/draw amplitude, RMSE, correlation and interval coverage", "descriptive native-PM versus prior-draw log-density skewness, excess kurtosis and high-density quantiles", "heldout predictions within each dataset"],
+    "interpretation": "Recovery on prior-compatible fields but not PM truth would support a field-model/coupling mismatch, not prove its unique cause. Displacement also on prior-compatible fields would prioritize posterior identifiability or inference implementation. No automatic prior change, nonlinear expansion, amplitude rescaling or production promotion.",
+    "stop": "Four fits and one automatic comparison; driver judgment, then user approval before another bundle."
+  },
+  "resources": {
+    "preflight": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "posterior": {"GPUs_per_task": 1, "CPUs": 4, "estimated_MiB": 6144, "requested_MiB": 7373, "time_limit": "02:00:00", "maximum_concurrent_tasks": 2, "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregate": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "output_budget_GiB": 5,
+    "no_new_PM": true
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z11_prior_control_v1",
+  "next_bundle_requires_user_approval": true
+}

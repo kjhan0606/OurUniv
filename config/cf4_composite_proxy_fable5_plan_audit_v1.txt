@@ -1,0 +1,20 @@
+Follow-up of the SAME unresolved-member DESIGN audit, not a new audit ladder.
+Read-only Korean <=650 words, no tools/changes. Your prior verdict was DESIGN
+CONDITIONAL GO with Q-LEAN recommending a simple composite-aperture operator
+before high-dimensional q_theta. The driver accepts that and has frozen the
+attached14-coefficient baseline, one CPU job, no neural training. The cell-level
+anchor-measure pipeline is deferred because it is not needed for this baseline;
+we do NOT claim deterministic anchor encoding alone normalizes that model.
+Driver also identified the missing p(E|F,O) or E-conditioned field prior;32
+positive selected fixtures cannot calibrate it, so this remains a diagnostic.
+
+Review the attached smallest next implementation plan for Q-GOAL (CF4/counts+
+LG -> present field -> LCDM IC -> LG zoom; LG<=.3/environment1–2) and Q-LEAN.
+Explicit MW/M31/M33: field-only finite MW/host pair mixture, distinct unresolved
+M33 relative state, no oracle candidate choice at test, mass priors disabled.
+Check normalized mixture/covariance/conditional-M33 score, selected-population
+limitations, field dependence versus posterior information, source split and
+feasibility. Is trimming the binary-coordinate/anchor work justified here?
+Give GO/CONDITIONAL GO/NO-GO and only essential remaining changes. This is
+approval of a bounded DIAGNOSTIC design, not a certified posterior/model and
+not authorization to launch new simulations or high-dimensional learning.

@@ -1,0 +1,96 @@
+{
+  "schema": "hong2021-v23-mechanism-audit-attestation-v1",
+  "status": "complete_failed_objective_proxy_misalignment",
+  "scope": "V23 formula, m-binning, occupancy, gradient strength/direction, optimization stability, and fixed-sigma denoiser response; development data only",
+  "inputs": {
+    "v23_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/development_decision.json",
+    "v23_decision_sha256": "0748135a47f6624b0355a0c7082b6cda1335883f7539e1f107e08415b82aa140",
+    "v23_decision_digest_sha256": "cdb0184c7d7640da53fc35303984051553105cbcbeede7509d6ad79a8a8f8e97",
+    "automatic_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/automatic_failure_audit.json",
+    "mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/mechanism_audit.json",
+    "mechanism_audit_sha256": "c39faea160b71e6693effdb2df56fbb0da7b8eb7332fc12ba0c7da0e8f523c3a",
+    "mechanism_audit_digest_sha256": "de7f7ce52bcb10a72546acb93255ddf88044e3b65257a18d051bc801d573f700",
+    "audit_code_commit": "4c306b8b6f31db22d15b3edd16cc2a2294e5b5f7",
+    "audit_script_sha256": "2228213af107cb3207fa92343ace0b0694dbd70cf6ffb2c1bd56ed03ff6778c7"
+  },
+  "formula_and_binning": {
+    "condition_channel_2_matches_dataset_m_max_absolute_error": 0.0,
+    "torch_bucketize_matches_numpy_searchsorted_right_clamped": true,
+    "audited_minimum_per_sample_bin_occupancy": 6227,
+    "frozen_minimum_required_occupancy": 64,
+    "all_audited_gradient_entries_finite": true,
+    "conclusion": "channel selection, bin assignment, occupancy filtering, and gradient propagation are correct"
+  },
+  "gradient_mechanism": {
+    "conditional_to_base_gradient_norm_ratio": [
+      0.532769174024921,
+      0.6777800631279814,
+      0.6629247872795369
+    ],
+    "mean_conditional_to_base_gradient_norm_ratio": 0.6244913414774799,
+    "conditional_vs_base_gradient_cosine": [
+      -0.5357410133419073,
+      -0.3968633175684235,
+      -0.22963293792318926
+    ],
+    "mean_conditional_vs_base_gradient_cosine": -0.3874124229445067,
+    "combined_gradient_exceeded_fixed_clip_one": false,
+    "conclusion": "the conditional term is not underweighted; despite a scalar loss near 1e-4, it supplies a large and systematically antagonistic gradient"
+  },
+  "optimization_history": {
+    "final_conditional_mean_loss": 0.00015157782868482173,
+    "final_balanced_conditional_validation": 0.06659875385473432,
+    "v22_first_500_step_clip_activation_fraction": 0.144,
+    "v23_first_500_step_clip_activation_fraction": 0.214,
+    "v23_nonfinite_mean_gradient_intervals": [500, 10500, 13000, 17000, 21000, 22500, 25000, 29000],
+    "interpretation": "V23 had a noisier AMP warm-up, but isolated later nonfinite intervals also occurred in V22 and final fixed-batch gradients are finite and below clipping; this is not the primary failure mechanism"
+  },
+  "denoiser_response": {
+    "statement": "For sigma 0.2 through 40, V23 reduced maximum aggregate conditional-bin denoising bias relative to V22 in every audited domain and sigma.",
+    "v23_over_v22_maximum_aggregate_bias_ratio_sigma_0p2_to_40": {
+      "TNG100": [0.6191326957918147, 0.4004543928620577, 0.35945663789428894, 0.6607580481031801, 0.7395918991948104],
+      "SIMBA": [0.33617571009298775, 0.5262277143582335, 0.4656197152932032, 0.5906936958800113, 0.763220680818695],
+      "Swift-EAGLE": [0.4861271256256642, 0.6778815637049183, 0.5578056732845218, 0.7318131643365636, 0.6186572941447825]
+    },
+    "conclusion": "optimization did change the intended finite-sigma denoising statistic"
+  },
+  "sampler_and_field_outcome": {
+    "v22_to_v23_final_sampler_Q6": {
+      "tng": [0.20639774643000264, 0.17700269930974008],
+      "simba_dev": [0.11732611650614204, 0.058878261272945015],
+      "swift_dev": [0.212018893051293, 0.15255735659208183]
+    },
+    "v22_to_v23_Q3": {
+      "tng": [0.12482308712937229, 0.1727117929739599],
+      "simba_dev": [0.11449807548136626, 0.1598632052552973],
+      "swift_dev": [0.042651302023482884, 0.05347723163422202]
+    },
+    "v22_to_v23_Q4": {
+      "tng": [2.2752540100463783, 2.630952879256894],
+      "simba_dev": [1.9411703127859312, 6.233748634505878],
+      "swift_dev": [1.2421258860182864, 1.793142034529283]
+    },
+    "Q6_std_no_harm_all_domains": true,
+    "conclusion": "the penalty partially improves sampler Q6 mean bias but degrades every Q3 and Q4 result and still leaves TNG and Swift Q6 above 0.10"
+  },
+  "root_cause": {
+    "classification": "finite_sigma_conditional_denoising_proxy_conflicts_with_base_objective_and_is_insufficient_for_terminal_sampler_moments",
+    "ruled_out": [
+      "wrong condition channel",
+      "wrong right-edge bin semantics",
+      "empty or marginal occupancy bins",
+      "missing gradient propagation",
+      "conditional coefficient too weak to influence optimization",
+      "failure to improve the directly optimized denoising statistic"
+    ],
+    "do_not_do_next": [
+      "increase lambda_conditional_mean",
+      "extend V23 beyond 30000 steps",
+      "tune thresholds",
+      "open Astrid or historical EAGLE"
+    ],
+    "recommended_next_control": "return to the non-antagonistic V22 objective and test one moderate capacity increase before attempting a sampler-differentiated moment objective"
+  },
+  "Astrid_accessed": false,
+  "historical_EAGLE_accessed": false
+}

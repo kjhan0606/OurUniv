@@ -1,0 +1,110 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-mode-release-audit-result-v1",
+  "status": "complete_fail_current_N64_freeze_architecture_V9_no_go",
+  "completed_date": "2026-08-15",
+  "purpose": "Seal the prospective all-256 V8 projection L0-L5 audit against the result-blind reference calibration.",
+  "execution": {
+    "host": "syntax",
+    "git_commit": "51ae788ad8cb8522dfaa587eef3bb408096e4a45",
+    "started_at": "2026-08-15T21:56:59+09:00",
+    "ended_at": "2026-08-15T22:17:52+09:00",
+    "environment_sha256": "e75d95084d24a202c8d13f491f766b67ce4526484109fb43228fe8dd5e973bc1"
+  },
+  "lineage": {
+    "program": "config/p2_lg_v8_cf4_mode_release_audit.json",
+    "program_sha256": "0fe4f196b34beb050f83b471bdec5221e64b52d3abf0216db9d0113bdc4c32be",
+    "implementation": "src/cf4_lg_mode_release_audit.py",
+    "implementation_sha256": "2e5af56460a307feb2b8e401cc4a645fc4c3cb235f4be4ff6a6f32f3396c2dc5",
+    "result": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_audit/result.json",
+    "result_sha256": "6c924df8c840ba67afa1b1b57a4aafb5688d4e502ef44db8e0e1b72027c9ba6e",
+    "complete_marker_sha256": "a4b3f48eadfb7742c7f42aa6a7a15f762f3d6ceabdea54ac7e287c8e3987bc16",
+    "monitor_summary_sha256": "05c29330477b749d89d1429a0b29ffb9c5c732f2f2fc2bff9784d99b89dcab38"
+  },
+  "gates": {
+    "L0": {
+      "pass": true,
+      "reference_fields_rehashed": 256,
+      "N576_fields_rehashed": 256,
+      "N192_fields_rehashed": 256,
+      "exact_N576_to_N192_recomputations": 256,
+      "maximum_projection_relative_RMS": 0.0,
+      "maximum_projection_normalized_error": 0.0
+    },
+    "L1": {
+      "pass": true,
+      "maximum_F64_relative_RMS": 4.521563234537896e-08,
+      "relative_RMS_limit": 2e-06,
+      "maximum_F64_normalized_error": 2.479659472400807e-06,
+      "maximum_normalized_error_limit": 2e-05
+    },
+    "L2": {
+      "pass": true,
+      "parent3429_one_sided_conformal_p": 0.62890625,
+      "minimum_p": 0.01
+    },
+    "L3": {
+      "pass": false,
+      "one_sided_max_stat_permutation_p": 9.99990000099999e-06,
+      "minimum_p": 0.01,
+      "permutation_replicates": 100000,
+      "worst_studentized_coordinates": {
+        "right_KS_radial_RMS_bin_2": 22.334918029972442,
+        "right_KS_radial_RMS_bin_4": 14.670432014775205,
+        "right_KS_radial_RMS_bin_5": 14.549357455806788,
+        "right_KS_radial_RMS_bin_3": 11.37582363363989,
+        "right_KS_D_per_CF4_row": 10.201757813873549
+      },
+      "extra_tail_gates": {
+        "proposal_median_deviance": 19728.88738692244,
+        "median_le_reference_Q95": true,
+        "proposal_Q90_deviance": 19733.30744346356,
+        "Q90_le_reference_Q99p5": true,
+        "reference_Q99_exceedance_fraction": 0.0,
+        "exceedance_fraction_pass": true
+      }
+    },
+    "L4": {
+      "pass": false,
+      "maximum_studentized_difference": 17.43636026876551,
+      "simultaneous_critical_value": 4.658926821922757,
+      "worst_coordinate": "median_abs_qhat_bulk_z"
+    },
+    "L5": {
+      "pass": false,
+      "maximum_studentized_difference": 146.67111966228913,
+      "simultaneous_critical_value": 4.658926821922757,
+      "worst_coordinate": "fraction_above_reference_Q99_abs_Pwhite_minus_1_shell_7",
+      "released_shell_mean_Pwhite": [
+        1.004427531910144,
+        1.0054622879126438,
+        1.0000857950723854,
+        0.9989206898517005,
+        0.9990138740039589,
+        0.9979532752032573,
+        0.9914083656977002,
+        0.9813580703909333
+      ],
+      "global_white_field_checks_pass": true,
+      "coarse_shell_mean_power_check_pass": true,
+      "reference_calibrated_simultaneous_envelope_pass": false
+    }
+  },
+  "interpretation": {
+    "CF4_posterior_failure": "All 256 proposals share the same frozen F64 parent3429 modes. Varying only released modes therefore does not reproduce the low-frequency CF4 posterior ensemble; the radial-RMS, marginal-deviance, nuisance bulk, and radial-bias families are strongly distributionally different from the 255-member reference calibration.",
+    "high_shell_power_failure": "The two highest released shells show systematic power deficits. Because L0 exactly reproduces every stored projection, this is not file corruption. A likely mechanism is the N576-to-N192 output-Nyquist boundary handling in Fourier truncation; this is an inference that requires an independent white-field projection control before redesign.",
+    "scientific_conclusion": "The current one-parent N64-freeze architecture is not a statistically valid CF4 constrained-realization ensemble even though it preserves lineage, exact projection reproducibility, and the explicitly frozen F64 modes."
+  },
+  "decision": {
+    "V8_projection_audit_pass": false,
+    "current_N64_freeze_architecture_V9_no_go": true,
+    "V9_design_authorized": false,
+    "same_model_seed_extension_authorized": false,
+    "seed_promotion_authorized": false,
+    "RAMSES_authorized": false,
+    "next": [
+      "Run a consumed-only N576-to-N192 white-field Nyquist control to isolate the high-shell power deficit mechanism.",
+      "Design any future proposal over independent CF4 posterior parents rather than 256 high-k variants of one frozen parent.",
+      "Freeze a new prospective architecture only after both the CF4 posterior-distribution and projection-power mechanisms are resolved."
+    ]
+  }
+}

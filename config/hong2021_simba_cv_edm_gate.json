@@ -1,0 +1,114 @@
+{
+  "schema": "hong2021-independent-simba-cv-edm-gate-v1",
+  "status": "complete_failed_frozen_field_gate_grid_hop_skipped",
+  "purpose": "Provisional independent hydrodynamic-simulation generalization test for the TNG-trained V6 EDM model",
+  "eagle_status": {
+    "required_for_final_independent_gate": true,
+    "available": false,
+    "blocker": "EAGLE account activation has not been returned by the data-site administrator",
+    "policy": "Do not substitute the SQL galaxy catalogue for the unavailable particle-level dark-matter truth"
+  },
+  "simulation": {
+    "suite": "CAMELS SIMBA",
+    "set": "CV",
+    "realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "independence": "One observer cube from each of 16 independent initial-condition realizations",
+    "box_mpc_h": 25.0,
+    "redshift": 0.0,
+    "provisional_only": true
+  },
+  "sources": {
+    "root": "/gpfs/kjhan/CAMELS/SIMBA/L25n256",
+    "dm_density": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/CMD/Grids_Mcdm_SIMBA_CV_256_z=0.0.npy",
+    "catalog_pattern": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/CV/CV_{realization}/groups_090.hdf5",
+    "download_script": "scripts/download_camels_simba_cv_gate.sh",
+    "public_base": "https://users.flatironinstitute.org/~camels",
+    "download_status": "complete_and_schema_validated",
+    "prepared_input": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16.h5",
+    "prepared_input_report": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16.json",
+    "orientation_audit": "Direct CMD (x,y,z) order ranked first among all 48 cube symmetries by density at massive-galaxy positions; median log10 overdensity 2.126"
+  },
+  "frozen_selection": {
+    "observer_stellar_mass_msun_h_code_convention": [40000000000.0, 100000000000.0],
+    "observer_choice": "candidate closest in log stellar mass to the geometric midpoint of the observer interval; no density-field information used",
+    "galaxy_proxy": "SubhaloMassType[:,4]*1e10 >= fixed threshold",
+    "galaxy_stellar_mass_threshold": 97664166.24188423,
+    "threshold_derivation": "TNG100-only rank threshold giving exactly the same global count (48296) as the training selection M_B < -15",
+    "tng_number_density_h3_mpc3": 0.1144794074074074,
+    "simba_photometry_excluded": "Native SIMBA SubhaloStellarPhotometrics is documented invalid; the separate photometry index is not consistently joinable to the current corrected SUBFIND rows"
+  },
+  "cube": {
+    "box_mpc_h": 20.0,
+    "grid": 64,
+    "voxel_mpc_h": 0.3125,
+    "input_channels": ["galaxy_count", "mean_radial_peculiar_velocity_km_s"],
+    "galactic_mask_abs_b_deg": 10.0,
+    "target": "log10(rho_cdm/rho_cdm_box_mean)/4.5",
+    "cmd_source_grid": 256,
+    "global_work_grid": 80,
+    "resampling": "exact separable volume-overlap averaging from the periodic 256^3 density grid to 80^3; preserves mass and box mean"
+  },
+  "model": {
+    "deterministic_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v4_split00_l0_groupnorm_std_cosine/minimum_validation_loss.pt",
+    "edm_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v6_edm_laplacian_sigma2/minimum_validation.pt",
+    "normalization": "Frozen TNG training normalization; no SIMBA fitting or recalibration",
+    "ensemble_per_object": 16,
+    "sampling_steps": 40,
+    "seed": 1777
+  },
+  "gate_policy": {
+    "thresholds": "Use the already committed V6 field-gate thresholds without inspecting SIMBA truth",
+    "hop": "Run grid-HOP only if the independent SIMBA field gate passes",
+    "interpretation": "Passing is evidence of cross-code generalization but does not replace the unavailable EAGLE gate or a forward particle simulation"
+  },
+  "outputs": {
+    "deterministic_cache": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16_deterministic_k2_4.h5",
+    "v6_cache": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16_laplacian_sigma2.h5",
+    "ensemble": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/evaluation/hong2021_v6_edm/edm_cv16_ensemble16.h5",
+    "metrics": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/evaluation/hong2021_v6_edm/ensemble_evaluation/metrics.json",
+    "diagnostics": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/evaluation/hong2021_v6_edm/ensemble_evaluation/diagnostics.png",
+    "decision": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/evaluation/hong2021_v6_edm/independent_gate_decision.json"
+  },
+  "domain_shift_diagnostics": {
+    "tng_validation_occupied_cells_per_cube_mean": 777.6021505376344,
+    "simba_occupied_cells_per_cube_mean": 606.5,
+    "tng_validation_occupied_count_mean_std": [1.4929684400558472, 2.0030386447906494],
+    "simba_occupied_count_mean_std": [1.2361912727355957, 0.7508342266082764],
+    "tng_validation_velocity_mean_std_kms": [-177.85317993164062, 430.0346374511719],
+    "simba_velocity_mean_std_kms": [-77.05855560302734, 195.00343322753906],
+    "tng_validation_target_mean_std": [-0.1675131767988205, 0.14632393419742584],
+    "simba_target_mean_std": [-0.15716201066970825, 0.12655091285705566],
+    "interpretation": "The 25 Mpc/h SIMBA boxes have fewer occupied tracer cells, much narrower radial velocities, and a smoother target than TNG100"
+  },
+  "result": {
+    "field_gate_pass": false,
+    "grid_hop_run": false,
+    "failed_checks": [
+      "high_k_total_power_within_10_percent",
+      "residual_rms_within_10_percent",
+      "rank_histogram_tv_at_most_0.05",
+      "finite_ensemble_coverage_within_0.03",
+      "all_selected_peak_void_statistics_improve_deterministic"
+    ],
+    "total_log_density_power_ratio": {
+      "0.3-1_h_mpc": 0.8670311024680802,
+      "1-3_h_mpc": 0.7278683558646771,
+      "3-6_h_mpc": 1.0923493303204577,
+      "6-10.0531_h_mpc": 2.003843866118927
+    },
+    "generated_residual_rms": 0.08870980901424713,
+    "truth_residual_rms": 0.07567156112330163,
+    "generated_over_truth_residual_rms": 1.1723005009728895,
+    "coverage_68": 0.6986534595489502,
+    "coverage_95": 0.9096372127532959,
+    "rank_histogram_tv": 0.09250601600198186,
+    "density_pdf_tv_generated": 0.0829247236251831,
+    "density_pdf_tv_deterministic": 0.39659643173217773,
+    "interpretation": "EDM improves PDF and 2pCF but overproduces unresolved high-k variance and fragments voids; this is scale dependent and cannot be repaired by one scalar normalization"
+  },
+  "decision": {
+    "advance_to_forward_dynamics": false,
+    "reason": "The frozen independent field gate failed, so grid-HOP and forward PM/RAMSES are not scientifically authorized",
+    "recommended_next_experiment": "Keep CV_0 through CV_15 locked as test; use only other simulations/realizations to develop a multi-domain conditional residual model, then rerun this untouched gate"
+  }
+}

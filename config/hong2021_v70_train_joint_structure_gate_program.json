@@ -1,0 +1,116 @@
+{
+  "schema": "hong2021-v70-train-only-joint-structure-mechanism-gate-program-v1",
+  "status": "frozen_during_fixed_training_before_checkpoint_or_mechanism_holdout_access",
+  "purpose": "Resolve every stochastic and numerical detail left open by the parent V70 program before the fixed fit completes, then decide from excluded train-only mechanism objects whether V70 learned cross-domain joint spatial structure without a pair or Fourier training loss.",
+  "parent_evidence": {
+    "v70_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v70_cache_record": "config/hong2021_v70_latent_cache_result_record.json",
+    "v70_cache_record_sha256": "3419206ce239546d7a2742ead01f20c9e6495c311dda0e4b82da6944a799ef76",
+    "required_cache_status": "complete_full_scan_pass_authorized_fixed_training",
+    "required_fixed_training_authorized": true,
+    "required_optimizer_step_before_this_freeze": "the already-running byte-bound fixed V70 fit only; no checkpoint or loss result has been inspected to define this gate",
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v65_query_program": "config/hong2021_v65_structure_factorization_audit_program.json",
+    "v65_query_program_sha256": "58c244e03a5f7fbb9cef29943869067fe3c202d01f3f3773d3cb69d4022bcc21",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "latent_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v70/train_latent.h5",
+    "latent_cache_sha256": "0ddc9a592bc0eb1ab08d11ce71a5da1864b1fedb241663b2cc9f309094943ad3",
+    "expected_training_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "expected_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json"
+  },
+  "immutable_mechanism_queries": {
+    "objects_per_domain": 16,
+    "excluded_from_V70_optimizer_batches": true,
+    "TNG100": [32, 35, 79, 94, 98, 103, 122, 135, 149, 215, 303, 316, 323, 347, 399, 416],
+    "SIMBA": [5, 15, 43, 50, 70, 100, 102, 107, 109, 127, 155, 164, 171, 186, 199, 201],
+    "Swift": [12, 36, 38, 57, 69, 178, 198, 201, 218, 269, 283, 288, 292, 305, 339, 406]
+  },
+  "noise_streams": {
+    "stream_A_seed": 170071,
+    "stream_B_seed": 170072,
+    "members_per_query_and_stream": 16,
+    "inference_batch": 4,
+    "mapping": "For each stream, draw one sequential torch CUDA standard-normal tensor in domain, query-list, and member order. The identical tensor is the EDM initial innovation and the paired independent-voxel V63 baseline latent. No seed may be selected or repeated after seeing a metric."
+  },
+  "sampler": {
+    "family": "deterministic EDM probability-flow Heun",
+    "steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "schedule": "40 values linearly spaced in sigma^(1/rho) from sigma_maximum to sigma_minimum, raised to rho, followed by an exact terminal zero",
+    "initial_state": "sigma_maximum times the frozen standard-normal innovation",
+    "update": "Euler probability-flow update at every interval and the standard second-order Heun correction whenever the next sigma is nonzero",
+    "candidate_inverse": "Phi(candidate z) through the frozen query-local V63 bounded inverse",
+    "baseline_inverse": "Phi(the paired independent standard-normal innovation) through the identical V63 inverse",
+    "post_inverse": "undo V63 target standardization, subtract each residual cube mean once in float64, and add the unchanged query backbone",
+    "sample_clipping_or_posthoc_scale_Ak": false
+  },
+  "fourier_measurement": {
+    "voxel_mpc_h": 0.3125,
+    "window": "the unchanged separable 64-cell Hann window from hong2021_residual_evaluate.SpectralBinner",
+    "DC": "subtract each full log-density or residual field cube mean before windowing",
+    "bands_h_mpc": [[3.0, 6.0], [6.0, 10.0]],
+    "total_power": "average the Hann-windowed full log-density |rfftn|^2 over all queries and members before dividing by the corresponding averaged truth power and mode-weighting within each band",
+    "phase_sensitive_energy_score": "on the complex Hann-windowed full-band residual rfftn coefficients restricted to one band, mean_m ||F_m-F_truth||_2/sqrt(N_modes) minus 0.5 times mean over ordered m!=n of ||F_m-F_n||_2/sqrt(N_modes); average object scores arithmetically within each domain",
+    "baseline": "the paired independent-voxel V63 marginal samples; candidate energy score must be strictly smaller, so any gain requires learned joint phase-amplitude structure rather than one-point calibration"
+  },
+  "one_point_measurement": {
+    "latent": "pool all generated or exact cached z voxels across the sixteen queries within each domain and stream",
+    "latent_mean_maximum_absolute_candidate_minus_truth": 0.1,
+    "latent_standard_deviation_candidate_over_truth_interval": [0.9, 1.1],
+    "q99_9_backbone_boundaries": {
+      "TNG100": 0.4621520478129412,
+      "SIMBA": 0.411563094049693,
+      "Swift": 0.4358510056436045
+    },
+    "physical_moment": "within backbone plus target_mean at or above the source q99.9 boundary, mean of (10^(4.5*y_full)-1)^2 over queries, members, and selected voxels divided by the exact truth value",
+    "physical_moment_ratio_interval": [0.6666666666666666, 1.5]
+  },
+  "selection_rules": {
+    "one_point_pass": "every domain and stream passes all three frozen one-point requirements",
+    "spectral_pass": "every domain, stream, and band total-power candidate-over-truth ratio is in [0.8,1.25]",
+    "phase_sensitive_pass": "every domain, stream, and band candidate Fourier energy score is strictly lower than its paired independent-voxel V63 baseline",
+    "stream_reproducibility": "for every domain and band, absolute ln(stream-A/stream-B) is at most ln(1.15) separately for positive candidate energy scores and total-power ratios",
+    "numerical_pass": "all samples and metrics are finite, maximum bounded inverse-CDF error is at most 2e-6, every exact DC residual is at most 1e-7, and peak Ada allocation is below 28 GiB",
+    "select_V70_for_locked_development": "all one-point, spectral, phase-sensitive, stream-reproducibility, numerical, ancestry, and firewall rules pass without threshold changes",
+    "reject_before_development": "any required rule fails"
+  },
+  "fixed_branches": [
+    {
+      "condition": "select_V70_for_locked_development",
+      "classification": "query_aligned_latent_spatial_score_learns_cross_domain_joint_structure",
+      "next": "run_one_locked_development_sampling_and_the_unchanged_field_Q3_Q4_gates"
+    },
+    {
+      "condition": "reject_before_development",
+      "classification": "query_aligned_latent_spatial_score_does_not_learn_cross_domain_joint_structure",
+      "next": "stop_before_development_without_posthoc_training_sampling_or_gate_tuning"
+    }
+  ],
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit_by_gate": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_train_joint_structure_gate/decision.json",
+  "firewall": {
+    "checkpoint_access_before_fixed_training_complete": "forbidden",
+    "optimizer_or_gradient": "forbidden",
+    "validation_access": "forbidden",
+    "development_access": "forbidden",
+    "posthoc_seed_member_sampler_metric_or_threshold_tuning": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

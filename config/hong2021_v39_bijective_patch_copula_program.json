@@ -1,0 +1,86 @@
+{
+  "schema": "hong2021-v39-train-only-bijective-local-patch-copula-development-program-v1",
+  "status": "frozen_before_implementation_sampling_or_development_evaluation",
+  "purpose": "Preserve every intact V31 donor conditional-rank value and its within-patch structure while replacing global or additive query coupling by a target-free one-to-one local patch correspondence with an exact shuffled-query causal control.",
+  "parent_evidence": {
+    "v38_record": "config/hong2021_v38_result_record.json",
+    "v38_record_sha256": "cd7435f7e970e42bd3290186125eca305b5cf536fb2d5e6e4d410f4f2a50a1a9",
+    "required_classification": "linear_gaussian_query_conditioning_is_not_a_common_domain_repair",
+    "required_next": "freeze_a_train_only_nonparametric_local_patch_copula_with_bijective_overlap_consistency"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "selection_rule": "reuse every frozen V28/V31 query, donor identity, and donor isometry byte-for-byte"
+  },
+  "train_only_patch_descriptor": {
+    "block_factor": 8,
+    "block_grid": "8^3 nonoverlapping blocks, each containing 8^3 native voxels and spanning 2.5 Mpc/h",
+    "central_fields": ["log1p summed galaxy count", "count-weighted mean radial velocity", "exact population radial-velocity dispersion", "mean frozen V14 corrected backbone"],
+    "overlap_context": "periodic 3x3x3 neighborhood of all four central fields around every block, yielding 108 ordered components whose neighboring descriptors overlap",
+    "normalization": "common per-field mean and standard deviation fitted on all train block cells with exactly one-third total weight per TNG100, SIMBA, and Swift source",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v39/patch_descriptor.json",
+    "target_density_used": false
+  },
+  "bijective_assignment": {
+    "donor_preparation": "compute the exact V31 conditional-rank cube, apply the frozen donor isometry to both rank cube and target-free descriptor, and never translate or reselect the donor",
+    "descriptor_cost": "mean squared difference between the 108 standardized overlapping-context components of a query block and donor block",
+    "spatial_cost": "squared periodic block displacement divided by 3*(8/2)^2, bounded by one",
+    "total_cost": "descriptor_cost plus spatial_cost with fixed unit coefficients",
+    "solver": "scipy.optimize.linear_sum_assignment on the frozen 512x512 cost matrix; query block rows receive donor block columns",
+    "transport": "copy each complete 8^3 donor conditional-rank block to its assigned nonoverlapping query block; this exactly preserves the donor rank multiset and all within-block ranks",
+    "aligned_arm": "cost uses the actual query object's descriptor",
+    "shuffled_query_control": "cost uses the next frozen query descriptor cyclically in the same domain but inversion uses the unchanged actual query backbone",
+    "per_cube_rank_remapping": false,
+    "additive_query_predictor": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping": false,
+    "posthoc_Ak": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "arms": ["aligned_patch", "shuffled_query_control"],
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "primary_pass": "aligned_patch passes field plus Q3 and Q4 independently in every domain",
+    "patch_alignment_material": "aligned Q4/V31 <=0.75 and aligned Q4/shuffled <=0.90 in every domain",
+    "selection_role": "only aligned_patch can be selected"
+  },
+  "fixed_branches": [
+    {"condition": "primary_pass", "classification": "bijective_local_patch_copula_sufficient", "next": "seal_v39_and_await_explicit_approval_before_independent_gate"},
+    {"condition": "Q3 and Q4 pass every domain but any field check fails", "classification": "patch_copula_repairs_tails_but_block_seams_limit_morphology", "next": "freeze_overlap_add_rank_preserving_seam_repair_without_changing_assignments"},
+    {"condition": "patch_alignment_material but Q3 or Q4 still fails", "classification": "bijective_patch_alignment_is_causal_but_insufficient", "next": "freeze_two_level_coarse_to_fine_bijective_patch_copula"},
+    {"condition": "otherwise", "classification": "fixed_local_patch_copula_is_not_a_common_domain_repair", "next": "audit_backbone_observable_sufficiency_at_object_and_structure_level_before_any_further_generator"}
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact parent, V35 data/cache, V31 copula, selection, and reference hashes",
+    "source-balanced descriptor fit uses train inputs/backbones only",
+    "synthetic and real Hungarian assignments are complete one-to-one permutations",
+    "transport preserves the sorted donor conditional-rank values exactly",
+    "aligned and shuffled arms use identical donors/isometries and no density truth for assignment",
+    "one real sample per arm is finite with residual DC below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v39_e21_bijective_patch_copula",
+  "firewall": {
+    "validation_truth_used_for_descriptor_fit_or_assignment": false,
+    "validation_used_for_hyperparameter_choice": false,
+    "additive_query_predictor": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

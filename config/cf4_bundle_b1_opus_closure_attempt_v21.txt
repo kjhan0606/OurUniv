@@ -1,0 +1,15 @@
+VERDICT: CONDITIONAL
+
+1. Provenance and receipt integrity are adequate for a development-only closure. The tag-to-HEAD src/test diff is empty, the certificate SHA is pinned to d34bda4, and the 71 non-self pins verify with missing=0/mismatches=0 with self-exclusion and no mutual cycle. Metadata-only drift after the tag is acceptable because it cannot alter certified source or test behavior.
+
+2. The coverage-denominator adjudication is arithmetically closed and correctly downgraded from a data defect to a rendering defect. The contingency table is internally consistent (9+38=47 for each component; 9+9+38+8=64 with union=56), the checker now asserts these identities rather than restating them in prose, and the legacy per-voxel metric and proposed analytic latent-mode coverage both remain unadopted. The strict gate at 8/64 with a failing pooled guard is the honest weakest link.
+
+3. Arm no-attribution is an auditable disposition, but only under its stated scope. The fresh common-random-number block with shared truth/count-split/mark/posterior seeds and disjoint ranges is the right design, and paired flips are null at this resolution: no_phi gains 2 and loses 1, no_discrepancy gains 0 and loses 1, both gains 0 and loses 1. With native strict passes 2/2/2/1 out of 16, the per-arm resolution is roughly one flip, so the factorial is underpowered to detect anything but a large effect. Correct wording: "no D mechanism was resolvable at n=16," not "no mechanism exists."
+
+4. The controls do not isolate D cleanly. no_discrepancy substitutes C intensity for D intensity and no_phi removes gamma-Poisson overdispersion; both mutate likelihood and data-generating interfaces. Refusing attribution is conservative and defensible, and no D-only repair is authorized.
+
+5. Regression evidence is sufficient but narrowly scoped. The 30-test selected suite at exit 0 in 85.98 s, including coverage-contract and arm-isolation tests, addresses the v19 findings. Residual audit gap: the exact selected-suite node IDs should be pinned alongside the selection expression.
+
+6. The science boundary is correct and must survive verbatim: observational z=0 posterior NOT_CREATED, validation unopened, frontier promotion forbidden, B2 not started, 0.3 cMpc/h claim forbidden, widths diagnostic-only and frozen.
+
+NEXT: Close B1 as development-only NO-GO after record-only edits pinning the 30 selected-suite node IDs plus selection expression alongside the certificate SHA, and restating the arm finding as "no D mechanism resolvable at n=16 with confounded controls; attribution deferred, no D-only width or gate repair authorized"; no validation, B2, width, or gate change.

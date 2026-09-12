@@ -1,0 +1,120 @@
+{
+  "schema": "ouruniv-cf4-phasec-scan-generator-gate-v3-result-record-v1",
+  "date": "2026-09-01",
+  "status": "PASS_ALL_EIGHT_GENERATOR_GATE_RELEASE_MOCK_SAMPLER_MECHANICS_INDICES_0_AND_6",
+  "lineage": {
+    "commit": "214a2fc03ec3be0bacc10b9241c026350387e046",
+    "rerun_program": {
+      "path": "config/cf4_phasec_scan_generator_gate_v3_hardware_quarantine.json",
+      "sha256": "c665c94c061be3e768a53f6a4fd882be02cd9cae5ba9b2de632d8216c805f171"
+    },
+    "exact_gate_program": {
+      "path": "config/cf4_phasec_scan_generator_gate_v2.json",
+      "sha256": "07b1c0434b954a364f66d78ab6e6b8c63cfe5ba609909ad16b8b2fd897980cf7"
+    },
+    "exact_gate_implementation": {
+      "path": "src/cf4_phasec_scan_generator_gate_v2.py",
+      "sha256": "5552198373b2c1507d981c467de9b9a469e053a8af189e51aea20495bf3c8f4b"
+    },
+    "array_job_id": 329947,
+    "aggregate_job_id": 329948
+  },
+  "aggregate_artifact": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v3_aggregate",
+    "aggregate_sha256": "5278680d570c89c6d6f16b7f71ce507922941fd18d8a76c80cb93c4bc4d2e2b3",
+    "manifest_sha256": "410cb68054d3832b3721c83209232e2912d2b616528a884c58bdfc9a3b204f50",
+    "complete_sha256": "4903c379274a61aa6831e733022a4e395531ed38040e18d64dd1b5e7361aefba",
+    "independent_validation": "PASS"
+  },
+  "summary": {
+    "requested_seed_count": 8,
+    "valid_task_artifact_count": 8,
+    "passing_seed_count": 8,
+    "failing_seed_count": 0,
+    "all_seed_gate_pass": true,
+    "both_integrations_finite_for_all_seeds": true,
+    "time_convergence_pass_for_all_seeds": true
+  },
+  "worst_time_convergence_metrics": {
+    "density_cross_correlation_minimum": 0.9999996686763666,
+    "density_relative_L2_maximum": 0.0008180036817880388,
+    "velocity_cross_correlation_minimum": 0.9999999506028876,
+    "velocity_relative_L2_maximum": 0.0003204948095186739
+  },
+  "task_result_sha256": {
+    "2026083000": "38804a456fbd81ce9b4b6ef21290309d08b411499508a232c3f3ff753cc58c2b",
+    "2026083001": "625b3e76c7958a94223a087ff86bc95b9670642f64428c6708b08dfb9f72c946",
+    "2026083002": "2fc8b9fbfef1ac291f1e09469e27a558bb7f0d351b3b2f570d1c22426b9c5d18",
+    "2026083003": "6347970fc87b8f65c259f4c1798465d514ae95894d6fedb2a14bf94d0dd760ca",
+    "2026083004": "22da8b4a8facf757a9354813df42c0358a773b1e6907badfa374d6dfa669a00f",
+    "2026083005": "1f283d156822fcf5ff2c7eaf94cf3bf650f87bb0642f0060cb71ccd810d9e482",
+    "2026083006": "93f90e6e2f7723195b418f5b81c7ee093754c52b52cb548bb182dbfd377c8aef",
+    "2026083007": "c68a0dc67293f36b55dfc6869055a85ce1c90f24b4ed35f2de0eeb63b0f90b8d"
+  },
+  "hardware_provenance": [
+    {
+      "tasks": [0, 4],
+      "host": "syn05",
+      "uuid": "GPU-517eb59e-4cf4-618f-0dc8-fc036ec41ba8",
+      "device_record_sha256": [
+        "b137e1a7e03c6b7cdbaf87a16dc5f044c4f9f56ec720a2b2ca2207958d29cad6",
+        "3e8bc469113531ea007a557bbcab6b26c246acddb7e2722b80a098507be4307f"
+      ]
+    },
+    {
+      "tasks": [1, 5],
+      "host": "syn07",
+      "uuid": "GPU-c9a35b0a-49e9-8712-9f1b-93a09b459bf2",
+      "device_record_sha256": [
+        "0bcc456e7623f2c258017c57b216f7f90fe1d6565f8091673817847e2f7b3d34",
+        "d6ba9f0b9db2be7ad172ac230cca16fcc848842fdafc8dc09c8bfc6b8f708d69"
+      ]
+    },
+    {
+      "tasks": [2, 6],
+      "host": "syn07",
+      "uuid": "GPU-4e58987a-91dc-ba72-321d-ebc256c79194",
+      "device_record_sha256": [
+        "ba0b4850c7bd669b6ac9f18462c21d79d5a64ca89a766f10dd3bbfe15d7a6154",
+        "19434df86af616368024d71c2c92dccece664714923f8ecc7901d2741a8be16d"
+      ]
+    },
+    {
+      "tasks": [3, 7],
+      "host": "syn07",
+      "uuid": "GPU-b0c7be3f-d465-5ecc-5cad-cd4287d03f27",
+      "device_record_sha256": [
+        "4201b8c3a5c05ae51387a58200aae4fe9093214f63d6541df1576b259e0e94cb",
+        "9e77d7d176bac97aa39e4ffa04c93dfe31e1e62f2cd35070e5ccafc136da0824"
+      ]
+    }
+  ],
+  "resource_audit": {
+    "requested_host_memory_MiB_per_task": 9216,
+    "largest_sacct_batch_MaxRSS_KiB": 3520,
+    "elapsed_range": "00:00:18-00:00:20",
+    "note": "The unusually small CPU MaxRSS accounting does not supersede the prior observed 7031 MiB maximum; subsequent GPU jobs retain the 9216 MiB request."
+  },
+  "warning_audit": {
+    "numa_hwloc_binding_warning_on_some_tasks": true,
+    "scientific_gate_impact_observed": false,
+    "nonfinite_or_conservation_warning": false
+  },
+  "decision": {
+    "generator_gate_pass": true,
+    "sampler_mechanics_pilot_indices_allowed": [0, 6],
+    "sampler_mechanics_pilot_started": false,
+    "actual_observational_posterior_allowed": false,
+    "validation_or_Phase_D_allowed": false,
+    "failing_syn06_UUID_allowed": false,
+    "next_step": "implement and run the frozen mock-only sampler mechanics pilot for indices 0 and 6 with syn06 quarantined"
+  },
+  "scope_firewall": {
+    "actual_observational_datum_used": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

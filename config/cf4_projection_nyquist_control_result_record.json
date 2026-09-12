@@ -1,0 +1,109 @@
+{
+  "schema": "ouruniv-cf4-projection-nyquist-control-result-record-v1",
+  "status": "complete_pass_output_Nyquist_boundary_mechanism_isolated",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the consumed-only N576-to-N192 IID white-field control and separate the numerical released-shell failure from the independent CF4 posterior-family failure.",
+  "execution": {
+    "host": "LagEunha",
+    "git_commit": "54a1b7f0dab1fdfd15f5e7a5cd26658c2b0acbbb",
+    "started_at": "2026-08-16T09:52:53+09:00",
+    "ended_at": "2026-08-16T09:53:47+09:00",
+    "thread_limit": 1,
+    "process_table_polling_used": false,
+    "environment_sha256": "65b5e30d4f1dc31509c69276bf4a7a200451c9a859fdf11cc5f240a21a2a9d32"
+  },
+  "lineage": {
+    "program": "config/cf4_projection_nyquist_control_program.json",
+    "program_sha256": "fe878d420645dc00024fa98c3c07d90d7ee280d6f6b7adee1b9c426cf9d29092",
+    "implementation": "src/cf4_projection_nyquist_control.py",
+    "implementation_sha256": "04e1c815c413cdfe6e2bb81e594e4f6826ea5744fbf1b7dc14e628bf7ea1b8a7",
+    "legacy_projection": "src/cf4_make_ic.py",
+    "legacy_projection_sha256": "bc5ede41920df78d1561ac0b6dc3fbca97d59b2ef347f09f72bb81170ed3ee63",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/projection_nyquist_control/result.json",
+    "canonical_result_sha256": "0fdaebf137ff52abe508820c17163c5722e7efa505a93df393b92824e7e8f025",
+    "complete_marker_sha256": "954fb3bffbff99155ca70605241ef58999b15f4ad735dc4ce2b4106ab5043fe2"
+  },
+  "information_firewall": {
+    "IID_N576_white_fields_only": true,
+    "sample_count": 8,
+    "CF4_catalog_or_forward_operator_read": false,
+    "existing_V8_field_read": false,
+    "new_constrained_field_constructed": false,
+    "proposal_or_seed_selected": false,
+    "threshold_retuning_after_result": false
+  },
+  "results": {
+    "legacy_helper_exact_production_relative_RMS": 0.0,
+    "legacy_helper_exact_production_maximum_normalized_error": 0.0,
+    "boundary_affected_shell_indices_zero_based": [5, 6, 7],
+    "boundary_weight_fractions": [
+      0.018625890389869053,
+      0.04524481989082896,
+      0.10584828436467375
+    ],
+    "legacy_boundary_mean_Pwhite": [
+      0.8328546285397738,
+      0.831310851010115,
+      0.8244607662288452
+    ],
+    "legacy_boundary_power_deficits": [
+      0.16714537146022623,
+      0.16868914898988496,
+      0.17553923377115477
+    ],
+    "legacy_all_mode_mean_Pwhite": [
+      0.9965456462483245,
+      0.992073823785875,
+      0.9798514647821255
+    ],
+    "sealed_V8_all_mode_mean_Pwhite": [
+      0.9979532752032573,
+      0.9914083656977002,
+      0.9813580703909333
+    ],
+    "legacy_white_control_minus_V8_absolute": [
+      0.001407628954932738,
+      0.000665458088174864,
+      0.0015066056088077762
+    ],
+    "variance_preserving_fold_boundary_mean_Pwhite": [
+      1.000802418223307,
+      0.9999037086875374,
+      0.9937800826486636
+    ],
+    "variance_preserving_fold_all_mode_mean_Pwhite": [
+      0.9996738233222189,
+      0.999701777279725,
+      0.9977736239243578
+    ]
+  },
+  "gates": {
+    "legacy_helper_exact": true,
+    "legacy_interior_white": true,
+    "variance_preserving_all_shells_white": true,
+    "variance_preserving_boundary_white": true,
+    "legacy_boundary_deficit_detected": true,
+    "legacy_matches_V8_boundary_shells": true,
+    "fold_improves_every_boundary_shell": true,
+    "mechanism_isolated": true
+  },
+  "interpretation": {
+    "numerical_cause": "On an even N192 output mesh, source frequencies +Nout/2 and -Nout/2 form one discrete output-Nyquist equivalence class. The legacy slice keeps one representative, after which the real inverse transform removes the inconsistent Hermitian boundary component. This lowers boundary power by about 17 percent.",
+    "V8_L5_attribution": "Only released shells 5--7 contain output-Nyquist boundary modes. Their boundary fractions grow from 1.86 to 10.58 percent, producing the same increasingly negative aggregate shell-power pattern as V8. The independent white control matches all three sealed V8 shell means within 0.00151 absolute power.",
+    "repair_mechanism": "Combining every source +/- output-Nyquist class with 1/sqrt(multiplicity) normalization preserves Gaussian unit variance and restores all affected aggregate shell powers close to one.",
+    "scope_limit": "This control explains and repairs the numerical L5 high-shell power mechanism only. It does not repair the L3/L4 failure caused by using 256 high-k variants of one fixed CF4 posterior parent."
+  },
+  "decision": {
+    "future_only_variance_preserving_projection_contract_authorized": true,
+    "retroactive_V8_mutation_authorized": false,
+    "current_single_parent_N64_freeze_architecture_reopened": false,
+    "V9_or_seed_promotion_authorized": false,
+    "RAMSES_authorized": false,
+    "next": [
+      "Freeze and test a paired variance-preserving N192-to-N576 prolongation and N576-to-N192 restriction contract, including exact output-Nyquist round-trip identity.",
+      "Build future proposals over independent members of the sealed CF4 N192 posterior bank rather than variants of parent3429.",
+      "Keep the CF4 parent index as part of the proposal state and include any Local-Group proposal/importance correction without selecting a seed.",
+      "Require a fresh prospective CF4 posterior-family gate before any PM forward promotion."
+    ]
+  }
+}

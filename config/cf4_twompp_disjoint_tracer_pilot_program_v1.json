@@ -1,0 +1,172 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_TECHNICAL_INPUT_PILOT_ONLY",
+  "purpose": "Close the 2M++ source, angular-completeness, coordinate, CF4-overlap, population-support, and Carrick-reference input gates before implementing a joint velocity-plus-density information solver.",
+  "authorization": {
+    "authorization_basis": "The user approved the recommended independent_z0_density_tracer_information_budget_design stage on 2026-09-01.",
+    "technical_pilot": true,
+    "single_Slurm_submission": true,
+    "GPFS_read": true,
+    "GPFS_write": true,
+    "network_access_during_pilot": false,
+    "field_inference": false,
+    "likelihood_datum_consumed_by_field_inference": false,
+    "joint_information_production": false,
+    "resolution_increase": false,
+    "new_truth_seed": false,
+    "untouched_256_validation": false,
+    "ML_training": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "selected_tracer_route": {
+    "primary": "raw 2M++ real-galaxy counts with official ARES/BORG angular completeness maps and a conservative CF4-disjoint subset",
+    "Carrick_density_cube_role": "provenance-bound coordinate and qualitative reference only; never an exact truth or zero-uncertainty likelihood datum",
+    "reason": "The raw-count route retains an explicit selection, bias, shot-noise, RSD, and model-discrepancy contract. The published Carrick cube is already a reconstructed and 4 cMpc/h-smoothed product and lacks a released voxel covariance.",
+    "observational_resolution_claim_cMpc_h": null
+  },
+  "inputs": {
+    "twompp_catalog": {
+      "path": "data/2mpp_catalog.csv",
+      "bytes": 7528160,
+      "sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d",
+      "source": "CDS VizieR J/MNRAS/416/2840/catalog"
+    },
+    "cf4_twompp_crossmatch": {
+      "path": "data/cf4_2mpp_crossmatch_v1.csv",
+      "bytes": 2924366,
+      "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"
+    },
+    "cf4_twompp_crossmatch_result": {
+      "path": "config/cf4_2mpp_crossmatch_v1_result.json",
+      "bytes": 2238,
+      "sha256": "3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a"
+    },
+    "ares_repository": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed",
+      "remote": "https://bitbucket.org/bayesian_lss_team/ares.git",
+      "commit": "6cf608ed8c70474c15c8ca76cce675742e291c71"
+    },
+    "completeness_11_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz",
+      "bytes": 459473,
+      "sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace"
+    },
+    "completeness_12_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz",
+      "bytes": 1008380,
+      "sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9"
+    },
+    "carrick_density": {
+      "path": "/gpfs/kjhan/CF4/observations/twompp_carrick_v1/twompp_density.npy",
+      "url": "https://cosmicflows.iap.fr/assets/data/twompp_density.npy",
+      "bytes": 135796824,
+      "sha256": "5e0b8473628c8ae94540cb6cf36df22f3aa85b262959effaf2c6d16f72a0fdb6"
+    },
+    "carrick_readme": {
+      "path": "/gpfs/kjhan/CF4/observations/twompp_carrick_v1/twompp_README.txt",
+      "url": "https://cosmicflows.iap.fr/assets/data/twompp_README.txt",
+      "bytes": 1549,
+      "sha256": "85b240f48c12f37e24ad9db397016f29973480009381a476ff641b79184bfec6"
+    }
+  },
+  "cosmology": {
+    "source": "Lavaux and Jasche 2016 2M++ BORG application",
+    "Omega_m": 0.3175,
+    "Omega_b": 0.049,
+    "h": 0.6711,
+    "H0_km_s_Mpc": 67.11,
+    "Tcmb_K": 2.7255
+  },
+  "no_double_counting": {
+    "policy": "Before any 2M++ density use, exclude every 2M++ target attached to any CF4 non-unmatched class, not only secure_joint_mark. CF4 individual positions remain fixed likelihood design and are never a separate density factor.",
+    "excluded_crossmatch_classes": [
+      "secure_joint_mark",
+      "coordinate_redshift_conflict",
+      "nonreciprocal_collision",
+      "extended_review_candidate"
+    ],
+    "expected_unique_2Mpp_targets_excluded": 17007,
+    "ZoA_fake_rows": "excluded",
+    "cloned_redshift_rows": "excluded",
+    "shared_redshift_latent_required_if_excluded_rows_are_ever_reintroduced": true
+  },
+  "tracer_design": {
+    "coordinate_frame": "supergalactic Cartesian, observer at box centre",
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "radial_min_cMpc_h": 5.0,
+    "radial_max_cMpc_h": 180.0,
+    "radial_boundary_reason": "Retain at least one N32 cell between every accepted tracer and the periodic box face.",
+    "bright_apparent_K_max": 11.5,
+    "faint_apparent_K_max": 12.5,
+    "absolute_K_bright": -25.0,
+    "absolute_K_faint": -21.0,
+    "absolute_K_edges": [-25.0, -23.6666666666667, -22.3333333333333, -21.0],
+    "population_count": 6,
+    "population_definition": "two apparent-magnitude samples times three equal-width absolute-K bins",
+    "Ksmag_semantics": "published corrected K2M++ apparent magnitude; Galactic extinction, surface-brightness dimming, and mean evolution corrections are already included by the source catalogue",
+    "radial_selection_future_model": "Schechter luminosity function with Mstar=-23.28 and alpha=-0.94, evaluated separately for all six populations",
+    "angular_selection_future_model": "official NSIDE=512 RING completeness map evaluated at every tracer and every empty N32 voxel direction",
+    "shot_noise_future_baseline": "Poisson counts after angular and radial selection thinning",
+    "bias_future_model": "six positive luminosity-dependent nuisance parameters; a universal scalar bias is forbidden",
+    "RSD_future_model": "linear coherent radial displacement plus a calibrated FoG/model-discrepancy term; redshift-space positions may not be silently treated as exact real-space positions"
+  },
+  "catalog_gate": {
+    "expected_rows": 72973,
+    "eligible_disjoint_rows_min_inclusive": 20000,
+    "all_six_populations_must_be_nonempty": true
+  },
+  "angular_completeness_gate": {
+    "HEALPix_NSIDE": 512,
+    "ordering": "RING",
+    "pixel_values_range_inclusive": [0.0, 1.0],
+    "median_absolute_difference_max_inclusive": 0.01,
+    "p95_absolute_difference_max_inclusive": 0.05,
+    "comparison": "official map sampled in Galactic coordinates against the per-galaxy c11.5 or c12.5 catalogue mark"
+  },
+  "carrick_reference_gate": {
+    "shape": [257, 257, 257],
+    "dtype": "float64",
+    "grid_spacing_cMpc_h": 1.5625,
+    "Gaussian_smoothing_cMpc_h": 4.0,
+    "density_contrast_minimum_allowed": -1.000001,
+    "full_cube_must_be_finite": true,
+    "field_likelihood_role": "none in this pilot"
+  },
+  "future_information_gate_not_executed_by_pilot": {
+    "lowest_bin_recovered_information_min_inclusive": 0.8,
+    "lowest_bin_bootstrap_lower_min_inclusive": 0.8,
+    "correlation_r_min_inclusive": 0.7,
+    "residual_power_ratio_max_inclusive": 0.5,
+    "frontier_rule": "nonzero contiguous joint delta-theta prefix",
+    "required_scenarios": [
+      "velocity_only_frozen_baseline",
+      "velocity_plus_disjoint_2Mpp_known_selection_known_bias_ceiling",
+      "velocity_plus_disjoint_2Mpp_bias_marginalized",
+      "velocity_plus_disjoint_2Mpp_selection_RSD_discrepancy_marginalized"
+    ]
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot.py",
+    "sha256": "695a21be6d5bb4cf51fee4f2c5c8d7ce5c1629dab7c744caf8a8960765fa84ec"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "cpus_per_task": 1,
+    "expected_peak_memory_MiB": 700,
+    "requested_memory_MiB": 1024,
+    "time_limit": "00:15:00",
+    "memory_headroom_multiplier_minimum": 1.2,
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v1/pilot",
+    "maximum_submissions": 1,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "refuse_overwrite": true,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}

@@ -1,0 +1,45 @@
+You are the requested Fable5 plan auditor for OurUniv / CF4. Read-only audit;
+no tools, code changes, jobs, external calls or filesystem investigations.
+Respond in Korean, <=1200 words, with specific actionable conclusions.
+
+FINAL GOAL: actual CF4 peculiar velocity + galaxy counts + explicit MW/M31/M33
+constraints -> present z=0 density/velocity posterior -> LCDM-compatible IC ->
+forward validation -> phase-consistent LG zoom. LG numerical cells <=0.3 cMpc/h
+(proposed0.1875), surroundings1–2 (proposed1.5), box384. Not unique high-k phase
+recovery, not direct CF4->IC restart, not RT/AGN/dust. Fine unconstrained modes
+remain conditional prior content. sigma_v is physical dispersion, distinct from
+posterior mean-velocity uncertainty. No observed LG map yet: actual diagnostic
+map remains12 cMpc/h; q_S member/field joint law and global1.5 inference missing.
+
+USER CONCERNS: months spent on diagnostics rather than actual density maps;
+excessive gate code obstructs progress. GPFS is ordinary shared storage: no
+filesystem probes. Slurm numerical work only, no manual syn101. Small substantive
+bundles, not step-by-step audit ladders. User approves entering the next bundle
+but asks YOU to judge it first. Driver Astra backs up only if your invocation
+fails; an adverse verdict is not to be treated as such a failure.
+
+EVIDENCE: corrected flow6000steps all16 draws fail original morphology gates.
+TF32 numerical inverse issue fixed, full context matched. Frozen analysis337496
+used v1/v2,2train/2heldout cubes,2draws each, strictFP32, no optimizer. v2 finest
+heldout high-band power/native: teacher-parent0.650 vs rollout0.390; training
+0.676 vs0.297. v2 heldout rollout .75/.375/.1875:0.766/0.571/0.390. Finest
+native NLL improves both splits, but training rollout log-power error worsens.
+Both single-step deficit and accumulated deficit; underoptimization vs capacity
+not isolated. Historically reused single TNG box, no independent certification.
+
+The full proposed design follows this request. Please audit:
+1. Q-GOAL: does the next bundle materially advance the actual final goal, or
+   just improve TNG-looking samples while the LG joint law stays absent?
+2. Q-LEAN: are the planned checks/metrics/code proportionate? Identify precisely
+   what to cut/reuse/defer; do not demand a large generic verification framework.
+3. Is the likelihood-ratio energy-score estimator mathematically valid and
+   computationally credible at this dimension, with mixed categorical atoms?
+   Is the matched1000-update control/repair experiment worth doing NOW?
+4. Does a native LG readout/calibration without fitted q_S deliver enough? If
+   not, what is the SMALLEST executable alternative that connects LG to F and
+   does not falsely call grid cells resolved halos or double-count observations?
+5. Return GO / CONDITIONAL GO / NO-GO, essential changes, deferred items, and
+   one bounded next bundle. If a change expands scope/resources, say explicitly.
+No model-family shopping, indefinite diagnostics, arbitrary power boosts or
+new simulation programmes. You may reject the plan; explain evidence and
+give a feasible narrower alternative, or state what cannot yet be justified.

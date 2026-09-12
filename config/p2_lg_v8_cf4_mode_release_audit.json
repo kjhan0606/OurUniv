@@ -1,0 +1,116 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-mode-release-audit-program-v1",
+  "status": "frozen_after_reference_pass_before_V8_metrics",
+  "frozen_date": "2026-08-15",
+  "purpose": "Prospectively audit every V8 N192 projection against the sealed reference-only CF4 and released-mode calibration without selecting a seed or opening any P1/P2 subset.",
+  "implementation": {
+    "path": "src/cf4_lg_mode_release_audit.py",
+    "sha256": "2e5af56460a307feb2b8e401cc4a645fc4c3cb235f4be4ff6a6f32f3396c2dc5"
+  },
+  "inputs": {
+    "reference_program": {
+      "path": "config/p2_lg_v8_cf4_mode_release_reference.json",
+      "sha256": "c97a7e4c071c569fea303f9358b8ec002bc226a2359d2eeb83898d49cdc5253c"
+    },
+    "reference_result_record": {
+      "path": "config/cf4_lg_v8_mode_release_reference_result_record.json",
+      "sha256": "35a823bd3cbf8e85ca08666450bfecef401a1f90baf6e4c5e015c92022ec09e6"
+    },
+    "reference_calibration": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+      "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988"
+    },
+    "V8_terminal_record": {
+      "path": "config/cf4_lg_v8_result_record.json",
+      "sha256": "a726e656e165ae48524292af02955b938dd616c03c5c24536c18cb59a6551786"
+    },
+    "V8_autopsy_result_record": {
+      "path": "config/cf4_lg_v8_joint_support_autopsy_result_record.json",
+      "sha256": "9e924394aa8fe722b78fb7a421718bfdda437ade893b3a337017bbee11973b66"
+    },
+    "proposal_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v8_z0_importance/lg_peak_proposals_manifest.json",
+      "sha256": "393710e6970517a5b2e27927f625fd148714676c0a283767fe1d6f1d20656f00"
+    },
+    "projection_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v8_z0_importance/parent_projection_manifest.json",
+      "sha256": "73b4c469ca38b971af44f3c460022e631fa1e792ca6860c59ae8d3a3da7ecdd8"
+    },
+    "V8_proposal_config": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    }
+  },
+  "source_dependencies": {
+    "reference_statistics": {
+      "path": "src/cf4_lg_mode_release_reference.py",
+      "sha256": "4ecfc294cecb61293de8585807ed0d7ecd9a3f3279659e5e4cec364d7be36e52"
+    },
+    "CF4_operator": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "released_mask_and_proposal": {
+      "path": "src/cf4_lg_peak_cr.py",
+      "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"
+    },
+    "exact_projection": {
+      "path": "src/cf4_make_ic.py",
+      "sha256": "bc5ede41920df78d1561ac0b6dc3fbca97d59b2ef347f09f72bb81170ed3ee63"
+    }
+  },
+  "required_status": {
+    "reference_result_record": "complete_pass_authorize_opening_v8_projection_metrics_only",
+    "reference_calibration": "complete_reference_calibration_parent3429_pass",
+    "V8_terminal_record": "complete_fail_joint_statistical_physical_gate_v8_closed",
+    "V8_autopsy_result_record": "complete_pass_lineage_and_terminal_reproduction_authorize_CF4_mode_release_audit_only"
+  },
+  "information_firewall": {
+    "reference_thresholds_sealed_before_V8_metrics": true,
+    "V8_projection_CF4_metrics_opened_now": true,
+    "all_256_projections_required": true,
+    "P1_P2_or_seed5422_subset_allowed": false,
+    "threshold_retuning_after_results": false,
+    "new_seed_or_forward_generation_allowed": false,
+    "seed_selection_allowed": false,
+    "RAMSES_allowed": false
+  },
+  "proposal_seed_range_python": [5269, 5525],
+  "reference_seed_range_python": [3193, 3449],
+  "geometry": {
+    "proposal_N": 576,
+    "projection_N": 192,
+    "frozen_N": 64,
+    "box_size_mpc_h": 384.0
+  },
+  "proposal_config_sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+  "parent3429": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+    "sha256": "5db9b43a00f71ff9bbf291e9979df57b26fa0bd6b3de7d5b3f9e87b51c9bc463"
+  },
+  "calibration_policy": {
+    "threshold_source": "Use every L0-L5 threshold, transform, quantile, bootstrap scale, and critical value exactly as stored in the hash-pinned reference program and calibration.",
+    "L0_failure_action": "Write an L0 fail result and stop before constructing the CF4 forward operator or calculating any V8 CF4/released-mode metric.",
+    "permutation_iterations": 100000,
+    "permutation_seed": 2026081503,
+    "permutation_rng": "NumPy Generator PCG64DXSM",
+    "permutation_labels": "One common 255/256 split of each pooled 511-row vector for all nine L3 coordinates.",
+    "simultaneous_envelope": "Use the sealed joint L4/L5 99% bootstrap critical value and coordinate scales without recalibration."
+  },
+  "metric_implementation": {
+    "L0_projection": "For every seed, call the hash-pinned cf4_make_ic.fourier_resample_white_field on the N576 s_conditioned array and compare the resulting float32 N192 spatial field with the stored s_out. Divide RMS and maximum absolute error by RMS(recomputed N192).",
+    "L1_frozen_modes": "Apply the exact complement of free_rfft_mask(192,64) to norm='ortho' rFFT coefficients of each N192 proposal and parent3429. Divide coefficient RMS and coefficient maximum absolute difference by the RMS of parent3429 coefficients on that exact F64 mask.",
+    "L3": "Use marginal deviance per CF4 row for the six permutation coordinates; raw-deviance and per-row forms are equivalent under the positive common CF4 row count for all order and shift gates. Extra median/Q90 thresholds are reported in raw-deviance units.",
+    "L4_L5": "Apply the transforms, coordinate Q99 values, bootstrap scales, and single joint simultaneous critical value stored in the sealed reference calibration."
+  },
+  "storage": {
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_audit/result.json",
+    "write_policy": "exclusive create; an existing path is immutable and may not be overwritten"
+  },
+  "decision": {
+    "on_any_L0_to_L5_failure": "Current N64-freeze architecture is V9 NO-GO; do not select a seed, extend the bank, or run RAMSES.",
+    "on_all_L0_to_L5_pass": "Authorize design of a new prospective V9 only; do not promote a V8 seed or run RAMSES.",
+    "seed_promotion_authorized_now": false,
+    "RAMSES_authorized_now": false
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "ouruniv-cf4-kf-bin-manifest-design-v2",
+  "date": "2026-08-30",
+  "status": "user_approved_design_frozen_numerical_preflight_pending",
+  "stage": "KF-DESIGN",
+  "predecessor": {
+    "design_path": "config/cf4_kf_bin_manifest_design_v1.json",
+    "design_raw_sha256": "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9",
+    "inherited_without_change": [
+      "analysis_lattice",
+      "native_bin_design",
+      "independent_real_mode_count",
+      "ROI_geometry",
+      "ROI_window_and_leakage_design.window"
+    ],
+    "failed_preflights": [
+      {
+        "Slurm_job_id": 327817,
+        "version": "v1",
+        "status": "FAILED_NUMERICAL_PRECHECK",
+        "artifact_or_COMPLETE_published": false,
+        "cause": "single-interval oscillatory radial transform and fixed-mu quadrature were numerically unresolved"
+      },
+      {
+        "Slurm_job_id": 327893,
+        "version": "v2",
+        "implementation_commit": "2eaac43236ba2a3960a4dfd4239d9c7f4d33afac",
+        "status": "PRECHECK_FAIL",
+        "artifact_or_COMPLETE_published": false,
+        "cause": "tensor shell Gauss-Legendre did not resolve the ko approximately equal to ki diagonal ridge for large and oscillatory windows"
+      }
+    ],
+    "design_v1_incompatibility": "Requiring a supported suffix through the terminal k_Ny bin conflicts with physical finite-window leakage above the analysis Nyquist; the terminal bin may legitimately fail the outside-analysis gate."
+  },
+  "authority": {
+    "authorization_basis": "current_user_approval_for_versioned_design_correction",
+    "design_v2_frozen": true,
+    "ROI_geometry_frozen_and_inherited": true,
+    "numerical_preflight_execution_authorized_here": false,
+    "production_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "science_inference_authorized": false,
+    "scientific_leakage_decision_authorized": false,
+    "Slurm_submission_authorized": false,
+    "GPFS_read_authorized": false,
+    "GPFS_write_authorized": false,
+    "network_access_authorized": false
+  },
+  "analysis_lattice": {
+    "box_size_cMpc_h": 384.0,
+    "grid_spacing_cMpc_h": 0.3,
+    "cells_per_axis_N": 1280,
+    "exact_identity": "N * grid_spacing_cMpc_h = box_size_cMpc_h",
+    "fundamental_formula": "k_f = 2*pi/L",
+    "fundamental_h_Mpc": 0.016362461737446838,
+    "isotropic_analysis_Nyquist_formula": "k_Ny = pi/grid_spacing_cMpc_h",
+    "isotropic_analysis_Nyquist_h_Mpc": 10.471975511965978,
+    "DFT_integer_frequency_convention_per_axis": {
+      "minimum_inclusive": -640,
+      "maximum_inclusive": 639
+    },
+    "DC_mode_included": false,
+    "radial_mode_domain": "0 < |k| <= k_Ny",
+    "cube_corner_modes_included": false,
+    "input_or_claim_candidate_above_kNy_allowed": false,
+    "numerical_grid_limit_is_not_a_claim_frontier": true,
+    "observational_resolution_claim_created_by_this_design": false
+  },
+  "native_bin_design": {
+    "first_lower_edge": "k_f",
+    "edge_ratio": "2^(1/4)",
+    "delta_log2_k": 0.25,
+    "construction": "The exact 37 complete quarter-octave bins plus one terminal truncated bin from design v1 are retained.",
+    "complete_native_bin_count_for_frozen_lattice": 37,
+    "terminal_truncated_bin_count_for_frozen_lattice": 1,
+    "complete_bin_interval": "lower inclusive and upper exclusive",
+    "terminal_bin_interval": "lower inclusive and k_Ny upper inclusive",
+    "representative_k": "geometric center sqrt(lower_edge * upper_edge)",
+    "record_every_native_bin": true,
+    "record_zero_mode_bins": true,
+    "record_failed_bins": true,
+    "prefix_suffix_or_failed_bin_omission_allowed": false,
+    "bin_reordering_allowed": false,
+    "shortened_Nyquist_allowed": false,
+    "user_science_cutoff_allowed": false
+  },
+  "independent_real_mode_count": {
+    "inherit_exactly_from_design_v1": true,
+    "enumeration_domain": "integer DFT lattice [-640,639]^3 restricted to 0 < n_x^2+n_y^2+n_z^2 <= 640^2",
+    "conjugate_pair_and_self_mode_convention_unchanged": true,
+    "DC_excluded": true,
+    "minimum_modes_for_greedy_low_mode_merge": 32,
+    "truth_or_candidate_input_allowed": false
+  },
+  "ROI_geometry_and_window": {
+    "inherit_exactly_from_design_v1": true,
+    "predecessor_section_bindings": [
+      "ROI_geometry",
+      "ROI_window_and_leakage_design.window"
+    ],
+    "ROI_ids": [
+      "Local_Group",
+      "Virgo",
+      "Coma",
+      "Local_Void",
+      "Bootes_Void",
+      "observer_environment"
+    ],
+    "numeric_window_radii_cMpc_h": [
+      5.0,
+      6.0,
+      8.0,
+      31.0
+    ],
+    "Local_Group_and_observer_numeric_window_shared_but_semantics_separate": true,
+    "scores_may_be_summed": false,
+    "truth_candidate_or_result_dependent_change_allowed": false
+  },
+  "diagnostic_output_domain": {
+    "purpose": "analytic window-normalization diagnostics only",
+    "creates_DFT_lattice_modes": false,
+    "creates_scientific_claim_candidates": false,
+    "input_and_claim_candidate_domain": "k_f <= k <= k_Ny",
+    "lower_guard": "0 <= k_output < k_f",
+    "analysis_output": "k_f <= k_output <= k_Ny using the same 38 native bins",
+    "upper_guard": "k_Ny < k_output <= 2*k_Ny",
+    "far_tail": "k_output > 2*k_Ny",
+    "q_cumulative_required_max": "3*k_Ny",
+    "outside_analysis_identity": "1-analysis_column_sum = lower_guard + upper_guard + far_tail",
+    "identity_tolerance": 0.0005,
+    "total_through_upper_guard_max": 1.0005,
+    "far_tail_min_with_tolerance": -0.0005,
+    "clipping_or_renormalization_before_numerical_PASS_allowed": false
+  },
+  "shell_integration_v3": {
+    "angular_cumulative": "F(q)=integral_0^q t*|A(t)|^2*S(t) dt",
+    "coordinate_map": "u=k_output+k_input; v=k_output-k_input",
+    "integral": "I=integral_(a-d)^(b-c) dv integral_u_low^u_high du (u^2-v^2)/8 * [F(u)-F(abs(v))]",
+    "u_low": "max(2a-v,2c+v)",
+    "u_high": "min(2b-v,2d+v)",
+    "v_split_points": "sorted unique endpoints plus internal 0, a-c, b-d",
+    "outer_v_method": "deterministic composite Gauss-Legendre with maximum panel width 2*pi/[(2R+max_pair_distance)*v_period_samples]",
+    "inner_u_method": "Gauss-Legendre; the F(abs(v)) polynomial factor is integrated analytically",
+    "normalization": "2*pi/[input_shell_k_squared_volume * (2*pi)^3 * integral W^2 dV]",
+    "reciprocity": "analysis unnormalized K_out,in must equal K_in,out within frozen tolerance",
+    "truth_or_candidate_data_allowed": false
+  },
+  "frozen_numerics": {
+    "convergence_abs_tolerance": 0.0005,
+    "mode_count_convolution_rounding_abs_tolerance": 1e-05,
+    "coarse": {
+      "moment_order": 96,
+      "u_order": 6,
+      "v_period_samples": 16,
+      "v_panel_order": 4,
+      "q_period_samples": 16,
+      "q_panel_order": 4,
+      "parseval_tail_x": [
+        384.0,
+        768.0
+      ]
+    },
+    "fine": {
+      "moment_order": 160,
+      "u_order": 10,
+      "v_period_samples": 32,
+      "v_panel_order": 8,
+      "q_period_samples": 32,
+      "q_panel_order": 8,
+      "parseval_tail_x": [
+        512.0,
+        1024.0
+      ]
+    },
+    "coarse_fine_rules_independent": true,
+    "classification_must_match": true,
+    "guard_decomposition_must_pass": true,
+    "reciprocity_must_pass": true,
+    "post_result_tuning_allowed": false
+  },
+  "native_bin_support_and_proposal": {
+    "raw_support_gates": {
+      "response_contained_in_b_minus_1_b_b_plus_1_min_inclusive": 0.9,
+      "outside_analysis_fraction_max_inclusive": 0.01,
+      "localized_effective_independent_mode_count_min_inclusive": 32,
+      "numerical_normalization_valid_required": true,
+      "combination": "all conditions required"
+    },
+    "terminal_bin_failure_allowed": true,
+    "supported_suffix_through_terminal_required": false,
+    "contiguous_run_enumeration": "retain every maximal contiguous run of raw-supported native bins",
+    "deterministic_proposal_selection": "highest upper k, then more bins, then larger summed independent-real-mode count",
+    "proposal_semantics": "geometry_and_window_only_not_a_CF4_observational_effective_resolution_or_scientific_frontier",
+    "all_supported_and_failed_bins_retained": true,
+    "post_result_threshold_or_geometry_change_allowed": false
+  },
+  "publication_and_science_state": {
+    "precheck_may_publish_only_on_numerical_PASS": true,
+    "final_manifest_materialization_authorized": false,
+    "k_boundary_claim_created": false,
+    "observational_effective_resolution_claim_created": false,
+    "production_or_science_inference_authorized": false,
+    "KF_EXPAND_authorized": false
+  }
+}

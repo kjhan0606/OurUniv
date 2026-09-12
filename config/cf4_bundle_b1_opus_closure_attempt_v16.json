@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v16",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "ae15de0",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "CONDITIONAL_NO_GO_UNTIL_LOCAL_REPAIRS",
+  "risk_level": "MODERATE",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v16.txt",
+  "findings": {
+    "grid_wrap_source_confirmed": true,
+    "periodic_test_numerical": false,
+    "dependent_count_information_v1_unlabelled_pre_repair": true,
+    "repaired_dependency_pinned_in_all_diagnostics": false,
+    "reported_metrics_faithful": true,
+    "width_mark_validation_firewalls": true,
+    "stale_mode_next_action": true,
+    "stale_validation_range_metadata": true,
+    "invalid_independent_n512_power_claim": false,
+    "observational_z0_posterior": false,
+    "validation_opened": false,
+    "B2_IC_FORWARD": false
+  },
+  "required_next": [
+    "Byte-level verify every implementation and current-artifact hash in the result record.",
+    "Relabel count-information v1 as pre-periodic-RSD superseded or regenerate it.",
+    "Pin the repaired base dependency artifact in calibration, mode and derivative outputs.",
+    "Replace the source-string periodic test with numerical whole-grid and edge-continuity checks.",
+    "Remove the stale mark-arm next action from the mode diagnostic and regenerate dependents.",
+    "Correct the sealed replacement validation range metadata in the base result.",
+    "Freeze the width policy before opening validation."
+  ],
+  "recommendation": "Accept grid-wrap repair and regenerated metrics as technically credible, but do not close B1 or open validation/B2 until required local provenance and numerical-test repairs 1-6 are complete."
+}

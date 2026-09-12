@@ -1,0 +1,105 @@
+{
+  "schema": "hong2021-v30-deterministic-backbone-local-condition-audit-program-v1",
+  "status": "frozen_before_implementation_or_development_audit_execution",
+  "purpose": "Determine whether V29 failed because the deterministic current-density backbone is underfit, or because the physical residual is locally coupled to the backbone and cannot be transplanted independently.",
+  "parent_evidence": {
+    "v29_registry": "config/hong2021_v29_development_program.json",
+    "v29_registry_sha256": "a6f356ce9825f528177b30e146759a7d77a09091c2fd191020fa58219cb0fa40",
+    "v29_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v29_e17_direct_physical_residual/development_decision.json",
+    "v29_decision_sha256": "7e745a3b435d633fb30b10ba3dc636a2dfa1bd203b8dd1850442d56796dfb3d9",
+    "v29_decision_digest_sha256": "269111e44b18ddaa753ca50925623a4ba82166c133f04f8da67339084bfa0b92",
+    "required_classification": "direct_physical_residual_transport_still_mismatches_validation_population",
+    "required_next": "replace_deterministic_current_density_backbone_and_local_condition_representation"
+  },
+  "development_domains": {
+    "TNG100": {
+      "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5",
+      "data_sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65",
+      "v4_baseline_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/tng_validation.h5",
+      "v4_baseline_cache_sha256": "0d3d453a007aca81aa267b1d31f9d58e9377ad22cf7365e5e2873b54764ada1b",
+      "v14_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+      "v14_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "objects": 93
+    },
+    "SIMBA": {
+      "data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5",
+      "data_sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910",
+      "v4_baseline_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/simba_validation.h5",
+      "v4_baseline_cache_sha256": "a77ea95b8d71d7a88f2206529e481ea33c3044c5b5a69d54d3b2a8d4666d6fa7",
+      "v14_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+      "v14_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "objects": 64
+    },
+    "Swift": {
+      "data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+      "data_sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4",
+      "v4_baseline_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/swift_eagle_validation.h5",
+      "v4_baseline_cache_sha256": "945d510530ce2ea227dad83dea4414d054f4e4ce8a2a6997a178467dbc9875ae",
+      "v14_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+      "v14_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "objects": 148
+    }
+  },
+  "frozen_measurements": {
+    "density_coordinate": "y=log10(rho/box_mean)/4.5",
+    "v4_backbone": "frozen V4 conditional_mean",
+    "v14_backbone": "V14 corrected conditional_mean plus train-only predicted residual DC",
+    "fourier_edges_h_mpc": [0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, "inf"],
+    "fourier_fields": "per-cube mean-centered y fields; aggregate auto/cross power before forming power ratio and phase coherence",
+    "input_pool_factors": [1, 2, 4, 8],
+    "pooled_count": "log1p of the exact galaxy-count sum in each nonoverlapping block",
+    "pooled_velocity": "galaxy-count-weighted mean radial peculiar velocity; empty blocks excluded from its correlation",
+    "local_condition_checks": [
+      "truth correlation with pooled count and velocity",
+      "V4 and V14 backbone correlation with truth",
+      "residual RMSE in observed and unobserved native cells",
+      "V14 residual mean and standard deviation in V14-backbone voxel deciles"
+    ],
+    "coupling_control": {
+      "residual": "exact validation truth minus its own V14 backbone",
+      "operation": "periodic translation of each complete residual cube while keeping its own backbone fixed",
+      "translations_cells": [[32, 0, 0], [0, 32, 0], [17, 29, 37]],
+      "invariants": ["residual one-point PDF", "residual power spectrum", "residual DC", "backbone", "truth set"],
+      "changed_quantity": "only the local backbone-residual phase/cross-correlation",
+      "diagnostics": "unchanged V20 Q3/Q4 definitions at q=0.99999 and physical delta=10^(4.5y)-1"
+    }
+  },
+  "predeclared_classification_thresholds": {
+    "backbone_rmse_improvement": "V14/V4 RMSE <= 0.98 independently in all three domains",
+    "low_k_phase_no_harm": "V14 coherence is no more than 0.02 below V4 in either k<0.5 or 0.5<=k<1 h/Mpc bin in every domain",
+    "material_local_coupling": "the median of the three translated controls fails any unchanged Q3/Q4 threshold in any domain",
+    "Q3_absolute_delta_q99_999_dex_max": 0.1,
+    "Q3_generated_max_above_truth_max_dex_max": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5
+  },
+  "fixed_branches": [
+    {
+      "condition": "backbone improves and local coupling is not material",
+      "classification": "deterministic_backbone_and_local_residual_separation_adequate",
+      "next": "audit the target-free donor descriptor rather than changing the backbone"
+    },
+    {
+      "condition": "backbone does not improve and local coupling is material",
+      "classification": "deterministic_backbone_underfit_and_local_residual_coupling_unmodeled",
+      "next": "replace the backbone with a multiscale conditional density model and condition the stochastic residual locally"
+    },
+    {
+      "condition": "backbone does not improve and local coupling is not material",
+      "classification": "deterministic_current_density_backbone_underfit",
+      "next": "replace and validate the deterministic multiscale backbone before residual modeling"
+    },
+    {
+      "condition": "backbone improves and local coupling is material",
+      "classification": "global_backbone_improves_but_local_residual_coupling_is_unmodeled",
+      "next": "retain the improved low-k backbone but replace independent residual transport with an explicitly local conditional residual model"
+    }
+  ],
+  "firewall": {
+    "fit_or_selection_from_this_audit": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "development_truth": "diagnostic use only after the frozen registry is committed"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v30_backbone_condition_audit/audit.json"
+}
