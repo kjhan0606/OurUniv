@@ -32,6 +32,12 @@ R1 starts with the bounded implementation in [CF4_R1_RUN.md](CF4_R1_RUN.md).
 Its cumulative numerical budget is4 GPU-hours; no new large production.
 Preserve all old results, source and failed-model limitations.
 
+R1 entry implemented and submitted as Slurm354568 on2026-09-13 21:34:05 KST,
+source8f2aa0d,1GPU/4CPU/10GiB/1h. Initial PENDING(Resources), no numerical
+outcome yet. One small periodic PM/aperture/adjoint/HMC mechanics job, not
+actual LG inference, nested-gravity validation, R1 closure or R2 entry.
+See CF4_R1_RUN.md for the bounded scope and fixed output/log paths.
+
 ## Scientific destination
 
 Use actual CF4 observations, galaxy-density observations, and explicit local

@@ -86,4 +86,18 @@ within remaining R1 budget. Do not launch R2 on this entry alone. No whole-R1
 completion or automatic large simulation claim. A hard failure is investigated,
 not cured by loosening scientific tolerances or adding a new training sweep.
 
-Implementation prepared; submission and numerical outcome recorded below.
+## Submission
+
+Slurm **354568**, submitted2026-09-13 21:34:05 KST from committed/pushed
+source `8f2aa0d9d8d3e2c67508164ecdd974ba89d11ccb`. Initial state
+PENDING(Resources); no GPU node allocated and no numerical test result yet.
+Python syntax compilation, Bash syntax and diff whitespace checks passed.
+Numerical tests execute only in the allocation, not on the login server.
+Requested1GPU/4CPU/10GiB/1h as above. Source unchanged after submission.
+
+Result:
+`/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568/result.json`.
+Progress: same directory `progress.json`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_354568.{out,err}`.
+Scheduler start estimates are provisional, not a promised start time. No
+external polling/process-scan daemon or automatic subsequent science job.
