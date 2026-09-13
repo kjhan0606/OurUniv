@@ -7,6 +7,28 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Latest planning update — 2026-09-13
+
+User requested an end-to-end feasibility/implementation replan with Fable
+consultations. [CF4_END_TO_END_REPLAN_20260913.md](CF4_END_TO_END_REPLAN_20260913.md)
+and its [advice dispositions](CF4_END_TO_END_ADVICE_20260913.md) record that
+work. Three Fable5 consultations were checked against source and literature;
+their unsupported claims were not adopted wholesale.
+
+First-scale specialist352623 completed8m21s:16 valid draws, individual1/16,
+ensemble2/8; its physical failure persists. CLOSE this ML repair line. No
+actual fine CF4/LG posterior has been delivered and no new calculation was
+launched for this replan. Historical queued states below are superseded by
+[the completion record](BUNDLE_C_FIRST_SCALE_EXPERT.md).
+
+The new recommendation uses a joint present-state/history posterior with
+latent ICs and gravity. It is explicitly forward Bayesian IC inference,
+with the z=0 marginal delivered first, not a standalone z=0-then-invert
+method. **This is a DESIGN PROPOSAL pending the user's explicit route choice;
+it does not silently override the approved scientific-order restriction
+below or authorize R1 numerical execution.** Routine autonomous authority
+does not resolve this material route conflict. Preserve all old results.
+
 ## Scientific destination
 
 Use actual CF4 observations, galaxy-density observations, and explicit local

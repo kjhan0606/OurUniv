@@ -5,10 +5,30 @@ approval wait. External review reserved for major changes/discoveries/large
 calculations; this one-GPU30min local specialization is driver-reviewed.
 
 Submitted Slurm352623 from pushed source1b55758ef7ada2b974472b868c45fd3c3c55ba8b.
-Initial state PENDING(Resources)2026-09-13 12:52 KST. Static syntax checks
-pass; no numerical/training result yet. The same job performs learning,
-frozen-network checks and full endpoint automatically once allocated.
+Initial state was PENDING(Resources)2026-09-13 12:52 KST. The same job
+performed learning, frozen-network checks and the full endpoint once allocated.
 Output /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_first_expert_v1/.
+
+## Completed result and driver disposition
+
+352623 COMPLETED0:0,2026-09-13 19:28:13–19:36:34 KST, elapsed8m21s.
+6000 updates, learning331.50s; four tests and three routing checks pass.
+The original finer-scale and categorical networks remain unchanged.
+Sixteen valid draws; individual quality1/16, ensemble criteria2/8. This is
+not an actual-data posterior. First-scale bulk-budget fraction0.22644988
+versus native0.09428579; final bulk RMS/native1.556592, internal sigma/native
+0.806021. The first-scale specialization did not remove the physical failure.
+Batch MaxRSS3266716K; no successor calculation was launched by this job.
+
+Driver disposition: CLOSE this repair line; no automatic longer training,
+second/third specialist, seed tuning or output rescaling. This result rejects
+this bounded remedy, not all ML or the cosmological reconstruction goal.
+The whole-route design and three Fable5 consultations are recorded in
+[the end-to-end replan](CF4_END_TO_END_REPLAN_20260913.md). The proposed
+internal-IC joint-inference route needs explicit user ratification before
+numerical adoption; this completion record does not grant it.
+
+## Original experimental rationale and contract
 
 352595 places first1.5->.75 output error in continuous values, not final legal
 categories. It does NOT prove negative transfer between scales. Hypothesis:
