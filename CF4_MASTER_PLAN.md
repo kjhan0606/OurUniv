@@ -37,6 +37,9 @@ source8f2aa0d,1GPU/4CPU/10GiB/1h. Initial PENDING(Resources), no numerical
 outcome yet. One small periodic PM/aperture/adjoint/HMC mechanics job, not
 actual LG inference, nested-gravity validation, R1 closure or R2 entry.
 See CF4_R1_RUN.md for the bounded scope and fixed output/log paths.
+User2026-09-14 requests a100_pcie. Added it to the SAME pending354568 job's
+eligible partitions without cancel/resubmit or altering its source/resources.
+Include a100_pcie in subsequent applicable GPU submissions.
 
 ## Scientific destination
 
@@ -859,7 +862,7 @@ design targets continuous physical-budget distribution, not amplitude repair.
 - A clean sampler is necessary, not scientific success. Separate posterior
   mean smoothing, individual-draw structure, uncertainty and phase recovery.
 - Syntax is a Slurm login server. Numerical jobs use Slurm; no manual syn101
-  or login-node calculations. Current GPU partitions: a40,a100,h100,h200;
+  or login-node calculations. Current GPU partitions: a100_pcie,a40,a100,h100,h200;
   exclude syn06 for these fits. Request estimated peak memory plus ~20%.
 - GPFS is ordinary shared storage. Read/write scoped project artifacts;
   do not implement storage/inode/renameat2 probes or process-scan monitoring.

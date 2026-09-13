@@ -101,3 +101,11 @@ Progress: same directory `progress.json`.
 Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_354568.{out,err}`.
 Scheduler start estimates are provisional, not a promised start time. No
 external polling/process-scan daemon or automatic subsequent science job.
+
+Update2026-09-14: user requests `a100_pcie`. Partition is UP, includes
+syn103 and permits this account. While354568 was still PENDING, updated
+that SAME job to `a100_pcie,a40,a100,h100,h200` with `scontrol update`.
+No cancellation, duplicate submission, resource increase or source changes.
+Job ID, original submit time,1GPU/4CPU/10GiB/1h and syn06 exclusion retained.
+The queued script/source pin is unchanged; this is a scheduler-side partition
+override. Include a100_pcie in subsequent applicable GPU submissions.
