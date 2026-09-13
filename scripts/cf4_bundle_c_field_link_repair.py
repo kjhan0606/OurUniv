@@ -71,7 +71,8 @@ def train(branch, initial, cases, slab, location, spread):
             if offset == 0 and step > 1:
                 order = rng.permutation(len(cases))
             case = cases[int(order[offset])]
-            symmetry, level = int(rng.integers(48)), (step-1) % 3
+            symmetry = int(rng.integers(48))
+            level = CFG.get('fixed_level', (step-1) % 3)
             field = augment(base.cube(slab, case), symmetry)
             observer = transform_positions(torch.tensor([44.]*3), symmetry, 80).numpy()*base.DX
             clean, codes, coarse = base.inputs(field, level, observer, location, spread)

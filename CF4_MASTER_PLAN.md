@@ -800,6 +800,13 @@ before final physical fields are compared.
 
 ## Working rules
 
+User2026-09-13 preapproves continuous multiple in-goal bundles without routine
+approval stops. Next BUNDLE_C_FIRST_SCALE_EXPERT.md: one first-scale-only
+6000-update expert, original finer networks frozen, existing sixteen-draw
+physical/LG readout comparison in one1GPU/2CPU/6GiB/30min job. Scale competition
+is a hypothesis, not diagnosed fact. No output amplitude adjustment, no
+actual posterior promotion or blind subsequent specialist/epoch sweep.
+
 347264 completed42m56s, both6000-update arms and7 tests complete. Individual
 quality0/16 versus1/16; ensemble0/8 both. Physical partition/grid improvement
 small, no accepted field prior or observed posterior. Close this extension.
