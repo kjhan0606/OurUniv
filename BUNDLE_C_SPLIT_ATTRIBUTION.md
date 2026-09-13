@@ -47,3 +47,24 @@ Execution: source c49c73305c188ea63003ab6a96b7410946300713 committed/pushed;
 Slurm352595 submitted. Static compilation/bash syntax/diff checks pass.
 Output /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_split_attribution_v1/.
 Submission is not a completed numerical or scientific result.
+
+## Completed result and driver decision
+
+352595 COMPLETED/exit0 on syn08 in26s, application10.108s, peak0.633GiB.
+All64 rows and32 roundtrip controls complete; zero new draws/updates.
+On BOTH arms, all eight first-split legal category arrays are EXACTLY equal
+to native codes (mismatch0). Native-code substitution therefore changes
+nothing. Generated codes + native continuous values reproduces native physics.
+Bulk budget fraction native .094286; control .227660; linked .214340.
+Corresponding bulk RMS/native1.61409/1.56136; sigma .92282/.93075.
+
+Close this diagnostic. First-split output-category mismatch is ruled out for
+these cases; freezing that output branch is not a sufficient explanation for
+the observed first-split defect. The continuous values/distribution carry the
+error. This does NOT exclude category-history influence during denoising,
+different finer-scale category errors, or isolate the unique learning cause.
+Do not run category-only retraining or another swap diagnostic on this result.
+Next justified design target is continuous moment-coordinate distribution
+and physical-budget learning/calibration at the first split, with a matched
+physical endpoint, not more fine-path training or output rescaling. Actual
+LG posterior and mass/COM identification remain outstanding.

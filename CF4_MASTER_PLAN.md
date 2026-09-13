@@ -808,6 +808,13 @@ first-split decoder intervention (native/generated codes versus values),
 2CPU/3GiB/5min Slurm, no training or new stochastic draws. Oracle hybrids
 are diagnostics only, not inference inputs or proof of unique neural cause.
 Next model choice requires this concrete evidence, not more blind steps.
+352595 now COMPLETED26s:64 rows/32 roundtrips pass, zero learning/draws.
+All first-split legal category arrays match native EXACTLY in both arms.
+Swapping categories does nothing; native continuous values recover native
+physics. Error resides in continuous output values at this split; no claim
+of unique training cause or exclusion of sampling-category history/finer
+scale effects. Close diagnostic; no category-only repair justified. Next
+design targets continuous physical-budget distribution, not amplitude repair.
 
 - Prefer substantive scientific outputs over more generic validation code.
   Reuse tests; add only checks necessary for the changed computation.
