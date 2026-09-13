@@ -24,10 +24,13 @@ launched for this replan. Historical queued states below are superseded by
 The new recommendation uses a joint present-state/history posterior with
 latent ICs and gravity. It is explicitly forward Bayesian IC inference,
 with the z=0 marginal delivered first, not a standalone z=0-then-invert
-method. **This is a DESIGN PROPOSAL pending the user's explicit route choice;
-it does not silently override the approved scientific-order restriction
-below or authorize R1 numerical execution.** Routine autonomous authority
-does not resolve this material route conflict. Preserve all old results.
+method. **User2026-09-13 explicitly APPROVED this route and R1 execution.**
+The R1–R5 replan now supersedes the historical A–D implementation order and
+independent-z0-first restriction below. Actual-data z=0 posterior remains
+the first science delivery; no best-seed or arbitrary fine-mode substitution.
+R1 starts with the bounded implementation in [CF4_R1_RUN.md](CF4_R1_RUN.md).
+Its cumulative numerical budget is4 GPU-hours; no new large production.
+Preserve all old results, source and failed-model limitations.
 
 ## Scientific destination
 

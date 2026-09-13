@@ -4,6 +4,10 @@ Read `/home/kjhan/.codex/SHARED_CONTEXT.md` fully at run start, then read
 `CF4_MASTER_PLAN.md` fully. The latter is the active project-level science,
 priority and execution plan, approved on 2026-09-07. It supersedes historical
 route/plan files; direct newer user instructions still take precedence.
+User2026-09-13 explicitly ratifies the latent-IC joint present-state/history
+route in CF4_END_TO_END_REPLAN_20260913.md and R1 execution. Read that plan
+for the new R1–R5 order; old independent-z0-first implementation restrictions
+are historical. The actual z=0 posterior remains the first science delivery.
 
 Confirm cwd/repository before actions. Syntax is a Slurm login server.
 GPFS is ordinary shared storage, not a subject for filesystem diagnostics.
