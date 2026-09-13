@@ -785,6 +785,19 @@ parent error from one-step field/velocity-variance partition error before
 selecting one correction. BUNDLE_C_SCALE_LINK.md, driver review only,
 1GPU/2CPU/4GiB/10min Slurm. No further standalone role-identification checks.
 
+347160 now COMPLETED57s on2026-09-13, tests4/4 and sixteen native-parent
+draws/physical variance identities pass. Both one-step error and propagation:
+at.1875 bulk RMS ratios teacher1.185/rollout1.567; sigma .949/.799. Already
+at.75 bulk budget fraction .235 versus native.094. Grid roughness persists
+with true parents. Close diagnosis. User requests correction; driver implements
+ONE matched6000-update-per-arm comparison from final EMA, original continuous
+model versus fine-lattice residual path + parent-only mass/variance-weighted
+v loss. Freeze category in BOTH arms; same noise/data/optimizer/normalization,
+unchanged physical decoder/sampler/criteria and generated-field LG readout.
+BUNDLE_C_FIELD_LINK_REPAIR.md;1GPU/2CPU/6GiB/2h, routine driver review,
+no new posterior or automatic repair series. Do not claim correction efficacy
+before final physical fields are compared.
+
 ## Working rules
 
 - Prefer substantive scientific outputs over more generic validation code.

@@ -49,3 +49,14 @@ logs /gpfs/kjhan/CF4/logs/cf4_C_scale_link_347160.{out,err}.
 Read result.json AND scores.json before selecting the correction. A finished
 scheduler job without complete result is not a scientific pass. There is no
 separate monitor daemon or automatically selected next learning job.
+
+347160 COMPLETED2026-09-13 05:53:02 KST on syn07,57s, all4 regressions,
+all16 native-parent draws valid, all variance-budget identities pass. At.1875
+bulk RMS ratio teacher1.185/rollout1.567 and sigma .949/.799; native budget
+bulk fraction .210 versus teacher.288/rollout.494. Even.75 already overallocates
+bulk fraction .235 versus native.094. Finest teacher log boundary/internal
+mean1.209 versus native1.006. Both one-step and propagated defects remain;
+not a unique causal architecture diagnosis. Driver closes this comparison.
+User requests correction: BUNDLE_C_FIELD_LINK_REPAIR.md implements a single
+matched fine-lattice/parent-budget-weighted continuous denoiser comparison,
+not another diagnosis or automatic endless training extension.
