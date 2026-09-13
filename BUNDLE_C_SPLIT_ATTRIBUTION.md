@@ -42,3 +42,8 @@ no new framework/tests/model.32 inline roundtrip controls directly validate
 the intervention.2 CPUs, estimated peak<=2.5GiB (imports plus streamed cubes),
 3GiB requested including20% headroom,5min allocation/4min application.
 Output small JSON only; no new full density cubes or GPFS diagnostics.
+
+Execution: source c49c73305c188ea63003ab6a96b7410946300713 committed/pushed;
+Slurm352595 submitted. Static compilation/bash syntax/diff checks pass.
+Output /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_split_attribution_v1/.
+Submission is not a completed numerical or scientific result.
