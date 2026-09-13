@@ -87,3 +87,15 @@ center cells inferred from each generated field with no true candidates.
 Unresolved M33, physical member masses/COM, archive-E selection assumptions
 and actual1.5 CF4 environment posterior remain limitations. No fake member
 mass map, actual LG on/off inference, IC or simulation is launched here.
+
+## Execution
+
+Source4d66631 committed/pushed; Slurm347264 submitted2026-09-13 11:42:31 KST
+and RUNNING on syn05. All7 numerical regressions pass in.620s, including
+the37991-parameter addition, lift isometry/gradient, initial exact equivalence,
+cross-parent sensitivity and parent-only weight properties. This validates
+implementation controls, not generated-field improvement. Same allocation
+continues control6000 -> evaluation -> correction6000 -> evaluation, subject
+to the fixed time/memory/completeness limits. Output
+/gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_link_repair_v1/;
+logs /gpfs/kjhan/CF4/logs/cf4_C_link_repair_347264.{out,err}.
