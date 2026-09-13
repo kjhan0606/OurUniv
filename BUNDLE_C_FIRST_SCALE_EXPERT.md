@@ -4,6 +4,12 @@ User2026-09-13 explicitly preapproves continuous in-scope bundles. No routine
 approval wait. External review reserved for major changes/discoveries/large
 calculations; this one-GPU30min local specialization is driver-reviewed.
 
+Submitted Slurm352623 from pushed source1b55758ef7ada2b974472b868c45fd3c3c55ba8b.
+Initial state PENDING(Resources)2026-09-13 12:52 KST. Static syntax checks
+pass; no numerical/training result yet. The same job performs learning,
+frozen-network checks and full endpoint automatically once allocated.
+Output /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_first_expert_v1/.
+
 352595 places first1.5->.75 output error in continuous values, not final legal
 categories. It does NOT prove negative transfer between scales. Hypothesis:
 one shared continuous network insufficiently learns the physically different
