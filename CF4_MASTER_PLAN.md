@@ -800,6 +800,15 @@ before final physical fields are compared.
 
 ## Working rules
 
+347264 completed42m56s, both6000-update arms and7 tests complete. Individual
+quality0/16 versus1/16; ensemble0/8 both. Physical partition/grid improvement
+small, no accepted field prior or observed posterior. Close this extension.
+User approves next bundle: BUNDLE_C_SPLIT_ATTRIBUTION.md, one saved-field
+first-split decoder intervention (native/generated codes versus values),
+2CPU/3GiB/5min Slurm, no training or new stochastic draws. Oracle hybrids
+are diagnostics only, not inference inputs or proof of unique neural cause.
+Next model choice requires this concrete evidence, not more blind steps.
+
 - Prefer substantive scientific outputs over more generic validation code.
   Reuse tests; add only checks necessary for the changed computation.
 - A clean sampler is necessary, not scientific success. Separate posterior

@@ -99,3 +99,10 @@ continues control6000 -> evaluation -> correction6000 -> evaluation, subject
 to the fixed time/memory/completeness limits. Output
 /gpfs/kjhan/CF4/z0_density/bundle_c_v1/stable_field_link_repair_v1/;
 logs /gpfs/kjhan/CF4/logs/cf4_C_link_repair_347264.{out,err}.
+
+Completed2026-09-13 12:25:29 KST,42m56s,exit0. Both6000-update fits complete,
+7/7 tests,16/16 valid per arm. Individual morphology0/16 control and1/16
+linked; ensemble0/8 both. Bulk RMS/native1.5523->1.5203, sigma .8063->.8219;
+mean log-boundary1.1098->1.0681(native1.0061). Small improvement, both NO-GO.
+Close this learning extension; next BUNDLE_C_SPLIT_ATTRIBUTION.md uses saved
+states only to examine the first conservative split, not another blind fit.
