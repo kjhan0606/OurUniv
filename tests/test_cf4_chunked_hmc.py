@@ -11,6 +11,25 @@ from cf4_chunked_hmc import make_chunks, checked_record
 
 
 class ChunkedHMCTest(unittest.TestCase):
+    def test_random_length_gaussian_target_and_work_record(self):
+        settings = dict(divergence_threshold=1000., target_acceptance=.9,
+                        initial_step_size=.02, maximum_step_size=.12,
+                        integration_steps=32, integration_steps_range=[16, 48])
+        initialize, warm, sample, final = make_chunks(
+            lambda x: -.5*jnp.sum(x*x), 16, settings, record_steps=True)
+        state, adaptation = initialize(jnp.ones(16))
+        (state, adaptation), _ = warm(state, adaptation, jax.random.split(jax.random.PRNGKey(61), 128))
+        step = final(adaptation)
+        state, records = sample(state, step, jax.random.split(jax.random.PRNGKey(62), 2048))
+        positions, _, _, divergent, _, raw, used, counts = checked_record(records, state)
+        self.assertFalse(divergent.any())
+        self.assertTrue(np.all((counts >= 16) & (counts <= 48)))
+        self.assertGreater(len(np.unique(counts)), 20)
+        np.testing.assert_array_equal(raw, used)
+        np.testing.assert_allclose(used, float(step), atol=0)
+        np.testing.assert_allclose(positions.mean(axis=0), 0, atol=.12)
+        np.testing.assert_allclose(positions.var(axis=0), 1, atol=.16)
+
     def test_gaussian_recovery_and_frozen_sampling_step(self):
         settings = dict(divergence_threshold=1000., target_acceptance=.9,
                         initial_step_size=.01, maximum_step_size=.25, integration_steps=16)

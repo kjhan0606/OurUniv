@@ -6,7 +6,12 @@ import numpy as np
 from blackjax.adaptation.step_size import dual_averaging_adaptation
 
 
-def make_chunks(logdensity, dimension, settings):
+def make_chunks(logdensity, dimension, settings, *, record_steps=False):
+    """Optional state-independent trajectory randomisation; same HMC target.
+
+    Fixed-length callers keep their existing keys and seven-array trace. When
+    requested, an eighth array records actual integration work, not an estimate.
+    """
     kernel = blackjax.hmc.build_kernel(divergence_threshold=settings["divergence_threshold"])
     da_init, da_update, da_final = dual_averaging_adaptation(settings["target_acceptance"])
     inverse_mass = jnp.ones(dimension, dtype=jnp.float64)
@@ -15,8 +20,23 @@ def make_chunks(logdensity, dimension, settings):
     def initialize(position):
         return blackjax.hmc.init(position, logdensity), da_init(settings["initial_step_size"])
 
-    def info_record(state, info, raw, used):
-        return (state.position, state.logdensity, info.acceptance_rate, info.is_divergent, info.energy, raw, used)
+    step_range = settings.get("integration_steps_range")
+    if step_range is not None and (len(step_range) != 2 or
+            any(not isinstance(x, int) for x in step_range) or
+            not 1 <= step_range[0] <= step_range[1]):
+        raise ValueError("integration_steps_range must contain two ordered positive integers")
+
+    def advance(key, state, step):
+        count = settings["integration_steps"]
+        if step_range is not None:
+            key, length_key = jax.random.split(key)
+            count = jax.random.randint(length_key, (), step_range[0], step_range[1]+1)
+        state, info = kernel(key, state, logdensity, step, inverse_mass, count)
+        return state, info, jnp.asarray(count)
+
+    def info_record(state, info, raw, used, count):
+        result = (state.position, state.logdensity, info.acceptance_rate, info.is_divergent, info.energy, raw, used)
+        return result + (count,) if record_steps else result
 
     @jax.jit
     def warm_chunk(state, adaptation, keys):
@@ -24,15 +44,15 @@ def make_chunks(logdensity, dimension, settings):
             state, adaptation = carry
             raw = jnp.exp(adaptation.log_step_size)
             used = jnp.minimum(raw, settings["maximum_step_size"])
-            state, info = kernel(key, state, logdensity, used, inverse_mass, settings["integration_steps"])
-            return (state, da_update(adaptation, info.acceptance_rate)), info_record(state, info, raw, used)
+            state, info, count = advance(key, state, used)
+            return (state, da_update(adaptation, info.acceptance_rate)), info_record(state, info, raw, used, count)
         return jax.lax.scan(transition, (state, adaptation), keys)
 
     @jax.jit
     def sample_chunk(state, step, keys):
         def transition(state, key):
-            state, info = kernel(key, state, logdensity, step, inverse_mass, settings["integration_steps"])
-            return state, info_record(state, info, step, step)
+            state, info, count = advance(key, state, step)
+            return state, info_record(state, info, step, step, count)
         return jax.lax.scan(transition, state, keys)
 
     def final_step(adaptation):

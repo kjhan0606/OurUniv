@@ -41,6 +41,19 @@ User2026-09-14 requests a100_pcie. Added it to the SAME pending354568 job's
 eligible partitions without cancel/resubmit or altering its source/resources.
 Include a100_pcie in subsequent applicable GPU submissions.
 
+Update2026-09-14:354568 COMPLETED5m52s on syn103/a100_pcie,9 tests pass,
+likelihood derivative error<=0.0292%. Short-chain mixing remains unestablished
+(max unsplit Rhat1.1504/min ESS6.36); mesh32→64 aperture-mass sensitivity up
+to40.85%, versus subsequent timestep sensitivity<=3.35%. No R1 closure.
+User directs resolving these important issues. Driver implements ONE bounded
+same-data HMC comparison (4 chains, fixed8 versus random16–48 trajectories,
+matched expected retained gradient work) and a three-seed same-particle force/
+time ladder through128^3. CF4_R1_RUN.md records interpretation/resources.
+1GPU/4CPU/16GiB/2h within the remaining R1 cumulative4GPU-hour budget. No
+mass/noise rescaling, threshold relaxation, actual LG inference or R2 launch.
+Physical MW/M31/M33 identification and verified local/coarse dynamics remain
+required; successful aperture numerics do not supply them.
+
 ## Scientific destination
 
 Use actual CF4 observations, galaxy-density observations, and explicit local

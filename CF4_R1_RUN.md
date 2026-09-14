@@ -109,3 +109,74 @@ No cancellation, duplicate submission, resource increase or source changes.
 Job ID, original submit time,1GPU/4CPU/10GiB/1h and syn06 exclusion retained.
 The queued script/source pin is unchanged; this is a scheduler-side partition
 override. Include a100_pcie in subsequent applicable GPU submissions.
+
+## Entry result and authorized correction — 2026-09-14
+
+354568 **COMPLETED/exit0** on syn103/a100_pcie,01:25:13–01:31:05 KST
+(5m52s). Nine regressions pass. Likelihood-only directional derivative maximum
+relative error0.0292%. Two chains retain128 draws each; sample divergences0,
+acceptance .941/.922. However the five unsplit diagnostics have maximum
+Rhat1.1504/minimum ESS6.36: **mixing is not established**. One warmup divergence
+occurred in chain1. Warm gradient evaluations ~27–53ms are not cost per
+independent posterior draw.
+
+Same-particle force mesh32→64 changes the three fixed aperture masses by
+−5.62%,−40.85%,−15.21%; then halving delta-a changes them by
++1.18%,+3.35%,−0.60%. This is resolution sensitivity, not measured error against
+truth. No physical halo or M33 is identified and R1 is not complete.
+Slurm MaxRSS9721416K (~9.27GiB) exceeds the Python-only5.38GiB report; use
+the Slurm peak for follow-up memory sizing. Entry used352 of14400 allowed
+GPU-seconds. There was no automatic downstream job after its completion.
+
+User now authorizes addressing the important unresolved issues. One bounded
+follow-up reuses this exact mock data and PM model and changes the numerical
+comparison/sampler only. Sources:
+[runner](scripts/cf4_r1_resolution_mixing.py),
+[configuration](config/cf4_r1_resolution_mixing_v2.json).
+
+- Same32^3 particles and LPT phases; three predeclared seeds, force meshes
+  32^3/64^3/128^3 at max delta-a1/128, plus128^3 at1/256. Keep radius.75,
+  centers, physical mass, observation units and noise unchanged. Compare
+  mass/COM/velocity differences in physical units and the FIXED mock sigma.
+  This tests convergence trend, not independent calibration, particle
+  convergence or license to rescale masses. Finer PM is not ground truth.
+- Sample the UNCHANGED original32^3-force/max delta-a1/32 likelihood with
+  four independent prior starts per arm.128 warmup; fixed8 leapfrog/2048
+  retained versus uniformly random16–48/512 retained. Expected retained
+  integration work is65536 steps per arm; actual work/timing is recorded,
+  warmup costs are separate and not matched. Same step-size adaptation,
+  target .8 and cap .1 in both arms. The old cap was .3, so comparison to
+  the old entry is not an isolated trajectory-only causal experiment.
+  State-independent length mixing preserves the Metropolis HMC target;
+  the initial hypothesis is insufficient travel, not a diagnosed adjoint bug.
+  [BlackJAX dynamic HMC](https://blackjax-devs.github.io/blackjax/autoapi/blackjax/mcmc/dynamic_hmc/index.html).
+- Use rank-normalized/folded split Rhat and library bulk/tail ESS on48
+  predeclared summaries: logL, white norm/three coordinates, DC and12
+  Fourier projections,21 physical observables and9 physical dispersions.
+  Engineering criterion Rhat<=1.05, ESS>=100 and no retained divergences is
+  NOT production convergence or coverage; disclose every failing summary.
+  [Rank/folding diagnostics](https://arxiv.org/abs/1903.08008).
+  Keep FP64 final restart states; archived draw white arrays are FP32 and
+  are explicitly not exact restart states. No best-seed selection or pooling
+  with the old short chains.
+
+The short fixed8 trajectory lengths in the entry were .512/.612. Enlarging
+them is a testable remedy for weakly constrained white-mode correlation; high
+acceptance alone is not evidence of independent samples. Longer/randomized
+trajectories may instead expose nonlinear gradient/energy problems; retain
+that outcome rather than silently dropping failures or changing the target.
+
+This directly addresses numerical reliability needed before connecting real
+MW/M31/M33 data, but the probes remain unnamed apertures. New-state candidate
+assignment, bound M33 readout and the local/coarse dynamics path remain
+explicitly unresolved. No R2/actual-data inference or new neural fit here.
+
+Resources:1GPU/4CPU/**16GiB/2h**, a100_pcie,a40,a100,h100,h200, exclude syn06;
+application cap110min. Estimate13GiB peak (observed9.27GiB plus finer-mesh
+executables, diagnostic imports and <=~1GiB live trace/save buffers), +20%
+rounded16GiB. Clear no-longer-used JAX executable caches between fidelity
+and sampling, not storage-system caches. Output estimate<2GiB. Even the full
+2h allocation plus entry is below R1's4GPU-hour cap. Numerical tests run only
+inside this allocation. Preserve every entry artifact and unrelated work.
+The same job performs tests→fidelity→both sampler arms→diagnostic report;
+bounded incomplete execution is reported as such, not automatically extended.
