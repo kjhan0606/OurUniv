@@ -126,3 +126,13 @@ CPU-only Slurm: one node,4MPI×2OMP=8cores,15GiB (12GiB estimate+20%, rounded),
 No GPU requested; R1 cumulative GPU allocation remains5374/14400s. Preserve
 all outputs on failure; reject incomplete dumps, mass/input mismatches,
 missing FFTW markers or fine-MG nonconvergence rather than trust exit0.
+
+Execution359480 submitted from ed1d896 on a100_pcie/syn103, CPU-only. The
+already completed build dependency was rejected by Slurm; submitted without
+that stale dependency after confirming build success and binary hash.
+Initial-state validation PASSED:2097152 unique particles, normalized total
+mass1, a=.015625, max position discrepancy8.88e-16 cMpc/h, max peculiar
+velocity discrepancy1.552e-6 km/s (float32 header precision). Required FFTW
+and baryon-header markers present. AMR8 evolution started; AMR9 and final
+comparisons follow automatically only if preceding checks succeed. Results
+are not yet an independent convergence verdict.
