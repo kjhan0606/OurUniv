@@ -31,10 +31,10 @@ def aperture_moments(position, velocity, mass, centers, radius, box):
                 effective_particles=1 / jnp.maximum(jnp.sum(normalized**2, axis=1), 1e-300))
 
 
-def make_dynamics(settings, *, mesh_ratio=1, time_factor=1):
-    """Same LPT phases/particle mass, optionally finer force mesh/time steps."""
+def make_configuration(settings, *, mesh_ratio=1, time_factor=1):
+    """Shared physical configuration for LPT and supplied-state comparisons."""
     enable_pmwd_type_description_compatibility()
-    from pmwd import Configuration, SimpleLCDM, boltzmann, linear_modes, lpt, nbody
+    from pmwd import Configuration, SimpleLCDM, boltzmann
     n, box = settings['n'], settings['box_cMpc_h']
     c = settings['cosmology']
     conf = Configuration(ptcl_spacing=box/n, ptcl_grid_shape=(n,)*3,
@@ -44,6 +44,14 @@ def make_dynamics(settings, *, mesh_ratio=1, time_factor=1):
                          a_nbody_maxstep=settings['a_nbody_maxstep']/time_factor)
     cosmo = boltzmann(SimpleLCDM(conf, Omega_m=c['Om'], Omega_b=c['Ob'],
                                 h=c['h'], A_s_1e9=c['A_s_1e9'], n_s=c['ns']), conf)
+    return conf, cosmo
+
+
+def make_dynamics(settings, *, mesh_ratio=1, time_factor=1):
+    """Same LPT phases/particle mass, optionally finer force mesh/time steps."""
+    conf, cosmo = make_configuration(settings, mesh_ratio=mesh_ratio, time_factor=time_factor)
+    from pmwd import linear_modes, lpt, nbody
+    n = settings['n']
 
     def initial_particles(white):
         modes = linear_modes(white.reshape((n,)*3), cosmo, conf)

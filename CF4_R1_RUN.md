@@ -189,3 +189,90 @@ Result/progress: `/gpfs/kjhan/CF4/z0_density/r1_resolution_mixing_v2/job_358369/
 Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_resmix_358369.{out,err}`.
 No separate polling daemon or automatic R2 job; the fixed calculation and
 postprocessing are included in this single allocation.
+
+## Comparison358369 completed; particle accuracy is next
+
+358369 COMPLETED/exit0 on2026-09-14 12:43:16 KST, elapsed1h17m08s;
+tests8/8, Slurm MaxRSS5031884K (~4.80GiB). The12 force/time cases, baseline
+reproduction and both four-chain sampler arms finished. Sampler transitions
+and physical readouts are separate evaluations, not part of the12-case count.
+The numerical report's status is COMPLETE_DRIVER_JUDGMENT_REQUIRED, not an
+automatic science pass.
+Fixed8: max rank/folded split Rhat1.00947, minimum bulk/tail ESS820.34/1468.45.
+Random16–48:1.01292,419.33/543.85. Both48-projection engineering criteria
+pass, warmup/retained divergences0. Retained integration steps65536 versus
+65590; seconds per minimum bulk ESS2.18 versus4.18. Keep fixed8 with enough
+draws as the small-model baseline. Longer trajectories are not required by
+these data; changed warmup/step cap/chain length preclude attributing the
+original short-run miss uniquely to integration length. Neither arm certifies
+full-field convergence, actual-data coverage or fine-PM mixing.
+
+At three seeds/fixed delta-a1/128, force32→64 versus64→128 differences have
+21-observable RMS .69456→.21444 times FIXED mock sigma; maximum aperture-mass
+changes56.63%→10.40%. Halving delta-a at force128 gives RMS .03466 sigma and
+maximum mass change3.10%. These are differences, not known truth errors.
+Same-data baseline observables reproduced to7.1e-15. R1 used352+4628=4980
+Slurm GPU-seconds (1h23m);2h37m of the4h numerical envelope remains.
+
+User now authorizes the recommended particle/force/observable accuracy work.
+The next single comparison is [particle-resolution v3](config/cf4_r1_particle_resolution_v3.json),
+implemented in [the runner](scripts/cf4_r1_particle_resolution.py) and
+[supplied-state forward](src/cf4_r1_particle_resolution.py).
+
+| Test | Particle grids | Force grid | max delta-a |
+| --- | --- | --- | --- |
+| Particle sampling | 32³→64³→128³ | 128³ fixed | 1/256 |
+| Force | 128³ fixed | 128³→256³ | 1/256 |
+| Time | 128³ fixed | 256³ fixed | 1/256→1/512 |
+
+Same three seeds, box12 cMpc/h, original aperture radius/centers/noise. The
+existing initial **displacement and velocity**, not wrapped coordinates, are
+periodically Fourier-resampled onto nested Lagrangian grids. Original coarse
+nodes, mean displacement/velocity and total mass must agree. Real even-grid
+Nyquist modes use the library's split-bin convention, tested with a constant,
+a sinusoid, a Nyquist wave and nested-node recovery.
+[SciPy resampling convention](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample.html).
+
+This holds ONE interpolated 2LPT state fixed, including its original LPT
+discretization/aliasing error. **No fresh high-k modes are added.** It is a
+particle quadrature control, NOT a high-resolution LCDM prior, production
+zoom-IC method or differentiable fine-IC parameterization. Recomputing fine
+2LPT or adding high-k would change the initial state and confound this test.
+Particle masses are4.537e9,5.671e8,7.089e7 Msun/h; fine force cell.046875.
+
+The supplied-state forward uses the identical PMWD nbody_init/nbody_step in
+lax.scan, avoiding hundreds of unrolled steps. It is NOT a new independent
+solver or a validated fine adjoint. A small regression compares it to ordinary
+PMWD; all three N32 endpoints must reproduce358369 before drawing physical
+conclusions. Mean/physical variance maps use a common64³ readout (.1875),
+explicit particle mass weights and conserved total mass/momentum.
+
+Two additional plane-wave controls at128³ particles, force128³/256³ compare
+against the exact pre-shell-crossing Zel'dovich trajectory, not another PM
+reference. Wavenumber4, final linear amplitude.3 gives minimum Jacobian.7.
+They share the background growth table, so this validates spatial force/time
+evolution and units in a restricted regime, not the background ODE or collapsed
+halos. Compare particle displacement/velocity and the SAME aperture readout.
+[Plane-parallel exactness](https://arxiv.org/abs/1502.07389).
+
+New-field MW/M31/M33 identification is still unresolved: these fixed probes
+must not inherit halo identities, and M33 boundness cannot be established by
+positive aperture mass or effective particle count. The goal contribution
+is determining whether same-state physical predictions are numerically stable
+before real LG likelihoods, not bypassing those identification requirements.
+An independent collapsed-structure solver comparison remains required. Existing
+legacy GRAFIC export recomputes velocity rather than exporting this exact state,
+so it is NOT invoked as an automatically matched RAMSES comparison. Preserve
+exact FP64 finest initial displacement/velocity and final particles to support
+the later verified transfer contract; no RAMSES launch is included here.
+
+One Slurm1GPU/4CPU/16GiB/1h, application cap50min, eligible a100_pcie,a40,
+a100,h100,h200, exclude syn06. Conservative host peak estimate13GiB including
+larger FFT/compiler/readout/interpolation arrays and snapshots, +20% rounded
+to16GiB. Largest single256³ real FP64 mesh is128MiB, several vector/complex
+workspaces coexist; do not extrapolate only particle-array bytes. GPU memory
+is measured, preallocation disabled. Estimated output<1.5GiB; no large new
+snapshot download, GPFS diagnostics or process-scan monitoring. Full allocation
+would put R1 at2h23m, still below4h. No HMC refit, new ML, R2 or independent-
+solver calibration is automatically claimed. Report numerical differences
+without changing observation errors, radius or acceptance criteria.

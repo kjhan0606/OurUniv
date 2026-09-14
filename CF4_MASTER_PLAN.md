@@ -57,6 +57,20 @@ Follow-up source32ae8c5 pushed; Slurm358369 started2026-09-14 11:26:08 KST
 on syn103/a100_pcie with the above bounded resources. Numerical outcomes
 pending; follow the fixed result/logs in CF4_R1_RUN.md, not historical jobs.
 
+358369 subsequently COMPLETED1h17m08s/exit0 at2026-09-14 12:43:16 KST,
+tests8/8. Both48-summary mixing criteria pass: fixed8 max Rhat1.0095/min bulk
+ESS820 versus random16–48 1.0129/419; no warmup/retained divergences. Keep
+adequately sampled fixed8 for the small target; fine-model mixing unverified.
+Force differences decrease, but64→128 still changes probe masses up to10.4%,
+so accuracy is not closed. R1 consumed1h23m of4GPUh. User approves the next
+priority: same interpolated initial displacement/velocity with32³→64³→128³
+particles at fixed force128³, then force256³ and timestep halving. One1GPU/
+4CPU/16GiB/1h Slurm job, no added high-k or new sampler. Two pre-crossing
+plane-wave analytic controls check spatial evolution against known trajectories.
+Exact initial/final finest states and common.1875 readout maps are retained;
+no actual LG, full-power fine IC, independent collapsed-solver validation or
+R1 closure. Details and limits: CF4_R1_RUN.md, config/cf4_r1_particle_resolution_v3.json.
+
 ## Scientific destination
 
 Use actual CF4 observations, galaxy-density observations, and explicit local

@@ -1,0 +1,25 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "comparison_directory": "/gpfs/kjhan/CF4/z0_density/r1_resolution_mixing_v2/job_358369",
+  "seeds": [2026091301, 2026091401, 2026091402],
+  "arms": [
+    {"name": "p32_f128_t256", "n": 32, "mesh_n": 128, "time_factor": 8},
+    {"name": "p64_f128_t256", "n": 64, "mesh_n": 128, "time_factor": 8},
+    {"name": "p128_f128_t256", "n": 128, "mesh_n": 128, "time_factor": 8},
+    {"name": "p128_f256_t256", "n": 128, "mesh_n": 256, "time_factor": 8},
+    {"name": "p128_f256_t512", "n": 128, "mesh_n": 256, "time_factor": 16}
+  ],
+  "contrasts": [
+    ["particles_32_to_64", "p32_f128_t256", "p64_f128_t256"],
+    ["particles_64_to_128", "p64_f128_t256", "p128_f128_t256"],
+    ["force_128_to_256", "p128_f128_t256", "p128_f256_t256"],
+    ["time_256_to_512", "p128_f256_t256", "p128_f256_t512"]
+  ],
+  "readout_n": 64,
+  "planar_control": {"arms": ["p128_f128_t256", "p128_f256_t256"], "wave_number": 4, "final_linear_amplitude": 0.3},
+  "application_seconds_cap": 3000,
+  "previous_R1_allocation_seconds": 4980,
+  "R1_total_GPU_seconds_cap": 14400,
+  "scope": "Particle quadrature and force/time sensitivity for the SAME Fourier-interpolated original 2LPT state; no new IC high-k, sampling, independent solver, observed LG, resolved MW/M31/M33, numerical calibration or R1 closure."
+}
