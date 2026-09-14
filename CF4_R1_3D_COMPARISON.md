@@ -103,3 +103,26 @@ total gravitating mass here. ASCII avoids that and cell-center offsets without
 modifying RAMSES gravity or recomputing velocities. `ic_deltab` supplies ONLY
 the required extended cosmological header for this ASCII path, not a gas map.
 The planned initial-state snapshot is intentional, not a no-output reader run.
+
+## Independent RAMSES reference execution
+
+Build359445 completed0:0 in101s, source d689044d896d9f195629891a202eaf2fd64ee0d2.
+Binary SHA256 e5a9b28a67238061946f3db82d8a991aff1180b4eefd2fc63c864ab0c3318129.
+Use fixed first seed2026091301,128³ original particles, box12 cMpc/h, a=1/64.
+Initial snapshot must reproduce positions, velocities, IDs and total-matter
+mass before evolution. Then compare AMR levelmax8 and9, levelmin7, at a=1
+against both archived CIC/TSC endpoints and each other using identical density
+readout and Gaussian probes. This is an independent dynamics diagnostic, not
+a CF4 posterior or MW/M31/M33 identification; no R2 promotion is automatic.
+
+Explicit output policy: initial-state check noutput1/aout=.015625 (z=63);
+each evolution noutput2/aout=.015625,1 (z=63,0). Five intentional snapshots
+total, conservative2GiB each/~10GiB total plus~.35GiB ASCII input and small
+summaries. Shared output storage had~90T free at the single sizing check.
+foutput/fbackup=1e9; existing step-zero output is intentional and counted.
+Effective namelists are /gpfs/kjhan/CF4/r1_ref_v7/job_JOBID/{initial_state,amr8,amr9}/run.nml.
+CPU-only Slurm: one node,4MPI×2OMP=8cores,15GiB (12GiB estimate+20%, rounded),
+90min allocation; application80min, each evolution30min, initial check5min.
+No GPU requested; R1 cumulative GPU allocation remains5374/14400s. Preserve
+all outputs on failure; reject incomplete dumps, mass/input mismatches,
+missing FFTW markers or fine-MG nonconvergence rather than trust exit0.
