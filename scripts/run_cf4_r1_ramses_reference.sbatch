@@ -6,7 +6,7 @@
 #SBATCH --ntasks=4
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=15G
-#SBATCH --time=01:30:00
+#SBATCH --time=03:20:00
 #SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%j.out
 #SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%j.err
 set -euo pipefail

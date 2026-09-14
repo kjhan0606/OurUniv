@@ -136,3 +136,19 @@ velocity discrepancy1.552e-6 km/s (float32 header precision). Required FFTW
 and baryon-header markers present. AMR8 evolution started; AMR9 and final
 comparisons follow automatically only if preceding checks succeed. Results
 are not yet an independent convergence verdict.
+
+## Timeout recovery — same comparison, no physics changes
+
+359480 FAILED after30m39s at2026-09-14 19:25:19 KST. The application killed
+AMR8 at its1800s per-evolution cap, not the Slurm90min allocation limit.
+Last reported coarse step600/a=.8691; no fine-MG nonconvergence or fatal
+runtime marker found. Initial-state validation passed; AMR9 never started
+and no final comparisons exist. Preserve all previous outputs.
+
+User approves continuation. Change ONLY time limits: each evolution90min,
+application190min, Slurm200min. The extra margin accounts for the unmeasured
+finer AMR9 cost; it is a cap, not a promised runtime. Keep same binary, seed,
+IC, tolerances,4MPI×2OMP,15GiB, and five-snapshot policy (~10GiB plus input).
+Use a new job directory and repeat the short initial-state check. No GPU
+allocation or new science scope. AMR8 and then AMR9 comparisons remain
+automatic within the job; a failure preserves results and stops the sequence.

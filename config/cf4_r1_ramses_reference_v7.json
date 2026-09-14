@@ -11,7 +11,7 @@
   "levelmin": 7,
   "reference_levelmax": [8, 9],
   "mpi_ranks": 4,
-  "application_seconds_cap": 4800,
-  "each_evolution_seconds_cap": 1800,
+  "application_seconds_cap": 11400,
+  "each_evolution_seconds_cap": 5400,
   "scope": "One fixed seed, same total-matter particle positions/velocities/masses, independent RAMSES DMO AMR8/9 comparison. Intentional initial snapshot validates ASCII handoff before evolution. No original RAMSES edits, no real LG identification or posterior promotion."
 }
