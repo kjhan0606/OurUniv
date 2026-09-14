@@ -276,3 +276,14 @@ snapshot download, GPFS diagnostics or process-scan monitoring. Full allocation
 would put R1 at2h23m, still below4h. No HMC refit, new ML, R2 or independent-
 solver calibration is automatically claimed. Report numerical differences
 without changing observation errors, radius or acceptance criteria.
+
+Submitted **359000** at2026-09-14 **13:17:10 KST**, source
+`62ccea176d5ed237b373fd1a921ca86f3e89493b` committed/pushed before launch.
+Initial **PENDING(Resources)**, no assigned node or numerical test result yet.
+1GPU/4CPU/16GiB/1h, a100_pcie,a40,a100,h100,h200, exclude syn06. Static
+Python/Bash syntax and diff checks pass; numerical tests run in the allocation.
+Result/progress: `/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359000/`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_v3_359000.{out,err}`.
+The one job performs tests→three-seed particle/force/time comparisons and two
+analytic controls→common-field snapshots and report. No duplicate/manual run,
+polling daemon, automatic R2 submission or promotion is attached.

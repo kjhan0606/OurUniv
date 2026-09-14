@@ -70,6 +70,9 @@ plane-wave analytic controls check spatial evolution against known trajectories.
 Exact initial/final finest states and common.1875 readout maps are retained;
 no actual LG, full-power fine IC, independent collapsed-solver validation or
 R1 closure. Details and limits: CF4_R1_RUN.md, config/cf4_r1_particle_resolution_v3.json.
+Source62ccea1 pushed; Slurm359000 submitted2026-09-14 13:17:10 KST,
+initial PENDING(Resources), with the above1h bound. Fixed result/log paths in
+CF4_R1_RUN.md; no numerical pass or independent-solver calibration yet.
 
 ## Scientific destination
 
