@@ -97,6 +97,18 @@ with the same time integrator. No installed or production gravity changes,
 new posterior or mesh escalation.7 controls/1GPU/4CPU/8GiB within R1 budget;
 interpretation must distinguish reference error, time integration and spatial
 force/discreteness effects rather than presupposing a PMWD defect.
+359206 COMPLETED70s/exit0 at2026-09-14 14:36:09 KST on syn103/a100_pcie.
+Independent growth/pure-mode IC checks pass and old endpoints reproduce.
+Replacing ONLY the spatial force by exact planar sheets reduces velocity RMS
+error to2.88e-14 with the SAME integrator; shift/projection/alias controls also
+reduce errors. The benchmark discrepancy is localized to particle-mesh spatial
+force, with lattice-phase/CIC sampling-alias effects supported. No universal
+83% cosmology-error or unique PMWD-line-bug claim. Accuracy/R2 still held.
+Details CF4_R1_PLANAR_DIAGNOSIS.md; important-finding Fable advice returned
+and supports localization plus an isolated higher-order deposit/gather trial.
+Driver rejects calling this single fixture a worst-case bound; no universal
+3D accuracy claim or production fix. Suggested corrective experiment is not
+launched in this diagnose-only turn. R1 allocation5178/14400 GPU-seconds.
 
 ## Scientific destination
 
