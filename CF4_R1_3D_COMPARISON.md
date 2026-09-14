@@ -152,3 +152,11 @@ IC, tolerances,4MPI×2OMP,15GiB, and five-snapshot policy (~10GiB plus input).
 Use a new job directory and repeat the short initial-state check. No GPU
 allocation or new science scope. AMR8 and then AMR9 comparisons remain
 automatic within the job; a failure preserves results and stops the sequence.
+
+Retry360338, source79d75f1149ac1137df38c0c2976ce6c03ccaa305, started
+2026-09-14 23:20:24 KST on syn103/a100_pcie. Allocation confirms CPU8,
+15GiB, no GPU; deadline2026-09-15 02:40:24 KST. Current free space150T.
+Outputs /gpfs/kjhan/CF4/r1_ref_v7/job_360338/; effective namelists under
+initial_state/run.nml, amr8/run.nml and amr9/run.nml within that directory.
+Logs /gpfs/kjhan/CF4/logs/cf4_R1_ramses_360338.{out,err}. Submitted/running,
+not a completed comparison or accuracy verdict.
