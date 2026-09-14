@@ -50,3 +50,55 @@ Files: config/cf4_r1_tsc_trial_v5.json, src/cf4_r1_tsc_diagnostic.py,
 tests/test_cf4_r1_tsc_diagnostic.py, scripts/run_cf4_r1_tsc_trial.sbatch.
 Outputs: /gpfs/kjhan/CF4/z0_density/r1_tsc_trial_v5/job_JOBID/
 and /gpfs/kjhan/CF4/logs/cf4_R1_tsc_JOBID.{out,err}.
+
+Source bc9dede committed/pushed. Slurm359341 submitted and RUNNING on
+syn103/a100_pcie2026-09-14. Numerical tests/evolution outcomes pending at
+submission; inspect the fixed359341 artifacts, not a process-scanning loop.
+
+## Completed result and driver judgment
+
+Slurm359341 COMPLETED/exit0 on syn103/a100_pcie,2026-09-14
+18:13:53–18:15:01 KST,68s allocation. Three tests pass in5.781s; diagnostic
+58.81s. Full-force derivative scaled finite-difference error max4.10e-7
+(denominator max(1,|AD|,|FD|), not a universally relative error). Original
+two CIC endpoints reproduce. All six evolutions complete, no numerical failure.
+
+| Force mesh / lattice alignment | CIC velocity relative RMS | TSC velocity relative RMS |
+| --- | ---: | ---: |
+|128³ / nodal |13.5679% |2.9335% |
+|256³ / nodal |82.6752% |6.3113% |
+|128³ / half force cell |4.3961% |2.4238% |
+|256³ / half force cell |25.6351% |14.1480% |
+
+CIC half-cell values are preserved job359206 references, not rerun in359341.
+These are particle trajectory/velocity errors, not Gaussian-aperture scores.
+At tiny initial amplitude, TSC128 nodal force shape residual is5.61e-8 versus
+CIC .09518, while the TSC gain is.988814 (not1). TSC256 nodal shape residual
+is1.28e-5 versus CIC .61694, gain1.018081. This confirms that a consistent
+smooth assignment pair removes the identified leading CIC corner artifact,
+without rescaling the cosmological power or deleting modes.
+
+**Partial correction, not accuracy closure.** Every tested final alignment
+improves over CIC, but the force256 results still depend strongly on alignment
+and remain worse than force128. In particular14.15% cannot be hidden by
+reporting only the best6.31% case. Remaining finite-displacement lattice/mesh
+errors and assignment-window response have not been uniquely decomposed or
+calibrated. Neither the two meshes nor these two shifts bound generic3D error.
+
+Driver accepts the isolated TSC implementation as a candidate for further
+evaluation, NOT as a production inference kernel. No need for another routine
+external audit of this expected, already-advised comparison. Do not start R2,
+lengthen HMC, arbitrarily choose the best lattice phase or blindly refine the
+force grid. Next substantive evidence should be a fixed3D same-state comparison
+and an independent force/evolution reference, including the used spatial bands
+and trajectory gradients, before choosing a science backend. This is a next
+priority, not a new job or an implemented independent solver. The previous
+particle64→128 aperture sensitivity15.81% is also not closed by this plane trial.
+No generated-state MW/M31/M33 identification or actual CF4/LG posterior yet.
+
+Measured diagnostic resource peak: process-reported host1.749GiB, device peak
+1959983360 bytes; Slurm batch MaxRSS1243536K (different collection method).
+R1 cumulative allocation5246/14400 GPU-seconds; remaining9154s (2h32m34s).
+Results: `/gpfs/kjhan/CF4/z0_density/r1_tsc_trial_v5/job_359341/result.json`
+and six compact history files; fixed log paths use job359341. No active
+numerical job remains from this trial; production PMWD was not changed.

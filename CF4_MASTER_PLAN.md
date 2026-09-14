@@ -116,6 +116,14 @@ Slurm allocation within R1. No installed/production kernel changes, mode
 filtering, real-data posterior or MW/M31/M33 identification claim. Compare
 all alignments and preserve residuals; plane improvement alone cannot close
 R1 or promote the actual inference backend.
+TSC trial359341 COMPLETED68s/exit0 on syn103/a100_pcie2026-09-14 18:15:01 KST;
+3 tests pass, six evolutions complete. Nodal final velocity RMS13.57→2.93%
+(force128),82.68→6.31% (force256); half-cell4.40→2.42%,25.64→14.15%.
+Leading CIC corner artifact is suppressed, but alignment/finite-amplitude
+error remains; PARTIAL correction only, no production/R2 promotion. Next
+priority is fixed3D and independent force/evolution evidence, not finer-grid/
+sampler escalation. Details CF4_R1_TSC_TRIAL.md. No next job launched;
+R1 allocation5246/14400 GPU-seconds, all MW/M31/M33 identification limits remain.
 
 ## Scientific destination
 
