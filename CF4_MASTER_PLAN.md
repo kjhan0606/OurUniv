@@ -109,6 +109,13 @@ and supports localization plus an isolated higher-order deposit/gather trial.
 Driver rejects calling this single fixture a worst-case bound; no universal
 3D accuracy claim or production fix. Suggested corrective experiment is not
 launched in this diagnose-only turn. R1 allocation5178/14400 GPU-seconds.
+User approves continuation: CF4_R1_TSC_TRIAL.md specifies an isolated,
+consistent TSC deposit/gather with unchanged Fourier force/time integration.
+Three focused tests and six frozen plane evolutions, one1GPU/4CPU/10GiB/20min
+Slurm allocation within R1. No installed/production kernel changes, mode
+filtering, real-data posterior or MW/M31/M33 identification claim. Compare
+all alignments and preserve residuals; plane improvement alone cannot close
+R1 or promote the actual inference backend.
 
 ## Scientific destination
 

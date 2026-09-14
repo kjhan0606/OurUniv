@@ -1,5 +1,6 @@
 """Separate analytic-reference, integrator, lattice-phase and PM-force effects."""
 import gc
+import argparse
 import json
 import os
 from pathlib import Path
@@ -36,7 +37,10 @@ def gain_error(value, reference):
 def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
-    cfg = json.loads((ROOT/'config/cf4_r1_planar_diagnosis_v4.json').read_text())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', default='config/cf4_r1_planar_diagnosis_v4.json')
+    args = parser.parse_args()
+    cfg = json.loads((ROOT/args.config).read_text())
     model = json.loads((Path(cfg['entry_directory'])/'result.json').read_text())['config']
     previous = json.loads((Path(cfg['reference_directory'])/'result.json').read_text())
     model = {**model, 'n': cfg['particle_n']}
@@ -107,6 +111,10 @@ def main():
             def force(particles):
                 if case['force'] == 'pm':
                     return gravity(a0, particles, cosmo, conf)  # PMWD spatial kernel is a-independent.
+                if case['force'] == 'tsc':
+                    from cf4_r1_tsc_diagnostic import force as tsc_force
+                    return tsc_force(particles.pos(wrap=False), conf.mesh_shape[0],
+                                     conf.cell_size, omega_m)
                 if case['force'] == 'sheets':
                     displacement = particles.pos(wrap=False)-q
                     return 1.5*omega_m*(displacement-displacement.mean(axis=0))
