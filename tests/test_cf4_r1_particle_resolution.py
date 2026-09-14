@@ -1,4 +1,6 @@
 import unittest
+from importlib.machinery import PathFinder
+from pathlib import Path
 
 import jax.numpy as jnp
 import numpy as np
@@ -8,6 +10,13 @@ from cf4_r1_particle_resolution import refine_lpt_state, make_state_evolution
 
 
 class ParticleResolutionTest(unittest.TestCase):
+    def test_cli_search_order_resolves_library_not_driver(self):
+        root = Path(__file__).resolve().parents[1]
+        spec = PathFinder.find_spec('cf4_r1_particle_resolution',
+                                    [str(root/'scripts'), str(root/'src')])
+        self.assertIsNotNone(spec)
+        self.assertEqual(Path(spec.origin), root/'src/cf4_r1_particle_resolution.py')
+
     def test_interpolation_constant_wave_nyquist_and_nodes(self):
         def field(n):
             q = np.indices((n,)*3)/n

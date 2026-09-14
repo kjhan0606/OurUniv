@@ -74,6 +74,12 @@ Source62ccea1 pushed; Slurm359000 submitted2026-09-14 13:17:10 KST,
 initial PENDING(Resources), with the above1h bound. Fixed result/log paths in
 CF4_R1_RUN.md; no numerical pass or independent-solver calibration yet.
 
+359000 failed at startup after5s: the driver basename shadowed its src library,
+causing a circular import before numerical work. Driver renames the executable,
+updates the Slurm entry and adds a module-resolution regression; same approved
+comparison/resources, no physics-model change or external review. Preserve
+failed logs; CF4_R1_RUN.md records recovery and subsequent job state.
+
 ## Scientific destination
 
 Use actual CF4 observations, galaxy-density observations, and explicit local

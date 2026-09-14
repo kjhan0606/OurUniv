@@ -1,4 +1,4 @@
-"""R1 particle/force/time control, preserving the original continuous LPT state."""
+"""R1 particle/force/time driver; basename must differ from its src module."""
 import gc
 import json
 import os

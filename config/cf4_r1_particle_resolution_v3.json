@@ -19,7 +19,7 @@
   "readout_n": 64,
   "planar_control": {"arms": ["p128_f128_t256", "p128_f256_t256"], "wave_number": 4, "final_linear_amplitude": 0.3},
   "application_seconds_cap": 3000,
-  "previous_R1_allocation_seconds": 4980,
+  "previous_R1_allocation_seconds": 4985,
   "R1_total_GPU_seconds_cap": 14400,
   "scope": "Particle quadrature and force/time sensitivity for the SAME Fourier-interpolated original 2LPT state; no new IC high-k, sampling, independent solver, observed LG, resolved MW/M31/M33, numerical calibration or R1 closure."
 }

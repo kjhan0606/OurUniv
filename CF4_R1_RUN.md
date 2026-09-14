@@ -216,7 +216,7 @@ Slurm GPU-seconds (1h23m);2h37m of the4h numerical envelope remains.
 
 User now authorizes the recommended particle/force/observable accuracy work.
 The next single comparison is [particle-resolution v3](config/cf4_r1_particle_resolution_v3.json),
-implemented in [the runner](scripts/cf4_r1_particle_resolution.py) and
+implemented in [the runner](scripts/cf4_r1_particle_resolution_run.py) and
 [supplied-state forward](src/cf4_r1_particle_resolution.py).
 
 | Test | Particle grids | Force grid | max delta-a |
@@ -287,3 +287,19 @@ Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_v3_359000.{out,err}`.
 The one job performs tests→three-seed particle/force/time comparisons and two
 analytic controls→common-field snapshots and report. No duplicate/manual run,
 polling daemon, automatic R2 submission or promotion is attached.
+
+359000 **FAILED/exit1** at2026-09-14 13:40:03 KST,5s after allocation on
+syn103/a100_pcie. Driver import failed BEFORE main/tests/numerical cases:
+`scripts/cf4_r1_particle_resolution.py` shadowed the same-named src library
+because the executing script directory comes first on Python's search path.
+This was a driver naming defect, not a physical-resolution failure, GPFS issue,
+memory exhaustion or the incidental hwloc warning. Failed logs are preserved.
+
+Technical recovery within the already-authorized calculation: rename only
+the executable driver to `cf4_r1_particle_resolution_run.py`, update the Slurm
+entry point and add a search-order regression. The particle, force, timestep,
+IC, seed, observable and resource choices stay unchanged; cumulative resource
+accounting adds the failed5s (4985s before retry). A standard-library-only
+module-resolution check is permitted on the login node; numerical imports and
+all seven focused tests still execute only in Slurm. Syntax compilation alone
+did not catch this import failure and is not claimed as a runtime validation.
