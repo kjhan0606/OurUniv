@@ -180,3 +180,12 @@ and sampling, not storage-system caches. Output estimate<2GiB. Even the full
 inside this allocation. Preserve every entry artifact and unrelated work.
 The same job performs tests→fidelity→both sampler arms→diagnostic report;
 bounded incomplete execution is reported as such, not automatically extended.
+
+Follow-up **358369** submitted and started2026-09-14 **11:26:08 KST** on
+**syn103/a100_pcie** through Slurm, source `32ae8c51c309db8115f0e20fdab2a16703a05891`
+committed and pushed beforehand. Initial RUNNING is not a numerical pass.
+Allocation ends by13:26:08 KST; application cap is110min from Python setup.
+Result/progress: `/gpfs/kjhan/CF4/z0_density/r1_resolution_mixing_v2/job_358369/`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_resmix_358369.{out,err}`.
+No separate polling daemon or automatic R2 job; the fixed calculation and
+postprocessing are included in this single allocation.

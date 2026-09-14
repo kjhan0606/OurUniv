@@ -53,6 +53,9 @@ time ladder through128^3. CF4_R1_RUN.md records interpretation/resources.
 mass/noise rescaling, threshold relaxation, actual LG inference or R2 launch.
 Physical MW/M31/M33 identification and verified local/coarse dynamics remain
 required; successful aperture numerics do not supply them.
+Follow-up source32ae8c5 pushed; Slurm358369 started2026-09-14 11:26:08 KST
+on syn103/a100_pcie with the above bounded resources. Numerical outcomes
+pending; follow the fixed result/logs in CF4_R1_RUN.md, not historical jobs.
 
 ## Scientific destination
 
