@@ -61,3 +61,45 @@ observational likelihood. R2/science promotion remains held.
 
 Outputs: `/gpfs/kjhan/CF4/z0_density/r1_three_dimensional_v6/job_JOBID/`;
 logs `/gpfs/kjhan/CF4/logs/cf4_R1_3d_JOBID.{out,err}`.
+
+##359415 completed; user confirms latest RAMSES source
+
+Source e63f60d, Slurm359415 COMPLETED128s/exit0 on syn103/a100_pcie,
+2026-09-14 18:35:24–18:37:32 KST. Four tests/twelve evolutions pass. Archived
+CIC endpoints reproduce to~1e-13 relative velocity. The short3D trajectory
+derivative AD=-.0003735988948135 agrees with both finite differences.
+
+Same force256/time1/512, TSC minus CIC across the three seeds:
+- Individual velocity relative RMS66.11–76.89%; position RMS.123–.149 cMpc/h.
+- Initial same-state force differences9.82–12.13%, final9.71–10.88%.
+- Density differences by fixed k bands:.527–.749%,1.376–2.119%,5.772–7.228%,
+  and13.815–14.953%. These are differences between solvers, NOT true errors.
+- Nine Gaussian probe masses differ by at most1.486%; centroid by.02149
+  cMpc/h; mean velocity by1.364 km/s.
+- Halving TSC time steps changes individual velocity3.48–14.72%, but probe
+  masses at most.0562% and mean velocities.0531 km/s.
+
+Thus large particle-by-particle differences cannot alone be equated with a
+failed macroscopic density reconstruction after nonlinear evolution. Conversely,
+agreement of broad probes cannot certify small scales, bound halos or M33.
+Keep the independent evolution comparison; no further assignment/mesh sweep.
+Peak process host2.283GiB/device1809263104 bytes. GPU allocation now5374/14400s,
+remaining9026s. Result/particle and moment artifacts retained under job359415.
+
+User subsequently confirms `/home/kjhan/BACKUP/lagRamses-de-nonstd` is the
+latest SOURCE. This resolves the source-location question, not the compiled-
+binary or input-contract checks. Tracked source is clean at
+`d689044d896d9f195629891a202eaf2fd64ee0d2`; build an archived source copy
+inside CF4 via Slurm, no original-project edits or old-binary substitution.
+Build request1CPU/6GiB/20min (estimated5GiB+20%), USE_FFTW=1, standard existing
+Makefile/compiler; no numerical run in this build job and no GPU reservation.
+
+Source review changes the handoff choice: use the existing cosmological
+ASCII particle path, with explicit normalized positions, code velocities and
+total-matter masses, retaining Omega_b=.05 in cosmological metadata. The
+GRAFIC particle constructor unconditionally multiplies masses by
+(1-Omega_b/Omega_m); using it with the physical baryon parameter would drop
+total gravitating mass here. ASCII avoids that and cell-center offsets without
+modifying RAMSES gravity or recomputing velocities. `ic_deltab` supplies ONLY
+the required extended cosmological header for this ASCII path, not a gas map.
+The planned initial-state snapshot is intentional, not a no-output reader run.
