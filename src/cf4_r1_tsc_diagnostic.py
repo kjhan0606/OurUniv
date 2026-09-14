@@ -73,3 +73,50 @@ def force(position, mesh_n, cell_size, omega_m, chunk_size=32768):
     field = jnp.stack([fftinv(neg_grad(k, potential, cell_size), shape=(mesh_n,)*3)
                        for k in kvec], axis=-1)
     return interpolate(position, field, cell_size, chunk_size)
+
+
+def make_evolution(settings, *, assignment, mesh_ratio=1, time_factor=1):
+    """Supplied-state diagnostic trajectory; NOT PMWD's production adjoint.
+
+The CIC branch is checked against archived PMWD endpoints. The TSC branch
+uses the SAME KDK factors; autodiff follows its actual force and scan.
+"""
+    from cf4_r1_particle_forward import make_configuration
+    conf, cosmo = make_configuration(settings, mesh_ratio=mesh_ratio, time_factor=time_factor)
+    from pmwd.particles import Particles
+    from pmwd.gravity import gravity
+    from pmwd.nbody import drift, kick
+    if assignment not in ('cic', 'tsc'):
+        raise ValueError('assignment must be cic or tsc')
+    grid = Particles.gen_grid(conf, vel=True, acc=True)
+    scales = jnp.asarray(conf.a_nbody)
+
+    def acceleration(particles):
+        if assignment == 'cic':
+            return gravity(settings['a_start'], particles, cosmo, conf)
+        return force(particles.pos(wrap=False), conf.mesh_shape[0], conf.cell_size,
+                     settings['cosmology']['Om'])
+
+    @jax.jit
+    def evolve(displacement, velocity):
+        state = grid.replace(disp=grid.disp+displacement.reshape((-1, 3)),
+                             vel=velocity.reshape((-1, 3))*settings['a_start']/100)
+        state = state.replace(acc=acceleration(state))
+
+        def step(particles, interval):
+            previous, following = interval
+            middle = .5*(previous+following)
+            particles = kick(previous, previous, middle, particles, cosmo, conf)
+            particles = drift(middle, previous, following, particles, cosmo, conf)
+            particles = particles.replace(acc=acceleration(particles))
+            particles = kick(following, middle, following, particles, cosmo, conf)
+            return particles, None
+
+        final, _ = jax.lax.scan(step, state, (scales[:-1], scales[1:]))
+        return final.pos(), final.vel*100/settings['a_stop']
+
+    @jax.jit
+    def at_position(position):
+        return acceleration(Particles.from_pos(conf, position))
+
+    return evolve, at_position, conf, cosmo

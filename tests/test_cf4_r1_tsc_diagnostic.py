@@ -5,7 +5,7 @@ import jax.numpy as jnp
 import numpy as np
 
 from cf4_z0_pm_bridge import enable_pmwd_type_description_compatibility
-from cf4_r1_tsc_diagnostic import stencil, deposit, interpolate, force
+from cf4_r1_tsc_diagnostic import stencil, deposit, interpolate, force, make_evolution
 
 
 class TSCDiagnosticTest(unittest.TestCase):
@@ -56,6 +56,25 @@ class TSCDiagnosticTest(unittest.TestCase):
             jump = abs(float(derivative(center+1e-7)-derivative(center-1e-7)))
             self.assertLess(jump, 2e-5)
         print('TSC full-force gradient max scaled FD error:', max(rows), flush=True)
+
+    def test_short_three_dimensional_trajectory_gradient(self):
+        settings = dict(n=8, box_cMpc_h=12., a_start=.1, a_stop=.3,
+                        a_nbody_maxstep=1/64,
+                        cosmology=dict(Om=.31, Ob=.05, h=.746, A_s_1e9=1.63, ns=.96))
+        evolve, _, _, _ = make_evolution(settings, assignment='tsc', mesh_ratio=2)
+        rng = np.random.default_rng(2026091406)
+        displacement = jnp.asarray(rng.normal(size=(8**3, 3))*.03)
+        velocity = jnp.asarray(rng.normal(size=(8**3, 3))*10.)
+        direction = jnp.asarray(rng.normal(size=displacement.shape)*.01)
+        weights = jnp.asarray(rng.normal(size=displacement.shape))
+        def score(t):
+            x, v = evolve(displacement+t*direction, velocity)
+            return jnp.mean(jnp.sin(x*2*jnp.pi/12)*weights)+jnp.mean(v*weights)/100
+        score = jax.jit(score)
+        analytic = float(jax.grad(score)(0.))
+        finite = [float((score(h)-score(-h))/(2*h)) for h in (1e-3, 1e-4)]
+        np.testing.assert_allclose(finite, analytic, rtol=2e-3, atol=1e-8)
+        print('TSC short-trajectory derivative AD/FD:', analytic, finite, flush=True)
 
 
 if __name__ == '__main__':

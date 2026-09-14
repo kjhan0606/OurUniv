@@ -124,6 +124,13 @@ error remains; PARTIAL correction only, no production/R2 promotion. Next
 priority is fixed3D and independent force/evolution evidence, not finer-grid/
 sampler escalation. Details CF4_R1_TSC_TRIAL.md. No next job launched;
 R1 allocation5246/14400 GPU-seconds, all MW/M31/M33 identification limits remain.
+User approves next priority. CF4_R1_3D_COMPARISON.md freezes three archived
+3D ICs / four CIC-TSC-time arms plus same-state force, field-band, particle
+and aperture comparisons and a short trajectory-gradient test. One1GPU/
+4CPU/10GiB/30min Slurm job. This is NOT the independent reference: discovered
+old RAMSES binaries/source are not verified current, and exact-state input
+handoff remains unchecked; user asked for current executable path. No external
+project edits or historical launcher reuse. No R2 promotion on code agreement.
 
 ## Scientific destination
 
