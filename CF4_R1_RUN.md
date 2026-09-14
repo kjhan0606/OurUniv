@@ -342,3 +342,7 @@ Final artifacts: `/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_35920
 `result.json` contains the complete quantitative comparisons and unresolved
 flags; `reference_particles_seed*.npz` and common readout fields are preserved.
 Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_v3_359203.{out,err}`.
+
+User-approved next cause separation is frozen in
+[CF4_R1_PLANAR_DIAGNOSIS.md](CF4_R1_PLANAR_DIAGNOSIS.md). It does not change
+the production dynamics or promote the prior accuracy comparisons.

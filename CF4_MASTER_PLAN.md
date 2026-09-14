@@ -89,6 +89,14 @@ not labelled a unique cause yet. HOLD accuracy promotion/R2 despite small
 smoothed-aperture residuals and successful implementation tests. Next priority
 is bounded planar-reference/initial-force/growth cause separation, not blindly
 finer meshes. R1 used5108/14400 GPU-seconds; no next job launched by this record.
+User now requests cause confirmation. CF4_R1_PLANAR_DIAGNOSIS.md freezes ONE
+15min Slurm diagnostic: independent growth quadrature, pure-mode LPT/units,
+original endpoint reproduction, initial-force/growth traces, half-mesh-cell
+lattice shift, transverse/axial alias controls and exact planar-sheet force
+with the same time integrator. No installed or production gravity changes,
+new posterior or mesh escalation.7 controls/1GPU/4CPU/8GiB within R1 budget;
+interpretation must distinguish reference error, time integration and spatial
+force/discreteness effects rather than presupposing a PMWD defect.
 
 ## Scientific destination
 
