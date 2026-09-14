@@ -79,6 +79,16 @@ causing a circular import before numerical work. Driver renames the executable,
 updates the Slurm entry and adds a module-resolution regression; same approved
 comparison/resources, no physics-model change or external review. Preserve
 failed logs; CF4_R1_RUN.md records recovery and subsequent job state.
+Recovery90bae45 pushed; retry359203 ran2026-09-14 14:13:01–14:15:04 KST
+on syn103/a100_pcie, COMPLETED2m03s/exit0,7 regressions pass. All15 numerical
+cases/two planar controls finish. Probe mass sensitivity particles64→128
+still15.81%, force128→2562.902%, timestep halving.1240%. CRITICAL unresolved
+control: analytic planar velocity relative RMS worsens13.57%→82.68% with finer
+force mesh; possible reference/setup or particle-force error must be separated,
+not labelled a unique cause yet. HOLD accuracy promotion/R2 despite small
+smoothed-aperture residuals and successful implementation tests. Next priority
+is bounded planar-reference/initial-force/growth cause separation, not blindly
+finer meshes. R1 used5108/14400 GPU-seconds; no next job launched by this record.
 
 ## Scientific destination
 

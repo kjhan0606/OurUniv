@@ -303,3 +303,42 @@ accounting adds the failed5s (4985s before retry). A standard-library-only
 module-resolution check is permitted on the login node; numerical imports and
 all seven focused tests still execute only in Slurm. Syntax compilation alone
 did not catch this import failure and is not claimed as a runtime validation.
+
+Retry **359203** from pushed source `90bae45b9f0b48e2fa1c2f90055922e00e861351`
+started2026-09-14 **14:13:01 KST** on syn103/a100_pcie and COMPLETED/exit0 at
+**14:15:04**, elapsed2m03s. All7 regressions pass; all15 three-seed numerical
+cases and two analytic controls finish. Import failure is resolved. Slurm
+MaxRSS2345516K (~2.24GiB), Python peak2.52GiB; retain both measurements.
+Same-state N32 endpoint errors<=1.07e-11 cMpc/h and1.97e-8 km/s versus358369.
+Total R1 Slurm GPU allocation time is352+4628+5+123=5108s, leaving9292s
+(2h34m52s) of4h. Fast forward-only scan timings do not establish fine-adjoint
+or effective-posterior-sample cost.
+
+| Matched comparison | Max probe-mass change | Max centroid change (cMpc/h) | Max mean-velocity change (km/s) |
+| --- | ---: | ---: | ---: |
+| Particles32³→64³, force128³ | 31.40% | .20571 | 21.236 |
+| Particles64³→128³, force128³ | 15.81% | .11628 | 7.923 |
+| Force128³→256³, particles128³ | 2.902% | .04404 | 2.989 |
+| Halve timestep at particles128³/force256³ | .1240% | .00167 | .103 |
+
+These three-seed differences decrease, but particle sensitivity remains.
+More importantly the new **planar analytic control has a large discrepancy**:
+force128³ gives displacement/velocity relative RMS .13367/.13568; force256³
+gives .80493/.82675 at the same128³ particles. This is not a passing analytic
+accuracy test even though the7 implementation regressions passed. Large
+displacement/velocity differences coexist with broad-aperture residuals only
+.0242/.0883 times mock sigma; smooth observables alone cannot certify dynamics.
+
+Driver decision: **HOLD numerical-accuracy promotion / no R2 launch**. Do not
+infer a unique PMWD defect, a physical resolution floor, or a false analytic
+reference without checking. Next bounded cause separation must verify the
+planar initial state/reference and units, initial force response and growth
+history/particle-lattice dependence before choosing any correction or more
+resolution. Independent collapsed-halo calibration and actual LG membership
+remain unresolved. No further job or external review has been launched by
+this completion record; important verified findings follow the advisory policy.
+
+Final artifacts: `/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359203/`.
+`result.json` contains the complete quantitative comparisons and unresolved
+flags; `reference_particles_seed*.npz` and common readout fields are preserved.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_R1_particles_v3_359203.{out,err}`.
