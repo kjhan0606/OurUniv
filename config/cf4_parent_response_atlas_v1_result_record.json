@@ -1,0 +1,86 @@
+{
+  "schema": "ouruniv-cf4-parent-response-atlas-result-record-v1",
+  "status": "complete_pass_exact_parent_response_atlas",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the exact local response atlases for all 256 frozen CF4 parent fields before any aggregate-evidence oracle regression or production SMC execution.",
+  "lineage": {
+    "git_commit": "0023d150a1d5ea28830d449233d9449140a87237",
+    "source_commit": "383b2f17b72d5baf510e5329db7c8a4b60d2681f",
+    "program": "config/cf4_parent_response_atlas_program.json",
+    "program_sha256": "3a01a02728fe185112e2e58f4a9678796ce813a7884d939449ec6da418a6215a",
+    "runner": "scripts/run_cf4_parent_response_atlas_lageunha.sh",
+    "runner_sha256": "aa4bcd5d2a4b3bb464ced369b2177917a37d69411db9e5c8f2d5679b903f8d39",
+    "oracle": "src/cf4_aggregate_evidence_oracle.py",
+    "oracle_sha256": "3da4bd598f381e8a6fccd1dc2ae179cdd01e14d80ad0ad6c25dd1b3a93631d7f",
+    "implementation": "src/cf4_parent_response_atlas.py",
+    "implementation_sha256": "5546965fe64951a95bde7ca486fe57f4601ad329558c8c878f126ef148c9d565",
+    "phase_cache_sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106",
+    "projection_sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f",
+    "reference_calibration_sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+    "canonical_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+    "canonical_manifest_sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211",
+    "complete_marker": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1_run/COMPLETE",
+    "complete_marker_sha256": "54663110db956f78b20941799469ec6159be5dc6d47c88918c80d7249bf4eb69",
+    "environment_sha256": "11a03a6831a6be4db7391ba22cdac7963bafae0656eb5e451aaaabb345ccd005",
+    "run_log_sha256": "05d2de6e5427e70214b102152881c4b3f713dcdfe35c4e1cd4cafe0318a9500c"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "started_at": "2026-08-16T13:26:15+09:00",
+    "ended_at": "2026-08-16T13:31:39+09:00",
+    "elapsed_seconds": 324,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "parent_count": 256,
+    "seed_range_inclusive": [3193, 3448]
+  },
+  "artifact": {
+    "shard_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/shards",
+    "shard_count": 256,
+    "shard_shape": [101, 101, 101],
+    "dtype": "float64",
+    "all_finite": true,
+    "total_shard_bytes": 2110089216,
+    "global_min": -9.388104351134213,
+    "global_max": 12.157610299728683,
+    "bounds": {
+      "relative_min": [-45, -54, -39],
+      "relative_max": [45, 36, 51],
+      "padded_min": [-50, -59, -44],
+      "padded_max": [50, 41, 56]
+    }
+  },
+  "gates": {
+    "single_complete_marker": true,
+    "manifest_hash_matches_complete_marker": true,
+    "all_parent_lineage_matches_reference_calibration": true,
+    "declared_and_actual_shard_sets_match": true,
+    "all_shard_hashes_match": true,
+    "all_actual_headers_match": true,
+    "all_values_finite": true,
+    "information_firewall_closed": true,
+    "atlas_construction_pass": true
+  },
+  "independent_Fable_audit": {
+    "result_go": true,
+    "full_artifact_recalculation_pass": true,
+    "verified_exactly": [
+      "The lifecycle marker set contains only COMPLETE and its manifest hash equals the independently recalculated manifest hash.",
+      "All 256 seeds, parent paths, and parent hashes exactly equal the frozen reference-calibration lineage.",
+      "The declared shard set exactly equals the 256 actual files and every file SHA was independently recalculated.",
+      "Every memory-mapped shard has shape 101 by 101 by 101, dtype float64, and only finite values.",
+      "Bounds, the information firewall, downstream authorization flags, environment lineage, and the sequential 256-of-256 run log are consistent."
+    ]
+  },
+  "decision": {
+    "response_atlas_result_accepted": true,
+    "oracle_regression_design_and_implementation_authorized": true,
+    "oracle_regression_execution_authorized": false,
+    "production_SMC_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false,
+    "next": "Prospectively freeze and independently audit a canonical oracle-regression program covering 1024 actual inside-atlas and 64 outside-atlas comparisons, all old 2048 and 8192 keys, and dense exact 27-phase covariance controls before any regression execution."
+  }
+}

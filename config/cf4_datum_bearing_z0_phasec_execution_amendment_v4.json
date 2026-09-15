@@ -1,0 +1,71 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-execution-amendment-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_V4_EXECUTION_ONLY_REPAIR_WAITING_PREFLIGHT",
+  "authorization": {
+    "basis": "The V3 fail-closed preflight produced no likelihood value, posterior, or science metric. The cross-device numerical consistency check is repaired under the user's standing pre-science error-correction instruction.",
+    "execution_only_retry_after_pre_science_failure": true,
+    "change_science_contract": false,
+    "change_seed_arm_assignment": false,
+    "change_sampler_or_diagnostics": false,
+    "actual_observational_field_inference": false,
+    "validation_seed_access": false,
+    "Phase_D_or_later": false
+  },
+  "base_program": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+  },
+  "V1_infrastructure_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v1_infrastructure_failure_result_record.json",
+    "sha256": "8547f5920a98d1ff31814414c297ca0f8e0aaa856adddb597ebcefec712eb6ea"
+  },
+  "prior_preflight_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v3_preflight_failure_result_record.json",
+    "sha256": "3942c173cc5864f0fbe1321165ba280e2384b2df62b6103611901118a1f61239"
+  },
+  "Phase_C_implementation": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phasec_pilot.py",
+    "sha256": "04b97bd1a5079a6c33a328428d98531a5d3be1b8e55bb2dae595b6d956c6d72f"
+  },
+  "execution_override": {
+    "backend": "Slurm_GPU_preflight_then_array_plus_CPU_aggregate",
+    "partitions": "a40,a100,h200,a100_pcie",
+    "excluded_partition_and_reason": "h100 excluded because V1 tasks could not acquire a CUDA context on syn08",
+    "preflight_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_preflight_v4",
+    "preflight_scope": "seed-2026083000 N64 PMWD truth, CPU transfer, cross-device growth audit, and one GPU joint value/gradient; no optimizer or sampler",
+    "preflight_cpus": 8,
+    "preflight_expected_peak_host_memory_MiB": 4096,
+    "preflight_requested_host_memory_MiB": 5120,
+    "preflight_time_limit": "01:00:00",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v4",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v4_aggregate",
+    "maximum_Slurm_submissions": 3,
+    "dependency_order": "preflight afterok -> array 0-7; aggregate afterany array",
+    "automatic_retry_or_replacement": false
+  },
+  "environment_override": {
+    "XLA_FLAGS": "--xla_gpu_autotune_level=0",
+    "LCDM_transfer_device": "JAX CPU",
+    "likelihood_and_gradient_device": "allocated JAX GPU",
+    "cross_device_growth_relative_tolerance": 5e-10,
+    "cross_device_growth_reporting": "record CPU and GPU values, relative difference, and tolerance in the preflight and task metadata",
+    "repair_reason": "replace the Phase-B same-device 2e-13 equality check with a declared bounded cross-device consistency check"
+  },
+  "inherited_without_change": [
+    "purpose",
+    "mock_assignments",
+    "grid",
+    "cosmology",
+    "external_population_prior",
+    "truth_model",
+    "stress",
+    "inference_model",
+    "heldout",
+    "sampler",
+    "pilot_flags",
+    "diagnostics",
+    "rng_tags",
+    "success_semantics"
+  ]
+}

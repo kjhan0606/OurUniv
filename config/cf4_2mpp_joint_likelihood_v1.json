@@ -1,0 +1,197 @@
+{
+  "schema": "ouruniv-cf4-2mpp-joint-likelihood-v1",
+  "version": 1,
+  "date": "2026-08-30",
+  "status": "crossmatch_complete_likelihood_blocked",
+  "stage": "KF-DESIGN",
+  "authority": {
+    "crossmatch_artifact_publication_authorized": true,
+    "crossmatch_artifact_publication_authorization_basis": "current_user_approval",
+    "joint_likelihood_execution_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_compute_authorized": false,
+    "Slurm_submission_authorized": false,
+    "GPFS_read_authorized": false,
+    "GPFS_write_authorized": false,
+    "network_access_authorized": false
+  },
+  "inputs": {
+    "D_2Mpp": {
+      "artifact": "data/2mpp_catalog.csv",
+      "provenance": "data/PROVENANCE.md#2m-galaxy-density-source",
+      "validator": "src/cf4_2mpp_validate.py",
+      "role": "real-galaxy redshift-space density and count field"
+    },
+    "D_CF4_groups": {
+      "artifact": "data/cf4_groups.csv",
+      "provenance": "data/PROVENANCE.md",
+      "role": "canonical grouped distance and radial-velocity marks"
+    },
+    "D_CF4_individual_galaxies": {
+      "artifact": "data/cf4_galaxies.csv",
+      "role": "crossmatch bridge from individual entries to canonical CF4 1PGC groups",
+      "independent_spatial_density_or_count_factor_allowed": false
+    }
+  },
+  "crossmatch_contract": {
+    "implementation": "src/cf4_2mpp_crossmatch.py",
+    "test": "tests/test_cf4_2mpp_crossmatch.py",
+    "artifact_status": "COMPLETE",
+    "artifacts": {
+      "mapping": {
+        "path": "data/cf4_2mpp_crossmatch_v1.csv",
+        "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
+        "canonical_order": "ascending integer CF4 recno"
+      },
+      "result": {
+        "path": "config/cf4_2mpp_crossmatch_v1_result.json",
+        "raw_sha256": "3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a",
+        "status": "COMPLETE",
+        "mapping_sha256_binding": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"
+      }
+    },
+    "secure_rule": "bidirectional mutual nearest on the unit sphere, separation <= 3.0 arcsec, abs(CF4 Vcmb - 2M++ Vcmb) <= 300 km/s, exact one-to-one",
+    "class_precedence": [
+      "secure_joint_mark",
+      "coordinate_redshift_conflict",
+      "nonreciprocal_collision",
+      "extended_review_candidate",
+      "unmatched"
+    ],
+    "secure_individual_mapping_action": "aggregate through CF4 1PGC membership; the group-level CF4 likelihood remains canonical",
+    "conflict_and_review_action": "quarantine until resolution by a rule frozen before candidate or validation-truth inspection",
+    "automatic_promotion_allowed": false,
+    "manual_truth_edit_allowed": false,
+    "verified_actual_diagnostic_counts": {
+      "CF4_individual_rows": 55877,
+      "2Mpp_real_rows": 69160,
+      "secure_mutual_rows": 16584,
+      "nonreciprocal_collision_rows": 5,
+      "coordinate_redshift_conflict_rows": 188,
+      "extended_review_candidate_rows": 273,
+      "unmatched_rows": 38827,
+      "secure_unique_CF4_1PGC_groups": 11610
+    },
+    "diagnostic_counts_verified_by_COMPLETE_result": true
+  },
+  "joint_factorization": {
+    "target_form": "p(IC, nuisance, shared_latents | D_2Mpp, D_CF4_groups) proportional to p(IC) p(nuisance) L_2Mpp_counts(D_2Mpp | F_z0(IC), nuisance, shared_latents) L_CF4_group_marks(D_CF4_groups | F_z0(IC), membership, shared_latents)",
+    "2Mpp_factor": "real-galaxy redshift-space density/count likelihood with the declared selection, RSD, luminosity-bias, shot-noise, and model-discrepancy terms",
+    "CF4_factor": "group distance/radial-velocity marks conditional on shared redshift and membership latents",
+    "CF4_group_factor_is_canonical": true,
+    "CF4_individual_positions_or_counts_are_an_independent_density_factor": false,
+    "shared_secure_object_rule": "one shared redshift datum or latent per securely mapped object, never two independent Vcmb likelihood terms",
+    "catalog_overlap_requires_joint_latent_or_covariance": true,
+    "independent_Vcmb_double_counting_allowed": false
+  },
+  "imputed_and_latent_policy": {
+    "ZoA_fake_rows": {
+      "selector": "Ref.strip() == 'zoa'",
+      "observation_status": "excluded",
+      "model_role": "mask or selection latent only",
+      "allowed_as_independent_observation": false
+    },
+    "Cln_rows": {
+      "available_observed_components": [
+        "angular position",
+        "apparent magnitude"
+      ],
+      "radial_redshift_status": "cloned_imputed_latent",
+      "radial_redshift_allowed_as_independent_datum": false,
+      "flag_must_be_retained": true
+    }
+  },
+  "selection_model_design": {
+    "status": "blocked_pending_full_angular_completeness_map_and_calibration",
+    "apparent_magnitude_samples": [
+      {
+        "id": "K_bright",
+        "range": "K <= 11.5"
+      },
+      {
+        "id": "K_faint",
+        "range": "11.5 < K <= 12.5"
+      }
+    ],
+    "absolute_K_range": "-25 < M_K < -21",
+    "equal_absolute_K_bins": [
+      {
+        "id": "MK_0",
+        "range": "-25 < M_K <= -23.6666666666667"
+      },
+      {
+        "id": "MK_1",
+        "range": "-23.6666666666667 < M_K <= -22.3333333333333"
+      },
+      {
+        "id": "MK_2",
+        "range": "-22.3333333333333 < M_K < -21"
+      }
+    ],
+    "tracer_population_count": 6,
+    "tracer_population_definition": "Cartesian product of two apparent-magnitude samples and three equal-width absolute-K bins",
+    "required_terms": [
+      "angular completeness evaluated at galaxies and empty-sky locations",
+      "radial completeness",
+      "K correction",
+      "evolution correction",
+      "extinction correction",
+      "K-band luminosity function",
+      "sampled mean density for each tracer population"
+    ],
+    "current_raw_tables_contain_full_angular_completeness_at_empty_sky_positions": false,
+    "empty_sky_angular_completeness_missing_semantics": "likelihood_blocked"
+  },
+  "bias_shot_and_model_discrepancy": {
+    "galaxy_bias": {
+      "form": "positive luminosity-dependent nuisance parameters for all six tracer populations",
+      "universal_scalar_bias_allowed": false,
+      "prior_and_scale_dependence_must_be_predeclared": true
+    },
+    "shot_noise_baseline": "Poisson count likelihood after selection thinning",
+    "predeclared_mock_alternative": "overdispersed or HOD count model",
+    "alternative_selection_rule": "freeze on development mocks and assess once on untouched independent validation mocks",
+    "forward_model_discrepancy_required": true
+  },
+  "redshift_space_distortion_model": {
+    "method": "direct forward prediction from the z=0 velocity posterior",
+    "required_components": [
+      "coherent line-of-sight radial displacement",
+      "small-scale FoG or group velocity dispersion",
+      "measurement-redshift uncertainty",
+      "joint treatment of secure CF4 membership and shared redshift latents"
+    ],
+    "fixed_Carrick_4_Mpc_h_map_used_as_truth": false,
+    "plugin_or_catalog_deprojection_used_as_truth": false,
+    "RSD_and_FoG_priors_status": "pending"
+  },
+  "posterior_and_frontier_policy": {
+    "inference_role": "direct all-data forward likelihood within the hybrid route",
+    "calibration_domains": [
+      "predeclared global domain",
+      "each predeclared ROI separately"
+    ],
+    "frontier_contract": "config/cf4_kf_design_v1.json",
+    "global_and_ROI_scores_may_be_indiscriminately_pooled": false,
+    "numerical_grid_target_cMpc_h_max": 0.3,
+    "numerical_resolution_implies_observational_effective_resolution": false,
+    "observational_claim_requires_strict_mock_frontier_gates": true,
+    "fixed_Carrick_map_or_random_high_k_counts_as_frontier_extension": false
+  },
+  "blockers": [
+    "full angular selection/completeness map at empty-sky positions is absent from the current raw tables",
+    "K-correction, evolution-correction, extinction, and luminosity-function contract is incomplete",
+    "RSD and FoG/group-dispersion priors are incomplete",
+    "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",
+    "CF4 group-member covariance and shared-redshift source-resolution contract is incomplete",
+    "immutable declared k-bin manifest and SHA256 binding are absent"
+  ],
+  "stage_transition": {
+    "current": "KF-DESIGN",
+    "KF_EXPAND_allowed": false,
+    "all_D_likelihood_ready": false,
+    "all_D_mock_execution_allowed": false,
+    "blockers_must_be_closed_before_execution": true
+  }
+}

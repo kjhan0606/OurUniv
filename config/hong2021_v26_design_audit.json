@@ -1,0 +1,91 @@
+{
+  "schema": "hong2021-v26-explicit-conditional-likelihood-design-audit-v1",
+  "status": "complete_development_only_before_v26_freeze",
+  "purpose": "Select an explicitly conditional likelihood after V25 rejected further EDM-loss variants.",
+  "parent_v25": {
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v25_e13_unweighted/development_decision.json",
+    "decision_sha256": "a1279cbba28e32843e141e277c89618f2f07d53085c101be3009d0dd2487d9e2",
+    "decision_digest_sha256": "ace330eafcc2fe9321799a3fb8073cff910ef386a87d8a833546087b7737790f",
+    "automatic_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v25_e13_unweighted/automatic_failure_audit.json",
+    "automatic_failure_audit_sha256": "1237b5f2a4cde8d0131bee9f75cc9d4c514f9240cde041d2272dfe182dab48a2",
+    "failure_classification": "target_tail_reweighting_not_the_primary_remaining_mechanism",
+    "required_next": "stop_edm_loss_variants_and_design_an_explicitly_conditional_alternative_likelihood"
+  },
+  "gaussian_copula_control": {
+    "model": "V14 observable-conditioned mean/location/Fourier-band scales plus V21 voxel-conditional inverse marginal and a train-only source-balanced four-band Gaussian latent field",
+    "audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_gaussian_copula_control_audit/audit_summary.json",
+    "audit_sha256": "c31287cb5891a5983310f36a99ada588c08b4104de98ed9f28ff28b58fd29f5d",
+    "audit_digest_sha256": "3a7b3b2fd80df23eadb219ad68703a4850c48aad3f801896ff9e7f7c9a50750e",
+    "classification": "conditional_gaussian_copula_rejected",
+    "results": {
+      "TNG100": {
+        "field_pass": false,
+        "delta_q99_999_dex": 0.4852382812301368,
+        "generated_max_above_truth_max_dex": 1.6869850158691406,
+        "generated_over_truth_mean_delta_squared": 22.587632972146203
+      },
+      "SIMBA": {
+        "field_pass": false,
+        "delta_q99_999_dex": 0.40489525303246765,
+        "generated_max_above_truth_max_dex": 1.359394758939743,
+        "generated_over_truth_mean_delta_squared": 11.487263535918304
+      },
+      "Swift": {
+        "field_pass": false,
+        "delta_q99_999_dex": 0.29987809963167766,
+        "generated_max_above_truth_max_dex": 1.1507808566093445,
+        "generated_over_truth_mean_delta_squared": 5.401126113689859
+      }
+    },
+    "finding": "Conditionally correct one-point transforms and band variances do not make the joint latent field Gaussian. Every domain loses high-k and two-point checks, and every Q3/Q4 gate fails. A learned conditional spatial copula is necessary."
+  },
+  "coordinate_audit": {
+    "representation": "six-level orthonormal 3-D Haar decomposition of the frozen V21 64^3 conditional-affine latent",
+    "measurement": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v26/design/haar_detail_moments.json",
+    "measurement_sha256": "32975f030ee014e15edb749dec8b26a0885e71ebab491f45f5d51e0f38782a24",
+    "fit_sources": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "detail_dimensions_fine_to_coarse": [229376, 28672, 3584, 448, 56, 7],
+    "non_dc_dimensions": 262143,
+    "coarsest_dc_dimensions": 1,
+    "source_balanced_detail_standard_deviation_range": [0.2543276177335634, 26.330987816431577],
+    "finding": "Haar isolates the sole DC coefficient and exposes a factor-103.5 scale range, so 42 train-only level/channel affine scales are required before a standard-normal base likelihood."
+  },
+  "selected_likelihood": {
+    "name": "coarse_to_fine_conditional_haar_rational_quadratic_spline_flow",
+    "reason": [
+      "It provides a normalized proper likelihood on all 64^3-1 stochastic degrees of freedom.",
+      "It isolates and fixes DC exactly in the mathematical coordinate system rather than projecting an unconstrained terminal sample.",
+      "Its coarse-to-fine factorization conditions fine structure on observables and already generated large-scale latent structure.",
+      "Rational-quadratic coupling transforms can learn non-Gaussian spatial dependence and tail contraction that the rejected Gaussian copula cannot.",
+      "Sampling is direct and exactly paired to the trained likelihood; no probability-flow ODE, terminal support, or denoising proxy remains."
+    ],
+    "rejected_alternatives": {
+      "another_edm_loss_or_mixture": "forbidden by the frozen V25 failure classification",
+      "posthoc_clipping_or_Ak": "not a likelihood and already ruled out by V24 audits",
+      "stationary_gaussian_or_student_t_copula": "the three-domain Gaussian control fails joint spatial and tail gates by large margins; changing only radial tails does not restore conditional phases",
+      "voxel_independent_mixture_likelihood": "cannot preserve filament and two-point dependence",
+      "autoregressive_voxel_likelihood": "exact but requires 262143 serial sampling steps per realization",
+      "unconstrained_full_grid_flow": "mishandles the exactly fixed DC degree of freedom"
+    }
+  },
+  "feasibility": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "prototype_batch": 6,
+    "parameters": 3206424,
+    "finite_loss_and_gradients": true,
+    "initial_mean_negative_log_likelihood_per_non_dc_dimension": 0.883690595626831,
+    "warm_step_wall_seconds": [0.5832436084747314, 0.5789964199066162],
+    "peak_allocated_gib": 3.299471378326416,
+    "selection_role": "architecture feasibility only; no validation or gate metric was consulted"
+  },
+  "firewall": {
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "Astrid_attempts_remaining": 1
+  }
+}

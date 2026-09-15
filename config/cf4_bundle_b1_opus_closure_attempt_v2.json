@@ -1,0 +1,22 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v2",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "requested_scope": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json and its result/tests at commit 227542c",
+  "request": {
+    "timeout_seconds": 240,
+    "external_compute_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true,
+    "network_forbidden": true,
+    "file_modification_forbidden": true
+  },
+  "status": "TIMEOUT_NO_VERDICT",
+  "exit_code": 124,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "verdict": "NOT-RECEIVED",
+  "interpretation": "No scientific or governance verdict was received. Timeout is not GO, CONDITIONAL-GO, or NO-GO.",
+  "driver_action": "Retain the contract amendment and keep posterior promotion, KF-EXPAND, and B2 blocked pending development-mock calibration and a future successful closure audit."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "hong2021-v29-direct-physical-residual-transport-design-audit-v1",
+  "status": "selected_before_implementation_or_sampling",
+  "parent": {
+    "v28_failure_mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/failure_mechanism_audit.json",
+    "sha256": "622c8e5ccee9d42b5cf428f6fb3ae3b9887365ac4e15d77f98692625da206949",
+    "classification": "cross_condition_inverse_inflates_intact_train_residuals",
+    "required_next": "replace_latent_transplantation_with_condition_consistent_physical_residual_representation"
+  },
+  "selected_change": {
+    "name": "same_donors_direct_centered_physical_y_residual_transport",
+    "from": "selected donor V21 latent inverted under the query conditional-affine profile and query V14 scales",
+    "to": "selected donor train target minus its own corrected-mean-plus-location baseline, exactly centered, then added after the same isometry to the query corrected-mean-plus-location baseline",
+    "unchanged": "all V28 query subsets, donor source/index/isometry selections, source balance, ensemble size, deterministic query baseline, field evaluator, Q3/Q4 thresholds, and firewall"
+  },
+  "interpretation": "This is a train-only empirical control of the physical residual coordinate, not a claim that a donor residual is the uniquely observed realization.",
+  "firewall": {
+    "donor_reselection": false,
+    "validation_truth_used_for_sampling": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

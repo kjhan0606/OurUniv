@@ -1,0 +1,31 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v15",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "242d79a",
+  "status": "COMPLETE",
+  "verdict": "NO-GO",
+  "promotion_disposition": "NO-GO",
+  "risk_level": "HIGH",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v15.txt",
+  "findings": {
+    "artifact_hashes": true,
+    "seed_firewall": true,
+    "strict_gate_unchanged": true,
+    "mark_arm_rejected_and_not_executed": true,
+    "rsd_map_coordinates_wrap_period_bug": true,
+    "bc_d_finite_difference_instability": true,
+    "count_sandwich_near_one_tautological": true,
+    "direct_z_covariance_width_broad": true,
+    "validation_opened": false,
+    "B2_IC_FORWARD": false
+  },
+  "required_next": [
+    "Replace map_coordinates mode=wrap with mode=grid-wrap or analytic differentiable shift.",
+    "Add a periodic-boundary regression test.",
+    "Rerun all dependent development calibration and diagnostics.",
+    "Replace step-fixed expected Fisher with observed information or adjoint after continuity is restored.",
+    "Reconcile D values and keep mark arm, validation and B2 closed."
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "schema": "ouruniv-cf4-b1-development-mock-calibration-result-v1",
+  "status": "SUPERSEDED_PRE_PERIODIC_RSD_AND_SEED_FIREWALL_METADATA",
+  "superseded_by": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_v3.json",
+  "superseded_reason": "This historical count-only result names the quarantined 2026083064..2026083320 block as untouched validation and predates the grid-wrap repair.",
+  "grid": {
+    "N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0
+  },
+  "seed_firewall": {
+    "development_count": 64,
+    "seed_start_inclusive": 2026083000,
+    "seed_stop_exclusive": 2026083064,
+    "untouched_validation_seed_start": 2026083064,
+    "untouched_validation_seed_stop_exclusive": 2026083320,
+    "validation_opened": false
+  },
+  "arms": {
+    "A": {
+      "member_count": 16,
+      "seed_range": [
+        2026083000,
+        2026083015
+      ],
+      "metric_median": {
+        "response": 0.7713773744592904,
+        "correlation_r": 0.4081745141474229,
+        "residual_power_ratio": 2.97955610583118,
+        "coverage68": 0.9739532470703125,
+        "coverage95": 0.9986724853515625,
+        "heldout_log_score_improvement": -1017.3336041551183,
+        "count_total": 10574.5,
+        "positive_support_fraction": 1.0
+      },
+      "metric_min": {
+        "response": 0.6999874511590428,
+        "correlation_r": 0.3796052922102811,
+        "residual_power_ratio": 2.6130439787137645,
+        "coverage68": 0.97186279296875,
+        "coverage95": 0.9981689453125,
+        "heldout_log_score_improvement": -1217.0801748513732,
+        "count_total": 10456.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_max": {
+        "response": 0.895974479556985,
+        "correlation_r": 0.4643438828062672,
+        "residual_power_ratio": 3.53455256320355,
+        "coverage68": 0.9769287109375,
+        "coverage95": 0.998870849609375,
+        "heldout_log_score_improvement": -862.2928165965823,
+        "count_total": 10837.0,
+        "positive_support_fraction": 1.0
+      },
+      "strict_low_k_gate_pass_count": 0,
+      "heldout_positive_count": 0
+    },
+    "B": {
+      "member_count": 16,
+      "seed_range": [
+        2026083016,
+        2026083031
+      ],
+      "metric_median": {
+        "response": 0.7566815159843168,
+        "correlation_r": 0.4297194966386657,
+        "residual_power_ratio": 2.7489327769695757,
+        "coverage68": 0.973968505859375,
+        "coverage95": 0.9985809326171875,
+        "heldout_log_score_improvement": -962.7989949083012,
+        "count_total": 10732.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_min": {
+        "response": 0.6538554074377634,
+        "correlation_r": 0.3614696700647119,
+        "residual_power_ratio": 2.427318870028275,
+        "coverage68": 0.971527099609375,
+        "coverage95": 0.99810791015625,
+        "heldout_log_score_improvement": -1157.6221779232237,
+        "count_total": 10562.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_max": {
+        "response": 0.9019096207201358,
+        "correlation_r": 0.4602638463143226,
+        "residual_power_ratio": 3.0425043626195314,
+        "coverage68": 0.9761962890625,
+        "coverage95": 0.99884033203125,
+        "heldout_log_score_improvement": -795.7876104062343,
+        "count_total": 10977.0,
+        "positive_support_fraction": 1.0
+      },
+      "strict_low_k_gate_pass_count": 0,
+      "heldout_positive_count": 0
+    },
+    "C": {
+      "member_count": 16,
+      "seed_range": [
+        2026083032,
+        2026083047
+      ],
+      "metric_median": {
+        "response": 0.7594092448313728,
+        "correlation_r": 0.4094358246227709,
+        "residual_power_ratio": 2.786765780328464,
+        "coverage68": 0.972808837890625,
+        "coverage95": 0.99859619140625,
+        "heldout_log_score_improvement": -998.4543327554211,
+        "count_total": 10767.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_min": {
+        "response": 0.6550311871902079,
+        "correlation_r": 0.3707210759400044,
+        "residual_power_ratio": 2.5735560243385085,
+        "coverage68": 0.97076416015625,
+        "coverage95": 0.998321533203125,
+        "heldout_log_score_improvement": -1144.0165934701563,
+        "count_total": 10593.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_max": {
+        "response": 0.8214136681197287,
+        "correlation_r": 0.4580471710476682,
+        "residual_power_ratio": 3.0406858691684957,
+        "coverage68": 0.974212646484375,
+        "coverage95": 0.999114990234375,
+        "heldout_log_score_improvement": -919.5098624909133,
+        "count_total": 10936.0,
+        "positive_support_fraction": 1.0
+      },
+      "strict_low_k_gate_pass_count": 0,
+      "heldout_positive_count": 0
+    },
+    "D": {
+      "member_count": 16,
+      "seed_range": [
+        2026083048,
+        2026083063
+      ],
+      "metric_median": {
+        "response": 0.7894830584975645,
+        "correlation_r": 0.42528400466331895,
+        "residual_power_ratio": 2.8223376308595487,
+        "coverage68": 0.97222900390625,
+        "coverage95": 0.9985504150390625,
+        "heldout_log_score_improvement": -1018.0572160244283,
+        "count_total": 10769.5,
+        "positive_support_fraction": 1.0
+      },
+      "metric_min": {
+        "response": 0.7469851104209801,
+        "correlation_r": 0.3816883384509709,
+        "residual_power_ratio": 2.372579107661291,
+        "coverage68": 0.97021484375,
+        "coverage95": 0.99822998046875,
+        "heldout_log_score_improvement": -1207.731116283916,
+        "count_total": 10541.0,
+        "positive_support_fraction": 1.0
+      },
+      "metric_max": {
+        "response": 0.8793394724861581,
+        "correlation_r": 0.4670008812420148,
+        "residual_power_ratio": 3.309502121735559,
+        "coverage68": 0.9765625,
+        "coverage95": 0.99896240234375,
+        "heldout_log_score_improvement": -837.0423862809494,
+        "count_total": 10953.0,
+        "positive_support_fraction": 1.0
+      },
+      "strict_low_k_gate_pass_count": 0,
+      "heldout_positive_count": 0
+    }
+  },
+  "aggregate": {
+    "member_count": 64,
+    "strict_low_k_gate_pass_count": 0,
+    "all_members_positive_support": true,
+    "all_arms_have_heldout_gain": false
+  },
+  "scientific_disposition": {
+    "development_calibration": "TECHNICAL_RESULT_ONLY",
+    "observational_z0_posterior": "NOT_CREATED",
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "untouched_256_validation": "NOT_RUN",
+    "frontier_promotion": "NOT_ALLOWED",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED"
+  }
+}

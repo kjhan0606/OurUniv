@@ -1,0 +1,45 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-design-v5",
+  "status": "frozen_design_only_execution_unauthorized",
+  "purpose": "v5 replaces the tainted v4 provenance boundary with a new one-shot boundary. It preserves the frozen production science program, uses new v5-only namespaces, and refuses execution until a separately audited grant, external release, and paired external manifest exist.",
+  "v4_is_tainted_and_read_only": true,
+  "storage": {
+    "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+    "receipts_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts",
+    "reuse_or_restart_allowed": false
+  },
+  "external_provenance": {
+    "release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+    "release_and_manifest_present_in_this_change": false,
+    "release_must_be_read_only": true,
+    "release_manifest_pair_is_mutually_bound": true,
+    "grant_pins_release_path_release_id_payload_and_manifest_hashes": true,
+    "receipt_is_exclusive_and_contains_hard_link_named_release.anchor": true,
+    "snapshot_uses_release_dev_ino_size_nlink_without_mtime_or_ctime": true,
+    "release_anchor_and_snapshot_are_revalidated_before_core_after_core_and_before_COMPLETE": true,
+    "delete_recreate_with_identical_content_is_invalid": true
+  },
+  "preflight_snapshot": {
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-preflight-snapshot-v5",
+    "canonical_json": true,
+    "policy": 5,
+    "binds": ["release", "external_manifest", "grant", "program", "implementation", "runner", "data_directory", "state_directory", "receipts_directory"]
+  },
+  "authorization": {
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

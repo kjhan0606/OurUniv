@@ -1,0 +1,45 @@
+{
+  "schema": "cf4-v3-bgc-mock-validation-v2",
+  "frozen_date": "2026-07-29",
+  "frozen_before_validation_run": true,
+  "supersedes": "config/v3_bgc_mock_validation_v1.json",
+  "reason": "V1 exposed a one-sided median-pool boundary error at cz_min. V2 uses a wider median pool and entirely fresh validation seeds.",
+  "algorithm": {
+    "reference": "Hoffman et al. 2021, MNRAS 505, 3380, equations 23 and 36",
+    "h0_km_s_mpc": 74.6,
+    "cz_min_km_s": 1500.0,
+    "cz_max_km_s": 18000.0,
+    "sigma_d_mpc": 0.0,
+    "candidate_redshift_neighbour_windows": [101, 201, 401, 801, 1201, 1601],
+    "selection_rule": "Minimize development mean over seeds of abs(z_mean) + abs(z_std - 1) + max_abs_radial_bias_in_sigma; ties choose the larger window."
+  },
+  "mock": {
+    "catalog_sampling": "Use the actual grouped-CF4 cz and e_DM distributions in the median pool; do not use observed peculiar velocities.",
+    "median_pool_cz_min_km_s": 500.0,
+    "median_pool_cz_max_km_s": 30000.0,
+    "true_velocity_sigma_km_s": 275.0,
+    "development_seeds": [3101, 3102, 3103, 3104, 3105, 3106, 3107, 3108],
+    "validation_seeds": [5101, 5102, 5103, 5104, 5105, 5106, 5107, 5108, 5109, 5110, 5111, 5112, 5113, 5114, 5115, 5116],
+    "radial_bins": 8
+  },
+  "acceptance": {
+    "validation_abs_ensemble_z_mean_max": 0.05,
+    "validation_ensemble_z_std_range": [0.9, 1.1],
+    "validation_max_abs_radial_bias_in_sigma": 0.5,
+    "validation_each_seed_abs_z_mean_max": 0.1,
+    "required_seed_pass_fraction": 0.9,
+    "raw_to_bgc_abs_mean_bias_improvement_min": 0.8,
+    "policy": "All gates must pass before BGc can be wired into the N64 CF4 CR comparison. This does not validate rows below cz_min."
+  },
+  "result": {
+    "status": "complete_passed",
+    "selected_redshift_neighbour_window": 801,
+    "validation_pooled_z_mean": 0.0013614010153924156,
+    "validation_pooled_z_std": 0.9996863392116734,
+    "validation_ensemble_max_abs_radial_bias_sigma": 0.30237329773526705,
+    "raw_mean_velocity_bias_km_s": -261.7499438609925,
+    "bgc_mean_velocity_bias_km_s": -0.30221964466605,
+    "all_frozen_gates_pass": true,
+    "scope": "Authorized for an N64 CF4 CR comparison only in 1500 <= cz <= 18000 km/s; nearby rows remain excluded pending a hierarchical likelihood"
+  }
+}

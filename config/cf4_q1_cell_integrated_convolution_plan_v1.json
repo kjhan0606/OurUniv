@@ -1,0 +1,114 @@
+{
+  "schema": "ouruniv-cf4-q1-cell-integrated-convolution-plan-v1",
+  "date": "2026-09-03",
+  "bundle": "Q1",
+  "owner": "driver",
+  "plan_status": "CONDITIONAL_GO_AFTER_FABLE_AUDIT",
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected initial condition with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Replace the unresolved point-deposit GH/TSC radial convolution with a mass-preserving, numerically convergent line-of-sight convolution before any posterior, IC, or zoom claim is considered.",
+  "final_goal_alignment": {
+    "necessity": "An unresolved observation operator biases the z=0 posterior and therefore invalidates any downstream IC or forward-validation conclusion.",
+    "sufficiency": "This bundle is necessary but not sufficient for the final goal; it does not by itself establish a z=0 posterior, high-k completion, IC, PM/HOP validation, or the <=0.3 cMpc/h claim."
+  },
+  "scope": {
+    "development_only": true,
+    "production_inference": false,
+    "KF_EXPAND": false,
+    "IC_generation": false,
+    "PM_or_HOP": false,
+    "GPFS": false,
+    "Slurm": false,
+    "science_resolution_claim": false
+  },
+  "frozen_inputs": {
+    "fixture_module": "src/cf4_2mpp_boundary_stress.py",
+    "case_id": "RSD_FOG_boundary_v1",
+    "orders_for_comparison": [3, 7, 9, 15],
+    "relative_l1_tolerance": 0.005,
+    "mass_tolerance": 1e-12,
+    "required_fixtures": ["RSD_FOG_boundary_v1", "RSD_FOG_nonboundary_v1"]
+  },
+  "fable_audit": {
+    "status": "CONDITIONAL_GO",
+    "summary": "Q1 is a necessary numerical prerequisite because the current GH/TSC boundary mismatch directly contaminates the z=0 posterior. Implementation is conditional on the operator, candidate-vs-oracle gate, and numerical tolerances below being frozen first.",
+    "final_goal_alignment": "DIRECT_PREREQUISITE_NOT_SUFFICIENT",
+    "required_amendments": [
+      "Freeze the periodic-torus expectation operator before implementation.",
+      "Use a new candidate-versus-oracle error gate; do not treat the failing GH3-versus-GH7 gate as a Q1 pass criterion.",
+      "Freeze JAX-versus-oracle, fallback, and tail-truncation tolerances numerically before implementation.",
+      "Define exposure-weighted mass conservation with both relative and absolute tolerances."
+    ],
+    "gpfs_or_slurm_used": false
+  },
+  "frozen_operator": {
+    "name": "periodic_torus_expected_cell_response",
+    "equation": "lambda_pc = E_epsilon [ sum_i m_pi W_TSC(c, (s_i + h*sigma_i*epsilon*rhat_i/(a*H)) mod L) ]",
+    "definitions": {
+      "s_i": "source position in cMpc/h",
+      "rhat_i": "observer-centred LOS direction computed from the coherent-RSD input position before the stochastic displacement",
+      "epsilon": "standard-normal line-of-sight displacement variate with the declared Gaussian/FoG convention",
+      "m_pi": "frozen population mass/mark factor",
+      "W_TSC": "periodic cell-integrated TSC response, not point-deposit TSC",
+      "L": "periodic box side length",
+      "lambda_pc": "expected exposure-free cell mass/intensity before selection exposure is applied"
+    },
+    "periodic_wrapping": "Apply modulo L to every stochastic displacement before evaluating the periodic cell response.",
+    "exposure_order": "Evaluate the exposure-free convolution first; multiply by the already calibrated per-population exposure only after convolution.",
+    "operator_status": "FROZEN_BEFORE_IMPLEMENTATION"
+  },
+  "frozen_numerical_tolerances": {
+    "oracle_internal_relative_l1": 5e-5,
+    "candidate_vs_oracle_relative_l1": 0.005,
+    "candidate_vs_oracle_absolute_l1_floor": 1e-12,
+    "jax_vs_oracle_relative_l1": 1e-6,
+    "jax_vs_oracle_absolute_l1_floor": 1e-10,
+    "fallback_vs_analytic_relative_l1": 1e-8,
+    "tail_truncation_relative_l1": 1e-8,
+    "exposure_weighted_mass_relative": 1e-10,
+    "exposure_weighted_mass_absolute": 1e-12,
+    "gradient_value_relative_l1": 1e-5,
+    "gradient_value_absolute_l1": 1e-8,
+    "tolerance_status": "FROZEN_BEFORE_IMPLEMENTATION"
+  },
+  "work_packages": [
+    {
+      "id": "Q1.1",
+      "task": "Implement a NumPy oracle for Gaussian LOS convolution integrated over the piecewise TSC/cell response, using an analytic piecewise-polynomial/erf form where practical and a deterministic high-accuracy fallback only for oracle verification.",
+      "acceptance": "No point-deposit approximation is used by the oracle; input mass and periodic support are explicit, and the frozen torus expectation operator is implemented exactly as specified."
+    },
+    {
+      "id": "Q1.2",
+      "task": "Compare the Q1 oracle against the current GH/TSC point-deposit method and GH7/GH9/GH15 on both boundary and non-boundary fixtures.",
+      "acceptance": "Report total and per-population relative L1 errors, extrema, exact frozen fixture identifiers, and candidate-versus-oracle errors against the new 0.005 gate. The old GH3-versus-GH7 failure is diagnostic only, not a Q1 pass criterion."
+    },
+    {
+      "id": "Q1.3",
+      "task": "Verify periodic mass conservation, non-negativity where required by the response, deterministic reproducibility, and finite derivatives of the eventual differentiable implementation.",
+      "acceptance": "Exposure-free convolution mass passes both relative <= 1e-10 and absolute <= 1e-12 gates per population and in total. Exposure-weighted totals are compared candidate-versus-oracle with relative <= 1e-10 and absolute <= 1e-12; they are not falsely required to conserve mass after selection exposure. No NaN/Inf."
+    },
+    {
+      "id": "Q1.4",
+      "task": "After NumPy reference agreement, implement the JAX counterpart and compare it to the oracle without changing the frozen tolerance or fixture.",
+      "acceptance": "JAX-versus-oracle relative L1 <= 1e-6 and absolute L1 <= 1e-10; fallback-versus-analytic <= 1e-8 and tail-truncation <= 1e-8 are recorded. For position, velocity, FoG sigma, and population-mass derivatives, JAX AD versus finite-difference/oracle checks pass relative <= 1e-5 and absolute <= 1e-8, including periodic boundaries and TSC knots; all x64/shape/ownership checks remain fail-closed."
+    }
+  ],
+  "release_gates": [
+    "The Q1 candidate-versus-oracle boundary and non-boundary errors pass the frozen 0.005 criterion; the criterion may not be relaxed.",
+    "Per-population results and exposure-free periodic mass conservation pass both relative and absolute gates; exposure-weighted totals agree between candidate and oracle without a false post-selection conservation claim.",
+    "Gradient agreement and boundary/knot continuity are checked for every differentiable input class before JAX promotion.",
+    "A synthetic benchmark records peak memory, particles per second, JIT compile cost, and gradient cost; the operator is not mathematically changed to meet a performance target.",
+    "NumPy oracle and JAX implementation agree before any likelihood expansion.",
+    "No observational posterior, conditional high-k, IC, PM/HOP, zoom, or <=0.3 cMpc/h science claim is authorized by Q1 alone."
+  ],
+  "audit_request": {
+    "auditor": "fable",
+    "focus": "Audit whether this Q1 bundle is the correct next prerequisite for the final CF4-to-z=0-posterior-to-IC-to-forward-validation goal, identify missing gates or scope creep, and state GO/CONDITIONAL-GO/NO-GO.",
+    "approval_required_before_implementation": true
+  },
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "do_not_run_production": true,
+    "do_not_modify_shared_context": true
+  }
+}

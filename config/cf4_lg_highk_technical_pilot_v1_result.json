@@ -1,0 +1,101 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-technical-pilot-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_pass_four_field_technical_pilot",
+  "scope": "Driver evaluation while Fable duties are temporarily delegated to the driver; no PM, halo finder, or science selection was run",
+  "execution": {
+    "initial_job": {
+      "job_id": 323852,
+      "state": "FAILED",
+      "elapsed": "00:04:13",
+      "max_rss_kib": 15732120,
+      "cause": "Implementation-only failure: SHA256 attempted a byte cast on a non-C-contiguous field view before any gate result was published"
+    },
+    "corrected_job": {
+      "job_id": 323853,
+      "state": "COMPLETED",
+      "elapsed": "00:05:13",
+      "max_rss_kib": 15728660,
+      "exit_code": "0:0"
+    },
+    "memory_request": "36G",
+    "automatic_retry_used": false,
+    "model_seed_or_threshold_changed": false
+  },
+  "artifact": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_technical_pilot_v1/result.json",
+    "sha256": "ec8baac947a6bf9a807ae9e24e0f5c0a055bdeb4ce9144651a6f89314b2eedc1",
+    "field_count": 4,
+    "fields_persisted": false
+  },
+  "covariance": {
+    "refinement_ratio": 3,
+    "phase_count_used": 22,
+    "maximum_possible_phase_count": 27,
+    "response_grids_held_simultaneously": 1,
+    "maximum_pre_symmetrization_asymmetry": 4.716279450311944e-17,
+    "maximum_phase_response_imaginary_relative_RMS": 2.9433195497379115e-12,
+    "required_limit": 1e-10
+  },
+  "cases": [
+    {
+      "schedule_index": 0,
+      "group_id": 0,
+      "parent_seed": 3423,
+      "coarse_roundtrip_relative_RMS": 1.487902778762873e-7,
+      "correction_restriction_relative_RMS": 1.5107936320514987e-9,
+      "maximum_response_identity_error": 4.697063975545035e-7,
+      "null_subspace_mean_square": 1.0000479769944548,
+      "passed": true
+    },
+    {
+      "schedule_index": 64,
+      "group_id": 1,
+      "parent_seed": 3405,
+      "coarse_roundtrip_relative_RMS": 1.487942000721887e-7,
+      "correction_restriction_relative_RMS": 1.5218597117021302e-9,
+      "maximum_response_identity_error": 3.914274988581212e-7,
+      "null_subspace_mean_square": 1.0001404678334542,
+      "passed": true
+    },
+    {
+      "schedule_index": 128,
+      "group_id": 2,
+      "parent_seed": 3195,
+      "coarse_roundtrip_relative_RMS": 1.4880745879963797e-7,
+      "correction_restriction_relative_RMS": 7.96808555453681e-10,
+      "maximum_response_identity_error": 4.57013909604953e-7,
+      "null_subspace_mean_square": 0.9997885587351684,
+      "passed": true
+    },
+    {
+      "schedule_index": 192,
+      "group_id": 3,
+      "parent_seed": 3367,
+      "coarse_roundtrip_relative_RMS": 1.487713205960972e-7,
+      "correction_restriction_relative_RMS": 4.819911281039123e-10,
+      "maximum_response_identity_error": 6.670303454026083e-7,
+      "null_subspace_mean_square": 0.9999554152256688,
+      "passed": true
+    }
+  ],
+  "gates": {
+    "all_four_finite": true,
+    "all_four_coarse_roundtrip": true,
+    "all_four_corrections_in_null_space": true,
+    "all_four_response_identity": true,
+    "all_four_null_power": true,
+    "all_four_global_mean": true,
+    "peak_evidence_reapplied": false,
+    "technical_pilot_pass": true
+  },
+  "decision": {
+    "exact_highk_posterior_completion_engine_promoted": true,
+    "production_design_authorized": true,
+    "production_field_generation_authorized": false,
+    "PM_authorized": false,
+    "RAMSES_authorized": false,
+    "single_parent_selection_authorized": false
+  },
+  "next": "Design the batched 256-state conditional-field plus forward-PM program, including covariance reuse, ephemeral field handling, z=0 likelihood weighting, and measured-memory-plus-20-percent Slurm requests; do not execute it yet."
+}

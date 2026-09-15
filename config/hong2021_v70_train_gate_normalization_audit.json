@@ -1,0 +1,58 @@
+{
+  "schema": "hong2021-v70-train-gate-normalization-static-audit-v1",
+  "status": "complete_code_only_normalization_audit_gate_unchanged",
+  "purpose": "Verify before execution that the frozen V70 train-only gate does not repeat the historical correlation-function normalization error and that its paired comparison is mathematically symmetric.",
+  "audit_code_commit": "0e93f9947d3e75563a17608ea247387718e682fe",
+  "audited_inputs": {
+    "train_gate_source": "src/hong2021_v70_train_gate.py",
+    "train_gate_source_sha256": "86924d1a3175bf0fcb066f5dcb288d172f1ba748e70d39da52c3dc50f5b60b00",
+    "spectral_binner_source": "src/hong2021_residual_evaluate.py",
+    "spectral_binner_source_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "frozen_gate_program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "frozen_gate_program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728"
+  },
+  "power_normalization": {
+    "truth_accumulator": "sum the identical SpectralBinner power over the 16 fixed queries, then divide by objects_per_domain",
+    "candidate_accumulator": "sum the identical SpectralBinner power over the same 16 queries and 16 members, then divide by objects_per_domain times members",
+    "band_reduction": "form candidate-over-truth for each finite radial bin and average those ratios with the frozen mode-count weights",
+    "candidate_truth_fft_window_and_bin_normalization_identical": true,
+    "member_factor_present_exactly_once": true,
+    "query_factor_present_exactly_once_per_arm": true,
+    "posthoc_Ak_or_power_rescaling": false,
+    "two_point_correlation_function_computed": false,
+    "conclusion": "No missing volume, query, member, FFT, or mode-count asymmetry was found in the frozen total-power comparison."
+  },
+  "phase_sensitive_energy_score": {
+    "first_term": "mean over members of the Euclidean distance from generated to truth Fourier coefficients, divided by sqrt(number_of_selected_modes)",
+    "second_term": "sum over unordered member pairs divided by M times (M-1)",
+    "coefficient_interpretation": "This is the unbiased ensemble energy-score estimator because one half of the ordered off-diagonal mean equals the unordered-pair sum divided by M times (M-1).",
+    "candidate_and_control_use_same_truth_query_mask_and_binner": true,
+    "candidate_and_control_use_identical_innovation": true,
+    "candidate_must_strictly_improve_over_control": true,
+    "conclusion": "The pair term is not missing a factor of two and the comparison cannot be improved by a one-point-only rescaling."
+  },
+  "one_point_normalization": {
+    "latent_moments": "pool exact truth or generated latent voxels across the same fixed queries within each domain and stream",
+    "physical_tail_truth": "mean over fixed backbone-selected truth voxels",
+    "physical_tail_candidate": "mean over the identical fixed mask, queries, and all members",
+    "selection_mask_depends_on_generated_or_truth_target": false,
+    "conclusion": "Truth and candidate physical-tail moments are means on the same conditioning-defined population; the ensemble count is not left in the ratio."
+  },
+  "decision": {
+    "normalization_audit_pass": true,
+    "gate_source_changed": false,
+    "gate_program_changed": false,
+    "seed_member_sampler_metric_or_threshold_changed": false,
+    "authorization": "run the already-frozen train-only gate exactly once after the fixed 30000-step fit completes"
+  },
+  "firewall": {
+    "training_checkpoint_read_by_this_audit": false,
+    "mechanism_holdout_payload_read_by_this_audit": false,
+    "validation_or_development_payload_read_by_this_audit": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "optimizer_gradient_or_training_performed": false,
+    "independent_gate_locked": true
+  }
+}

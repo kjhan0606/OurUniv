@@ -1,0 +1,43 @@
+{
+  "bundle": "A-ACTUAL-DATA-PREVIEW",
+  "authority": "CF4_MASTER_PLAN.md",
+  "status": "USER_APPROVED_DIAGNOSTIC_IMPLEMENTATION_AND_ONE_FIT",
+  "model_decision": {
+    "comparison": "/gpfs/kjhan/CF4/z0_density/bundle_a_prior_to_data_v1/comparison.json",
+    "decision": "Quantile extension did not meet frozen spatial-recovery/predictive criteria. End prior-repair series. Use original PM-calibrated lognormal joint density/velocity model with 24 nuisances and no added tracer curvature for one actual-data model-stress diagnosis.",
+    "interpretation": "Baseline is not scientifically promoted or certified. Its approximate field prior, galaxy link/selection and conditional noise model may be biased. A converged real-data fit is still provisional."
+  },
+  "data": {
+    "tasks": [0],
+    "CF4_catalog": "data/cf4_clean.npz",
+    "counts": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/datum.npz",
+    "count_result": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/result.json",
+    "covariance": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1/covariance.npz",
+    "covariance_record": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1/calibration.json",
+    "base_settings": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "retained_counts": 36635,
+    "training_counts": 29257,
+    "holdout_counts": 7378,
+    "CF4": "Retain actual BGc-transformed vobs, original positions/design/variance/holdout. Existing fixed args, cz1500-18000 km/s; this is not a direct LG catalog.",
+    "counts_contract": "Use actual integer counts_train and counts_holdout with raw selection exposure and original six populations. Counts_all only verifies split consistency. Never centre priors or rescale exposure using observed totals.",
+    "limitations": "Count hash split is a predictive partition, not an exact independent-Poisson experiment. Same-object exclusion does not eliminate every selection/systematic dependence; external density/bias priors may not match this restricted sample."
+  },
+  "grid": {"N": 32, "box_cMpc_h": 384.0, "dx_cMpc_h": 12.0, "field_origin_fraction": 0.25, "count_origin_fraction": 0.5},
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero plus .5 standardized jitter", "inverse_mass": "identity"},
+  "heldout_retained_draw_stride": 8,
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "outputs": ["density mean, uncertainty and individual draws", "velocity mean and posterior uncertainty, distinct from physical sigma_v", "observed/predicted counts and radial velocities, predictive moment residuals, heldout log scores", "population totals, nuisance/chain diagnostics and explicit provisional labels"],
+    "forbidden": ["fake truth arrays", "real-universe truth RMSE/correlation/coverage", "high-resolution or LG recovery claims", "automatic next mock/model tuning", "automatic Bundle B submission"]
+  },
+  "resources": {
+    "preflight": {"CPUs": 2, "estimated_MiB": 2500, "requested_MiB": 3000, "time_limit": "00:15:00"},
+    "fit": {"GPUs": 1, "CPUs": 4, "estimated_MiB": 6144, "requested_MiB": 7373, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregate": {"CPUs": 2, "estimated_MiB": 1000, "requested_MiB": 1200, "time_limit": "00:05:00"},
+    "output_budget_GiB": 2,
+    "new_PM_simulations": 0,
+    "actual_data_fits": 1
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/actual_data_preview_v1",
+  "next_bundle_requires_user_approval": true
+}

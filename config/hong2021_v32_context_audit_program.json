@@ -1,0 +1,111 @@
+{
+  "schema": "hong2021-v32-local-context-velocity-dispersion-audit-program-v1",
+  "status": "frozen_before_implementation_or_development_audit_execution",
+  "purpose": "Quantify whether native multiplicity, recoverable multiscale velocity dispersion, and oriented local observation patches add target-predictive information beyond the scalar V14 backbone before freezing a new learned conditional residual model.",
+  "parent_evidence": {
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "required_classification": "backbone_only_conditional_copula_is_insufficient",
+    "required_next": "include_local_observable_patches_and_multiscale_backbone_context_in_conditional_residual_representation"
+  },
+  "development_domains": {
+    "TNG100": {
+      "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5",
+      "train_data_sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+      "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500",
+      "train_objects": 432,
+      "validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5",
+      "validation_data_sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+      "validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "validation_objects": 93
+    },
+    "SIMBA": {
+      "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5",
+      "train_data_sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+      "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c",
+      "train_objects": 202,
+      "validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5",
+      "validation_data_sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+      "validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "validation_objects": 64
+    },
+    "Swift": {
+      "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5",
+      "train_data_sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+      "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3",
+      "train_objects": 409,
+      "validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+      "validation_data_sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+      "validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "validation_objects": 148
+    }
+  },
+  "native_multiplicity_audit": {
+    "measurements": [
+      "occupied cell fraction",
+      "multi-galaxy cell fraction among occupied cells",
+      "fraction of selected galaxies lying in multi-galaxy cells"
+    ],
+    "intrinsic_within_cell_sig_v_recoverability": "not recoverable from the frozen two-channel HDF5 because only count and cell mean velocity were retained",
+    "materiality_threshold": "at least 0.10 of selected galaxies lie in native cells with count>=2 in any development domain"
+  },
+  "recoverable_context": {
+    "block_factors": [4, 8],
+    "physical_scales_mpc_h": [1.25, 2.5],
+    "block_count": "sum native galaxy count",
+    "block_mean_velocity": "sum(N_cell*vbar_cell)/sum(N_cell)",
+    "block_velocity_dispersion_lower_bound": "sqrt(sum(N_cell*(vbar_cell-vbar_block)^2)/sum(N_cell)); excludes unrecorded within-native-cell variance",
+    "block_backbone_mean_std": "mean and standard deviation of V14 corrected backbone plus predicted residual DC",
+    "local_patch": "periodic 3x3x3 coarse-grid neighborhood mean and standard deviation of log1p block count, block mean velocity, and block backbone mean",
+    "radius": "distance of coarse-cell centre from the observer divided by the 10 Mpc/h cube half-width",
+    "target": "nonoverlapping block mean of physical y residual truth minus V14 backbone"
+  },
+  "fixed_linear_controls": {
+    "fit": "one source-balanced float64 ridge normal equation over all three train domains",
+    "ridge_lambda": 0.001,
+    "intercept_penalty": false,
+    "feature_standardization": "equal-source train-only mean and standard deviation",
+    "train_row_selection": {
+      "factor_4": "one of eight parity sublattices per cube, offsets ((i),(i//2),(i//4)) mod 2, yielding 8^3 rows per cube",
+      "factor_8": "all 8^3 rows per cube"
+    },
+    "validation_rows": "all coarse cells in every validation cube",
+    "models": {
+      "base": ["log1p block count", "block mean velocity", "backbone mean", "backbone std", "radius"],
+      "plus_sig_v": ["base", "block velocity dispersion lower bound"],
+      "plus_local_context": ["plus_sig_v", "3x3x3 neighborhood mean/std of count, velocity, and backbone"]
+    },
+    "metrics": "per-domain residual RMSE, Pearson correlation, and RMSE ratio to base at each block factor"
+  },
+  "predeclared_interpretation": {
+    "sig_v_supported": "plus_sig_v/base validation RMSE <=0.99 in all three domains at either common block factor",
+    "local_patch_supported": "plus_local_context/base validation RMSE <=0.98 in all three domains at either common block factor",
+    "native_sig_v_channel_required": "native multiplicity materiality threshold is reached",
+    "next_if_local_supported": "freeze a multiscale locally conditioned physical residual likelihood; inject condition features at every U-Net resolution",
+    "next_if_only_sig_v_supported": "rebuild development inputs with explicit velocity second moments before generative training",
+    "next_if_neither_supported": "do not expand channels blindly; audit nonlinear conditional sufficiency and residual spatial copula"
+  },
+  "uncertainty_channel_boundary": {
+    "simulation_catalog_velocity": "exact mock value; no observational sigma exists in the frozen development files",
+    "CF4_required_channels": [
+      "inverse-variance weighted mean radial peculiar velocity",
+      "propagated sigma of the mean velocity",
+      "within-voxel weighted velocity dispersion"
+    ],
+    "existing_implementation": ["src/hong2021_data.py:grid_uncertainty_aware_observables", "src/hong2021_train.py:INPUT_MODES"],
+    "rule": "a later simulation comparison must impose one predeclared CF4-like error model; observational sigma must never be fabricated from intrinsic velocity scatter"
+  },
+  "firewall": {
+    "development_truth_role": "diagnostic only after this committed freeze",
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v32_context_audit/audit.json"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "hong2021-v22-long-horizon-development-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Falsify the diagnosis that V21 was truncated while its conditional score model was still converging.",
+  "parent_evidence": {
+    "v21_registry": "config/hong2021_v21_development_program.json",
+    "v21_registry_sha256": "e44486a52f284ded1d17a83da491b571a7987f0380cd5ff0fdc1ef5f3c29a27d",
+    "v21_artifacts": "config/hong2021_v21_derived_artifacts.json",
+    "v21_artifacts_sha256": "5622fc5a22b7502eac433f50e6cc2b51e6253c6e89b179335b1f8eef4e6d5852",
+    "v21_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v21_e9_conditional_affine/development_decision.json",
+    "v21_decision_sha256": "9f1c8bdb00f8d2639339e7484cee8f364313ab4a51e31cd63db45014333b6b65",
+    "v21_decision_digest_sha256": "3a6f7b3050f85afa12df1931a73f7e063a024d51c7fdda81a7177fba923cc8f7",
+    "failure_audit": "config/hong2021_v21_failure_audit.json",
+    "failure_audit_sha256": "8395c6e44e785e17db125c25e12ef26b1af898a3175f961620d6910acd00b230",
+    "Astrid_used": false,
+    "historical_EAGLE_used": false
+  },
+  "single_change": {
+    "description": "Train the byte-identical V21 representation/model/protocol from scratch with CosineAnnealingLR over 30000 rather than 10000 optimizer steps.",
+    "training_from_scratch": true,
+    "continuation_checkpoint": null,
+    "steps": 30000,
+    "candidate_steps": [10000, 20000, 30000],
+    "schedule": "CosineAnnealingLR over exactly 30000 optimizer steps",
+    "minimum_learning_rate": 0.00002
+  },
+  "inherited_byte_identical": [
+    "V21 conditional-affine profile", "V21 G21 transform", "six V21 caches",
+    "architecture and base_channels=32", "batch and equal-source balance",
+    "loss and tail weights", "noise distribution", "initializer and band variances",
+    "training/validation/sampling seeds", "sampler and 16-member ensembles",
+    "development subsets", "evaluator and thresholds"
+  ],
+  "diagnostics": {
+    "selection": "smallest candidate passing every unchanged V6 field check plus Q3 and Q4 independently in all three domains",
+    "Q3": {"absolute_delta_q99_999_log10rho_max_dex": 0.10, "generated_max_above_truth_max_dex": 0.30},
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "Q5": "unchanged no-harm checks",
+    "Q6": "original residual and forward-mapped latent conditional mean/std profiles on frozen m bins at all candidates; selection_role none",
+    "plateau_falsification": "if balanced validation improves by <1 percent from step 25000 to 30000, TNG Q4 remains >1.5, and Q6 latent-mean trend stops shrinking, classify conditional/representation capacity limitation",
+    "swift_no_harm": "Swift must retain the unchanged field gate and Q3/Q4 pass at the selected candidate"
+  },
+  "fixed_decision_order": [
+    "train one model from scratch on Lageunha Ada with no mid-run changes",
+    "evaluate 10000, 20000, 30000 in ascending order",
+    "select the smallest all-domain pass and stop before any independent-data access",
+    "otherwise apply the frozen plateau classification and stop with Astrid unopened",
+    "never extend the horizon, alter thresholds, or rescue a near miss after results"
+  ],
+  "approval_firewall": {"Astrid_access": "forbidden until development pass, committed seal, and explicit user approval", "historical_EAGLE_access": "forbidden"}
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v4",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "requested_scope": "corrected integrated joint development calibration at commit 2cea567",
+  "request": {
+    "timeout_seconds": 240,
+    "external_compute_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true,
+    "network_forbidden": true,
+    "file_modification_forbidden": true
+  },
+  "status": "NO_USABLE_VERDICT_BARE_MODE_AUTH_DISABLED",
+  "exit_code": 1,
+  "stdout_bytes": 35,
+  "stderr_bytes": 0,
+  "raw_output": "Not logged in · Please run /login",
+  "failure_cause": "The --bare option disables OAuth/keychain authentication and requires an API key; it bypassed the existing Claude login. A normal-mode auth smoke subsequently returned OPUS_SMOKE_OK.",
+  "verdict": "NOT-RECEIVED",
+  "interpretation": "The invocation was malformed for the authenticated environment; this is not a scientific GO or NO-GO verdict.",
+  "driver_action": "Retry the primary Opus audit without --bare before relying on the backup auditor."
+}

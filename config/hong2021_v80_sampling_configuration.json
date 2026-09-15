@@ -1,0 +1,56 @@
+{
+  "schema": "hong2021-v80-frozen-candidate-control-sampling-configuration-v1",
+  "status": "frozen_before_V80_candidate_program_or_selected_payload_access",
+  "candidate": "V72 conditioning-stratified spatial quantile transport followed by the single fitted V80 domain monotone y calibration and exact cube residual-DC projection",
+  "control": "paired independent V63 marginal innovations followed by the identical V80 domain monotone y calibration and exact cube residual-DC projection",
+  "implementation_commit": "d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d",
+  "sampling_source_sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080",
+  "calibration_source_sha256": "943bd80a28a94ec6e6bb88ed59b6c4a46950a9386cd4a789a5c8e5b5ab17ef13",
+  "sampler": {
+    "name": "deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map",
+    "members_per_query": 16,
+    "sampling_batch_size": 4,
+    "steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "sample_clipping": false,
+    "posthoc_Ak": false
+  },
+  "innovation": {
+    "algorithm": "NumPy Generator(PCG64(SHA256-derived member seed)).standard_normal(shape=(1,64,64,64),dtype=float32)",
+    "member_seed_derivation": "little-endian first 64 bits of SHA256('V80-PCG64-v1\\0'+base_seed+'\\0'+domain+'\\0'+query_position+'\\0'+member)",
+    "TNG100": {
+      "base_seed": 180080,
+      "pairing_digest": "670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55"
+    },
+    "SIMBA": {
+      "base_seed": 180081,
+      "pairing_digest": "3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed"
+    },
+    "Swift": {
+      "base_seed": 180082,
+      "pairing_digest": "d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544"
+    },
+    "pairing_digest_definition": "SHA256 of the C-order bytes of the uint8 array of shape (32,16,32) containing the SHA256 bytes of each float32 innovation field",
+    "candidate_control_same_bytes": true
+  },
+  "calibration": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/calibration.npz",
+    "sha256": "21b80b6c9582648c087a25aeb8617ce8f2c80ca01780b6d9257faba08eae0393",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/training_report.json",
+    "training_report_sha256": "a8a843b41dc4b3b553bd4a90439b85a97155627332de57c91ef9869e34e2bd7e",
+    "second_fit_or_tuning_permitted": false
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "candidate_and_control_generated_together": true,
+    "queries_per_domain": 32,
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "refuse_existing_output": true,
+    "single_candidate": true,
+    "retry_or_second_seed": false
+  }
+}

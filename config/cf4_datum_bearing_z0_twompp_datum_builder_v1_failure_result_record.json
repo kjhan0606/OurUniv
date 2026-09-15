@@ -1,0 +1,58 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-twompp-datum-builder-v1-failure-result-record",
+  "date": "2026-09-01",
+  "status": "FAILED_BEFORE_CATALOG_DESERIALIZATION_WRONG_FROZEN_LOADER_BINDING",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "b90123378b3f4e0ac5427d66c616342f958915af",
+    "remote_commit_at_submission": "b90123378b3f4e0ac5427d66c616342f958915af",
+    "program": "config/cf4_datum_bearing_z0_twompp_datum_builder_program_v1.json",
+    "implementation": "src/cf4_datum_bearing_z0_twompp_datum_builder_v1.py",
+    "runner": "scripts/run_cf4_datum_bearing_z0_twompp_datum_builder_v1.sbatch"
+  },
+  "execution": {
+    "Slurm_job_id": 329827,
+    "cluster": "syntax",
+    "node": "syn04",
+    "partition": "a10",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 6,
+    "requested_cpus": 1,
+    "requested_memory_MiB": 1024,
+    "reported_batch_MaxRSS_KiB": 3512,
+    "automatic_follow_on_executed": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/z0_density/logs/datum-builder-v1-329827.out",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/z0_density/logs/datum-builder-v1-329827.err",
+      "bytes": 1048,
+      "sha256": "d992543018319f5cb2461803869edb6637599ae9de99e8eed3c84ffbaf1ae623"
+    }
+  },
+  "failure": {
+    "layer": "catalog header assertion before catalog deserialization",
+    "exception": "2M++ catalogue header changed",
+    "incorrect_binding": "src/cf4_twompp_disjoint_tracer_pilot.py",
+    "incorrect_required_header_names": ["RA", "DEC"],
+    "actual_VizieR_header_names": ["_RA", "_DE"],
+    "existing_correction_missed_by_builder": "src/cf4_twompp_disjoint_tracer_pilot_v3.py",
+    "science_input_read_as_datum": false,
+    "selection_built": false,
+    "count_grid_built": false,
+    "gate_evaluated": false,
+    "public_output_created": false,
+    "empty_staging_created": true
+  },
+  "scientific_interpretation": {
+    "Phase_A_science_result": "NOT_EVALUATED",
+    "route_verdict_changed": false,
+    "repair_scope": "bind the already validated V3 VizieR header loader without changing inputs, row selection, split, selection, counts, or gates",
+    "retry_or_replacement_is_automatic": false
+  }
+}

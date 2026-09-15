@@ -1,0 +1,214 @@
+{
+  "schema": "ouruniv-cf4-same-truth-information-budget-program-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_ASSISTANT_SOLVER_CORRECTION_V2_AFTER_FAILED_V1",
+  "purpose": "Execute the unchanged approved covariance-only information budget with a numerically robust equivalent CG system after the v1 low-noise solver failure.",
+  "authorization": {
+    "authorization_basis": "User approved the information-budget audit; standing instruction authorizes correction of the assistant-caused immediate solver failure without another approval.",
+    "same_truth_information_budget_audit": true,
+    "assistant_solver_correction_v2": true,
+    "single_member_technical_pilot": true,
+    "production_after_pilot_pass": true,
+    "Slurm_member_array_submission": true,
+    "Slurm_dependent_aggregation_submission": true,
+    "GPFS_declared_read_write": true,
+    "truth_array_generation_or_deserialization": false,
+    "likelihood_datum_consumed_by_inference": false,
+    "population_generator_retuning": false,
+    "untouched_256_mock_validation": false,
+    "resolution_increase": false,
+    "ML_training": false,
+    "frontier_promotion": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_retry": false,
+    "automatic_follow_on_after_aggregate": false,
+    "network_access": false
+  },
+  "design": {
+    "mock_count": 64,
+    "posterior_draw_count": 16,
+    "scenario_order": [
+      "marginalized_s1",
+      "known_s1",
+      "known_s0p3",
+      "known_s0p1"
+    ],
+    "known_nuisance_noise_standard_deviation_scales": {
+      "known_s1": 1.0,
+      "known_s0p3": 0.3,
+      "known_s0p1": 0.1
+    },
+    "new_truth_seed_count": 0,
+    "new_random_seed_count": 0,
+    "random_streams": "exactly the v1 completed per-mock preconditioner, adjoint, and posterior-draw seeds; 16 probes extend the same preconditioner stream without a new seed",
+    "covariance_only": true,
+    "posterior_mean_or_datum_required": false,
+    "true_position_geometry": true,
+    "same_D_selected_rows_and_train_holdout_split": true,
+    "same_D_variance_before_finite_scale_factor": true,
+    "post_result_retuning_allowed": false
+  },
+  "solver_correction": {
+    "failed_v1_member_array_job_id": 329405,
+    "failed_v1_aggregate_job_id": 329406,
+    "system": "unnormalized_data_covariance_AAT_plus_N",
+    "noise_scale_continuation_order": [1.0, 0.3, 0.1],
+    "warm_start_previous_noise_scale": true,
+    "preconditioner_probe_count": 16,
+    "CG_tolerance": 3e-05,
+    "CG_max_iterations": 4000,
+    "science_or_random_stream_changed": false
+  },
+  "scenarios": {
+    "marginalized_s1": {
+      "nuisance": "Gaussian prior marginalized",
+      "noise_standard_deviation_scale": 1.0,
+      "source": "immutable completed exact arm-A posterior draws",
+      "new_inference": false
+    },
+    "known_s1": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 1.0,
+      "source": "v2 covariance-only solve on exact arm-A geometry"
+    },
+    "known_s0p3": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 0.3,
+      "source": "v2 covariance-only solve on exact arm-A geometry"
+    },
+    "known_s0p1": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 0.1,
+      "source": "v2 covariance-only solve on exact arm-A geometry",
+      "interpretation_limit": "Finite tenfold standard-deviation reduction; not a zero-noise geometry theorem."
+    }
+  },
+  "information_gates": {
+    "mock_cluster_bootstrap_replicates": 2000,
+    "mock_cluster_bootstrap_seed": 2026800000,
+    "response_min_inclusive": 0.8,
+    "correlation_r_min_inclusive": 0.7,
+    "residual_power_ratio_max_inclusive": 0.5,
+    "robust_information_lower_min_inclusive": 0.8,
+    "strict_gate": "unchanged from v1: point performance gates plus 2.5 percent geometry-bootstrap information bound at least 0.8",
+    "frontier_rule": "unchanged contiguous joint delta-theta prefix with unavailable theta bin 11 fail-closed"
+  },
+  "preregistered_decision_tree": {
+    "marginalized_s1_passes": "BASELINE_INFORMATION_SUFFICIENT_PRIOR_FIELD_FAILURE_REQUIRES_METRIC_AUDIT",
+    "known_s1_passes_marginalized_s1_fails": "NUISANCE_MARGINALIZATION_DOMINANT",
+    "known_s0p1_passes_known_s1_fails": "MEASUREMENT_ERROR_DOMINANT_IMPROVE_VELOCITY_LIKELIHOOD",
+    "known_s0p1_fails": "FINITE_LOW_NOISE_CEILING_INSUFFICIENT_ADD_INDEPENDENT_Z0_DENSITY_TRACERS",
+    "other": "MIXED_INFORMATION_BUDGET_NO_SINGLE_DOMINANT_COMPONENT"
+  },
+  "repository_bindings": {
+    "failed_v1_program": {
+      "path": "config/cf4_same_truth_information_budget_program_v1.json",
+      "sha256": "862bf6c125c228b6e9be9e8b4178c976d15eb4bb015cd506d7a066c8c0e9682a"
+    },
+    "solver_correction_record": {
+      "path": "config/cf4_same_truth_information_budget_solver_correction_v2.json",
+      "sha256": "42ed93121f634d730e82bb7040f8a7c731ad9007ed41edb202137a0464da723a"
+    },
+    "prior_ablation_program": {
+      "path": "config/cf4_same_truth_likelihood_ablation_program_v1.json",
+      "sha256": "a212c316bd69cba8ed94faaf6e7b25dc83fc10ea925b8a43253aac41a15e9d74"
+    },
+    "prior_ablation_result_record": {
+      "path": "config/cf4_same_truth_likelihood_ablation_v1_result.json",
+      "sha256": "c94abba8dc751fc804950ef5c4512710f9e97fbe9b20ba0fa252d91f61f9a969"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302"
+    },
+    "clean_catalog_marks": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37"
+    }
+  },
+  "source_bindings": {
+    "corrected_information_budget_v2": {
+      "path": "src/cf4_same_truth_information_budget_v2.py",
+      "sha256": "ed0ab98780a7c2761ace06a63b5cb5eafa5411f7a6699e39e4f4187ad3ad3bbf"
+    },
+    "frozen_failed_v1_information_budget": {
+      "path": "src/cf4_same_truth_information_budget.py",
+      "sha256": "d694505367807bea83e0e7ed0686c2b1b89ac315546f04fdfbaaaa6b328db3cc"
+    },
+    "prior_ablation": {
+      "path": "src/cf4_same_truth_ablation.py",
+      "sha256": "d9c2c64cfa9315389e945fd09c3a0a684361456dedb01631b2765cab2f9f5312"
+    },
+    "population_calibration": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "corrected_population_aggregate": {
+      "path": "src/cf4_population_calibration_aggregate_v2.py",
+      "sha256": "371016743b9c0609c15a400f30560cc288ac694301f59f482e3fa0cb132a9969"
+    },
+    "fixed_field_kernels": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "linear_CR_and_BGc_design": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    }
+  },
+  "prior_ablation": {
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/members",
+    "member_implementation_commit": "c3dbdc8becdea89a732d118d250dd34aa4d277f3",
+    "aggregate_directory": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/aggregate",
+    "aggregate_result_sha256": "379e4c7d15dde242b315429aa17727282252c7feea3910fcdb12184cc10a38b2",
+    "aggregate_metrics_sha256": "649d7253d1e2d79222a864da76b9268de275366f5e85d3afee01e480a9f41d11"
+  },
+  "completed_D": {
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "aggregate_directory": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "aggregate_result_sha256": "9214a9d7000862832f8e428cef5121e205899f34a819b2d0b4b795cef46e691b",
+    "aggregate_metrics_sha256": "0c5603e7a2933541729b81953e7477933534c9bc52120fa767a0fea4675da5fd"
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "technical_pilot_index": 0,
+    "technical_pilot_expected_peak_memory_MiB": 2500,
+    "technical_pilot_requested_memory_MiB": 3072,
+    "technical_pilot_time_limit": "00:30:00",
+    "production_member_array": "0-63%8",
+    "member_cpus_per_task": 4,
+    "member_expected_peak_memory_MiB": 2500,
+    "member_requested_memory_MiB": 3072,
+    "member_time_limit": "00:30:00",
+    "aggregate_cpus_per_task": 4,
+    "aggregate_expected_peak_memory_MiB": 2200,
+    "aggregate_requested_memory_MiB": 3072,
+    "aggregate_time_limit": "00:30:00",
+    "memory_minimum_headroom_multiplier": 1.2,
+    "output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2",
+    "technical_pilot_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/pilot/member-00",
+    "member_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/members",
+    "aggregate_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/aggregate",
+    "maximum_technical_pilot_submissions": 1,
+    "maximum_production_member_array_submissions_after_pilot": 1,
+    "maximum_aggregate_submissions": 1,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true,
+    "target_0p3_cMpc_h_reached": false
+  }
+}
