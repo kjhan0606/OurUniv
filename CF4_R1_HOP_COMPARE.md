@@ -31,3 +31,8 @@ regroup1min each. No GPU, snapshots or new evolution. Four small particle
 streams plus HOP diagnostics estimated<1GiB. Preserve previous/new artifacts.
 Matching label-permutation regression and input round-trip run in allocation.
 Routine driver evaluation; no new external audit or automatic R1 promotion.
+
+Submitted361459 from16412c65bc7a5aabfd87851d7f8f8781c8cc103b, running on
+syn103 via Slurm. Outputs /gpfs/kjhan/CF4/r1_hop/job_361459/ and logs
+/gpfs/kjhan/CF4/logs/cf4_R1_hop_361459.{out,err}. First CIC arm completed
+with486 reported host groups; remaining arms/matching not yet judged.
