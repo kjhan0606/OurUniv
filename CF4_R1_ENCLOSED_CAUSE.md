@@ -44,3 +44,12 @@ saves matched HOP-group mass differences and per-radius summaries for the same
 32 centers, while retaining the AMR9-center bias explicitly. The previous
 boundary interpretation is therefore provisional until this corrected readout
 is executed and re-audited.
+
+Fable bundle-close audit of run362967: **CONDITIONAL PASS**. The calculation
+is sound, but the prior interpretation was too strong. At r=.1875 cMpc/h,
+enclosed median absolute mass differences are CIC4.5%, TSC5.1%, AMR82.4%,
+versus matched HOP medians2.3%,2.7%,1.0%; at r=.3 they are1.9%,1.2%,.8%.
+Thus core-scale residuals do not support an HOP-boundary-only explanation;
+force resolution and matter-distribution differences remain viable. The code
+now records HOP maxima and reciprocal-pair counts and uses only reciprocal
+matches. HOP groups remain diagnostic, with no MW/M31/M33 or posterior claim.

@@ -46,7 +46,7 @@ def main():
     top=centers_from(loaded['amr9'].tags, loaded['amr9'].positions_cMpc_h, loaded['amr9'].masses_Msun_h); centers=[z[2] for z in top]
     report=dict(status='RUNNING',source_commit=os.environ['EXPECTED_COMMIT'],sample='AMR9 top-32 HOP masses >=1000 particles',radii_cMpc_h=radii,centers_cMpc_h=np.asarray(centers).tolist(),moments={},contrasts={},limits='Fixed AMR9 centers remove solver-specific group boundaries but are not MW/M31/M33 identities, M200c or bound M33.')
     old=json.loads((BASE/'result.json').read_text())
-    matched_ids={k:{row['source_group']:row['choices'][0]['group_id'] for row in old['matches']['amr9-'+k] if row['choices']} for k in ['cic','tsc','amr8']}
+    matched_ids={k:{row['source_group']:row['choices'][0]['group_id'] for row in old['matches']['amr9-'+k] if row['choices'] and row['reciprocal']} for k in ['cic','tsc','amr8']}
     hop_group_mass={k:{int(g):float(np.sum(state.masses_Msun_h[state.tags==g])) for g in np.unique(state.tags[state.tags>=0])} for k,state in loaded.items()}
     try:
         for label,state in loaded.items(): report['moments'][label]=enclosed(state.positions_cMpc_h,state.velocities_km_s,state.masses_Msun_h,centers,radii); write(out/'result.json',report); print(label+' enclosed complete',flush=True)
@@ -60,7 +60,7 @@ def main():
                     hop_rel=None if target_group is None else hop_group_mass['amr9'][source_group]/hop_group_mass[other][target_group]-1
                     rows.append(dict(index=i,radius_cMpc_h=rad,mass_relative=a['mass']/b['mass']-1,hop_group_mass_relative=hop_rel,mean_velocity_difference=float(np.linalg.norm(np.asarray(a['mean_velocity'])-b['mean_velocity'])),sigma_relative=float(np.max(np.abs(np.asarray(a['sigma'])/np.maximum(b['sigma'],1e-30)-1))),count_amr9=a['count'],count_other=b['count']))
             report['contrasts'][other]=rows
-            report.setdefault('per_radius_summary',{})[other]={str(rad):dict(n=sum(x['radius_cMpc_h']==rad for x in rows),enclosed_median_abs_mass_difference=float(np.median([abs(x['mass_relative']) for x in rows if x['radius_cMpc_h']==rad])),enclosed_max_abs_mass_difference=float(max(abs(x['mass_relative']) for x in rows if x['radius_cMpc_h']==rad)),hop_median_abs_mass_difference=float(np.median([abs(x['hop_group_mass_relative']) for x in rows if x['radius_cMpc_h']==rad and x['hop_group_mass_relative'] is not None]))) for rad in radii}
+            report.setdefault('per_radius_summary',{})[other]={str(rad):dict(n=sum(x['radius_cMpc_h']==rad for x in rows),reciprocal_pairs=sum(x['hop_group_mass_relative'] is not None for x in rows if x['radius_cMpc_h']==rad),enclosed_median_abs_mass_difference=float(np.median([abs(x['mass_relative']) for x in rows if x['radius_cMpc_h']==rad])),enclosed_max_abs_mass_difference=float(max(abs(x['mass_relative']) for x in rows if x['radius_cMpc_h']==rad)),hop_median_abs_mass_difference=float(np.median([abs(x['hop_group_mass_relative']) for x in rows if x['radius_cMpc_h']==rad and x['hop_group_mass_relative'] is not None])),hop_max_abs_mass_difference=float(max([abs(x['hop_group_mass_relative']) for x in rows if x['radius_cMpc_h']==rad and x['hop_group_mass_relative'] is not None],default=0.)) ) for rad in radii}
         report['status']='COMPLETE_DRIVER_JUDGMENT_REQUIRED'
     except Exception as exc: report.update(status='FAILED',error=f'{type(exc).__name__}: {exc}'); raise
     finally: write(out/'result.json',report)
