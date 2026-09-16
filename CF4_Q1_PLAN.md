@@ -27,3 +27,24 @@ Exit: PASS only if Q1 converges at both spacings, conserves mass, agrees with
 JAX and has finite gradients and a measured feasible cost. Otherwise NO-GO
 and switch to Fourier/radial-shell design; do not relax the gate. No posterior,
 LG identity, M33 boundness or ≤0.3 cMpc/h claim is authorized by Q1 alone.
+
+Opus5 planning/code audit (`claude --model opus`, read-only) returned
+**CONDITIONAL PASS** after Slurm373164's4/4 fixture tests. The NumPy oracle and
+fixture contraction are sound, but the current JAX basis contraction is not a
+state-dependent Q1 operator: its gradients are only derivatives with respect
+to source masses, and its table lacks an explicit population dimension. The
+GH point-deposit path remains unpromoted. Additional findings are that the
+observer guard is not guaranteed gradient-safe, zero-intensity Poisson
+handling needs support/gradient tests, the Q1 oracle and GH path use different
+line-of-sight definitions, frozen sliver/tail tolerances are not enforced, and
+no R2-scale cost is measured.
+
+Driver disposition: accept these as real blockers, not audit failure. Keep the
+fixture contraction development-only. The next implementation must define one
+LOS convention and a population-indexed response contract, enforce Q1
+mass/sliver/tail tolerances, add correct zero-support and observer-gradient
+tests, then measure N128/3 and N256/1.5 cost. Only after those gates can a
+state-dependent JAX operator or R2 entry be considered. The CF4 distance
+factor, shared observer/solar nuisance frame, MW/M31/M33 identification and
+bound M33 remain separate unresolved work; no HOP identity or posterior is
+implied.
