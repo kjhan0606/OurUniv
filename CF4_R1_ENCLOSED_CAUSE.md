@@ -16,3 +16,13 @@ Q-GOAL: distinguish HOP boundary effects from field dynamics before LG
 observables. Q-LEAN: one readout, no new framework/simulation. CPU4/8GiB
 (6.5GiB estimate+20%),20min, JSON only. Code implementation by driver;
 Opus5 code audit required before closing this bundle.
+
+Initial run362840 exposed a driver error in this newly added code: the AMR9
+velocity array was accidentally passed as the mass argument when ranking
+diagnostic centers. No physical result was consumed from that run. The call
+is corrected to pass the archived particle masses explicitly; the corrected
+run must replace362840 for interpretation. Requested Opus5 CLI audit was
+attempted, but this environment rejected model name `opus-5`; the `opus`
+alias produced no response and exited after timeout. Treat that as audit
+unavailable, not approval; driver performs an additional source review and
+records this limitation.

@@ -41,7 +41,8 @@ def main():
     if not os.environ.get('SLURM_JOB_ID'): raise RuntimeError('Slurm required')
     root=Path('/home/kjhan/BACKUP/CF4'); out=Path('/gpfs/kjhan/CF4/r1_enclosed_cause')/('job_'+os.environ['SLURM_JOB_ID']); out.mkdir(parents=True,exist_ok=False)
     radii=[.1875,.3,.5,.75,1.,1.5]; loaded={k:load_hop(k) for k in ['amr9','cic','tsc','amr8']}
-    top=centers_from(*loaded['amr9'][:3]); centers=[z[2] for z in top]
+    # loaded=(tags, positions, velocities, masses); pass masses explicitly.
+    top=centers_from(loaded['amr9'][0], loaded['amr9'][1], loaded['amr9'][3]); centers=[z[2] for z in top]
     report=dict(status='RUNNING',source_commit=os.environ['EXPECTED_COMMIT'],sample='AMR9 top-32 HOP masses >=1000 particles',radii_cMpc_h=radii,centers_cMpc_h=np.asarray(centers).tolist(),moments={},contrasts={},limits='Fixed AMR9 centers remove solver-specific group boundaries but are not MW/M31/M33 identities, M200c or bound M33.')
     try:
         for label,(tag,x,v,m) in loaded.items(): report['moments'][label]=enclosed(x,v,m,centers,radii); write(out/'result.json',report); print(label+' enclosed complete',flush=True)
