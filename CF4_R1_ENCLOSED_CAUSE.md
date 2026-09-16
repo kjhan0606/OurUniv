@@ -35,3 +35,12 @@ are24.98,12.10,13.46 km/s respectively. The reduction from HOP group-level
 mass differences supports a substantial boundary-membership contribution,
 but nonzero fixed-center residuals show that dynamics/distribution differences
 remain. This is still a one-seed diagnostic and not a convergence certificate.
+
+Opus audit using the safe `claude --model opus` read-only settings returned
+CONDITIONAL PASS. It found no numerical bug in the corrected run, but required
+like-for-like reporting: pooled enclosed statistics cannot be compared with
+counts of HOP pairs, and AMR9-centered spheres are asymmetric. The code now
+saves matched HOP-group mass differences and per-radius summaries for the same
+32 centers, while retaining the AMR9-center bias explicitly. The previous
+boundary interpretation is therefore provisional until this corrected readout
+is executed and re-audited.
