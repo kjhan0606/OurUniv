@@ -26,3 +26,12 @@ attempted, but this environment rejected model name `opus-5`; the `opus`
 alias produced no response and exited after timeout. Treat that as audit
 unavailable, not approval; driver performs an additional source review and
 records this limitation.
+
+Corrected run362869 completed in23s (source7f31041). With centers correctly
+ranked by AMR9 HOP mass, AMR9 enclosed-vs-comparator maximum/median absolute
+mass differences are CIC11.15%/1.33%, TSC12.32%/.75%, and AMR8 7.73%/.32%
+across the six radii and32 centers. Maximum mean-velocity vector differences
+are24.98,12.10,13.46 km/s respectively. The reduction from HOP group-level
+mass differences supports a substantial boundary-membership contribution,
+but nonzero fixed-center residuals show that dynamics/distribution differences
+remain. This is still a one-seed diagnostic and not a convergence certificate.
