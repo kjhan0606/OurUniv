@@ -45,6 +45,21 @@ saves matched HOP-group mass differences and per-radius summaries for the same
 boundary interpretation is therefore provisional until this corrected readout
 is executed and re-audited.
 
+Fable bundle-close audit: **CONDITIONAL PASS**. Corrected run363094 completed
+in45s from commitf9b8737; all32 centers matched reciprocally for each
+comparator. Per-radius summaries are saved in
+`/gpfs/kjhan/CF4/r1_enclosed_cause/job_363094/result.json`.
+
+At r=.1875 cMpc/h, enclosed median absolute mass differences are CIC4.52%,
+TSC5.10%, AMR82.41%, while matched HOP medians are2.34%,2.67%,1.02%.
+At r=.3 they are1.85%,1.17%,.78%; at r=.5 they are1.32%,.91%,.33%; at
+r=1.5 they are.68%,.29%,.09%. HOP maximum differences on this same sample
+are47.65%,32.82%,16.33% respectively. Thus HOP tails can be boundary-sensitive,
+but core-scale enclosed differences are not reduced below HOP differences and
+are consistent with force resolution and matter-distribution differences.
+The cause remains undetermined. This diagnostic bundle is closed as a
+conditional solver-readout result, not as R1 completion or LG inference.
+
 Fable bundle-close audit of run362967: **CONDITIONAL PASS**. The calculation
 is sound, but the prior interpretation was too strong. At r=.1875 cMpc/h,
 enclosed median absolute mass differences are CIC4.5%, TSC5.1%, AMR82.4%,
