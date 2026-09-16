@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from cf4_r1_particle_entry import write
 from cf4_zoom_z0_gate import _record, _skip_header
+from cf4_state_contract import ParticleState, validate_state
 
 BASE = Path('/gpfs/kjhan/CF4/r1_hop/job_361459'); BOX = 12.0
 
@@ -15,7 +16,7 @@ def load_hop(label):
         x = np.stack([_record(f, '<f8') for _ in range(3)], axis=1)*BOX
         v = np.stack([_record(f, '<f8') for _ in range(3)], axis=1); m = _record(f, '<f8')
     assert n == nfile == len(tag) == len(x)
-    return tag, x, v, m
+    return validate_state(ParticleState(x, v, m, tags=tag), box_cMpc_h=BOX)
 
 def centers_from(tag, x, m, minimum=1000, count=32):
     ids, counts = np.unique(tag[tag >= 0], return_counts=True); ids = ids[counts >= minimum]; rows=[]
@@ -42,13 +43,13 @@ def main():
     root=Path('/home/kjhan/BACKUP/CF4'); out=Path('/gpfs/kjhan/CF4/r1_enclosed_cause')/('job_'+os.environ['SLURM_JOB_ID']); out.mkdir(parents=True,exist_ok=False)
     radii=[.1875,.3,.5,.75,1.,1.5]; loaded={k:load_hop(k) for k in ['amr9','cic','tsc','amr8']}
     # loaded=(tags, positions, velocities, masses); pass masses explicitly.
-    top=centers_from(loaded['amr9'][0], loaded['amr9'][1], loaded['amr9'][3]); centers=[z[2] for z in top]
+    top=centers_from(loaded['amr9'].tags, loaded['amr9'].positions_cMpc_h, loaded['amr9'].masses_Msun_h); centers=[z[2] for z in top]
     report=dict(status='RUNNING',source_commit=os.environ['EXPECTED_COMMIT'],sample='AMR9 top-32 HOP masses >=1000 particles',radii_cMpc_h=radii,centers_cMpc_h=np.asarray(centers).tolist(),moments={},contrasts={},limits='Fixed AMR9 centers remove solver-specific group boundaries but are not MW/M31/M33 identities, M200c or bound M33.')
     old=json.loads((BASE/'result.json').read_text())
     matched_ids={k:{row['source_group']:row['choices'][0]['group_id'] for row in old['matches']['amr9-'+k] if row['choices']} for k in ['cic','tsc','amr8']}
-    hop_group_mass={k:{int(g):float(np.sum(m[tag==g])) for g in np.unique(tag[tag>=0])} for k,(tag,x,v,m) in loaded.items()}
+    hop_group_mass={k:{int(g):float(np.sum(state.masses_Msun_h[state.tags==g])) for g in np.unique(state.tags[state.tags>=0])} for k,state in loaded.items()}
     try:
-        for label,(tag,x,v,m) in loaded.items(): report['moments'][label]=enclosed(x,v,m,centers,radii); write(out/'result.json',report); print(label+' enclosed complete',flush=True)
+        for label,state in loaded.items(): report['moments'][label]=enclosed(state.positions_cMpc_h,state.velocities_km_s,state.masses_Msun_h,centers,radii); write(out/'result.json',report); print(label+' enclosed complete',flush=True)
         for other in ['cic','tsc','amr8']:
             rows=[]
             for i in range(len(centers)):
