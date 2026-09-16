@@ -179,7 +179,11 @@ def poisson_log_likelihood_jax(counts, intensity):
     # Avoid differentiating through log(0): positive counts at zero intensity
     # still evaluate to a very negative finite value, with finite gradients.
     log_intensity = jnp.log(jnp.maximum(intensity, jnp.finfo(intensity.dtype).tiny))
-    return poisson_log_likelihood_from_log_intensity_jax(counts, log_intensity)
+    # Keep the expected-count term as I itself: this gives dL/dI=-1 at I=0
+    # for zero observed counts, while the checked bridge rejects invalid
+    # positive-count/zero-intensity support before inference.
+    count_term = jnp.where(counts > 0, counts * log_intensity, 0.0)
+    return jnp.sum(count_term - intensity - gammaln(counts + 1.0))
 
 
 def poisson_log_likelihood_from_log_intensity_jax(counts, log_intensity):
