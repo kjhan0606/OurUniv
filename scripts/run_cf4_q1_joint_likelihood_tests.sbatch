@@ -15,4 +15,4 @@ git diff --quiet "$EXPECTED_COMMIT" -- src scripts config tests
 export PYTHONPATH="$PWD:$PWD/src:$PWD/scripts:$PWD/tests"
 export JAX_ENABLE_X64=1 JAX_PLATFORMS=cpu XLA_PYTHON_CLIENT_PREALLOCATE=false
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
-exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 -m pytest -q tests/test_cf4_2mpp_joint_likelihood_jax.py
+exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_q1_joint_smoke.py
