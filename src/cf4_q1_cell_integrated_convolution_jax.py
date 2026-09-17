@@ -100,6 +100,23 @@ def contract_mass_field_from_jax(response_basis, masses):
     return jnp.einsum("mxyz,m->xyz", response, mass, precision=jax.lax.Precision.HIGHEST)
 
 
+def contract_population_fields(response_basis, masses):
+    """Contract an explicitly population-indexed basis: (P,M,N,N,N) × (P,M)."""
+    require_jax()
+    response = np.asarray(response_basis, dtype=np.float64)
+    mass = np.asarray(masses, dtype=np.float64)
+    if response.ndim != 5 or response.shape[0] < 1 or response.shape[1] < 1 or len(set(response.shape[2:])) != 1:
+        raise JaxOperatorInputError('population response_basis must have shape (P,M,N,N,N)')
+    if mass.shape != response.shape[:2]:
+        raise JaxOperatorInputError('population masses must have shape (P,M)')
+    if response.nbytes > 64 * 1024**2 or not np.isfinite(response).all() or np.any(response < 0):
+        raise JaxOperatorInputError('invalid population response_basis')
+    if not np.allclose(response.sum(axis=(2,3,4)), 1., rtol=0., atol=1e-10):
+        raise JaxOperatorInputError('each population response must conserve unit mass')
+    if not np.isfinite(mass).all() or np.any(mass < 0): raise JaxOperatorInputError('invalid population masses')
+    return jnp.einsum('pmxyz,pm->pxyz', jnp.asarray(response), jnp.asarray(mass), precision=jax.lax.Precision.HIGHEST)
+
+
 def mass_gradient_basis(response_basis: Iterable[object]):
     """Return the mass-first Jacobian (M,N,N,N); jacfwd uses (N,N,N,M)."""
 

@@ -10,6 +10,7 @@ from cf4_q1_cell_integrated_convolution import cell_integrated_tsc_deposit
 from cf4_q1_cell_integrated_convolution_jax import (
     JaxOperatorInputError, assert_q1_numpy_provenance, contract_mass_field,
     contract_mass_field_from_jax, jax, jnp, mass_gradient_basis,
+    contract_population_fields,
 )
 
 
@@ -105,6 +106,14 @@ class Q1ContractionTests(unittest.TestCase):
         print(json.dumps({"scope": "tiny fixed-geometry fixture only", "device": str(jax.devices()[0]),
             "compile_and_first_seconds": compile_seconds, "warm_seconds": warm_seconds,
             "peak_host_mib_so_far": peak_mib, "gpu_memory": "not_applicable_CPU_only"}), flush=True)
+
+    def test_population_dimension_is_explicit(self):
+        basis = np.stack([self.cases[0][-1], self.cases[1][-1]])
+        masses = np.stack([np.array([.7, 1.2, .3]), np.array([1.1, .4, .8])])
+        actual = np.asarray(contract_population_fields(basis, masses))
+        expected = np.stack([np.asarray(contract_mass_field(basis[p], masses[p])) for p in range(2)])
+        np.testing.assert_allclose(actual, expected, atol=2e-12, rtol=0.)
+        with self.assertRaises(JaxOperatorInputError): contract_population_fields(basis[0], masses[0])
 
 
 if __name__ == "__main__":
