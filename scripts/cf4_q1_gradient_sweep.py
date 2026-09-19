@@ -19,6 +19,7 @@ cases = {"interior": np.array([[1.37, 2.11, 4.23]]),
          "seam": np.array([[box - .006, 2.11, 4.23]])}
 
 def oracle_scalar(p):
+    p = np.mod(p, box)
     f = predict_selected_intensity_cell_integrated(p, vel, masses, exposure, **kw)
     return float(np.sum(f * exposure ** 2))
 def candidate_scalar(p):
