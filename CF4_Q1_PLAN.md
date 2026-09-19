@@ -285,3 +285,11 @@ two-source cell-centre comparison is `2.20e-15` with exact mass `6.72` (job
 387216). The earlier `1.20` failure was a harness origin/indexing defect. The
 next gate is consistent post-RSD positions, followed by sub-cell phase error;
 no shell grouping or production cost claim is authorized yet.
+
+The subsequent phase/post-RSD gate (job 387219) rejects the single
+cell-centre kernel for real states: relative L1 is `1.37e-6` at phase 0 but
+`0.107`, `0.275`, `0.567`, and `0.284` at phases 0.1, 0.25, 0.5, and 0.75;
+the consistent post-RSD two-source case is `0.563`. Mass remains conserved.
+The phase-indexed response basis or exact sub-cell TSC treatment is therefore
+mandatory. Grok was queried for the next design after this failure, but the
+CLI returned no usable answer in the bounded call; production remains closed.
