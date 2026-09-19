@@ -16,5 +16,5 @@ for s in range(2):
      center=(cell+np.array([ix,iy,iz])/p)*h
      k=cell_integrated_tsc_deposit(center[None,:],np.array([1.]),rh[s:s+1],np.array([disp]),n,box)
      basis[s,ix,iy,iz]=np.fft.fftn(np.roll(k,-cell,axis=(0,1,2)))
-pred=np.asarray(predict_phase_basis_kernel_jax(jnp.asarray(rsd.positions),jnp.asarray(masses),jnp.asarray(exposure),jnp.array([0,1]),jnp.asarray(basis),box_size_cMpc_h=box))
+pred=np.asarray(predict_phase_basis_kernel_jax(jnp.asarray(rsd.positions),jnp.asarray(masses),jnp.asarray(exposure),jnp.asarray(basis),jnp.array([0,1]),box_size_cMpc_h=box))
 print({'status':'PHASE_SHELL_RSD_CHECK','relative_l1':float(np.sum(np.abs(pred-oracle))/np.sum(np.abs(oracle))),'mass':float(pred.sum())},flush=True)
