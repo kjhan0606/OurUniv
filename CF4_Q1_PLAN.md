@@ -48,3 +48,26 @@ state-dependent JAX operator or R2 entry be considered. The CF4 distance
 factor, shared observer/solar nuisance frame, MW/M31/M33 identification and
 bound M33 remain separate unresolved work; no HOP identity or posterior is
 implied.
+
+## Bundle update — 2026-09-19
+
+The population-indexed fixture and the joint-likelihood smoke test both pass
+on Slurm CPU (Q1 fixture: 5/5; joint smoke: including the zero-count,
+zero-intensity gradient guard). A first benchmark of the *actual* NumPy
+state-dependent cell-integrated oracle was also completed on Slurm job 386723:
+
+| grid | sources | populations | wall time | peak host memory |
+|---:|---:|---:|---:|---:|
+| 128^3 | 8 | 6 | 13.85 s | 364 MiB |
+| 256^3 | 8 | 6 | 34.36 s | 2,572 MiB |
+
+This is a representative eight-source development measurement, not an R2
+catalog estimate; it has no JAX state gradient and does not authorize sampler
+or production use. The JAX implementation is still only a population-indexed
+response-basis contraction bridge, not the physical state-dependent operator.
+Therefore Q1 remains **CONDITIONAL / development-only**: the next gate is a
+single LOS convention plus a differentiable state-dependent JAX operator,
+validated against this NumPy oracle and its gradients. If that cannot meet a
+measured cost bound, switch to a radial-shell/Fourier design rather than
+relaxing the convergence or science gates. No posterior, MW/M31/M33 identity,
+or 0.3 cMpc/h claim follows from this benchmark.
