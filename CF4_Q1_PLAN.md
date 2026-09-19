@@ -204,6 +204,14 @@ candidate: shell discretization and Fourier-vs-oracle value gates remain to be
 measured before any Q1 promotion. The dense and tiled production gates stay
 closed.
 
+The first Fourier-vs-oracle check rejects the present transfer convention:
+relative L1 is `0.459` at 16³, `0.653` at 32³, and `0.783` at 64³ (jobs
+387190, 387192, 387193), despite mass conservation. Refining the grid does
+not converge toward the cell-integrated oracle, so this radial-shell candidate
+is **NO-GO** as written. Before another production-cost run, the Fourier
+kernel must include a verified TSC window/alias treatment or the shell
+approximation must be redesigned and pass the oracle value gate.
+
 ### Tiled candidate result
 
 The first spatially tiled sparse-TSC candidate matches the dense operator in a
