@@ -185,3 +185,10 @@ gradient norm only a conservation sanity check. The measured order-64
 gradient will not fit a single 16 GiB card; tiled/checkpointed execution or a
 lower-cost radial-shell/Fourier operator is required for production. Q1 is
 therefore **CONDITIONAL**, not a production authorization.
+
+The bounded 256³ order-512 gradient attempt (job 386960) hit the hard
+10-minute walltime limit and was cancelled at 10:25, with peak recorded RSS
+8,616 MiB and no completed result file. This rejects single-card 256³
+order-512 gradient execution under the current implementation. Production
+requires tiling/checkpointing or a lower-cost radial-shell/Fourier operator;
+the Q1 production gate remains closed.
