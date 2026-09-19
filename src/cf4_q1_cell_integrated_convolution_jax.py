@@ -27,7 +27,7 @@ except ImportError:  # pragma: no cover - exercised by the skip path in tests.
     jnp = None  # type: ignore[assignment]
 
 
-Q1_NUMPY_SOURCE_SHA256 = "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2"
+Q1_NUMPY_SOURCE_SHA256 = "0c3fe50ed519796fcc05e82c9696bb4be0f4d2a1731773f5a1d2ce20253ba78e"
 Q1_JAX_CONTRACTION_NAME = "q1_cell_integrated_response_basis_contraction"
 
 
