@@ -90,3 +90,14 @@ Post-audit Slurm rerun at commit `34a5303` passed the joint smoke, the Q1 JAX
 fixture (5/5), and the state-cost benchmark (job 386734). These passes verify
 the release checks and provenance only; they do not change the conditional
 status or promote the response-basis bridge to a physical JAX operator.
+
+### R2-geometry follow-up
+
+At commit `1e77efd`, the JAX stochastic LOS was changed to recompute the
+minimum-image direction from the coherent-RSD (shifted) position, matching the
+NumPy oracle. The periodic wrap smoke passed on Slurm job 386881, and the joint
+smoke passed on job 386883. A geometry-scaled NumPy benchmark at a 384 cMpc/h
+box with 32 sources and six populations (job 386882) gave 3.06 s / 365 MiB at
+128³ and 31.15 s / 2,573 MiB at 256³. This is a useful oracle reference, but
+still not a JAX state-gradient or full-catalog measurement; Q1 therefore
+remains conditional and production inference remains closed.
