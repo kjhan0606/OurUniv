@@ -58,8 +58,8 @@ state-dependent cell-integrated oracle was also completed on Slurm job 386723:
 
 | grid | sources | populations | wall time | peak host memory |
 |---:|---:|---:|---:|---:|
-| 128^3 | 8 | 6 | 13.85 s | 364 MiB |
-| 256^3 | 8 | 6 | 34.36 s | 2,572 MiB |
+| 128^3 | 8 | 6 | 13.53 s | 365 MiB |
+| 256^3 | 8 | 6 | 33.53 s | 2,573 MiB |
 
 This is a representative eight-source development measurement, not an R2
 catalog estimate; it has no JAX state gradient and does not authorize sampler
@@ -85,3 +85,8 @@ runtime (now fail-closed in the NumPy operator). If the R2 cost is infeasible,
 activate the radial-shell/Fourier fallback. Sparse oracle scatter, naming
 cleanup, GH diagnostics, and the M31/M33 geometric operator are deferred; no
 LG or resolution claim is authorized.
+
+Post-audit Slurm rerun at commit `34a5303` passed the joint smoke, the Q1 JAX
+fixture (5/5), and the state-cost benchmark (job 386734). These passes verify
+the release checks and provenance only; they do not change the conditional
+status or promote the response-basis bridge to a physical JAX operator.
