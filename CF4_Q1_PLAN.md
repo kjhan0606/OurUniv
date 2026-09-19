@@ -193,6 +193,18 @@ order-512 gradient execution under the current implementation. Production
 requires tiling/checkpointing or a lower-cost radial-shell/Fourier operator;
 the Q1 production gate remains closed.
 
+### Tiled candidate result
+
+The first spatially tiled sparse-TSC candidate matches the dense operator in a
+small Slurm smoke (`2.1e-17` maximum absolute difference) and has finite
+gradients. However, its 256³ order-256 reverse-mode benchmark (job 387032)
+also hit the 10-minute limit and grew to `33,113 MiB` RSS. The unrolled JAX
+tile graph is therefore worse than the dense path for production memory. This
+tiling implementation is retained only as a correctness reference and is not
+a production route. The next implementation must switch to a radial-shell /
+Fourier operator with a bounded contraction graph; no further unrolled sparse
+tile scaling is authorized.
+
 The lower-order fallback was measured directly: a 256³ order-256 reverse-mode
 run (job 386984) also hit the 10-minute hard walltime and was cancelled, with
 peak RSS `14,413 MiB` and no result file. Lowering the quadrature order alone
