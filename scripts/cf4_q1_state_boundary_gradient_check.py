@@ -1,5 +1,6 @@
 """Boundary/wrap value and state-gradient check for the Q1 JAX candidate."""
 import json
+import os
 import numpy as np
 import jax
 import jax.numpy as jnp
@@ -25,11 +26,12 @@ cases = {
     "interior": np.array([[1.37, 2.11, 4.23]]),
 }
 rows = []
+order = int(os.environ.get("Q1_GRAD_ORDER", "64"))
 for name, positions in cases.items():
     oracle = predict_selected_intensity_cell_integrated(positions, velocities, masses, exposure, **kw)
     candidate = np.asarray(predict_selected_intensity_state_jax(
         jnp.asarray(positions), jnp.asarray(velocities), jnp.asarray(masses),
-        jnp.asarray(exposure), quadrature_order=64, **kw))
+        jnp.asarray(exposure), quadrature_order=order, **kw))
     rel = float(np.sum(np.abs(candidate - oracle)) / np.sum(np.abs(oracle)))
     rows.append({"case": name, "relative_l1": rel, "finite": bool(np.isfinite(candidate).all())})
 
@@ -39,7 +41,7 @@ def oracle_scalar(position, velocity):
 
 def candidate_scalar(position, velocity):
     field = predict_selected_intensity_state_jax(position, velocity, jnp.asarray(masses),
-        jnp.asarray(exposure), quadrature_order=64, **kw)
+        jnp.asarray(exposure), quadrature_order=order, **kw)
     return jnp.sum(field * jnp.asarray(exposure) ** 2)
 
 position = cases["interior"]
@@ -49,4 +51,4 @@ oracle_vx = (oracle_scalar(position, velocities + [[step, 0, 0]]) - oracle_scala
 _, grad = jax.value_and_grad(lambda p, v: candidate_scalar(p, v), argnums=(0, 1))(jnp.asarray(position), jnp.asarray(velocities))
 rows.append({"case": "interior_position_gradient", "jax": float(grad[0][0, 0]), "oracle_fd": float(oracle_px), "abs_error": abs(float(grad[0][0, 0]) - oracle_px)})
 rows.append({"case": "interior_velocity_gradient", "jax": float(grad[1][0, 0]), "oracle_fd": float(oracle_vx), "abs_error": abs(float(grad[1][0, 0]) - oracle_vx)})
-print(json.dumps({"status": "DIAGNOSTIC_ONLY", "rows": rows}, indent=2), flush=True)
+print(json.dumps({"status": "DIAGNOSTIC_ONLY", "quadrature_order": order, "rows": rows}, indent=2), flush=True)
