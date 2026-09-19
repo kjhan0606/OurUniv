@@ -212,6 +212,14 @@ is **NO-GO** as written. Before another production-cost run, the Fourier
 kernel must include a verified TSC window/alias treatment or the shell
 approximation must be redesigned and pass the oracle value gate.
 
+Per the user's instruction, Grok was consulted after this failure. Its
+fact-bounded advice identifies three live causes despite the passing impulse
+roll test: kernel origin/half-cell phase, FFT convolution normalization
+(including the k=0 mode), and the mismatch between oracle TSC stencil and the
+nearest-cell delta source representation. The priority check is a one-source
+origin/phase plus k=0 normalization test before any shell grouping. Production
+remains closed.
+
 The first oracle-calibrated alias-aware kernel prototype (job 387198) also
 failed its cell-centre check with relative L1 `1.20` (mass was conserved).
 The likely defect is the discrete kernel origin/translation convention, not
