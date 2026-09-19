@@ -71,3 +71,17 @@ validated against this NumPy oracle and its gradients. If that cannot meet a
 measured cost bound, switch to a radial-shell/Fourier design rather than
 relaxing the convergence or science gates. No posterior, MW/M31/M33 identity,
 or 0.3 cMpc/h claim follows from this benchmark.
+
+### Bundle-close audit disposition
+
+Fable returned **CONDITIONAL PASS**. The bundle is scientifically aligned and
+not over-instrumented, but it is not an R2 entry gate. Mandatory next work is:
+(i) freeze one LOS convention (the shifted-position direction used by the
+NumPy oracle), including observer-crossing/wrap tests; (ii) implement and
+gradient-test a genuinely state-dependent JAX operator against the oracle;
+(iii) repeat the benchmark at the real R2 box/spacing and catalog-sized source
+counts, timing the JAX path; and (iv) enforce sliver and tail tolerances at
+runtime (now fail-closed in the NumPy operator). If the R2 cost is infeasible,
+activate the radial-shell/Fourier fallback. Sparse oracle scatter, naming
+cleanup, GH diagnostics, and the M31/M33 geometric operator are deferred; no
+LG or resolution claim is authorized.

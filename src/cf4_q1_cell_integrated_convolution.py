@@ -11,7 +11,7 @@ The implementation is an in-memory development oracle.  It performs no file
 I/O, does not access GPFS or Slurm, and carries no permission to run inference
 or make a resolution claim.  Gaussian tails outside the fixed cutoff are
 renormalised per particle; the omitted probability is reported and is below the
-frozen tail tolerance for the default cutoff.
+frozen tail tolerance for the default cutoff (8σ).
 """
 
 from __future__ import annotations
@@ -403,6 +403,13 @@ def cell_integrated_tsc_deposit(
         "particle_diagnostics": particle_diagnostics,
         "renormalization_is_applied": True,
     }
+    # These are release gates, not merely diagnostics. Renormalisation keeps
+    # mass conservation exact, but it must not hide an underspecified tail or
+    # numerically merged interval that exceeds the frozen Q1 tolerances.
+    if diagnostics["max_dropped_sliver_probability"] > Q1_SLIVER_PROBABILITY_TOLERANCE:
+        raise LikelihoodInputError("Q1 sliver probability exceeds frozen tolerance")
+    if diagnostics["tail_probability"] > Q1_TAIL_TRUNCATION_RELATIVE_L1_TOLERANCE:
+        raise LikelihoodInputError("Q1 Gaussian tail exceeds frozen tolerance")
     return result, diagnostics
 
 
