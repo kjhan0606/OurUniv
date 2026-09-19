@@ -5,7 +5,7 @@ from cf4_q1_radial_shell_fourier_jax import predict_phase_basis_kernel_jax
 from cf4_q1_cell_integrated_convolution import cell_integrated_tsc_deposit
 
 jax.config.update('jax_enable_x64', True)
-n=16; box=6.; h=box/n; pcount=4; cell=np.array([3,5,7]); direction=np.array([[1.,0.,0.]]); disp=.746*np.hypot(24.,11.)/74.6
+n=16; box=6.; h=box/n; pcount=8; cell=np.array([3,5,7]); direction=np.array([[1.,0.,0.]]); disp=.746*np.hypot(24.,11.)/74.6
 exposure=np.full((6,n,n,n),.8); masses=np.full((6,1),.7)
 basis=np.empty((pcount,pcount,pcount,n,n,n),dtype=np.complex128)
 for ix in range(pcount):
