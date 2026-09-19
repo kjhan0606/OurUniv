@@ -49,6 +49,36 @@ def predict_shell_kernel_convolution_jax(
     return jnp.stack(rows)
 
 
+def predict_phase_basis_kernel_jax(source_positions, population_masses, selection_exposure,
+                                   phase_kernel_fft, *, box_size_cMpc_h):
+    """Apply a trilinearly interpolated sub-cell phase kernel basis.
+
+    ``phase_kernel_fft`` has shape (P,P,P,N,N,N), with kernels sampled at
+    phase coordinates in [0,1)^3 for one shell. This is a development route;
+    shell and population-specific bases can be added after the phase gate.
+    """
+    _require_jax()
+    positions=jnp.asarray(source_positions,dtype=jnp.float64); masses=jnp.asarray(population_masses,dtype=jnp.float64)
+    exposure=jnp.asarray(selection_exposure,dtype=jnp.float64); basis=jnp.asarray(phase_kernel_fft)
+    n=int(exposure.shape[1]); pcount=int(basis.shape[0]); h=box_size_cMpc_h/n; field_rows=[]
+    for pop in range(POPULATIONS):
+        field=jnp.zeros((n,n,n),dtype=jnp.float64)
+        for source in range(positions.shape[0]):
+            cell=jnp.floor(jnp.mod(positions[source],box_size_cMpc_h)/h).astype(jnp.int32)%n
+            phase=jnp.mod(positions[source]/h,1.0)*pcount
+            low=jnp.floor(phase).astype(jnp.int32)%pcount; frac=phase-jnp.floor(phase)
+            interp=jnp.zeros((n,n,n),dtype=jnp.complex128)
+            for ix in (0,1):
+                for iy in (0,1):
+                    for iz in (0,1):
+                        w=(frac[0] if ix else 1-frac[0])*(frac[1] if iy else 1-frac[1])*(frac[2] if iz else 1-frac[2])
+                        interp=interp+w*basis[(low[0]+ix)%pcount,(low[1]+iy)%pcount,(low[2]+iz)%pcount]
+            delta=jnp.zeros((n,n,n),dtype=jnp.float64).at[cell[0],cell[1],cell[2]].add(masses[pop,source])
+            field=field+jnp.real(jnp.fft.ifftn(jnp.fft.fftn(delta)*interp))
+        field_rows.append(exposure[pop]*field)
+    return jnp.stack(field_rows)
+
+
 def _wavevectors(n: int, box: float):
     k = 2.0 * np.pi * np.fft.fftfreq(n, d=box / n)
     return jnp.meshgrid(jnp.asarray(k), jnp.asarray(k), jnp.asarray(k), indexing="ij")
