@@ -110,3 +110,23 @@ response (including periodic wrap and FoG/redshift broadening), compare its
 values and position/velocity JVP/VJP against the sealed oracle at x64, then
 benchmark JAX forward/gradient memory and wall time at production source
 counts. Q2 inference remains closed until those gates pass.
+
+### State-dependent JAX candidate
+
+The next implementation bundle added `src/cf4_q1_state_dependent_jax.py`, a
+fixed Gauss--Legendre candidate that is differentiable in source positions,
+velocities, masses, and LOS scatter. A Slurm x64 smoke (job 386922) passed
+against the NumPy oracle at a small non-boundary fixture with relative L1
+`6.82e-5`; its position derivative agreed with central finite difference.
+This is a candidate gate, not a promotion: the interval-exact oracle remains
+authoritative and boundary/wrap cases still require explicit value and JVP/VJP
+coverage.
+
+The first JAX cost run at R2 geometry (384 cMpc/h, 32 sources, six
+populations, order-64 quadrature) measured 137.96 s and 3,178 MiB at 128³
+(job 386923), and 311.54 s and 4,561 MiB at 256³ (job 386924). These are
+forward-only CPU measurements; gradients and production catalog counts are
+not yet included. The candidate is therefore computationally plausible for a
+bounded pilot but not yet a production inference path. Q1 remains
+**CONDITIONAL** until wrap/boundary oracle gates, JVP/VJP gates, and a
+gradient-inclusive cost bound pass.
