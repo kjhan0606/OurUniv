@@ -91,7 +91,19 @@ def observer_centred_spherical_rsd_jax(
     radial_velocity = jnp.sum(velocities_km_s * rhat, axis=1)
     displacement = little_h * radial_velocity / (scale_factor * hubble_km_s_Mpc)
     shifted = (positions + displacement[:, None] * rhat) % box_size_cMpc_h
-    return shifted, displacement, rhat
+    # Q1 defines the stochastic LOS from the coherent-RSD position. Recompute
+    # the minimum-image direction after the coherent shift to match the NumPy
+    # cell-integrated oracle, including periodic observer crossings.
+    shifted_relative = (shifted - observer + box_size_cMpc_h / 2.0) % box_size_cMpc_h
+    shifted_relative -= box_size_cMpc_h / 2.0
+    shifted_radius = jnp.linalg.norm(shifted_relative, axis=1)
+    shifted_safe_radius = jnp.maximum(shifted_radius, jnp.finfo(shifted_relative.dtype).tiny)
+    shifted_rhat = jnp.where(
+        (shifted_radius > 0.0)[:, None],
+        shifted_relative / shifted_safe_radius[:, None],
+        0.0,
+    )
+    return shifted, displacement, shifted_rhat
 
 
 def tsc_deposit_jax(positions, masses, grid_size, box_size_cMpc_h):
