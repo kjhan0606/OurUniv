@@ -1,0 +1,66 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-lift-v6-open",
+  "status": "frozen_additive_grant_release_lift_runtime_unauthorized",
+  "purpose": "Permit only the separately audited creation of the canonical one-shot v6-open local grant and paired external release/manifest. No pilot, receipt, cache, production, data, state, downstream, or automatic runtime action is permitted by this lift.",
+  "frozen_design": {
+    "commit": "ef72afcac5db1e6290ce8e494ad90b566f2e976f",
+    "ref": "config/cf4_aggregate_evidence_smc_execution_authorization_grant_release_design_v6_open.json",
+    "sha256": "78ef4fbf095adf692f7f73bd133b115c8f0a072a429f5a84df8022440f300b38"
+  },
+  "lift_version": "v1",
+  "scope": {
+    "grant_release_design_only": true,
+    "pilot_execution": false,
+    "production_execution": false,
+    "receipt_creation": false,
+    "cache_population": false,
+    "data_or_state_creation": false,
+    "downstream_execution": false,
+    "automatic_retry_retune_scale_up_or_follow_on": false
+  },
+  "grant_release_permissions": {
+    "grant_creation": true,
+    "external_pair_creation": true,
+    "pilot_execution": false,
+    "production_execution": false,
+    "one_shot": true,
+    "canonical_paths_only": true
+  },
+  "hard_pins": {
+    "open_authorization_design": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v6_open.json", "sha256": "162ee1122ad0d756420021a6855872dde0643d54a0d21131fd08a82da4cdca1e"},
+    "open_authorization_program": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v6_open.json", "sha256": "77f10acd607dfe55d8bced94ad6ae036a3997a291780f569ddf4028db03d1765"},
+    "open_authorization_source": {"path": "src/cf4_aggregate_evidence_smc_execution_authorized_v6_open.py", "sha256": "920b3b44a4580e19defd572c83ff53967e2e7bbb26661a75a1b73e2c27400e03"},
+    "open_authorization_implementation_record": {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_open_implementation_result_record_v6.json", "sha256": "c480e718caecd499b221d6eb66e746a0213ff5e846255983ba48b77605e2cc39", "commit": "ea0576fd44c205b98c0737ae74e7f4619e24348a"},
+    "shared_annealing_design": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_design.json", "sha256": "5d17ad724e780b4c5f5d0f2de1b497a9207719f338627ca92441e4acbf7adb18"},
+    "shared_annealing_source": {"path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py", "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060"},
+    "shared_annealing_implementation_record": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_implementation_result_record.json", "sha256": "d025efa5338fe12b43a255131a5d781302f6f9c954d6ff663d3a9c35833c50ee"}
+  },
+  "pair_contract": {
+    "local_grant_path": "config/cf4_aggregate_evidence_smc_execution_grant_v6_open.json",
+    "external_release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_release.json",
+    "external_manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_manifest.json",
+    "release_schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-release-v6-open",
+    "manifest_schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-manifest-v6-open",
+    "release_status": "complete_pass_external_postcommit_lineage_audit",
+    "manifest_status": "complete_paired_external_manifest",
+    "mode": "0444",
+    "grant_must_bind_full_64hex_hashes": true,
+    "grant_must_bind_release_id_payload_sha256_manifest_sha256_and_manifest_id": true,
+    "acyclic": {
+      "release_binds_manifest_path_manifest_sha256_manifest_id_and_payload_sha256": true,
+      "manifest_binds_release_path_release_id_and_release_payload_sha256": true,
+      "release_file_sha256_not_embedded_in_manifest": true,
+      "manifest_file_sha256_not_embedded_in_release_payload": true
+    }
+  },
+  "runtime_precondition": {
+    "grant_present": false,
+    "release_present": false,
+    "manifest_present": false,
+    "receipt_present": false,
+    "pilot_present": false,
+    "data_present": false,
+    "state_present": false,
+    "execution_occurred": false
+  }
+}

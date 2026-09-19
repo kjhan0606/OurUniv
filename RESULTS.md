@@ -1,5 +1,15 @@
 # CF4 — Results log
 
+> **2026-07-30 correction.** The entries below labeled “Hong+2021 direct
+> comparison” and “Hong+2021 method” are historical PMWD+HOD proof-of-concept
+> experiments, not a reproduction of Hong et al.  Their velocity grid stored a
+> weighted velocity sum rather than the published per-voxel mean; their mocks,
+> network widths, sample selection, and validation data also differ from the
+> paper.  They demonstrate code behavior at a 0.3125-Mpc/h output voxel but do
+> not establish Hong-level physical resolution or fidelity.  The audited
+> reproduction and its current data blockers are documented in
+> `HONG2021_REPRODUCTION.md`.
+
 ## 2026-07-08 — Rebuild + FoF/HOD training-data pipeline
 
 **Context.** Prior session's CF4 source + downloaded catalog were **gone from disk**

@@ -1,0 +1,22 @@
+{
+  "output_name": "population_locations_v1",
+  "seed": 912301,
+  "shuffle_seed": 912302,
+  "rollout_selection_seed": 912303,
+  "rollout_seed": 912304,
+  "epochs": 12,
+  "batch_observers": 8,
+  "learning_rate": 0.02,
+  "ridge": 0.1,
+  "parameters": 21,
+  "min_observers": {"train": 100, "calibration": 30, "test": 30},
+  "previous_development_lowers_cMpc_h": [[37.5,48,1.5],[55.5,10.5,12],[55.5,60,31.5]],
+  "rollout_observers": 8,
+  "rollouts_per_observer_per_law": 32,
+  "symmetry_L1_max": 0.0001,
+  "learning_seconds": 4200,
+  "application_seconds": 6600,
+  "host_peak_GiB": 8,
+  "gpu_reserved_peak_GiB": 8,
+  "status": "ARCHIVE_CONDITIONAL_CENTER_LAW_NOT_OBSERVED_LG_OR_HALO_CATALOGUE"
+}

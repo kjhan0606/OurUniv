@@ -1,0 +1,80 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-adaptation-v1-result-record-v1",
+  "status": "complete_fail_insufficient_adaptation_support",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the independent 2048-geometry adaptation-only bank and its preregistered support failure without fitting or publishing a proposal.",
+  "lineage": {
+    "git_commit": "7378d4bacb9a99d76d612474a668262d62a3e21f",
+    "program": "config/cf4_peak_evidence_adaptation_program.json",
+    "program_sha256": "37942d212aec299296951cd66f6fa9040aa0ddd2987ee9c27cb25da5149ea9d6",
+    "adaptation_implementation": "src/cf4_peak_evidence_adaptation.py",
+    "adaptation_implementation_sha256": "b5aa7b4f5c976532647ad0583e62e3395575cabed03a9e10199e5d7704f9424d",
+    "proposal_implementation": "src/cf4_adaptive_geometry_proposal.py",
+    "proposal_implementation_sha256": "403eadcd601bcff14c8cf7f2f438b6dad4640d8be08752178e5cd7b709ec93cc",
+    "runner_sha256": "3fc6a20d7bff62a9b26ea765df33f16d9ee8bafeff79bfa74c25f2aaa3e2c935",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/result.json",
+    "canonical_result_sha256": "520e2b57fe178baed4e9634ca322aca57870026f1254042ae3608f96aaf770a8",
+    "canonical_arrays": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/arrays.npz",
+    "canonical_arrays_sha256": "53effa951768bcebdbc5aeaf9c8bc5aa6c19b18e749f61562f1151b41911da90",
+    "complete_marker": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_adaptation_v1/COMPLETE",
+    "complete_marker_sha256": "d498be087a52079f3f2057b752bc56f4f01174a73028d31b57a0473460226f68",
+    "environment_sha256": "54fcf8a937b45e51398375be24fb28f4c12ea6c34072a01d4bfa4cb8d9582c9d",
+    "run_log_sha256": "994c6108fc625ad234ebe5d6255d9a33a8cd40b7b8a890e28987d6821f280c6b"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "elapsed_seconds": 593.5795273119584,
+    "parent_count": 256,
+    "common_geometry_draws": 2048,
+    "normalized_log_Z_row_count": 524288,
+    "master_seed": 2026082001
+  },
+  "gates": {
+    "all_parent_lineage": true,
+    "all_log_Z_and_importance_finite": true,
+    "real_evidence_scalar_vectorized_control": true,
+    "geometry_integration_support": false,
+    "EM_or_CV_executed": false,
+    "adaptation_pass": false
+  },
+  "results": {
+    "geometry_marginal_ESS": 44.408638631457826,
+    "geometry_marginal_ESS_min": 128.0,
+    "maximum_normalized_geometry_weight": 0.05992241848675407,
+    "maximum_normalized_geometry_weight_max": 0.025,
+    "geometry_weight_entropy": 4.684821056196128,
+    "scalar_vectorized_log_Z_max_difference": 2.2737367544323206e-13,
+    "scalar_vectorized_log_weight_max_difference": 2.2737367544323206e-13,
+    "scalar_vectorized_tolerance": 1e-10,
+    "phase_count_used": 27,
+    "maximum_phase_response_imaginary_relative_RMS": 2.9433195497379115e-12
+  },
+  "independent_Fable_audit": {
+    "result_lineage_and_recalculation_pass": true,
+    "failure_classification_pass": true,
+    "failure_class": "insufficient_adaptation_support_fallback_authorized",
+    "verified_exactly": [
+      "All 524288 log_Z values are finite.",
+      "All parent seeds and field hashes match the sealed reference.",
+      "Stored geometry weights, log importance, and reconstructed log_Z agree with source arrays at zero maximum difference.",
+      "No fit or CV ran before the support gate and no proposal artifact exists."
+    ],
+    "interpretation": "The 2048-draw V1 proposal remains under-sampled. This is not evidence for physical tension or parent preference."
+  },
+  "decision": {
+    "fallback_8192_adaptation_bank_authorized": true,
+    "fallback_master_seed": 2026082005,
+    "combine_or_reuse_2048_rows": false,
+    "additional_fallback_after_8192_authorized": false,
+    "final_proposal_frozen": false,
+    "independent_8192_final_bank_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false,
+    "next": "Freeze a separate last-chance 8192-draw adaptation fallback program using the unchanged g_A proposal, unchanged gates, and master seed 2026082005."
+  }
+}

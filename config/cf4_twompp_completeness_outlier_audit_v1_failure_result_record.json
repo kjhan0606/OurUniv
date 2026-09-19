@@ -1,0 +1,137 @@
+{
+  "schema": "ouruniv-cf4-twompp-completeness-outlier-audit-v1-failure-result-record",
+  "date": "2026-09-01",
+  "status": "NO_GO_UNFILTERED_COUNT_LIKELIHOOD_ZERO_EXPOSURE_GATE_FAILED",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "09535c56f4efe418e0977d1414a6c4dfa3089668",
+    "remote": "origin",
+    "remote_commit_at_submission": "09535c56f4efe418e0977d1414a6c4dfa3089668",
+    "program": {
+      "path": "config/cf4_twompp_completeness_outlier_audit_program_v1.json",
+      "sha256": "c75c52b891656a72626767ed7345c88f2aec564a07771caf8d042af2e9332db5"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_completeness_outlier_audit_v1.py",
+      "sha256": "4c2a942834377fd70bdcc2704dd5474ef29f06a1692491cc0dadc00261918fed"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_completeness_outlier_audit_v1.sbatch",
+      "bytes": 3209,
+      "sha256": "0d62aa8b7c5ce19a87e571042b2120f871110852d477e8ea206e26c573e6ab12"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329539,
+    "controller": "syntax",
+    "cluster": "syntax",
+    "node": "syn04",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 6,
+    "partition": "a10",
+    "cpus": 1,
+    "requested_memory_MiB": 768,
+    "expected_peak_memory_MiB": 500,
+    "memory_headroom_multiplier": 1.536,
+    "reported_batch_MaxRSS_KiB": 3632,
+    "failure_mode": "intentional_fail_closed_scientific_input_gate",
+    "implementation_exception_before_measurement": false,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "preserved_failure_artifacts": {
+    "staging_directory": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging",
+    "result": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/result.json",
+      "bytes": 4580,
+      "sha256": "236cabadc6616432bbdee7990b423befd5d17a7f82967097058da7abc50f1f84"
+    },
+    "outliers": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/outliers.csv",
+      "bytes": 36312,
+      "sha256": "61ed7b3e43f89cffb95dc26394bb1e16416ca573d8bee89f6b84747a50f857d3"
+    },
+    "FAILED": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/FAILED",
+      "bytes": 352,
+      "sha256": "d335509ba07e7452d71e33961c259c1d3a122dcd01cd558b98bf0e71a5f79f11"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/logs/audit-329539.out",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/logs/audit-329539.err",
+      "bytes": 942,
+      "sha256": "a2132aa9d4ba72167fd08b5093a8db23ca08623684f37bbdda37053eefe70f49"
+    }
+  },
+  "gate_result": {
+    "failed_gates": [
+      "eligible_zero_exposure_count_zero"
+    ],
+    "passed_gate_count": 6,
+    "total_gate_count": 7,
+    "eligible_count_exactly_reproduced": 36954,
+    "zero_exposure_count": 1,
+    "zero_exposure_row": {
+      "recno": 67100,
+      "Ksmag": 12.05,
+      "assigned_map": "12_5",
+      "RA_deg": 151.19712,
+      "DEC_deg": 57.60156,
+      "map_exposure": 0.0,
+      "catalog_c12_5": 0.5,
+      "nearest_neighbor_exposure_matches_catalog_mark": true
+    },
+    "large_difference_threshold": 0.05,
+    "large_difference_count": 319,
+    "large_difference_fraction": 0.00863235373707853,
+    "large_difference_fraction_limit": 0.01,
+    "all_large_difference_rows_in_faint_apparent_sample": true,
+    "neighbor_reconciled_count": 71,
+    "neighbor_reconciled_fraction": 0.2225705329153605,
+    "usable_after_frozen_outlier_exclusion_count": 36635,
+    "usable_six_population_counts": {
+      "apparent_0_absolute_0": 9617,
+      "apparent_0_absolute_1": 3463,
+      "apparent_0_absolute_2": 527,
+      "apparent_1_absolute_0": 15671,
+      "apparent_1_absolute_1": 6197,
+      "apparent_1_absolute_2": 1160
+    },
+    "N32_positive_exposure_voxel_fraction": {
+      "map_11_5": 0.876675041876047,
+      "map_12_5": 0.5531825795644891
+    }
+  },
+  "source_semantics_audit": {
+    "VizieR_ReadMe": "https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/MNRAS/416/2840?format=html&tex=true",
+    "VizieR_c11_5_semantics": "redshift incompleteness at K2M++ <= 11.5",
+    "VizieR_c12_5_semantics": "redshift incompleteness at K2M++ <= 12.5 and may be empty where the local catalogue limit is 11.5",
+    "Lavaux_Jasche_2016": "https://academic.oup.com/mnras/article/455/3/3169/2892571",
+    "paper_population_rule": "K <= 11.5 and 11.5 < K <= 12.5 are separate data sets with their respective angular selection maps",
+    "assigned_map_rule_was_wrong": false,
+    "official_map_invalidated": false,
+    "interpretation": "A sub-percent map/catalog metadata tail remains. The single zero-exposure row is consistent with an angular pixel-boundary ambiguity because an adjacent RING pixel has exposure 0.5."
+  },
+  "scientific_decision": {
+    "unfiltered_36954_tracer_count_likelihood": "NO_GO",
+    "joint_information_budget_execution": "STOPPED_NOT_RUN",
+    "density_field_inference": "NOT_RUN",
+    "present_density_posterior": "NOT_CREATED",
+    "observational_resolution_0p3_cMpc_h": "NOT_ESTABLISHED",
+    "IC_inference": "NOT_RUN",
+    "2Mpp_density_tracer_route_abandoned": false
+  },
+  "recommended_redesign": {
+    "approval_required": true,
+    "name": "freeze_metadata_consistent_36635_tracer_subset",
+    "rule": "Exclude the 319 rows already frozen in outliers.csv from every galaxy-count likelihood, including the zero-exposure row; do not change the 0.05 threshold or inspect density outcomes.",
+    "justification": "The rule uses only angular selection metadata, removes 0.863 percent of the eligible sample, and retains all six populations with 36,635 tracers.",
+    "required_next_gate": "Publish an exact recno exclusion manifest, reproduce 36,635 rows and six population counts, and prove positive assigned exposure for every retained row before implementing joint information calculations.",
+    "automatic_retry_or_joint_submission_authorized": false
+  }
+}

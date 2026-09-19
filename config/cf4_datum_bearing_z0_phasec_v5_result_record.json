@@ -1,0 +1,287 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-v5-result-record-v1",
+  "date": "2026-09-01",
+  "status": "PHASE_C_V5_NO_GO_INCOMPLETE_BALANCED_PILOT_AND_ALL_COMPLETED_TASKS_FAILED_SAMPLER_USABILITY",
+  "lineage": {
+    "commit": "1e63f5c200154571de803cce81a6001b9e8eda89",
+    "base_program": {
+      "path": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+      "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+    },
+    "execution_amendment": {
+      "path": "config/cf4_datum_bearing_z0_phasec_execution_amendment_v5.json",
+      "sha256": "4bafc8a51fc341979a5245d4b6f5341c6aaf36dec0e7135c2dfc1acee65dc556"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "79225219fb170cbe19d5be617f070444b2edd351cecabb8941d7558e77744f11"
+    },
+    "preflight_job_id": 329879,
+    "array_job_id": 329880,
+    "aggregate_job_id": 329881
+  },
+  "preflight": {
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "node": "syn05",
+    "partition": "a40",
+    "elapsed_seconds": 58,
+    "MaxRSS_KiB": 1635172,
+    "output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_preflight_v5",
+    "status": "PASS_PHASE_C_EXECUTION_PREFLIGHT_NO_SAMPLER_NO_SCIENCE_RESULT",
+    "joint_negative_log_posterior": 15185.794553037196,
+    "joint_gradient_norm": 1866.879179777104,
+    "joint_gradient_max_abs": 1098.381876871154,
+    "CPU_and_GPU_growth_rate": 0.5223701671929186,
+    "cross_device_growth_relative_difference": 0.0
+  },
+  "array_summary": {
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5",
+    "requested_tasks": 8,
+    "Slurm_completed_tasks": 6,
+    "Slurm_failed_tasks": 2,
+    "validated_complete_artifact_sets": 6,
+    "tasks_passing_all_sampler_usability_flags": 0,
+    "tasks_failing_all_of_Rhat_bulk_ESS_tail_ESS_flags": 6,
+    "aggregate_created": false,
+    "balanced_arm_summary_allowed": false
+  },
+  "task_outcomes": [
+    {
+      "assignment": {"index": 0, "seed": 2026083000, "arm": "A"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn05", "elapsed_seconds": 243, "MaxRSS_KiB": 4943064},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_00_seed_2026083000_arm_A",
+        "result_sha256": "07a2d2798092d053a63791770e162d579dac00ce1246989a146dc33505578cbb",
+        "manifest_sha256": "430fffd1d7ee559af6f99940403391f36484aeb9c0bea844a9cf3440a68e2f99",
+        "complete_sha256": "7705d197f109e8d765e8e7ea80435058c4a223a177d329bbadcc86f5f2949695",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 233.05132996154802,
+        "sampling_mean_acceptance": 0.9469294204468083,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 3.096776867644363,
+        "min_bulk_ESS": 4.651414361046568,
+        "min_tail_ESS": 15.663653112107554,
+        "heldout_count_delta_LPD": 770.0012887597279,
+        "density_global_68_coverage": 0.6214599609375,
+        "density_global_95_coverage": 0.839813232421875,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 1, "seed": 2026083001, "arm": "A"},
+      "Slurm": {"state": "FAILED", "exit_code": "1:0", "node": "syn06", "elapsed_seconds": 265, "MaxRSS_KiB": 6353576},
+      "artifact": {"created": false},
+      "failure_boundary": "after four-chain sampling while constructing posterior-predictive count replicates",
+      "failure": "at least one finite sampled parameter vector produced a Poisson intensity above NumPy Generator.poisson support; the task aborted with ValueError: lam value too large",
+      "stderr": {
+        "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-v5-329880_1.err",
+        "bytes": 1977,
+        "sha256": "52b9a4052c306c623a3915c3e672c985ccf7f031c6b5b44a03f16f3cc11d5057"
+      }
+    },
+    {
+      "assignment": {"index": 2, "seed": 2026083002, "arm": "B"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn07", "elapsed_seconds": 235, "MaxRSS_KiB": 3777528},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_02_seed_2026083002_arm_B",
+        "result_sha256": "6ae73c0a44d20045adfb578bc917251bff9b4ce862db23e027f695648928b2a4",
+        "manifest_sha256": "36b685cdd49c0e1e00b6268b2fc31d2de628f0babf7077dd2dba7cc957831f48",
+        "complete_sha256": "059662c85aebec997d711dfef3f2da5036b43c333f40544c52453e5d0f241734",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 350.3909257069997,
+        "sampling_mean_acceptance": 0.9639132933286094,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 3.151646733375398,
+        "min_bulk_ESS": 4.6212512599724995,
+        "min_tail_ESS": 14.938072852374324,
+        "heldout_count_delta_LPD": 917.4924791417633,
+        "density_global_68_coverage": 0.579986572265625,
+        "density_global_95_coverage": 0.79742431640625,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 3, "seed": 2026083003, "arm": "B"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn07", "elapsed_seconds": 239, "MaxRSS_KiB": 5415112},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_03_seed_2026083003_arm_B",
+        "result_sha256": "c5b0d84d2b1681ce7017e76db35ea60334ba4223a9c53285121c82bc1d7ef305",
+        "manifest_sha256": "51652dff769a154c0f66af7319e8e41a54a1cbff99f4f4363fe2d5b6c231b2bc",
+        "complete_sha256": "2dea3f5fdc52e0256f4b0091f485829ba75b1a546224b020333a9891af16c038",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 269.36107531490387,
+        "sampling_mean_acceptance": 0.9618754076626843,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 2.6683684881585914,
+        "min_bulk_ESS": 4.950001939254025,
+        "min_tail_ESS": 15.250419109255931,
+        "heldout_count_delta_LPD": 972.6024835685499,
+        "density_global_68_coverage": 0.56951904296875,
+        "density_global_95_coverage": 0.7900390625,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 4, "seed": 2026083004, "arm": "C"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn07", "elapsed_seconds": 237, "MaxRSS_KiB": 3490052},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_04_seed_2026083004_arm_C",
+        "result_sha256": "0f5736f604254f8a95c4380f3e36f52b9951c82e7a5610cbad10159333f26240",
+        "manifest_sha256": "51a8e814b4872b43911c6b175adc73e5bd3015054dc77972675f72f1f5e3ef75",
+        "complete_sha256": "8ee000e885b1d098a0d223fd83f1168380473df86d7f9b066b13ab0f0d9b8518",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 162.39344199713514,
+        "sampling_mean_acceptance": 0.9819142302347197,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 2.7748884520550128,
+        "min_bulk_ESS": 4.818070203126588,
+        "min_tail_ESS": 15.178473893603586,
+        "heldout_count_delta_LPD": 524.8276615973142,
+        "density_global_68_coverage": 0.4849853515625,
+        "density_global_95_coverage": 0.69903564453125,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 5, "seed": 2026083005, "arm": "C"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn07", "elapsed_seconds": 246, "MaxRSS_KiB": 3384224},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_05_seed_2026083005_arm_C",
+        "result_sha256": "859fa4750331cd78dcf4e7d7d96c67f48407b00b8ffa7d70c032f2787d5d0e9f",
+        "manifest_sha256": "c5b1fe14c4605e7c015d4a82cfae161cd8688488d830b63fb28737d62826b37e",
+        "complete_sha256": "0c3fdb84fb96b72c46699e8c648b14b09adeacdc01bb0d89c936f2cc5b55ecde",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 126.82519803917998,
+        "sampling_mean_acceptance": 0.9714676603577137,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 2.881156266881466,
+        "min_bulk_ESS": 4.770086082091019,
+        "min_tail_ESS": 14.675623446664789,
+        "heldout_count_delta_LPD": 371.52263772883873,
+        "density_global_68_coverage": 0.500457763671875,
+        "density_global_95_coverage": 0.710479736328125,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 6, "seed": 2026083006, "arm": "D"},
+      "Slurm": {"state": "COMPLETED", "exit_code": "0:0", "node": "syn05", "elapsed_seconds": 240, "MaxRSS_KiB": 5340472},
+      "artifact": {
+        "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5/mock_06_seed_2026083006_arm_D",
+        "result_sha256": "f186f901bc17227307cc354ef0ba2cbd3665af01a3a4ec38f41221a05af0fb25",
+        "manifest_sha256": "c7894668a6bdc88d1f1b695e9d3a862ae1df4a2515e12503b1c9d16c445a85c8",
+        "complete_sha256": "73f7eb48e6764170f5ff37fa6e88caa0efe60491c1dc69d5223734236f686fd9",
+        "validation": "PASS"
+      },
+      "result": {
+        "status": "COMPLETE_PHASE_C_TASK_WITH_DIAGNOSTIC_FLAGS",
+        "MAP_status": 1,
+        "MAP_iterations": 64,
+        "MAP_gradient_norm": 271.92616987107357,
+        "sampling_mean_acceptance": 0.9627555646633293,
+        "sampling_divergence_fraction": 0.0,
+        "max_Rhat": 2.342869428742712,
+        "min_bulk_ESS": 5.37941436495617,
+        "min_tail_ESS": 15.160168603011716,
+        "heldout_count_delta_LPD": 859.3254901528259,
+        "density_global_68_coverage": 0.5738525390625,
+        "density_global_95_coverage": 0.795166015625,
+        "all_pilot_diagnostic_flags_pass": false
+      }
+    },
+    {
+      "assignment": {"index": 7, "seed": 2026083007, "arm": "D"},
+      "Slurm": {"state": "FAILED", "exit_code": "1:0", "node": "syn06", "elapsed_seconds": 37, "MaxRSS_KiB": 1582084},
+      "artifact": {"created": false},
+      "failure_boundary": "N64 PMWD truth generation before mock generation, inference, optimizer, or sampler",
+      "failure": "PMWD density or momentum contained nonfinite values",
+      "stderr": {
+        "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-v5-329880_7.err",
+        "bytes": 739,
+        "sha256": "fd4ee0efcbc05786f89e613b8ccaa71cade1cb30ea63811faeaa19d15a655670"
+      }
+    }
+  ],
+  "aggregate": {
+    "state": "FAILED_EXPECTEDLY_FROM_MISSING_TASK_ARTIFACTS",
+    "exit_code": "1:0",
+    "node": "syn05",
+    "elapsed_seconds": 3,
+    "MaxRSS_KiB": 3516,
+    "output_created": false,
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-v5-agg-329881.err",
+      "bytes": 727,
+      "sha256": "9f1f18e2e85b08a2ce94a27a8319864dd1ed15cb7083fa02afab8a158e80f585"
+    }
+  },
+  "audit": {
+    "completed_artifact_hash_and_contract_validation": "PASS_6_OF_6_CREATED_TASKS",
+    "balanced_two_member_arm_comparison": "NOT_AVAILABLE_BECAUSE_A1_AND_D1_FAILED",
+    "sampler_usability": "FAIL_6_OF_6_COMPLETED_TASKS",
+    "MAP_convergence": "FAIL_6_OF_6_COMPLETED_TASKS_REACHED_64_ITERATION_LIMIT_WITH_NONZERO_GRADIENT_NORM",
+    "Rhat_observed_range": [2.342869428742712, 3.151646733375398],
+    "minimum_bulk_ESS_observed_range": [4.6212512599724995, 5.37941436495617],
+    "minimum_tail_ESS_observed_range": [14.675623446664789, 15.663653112107554],
+    "sampling_acceptance_observed_range": [0.9469294204468083, 0.9819142302347197],
+    "sampling_divergence_fraction_observed": 0.0,
+    "interpretation": [
+      "Zero reported divergences does not rescue chains with grossly failed rank-normalized split Rhat and ESS.",
+      "The high acceptance range together with the very low cross-chain ESS is consistent with insufficient exploration, but this pilot alone does not isolate a unique sampler root cause.",
+      "Heldout LPD, coverage, k-shell, posterior predictive, and arm-stress comparisons are not promotion evidence because their posterior draws failed the declared usability gates.",
+      "The task-1 derived-rate overflow shows that finite positions and energies are not a sufficient mechanics gate.",
+      "The task-7 nonfinite truth shows that the frozen PMWD truth generator is not robust across the exact eight development seeds under the tested integration settings."
+    ]
+  },
+  "decision": {
+    "Phase_C_pilot_pass": false,
+    "promote_current_parent_posterior": false,
+    "open_validation_seeds": false,
+    "run_actual_observational_posterior": false,
+    "enter_Phase_D": false,
+    "claim_present_day_density_or_velocity_posterior": false,
+    "claim_0p3_cMpc_h_resolution": false,
+    "automatic_retry_allowed": false,
+    "new_user_approval_required_for_redesigned_Phase_C": true
+  },
+  "recommended_next_program_before_any_new_pilot": [
+    "Freeze a generator-only all-eight-seed PMWD finiteness gate and choose documented integration headroom before sampling; any changed integration settings must be applied to all eight seeds, not only seed 2026083007.",
+    "Require finite and explicitly bounded derived count intensities for every retained draw before declaring sampler mechanics complete; do not clip the scientific intensity merely to make posterior predictive RNG succeed.",
+    "Replace or materially redesign the current high-dimensional HMC initialization/adaptation plan, then validate it on new development mocks; do not reinterpret the present failed chains by relaxing Rhat or ESS thresholds.",
+    "Keep actual 2M++ counts, actual CF4 radial-velocity values, validation seeds, Phase D, and the 0.3 cMpc/h frontier closed until a newly authorized mock program passes its predeclared gates."
+  ],
+  "scope_firewall": {
+    "actual_2Mpp_count_arrays_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_seed_accessed": false,
+    "actual_present_day_posterior_created": false,
+    "Phase_D_started": false,
+    "IC_PM_HOP_or_RAMSES_started": false
+  }
+}

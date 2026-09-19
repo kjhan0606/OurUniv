@@ -30,6 +30,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--deltab", default="/gpfs/kjhan/Hydro/CF4_LG/ic_cr6_e19_1024/level_010/ic_deltab")
     ap.add_argument("--sfield", default="/gpfs/kjhan/Hydro/CF4_LG/ic_src/s_cr6_e19_1024.npy")
+    ap.add_argument("--skey", default="s_fine", help="array key when --sfield is NPZ")
     ap.add_argument("--box-hmpc", type=float, default=384.0)
     ap.add_argument("--N", type=int, default=0, help="block-downsample to N for a quick check (0=full)")
     ap.add_argument("--out", default="/gpfs/kjhan/Hydro/CF4_LG/tier1/transfer_cr6_e19.npz")
@@ -40,7 +41,14 @@ def main():
     d = d.astype(np.float32)
     print(f"[T]   delta N={d.shape[0]} std={d.std():.4e}", flush=True)
     print("[T] loading s (npy) ...", flush=True)
-    s = np.load(args.sfield).astype(np.float32)
+    loaded = np.load(args.sfield)
+    if isinstance(loaded, np.lib.npyio.NpzFile):
+        try:
+            s = loaded[args.skey].astype(np.float32)
+        finally:
+            loaded.close()
+    else:
+        s = loaded.astype(np.float32)
     print(f"[T]   s N={s.shape[0]} std={s.std():.4e}", flush=True)
     assert d.shape == s.shape, (d.shape, s.shape)
     Nfull = d.shape[0]

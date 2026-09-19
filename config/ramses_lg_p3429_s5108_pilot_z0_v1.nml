@@ -1,0 +1,72 @@
+! OurUniv LG DMO zoom pilot to z=0.
+! Candidate: conditioned parent 3429, explicit mid-k seed 5108.
+! Accepted IC: v2_pad6, global L9 / zoom-particle L12 / runtime L19.
+
+&RUN_PARAMS
+cosmo=.true.
+pic=.true.
+poisson=.true.
+hydro=.false.
+sink=.false.
+sidm=.false.
+nrestart=0
+nstepmax=10000000
+nremap=5
+nsubcycle=1,1,9*2
+ncontrol=1
+ordering='ksection'
+memory_balance=.true.
+use_fftw=.true.
+ksec_level_balance_alpha=0.5
+ksec_level_min_fraction=0.03
+ksec_level_bins=256
+jobcontrolfile='jobcontrol.txt'
+verbose=.false.
+/
+
+&OUTPUT_PARAMS
+noutput=7
+aout=0.05,0.10,0.20,0.3333333333,0.50,0.6666666667,1.0
+foutput=1000000
+fbackup=1000
+/
+
+&INIT_PARAMS
+filetype='grafic'
+! CHARACTER(LEN=80) compatible symlink to the accepted v2_pad6 IC.
+initfile(1)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_009'
+initfile(2)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_010'
+initfile(3)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_011'
+initfile(4)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_012'
+/
+
+&AMR_PARAMS
+levelmin=9
+levelmax=19
+nexpand=1,1,9*1
+ngridtot=120000000
+nparttot=220000000
+/
+
+&COSMO_PARAMS
+omega_b=0.0
+omega_m=0.31
+omega_l=0.69
+h0=0.746
+/
+
+&REFINE_PARAMS
+m_refine=11*8.
+ivar_refine=0
+mass_cut_refine=2.9103830457d-11
+interpol_var=1
+interpol_type=0
+! Do not silently change the requested AMR model with fixed-proper-resolution
+! suppression. The pilot directly tests the declared L19 ceiling.
+q_refine_holdback=.false.
+dr_proper=0.0
+/
+
+&POISSON_PARAMS
+epsilon=1.d-4
+/

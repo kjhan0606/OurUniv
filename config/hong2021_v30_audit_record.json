@@ -1,0 +1,53 @@
+{
+  "schema": "hong2021-v30-deterministic-backbone-local-condition-audit-record-v1",
+  "status": "complete_development_only_audit",
+  "program": "config/hong2021_v30_backbone_condition_audit.json",
+  "program_sha256": "c3978322153870964084f437b23367a52dc0607ba125790350f361e836e2a1ac",
+  "code_commit": "dfd9865a8610309dac16668a444c12a40fda37ba",
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v30_backbone_condition_audit/audit.json",
+  "output_sha256": "2ecede75ab5e794d6a5972add384ec29956c1ce87468165dea0e0a5f1235e0ff",
+  "decision_digest_sha256": "2fe3ce4054144928a64ff5745affdfd491e03e75da6c397e45ddacd8146491fc",
+  "classification": "global_backbone_improves_but_local_residual_coupling_is_unmodeled",
+  "next": "retain_improved_low_k_backbone_and_build_explicitly_local_conditional_residual_model",
+  "domain_summary": {
+    "TNG100": {
+      "native_input_occupied_fraction": 0.0029663167974000337,
+      "v14_over_v4_rmse": 0.9708625989861862,
+      "v14_truth_coherence_k_lt_0p5": 0.9510150940532068,
+      "v14_truth_coherence_0p5_to_1": 0.900991573231743,
+      "v14_coherence_ge_0p5_horizon_h_mpc": 3.0,
+      "translated_residual_median_delta_q99_999_dex": 0.4694621432014543,
+      "translated_residual_median_Q4": 12.720733438353973
+    },
+    "SIMBA": {
+      "native_input_occupied_fraction": 0.0022451281547546387,
+      "v14_over_v4_rmse": 0.9475124377467977,
+      "v14_truth_coherence_k_lt_0p5": 0.9492919988712267,
+      "v14_truth_coherence_0p5_to_1": 0.872830552623188,
+      "v14_coherence_ge_0p5_horizon_h_mpc": 3.0,
+      "translated_residual_median_delta_q99_999_dex": 0.43640203278650924,
+      "translated_residual_median_Q4": 17.850531458041516
+    },
+    "Swift": {
+      "native_input_occupied_fraction": 0.0024132599701752536,
+      "v14_over_v4_rmse": 0.9564613460274205,
+      "v14_truth_coherence_k_lt_0p5": 0.9467282405542102,
+      "v14_truth_coherence_0p5_to_1": 0.8826351517090372,
+      "v14_coherence_ge_0p5_horizon_h_mpc": 4.0,
+      "translated_residual_median_delta_q99_999_dex": 0.4454740970687068,
+      "translated_residual_median_Q4": 17.199614144031784
+    }
+  },
+  "interpretation": [
+    "The three-source V14 correction is a real, cross-domain improvement and must not be discarded merely because a deterministic conditional mean lacks high-k power.",
+    "Only 0.22--0.30 percent of native 0.3125 Mpc/h cells contain a selected galaxy; the galaxy-count correlation with truth rises from about 0.19--0.20 natively to 0.73--0.77 after 8-cell (2.5 Mpc/h) pooling.",
+    "The constrained phase horizon of the current backbone is approximately k=3 h/Mpc for TNG100/SIMBA and k=4 h/Mpc for Swift under the frozen coherence>=0.5 definition.",
+    "The exact own residual reconstructs truth, but translating that unchanged residual relative to its own backbone catastrophically inflates the nonlinear density tail. Residual PDF, residual power, DC, and backbone are therefore insufficient statistics; their local cross-structure is essential.",
+    "V28/V29 failed because they transported a residual independently of the query backbone. A(k), clipping, or another unconditional residual family cannot repair this mechanism."
+  ],
+  "firewall": {
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/r1_planar_diagnosis_v4",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "reference_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359203",
+  "particle_n": 128,
+  "wave_number": 4,
+  "final_linear_amplitude": 0.3,
+  "time_factor": 8,
+  "cases": [
+    {"name": "pm128", "mesh_ratio": 1, "mesh_shift": 0.0, "force": "pm"},
+    {"name": "pm256", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "pm"},
+    {"name": "pm128_halfcell", "mesh_ratio": 1, "mesh_shift": 0.5, "force": "pm"},
+    {"name": "pm256_halfcell", "mesh_ratio": 2, "mesh_shift": 0.5, "force": "pm"},
+    {"name": "plane256", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "plane"},
+    {"name": "plane256_lowpass", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "plane_lowpass"},
+    {"name": "exact_sheets", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "sheets"}
+  ],
+  "application_seconds_cap": 720,
+  "previous_R1_allocation_seconds": 5108,
+  "scope": "Diagnosis only. Verify growth/units and reproduce original controls; compare force replacements and mesh phase at fixed physical plane wave. Exact sheet force uses known q ONLY for this pre-crossing analytic control. Filtering/plane projection are NOT production remedies. No posterior, new science promotion or installed-PMWD changes."
+}

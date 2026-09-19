@@ -1,0 +1,110 @@
+{
+  "schema": "hong2021-v41-two-stage-structure-amplitude-result-record-v1",
+  "status": "complete_development_only_q4_repaired_global_scale_falsified",
+  "program": "config/hong2021_v41_two_stage_structure_amplitude_program.json",
+  "program_sha256": "6b189e3aeb8ad7d8a69d84fd029c5656a9b62ee154cd317008d2d82147cfaccd",
+  "sampling_implementation_commit": "7600fad2625a6bf595818c715a5371e6be484189",
+  "gate_commit": "79593b43cd15a46d691db43377e2f78af50bd6c0",
+  "fit": {
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.joblib",
+    "artifact_sha256": "bb53077bfd4a96edb2da6f4ce3c14fb351e601834f0af78cfb5cfe0d265c4e9e",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.json",
+    "report_sha256": "c2e9c6352771a9e725443bf000e17bd5a0ba19d679dea32ffd33c250879a2b42",
+    "report_decision_digest_sha256": "3354d7c733539a2ea86f40b882ef0bdec4bc4feec8d6904fc85a8838741bf739",
+    "seed_block_count": 11
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v41_two_stage_sequence/preflight.json",
+    "sha256": "261e637fce2ad5c3057db973082dc1f1aaecae335499a03ddaf76f0d01d8eadf",
+    "decision_digest_sha256": "ae51181f6eabbb480593ad1f5567bc66b99c9bf2939fccd5141285e2415d00c9"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v41_e22_two_stage_structure_amplitude/development_decision.json",
+    "sha256": "9fa4f22593f7b78ded4d07323b143afa7d21dd7c81c4ca2afc47cabd111d03ec",
+    "decision_digest_sha256": "251c4f0a1112f3504d2993fee4d3eeac7c30a50bcaba91db06d4a405b7360d64",
+    "development_pass": false,
+    "classification": "object_amplitude_calibration_supported_but_structure_seeding_is_insufficient",
+    "next": "freeze_train_only_within_block_extreme_location_model_without_changing_object_amplitude"
+  },
+  "two_stage_tail_and_calibration": {
+    "TNG100": {
+      "Q3_delta_q99_999_dex": 0.0004127919673919678,
+      "Q3_maximum_excess_dex": 0.18525481224060059,
+      "Q4_generated_over_truth": 1.019014741797764,
+      "mean_amplitude_scale": 0.04547589436697308,
+      "scale_boundary_fraction": 0.375,
+      "mean_calibration_error_dex": 0.1915241026399599
+    },
+    "SIMBA": {
+      "Q3_delta_q99_999_dex": 0.11183477936914565,
+      "Q3_maximum_excess_dex": 0.22754761576652527,
+      "Q4_generated_over_truth": 1.4122467540265238,
+      "mean_amplitude_scale": 0.08132744282193016,
+      "scale_boundary_fraction": 0.375,
+      "mean_calibration_error_dex": 0.33910431349795545
+    },
+    "Swift": {
+      "Q3_delta_q99_999_dex": -0.09390725808476663,
+      "Q3_maximum_excess_dex": -0.055089354515075684,
+      "Q4_generated_over_truth": 0.5371641364051086,
+      "mean_amplitude_scale": 0.161077942520933,
+      "scale_boundary_fraction": 0.25,
+      "mean_calibration_error_dex": 0.2885158223325561
+    }
+  },
+  "two_stage_field_failure": {
+    "generated_residual_rms_over_truth": {
+      "TNG100": 0.06800853912162617,
+      "SIMBA": 0.12206389156155027,
+      "Swift": 0.21250330781257099
+    },
+    "rank_histogram_total_variation": {
+      "TNG100": 0.8198999096365537,
+      "SIMBA": 0.7669082809897031,
+      "Swift": 0.6639865566702451
+    },
+    "total_power_over_truth_3_to_6_h_mpc": {
+      "TNG100": 0.20433326079140085,
+      "SIMBA": 0.20802629608506137,
+      "Swift": 0.2473151902793347
+    },
+    "total_power_over_truth_6_to_10_h_mpc": {
+      "TNG100": 0.06731490026266033,
+      "SIMBA": 0.07296504816006426,
+      "Swift": 0.11709712934112493
+    }
+  },
+  "scientific_conclusion": [
+    "The supervised two-stage intervention reduces V31 Q4 from 12.43, 6.35, and 2.21 to 1.02, 1.41, and 0.54 in TNG100, SIMBA, and Swift. TNG100 and Swift also pass both frozen Q3 checks; SIMBA misses q99.999 by only 0.012 dex.",
+    "This tail repair is not a usable density-field realization. The global residual amplitude scale is only 0.045 to 0.161 on average and sits at a boundary for 25.0 to 37.5 percent of samples, collapsing residual RMS, ensemble coverage, rank calibration, high-k power, and peak/void statistics.",
+    "The full and backbone-only risk arms have nearly identical field failures, and the rolled-risk arm retains the same qualitative failure. The dominant failure is therefore global scaling of the stochastic body, not block seams or absence of a transferable structure-risk signal.",
+    "The next frozen branch must keep the V41 object-amplitude predictor but replace global residual scaling by a train-only native within-block extreme-location model and a tail-only continuous calibration. The non-extreme residual body must remain byte-identical to the unscaled V31 conditional inverse apart from exact DC projection."
+  ],
+  "next_experiment_boundary": {
+    "primary": "fit a train-only native-voxel classifier inside the 11 seeded blocks and calibrate only the positive extreme residual excess while leaving the stochastic body at unit scale",
+    "required_controls": [
+      "unchanged V41 full block-risk and object-amplitude predictions",
+      "unit-scale unmodified residual body below a train-only tail threshold",
+      "within-block spatial-roll control",
+      "tail-calibration-disabled control",
+      "identical V31 donors/isometries and exact residual DC projection"
+    ],
+    "forbidden": [
+      "global residual scale below unity",
+      "hard density clipping or a flat tail cap",
+      "validation tuning",
+      "post-hoc Fourier A(k)",
+      "donor reselection",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "validation_used_for_fit_threshold_hyperparameter_or_sampling_prediction": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

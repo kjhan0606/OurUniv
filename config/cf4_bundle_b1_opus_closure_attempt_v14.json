@@ -1,0 +1,38 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v14",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "b6e5a92",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "NO-GO",
+  "risk_level": "MEDIUM",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v14.txt",
+  "findings": {
+    "hashes_and_bytes": true,
+    "guard_reproducible": true,
+    "seed_cluster_unit": true,
+    "both_coverage_levels": true,
+    "strict_gate_unchanged": true,
+    "pooled_guard_68_mean": 0.751953125,
+    "pooled_guard_68_upper": 0.79296875,
+    "pooled_guard_95_mean": 0.966796875,
+    "pooled_guard_95_upper": 0.98046875,
+    "pooled_guard_pass": false,
+    "count_sandwich_medians": {"A": 0.997077771171671, "B": 0.9979640029126331, "C": 0.9969083686249577, "D": 1.0680555518823254},
+    "count_diagnosis_sample_weak": true,
+    "mark_fisher_information_fraction": 0.00005,
+    "mark_arm_information_null": true,
+    "mark_mixture_variance_confounded": true,
+    "direct_z_covariance_points_to_count_width": true,
+    "validation_opened": false,
+    "B2_IC_FORWARD": false
+  },
+  "required_next": [
+    "Do not execute E_MARK_HEAVY_TAIL.",
+    "Run independent count derivative step-ladder and direct z-covariance diagnosis.",
+    "Correct D variance standardization and add the 95-level tolerance to the proposal.",
+    "Freeze width policy and keep validation sealed; do not start B2."
+  ]
+}

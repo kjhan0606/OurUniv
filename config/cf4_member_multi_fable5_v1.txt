@@ -1,0 +1,11 @@
+Fable5 PRIMARY PLAN AUDIT of attached next member-mass bundle. User approves
+proceeding to13-field learning/3-field evaluation after the fixed5000-step
+single-field pass. Return GO / CONDITIONAL GO / NO-GO. Explicit Q-GOAL,
+Q-LEAN, feasibility, essential/deferred, MW/M31/M33 identification on NEW fields
+without oracle labels, unresolved/shared-cell M33, and SAME-field observation
+conditioning. Review whether budget and claims are proportionate to the goal.
+This is one fixed continuation, not a model/seed sweep. Changed data exposure
+with rotations/reflections is intentional; old hyperparameters/loss preserved.
+13 training fields are correlated;3 development fields reused, not independent
+validation. No observed fine posterior or physics/IC claim. Identify only
+essential pre-launch corrections; no repeated gate ladders. No tools requested.

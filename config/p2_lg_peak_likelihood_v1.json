@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-explicit-lg-peak-likelihood-v1",
+  "frozen_date": "2026-08-02",
+  "activation_condition": "The three CF4-only P1 parents 3023, 3096, and 3429 produced zero N576 LG pairs in 96 preregistered small-scale trials.",
+  "information_status": "These constraints are additional MW/M31 information and are not attributed to CF4.",
+  "method": "Exact Gaussian conditioning by Matheron's rule on linear functionals of only the N576 Fourier modes absent from the frozen N192 parent.",
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "box_size_mpc_h": 384.0,
+  "proposal_seeds": [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008],
+  "geometry_seeds": [6101, 6102, 6103, 6104, 6105, 6106, 6107, 6108],
+  "likelihood_noise_seeds": [7101, 7102, 7103, 7104, 7105, 7106, 7107, 7108],
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.686,
+    "six_shell_target_delta_linear": 0.70,
+    "likelihood_sigma_delta": 0.15,
+    "n_constraints_per_proposal": 14
+  },
+  "selection_policy": {
+    "all_eight_proposals_receive_the_same_likelihood": true,
+    "orientation_is_drawn_isotropically_from_the_frozen_geometry_seed": true,
+    "coarse_fourier_coefficients_must_remain_unchanged": true,
+    "no_threshold_retuning_after_forward_results": true,
+    "use_the_existing_P2_FoF_gates_unchanged": true,
+    "definitive_acceptance_still_requires_RAMSSES_HOP_M200c_and_contamination": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v1",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v1"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "schema": "hong2021-v59-256-128-grid-tail-audit-result-record-v1",
+  "status": "complete_beyond_grid_TNG_failure_selected_reachable_support_extension",
+  "program": "config/hong2021_v59_256_128_grid_tail_audit_program.json",
+  "program_sha256": "10f9189095df73a0605a6fe5354c4a80382923de30d993cb84805b418146b7a7",
+  "audit_code_commit": "339eb1ea7e73f8be18306a2e649625f6f4eb398d",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v59_256_128_grid_tail_audit/audit.json",
+    "sha256": "92a23e700f80ed8f32c6274b880f084b7dfcdcf8edd9f51373e4b1af0bff7ad7",
+    "decision_digest_sha256": "3aabaf18e38690dd5c5d104c4a65eb8809161ec53d7c869661ae4743a73430b4",
+    "numerical_requirements_pass": true,
+    "classification": "V56_TNG_moment_excess_lies_beyond_scored_global_train_maximum",
+    "next": "freeze_one_matched_train_only_model_that_extends_the_proper_survival_grid_over_the_immutable_reachable_output_support_without_changing_other_model_or_training_choices"
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation for model inference and exact V56 reproduction; CPU float64 for interval quadrature",
+    "worktree_clean_at_audit": true,
+    "pytest_passed": 446,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "c32b4f7eef099019b7b95194bcb7f354dbf08563f8c5489fbff1e17a1a45397c",
+    "audit_log_sha256": "11e75f7b8d02049c49ef33997927e181728c6f53526b82c56fe20cff04d636b2",
+    "exact_V56_gate_reproduction_relative_difference": {
+      "TNG100": 0.0,
+      "SIMBA": 0.0,
+      "Swift": 0.0
+    },
+    "maximum_tail_GL128_to_GL256_relative_difference": {
+      "TNG100": 0.0003478253470289157,
+      "SIMBA": 0.002765449031985173,
+      "Swift": 0.0016682609324389184
+    },
+    "tail_convergence_limit": 0.005,
+    "maximum_bin_partition_relative_difference": 1.3730294398570594e-16,
+    "partition_limit": 1e-12,
+    "all_domains_numerical_requirements_pass": true,
+    "decision_digest_independently_verified": true
+  },
+  "domainwise_grid_tail_decomposition": {
+    "TNG100": {
+      "exact_V56_over_truth_complete_moment": 8.176958714802522,
+      "high_accuracy_GL256_over_truth_complete_moment": 8.175693941526047,
+      "region_positive_excess_shares": {
+        "below_grid": 0.0,
+        "inside_grid": 0.0337043687960096,
+        "beyond_grid": 0.9662956312039904
+      },
+      "q99_999_anchor_probability_ratio": 1.0280615648750357,
+      "q99_999_anchor_conditional_amplitude_ratio": 12.953047346708836,
+      "q99_999_anchor_tail_moment_ratio": 13.316530125157916,
+      "q99_999_anchor_highest_location_rank_moment_share": 0.9082696804133202,
+      "supported_grid_weighted_mean_absolute_log_probability_ratio": 0.6076973178985785,
+      "supported_grid_weighted_mean_absolute_log_conditional_amplitude_ratio": 2.8231560959427178,
+      "above_global_train_maximum_predicted_probability": 0.0015542503678916207,
+      "above_global_train_maximum_predicted_mean_delta_squared": 3475291.6615984477,
+      "above_global_train_maximum_highest_location_rank_moment_share": 0.9736065014691593
+    },
+    "SIMBA": {
+      "exact_V56_over_truth_complete_moment": 1.228612489853247,
+      "high_accuracy_GL256_over_truth_complete_moment": 1.2282201841499532,
+      "region_positive_excess_shares": {
+        "below_grid": 0.0,
+        "inside_grid": 0.5457942009007432,
+        "beyond_grid": 0.45420579909925696
+      },
+      "above_global_train_maximum_predicted_probability": 0.00006055892266945054,
+      "above_global_train_maximum_highest_location_rank_moment_share": 0.901603396923401
+    },
+    "Swift": {
+      "exact_V56_over_truth_complete_moment": 1.345302262183511,
+      "high_accuracy_GL256_over_truth_complete_moment": 1.3450300548715834,
+      "region_positive_excess_shares": {
+        "below_grid": 0.0,
+        "inside_grid": 0.47629550909359814,
+        "beyond_grid": 0.5237044909064018
+      },
+      "above_global_train_maximum_predicted_probability": 0.00013177928681346046,
+      "above_global_train_maximum_highest_location_rank_moment_share": 0.8652216504181599
+    }
+  },
+  "scientific_conclusion": [
+    "The V56 proper survival grid repairs SIMBA and Swift train-gate moments but ends before the model's reachable output tail is controlled in TNG100.",
+    "In TNG100, 96.63 percent of the positive physical second-moment excess lies strictly above the final V56 threshold, which is the immutable global maximum truth density in the train population.",
+    "The highest-location mixture component contributes 97.36 percent of the predicted TNG100 moment above that threshold even though its mean mixture mass is only 7.19 percent.",
+    "At the q99.999 anchor the TNG100 exceedance probability ratio is only 1.03 while the conditional-amplitude ratio is 12.95, confirming that residual failure is amplitude beyond grid coverage rather than the scored survival probability at the anchor.",
+    "Exact V56 gate reproduction, 256-versus-128 interval convergence, moment/probability partition, and log-ratio identities pass in all three domains, so the conclusion is not an integration artifact."
+  ],
+  "selected_next_model": {
+    "base": "the complete V56 bounded-logit five-component mixture, bounded NLL, four V54 tail scores, and upper survival score",
+    "single_change": "extend the proper upper survival grid from the existing q99.999 lower anchor through the immutable maximum output reachable under the fixed bounded residual support and immutable train backbones",
+    "unchanged": [
+      "network, all seven input channels, bounded support, initialization, optimizer, schedule, augmentation, equal-source batches, and 12000 fixed steps",
+      "V54 tail coefficient, upper survival coefficient, proper Brier form, and score normalization",
+      "train-only absolute high-backbone mechanism gate before development",
+      "sampling, controls, development gates, and independent-data firewall"
+    ],
+    "posthoc_clipping_or_scale": false,
+    "guaranteed_repair": false
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "threshold_changed_during_audit": false,
+    "support_changed": false,
+    "posthoc_tolerance_change": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-streaming-pm-pilot-result-v1",
+  "date_kst": "2026-08-27",
+  "status": "complete_technical_pass_production_go",
+  "execution": {
+    "covariance_cache": {
+      "job_id": 323889,
+      "state": "COMPLETED",
+      "elapsed": "00:04:56",
+      "requested_memory": "19G",
+      "max_rss_kib": 16965580,
+      "node": "syn08",
+      "exit_code": "0:0"
+    },
+    "streaming_PM_pilot": {
+      "job_id": 323890,
+      "state": "COMPLETED",
+      "elapsed": "00:04:30",
+      "requested_memory": "48G",
+      "max_rss_kib": 18025656,
+      "max_rss_gib": 17.19060516357422,
+      "node": "syn104",
+      "gpu": "NVIDIA H200 NVL",
+      "exit_code": "0:0"
+    }
+  },
+  "artifacts": {
+    "covariance_cache": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_covariance_cache_v1/cache.npz",
+      "sha256": "c15747dd7afdfb6d2b0013c726bdaa99b8fc1a3b3a1c75581086eebe35470b1a"
+    },
+    "covariance_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_covariance_cache_v1/result.json",
+      "sha256": "0f588a443cd96726462ad393436abecb037135fc9044fceed22480985180dcaa"
+    },
+    "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_streaming_pm_pilot_v1",
+    "row_result_sha256": {
+      "0": "1f49d34d5c300a1c41ac461b42238b05c7ed0199821373df6ea592af2a120e3b",
+      "64": "1954e9327ef6887ec71352008332f202adedfdba72ae1733629b1d4c98e89807",
+      "128": "e5b183a6e2717f50af99bc79a019a6237e1fecac98ab062539105b611f09072c",
+      "192": "5ed4bdee53b43089071da64d18fdeecdb37da017bbe13236384b67389dfb0ed9"
+    },
+    "row_halo_sha256": {
+      "0": "03e8e65633ca1721138585b46d93cbe96f425eb98e79a720bfb25e15fb7318a3",
+      "64": "fe4cd7f50900439ec452792d704af32311b8511f9dfa4cff9b130299196fcf64",
+      "128": "3bac2a0e99c1ef68354c232759ca9e342bd775aa4c5ded2bf8d320fbd80f82fc",
+      "192": "32ea06da891d5cad6c49a415e02e685b5ced00c9273253ca939817a8ba02d1a2"
+    }
+  },
+  "covariance": {
+    "schedule_rows": 256,
+    "unique_geometry_keys": 250,
+    "deterministic_translation_phases": 27,
+    "maximum_pre_symmetrization_asymmetry": 4.716279450311944e-17,
+    "maximum_phase_response_imaginary_relative_RMS": 2.9433195497379115e-12,
+    "field_generated": false,
+    "science_selection_performed": false
+  },
+  "rows": [
+    {
+      "schedule_index": 0,
+      "group_id": 0,
+      "parent_seed": 3423,
+      "seconds": 85.6097801066935,
+      "halo_count": 651,
+      "hard_P2_pair_count": 0,
+      "loose_z0_pair_count": 0,
+      "highk_numerical_pass": true
+    },
+    {
+      "schedule_index": 64,
+      "group_id": 1,
+      "parent_seed": 3405,
+      "seconds": 40.06357840728015,
+      "halo_count": 709,
+      "hard_P2_pair_count": 0,
+      "loose_z0_pair_count": 3,
+      "loose_z0_log_likelihood": -26.261234041202776,
+      "highk_numerical_pass": true
+    },
+    {
+      "schedule_index": 128,
+      "group_id": 2,
+      "parent_seed": 3195,
+      "seconds": 40.181769830174744,
+      "halo_count": 781,
+      "hard_P2_pair_count": 0,
+      "loose_z0_pair_count": 0,
+      "highk_numerical_pass": true
+    },
+    {
+      "schedule_index": 192,
+      "group_id": 3,
+      "parent_seed": 3367,
+      "seconds": 40.03658986184746,
+      "halo_count": 699,
+      "hard_P2_pair_count": 0,
+      "loose_z0_pair_count": 0,
+      "highk_numerical_pass": true
+    }
+  ],
+  "gates": {
+    "all_four_highk_numerical_gates_pass": true,
+    "all_four_PM_and_FoF_forwards_complete": true,
+    "field_persisted": false,
+    "full_particle_state_persisted": false,
+    "parent_centered_P1_evaluated": false,
+    "hard_P2_zero_of_four_is_a_stop_condition": false
+  },
+  "independent_science_audit": {
+    "auditor": "Fable",
+    "technical_verdict": "GO",
+    "production_verdict": "GO",
+    "zero_of_four_hard_P2_interpretation": "Not a stop condition; using the old V8 rate only as a non-formal reference gives approximately 0.80 probability of zero successes in four trials.",
+    "required_preproduction_contracts": [
+      "exact 256-row to 250-covariance-key join with multiplicity preserved",
+      "terminal row and grouped-support decision rules frozen before production results",
+      "full loose-pair likelihood denominator retained after same-pair P2 and recentered-P1 intersection"
+    ]
+  },
+  "resource_decision": {
+    "production_memory_request": "21G",
+    "calculation": "18025656 KiB / 1048576 * 1.2 = 20.6287 GiB, rounded upward",
+    "production_array": "16 tasks times 16 sequential rows, maximum concurrency four"
+  },
+  "interpretation_limits": [
+    "The pilot validates numerical and streaming execution, not the hard-P2 success rate.",
+    "High-k modes are conditional LCDM random completion informed by explicit LG constraints; they are not claimed to be directly constrained by CF4.",
+    "PM/FoF catalogues are screening products and do not establish RAMSES/HOP M200c, M33, contamination, or zoom fidelity.",
+    "The 27 covariance translation phases are deterministic computational components, not independent posterior samples."
+  ],
+  "decision": {
+    "production_256_streaming_PM_authorized_by_user": true,
+    "pair_recentered_P1_aggregation_authorized": false,
+    "candidate_promotion_authorized": false,
+    "RAMSES_authorized": false,
+    "same_model_extension_authorized": false
+  }
+}

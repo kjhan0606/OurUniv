@@ -1,0 +1,52 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-v2-infrastructure-failure-result-record",
+  "date": "2026-09-01",
+  "status": "INFRASTRUCTURE_FAIL_BEFORE_MODEL_EXECUTION_NO_GATE_RESULT",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "83d3f3d",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_phaseb_smoke_program_v2.json",
+      "sha256": "3b0c23602b8ac8d850ea97dc52b80552d17b6e7bc58788edef6212ece338c351"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phaseb_smoke.py",
+      "sha256": "c895b4ed9abe67685001c87d52c5ce50ecf34cf2021e1b32abe9c6b4518d7824"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329849,
+    "cluster": "syntax",
+    "partition": "h100",
+    "node": "syn08",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 13,
+    "requested_cpus": 8,
+    "requested_memory_MiB": 24576,
+    "reported_batch_MaxRSS_KiB": 3404,
+    "GPU_count": 1,
+    "output_or_staging_created": false
+  },
+  "failure": {
+    "stage": "jax.default_backend CUDA executor initialization before input loading or model evaluation",
+    "exception": "CUDA_ERROR_OUT_OF_MEMORY: out of memory; no supported devices found for platform CUDA",
+    "science_or_numerical_gate_reached": false,
+    "TSC_implementation_evaluated": false,
+    "truth_or_likelihood_noise_stream_consumed": false
+  },
+  "execution_revision": {
+    "version": "V3_REQUIRED",
+    "model_or_gate_change_allowed": false,
+    "same_truth_seed": 2026083000,
+    "exclude_h100_for_retry": true,
+    "XLA_PYTHON_CLIENT_PREALLOCATE": false,
+    "reason": "avoid a second admission failure from JAX attempting its default large GPU-memory preallocation on a shared allocated device"
+  },
+  "scientific_disposition": {
+    "Phase_B": "NO_RESULT",
+    "present_day_observational_posterior": "NOT_CREATED",
+    "observational_frontier_or_resolution_claim": "NOT_ALLOWED",
+    "Phase_C": "BLOCKED"
+  }
+}

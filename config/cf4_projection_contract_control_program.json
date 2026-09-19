@@ -1,0 +1,88 @@
+{
+  "schema": "ouruniv-cf4-projection-contract-control-program-v1",
+  "status": "frozen_before_full_N192_N576_contract_control",
+  "frozen_date": "2026-08-16",
+  "purpose": "Validate at production mesh sizes that the future-only variance-preserving restriction/prolongation pair preserves every N192 mode, retains independent N576 null-space variation, and has a white marginal for IID coarse parents.",
+  "implementation": {
+    "path": "src/cf4_projection_contract_control.py",
+    "sha256": "afbd374a38eb4b7eeeb072ffd3a8ea2a1794fbf0cde757c7253fdb3792332348"
+  },
+  "contract_implementation": {
+    "path": "src/cf4_projection_contract.py",
+    "sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f"
+  },
+  "rfft_control": {
+    "path": "src/cf4_projection_nyquist_control.py",
+    "sha256": "04e1c815c413cdfe6e2bb81e594e4f6826ea5744fbf1b7dc14e628bf7ea1b8a7",
+    "required_result_record": "config/cf4_projection_nyquist_control_result_record.json",
+    "required_status": "complete_pass_output_Nyquist_boundary_mechanism_isolated"
+  },
+  "information_firewall": {
+    "numerical_contract_control_only": true,
+    "CF4_catalog_or_forward_operator_read": false,
+    "CF4_likelihood_or_structure_metric_computed": false,
+    "reference_fields_used_for_roundtrip_only": true,
+    "fine_fields_persisted": false,
+    "candidate_or_proposal_constructed": false,
+    "parent_or_seed_selected": false,
+    "threshold_retuning_after_result": false,
+    "PM_or_RAMSES_authorized": false
+  },
+  "mesh": {
+    "coarse_N": 192,
+    "fine_N": 576,
+    "box_size_mpc_h": 384.0,
+    "FFT_normalization": "ortho",
+    "output_Nyquist_class_normalization": "1/sqrt(2**r)"
+  },
+  "IID_cases": [
+    {"coarse_seed": 2026081611, "fine_seed": 2026081621},
+    {"coarse_seed": 2026081612, "fine_seed": 2026081622}
+  ],
+  "reference_cases": [
+    {
+      "parent_seed": 3193,
+      "fine_seed": 2026081631,
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3193.npz",
+      "sha256": "0dd7683aaad2e22681cf9b1b7cd44be20848e2056556f76d52177434c89798a2",
+      "array": "s_out"
+    },
+    {
+      "parent_seed": 3429,
+      "fine_seed": 2026081632,
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+      "sha256": "5db9b43a00f71ff9bbf291e9979df57b26fa0bd6b3de7d5b3f9e87b51c9bc463",
+      "array": "s_out",
+      "retain_for_pair": true
+    },
+    {
+      "parent_seed": 3429,
+      "fine_seed": 2026081633,
+      "paired_with_fine_seed": 2026081632,
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+      "sha256": "5db9b43a00f71ff9bbf291e9979df57b26fa0bd6b3de7d5b3f9e87b51c9bc463",
+      "array": "s_out"
+    }
+  ],
+  "gates": {
+    "roundtrip_relative_RMS_max": 2e-7,
+    "roundtrip_maximum_normalized_error_max": 2e-6,
+    "full_vs_rfft_relative_RMS_max": 2e-7,
+    "full_vs_rfft_maximum_normalized_error_max": 2e-6,
+    "IID_fine_abs_mean_max": 0.0005,
+    "IID_fine_abs_std_minus_one_max": 0.0005,
+    "IID_fine_abs_skew_max": 0.001,
+    "IID_fine_abs_excess_kurtosis_max": 0.002,
+    "same_parent_fine_difference_RMS_min": 1.3,
+    "pass_requires_all": true
+  },
+  "decision": {
+    "pass": "Authorize this paired projection contract for an independent-CF4-parent architecture design only. Do not generate candidates or run PM/RAMSES.",
+    "fail": "Do not design the new architecture; repair the paired numerical operators and repeat a newly frozen contract control."
+  },
+  "storage": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/projection_contract_control",
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/projection_contract_control/result.json",
+    "write_policy": "exclusive create; no fine field is persisted"
+  }
+}

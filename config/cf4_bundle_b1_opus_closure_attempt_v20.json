@@ -1,0 +1,48 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v20",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "6d23305cbd482d1067c80adde8f8b5a6f3285971",
+  "audit_mode": "packet_internal_no_tree_tools; tools explicitly disabled; no Task/subagents",
+  "status": "COMPLETE_DESK_AUDIT",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "CONDITIONAL_NO_GO_DEVELOPMENT_ONLY; validation and B2 remain closed",
+  "risk_level": "MODERATE_GATE_CONTRACT",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v20.txt",
+  "packet": {
+    "source_test_certified_tag": "cf4-b1-cert-515630a",
+    "source_test_tag_target": "515630a93519903dbb5c4a800c9f1fd889aa89fd",
+    "audited_head": "6d23305cbd482d1067c80adde8f8b5a6f3285971",
+    "post_tag_src_test_diff": "none",
+    "linked_artifact_pin_check": {"unique_pins": 19, "missing": 0, "mismatches": 0},
+    "regression": {"passed": 26, "exit_status": 0, "pytest_seconds": 89.43, "wall_seconds": 90.558},
+    "strict_gate": {"members": 64, "pass": 8, "fail": 56},
+    "legacy_coverage": {"flagged_68": "47/47", "flagged_95": "47/47", "metric_scope": "legacy single-member per-voxel"},
+    "coverage_contingency": {"coverage68_only": 9, "coverage95_only": 9, "both": 38, "neither": 8, "union": 56, "population": 64},
+    "analytic_latent_mode_coverage": {"denominator": 512, "coverage68": 0.744140625, "coverage95": 0.96875},
+    "arm_strict_pass": {"A": "2/16", "B": "2/16", "C": "2/16", "D": "2/16"},
+    "width_direction": "A/C/D over-cover while B under-covers; pooled scalar shrinkage cannot fix all arms",
+    "science_boundary": "development-only NO-GO; no observational posterior, validation, frontier promotion, B2, or 0.3 cMpc/h claim"
+  },
+  "findings": {
+    "v19_provenance_receipt_repairs_closed": true,
+    "periodic_rsd_and_import_evidence_repairs_supported": true,
+    "regression_anchor_non_tautological": true,
+    "science_boundary_sealed": true,
+    "legacy_coverage_denominator_reconciled": false,
+    "arm_level_causal_isolation_established": false,
+    "width_policy_ready_for_refit": false
+  },
+  "blocking_findings": [
+    "Reconcile the legacy 47/47 coverage flag with the 64-member contingency table; retire or explicitly re-scope the legacy flag before re-running any gate.",
+    "Establish arm-level causal isolation, especially for D, and explain the uniform 2/16 strict-pass count before fitting any per-arm width model."
+  ],
+  "required_next": [
+    "Keep B1 development-only NO-GO and keep validation, frontier promotion, and B2 closed.",
+    "Recompute or formally re-scope the legacy coverage diagnostic with one declared denominator and reconcile it to the contingency table.",
+    "Run a fresh disjoint development experiment that isolates arm interventions (especially D); do not refit the current seeds.",
+    "Keep widths diagnostic-only and frozen until the two blocking contract repairs receive a new closure audit."
+  ],
+  "recommendation": "CONDITIONAL. Provenance, receipt, periodic-RSD, and import-evidence repairs close v19 audit defects. The scientific gate remains failed; resolve denominator and arm-isolation defects before any gate amendment or forward bundle."
+}

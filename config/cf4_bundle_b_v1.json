@@ -1,0 +1,9 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/bundle_b_v1",
+  "actual_plan": "config/cf4_actual_data_longer_v3.json",
+  "native_plan": "config/cf4_z6_native_physics_plan_v1.json",
+  "PM_program": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+  "map": {"indices_start": 8, "indices_stride": 16, "indices_stop": 512, "radii": [12, 24], "support_threshold": 0.5},
+  "bridge": {"targets": [0, 5], "training": [1, 2, 3, 4], "seeds": [2026090700, 2026090705], "max_evaluations": 200, "normalization_fraction": 0.1},
+  "status": "APPROVED_DEVELOPMENT_NOT_SCIENTIFIC_CERTIFICATION"
+}

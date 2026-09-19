@@ -1,0 +1,82 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-density-likelihood-redesign-v2",
+  "date": "2026-09-01",
+  "status": "CORRECTED_CONDITIONAL_GO_PHASE_A_AUTHORIZED_ONLY",
+  "supersedes": {
+    "path": "config/cf4_datum_bearing_z0_density_likelihood_redesign_v1.json",
+    "bytes": 26621,
+    "sha256": "d10acce582c67215e0c495ad6c7025888d1d32381953c386c3cc84c0b2656fd1",
+    "retention_policy": "v1 remains immutable audit history; v2 is the effective addendum"
+  },
+  "authorization": {
+    "basis": "After reviewing the independent Antigravity audit, the user instructed Codex to apply the valid corrections and continue on 2026-09-01.",
+    "Phase_A_implementation": true,
+    "Phase_A_static_tests": true,
+    "Phase_A_commit_and_push": true,
+    "Phase_A_single_Slurm_CPU_validation": true,
+    "GPFS_read": true,
+    "GPFS_write_new_output_only": true,
+    "field_inference": false,
+    "mock_seed_consumption": false,
+    "Phase_B_or_later": false,
+    "automatic_follow_on": false
+  },
+  "independent_audit": {
+    "auditor": "Google Antigravity CLI agy",
+    "conversation_id": "bfb0e997-b321-4b78-808a-1e0e88c3d2fb",
+    "verdict": "CONDITIONAL_GO_PHASE_A_RECOMMENDED",
+    "audit_was_read_only": true,
+    "audit_output_adopted_verbatim": false
+  },
+  "adopted_corrections": {
+    "density_monopole_gauge": "The N32 technical z=0 latent must remove or explicitly fix the spatial mean of eta before alpha_p is applied. No actual-field inference may begin with an unconstrained eta monopole.",
+    "alpha_prior": "Each of six alpha_p parameters requires an external luminosity-function/selection calibration prior; the observed population totals may be data but may not define the prior center through exposure renormalization.",
+    "full_sky_RSD": "The RSD operator must use the observer-centered position-dependent line of sight rhat(x). A plane-parallel or one-axis distant-observer approximation is forbidden.",
+    "RSD_deposition": "NGP applies only to observed integer count construction. The predicted continuous intensity may and generally should use a differentiable mass-conserving deposition kernel with a tested adjoint; predicted lambda is not an integer.",
+    "low_exposure_label": "Every posterior field voxel must carry exposure/information diagnostics. ZoA and other mock-demonstrated unconstrained regions must be labeled prior_dominated rather than observationally reconstructed.",
+    "boundary_policy": "Before Phase B, predeclare padding, radial support, periodic-image suppression, and operator tests for the observer-centered sphere embedded in the periodic box.",
+    "overdispersion_scale_dependence": "Poisson is the N32 baseline only. HOD or negative-binomial alternatives must be decided on development mocks before increasing spatial resolution.",
+    "holdout_semantics": "The frozen recno hash is a reproducible pseudo-random row split. Conditional on the realized split it is a predictive partition, not a claim of mathematically exact independent Poisson experiments.",
+    "overlap_semantics": "The 17,007-target exclusion removes direct same-object reuse. It does not erase shared cosmic-field dependence or every catalog-level systematic covariance; conditional factorization and posterior predictive residual checks remain required."
+  },
+  "rejected_or_corrected_audit_statements": {
+    "Fisher_normalization": "Normalizing expected counts to observed population totals was an explicit datum-free Fisher sensitivity convention, not by itself a fatal error. It is forbidden as the actual Poisson intensity because it would condition away population-normalization information.",
+    "invented_numerical_thresholds": "The Antigravity suggestions gradient 1e-4, RSD conservation 1e-6, Rhat 1.05, zero divergences, r(k) 0.7, and residual ratio 0.5 are not adopted or frozen by this addendum.",
+    "observational_k_estimate": "The suggested generic k range 0.2--0.5 h/Mpc is not a project result and may not be quoted as the recovered frontier.",
+    "complete_covariance_removal": "The disjoint-object rule does not prove all CF4/2M++ observational errors independent."
+  },
+  "effective_Phase_A_contract": {
+    "purpose": "Build the first actual datum-bearing six-population 2M++ count artifact without performing inference.",
+    "observed_count_assignment": "one NGP/floor voxel per retained catalog row, integer int64 counts",
+    "selection": "raw official angular times Schechter radial exposure, integrated with eight Gauss subpoints per N32 voxel and never normalized to observed totals",
+    "split": "deterministic SHA256 recno thinning with a frozen salt and nominal 4/5 train, 1/5 holdout fractions before voxelization",
+    "hard_failure_if": [
+      "the retained count or any of six population totals differs from the frozen values",
+      "counts_all differs elementwise from counts_train plus counts_holdout",
+      "a positive observed count lies in a voxel with nonpositive raw exposure",
+      "selection is nonfinite or outside [0,1]",
+      "retained and excluded recnos are not disjoint",
+      "the output or staging directory already exists"
+    ],
+    "field_inference": false,
+    "mock_access": false,
+    "resolution_claim": false,
+    "automatic_Phase_B": false
+  },
+  "Phase_B_entry_amendments_required": [
+    "freeze the eta monopole/gauge implementation and alpha priors",
+    "define observer-centered spherical RSD including boundary handling and a differentiable deposition/adjoint pair",
+    "freeze directional-gradient and mass-conservation tolerances from implementation precision analysis before seeing mock results",
+    "define prior_dominated exposure/information labels",
+    "obtain separate user approval"
+  ],
+  "unchanged_science_policy": {
+    "primary_product": "z=0 density and peculiar-velocity posterior",
+    "IC_role": "downstream physical closure after z=0 mock validation",
+    "technical_N32_cell_size_cMpc_h": 12.0,
+    "target_numerical_cell_size_cMpc_h_max": 0.3,
+    "numerical_resolution_is_not_observational_resolution": true,
+    "maximize_contiguous_calibrated_k_frontier": true,
+    "random_high_k_must_be_labeled_prior_or_structure_conditioned": true
+  }
+}
