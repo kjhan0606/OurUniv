@@ -130,3 +130,20 @@ not yet included. The candidate is therefore computationally plausible for a
 bounded pilot but not yet a production inference path. Q1 remains
 **CONDITIONAL** until wrap/boundary oracle gates, JVP/VJP gates, and a
 gradient-inclusive cost bound pass.
+
+### Boundary/gradient gate result
+
+Slurm job 386928 compared the candidate with the NumPy oracle at a cell
+boundary, a periodic seam, and an interior point. Value relative-L1 errors
+were `3.73e-5`, `7.09e-5`, and `6.82e-5`; the development value gate passes
+at `5e-3`. The interior reverse gradients versus NumPy central differences did
+not meet a strict release gate: position absolute error was `7.53e-4` and
+velocity absolute error `4.45e-6`. They remain diagnostics, not promotion.
+
+The gradient-inclusive R2 CPU run (job 386929; 384 cMpc/h, 32 sources,
+128³) completed in 411.18 s using 14,512 MiB. Uniform exposure makes its
+gradient norm a conservation sanity check rather than a science-shaped test.
+The cost is already close to the 16 GiB allocation; 256³ gradient cost and a
+non-uniform exposure run are deferred until the gradient mismatch is fixed.
+Q1 is therefore **NO-GO for production**: reduce the oracle-gradient mismatch
+or activate the radial-shell/Fourier fallback before opening any sampler.
