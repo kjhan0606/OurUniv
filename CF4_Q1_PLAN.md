@@ -158,3 +158,17 @@ dot-product check passes to `6.94e-17`, so the candidate is internally
 differentiable; it is not differentiating the same operator as the NumPy
 oracle. The next action is an operator-level gradient fix or a radial-shell /
 Fourier redesign, not more cost scaling. Production inference remains closed.
+
+### Quadrature-order resolution
+
+The order gate (job 386935) shows the gradient mismatch is quadrature error:
+orders 64, 128, 256, and 512 give position-gradient errors
+`7.53e-4`, `1.13e-4`, `1.81e-5`, and `2.15e-6`, while value errors fall to
+`1.98e-7` at order 512. The order-512 boundary/seam run (job 386942) also
+passes: value errors are `1.25e-7` and `8.52e-8`, position-gradient error
+`2.15e-6`, and velocity-gradient error `1.27e-8`. The adjoint check remains at
+machine precision. This closes the development accuracy gate, but not the
+production cost gate: the measured 14.5 GiB/411 s gradient run used order 64;
+order 512 has not yet been costed at R2 geometry and is expected to be much
+more expensive. Keep production inference closed until that cost is measured
+or the operator is replaced by a lower-cost analytic/radial-shell design.
