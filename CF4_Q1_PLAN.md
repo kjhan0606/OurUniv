@@ -286,6 +286,13 @@ two-source cell-centre comparison is `2.20e-15` with exact mass `6.72` (job
 next gate is consistent post-RSD positions, followed by sub-cell phase error;
 no shell grouping or production cost claim is authorized yet.
 
+The phase-indexed redesign was implemented. A 4³ phase basis reduced the
+sub-cell error to about `0.045` but failed the value gate; an 8³ basis (job
+387227) reduced the tested phase errors to `0.00248`, `0.00176`, `0.00176`,
+and `0.00176`, below the development `5e-3` gate. This closes the small-grid
+phase gate for the prototype, but the basis size, post-RSD multi-shell case,
+and R2 memory/cost remain unverified; production is still closed.
+
 The subsequent phase/post-RSD gate (job 387219) rejects the single
 cell-centre kernel for real states: relative L1 is `1.37e-6` at phase 0 but
 `0.107`, `0.275`, `0.567`, and `0.284` at phases 0.1, 0.25, 0.5, and 0.75;
