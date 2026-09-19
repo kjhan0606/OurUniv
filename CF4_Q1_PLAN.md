@@ -193,6 +193,13 @@ order-512 gradient execution under the current implementation. Production
 requires tiling/checkpointing or a lower-cost radial-shell/Fourier operator;
 the Q1 production gate remains closed.
 
+The lower-order fallback was measured directly: a 256³ order-256 reverse-mode
+run (job 386984) also hit the 10-minute hard walltime and was cancelled, with
+peak RSS `14,413 MiB` and no result file. Lowering the quadrature order alone
+therefore does not make the 256³ path production-feasible. The next design
+must use spatial tiling/checkpointed VJP or replace the dense LOS response with
+a radial-shell/Fourier operator; no further un-tiled order sweep is warranted.
+
 ### Grok replacement audits
 
 At the user's request, Grok replaced both external roles for this bundle using
