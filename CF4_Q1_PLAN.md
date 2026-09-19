@@ -193,6 +193,17 @@ order-512 gradient execution under the current implementation. Production
 requires tiling/checkpointing or a lower-cost radial-shell/Fourier operator;
 the Q1 production gate remains closed.
 
+### Radial-shell/Fourier fallback
+
+The failed tiled route is now superseded by a bounded radial-shell/Fourier
+candidate (`src/cf4_q1_radial_shell_fourier_jax.py`). It groups sources into
+fixed shells, deposits one shell field, and applies an anisotropic Gaussian
+LOS transfer in Fourier space. Slurm smoke job 387184 passed mass/finite-value
+and autodiff checks (`mass=6.72`, finite gradient). This is only a numerical
+candidate: shell discretization and Fourier-vs-oracle value gates remain to be
+measured before any Q1 promotion. The dense and tiled production gates stay
+closed.
+
 ### Tiled candidate result
 
 The first spatially tiled sparse-TSC candidate matches the dense operator in a
