@@ -9,7 +9,7 @@ from cf4_2mpp_joint_likelihood_local import observer_centred_spherical_rsd
 
 jax.config.update('jax_enable_x64', True)
 box=6.; n=int(os.environ.get('Q1_SHELL_GRID','16')); observer=np.array([3.,3.,3.])
-positions=np.array([[1.3,2.1,4.2],[5.7,.4,2.7]],dtype=np.float64)
+positions=np.array([[1.3125,2.0625,4.3125],[5.8125,.5625,2.8125]],dtype=np.float64)
 vel=np.array([[20.,-5.,8.],[-12.,4.,9.]],dtype=np.float64); masses=np.full((6,2),.7)
 exposure=np.full((6,n,n,n),.8); exposure[:,2,3,5]=.2; exposure[:,8,6,1]=1.3
 sigma_fog=np.full(6,24.); sigma_red=np.full(6,11.)
