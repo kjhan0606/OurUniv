@@ -14,7 +14,8 @@ from cf4_2mpp_joint_likelihood_jax import POPULATIONS, VELOCITY_CONVENTION, _req
 
 
 def _nearest_delta_jax(position, mass, n, box):
-    cell = jnp.floor((jnp.mod(position, box) / (box / n)) + 0.5).astype(jnp.int32) % n
+    # Cell centres are at (i+1/2)h in the project TSC convention.
+    cell = jnp.floor(jnp.mod(position, box) / (box / n)).astype(jnp.int32) % n
     field = jnp.zeros((n, n, n), dtype=jnp.asarray(mass).dtype)
     return field.at[cell[0], cell[1], cell[2]].add(mass)
 
