@@ -212,6 +212,13 @@ is **NO-GO** as written. Before another production-cost run, the Fourier
 kernel must include a verified TSC window/alias treatment or the shell
 approximation must be redesigned and pass the oracle value gate.
 
+The first oracle-calibrated alias-aware kernel prototype (job 387198) also
+failed its cell-centre check with relative L1 `1.20` (mass was conserved).
+The likely defect is the discrete kernel origin/translation convention, not
+mass normalization. This prototype is rejected and no production work is
+opened. The next redesign must explicitly validate kernel origin, FFT shift,
+and one-source translation against an impulse response before shell grouping.
+
 Cell-centred source probes (jobs 387195/387196) still give relative L1
 `0.552` and `0.677` at 16³/32³. The error is therefore not only sub-cell
 phase aliasing; the simple continuous Gaussian Fourier transfer is incompatible
