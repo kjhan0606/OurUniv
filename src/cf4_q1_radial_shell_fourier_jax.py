@@ -60,7 +60,7 @@ def predict_phase_basis_kernel_jax(source_positions, population_masses, selectio
     _require_jax()
     positions=jnp.asarray(source_positions,dtype=jnp.float64); masses=jnp.asarray(population_masses,dtype=jnp.float64)
     exposure=jnp.asarray(selection_exposure,dtype=jnp.float64); basis=jnp.asarray(phase_kernel_fft)
-    n=int(exposure.shape[1]); pcount=int(basis.shape[0]); h=box_size_cMpc_h/n; field_rows=[]
+    n=int(exposure.shape[1]); pcount=int(basis.shape[-6] if basis.ndim == 7 else basis.shape[0]); h=box_size_cMpc_h/n; field_rows=[]
     for pop in range(POPULATIONS):
         field=jnp.zeros((n,n,n),dtype=jnp.float64)
         for source in range(positions.shape[0]):
@@ -72,7 +72,8 @@ def predict_phase_basis_kernel_jax(source_positions, population_masses, selectio
                 for iy in (0,1):
                     for iz in (0,1):
                         w=(frac[0] if ix else 1-frac[0])*(frac[1] if iy else 1-frac[1])*(frac[2] if iz else 1-frac[2])
-                        interp=interp+w*basis[(low[0]+ix)%pcount,(low[1]+iy)%pcount,(low[2]+iz)%pcount]
+                        selected = basis if basis.ndim == 6 else basis[ids[source]]
+                        interp=interp+w*selected[(low[0]+ix)%pcount,(low[1]+iy)%pcount,(low[2]+iz)%pcount]
             delta=jnp.zeros((n,n,n),dtype=jnp.float64).at[cell[0],cell[1],cell[2]].add(masses[pop,source])
             field=field+jnp.real(jnp.fft.ifftn(jnp.fft.fftn(delta)*interp))
         field_rows.append(exposure[pop]*field)
