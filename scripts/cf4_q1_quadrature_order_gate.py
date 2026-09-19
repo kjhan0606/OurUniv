@@ -18,7 +18,7 @@ positions = np.array([[1.37, 2.11, 4.23]])
 oracle = predict_selected_intensity_cell_integrated(positions, vel, masses, exposure, **kw)
 oracle_scalar = float(np.sum(oracle * exposure ** 2))
 rows = []
-for order in (64, 128, 256):
+for order in (64, 128, 256, 512):
     def scalar(p):
         f = predict_selected_intensity_state_jax(p, jnp.asarray(vel), jnp.asarray(masses),
             jnp.asarray(exposure), quadrature_order=order, **kw)
