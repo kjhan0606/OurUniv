@@ -50,7 +50,7 @@ def predict_shell_kernel_convolution_jax(
 
 
 def predict_phase_basis_kernel_jax(source_positions, population_masses, selection_exposure,
-                                   phase_kernel_fft, *, box_size_cMpc_h):
+                                   phase_kernel_fft, shell_ids=None, *, box_size_cMpc_h):
     """Apply a trilinearly interpolated sub-cell phase kernel basis.
 
     ``phase_kernel_fft`` has shape (P,P,P,N,N,N), with kernels sampled at
@@ -59,6 +59,7 @@ def predict_phase_basis_kernel_jax(source_positions, population_masses, selectio
     """
     _require_jax()
     positions=jnp.asarray(source_positions,dtype=jnp.float64); masses=jnp.asarray(population_masses,dtype=jnp.float64)
+    ids=jnp.zeros((positions.shape[0],),dtype=jnp.int32) if shell_ids is None else jnp.asarray(shell_ids,dtype=jnp.int32)
     exposure=jnp.asarray(selection_exposure,dtype=jnp.float64); basis=jnp.asarray(phase_kernel_fft)
     n=int(exposure.shape[1]); pcount=int(basis.shape[-6] if basis.ndim == 7 else basis.shape[0]); h=box_size_cMpc_h/n; field_rows=[]
     for pop in range(POPULATIONS):
