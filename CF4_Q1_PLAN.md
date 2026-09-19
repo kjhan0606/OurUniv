@@ -300,3 +300,19 @@ the consistent post-RSD two-source case is `0.563`. Mass remains conserved.
 The phase-indexed response basis or exact sub-cell TSC treatment is therefore
 mandatory. Grok was queried for the next design after this failure, but the
 CLI returned no usable answer in the bounded call; production remains closed.
+
+The first shell-specific phase-basis post-RSD run exposed a second failure
+mode. After fixing the shell-id argument order (commit `9754e63`), the p=4
+run (job 387242) still gave relative L1 `1.254`; increasing to p=8 (job
+387246) improved this only to `0.926`, with source-wise errors `0.646` and
+`1.207`. A Slurm diagnostic (job 387255) isolated the cause: translating a
+kernel generated at the exact post-RSD source position reproduces the sealed
+oracle at `2.6e-15`, while phase-basis interpolation at that same source gives
+`0.646` and `1.207`. Thus the FFT origin/translation and mass normalization
+are correct; the multi-direction phase-basis interpolation is not a valid
+production approximation for the anisotropic cell-integrated TSC response.
+The shell phase-basis route is rejected for production and remains a
+research diagnostic only. The next validation must use exact per-source
+cell-integrated kernels (or a basis indexed jointly by sub-cell phase and
+LOS/orientation, with a fresh value gate); no R2 cost or IC inference claim
+is authorized from the failed basis.
