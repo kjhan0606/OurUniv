@@ -192,3 +192,15 @@ The bounded 256³ order-512 gradient attempt (job 386960) hit the hard
 order-512 gradient execution under the current implementation. Production
 requires tiling/checkpointing or a lower-cost radial-shell/Fourier operator;
 the Q1 production gate remains closed.
+
+### Grok replacement audits
+
+At the user's request, Grok replaced both external roles for this bundle using
+read-only, fact-bounded prompts. The Fable-role bundle audit returned
+**CONDITIONAL PASS**: Q-GOAL is aligned, Q-LEAN is proportionate, and the
+mandatory next action is tiling/checkpointing or a radial-shell/Fourier
+alternative. The Opus-role technical audit returned **HOLD**: the numerical
+and autodiff checks pass, but the 256³ reverse-mode run fails its wall-clock
+budget. It recommends keeping the kernel research-only until a budgeted 256³
+reverse-mode run fits via lower order, batched LOS, or checkpointed VJP. These
+audits do not authorize production inference.
