@@ -12,6 +12,8 @@ positions = np.array([[1.37, 2.11, 4.23]], dtype=np.float64)
 velocities = np.array([[31.0, -12.0, 8.0]], dtype=np.float64)
 masses = np.full((6, 1), 0.7, dtype=np.float64)
 exposure = np.full((6, 8, 8, 8), 0.8, dtype=np.float64)
+exposure[:, 3, 2, 5] = 0.2
+exposure[:, 5, 6, 1] = 1.3
 kw = dict(observer=np.array([3.0, 3.0, 3.0]), box_size_cMpc_h=box,
           hubble_km_s_Mpc=74.6, little_h=0.746, scale_factor=1.0,
           sigma_fog_km_s=np.full(6, 24.0), sigma_redshift_km_s=np.full(6, 11.0))
@@ -26,7 +28,9 @@ assert relative_l1 < 5.0e-3, f"candidate/oracle relative L1={relative_l1}"
 def scalar(pos):
     field = predict_selected_intensity_state_jax(pos, jnp.asarray(velocities), jnp.asarray(masses),
         jnp.asarray(exposure), quadrature_order=64, **kw)
-    return jnp.sum(field * jnp.asarray(exposure))
+    # Non-uniform weights prevent the conservation identity from masking the
+    # position derivative check.
+    return jnp.sum(field * jnp.asarray(exposure) ** 2)
 
 grad = jax.grad(scalar)(jnp.asarray(positions))
 step = 1.0e-5
