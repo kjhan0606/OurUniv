@@ -172,3 +172,16 @@ production cost gate: the measured 14.5 GiB/411 s gradient run used order 64;
 order 512 has not yet been costed at R2 geometry and is expected to be much
 more expensive. Keep production inference closed until that cost is measured
 or the operator is replaced by a lower-cost analytic/radial-shell design.
+
+### Bounded order-512 production-cost gate
+
+The required bounded Slurm measurement (job 386943) completed within its hard
+limits (10 minutes, 16 GiB): R2 geometry, 384 cMpc/h box, 32 sources, 128³,
+order-512 forward plus position/velocity reverse gradient took `520.58 s` and
+used `12,975 MiB`. The run root contains the required owner marker. This
+closes the single-case feasibility gate, but the uniform exposure makes the
+gradient norm only a conservation sanity check. The measured order-64
+256³/gradient scaling and order-512 128³ memory imply that a 256³ order-512
+gradient will not fit a single 16 GiB card; tiled/checkpointed execution or a
+lower-cost radial-shell/Fourier operator is required for production. Q1 is
+therefore **CONDITIONAL**, not a production authorization.
