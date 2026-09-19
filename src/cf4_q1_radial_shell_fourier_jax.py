@@ -13,6 +13,41 @@ import jax.numpy as jnp
 from cf4_2mpp_joint_likelihood_jax import POPULATIONS, VELOCITY_CONVENTION, _require_jax, observer_centred_spherical_rsd_jax, tsc_deposit_jax
 
 
+def _nearest_delta_jax(position, mass, n, box):
+    cell = jnp.floor((jnp.mod(position, box) / (box / n)) + 0.5).astype(jnp.int32) % n
+    field = jnp.zeros((n, n, n), dtype=jnp.asarray(mass).dtype)
+    return field.at[cell[0], cell[1], cell[2]].add(mass)
+
+
+def predict_shell_kernel_convolution_jax(
+    source_positions, population_masses, selection_exposure, shell_ids,
+    shell_kernel_fft, *, box_size_cMpc_h,
+):
+    """Apply precomputed oracle shell kernels by FFT translation/contraction.
+
+    ``shell_kernel_fft`` has shape (S,N,N,N) and is produced by the sealed
+    NumPy oracle. This path is intentionally limited to a fixed shell kernel;
+    arbitrary sub-cell source phases require a separate calibrated basis.
+    """
+    _require_jax()
+    positions = jnp.asarray(source_positions, dtype=jnp.float64)
+    masses = jnp.asarray(population_masses, dtype=jnp.float64)
+    exposure = jnp.asarray(selection_exposure, dtype=jnp.float64)
+    ids = jnp.asarray(shell_ids, dtype=jnp.int32)
+    kernels = jnp.asarray(shell_kernel_fft)
+    n = int(exposure.shape[1]); shells = int(kernels.shape[0])
+    rows = []
+    for p in range(POPULATIONS):
+        field = jnp.zeros((n, n, n), dtype=jnp.float64)
+        for shell in range(shells):
+            delta = jnp.zeros((n, n, n), dtype=jnp.float64)
+            for source in range(positions.shape[0]):
+                delta = delta + _nearest_delta_jax(positions[source], jnp.where(ids[source] == shell, masses[p, source], 0.0), n, box_size_cMpc_h)
+            field = field + jnp.real(jnp.fft.ifftn(jnp.fft.fftn(delta) * kernels[shell]))
+        rows.append(exposure[p] * field)
+    return jnp.stack(rows)
+
+
 def _wavevectors(n: int, box: float):
     k = 2.0 * np.pi * np.fft.fftfreq(n, d=box / n)
     return jnp.meshgrid(jnp.asarray(k), jnp.asarray(k), jnp.asarray(k), indexing="ij")
