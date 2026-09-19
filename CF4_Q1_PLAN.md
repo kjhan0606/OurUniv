@@ -212,6 +212,15 @@ is **NO-GO** as written. Before another production-cost run, the Fourier
 kernel must include a verified TSC window/alias treatment or the shell
 approximation must be redesigned and pass the oracle value gate.
 
+Cell-centred source probes (jobs 387195/387196) still give relative L1
+`0.552` and `0.677` at 16³/32³. The error is therefore not only sub-cell
+phase aliasing; the simple continuous Gaussian Fourier transfer is incompatible
+with the periodic cell-integrated TSC oracle. The Fourier candidate is fully
+rejected. The replacement design is an alias-aware hybrid: precompute each
+shell's exact periodic cell-integrated response kernel from the sealed oracle,
+then use FFT only for translation/contraction. It must pass the same oracle
+value gate before any cost benchmark.
+
 ### Tiled candidate result
 
 The first spatially tiled sparse-TSC candidate matches the dense operator in a
