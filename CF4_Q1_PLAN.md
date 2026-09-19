@@ -101,3 +101,12 @@ box with 32 sources and six populations (job 386882) gave 3.06 s / 365 MiB at
 128³ and 31.15 s / 2,573 MiB at 256³. This is a useful oracle reference, but
 still not a JAX state-gradient or full-catalog measurement; Q1 therefore
 remains conditional and production inference remains closed.
+
+Fable's follow-up close audit is **CONDITIONAL PASS**. It confirms that the
+shifted-position LOS fix is correct but that the central gate is still open:
+the JAX path has no position/velocity state derivative and the R2 benchmark is
+NumPy-only. The next bundle must implement the traceable cell-integrated LOS
+response (including periodic wrap and FoG/redshift broadening), compare its
+values and position/velocity JVP/VJP against the sealed oracle at x64, then
+benchmark JAX forward/gradient memory and wall time at production source
+counts. Q2 inference remains closed until those gates pass.
