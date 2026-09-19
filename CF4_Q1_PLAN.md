@@ -277,3 +277,11 @@ positions. The next diagnostics are therefore a zero-velocity single-source
 cell-centre identity, centroid comparison, a consistent post-RSD two-source
 test, and only then sub-cell phase/basis tests. Production and LG claims stay
 closed.
+
+The corrected alias-aware design now passes the first identity gates. Using the
+actual source cell index for the FFT origin (and fixing shell-id wiring), the
+single-source error is `3.01e-15` (job 387212) and the zero-velocity
+two-source cell-centre comparison is `2.20e-15` with exact mass `6.72` (job
+387216). The earlier `1.20` failure was a harness origin/indexing defect. The
+next gate is consistent post-RSD positions, followed by sub-cell phase error;
+no shell grouping or production cost claim is authorized yet.
