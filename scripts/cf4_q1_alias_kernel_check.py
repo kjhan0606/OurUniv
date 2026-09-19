@@ -15,9 +15,10 @@ rel=(rsd.positions-observer+box/2)%box-box/2; rh=rel/np.linalg.norm(rel,axis=1)[
 kernels=[]
 for direction in rh:
     kernel=cell_integrated_tsc_deposit(positions[0:1],np.array([1.]),np.array([direction]),np.array([disp]),n,box)
-    # FFT convolution uses index 0 as the impulse origin; the oracle kernel is
-    # centred at n//2, so shift it back (the previous prototype used +n//2).
-    kernels.append(np.fft.fftn(np.roll(kernel, -n//2, axis=(0,1,2))))
+    # FFT convolution uses index 0 as the impulse origin; shift from the
+    # actual cell-centre index of this impulse, not from n//2.
+    center_index=np.floor(positions[0]/(box/n)).astype(int)
+    kernels.append(np.fft.fftn(np.roll(kernel, -center_index, axis=(0,1,2))))
 candidate=np.asarray(predict_shell_kernel_convolution_jax(jnp.asarray(positions),jnp.asarray(masses),jnp.asarray(exposure),jnp.array([0]),jnp.asarray(kernels),box_size_cMpc_h=box))
 relerr=float(np.sum(np.abs(candidate-oracle))/np.sum(np.abs(oracle)))
 print({'status':'ALIAS_KERNEL_CHECK','relative_l1':relerr,'mass':float(candidate.sum())},flush=True)
