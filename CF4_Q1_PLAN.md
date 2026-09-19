@@ -147,3 +147,14 @@ The cost is already close to the 16 GiB allocation; 256³ gradient cost and a
 non-uniform exposure run are deferred until the gradient mismatch is fixed.
 Q1 is therefore **NO-GO for production**: reduce the oracle-gradient mismatch
 or activate the radial-shell/Fourier fallback before opening any sampler.
+
+### Fable-requested gradient sweep
+
+The float64 step sweep (Slurm job 386931) confirms the position-gradient
+discrepancy is not finite-difference truncation: the interior error plateaus at
+`7.53e-4` from `h=1e-3` through `1e-6`. Boundary and seam errors are much
+smaller, but the interior plateau fails the release gate. The JVP/VJP adjoint
+dot-product check passes to `6.94e-17`, so the candidate is internally
+differentiable; it is not differentiating the same operator as the NumPy
+oracle. The next action is an operator-level gradient fix or a radial-shell /
+Fourier redesign, not more cost scaling. Production inference remains closed.
