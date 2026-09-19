@@ -317,9 +317,10 @@ cell-integrated kernels (or a basis indexed jointly by sub-cell phase and
 LOS/orientation, with a fresh value gate); no R2 cost or IC inference claim
 is authorized from the failed basis.
 
-A bounded exact-kernel scaling check (job 387257) remains inexpensive for two
-sources: n=16/32/64 took 0.041/0.075/0.165 s, used 62.2/65.0/77.5 MiB RSS,
-and conserved mass exactly. This is only a two-source microbenchmark; it does
-not authorize large-source R2 inference. It does show that exact per-source
-kernels are a viable correctness reference, while the next production design
-must reduce source count or batch kernels before attempting 128^3/256^3.
+A bounded exact-kernel scaling check (jobs 387257 and 387260) remains exact
+for two sources: n=16/32/64/128/256 took 0.041/0.075/0.170/0.452/1.902 s,
+with peak RSS 61/63/78/198/973 MiB and exact mass conservation. This is only
+a two-source microbenchmark; it does not authorize large-source R2 inference.
+It does show that exact per-source kernels are a viable correctness reference,
+while the next production design must reduce source count or batch kernels
+before attempting 128^3/256^3 with a realistic catalogue.
