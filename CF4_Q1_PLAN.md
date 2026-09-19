@@ -266,3 +266,14 @@ and autodiff checks pass, but the 256³ reverse-mode run fails its wall-clock
 budget. It recommends keeping the kernel research-only until a budgeted 256³
 reverse-mode run fits via lower order, batched LOS, or checkpointed VJP. These
 audits do not authorize production inference.
+
+### Fable cross-design after Fourier failure
+
+Fable agrees with Grok that origin/half-cell phase and TSC-versus-delta are
+the live causes, but rejects FFT normalization as a primary cause because the
+k=0 mass mode is conserved. It also found a harness defect: the alias test
+passed pre-RSD positions to the candidate while the oracle used post-RSD
+positions. The next diagnostics are therefore a zero-velocity single-source
+cell-centre identity, centroid comparison, a consistent post-RSD two-source
+test, and only then sub-cell phase/basis tests. Production and LG claims stay
+closed.
