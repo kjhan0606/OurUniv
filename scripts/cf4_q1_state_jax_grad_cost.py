@@ -12,6 +12,7 @@ rng = np.random.default_rng(20260919)
 box = float(os.environ.get("Q1_BENCHMARK_BOX", "384.0"))
 sources = int(os.environ.get("Q1_BENCHMARK_SOURCES", "32"))
 grid = int(os.environ.get("Q1_JAX_GRAD_GRID", "128"))
+order = int(os.environ.get("Q1_JAX_GRAD_ORDER", "64"))
 positions = jnp.asarray(rng.uniform(0.0, box, (sources, 3)))
 velocities = jnp.asarray(rng.normal(0.0, 100.0, (sources, 3)))
 masses = jnp.asarray(np.abs(rng.normal(1.0, 0.2, (6, sources))))
@@ -19,7 +20,7 @@ exposure = jnp.full((6, grid, grid, grid), 0.8, dtype=jnp.float64)
 kw = dict(observer=jnp.full(3, box / 2.0), box_size_cMpc_h=box,
           hubble_km_s_Mpc=74.6, little_h=.746, scale_factor=1.0,
           sigma_fog_km_s=jnp.full(6, 100.0), sigma_redshift_km_s=jnp.full(6, 30.0),
-          quadrature_order=64)
+          quadrature_order=order)
 
 def objective(pos, vel):
     field = predict_selected_intensity_state_jax(pos, vel, masses, exposure, **kw)
@@ -31,11 +32,13 @@ jax.block_until_ready(value)
 jax.block_until_ready(grad_pos)
 jax.block_until_ready(grad_vel)
 elapsed = time.perf_counter() - start
-row = dict(grid=grid, sources=sources, populations=6, seconds=elapsed,
+row = dict(grid=grid, sources=sources, populations=6, quadrature_order=order, seconds=elapsed,
            peak_host_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
            value=float(value), grad_pos_norm=float(jnp.linalg.norm(grad_pos)),
            grad_vel_norm=float(jnp.linalg.norm(grad_vel)), finite=bool(np.isfinite(np.asarray(grad_pos)).all() and np.isfinite(np.asarray(grad_vel)).all()))
 print(json.dumps(row), flush=True)
 out = '/gpfs/kjhan/CF4/q1_state_jax_grad_cost/job_' + os.environ['SLURM_JOB_ID']
 os.makedirs(out, exist_ok=False)
+with open(out + '/OWNER.txt', 'w', encoding='utf-8') as owner:
+    owner.write('CF4 Q1 bounded gradient benchmark; owner=kjhan; no production authorization\n')
 json.dump(dict(status='COMPLETE_JAX_GRADIENT_COST', source_commit=os.environ['EXPECTED_COMMIT'], box_cMpc_h=box, row=row), open(out + '/result.json', 'w'), indent=2)
