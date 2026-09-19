@@ -17,6 +17,7 @@ oracle=predict_selected_intensity_cell_integrated(positions,vel,masses,exposure,
 rsd=observer_centred_spherical_rsd(positions,vel,observer,box,74.6,little_h=.746,scale_factor=1.)
 relative=(rsd.positions-observer+box/2)%box-box/2; rhat=relative/np.linalg.norm(relative,axis=1)[:,None]
 disp=.746*np.hypot(24.,11.)/74.6; shell_ids=jnp.array([0,1]);
-candidate=np.asarray(predict_selected_intensity_radial_shell_fourier_jax(jnp.asarray(positions),jnp.asarray(vel),jnp.asarray(masses),jnp.asarray(exposure),shell_ids,jnp.asarray(rhat),jnp.array([disp,disp]),**kw))
+fourier_kw={k:v for k,v in kw.items() if k not in ('sigma_fog_km_s','sigma_redshift_km_s')}
+candidate=np.asarray(predict_selected_intensity_radial_shell_fourier_jax(jnp.asarray(positions),jnp.asarray(vel),jnp.asarray(masses),jnp.asarray(exposure),shell_ids,jnp.asarray(rhat),jnp.array([disp,disp]),**fourier_kw))
 rel=float(np.sum(np.abs(candidate-oracle))/np.sum(np.abs(oracle)))
 print(json.dumps({'status':'RADIAL_SHELL_ORACLE_CHECK','relative_l1':rel,'mass_oracle':float(oracle.sum()),'mass_candidate':float(candidate.sum()),'finite':bool(np.isfinite(candidate).all())},indent=2),flush=True)
