@@ -115,3 +115,67 @@ Grok은 다음 묶음 단계의 **독립 기획 및 구현 감사**를 담당한
 ## 8. 현재 운전자에게 필요한 다음 판단
 
 Grok은 먼저 “현재 v3 IC preflight 통과로 Stage 8의 IC 검증을 종료할 수 있는가”를 판단하고, 그 다음에만 선택적 nonlinear pilot 또는 z=0 zoom 진화의 필요성을 비교한다. 목적과 무관한 추가 계산은 NO-GO로 판정한다.
+
+## 9. 프로젝트 히스토리 요약
+
+### 초기 접근
+
+- CF4 점 자료의 위치·특이속도를 이용해 `CF4 -> IC`를 직접 구성하려 했다.
+- 초기 고분해능 보정은 high-k LCDM power를 왜곡할 위험이 있었고, 임의 amplitude/phase 보정은 통계적으로 방어하기 어려웠다.
+- 이후 low-k는 관측 posterior로 유지하고 high-k는 LCDM power spectrum 및 물리적 조건으로 completion하는 방향으로 수정했다.
+
+### 현재 밀도장·tracer 경로
+
+- CF4 tracer bias, RSD/FoG, Carrick reference field를 분리해 calibration/holdout을 수행했다.
+- `z=0` posterior, low/high-k splice, joint tracer calibration을 단계별 decision 파일로 기록했다.
+- 이 결과는 대규모·저주파 제약을 제공하지만, CF4의 소수 LG 점 자료만으로 MW/M31/M33의 개별 halo를 직접 결정하지는 않는다.
+
+### PM/HOP 검증
+
+- uniform L8 parent GRAFIC IC를 RAMSES PM으로 진화하고 z=0 HOP을 수행했다.
+- HOP clean rebuild 후 large-scale catalog는 정상화되었다.
+- 그러나 parent 입자질량이 약 `2.89e11 Msun/h`라 MW/M31은 수 입자 수준이다. 따라서 “large-scale HOP pass”와 “Local Group halo reproduction”을 분리 판정했다.
+
+### Zoom 전환
+
+- z=0의 CF4 LG anchor 주변 입자를 tracing하여 Lagrangian mask를 만들었다.
+- 첫 narrow mask(v2)는 경계 및 fine-Poisson 경고가 발생해 폐기/비확정 처리했다.
+- mask padding을 L8 기준 12 cells로 넓힌 v3 IC를 생성했다.
+- 새 lagRamses binary에 `maxiter_fine` 지원을 포함해 preflight를 재실행했고, job 388636에서 경계 0, Poisson 0으로 통과했다.
+
+## 10. 현재 상황의 정확한 판정
+
+- **확정:** low-k posterior/calibration, parent IC, parent PM/HOP 대규모 검증, trace-derived v3 zoom IC 생성, v3 초기 RAMSES preflight.
+- **미확정:** v3 zoom을 실제로 z=0까지 진화했을 때 MW/M31/M33 및 주변 환경이 관측과 맞는지.
+- **미확정:** CF4 점 자료만으로 LG high-k의 실제 위상/halo pair를 유일하게 결정할 수 있는지.
+- **현재 핵심 병목:** 관측으로 직접 결정되지 않는 LG high-k를 LCDM prior와 zoom 실행 조건으로 어떻게 제한하고, 어떤 관측량으로 검증할지.
+- **선택적 작업:** job 388638의 `a=0.02 -> 0.05` bounded nonlinear pilot. 이것은 안정성 진단이지 최종 구조 재현 증거가 아니다.
+
+## 11. 앞으로 해야 할 일
+
+### 반드시 해야 할 일
+
+1. v3 IC의 provenance와 preflight 결과를 보존하고, IC level/parent/mask/해상도 계산을 최종 문서화한다.
+2. Local Group 영역의 목표 질량 해상도와 contamination/zoom volume 기준을 명시한다.
+3. 실제 z=0 zoom 진화가 필요하다고 판정될 경우에만, 최소 출력 정책으로 제한된 production 설계를 만든다.
+4. z=0 진화 후 HOP/halo finder에서 MW/M31/M33 후보, pair separation/relative velocity, Local Void·Virgo 방향 환경을 평가한다.
+5. 여러 high-k realization 또는 seed ensemble을 사용할 경우, 단일 성공 사례가 아니라 LCDM prior와 관측 holdout을 함께 보고한다.
+
+### 조건부 또는 연기할 일
+
+- job 388638 bounded nonlinear pilot: Grok의 Q-LEAN 판정 전에는 추가 제출·확장하지 않는다.
+- 장시간 z=0 zoom production: contamination, 메모리, 출력량, 목표 관측량의 사전 검토 없이는 시작하지 않는다.
+- hydrodynamics/stellar·AGN feedback: 현재 DMO/IC 검증의 병목을 해결하기 전에는 연기한다.
+- 새 ML 학습, 새 external calibration, 대규모 시각화: 최종 목적에 직접 기여하는 경우에만 계획에 포함한다.
+
+## 12. 중요한 메모
+
+- “초기조건 preflight 통과”는 “현재 우주 구조 재현”이 아니다.
+- uniform L8 HOP 결과로 MW/M31 재현을 주장하지 않는다.
+- CF4 LG 점 자료는 anchor/velocity 제약이지, 개별 은하의 완전한 고-k density field가 아니다.
+- high-k를 임의로 증폭하거나 random phase로 교체하면 LCDM 통계와 관측 posterior의 의미가 바뀔 수 있다.
+- `0.3 cMpc/h`는 전체 상자 해상도가 아니라 Local Group zoom 영역의 유효 해상도 목표다.
+- Slurm job은 메모리 최대 예상치에 약 20% 여유를 둔다.
+- GPFS는 `/home`과 같은 공유 파일시스템이다. GPFS 특수 기능을 구현하거나 별도 검증 대상으로 만들지 않는다.
+- 모든 감사는 읽기 전용이며, 감사자가 직접 코드·잡·시뮬레이션을 변경하지 않는다.
+- 새 단계는 Q-GOAL과 Q-LEAN을 먼저 통과해야 하며, 불필요한 검증 단계가 본 계산보다 커지지 않게 한다.
