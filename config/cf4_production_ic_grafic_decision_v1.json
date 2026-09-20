@@ -1,0 +1,13 @@
+{
+  "schema": "ouruniv-cf4-production-ic-grafic-decision-v1",
+  "date": "2026-09-20",
+  "job": "388404",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1/ic_provenance.json",
+  "decision": "IC_GENERATED_PM_FORWARD_PENDING",
+  "contract": {"N":256,"box_cMpc_h":384.0,"cell_cMpc_h":1.5,"astart":0.02,"omega_m":0.31,"h":0.746},
+  "checks": {"grafic_roundtrip_max_abs_error":0.0,"density_velocity_same_source":true,"production_evolution_started":false},
+  "method": "Repaired z=0 density contrast was linearly scaled to a_start and paired with a Fourier-consistent 1LPT velocity field.",
+  "caveat": "This is the first production-format IC candidate; PM/PMWD forward evolution must validate z=0 recovery before zoom promotion.",
+  "output": "/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1",
+  "stage": "5/8 IC generated, stage 6 pending"
+}
