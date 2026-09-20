@@ -325,6 +325,14 @@ It does show that exact per-source kernels are a viable correctness reference,
 while the next production design must reduce source count or batch kernels
 before attempting 128^3/256^3 with a realistic catalogue.
 
+The exact-kernel batch gate (job 388101) passed at machine precision for all
+catalogue sizes tested: relative L1 `4.3e-15`, `2.4e-15`, `9.0e-15`, and
+`5.0e-15` for (64^3,16), (64^3,64), (128^3,16), and (128^3,64), with exact
+mass totals. Wall time was 2.8/11.2/8.1/31.7 s respectively. The batched
+exact route is therefore a valid correctness fallback; its production cost,
+especially at 256^3 and full CF4 source counts, remains to be bounded before
+any IC inference is launched.
+
 The catalog scaling microbenchmark (job 388100) confirms linear source cost
 for exact kernels: 64^3 with 16/64 sources took 1.34/5.19 s at 81 MiB RSS;
 128^3 with 16/64 sources took 3.58/14.18 s at 205 MiB RSS, with exact mass
