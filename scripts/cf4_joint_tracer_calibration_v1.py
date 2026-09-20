@@ -31,6 +31,23 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def load_joint_catalog(path: str | Path) -> dict[str, np.ndarray]:
+    """Read the published 2M++ header (_RA/_DE) without altering the source pilot."""
+    rows = {k: [] for k in ("recno", "Ksmag", "Vcmb", "c11_5", "c12_5", "Cln", "Ref", "RA", "DEC")}
+    with Path(path).open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        required = {"recno", "Ksmag", "Vcmb", "c11_5", "c12_5", "Cln", "Ref", "_RA", "_DE"}
+        if reader.fieldnames is None or not required.issubset(reader.fieldnames):
+            raise ValueError("2M++ catalogue header changed")
+        for r in reader:
+            rows["recno"].append(int(r["recno"])); rows["Ksmag"].append(float(r["Ksmag"]))
+            rows["Vcmb"].append(float(r["Vcmb"])); rows["c11_5"].append(float(r["c11_5"]))
+            rows["c12_5"].append(float(r["c12_5"]) if r["c12_5"].strip() else np.nan)
+            rows["Cln"].append(int(r["Cln"])); rows["Ref"].append(r["Ref"].strip())
+            rows["RA"].append(float(r["_RA"])); rows["DEC"].append(float(r["_DE"]))
+    return {"recno": np.asarray(rows["recno"], dtype=np.int64), "Ksmag": np.asarray(rows["Ksmag"]), "Vcmb": np.asarray(rows["Vcmb"]), "c11_5": np.asarray(rows["c11_5"]), "c12_5": np.asarray(rows["c12_5"]), "Cln": np.asarray(rows["Cln"], dtype=np.int8), "Ref": np.asarray(rows["Ref"], dtype=str), "RA": np.asarray(rows["RA"]), "DEC": np.asarray(rows["DEC"])}
+
+
 def read_program(path: Path) -> dict[str, Any]:
     p = json.loads(path.read_text())
     if p.get("schema") != "ouruniv-cf4-joint-tracer-calibration-v1":
@@ -87,7 +104,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         path = Path(data[key]["path"])
         if not path.is_file() or sha256(path) != data[key]["sha256"]:
             raise ValueError(f"input binding changed: {path}")
-    cat = load_catalog(data["catalog"]["path"])
+    cat = load_joint_catalog(data["catalog"]["path"])
     excluded, _ = read_crossmatch_exclusions(data["crossmatch"]["path"], int(data["excluded_targets"]))
     distance, absmag = distance_and_absolute_magnitude(cat["Vcmb"], cat["Ksmag"], program["cosmology"])
     eligible, _, appbin, absbin = classify_disjoint_tracer(cat, excluded, distance, absmag, design)
