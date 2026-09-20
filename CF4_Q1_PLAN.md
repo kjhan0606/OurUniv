@@ -352,3 +352,9 @@ for exact kernels: 64^3 with 16/64 sources took 1.34/5.19 s at 81 MiB RSS;
 conservation in every case. This is feasible as a correctness/batching
 reference, but a full CF4 catalogue still requires source batching and must
 not materialize all per-source 256^3 kernels simultaneously.
+
+The 256^3 chunked exact gate also passed for 4 and 8 sources (jobs 388116 and
+388117): relative L1 was exactly `0.0`, mass errors were below `5e-16`, and
+wall times were 23.8 s and 45.9 s. The measured scaling is linear in source
+count, so a full catalogue must be processed in bounded chunks and likely
+parallel batches; no unbounded all-source materialization is permitted.

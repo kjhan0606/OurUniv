@@ -4,7 +4,7 @@ from cf4_q1_cell_integrated_convolution import cell_integrated_tsc_deposit
 from cf4_q3_source_compressed_operator import evaluate_chunked_q1_operator
 
 rng=np.random.default_rng(20260920); box=6.; obs=np.array([3.,3.,3.]); disp=.746*np.hypot(24.,11.)/74.6
-for n,m in ((64,16),(128,16)):
+for n,m in ((256,8),):
     pos=rng.uniform(.05,box-.05,size=(m,3)); rel=(pos-obs+box/2)%box-box/2; los=rel/np.linalg.norm(rel,axis=1)[:,None]; scale=np.full(m,disp)
     masses=rng.uniform(.1,1.2,size=(6,m)); t=time.perf_counter()
     oracle=np.zeros((6,n,n,n))
