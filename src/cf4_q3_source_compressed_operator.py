@@ -178,3 +178,49 @@ def candidate_metadata(compressed: ExactCompressedSources) -> dict[str, object]:
         "approximation": False,
         "science_claim_authorized": False,
     }
+
+
+def evaluate_chunked_q1_operator(
+    positions: Iterable[Iterable[float]],
+    los_unit_vectors: Iterable[Iterable[float]],
+    displacement_scales: Iterable[float],
+    population_masses: Iterable[Iterable[float]],
+    grid_size: int,
+    box_size_cMpc_h: float,
+    *,
+    chunk_size: int = 32,
+    tail_cutoff: float = 8.0,
+) -> np.ndarray:
+    """Evaluate the exact Q1 response in bounded source chunks.
+
+    This is deliberately a correctness-first fallback: chunks bound working
+    memory while each source still uses the sealed cell-integrated oracle. No
+    geometry or phase approximation is introduced.
+    """
+    pos, los, scale = _validate_geometry(positions, los_unit_vectors, displacement_scales)
+    masses = np.asarray(population_masses, dtype=np.float64)
+    if masses.ndim != 2 or masses.shape[1] != pos.shape[0]:
+        raise LikelihoodInputError("population_masses must have shape (P, M)")
+    if not np.all(np.isfinite(masses)) or np.any(masses < 0.0):
+        raise LikelihoodInputError("population_masses must be finite and non-negative")
+    if not isinstance(chunk_size, int) or chunk_size <= 0:
+        raise LikelihoodInputError("chunk_size must be a positive integer")
+    result = np.zeros((masses.shape[0], grid_size, grid_size, grid_size), dtype=np.float64)
+    for start in range(0, pos.shape[0], chunk_size):
+        stop = min(start + chunk_size, pos.shape[0])
+        for source in range(start, stop):
+            for population in range(masses.shape[0]):
+                if masses[population, source] == 0.0:
+                    continue
+                result[population] += cell_integrated_tsc_deposit(
+                    pos[source : source + 1],
+                    np.asarray([masses[population, source]], dtype=np.float64),
+                    los[source : source + 1],
+                    scale[source : source + 1],
+                    grid_size,
+                    box_size_cMpc_h,
+                    tail_cutoff=tail_cutoff,
+                )
+    if not np.all(np.isfinite(result)) or np.any(result < 0.0):
+        raise LikelihoodInputError("chunked Q1 result is not finite and non-negative")
+    return result

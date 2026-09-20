@@ -339,6 +339,13 @@ The 256^3/16-source exact batch (job 388102) also passed: relative L1
 a small catalogue; full-catalogue scaling still requires chunking and is not
 yet a production IC run.
 
+The bundled chunked exact operator was implemented and gated (job 388106).
+For random six-population masses, chunk size 4 reproduced the sealed oracle
+with relative L1 `0.0` at both 64^3 and 128^3; maximum per-population mass
+errors were `3.6e-15` and `1.8e-15`. Wall times were 14.1 s and 30.8 s.
+This validates chunking as an exact memory-bounded fallback, without claiming
+that its unaccelerated Python loop is yet production-speed at full CF4 size.
+
 The catalog scaling microbenchmark (job 388100) confirms linear source cost
 for exact kernels: 64^3 with 16/64 sources took 1.34/5.19 s at 81 MiB RSS;
 128^3 with 16/64 sources took 3.58/14.18 s at 205 MiB RSS, with exact mass
