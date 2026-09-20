@@ -40,7 +40,8 @@ levelmax=8
 nexpand=1
 ! 256^3 cells require 2,097,152 level-8 grids; leave headroom for AMR buffers.
 ngridtot=5000000
-nparttot=5000000
+! One particle per L8 cell is 16,777,216; retain MPI/AMR headroom.
+nparttot=20000000
 /
 
 &COSMO_PARAMS
