@@ -479,3 +479,11 @@ zero-mean, and preserved all low-k Fourier modes exactly (difference power
 fraction `0.0`). This is only a wiring/continuity test: the high-k amplitude
 normalization and transfer table are not yet a frozen LCDM prior, so the
 artifact is not an IC and cannot be used for PM/PMWD production.
+
+The first continuity check exposed an FFT normalization defect: high-k power
+was suppressed by `n^-6` (job 388218, edge ratio `1.5e-15`). The normalization
+was corrected and a 0.10 h/Mpc smooth taper was added. The rerun (jobs 388224
+and 388229) is finite and zero-mean, with high/low edge power ratio `0.479`.
+This is an improvement but not a final continuity pass; the high-k amplitude
+still requires a frozen LCDM P(k) normalization and a stricter boundary gate.
+The failed run and correction are retained in the audit trail.
