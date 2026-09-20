@@ -497,3 +497,13 @@ derived v1 map is the calibrated baseline; v2 is retained only as support-
 repair sensitivity. This closes selection provenance/calibration as a
 baseline while leaving coverage, survival/bias, and map-boundary limitations
 explicit.
+
+The final limitation decision audit (job 388260) resolves the scope: official
+ARES provenance passes, but only 57.97% of the catalog lies in the map's
+supported radial domain (5--180 cMpc/h). Positive exposure fractions are
+99.85%, 57.08%, 25.01%, 41.51%, 59.16%, and 28.90% by population. Neither
+ARES nor the CF4 CSV supplies scale-dependent survival/bias calibration, and
+the map supports effective-volume normalization only. Therefore selection is
+**development GO with explicit mask/nuisance**, but **production NO-GO** until
+external survival/bias calibration or a joint calibrated tracer model exists.
+The decision is recorded in `config/cf4_selection_limitations_decision_v1.json`.
