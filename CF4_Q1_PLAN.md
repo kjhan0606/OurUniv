@@ -383,3 +383,10 @@ was 4.47x. Updating the Slurm cost model (job 388142) gives 0.72 s/source for
 ideal cores. A reproducible chunk manifest (job 388139) defines 874 chunks of
 64 rows. These are ideal estimates; real array scheduling and I/O overhead
 must still be measured before production submission.
+
+An actual Slurm array probe (job 388143, four concurrent tasks) completed
+without failures. Each 128^3/16-source shared-geometry chunk took 3.02--3.13
+s with about 284 MiB RSS, and all array elements finished in roughly 3 s
+elapsed. This confirms that independent chunk arrays are practical and that
+the ideal parallel cost model is close for this bounded workload; production
+still needs output aggregation and a controlled pilot before release.
