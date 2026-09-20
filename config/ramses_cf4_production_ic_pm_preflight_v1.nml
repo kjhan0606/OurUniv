@@ -30,7 +30,8 @@ fbackup=1000000
 
 &INIT_PARAMS
 filetype='grafic'
-initfile(8)='/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1'
+! read_params remaps initfile(i) to levelmin+i-1; levelmin=8 => slot 1.
+initfile(1)='/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1'
 /
 
 &AMR_PARAMS
