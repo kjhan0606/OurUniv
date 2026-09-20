@@ -19,7 +19,7 @@ export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
 exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_zoom_ic2.py \
   --parent /gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1 \
   --parent-level 8 --parent-grid-size 256 \
-  --transfer /gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_grafic_p3429_s5108_n576/transfer_p3429_s5108_n576.npz \
+  --transfer /gpfs/kjhan/CF4/zoom/transfer_parent_n256_v1.npz \
   --out /gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v1 \
   --resolution-config config/ic_resolution_v1.json \
   --tier pilot --levelmin 9 --levelmax-ic 12 --runtime-levelmax 19 \
