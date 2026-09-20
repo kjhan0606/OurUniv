@@ -22,7 +22,7 @@ test -r "$source/part_00004.out00001"
 mkdir -p "$root"; mkdir "$work"; cd "$work"
 sha256sum "$hopdir/hop" "$hopdir/regroup" > provenance.sha256
 printf 'job=%s host=%s source=%s\n' "$SLURM_JOB_ID" "$(hostname)" "$source" | tee provenance.txt
-"$hopdir/hop" -in "$source/part_00004.out" -p 1. -nd 64 -nh 64 -nm 4 -o hop > hop.log 2>&1
+stdbuf -oL -eL "$hopdir/hop" -in "$source/part_00004.out" -p 1. -nd 64 -nh 64 -nm 4 -o hop > hop.log 2>&1
 "$hopdir/regroup" -root hop -douter 80. -dsaddle 200. -dpeak 240. -f77 -o grp > regroup.log 2>&1
 test -s grp.tag
 printf 'HOP_PRELIMINARY_PASS job=%s source=%s work=%s\n' "$SLURM_JOB_ID" "$source" "$work" | tee result.txt
