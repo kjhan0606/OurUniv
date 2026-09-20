@@ -367,3 +367,11 @@ optimistic linear estimates and exclude I/O/scheduling overhead. Therefore
 the unaccelerated exact operator is a correctness reference, not yet a
 reasonable full-catalog production route; a faster response representation or
 aggressive source reduction is required before IC inference.
+
+An exact shared-geometry optimization was added: each source's unit geometry
+kernel is computed once and contracted with all six population masses. The
+Slurm gate (job 388130) reproduced the previous chunked result exactly
+(relative L1 `0.0`, mass errors below `9e-16`) and reduced wall time by 5.21x
+at 128^3/16 sources and 4.24x at 256^3/8 sources. This lowers the full-catalog
+estimate by roughly the same factor, but still requires bounded parallel
+chunks; it is now the preferred exact fallback.

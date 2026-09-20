@@ -224,3 +224,43 @@ def evaluate_chunked_q1_operator(
     if not np.all(np.isfinite(result)) or np.any(result < 0.0):
         raise LikelihoodInputError("chunked Q1 result is not finite and non-negative")
     return result
+
+
+def evaluate_chunked_q1_operator_shared_geometry(
+    positions: Iterable[Iterable[float]],
+    los_unit_vectors: Iterable[Iterable[float]],
+    displacement_scales: Iterable[float],
+    population_masses: Iterable[Iterable[float]],
+    grid_size: int,
+    box_size_cMpc_h: float,
+    *,
+    chunk_size: int = 32,
+    tail_cutoff: float = 8.0,
+) -> np.ndarray:
+    """Exact chunked Q1 evaluation with one geometry kernel per source.
+
+    The response is linear in population mass.  Compute the cell-integrated
+    geometry kernel once per source and contract it with all populations;
+    this changes only the execution graph, not the sealed operator.
+    """
+    pos, los, scale = _validate_geometry(positions, los_unit_vectors, displacement_scales)
+    masses = np.asarray(population_masses, dtype=np.float64)
+    if masses.ndim != 2 or masses.shape[1] != pos.shape[0]:
+        raise LikelihoodInputError("population_masses must have shape (P, M)")
+    if not np.all(np.isfinite(masses)) or np.any(masses < 0.0):
+        raise LikelihoodInputError("population_masses must be finite and non-negative")
+    if not isinstance(chunk_size, int) or chunk_size <= 0:
+        raise LikelihoodInputError("chunk_size must be a positive integer")
+    result = np.zeros((masses.shape[0], grid_size, grid_size, grid_size), dtype=np.float64)
+    for start in range(0, pos.shape[0], chunk_size):
+        stop = min(start + chunk_size, pos.shape[0])
+        for source in range(start, stop):
+            geometry = cell_integrated_tsc_deposit(
+                pos[source : source + 1], np.asarray([1.0]),
+                los[source : source + 1], scale[source : source + 1],
+                grid_size, box_size_cMpc_h, tail_cutoff=tail_cutoff,
+            )
+            result += masses[:, source, None, None, None] * geometry[None, ...]
+    if not np.all(np.isfinite(result)) or np.any(result < 0.0):
+        raise LikelihoodInputError("shared-geometry Q1 result is not finite and non-negative")
+    return result
