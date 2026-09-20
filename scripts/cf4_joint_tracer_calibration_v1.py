@@ -196,12 +196,19 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     results=[]
     version = program.get("model_version", "v1")
     v2 = version == "v2"; v3 = version == "v3"
+    prior = program.get("external_fog_prior", [])
     for p in range(6):
+        x_fit = x
+        if version == "v4":
+            sigma = float(prior[p]["mean_cMpc_h"])
+            # Bounded radial FoG operator: suppress line-of-sight density contrast
+            # before the tracer link.  The prior is external; NB k remains separate.
+            x_fit = x * np.exp(-0.5 * (sigma / float(program.get("fog_operator_scale_cMpc_h", 3.0))) ** 2)
         if v3:
-            b,eta,A,score,score0,k = fit_bias_radial_nb(counts[p], exp[p], x, sg, train)
+            b,eta,A,score,score0,k = fit_bias_radial_nb(counts[p], exp[p], x_fit, sg, train)
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
-        elif v2:
-            b,eta,A,dev,dev0,fog = fit_bias_radial_fog(counts[p], exp[p], x, sg, train)
+        elif v2 or version == "v4":
+            b,eta,A,dev,dev0,fog = fit_bias_radial_fog(counts[p], exp[p], x_fit, sg, train)
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev,"fog_overdispersion_proxy":fog})
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
