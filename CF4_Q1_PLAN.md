@@ -464,3 +464,10 @@ Macro stages: (1) selection/completeness, (2) tangential-velocity uncertainty,
 generation, (6) PM/PMWD forward evolution, (7) structure reproduction, (8)
 final zoom-IC release. Current #3 outputs are development-only; no production
 IC claim is authorized.
+
+The low-k power comparison (job 388216) found median v1/no-selection and
+v2/no-selection power ratios of `5.63` over 32 nonzero bins, confirming that
+selection weighting materially changes the inferred large-scale field. The
+v1/v2 mean fields remain nearly identical in L1; power-ratio outliers occur
+only in very low-power bins. Stage #3 remains open pending a calibrated
+selection choice, not because of numerical instability.
