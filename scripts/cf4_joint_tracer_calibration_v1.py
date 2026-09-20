@@ -127,6 +127,26 @@ def fit_bias_radial_fog(y: np.ndarray, exposure: np.ndarray, x: np.ndarray,
     return b, eta, A, dev(pred), dev(null), fog_proxy
 
 
+def fit_bias_radial_nb(y: np.ndarray, exposure: np.ndarray, x: np.ndarray,
+                       radius: np.ndarray, train: np.ndarray) -> tuple[float, float, float, float, float]:
+    """Fit bias, radial nuisance and NB overdispersion for redshift-space counts."""
+    from scipy.optimize import minimize
+    from scipy.special import gammaln
+    rt = (radius - np.median(radius[train])) / 60.0
+    yy, ee, xx, rr = y[train], exposure[train], x[train], rt[train]
+    def nll(theta: np.ndarray, yv: np.ndarray, ev: np.ndarray, xv: np.ndarray, rv: np.ndarray) -> float:
+        b, eta, logk = theta; k = np.exp(np.clip(logk, -8.0, 15.0))
+        z = ev*np.exp(np.clip(b*xv + eta*rv, -30.0, 30.0)); A = yv.sum()/max(z.sum(),1e-30); mu=np.maximum(A*z,1e-12)
+        return float(-np.sum(gammaln(yv+k)-gammaln(k)-gammaln(yv+1)+k*np.log(k/(k+mu))+yv*np.log(mu/(k+mu))))
+    opt = minimize(lambda t: nll(t,yy,ee,xx,rr), np.array([0.5,0.0,2.0]), method="L-BFGS-B", bounds=[(0.01,6.0),(-2.0,2.0),(-8.0,15.0)])
+    b,eta,logk = map(float,opt.x); k=np.exp(logk); z=ee*np.exp(np.clip(b*xx+eta*rr,-30,30)); A=float(yy.sum()/max(z.sum(),1e-30))
+    hold=~train; zh=exposure[hold]*np.exp(np.clip(b*x[hold]+eta*rt[hold],-30,30)); mu=A*zh
+    score_model=-nll(np.array([b,eta,logk]),y[hold],exposure[hold],x[hold],rt[hold])
+    nullA=float(y[train].sum()/max(exposure[train].sum(),1e-30)); nullmu=nullA*exposure[hold]
+    score_null=-nll(np.array([0.0,0.0,logk]),y[hold],exposure[hold],np.zeros_like(x[hold]),rt[hold])
+    return b,eta,A,float(score_model),float(score_null),float(k)
+
+
 def run(program: dict[str, Any]) -> dict[str, Any]:
     data = program["data"]; design = program["design"]
     for key in ("catalog", "crossmatch", "map11", "map12", "carrick"):
@@ -174,16 +194,20 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     x = np.log1p(np.clip(delta, -0.999999, None))
     train = (np.arange(N**3) % 5) != 0
     results=[]
-    v2 = program.get("model_version", "v1") == "v2"
+    version = program.get("model_version", "v1")
+    v2 = version == "v2"; v3 = version == "v3"
     for p in range(6):
-        if v2:
+        if v3:
+            b,eta,A,score,score0,k = fit_bias_radial_nb(counts[p], exp[p], x, sg, train)
+            results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
+        elif v2:
             b,eta,A,dev,dev0,fog = fit_bias_radial_fog(counts[p], exp[p], x, sg, train)
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev,"fog_overdispersion_proxy":fog})
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
             results.append({"population":p,"bias":b,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev})
     passed = all(r["bias"] > 0 and np.isfinite(r["deviance_improvement"]) for r in results)
-    return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":"v2" if v2 else "v1","eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if v2 else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; RSD/FoG is represented by a residual overdispersion diagnostic, not yet an independently calibrated physical model"}}
+    return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":version,"eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if (v2 or v3) else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; NB dispersion is fitted phenomenologically and still lacks external RSD/FoG validation"}}
 
 
 def main() -> None:
