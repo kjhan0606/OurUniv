@@ -203,12 +203,12 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     prior = program.get("external_fog_prior", [])
     for p in range(6):
         x_fit = x
-        if version == "v4":
+        if version in ("v4", "v5"):
             sigma = float(prior[p]["mean_cMpc_h"])
             # Bounded radial FoG operator: suppress line-of-sight density contrast
             # before the tracer link.  The prior is external; NB k remains separate.
             x_fit = x * np.exp(-0.5 * (sigma / float(program.get("fog_operator_scale_cMpc_h", 3.0))) ** 2)
-        if v3 or version == "v4":
+        if v3 or version in ("v4", "v5"):
             b,eta,A,score,score0,k = fit_bias_radial_nb(counts[p], exp[p], x_fit, sg, train)
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
         elif v2:
@@ -217,7 +217,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
             results.append({"population":p,"bias":b,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev})
-    metric = "log_score_improvement" if (v3 or version == "v4") else "deviance_improvement"
+    metric = "log_score_improvement" if (v3 or version in ("v4", "v5")) else "deviance_improvement"
     passed = all(r["bias"] > 0 and np.isfinite(r[metric]) for r in results)
     return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":version,"eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if (v2 or v3) else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; NB dispersion is fitted phenomenologically and still lacks external RSD/FoG validation"}}
 
