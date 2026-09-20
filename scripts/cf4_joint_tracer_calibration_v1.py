@@ -131,7 +131,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     from astropy.coordinates import SkyCoord
     from astropy import units as u
     lon = np.arctan2(Y.ravel(), X.ravel()); lat = np.arcsin(Z.ravel()/sg_safe)
-    gal = SkyCoord(l=lon*u.rad, b=lat*u.rad, frame="supergalactic").galactic
+    gal = SkyCoord(sgl=lon*u.rad, sgb=lat*u.rad, frame="supergalactic").galactic
     cp11 = c11[hp.ang2pix(nside, 0.5*np.pi-gal.b.rad, np.mod(gal.l.rad,2*np.pi), nest=False)]
     cp12 = c12[hp.ang2pix(nside, 0.5*np.pi-gal.b.rad, np.mod(gal.l.rad,2*np.pi), nest=False)]
     exp = np.zeros((6,N**3)); edges = np.asarray(design["abs_edges"], float)
