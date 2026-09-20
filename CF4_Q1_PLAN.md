@@ -375,3 +375,11 @@ Slurm gate (job 388130) reproduced the previous chunked result exactly
 at 128^3/16 sources and 4.24x at 256^3/8 sources. This lowers the full-catalog
 estimate by roughly the same factor, but still requires bounded parallel
 chunks; it is now the preferred exact fallback.
+
+The shared-geometry 256^3/16-source benchmark (job 388135) took 11.53 s and
+passed at L1 `0.0`; the speedup over the population-repeated implementation
+was 4.47x. Updating the Slurm cost model (job 388142) gives 0.72 s/source for
+55,877 rows: 11.18 h on one core, 1.40 h on 8 ideal cores, and 0.35 h on 32
+ideal cores. A reproducible chunk manifest (job 388139) defines 874 chunks of
+64 rows. These are ideal estimates; real array scheduling and I/O overhead
+must still be measured before production submission.

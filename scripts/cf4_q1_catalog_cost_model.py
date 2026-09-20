@@ -1,7 +1,7 @@
 import json
 import math
 rows=55877
-sec_per_source_256=45.852801118046045/8.0
+sec_per_source_256=11.528248753398657/16.0
 for cores in (1,4,8,16,32):
     serial=rows*sec_per_source_256
     ideal=serial/cores
