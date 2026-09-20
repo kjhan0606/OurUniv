@@ -324,3 +324,10 @@ a two-source microbenchmark; it does not authorize large-source R2 inference.
 It does show that exact per-source kernels are a viable correctness reference,
 while the next production design must reduce source count or batch kernels
 before attempting 128^3/256^3 with a realistic catalogue.
+
+The catalog scaling microbenchmark (job 388100) confirms linear source cost
+for exact kernels: 64^3 with 16/64 sources took 1.34/5.19 s at 81 MiB RSS;
+128^3 with 16/64 sources took 3.58/14.18 s at 205 MiB RSS, with exact mass
+conservation in every case. This is feasible as a correctness/batching
+reference, but a full CF4 catalogue still requires source batching and must
+not materialize all per-source 256^3 kernels simultaneously.
