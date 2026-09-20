@@ -446,3 +446,21 @@ changed the radial projection by only `2.9e-13` km/s and the exact field by
 relative L1 `0.0`. The current radial-RSD operator therefore marginalizes the
 unobserved tangential prior exactly; tangential data would only be required
 for a full 3-D velocity reconstruction.
+
+Stage #3 selection sensitivity development (jobs 388212 and 388214) produced
+four 256^3 posterior draws for no-selection, v1, and v2. The v1/v2 total
+ratio is `1.000003` and their spatial relative L1 is `2.98e-6`, showing that
+support repair itself has negligible effect for this catalog. In contrast,
+both selection-map variants differ from the no-selection field by L1 about
+`0.668`, so selection modeling is scientifically important even though v1 to
+v2 repair is small. Artifact:
+`/gpfs/kjhan/CF4/q1_z0_selection_sensitivity_v1/posterior_sensitivity.npz`.
+# CURRENT PROJECT STAGE
+
+`3/8 — z=0 density posterior development and selection-sensitivity analysis`
+
+Macro stages: (1) selection/completeness, (2) tangential-velocity uncertainty,
+(3) z=0 density posterior, (4) low-k/LCDM high-k combination, (5) IC
+generation, (6) PM/PMWD forward evolution, (7) structure reproduction, (8)
+final zoom-IC release. Current #3 outputs are development-only; no production
+IC claim is authorized.
