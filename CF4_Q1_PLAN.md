@@ -397,3 +397,11 @@ geometry evaluation at relative L1 `4.86e-20`, maximum absolute difference
 `1.73e-18`, and population mass error `7.1e-15`. This validates the partial
 field file contract and dependency-based aggregation pattern for a larger
 chunk array.
+
+The first real-input CF4 pilot (job 388173) consumed 64 valid rows from
+`data/cf4_galaxies.csv`, converted distance modulus plus RA/Dec to a bounded
+1000 cMpc/h box, and wrote `/gpfs/kjhan/CF4/q1_cf4_catalog_pilot_v1/field.npz`.
+The 64^3 field was finite and non-negative with total weighted mass
+`380.8131`. This is an execution/format gate only: the pilot intentionally
+uses the preliminary RA/Dec geometry and fixed radial scatter, not a science
+grade CF4 coordinate/velocity calibration. No density or IC claim is made.
