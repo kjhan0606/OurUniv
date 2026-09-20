@@ -20,7 +20,7 @@ exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_zoom_ic2.py \
   --parent /gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1 \
   --parent-level 8 --parent-grid-size 256 \
   --transfer /gpfs/kjhan/CF4/zoom/transfer_parent_n256_v1.npz \
-  --out /gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2 \
+  --out /gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3 \
   --resolution-config config/ic_resolution_v1.json \
   --tier pilot --levelmin 8 --levelmax-ic 12 --runtime-levelmax 19 \
   --box-hmpc 384.0 \

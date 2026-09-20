@@ -55,8 +55,10 @@ def main() -> None:
     np.savez(root / "traced_lagrangian.npz", lagrangian=traced,
              particle_ids=init_ids[order], target=TARGET, radius=RADIUS,
              box_size_mpc_h=BOX)
+    # Wide pad absorbs the initial displacement margin; pad=2 caused RAMSES
+    # init_part boundary violations in the first zoom preflight.
     built = build_mask(traced, BOX, base_level=8, buffer_mpc_h=1.5,
-                       subbox_pad_base_cells=2)
+                       subbox_pad_base_cells=12)
     np.savez(root / "lg_mask_l8.npz", schema=SCHEMA,
              box_size_mpc_h=BOX, base_level=8, base_cells=built["cells"],
              subbox_lo_base=built["lo"], subbox_hi_base=built["hi"],

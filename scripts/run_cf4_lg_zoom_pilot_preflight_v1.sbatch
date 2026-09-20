@@ -14,8 +14,8 @@ set -Eeuo pipefail
 : "${SLURM_JOB_ID:?}"
 binary=/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax/ramses_lb_minimax3d
 namelist=/home/kjhan/BACKUP/CF4/config/ramses_cf4_lg_zoom_pilot_preflight_v1.nml
-ic=/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2
-root=/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_pilot_v1
+ic=/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3
+root=/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_pilot_v2
 run_dir="$root/job_${SLURM_JOB_ID}"
 test -x "$binary"; test -r "$namelist"
 for level in 008 009 010 011 012; do

@@ -30,11 +30,11 @@ fbackup=1000000
 &INIT_PARAMS
 filetype='grafic'
 ! slots are relative to levelmin=8 in this RAMSES build.
-initfile(1)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/level_008'
-initfile(2)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/level_009'
-initfile(3)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/level_010'
-initfile(4)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/level_011'
-initfile(5)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/level_012'
+initfile(1)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3/level_008'
+initfile(2)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3/level_009'
+initfile(3)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3/level_010'
+initfile(4)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3/level_011'
+initfile(5)='/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3/level_012'
 /
 
 &AMR_PARAMS
@@ -63,4 +63,5 @@ mass_cut_refine=2.9103830457d-11
 
 &POISSON_PARAMS
 epsilon=1.d-4
+abort_on_mg_nonconvergence=.true.
 /
