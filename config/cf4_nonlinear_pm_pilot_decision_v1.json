@@ -1,0 +1,23 @@
+{
+  "schema": "ouruniv-cf4-nonlinear-pm-pilot-decision-v1",
+  "date": "2026-09-20",
+  "job": "388412",
+  "stage": "6/8",
+  "decision": "NONLINEAR_PM_PILOT_PASS_STRUCTURE_DIAGNOSTICS_PENDING",
+  "input": "/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1",
+  "run_dir": "/gpfs/kjhan/CF4/ramses/cf4_production_ic_nonlinear_pilot_v1/job_388412",
+  "namelist": "config/ramses_cf4_production_ic_nonlinear_pilot_v1.nml",
+  "checks": {
+    "run_completed": true,
+    "coarse_steps": 23,
+    "a_start": 0.02,
+    "a_final": 0.2118211195005763,
+    "outputs": [0.02, 0.0503509570161554, 0.103252716188006, 0.211821195005763],
+    "poisson_fftw3_each_step": true,
+    "particle_and_mesh_conservation_logs_present": true,
+    "mpi_abort": false,
+    "slurm_exit_code": "0:0"
+  },
+  "scope": "Uniform L8 DMO nonlinear pilot only; not z=0, not a halo/void claim, not zoom promotion.",
+  "next": "Run particle/HOP and density/void diagnostics on the pilot outputs, then decide whether a z=0 production evolution is justified."
+}
