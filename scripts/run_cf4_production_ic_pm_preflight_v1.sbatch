@@ -20,7 +20,9 @@ run_root=/gpfs/kjhan/CF4/ramses/cf4_production_ic_pm_preflight_v1
 run_dir="$run_root/job_${SLURM_JOB_ID}"
 test -x "$binary"
 test -r "$namelist"
-test -r "$ic/ic_deltab" "$ic/ic_velcx" "$ic/ic_velcy" "$ic/ic_velcz"
+for field in ic_deltab ic_velcx ic_velcy ic_velcz; do
+    test -r "$ic/$field"
+done
 mkdir -p "$run_root"
 mkdir "$run_dir"
 cd "$run_dir"
