@@ -490,6 +490,13 @@ This is an improvement but not a final continuity pass; the high-k amplitude
 still requires a frozen LCDM P(k) normalization and a stricter boundary gate.
 The failed run and correction are retained in the audit trail.
 
+The development cosmology binding now uses the project-pinned
+`Omega_m=0.31`, `Omega_b=0.05`, `h=0.746`, `A_s=1.63e-9`, and `n_s=0.96`
+(`config/cf4_low_highk_cosmology_binding_v1.json`). The rerun (jobs 388262
+and 388263) remains finite with edge power ratio `0.479`. Sigma8/growth and
+absolute transfer normalization are still unbound, so #4 remains development
+only and cannot yet authorize IC generation.
+
 Stage #1 selection baseline is now bound to the official ARES completeness
 inputs (config record `cf4_selection_calibration_record_v1.json`). Their
 SHA256 hashes and ARES commit match the approved tracer configuration. The
