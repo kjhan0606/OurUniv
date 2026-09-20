@@ -390,3 +390,10 @@ s with about 284 MiB RSS, and all array elements finished in roughly 3 s
 elapsed. This confirms that independent chunk arrays are practical and that
 the ideal parallel cost model is close for this bounded workload; production
 still needs output aggregation and a controlled pilot before release.
+
+The array aggregation gate used four Slurm array elements (job 388165) and a
+dependent reducer (job 388170). The reducer matched a monolithic shared-
+geometry evaluation at relative L1 `4.86e-20`, maximum absolute difference
+`1.73e-18`, and population mass error `7.1e-15`. This validates the partial
+field file contract and dependency-based aggregation pattern for a larger
+chunk array.
