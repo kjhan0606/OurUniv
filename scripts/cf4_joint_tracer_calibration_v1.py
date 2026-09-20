@@ -56,7 +56,8 @@ def read_program(path: Path) -> dict[str, Any]:
 
 
 def schechter_fraction(r: np.ndarray, Kmax: float, lo: float, hi: float,
-                       h: float, Omega_m: float, Omega_b: float, Tcmb_K: float) -> np.ndarray:
+                       h: float, Omega_m: float, Omega_b: float, Tcmb_K: float,
+                       H0_km_s_Mpc: float | None = None) -> np.ndarray:
     from astropy import units as u
     from astropy.cosmology import FlatLambdaCDM
     cosmo = FlatLambdaCDM(H0=100*h*u.km/u.s/u.Mpc, Om0=Omega_m, Ob0=Omega_b, Tcmb0=Tcmb_K*u.K)
