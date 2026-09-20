@@ -156,9 +156,9 @@ def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
     with tag_path.open("rb") as fh:
         header = _record(fh, "<i4")
     ntags, ngroup = map(int, header)
-    # The second Fortran record starts after the 16-byte first record; skip its
-    # four-byte leading marker before mapping the ntags int32 payload.
-    tags = np.memmap(tag_path, dtype="<i4", mode="r", offset=24, shape=(ntags,))
+    # The second Fortran record starts after the 16-byte first record; its
+    # four-byte leading marker occupies bytes 16:20.
+    tags = np.memmap(tag_path, dtype="<i4", mode="r", offset=20, shape=(ntags,))
     count = np.zeros(ngroup, np.int64)
     mass_sum = np.zeros(ngroup)
     fine_sum = np.zeros(ngroup)
