@@ -105,7 +105,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         if not path.is_file() or sha256(path) != data[key]["sha256"]:
             raise ValueError(f"input binding changed: {path}")
     cat = load_joint_catalog(data["catalog"]["path"])
-    excluded, _ = read_crossmatch_exclusions(data["crossmatch"]["path"], int(data["excluded_targets"]))
+    excluded, _ = read_crossmatch_exclusions(data["crossmatch"]["path"], int(program["excluded_targets"]))
     distance, absmag = distance_and_absolute_magnitude(cat["Vcmb"], cat["Ksmag"], program["cosmology"])
     eligible, _, appbin, absbin = classify_disjoint_tracer(cat, excluded, distance, absmag, design)
     nside = int(design["nside"])
