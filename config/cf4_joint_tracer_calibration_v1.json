@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-joint-tracer-calibration-v1",
   "date": "2026-09-20",
   "purpose": "Development joint calibrated tracer model to replace fixed survival/bias assumptions before production density/IC.",
-  "cosmology": {"h": 0.6711, "Omega_m": 0.3175, "Omega_b": 0.049, "Tcmb_K": 2.7255},
+  "cosmology": {"h": 0.6711, "H0_km_s_Mpc": 67.11, "Omega_m": 0.3175, "Omega_b": 0.049, "Tcmb_K": 2.7255},
   "data": {
     "catalog": {"path": "data/2mpp_catalog.csv", "sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d"},
     "crossmatch": {"path": "data/cf4_2mpp_crossmatch_v1.csv", "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"},
