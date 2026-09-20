@@ -206,7 +206,8 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
             results.append({"population":p,"bias":b,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev})
-    passed = all(r["bias"] > 0 and np.isfinite(r["deviance_improvement"]) for r in results)
+    metric = "log_score_improvement" if v3 else "deviance_improvement"
+    passed = all(r["bias"] > 0 and np.isfinite(r[metric]) for r in results)
     return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":version,"eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if (v2 or v3) else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; NB dispersion is fitted phenomenologically and still lacks external RSD/FoG validation"}}
 
 
