@@ -151,7 +151,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     data = program["data"]; design = program["design"]
     for key in ("catalog", "crossmatch", "map11", "map12", "carrick"):
         path = Path(data[key]["path"])
-        if not path.is_file() or sha256(path) != data[key]["sha256"]:
+        if not path.is_file() or ("sha256" in data[key] and sha256(path) != data[key]["sha256"]):
             raise ValueError(f"input binding changed: {path}")
     cat = load_joint_catalog(data["catalog"]["path"])
     excluded, _ = read_crossmatch_exclusions(data["crossmatch"]["path"], int(program["excluded_targets"]))
@@ -187,12 +187,16 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     for a,K in enumerate(design["Kmax"]):
         for j in range(3):
             exp[a*3+j] = (cp11 if a == 0 else cp12) * schechter_fraction(sg_safe, K, edges[j], edges[j+1], **program["cosmology"])
+    if version == "v5":
+        perturb = float(program.get("survival_perturb", 0.0))
+        exp = np.clip(exp * (1.0 + perturb * (1.0 - exp)), 1e-8, 1.0)
     carrick = np.load(data["carrick"]["path"], mmap_mode="r", allow_pickle=False)
     # trilinear-free nearest-neighbour reference covariate, only a calibration covariate.
     cg = np.clip(np.floor((np.stack(np.meshgrid(grid,grid,grid,indexing="ij"),-1)+200.0)/1.5625).astype(int),0,256)
     delta = np.asarray(carrick[cg[...,0],cg[...,1],cg[...,2]], float).ravel()
     x = np.log1p(np.clip(delta, -0.999999, None))
-    train = (np.arange(N**3) % 5) != 0
+    modulus = int(program.get("holdout_modulus", 5)); remainder = int(program.get("holdout_remainder", 0))
+    train = (np.arange(N**3) % modulus) != remainder
     results=[]
     version = program.get("model_version", "v1")
     v2 = version == "v2"; v3 = version == "v3"
