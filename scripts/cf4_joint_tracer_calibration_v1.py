@@ -221,7 +221,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
             # Bounded radial FoG operator: suppress line-of-sight density contrast
             # before the tracer link.  The prior is external; NB k remains separate.
             x_fit = x * np.exp(-0.5 * (sigma / float(program.get("fog_operator_scale_cMpc_h", 3.0))) ** 2)
-        if version == "v6":
+        if version in ("v6", "v7"):
             b,eta,A,score,score0,k,gamma=fit_bias_radial_nb_survival(counts[p], exp[p], x_fit, sg, train, wide=(version == "v7"))
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"survival_response":gamma,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
         elif v3 or version in ("v4", "v5"):
