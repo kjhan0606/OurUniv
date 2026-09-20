@@ -146,6 +146,18 @@ def fit_bias_radial_nb(y: np.ndarray, exposure: np.ndarray, x: np.ndarray,
     score_null=-nll(np.array([0.0,0.0,logk]),y[hold],exposure[hold],np.zeros_like(x[hold]),rt[hold])
     return b,eta,A,float(score_model),float(score_null),float(k)
 
+def fit_bias_radial_nb_survival(y, exposure, x, radius, train):
+    from scipy.optimize import minimize
+    from scipy.special import gammaln
+    rr=(radius-np.median(radius[train]))/60.; yy,ee,xx,rt=y[train],exposure[train],x[train],rr[train]; le=np.log(np.maximum(ee,1e-8))
+    def nll(t,yv,xv,rv,lev):
+        b,eta,lk,gamma=t; k=np.exp(np.clip(lk,-8,15)); z=np.exp(np.clip(gamma*lev+b*xv+eta*rv,-30,30)); A=yv.sum()/max(z.sum(),1e-30); mu=np.maximum(A*z,1e-12)
+        return float(-np.sum(gammaln(yv+k)-gammaln(k)-gammaln(yv+1)+k*np.log(k/(k+mu))+yv*np.log(mu/(k+mu))))
+    o=minimize(lambda t:nll(t,yy,xx,rt,le),[.8,.2,0,1],method='L-BFGS-B',bounds=[(.01,6),(-2,2),(-8,15),(.5,1.5)])
+    b,eta,lk,gamma=o.x; k=np.exp(lk); hold=~train; score=-nll(o.x,y[hold],x[hold],rr[hold],np.log(np.maximum(exposure[hold],1e-8))); null=-nll(np.array([0.,0.,lk,1.]),y[hold],np.zeros_like(x[hold]),rr[hold],np.log(np.maximum(exposure[hold],1e-8)))
+    z=np.exp(np.clip(gamma*le+b*xx+eta*rt,-30,30)); A=yy.sum()/max(z.sum(),1e-30)
+    return float(b),float(eta),float(A),float(score),float(null),float(k),float(gamma)
+
 
 def run(program: dict[str, Any]) -> dict[str, Any]:
     data = program["data"]; design = program["design"]
@@ -203,12 +215,15 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     prior = program.get("external_fog_prior", [])
     for p in range(6):
         x_fit = x
-        if version in ("v4", "v5"):
+        if version in ("v4", "v5", "v6"):
             sigma = float(prior[p]["mean_cMpc_h"])
             # Bounded radial FoG operator: suppress line-of-sight density contrast
             # before the tracer link.  The prior is external; NB k remains separate.
             x_fit = x * np.exp(-0.5 * (sigma / float(program.get("fog_operator_scale_cMpc_h", 3.0))) ** 2)
-        if v3 or version in ("v4", "v5"):
+        if version == "v6":
+            b,eta,A,score,score0,k,gamma=fit_bias_radial_nb_survival(counts[p], exp[p], x_fit, sg, train)
+            results.append({"population":p,"bias":b,"radial_nuisance":eta,"survival_response":gamma,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
+        elif v3 or version in ("v4", "v5"):
             b,eta,A,score,score0,k = fit_bias_radial_nb(counts[p], exp[p], x_fit, sg, train)
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
         elif v2:
@@ -217,7 +232,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
             results.append({"population":p,"bias":b,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev})
-    metric = "log_score_improvement" if (v3 or version in ("v4", "v5")) else "deviance_improvement"
+    metric = "log_score_improvement" if (v3 or version in ("v4", "v5", "v6")) else "deviance_improvement"
     passed = all(r["bias"] > 0 and np.isfinite(r[metric]) for r in results)
     return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":version,"eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if (v2 or v3) else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; NB dispersion is fitted phenomenologically and still lacks external RSD/FoG validation"}}
 
