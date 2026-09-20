@@ -3,8 +3,7 @@ import numpy as np
 from cf4_q1_cell_integrated_convolution import cell_integrated_tsc_deposit
 
 rng=np.random.default_rng(20260920); box=6.; obs=np.array([3.,3.,3.]); disp=.746*np.hypot(24.,11.)/74.6
-for n in (64,128):
-  for m in (16,64):
+for n,m in ((256,16),):
     pos=rng.uniform(0.05,box-0.05,size=(m,3)); rel=(pos-obs+box/2)%box-box/2; rh=rel/np.linalg.norm(rel,axis=1)[:,None]; t=time.perf_counter()
     oracle=cell_integrated_tsc_deposit(pos,np.ones(m),rh,np.full(m,disp),n,box)
     pred=np.zeros_like(oracle)

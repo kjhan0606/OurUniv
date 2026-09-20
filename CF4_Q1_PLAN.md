@@ -333,6 +333,12 @@ exact route is therefore a valid correctness fallback; its production cost,
 especially at 256^3 and full CF4 source counts, remains to be bounded before
 any IC inference is launched.
 
+The 256^3/16-source exact batch (job 388102) also passed: relative L1
+`1.82e-14`, mass `16.0`, wall time `38.3 s`. Peak memory stayed within the
+8-GiB Slurm request. This validates the exact fallback at the target grid for
+a small catalogue; full-catalogue scaling still requires chunking and is not
+yet a production IC run.
+
 The catalog scaling microbenchmark (job 388100) confirms linear source cost
 for exact kernels: 64^3 with 16/64 sources took 1.34/5.19 s at 81 MiB RSS;
 128^3 with 16/64 sources took 3.58/14.18 s at 205 MiB RSS, with exact mass
