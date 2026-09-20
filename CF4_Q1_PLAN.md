@@ -425,3 +425,11 @@ velocities are not present and are explicitly set to zero; no selection weight
 column or completeness map is present in this catalog, so no arbitrary
 selection correction was applied. These two limitations remain explicit
 science blockers rather than hidden assumptions.
+
+The full-data readiness audit (job 388192) found 55,877/55,877 rows with
+valid `SGL/SGB`, `DM`, `Vcmb`, and primary `e_DM`; no fallback error method was
+needed. Distances span `0.0369--599.7` cMpc/h. The catalog contains no
+tangential-velocity columns and no selection/completeness/weight columns, so
+the two blockers affect the complete catalog rather than a small missing
+subset. Any science-grade selection correction must therefore come from an
+external, versioned completeness map; it must not be invented from this CSV.
