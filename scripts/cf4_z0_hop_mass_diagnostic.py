@@ -21,7 +21,22 @@ def main() -> None:
     mass_unit = info["unit_d"] * info["unit_l"] ** 3 / MSUN_G * (info["H0"] / 100.0)
     ntotal, species = scan_mass_species(files, mass_unit)
     fine_mass_code = species[0]["mass_code"]
-    cat = catalog_from_hop_tags(output, hop / "grp.tag", 384.0, mass_unit,
+    # regroup's legacy -f77 writer leaves ngroups=0 in this build; use the
+    # validated binary hop.hop header/tags and wrap them in a correct F77 tag.
+    raw = hop / "hop.hop"
+    header = np.fromfile(raw, dtype="<i4", count=2)
+    if tuple(header) != (ntotal, 95850):
+        raise RuntimeError(f"unexpected HOP binary header: {header.tolist()}")
+    tags = np.memmap(raw, dtype="<i4", mode="r", offset=8, shape=(ntotal,))
+    tag_path = hop / "hop_tags_for_catalog.tag"
+    if not tag_path.exists():
+        with tag_path.open("xb") as fh:
+            payload = np.asarray(tags, dtype="<i4").tobytes()
+            fh.write(np.asarray([8, ntotal, int(header[1]), 8], dtype="<i4").tobytes())
+            fh.write(np.asarray([len(payload)], dtype="<i4").tobytes())
+            fh.write(payload)
+            fh.write(np.asarray([len(payload)], dtype="<i4").tobytes())
+    cat = catalog_from_hop_tags(output, tag_path, 384.0, mass_unit,
                                 info["unit_l"] / info["unit_t"] / 1e5,
                                 fine_mass_code)
     mass = np.asarray(cat["mass"], float)
