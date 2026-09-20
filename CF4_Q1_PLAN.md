@@ -433,3 +433,16 @@ tangential-velocity columns and no selection/completeness/weight columns, so
 the two blockers affect the complete catalog rather than a small missing
 subset. Any science-grade selection correction must therefore come from an
 external, versioned completeness map; it must not be invented from this CSV.
+
+The existing versioned selection map audit (job 388201) found
+`selection_1p5_v2`: 74.4% of CF4 rows lie inside its 384 cMpc/h box, while
+positive exposure fractions per population are 78.4%, 44.7%, 19.7%, 32.9%,
+46.2%, and 22.6%. Its status is support-repaired, not calibrated selection,
+so it is not silently promoted to production.
+
+The stage-2 tangential-velocity gate (job 388204) passed: adding arbitrary
+200 km/s tangential components while preserving each source's radial velocity
+changed the radial projection by only `2.9e-13` km/s and the exact field by
+relative L1 `0.0`. The current radial-RSD operator therefore marginalizes the
+unobserved tangential prior exactly; tangential data would only be required
+for a full 3-D velocity reconstruction.
