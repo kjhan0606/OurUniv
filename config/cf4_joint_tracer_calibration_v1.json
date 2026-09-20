@@ -1,0 +1,30 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v1",
+  "date": "2026-09-20",
+  "purpose": "Development joint calibrated tracer model to replace fixed survival/bias assumptions before production density/IC.",
+  "cosmology": {"h": 0.6711, "Omega_m": 0.3175, "Omega_b": 0.049, "Tcmb_K": 2.7255},
+  "data": {
+    "catalog": {"path": "data/2mpp_catalog.csv", "sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d"},
+    "crossmatch": {"path": "data/cf4_2mpp_crossmatch_v1.csv", "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf"},
+    "map11": {"path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz", "sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace"},
+    "map12": {"path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz", "sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9"},
+    "carrick": {"path": "/gpfs/kjhan/CF4/observations/twompp_carrick_v1/twompp_density.npy", "sha256": "5e0b8473628c8ae94540cb6cf36df22f3aa85b262959effaf2c6d16f72a0fdb6"}
+  },
+  "excluded_targets": 17007,
+  "design": {
+    "grid_N": 32, "box": 384.0, "nside": 512,
+    "radial_min_cMpc_h": 5.0, "radial_max_cMpc_h": 180.0,
+    "faint_apparent_K_max": 12.5, "bright_apparent_K_max": 11.5,
+    "absolute_K_bright": -25.0, "absolute_K_faint": -21.0,
+    "absolute_K_edges": [-25.0, -23.6666666666667, -22.3333333333333, -21.0],
+    "abs_edges": [-25.0, -23.6666666666667, -22.3333333333333, -21.0],
+    "Kmax": [11.5, 12.5]
+  },
+  "interpretation": {
+    "selection": "official ARES angular completeness plus Schechter radial survival offset",
+    "bias": "six positive population-specific slopes, jointly calibrated by Poisson voxel counts",
+    "holdout": "deterministic spatial 4:1 train/holdout split; not an independent survey",
+    "reference_field": "Carrick luminosity-weighted density is a covariate only, never exact truth"
+  },
+  "resources": {"partition": "a40,a100,h100,h200", "cpus": 2, "memory_MiB": 2880, "time": "00:20:00"}
+}
