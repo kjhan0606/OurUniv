@@ -25,11 +25,11 @@ def main() -> None:
                                 info["unit_l"] / info["unit_t"] / 1e5,
                                 fine_mass_code)
     mass = np.asarray(cat["mass"], float)
-    count = np.asarray(cat["count"], int)
+    count = np.asarray(cat["n"], int)
     order = np.argsort(-mass)
     rows = []
     for i in order[:200]:
-        rows.append({"group_id": int(cat["group"][i]), "count": int(count[i]),
+        rows.append({"group_id": int(cat["group_id"][i]), "count": int(count[i]),
                      "mass_msun_h": float(mass[i]),
                      "position_cMpc_h": np.asarray(cat["pos"][i]).tolist(),
                      "velocity_km_s": np.asarray(cat["vel"][i]).tolist()})
