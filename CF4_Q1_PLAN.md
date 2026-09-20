@@ -414,3 +414,14 @@ LOS kernel. The 64^3 field was finite and non-negative with total mass
 `/gpfs/kjhan/CF4/q1_cf4_supergalactic_rsd_pilot_v1/field.npz`. This is a
 geometry/operator gate only; tangential velocities and calibrated selection
 weights remain outstanding.
+
+The uncertainty-aware pilot (job 388187) used the first available CF4 distance
+error column per row (`e_DM` with method fallbacks), propagated it as
+`sigma_r=(ln10/5) r e_DM`, and combined it in quadrature with the fixed
+velocity/redshift scatter. The 64-row 64^3 field was finite and conserved mass
+exactly (`384.0`), with source sigma range `3.83--46.04` cMpc/h. The artifact
+is `/gpfs/kjhan/CF4/q1_cf4_uncertainty_pilot_v1/field.npz`. Tangential
+velocities are not present and are explicitly set to zero; no selection weight
+column or completeness map is present in this catalog, so no arbitrary
+selection correction was applied. These two limitations remain explicit
+science blockers rather than hidden assumptions.
