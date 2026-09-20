@@ -358,3 +358,12 @@ The 256^3 chunked exact gate also passed for 4 and 8 sources (jobs 388116 and
 wall times were 23.8 s and 45.9 s. The measured scaling is linear in source
 count, so a full catalogue must be processed in bounded chunks and likely
 parallel batches; no unbounded all-source materialization is permitted.
+
+The actual `data/cf4_galaxies.csv` contains 55,877 data rows. A Slurm cost
+model (job 388127), using the measured 256^3 rate of 5.73 s/source and the
+8-source bounded chunk (about 973 MiB peak), predicts roughly 89.0 h on one
+core, 11.1 h on 8 ideal cores, or 2.78 h on 32 ideal cores. These are
+optimistic linear estimates and exclude I/O/scheduling overhead. Therefore
+the unaccelerated exact operator is a correctness reference, not yet a
+reasonable full-catalog production route; a faster response representation or
+aggressive source reduction is required before IC inference.
