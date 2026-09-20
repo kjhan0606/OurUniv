@@ -457,13 +457,15 @@ v2 repair is small. Artifact:
 `/gpfs/kjhan/CF4/q1_z0_selection_sensitivity_v1/posterior_sensitivity.npz`.
 # CURRENT PROJECT STAGE
 
-`3/8 — z=0 density posterior development and selection-sensitivity analysis`
+`4/8 — low-k/LCDM high-k combination development`
 
-Macro stages: (1) selection/completeness, (2) tangential-velocity uncertainty,
-(3) z=0 density posterior, (4) low-k/LCDM high-k combination, (5) IC
-generation, (6) PM/PMWD forward evolution, (7) structure reproduction, (8)
-final zoom-IC release. Current #3 outputs are development-only; no production
-IC claim is authorized.
+Macro stages: (1) selection/completeness [baseline bound to official ARES maps;
+coverage/calibration limitations retained], (2) tangential-velocity
+uncertainty [complete for radial-RSD operator], (3) z=0 density posterior
+[development complete; selection sensitivity retained], (4) low-k/LCDM high-k
+combination, (5) IC generation, (6) PM/PMWD forward evolution, (7) structure
+reproduction, (8) final zoom-IC release. Current #4 outputs are development-
+only; no production IC claim is authorized.
 
 The low-k power comparison (job 388216) found median v1/no-selection and
 v2/no-selection power ratios of `5.63` over 32 nonzero bins, confirming that
@@ -487,3 +489,11 @@ and 388229) is finite and zero-mean, with high/low edge power ratio `0.479`.
 This is an improvement but not a final continuity pass; the high-k amplitude
 still requires a frozen LCDM P(k) normalization and a stricter boundary gate.
 The failed run and correction are retained in the audit trail.
+
+Stage #1 selection baseline is now bound to the official ARES completeness
+inputs (config record `cf4_selection_calibration_record_v1.json`). Their
+SHA256 hashes and ARES commit match the approved tracer configuration. The
+derived v1 map is the calibrated baseline; v2 is retained only as support-
+repair sensitivity. This closes selection provenance/calibration as a
+baseline while leaving coverage, survival/bias, and map-boundary limitations
+explicit.
