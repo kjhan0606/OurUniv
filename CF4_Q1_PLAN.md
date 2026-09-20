@@ -471,3 +471,11 @@ selection weighting materially changes the inferred large-scale field. The
 v1/v2 mean fields remain nearly identical in L1; power-ratio outliers occur
 only in very low-power bins. Stage #3 remains open pending a calibrated
 selection choice, not because of numerical instability.
+
+Stage #4 development pilot (job 388217) blended the v2 low-k posterior with a
+deterministic random high-k field shaped by the available transfer table, at
+`k_cut=0.30 h/Mpc` on a 256^3, 384 cMpc/h grid. The output was finite,
+zero-mean, and preserved all low-k Fourier modes exactly (difference power
+fraction `0.0`). This is only a wiring/continuity test: the high-k amplitude
+normalization and transfer table are not yet a frozen LCDM prior, so the
+artifact is not an IC and cannot be used for PM/PMWD production.
