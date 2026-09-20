@@ -405,3 +405,12 @@ The 64^3 field was finite and non-negative with total weighted mass
 `380.8131`. This is an execution/format gate only: the pilot intentionally
 uses the preliminary RA/Dec geometry and fixed radial scatter, not a science
 grade CF4 coordinate/velocity calibration. No density or IC claim is made.
+
+The supergalactic/RSD pilot (job 388183) replaced the temporary RA/Dec
+geometry with CF4 `SGL/SGB`, converted distance modulus to cMpc/h, and applied
+the measured `Vcmb` as a radial coherent displacement before the stochastic
+LOS kernel. The 64^3 field was finite and non-negative with total mass
+`376.3310`, and was written to
+`/gpfs/kjhan/CF4/q1_cf4_supergalactic_rsd_pilot_v1/field.npz`. This is a
+geometry/operator gate only; tangential velocities and calibrated selection
+weights remain outstanding.
