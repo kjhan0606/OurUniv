@@ -63,5 +63,4 @@ mass_cut_refine=2.9103830457d-11
 
 &POISSON_PARAMS
 epsilon=1.d-4
-abort_on_mg_nonconvergence=.true.
 /

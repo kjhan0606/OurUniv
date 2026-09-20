@@ -30,4 +30,12 @@ export OMP_NUM_THREADS=2 OMP_PROC_BIND=close OMP_PLACES=cores
 export I_MPI_PIN=1 I_MPI_PIN_DOMAIN=omp
 timeout --signal=TERM --kill-after=15s 3500s mpirun -np 4 "$binary" "$namelist" 2>&1 | tee ramses.log
 grep -Eq 'Run completed|Total elapsed time' ramses.log
+if grep -q 'Some grid are outside initial conditions sub-volume' ramses.log; then
+    echo 'ZOOM_PREFLIGHT_FAIL_BOUNDARY' >&2
+    exit 4
+fi
+if grep -q 'Fine multigrid Poisson failed to converge' ramses.log; then
+    echo 'ZOOM_PREFLIGHT_FAIL_POISSON' >&2
+    exit 5
+fi
 printf 'ZOOM_PREFLIGHT_PASS job=%s run_dir=%s\n' "$SLURM_JOB_ID" "$run_dir" | tee result.txt
