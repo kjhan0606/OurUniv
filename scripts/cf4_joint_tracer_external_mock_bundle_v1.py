@@ -13,7 +13,7 @@ def fit(y,e,x,r,train):
         b,eta,lk=t; k=np.exp(np.clip(lk,-8,15)); z=ev*np.exp(np.clip(b*xv+eta*rv,-30,30)); A=yv.sum()/max(z.sum(),1e-30); mu=np.maximum(A*z,1e-12)
         return float(-np.sum(gammaln(yv+k)-gammaln(k)-gammaln(yv+1)+k*np.log(k/(k+mu))+yv*np.log(mu/(k+mu))))
     o=minimize(lambda t:nll(t,yy,ee,xx,rt),[.8,.2,0],method='L-BFGS-B',bounds=[(.01,6),(-2,2),(-8,15)])
-    b,eta,lk=o.x; k=np.exp(lk); hold=~train; score=-nll(o.x,y[hold],e[hold],x[hold],rt[hold]); return np.array([b,eta,k]),score
+    b,eta,lk=o.x; k=np.exp(lk); hold=~train; score=-nll(o.x,y[hold],e[hold],x[hold],rr[hold]); return np.array([b,eta,k]),score
 
 def scenario(rng, fog_sigma, mask_seed):
     N=32; n=N**3; q=np.arange(n,dtype=float); x=.35*np.sin(q/173)+.12*np.cos(q/47); r=5+175*((q%N)+.5)/N
