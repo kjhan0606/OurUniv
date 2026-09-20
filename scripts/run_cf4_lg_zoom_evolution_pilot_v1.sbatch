@@ -31,5 +31,6 @@ grep -Eq 'Run completed|Total elapsed time' ramses.log
 if grep -q 'Some grid are outside initial conditions sub-volume' ramses.log; then echo 'ZOOM_EVOL_FAIL_BOUNDARY' >&2; exit 4; fi
 if grep -q 'Fine multigrid Poisson failed to converge' ramses.log; then echo 'ZOOM_EVOL_FAIL_POISSON' >&2; exit 5; fi
 if grep -Eiq 'nan|negative density|negative pressure' ramses.log; then echo 'ZOOM_EVOL_FAIL_STATE' >&2; exit 6; fi
-test -d output_00001
+test -r output_00002/info_00002.txt
+awk '$1=="aexp" {if (($3+0) < 0.05) exit 1; found=1} END {exit(found ? 0 : 1)}' output_00002/info_00002.txt
 printf 'ZOOM_EVOL_PASS job=%s run_dir=%s\n' "$SLURM_JOB_ID" "$run_dir" | tee result.txt
