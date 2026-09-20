@@ -149,6 +149,7 @@ def fit_bias_radial_nb(y: np.ndarray, exposure: np.ndarray, x: np.ndarray,
 
 def run(program: dict[str, Any]) -> dict[str, Any]:
     data = program["data"]; design = program["design"]
+    version = program.get("model_version", "v1")
     for key in ("catalog", "crossmatch", "map11", "map12", "carrick"):
         path = Path(data[key]["path"])
         if not path.is_file() or ("sha256" in data[key] and sha256(path) != data[key]["sha256"]):
@@ -198,7 +199,6 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     modulus = int(program.get("holdout_modulus", 5)); remainder = int(program.get("holdout_remainder", 0))
     train = (np.arange(N**3) % modulus) != remainder
     results=[]
-    version = program.get("model_version", "v1")
     v2 = version == "v2"; v3 = version == "v3"
     prior = program.get("external_fog_prior", [])
     for p in range(6):
