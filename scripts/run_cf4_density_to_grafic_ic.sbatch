@@ -10,4 +10,5 @@
 set -euo pipefail
 cd /home/kjhan/BACKUP/CF4
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+export PYTHONPATH=/home/kjhan/BACKUP/CF4/src
 exec /home/kjhan/miniconda3/bin/python3.13 scripts/cf4_density_to_grafic_ic.py --out /gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1
