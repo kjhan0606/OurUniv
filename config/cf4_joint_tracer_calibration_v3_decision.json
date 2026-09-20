@@ -1,0 +1,21 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v3-decision",
+  "date": "2026-09-20",
+  "job": "388279",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v3/result.json",
+  "decision": "CONDITIONAL_DEVELOPMENT_GO_PRODUCTION_NO_GO",
+  "resolved": [
+    "Poisson-only count assumption replaced by a fitted negative-binomial stochastic residual",
+    "population-specific bias and radial-selection nuisance are jointly fit",
+    "all six spatial holdout log-scores improve over the null model"
+  ],
+  "remaining_gate": [
+    "NB dispersion is phenomenological, not an externally calibrated FoG kernel",
+    "some radial nuisance and NB k estimates reach parameter bounds",
+    "no independent survey survival/bias validation",
+    "Carrick reference field remains a reconstructed covariate"
+  ],
+  "next_action": "Calibrate the NB/FoG parameters against an independent mock or external tracer catalogue, then repeat an untouched holdout before density posterior promotion.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}
