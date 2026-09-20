@@ -159,6 +159,17 @@ def fit_bias_radial_nb_survival(y, exposure, x, radius, train, wide=False):
     z=np.exp(np.clip(gamma*le+b*xx+eta*rt,-30,30)); A=yy.sum()/max(z.sum(),1e-30)
     return float(b),float(eta),float(A),float(score),float(null),float(k),float(gamma)
 
+def fit_bias_radial_nb_biasprior(y, exposure, x, radius, train, prior):
+    from scipy.optimize import minimize
+    from scipy.special import gammaln
+    rr=(radius-np.median(radius[train]))/60.; yy,ee,xx,rt=y[train],exposure[train],x[train],rr[train]; le=np.log(np.maximum(ee,1e-8)); pm,ps=prior
+    def nll(t,yv,xv,rv,lev,penalty):
+        b,eta,lk=t; k=np.exp(np.clip(lk,-8,15)); z=np.exp(np.clip(b*xv+eta*rv+lev,-30,30)); A=yv.sum()/max(z.sum(),1e-30); mu=np.maximum(A*z,1e-12); base=-np.sum(gammaln(yv+k)-gammaln(k)-gammaln(yv+1)+k*np.log(k/(k+mu))+yv*np.log(mu/(k+mu)))
+        return float(base + (0.5*((b-pm)/max(ps,1e-4))**2 if penalty else 0.0))
+    o=minimize(lambda t:nll(t,yy,xx,rt,le,True),[pm,.2,0],method='L-BFGS-B',bounds=[(.001,2),(-2,2),(-8,15)])
+    b,eta,lk=o.x; k=np.exp(lk); hold=~train; score=-nll(o.x,y[hold],x[hold],rr[hold],np.log(np.maximum(exposure[hold],1e-8)),False); null=-nll(np.array([pm,0.,lk]),y[hold],np.zeros_like(x[hold]),rr[hold],np.log(np.maximum(exposure[hold],1e-8)),False); z=np.exp(np.clip(b*xx+eta*rt+le,-30,30)); A=yy.sum()/max(z.sum(),1e-30)
+    return float(b),float(eta),float(A),float(score),float(null),float(k)
+
 
 def run(program: dict[str, Any]) -> dict[str, Any]:
     data = program["data"]; design = program["design"]
@@ -216,12 +227,15 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
     prior = program.get("external_fog_prior", [])
     for p in range(6):
         x_fit = x
-        if version in ("v4", "v5", "v6"):
+        if version in ("v4", "v5", "v6", "v8"):
             sigma = float(prior[p]["mean_cMpc_h"])
             # Bounded radial FoG operator: suppress line-of-sight density contrast
             # before the tracer link.  The prior is external; NB k remains separate.
             x_fit = x * np.exp(-0.5 * (sigma / float(program.get("fog_operator_scale_cMpc_h", 3.0))) ** 2)
-        if version in ("v6", "v7"):
+        if version == "v8":
+            b,eta,A,score,score0,k=fit_bias_radial_nb_biasprior(counts[p], exp[p], x_fit, sg, train, (float(program["external_bias_prior"][p]["mean"]),float(program["external_bias_prior"][p]["sd"])))
+            results.append({"population":p,"bias":b,"radial_nuisance":eta,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
+        elif version in ("v6", "v7"):
             b,eta,A,score,score0,k,gamma=fit_bias_radial_nb_survival(counts[p], exp[p], x_fit, sg, train, wide=(version == "v7"))
             results.append({"population":p,"bias":b,"radial_nuisance":eta,"survival_response":gamma,"amplitude":A,"holdout_log_score":score,"null_holdout_log_score":score0,"log_score_improvement":score-score0,"nb_dispersion_k":k})
         elif v3 or version in ("v4", "v5"):
@@ -233,7 +247,7 @@ def run(program: dict[str, Any]) -> dict[str, Any]:
         else:
             b,A,dev,dev0 = fit_bias(counts[p], exp[p], x, train)
             results.append({"population":p,"bias":b,"amplitude":A,"holdout_deviance":dev,"null_holdout_deviance":dev0,"deviance_improvement":dev0-dev})
-    metric = "log_score_improvement" if (v3 or version in ("v4", "v5", "v6", "v7")) else "deviance_improvement"
+    metric = "log_score_improvement" if (v3 or version in ("v4", "v5", "v6", "v7", "v8")) else "deviance_improvement"
     passed = all(r["bias"] > 0 and np.isfinite(r[metric]) for r in results)
     return {"schema":program["schema"],"status":"CALIBRATION_PASS" if passed else "CALIBRATION_FAIL","model_version":version,"eligible_rows":int(inside.sum()),"grid":{"N":N,"box_cMpc_h":box,"cell_cMpc_h":dx,"train_fraction":float(train.mean())},"selection":{"official_ARES":True,"survival_min":float(np.min(exp)),"survival_max":float(np.max(exp)),"radial_model":"Schechter Mstar=-23.28 alpha=-0.94 with fitted radial nuisance" if (v2 or v3) else "Schechter Mstar=-23.28 alpha=-0.94"},"population_results":results,"reference_covariate":"Carrick luminosity-weighted delta only; not treated as truth","production_gate":{"external_survival_bias_calibration_or_joint_model":bool(passed),"production_IC_GO":False,"reason":"development calibration; NB dispersion is fitted phenomenologically and still lacks external RSD/FoG validation"}}
 
