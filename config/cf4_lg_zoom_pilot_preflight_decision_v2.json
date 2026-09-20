@@ -1,0 +1,35 @@
+{
+  "decision": "ZOOM_PREFLIGHT_PASS",
+  "stage": 8,
+  "purpose": "Validate the trace-derived LG zoom IC wiring and early RAMSES evolution before any long zoom run.",
+  "job_id": 388636,
+  "host": "syn103",
+  "ic": {
+    "path": "/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3",
+    "manifest": "zoom_ic_manifest.json",
+    "parent_grid": 256,
+    "box_cMpc_h": 384.0,
+    "levelmin_ic": 8,
+    "levelmax_ic": 12,
+    "runtime_levelmax": 19,
+    "trace_mask": "/gpfs/kjhan/CF4/zoom/cf4_lg_trace_v1/lg_mask_l8.npz",
+    "mask_padding_base_l8_cells": 12
+  },
+  "runtime": {
+    "binary": "/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax_maxiter30/ramses_lb_minimax3d_maxiter30",
+    "binary_sha256": "c5df081001316cd659b3ee90b29280ea8dd14a8c60eb8e07f20a1cef81d41337",
+    "namelist": "config/ramses_cf4_lg_zoom_pilot_preflight_v1.nml",
+    "maxiter_fine": 30,
+    "epsilon": 0.0001,
+    "nstepmax": 2,
+    "observed_max_refined_level": 14
+  },
+  "checks": {
+    "run_completed": true,
+    "fftw_base_poisson_done": true,
+    "boundary_warning_count": 0,
+    "fine_poisson_warning_count": 0,
+    "output_snapshot_created": false,
+    "interpretation": "Passes IC wiring and early Poisson/refinement gates; does not establish z=0 structure reproduction."
+  }
+}

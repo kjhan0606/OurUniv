@@ -12,7 +12,7 @@
 #SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%j.err
 set -Eeuo pipefail
 : "${SLURM_JOB_ID:?}"
-binary=/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax/ramses_lb_minimax3d
+binary=/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax_maxiter30/ramses_lb_minimax3d_maxiter30
 namelist=/home/kjhan/BACKUP/CF4/config/ramses_cf4_lg_zoom_pilot_preflight_v1.nml
 ic=/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3
 root=/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_pilot_v2
