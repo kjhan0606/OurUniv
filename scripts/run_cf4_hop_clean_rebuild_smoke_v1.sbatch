@@ -19,7 +19,7 @@ source=/gpfs/kjhan/CF4/ramses/cf4_production_ic_nonlinear_pilot_v1/job_388412/ou
 mkdir -p "$build_root"; mkdir "$build"
 for f in Makefile hop.c hop_input.c kd.c kd.h smooth.c smooth.h regroup.c slice.c slice.h; do cp "$src/$f" "$build/$f"; done
 cd "$build"
-make -j1 hop regroup > build.log 2>&1
+make -j1 CFLAGS='-O -mcmodel=medium -DHUGE=1.0e30' hop regroup > build.log 2>&1
 test -x hop; test -x regroup
 sha256sum hop regroup > rebuilt.sha256
 mkdir work; cd work
