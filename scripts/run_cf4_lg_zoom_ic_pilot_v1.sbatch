@@ -22,7 +22,7 @@ exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_zoom_ic2.py \
   --transfer /gpfs/kjhan/CF4/zoom/transfer_parent_n256_v1.npz \
   --out /gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v1 \
   --resolution-config config/ic_resolution_v1.json \
-  --tier pilot --levelmin 9 --levelmax-ic 12 --runtime-levelmax 19 \
+  --tier pilot --levelmin 8 --levelmax-ic 12 --runtime-levelmax 19 \
   --box-hmpc 384.0 \
-  --mask-npz /gpfs/kjhan/CF4/zoom/cf4_lg_trace_v1/lg_mask_l9.npz \
+  --mask-npz /gpfs/kjhan/CF4/zoom/cf4_lg_trace_v1/lg_mask_l8.npz \
   --seed 5108 --fft-workers 8
