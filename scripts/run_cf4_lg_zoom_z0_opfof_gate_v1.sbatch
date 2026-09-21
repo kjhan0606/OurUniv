@@ -18,5 +18,5 @@ export PYTHONPATH=/home/kjhan/BACKUP/CF4/src
 python /home/kjhan/BACKUP/CF4/src/cf4_zoom_z0_gate.py \
   --output "$output" --work "$work" --box 384.0 \
   --screen /gpfs/kjhan/CF4/diagnostics/no_observational_screen_for_zoom_gate.npz \
-  --halo-finder opfof --opfof-nx 512 --nrank 8 --nfile 8
+  --halo-finder opfof --opfof-nx 512 --nrank 8 --nfile 64
 printf 'LG_ZOOM_OPFOF_GATE_PASS job=%s work=%s\n' "${SLURM_JOB_ID:?}" "$work"
