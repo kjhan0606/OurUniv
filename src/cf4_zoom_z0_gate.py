@@ -212,7 +212,9 @@ def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
 def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
                     reuse=False):
     """Run the user's serial multi-mass HOP and parse poshalo's group catalog."""
-    hop_dir = Path("/home/kjhan/BACKUP/lagRamses-de-nonstd/utils/f90/hop_ramses")
+    hop_dir = Path(os.environ.get(
+        "CF4_HOP_DIR",
+        "/home/kjhan/BACKUP/lagRamses-de-nonstd/utils/f90/hop_ramses"))
     hop_bin = hop_dir / "hop"
     regroup_bin = hop_dir / "regroup"
     poshalo_bin = hop_dir / "poshalo"
@@ -226,7 +228,8 @@ def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
     if not (reuse and tag_path.exists()):
         prefix = output / f"part_{output.name[-5:]}.out"
         commands = [
-            ([str(hop_bin), "-in", str(prefix), "-p", "1.", "-o", "hop00010"],
+            ([str(hop_bin), "-in", str(prefix), "-p", "1.", "-nd", "64",
+              "-nh", "64", "-nm", "4", "-o", "hop00010"],
              "hop.log"),
             ([str(regroup_bin), "-root", "hop00010", "-douter", "80.",
               "-dsaddle", "200.", "-dpeak", "240.", "-f77", "-o", "grp00010"],
