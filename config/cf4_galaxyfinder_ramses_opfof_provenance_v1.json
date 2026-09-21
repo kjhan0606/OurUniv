@@ -56,6 +56,19 @@
         "shell_2_3_halos_mass_ge_1e10": 28,
         "shell_1_2_halos_mass_ge_1e11": 3
       },
+      "catalog_resolution": {
+        "minimum_particles": 20,
+        "median_particles": 86,
+        "halo_count_np_ge_50": 2246,
+        "halo_count_np_ge_100": 1604,
+        "halo_count_np_ge_500": 661,
+        "mass_bins_Msun_h": {
+          "1e9_1e10": 1447,
+          "1e10_1e11": 937,
+          "1e11_1e12": 1017,
+          "1e12_1e13": 48
+        }
+      },
       "comparison": "Consistent with the prior HOP pair (6.76e11/6.54e11 Msun/h, 1.126 cMpc/h, -36.6 km/s).",
       "remaining_checks": ["M33 candidate", "Virgo/Coma and void environment", "catalog mass function and minimum-member sensitivity"]
     }
