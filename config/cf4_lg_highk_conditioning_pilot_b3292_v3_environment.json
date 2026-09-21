@@ -1,0 +1,53 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-conditioning-pilot-b3292-v3-environment",
+  "status": "frozen_before_forward",
+  "supersedes": "config/cf4_lg_highk_conditioning_pilot_b3292_v2.json",
+  "change_from_v2": "Carry the preregistered no-massive-neighbour Local-Volume gate into candidate screening and broaden the fresh deterministic seed bank. The low/high-k boundary and the 14 LG constraints are unchanged.",
+  "parent_seed": 3292,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+  "parent_field_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d",
+  "mesh_size": 512,
+  "frozen_k_max_h_mpc": 0.6,
+  "box_size_mpc_h": 384.0,
+  "seed_bank": {
+    "count": 256,
+    "field_seed_start": 40101,
+    "geometry_seed_start": 41101,
+    "likelihood_noise_seed_start": 42101,
+    "midpoint_seed_start": 43101
+  },
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_prior": {
+      "distribution": "diagonal_normal",
+      "mean_mpc_h": [-0.971, -6.353, 2.853],
+      "sigma_mpc_h": [3.0, 3.0, 3.0],
+      "basis": "R=5 Mpc/h observer preimage from job 394168"
+    },
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "hard_p2_config": "config/p2_lg_targets_v12_parent_b3292_beta025_l9_environment.json",
+  "output": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_environment_v3",
+  "retention": {
+    "conditioned_fields": false,
+    "full_particle_state": false,
+    "passing_conditioned_fields": true,
+    "passing_halo_catalogues_only": true,
+    "reproducibility": "Every proposal is regenerated from the frozen parent and four recorded integer seeds."
+  },
+  "science_policy": {
+    "LG_information_is_additional_to_CF4": true,
+    "all_modes_at_or_below_0p6_h_Mpc_are_frozen": true,
+    "modes_above_0p6_are_conditioned_by_LG_not_claimed_from_CF4": true,
+    "observer_environment_gate_in_screen": true,
+    "RAMSES_HOP_confirmation_still_required": true,
+    "no_threshold_retuning_after_forward": true,
+    "production_promotion_from_this_pilot": false
+  }
+}

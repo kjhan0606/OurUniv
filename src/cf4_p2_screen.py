@@ -103,8 +103,19 @@ def find_pairs(halos: dict, centre: np.ndarray, screen: dict, m33_gate: dict):
     pair_tree = cKDTree(pos[eligible])
     sep_lo, sep_hi = screen["pair_separation_range_mpc_h"]
     candidates = pair_tree.query_pairs(sep_hi, output_type="ndarray")
+    environment = screen.get("observer_environment_gate")
+    if environment is not None and not np.isclose(
+        float(environment.get(
+            "mass_threshold_msun_h", screen["isolation_mass_threshold_msun_h"])),
+        float(screen["isolation_mass_threshold_msun_h"]),
+    ):
+        raise ValueError("environment and isolation mass thresholds must match")
     massive = np.flatnonzero(mass >= screen["isolation_mass_threshold_msun_h"])
     massive_tree = cKDTree(pos[massive]) if massive.size else None
+    if environment is not None and massive.size:
+        observer_distance = np.linalg.norm(pos[massive] - centre, axis=1)
+        if np.any(observer_distance < float(environment["radius_mpc_h"])):
+            return []
     m33_lo, m33_hi = m33_gate["mass_range_msun_h"]
     possible_m33 = np.flatnonzero((mass >= m33_lo) & (mass <= m33_hi))
 
@@ -135,6 +146,8 @@ def find_pairs(halos: dict, centre: np.ndarray, screen: dict, m33_gate: dict):
             ]
             isolation = min(external) if external else 99.0
         if isolation < screen["isolation_radius_mpc_h"]:
+            continue
+        if environment is not None and isolation < float(environment["radius_mpc_h"]):
             continue
 
         radial_hat = separation_vector / separation

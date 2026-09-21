@@ -113,6 +113,10 @@
     "pipeline_job": 394268,
     "validation_job": 394270,
     "finder": "GalaxyFinder RAMSES NewDD plus variable-mass opFoF",
+    "source_repository": "https://github.com/kjhan0606/GalaxyFinder",
+    "source_commit_with_lagRamses_support": "d0aceae",
+    "production_newdd_sha256": "54ebaa30b4a2a3a81f0359e2b7d20b8b8bb8b174290dccd97de80db72aa49200",
+    "production_opfof_sha256": "517cc51811a3915f7482f0d368241a64385bf11e7ff45926f7f8c85ecbb27c3a",
     "nsplit": 256,
     "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_parent_galaxyfinder_v1.json",
     "result_sha256": "5a1973a3a9a4caa0d645a1b292c0be73bc833dfc0ce664ad0ad1a72ae3f33232",
@@ -134,9 +138,30 @@
       "target_separation_mpc_h": 4.092555295056198
     },
     "member_id_artifact": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s30113_parent_members_v1.npz",
-    "member_id_artifact_sha256": "9bc3da1cf37805f04e25bf67fe5eaa82e5f65c2fa10eb3f8f0e4d172eb10bf5f",
+    "member_id_artifact_sha256": "770f5c9527295a75da0382a3aafe75ccf2b574e1a3c25bba42a49c15107f36c3",
     "conditional_issue": "A 1.22e13 Msun/h FoF group lies 4.16 Mpc/h from the observer. The frozen definitive exclusion is HOP/M200c-based, so FoF alone neither passes nor rejects it.",
     "hop_job": 394274
+  },
+  "lagrangian_trace": {
+    "job": 394280,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_lagrangian_trace_v1.json",
+    "result_sha256": "7ff6f29346d4afc40b87d6b7dc83b28c35340bc2d0782dbba87a15ebf4c1c1d7",
+    "position_artifact": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s30113_lagrangian_positions_v1.npz",
+    "position_artifact_sha256": "b897b56db553359ff521a4f152f8cd90765be9f3fb858cb676fd156acb170baa",
+    "matched_particle_ids": 449,
+    "lg_member_ids": 113,
+    "nearby_group_member_ids": 336,
+    "lg_footprint_span_mpc_h": [7.336378104983737, 4.44419085174178, 5.078313841419998],
+    "nearby_group_footprint_span_mpc_h": [7.350572098127742, 4.449399846855016, 8.062911237905013]
+  },
+  "environment_gate_correction": {
+    "finding": "The v11 P2 screen enforced only 3 Mpc/h isolation and omitted the already-frozen 8 Mpc/h Local-Volume massive-halo exclusion.",
+    "corrected_screen": "config/p2_lg_targets_v12_parent_b3292_beta025_l9_environment.json",
+    "regression_job": 394293,
+    "regression_result": "3 passed",
+    "fresh_search_config": "config/cf4_lg_highk_conditioning_pilot_b3292_v3_environment.json",
+    "fresh_search_job": 394297,
+    "fresh_proposals": 256
   },
   "decision": {
     "selected_L9_field": "CONDITIONAL_PENDING_HOP_LOCAL_ENVIRONMENT",

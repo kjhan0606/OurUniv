@@ -239,27 +239,37 @@ def main() -> None:
     }
     pairs = find_lg_pairs(catalog, p2)
     selected = pairs[0] if pairs else None
+    position = np.column_stack((catalog["x"], catalog["y"], catalog["z"]))
+    massive = np.flatnonzero(catalog["mass"] >= 5.0e12)
+    exclusion_index = None
+    if massive.size:
+        exclusion_index = int(massive[np.argmin(distance(position[massive], OBSERVER))])
     if selected is not None:
-        ids = member_ids(args.members, catalog, [selected["halo_i"], selected["halo_j"]])
+        trace_indices = [selected["halo_i"], selected["halo_j"]]
+        if exclusion_index is not None and exclusion_index not in trace_indices:
+            trace_indices.append(exclusion_index)
+        ids = member_ids(args.members, catalog, trace_indices)
         if any(values.size != np.unique(values).size for values in ids):
             raise RuntimeError("duplicate particle ID within selected halo")
         if np.intersect1d(ids[0], ids[1]).size:
             raise RuntimeError("selected pair shares particle IDs")
         args.member_output.parent.mkdir(parents=True, exist_ok=True)
-        np.savez_compressed(
-            args.member_output,
-            halo_i=np.int64(selected["halo_i"]),
-            halo_j=np.int64(selected["halo_j"]),
-            member_ids_i=ids[0],
-            member_ids_j=ids[1],
-        )
+        payload = {
+            "halo_i": np.int64(selected["halo_i"]),
+            "halo_j": np.int64(selected["halo_j"]),
+            "member_ids_i": ids[0],
+            "member_ids_j": ids[1],
+        }
+        if len(trace_indices) == 3:
+            payload["exclusion_halo"] = np.int64(trace_indices[2])
+            payload["exclusion_member_ids"] = ids[2]
+        np.savez_compressed(args.member_output, **payload)
 
-    position = np.column_stack((catalog["x"], catalog["y"], catalog["z"]))
-    massive = catalog["mass"] >= 5.0e12
-    observer_nearest = float(distance(position[massive], OBSERVER).min()) if np.any(massive) else 99.0
+    massive_mask = catalog["mass"] >= 5.0e12
+    observer_nearest = float(distance(position[massive_mask], OBSERVER).min()) if np.any(massive_mask) else 99.0
     midpoint_nearest = (
-        float(distance(position[massive], np.asarray(selected["midpoint_mpc_h"])).min())
-        if selected is not None and np.any(massive) else 99.0
+        float(distance(position[massive_mask], np.asarray(selected["midpoint_mpc_h"])).min())
+        if selected is not None and np.any(massive_mask) else 99.0
     )
     cluster_pass = bool(
         clusters["Virgo"].get("mass_msun_h", 0.0) >= 1.0e14
