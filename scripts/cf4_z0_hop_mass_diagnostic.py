@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 from pathlib import Path
 import numpy as np
 
@@ -13,9 +14,12 @@ MSUN_G = 1.98847e33
 
 
 def main() -> None:
-    output = Path("/gpfs/kjhan/CF4/ramses/cf4_production_ic_z0_dmo_v1/job_388424/output_00002")
-    hop = Path("/gpfs/kjhan/CF4/hop/cf4_z0_v1/job_388595")
-    out = Path("/gpfs/kjhan/CF4/diagnostics/cf4_z0_hop_mass_v1.json")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--output", type=Path, default=Path("/gpfs/kjhan/CF4/ramses/cf4_production_ic_z0_dmo_v1/job_388424/output_00002"))
+    ap.add_argument("--hop", type=Path, default=Path("/gpfs/kjhan/CF4/hop/cf4_z0_v1/job_388595"))
+    ap.add_argument("--out", type=Path, default=Path("/gpfs/kjhan/CF4/diagnostics/cf4_z0_hop_mass_v1.json"))
+    args = ap.parse_args()
+    output, hop, out = args.output, args.hop, args.out
     info = read_info(output)
     files = particle_files(output)
     mass_unit = info["unit_d"] * info["unit_l"] ** 3 / MSUN_G * (info["H0"] / 100.0)
@@ -25,8 +29,8 @@ def main() -> None:
     # validated binary hop.hop header/tags and wrap them in a correct F77 tag.
     raw = hop / "hop.hop"
     header = np.fromfile(raw, dtype="<i4", count=2)
-    if tuple(header) != (ntotal, 95850):
-        raise RuntimeError(f"unexpected HOP binary header: {header.tolist()}")
+    if int(header[0]) != ntotal or int(header[1]) <= 0:
+        raise RuntimeError(f"unexpected HOP binary header: {header.tolist()} vs ntotal={ntotal}")
     tags = np.memmap(raw, dtype="<i4", mode="r", offset=8, shape=(ntotal,))
     tag_path = hop / "hop_tags_for_catalog.tag"
     if not tag_path.exists():
