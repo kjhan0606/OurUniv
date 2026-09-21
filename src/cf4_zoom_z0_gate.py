@@ -465,6 +465,7 @@ def main():
                     default=Path("recon/screen3b_halos_cr6_e19.npz"))
     ap.add_argument("--nrank", type=int, default=16)
     ap.add_argument("--nfile", type=int, default=32)
+    ap.add_argument("--opfof-nx", type=int, default=2 ** 14)
     ap.add_argument("--halo-finder", choices=("hop", "opfof"), default="hop")
     ap.add_argument("--reuse-catalog", action="store_true")
     args = ap.parse_args()
@@ -501,7 +502,7 @@ def main():
         pos, vel = extract_finest(files, fine_mass_code, args.box, velocity_unit)
         opwork = args.work / "opfof_work"
         cat = opfof_io.fof_opfof(
-            pos, vel, L=args.box, nx=2 ** 14, nstep=10,
+            pos, vel, L=args.box, nx=args.opfof_nx, nstep=10,
             nfile=args.nfile, nid=args.nrank, outdir=str(opwork),
             m_particle=fine_mass, nmin=20, verbose=True)
         np.savez(catalog_path, n=cat["n"], mass=cat["mass"],
