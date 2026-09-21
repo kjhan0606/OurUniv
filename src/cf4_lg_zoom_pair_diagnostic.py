@@ -35,9 +35,12 @@ def main():
             j=int(local[jj]); sep=float(np.linalg.norm(dx[i]-dx[j]-args.box*np.round((dx[i]-dx[j])/args.box)))
             if not (0.3 <= sep <= 1.2): continue
             if not (5e11 <= mass[i] <= 4e12 and 5e11 <= mass[j] <= 4e12): continue
+            dr=dx[j]-dx[i]; dr-=args.box*np.round(dr/args.box)
             rows.append({'i':i,'j':j,'group_i':int(cat['group_id'][i]),'group_j':int(cat['group_id'][j]),
                          'sep_cMpc_h':sep,'mass_i_msun_h':float(mass[i]),'mass_j_msun_h':float(mass[j]),
                          'r_i_cMpc_h':float(r[i]),'r_j_cMpc_h':float(r[j]),
+                         'pos_i_cMpc_h':pos[i].tolist(),'pos_j_cMpc_h':pos[j].tolist(),
+                         'pair_displacement_j_minus_i_cMpc_h':dr.tolist(),
                          'contam_i':float(contam[i]),'contam_j':float(contam[j]),
                          'v_i_km_s':vel[i].tolist(),'v_j_km_s':vel[j].tolist()})
     rows.sort(key=lambda x: (x['contam_i']+x['contam_j'], abs(x['sep_cMpc_h']-0.78)))
