@@ -75,6 +75,13 @@
         "observed": "The accepted HaloQ catalog occupies only the central zoom region; the raw RAMSES particle files themselves span the full normalized box.",
         "consequence": "Do not use this catalog alone to claim Virgo/Coma or Local/Bootes Void reproduction.",
         "next_action": "Run a parent/base-resolution halo-environment diagnostic with an explicitly calibrated minimum-member and mass threshold, then combine it with the zoom LG catalog."
+      },
+      "mass_abi_diagnostic": {
+        "newdd_dm_records": 30956953,
+        "zero_mass_records": 20637968,
+        "zero_mass_fraction": 0.6666666451313862,
+        "consequence": "Parent/base particles receive zero linking length in opFoF and are omitted from meaningful halos.",
+        "decision": "Do not increase lbase before reconstructing parent masses from the RAMSES level/type ABI; reuse existing snapshot and intermediate files."
       }
     }
   }
