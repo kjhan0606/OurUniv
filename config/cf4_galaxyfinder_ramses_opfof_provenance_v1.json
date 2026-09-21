@@ -31,6 +31,20 @@
   "interpretation": {
     "pipeline": "PASS",
     "science": "CONDITIONAL",
-    "reason": "The first successful run is dominated by singleton groups in the log; catalog decoding, minimum-member selection, and LG/MW-M31-M33 matching remain mandatory before any production claim."
+    "reason": "The first successful run contains 3449 decoded HaloQ records. The dominant LG pair is recovered, but M33, environment statistics, and full catalog quality remain mandatory before any production claim.",
+    "catalog_summary": {
+      "header_bytes": 28,
+      "haloq_record_bytes": 120,
+      "halo_count": 3449,
+      "mw_m31_candidate": {
+        "mass_1_Msun_h": 677853487995.3223,
+        "mass_2_Msun_h": 663169972715.3877,
+        "separation_cMpc_h": 1.120244247421984,
+        "relative_radial_velocity_km_s": -36.90116263607161,
+        "particle_counts": [9556, 9349]
+      },
+      "comparison": "Consistent with the prior HOP pair (6.76e11/6.54e11 Msun/h, 1.126 cMpc/h, -36.6 km/s).",
+      "remaining_checks": ["M33 candidate", "Virgo/Coma and void environment", "catalog mass function and minimum-member sensitivity"]
+    }
   }
 }
