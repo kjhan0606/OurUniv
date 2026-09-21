@@ -43,6 +43,19 @@
         "relative_radial_velocity_km_s": -36.90116263607161,
         "particle_counts": [9556, 9349]
       },
+      "m33_candidate": {
+        "mass_Msun_h": 118603079942.22934,
+        "particle_count": 1672,
+        "separation_from_m31_cMpc_h": 0.7893324730412854,
+        "catalog_index": 3150
+      },
+      "lg_environment": {
+        "within_3_cMpc_h_halos_mass_ge_1e10": 39,
+        "shell_0_1_halos_mass_ge_1e10": 3,
+        "shell_1_2_halos_mass_ge_1e10": 11,
+        "shell_2_3_halos_mass_ge_1e10": 28,
+        "shell_1_2_halos_mass_ge_1e11": 3
+      },
       "comparison": "Consistent with the prior HOP pair (6.76e11/6.54e11 Msun/h, 1.126 cMpc/h, -36.6 km/s).",
       "remaining_checks": ["M33 candidate", "Virgo/Coma and void environment", "catalog mass function and minimum-member sensitivity"]
     }
