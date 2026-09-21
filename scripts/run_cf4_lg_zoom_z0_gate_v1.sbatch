@@ -21,4 +21,8 @@ python /home/kjhan/BACKUP/CF4/src/cf4_zoom_z0_gate.py \
   --output "$output" --work "$work" --box 384.0 \
   --screen /gpfs/kjhan/CF4/diagnostics/no_observational_screen_for_zoom_gate.npz \
   --halo-finder hop
-printf 'LG_ZOOM_GATE_PASS job=%s work=%s\n' "${SLURM_JOB_ID:?}" "$work"
+if jq -e '.verdict.overall == true' "$work/gate_result.json" >/dev/null; then
+  printf 'LG_ZOOM_GATE_PASS job=%s work=%s\n' "${SLURM_JOB_ID:?}" "$work"
+else
+  printf 'LG_ZOOM_GATE_CONDITIONAL job=%s work=%s\n' "${SLURM_JOB_ID:?}" "$work"
+fi
