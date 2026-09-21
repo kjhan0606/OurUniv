@@ -16,6 +16,7 @@ work=/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_z0_gate_v1
 mkdir -p "$work"
 export PYTHONPATH=/home/kjhan/BACKUP/CF4/src
 export CF4_HOP_DIR=/gpfs/kjhan/CF4/hop/clean_rebuild_v1/job_388420
+export CF4_SKIP_POSHALO=1
 python /home/kjhan/BACKUP/CF4/src/cf4_zoom_z0_gate.py \
   --output "$output" --work "$work" --box 384.0 \
   --screen /gpfs/kjhan/CF4/diagnostics/no_observational_screen_for_zoom_gate.npz \

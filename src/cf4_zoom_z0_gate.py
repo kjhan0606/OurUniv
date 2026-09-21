@@ -218,7 +218,8 @@ def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
     hop_bin = hop_dir / "hop"
     regroup_bin = hop_dir / "regroup"
     poshalo_bin = hop_dir / "poshalo"
-    for exe in (hop_bin, regroup_bin, poshalo_bin):
+    required = (hop_bin, regroup_bin) if os.environ.get("CF4_SKIP_POSHALO") == "1" else (hop_bin, regroup_bin, poshalo_bin)
+    for exe in required:
         if not (exe.is_file() and os.access(exe, os.X_OK)):
             raise FileNotFoundError(f"missing executable: {exe}")
 
@@ -234,9 +235,10 @@ def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
             ([str(regroup_bin), "-root", "hop00010", "-douter", "80.",
               "-dsaddle", "200.", "-dpeak", "240.", "-f77", "-o", "grp00010"],
              "regroup.log"),
-            ([str(poshalo_bin), "-inp", str(output), "-pre", "grp00010",
-              "-cut", f"{fine_mass_code * 1.01:.18e}"], "poshalo.log"),
         ]
+        if os.environ.get("CF4_SKIP_POSHALO") != "1":
+            commands.append(([str(poshalo_bin), "-inp", str(output), "-pre", "grp00010",
+                              "-cut", f"{fine_mass_code * 1.01:.18e}"], "poshalo.log"))
         for command, logname in commands:
             print("[hop]", " ".join(command), flush=True)
             with (work / logname).open("w") as log:
