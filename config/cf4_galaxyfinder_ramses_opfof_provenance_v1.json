@@ -1,0 +1,36 @@
+{
+  "stage": "8_z0_structure_validation",
+  "status": "pipeline_pass_science_conditional",
+  "purpose": "Use the RAMSES-aware GalaxyFinder NewDD/opFoF implementation with individual-particle masses for a z=0 halo cross-check.",
+  "ramses_run": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_z0_production_v1/job_388664",
+  "snapshot": 2,
+  "box_cMpc_h": 384.0,
+  "newdd_opfof_source": {
+    "repository": "https://github.com/kjhan0606/GalaxyFinder",
+    "commit": "d445b60",
+    "binaries": ["NewDD/newdd.exe", "opFoF/opfof.exe"],
+    "mass_linking_law": "0.2*(m/(2.7755e11*omega_m))^(1/3)",
+    "ramse_unit_adapter": [
+      "DM-only parser stops after x,y,z,vx,vy,vz,mass to avoid ABI-dependent optional records",
+      "boxlen_ini is supplied as NEWDD_BOXLEN_CMPCH=384",
+      "coordinates, velocities and masses are converted before NewDD slab output"
+    ],
+    "local_patches": [
+      "mpiicx compiler wrapper",
+      "DM-only RAMSES particle ABI path",
+      "RAMSES code-unit box length and unit conversion",
+      "legacy header/linker compatibility fixes"
+    ]
+  },
+  "slurm": {
+    "build_job": 392215,
+    "pipeline_job": 392217,
+    "pipeline_exit": 0,
+    "wrapper": "scripts/run_galaxyfinder_ramses_halo_v1.sbatch"
+  },
+  "interpretation": {
+    "pipeline": "PASS",
+    "science": "CONDITIONAL",
+    "reason": "The first successful run is dominated by singleton groups in the log; catalog decoding, minimum-member selection, and LG/MW-M31-M33 matching remain mandatory before any production claim."
+  }
+}
