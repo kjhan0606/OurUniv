@@ -149,6 +149,32 @@ def extract_finest(files, fine_mass_code, box_mpc_h, velocity_unit):
     return pos, vel
 
 
+def extract_all(files, box_mpc_h, velocity_unit):
+    """Load every particle species; OPFoF uses positions/velocities only."""
+    total = 0
+    for path in files:
+        with path.open("rb") as fh:
+            _, n = _skip_header(fh)
+            total += n
+    pos = np.empty((total, 3), np.float32)
+    vel = np.empty((total, 3), np.float32)
+    mass = np.empty(total, np.float64)
+    cursor = 0
+    for path in files:
+        with path.open("rb") as fh:
+            _, n = _skip_header(fh)
+            xyz = [_record(fh, "<f8") for _ in range(3)]
+            vvv = [_record(fh, "<f8") for _ in range(3)]
+            mm = _record(fh, "<f8")
+        sl = slice(cursor, cursor + n)
+        for j in range(3):
+            pos[sl, j] = xyz[j] * box_mpc_h
+            vel[sl, j] = vvv[j] * velocity_unit
+        mass[sl] = mm
+        cursor += n
+    return pos, vel, mass
+
+
 def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
                           fine_mass_code):
     """Recompute HOP group properties without poshalo's coarse text rounding."""
@@ -499,12 +525,20 @@ def main():
     else:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
         import opfof_io
-        pos, vel = extract_finest(files, fine_mass_code, args.box, velocity_unit)
+        pos, vel, mass_code = extract_all(files, args.box, velocity_unit)
         opwork = args.work / "opfof_work"
         cat = opfof_io.fof_opfof(
             pos, vel, L=args.box, nx=args.opfof_nx, nstep=10,
             nfile=args.nfile, nid=args.nrank, outdir=str(opwork),
-            m_particle=fine_mass, nmin=20, verbose=True)
+            m_particle=1.0, nmin=20, verbose=True)
+        # OPFoF ignores particle masses; restore physical multi-mass halo sums
+        # from its member indices before applying the MW-scale pair cuts.
+        cat["mass"] = np.asarray([
+            mass_code[idx].sum() * mass_unit
+            for idx in (cat["member"][cat["head"][k]:
+                                  cat["head"][k] + cat["n"][k]]
+                        for k in range(len(cat["n"])))
+        ], dtype=float)
         np.savez(catalog_path, n=cat["n"], mass=cat["mass"],
                  pos=cat["pos"], vel=cat["vel"])
         cat = {k: cat[k] for k in ("n", "mass", "pos", "vel")}
