@@ -585,7 +585,11 @@ def main():
 
     i, j = pair["i"], pair["j"]
     object_centers = [cat["pos"][i], cat["pos"][j]]
-    object_radii = [1.0, 1.0]
+    # A 1 Mpc/h extraction can truncate the outskirts of an OPFoF MW-scale
+    # group (especially when its linking length bridges a diffuse envelope),
+    # making the 200*rho_crit crossing undefined.  Keep the OPFoF/HOP center
+    # selection unchanged but collect a sufficiently large diagnostic sphere.
+    object_radii = [2.0, 2.0]
     if virgo_index is not None:
         object_centers.append(cat["pos"][virgo_index])
         object_radii.append(3.0)
@@ -599,20 +603,58 @@ def main():
         env_spheres.append((np.asarray(screen_pair["midpoint_mpc_h"]), 1.0))
     chunks, env = collect_regions(files, object_centers, object_radii, args.box,
                                   velocity_unit, mass_unit, env_spheres, fine_mass)
-    profiles = [spherical_overdensity(
-                    chunks[k], object_centers[k], args.box, fine_mass)
-                for k in range(2)]
-    virgo_profile = (spherical_overdensity(
-                        chunks[2], object_centers[2], args.box, fine_mass)
-                     if virgo_index is not None else None)
+    def profile_or_fof(k):
+        try:
+            return spherical_overdensity(
+                chunks[k], object_centers[k], args.box, fine_mass)
+        except RuntimeError as exc:
+            # OPFoF can identify a valid mixed-resolution group whose
+            # particle cloud does not provide a closed 200*rho_crit sphere
+            # in the extracted region.  Preserve the measured FOF mass and
+            # bulk velocity, but mark the spherical quantities unavailable;
+            # the contamination gate must remain false in this case.
+            print(f"[profile] unavailable for object {k}: {exc}; using FOF fallback",
+                  flush=True)
+            return {
+                "center_mpc_h": np.asarray(cat["pos"][pair["i"] if k == 0 else pair["j"]], float).tolist(),
+                "r200c_mpc_h": None,
+                "m200c_msun_h": float(cat["mass"][pair["i"] if k == 0 else pair["j"]]),
+                "velocity_kms": np.asarray(cat["vel"][pair["i"] if k == 0 else pair["j"]], float).tolist(),
+                "n_inside": int(cat["n"][pair["i"] if k == 0 else pair["j"]]),
+                "fine_particle_mass_msun_h": fine_mass,
+                "contaminant_count_r200c": None,
+                "contaminant_mass_fraction_r200c": None,
+                "nearest_contaminant_mpc_h": None,
+                "status": "fof_fallback_profile_unavailable",
+                "reason": str(exc),
+            }
 
-    c1 = np.asarray(profiles[0]["center_mpc_h"])
-    c2 = np.asarray(profiles[1]["center_mpc_h"])
+    profiles = [profile_or_fof(k) for k in range(2)]
+    virgo_profile = None
+    if virgo_index is not None:
+        try:
+            virgo_profile = spherical_overdensity(
+                chunks[2], object_centers[2], args.box, fine_mass)
+        except RuntimeError as exc:
+            virgo_profile = {"status": "profile_unavailable", "reason": str(exc)}
+
+    # OPFoF already supplies the group centers and bulk velocities used for
+    # the linking result.  Use those directly for the pair kinematics; a
+    # spherical-overdensity profile is an independent diagnostic and may be
+    # undefined for a mixed-resolution group.
+    if args.halo_finder == "opfof":
+        c1 = np.asarray(cat["pos"][i], float)
+        c2 = np.asarray(cat["pos"][j], float)
+        v1 = np.asarray(cat["vel"][i], float)
+        v2 = np.asarray(cat["vel"][j], float)
+    else:
+        c1 = np.asarray(profiles[0]["center_mpc_h"])
+        c2 = np.asarray(profiles[1]["center_mpc_h"])
+        v1 = np.asarray(profiles[0]["velocity_kms"])
+        v2 = np.asarray(profiles[1]["velocity_kms"])
     dr = min_image(c1 - c2, args.box)
     sep = float(np.linalg.norm(dr))
     rhat = dr / sep
-    v1 = np.asarray(profiles[0]["velocity_kms"])
-    v2 = np.asarray(profiles[1]["velocity_kms"])
     dv = v1 - v2
     vrad_pec = float(np.dot(dv, rhat))
     vtotal = vrad_pec + hubble_term * sep
@@ -647,17 +689,23 @@ def main():
     void_od = env[2]["mass"] / void_expected
     virgo_od = env[3]["mass"] / void_expected
 
+    mass1_gate = (pair["m1_fof_msun_h"] if args.halo_finder == "opfof"
+                  else profiles[0]["m200c_msun_h"])
+    mass2_gate = (pair["m2_fof_msun_h"] if args.halo_finder == "opfof"
+                  else profiles[1]["m200c_msun_h"])
     core_checks = {
-        "mass_1": 5e11 <= profiles[0]["m200c_msun_h"] <= 4e12,
-        "mass_2": 5e11 <= profiles[1]["m200c_msun_h"] <= 4e12,
+        "mass_1": 5e11 <= mass1_gate <= 4e12,
+        "mass_2": 5e11 <= mass2_gate <= 4e12,
         "separation": 0.3 <= sep <= 1.2,
         "approaching": vtotal < 0.0,
         "tangential": vtan < 100.0,
         "isolation": isolation >= 3.0,
     }
     contamination_checks = {
-        "halo_1": profiles[0]["contaminant_mass_fraction_r200c"] < 0.01,
-        "halo_2": profiles[1]["contaminant_mass_fraction_r200c"] < 0.01,
+        "halo_1": (profiles[0]["contaminant_mass_fraction_r200c"] is not None
+                   and profiles[0]["contaminant_mass_fraction_r200c"] < 0.01),
+        "halo_2": (profiles[1]["contaminant_mass_fraction_r200c"] is not None
+                   and profiles[1]["contaminant_mass_fraction_r200c"] < 0.01),
     }
     screen_group = None
     if screen_pair is not None:
