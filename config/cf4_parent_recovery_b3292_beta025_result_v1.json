@@ -65,19 +65,43 @@
     "delta_chi2": -2.768123977999494,
     "posterior_mahalanobis": 5.5061657341971255
   },
+  "resolution_validation": {
+    "n256": {
+      "job": 394137,
+      "result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_candidate_b3292_beta0p25_n256_stability_v1.json",
+      "result_sha256": "891ff082e917124defc591c53049c592b311ac85dab02a852291f43819ff09bf",
+      "grid_spacing_mpc_h": 1.5,
+      "small_scale_seeds": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008],
+      "joint_pass_fraction": 1.0,
+      "checks": "all five frozen P1 gates plus Virgo and Coma local FoF mass gates"
+    },
+    "n512_l9": {
+      "job": 394149,
+      "result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_candidate_b3292_beta0p25_n512_stability_v1.json",
+      "result_sha256": "5354ee772c1143f0831751f4d2b57086355135e731c30944908bdf0d342f9685",
+      "grid_spacing_mpc_h": 0.75,
+      "particle_mass_msun_h": 36291796875.0,
+      "small_scale_seeds": [2001, 2002, 2003, 2004],
+      "cluster_pass_fraction": 1.0,
+      "virgo_mass_range_msun_h": [319512979687500.0, 328985138671875.0],
+      "coma_mass_range_msun_h": [566660116406250.0, 578926743750000.0],
+      "checks": "Virgo and Coma local FoF mass and frozen search-radius gates; P1 density was not rematerialized at N512"
+    },
+    "interpretation": "The recovered large-scale parent is stable to independent statistically normalized high-k completions through the executable L9 parent mesh. This validates the parent environment, not a Local-Group realization or a production zoom IC."
+  },
   "operational_history": {
     "failed_or_cancelled_diagnostics": {
       "393993": "missing GPU resource request; cancelled after CPU fallback",
       "393999": "read-only JAX array subtraction implementation error; corrected immediately",
       "394020": "superseded general three-base proposal after seed 3292 was identified; cancelled before outputs"
     },
-    "successful_jobs": [393990, 394000, 394006, 394012, 394014, 394023, 394024, 394026, 394027, 394029]
+    "successful_jobs": [393990, 394000, 394006, 394012, 394014, 394023, 394024, 394026, 394027, 394029, 394137, 394149]
   },
   "decision": {
     "old_repaired_field_production_status": "REJECTED",
-    "b3292_beta0p25_parent_status": "CONDITIONAL_GO_FOR_RESOLUTION_VALIDATION_ONLY",
+    "b3292_beta0p25_parent_status": "GO_AS_LARGE_SCALE_PARENT_FOR_LOCAL_GROUP_HIGH_K_SEARCH",
     "production_ic_status": "NO_GO",
     "ramses_status": "NO_GO",
-    "next": "Validate the candidate with a higher-resolution statistically correct high-k completion while preserving all modes above k=0.6 h/Mpc from the base realization; then repeat PM+FoF/P1 before any GRAFIC or zoom generation."
+    "next": "Search statistically normalized L9 high-k completions for an observer-centred MW-M31 pair and M33-compatible third component while retaining the recovered parent modes; only a passing LG member may proceed to GRAFIC and parent RAMSES validation."
   }
 }
