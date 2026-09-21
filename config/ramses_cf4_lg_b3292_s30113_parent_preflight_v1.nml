@@ -1,0 +1,67 @@
+! Two-step L9 parent wiring test for the recovered CF4+LG candidate.
+! No z=0 or zoom claim is made by this namelist.
+
+&RUN_PARAMS
+cosmo=.true.
+pic=.true.
+poisson=.true.
+hydro=.false.
+sink=.false.
+sidm=.false.
+nrestart=0
+nstepmax=2
+nremap=1
+nsubcycle=1
+ncontrol=1
+ordering='ksection'
+memory_balance=.true.
+use_fftw=.true.
+jobcontrolfile='jobcontrol.txt'
+verbose=.false.
+/
+
+&OUTPUT_PARAMS
+noutput=1
+aout=1.0
+foutput=1000000
+fbackup=1000000
+/
+
+&INIT_PARAMS
+filetype='grafic'
+initfile(1)='/gpfs/kjhan/CF4/ramses/ic/s30113_parent'
+/
+
+&AMR_PARAMS
+levelmin=9
+levelmax=9
+nexpand=1
+! 512^3 cells are 16,777,216 octs; capacity includes about 20% operational margin.
+ngridtot=20200000
+! 512^3 particles are 134,217,728; capacity includes about 23% margin.
+nparttot=165000000
+/
+
+&COSMO_PARAMS
+omega_b=0.0
+omega_m=0.31
+omega_l=0.69
+h0=0.746
+/
+
+&REFINE_PARAMS
+m_refine=10*8.
+ivar_refine=0
+interpol_var=1
+interpol_type=0
+q_refine_holdback=.false.
+/
+
+&POISSON_PARAMS
+epsilon=1.d-4
+/
+
+! Required syntactically by the current binary; inactive because hydro=.false.
+&STELLAR_ENRICHMENT_PARAMS
+feedback_mode='legacy'
+/

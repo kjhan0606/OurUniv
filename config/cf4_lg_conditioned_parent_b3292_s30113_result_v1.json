@@ -1,8 +1,8 @@
 {
   "schema": "ouruniv-cf4-lg-conditioned-parent-b3292-s30113-result-v1",
   "date": "2026-09-22",
-  "stage": "4-5/8 LG-conditioned high-k realization before GRAFIC/RAMSES validation",
-  "status": "single_L9_candidate_passes_PM_LG_and_parent_environment_validation",
+  "stage": "7/8 parent RAMSES z=0 structure validation; HOP local-environment check running",
+  "status": "L9_candidate_passes_RAMSES_LG_Virgo_Coma;_local_environment_conditional",
   "large_scale_parent": {
     "result_record": "config/cf4_parent_recovery_b3292_beta025_result_v1.json",
     "parent_seed": 3292,
@@ -86,10 +86,62 @@
     "coma_mass_msun_h": 581285710546875.0,
     "coma_target_separation_mpc_h": 4.240337855596284
   },
+  "grafic_parent_ic": {
+    "job": 394229,
+    "directory": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1/grafic_l9",
+    "mesh_size": 512,
+    "spacing_mpc_h": 0.75,
+    "roundtrip_relative_error": 0.0,
+    "phase_transfer_median_r": 1.0,
+    "phase_transfer_min_r": 0.999,
+    "peak_rss_kib": 11888936
+  },
+  "ramses_parent_forward": {
+    "preflight_job": 394244,
+    "z0_job": 394245,
+    "run": "/gpfs/kjhan/CF4/ramses/cf4_lg_b3292_s30113_parent_z0_v1/job_394245",
+    "initial_snapshot": 1,
+    "final_snapshot": 2,
+    "final_aexp": 1.00806708192456,
+    "fine_steps": 157,
+    "mass_conservation_error": 0.0,
+    "energy_conservation_error": -0.00306,
+    "elapsed": "00:11:11",
+    "peak_rss_kib": 50646504
+  },
+  "galaxyfinder_parent_validation": {
+    "pipeline_job": 394268,
+    "validation_job": 394270,
+    "finder": "GalaxyFinder RAMSES NewDD plus variable-mass opFoF",
+    "nsplit": 256,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_parent_galaxyfinder_v1.json",
+    "result_sha256": "5a1973a3a9a4caa0d645a1b292c0be73bc833dfc0ce664ad0ad1a72ae3f33232",
+    "halo_count": 142500,
+    "lg_pair": {
+      "masses_msun_h": [2578623900753.602, 1525383152558.4702],
+      "separation_mpc_h": 0.8568558984738025,
+      "midpoint_offset_mpc_h": 3.598670257075597,
+      "peculiar_radial_velocity_km_s": -145.0326415542934,
+      "total_radial_velocity_km_s": -59.34705170691315,
+      "tangential_velocity_km_s": 99.5640444512836
+    },
+    "virgo": {
+      "mass_msun_h": 329301167720239.5,
+      "target_separation_mpc_h": 4.346096138648271
+    },
+    "coma": {
+      "mass_msun_h": 586655096744836.5,
+      "target_separation_mpc_h": 4.092555295056198
+    },
+    "member_id_artifact": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s30113_parent_members_v1.npz",
+    "member_id_artifact_sha256": "9bc3da1cf37805f04e25bf67fe5eaa82e5f65c2fa10eb3f8f0e4d172eb10bf5f",
+    "conditional_issue": "A 1.22e13 Msun/h FoF group lies 4.16 Mpc/h from the observer. The frozen definitive exclusion is HOP/M200c-based, so FoF alone neither passes nor rejects it.",
+    "hop_job": 394274
+  },
   "decision": {
-    "selected_L9_field": "GO_FOR_GRAFIC_AND_PARENT_RAMSES_VALIDATION",
+    "selected_L9_field": "CONDITIONAL_PENDING_HOP_LOCAL_ENVIRONMENT",
     "production_IC": "NO_GO",
-    "zoom_IC": "NO_GO_UNTIL_PARENT_RAMSES_HALO_IDENTIFICATION_AND_TRACE",
-    "next": "Export this exact N512 white field to a phase-identical GRAFIC parent IC, run RAMSES parent validation, identify the LG/Virgo/Coma halos with GalaxyFinder, and trace the LG Lagrangian mask before generating the L12 pilot zoom."
+    "zoom_IC": "NO_GO_UNTIL_HOP_LOCAL_ENVIRONMENT_AND_LAGRANGIAN_TRACE_PASS",
+    "next": "Finish the preregistered HOP/M200c local-environment gate. If it passes, trace the preserved LG member IDs to the initial lattice and generate the L12 pilot zoom; if it fails, reject seed 30113 and add the missing local-environment constraint to the high-k search."
   }
 }
