@@ -1,0 +1,83 @@
+{
+  "schema": "ouruniv-cf4-parent-recovery-b3292-beta025-result-v1",
+  "date": "2026-09-22",
+  "stage": "3-4/8 parent z0-environment recovery before high-k completion",
+  "status": "parent_candidate_passes_current_low_resolution_joint_screen_not_yet_production_ic",
+  "root_cause": {
+    "rejected_production_parent": "/gpfs/kjhan/CF4/kf_design/low_high_splice_repair_bundle_v1/repaired_field.npz",
+    "finding": "The rejected field originated from an explicitly uncalibrated z=0 selection support map, was promoted after numerical splice checks without rerunning P1, and passed only two of five frozen P1 environment gates.",
+    "rejected_posthoc_fix": "A direct Hoffman-Ribak Virgo patch produced unacceptable global/environment and power-spectrum distortions.",
+    "legacy_parent_issue": "The sole legacy 5/5 P1 seed 3429 passed percentile gates but did not place cluster-mass Virgo and Coma halos inside the frozen z=0 search radii."
+  },
+  "search": {
+    "linear_top_hat_job": 394000,
+    "linear_top_hat_result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_physical_cluster_gate_scan_v1.json",
+    "linear_top_hat_result_sha256": "aedbdf1ad4cea00fbf425d57d884e4a7424a8116cc009944ec25760a5864ad47",
+    "all_256_pm_fof_job": 394014,
+    "all_256_pm_fof_result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_cluster_pm_fof_scan_all_v2.json",
+    "all_256_pm_fof_result_sha256": "7cc3597fc99b2c9e06c6c85b2b586eab7b9df8221341d64c1ff83598c081f8fd",
+    "raw_seed_3292": {
+      "virgo_fof_mass_msun_h": 318636600000000.0,
+      "virgo_target_separation_mpc_h": 4.985159339484393,
+      "coma_fof_mass_msun_h": 553312800000000.0,
+      "coma_target_separation_mpc_h": 4.155004752887422,
+      "legacy_p1_failure_only": "LocalVoid median shell percentile 36.3287408895 exceeded frozen maximum 35.0"
+    }
+  },
+  "conditioning": {
+    "method": "regularized ensemble linear update estimated from all 256 CF4 velocity-conditioned parent draws",
+    "base_seed": 3292,
+    "selected_beta": 0.25,
+    "changed_information": "four Local Void probe densities with already-passing Virgo, Coma, Bootes, and observer summaries held at their base values",
+    "fourier_localization_h_Mpc": {
+      "full_correction_below": 0.3,
+      "smooth_to_zero_at": 0.6,
+      "exactly_unchanged_above": 0.6
+    },
+    "candidate": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+    "candidate_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d",
+    "manifest": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/manifest.json",
+    "manifest_sha256": "54380dd0bfb5373f8af41d4c8e9eb7140d86b41c7af440329ee2e1136e79efc7"
+  },
+  "forward_validation": {
+    "job": 394027,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_ensemble_conditioning_refine_eval_v1.json",
+    "result_sha256": "db394013190fb523a7905f880305ebfe16a072b66900bd1c641e93ca8661d535",
+    "p1_gates": {
+      "Virgo": true,
+      "Coma": true,
+      "LocalVoid": true,
+      "BootesVoid": true,
+      "ObserverEnvironment": true
+    },
+    "virgo_fof_mass_msun_h": 318636600000000.0,
+    "coma_fof_mass_msun_h": 553312800000000.0,
+    "local_void_median_shell_percentile": 34.98524964053746,
+    "high_k_power_ratio_above_0p6": 1.0,
+    "candidate_base_correlation": 0.9999978713539228
+  },
+  "cf4_likelihood_audit": {
+    "job": 394029,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_candidate_b3292_beta0p25_likelihood_audit_v1.json",
+    "result_sha256": "423ef8077b9a07eaa0b09eb57cd5f716ca6db3da8d119c2e073654e2fe07d7ae",
+    "base_normalized_residual_rms": 1.0130108482516833,
+    "candidate_normalized_residual_rms": 1.0129401124285342,
+    "delta_chi2": -2.768123977999494,
+    "posterior_mahalanobis": 5.5061657341971255
+  },
+  "operational_history": {
+    "failed_or_cancelled_diagnostics": {
+      "393993": "missing GPU resource request; cancelled after CPU fallback",
+      "393999": "read-only JAX array subtraction implementation error; corrected immediately",
+      "394020": "superseded general three-base proposal after seed 3292 was identified; cancelled before outputs"
+    },
+    "successful_jobs": [393990, 394000, 394006, 394012, 394014, 394023, 394024, 394026, 394027, 394029]
+  },
+  "decision": {
+    "old_repaired_field_production_status": "REJECTED",
+    "b3292_beta0p25_parent_status": "CONDITIONAL_GO_FOR_RESOLUTION_VALIDATION_ONLY",
+    "production_ic_status": "NO_GO",
+    "ramses_status": "NO_GO",
+    "next": "Validate the candidate with a higher-resolution statistically correct high-k completion while preserving all modes above k=0.6 h/Mpc from the base realization; then repeat PM+FoF/P1 before any GRAFIC or zoom generation."
+  }
+}
