@@ -1,8 +1,8 @@
 {
   "schema": "ouruniv-cf4-lg-conditioned-parent-b3292-s30113-result-v1",
   "date": "2026-09-22",
-  "stage": "7/8 parent RAMSES z=0 structure validation; HOP local-environment check running",
-  "status": "L9_candidate_passes_RAMSES_LG_Virgo_Coma;_local_environment_conditional",
+  "stage": "7/8 parent RAMSES z=0 validation completed; candidate rejected and stage-4 high-k reselection running",
+  "status": "seed_30113_rejected_by_frozen_HOP_Local_Volume_environment_gate",
   "large_scale_parent": {
     "result_record": "config/cf4_parent_recovery_b3292_beta025_result_v1.json",
     "parent_seed": 3292,
@@ -142,6 +142,22 @@
     "conditional_issue": "A 1.22e13 Msun/h FoF group lies 4.16 Mpc/h from the observer. The frozen definitive exclusion is HOP/M200c-based, so FoF alone neither passes nor rejects it.",
     "hop_job": 394274
   },
+  "hop_parent_validation": {
+    "pipeline_job": 394274,
+    "validation_job": 394294,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_parent_hop_v1.json",
+    "result_sha256": "d3bf5e78022a092d892ef0b21a5db5fb2fc2155d224d269f814d47b2f4f0a25b",
+    "group_count": 74432,
+    "virgo_mass_msun_h": 327477499527168.0,
+    "coma_mass_msun_h": 552371685949440.0,
+    "nearest_massive_group": {
+      "mass_msun_h": 11066917729075.2,
+      "npart": 305,
+      "observer_distance_mpc_h": 4.148266529527755,
+      "lg_midpoint_distance_mpc_h": 3.3548483481225375
+    },
+    "decision": "HOP_LOCAL_ENVIRONMENT_FAIL"
+  },
   "lagrangian_trace": {
     "job": 394280,
     "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_lagrangian_trace_v1.json",
@@ -164,9 +180,9 @@
     "fresh_proposals": 256
   },
   "decision": {
-    "selected_L9_field": "CONDITIONAL_PENDING_HOP_LOCAL_ENVIRONMENT",
+    "selected_L9_field": "REJECT_SEED_30113_HOP_LOCAL_ENVIRONMENT_FAIL",
     "production_IC": "NO_GO",
-    "zoom_IC": "NO_GO_UNTIL_HOP_LOCAL_ENVIRONMENT_AND_LAGRANGIAN_TRACE_PASS",
-    "next": "Finish the preregistered HOP/M200c local-environment gate. If it passes, trace the preserved LG member IDs to the initial lattice and generate the L12 pilot zoom; if it fails, reject seed 30113 and add the missing local-environment constraint to the high-k search."
+    "zoom_IC": "NO_GO_FOR_SEED_30113",
+    "next": "Complete fresh search job 394297 with the corrected v12 Local-Volume screen, select only a candidate that passes LG plus the observer/midpoint massive-halo exclusion, and repeat the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP validation chain."
   }
 }
