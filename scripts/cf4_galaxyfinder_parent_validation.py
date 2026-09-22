@@ -174,6 +174,109 @@ def find_lg_pairs(catalog: np.ndarray, p2: dict) -> list[dict]:
     return rows
 
 
+def diagnose_lg_pair_cutflow(catalog: np.ndarray, p2: dict, limit: int = 12) -> dict:
+    """Explain which frozen LG cut removes each nearby pair.
+
+    This is deliberately diagnostic-only: it does not relax or retune any
+    selection threshold after looking at the RAMSES result.
+    """
+    screen = p2["screen"]
+    position = np.column_stack((catalog["x"], catalog["y"], catalog["z"]))
+    velocity = np.column_stack((catalog["vx"], catalog["vy"], catalog["vz"])).astype(np.float64)
+    mass = catalog["mass"].astype(np.float64)
+    mass_lo, mass_hi = map(float, screen["pair_member_mass_range_msun_h"])
+    midpoint_limit = float(screen["pair_midpoint_max_offset_mpc_h"])
+    isolation_limit = float(screen["isolation_radius_mpc_h"])
+    ratio_limit = float(screen["pair_mass_ratio_max"])
+    sep_lo, sep_hi = map(float, screen["pair_separation_range_mpc_h"])
+    radius = distance(position, OBSERVER)
+    eligible = np.flatnonzero(
+        (mass >= mass_lo) & (mass <= mass_hi) & (radius <= midpoint_limit + 1.0)
+    )
+    massive = np.flatnonzero(mass >= float(screen["isolation_mass_threshold_msun_h"]))
+    counts = {
+        "eligible_halos": int(eligible.size),
+        "all_pairs": 0,
+        "separation_pass": 0,
+        "mass_ratio_pass": 0,
+        "midpoint_pass": 0,
+        "isolation_pass": 0,
+    }
+    candidates: list[dict] = []
+    for local_a in range(eligible.size):
+        i = int(eligible[local_a])
+        for local_b in range(local_a + 1, eligible.size):
+            j = int(eligible[local_b])
+            counts["all_pairs"] += 1
+            vector = min_image(position[i] - position[j])
+            separation = float(np.linalg.norm(vector))
+            separation_pass = sep_lo <= separation <= sep_hi
+            counts["separation_pass"] += int(separation_pass)
+            ratio = float(max(mass[i], mass[j]) / min(mass[i], mass[j]))
+            ratio_pass = ratio <= ratio_limit
+            counts["mass_ratio_pass"] += int(separation_pass and ratio_pass)
+            midpoint = (position[j] + 0.5 * vector) % BOX
+            midpoint_offset = float(distance(midpoint[None, :], OBSERVER)[0])
+            midpoint_pass = midpoint_offset <= midpoint_limit
+            counts["midpoint_pass"] += int(separation_pass and ratio_pass and midpoint_pass)
+            external = [
+                float(distance(position[k][None, :], midpoint)[0])
+                for k in massive if int(k) not in (i, j)
+            ]
+            isolation = min(external) if external else 99.0
+            isolation_pass = isolation >= isolation_limit
+            counts["isolation_pass"] += int(
+                separation_pass and ratio_pass and midpoint_pass and isolation_pass
+            )
+            # A dimensionless ordering for diagnosis only.  Zero means every
+            # frozen geometric cut passes; positive terms quantify violations.
+            penalty = (
+                max(0.0, sep_lo - separation) / sep_lo
+                + max(0.0, separation - sep_hi) / sep_hi
+                + max(0.0, ratio - ratio_limit) / ratio_limit
+                + max(0.0, midpoint_offset - midpoint_limit) / midpoint_limit
+                + max(0.0, isolation_limit - isolation) / isolation_limit
+            )
+            radial_hat = vector / separation if separation > 0 else np.zeros(3)
+            relative_velocity = velocity[i] - velocity[j]
+            peculiar_radial = float(np.dot(relative_velocity, radial_hat))
+            tangential = float(np.linalg.norm(relative_velocity - peculiar_radial * radial_hat))
+            failed = []
+            if not separation_pass:
+                failed.append("separation")
+            if not ratio_pass:
+                failed.append("mass_ratio")
+            if not midpoint_pass:
+                failed.append("midpoint")
+            if not isolation_pass:
+                failed.append("isolation")
+            candidates.append(
+                {
+                    "halo_i": i,
+                    "halo_j": j,
+                    "masses_msun_h": [float(mass[i]), float(mass[j])],
+                    "npart": [int(catalog["np"][i]), int(catalog["np"][j])],
+                    "positions_mpc_h": [position[i].tolist(), position[j].tolist()],
+                    "separation_mpc_h": separation,
+                    "mass_ratio": ratio,
+                    "midpoint_mpc_h": midpoint.tolist(),
+                    "midpoint_offset_mpc_h": midpoint_offset,
+                    "isolation_mpc_h": isolation,
+                    "peculiar_radial_velocity_km_s": peculiar_radial,
+                    "total_radial_velocity_km_s": peculiar_radial + 100.0 * separation,
+                    "tangential_velocity_km_s": tangential,
+                    "failed_cuts": failed,
+                    "diagnostic_penalty": float(penalty),
+                }
+            )
+    candidates.sort(key=lambda item: (item["diagnostic_penalty"], item["separation_mpc_h"]))
+    return {
+        "thresholds_frozen": True,
+        "counts": counts,
+        "nearest_pairs": candidates[:limit],
+    }
+
+
 def member_ids(member_path: Path, catalog: np.ndarray, indices: list[int]) -> list[np.ndarray]:
     cumulative = np.concatenate(([0], np.cumsum(catalog["np"], dtype=np.uint64)))
     expected = int(cumulative[-1]) * DM_RECORD.itemsize
@@ -245,6 +348,7 @@ def main() -> None:
         for name, entry in p1["clusters"].items()
     }
     pairs = find_lg_pairs(catalog, p2)
+    pair_cutflow = diagnose_lg_pair_cutflow(catalog, p2)
     selected = pairs[0] if pairs else None
     position = np.column_stack((catalog["x"], catalog["y"], catalog["z"]))
     massive = np.flatnonzero(catalog["mass"] >= 5.0e12)
@@ -333,6 +437,7 @@ def main() -> None:
         "lg": {
             "hard_pair_count": len(pairs),
             "selected": selected,
+            "cutflow": pair_cutflow,
             "m33_status": "unresolved at L9; mandatory in the L12 zoom",
         },
         "clusters": clusters,

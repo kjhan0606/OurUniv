@@ -16,6 +16,11 @@ def main() -> None:
     parser.add_argument("--base-config", type=Path, required=True)
     parser.add_argument("--selected-config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--search-index",
+        type=int,
+        help="Reproduce this passing search row instead of the minimum-score row.",
+    )
     args = parser.parse_args()
 
     search = json.loads(args.search_result.read_text())
@@ -30,18 +35,31 @@ def main() -> None:
         print("NO_CONDITIONED_LG_CANDIDATE: exact reproduction not started", flush=True)
         raise SystemExit(3)
 
-    selected = min(
-        passing,
-        key=lambda row: (float(row["best_pair"]["ranking_score"]), int(row["index"])),
-    )
+    if args.search_index is None:
+        selected = min(
+            passing,
+            key=lambda row: (float(row["best_pair"]["ranking_score"]), int(row["index"])),
+        )
+        selection_rule = (
+            "minimum preregistered best-pair ranking_score among rows passing the "
+            "hard P2 screen named by the base config; index breaks exact ties"
+        )
+    else:
+        matches = [row for row in passing if int(row["index"]) == args.search_index]
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"search index {args.search_index} is not a unique passing row"
+            )
+        selected = matches[0]
+        selection_rule = (
+            "explicit passing search index selected for preregistered RAMSES "
+            "survival calibration; no P2 thresholds were retuned"
+        )
     base = json.loads(args.base_config.read_text())
     base["schema"] = "ouruniv-cf4-lg-highk-selected-candidate-v1"
     base["status"] = "selected_for_exact_reproduction"
     base["selection_source"] = str(args.search_result.resolve())
-    base["selection_rule"] = (
-        "minimum preregistered best-pair ranking_score among rows passing the "
-        "hard P2 screen named by the base config; index breaks exact ties"
-    )
+    base["selection_rule"] = selection_rule
     base["selected_search_index"] = int(selected["index"])
     base["seed_bank"] = {
         "count": 1,
