@@ -12,6 +12,7 @@ from pathlib import Path
 import numpy as np
 
 RHO_CRIT = 2.775e11
+MERGED_PAIR_MASS_RELATIVE_TOLERANCE = 0.02
 
 
 def sha256(path: Path) -> str:
@@ -129,6 +130,88 @@ def find_hop_lg_pairs(
     return rows
 
 
+def classify_selected_pair_crossmatch(
+    selected: dict,
+    position: np.ndarray,
+    mass: np.ndarray,
+    npart: np.ndarray,
+    box: float,
+) -> dict:
+    """Classify a GalaxyFinder pair against the regrouped HOP catalogue.
+
+    Regrouped HOP can join a close MW/M31 analogue into one host group.  That
+    outcome is useful for checking the combined parent mass and environment,
+    but it is not evidence that HOP independently resolved both components.
+    """
+    pair_positions = np.asarray(
+        [selected["position_i_mpc_h"], selected["position_j_mpc_h"]],
+        dtype=np.float64,
+    )
+    pair_hop_rows: list[int] = []
+    pair_match_distance: list[float] = []
+    for pair_position in pair_positions:
+        separation = distance(position, pair_position, box)
+        index = int(np.argmin(separation))
+        pair_hop_rows.append(index)
+        pair_match_distance.append(float(separation[index]))
+
+    distinct = len(set(pair_hop_rows)) == 2
+    within_match_radius = max(pair_match_distance, default=math.inf) <= 1.0
+    merged_row = pair_hop_rows[0] if pair_hop_rows and not distinct else None
+    selected_npart = [int(value) for value in selected.get("npart", [])]
+    selected_mass = (
+        float(selected["m1_fof_msun_h"]) + float(selected["m2_fof_msun_h"])
+    )
+    if merged_row is None:
+        hop_npart = None
+        hop_mass = None
+        particle_count_match = False
+        mass_relative_error = None
+        merged_consistency_pass = False
+    else:
+        hop_npart = int(npart[merged_row])
+        hop_mass = float(mass[merged_row])
+        particle_count_match = (
+            len(selected_npart) == 2 and hop_npart == sum(selected_npart)
+        )
+        mass_relative_error = abs(hop_mass - selected_mass) / selected_mass
+        merged_consistency_pass = bool(
+            within_match_radius
+            and particle_count_match
+            and mass_relative_error <= MERGED_PAIR_MASS_RELATIVE_TOLERANCE
+        )
+
+    pair_supported = bool(within_match_radius and distinct)
+    return {
+        "mode": (
+            "distinct_hop_groups"
+            if distinct
+            else (
+                "merged_hop_group_mass_consistent"
+                if merged_consistency_pass
+                else "merged_hop_group_unverified"
+            )
+        ),
+        "pair_hop_rows": pair_hop_rows,
+        "pair_match_distance_mpc_h": pair_match_distance,
+        "distinct_hop_groups": distinct,
+        "within_match_radius": within_match_radius,
+        "pair_supported_for_parent_trace": pair_supported,
+        "hop_independently_resolves_pair": bool(distinct and within_match_radius),
+        "merged_group": {
+            "hop_row": merged_row,
+            "hop_npart": hop_npart,
+            "selected_pair_npart": selected_npart,
+            "particle_count_match": particle_count_match,
+            "hop_mass_msun_h": hop_mass,
+            "selected_pair_mass_msun_h": selected_mass,
+            "mass_relative_error": mass_relative_error,
+            "mass_relative_tolerance": MERGED_PAIR_MASS_RELATIVE_TOLERANCE,
+            "consistency_pass": merged_consistency_pass,
+        },
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--hop", type=Path, required=True)
@@ -179,26 +262,43 @@ def main() -> None:
     midpoint_distance = distance(position[massive], midpoint, box) if np.any(massive) else np.asarray([99.0])
     environment_pass = bool(observer_distance.min() >= 8.0 and midpoint_distance.min() >= 8.0)
 
-    pair_hop_rows: list[int] = []
-    pair_match_distance: list[float] = []
+    pair_crossmatch = None
     if selected is not None:
-        pair_positions = np.asarray(
-            [selected["position_i_mpc_h"], selected["position_j_mpc_h"]],
-            dtype=np.float64,
+        pair_crossmatch = classify_selected_pair_crossmatch(
+            selected, position, mass, npart, box
         )
-        for pair_position in pair_positions:
-            separation = distance(position, pair_position, box)
-            index = int(np.argmin(separation))
-            pair_hop_rows.append(index)
-            pair_match_distance.append(float(separation[index]))
+        pair_hop_rows = pair_crossmatch["pair_hop_rows"]
+        pair_match_distance = pair_crossmatch["pair_match_distance_mpc_h"]
         third_threshold = min(
             float(selected["m1_fof_msun_h"]), float(selected["m2_fof_msun_h"])
         )
     elif hop_selected is not None:
         pair_hop_rows = [int(index) for index in hop_selected["hop_rows"]]
         pair_match_distance = [0.0, 0.0]
+        pair_crossmatch = {
+            "mode": "independent_hop_pair",
+            "pair_hop_rows": pair_hop_rows,
+            "pair_match_distance_mpc_h": pair_match_distance,
+            "distinct_hop_groups": True,
+            "within_match_radius": True,
+            "pair_supported_for_parent_trace": True,
+            "hop_independently_resolves_pair": True,
+            "merged_group": None,
+        }
         third_threshold = min(float(value) for value in hop_selected["masses_msun_h"])
     else:
+        pair_hop_rows = []
+        pair_match_distance = []
+        pair_crossmatch = {
+            "mode": "no_pair",
+            "pair_hop_rows": [],
+            "pair_match_distance_mpc_h": [],
+            "distinct_hop_groups": False,
+            "within_match_radius": False,
+            "pair_supported_for_parent_trace": False,
+            "hop_independently_resolves_pair": False,
+            "merged_group": None,
+        }
         third_threshold = None
     third_distance = distance(position, midpoint, box)
     third_candidates = (
@@ -210,8 +310,7 @@ def main() -> None:
         dtype=np.int64,
     )
     standard_isolation_pass = bool(
-        len(set(pair_hop_rows)) == 2
-        and max(pair_match_distance, default=math.inf) <= 1.0
+        pair_crossmatch["pair_supported_for_parent_trace"]
         and third_candidates.size == 0
     )
 
@@ -260,6 +359,16 @@ def main() -> None:
         environment_pass
         if args.environment_policy == "v12-blanket-veto"
         else standard_isolation_pass
+    )
+    production_trace_pass = bool(
+        cluster_pass
+        and selected_environment_pass
+        and pair_crossmatch["hop_independently_resolves_pair"]
+    )
+    decision = (
+        "HOP_PARENT_STRUCTURE_PASS"
+        if production_trace_pass
+        else "HOP_PARENT_STRUCTURE_FAIL"
     )
     third_halos = [
         {
@@ -310,6 +419,7 @@ def main() -> None:
                 "third_halos": third_halos,
                 "pass": standard_isolation_pass,
             },
+            "pair_crossmatch": pair_crossmatch,
         },
         "gates": {
             "virgo_coma_mass": cluster_pass,
@@ -317,12 +427,16 @@ def main() -> None:
             "selected_environment_pass": selected_environment_pass,
             "v12_blanket_veto_diagnostic": environment_pass,
             "standard_lg_isolation": standard_isolation_pass,
+            "hop_independently_resolves_pair": pair_crossmatch[
+                "hop_independently_resolves_pair"
+            ],
+            "merged_pair_consistency": bool(
+                pair_crossmatch.get("merged_group")
+                and pair_crossmatch["merged_group"]["consistency_pass"]
+            ),
+            "production_trace_pass": production_trace_pass,
         },
-        "decision": (
-            "HOP_PARENT_STRUCTURE_PASS"
-            if cluster_pass and selected_environment_pass
-            else "HOP_PARENT_STRUCTURE_FAIL"
-        ),
+        "decision": decision,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
