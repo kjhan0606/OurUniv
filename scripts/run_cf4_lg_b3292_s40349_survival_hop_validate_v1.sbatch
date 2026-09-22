@@ -21,3 +21,6 @@ run=/gpfs/kjhan/CF4/ramses/sv1_grammar/i248_s40349/job_1104302
   --p2 "$root/config/p2_lg_targets_v11_parent_b3292_beta025_l9.json" \
   --environment-policy standard-lg-isolation \
   --output /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_i248_s40349_survival_hop_v1.json
+grep -q '"decision": "HOP_PARENT_STRUCTURE_PASS"' \
+  /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_i248_s40349_survival_hop_v1.json
+printf 'HOP_S40349_SCIENCE_GATE_PASS\n'
