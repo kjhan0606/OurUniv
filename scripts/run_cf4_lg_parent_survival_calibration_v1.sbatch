@@ -5,9 +5,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=128G
+#SBATCH --mem=64G
 #SBATCH --time=01:00:00
-#SBATCH --array=124,129,242,248
+#SBATCH --array=124,129,242,248%2
 #SBATCH --no-requeue
 #SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%A_%a.out
 #SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%A_%a.err

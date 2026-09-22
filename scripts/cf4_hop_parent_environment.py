@@ -199,10 +199,11 @@ def main() -> None:
         pair_match_distance = [0.0, 0.0]
         third_threshold = min(float(value) for value in hop_selected["masses_msun_h"])
     else:
-        third_threshold = math.inf
+        third_threshold = None
     third_distance = distance(position, midpoint, box)
-    third_candidates = np.flatnonzero(
-        (mass >= third_threshold) & (third_distance <= 2.5)
+    third_candidates = (
+        np.flatnonzero((mass >= third_threshold) & (third_distance <= 2.5))
+        if third_threshold is not None else np.empty(0, dtype=np.int64)
     )
     third_candidates = np.asarray(
         [index for index in third_candidates if int(index) not in pair_hop_rows],
