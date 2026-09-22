@@ -24,7 +24,9 @@ selected_config="$config_root/${tag}.json"
 work=/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_survival_calibration_v1/$tag
 grafic="$work/grafic_l9"
 transfer="$work/transfer_l9.npz"
-run_root=/gpfs/kjhan/CF4/ramses/cf4_lg_b3292_survival_calibration_v1/$tag
+ic_root=/gpfs/kjhan/CF4/ramses/ic/sv1
+ic_link="$ic_root/$tag"
+run_root=/gpfs/kjhan/CF4/ramses/sv1/$tag
 run="$run_root/job_${SLURM_JOB_ID}"
 binary=/home/kjhan/BACKUP/lagRamses-de-nonstd/bin/ramses_final3d
 template="$root/config/ramses_cf4_lg_parent_survival_screen_v1.nml.in"
@@ -36,8 +38,8 @@ if [[ "${CF4_SKIP_REPRODUCTION:-0}" == 1 ]]; then
   test -s "$work/result.json"
   test -s "$work/passing_field_000.npz"
   test -s "$selected_config"
-  if [[ -e "$grafic" || -e "$transfer" || -e "$run" ]]; then
-    echo "refusing to overwrite downstream artifacts for $tag" >&2
+  if [[ -e "$run" ]]; then
+    echo "refusing to overwrite RAMSES run for $tag" >&2
     exit 3
   fi
   mkdir -p "$run_root"
@@ -62,19 +64,39 @@ fi
 cd "$root"
 export JAX_ENABLE_X64=True XLA_PYTHON_CLIENT_PREALLOCATE=false
 export OMP_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16 MKL_NUM_THREADS=16
-/home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_export_grafic.py \
-  --s-npz "$work/passing_field_000.npz" --key s_conditioned --N 512 --spacing 0.75 \
-  --Om 0.31 --h 0.746 --A-s-1e9 1.63 --astart 0.02 --out "$grafic"
-/home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_measure_transfer.py \
-  --deltab "$grafic/ic_deltab" --sfield "$work/passing_field_000.npz" \
-  --skey s_conditioned --box-hmpc 384 --out "$transfer"
-sha256sum "$work/passing_field_000.npz" "$grafic/ic_deltab" \
-  "$grafic/ic_velcx" "$grafic/ic_velcy" "$grafic/ic_velcz" "$transfer" \
-  > "$work/grafic_l9_SHA256SUMS"
+if [[ -s "$grafic/ic_deltab" && -s "$grafic/ic_velcx" \
+      && -s "$grafic/ic_velcy" && -s "$grafic/ic_velcz" \
+      && -s "$transfer" && -s "$work/grafic_l9_SHA256SUMS" ]]; then
+  printf 'GRAFIC_SKIP_COMPLETE tag=%s\n' "$tag"
+elif [[ ! -e "$grafic" && ! -e "$transfer" \
+        && ! -e "$work/grafic_l9_SHA256SUMS" ]]; then
+  /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_export_grafic.py \
+    --s-npz "$work/passing_field_000.npz" --key s_conditioned --N 512 --spacing 0.75 \
+    --Om 0.31 --h 0.746 --A-s-1e9 1.63 --astart 0.02 --out "$grafic"
+  /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_measure_transfer.py \
+    --deltab "$grafic/ic_deltab" --sfield "$work/passing_field_000.npz" \
+    --skey s_conditioned --box-hmpc 384 --out "$transfer"
+  sha256sum "$work/passing_field_000.npz" "$grafic/ic_deltab" \
+    "$grafic/ic_velcx" "$grafic/ic_velcy" "$grafic/ic_velcz" "$transfer" \
+    > "$work/grafic_l9_SHA256SUMS"
+else
+  echo "refusing inconsistent partial GRAFIC artifacts for $tag" >&2
+  exit 3
+fi
+
+mkdir -p "$ic_root"
+if [[ -L "$ic_link" ]]; then
+  [[ "$(readlink -f "$ic_link")" == "$(readlink -f "$grafic")" ]]
+elif [[ -e "$ic_link" ]]; then
+  echo "refusing non-symlink IC path $ic_link" >&2
+  exit 3
+else
+  ln -s "$grafic" "$ic_link"
+fi
 
 mkdir "$run"
 namelist="$run/ramses.nml"
-sed "s|@INITFILE@|$grafic|g" "$template" > "$namelist"
+sed "s|@INITFILE@|$ic_link|g" "$template" > "$namelist"
 cd "$run"
 printf 'job=%s array_job=%s index=%s seed=%s host=%s screening_only=true expected_outputs=1\n' \
   "$SLURM_JOB_ID" "$SLURM_ARRAY_JOB_ID" "$index" "$seed" "$(hostname)" | tee provenance.txt
