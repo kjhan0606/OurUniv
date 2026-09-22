@@ -19,5 +19,6 @@ run=/gpfs/kjhan/CF4/ramses/cf4_lg_b3292_s40274_parent_z0_v1/job_396128
   --hop "$run/HOP_00002/grp00002.pos" \
   --galaxyfinder /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40274_parent_galaxyfinder_v1.json \
   --p1 "$root/config/p1_targets_v2_observer.json" \
+  --p2 "$root/config/p2_lg_targets_v11_parent_b3292_beta025_l9.json" \
   --environment-policy standard-lg-isolation \
   --output /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40274_parent_hop_v1.json
