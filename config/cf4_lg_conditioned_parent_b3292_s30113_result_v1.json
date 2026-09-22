@@ -2,7 +2,7 @@
   "schema": "ouruniv-cf4-lg-conditioned-parent-b3292-s30113-result-v1",
   "date": "2026-09-22",
   "stage": "7/8 parent RAMSES z=0 validation completed; candidate rejected and stage-4 high-k reselection running",
-  "status": "seed_30113_rejected_by_frozen_HOP_Local_Volume_environment_gate",
+  "status": "seed_30113_historical_forward_complete_v12_environment_rejection_superseded",
   "large_scale_parent": {
     "result_record": "config/cf4_parent_recovery_b3292_beta025_result_v1.json",
     "parent_seed": 3292,
@@ -185,10 +185,19 @@
     "pair_formation_diagnostic_job": 395247,
     "environment_attribution_job": 395248
   },
+  "gate_reassessment": {
+    "record": "config/cf4_local_volume_halo_gate_correction_v1.json",
+    "finding": "The v12 no-halo-above-5e12-Msun/h-within-8-Mpc/h rule is stronger than standard LG isolation and can reject the observed Centaurus A group. It is no longer a candidate rejection gate.",
+    "parent_persistence_job": 396101,
+    "parent_persistence_result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_b3292_local_halo_persistence_v1.json",
+    "parent_persistence_result_sha256": "b4cc0fca1baecea77799c8155d3208a265da5600725ed182384863a57b338e21",
+    "v12_status": "DIAGNOSTIC_ONLY_SUPERSEDED_FOR_SELECTION",
+    "seed_30113_status": "NOT_PROMOTED_BECAUSE_A_BETTER_V11_PAIR_CANDIDATE_EXISTS"
+  },
   "decision": {
-    "selected_L9_field": "REJECT_SEED_30113_HOP_LOCAL_ENVIRONMENT_FAIL",
+    "selected_L9_field": "SEED_30113_NOT_SELECTED_AFTER_GATE_CORRECTION",
     "production_IC": "NO_GO",
     "zoom_IC": "NO_GO_FOR_SEED_30113",
-    "next": "Use jobs 395247 and 395248 to separate LG pair-formation failures from the 8 Mpc/h Local-Volume environment rejection. If the environment is limiting, add a prospectively frozen physical environment constraint without relaxing the observed thresholds; otherwise revise the LG peak proposal itself. Only a v12-screen survivor may re-enter the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP chain."
+    "next": "Exactly reproduce the minimum-ranking-score v11 pair candidate, field seed 40274 at diagnostic index 173, then repeat the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP chain. Keep the P1 observer density/excess-mass gate and standard 3 Mpc/h pair isolation; do not use the superseded v12 8 Mpc/h blanket halo veto."
   }
 }

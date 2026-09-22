@@ -35,12 +35,12 @@ def main() -> None:
         key=lambda row: (float(row["best_pair"]["ranking_score"]), int(row["index"])),
     )
     base = json.loads(args.base_config.read_text())
-    base["schema"] = "ouruniv-cf4-lg-highk-selected-environment-v3"
+    base["schema"] = "ouruniv-cf4-lg-highk-selected-candidate-v1"
     base["status"] = "selected_for_exact_reproduction"
     base["selection_source"] = str(args.search_result.resolve())
     base["selection_rule"] = (
         "minimum preregistered best-pair ranking_score among rows passing the "
-        "unchanged v12 Local-Volume environment screen; index breaks exact ties"
+        "hard P2 screen named by the base config; index breaks exact ties"
     )
     base["selected_search_index"] = int(selected["index"])
     base["seed_bank"] = {
