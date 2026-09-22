@@ -177,12 +177,18 @@
     "regression_result": "3 passed",
     "fresh_search_config": "config/cf4_lg_highk_conditioning_pilot_b3292_v3_environment.json",
     "fresh_search_job": 394297,
-    "fresh_proposals": 256
+    "fresh_proposals": 256,
+    "fresh_search_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_environment_v3/result.json",
+    "fresh_search_result_sha256": "183719219dfa039ef6cc84a44e12e469f06a66f4fce8e1dae5a6464e9feb33d2",
+    "fresh_search_pass_count": 0,
+    "fresh_search_decision": "NO_CONDITIONED_LG_CANDIDATE",
+    "pair_formation_diagnostic_job": 395247,
+    "environment_attribution_job": 395248
   },
   "decision": {
     "selected_L9_field": "REJECT_SEED_30113_HOP_LOCAL_ENVIRONMENT_FAIL",
     "production_IC": "NO_GO",
     "zoom_IC": "NO_GO_FOR_SEED_30113",
-    "next": "Complete fresh search job 394297 with the corrected v12 Local-Volume screen, select only a candidate that passes LG plus the observer/midpoint massive-halo exclusion, and repeat the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP validation chain."
+    "next": "Use jobs 395247 and 395248 to separate LG pair-formation failures from the 8 Mpc/h Local-Volume environment rejection. If the environment is limiting, add a prospectively frozen physical environment constraint without relaxing the observed thresholds; otherwise revise the LG peak proposal itself. Only a v12-screen survivor may re-enter the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP chain."
   }
 }
