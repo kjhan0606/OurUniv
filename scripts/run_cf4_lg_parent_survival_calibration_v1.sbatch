@@ -3,7 +3,7 @@
 #SBATCH --partition=a100_pcie,a40,a100,h100,h200
 #SBATCH --exclude=syn06
 #SBATCH --nodes=1
-#SBATCH --ntasks=32
+#SBATCH --ntasks=16
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=64G
 #SBATCH --time=01:00:00
@@ -70,7 +70,7 @@ sha256sum "$binary" "$namelist" "$grafic/ic_deltab" "$grafic/ic_velcx" \
 export OMP_NUM_THREADS=2 OMP_PROC_BIND=close OMP_PLACES=cores
 export I_MPI_PIN=1 I_MPI_PIN_DOMAIN=omp
 timeout --signal=TERM --kill-after=30s 3300s \
-  mpirun -np 32 "$binary" "$namelist" 2>&1 | tee ramses.log
+  mpirun -np "$SLURM_NTASKS" "$binary" "$namelist" 2>&1 | tee ramses.log
 grep -q 'Run completed' ramses.log
 grep -q 'FFTW3 CPU direct Poisson solver enabled' ramses.log
 ! grep -Eiq 'fatal|segmentation|out of memory|MPI_ABORT|Fine multigrid Poisson failed to converge' ramses.log

@@ -87,6 +87,6 @@
     "production_IC": "NO_GO",
     "zoom_IC": "NO_GO_FOR_SEED_40274",
     "reason": "The PM pair does not survive the phase-identical RAMSES forward model as two halos within the frozen 0.3-1.2 Mpc/h separation interval; independent HOP also finds no passing pair.",
-    "next": "Run the preregistered four-candidate PM-to-RAMSES survival calibration (Slurm array 396156) on wider PM pairs before selecting the production parent and constructing its zoom mask."
+    "next": "Run the preregistered four-candidate PM-to-RAMSES survival calibration (Slurm array 396161) on wider PM pairs before selecting the production parent and constructing its zoom mask."
   }
 }
