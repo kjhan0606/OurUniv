@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=cf4_lg_survive
-#SBATCH --partition=a100_pcie,a40,a100,h100,h200
-#SBATCH --exclude=syn06
+#SBATCH --partition=normal
 #SBATCH --nodes=1
 #SBATCH --ntasks=16
 #SBATCH --cpus-per-task=2
@@ -9,8 +8,8 @@
 #SBATCH --time=02:00:00
 #SBATCH --array=124,129,242,248%2
 #SBATCH --no-requeue
-#SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%A_%a.out
-#SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%A_%a.err
+#SBATCH --output=/gpfs/kjhan/CF4/logs/grammar_%x_%A_%a.out
+#SBATCH --error=/gpfs/kjhan/CF4/logs/grammar_%x_%A_%a.err
 set -Eeuo pipefail
 
 root=/home/kjhan/BACKUP/CF4
@@ -26,7 +25,7 @@ grafic="$work/grafic_l9"
 transfer="$work/transfer_l9.npz"
 ic_root=/gpfs/kjhan/CF4/ramses/ic/sv1
 ic_link="$ic_root/$tag"
-run_root=/gpfs/kjhan/CF4/ramses/sv1/$tag
+run_root=/gpfs/kjhan/CF4/ramses/sv1_grammar/$tag
 run="$run_root/job_${SLURM_JOB_ID}"
 binary=/home/kjhan/BACKUP/lagRamses-de-nonstd/bin/ramses_final3d
 template="$root/config/ramses_cf4_lg_parent_survival_screen_v1.nml.in"
