@@ -13,7 +13,7 @@ set -Eeuo pipefail
 
 cd /home/kjhan/BACKUP/CF4
 export PYTHONPATH=/home/kjhan/BACKUP/CF4/scripts:/home/kjhan/BACKUP/CF4/src
-/home/kjhan/miniconda3/envs/circle/bin/python3.11 -m pytest -q \
+/home/kjhan/miniconda3/bin/python -m pytest -q \
   tests/test_cf4_parent_local_halo_persistence.py
 exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 \
   scripts/cf4_parent_local_halo_persistence.py \
