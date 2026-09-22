@@ -212,12 +212,64 @@ def classify_selected_pair_crossmatch(
     }
 
 
+def crossmatch_raw_hop_peaks(
+    path: Path,
+    selected: dict,
+    box: float,
+) -> dict:
+    """Match the selected pair to pre-regroup density peaks in a gbound file."""
+    pair_positions = np.asarray(
+        [selected["position_i_mpc_h"], selected["position_j_mpc_h"]],
+        dtype=np.float64,
+    )
+    nearest: list[dict | None] = [None, None]
+    peak_count = 0
+    with path.open() as stream:
+        for line in stream:
+            stripped = line.strip()
+            if stripped.startswith("###"):
+                break
+            if not stripped or stripped.startswith("#"):
+                continue
+            fields = stripped.split()
+            if len(fields) == 1 and peak_count == 0:
+                continue
+            if len(fields) != 7:
+                raise RuntimeError(f"invalid HOP gbound peak row: {stripped[:120]}")
+            group_id, group_npart = int(fields[0]), int(fields[1])
+            peak_position = np.asarray([float(value) for value in fields[3:6]]) * box
+            peak_density = float(fields[6])
+            for member, target in enumerate(pair_positions):
+                separation = float(distance(peak_position[None, :], target, box)[0])
+                if nearest[member] is None or separation < nearest[member]["distance_mpc_h"]:
+                    nearest[member] = {
+                        "raw_group_id": group_id,
+                        "raw_group_npart": group_npart,
+                        "peak_position_mpc_h": peak_position.tolist(),
+                        "peak_density_mean_units": peak_density,
+                        "distance_mpc_h": separation,
+                    }
+            peak_count += 1
+    if peak_count == 0 or any(item is None for item in nearest):
+        raise RuntimeError("HOP gbound file contains no raw peak catalogue")
+    group_ids = [int(item["raw_group_id"]) for item in nearest if item is not None]
+    distances = [float(item["distance_mpc_h"]) for item in nearest if item is not None]
+    return {
+        "catalog": str(path),
+        "peak_count": peak_count,
+        "nearest": nearest,
+        "distinct_raw_peaks": len(set(group_ids)) == 2,
+        "both_within_1_mpc_h": max(distances) <= 1.0,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--hop", type=Path, required=True)
     parser.add_argument("--galaxyfinder", type=Path, required=True)
     parser.add_argument("--p1", type=Path, required=True)
     parser.add_argument("--p2", type=Path)
+    parser.add_argument("--raw-gbound", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--box", type=float, default=384.0)
     parser.add_argument("--omega-m", type=float, default=0.31)
@@ -241,6 +293,11 @@ def main() -> None:
 
     galaxyfinder = json.loads(args.galaxyfinder.read_text())
     selected = galaxyfinder["lg"].get("selected")
+    raw_peak_crossmatch = (
+        crossmatch_raw_hop_peaks(args.raw_gbound, selected, box)
+        if args.raw_gbound is not None and selected is not None
+        else None
+    )
     independent_pairs: list[dict] = []
     if selected is None:
         if args.p2 is None:
@@ -398,6 +455,7 @@ def main() -> None:
             "selected": selected if selected is not None else hop_selected,
             "independent_pair_count": len(independent_pairs),
             "independent_pairs": independent_pairs[:12],
+            "raw_peak_crossmatch": raw_peak_crossmatch,
         },
         "clusters": clusters,
         "environment": {

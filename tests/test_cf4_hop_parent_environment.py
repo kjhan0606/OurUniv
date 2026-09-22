@@ -62,3 +62,19 @@ def test_distinct_nearby_hop_groups_remain_independently_resolved() -> None:
     assert result["mode"] == "distinct_hop_groups"
     assert result["pair_supported_for_parent_trace"] is True
     assert result["hop_independently_resolves_pair"] is True
+
+
+def test_raw_gbound_crossmatch_reports_distinct_density_peaks(tmp_path: Path) -> None:
+    path = tmp_path / "hop.gbound"
+    path.write_text(
+        "2\n"
+        "# raw peaks\n"
+        "0 45 10 0.0260416667 0.0260416667 0.0260416667 300\n"
+        "1 98 11 0.0281250000 0.0260416667 0.0260416667 400\n"
+        "###\n"
+        "0 1 150\n"
+    )
+    result = MODULE.crossmatch_raw_hop_peaks(path, selected_pair(), 384.0)
+    assert result["peak_count"] == 2
+    assert result["distinct_raw_peaks"] is True
+    assert result["both_within_1_mpc_h"] is True

@@ -21,20 +21,19 @@ common=(
   --environment-policy standard-lg-isolation
 )
 "$python" "$root/scripts/cf4_hop_parent_environment.py" \
-  --hop "$hop/raw00001.pos" "${common[@]}" \
-  --output /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_i248_s40349_hop_nh16_nomerge_v2.json
-"$python" "$root/scripts/cf4_hop_parent_environment.py" \
   --hop "$hop/grp00001.pos" "${common[@]}" \
+  --raw-gbound "$hop/hop00001.gbound" \
   --output /gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_i248_s40349_hop_nh16_regroup_v2.json
 "$python" - <<'PY'
 import json
 from pathlib import Path
 
-root = Path("/gpfs/kjhan/CF4/diagnostics")
-raw = json.loads((root / "cf4_lg_b3292_i248_s40349_hop_nh16_nomerge_v2.json").read_text())
-regrouped = json.loads((root / "cf4_lg_b3292_i248_s40349_hop_nh16_regroup_v2.json").read_text())
+path = Path("/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_i248_s40349_hop_nh16_regroup_v2.json")
+regrouped = json.loads(path.read_text())
+raw = regrouped["lg"]["raw_peak_crossmatch"]
 print(json.dumps({
-    "nomerge_pair_mode": raw["environment"]["pair_crossmatch"]["mode"],
+    "raw_distinct_peaks": raw["distinct_raw_peaks"],
+    "raw_both_within_1_mpc_h": raw["both_within_1_mpc_h"],
     "regroup_pair_mode": regrouped["environment"]["pair_crossmatch"]["mode"],
     "regroup_decision": regrouped["decision"],
 }, sort_keys=True))
