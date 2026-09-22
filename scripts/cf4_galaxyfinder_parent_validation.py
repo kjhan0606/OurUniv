@@ -153,6 +153,8 @@ def find_lg_pairs(catalog: np.ndarray, p2: dict) -> list[dict]:
             row = {
                 "halo_i": i,
                 "halo_j": j,
+                "position_i_mpc_h": position[i].tolist(),
+                "position_j_mpc_h": position[j].tolist(),
                 "m1_fof_msun_h": float(mass[i]),
                 "m2_fof_msun_h": float(mass[j]),
                 "npart": [int(catalog["np"][i]), int(catalog["np"][j])],
@@ -215,6 +217,11 @@ def main() -> None:
     parser.add_argument("--p2", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--member-output", type=Path, required=True)
+    parser.add_argument(
+        "--environment-policy",
+        choices=("v12-blanket-veto", "standard-lg-isolation"),
+        default="v12-blanket-veto",
+    )
     args = parser.parse_args()
 
     p1 = json.loads(args.p1.read_text())
@@ -276,7 +283,39 @@ def main() -> None:
         and clusters["Coma"].get("mass_msun_h", 0.0) >= 5.0e14
     )
     environment_fof_pass = observer_nearest >= 8.0 and midpoint_nearest >= 8.0
-    parent_core_pass = bool(selected is not None and cluster_pass)
+    third_halo = None
+    standard_isolation_pass = False
+    if selected is not None:
+        midpoint = np.asarray(selected["midpoint_mpc_h"])
+        pair_indices = (int(selected["halo_i"]), int(selected["halo_j"]))
+        third_threshold = min(
+            float(selected["m1_fof_msun_h"]), float(selected["m2_fof_msun_h"])
+        )
+        third_candidates = np.flatnonzero(
+            (catalog["mass"] >= third_threshold)
+            & (distance(position, midpoint) <= 2.5)
+        )
+        third_candidates = np.asarray(
+            [index for index in third_candidates if int(index) not in pair_indices],
+            dtype=np.int64,
+        )
+        if third_candidates.size:
+            index = int(third_candidates[np.argmax(catalog["mass"][third_candidates])])
+            third_halo = {
+                "catalog_index": index,
+                "mass_msun_h": float(catalog["mass"][index]),
+                "midpoint_distance_mpc_h": float(distance(position[index][None, :], midpoint)[0]),
+                "position_mpc_h": position[index].tolist(),
+            }
+        standard_isolation_pass = third_halo is None
+    selected_environment_pass = (
+        environment_fof_pass
+        if args.environment_policy == "v12-blanket-veto"
+        else standard_isolation_pass
+    )
+    parent_core_pass = bool(
+        selected is not None and cluster_pass and selected_environment_pass
+    )
     result = {
         "schema": "ouruniv-cf4-lg-selected-parent-galaxyfinder-validation-v1",
         "stage": "7/8 parent RAMSES z=0 structure validation",
@@ -298,6 +337,7 @@ def main() -> None:
         },
         "clusters": clusters,
         "environment": {
+            "selection_policy": args.environment_policy,
             "mass_threshold_msun_h": 5.0e12,
             "nearest_to_observer_mpc_h": observer_nearest,
             "nearest_to_lg_midpoint_mpc_h": midpoint_nearest,
@@ -308,6 +348,18 @@ def main() -> None:
                 if selected is not None else []
             ),
             "fof_proxy_pass": environment_fof_pass,
+            "v12_blanket_veto_is_diagnostic_only": (
+                args.environment_policy == "standard-lg-isolation"
+            ),
+            "standard_lg_isolation": {
+                "third_halo_mass_threshold_msun_h": (
+                    min(selected["m1_fof_msun_h"], selected["m2_fof_msun_h"])
+                    if selected is not None else None
+                ),
+                "radius_mpc_h": 2.5,
+                "most_massive_failing_third_halo": third_halo,
+                "pass": standard_isolation_pass,
+            },
             "status": (
                 "PASS" if environment_fof_pass else
                 "REQUIRES_HOP_OR_M200C_CHECK; the frozen gate is defined for HOP/M200c, not FoF mass"
@@ -316,12 +368,15 @@ def main() -> None:
         "gates": {
             "lg_pair": selected is not None,
             "virgo_coma_mass": cluster_pass,
-            "observer_environment_fof_proxy": environment_fof_pass,
-            "observer_environment_definitive": None,
+            "selected_environment_policy": args.environment_policy,
+            "selected_environment_pass": selected_environment_pass,
+            "v12_blanket_veto_diagnostic": environment_fof_pass,
+            "standard_lg_isolation": standard_isolation_pass,
         },
         "decision": (
-            "PARENT_RAMSES_HALO_PASS" if parent_core_pass and environment_fof_pass
-            else "PARENT_RAMSES_HALO_CONDITIONAL_LOCAL_ENVIRONMENT" if parent_core_pass
+            "PARENT_RAMSES_HALO_PASS" if parent_core_pass
+            else "PARENT_RAMSES_HALO_CONDITIONAL_LOCAL_ENVIRONMENT"
+            if selected is not None and cluster_pass
             else "PARENT_RAMSES_HALO_NO_GO"
         ),
     }

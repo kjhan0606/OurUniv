@@ -51,6 +51,11 @@ def main() -> None:
     parser.add_argument("--box", type=float, default=384.0)
     parser.add_argument("--omega-m", type=float, default=0.31)
     parser.add_argument("--h", type=float, default=0.746)
+    parser.add_argument(
+        "--environment-policy",
+        choices=("v12-blanket-veto", "standard-lg-isolation"),
+        default="v12-blanket-veto",
+    )
     args = parser.parse_args()
 
     table = np.loadtxt(args.hop, comments="#", ndmin=2)
@@ -69,6 +74,35 @@ def main() -> None:
     observer_distance = distance(position[massive], observer, box) if np.any(massive) else np.asarray([99.0])
     midpoint_distance = distance(position[massive], midpoint, box) if np.any(massive) else np.asarray([99.0])
     environment_pass = bool(observer_distance.min() >= 8.0 and midpoint_distance.min() >= 8.0)
+
+    selected = galaxyfinder["lg"]["selected"]
+    pair_positions = np.asarray(
+        [selected["position_i_mpc_h"], selected["position_j_mpc_h"]],
+        dtype=np.float64,
+    )
+    pair_hop_rows = []
+    pair_match_distance = []
+    for pair_position in pair_positions:
+        separation = distance(position, pair_position, box)
+        index = int(np.argmin(separation))
+        pair_hop_rows.append(index)
+        pair_match_distance.append(float(separation[index]))
+    third_threshold = min(
+        float(selected["m1_fof_msun_h"]), float(selected["m2_fof_msun_h"])
+    )
+    third_distance = distance(position, midpoint, box)
+    third_candidates = np.flatnonzero(
+        (mass >= third_threshold) & (third_distance <= 2.5)
+    )
+    third_candidates = np.asarray(
+        [index for index in third_candidates if int(index) not in pair_hop_rows],
+        dtype=np.int64,
+    )
+    standard_isolation_pass = bool(
+        len(set(pair_hop_rows)) == 2
+        and max(pair_match_distance) <= 1.0
+        and third_candidates.size == 0
+    )
 
     nearby = []
     if np.any(massive):
@@ -107,6 +141,27 @@ def main() -> None:
         else:
             clusters[name] = {"found": False}
 
+    cluster_pass = bool(
+        clusters["Virgo"].get("mass_msun_h", 0.0) >= 1.0e14
+        and clusters["Coma"].get("mass_msun_h", 0.0) >= 5.0e14
+    )
+    selected_environment_pass = (
+        environment_pass
+        if args.environment_policy == "v12-blanket-veto"
+        else standard_isolation_pass
+    )
+    third_halos = [
+        {
+            "hop_row": int(index),
+            "group_id": int(table[index, 0]),
+            "npart": int(npart[index]),
+            "mass_msun_h": float(mass[index]),
+            "position_mpc_h": position[index].tolist(),
+            "midpoint_distance_mpc_h": float(third_distance[index]),
+        }
+        for index in third_candidates
+    ]
+
     result = {
         "schema": "ouruniv-cf4-parent-ramses-hop-environment-v1",
         "hop_catalog": str(args.hop),
@@ -117,14 +172,37 @@ def main() -> None:
         "group_count": int(table.shape[0]),
         "clusters": clusters,
         "environment": {
+            "selection_policy": args.environment_policy,
             "mass_threshold_msun_h": 5.0e12,
             "radius_mpc_h": 8.0,
             "nearest_to_observer_mpc_h": float(observer_distance.min()),
             "nearest_to_lg_midpoint_mpc_h": float(midpoint_distance.min()),
             "nearby_groups": nearby,
             "pass": environment_pass,
+            "v12_blanket_veto_is_diagnostic_only": (
+                args.environment_policy == "standard-lg-isolation"
+            ),
+            "standard_lg_isolation": {
+                "third_halo_mass_threshold_msun_h": third_threshold,
+                "radius_mpc_h": 2.5,
+                "pair_hop_rows": pair_hop_rows,
+                "pair_match_distance_mpc_h": pair_match_distance,
+                "third_halos": third_halos,
+                "pass": standard_isolation_pass,
+            },
         },
-        "decision": "HOP_LOCAL_ENVIRONMENT_PASS" if environment_pass else "HOP_LOCAL_ENVIRONMENT_FAIL",
+        "gates": {
+            "virgo_coma_mass": cluster_pass,
+            "selected_environment_policy": args.environment_policy,
+            "selected_environment_pass": selected_environment_pass,
+            "v12_blanket_veto_diagnostic": environment_pass,
+            "standard_lg_isolation": standard_isolation_pass,
+        },
+        "decision": (
+            "HOP_PARENT_STRUCTURE_PASS"
+            if cluster_pass and selected_environment_pass
+            else "HOP_PARENT_STRUCTURE_FAIL"
+        ),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
