@@ -5,7 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=16
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=192G
+#SBATCH --mem=64G
 #SBATCH --time=02:00:00
 #SBATCH --array=124,129,242,248%2
 #SBATCH --no-requeue
@@ -32,23 +32,36 @@ galaxyfinder=/gpfs/kjhan/CF4/external/GalaxyFinder
 
 test -x "$binary"
 test -r "$template"
-if [[ -e "$work" || -e "$selected_config" || -e "$run" ]]; then
-  echo "refusing to overwrite candidate artifacts for $tag" >&2
-  exit 3
+if [[ "${CF4_SKIP_REPRODUCTION:-0}" == 1 ]]; then
+  test -s "$work/result.json"
+  test -s "$work/passing_field_000.npz"
+  test -s "$selected_config"
+  if [[ -e "$grafic" || -e "$transfer" || -e "$run" ]]; then
+    echo "refusing to overwrite downstream artifacts for $tag" >&2
+    exit 3
+  fi
+  mkdir -p "$run_root"
+else
+  if [[ -e "$work" || -e "$selected_config" || -e "$run" ]]; then
+    echo "refusing to overwrite candidate artifacts for $tag" >&2
+    exit 3
+  fi
+  mkdir -p "$config_root" "$run_root"
+  cd "$root"
+  export JAX_ENABLE_X64=True XLA_PYTHON_CLIENT_PREALLOCATE=false
+  export OMP_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16 MKL_NUM_THREADS=16
+  /home/kjhan/miniconda3/envs/circle/bin/python3.11 \
+    scripts/cf4_select_and_reproduce_lg_environment_candidate.py \
+    --search-result "$search" \
+    --base-config "$base_config" \
+    --search-index "$index" \
+    --selected-config "$selected_config" \
+    --output "$work"
 fi
-mkdir -p "$config_root" "$run_root"
 
 cd "$root"
 export JAX_ENABLE_X64=True XLA_PYTHON_CLIENT_PREALLOCATE=false
 export OMP_NUM_THREADS=16 OPENBLAS_NUM_THREADS=16 MKL_NUM_THREADS=16
-/home/kjhan/miniconda3/envs/circle/bin/python3.11 \
-  scripts/cf4_select_and_reproduce_lg_environment_candidate.py \
-  --search-result "$search" \
-  --base-config "$base_config" \
-  --search-index "$index" \
-  --selected-config "$selected_config" \
-  --output "$work"
-
 /home/kjhan/miniconda3/envs/circle/bin/python3.11 src/cf4_export_grafic.py \
   --s-npz "$work/passing_field_000.npz" --key s_conditioned --N 512 --spacing 0.75 \
   --Om 0.31 --h 0.746 --A-s-1e9 1.63 --astart 0.02 --out "$grafic"
