@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=cf4_lg_s40274_ic
-#SBATCH --partition=a100_pcie,h200,h100,a100
+#SBATCH --job-name=cf4_s40274_ic_cpu
+#SBATCH --partition=a10,a40,a100_pcie,a100,h100,h200
 #SBATCH --exclude=syn06
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --gres=gpu:1
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
 #SBATCH --no-requeue
