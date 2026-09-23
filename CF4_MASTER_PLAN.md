@@ -62,6 +62,13 @@ validated; they are not recoverable.  Logs, namelists, hashes, and decision
 records remain.  Keep the a=0.10 restart source until z=0 validation and keep
 the z=0 dump until all halo catalogues and science diagnostics are sealed.
 
+Full-z0 restart grammar Slurm1109268 was submitted from commit `db93072` and
+started on grammar089 with32 MPI ranks x2 threads,96 GiB, and a48-hour limit.
+The pinned Intel MPI2021.17 environment loaded, the wrapper verified the
+checkpoint writer's `ncpu=32`, RAMSES reported `Restarting at` a=0.10, and the
+first fine steps advanced without stderr or a failure marker.  Status remains
+RUNNING; no numerical or science conclusion is available yet.
+
 ## Latest planning update — 2026-09-13
 
 User requested an end-to-end feasibility/implementation replan with Fable
