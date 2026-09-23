@@ -7,6 +7,41 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Latest execution update — 2026-09-23
+
+Seed40349 remains a **TRACE-ONLY zoom candidate**, not a promoted parent.
+GalaxyFinder resolves an L9 pair, while the frozen-threshold HOP regrouping
+merges its two distinct raw peaks; M33 is unresolved.  The zoom work therefore
+tests whether one conditional fine realization can preserve the coarse LG
+candidate, not whether the parent or MW/M31/M33 system is already validated.
+
+The old halo-member-only trace was replaced by a spatial environment trace.
+Grammar Slurm1108300 selected all1886 parent particles within5 cMpc/h of the
+z=0 pair midpoint, retained all143 pair members, traced them to a
+14.13x11.21x14.09 cMpc/h initial footprint, and built a buffered L9 sparse
+mask with a42-cell enclosing cube.  Seed40349's measured L9 transfer was
+continued with an LCDM-shaped EH98 high-k tail: overlap shape scatter0.10%
+and Nyquist join ratio1.00315 (Slurm1108316).  These modes above the parent
+Nyquist have random conditional phases and are not claimed as CF4-recovered
+information.
+
+Syntax Slurm398944 generated the bounded L9-L12 IC hierarchy with an extended
+48-byte GRAFIC header, explicit omega_b=0 DMO metadata, finest particle
+spacing0.09375 cMpc/h, runtime ceiling L19 and fine seed403495108.  Grammar
+reader gate1108348 and no-output two-step runtime gate1108357 both completed:
+138632600 particles, Morton mismatch0, base FFT and all fine MG solves pass,
+maximum reported fine residual7.437e-5<1e-4, no boundary/OOM/fatal marker and
+no full snapshot.  The two-step gate reached a=0.02455 and used48.72 GiB peak
+RSS under a64 GiB request; it did not yet refine above L12.
+
+Do not call this a validated zoom or production IC.  A long z=0 L9/L12/L19
+evolution has not been launched.  The next calculation should first be a
+bounded early-nonlinear runtime/refinement gate with one justified final dump,
+then a separately reviewed full z=0 evolution only if that gate passes.  The
+older L8/L12 full run took22h56m on16 CPUs; the L9 base contains eight times
+as many particles, so the new full evolution is a large calculation requiring
+an explicit resource/output plan and the project's large-calculation review.
+
 ## Latest planning update — 2026-09-13
 
 User requested an end-to-end feasibility/implementation replan with Fable
