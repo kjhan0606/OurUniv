@@ -52,3 +52,20 @@ No checkpoint or additional science output is requested.
 MW/M31 can only be re-identified in a later new-field halo catalogue.  M33 is
 explicitly unresolved here and cannot be inferred from this a~0.05 dump.
 Native truth IDs are not used to promote or label a generated z=0 system.
+
+## a=0.05 outcome and bounded continuation
+
+Grammar job 1108467 completed RAMSES normally in 263 seconds at exactly
+a=0.05, with no numerical or boundary error, maximum fine residual
+9.858e-5, 63.76 GiB peak RSS, and one 19 GiB dump.  The fail-closed wrapper
+returned exit 1 because the maximum populated level remained L12.  The outcome
+is `INCONCLUSIVE_EPOCH_TOO_EARLY_NO_REFINEMENT_ABOVE_L12`, not instability.
+
+The historical refinement onset is not a matched reference: that IC used a
+different seed/parent, approximately 19% higher transfer amplitude over the
+sampled range, and a substantially larger fine cube.  One bounded continuation
+therefore restarts the preserved 32-rank a=0.05 dump and stops at a=0.10.  It
+writes exactly one new final dump and retains the same requirement that a level
+above L12 be populated.  The measured a=0.05 peak plus refinement allowance
+gives an 80 GiB estimate; the request remains 96 GiB.  The restart grid capacity
+is initialized at 48 million to match the auto-grown checkpoint capacity.
