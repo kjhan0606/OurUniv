@@ -4,11 +4,20 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import struct
 from pathlib import Path
 
 import numpy as np
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def record(fh) -> tuple[int, int]:
@@ -55,6 +64,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--positions-output", type=Path, required=True)
     parser.add_argument("--box", type=float, default=384.0)
+    parser.add_argument(
+        "--selection-status",
+        default="unspecified",
+        choices=("unspecified", "validated-parent", "trace-only-zoom-candidate"),
+    )
+    parser.add_argument("--evidence", type=Path, action="append", default=[])
     args = parser.parse_args()
 
     with np.load(args.members, allow_pickle=False) as data:
@@ -124,14 +139,26 @@ def main() -> None:
     lg_position = found_position[found_owner <= 1]
     summaries["lg_combined"] = periodic_summary(lg_position, float(args.box))
     result = {
-        "schema": "ouruniv-cf4-ramses-member-id-lagrangian-trace-v1",
+        "schema": "ouruniv-cf4-ramses-member-id-lagrangian-trace-v2",
         "snapshot": str(args.snapshot),
         "members": str(args.members),
+        "members_sha256": sha256(args.members),
         "box_mpc_h": float(args.box),
+        "selection_status": args.selection_status,
+        "evidence": [
+            {"path": str(path), "sha256": sha256(path)} for path in args.evidence
+        ],
         "requested_unique_ids": int(all_ids.size),
         "matched_unique_ids": int(np.unique(found_ids).size),
         "summaries": summaries,
-        "interpretation": "Initial-snapshot positions; an L12 zoom mask must include padding around the LG combined footprint.",
+        "m33_resolved": False,
+        "interpretation": (
+            "Initial-snapshot positions for a trace-only zoom candidate. "
+            "The buffered zoom mask must enclose the combined LG footprint and its environment; "
+            "this trace does not promote the L9 parent or validate MW/M31/M33 structure."
+            if args.selection_status == "trace-only-zoom-candidate"
+            else "Initial-snapshot positions; a zoom mask must include padding around the combined LG footprint."
+        ),
     }
     args.positions_output.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
