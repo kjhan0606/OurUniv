@@ -69,3 +69,11 @@ writes exactly one new final dump and retains the same requirement that a level
 above L12 be populated.  The measured a=0.05 peak plus refinement allowance
 gives an 80 GiB estimate; the request remains 96 GiB.  The restart grid capacity
 is initialized at 48 million to match the auto-grown checkpoint capacity.
+
+The first continuation submission, grammar 1108478, stopped in three seconds
+before reading the checkpoint because the restart namelist omitted the formally
+required `INIT_PARAMS` block.  It performed no evolution and wrote no output.
+The technical recovery restores the unchanged IC declarations (ignored for
+state initialization when `nrestart=1`) and removes a deprecated, ignored
+Poisson warm-start setting.  The scientific calculation and resources are
+unchanged.

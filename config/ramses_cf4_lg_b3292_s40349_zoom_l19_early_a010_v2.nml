@@ -29,6 +29,14 @@ foutput=1000000000
 fbackup=1000000000
 /
 
+&INIT_PARAMS
+filetype='grafic'
+initfile(1)='/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2/level_009'
+initfile(2)='/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2/level_010'
+initfile(3)='/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2/level_011'
+initfile(4)='/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2/level_012'
+/
+
 &AMR_PARAMS
 levelmin=9
 levelmax=19
@@ -60,7 +68,6 @@ dr_proper=0.0
 epsilon=1.d-4
 maxiter_fine=100
 abort_on_mg_nonconvergence=.true.
-restart_phi_warm_start=.true.
 /
 
 &STELLAR_ENRICHMENT_PARAMS
