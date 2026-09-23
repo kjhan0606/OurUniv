@@ -1,0 +1,11 @@
+{
+  "duration_api_ms": 4730,
+  "stop_reason": "end_turn",
+  "session_id": "385e7a81-f921-4a0b-9428-0dcabc0a049e",
+  "model": "claude-fable-5",
+  "is_error": false,
+  "subtype": "success",
+  "result": "I'll read the three drafted files to verify the claims in the audit brief before giving a verdict.",
+  "audit_verdict": "NO_VERDICT",
+  "driver_interpretation": "The invocation completed but returned only an intention to inspect and no Q-GOAL, Q-LEAN, feasibility, or correction assessment. It is not an audit pass."
+}
