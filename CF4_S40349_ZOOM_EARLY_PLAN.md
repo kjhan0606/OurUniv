@@ -77,3 +77,10 @@ The technical recovery restores the unchanged IC declarations (ignored for
 state initialization when `nrestart=1`) and removes a deprecated, ignored
 Poisson warm-start setting.  The scientific calculation and resources are
 unchanged.
+
+Recovery job 1108481 completed in 4m42s and passed the gate.  It reached
+exactly a=0.10, populated levels through L17 (27 grids at the transient
+maximum), kept the maximum fine residual at 9.706e-5, used 48.89 GiB peak RSS,
+and wrote one 20,309,509,775-byte new dump.  No boundary, OOM, fatal or MG
+nonconvergence marker occurred.  This closes the early-nonlinear operational
+gate only.  A full z=0 calculation remains a separate large-run decision.

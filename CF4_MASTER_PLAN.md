@@ -34,10 +34,21 @@ maximum reported fine residual7.437e-5<1e-4, no boundary/OOM/fatal marker and
 no full snapshot.  The two-step gate reached a=0.02455 and used48.72 GiB peak
 RSS under a64 GiB request; it did not yet refine above L12.
 
+The bounded early-nonlinear sequence is now complete. Grammar1108467 evolved
+normally to a=0.05 but the fail-closed wrapper rejected the gate because no
+level above L12 was populated; preserve its single19 GiB dump and classify the
+result as epoch-too-early, not numerical instability. The first restart attempt
+1108478 exposed a missing formal INIT_PARAMS block before evolution and wrote
+no output. Corrected same-rank restart1108481 then completed a=0.05->0.10 in
+4m42s: transient maximum L17, fine residual<=9.706e-5, no boundary/OOM/fatal/MG
+failure,48.89 GiB peak RSS, and one20.31e9-byte final dump. Decision:
+TRACE_ONLY_ZOOM_L19_EARLY_NONLINEAR_PASS. This does not promote the parent,
+resolve M33, identify a z=0 MW/M31/M33 system, or validate high-k phases.
+
 Do not call this a validated zoom or production IC.  A long z=0 L9/L12/L19
-evolution has not been launched.  The next calculation should first be a
-bounded early-nonlinear runtime/refinement gate with one justified final dump,
-then a separately reviewed full z=0 evolution only if that gate passes.  The
+evolution has not been launched.  The early-nonlinear runtime/refinement gate
+has passed; the next step is a separately reviewed full-z0 resource, output,
+restart and science-gate plan, not an automatic production launch.  The
 older L8/L12 full run took22h56m on16 CPUs; the L9 base contains eight times
 as many particles, so the new full evolution is a large calculation requiring
 an explicit resource/output plan and the project's large-calculation review.
