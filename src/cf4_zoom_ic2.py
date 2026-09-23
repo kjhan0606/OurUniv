@@ -262,6 +262,7 @@ def main():
         "h": args.h,
         "Omega_m": Om,
         "Omega_l": OL,
+        "Omega_b_header": 0.0,
         "astart": a,
         "small_scale_seed": args.seed,
         "fft_workers": args.fft_workers,
@@ -380,11 +381,16 @@ def main():
                 args.center_hmpc, args.mask_R_hmpc)
         os.makedirs(outdir, exist_ok=True)
         wargs = (dxg, tuple(off_mpc), a, Om, OL, h0)
-        G.write_grafic_field(os.path.join(outdir, "ic_deltab"), np.zeros_like(vx), *wargs)
-        G.write_grafic_field(os.path.join(outdir, "ic_velcx"), vx.astype(np.float32), *wargs)
-        G.write_grafic_field(os.path.join(outdir, "ic_velcy"), vy.astype(np.float32), *wargs)
-        G.write_grafic_field(os.path.join(outdir, "ic_velcz"), vz.astype(np.float32), *wargs)
-        G.write_grafic_field(os.path.join(outdir, "ic_refmap"), refmap, *wargs)
+        G.write_grafic_field(
+            os.path.join(outdir, "ic_deltab"), np.zeros_like(vx), *wargs, omega_b=0.0)
+        G.write_grafic_field(
+            os.path.join(outdir, "ic_velcx"), vx.astype(np.float32), *wargs, omega_b=0.0)
+        G.write_grafic_field(
+            os.path.join(outdir, "ic_velcy"), vy.astype(np.float32), *wargs, omega_b=0.0)
+        G.write_grafic_field(
+            os.path.join(outdir, "ic_velcz"), vz.astype(np.float32), *wargs, omega_b=0.0)
+        G.write_grafic_field(
+            os.path.join(outdir, "ic_refmap"), refmap, *wargs, omega_b=0.0)
         bounds = ",".join(f"{int(i0[q])}:{int(i1[q])}" for q in range(3))
         offsets = ",".join(f"{off_mpc[q]:.2f}" for q in range(3))
         print(f"[z2] level {L:2d} N={N:5d} sub=[{bounds}]({Nsub}^3) off=({offsets})Mpc "

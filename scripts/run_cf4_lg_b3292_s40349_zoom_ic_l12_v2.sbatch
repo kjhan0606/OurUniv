@@ -18,8 +18,8 @@ transfer=/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_survival_calibr
 transfer_report=/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_eh98_transfer_v1.json
 mask=/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s40349_spatial_mask_l9_v1.npz
 trace_report=/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_spatial_trace_v1.json
-out=/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v1
-report=/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_zoom_ic_l12_v1.json
+out=/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2
+report=/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_zoom_ic_l12_v2.json
 
 test -d "$parent"
 test -s "$transfer"
@@ -94,10 +94,10 @@ def header(path):
         size = struct.unpack("<i", stream.read(4))[0]
         payload = stream.read(size)
         end = struct.unpack("<i", stream.read(4))[0]
-    if size != 44 or end != size:
+    if size != 48 or end != size:
         raise SystemExit(f"bad GRAFIC header in {path}")
     dims = struct.unpack("<3i", payload[:12])
-    values = struct.unpack("<8f", payload[12:])
+    values = struct.unpack("<9f", payload[12:])
     return dims, values
 
 levels = {}
@@ -111,7 +111,8 @@ for level, side in expected_side.items():
         dims, values = header(path)
         if dims != (side, side, side):
             raise SystemExit(f"{path} dims={dims}, expected {(side, side, side)}")
-        if not np.isclose(values[4], 0.02) or not np.isclose(values[5], 0.31):
+        if (not np.isclose(values[4], 0.02) or not np.isclose(values[5], 0.31)
+                or not np.isclose(values[8], 0.0)):
             raise SystemExit(f"bad cosmology header in {path}")
         fields[name] = path.stat().st_size
         headers[name] = {"dims": list(dims), "dx_mpc": values[0], "offset_mpc": list(values[1:4])}
@@ -125,7 +126,7 @@ def digest(path):
     return h.hexdigest()
 
 payload = {
-    "schema": "ouruniv-cf4-s40349-traceonly-zoom-ic-l12-v1",
+    "schema": "ouruniv-cf4-s40349-traceonly-zoom-ic-l12-v2",
     "stage": "8/8 bounded zoom-IC pilot",
     "selection_status": "trace-only-zoom-candidate",
     "parent_promoted": False,
@@ -137,6 +138,8 @@ payload = {
     "finest_particle_spacing_cMpc_h": 0.09375,
     "runtime_levelmax": 19,
     "minimum_runtime_cell_ckpc_h": 0.732421875,
+    "grafic_header_payload_bytes": 48,
+    "grafic_header_omega_b": 0.0,
     "decision": "TRACE_ONLY_ZOOM_IC_L12_GENERATED_PREFLIGHT_PENDING",
     "interpretation": (
         "The L12 pilot preserves the exact seed-40349 L9 parent modes and adds one "
