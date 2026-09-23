@@ -36,8 +36,8 @@ RSS under a64 GiB request; it did not yet refine above L12.
 
 The bounded early-nonlinear sequence is now complete. Grammar1108467 evolved
 normally to a=0.05 but the fail-closed wrapper rejected the gate because no
-level above L12 was populated; preserve its single19 GiB dump and classify the
-result as epoch-too-early, not numerical instability. The first restart attempt
+level above L12 was populated; classify the result as epoch-too-early, not
+numerical instability. The first restart attempt
 1108478 exposed a missing formal INIT_PARAMS block before evolution and wrote
 no output. Corrected same-rank restart1108481 then completed a=0.05->0.10 in
 4m42s: transient maximum L17, fine residual<=9.706e-5, no boundary/OOM/fatal/MG
@@ -46,12 +46,21 @@ TRACE_ONLY_ZOOM_L19_EARLY_NONLINEAR_PASS. This does not promote the parent,
 resolve M33, identify a z=0 MW/M31/M33 system, or validate high-k phases.
 
 Do not call this a validated zoom or production IC.  A long z=0 L9/L12/L19
-evolution has not been launched.  The early-nonlinear runtime/refinement gate
-has passed; the next step is a separately reviewed full-z0 resource, output,
-restart and science-gate plan, not an automatic production launch.  The
-older L8/L12 full run took22h56m on16 CPUs; the L9 base contains eight times
-as many particles, so the new full evolution is a large calculation requiring
-an explicit resource/output plan and the project's large-calculation review.
+evolution has not yet produced a result.  The early-nonlinear
+runtime/refinement gate has passed, and the reviewed full-z0 resource, output,
+restart, and science-gate contract is now in
+`CF4_S40349_ZOOM_Z0_PLAN.md`.  The actual uniform-L9 reference reaches z=0 in
+about27 minutes on16 MPI ranks; the older, much larger L8/L12 mask zoom took
+22h56m on8 MPI ranks.  The current L12 mask occupies21.6% of that older mask's
+volume, so one 32-rank,96-GiB,48-hour restart with exactly one new final dump is
+the bounded next calculation.  Runtime success still requires subsequent
+GalaxyFinder/HOP and MW/M31/M33/environment/contamination evaluation.
+
+Per the user's raw-output retention instruction, the superseded19-GiB a=0.05
+dump and its historical symlink were removed after the a=0.10 successor was
+validated; they are not recoverable.  Logs, namelists, hashes, and decision
+records remain.  Keep the a=0.10 restart source until z=0 validation and keep
+the z=0 dump until all halo catalogues and science diagnostics are sealed.
 
 ## Latest planning update — 2026-09-13
 
