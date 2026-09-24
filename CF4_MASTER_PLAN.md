@@ -62,12 +62,22 @@ validated; they are not recoverable.  Logs, namelists, hashes, and decision
 records remain.  Keep the a=0.10 restart source until z=0 validation and keep
 the z=0 dump until all halo catalogues and science diagnostics are sealed.
 
-Full-z0 restart grammar Slurm1109268 was submitted from commit `db93072` and
-started on grammar089 with32 MPI ranks x2 threads,96 GiB, and a48-hour limit.
-The pinned Intel MPI2021.17 environment loaded, the wrapper verified the
-checkpoint writer's `ncpu=32`, RAMSES reported `Restarting at` a=0.10, and the
-first fine steps advanced without stderr or a failure marker.  Status remains
-RUNNING; no numerical or science conclusion is available yet.
+Full-z0 restart grammar Slurm1109268 ran from2026-09-23 16:20 to2026-09-24
+06:14 KST on grammar089 with32 MPI ranks x2 threads,96 GiB, and completed in
+13h54m03s/exit0.  The pinned Intel MPI2021.17 environment loaded, the wrapper
+verified the checkpoint writer's `ncpu=32`, and RAMSES evolved a=0.10->1.0.
+It populated L19, completed285 coarse steps, reported maximum fine residual
+9.992e-5<1e-4, no boundary/OOM/fatal/MG-nonconvergence marker, and wrote
+exactly one22.011e9-byte final dump.  Peak RSS was60.34 GiB. Decision:
+`TRACE_ONLY_ZOOM_L19_Z0_FORWARD_PASS` in
+`config/cf4_lg_s40349_zoom_l19_z0_decision_v1.json`.
+
+This is numerical completion only.  The parent remains trace-only, M33 remains
+unresolved, and the single random conditional high-k realization is not
+CF4-recovered information.  Next run the RAMSES GalaxyFinder newDD/opFoF path
+plus independent HOP peak/deblend diagnostics on output_00003, then evaluate
+MW/M31/M33, environment drift, and contamination.  Do not promote the seed or
+call it a validated production zoom before that science decision.
 
 ## Latest planning update — 2026-09-13
 
