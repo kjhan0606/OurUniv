@@ -7,6 +7,37 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Active direction — 2026-09-25: no new TNG dependency
+
+The user directs omitting new TNG data if they are not indispensable. They
+are not needed to begin the R2 actual CF4+galaxy present-field inference, so
+the proposed hydro-to-Dark matching download and its unsubmitted Slurm job
+are withdrawn. Existing TNG products remain optional calibration evidence;
+their native identities never enter generated-field candidate selection.
+See `CF4_LG_ROLE_DETECTION_CONTRACT_20260925.md` for the R3 limit.
+
+The next critical path is the actual CF4 velocity + galaxy-count likelihood,
+its selection/bias limits, and a latent-IC forward state that returns z=0
+density/velocity samples. The ARES selection map is a development baseline,
+not a calibrated survival/bias likelihood (`config/cf4_selection_limitations_decision_v1.json`).
+The historical Q1 `cf4_q1_z0_density_posterior_dev.py` product is **not** a
+physical R2 posterior: source inspection shows distance-modulus perturbations
+followed by weighted TSC deposition, without an inferred IC, gravity or a
+joint CF4+galaxy likelihood. Do not interpolate or rename that proxy into the
+required R2 delivery. Start with a bounded same-state observation/forward
+feasibility calculation; only launch a larger N256 inference after a viable
+state-dependent operator, model calibration and cost are demonstrated.
+
+For R3, TNG is not a mandatory gate, but omitting it does not make the
+MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
+Keep those as latent/nuisance quantities tied to the **same evolved state**;
+use project's own resolution/forward controls and independent observations or
+mocks to bound them. No actual-data LG weight or seed promotion before a
+defensible normalized role law and shared covariance are present. Q-GOAL:
+this returns work to the present-field-first science delivery. Q-LEAN: it
+removes a 5.3-GB optional download and finder-conversion detour, with no new
+gate machinery or simulation authorized by this note.
+
 ## Latest execution update — 2026-09-23
 
 Seed40349 remains a **TRACE-ONLY zoom candidate**, not a promoted parent.

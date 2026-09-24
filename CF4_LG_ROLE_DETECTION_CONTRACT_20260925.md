@@ -74,21 +74,25 @@ NewGalFinder fragmentation, or M33 missed-detection probability. A whole-box
 conversion/finder run would process billions of particles and still need a
 matched hydro-to-DMO transfer argument; do not launch it as a quick fix.
 
-**Decision:** no full-box TNG converter or large finder job now. The smallest
-credible next calibration input is the official matching table plus z=0 Dark
-group catalogue, with a predeclared galaxy selection and observer geometry.
-First quantify galaxy-to-DMO-*Subfind* association and unmatched M33-like
-objects; report the finder/domain transfer as unresolved. If that baseline is
-informative, a bounded representative particle/finder subset, preserving the
-full-box host definitions, can test NewGalFinder transfer. Do not silently
-replace that test with a one-halo cutout or declare a calibrated LG likelihood
-from the Subfind table alone. An alternative is a state-linked galaxy
-occupation/kinematic model calibrated on independent paired mocks. In either
-route retain latent MW/M31/M33 roles, M33 non-detection, common observational
-errors and a transfer-discrepancy term. A single selected halo or uniform role
-prior is not an approximation with a quantified error. Meanwhile R2
-environmental development may proceed under its own selection limits; it is
-not an LG-posterior promotion.
+**Superseded decision:** the matching table and z=0 Dark catalogue were briefly
+proposed as the next optional calibration input. The user then directed that
+TNG data be omitted if not essential. They are **not essential to the R2
+CF4+galaxy present-field inference**, so no new TNG download, matching job,
+converter or finder run is on the active critical path. The prepared but
+unsubmitted download/matching code was removed; commit `3453bb8` preserves it
+in Git history. Existing TNG fixtures remain historical engineering evidence,
+not a source of generated-field truth identities.
+
+This does **not** waive the R3 requirement for a normalized same-state role
+law, an M33 state-linked unresolved branch, observational covariance and a
+quantified DMO-to-galaxy discrepancy. The active route is to use generated
+particle states and actual LG observations directly, with explicit uncertain
+role/galaxy mapping; test finder incompleteness and solver-resolution effects
+on the project's own forward states. Independent external mocks or TNG can be
+used later to validate that mapping, but are not a prerequisite for starting
+R2. Until those uncertainties are bounded, a resolved MW/M31 diagnostic is
+not a production LG posterior. A single selected halo or uniform role prior
+is not an approximation with a quantified error.
 
 The fixed5-cMpc/h support in seed40349 contains521 hosts,579 bound components
 and193,434,636 ordered assignments. These are counts, not probabilities.
@@ -100,11 +104,12 @@ shared nuisances. Pair-dependent M31–M33 association, selection, and general
 covariance can restore three-way coupling; importance proposals need known
 q and p/q correction with support coverage.
 
-Next bounded science action: establish one matched calibration source or a
-defensible documented approximation for observer-to-MW alignment,
-galaxy-to-DMO assignment and M33 detection at the actual finder resolution.
-Only then compare exact and proposed factorized/importance sums on a tiny
-synthetic set, followed by one generated-state feasibility calculation.
+Next bounded science action: advance the CF4+galaxy R2 current-field route
+without a TNG dependency, while separately specifying a defensible
+state-linked approximation for observer-to-MW alignment, galaxy-to-DMO
+assignment and M33 detectability at the actual finder resolution. Only after
+that compare exact and proposed factorized/importance sums on a tiny synthetic
+set, followed by one generated-state feasibility calculation.
 **Stop before any actual-data LG weight** if the role law, omitted-support
 bound, shared covariance, or state-linked unresolved-M33 term is absent.
 Do not substitute another random seed, widened sky error, or more zoom runs.
