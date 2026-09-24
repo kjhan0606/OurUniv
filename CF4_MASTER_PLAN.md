@@ -92,8 +92,10 @@ NewGalFinder source commit586a62e was fetched without overwriting the user's
 modified local GalaxyFinder tree, checked out at the separate GPFS worktree
 `GalaxyFinder_newgal_586a62e`, and built successfully with the documented
 opFoF ABI. The fixed binary hash and one-run resource plan are recorded in
-`CF4_S40349_NEWGALFINDER_PLAN.md`. First generate and validate the required
-mass-preserving NewDD/opFoF catalog; no HOP job is submitted.
+`CF4_S40349_NEWGALFINDER_PLAN.md`. Grammar job1113459 completed the required
+mass-preserving NewDD/opFoF conversion:512 DM slabs,146681 hosts, and a largest
+host of165853 particles. This justifies the fixed 8-GB-per-worker allocator
+build and a150-GB NewGalFinder request. No HOP job is submitted.
 
 ## Latest planning update — 2026-09-13
 

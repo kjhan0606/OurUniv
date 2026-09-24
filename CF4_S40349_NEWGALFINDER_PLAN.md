@@ -27,8 +27,10 @@ information.
   `586a62e09d5a06cc94b88748cd01e8215f569710`, checked out separately at
   `/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e` so the user's dirty
   local tree is not overwritten.
-- NewGalFinder binary SHA256:
-  `9a553a3222136fbc7102e582405422563768cb8c9ce603c8d81902bbb3d564a5`.
+- NewGalFinder binary: the same source and physics flags, rebuilt with only
+  the worker allocator ceiling changed from `NMEG=90000L` to `NMEG=8000L`.
+  SHA256:
+  `948a2ae6049933ade00f72168dbc05c10eeaba776e7022429a921b074c00d0ad`.
 - Input/output ABI: `INDEX`, `VarPM`, `XYZDBL`, `NCHEM=9`, `NDUST=4`, matching
   the opFoF member layout. NewGalFinder includes the latest DMO peak fallback
   fixes.
@@ -39,12 +41,13 @@ information.
    slabs, then run opFoF on the same slabs. Validate catalog and member files.
 2. Inspect the opFoF header count and largest host before releasing the larger
    NewGalFinder allocation.
-3. Run NewGalFinder on the validated opFoF catalog. The default build reserves
-   80 GB for its master and 90 GB per worker; a four-rank node therefore has a
-   350 GB allocator ceiling and requires 420 GB with the requested 20% margin.
-   Use 4 MPI ranks x16 OpenMP threads on one grammar normal node, with a
-   24-hour ceiling. Revisit this only if the measured catalog shows that a
-   smaller fixed build is sufficient and scientifically identical.
+3. Run NewGalFinder on the validated opFoF catalog. It contains 146,681 hosts;
+   the largest contains 165,853 particles. This is safely below the 8 GB worker
+   allocator ceiling. The four-rank build reserves 80 GB for the master and
+   8 GB for each of three workers; allowing for OpenMP stacks and overhead gives
+   an expected ceiling near 125 GB. Request 150 GB (at least 20% margin), use
+   4 MPI ranks x16 OpenMP threads on one grammar normal node, and impose a
+   24-hour ceiling.
 4. Parse the resulting subhalo catalog without oracle identities. Locate an
    isolated MW/M31-scale pair near the constrained observer/environment,
    search for an M33-scale bound satellite around either component, and measure
