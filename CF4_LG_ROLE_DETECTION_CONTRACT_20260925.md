@@ -41,6 +41,55 @@ NewDD currently reads RAMSES, not the TNG/GADGET HDF5 snapshot. Applying the
 same NewGalFinder pipeline to TNG requires a separately verified conversion
 and finder/domain-shift design, not a free invocation of the existing binary.
 
+### TNG-to-finder feasibility decision (2026-09-25)
+
+The local TNG100-1 snapshot-99 header reports 448 files, a 75,000-ckpc/h
+periodic box and **6,028,568,000 PartType1 DM particles** (combining its low
+and high count words). The existing 37-MB staged particle fixture is instead
+one native FoF group (ID468): 604,989 DM particles, 233,820 gas cells,
+151,001 stars and five black holes. Its three native Subfind members were
+selected for an engineering operator check, not as LG analogues or a random
+sample. The separate TNG100-1-Dark counterpart is not at the checked local
+path. These are source/header facts, not a search of all storage.
+
+The [official TNG100-1 supplementary download page](https://www.tng-project.org/data/downloads/TNG100-1/)
+does provide an all-snapshot hydro-to-Dark **Subfind** matching table (3.6 GB),
+and the [official TNG100-1-Dark page](https://www.tng-project.org/data/downloads/TNG100-1-Dark/)
+lists the z=0 Dark group catalogue (1.7 GB). The
+[specification](https://www.tng-project.org/data/docs/specifications/)
+defines `-1` for no match and describes two matching algorithms. These are
+credible, smaller **external** sources for a hydro-galaxy to DMO-*Subfind*
+baseline; neither file is at the three checked project paths. They do not
+contain NewGalFinder outputs or by themselves calibrate its resolution-
+dependent M33 detection. No download was started in this feasibility check.
+
+Source inspection confirms that NewDD writes raw `DmType` x-slabs plus
+`SN.<step>.<slab>.info`, and opFoF reads those slabs and an ABI-dependent
+`RamsesType` header. A direct TNG-to-slab converter is possible in principle,
+but **does not yet exist or have a verified ABI/unit test**. More importantly,
+running opFoF on the one-group fixture or a spatial cutout changes the
+periodic full-volume host-selection boundary. It can test parser/finder
+integration but cannot estimate observer-selected MW/M31/M33 role frequencies,
+NewGalFinder fragmentation, or M33 missed-detection probability. A whole-box
+conversion/finder run would process billions of particles and still need a
+matched hydro-to-DMO transfer argument; do not launch it as a quick fix.
+
+**Decision:** no full-box TNG converter or large finder job now. The smallest
+credible next calibration input is the official matching table plus z=0 Dark
+group catalogue, with a predeclared galaxy selection and observer geometry.
+First quantify galaxy-to-DMO-*Subfind* association and unmatched M33-like
+objects; report the finder/domain transfer as unresolved. If that baseline is
+informative, a bounded representative particle/finder subset, preserving the
+full-box host definitions, can test NewGalFinder transfer. Do not silently
+replace that test with a one-halo cutout or declare a calibrated LG likelihood
+from the Subfind table alone. An alternative is a state-linked galaxy
+occupation/kinematic model calibrated on independent paired mocks. In either
+route retain latent MW/M31/M33 roles, M33 non-detection, common observational
+errors and a transfer-discrepancy term. A single selected halo or uniform role
+prior is not an approximation with a quantified error. Meanwhile R2
+environmental development may proceed under its own selection limits; it is
+not an LG-posterior promotion.
+
 The fixed5-cMpc/h support in seed40349 contains521 hosts,579 bound components
 and193,434,636 ordered assignments. These are counts, not probabilities.
 Uniform component weights would privilege finder fragmentation and numerous
