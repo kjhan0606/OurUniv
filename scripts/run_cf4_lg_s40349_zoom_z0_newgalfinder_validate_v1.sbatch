@@ -27,7 +27,7 @@ test -s "$reference"
 test ! -e "$output"
 
 cd "$root"
-python scripts/cf4_newgalfinder_zoom_validation.py \
+/home/kjhan/miniconda3/bin/python3.13 scripts/cf4_newgalfinder_zoom_validation.py \
   --catalog "$catalog" \
   --config "$config" \
   --parent-reference "$reference" \

@@ -69,6 +69,22 @@ Commit96560d9 routes zero-star hosts directly to the same adaptive DMO finder
 and zero-initializes per-halo state. This removes a scientifically inert cost
 and the associated large-host memory risk without changing the DMO algorithm.
 
+Production job1113522 completed all146681 input FoF hosts on2026-09-24
+21:38:44 KST in2h57m38s/exit0. The finder wrote its catalogue and a
+`NEWGALFINDER_PASS` result. Its dependent validation job1113532 failed before
+reading the catalogue because `python` was absent from the grammar node's
+batch PATH (exit127). The runner now uses the verified absolute Python3.13
+path. Evaluation-only retry1114528 completed2026-09-25 01:52:23 KST/exit0.
+It parsed103220 recorded hosts and152931 bound components, including18215
+multi-component hosts. The frozen LG pair screen finds0 accepted pairs:
+5 eligible hosts,2 pairs passing separation,1 also passing mass ratio and
+midpoint,0 passing the3 cMpc/h isolation cut. The nearest candidate has
+separation1.1357 cMpc/h, masses2.0848e12 and5.3960e11 Msun/h, and
+isolation2.7388 cMpc/h. Diagnostic decision:
+`NEWGAL_DIAGNOSTIC_PAIR_NO_GO`. Virgo and Coma candidates remain present near
+their frozen positions. This finder result does not identify an M33 analogue
+or promote the trace-only zoom. Preserve the catalogue and final RAMSES dump.
+
 ## Q-GOAL and Q-LEAN driver review
 
 Q-GOAL: strong. This directly attacks the unresolved MW/M31/M33 structural

@@ -106,6 +106,17 @@ showing that every zero-star host still paid for an empty stellar FFT. Follow-up
 commit96560d9 sends such hosts directly to the identical adaptive DMO finder
 and zero-initializes the per-halo state. No HOP job is submitted.
 
+Final NewGalFinder job1113522 completed all146681 FoF hosts on2026-09-24
+21:38:44 KST/exit0. Validation1113532 failed at startup because its batch
+PATH lacked `python`; the absolute-interpreter retry1114528 completed on
+2026-09-25 01:52:23 KST. Its frozen LG cutflow gives0 accepted pairs:
+5 eligible hosts,2 separation passes,1 mass-ratio/midpoint pass,0 isolation
+passes. The closest candidate misses the3 cMpc/h isolation threshold at
+2.7388 cMpc/h. Decision: `NEWGAL_DIAGNOSTIC_PAIR_NO_GO`; Virgo and Coma are
+still located. The current trace-only zoom is not a validated MW/M31/M33
+realization. Detailed evidence is in `CF4_S40349_NEWGALFINDER_PLAN.md` and
+the preserved validation JSON.
+
 ## Latest planning update — 2026-09-13
 
 User requested an end-to-end feasibility/implementation replan with Fable
