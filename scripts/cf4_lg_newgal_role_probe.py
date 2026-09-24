@@ -12,7 +12,7 @@ from cf4_newgalfinder_zoom_validation import read_catalog
 
 
 CATALOG = Path("/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268/"
-               "FoF_Data/FoF.00003/GALFIND.DATA.00003")
+               "FoF_Data/FoF.00003/GALCATALOG.LIST.00003")
 BOX = 384.0
 OBSERVER = np.full(3, BOX / 2)
 LOCAL_RADIUS = 5.0  # pre-existing P1 Local-Sheet aperture, not target-ranked
