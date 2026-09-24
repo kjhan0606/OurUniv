@@ -143,6 +143,21 @@ IC-posterior update. Next, candidate support must come from the NEW evolved
 state without truth IDs, with unresolved M33 retained explicitly; a calibrated
 joint sky/kinematic likelihood and multiresolution forward connection are
 required before an LG-on/off IC comparison can be claimed.
+`src/cf4_lg_generated_roles.py` now supplies the corresponding identity-free
+NewGalFinder bound-component adapter. On a predeclared generated-state local
+support it enumerates every ordered MW/M31 component pair (including two
+components sharing one FoF host), every distinct M33 component, and an
+explicit unresolved-M33 branch; it does not select the most massive component
+or best observed match. For an assigned triple it transforms the saved SG
+position/peculiar velocity to the observation contract's ICRS frame and
+reports the eight predicted quantities plus both sky offsets. A cap fails
+without truncating support. The pure synthetic tests pass. Q-GOAL: this
+addresses the missing role/observation wiring on one generated state.
+Q-LEAN: no new RAMSES run or arbitrary candidate scoring. These hypotheses
+have **no calibrated role prior, detection law, sky covariance or posterior
+weight**, and the adapter is not differentiable IC inference. Its M33 branch
+labels indicate FoF sharing, not demonstrated association with M31. Do not
+call enumeration or a close observed-space match a validated LG realization.
 
 ## Latest planning update — 2026-09-13
 
