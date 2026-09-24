@@ -41,13 +41,13 @@ test -s "$checksum_file"
 test -s "$plan"
 test "$(git -C "$source_tree" rev-parse HEAD)" = "$source_commit"
 test "$(sha256sum "$binary" | awk '{print $1}')" = "$binary_sha"
-sha256sum -c "$checksum_file"
 test ! -e "$list"
 test ! -e "$data"
 test ! -e "$background"
 test ! -e "$result"
 
 cd "$run"
+sha256sum -c "$checksum_file"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:?}"
 export OMP_STACKSIZE=256M
 export OMP_PROC_BIND=spread
