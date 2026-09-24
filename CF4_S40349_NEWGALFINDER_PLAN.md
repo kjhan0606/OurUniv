@@ -23,17 +23,18 @@ information.
 - NewDD/opFoF working source and binaries:
   `/home/kjhan/BACKUP/GalaxyFinder`; preserve its existing staged DMO-reader
   changes and record exact binary/source hashes.
-- NewGalFinder source: GitHub commit
-  `586a62e09d5a06cc94b88748cd01e8215f569710`, checked out separately at
+- NewGalFinder source: GalaxyFinder branch
+  `agent/fix-newgalfinder-periodic-unwrapping`, commit
+  `43046a3305724cf8229ffc4273942e95f8a508aa`, checked out separately at
   `/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e` so the user's dirty
   local tree is not overwritten.
-- NewGalFinder binary: the same source and physics flags, rebuilt with only
-  the worker allocator ceiling changed from `NMEG=90000L` to `NMEG=8000L`.
-  SHA256:
-  `948a2ae6049933ade00f72168dbc05c10eeaba776e7022429a921b074c00d0ad`.
-- Input/output ABI: `INDEX`, `VarPM`, `XYZDBL`, `NCHEM=9`, `NDUST=4`, matching
-  the opFoF member layout. NewGalFinder includes the latest DMO peak fallback
-  fixes.
+- NewGalFinder binary: the same finder physics, rebuilt with `NMEG=8000L` and
+  `NBODY`. SHA256:
+  `f5ceabadde2d32bb9fb17b5d78e87a40f4249eb389682c6c500b6c0237da077f`.
+- Input/output ABI: `INDEX`, `VarPM`, `XYZDBL`, `NBODY`; the compact `DmType`
+  is compile-time asserted to be 72 bytes, exactly matching the measured opFoF
+  member layout. The branch also fixes value sorting and post-shift bounds in
+  periodic halo unwrapping and includes the latest DMO peak fallback fixes.
 
 ## Execution order
 
@@ -53,6 +54,12 @@ information.
    search for an M33-scale bound satellite around either component, and measure
    masses, separation, radial/tangential velocities, environment drift, and
    low-resolution contamination from the RAMSES particle masses.
+
+The first launch, grammar job1113477, was cancelled after54 seconds when its
+preflight-incomplete hydro build read the 72-byte DMO records with a 168-byte
+stride. The resulting false coordinates triggered grid-size overflow. It made
+no usable output. The corrected DMO ABI and periodic-unwrapping branch above
+are mandatory for the rerun; adding memory would not fix this error.
 
 ## Q-GOAL and Q-LEAN driver review
 

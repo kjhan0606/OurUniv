@@ -95,7 +95,12 @@ opFoF ABI. The fixed binary hash and one-run resource plan are recorded in
 `CF4_S40349_NEWGALFINDER_PLAN.md`. Grammar job1113459 completed the required
 mass-preserving NewDD/opFoF conversion:512 DM slabs,146681 hosts, and a largest
 host of165853 particles. This justifies the fixed 8-GB-per-worker allocator
-build and a150-GB NewGalFinder request. No HOP job is submitted.
+build and a150-GB NewGalFinder request. The first NewGalFinder launch exposed a
+DMO ABI mismatch (72-byte member records versus a168-byte hydro build) plus
+two periodic-unwrapping defects; it was cancelled after54 seconds without a
+usable product. GalaxyFinder branch
+`agent/fix-newgalfinder-periodic-unwrapping` commit43046a3 fixes both and adds
+a compile-time 72-byte DMO ABI assertion. No HOP job is submitted.
 
 ## Latest planning update — 2026-09-13
 

@@ -19,7 +19,7 @@ module load intel/tbb/2022.3 intel/umf/1.0.2 \
 
 run=/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268
 source_tree=/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e
-binary="$source_tree/NewGalFinder/gfind_nmeg8000.exe"
+binary="$source_tree/NewGalFinder/gfind_nmeg8000_dmo.exe"
 plan=/home/kjhan/BACKUP/CF4/CF4_S40349_NEWGALFINDER_PLAN.md
 istep=3
 step=$(printf '%05d' "$istep")
@@ -31,8 +31,8 @@ list="$fof_dir/GALCATALOG.LIST.${step}"
 data="$fof_dir/GALFIND.DATA.${step}"
 background="$fof_dir/background_ptl.${step}"
 result="$run/newgalfinder_result_${step}.txt"
-binary_sha=948a2ae6049933ade00f72168dbc05c10eeaba776e7022429a921b074c00d0ad
-source_commit=586a62e09d5a06cc94b88748cd01e8215f569710
+binary_sha=f5ceabadde2d32bb9fb17b5d78e87a40f4249eb389682c6c500b6c0237da077f
+source_commit=43046a3305724cf8229ffc4273942e95f8a508aa
 
 test -x "$binary"
 test -s "$catalog"
@@ -62,7 +62,7 @@ export I_MPI_HYDRA_BOOTSTRAP=fork
   printf 'job=%s host=%s run=%s step=%s mpi_ranks=%s omp_threads=%s memory=150G\n' \
     "$SLURM_JOB_ID" "$(hostname)" "$run" "$istep" "$SLURM_NTASKS" \
     "$SLURM_CPUS_PER_TASK"
-  printf 'source_commit=%s\nbinary_sha256=%s\nworker_allocator_mb=8000\n' \
+  printf 'source_commit=%s\nbinary_sha256=%s\nworker_allocator_mb=8000\nmember_abi=NBODY_72B\n' \
     "$source_commit" "$binary_sha"
   cat "$checksum_file"
   sha256sum "$plan"
