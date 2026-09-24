@@ -21,7 +21,13 @@ def solar_reference(contract):
             ICRS_TO_GALACTIC.T @ np.array(ref["U_Vtotal_W_km_s"]))
 
 
-def predict(catalog,contract,*,h,solar_position_kpc,solar_velocity_km_s):
+def predict_candidate(catalog,contract,*,h,solar_position_kpc,solar_velocity_km_s):
+    """Predict a resolved role hypothesis without assuming its sky position fits.
+
+    The caller supplies one MW/M31/M33 assignment from the generated state.
+    Angular offsets are diagnostics, not a likelihood or a calibrated sky error.
+    An unresolved M33 is not assigned an arbitrary replacement here.
+    """
     if not catalog.get("resolved_halos",False):
         raise ValueError("MW/M31/M33 require resolved halo/subhalo operators, not N32 peaks")
     if catalog.get("frame") != contract["frame"]:
@@ -30,6 +36,7 @@ def predict(catalog,contract,*,h,solar_position_kpc,solar_velocity_km_s):
         raise ValueError("positive finite h required")
     mw=catalog["MW"]
     output=[]
+    angular_offsets=[]
     for name in contract["galaxy_order"]:
         item=catalog[name]  # M33 must exist; no anonymous/best pair selection.
         dr=np.asarray(item["position_kpc"])-np.asarray(mw["position_kpc"])
@@ -49,12 +56,23 @@ def predict(catalog,contract,*,h,solar_position_kpc,solar_velocity_km_s):
         observed=contract["measurements"][name]
         delta_angle=np.rad2deg(np.arccos(np.clip(np.dot(heliopos/distance,
             basis(observed["ra_deg"],observed["dec_deg"])[0]),-1,1)))
-        if delta_angle>contract["sky_conditioning_rounding_tolerance_deg"]:
-            raise ValueError(f"{name} does not satisfy conditioned observed sky direction")
+        angular_offsets.append(float(delta_angle))
         radial,east,north=basis(ra,dec)@heliovel
         output.extend([5*np.log10(distance)+10,radial,
                        east*1000/(4.74047*distance),north*1000/(4.74047*distance)])
-    return np.array(output)
+    return {"observables":np.array(output),
+            "sky_offsets_deg":dict(zip(contract["galaxy_order"],angular_offsets))}
+
+
+def predict(catalog,contract,*,h,solar_position_kpc,solar_velocity_km_s):
+    """Original sky-conditioned interface; preserve its strict contract."""
+    result=predict_candidate(catalog,contract,h=h,
+        solar_position_kpc=solar_position_kpc,
+        solar_velocity_km_s=solar_velocity_km_s)
+    for name,angle in result["sky_offsets_deg"].items():
+        if angle>contract["sky_conditioning_rounding_tolerance_deg"]:
+            raise ValueError(f"{name} does not satisfy conditioned observed sky direction")
+    return result["observables"]
 
 
 def approximate_covariance(contract):

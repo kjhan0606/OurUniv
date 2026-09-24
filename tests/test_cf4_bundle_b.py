@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import unittest
 import numpy as np
-from cf4_lg_observation_contract import basis,solar_reference,predict,log_likelihood,approximate_covariance
+from cf4_lg_observation_contract import basis,solar_reference,predict,predict_candidate,log_likelihood,approximate_covariance
 from cf4_bundle_b_environment import aperture
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -38,6 +38,19 @@ class BundleBTest(unittest.TestCase):
         self.cat["resolved_halos"]=True
         del self.cat["M33"]
         with self.assertRaises(KeyError): self.forward()
+
+    def test_candidate_reports_sky_mismatch_without_weakening_strict_prediction(self):
+        matched=predict_candidate(self.cat,self.c,h=.746,
+            solar_position_kpc=self.sun,solar_velocity_km_s=self.vsun)
+        np.testing.assert_allclose(matched["observables"],self.forward(),atol=1e-10)
+        self.assertLess(matched["sky_offsets_deg"]["M31"],1e-5)
+        self.cat["M31"]["position_kpc"]=-np.asarray(self.cat["M31"]["position_kpc"])
+        mismatched=predict_candidate(self.cat,self.c,h=.746,
+            solar_position_kpc=self.sun,solar_velocity_km_s=self.vsun)
+        self.assertGreater(mismatched["sky_offsets_deg"]["M31"],90)
+        self.assertTrue(np.isfinite(mismatched["observables"]).all())
+        with self.assertRaisesRegex(ValueError,"M31 does not satisfy"):
+            self.forward()
 
     def test_covariance(self):
         pred=self.forward()

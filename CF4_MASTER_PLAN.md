@@ -133,6 +133,16 @@ hosts3.77/4.57 cMpc/h from the fixed observer. This is an independent
 geometric diagnostic, not a calibrated likelihood. Stop seed40349 work;
 connect actual LG observables and latent roles to the same evolved IC state
 before another zoom or parent promotion.
+The first bounded observation-operator bridge now exposes
+`predict_candidate` in `src/cf4_lg_observation_contract.py`: for a caller-
+supplied resolved MW/M31/M33 role hypothesis it returns the eight predicted
+observables **and** both angular mismatches instead of rejecting an off-sky
+candidate. The original strict `predict` behavior is unchanged. This is an
+interface test, not a likelihood, role enumerator, M33 certification, or an
+IC-posterior update. Next, candidate support must come from the NEW evolved
+state without truth IDs, with unresolved M33 retained explicitly; a calibrated
+joint sky/kinematic likelihood and multiresolution forward connection are
+required before an LG-on/off IC comparison can be claimed.
 
 ## Latest planning update — 2026-09-13
 
