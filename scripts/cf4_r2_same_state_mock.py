@@ -52,6 +52,8 @@ def main():
 
     true_intensity = intensity_at(1.0)
     counts = jnp.asarray(rng.poisson(np.asarray(true_intensity)), dtype=jnp.float64)
+    shifted_intensity = intensity_at(0.9)
+    unsupported_shifted = int(jnp.sum((counts > 0) & (shifted_intensity <= 0)))
 
     def factors(scale):
         predicted_radial = jnp.sum(velocity * scale * direction, axis=1)
@@ -79,6 +81,8 @@ def main():
         'factor_derivative_at_1': [float(x) for x in derivatives],
         'count_total': float(counts.sum()),
         'intensity_total': float(true_intensity.sum()),
+        'positive_count_zero_intensity_cells_at_0p9': unsupported_shifted,
+        'shifted_count_score_valid': unsupported_shifted == 0,
         'actual_CF4_or_2Mpp_used': False,
         'physical_galaxy_tracer_model': False,
         'posterior_or_R2_completion': False,
