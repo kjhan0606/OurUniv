@@ -85,6 +85,16 @@ isolation2.7388 cMpc/h. Diagnostic decision:
 their frozen positions. This finder result does not identify an M33 analogue
 or promote the trace-only zoom. Preserve the catalogue and final RAMSES dump.
 
+The next bounded readout uses the existing `GALCATALOG.LIST.00003` and
+`GALFIND.DATA.00003`. It identifies the exact massive halo responsible for
+the nearest pair's isolation failure, lists the bound components of the five
+eligible local hosts and that intruder, and reads their DMO member masses and
+particle levels to diagnose low-resolution contamination. It applies the
+unchanged M33 mass/separation/fraction cuts to every local host. This is one
+CPU Slurm analysis of saved catalogues, with no finder rerun, new simulation,
+or post-hoc threshold change. The output can distinguish a real local triplet
+from a catalogue interpretation issue, but cannot by itself promote the IC.
+
 ## Q-GOAL and Q-LEAN driver review
 
 Q-GOAL: strong. This directly attacks the unresolved MW/M31/M33 structural

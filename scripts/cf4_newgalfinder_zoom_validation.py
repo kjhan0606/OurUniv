@@ -58,8 +58,9 @@ def read_catalog(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     hosts: list[np.void] = []
     children: list[np.void] = []
     parent: list[int] = []
+    size = path.stat().st_size
     with path.open("rb") as stream:
-        while stream.tell() < path.stat().st_size:
+        while stream.tell() < size:
             halo = np.fromfile(stream, dtype=HALO_INFO, count=1)
             if halo.size != 1:
                 raise RuntimeError("truncated HaloInfo record")
@@ -73,7 +74,7 @@ def read_catalog(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
             hosts.append(halo[0])
             children.extend(sub)
             parent.extend([host_index] * nsub)
-        if stream.tell() != path.stat().st_size:
+        if stream.tell() != size:
             raise RuntimeError("catalogue parser did not end at EOF")
     return (
         np.asarray(hosts, dtype=HALO_INFO),
