@@ -117,6 +117,16 @@ still located. The current trace-only zoom is not a validated MW/M31/M33
 realization. Detailed evidence is in `CF4_S40349_NEWGALFINDER_PLAN.md` and
 the preserved validation JSON.
 
+The bounded member audit1114563 completed2026-09-25/exit0. It confirms the
+isolation intruder is a distinct6.1498e12-Msun/h FoF host2.73884 cMpc/h
+from the candidate midpoint. A third LG-scale host of2.5309e12 Msun/h is
+only0.8532 cMpc/h from that midpoint. Both nearest-pair hosts contain
+well-resolved bound M33-scale components, but there are several competing
+assignments. Their FoF and bound-member particle masses show no coarse-particle
+contamination. The failure is therefore a real frozen-cut local configuration
+at the catalogue level; retain the strict NO-GO for this one conditional
+fine-phase realization. No threshold or seed selection follows from it.
+
 ## Latest planning update — 2026-09-13
 
 User requested an end-to-end feasibility/implementation replan with Fable

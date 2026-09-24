@@ -95,6 +95,32 @@ CPU Slurm analysis of saved catalogues, with no finder rerun, new simulation,
 or post-hoc threshold change. The output can distinguish a real local triplet
 from a catalogue interpretation issue, but cannot by itself promote the IC.
 
+Local catalogue/member audit job1114563 completed2026-09-25 01:58:34 KST in6s,
+exit0. Its output is
+`/gpfs/kjhan/CF4/diagnostics/cf4_lg_s40349_zoom_l19_z0_newgalfinder_local_audit_v1.json`.
+The isolation source is a distinct FoF host90370 of6.1498e12 Msun/h at
+2.73884 cMpc/h from the nearest candidate pair's midpoint. It has82461
+particles and20 bound components. Another eligible LG-scale host90515 has
+2.5309e12 Msun/h and lies0.8532 cMpc/h from that midpoint, so the local
+configuration is not an unambiguous two-primary system. The nearest pair
+hosts93620/93731 have2.0848e12/5.3960e11 Msun/h and separation1.1357
+cMpc/h. Their FoF mass divided by particle count and all examined bound
+members agree with the finest DMO particle mass7.09348e7 Msun/h; low-mass
+resolution contamination does not explain the pair's isolation failure.
+The stored `levelp` field is zero for these members, so resolution here is
+diagnosed by particle mass rather than `levelp`.
+
+Both pair hosts contain bound M33-scale components under the frozen mass,
+distance and mass-fraction cuts: child136031 is6.0649e10 Msun/h at0.2806
+cMpc/h from its primary (855 finest-mass particles), and child136172 is
+5.8805e10 Msun/h at0.1644 cMpc/h (829 particles). The nearby third eligible
+host90515 also contains two such components. These are candidate substructures
+of one random fine-phase realization, with no observational identity assignment.
+The strict pair result remains NO-GO; finder-level M33-like components do not
+repair the isolation and role ambiguity. Close seed40349 as a trace-only
+diagnostic rather than retuning the frozen thresholds or selecting a new best
+random seed from this result. Preserve the final dump and catalogues for now.
+
 ## Q-GOAL and Q-LEAN driver review
 
 Q-GOAL: strong. This directly attacks the unresolved MW/M31/M33 structural
