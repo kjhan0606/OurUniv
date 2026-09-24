@@ -179,6 +179,12 @@ Q-GOAL: the readout tests whether MW/M31/M33 role ambiguity can be retained
 when actual generated components, rather than truth IDs, feed the observation
 operator. Q-LEAN: one 29-MB catalogue read and a scalar count; no new physics
 run, candidate ranking, filesystem diagnostic or validation framework.
+The observation-to-role probability boundary after independent Fable/Astra
+advice is recorded in `CF4_LG_ROLE_DETECTION_CONTRACT_20260925.md`. No
+uniform-role or constant unresolved-M33 weight, immediate R2+LG-dipole run,
+or unconditional O(n^2) claim is accepted without calibration and a joint
+probability law. This is a design/status record, not a production likelihood
+or approval of a new large calculation.
 
 ## Latest planning update — 2026-09-13
 
