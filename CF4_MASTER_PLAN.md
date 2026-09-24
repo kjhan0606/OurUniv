@@ -100,7 +100,11 @@ DMO ABI mismatch (72-byte member records versus a168-byte hydro build) plus
 two periodic-unwrapping defects; it was cancelled after54 seconds without a
 usable product. GalaxyFinder branch
 `agent/fix-newgalfinder-periodic-unwrapping` commit43046a3 fixes both and adds
-a compile-time 72-byte DMO ABI assertion. No HOP job is submitted.
+a compile-time 72-byte DMO ABI assertion. Corrected-ABI job1113504 then passed
+the early hosts and produced DMO subhalos, but was deliberately cancelled after
+showing that every zero-star host still paid for an empty stellar FFT. Follow-up
+commit96560d9 sends such hosts directly to the identical adaptive DMO finder
+and zero-initializes the per-halo state. No HOP job is submitted.
 
 ## Latest planning update — 2026-09-13
 

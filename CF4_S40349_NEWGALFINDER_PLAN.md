@@ -25,12 +25,12 @@ information.
   changes and record exact binary/source hashes.
 - NewGalFinder source: GalaxyFinder branch
   `agent/fix-newgalfinder-periodic-unwrapping`, commit
-  `43046a3305724cf8229ffc4273942e95f8a508aa`, checked out separately at
+  `96560d9ceef34a0143304d8a32534649634d5116`, checked out separately at
   `/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e` so the user's dirty
   local tree is not overwritten.
 - NewGalFinder binary: the same finder physics, rebuilt with `NMEG=8000L` and
   `NBODY`. SHA256:
-  `f5ceabadde2d32bb9fb17b5d78e87a40f4249eb389682c6c500b6c0237da077f`.
+  `2702135f6195714257a7ca3298c5bda2f128a7bc2f987587ca336f8d091dff09`.
 - Input/output ABI: `INDEX`, `VarPM`, `XYZDBL`, `NBODY`; the compact `DmType`
   is compile-time asserted to be 72 bytes, exactly matching the measured opFoF
   member layout. The branch also fixes value sorting and post-shift bounds in
@@ -60,6 +60,14 @@ preflight-incomplete hydro build read the 72-byte DMO records with a 168-byte
 stride. The resulting false coordinates triggered grid-size overflow. It made
 no usable output. The corrected DMO ABI and periodic-unwrapping branch above
 are mandatory for the rerun; adding memory would not fix this error.
+
+The corrected-ABI launch, job1113504, demonstrated valid coordinates and DMO
+subhalo separation, reaching host number4992 without an allocation failure.
+It was then cancelled deliberately after9m47s: with `DM_DENSITY_WEIGHT=0`, the
+code still computed an empty stellar FFT before every dedicated DMO search.
+Commit96560d9 routes zero-star hosts directly to the same adaptive DMO finder
+and zero-initializes per-halo state. This removes a scientifically inert cost
+and the associated large-host memory risk without changing the DMO algorithm.
 
 ## Q-GOAL and Q-LEAN driver review
 

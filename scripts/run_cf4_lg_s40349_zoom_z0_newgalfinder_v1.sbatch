@@ -19,7 +19,7 @@ module load intel/tbb/2022.3 intel/umf/1.0.2 \
 
 run=/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268
 source_tree=/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e
-binary="$source_tree/NewGalFinder/gfind_nmeg8000_dmo.exe"
+binary="$source_tree/NewGalFinder/gfind_nmeg8000_dmo_direct.exe"
 plan=/home/kjhan/BACKUP/CF4/CF4_S40349_NEWGALFINDER_PLAN.md
 istep=3
 step=$(printf '%05d' "$istep")
@@ -31,8 +31,8 @@ list="$fof_dir/GALCATALOG.LIST.${step}"
 data="$fof_dir/GALFIND.DATA.${step}"
 background="$fof_dir/background_ptl.${step}"
 result="$run/newgalfinder_result_${step}.txt"
-binary_sha=f5ceabadde2d32bb9fb17b5d78e87a40f4249eb389682c6c500b6c0237da077f
-source_commit=43046a3305724cf8229ffc4273942e95f8a508aa
+binary_sha=2702135f6195714257a7ca3298c5bda2f128a7bc2f987587ca336f8d091dff09
+source_commit=96560d9ceef34a0143304d8a32534649634d5116
 
 test -x "$binary"
 test -s "$catalog"
