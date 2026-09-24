@@ -38,7 +38,6 @@ def main():
         "local_host_count": int(len(host_ids)),
         "local_bound_component_count": int(n),
         "ordered_role_hypothesis_count_including_unresolved": int(count),
-        "local_host_indices": host_ids.tolist(),
         "limits": "This is support cardinality, not a role prior, likelihood, posterior, M33 identification, or an IC update. A shared FoF host does not prove a bound MW-M31 pair.",
     }
     if count <= 100000:

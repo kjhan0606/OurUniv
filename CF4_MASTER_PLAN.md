@@ -158,6 +158,27 @@ have **no calibrated role prior, detection law, sky covariance or posterior
 weight**, and the adapter is not differentiable IC inference. Its M33 branch
 labels indicate FoF sharing, not demonstrated association with M31. Do not
 call enumeration or a close observed-space match a validated LG realization.
+Syntax CPU-only Slurm403323 then read the preserved NewGalFinder z=0
+`GALCATALOG.LIST.00003` (6s/exit0) with the fixed 5 cMpc/h observer aperture,
+without observational or mass ranking. It contains521 local FoF hosts and579
+bound components. Exhaustive ordered MW/M31/M33-or-unresolved enumeration
+would generate193434636 hypotheses, so the adapter correctly stopped before
+materializing them. The compact result is
+`config/cf4_lg_newgal_role_support_403323.json`. An initial job403318 failed
+in3s because its runner supplied the particle-data file rather than the
+catalogue-list file; it produced no science result and was corrected without
+changing the aperture or state. This cardinality is **not evidence that the
+observed LG is absent**. It establishes that a best-match shortlist or uniform
+explicit triple list is not an acceptable route to posterior conditioning.
+The next inference design must specify a normalized generated-state role and
+detection law (including missing M33), then preserve its probabilities through
+factorized summation or an importance-corrected proposal. Only after that and
+the calibrated sky/kinematic likelihood can the same-state LG-on/off IC test
+be performed. No extra zoom run or mass-cut retuning follows from this count.
+Q-GOAL: the readout tests whether MW/M31/M33 role ambiguity can be retained
+when actual generated components, rather than truth IDs, feed the observation
+operator. Q-LEAN: one 29-MB catalogue read and a scalar count; no new physics
+run, candidate ranking, filesystem diagnostic or validation framework.
 
 ## Latest planning update — 2026-09-13
 
