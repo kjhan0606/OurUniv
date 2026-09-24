@@ -36,6 +36,10 @@ tracked product pairs NewGalFinder detection with independent galaxy truth
 on an ensemble of relevant forward states. This does not prove that no such
 data exist elsewhere; establish an exact source before proposing a transfer
 calibration or large run. Do not recopy the staged hydro catalogue.
+The checked GalaxyFinder `NewDD/README4GADGET.md` is an *adaptation guide*:
+NewDD currently reads RAMSES, not the TNG/GADGET HDF5 snapshot. Applying the
+same NewGalFinder pipeline to TNG requires a separately verified conversion
+and finder/domain-shift design, not a free invocation of the existing binary.
 
 The fixed5-cMpc/h support in seed40349 contains521 hosts,579 bound components
 and193,434,636 ordered assignments. These are counts, not probabilities.
