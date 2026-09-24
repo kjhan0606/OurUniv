@@ -126,6 +126,13 @@ assignments. Their FoF and bound-member particle masses show no coarse-particle
 contamination. The failure is therefore a real frozen-cut local configuration
 at the catalogue level; retain the strict NO-GO for this one conditional
 fine-phase realization. No threshold or seed selection follows from it.
+The observed-frame cross-check in `CF4_S40349_NEWGALFINDER_PLAN.md` also
+finds a minimum57.57-degree MW-to-M31 sky-direction mismatch, a1.522-Mpc
+pair separation versus0.761-Mpc observed M31 distance, and candidate MW
+hosts3.77/4.57 cMpc/h from the fixed observer. This is an independent
+geometric diagnostic, not a calibrated likelihood. Stop seed40349 work;
+connect actual LG observables and latent roles to the same evolved IC state
+before another zoom or parent promotion.
 
 ## Latest planning update — 2026-09-13
 

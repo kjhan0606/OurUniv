@@ -121,6 +121,36 @@ repair the isolation and role ambiguity. Close seed40349 as a trace-only
 diagnostic rather than retuning the frozen thresholds or selecting a new best
 random seed from this result. Preserve the final dump and catalogues for now.
 
+## Observed-frame cross-check — 2026-09-25
+
+The small, read-only `scripts/cf4_lg_observed_geometry_check.py` checks the
+same frozen pair against the actual M31 sky/distance entry, using the P1
+de Vaucouleurs supergalactic Cartesian frame, the zoom's h=0.746 and its
+384 cMpc/h observer-centred box. Astropy transforms the observed ICRS M31
+direction to SG Cartesian. Both possible MW/M31 assignments are reported;
+neither is chosen by target fit. They give angular discrepancies **57.5683°**
+and **122.4317°**. Their separation is **1.5224 physical Mpc**, versus the
+M31 distance-modulus value **0.7610 physical Mpc** in the observational
+contract. The potential MW hosts lie **3.7691** and **4.5651 cMpc/h** from
+the box-centre observer. These are geometric diagnostics, not a calibrated
+galaxy-centre likelihood: solar offset, halo/galaxy COM discrepancy and
+distance covariance are not modeled here. Nevertheless, the differences are
+far larger than those omitted small offsets. The old pair score never used
+the observed sky direction and permitted a midpoint several Mpc/h from the
+observer; passing its loose cuts would not establish an observed LG.
+
+This independent observational mismatch reinforces, but does not replace,
+the frozen isolation NO-GO. NewGalFinder's several bound M33-scale children
+remain unidentified; no child can be promoted by selecting the nearest one.
+Do not retune pair thresholds, recenter the observed frame after seeing this
+seed, or spend another zoom run on this candidate. The next scientific bridge
+must make the MW observer, M31/M33 directions and distances, velocities,
+latent role assignments, and bound M33 existence predictions of the *same*
+evolved state under a phase-consistent IC posterior. Its first bounded test
+should use an actual matched IC/forward state with known coordinate transform,
+and explicitly show LG-on versus LG-off changes in local IC modes; anonymous
+pair cuts and post-hoc seed ranking do not meet that criterion.
+
 ## Q-GOAL and Q-LEAN driver review
 
 Q-GOAL: strong. This directly attacks the unresolved MW/M31/M33 structural
