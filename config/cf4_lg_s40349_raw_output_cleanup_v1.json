@@ -15,14 +15,28 @@
       "stage": "historical symlink to the a=0.05 checkpoint",
       "reason": "The target raw checkpoint was retired; the a=0.10 output is self-contained and is the active restart source.",
       "recoverable": false
+    },
+    {
+      "path": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_a010_v2/job_1108481/output_00002",
+      "stage": "a=0.10 early nonlinear checkpoint",
+      "measured_size": "19 GiB",
+      "reason": "Superseded by the completed, validated, and durably recorded z=0 output_00003.",
+      "recoverable": false
+    },
+    {
+      "path": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268/output_00002",
+      "stage": "historical symlink to the a=0.10 checkpoint",
+      "reason": "The z=0 output is self-contained and the intermediate restart checkpoint was retired.",
+      "recoverable": false
     }
   ],
   "retained": [
     "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_v1/job_1108467/ramses.log",
     "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_v1/job_1108467/ramses.nml",
-    "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_a010_v2/job_1108481/output_00002",
+    "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268/output_00003",
     "config/cf4_lg_s40349_zoom_l19_early_a005_decision_v1.json",
-    "config/cf4_lg_s40349_zoom_l19_early_a010_decision_v2.json"
+    "config/cf4_lg_s40349_zoom_l19_early_a010_decision_v2.json",
+    "config/cf4_lg_s40349_zoom_l19_z0_decision_v1.json"
   ],
-  "retention_rule": "Keep a restart source until its downstream dump is validated. Keep z=0 raw output until GalaxyFinder, HOP, structure, environment, and contamination products are sealed; then remove superseded raw dumps while retaining provenance and derived products."
+  "retention_rule": "Keep a restart source until its downstream dump is validated. Keep z=0 raw output until NewDD, opFoF, NewGalFinder, structure, environment, and contamination products are sealed; then remove superseded raw dumps while retaining provenance and derived products."
 }

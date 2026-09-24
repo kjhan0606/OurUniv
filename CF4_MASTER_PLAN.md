@@ -74,10 +74,26 @@ exactly one22.011e9-byte final dump.  Peak RSS was60.34 GiB. Decision:
 
 This is numerical completion only.  The parent remains trace-only, M33 remains
 unresolved, and the single random conditional high-k realization is not
-CF4-recovered information.  Next run the RAMSES GalaxyFinder newDD/opFoF path
-plus independent HOP peak/deblend diagnostics on output_00003, then evaluate
-MW/M31/M33, environment drift, and contamination.  Do not promote the seed or
-call it a validated production zoom before that science decision.
+CF4-recovered information. The user now directs using the newer
+`GalaxyFinder/NewGalFinder` instead of HOP. Run the RAMSES NewDD/opFoF path,
+then NewGalFinder's DMO density-peak/watershed/boundedness/tidal-radius
+substructure analysis on output_00003 and evaluate MW/M31/M33, environment
+drift, and contamination. HOP is deferred unless NewGalFinder has an
+implementation-level failure. Do not promote the seed or call it a validated
+production zoom before that science decision.
+
+After the z=0 result and hashes were committed and pushed, the superseded
+19-GiB a=0.10 checkpoint and its z=0-run symlink were removed under the user's
+raw-output cleanup instruction; they are not recoverable.  Preserve the final
+z=0 output_00003 until both halo-finder products and the science decision are
+sealed.
+
+NewGalFinder source commit586a62e was fetched without overwriting the user's
+modified local GalaxyFinder tree, checked out at the separate GPFS worktree
+`GalaxyFinder_newgal_586a62e`, and built successfully with the documented
+opFoF ABI. The fixed binary hash and one-run resource plan are recorded in
+`CF4_S40349_NEWGALFINDER_PLAN.md`. First generate and validate the required
+mass-preserving NewDD/opFoF catalog; no HOP job is submitted.
 
 ## Latest planning update — 2026-09-13
 

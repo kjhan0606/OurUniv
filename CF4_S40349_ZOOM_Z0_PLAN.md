@@ -13,7 +13,7 @@ show that MW/M31/M33 are reproduced.
 The strongest possible runtime result is
 `TRACE_ONLY_ZOOM_L19_Z0_FORWARD_PASS`.  Scientific acceptance remains blocked
 until the final snapshot is processed with the RAMSES GalaxyFinder newDD/opFoF
-path and a complementary HOP peak/deblend diagnostic, followed by explicit
+path and NewGalFinder substructure analysis, followed by explicit
 MW/M31/M33, environment, and contamination checks.
 
 ## Fixed execution contract
@@ -60,8 +60,10 @@ decision.
 2. Convert the final RAMSES dump with the GalaxyFinder `newDD` executable and
    run its RAMSES-compatible opFoF.  Preserve particle masses; do not use the
    historical GOTPM converter.
-3. Run the existing RAMSES HOP diagnostic independently to expose peak
-   merging/deblending ambiguity.
+3. Run the latest GalaxyFinder `NewGalFinder` inside the opFoF hosts. Use its
+   DMO density-peak, watershed, boundedness, and tidal-radius machinery to test
+   peak separation and M33-scale substructure. HOP is deferred rather than
+   duplicated unless NewGalFinder produces an implementation-level failure.
 4. Test whether an MW/M31 pair can be identified without truth-label
    selection, search separately for an M33 analogue, and measure separation,
    radial velocity, masses, Virgo/environment drift, and low-resolution
@@ -76,6 +78,6 @@ decision.
 The superseded `a=0.05` raw dump was removed after the independent `a=0.10`
 checkpoint had completed and been validated; logs, namelists, and tracked
 decisions remain.  Keep `a=0.10` until the z=0 dump is validated.  Keep the z=0
-dump until both halo-finder products and all structure/contamination metrics
-are sealed.  Only then remove superseded raw dumps, retaining provenance,
+dump until the opFoF/NewGalFinder products and all structure/contamination
+metrics are sealed. Only then remove superseded raw dumps, retaining provenance,
 catalogues, diagnostics, hashes, and decision records.
