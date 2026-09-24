@@ -28,6 +28,23 @@ required R2 delivery. Start with a bounded same-state observation/forward
 feasibility calculation; only launch a larger N256 inference after a viable
 state-dependent operator, model calibration and cost are demonstrated.
 
+The first no-TNG same-state wiring control is now complete (Syntax Slurm
+403551, 13 s; source `d24aee1`). It read one preserved R1 PM z=0 particle
+state and used 64 fixed synthetic tracers to evaluate radial-velocity and
+six-population count factors from the **same** positions/velocities. Both
+factors respond to a velocity perturbation and have finite local derivatives.
+Crucially, the perturbed sparse count model gives positive observed count at
+one exactly zero-intensity cell; its huge log-score change is a support
+failure, not evidence of information recovery. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_same_state_mock_v1/job_403551.json`.
+This is a mechanics control only: it uses synthetic observations, an arbitrary
+particle-as-tracer assignment, a 12 cMpc/h box and no actual CF4/2M++ rows.
+It does not close R1 or deliver R2. Before actual-data sampling, replace the
+synthetic tracer law with a calibrated, positive-support galaxy-intensity
+model, retain selection/bias uncertainty and show a feasible state-dependent
+cost. Do not regularize away zero support with an undocumented likelihood
+floor or infer galaxy bias from this toy calculation.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
