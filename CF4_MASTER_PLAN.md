@@ -53,6 +53,15 @@ not a high-resolution bias calibration. The unsupported synthetic count score
 was corrected to undefined (`null`) in Slurm404169. Evidence, qualified
 external advice, and the next no-TNG 384-box action are in
 `CF4_R2_TRACER_IDENTIFIABILITY_20260925.md`. No R2 posterior is delivered.
+The follow-up Slurm404189 compared actual 2M++ count factorial moments with
+six archived 384-box N32 PM fields under the corrected selection window.
+Published-bias PM means are below the observed excess in all six populations;
+blindly transferring the old fit biases overshoots dramatically (predicted
+excess17.8–69.5). This is a coarse, no-RSD diagnostic, not a bias calibration.
+Close the N32 moment check; the next critical work is a positive-support
+continuous tracer/RSD operator on a same-state 384-box PM forward with N128
+feasibility before N256 inference. Details and limits are in the linked R2
+tracer decision record. No TNG, new simulation or posterior was launched.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
