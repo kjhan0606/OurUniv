@@ -45,6 +45,15 @@ model, retain selection/bias uncertainty and show a feasible state-dependent
 cost. Do not regularize away zero support with an undocumented likelihood
 floor or infer galaxy bias from this toy calculation.
 
+Actual-data tracer identifiability follow-up: Slurm404160 used saved N32/384
+CF4+2M++ chains and found all six old-model bias coordinates 2.42–4.95 prior
+SD above their imported centres, with posterior SD only 0.11–0.22 prior SD.
+This is strong *conditional old-model* information and a model-stress warning,
+not a high-resolution bias calibration. The unsupported synthetic count score
+was corrected to undefined (`null`) in Slurm404169. Evidence, qualified
+external advice, and the next no-TNG 384-box action are in
+`CF4_R2_TRACER_IDENTIFIABILITY_20260925.md`. No R2 posterior is delivered.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
