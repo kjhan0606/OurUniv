@@ -50,3 +50,14 @@ class TestContinuousTracer(unittest.TestCase):
 
     def test_geometry(self):
         test_geometry_rejects_wrong_population_count()
+
+    def test_empty_pm_cell_is_not_a_numerical_density_floor(self):
+        rho = jnp.ones((2, 2, 2)).at[0, 0, 0].set(0.)
+        result = predict_continuous_intensity(
+            rho, jnp.zeros((3, 2, 2, 2)), jnp.ones((6, 2, 2, 2)),
+            jnp.ones(6), jnp.ones(6), jnp.zeros(6),
+            box=12., observer=jnp.array([6., 6., 6.]), hubble=75., little_h=.75,
+            sigma_fog=jnp.zeros(6), sigma_redshift=jnp.zeros(6),
+        )
+        self.assertTrue(np.isfinite(np.asarray(result)).all())
+        self.assertGreaterEqual(float(result.min()), 0.)

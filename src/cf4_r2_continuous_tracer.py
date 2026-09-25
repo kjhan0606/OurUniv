@@ -22,7 +22,7 @@ def predict_continuous_intensity(
 ):
     """Six selected count intensities with spherical RSD and Gaussian LOS scatter.
 
-    density is positive cell-mean matter density, velocity is (3,N,N,N)
+    density is nonnegative cell-mean matter density, velocity is (3,N,N,N)
     observer-subtracted physical peculiar km/s, and nbar is *unselected*
     expected count per output cell at unit density. A population's diffuse
     component is spatially uniform before survey selection. Its normalization
@@ -36,9 +36,11 @@ def predict_continuous_intensity(
     if nbar.shape != (6,) or bias.shape != (6,) or diffuse_fraction.shape != (6,):
         raise ValueError("six-population parameter geometry mismatch")
     positions = cell_centres(n, box, origin_fraction)
-    log_density = jnp.log(density.reshape(-1))
-    log_response = bias[:, None] * log_density[None, :]
-    response = jnp.exp(log_response - jnp.max(log_response, axis=1, keepdims=True))
+    # CIC-deposited PM cells can be exactly empty. At the fixed published
+    # biases (all >=1), rho**b is well-defined without an arbitrary floor.
+    # Differentiation with respect to a free b at rho=0 needs a separate
+    # smooth occupancy model; this development operator does not assert it.
+    response = density.reshape(1, -1) ** bias[:, None]
     response = response / jnp.mean(response, axis=1, keepdims=True)
     clustered_mass = nbar[:, None] * (1.0 - diffuse_fraction[:, None]) * response
     clustered = predict_selected_intensity_jax(
