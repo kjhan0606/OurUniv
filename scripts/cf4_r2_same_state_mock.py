@@ -77,7 +77,10 @@ def main():
         'source': str(SOURCE), 'source_particles': int(len(index)),
         'box_cMpc_h': box, 'count_cell_cMpc_h': box / ngrid,
         'log_factor_at_velocity_scale_1': [float(x) for x in at_true],
-        'log_factor_at_velocity_scale_0p9': [float(x) for x in at_shifted],
+        # The JAX Poisson kernel uses a finite numerical log guard. It is not
+        # a valid likelihood when an occupied cell has exactly zero intensity.
+        'log_factor_at_velocity_scale_0p9': [float(at_shifted[0]),
+                                               None if unsupported_shifted else float(at_shifted[1])],
         'factor_derivative_at_1': [float(x) for x in derivatives],
         'count_total': float(counts.sum()),
         'intensity_total': float(true_intensity.sum()),
@@ -89,7 +92,7 @@ def main():
     }
     if not np.isfinite(np.asarray(list(result['factor_derivative_at_1']))).all():
         raise RuntimeError('nonfinite state sensitivity')
-    if not all(abs(float(a) - float(b)) > 1e-8 for a, b in zip(at_true, at_shifted)):
+    if abs(float(at_true[0]) - float(at_shifted[0])) <= 1e-8 or abs(float(derivatives[1])) <= 1e-8:
         raise RuntimeError('both observation factors must respond to the same state')
     OUTPUT.mkdir(parents=True, exist_ok=True)
     target = OUTPUT / f"job_{os.environ['SLURM_JOB_ID']}.json"
