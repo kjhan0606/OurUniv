@@ -63,6 +63,19 @@ continuous tracer/RSD operator on a same-state 384-box PM forward with N128
 feasibility before N256 inference. Details and limits are in the linked R2
 tracer decision record. No TNG, new simulation or posterior was launched.
 
+R2 continuous-tracer mechanics/cost follow-up: Slurm404199 passed two focused
+tests and checked a six-population RSD/FoG operator on one archived N32/384
+PM state under the corrected actual selection; occupied zero-intensity cells
+were 0. An explicit 3% unresolved/contaminant component provides positive
+support but is **uncalibrated**, not a numerical likelihood floor or accepted
+galaxy model. The N128/384 operator-only analytic-field benchmark and corrected
+nonuniform gradient ran in Slurm404201 (GPU warm forward 0.044 s, scalar-
+parameter gradient 0.049 s, batch MaxRSS 2.62 GB). This is neither an N128
+PM state, full IC adjoint, actual-data likelihood nor R2 posterior. Obtain a
+genuine N128/384 PM state and count/selection representation and calibrate
+the positive-support response before larger inference. Details:
+`CF4_R2_CONTINUOUS_TRACER_FEASIBILITY_20260925.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
