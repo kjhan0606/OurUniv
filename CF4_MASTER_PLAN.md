@@ -90,6 +90,22 @@ calibrate survival, not an unclustered fraction or N128 bias. A cosmology
 mismatch between the PM control and ARES selection also forbids quantitative
 likelihood promotion. Details: `CF4_R2_N128_OBSERVATION_LINK_20260925.md`.
 
+The next R2 datum repair froze the CF4/PM basis (`h=.746`, `Om=.31`) and
+rebuilt the 2M++ N128 row catalogue at that same basis (Slurm404255/404257),
+retaining33,368 count rows and11,502 disjoint survivor marks. Slurm404259
+directly recomputed the six-population/shell N128 selection with order-6
+quadrature: no observed zero-exposure cells among29,100 occupied keys.
+The published cell-density prior predicts28,574 counts under a homogeneous
+field and mean survival against33,368 observed; it is not an exact new-model
+rate calibration. This removes the known coordinate/cosmology inconsistency
+but **does not** promote the PM control to an actual CF4-conditioned posterior
+or certify bias, survival-environment, RSD/FoG and field discrepancy. Details:
+`CF4_R2_COMMON_COSMOLOGY_CONTRACT_20260925.md`.
+Slurm404269 additionally checked the corrected count/selection response on
+the same unconditional N128 PM state: all29,100 occupied cells have positive
+finite predicted intensity with zero diffuse component. The random-phase
+population totals are not a fit or nuisance calibration.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
