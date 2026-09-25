@@ -76,6 +76,20 @@ genuine N128/384 PM state and count/selection representation and calibrate
 the positive-support response before larger inference. Details:
 `CF4_R2_CONTINUOUS_TRACER_FEASIBILITY_20260925.md`.
 
+The subsequent native N128 link is now complete at **wiring/support** level,
+not calibration or posterior level. Slurm404203 conservatively aggregated the
+existing1.5-cMpc/h 2M++ rows and selection to3 cMpc/h:33,376 galaxies,
+24,998 train/8,378 held out, zero occupied selection holes. This corrects
+the mistaken claim that only N32 selection existed. Slurm404204 produced one
+genuine unconditional384-box N128 PM density/velocity state. Slurm404205 found
+zero occupied zero-intensity cells with the arbitrary diffuse fraction **set
+to zero**: the fixed3% trial is withdrawn, not calibrated. Slurm404208
+connected all19,313 actual CF4 radial rows to the same PM velocity state.
+These are not CF4-conditioned phases or a joint likelihood. Independent marks
+calibrate survival, not an unclustered fraction or N128 bias. A cosmology
+mismatch between the PM control and ARES selection also forbids quantitative
+likelihood promotion. Details: `CF4_R2_N128_OBSERVATION_LINK_20260925.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

@@ -42,9 +42,11 @@ with the project's JAX environment. No simulation or posterior fit ran.
 This closes the **mechanics/cost** part of a positive-support response, not
 the R2 observation model. The N128 benchmark used an analytic field, uniform
 selection and fixed nuisance values. The only existing 384-box native PM
-fields used here are N32/12 cMpc/h. The actual corrected selection array is
-also N32; simply interpolating that exposure or an N32 PM field does not
-create independent 3 cMpc/h information. The artificial diffuse fraction,
+fields used here are N32/12 cMpc/h. The corrected-count NPZ selection array
+used here is N32; a separate native N256 ARES selection and row set was
+subsequently found and conservatively aggregated to N128, as recorded in
+`CF4_R2_N128_OBSERVATION_LINK_20260925.md`. Simply interpolating an N32 PM
+field does not create independent 3 cMpc/h information. The artificial diffuse fraction,
 rate, bias scale, FoG and survival uncertainty still need a calibrated
 joint treatment. A full-field IC gradient and chain ESS have **not** been
 measured by this scalar-parameter adjoint.
