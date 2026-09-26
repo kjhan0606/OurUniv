@@ -100,6 +100,19 @@ not proof that all 340 objects have positive pointwise angular selection or
 that the count/CF4 partial likelihood is calibrated. The old 63 number refers
 only to the 20% calibration slice. No likelihood or posterior was evaluated.
 
+A source-bound **pointwise** follow-up, Slurm405253 (COMPLETED/exit0, seven
+seconds), used the official HEALPix maps at every eligible galaxy coordinate
+and exactly reconstructed the old survivor flags without using the CF4 match
+in the quality rule. There are442 object-level mark/map discrepancies among
+57,238 eligible rows:102 crossmatched and340 noncrossmatched. Only **one**
+row has zero pointwise map value; all442 are mark discrepancies by the frozen
+0.05 threshold. The old319-row exception manifest intersects316 of the
+current eligible nonmatches, so it is not a complete new-model anomaly list.
+The full340 nonmatch failures include the63 in the calibration slice. These
+are observed-data inconsistencies, not an inferred sky-completeness mask.
+The inclusive diagnostic's57,238 rows deliberately retain them for audit;
+its zero-*voxel*-exposure result cannot certify their selection likelihood.
+
 BGc `vobs` and its position are functions of CF4 grouped redshift and
 distance, and the transform uses a training reference pool. The current
 R2 implementation's overlap guard is a **global disjoint exclusion**, not a

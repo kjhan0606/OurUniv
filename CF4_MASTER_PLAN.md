@@ -167,6 +167,11 @@ exposure does not validate these object-level exceptions or the joint
 likelihood. Result and limits are in the overlap group audit record. Next
 science action is the one group/member-dependent mock/conditional-mark test,
 not immediate actual-data posterior sampling.
+Slurm405253 then checked the official angular maps at the *individual*
+galaxy positions:442 eligible mark/map mismatches (102 crossmatched,340
+nonmatched), with only one zero pointwise map value. Thus an angle-only mask
+cannot replace the missing row-level selection/discrepancy model, and positive
+integrated-cell support does not settle it. No inclusive likelihood was fit.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
