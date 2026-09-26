@@ -393,6 +393,21 @@ Close this width check; next work is group dependence/selection and latent
 population uncertainty, not more individual-PDF diagnostics or truth-based
 offset correction. Record: `CF4_R2_FP_MOCK_EVALUATION_20260926.md`.
 
+R2 latent/shared group-mark interface406155 COMPLETED1m49s, six tests pass.
+The conditional distance factor now sums no-observed-central/one-central
+assignments and integrates one shared group offset after member products;
+the existing single global zero is still integrated only after group products.
+All10,020 FP rows/6,821 groups connect to the saved same-state density/velocity.
+Coarse/fine log-contrast changes are at most0.00036257; exact Gaussian common-
+covariance and zero-effect identity checks pass. Accept numerical wiring ONLY:
+role probabilities/offsets/scatter are illustrative, not calibrated or inferred
+from mock truth. No nuisance fit, new gravity, actual posterior or LG component
+identification. Close synthetic covariance variations. Next scientific work
+must specify/calibrate the joint selected-group role/FoG/inclusion/source-fit
+law, distinguishing available observation information from missing preselection
+parent/recovered-group mocks. More rows of the same selected-mock schema do
+not solve that absence. Record: `CF4_R2_LATENT_GROUP_MARKS_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

@@ -18,7 +18,8 @@ from scipy.special import logsumexp
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from cf4_r2_fp_group_marginal import (redshift_sufficient, joint_redshift_logkernel,
-    conditional_group_scores, shared_zero_logfactor, selected_group_logweights)
+    conditional_group_scores, shared_zero_logfactor, selected_group_logweights,
+    conditional_latent_group_scores)
 from cf4_z0_physical_field import read_centred
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
@@ -29,8 +30,12 @@ SOURCE = Path('/gpfs/kjhan/CF4/external/sdss_pv_6824749/SDSS_PV_public.dat')
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--same-field-density', action='store_true')
+    parser.add_argument('--latent-group', action='store_true')
     args = parser.parse_args()
+    args.same_field_density = args.same_field_density or args.latent_group
     out = BASE/'r2_fp_same_field_radial_v1' if args.same_field_density else OUT
+    if args.latent_group:
+        out = BASE/'r2_fp_latent_group_v1'
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
     if out.exists():
@@ -52,6 +57,10 @@ def main():
     group_labels, row_group = np.unique(data['source_group'], return_inverse=True)
     ng = len(group_labels)
     nrows = np.bincount(row_group)
+    # Exchangeable observed-subset roles, solely an UNCALIBRATED mechanics
+    # fixture. No native/mock truth role labels enter these probabilities.
+    log_none = jnp.full(ng, np.log(.5))
+    log_central = jnp.asarray(np.log(.5/nrows[row_group]))
     dirs = np.stack([np.bincount(row_group, weights=data['directions'][:,k])/nrows for k in range(3)],axis=1)
     dirs /= np.linalg.norm(dirs,axis=1)[:,None]
     zgroup = np.bincount(row_group, weights=data['zgroup'])/nrows
@@ -143,11 +152,18 @@ def main():
                 # NOT measured bias or a calibrated selected-group prior.
                 logdw = (selected_group_logweights(d,jnp.asarray(weight),rho,1.,jnp.zeros_like(d))
                          if args.same_field_density else uniform_logdw)
+                nu = 5 if nq == 257 else 9
+                ux, uw = np.polynomial.hermite.hermgauss(nu)
+                group_offset = jnp.asarray(np.sqrt(2.)*.005*ux)
+                log_group_weight = jnp.asarray(np.log(uw))
                 def scores(a, bias=1.):
                     prediction = 299792.458*zcos+(1+zcos)*a*radial
                     kernel = joint_redshift_logkernel(prediction,zcos,suff[sigma])
                     w = (selected_group_logweights(d,jnp.asarray(weight),rho,bias,jnp.zeros_like(d))
                          if args.same_field_density else logdw)
+                    if args.latent_group:
+                        return conditional_latent_group_scores(d,w,kernel,gid,dzrow,*moments,zero,
+                            log_none,log_central,-.005,.005,group_offset,log_group_weight)
                     return conditional_group_scores(d,w,kernel,gid,dzrow,*moments,zero)
                 calculate = jax.jit(scores)
                 state_scores = calculate(1.)
@@ -161,15 +177,23 @@ def main():
                 trial['holdout_conditional_logratio'] = trial['all_logratio_to_zero_velocity']-trial['train_logratio_to_zero_velocity']
                 if args.same_field_density:
                     kernel = joint_redshift_logkernel(299792.458*zcos+(1+zcos)*radial,zcos,suff[sigma])
-                    uniform_scores = conditional_group_scores(d,uniform_logdw,kernel,gid,dzrow,*moments,zero)
-                    trial['train_density_weight_minus_uniform'] = get(state_scores,train)-get(uniform_scores,train)
+                    if args.latent_group:
+                        baseline_scores = jax.jit(conditional_group_scores)(d,logdw,kernel,gid,dzrow,*moments,zero)
+                        trial.update(group_offset_nodes=nu,group_offset_std_dex=.005,
+                            central_offset_dex=-.005,satellite_offset_dex=.005,
+                            observed_central_probability=.5,
+                            train_latent_minus_baseline=get(state_scores,train)-get(baseline_scores,train),
+                            all_latent_minus_baseline=get(state_scores,allgroups)-get(baseline_scores,allgroups))
+                    else:
+                        uniform_scores = conditional_group_scores(d,uniform_logdw,kernel,gid,dzrow,*moments,zero)
+                        trial['train_density_weight_minus_uniform'] = get(state_scores,train)-get(uniform_scores,train)
                     trial['zero_density_quadrature_nodes'] = int(np.sum(np.asarray(rho)<=0))
                 prediction = 299792.458*zcos+(1+zcos)*radial
                 base = logdw+joint_redshift_logkernel(prediction,zcos,suff[sigma])
                 base_np = np.asarray(base)
                 edge = np.exp(logsumexp(base_np[:,[0,-1]],axis=1)-logsumexp(base_np,axis=1))
                 trial['max_endpoint_weight'] = float(edge.max())
-                if nq == 513 and sigma == 150. and zpstd == .004:
+                if nq == 513 and sigma == 150. and zpstd == .004 and not args.latent_group:
                     f = lambda a: shared_zero_logfactor(scores(a),logzw,train)
                     derivative = float(jax.jit(jax.grad(f))(1.))
                     fd = (float(f(1.0001))-float(f(.9999)))/.0002
@@ -183,6 +207,11 @@ def main():
                             radial_bias_gradient_agreement=bool(np.isclose(db,fdb,rtol=2e-3,atol=1e-4)))
                     saved_scores = dict(group_scores=np.asarray(state_scores),zero_nodes=np.asarray(zero),
                         log_zero_weights=np.asarray(logzw),group_labels=group_labels,group_holdout=group_hold)
+                if args.latent_group and nq == 513:
+                    saved_scores = dict(group_scores=np.asarray(state_scores),zero_nodes=np.asarray(zero),
+                        log_zero_weights=np.asarray(logzw),group_labels=group_labels,group_holdout=group_hold,
+                        group_offset_nodes=np.asarray(group_offset),log_group_offset_weights=np.asarray(log_group_weight),
+                        row_group=row_group,log_none_weight=np.asarray(log_none),log_central_weight=np.asarray(log_central))
                 if not np.isfinite(list(trial.values())).all():
                     raise FloatingPointError('nonfinite marginal calculation')
                 trials.append(trial)
@@ -208,6 +237,13 @@ def main():
         source_sha256={name:hashlib.sha256((ROOT/'data'/name).read_bytes()).hexdigest()
                        for name in ('2mpp_catalog.csv','cf4_2mpp_crossmatch_v1.csv')},
         runtime_seconds=time.monotonic()-start)
+    if args.latent_group:
+        result.update(classification='UNCALIBRATED_LATENT_ROLE_AND_SHARED_GROUP_MARK_CONTROL',
+            roles_and_group_scatter_calibrated=False,role_dependent_redshift_kernel=False,
+            source_fit_covariance_resolved=False,nuisance_fits=0,
+            max_latent_baseline_quadrature_difference=max(abs(trials[0][k]-trials[1][k])
+                for k in ('train_latent_minus_baseline','all_latent_minus_baseline')),
+            full_adjoint_cost_measured=False)
     out.mkdir(parents=True)
     np.savez_compressed(out/'group_factors.npz',**saved_scores)
     (out/'result.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')

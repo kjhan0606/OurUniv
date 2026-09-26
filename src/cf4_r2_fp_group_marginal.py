@@ -96,3 +96,99 @@ def shared_zero_logfactor(scores, log_zero_weights, group_mask):
     """Integrate ONE global zero point after multiplying all selected groups."""
     logw = log_zero_weights - logsumexp(log_zero_weights)
     return logsumexp(logw + jnp.sum(jnp.where(group_mask[None, :], scores, 0.), axis=1))
+
+
+def _supported_logsumexp(values, axis):
+    """Preserve zero support and a zero tangent when all terms are -inf."""
+    maximum = jnp.max(values, axis=axis, keepdims=True)
+    maximum = jnp.where(jnp.isneginf(maximum), 0., maximum)
+    total = jnp.sum(jnp.exp(values-maximum), axis=axis, keepdims=True)
+    result = maximum + jnp.log(jnp.where(total == 0, 1., total))
+    return jnp.squeeze(jnp.where(total == 0, -jnp.inf, result), axis=axis)
+
+
+def _segment_logsumexp(values, row_group, groups):
+    maximum = jax.ops.segment_max(values, row_group, num_segments=groups)
+    maximum = jnp.where(jnp.isneginf(maximum), 0., maximum)
+    total = jax.ops.segment_sum(jnp.exp(values-maximum[row_group]), row_group,
+                                num_segments=groups)
+    result = maximum + jnp.log(jnp.where(total == 0, 1., total))
+    return jnp.where(total == 0, -jnp.inf, result)
+
+
+def latent_central_logmark(log_satellite, log_central, row_group,
+                           log_none_weight, log_central_weight):
+    """Marginalize no observed central OR exactly one observed central.
+
+    Marks are (rows, nodes). Weights are (groups,) and (rows,), respectively;
+    they are normalized jointly WITHIN each group, not independently per row.
+    Caller must supply nonnegative weights (log zero = -inf), at least one
+    positive hypothesis per group, and valid consecutive group indices.
+    Weights describe the SELECTED observed subset conditional on the supplied
+    redshifts/other covariates, not an unselected central fraction. A common
+    source-data reference must be used for BOTH role likelihood ratios.
+
+    The single-host approximation is explicit: an observed FoF group need
+    not obey it (interlopers/merged hosts are NOT implemented). No truth IDs
+    or role labels are used. This is a model interface, not calibrated roles.
+    """
+    groups = log_none_weight.shape[0]
+    supported_sat = ~jnp.isneginf(log_satellite)
+    safe_sat = jnp.where(supported_sat, log_satellite, 0.)
+    summed = jax.ops.segment_sum(safe_sat, row_group, num_segments=groups)
+    missing = jax.ops.segment_sum((~supported_sat).astype(jnp.int32), row_group,
+                                  num_segments=groups)
+    no_central = jnp.where(missing == 0, summed, -jnp.inf) + log_none_weight[:, None]
+    # A central branch can rescue ONE zero satellite factor. Never subtract
+    # -inf from -inf to form the leave-one-out product.
+    others_valid = missing[row_group] - (~supported_sat) == 0
+    central = jnp.where(others_valid, summed[row_group]-safe_sat, -jnp.inf)
+    central = central + log_central + log_central_weight[:, None]
+    central_sum = _segment_logsumexp(central, row_group, groups)
+    norm = _supported_logsumexp(jnp.stack((log_none_weight,
+        _segment_logsumexp(log_central_weight, row_group, groups))), axis=0)
+    return _supported_logsumexp(jnp.stack((no_central, central_sum)), axis=0) - norm[:, None]
+
+
+def conditional_latent_group_scores(distance, log_distance_weight, redshift_logkernel,
+                                    row_group, dz_row, mean, std, alpha, zero_nodes,
+                                    log_none_weight, log_central_weight,
+                                    central_offset, satellite_offset,
+                                    group_offset_nodes, log_group_offset_weights):
+    """Conditional group marks including latent roles and ONE shared offset.
+
+    eta_pred + global_zero + group_offset + role_offset is evaluated against
+    the supplied source measurement PDF. Offset/zero units are dex in eta.
+    group_offset_nodes/weights specify a caller-provided common prior rule;
+    offsets are independent ACROSS groups, shared WITHIN each group. Integrate
+    the product of member factors, not each member separately. Global zero is
+    still integrated only by shared_zero_logfactor after group multiplication.
+
+    The SAME selected radial measure and redshift kernel enter numerator and
+    denominator. This implementation assumes their kernels do not depend on
+    the mark offset/role. A role-dependent FoG/selection law requires a joint
+    numerator AND denominator, not just replacement of mark mixture weights.
+    Weights/offsets are explicit nuisance inputs, NOT measurements inferred
+    from mock truth. An extra group scatter may overlap source-fit uncertainty;
+    fitting/calibration must resolve that, not automatically add variances.
+    """
+    base = log_distance_weight + redshift_logkernel
+    denominator = _supported_logsumexp(base, axis=-1)
+    eta = jnp.log10(dz_row[:, None] / distance[row_group])
+    loguw = log_group_offset_weights-logsumexp(log_group_offset_weights)
+
+    @jax.checkpoint
+    def at_zero(b):
+        @jax.checkpoint
+        def at_offset(u):
+            common = eta+b+u
+            sat = fp_log_likelihood_ratio(common+satellite_offset, 0., mean[:, None],
+                                          std[:, None], alpha[:, None])
+            cen = fp_log_likelihood_ratio(common+central_offset, 0., mean[:, None],
+                                          std[:, None], alpha[:, None])
+            marks = latent_central_logmark(sat, cen, row_group,
+                                           log_none_weight, log_central_weight)
+            return _supported_logsumexp(base+marks, axis=-1)
+        integrals = jax.lax.map(at_offset, group_offset_nodes)
+        return _supported_logsumexp(integrals+loguw[:, None], axis=0)-denominator
+    return jax.lax.map(at_zero, zero_nodes)
