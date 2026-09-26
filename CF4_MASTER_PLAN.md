@@ -172,6 +172,26 @@ galaxy positions:442 eligible mark/map mismatches (102 crossmatched,340
 nonmatched), with only one zero pointwise map value. Thus an angle-only mask
 cannot replace the missing row-level selection/discrepancy model, and positive
 integrated-cell support does not settle it. No inclusive likelihood was fit.
+The one-state grouped/member **structural stress mock** (Slurm405282 failed
+at startup on an erroneous positive-density assumption; fixed retry405294
+COMPLETED/exit0) used512 source-bound secure native CF4 group geometries and
+4,096 synthetic realizations per arm. Candidate score-variance/curvature
+ratios were1.032 for independent reference,1.399 for shared member velocity,
+1.294 with distance-dependent group selection (also shifted mean score),
+and5.681 for the forbidden per-member duplicate group mark. This demonstrates
+that the proposed partial product can overstate information or shift its score
+under explicit dependence violations; it **does not** measure their actual
+CF4/2M++ amplitude. Preserve the inclusive datum as diagnostic only and do
+not rescale a real posterior by these mock ratios. A realistic source-aware
+joint survey/group-selection calibration, not more abstract score arms or a
+long sampler, is next. Full evidence: `CF4_R2_GROUP_MEMBER_SCORE_STRESS_20260926.md`.
+Source aggregation check405317 then found exact `Ngal`/listed-member-count
+agreement for38,023 CF4 groups, but group V3k differs from the arithmetic
+mean of individual CF4 member Vcmb by median206/p90 620 km/s over all groups.
+Thus CF4 distance-contributor membership is available, while a simple member-mean replacement
+for the published group redshift is not source-justified. The planned realistic
+joint survey mock must model that distinction, not infer the offset as a pure
+redshift measurement error. No posterior or simulation was run in this check.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
