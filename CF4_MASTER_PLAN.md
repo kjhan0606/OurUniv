@@ -115,9 +115,17 @@ intensity. A naive finite difference at epsilon.005 failed badly, but shrinking
 to2e-5 gave directional derivative -0.94745 versus autodiff -0.94325 (0.42%
 relative difference). Intermediate steps oscillate; this is local derivative
 evidence, NOT finite-step HMC stability, N128 gradient readiness, a calibrated
-tracer model or an R2 posterior. Next prioritize a minimal sourced nuisance
-law and one bounded N128 IC-gradient/cost screen before actual sampling.
+tracer model or an R2 posterior. It motivated a minimal uncertain-rate law
+and bounded N128 IC-gradient/cost screen before actual sampling.
 Details: `CF4_R2_JOINT_IC_GRADIENT_20260926.md`.
+
+The follow-up uncertain-rate N128 screen (Slurm405229/405230) analytically
+marginalized six broad, provisional Gamma count rates and differentiated the
+actual CF4+2M++ joint objective through all 2,097,152 IC coordinates at
+3 cMpc/h. One small-step directional check differed by 0.022%; warm gradient
+evaluation took 0.336 s, without establishing sampler stability. The rate
+shape, survival, bias and FoG law remain uncalibrated; no posterior or target
+resolution map is delivered. See `CF4_R2_RATE_NUISANCE_N128_SCREEN_20260926.md`.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.

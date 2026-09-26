@@ -8,6 +8,7 @@ still fixed development inputs. No native LG truth identity enters this run.
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 
@@ -149,8 +150,10 @@ def main():
     value_f = float(value)
     if not np.isfinite(value_f) or not np.isfinite(gradient_np).all():
         raise FloatingPointError('N128 objective or gradient nonfinite')
+    source_commit = subprocess.check_output(
+        ['git','rev-parse',os.environ['EXPECTED_COMMIT']],cwd=ROOT,text=True).strip()
     report = dict(classification='ACTUAL_DATA_N128_RATE_MARGINAL_IC_GRADIENT_SCREEN',
-        source_commit=os.environ['EXPECTED_COMMIT'],grid=N,box_cMpc_h=BOX,
+        source_commit=source_commit,grid=N,box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N,particle_count=N**3,
         CF4_training_rows=int(train.sum()),CF4_holdout_rows=int((~train).sum()),
         galaxy_training_count=int(train_counts.sum()),galaxy_holdout_count=int(hold_counts.sum()),
