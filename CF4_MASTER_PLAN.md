@@ -106,6 +106,19 @@ the same unconditional N128 PM state: all29,100 occupied cells have positive
 finite predicted intensity with zero diffuse component. The random-phase
 population totals are not a fit or nuisance calibration.
 
+The first **actual-data joint IC-gradient mechanics** control (N32/12 only)
+completed as Syntax Slurm405224 and its same-state step-size diagnosis405225.
+It uses24,993 2M++ training counts and15,346 CF4 training radial rows from
+one evolved PMWD IC, with both holdouts excluded and four shared CF4 bulk/H0
+nuisances analytically marginalized. All occupied cells have positive
+intensity. A naive finite difference at epsilon.005 failed badly, but shrinking
+to2e-5 gave directional derivative -0.94745 versus autodiff -0.94325 (0.42%
+relative difference). Intermediate steps oscillate; this is local derivative
+evidence, NOT finite-step HMC stability, N128 gradient readiness, a calibrated
+tracer model or an R2 posterior. Next prioritize a minimal sourced nuisance
+law and one bounded N128 IC-gradient/cost screen before actual sampling.
+Details: `CF4_R2_JOINT_IC_GRADIENT_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
