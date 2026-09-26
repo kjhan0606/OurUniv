@@ -27,7 +27,7 @@ from cf4_z0_physical_field import read_centred
 CATALOGUE = Path('/gpfs/kjhan/CF4/z0_density/r2_common_catalogue_128_v1')
 SELECTION = Path('/gpfs/kjhan/CF4/z0_density/r2_common_selection_128_v1')
 CF4 = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1/native_data_v2/CF4_native.npz')
-OUTPUT = Path('/gpfs/kjhan/CF4/z0_density/r2_joint_ic_gradient_n32_v1')
+OUTPUT = Path('/gpfs/kjhan/CF4/z0_density/r2_joint_ic_gradient_n32_v2')
 
 
 def aggregate_sparse(keys, values):
@@ -141,12 +141,15 @@ def main():
         radial = jnp.sum(velocity*cf4_rhat, axis=1)
         return intensity, radial
 
-    def objective(white):
+    def objective_parts(white):
         intensity, radial = forward(white)
         count_ll = poisson_log_likelihood_jax(train_count, .6*intensity)
         cf4_ll = radial_log_likelihood(radial,observed,variance,B,q_std)
         prior = .5*jnp.vdot(white,white)
-        return prior-count_ll-cf4_ll
+        return jnp.stack((prior,-count_ll,-cf4_ll))
+
+    def objective(white):
+        return jnp.sum(objective_parts(white))
 
     rng = np.random.default_rng(2026092601)
     white = jnp.asarray(rng.standard_normal(32**3))
@@ -168,10 +171,20 @@ def main():
         value, gradient = jax.jit(jax.value_and_grad(objective))(white)
         gradient.block_until_ready()
         gradient_seconds = time.monotonic()-t1
-        epsilon = .005
-        plus = float(jax.jit(objective)(white+epsilon*direction))
-        minus = float(jax.jit(objective)(white-epsilon*direction))
-        finite_difference = (plus-minus)/(2*epsilon)
+        components = jax.jit(objective_parts)
+        baseline = np.asarray(components(white))
+        ladder = []
+        for epsilon in (.04,.02,.01,.005,.002,.001,.0005,.0001,.00002):
+            plus = np.asarray(components(white+epsilon*direction))
+            minus = np.asarray(components(white-epsilon*direction))
+            derivative = (plus-minus)/(2*epsilon)
+            ladder.append(dict(epsilon=epsilon,
+                prior_derivative=float(derivative[0]),
+                count_derivative=float(derivative[1]),
+                cf4_derivative=float(derivative[2]),
+                total_derivative=float(derivative.sum()),
+                plus_total=float(plus.sum()), minus_total=float(minus.sum())))
+        finite_difference = ladder[-1]['total_derivative']
         tangent = float(jnp.vdot(gradient,direction))
         relative_error = abs(finite_difference-tangent)/max(1.,abs(finite_difference),abs(tangent))
         report = dict(classification='ACTUAL_DATA_N32_JOINT_IC_GRADIENT_CONTROL',
@@ -186,7 +199,11 @@ def main():
             predicted_CF4_radial_rms_km_s=float(np.sqrt(np.mean(radial**2))),
             objective=float(value),gradient_rms=float(np.sqrt(np.mean(np.asarray(gradient)**2))),
             directional_gradient=tangent,finite_difference=finite_difference,
-            relative_directional_error=relative_error,forward_seconds=forward_seconds,
+            relative_directional_error=relative_error,
+            base_objective_components=dict(zip(('white_prior','count_negative_log_likelihood',
+                'CF4_negative_log_likelihood'),baseline.tolist())),
+            directional_finite_difference_ladder=ladder,
+            forward_seconds=forward_seconds,
             gradient_seconds=gradient_seconds,
             fixed_published_rate_and_bias_only=True,
             survival_uncertainty_marginalized=False,FoG_calibrated=False,
