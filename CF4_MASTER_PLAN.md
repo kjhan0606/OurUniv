@@ -313,6 +313,24 @@ redshifts, not more empirical residual tuning or cold-root controls.
 TF/6dFGSv remain separate source/calibration tasks. Full details and failed
 numerical attempts are preserved in `CF4_R2_SOURCE_DISTANCE_BUNDLE_20260926.md`.
 
+R2 group-distance/shared-zero integration now implemented: H200406005
+COMPLETED1m49s, four focused/reused tests pass. All10,020 FP rows become
+6,821 source Tempel/singleton groups (not the5,450 CF4 groups);3,062 unique
+eligible2M++ member redshifts condition2,413 groups, with no ambiguous
+cross-group recnos in this subset. Group distance is integrated once across
+all its FP members; correlated redshifts appear in both numerator and
+conditional denominator; ONE global calibration is integrated after group
+products. Joint distance/zero quadrature refinement changes train log ratios
+by at most0.0004234 (all-group0.0025020); amplitude derivative agrees with
+finite difference. Accept this numerical observation-model implementation,
+not an R2 posterior. COM/member/catalogue covariance and the selected-group
+r^2 distance prior remain provisional sensitivity assumptions. Counts alone
+still lack the within-cell point/redshift law needed for the complete joint
+factorization. Next is source-backed group/selection/covariance specification
+or source-mock calibration and that conditional connection, not more generic
+residual/root checks or another gravity run. Evidence and explicit limits:
+`CF4_R2_GROUP_DISTANCE_MARGINAL_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
