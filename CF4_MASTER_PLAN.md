@@ -425,6 +425,22 @@ inclusion/FoG law, using each datum once.96 anchored groups do not calibrate
 all6,821 groups or latent central roles. Record and preserved artifacts:
 `CF4_R2_CROSS_METHOD_ANCHORS_20260926.md`.
 
+R2 joint calibration bundle2026-09-27:406219 passed three tests and saved
+the fixed-state geometry but failed on a driver import-path collision before
+sampling. Corrected406244 COMPLETED1m27s/exit0,3 tests pass, six shared
+nuisances sampled with4x256 retained draws; max split Rhat1.00304, minimum
+ESS719.88, zero divergences. Sampled Q257/513 logtarget correction range
+0.0003666nat. Original observations enter once; old fitted offsets/scatter
+are not priors. Kappa SD1.864 versus prior2 leaves selected-radial shape
+weakly informed, not group inclusion identified. Heldout factor integration
+has importance ESS5.53/64 and is NOT accepted as reliable predictive evidence.
+Close the fixed-state control; reuse its nuisance interface in joint field
+updates, not more frozen-field sweeps or a same-data empirical prior.
+Selected-group law, full count/point factorization and source/FoG covariance
+remain unresolved. No new gravity, field inference or actual R2 posterior.
+Evidence, explicit development prior and MW/M31/M33 same-new-field limits:
+`CF4_R2_JOINT_CALIBRATION_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
