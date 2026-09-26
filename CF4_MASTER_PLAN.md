@@ -345,6 +345,20 @@ and justified point-selection support; not another gravity run. Selected-group
 distance prior and COM/model discrepancy remain unresolved. Details and result
 paths: `CF4_R2_TEMPEL_SOURCE_BUNDLE_20260926.md`.
 
+R2 source semantics resolved in H200406020 (3s, two tests pass): the75
+unmatched selected FP rows are all explicitly source-ungrouped; the full
+catalogue's418 absent counterparts reproduces Howlett+2022 sec.2.2 exactly.
+No missing grouped member/conflict is found. All10,020 FP rows remain in the
+new aligned observation artifact with original eta/field/split arrays and
+source identities/redshifts/errors. Close this identity concern, not the
+physical group/selection model. Published additive-vs-multiplicative redshift
+conventions reduce matched individual median cz discrepancy9.084->1.591 km/s
+in a fixed diagnostic; do not alter the FP numerator or interpret the original
+offset as independent noise calibration. Map-zero recno67100 has no CF4 edge;
+its inclusive count is retained, literal full-point support still unresolved.
+Next: joint group-distance/selection law, not another matching/residual sweep
+or gravity run. See `CF4_R2_SOURCE_SEMANTICS_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
