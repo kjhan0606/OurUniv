@@ -383,6 +383,16 @@ COM discrepancy remain uncalibrated. Do not download the full archive merely
 to repeat this schema. Reusable inputs and next model limits:
 `CF4_R2_SDSS_MOCK_BRIDGE_20260926.md`. No new gravity or posterior.
 
+R2 selected-mock measurement406150 COMPLETED3s: source skew-normal nominal
+68/90/95% truth containment68.540/90.325/95.257%, standardized residual
+SD0.99047. Coordinate conversion preserves CDF to2.22e-16. Keep this individual
+measurement shape without error inflation, but retain central/satellite mean
+eta biases-0.008168/+0.001701dex (larger opposite shifts at low z). One mock
+with shared FP fitting is not independent validation or group calibration.
+Close this width check; next work is group dependence/selection and latent
+population uncertainty, not more individual-PDF diagnostics or truth-based
+offset correction. Record: `CF4_R2_FP_MOCK_EVALUATION_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
