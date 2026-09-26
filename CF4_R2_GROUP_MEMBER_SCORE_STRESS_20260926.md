@@ -136,3 +136,53 @@ errors. That alternative also needs explicit selection and covariance; it
 has not been implemented or validated here. MW/M31/M33 are not inferred from
 this source audit, and any later role model must identify ambiguous or
 unresolved members from the same newly generated field without native IDs.
+
+## Tully (2015) archived source bridge — 2026-09-26
+
+The official [CDS archive for Tully (2015)](https://cdsarc.cds.unistra.fr/ftp/J/AJ/149/171/)
+provides the actual K<11.75 nest properties (table 3), all nest members and
+their adjusted CMB velocities (table 4), and a combined per-galaxy table with
+both the Tully Nest and a *published* 2M++ group cross-ID (table 5). The
+three compressed tables and ReadMe were fetched to `data/tully2015_*` with
+SHA-256 hashes frozen in `scripts/cf4_r2_tully2015_source_bridge.py`.
+They are ignored source data, not a newly fabricated catalogue.
+
+Typed-H200 Syntax Slurm **405490 COMPLETED/exit0** in 2 s. Its
+[source-only result](/gpfs/kjhan/CF4/z0_density/r2_tully2015_source_bridge_v1/result.json)
+checks all 25,474 archived nests and 43,038 member rows. Only one nest
+disagrees with the published `Nmb` count; over 6,201 multi-member nests,
+the median absolute table-3 group velocity minus table-4 member mean is
+0.25 km/s (rounding-scale), although the outlier reaches 53.9 km/s.
+This verifies the **archived 2015** velocity construction without asserting
+that CF4 later used exactly those unchanged rows.
+
+CF4 `1PGC` has a unique archived `PGC1` association for 9,380 of its 38,053
+groups. Their CF4 versus archived Tully group CMB velocities differ by a
+median **161 km/s**, p90 562 km/s. Among 14,878 eligible secure CF4–2M++
+matches, 9,881 have a unique PGC in the archived combined table and 9,605
+of those enter the Tully nest associated with their CF4 `1PGC`. But the
+archived *published* 2M++ cross-ID equals the local 2M++ `GID` in only 2
+of the 3,777 rows where both IDs are present; 6,104 further rows lack one
+ID. This is an explicit warning about catalogue version/identifier semantics,
+not evidence that either survey catalogue is wrong. The direct CF4 `V3k`
+versus archived adjusted-CMB number is not interpreted because of frame and
+definition differences.
+
+Decision: the archived Tully tables are now an observed **source-process
+control** and possible independent mock ingredient. They are **not** a
+drop-in current-CF4 group-velocity operator, nor can their 2M++ identifier
+be substituted for local `GID`. Next substantive model work must either
+recover the later EDD velocity-member revision with validated row-level
+provenance or use a normalized shared-latent model of CF4 distance marks and
+2M++ redshifts, with group/selection dependence and the 442 mark/map
+anomalies explicit. No R2 posterior or candidate IC was fitted. This work
+does not identify MW/M31/M33; R3 must retain role ambiguity and unresolved
+M33 on the same generated state.
+
+The live EDD table selector lists 2MRS1175 North/South member tables, but its
+data-response endpoint currently requires an interactive reCAPTCHA even for
+five rows. The driver did not bypass that access control or call the archived
+CDS table a live EDD export. Until a permitted export is available, the
+shared-latent/conditional-mark route is the actionable modelling option;
+the group systemic redshift must remain an observed correlated datum, not a
+recomputed mean of CF4 distance contributors.

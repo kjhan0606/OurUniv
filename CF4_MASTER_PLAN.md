@@ -204,6 +204,20 @@ document. Do not equate the Lavaux--Hudson 2M++ `GID`, Tully (2015) group
 membership and CF4 `1PGC` without a measured bridge. No source-aware survey
 mock or joint likelihood is promoted by this submission.
 
+Update2026-09-26:405476 COMPLETED/exit0;2,524 CF4 groups have one mapped local
+2M++ `GID`, but their group-velocity absolute offset has median60 km/s;
+159 CF4 groups map to multiple local GIDs. The actual archived Tully (2015)
+CDS K<11.75 nest/member/combined tables were then acquired and hash-frozen.
+Typed-H200 source bridge405490 COMPLETED/exit0. The archived nest velocity
+tracks its own member mean at rounding scale (median0.25 km/s over6,201
+multi-member nests), but the9,380 unique CF4 `1PGC`→archived `PGC1`
+associations differ in group CMB velocity by median161 km/s. The archived
+published 2M++ cross-ID equals the local 2M++ `GID` in only2/3,777 rows with
+both IDs. Thus the 2015 archive is source-process evidence, not a drop-in
+later-CF4 velocity operator or validated 2M++ join. No R2 likelihood,
+posterior or IC was promoted. Detailed evidence and the narrow next decision:
+`CF4_R2_GROUP_MEMBER_SCORE_STRESS_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
