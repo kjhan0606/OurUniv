@@ -1,0 +1,165 @@
+{
+  "schema": "hong2021-v45-identifiable-query-local-mixture-copula-development-program-v1",
+  "status": "frozen_before_implementation_training_sampling_or_development_evaluation",
+  "purpose": "Run the V44 query-local residual likelihood as an actually identifiable five-component logistic mixture by breaking only the erroneous identical-component initialization, before any V44 validation diagnostic or development sample existed.",
+  "parent_evidence": {
+    "v44_abort_record": "config/hong2021_v44_aborted_result_record.json",
+    "v44_abort_record_sha256": "80883422b7e230efe2bc2c47f4450fc0b004c55ee69c210966f258dadd423024",
+    "required_classification": "v44_preflight_failed_to_test_mixture_identifiability",
+    "required_next": "freeze_v45_with_deterministic_asymmetric_component_locations_and_a_hard_identifiability_preflight",
+    "required_validation_diagnostics_opened": 0,
+    "required_development_samples_created": false
+  },
+  "inherited_experiment": {
+    "v44_program": "config/hong2021_v44_local_mixture_copula_program.json",
+    "v44_program_sha256": "5929bb84b47cc21db09a281feecb802a6831e96ffc858c479fe73ef51b21fadb",
+    "rule": "inherit every V44 input, split, standardization, channel, architecture, loss, optimizer, schedule, augmentation, donor identity, donor isometry, member pairing, sampling rule, evaluation threshold, fixed branch, and firewall except the explicitly replaced final-layer initialization and its identifiability checks"
+  },
+  "conditioning": {
+    "channels": [
+      "log1p galaxy count",
+      "mean radial peculiar velocity",
+      "intrinsic radial velocity dispersion",
+      "frozen V14 corrected backbone",
+      "observer radius divided by 10 Mpc/h",
+      "V41 full extreme-structure block probability lifted from 16^3 to 64^3",
+      "V41 object log10 mean delta squared prediction broadcast over 64^3"
+    ],
+    "target_free_at_inference": true,
+    "standardization": "unchanged V44 one equal-source train-only mean and standard deviation per channel",
+    "validation_truth_feature": false,
+    "simulation_identity_feature": false
+  },
+  "target_and_likelihood": {
+    "target": "physical residual y_truth minus the frozen V14 corrected backbone",
+    "standardization": "unchanged V44 equal-source train-only scalar mean and standard deviation",
+    "distribution": "five-component continuous logistic mixture independently parameterized at every native voxel",
+    "network_outputs_per_voxel": 15,
+    "objective": "unchanged equal-source mean exact continuous logistic-mixture negative log likelihood per voxel",
+    "target_density_or_tail_weight": false,
+    "field_or_fourier_auxiliary_loss": false,
+    "density_clipping": false
+  },
+  "network": {
+    "architecture": "unchanged V44 three-dimensional residual U-Net",
+    "input_channels": 7,
+    "base_channels": 32,
+    "channel_multipliers_at_64_32_16_8": [1, 2, 4, 4],
+    "residual_blocks_per_resolution": 2,
+    "normalization": "GroupNorm",
+    "activation": "SiLU",
+    "parameters": 8490415,
+    "output_weight_initialization": "exactly zero for all 15 one-by-one convolution output rows",
+    "mixture_logit_biases": [0.0, 0.0, 0.0, 0.0, 0.0],
+    "standardized_location_biases": [-1.2815515655446004, -0.5244005127080409, 0.0, 0.5244005127080407, 1.2815515655446004],
+    "location_construction": "standard-normal quantiles at midpoint probabilities 0.1, 0.3, 0.5, 0.7, and 0.9",
+    "initial_logistic_scale": 0.26615648673140785,
+    "raw_scale_biases": [-1.2311559889276684, -1.2311559889276684, -1.2311559889276684, -1.2311559889276684, -1.2311559889276684],
+    "scale_construction": "choose one common scale so the equal-weight initial mixture has exactly zero mean and unit variance after the fixed softplus(raw)+0.01 transform",
+    "initial_mixture_mean": 0.0,
+    "initial_mixture_variance": 1.0,
+    "trainability": "all output weights and all 15 biases remain trainable; the deterministic asymmetric locations only identify components at initialization"
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {"TNG100": 1, "SIMBA": 1, "Swift": 1},
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "CUDA autocast plus GradScaler; mixture log probabilities remain float32",
+    "augmentation": "uniform one of 48 signed cube isometries applied jointly to all conditioning channels and target",
+    "seed": 144044,
+    "validation": "fixed diagnostic NLL at steps 4000, 8000, and 12000; never used for stopping, selection, or hyperparameter changes",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.pt",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/identifiable_mixture_copula_step12000.json"
+  },
+  "sampling": {
+    "candidate": "unchanged V44 same-voxel monotone mixture-CDF inversion of the unchanged paired V31 donor conditional-rank field",
+    "mixture_inverse": "unchanged exactly 28 vectorized bisection iterations",
+    "post_sample": "undo train-only residual standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16
+  },
+  "matched_arms": {
+    "identifiable_query_local_mixture_copula": "actual query-local parameters and unchanged paired donor ranks; the only selectable arm",
+    "rolled_parameter_control": "periodically roll all 15 parameter fields by (16,8,4) native voxels while keeping query backbone and donor rank fixed",
+    "structure_risk_ablation": "set the standardized V41 block-risk input channel to zero while retaining every other input and donor rank",
+    "common": "identical query, donor, isometry, V31 rank field, backbone, fitted model, sampling arithmetic, and exact DC rule except for the named control change"
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+    "Q3_generated_max_above_truth_max_dex": 0.30,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.50,
+    "primary_pass": "identifiable_query_local_mixture_copula passes field, Q3, and Q4 independently in every domain",
+    "selection_role": "only identifiable_query_local_mixture_copula can be selected",
+    "paired_references": ["V31", "V41", "V42", "V44 abort"]
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "identifiable_query_local_mixture_copula_sufficient",
+      "next": "seal_v45_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "identifiable_local_marginal_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_marginal_likelihood"
+    },
+    {
+      "condition": "high-k power and residual RMS pass every domain but Q3 or Q4 fails anywhere",
+      "classification": "identifiable_mixture_body_is_supported_but_extreme_likelihood_is_insufficient",
+      "next": "audit_train_only_mixture_tail_NLL_and_component_occupancy_without_threshold_tuning"
+    },
+    {
+      "condition": "rolled parameter control equals or improves candidate Q3 and Q4 jointly in every domain",
+      "classification": "query_local_parameter_alignment_is_not_causal",
+      "next": "stop_local_neural_likelihoods_and_reassess_the_observable_information_ceiling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "identifiable_query_local_mixture_copula_is_not_a_common_domain_repair",
+      "next": "audit_candidate_vs_structure_ablation_and_V31_before_any_further_generator"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V44 abort record and inherited V44 input and artifact hashes",
+    "prove the V44 zero initialization has identical same-role component gradients on a deterministic synthetic tensor",
+    "prove the V45 initial output biases equal the frozen values and initial mixture mean and variance equal zero and one within 1e-6",
+    "prove every initial component location is distinct and same-role component gradients are nonidentical after one deterministic likelihood backward pass",
+    "prove at least two component locations and scales diverge after two deterministic optimizer steps",
+    "network shape, parameter count, finite likelihood, nonzero finite gradients, and CDF inverse consistency",
+    "one real source-balanced GPU step with peak allocated memory below 24 GiB",
+    "one real paired-donor sample is finite, has no rank permutation, and residual DC below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v45_e24_identifiable_mixture_copula",
+  "firewall": {
+    "V44_validation_or_development_result_used": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

@@ -1,0 +1,16 @@
+Review the attached concrete CF4/OurUniv plan as Fable5 PRIMARY PLAN AUDITOR.
+The user has approved the driver's final smaller recommendation after two
+independent proposals. This is its pre-launch plan decision, not a request to
+repeat independence, launch experiments, inspect files, or create gate ladders.
+Answer GO / CONDITIONAL GO / NO-GO and explicitly cover Q-GOAL, Q-LEAN,
+feasibility, essential versus deferred, MW/M31/M33 identification on NEW total
+fields without oracle component access, unresolved/shared-cell M33, and the
+eventual same-field observation link. Challenge unsupported scientific claims.
+Limit conditions to blockers for this one bounded repair, no scope expansion.
+Native sparse targets are fractional mass allocations; four-way softmax can
+approach target zeros but not attain them with finite logits. Equal role shape
+KL is over SPATIAL distributions, not class-weighted per-cell CE. The first
+300-step segment may fail simply from too short a budget; the plan acknowledges
+this and stops without claiming fundamental unidentifiability. Recommend any
+essential correction before execution; do not assume this pilot calibrates a
+joint posterior or supplies the missing fine-field prior.

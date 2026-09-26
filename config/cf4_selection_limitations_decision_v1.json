@@ -1,0 +1,16 @@
+{
+  "schema": "ouruniv-cf4-selection-limitations-decision-v1",
+  "status": "DEVELOPMENT_GO_PRODUCTION_NO_GO",
+  "provenance": "PASS_OFFICIAL_ARES",
+  "map_domain": "5<=r<=180 cMpc/h, 384 cMpc/h box, dx=1.5 cMpc/h",
+  "catalog_coverage": {
+    "map_supported_fraction": 0.5797197415752456,
+    "map_unsupported_fraction": 0.42028025842475436,
+    "positive_exposure_fraction_per_population": [0.9985181983761924,0.5708023338375575,0.25011576575185995,0.4151205507362702,0.5916401691723521,0.28898218750964716]
+  },
+  "survival_bias_calibration": "UNAVAILABLE_IN_ARES_MAP_AND_CF4_CSV",
+  "normalization": "EFFECTIVE_VOLUME_ONLY_NOT_FULL_SELECTION_LIKELIHOOD",
+  "development_rule": "Restrict baseline posterior to map-supported volume; carry v1/v2/no-selection sensitivity and selection nuisance.",
+  "production_rule": "NO_GO until external survival/bias calibration or a joint calibrated tracer model is supplied.",
+  "science_claim": "No final density posterior or IC claim from this selection baseline alone."
+}

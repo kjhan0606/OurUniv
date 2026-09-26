@@ -1,0 +1,15 @@
+{
+  "schema": "cf4-p2-lg-targets-v6-bgc-l10-parent3023",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "extends": "config/p2_lg_targets_v5_bgc_l10_canonical.json",
+  "extends_sha256": "2f71015dd30689734f9ba555e350ef46ce735c8d23a69ec5d2e02c1f30dd84f7",
+  "change_from_v5": "Only the P1 survivor changes to seed 3023 from the independently P0-passed 48-member extension. All P2 physical cuts, ranking weights, small-scale seeds, canonical L10 definition, and N576 PM screen are inherited unchanged from the SHA-pinned v5 config.",
+  "parent_seeds": [3023],
+  "input": {
+    "p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v1_retry1/p1_result.json"
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p2_l10_parent3023_v1"
+  }
+}

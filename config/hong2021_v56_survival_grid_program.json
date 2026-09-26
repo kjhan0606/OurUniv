@@ -1,0 +1,206 @@
+{
+  "schema": "hong2021-v56-upper-survival-grid-bounded-mixture-program-v1",
+  "status": "frozen_before_grid_materialization_model_implementation_training_or_evaluation",
+  "purpose": "Test the sealed V55 common amplitude diagnosis with one matched objective augmentation: retain the complete V54 bounded NLL and four fixed proper Brier terms, add a proper physical-moment-weighted survival Brier grid from q99.999 to the immutable global train maximum, and require absolute train high-backbone moment calibration before any development sampling.",
+  "parent_evidence": {
+    "v55_record": "config/hong2021_v55_result_record.json",
+    "v55_record_sha256": "9ca592cec7113883baeac6a574cd6a7ec4a68d5859531a523281b2607d90aeba",
+    "required_status": "complete_common_beyond_highest_threshold_amplitude_failure_selected_survival_grid",
+    "required_classification": "V54_probability_score_leaves_beyond_highest_threshold_amplitudes_unconstrained",
+    "required_next": "freeze_one_matched_train_only_model_with_a_proper_survival_score_grid_spanning_q99_999_to_the_immutable_train_maximum_while_retaining_the_unchanged_bounded_NLL",
+    "required_common_amplitude_dominance": true,
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v54_program": "config/hong2021_v54_physical_tail_brier_program.json",
+    "v54_program_sha256": "84e06be3980deeb63456fb53a56d05d22eca68fea663d023b6be5e75460fbd90",
+    "v54_record": "config/hong2021_v54_result_record.json",
+    "v54_record_sha256": "cd773f385dcffaa881e30c8abce0b840a79e0ba625f1db603059b435805f683f",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v54_threshold_selection_decision_digest_sha256": "3f7fb5d7784f3527806695281bb0da8b3e1544c5a0d53e89234f89e9f24c4ca3",
+    "v54_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_physical_tail_brier_sequence/preflight.json",
+    "v54_preflight_sha256": "2151b72fbdb882dcd12d685af7ef431abd7e749b0c9f229c730326aa752c33ca",
+    "v54_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_train_high_backbone_gate/decision.json",
+    "v54_train_gate_sha256": "e01611d46dfe9328558b8beb9292ac8f3c152c0b0c9613d14c8f9cebd80e6624",
+    "v55_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v55_tail_amplitude_audit/audit.json",
+    "v55_audit_sha256": "8d20d0a88b3aa2cd72772903676897f85713fc98772debfa1ab96328460f2e30",
+    "v55_audit_decision_digest_sha256": "da3e880164a3d89903c87b159b36bf7e45af621fc1a1a64024919a6fbce2ec83",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "v50_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "v50_checkpoint_sha256": "834488cf990e0334573d66ead742d6036f6737f551f406be10b16cdc54e466b4",
+    "v50_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json",
+    "v50_training_report_sha256": "0b1525e49904f8465e922de09d3a85f23d9c238c15e5a39433dd1e70ae688e55",
+    "v50_development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "v50_development_decision_sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "v52_development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/development_decision.json",
+    "v52_development_decision_sha256": "1c7bb6abdf2d66e6f4601e38ef5b714a7ef2f1e1579da23beae67423efbb6776"
+  },
+  "single_changed_factor": {
+    "base_objective": "the complete V54 objective: unchanged equal-source bounded negative log likelihood plus 0.1 times the unchanged mean of four q(1-q)-normalized fixed-threshold Brier scores",
+    "added_term": "0.1 times one predeclared physical-moment-weighted upper survival-grid Brier score",
+    "all_V54_terms_retained_exactly": true,
+    "all_input_channels_including_structure_risk_unchanged": true,
+    "network_support_initialization_optimizer_schedule_augmentation_and_seed_unchanged": true,
+    "sampling_and_development_gates_unchanged": true
+  },
+  "upper_survival_grid": {
+    "coordinate": "log10rho=4.5*y",
+    "lower_edge": "the immutable V54 common q99.999 threshold common_log10rho_thresholds[3]",
+    "lower_edge_value": 3.3113619089126587,
+    "upper_edge": "the exact maximum of the three immutable domain maximum_log10rho values in the V54 threshold artifact",
+    "upper_edge_value": 3.975167065858841,
+    "cells": 16,
+    "threshold_rule": "for j=1,...,16 use lower_edge + j*(upper_edge-lower_edge)/16 in IEEE float64; the final threshold equals the immutable global train maximum",
+    "strict_event": "observed log10rho is strictly greater than the fixed grid threshold",
+    "prediction": "analytic V54 bounded-mixture survival probability at the threshold conditional on the unchanged seven fields",
+    "physical_proxy": "M(t)=(10^t-1)^2",
+    "weight_rule": "cell weight j equals [M(edge_j)-M(edge_j-1)]/[M(upper_edge)-M(lower_edge)]; all 16 weights are finite, strictly positive, and sum to one within 1e-12",
+    "reference_probability": 0.00001,
+    "score": "sum over the 16 fixed positive cell weights of mean squared survival-probability error, divided by reference_probability*(1-reference_probability)",
+    "coefficient": 0.1,
+    "maximum_threshold_truth_event": "exactly zero because strict exceedance is used at the immutable global train maximum",
+    "properness": "every fixed-threshold Brier term is proper; their fixed positive weighted sum is proper, and addition to the unchanged strictly proper bounded NLL preserves strict propriety",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "development_tuned_cell_count_threshold_weight_or_coefficient": false
+  },
+  "likelihood_and_network": {
+    "likelihood": "unchanged V54 five-component Gaussian mixture in latent bounded-logit residual coordinates with exact Jacobian",
+    "open_standardized_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "architecture": "unchanged V54 seven-channel three-dimensional residual U-Net",
+    "parameters": 8490415,
+    "density_or_residual_clipping": false,
+    "component_scale_cap": false
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {
+      "TNG100": 1,
+      "SIMBA": 1,
+      "Swift": 1
+    },
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "unchanged CUDA autocast plus GradScaler; bounded NLL and both analytic survival scores remain float32 or safer",
+    "augmentation": "the same uniformly selected 48 signed cube isometries applied jointly to all seven conditions, physical backbone, and target",
+    "seed": 144044,
+    "initialization": "bitwise identical V50 and V54 seed-144044 initialization; no V54 checkpoint fine-tuning",
+    "validation": "fixed diagnostic bounded NLL, V54 four-threshold score, upper-grid score, and composite at steps 4000, 8000, and 12000; never used for stopping, grid selection, checkpoint selection, or hyperparameter change",
+    "checkpoint_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.pt",
+    "report_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.json"
+  },
+  "train_mechanism_gate": {
+    "timing": "after the fixed step-12000 checkpoint and before any V56 development sample",
+    "population": "the identical V53/V54/V55 seed-146046 train-only 4096-voxel probe per object for 432 TNG100, 202 SIMBA, and 409 Swift objects",
+    "primary": "64-point Gauss-Hermite quadrature of the V56 bounded mixture in the domainwise q99.9-and-above query-backbone stratum",
+    "control": "32-point Gauss-Hermite quadrature",
+    "pass": "V56 quadrature-over-truth mean delta squared is independently within [2/3,1.5] in TNG100, SIMBA, and Swift, with every aggregate 32-to-64 relative difference at most 0.005",
+    "comparison": "also report sealed V50, V52, and V54 ratios without using relative improvement as a substitute for the absolute pass",
+    "failure_action": "seal failure and do not create any V56 development sample"
+  },
+  "sampling_if_train_mechanism_passes": {
+    "candidate": "same-voxel monotone bounded-mixture CDF inversion of the unchanged paired V31 donor conditional-rank field using actual V56 query-local parameters",
+    "inverse": "unchanged 28-step latent Gaussian-mixture inverse at rank epsilon 1e-7 followed by the exact frozen sigmoid support transform",
+    "post_sample": "undo immutable V45 standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "sample_clipping": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16,
+    "seeds_donor_objects_donor_isometries_and_member_pairing": "identical to V50 and V52",
+    "control": "periodically roll all 15 V56 latent parameter fields by (16,8,4) native voxels while retaining the query, backbone, and donor rank"
+  },
+  "development_evaluation_if_train_mechanism_passes": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "primary_pass": "candidate passes field, Q3, and Q4 independently in every domain",
+    "sealed_references": "V50 full-risk and V52 no-risk decisions and artifact hashes only; neither is resampled",
+    "selection_role": "only the V56 query-local candidate can be selected",
+    "independent_gate_action_on_pass": "seal V56 and await explicit user approval before any EAGLE access"
+  },
+  "fixed_branches": [
+    {
+      "condition": "the train mechanism gate fails in any domain",
+      "classification": "proper_upper_survival_grid_does_not_calibrate_train_high_backbone_physical_moments",
+      "next": "stop_before_development_sampling_and_audit_grid_survival_calibration_and_component_tail_amplitudes"
+    },
+    {
+      "condition": "the train mechanism gate passes and the development primary_pass holds",
+      "classification": "train_only_upper_survival_grid_is_development_sufficient",
+      "next": "seal_V56_and_await_explicit_approval_before_independent_EAGLE_gate"
+    },
+    {
+      "condition": "the train mechanism gate passes, Q3 and Q4 pass every development domain, but any field check fails",
+      "classification": "upper_survival_marginal_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_V56_likelihood_or_score"
+    },
+    {
+      "condition": "the train mechanism gate passes but the development primary_pass fails otherwise",
+      "classification": "upper_survival_grid_train_repair_does_not_transfer_cleanly_to_development",
+      "next": "seal_train_and_development_evidence_before_selecting_any_further_model"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree on Lageunha",
+    "exact V55 record and audit, V54 record, program, thresholds, preflight, train gate, immutable support, conditioning cache, and all canonical digests",
+    "the 16 grid thresholds and weights exactly obey the frozen float64 formulas, are strictly increasing and positive, and the final threshold equals the immutable train maximum",
+    "a complete immutable train-target scan confirms zero strict truth exceedances above the final threshold without changing any grid value",
+    "analytic bounded survival probabilities implement exact outside-support constants, remain in [0,1], and have finite nonzero gradients on real interior train voxels",
+    "the composite equals bounded NLL plus exactly 0.1 times the unchanged V54 four-threshold score plus exactly 0.1 times the upper-grid score",
+    "same-seed V56 initial parameters and output biases exactly equal V50 and V54 initialization, all 8490415 parameters remain trainable, and only the added score graph differs",
+    "one real source-balanced GPU step is finite with peak allocated memory below 24 GiB",
+    "one real paired-donor sample remains strictly within support before DC projection, preserves ranks, and has residual DC below 1e-7",
+    "no validation selection, no development access before train mechanism pass, and no Astrid or historical EAGLE access"
+  ],
+  "output_roots": {
+    "grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid_sequence",
+    "train_mechanism": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_train_high_backbone_gate",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_e29_survival_grid"
+  },
+  "firewall": {
+    "structure_risk_changed": false,
+    "support_changed": false,
+    "development_threshold_changed": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "development_access_before_train_mechanism_pass": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

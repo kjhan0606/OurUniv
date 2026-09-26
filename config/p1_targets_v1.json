@@ -1,0 +1,114 @@
+{
+  "schema": "cf4-p1-targets-v1",
+  "frozen_before_forwarding": true,
+  "coordinate_frame": "de Vaucouleurs supergalactic Cartesian, observer at box centre",
+  "length_unit": "Mpc/h",
+  "cosmology_h": 0.746,
+  "density_smoothing_mpc_h": 4.0,
+  "shell_half_width_mpc_h": 6.0,
+  "clusters": {
+    "Virgo": {
+      "source_object": "M87",
+      "sgl_deg": 102.8806,
+      "sgb_deg": -2.3480,
+      "distance_mpc": 16.07,
+      "search_radius_mpc_h": 5.0,
+      "minimum_target_percentile": 70.0,
+      "minimum_peak_percentile": 90.0,
+      "require_positive_target_delta": true
+    },
+    "Coma": {
+      "source_object": "NGC 4874",
+      "sgl_deg": 89.6165,
+      "sgb_deg": 8.3266,
+      "distance_mpc": 95.0,
+      "search_radius_mpc_h": 8.0,
+      "minimum_target_percentile": 70.0,
+      "minimum_peak_percentile": 90.0,
+      "require_positive_target_delta": true
+    }
+  },
+  "secondary_cluster_anchors": {
+    "Fornax": {
+      "source_object": "NGC 1399",
+      "sgl_deg": 262.5458,
+      "sgb_deg": -42.0776,
+      "distance_mpc": 20.0,
+      "search_radius_mpc_h": 6.0
+    },
+    "Hydra": {
+      "source_object": "NGC 3311 / Abell 1060",
+      "sgl_deg": 139.3664,
+      "sgb_deg": -37.5596,
+      "distance_mpc": 51.0,
+      "search_radius_mpc_h": 8.0
+    },
+    "Centaurus": {
+      "source_object": "NGC 4696 / Abell 3526",
+      "sgl_deg": 156.4479,
+      "sgb_deg": -11.4362,
+      "distance_mpc": 45.0,
+      "search_radius_mpc_h": 8.0
+    },
+    "Norma": {
+      "source_object": "ESO 137-006 / Abell 3627",
+      "sgl_deg": 188.1003,
+      "sgb_deg": 7.0090,
+      "distance_mpc": 68.0,
+      "search_radius_mpc_h": 10.0
+    },
+    "Perseus": {
+      "source_object": "NGC 1275 / Abell 426",
+      "sgl_deg": 347.8785,
+      "sgb_deg": -14.2563,
+      "distance_mpc": 73.0,
+      "search_radius_mpc_h": 10.0
+    },
+    "ShapleyCore": {
+      "source_object": "Abell 3558",
+      "sgl_deg": 148.8709,
+      "sgb_deg": -1.3702,
+      "distance_mpc": 193.03,
+      "search_radius_mpc_h": 12.0
+    }
+  },
+  "local_void": {
+    "source": "Tully et al. 2019, arXiv:1905.08329",
+    "probe_radius_mpc_h": 6.0,
+    "minimum_underdense_probes": 3,
+    "maximum_median_shell_percentile": 35.0,
+    "require_negative_probe_mean": true,
+    "probes": {
+      "Lacerta-2.4": [16.5, -7.0, 16.5],
+      "Andromeda-2.3": [21.0, -7.0, -3.0],
+      "Aquila-0.8": [-2.0, -2.0, 7.0],
+      "UrsaMinor-3.7": [31.0, 17.0, 12.0]
+    },
+    "note": "The Local Void is a connected multi-basin complex, not one sphere. Coordinates are the published SGX/SGY/SGZ minima in km/s divided by 100, which is numerically Mpc/h."
+  },
+  "bootes_void": {
+    "source": "Kirshner et al. 1987, ApJ 314, 493, doi:10.1086/165080",
+    "source_epoch": "B1950",
+    "source_ra": "14h50m",
+    "source_dec": "+46deg",
+    "source_cz_km_s": 15500.0,
+    "sgl_deg": 71.9564,
+    "sgb_deg": 31.4293,
+    "distance_mpc_h": 155.0,
+    "observed_empty_sphere_radius_mpc_h": 31.0,
+    "profile_radii_mpc_h": [12.0, 24.0, 31.0],
+    "maximum_center_shell_percentile": 35.0,
+    "require_negative_mean_at_radii_mpc_h": [12.0, 24.0],
+    "note": "The paper's 63 Mpc radius assumes H0=50 and is explicitly written as 31 h^-1 Mpc. P1 tests matter underdensity, not literal absence of galaxies."
+  },
+  "hard_gate_policy": {
+    "pass_requires": ["Virgo", "Coma", "LocalVoid", "BootesVoid"],
+    "no_threshold_retuning_after_results": true,
+    "mass_and_velocity_status": "advisory at N=192; HOP M200c, contamination, and relative velocities are deferred to higher resolution"
+  },
+  "secondary_policy": {
+    "status": "blind validation only; never required for P1 pass and never used to retune hard gates",
+    "reported_metrics": ["target_delta", "target_shell_percentile", "peak_shell_percentile", "peak_separation_mpc_h"],
+    "note": "Cluster anchors test the surrounding cosmography. Extended filaments and basins such as Perseus-Pisces and the Great Attractor require a later topology/velocity-field comparison rather than a single-point hard gate."
+  }
+}

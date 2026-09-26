@@ -1,0 +1,211 @@
+{
+  "schema": "ouruniv-cf4-same-truth-information-budget-result-record-v2",
+  "date": "2026-09-01",
+  "status": "COMPLETE_COVARIANCE_ONLY_INFORMATION_BUDGET_NO_GO_ADD_INDEPENDENT_Z0_DENSITY_TRACERS",
+  "scope": "Covariance-only 64-geometry information-budget audit of the completed same-truth arm-A operator at N32. The audit reuses the marginalized-s1 posterior draws and compares known-nuisance covariance solves at frozen velocity-noise standard-deviation scales 1, 0.3, and 0.1.",
+  "executions": {
+    "preserved_failed_v1": {
+      "member_array_Slurm_job_id": 329405,
+      "failed_task_count": 8,
+      "failed_task_indices": [0, 1, 2, 3, 4, 5, 6, 7],
+      "failed_task_exit_code": "1:0",
+      "cancelled_running_task_indices": [8, 9, 10, 11],
+      "cancelled_unstarted_task_range": "12-63",
+      "aggregate_Slurm_job_id": 329406,
+      "aggregate_state": "CANCELLED_BEFORE_EXECUTION",
+      "failure": "The normalized data-space CG formulation failed the frozen known-s0p3 covariance numerical gate at maxiter 500. No member or aggregate artifact was published.",
+      "output_root_preserved": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v1"
+    },
+    "v2_technical_pilot": {
+      "Slurm_job_id": 329419,
+      "mock_index": 0,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 228,
+      "batch_MaxRSS_KiB": 1729516,
+      "requested_memory_MiB": 3072,
+      "validator_status": "PASS"
+    },
+    "v2_member_array": {
+      "Slurm_array_job_id": 329420,
+      "state": "COMPLETED",
+      "task_count": 64,
+      "task_index_range": [0, 63],
+      "all_task_exit_codes": "0:0",
+      "elapsed_seconds_range": [195, 408],
+      "maximum_batch_MaxRSS_KiB": 2000464,
+      "maximum_batch_MaxRSS_task": 6,
+      "requested_cpus_per_task": 4,
+      "requested_memory_MiB_per_task": 3072,
+      "implementation_commit": "ffa32941b170446aabdff663f188f6dd6a2dc937"
+    },
+    "v2_aggregate": {
+      "Slurm_job_id": 329421,
+      "dependency": "afterok:329420",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 12,
+      "reported_batch_MaxRSS_KiB": 3780,
+      "reported_MaxRSS_caveat": "The aggregate batch MaxRSS is implausibly low for the arrays read and is retained as raw Slurm accounting, not used as a measured-memory claim.",
+      "requested_cpus": 4,
+      "requested_memory_MiB": 3072,
+      "aggregation_runtime_commit": "ffa32941b170446aabdff663f188f6dd6a2dc937"
+    },
+    "v2_retry_or_replacement": false,
+    "manual_syntax_or_syn101_numerical_execution": false
+  },
+  "bindings": {
+    "program": {
+      "path": "config/cf4_same_truth_information_budget_program_v2.json",
+      "sha256": "5689193b61ce22c2170cd6b01f35d36bb8e22944ed2c4df758aa261ffc4a11bb"
+    },
+    "solver_correction_record": {
+      "path": "config/cf4_same_truth_information_budget_solver_correction_v2.json",
+      "sha256": "42ed93121f634d730e82bb7040f8a7c731ad9007ed41edb202137a0464da723a"
+    },
+    "implementation": {
+      "path": "src/cf4_same_truth_information_budget_v2.py",
+      "sha256": "ed0ab98780a7c2761ace06a63b5cb5eafa5411f7a6699e39e4f4187ad3ad3bbf"
+    },
+    "pilot_runner": {
+      "path": "scripts/run_cf4_same_truth_information_pilot_v2.sbatch",
+      "sha256": "ca3e4532254c0320c1728137b1005098b66bf8f990888a24f0d23e6e2a207775"
+    },
+    "member_runner": {
+      "path": "scripts/run_cf4_same_truth_information_members_v2.sbatch",
+      "sha256": "8f116ee689e44c878e6dcaa4afe0d693aec3db2ba9240063cee6051374ec6093"
+    },
+    "aggregate_runner": {
+      "path": "scripts/run_cf4_same_truth_information_aggregate_v2.sbatch",
+      "sha256": "a2f38830f7d67c389fc428f947238a3c410a5d41c65422fbb9a2705829dba6aa"
+    },
+    "aggregate_artifact": {
+      "directory": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/aggregate",
+      "result_json_sha256": "bcba00d89a9912f590b6b77b6589e2d93a3592c8ac22d0b2cba45027c1a7c89d",
+      "result_json_bytes": 45084,
+      "metrics_npz_sha256": "9926febb682c4224e4d0ebb2753c1a73447711d1affc5dc1e6cca42cdb05c9e2",
+      "metrics_npz_bytes": 363326,
+      "manifest_json_sha256": "5889e8b575fa4c361e35e11ed9a3411e823d5edc420f1870fc3a90ad51a9c3b7",
+      "manifest_json_bytes": 384,
+      "COMPLETE_sha256": "1bfdf6a76407a397bc8a4ec875820ad9daa2de479f3798e3008adb89901e3bb5",
+      "COMPLETE_bytes": 263,
+      "validator_status": "PASS"
+    }
+  },
+  "firewall_audit": {
+    "covariance_only": true,
+    "truth_array_generated_or_deserialized": false,
+    "likelihood_datum_consumed_by_inference": false,
+    "catalog_marks_read_only_for_variance_reconstruction": true,
+    "new_truth_seed_count": 0,
+    "new_random_seed_count": 0,
+    "same_64_completed_geometries": true,
+    "same_D_selected_rows_and_train_holdout_split": true,
+    "population_generator_retuned": false,
+    "untouched_256_mock_validation_executed": false,
+    "post_result_retuning": false
+  },
+  "lowest_joint_bin": {
+    "cumulative_upper_k_h_Mpc": 0.0462800306058163,
+    "required_information_fraction_and_bootstrap_lower": 0.8,
+    "strict_pass_pattern": {
+      "marginalized_s1": false,
+      "known_s1": false,
+      "known_s0p3": false,
+      "known_s0p1": false
+    },
+    "all_scenario_joint_frontier_prefix_bin_count": 0,
+    "preregistered_diagnostic_code": "FINITE_LOW_NOISE_CEILING_INSUFFICIENT_ADD_INDEPENDENT_Z0_DENSITY_TRACERS"
+  },
+  "scenario_metrics_lowest_bin": {
+    "marginalized_s1": {
+      "recovered_information_fraction": 0.30409692861112125,
+      "recovered_information_bootstrap_95_interval": [0.296684409019658, 0.3114680595192264],
+      "expected_response": 0.30409692861112125,
+      "expected_correlation_r": 0.5514498423348412,
+      "expected_residual_power_ratio": 0.6959030713888787,
+      "strict_gate": false
+    },
+    "known_s1": {
+      "recovered_information_fraction": 0.33217971061822094,
+      "recovered_information_bootstrap_95_interval": [0.3245036503853316, 0.3395619974628179],
+      "expected_response": 0.33217971061822094,
+      "expected_correlation_r": 0.5763503367034853,
+      "expected_residual_power_ratio": 0.6678202893817791,
+      "strict_gate": false
+    },
+    "known_s0p3": {
+      "recovered_information_fraction": 0.5489209851464294,
+      "recovered_information_bootstrap_95_interval": [0.5420872457473563, 0.5552517167894583],
+      "expected_response": 0.5489209851464294,
+      "expected_correlation_r": 0.7408920198965767,
+      "expected_residual_power_ratio": 0.45107901485357066,
+      "strict_gate": false
+    },
+    "known_s0p1": {
+      "recovered_information_fraction": 0.690016874814867,
+      "recovered_information_bootstrap_95_interval": [0.6836128575415878, 0.6962914744317147],
+      "expected_response": 0.690016874814867,
+      "expected_correlation_r": 0.8306725436746221,
+      "expected_residual_power_ratio": 0.30998312518513305,
+      "strict_gate": false
+    }
+  },
+  "information_contrasts_lowest_bin": {
+    "known_minus_marginalized_s1_information": 0.028082782007099683,
+    "known_s0p3_minus_s1_information": 0.21674127452820846,
+    "known_s0p1_minus_s1_information": 0.357837164196646
+  },
+  "interpretation": {
+    "primary": "Even with nuisance known exactly and the velocity-error standard deviation reduced by a finite factor of ten, the lowest-bin information point estimate is 0.6900 and its 95 percent geometry-bootstrap lower bound is 0.6836, below the frozen 0.8 requirement. Velocity-only information is therefore insufficient for the requested stable parent posterior under every preregistered finite scenario.",
+    "nuisance_contribution": "At the original velocity-error scale, making the nuisance known increases lowest-bin information by only 0.0281. Nuisance marginalization is not the dominant information loss in this audit.",
+    "measurement_error_contribution": "Reducing the velocity-error standard deviation to 0.3 and 0.1 raises lowest-bin information by 0.2167 and 0.3578 relative to known-s1. Measurement error matters, but even the finite 0.1 scenario remains below the gate.",
+    "finite_ceiling_limit": "known_s0p1 is a finite tenfold standard-deviation reduction, not a zero-noise theorem and not a proof that radial geometry alone imposes an absolute ceiling.",
+    "resolution_implication": "Information decreases rather than improves toward the higher audited k bins, and no scenario passes any strict bin. Increasing numerical resolution or constructing a high-resolution IC cannot repair missing observational information by itself.",
+    "route_implication": "The next scientifically justified route is to augment the z=0 density posterior with independent density-tracer information before IC inversion or nonlinear forward validation."
+  },
+  "scientific_disposition": {
+    "same_truth_information_budget_audit": "COMPLETE_NO_GO",
+    "velocity_only_parent_posterior_promotion": "NO_GO",
+    "independent_z0_density_tracer_constraints": "REQUIRED_NEXT_DESIGN_DIRECTION",
+    "resolution_increase_or_ML_training": "NOT_JUSTIFIED_BY_THIS_RESULT",
+    "untouched_256_mock_validation": "NOT_RUN_AND_STILL_UNAUTHORIZED",
+    "frontier_promotion": "NOT_ALLOWED",
+    "0p3_cMpc_h_observational_density_or_velocity_claim": "NOT_ALLOWED",
+    "high_resolution_z0_density_map": "NOT_ESTABLISHED",
+    "constrained_IC": "NOT_ESTABLISHED",
+    "IC_PM_HOP_or_RAMSES": "NOT_AUTHORIZED_BY_THIS_RESULT",
+    "current_audit_grid_cell_size_cMpc_h": 12.0,
+    "target_cell_size_cMpc_h_or_less": 0.3
+  },
+  "resource_audit": {
+    "member_expected_peak_memory_MiB": 2500,
+    "member_requested_memory_MiB": 3072,
+    "observed_max_batch_MaxRSS_MiB": 1953.578125,
+    "minimum_request_for_20_percent_observed_headroom_MiB": 2345,
+    "requested_memory_has_at_least_20_percent_observed_headroom": true,
+    "aggregate_expected_peak_memory_MiB": 2200,
+    "aggregate_requested_memory_MiB": 3072
+  },
+  "recommended_next_stage_requiring_user_approval": {
+    "name": "independent_z0_density_tracer_information_budget_design",
+    "purpose": "Design a joint current-epoch posterior in which CF4 peculiar velocities constrain the large-scale velocity-density modes and independent z=0 density tracers supply information missing from the velocity-only operator.",
+    "first_gate": "At the frozen N32 development resolution, preregister a tracer forward model, selection function, bias and shot-noise or mass-proxy uncertainty, redshift-space treatment, survey mask, and a no-double-counting rule; then quantify incremental per-bin posterior information before any resolution increase.",
+    "required_success_condition": "The joint velocity-plus-density design must pass the frozen lowest-bin information and bootstrap gate and establish a nonzero contiguous joint delta-theta frontier before promotion.",
+    "candidate_observational_classes_to_audit_not_yet_selected": [
+      "galaxy_or_group_number_density",
+      "cluster_and_group_mass_proxy_constraints",
+      "void_or_environment_constraints"
+    ],
+    "forbidden_without_new_approval": [
+      "new Slurm scientific execution",
+      "new truth seeds",
+      "untouched 256 validation",
+      "resolution increase",
+      "ML training",
+      "frontier promotion",
+      "IC PM HOP or RAMSES"
+    ],
+    "new_execution_authorized_by_this_record": false
+  }
+}

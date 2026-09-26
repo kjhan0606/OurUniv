@@ -1,0 +1,74 @@
+{
+  "schema": "hong2021-v35-conditional-residual-spectrum-phase-coupling-result-record-v1",
+  "status": "complete_development_only_single_material_mechanism_with_scope_limit",
+  "program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+  "program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+  "implementation_commit": "6930165b4e4d522c67bbb3885a4b534e688ad969",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v35_residual_spectrum_phase/audit.json",
+    "sha256": "a6d787559a15f3d51dc8a1573fe6c72786cda6b1b507c6568597107ac8a8b304",
+    "decision_digest_sha256": "442449826827671368c1804001d7981e05f3eb2981a76b478f3d605485906421",
+    "classification": "v35_material_mechanisms:finite_conditional_copula_support_is_material",
+    "next": "freeze_joint_conditional_residual_model_with_repairs:replace_endpoint_saturation_with_train_only_conditional_tail_likelihood"
+  },
+  "conditional_spectrum": {
+    "supported": false,
+    "supported_common_bands": [],
+    "nonlinear_over_constant_validation_rmse_by_band": {
+      "TNG100": [1.269588, 1.198945, 1.074461, 0.972795, 0.974826, 0.949056, 1.061687, 0.969337],
+      "SIMBA": [0.927267, 0.905377, 0.903141, 1.030554, 0.940697, 0.744871, 0.756044, 0.659852],
+      "Swift": [0.903492, 0.92565, 0.894168, 0.917576, 0.912639, 0.96175, 0.873192, 0.902095]
+    }
+  },
+  "conditional_support": {
+    "material": true,
+    "TNG100": {
+      "endpoint_fraction": 9.5367431640625e-7,
+      "maximum_coherent_roundtrip_error_log10rho_dex": 0.13579718003054542,
+      "coherent_Q4_ratio": 0.9988210412164793
+    },
+    "SIMBA": {
+      "endpoint_fraction": 3.5762786865234375e-6,
+      "maximum_coherent_roundtrip_error_log10rho_dex": 0.7861661490682086,
+      "coherent_Q4_ratio": 0.9982017398708471
+    },
+    "Swift": {
+      "endpoint_fraction": 7.152557373046875e-7,
+      "maximum_coherent_roundtrip_error_log10rho_dex": 0.16816386053511262,
+      "coherent_Q4_ratio": 0.9996933260456622
+    }
+  },
+  "phase_translation": {
+    "common_domain_material": false,
+    "common_evidence": [],
+    "domain_specific_5_mpc_h_band0_absolute_log10_total_power_error": {
+      "TNG100": 0.03867656990723553,
+      "SIMBA": 0.02378333439661303,
+      "Swift": 0.0028582806233770396
+    },
+    "domain_specific_note": "The 5 Mpc/h band-0 translation exceeds 0.02 dex in TNG100 and SIMBA, exactly the two domains whose V31 field gate fails 2PCF, but not in Swift. This is diagnostic evidence only and does not satisfy the preregistered all-domain phase rule."
+  },
+  "scientific_conclusion": [
+    "No Fourier band has a target-free nonlinear residual-power predictor that improves the constant reference by ten percent in every domain, so a common cube-level conditional spectrum model is not justified by V35.",
+    "The exact V31 scalar-backbone conditional CDF has finite train-derived support. Only about 0.7 to 3.6 voxels per million hit an endpoint in the selected validation cubes, but the worst coherent round-trip density error is 0.136 to 0.786 dex, so a train-only extrapolating conditional tail model is required instead of endpoint saturation.",
+    "The coherent support error leaves pooled Q4 within 0.2 percent of truth in every domain. It therefore cannot by itself explain the V31 Q4 ratios of 2.21 to 12.43; a later model must also condition residual scale/tails more richly than a scalar backbone bin.",
+    "The strict common-domain phase criterion fails. A domain-specific low-k translation response remains aligned with the observed TNG100/SIMBA 2PCF failures and should be retained as a secondary diagnostic, not promoted to a passed mechanism."
+  ],
+  "next_experiment_boundary": {
+    "primary": "fit and validate a train-only local conditional residual scale/tail likelihood with explicit non-saturating extreme continuation; compare it against the scalar-backbone V31 likelihood before any new full-field generator",
+    "secondary": "measure translated-transport Q3/Q4 and the paired TNG100/SIMBA low-k response, without weakening the failed V35 common-domain phase criterion",
+    "forbidden": [
+      "validation extrema in tail fitting",
+      "field clipping",
+      "post-hoc A(k)",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "posthoc_Ak_used": false,
+    "validation_used_for_spectrum_fit_or_early_stopping": false,
+    "phase_translations_used_as_generated_candidates": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

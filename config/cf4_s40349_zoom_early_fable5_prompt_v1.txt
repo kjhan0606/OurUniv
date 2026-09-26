@@ -1,0 +1,48 @@
+Read-only planning audit. Do not edit files, build, submit jobs, or run simulations.
+
+Project destination: use actual CF4 velocities, galaxy density, and explicit
+Local Group observations to infer a present-day density/velocity posterior,
+construct compatible LCDM ICs, and forward-validate the MW/M31/M33 system and
+Virgo/Coma/void environment. Surroundings may be 1--2 cMpc/h; the LG target is
+<=0.3 cMpc/h. Fine unconstrained modes must remain labelled conditional prior
+content.
+
+Current evidence:
+- Seed40349 is TRACE-ONLY, not a promoted parent. GalaxyFinder resolves an L9
+  two-host candidate, frozen-threshold HOP merges it, and M33 is unresolved.
+- A spatial 5 cMpc/h z=0 environment trace produced a buffered L9 mask and a
+  conditional L9--L12 IC. Modes above the L9 parent Nyquist are random LCDM
+  conditional phases, not CF4-recovered information.
+- A RAMSES reader gate and two-step L19-ceiling gate passed with 138,632,600
+  particles, FFT/MG convergence, no output, and peak RSS 48.72 GiB. The latter
+  reached a=0.02455 and populated no level above L12.
+- The historical L8--L12 early gate reached a=0.05447 and L17. Its startup and
+  early peaks were 6.45 and 10.58 GiB (ratio 1.64); its final dump was 3.5 GiB.
+
+Proposed single calculation (files already drafted, not submitted):
+- config/ramses_cf4_lg_b3292_s40349_zoom_l19_early_v1.nml
+- scripts/run_cf4_lg_b3292_s40349_zoom_l19_early_v1.sbatch
+- CF4_S40349_ZOOM_EARLY_PLAN.md
+- DMO L9 base, IC through L12, runtime ceiling L19; evolve from a=0.02 to the
+  first completed step at or beyond a=0.05.
+- Exactly one final full dump. noutput=1, aout=0.05, match_aout=true,
+  tout=1e100, foutput=fbackup=1e9. No initial dump/checkpoint.
+- Fail closed unless normal completion, base FFT and all fine MG converge, no
+  fatal/boundary/OOM marker, exactly one target dump, and max populated level
+  exceeds L12.
+- grammar Slurm normal: one 64-core node, 32 MPI x 2 threads, 96 GiB, 2 hours.
+  Estimated peak 48.72*1.64=79.9 GiB; request is 20.1% above. Estimated one
+  dump <=32 GiB; current free project filesystem capacity 327 TiB.
+- PASS only permits inspection and separately reviewed z=0 planning. It does
+  not promote seed40349, validate CF4 high-k recovery, identify MW/M31/M33, or
+  establish z=0 viability. M33 remains explicitly unresolved.
+
+Please return one verdict: GO, CONDITIONAL GO, REJECT, or NO VERDICT, then answer:
+1. Q-GOAL: Is this bounded early-nonlinear refinement gate materially aligned
+   with the final CF4/LG zoom goal, despite not identifying MW/M31/M33 yet?
+2. Q-LEAN: Is a~0.05, one dump, and the listed fail-closed checks the minimum
+   proportionate calculation, or is there avoidable computation/instrumentation?
+3. Are the CPU/time/memory/storage estimates defensible from the evidence?
+4. Identify only essential pre-submission corrections. Separate them from
+   deferred z=0 science (MW/M31/M33 identification, halo finding, contamination,
+   ensemble robustness). Do not invent an additional audit ladder.

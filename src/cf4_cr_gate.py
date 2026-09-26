@@ -202,7 +202,9 @@ def write_report(path, test_path, parent_path, test, parent, spectra, checks, pa
         f"- Cosmology: Om={parent['configuration']['Om']}, Ob={parent['configuration']['Ob']}, "
         f"h={parent['configuration']['h']}, As(1e9)={parent['configuration']['A_s_1e9']}, "
         f"ns={parent['configuration']['ns']}",
-        f"- CF4 constraints: {parent['n_train']} grouped distances; WF15 Gaussian velocity estimator",
+        f"- CF4 constraints: {parent['n_train']} grouped distances; "
+        f"{parent['configuration'].get('velocity_estimator', 'wf15').upper()} "
+        "Gaussian velocity estimator",
         f"- Error model: scale={parent['configuration']['error_scale']}, "
         f"sigma_NL={parent['configuration']['sigma_nl']} km/s",
         f"- Ensemble: {len(parent['samples'])} exact Matheron draws, seeds "
@@ -248,7 +250,8 @@ def write_report(path, test_path, parent_path, test, parent, spectra, checks, pa
         "## Status",
         "",
         "- The 16-member ensemble is accepted as the statistically valid parent-CR ensemble.",
-        "- Seed 1001 is the deterministic reference member only; it was not chosen using",
+        f"- Seed {parent['configuration']['sample_seeds'][0]} is the deterministic "
+        "reference member only; it was not chosen using",
         "  held-out data or Local-Group morphology.",
         "- No member is yet the final physical parent. Named-structure and LG acceptance",
         "  criteria must be frozen before forwarding and choosing among these 16 draws.",

@@ -1,0 +1,92 @@
+{
+  "schema": "ouruniv-explicit-lg-peak-likelihood-v6-latent-midpoint",
+  "frozen_date": "2026-08-13",
+  "activation_condition": "Candidate 5108 failed the definitive RAMSES/HOP LG gate and the fixed-midpoint v4/v5 development batches produced zero recentered-P1 survivors in 96 proposals.",
+  "development_result_record": "config/cf4_lg_v5_result_record.json",
+  "development_result_record_sha256": "8c6527352752178022fabb72d3aa4822d8390afd72371d292dcabbbb0f3ac601",
+  "information_status": "The peak and latent-midpoint constraints are explicit additional MW/M31 information. They are not inferred from CF4 and are not part of the CF4-only posterior claim.",
+  "method": "Draw the unknown Lagrangian protohalo midpoint from one frozen hierarchical prior, then apply the same exact band-limited Gaussian peak likelihood by Matheron's rule. Preserve N64 long modes, re-run all five P1 gates at N192, forward fresh N576 samples, and require the unchanged P1 gates again at every evolved pair midpoint.",
+  "validation_policy": "One fresh 64-member bank. The v4/v5 outcomes are development-only. No v6 likelihood, prior-width, gate, or seed extension may be changed after any v6 forward result is opened.",
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "parent_projection_mesh_size": 192,
+  "frozen_mode_mesh_size": 64,
+  "box_size_mpc_h": 384.0,
+  "proposal_seeds": [
+    5205, 5206, 5207, 5208, 5209, 5210, 5211, 5212,
+    5213, 5214, 5215, 5216, 5217, 5218, 5219, 5220,
+    5221, 5222, 5223, 5224, 5225, 5226, 5227, 5228,
+    5229, 5230, 5231, 5232, 5233, 5234, 5235, 5236,
+    5237, 5238, 5239, 5240, 5241, 5242, 5243, 5244,
+    5245, 5246, 5247, 5248, 5249, 5250, 5251, 5252,
+    5253, 5254, 5255, 5256, 5257, 5258, 5259, 5260,
+    5261, 5262, 5263, 5264, 5265, 5266, 5267, 5268
+  ],
+  "geometry_seeds": [
+    6305, 6306, 6307, 6308, 6309, 6310, 6311, 6312,
+    6313, 6314, 6315, 6316, 6317, 6318, 6319, 6320,
+    6321, 6322, 6323, 6324, 6325, 6326, 6327, 6328,
+    6329, 6330, 6331, 6332, 6333, 6334, 6335, 6336,
+    6337, 6338, 6339, 6340, 6341, 6342, 6343, 6344,
+    6345, 6346, 6347, 6348, 6349, 6350, 6351, 6352,
+    6353, 6354, 6355, 6356, 6357, 6358, 6359, 6360,
+    6361, 6362, 6363, 6364, 6365, 6366, 6367, 6368
+  ],
+  "likelihood_noise_seeds": [
+    7405, 7406, 7407, 7408, 7409, 7410, 7411, 7412,
+    7413, 7414, 7415, 7416, 7417, 7418, 7419, 7420,
+    7421, 7422, 7423, 7424, 7425, 7426, 7427, 7428,
+    7429, 7430, 7431, 7432, 7433, 7434, 7435, 7436,
+    7437, 7438, 7439, 7440, 7441, 7442, 7443, 7444,
+    7445, 7446, 7447, 7448, 7449, 7450, 7451, 7452,
+    7453, 7454, 7455, 7456, 7457, 7458, 7459, 7460,
+    7461, 7462, 7463, 7464, 7465, 7466, 7467, 7468
+  ],
+  "midpoint_seeds": [
+    8505, 8506, 8507, 8508, 8509, 8510, 8511, 8512,
+    8513, 8514, 8515, 8516, 8517, 8518, 8519, 8520,
+    8521, 8522, 8523, 8524, 8525, 8526, 8527, 8528,
+    8529, 8530, 8531, 8532, 8533, 8534, 8535, 8536,
+    8537, 8538, 8539, 8540, 8541, 8542, 8543, 8544,
+    8545, 8546, 8547, 8548, 8549, 8550, 8551, 8552,
+    8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560,
+    8561, 8562, 8563, 8564, 8565, 8566, 8567, 8568
+  ],
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_prior": {
+      "distribution": "diagonal_normal",
+      "mean_mpc_h": [0.0, -6.0, 4.0],
+      "sigma_mpc_h": [3.0, 3.0, 3.0],
+      "role": "Latent Lagrangian location around the independently inverse-mapped parent-flow preimage; not a post-forward translation.",
+      "development_basis": "The fixed preimage left otherwise eligible PM pair midpoints 2.006--4.641 Mpc/h from the observer. A 3 Mpc/h per-axis width represents the unresolved nonlinear displacement rather than changing the observed z=0 origin."
+    },
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "selection_policy": {
+    "latent_midpoint_is_drawn_independently_from_the_frozen_prior": true,
+    "orientation_is_drawn_isotropically_from_the_frozen_geometry_seed": true,
+    "all_other_peak_likelihood_parameters_match_v4_v5": true,
+    "n64_long_mode_coefficients_must_remain_unchanged": true,
+    "repeat_all_five_p1_gates_on_every_n192_projection": true,
+    "repeat_all_five_p1_gates_at_each_evolved_p2_pair_midpoint": true,
+    "evaluate_every_P2_screen_pair_not_only_rank_one": true,
+    "use_existing_P1_and_P2_physical_thresholds_unchanged": true,
+    "stop_before_RAMSSES_for_human_review": true,
+    "definitive_acceptance_requires_RAMSSES_HOP_M200c_M33_and_contamination": true,
+    "no_same_model_seed_extension_after_v6": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v6_latent_midpoint",
+    "parent_projection_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v6_latent_midpoint",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v6_latent_midpoint",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v6_latent_midpoint"
+  }
+}

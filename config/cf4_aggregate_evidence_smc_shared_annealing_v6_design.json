@@ -1,0 +1,60 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-shared-annealing-design-v6",
+  "status": "frozen_design_and_implementation_only_execution_unauthorized",
+  "purpose": "Prospective v6-only shared-annealing design. A disposable pilot may freeze one beta schedule; the pilot evaluator, cache, posterior and scientific output are then discarded before four fresh fixed-master production replicates are run under that schedule.",
+  "v5_namespace_reuse_forbidden": true,
+  "fixed_science_parameters": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "target_conditional_ESS_fraction": 0.8,
+    "resampling_ESS_fraction": 0.5,
+    "MH_sweeps_per_stage": 4,
+    "maximum_temperature_stages": 256,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true
+  },
+  "pilot": {
+    "master_seed": 2026082301,
+    "particles": 2048,
+    "parents": "all_256",
+    "namespace": "v6_disposable_pilot_evaluator_and_cache_only",
+    "posterior_or_cache_or_scientific_result_reuse": false,
+    "close_and_dispose_hard_check_before_production": true
+  },
+  "shared_schedule": {
+    "immutable_after_pilot": true,
+    "applied_to_all_four_production_masters_including_2026082301": true,
+    "per_replicate_stage_parity_hard_gate": true,
+    "mismatch_failure_class": "shared_schedule_stage_parity_architecture_failure"
+  },
+  "paired_incoherence_diagnostics": {
+    "failed_channels_array_required": true,
+    "primary_when_logI_range_and_L1_both_fail": "paired_incoherence",
+    "logI_range_gate_maximum": 0.2,
+    "logI_sample_SE_gate_maximum": 0.1,
+    "old_L1_0p2_threshold_is_diagnostic_only": true,
+    "coherent_L1_statistic": "S = maximum of six pairwise L1 distances between P_rep",
+    "null_calibration": {
+      "bit_generator": "PCG64DXSM",
+      "seed": 2026081801,
+      "draws": 20000,
+      "replicates_per_draw": 4,
+      "particles_per_replicate": 2048,
+      "source": "P_pool",
+      "pass_tail_probability_minimum": 0.001,
+      "equivalence": "familywise q99.9 maximum-S test"
+    }
+  },
+  "authorization": {
+    "v6_design_and_implementation_authorized": true,
+    "pilot_execution_authorized": false,
+    "production_execution_authorized": false,
+    "grant_or_release_creation_authorized": false,
+    "cache_population_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  }
+}

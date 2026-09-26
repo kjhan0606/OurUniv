@@ -1,0 +1,99 @@
+{
+  "schema": "hong2021-v72-stage-A-gate-label-only-recovery-program-v1",
+  "status": "frozen_after_all_stage_A_metrics_before_any_decision_or_stage_B_access",
+  "purpose": "Recover the V72 stage-A gate after all nine frozen evaluations completed but the gate reused a legacy loader that hard-coded the absent candidate key edm. Select the sole existing sqt key without changing or recomputing any ensemble, metric, threshold, statistic, or decision rule, then execute the already frozen gate exactly once.",
+  "failure_state": {
+    "sequence_status": "failed_V72_metadata_recovery_resume exit=1 previous=gating_single_V72_SQT_stage_A",
+    "sequence_status_sha256": "9cead70212ebaae6cf6b0ddc2a3776239371dac3891b19794496b57a7a9218b4",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/preflight.json",
+    "preflight_sha256": "d3e2d7e71923054ba5c4234fad36ddb6d7b497ffec3878a507c467bb2b11c0a8",
+    "metadata_recovery_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_metadata_recovery.json",
+    "metadata_recovery_record_sha256": "981f81b25ef2c829ce226649761f1e12d7eb18fca11d8ad1984db677f049e0ea",
+    "decision_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/decision.log",
+    "decision_log_sha256": "a1282d2011b51076e1a917382e76aef9ea0eadf6e27ea958cde8281869622348",
+    "metrics_json_files_created": 9,
+    "stage_A_decision_created": false,
+    "stage_B_created_or_accessed": false,
+    "independent_EAGLE_accessed": false
+  },
+  "diagnosis": {
+    "failing_source": "src/hong2021_v72_gate.py",
+    "failure": "KeyError: edm from the imported legacy V15 _load_metrics helper",
+    "actual_evaluator_schema": "hong2021-stochastic-residual-ensemble-evaluation-v1",
+    "actual_candidate_keys_in_every_metric": [
+      "sqt"
+    ],
+    "authorized_loader_semantics": "require the exact evaluator schema, require candidates to contain exactly one key sqt, and return candidates.sqt",
+    "scientific_values_disclosed_before_this_freeze": true,
+    "post_disclosure_candidate_or_threshold_tuning": "forbidden",
+    "scientific_candidate_statistic_threshold_or_decision_rule_changed": false
+  },
+  "stage_A_artifacts": {
+    "conditioning_stratified_spatial_quantile_transport/tng": {
+      "ensemble_sha256": "2d316779c91cde2d1c8b2c60a567f97b57584694b8b1ea72dcc3487f547390a6",
+      "metrics_sha256": "c8284b6f665cdf31d95152e29c2c107d035ca6fdc9e3448ba9b49c53ed7ff3a8"
+    },
+    "conditioning_stratified_spatial_quantile_transport/simba_dev": {
+      "ensemble_sha256": "0edbeb09fc749d065a8a1b5a19ef10dad7834f79ce9a6b3a278fa8e27cbae80e",
+      "metrics_sha256": "c2e72268f866458dca073cec457ab6ce31f39f7c962b6da20c1f7c5e226482c4"
+    },
+    "conditioning_stratified_spatial_quantile_transport/swift_dev": {
+      "ensemble_sha256": "1230296da0536126ced51207a0eb1b3789e29e2a8319f47fce68270e77c25873",
+      "metrics_sha256": "c37e23e95048c5e51eb40ae75280e763a72f09cc283b3b954584f52b6b4789a4"
+    },
+    "raw_V70_latent_spatial_score/tng": {
+      "ensemble_sha256": "150099d3b8632b043346f57db2521247cda38a28610f52f2aadfc499d2f08bd6",
+      "metrics_sha256": "1b0743b5f92d18ecb9222344c3528908786188c09ad9c567a2b4d1e38daf6a66"
+    },
+    "raw_V70_latent_spatial_score/simba_dev": {
+      "ensemble_sha256": "f37ff07efc043493c86fe7e406dcc015bad6b41efa51147f072f5ce4117ad30d",
+      "metrics_sha256": "5bfbf3d691177c2e07d98324032a3f92b48e2c0f287651627bb0ee864f83e215"
+    },
+    "raw_V70_latent_spatial_score/swift_dev": {
+      "ensemble_sha256": "2fbcbc87db70ac22d4fce45b058572a5fdf4923eb31a9f6f2957fb9ab6ab75c7",
+      "metrics_sha256": "cbf70465fea39dd20113bcd9e9bb70e8ed3ff54e9344e4726e188418c753894c"
+    },
+    "independent_voxel_V63_marginal/tng": {
+      "ensemble_sha256": "55f553572a8bb4acdcc5eb117aa0721c1a1280cb5381531bdcd99ab3e4a370da",
+      "metrics_sha256": "5e503e719f2a0f62e96a9060d5877a2612be5814e07ac1fbb1eaa03351f92b3d"
+    },
+    "independent_voxel_V63_marginal/simba_dev": {
+      "ensemble_sha256": "c3de317860613c079c52e8ac47106b8f176f7d51caf9595826bbf5f9b9fa7de3",
+      "metrics_sha256": "892ffe9273796bd6d6ee25badfff3d0999c31efd1875467e84b421b48c33e0d6"
+    },
+    "independent_voxel_V63_marginal/swift_dev": {
+      "ensemble_sha256": "a907c12f0ca85c18076906b497e792535df056a5f7aa05fbbe2076d102e00a6d",
+      "metrics_sha256": "c84376f5d66941aeb4cec3381fa3881570ccb7707d32423520cd6b289832e8c7"
+    }
+  },
+  "only_authorized_code_correction": {
+    "target": "the V72 metrics loader used by src/hong2021_v72_gate.py",
+    "operation": "replace the legacy hard-coded edm lookup with strict validation and lookup of the sole sqt key",
+    "forbidden": "any artifact rewrite, metric recomputation, sample regeneration, candidate change, statistic change, threshold change, gate Boolean change, selection change, seed change, or Stage-A retry after a decision is produced"
+  },
+  "mandatory_preconditions": {
+    "host": "lageunha",
+    "repository": "clean with this recovery freeze in its ancestry",
+    "artifact_integrity": "verify all eighteen ensemble and metrics SHA256 values above before running the gate",
+    "metric_structure": "verify all nine files have the exact frozen schema and sole candidate key sqt",
+    "stage_A_decision_absent": true,
+    "stage_B_absent": true,
+    "terminal_seal_absent": true
+  },
+  "resume_sequence": [
+    "run the full repository test suite",
+    "verify the frozen failure state and all bound artifacts without modifying them",
+    "execute the corrected predeclared V72 stage-A gate exactly once on the nine existing metrics",
+    "if stage A fails, seal and stop with stage B unopened",
+    "if stage A passes, execute the already frozen stage-B sample, evaluation, gate, and seal sequence"
+  ],
+  "firewall": {
+    "stage_A_resampling_or_reevaluation": "forbidden",
+    "candidate_strata_seed_member_sampler_metric_or_threshold_tuning": "forbidden",
+    "stage_B_access_before_exact_stage_A_pass": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

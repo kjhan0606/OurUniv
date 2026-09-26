@@ -1,0 +1,191 @@
+{
+  "schema": "ouruniv-cf4-same-truth-likelihood-ablation-result-record-v1",
+  "date": "2026-08-31",
+  "status": "COMPLETE_SAME_TRUTH_DEVELOPMENT_ABLATION_NO_GO",
+  "scope": "Paired 64-truth A/B/C likelihood ablation with immutable completed D comparison at N32; all arms condition on the same realised population selection and exact D-selected rows and split.",
+  "executions": {
+    "member_array": {
+      "Slurm_array_job_id": 328907,
+      "state": "COMPLETED",
+      "task_count": 64,
+      "task_index_range": [0, 63],
+      "all_task_exit_codes": "0:0",
+      "elapsed_seconds_range": [126, 194],
+      "maximum_batch_MaxRSS_KiB": 2429344,
+      "maximum_batch_MaxRSS_task": 54,
+      "requested_memory_MiB_per_task": 2560,
+      "implementation_commit": "c3dbdc8becdea89a732d118d250dd34aa4d277f3"
+    },
+    "aggregate": {
+      "Slurm_job_id": 328908,
+      "dependency": "afterok:328907",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 23,
+      "requested_cpus": 4,
+      "requested_memory_MiB": 4096,
+      "reported_batch_MaxRSS_KiB": 3516,
+      "reported_MaxRSS_caveat": "The aggregate batch MaxRSS is implausibly low for the arrays read and is retained as raw Slurm accounting, not used as a measured-memory claim.",
+      "aggregation_runtime_commit": "c3dbdc8becdea89a732d118d250dd34aa4d277f3"
+    },
+    "retry_or_replacement": false,
+    "manual_syntax_or_syn101_numerical_execution": false
+  },
+  "bindings": {
+    "program": {
+      "path": "config/cf4_same_truth_likelihood_ablation_program_v1.json",
+      "sha256": "a212c316bd69cba8ed94faaf6e7b25dc83fc10ea925b8a43253aac41a15e9d74"
+    },
+    "implementation": {
+      "path": "src/cf4_same_truth_ablation.py",
+      "sha256": "d9c2c64cfa9315389e945fd09c3a0a684361456dedb01631b2765cab2f9f5312"
+    },
+    "member_runner": {
+      "path": "scripts/run_cf4_same_truth_ablation_members_v1.sbatch",
+      "sha256": "287a75b869b3ae7192d4994b2fbd81e7d6bbddf734259c1fddc05dd47dba9b7a"
+    },
+    "aggregate_runner": {
+      "path": "scripts/run_cf4_same_truth_ablation_aggregate_v1.sbatch",
+      "sha256": "abe6d0cd95f1d599c21f3a2286d275d4679a0fa78db0689782b6e35da468c4fa"
+    },
+    "aggregate_artifact": {
+      "directory": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/aggregate",
+      "result_json_sha256": "379e4c7d15dde242b315429aa17727282252c7feea3910fcdb12184cc10a38b2",
+      "result_json_bytes": 50656,
+      "metrics_npz_sha256": "649d7253d1e2d79222a864da76b9268de275366f5e85d3afee01e480a9f41d11",
+      "metrics_npz_bytes": 672862,
+      "manifest_json_sha256": "28677a0e2a8b59fe8d50658790d6f76ce38a0d0585c428b62c76508a3379d5dc",
+      "manifest_json_bytes": 382,
+      "COMPLETE_sha256": "7bb929eb91cf2a8f5c2d81baa4da7393c496a463faf2309742a942ee6a971c83",
+      "COMPLETE_bytes": 261,
+      "validator_status": "PASS"
+    }
+  },
+  "paired_contract_audit": {
+    "same_64_completed_truth_fields": true,
+    "new_truth_seed_count": 0,
+    "same_generated_population_catalogs": true,
+    "same_D_selected_rows": true,
+    "same_D_train_holdout_splits": true,
+    "A_and_C_common_nontruth_standard_normal_noise": true,
+    "D_rerun": false,
+    "untouched_256_mock_validation_opened": false,
+    "population_selection_removed_or_independently_tested": false,
+    "interpretation_limit": "All arms remain conditional on the same realised population selection. This result cannot isolate or validate the survey population-selection model."
+  },
+  "lowest_joint_bin": {
+    "cumulative_upper_k_h_Mpc": 0.0462800306058163,
+    "strict_pass_pattern": {
+      "A": false,
+      "B": false,
+      "C": false,
+      "D": false
+    },
+    "preregistered_diagnostic_code": "IDEAL_TRUE_POSITION_BASELINE_INSUFFICIENT",
+    "all_arm_joint_frontier_prefix_bin_count": 0,
+    "all_arm_development_k_eff_global_h_Mpc_or_null": null,
+    "all_arm_density_strict_gate_pass_count": 0,
+    "all_arm_theta_strict_gate_pass_count": 0
+  },
+  "arm_metrics_lowest_bin": {
+    "A_ideal_true_position_exact_Gaussian_with_D_variance": {
+      "response": 0.3046573942793008,
+      "correlation_r": 0.5534827153845546,
+      "residual_power_ratio": 0.6936661598350007,
+      "posterior_prior_variance_ratio_median": 0.6917331872243122,
+      "phase_null_p_value": 0.0038910505836575876,
+      "coverage68": 0.6818359375000002,
+      "coverage95": 0.9529296874999998,
+      "heldout_pass": true,
+      "heldout_all_12_bins_pass": true,
+      "heldout_mean_per_row_improvement_range": [0.06676574767132602, 0.0850686564505046]
+    },
+    "B_direct_lognormal_moment_approximation_no_BGc": {
+      "response": 0.3594233630716733,
+      "correlation_r": 0.36075223992031313,
+      "residual_power_ratio": 1.273799588095349,
+      "posterior_prior_variance_ratio_median": 0.6952597363718258,
+      "phase_null_p_value": 0.0038910505836575876,
+      "coverage68": 0.555078125,
+      "coverage95": 0.8705078125000002,
+      "heldout_pass": true,
+      "heldout_all_12_bins_pass": true,
+      "heldout_mean_per_row_improvement_range": [0.06765273378286486, 0.10109946676656961]
+    },
+    "C_fixed_D_BGc_geometry_error_exact_Gaussian": {
+      "response": 0.2886582885866452,
+      "correlation_r": 0.5416441287758382,
+      "residual_power_ratio": 0.7066975775664649,
+      "posterior_prior_variance_ratio_median": 0.6956066435484258,
+      "phase_null_p_value": 0.0038910505836575876,
+      "coverage68": 0.678515625,
+      "coverage95": 0.9521484375000002,
+      "heldout_pass": true,
+      "heldout_all_12_bins_pass": true,
+      "heldout_mean_per_row_improvement_range": [0.06658541827824413, 0.08310619769957243]
+    },
+    "D_completed_population_selection_actual_BGc": {
+      "response": 0.2855317688285811,
+      "correlation_r": 0.3280485513394589,
+      "residual_power_ratio": 1.1865236529657166,
+      "posterior_prior_variance_ratio_median": 0.6956093021265969,
+      "phase_null_p_value": 0.0038910505836575876,
+      "coverage68": 0.5544921875,
+      "coverage95": 0.8814453125000002,
+      "heldout_pass": true,
+      "heldout_all_12_bins_pass": true,
+      "population_generator_all_64_members_pass": false,
+      "population_generator_passing_member_count": 41
+    }
+  },
+  "interpretation": {
+    "primary": "Even the exact linear-Gaussian true-position arm A, while retaining the completed D error variances and nuisance marginalization, cannot reach the frozen response, correlation, or residual-power thresholds in the lowest N32 bin. The current selected radial-velocity geometry plus error level therefore provides insufficient field-recovery information for the requested stable low-k parent posterior.",
+    "solver_calibration_evidence": "A and C have near-nominal 68 and 95 percent coverage and pass phase, variance, heldout, adjoint, CG, and truth-forward consistency checks. This disfavors a basic linear-operator or posterior-sampler bug as the primary explanation.",
+    "secondary_likelihood_loss": "B and D show strong under-coverage and substantially worse field correlation than exact arms A and C. Distance-position approximation and the actual BGc datum/generative-likelihood mismatch add information loss or miscalibration beyond the primary information ceiling.",
+    "heldout_limit": "Positive heldout radial-velocity prediction in every bin does not imply recovery of the latent three-dimensional density or velocity-divergence phase field.",
+    "causal_limit": "B and C are not a one-factor nested pair, and all arms share one realised population selection. Secondary contrasts are diagnostic rather than unique causal proofs."
+  },
+  "scientific_disposition": {
+    "same_truth_likelihood_ablation": "COMPLETE_NO_GO",
+    "current_low_k_parent_posterior_promotion": "NO_GO",
+    "resolution_increase_or_ML_training": "NOT_JUSTIFIED_BY_THIS_RESULT",
+    "untouched_256_mock_validation": "NOT_RUN_AND_STILL_UNAUTHORIZED",
+    "constraint_frontier_promotion": "NOT_ALLOWED",
+    "0p3_cMpc_h_observational_density_or_velocity_claim": "NOT_ALLOWED",
+    "high_resolution_z0_density_map": "NOT_ESTABLISHED",
+    "constrained_IC": "NOT_ESTABLISHED",
+    "N32_cell_size_cMpc_h": 12.0
+  },
+  "resource_audit": {
+    "member_preregistered_expected_peak_memory_MiB": 2100,
+    "member_requested_memory_MiB": 2560,
+    "observed_max_batch_MaxRSS_MiB": 2372.40625,
+    "observation": "The run completed without OOM, but observed maximum RSS exceeded the preregistered estimate and left less than 20 percent headroom relative to observed maximum.",
+    "minimum_future_request_for_20_percent_observed_headroom_MiB": 2847,
+    "recommended_future_round_request_MiB": 3072
+  },
+  "recommended_next_stage_requiring_user_approval": {
+    "name": "same_truth_information_budget_audit",
+    "purpose": "Separate the arm-A information ceiling into measurement-error, radial-only geometry, and nuisance-marginalization contributions before changing the reconstruction route.",
+    "reuse_without_new_truth": [
+      "the_same_64_completed_truths",
+      "the_same_selected_rows_and_splits",
+      "the_same_true-position forward operators"
+    ],
+    "required_components": [
+      "per-bin Fisher or posterior-information spectrum for the arm-A operator and D variance",
+      "known-nuisance versus marginalized-nuisance comparison",
+      "preregistered finite noise-scale ceiling comparison without generator retuning",
+      "explicit decision between improving the velocity likelihood and adding independent z=0 density-tracer constraints"
+    ],
+    "forbidden_without_new_approval": [
+      "new truth seeds",
+      "untouched 256 validation",
+      "resolution increase",
+      "ML training",
+      "frontier promotion",
+      "IC PM HOP or RAMSES"
+    ],
+    "new_Slurm_execution_authorized_by_this_record": false
+  }
+}

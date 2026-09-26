@@ -1,0 +1,338 @@
+{
+  "schema": "hong2021-v20-predeclared-gaussianized-marginal-program-v1",
+  "status": "frozen_after_train_only_derivation_before_v20_e8_implementation_or_execution",
+  "purpose": "Test exactly one independently audited representation intervention: a frozen train-only equal-source marginal Gaussianization of the V14 standardized residual, with the E3 relative-noise training protocol and V18 prior-matched initializer otherwise unchanged.",
+  "parent_evidence": {
+    "v19_registry": "config/hong2021_v19_development_program.json",
+    "v19_registry_sha256": "4a2b1099b696dbf580db8e8b8cd7dfe9dd6af45e18240316507c8136f5bc5011",
+    "v19_code_commit": "3cb644da22b5b86db47e830f46a21b6e195e6b68",
+    "e7_run": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v19_e7_band_anchored_noise_edm/run.json",
+    "e7_run_sha256": "49a1176bde2cb21f3ebf396e3ab1999478f4bade177cce5820fb4a60ff352400",
+    "e7_checkpoints": [
+      {
+        "step": 5000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v19_e7_band_anchored_noise_edm/validation_checkpoints/step_005000.pt",
+        "sha256": "31c91c406f51090d965ccd66669763a9646f09762599e73c941b17af39c387ae"
+      },
+      {
+        "step": 10000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v19_e7_band_anchored_noise_edm/validation_checkpoints/step_010000.pt",
+        "sha256": "3cb068a1c21ea4b45131d28bee019676af41916ce5a46502b1404503025bcaf8"
+      }
+    ],
+    "development_decisions": {
+      "E3": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/development_decision.json",
+        "file_sha256": "7f492b4695e9bde37b4ad8cdcc19d3ad05a084816724f2e339ba2fb3a7164e41",
+        "decision_digest_sha256": "5884b91a8828f5707beb41403a6b916c64cec6aaf0b3f3da777b0023e01146cc"
+      },
+      "E6": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v18_e6_prior_matched_init/development_decision.json",
+        "file_sha256": "add393d2c93af92f30d959cb1149049151d253e84f214e9d7c8ee5dede403d92",
+        "decision_digest_sha256": "9e0eaafbadc4b748be182f51bd772abe18ba345426f81a2537d8b6f482a12c8c"
+      },
+      "E7": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v19_e7_band_anchored_noise/development_decision.json",
+        "file_sha256": "814c72dde53467ca08fb6c41fc0d45d8dc30cf944b37e69ba9a790a43c184e1d",
+        "decision_digest_sha256": "89be5117c480d2f39cd63f063f36409b887c3b6ddfb156dd517a7767e4a487c2",
+        "classification": "sigma_coverage_falsified_audit_architecture_representation",
+        "next": "stop_unopened_and_audit_architecture_or_representation"
+      }
+    },
+    "astrid_used": false,
+    "historical_eagle_used": false
+  },
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "date": "2026-08-06",
+    "record": "/home/kjhan/.claude/plans/you-are-the-independent-mossy-flute.md",
+    "record_sha256": "ba42a2262163c182d2dc8fdcf899851a7350345de157e232fdf1fe717fc31201",
+    "verdict": "DESIGN READY with Addenda A and B",
+    "conclusion": "The V19 failure is representation-limited by a tiny set of over-extreme generated density voxels. Proceed with the one frozen marginal bijection, split algorithmic and float32 round-trip checks by numerical layer, and enforce the inherited exact-zero-DC invariant with a deterministic one-voxel float32 projection.",
+    "astrid_must_remain_sealed": true
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "posthoc_Ak": false,
+    "simulation_label_conditioning": false,
+    "target_derived_inference_features_or_scales": false,
+    "field_clipping_outside_the_frozen_inverse_support": false,
+    "density_floor": false,
+    "pseudocount": false,
+    "architecture_or_capacity_search": false,
+    "loss_coefficient_or_band_weight_search": false,
+    "noise_distribution_search": false,
+    "sigma_max_or_initialization_scale_search": false,
+    "per_domain_initialization_variance": false,
+    "sampling_step_member_seed_or_subset_search": false,
+    "threshold_changes_after_results": false,
+    "near_miss_rescue": false
+  },
+  "e8_gaussianized_marginal_retrain": {
+    "training_from_scratch": true,
+    "continuation_checkpoint": null,
+    "single_change": "Replace the V14 standardized-residual target r_std by the deterministic exact-zero-DC projection of G(r_std)-mean(G(r_std)), where G is the frozen train-only equal-source three-domain marginal Gaussianization; at sampling apply the frozen inverse G^-1 after the existing latent zero-DC projection and before inverse_standardized_residual.",
+    "checkpoint_schema": "hong2021-v20-e8-gaussianized-marginal-multiscale-edm-v1",
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "gaussianization": {
+      "schema": "hong2021-v20-e8-equal-source-gaussianization-v1",
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/gaussianization.json",
+      "sha256": "6636bcfd77035ac8ac23a117ac158767b9ff07405f6d9fca14d6766f37a7d639",
+      "fit_sources": ["TNG100 train", "SIMBA train", "Swift train"],
+      "source_weights": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333],
+      "validation_or_test_data_used": false,
+      "histogram_bins": 131072,
+      "histogram_range": [-25.7735440463562, 19.737746927215575],
+      "histogram_padding": 0.00004551119995117187,
+      "cdf": "equal-source weighted histogram midpoint CDF",
+      "knots": 8193,
+      "z_support": [-5.0, 5.0],
+      "monotonic_repair": "numpy.maximum.accumulate followed by numpy.nextafter toward positive infinity",
+      "forward": "numpy.interp(float32 residual, float64 value knots, float64 z knots), cast float32",
+      "inverse": "numpy.interp(float32 latent, float64 z knots, float64 value knots), cast float32",
+      "tail_behavior": "fixed train-fitted endpoint saturation; no learned or post-hoc clipping",
+      "latent_dc_restored_at_sampling": false,
+      "equal_source_pooled_latent_moments": {
+        "mean": -2.8988784635231545e-08,
+        "standard_deviation": 0.9999994192623336,
+        "skewness": 1.5173589614271134e-07,
+        "excess_kurtosis": -0.000052953592131199656
+      },
+      "maximum_absolute_uncentered_cube_mean": 0.01943791554833976,
+      "maximum_per_source_clipped_fraction": 9.886501470812957e-07
+    },
+    "roundtrip_preflight": {
+      "failed_original_check_on_record": {
+        "criterion": "applied float32 absolute round-trip <= 1e-6",
+        "measured": 0.00000762939453125,
+        "resolution": "Fable Addendum A found this unsatisfiable by correct float32 arithmetic and bound the scientific transform at float64 while separately bounding implementation quantization."
+      },
+      "float64": {
+        "strict_knots": true,
+        "knot_table_max_absolute_error": 1e-12,
+        "measured_knot_table_max_absolute_error": 0.0,
+        "per_voxel_scaled_data_error": 1e-12,
+        "measured_per_voxel_scaled_data_error": 1.0113459750416316e-15
+      },
+      "float32": {
+        "per_voxel_budget": "4*(spacing32(max(abs(x),1))+s_eff*spacing32(max(abs(z),1))), where s_eff is the maximum inverse slope in the containing knot interval and its immediate neighbors",
+        "maximum_error_to_budget_ratio": 1.0,
+        "measured_maximum_error_to_budget_ratio": 0.12493008007497414,
+        "absolute_error_ceiling": 0.0001,
+        "measured_absolute_error": 0.00000762939453125,
+        "per_source_rms_error_ceiling": 0.000001,
+        "measured_maximum_per_source_rms_error": 6.151405744086184e-08
+      },
+      "moment_limits": {
+        "absolute_equal_source_mean": 0.001,
+        "standard_deviation": [0.99, 1.01],
+        "absolute_skewness": 0.02,
+        "absolute_excess_kurtosis": 0.05,
+        "absolute_uncentered_cube_mean": 0.05,
+        "per_source_clipped_fraction": 0.00001
+      }
+    },
+    "dc_projection": {
+      "schema": "hong2021-v20-addendum-b-exact-float32-zero-dc-v1",
+      "failed_naive_centering_check_on_record": {
+        "criterion": "inherited orthonormal FFT DC <= 1e-6",
+        "measured": 0.00000978011121333111,
+        "resolution": "Fable Addendum B requires deterministic exact float32 zero-DC projection and retains the inherited threshold unchanged."
+      },
+      "algorithm": "For each C-order float32 centered cube compute S with float64 sum and cross-check math.fsum; if S is nonzero choose the first C-order argmin(abs(c)), replace that voxel by float32(float64(c[j])-S), and repeat on the same voxel at most once only if required.",
+      "applies_to": "all train and validation caches identically",
+      "maximum_fsum_crosscheck": 2e-11,
+      "maximum_postprojection_ortho_dc": 1e-9,
+      "inherited_maximum_ortho_dc": 0.000001,
+      "maximum_absolute_adjustment": 0.03,
+      "adjusted_voxels_per_cube": [0, 1],
+      "maximum_passes": 2,
+      "tie_break": "first C-order occurrence",
+      "audit_datasets": ["latent_dc", "dc_projection_adjustment", "dc_projection_index", "dc_projection_passes"],
+      "measured_all_six_caches": {
+        "total_cubes": 1348,
+        "adjusted_cubes": 1348,
+        "pass_2_count": 0,
+        "maximum_fsum_crosscheck": 9.094947017729282e-13,
+        "maximum_absolute_adjustment": 0.005276566371321678,
+        "maximum_postprojection_ortho_dc": 4.547473508864641e-13
+      }
+    },
+    "derived_caches": {
+      "schema": "hong2021-v20-gaussianized-multiscale-standardized-residual-cache-v1",
+      "TNG100": {
+        "train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/tng_train_gaussianized.h5", "sha256": "d084b767ed07834c31f54d25c5165367abd15cf3702d2c2141b111e48e1b42ae", "objects": 432, "rms": 0.9826687231986997},
+        "validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/tng_validation_gaussianized.h5", "sha256": "bfd286a7ca0ac121f2da54f37e2afa89ba658f95d91028ce26164d897c1bd1c5", "objects": 93, "rms": 1.0547509461860252}
+      },
+      "SIMBA": {
+        "train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/simba_train_gaussianized.h5", "sha256": "e0be5d463c5b7a496964de2f22c92d6731b6918b92215d177fa51a84015e0247", "objects": 202, "rms": 1.0028191215485707},
+        "validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/simba_validation_gaussianized.h5", "sha256": "0f048595c366a0d232220870b6f91d9d45f015ba2da648fb8d9f7ec2d8305896", "objects": 64, "rms": 1.0130143490919679}
+      },
+      "Swift": {
+        "train": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/swift_eagle_train_gaussianized.h5", "sha256": "40a729d0f2329a97c85af394cab5991a0f0fb95738033b41b4a8e305ba86e2c3", "objects": 409, "rms": 1.0142313403348433},
+        "validation": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/swift_eagle_validation_gaussianized.h5", "sha256": "80ce64934185f8a6ff4d31f7713aafd49fd95c831098d36342b7df9c77be076f", "objects": 148, "rms": 1.0064139637472957}
+      }
+    },
+    "initialization_and_normalization": {
+      "measurement_schema": "hong2021-v20-e8-source-balanced-gaussianized-band-variance-v1",
+      "measurement_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v20/model/initialization_variance_measurement.json",
+      "measurement_report_sha256": "083658e7ffcd977f566c90f919a40b1f0c88c2b4d399144c9cd6fa8f21f96016",
+      "sigma_data": 0.9999915369331587,
+      "sigma_data_rule": "sqrt(equal-source mean of final postprojection per-domain train-cache RMS squared)",
+      "per_domain_band_mode_variance": {
+        "TNG100": [401.7335470281945, 18.158161849195444, 2.5639018484353624, 0.27596941951072634],
+        "SIMBA": [480.59503079948144, 18.255106600231983, 2.541584197261885, 0.27249506998445355],
+        "Swift": [529.0698064947137, 18.142507524108815, 2.50977122682711, 0.27320989040006516]
+      },
+      "source_balanced_band_mode_variance": [470.4661281074632, 18.185258657845413, 2.538419090841453, 0.2738914599650817],
+      "preprojection_to_postprojection_maximum_relative_shift": 3.2746705367833173e-09,
+      "maximum_allowed_relative_shift": 0.000001,
+      "maximum_parseval_relative_error": 4.49948610973153e-16,
+      "maximum_absolute_ortho_dc": 4.547473508864641e-13,
+      "mode_counts_64": [146, 3596, 25296, 233105],
+      "mode_counts_80": [250, 6872, 49928, 454949],
+      "inference_mapping": "V18 fixed-voxel-size per-mode variance mapping on the sealed 80^3 grid; no inference-data remeasurement"
+    },
+    "training_noise": {
+      "mode": "log_sigma_data_fraction",
+      "median_sigma_data_fraction": 0.6,
+      "p_mean": -0.5108340868686441,
+      "p_std": 1.2,
+      "derivation": "p_mean=ln(0.6*sigma_data)",
+      "additional_rng_draws_relative_to_E3": 0
+    },
+    "training_protocol": {
+      "batch": 6,
+      "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift": 2},
+      "validation_batch": 6,
+      "workers": 1,
+      "architecture": "ObservableContextUNet",
+      "base_channels": 32,
+      "parameter_count": 3618465,
+      "decoder_upsampling": "nearest",
+      "learning_rate": 0.0002,
+      "minimum_learning_rate": 0.00002,
+      "schedule": "CosineAnnealingLR over exactly 10000 optimizer steps",
+      "weight_decay": 0.0001,
+      "ema_decay": 0.999,
+      "gradient_clip": 1.0,
+      "loss": "0.5*unweighted_EDM_MSE+0.5*tail_weighted_EDM_MSE",
+      "tail_exponent": 0.25,
+      "tail_maximum": 10.0,
+      "band_balanced": false,
+      "validation_every": 500,
+      "training_seed": 144021,
+      "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+      "augmentation": "48 signed cube isometries",
+      "selection": "smallest candidate step passing every unchanged V6 field check independently in all three domains; validation loss and Q3/Q4/Q5 are selection_role none"
+    },
+    "data": {
+      "location_scale_model": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/location_scale_model.json", "sha256": "0132cb15088d16b89251c9f76ec8fc34cae1292f7549368ed0d9bd9000330bbe"},
+      "TNG100": {
+        "train_data": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5", "sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d"},
+        "validation_data": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5", "sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65"},
+        "source_train_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_train_standardized.h5", "sha256": "60655d61008cf1ff619ab8a390a02aba3f2e894ece454f6c40b9ef31f1dcfb5b"},
+        "source_validation_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_validation_standardized.h5", "sha256": "9634e75de13267fc374d209096202fdf419eb9819f1f1026e11e72f21836d275"}
+      },
+      "SIMBA": {
+        "train_data": {"path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5", "sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7"},
+        "validation_data": {"path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5", "sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910"},
+        "source_train_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_train_standardized.h5", "sha256": "a05c43cb6d9c7d935543920b985b74f90b631fb69a661dee8dac61268f88bff2"},
+        "source_validation_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_validation_standardized.h5", "sha256": "015e00aabf7236f955bc5910b3350d6b4ae369421f37e2314f640c36960640a7"}
+      },
+      "Swift": {
+        "train_data": {"path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5", "sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd"},
+        "validation_data": {"path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5", "sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4"},
+        "source_train_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_train_standardized.h5", "sha256": "ac57b8c49bd05c68319139d53aab11c71eddd8ea10430d9fe0fc6a4f3ccf528a"},
+        "source_validation_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_validation_standardized.h5", "sha256": "0158f2245b2a22e7542c0a061a00056125fe03173dfdec9197534c37b771d647"}
+      }
+    },
+    "development_objects": {
+      "TNG100": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "SIMBA": {"path": "config/hong2021_simba_dev_representative16_v1.json", "sha256": "8e60a07328f75058a682ffd42a4667655f62935baaeb3985b10bcdd727a92663"},
+      "Swift": {"path": "config/hong2021_swift_eagle_dev_representative16_v1.json", "sha256": "d0475680dc846332b928833961a34802fb4560dd100f8714bc95241db13582b7"}
+    },
+    "sampler": {
+      "ensemble_members": 16,
+      "steps": 40,
+      "sigma_min": 0.002,
+      "sigma_max": 40.0,
+      "rho": 7.0,
+      "integrator": "deterministic Heun probability-flow ODE",
+      "initialization": "V18 prior-matched spectral initialization with the V20 remeasured source-balanced band variances",
+      "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777},
+      "seed_lineage": "unchanged E3/E6/E7 seeds and draw-paired initial random tensors",
+      "additional_rng_draws": 0
+    },
+    "unchanged_evaluator": {"path": "src/hong2021_residual_evaluate.py", "preimplementation_sha256": "a0ae49f945b206a0ec8979d2b7eb6a0700d9efe3e0aab4e1233f0a41db2ecc59"},
+    "unchanged_gate": {"path": "src/hong2021_v6_gate.py", "preimplementation_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512"},
+    "mechanism_diagnostics": {
+      "selection_role": "none",
+      "Q3": {
+        "step": 10000,
+        "per_domain_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+        "per_domain_generated_max_log10rho_above_truth_max_dex": 0.30,
+        "pass": "both conditions in every development domain"
+      },
+      "Q4": {
+        "step": 10000,
+        "per_domain_generated_over_truth_mean_delta_squared_max": 1.5,
+        "pass": "condition in every development domain"
+      },
+      "Q5": {
+        "required_unchanged_passing_checks": ["density_pdf_improves_deterministic", "exact_dc_projection", "finite_ensemble_coverage_within_0.03", "high_k_total_power_within_10_percent", "rank_histogram_tv_at_most_0.05", "residual_rms_within_10_percent"],
+        "pass": "all six checks remain passing in every development domain"
+      }
+    },
+    "gate_selection": "smallest candidate step passing all unchanged V6 field checks independently in all three development domains; Q3, Q4, Q5 never select a checkpoint"
+  },
+  "hard_preflight": [
+    "validate the registry, parent decisions, run, checkpoint, transform, source-cache, derived-cache, measurement, location-scale, subset, evaluator, and gate hashes",
+    "refit the transform from the three train caches only and reproduce the frozen knots, moments, clipping fractions, and transform SHA256 exactly",
+    "pass every Addendum-A float64 scientific and float32 implementation round-trip threshold without changing a bound",
+    "rebuild or audit all six caches with the Addendum-B projection and reproduce every cache SHA256",
+    "retain inherited ortho DC <=1e-6 and additionally pass ortho DC <=1e-9, adjustment <=0.03, fsum cross-check <=2e-11, at most one adjusted voxel, at most two passes, and pass-2 count zero",
+    "remeasure sigma_data and band variances from final cache bytes; Parseval <=1e-12, exact mode counts, and preprojection/postprojection relative shift <=1e-6",
+    "derive p_mean=ln(0.6*sigma_data) and retain p_std=1.2 to relative tolerance 1e-12",
+    "prove latent_inverse consumes no random numbers and the initial RNG stream is draw-paired to E3/E6/E7",
+    "run full unit tests and an independent implementation audit before GPU execution",
+    "confirm a clean committed worktree, Lageunha Ada GPU, absent forbidden V20 training/evaluation/seal outputs, and the previously recorded unopened Astrid state without opening independent data"
+  ],
+  "implementation_files_after_registry_commit": [
+    "src/hong2021_v20_gaussianize.py",
+    "src/hong2021_v20_edm.py",
+    "src/hong2021_v20_development_gate.py",
+    "src/hong2021_v14_edm.py",
+    "src/hong2021_v18_init.py",
+    "src/hong2021_v18_edm.py",
+    "scripts/hong2021_v20_prepare_gaussianized.sh",
+    "scripts/hong2021_v20_preflight.sh",
+    "scripts/hong2021_v20_train_lageunha.sh",
+    "scripts/hong2021_v20_gate.sh",
+    "scripts/hong2021_v20_supervise.sh",
+    "scripts/hong2021_v20_finalize.sh"
+  ],
+  "fixed_decision_order": [
+    "implement and independently audit E8 exactly as declared before any GPU execution",
+    "train one model from scratch on Lageunha Ada and evaluate candidates in ascending order 5000 then 10000 with the unchanged V6 field gate on all three development domains",
+    "if all three domains pass, select the smallest passing step, stop development, and commit one V20 Astrid seal before any independent-data access",
+    "if the unchanged gate fails but Q3 and Q4 both pass in every domain, classify marginal_constrained_spatial_structure_limited and stop with Astrid and historical EAGLE unopened",
+    "if the unchanged gate fails and Q3 or Q4 fails anywhere, classify gaussianized_marginal_falsified_audit_conditional_structure and stop with Astrid and historical EAGLE unopened",
+    "Q5 is a no-harm diagnostic with selection_role none and cannot rescue or select a checkpoint",
+    "any preflight failure creates no training artifacts and permits only a documented fix, recommit, and complete preflight rerun",
+    "never adjust the transform, projection, cache bytes, sigma_data, p_mean, p_std, band variances, architecture, loss, sampler, seeds, subsets, thresholds, members, or ladder after E8 results"
+  ],
+  "astrid_seal": {
+    "required_before_access": true,
+    "one_file_commit": true,
+    "one_shot_attempts_remaining": 1,
+    "require_unopened": true,
+    "inference_grid": 80,
+    "voxel_mpc_h": 0.3125,
+    "must_bind": ["V20 registry", "V20 transform", "six V20 caches", "V20 initialization measurement", "E8 decision", "selected E8 checkpoint", "V20 training and sampling code", "unchanged evaluator", "unchanged gate", "preprocessing", "Astrid one-shot command"]
+  }
+}

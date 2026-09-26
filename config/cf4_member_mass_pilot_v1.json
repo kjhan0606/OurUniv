@@ -1,0 +1,21 @@
+{
+  "output_name": "member_mass_readout_v1",
+  "train": [0,2,3,4,5,7,8,9,10,11,12,14,15],
+  "development": [16,17,20],
+  "seed": 911101,
+  "steps": 2000,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.01,
+  "gradient_clip": 10,
+  "learning_seconds": 4200,
+  "application_seconds": 5250,
+  "host_peak_GiB": 5,
+  "gpu_reserved_peak_GiB": 20,
+  "parameters": 530804,
+  "mass_unit_Msun": 1000000000000,
+  "observer_center_cells": [68,68,68],
+  "status": "ONE_SUPERVISED_NATIVE_MASS_READOUT_NOT_FIELD_PRIOR_OR_OBSERVED_LG",
+  "loss": "mean across four per-field mass-normalized map-L1 errors; no class-weighted CE",
+  "baseline": "canonical unaugmented training-average per-cell mass fractions, equal field weights",
+  "next_step": "No automatic follow-up, field-prior training, actual-data inference or IC"
+}

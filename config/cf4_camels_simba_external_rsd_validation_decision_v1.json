@@ -1,0 +1,24 @@
+{
+  "schema": "ouruniv-cf4-camels-simba-external-rsd-validation-decision-v1",
+  "date": "2026-09-20",
+  "job": "388326",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/camels_simba_external_rsd_validation_v1/result.json",
+  "source": "CAMELS SIMBA L25n256 CV16-26 groups_090 and CIC DM grids",
+  "decision": "EXTERNAL_PHYSICAL_RSD_VALIDATION_PASS_PRODUCTION_CALIBRATION_PENDING",
+  "validated": [
+    "train/validation realizations are disjoint",
+    "subhalo velocities are present and used in redshift-space displacement",
+    "all validation outputs are finite",
+    "RSD changes tracer-density correlation measurably"
+  ],
+  "scientific_finding": "Across validation realizations and stellar-mass populations, physical RSD lowers the log-density correlation by approximately 0.07-0.09 in this 0.3125 cMpc/h test grid.",
+  "limitations": [
+    "CAMELS SIMBA tracer population is not CF4-selected",
+    "ARES angular survival is not applied to the CAMELS catalogue",
+    "the measured external bias is not transferable without luminosity/selection matching",
+    "FoG kernel is measured diagnostically but not yet inserted into the CF4 posterior"
+  ],
+  "next_action": "Use CAMELS velocity-conditioned RSD statistics to set an informative FoG/discrepancy prior, then rerun CF4 joint calibration with ARES selection and an untouched validation split.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

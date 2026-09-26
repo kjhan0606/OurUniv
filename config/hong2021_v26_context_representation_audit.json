@@ -1,0 +1,109 @@
+{
+  "schema": "hong2021-v26-context-representation-failure-audit-v1",
+  "status": "complete_development_only_post_failure_audit",
+  "purpose": "Determine whether V26 failed because of numerical sampling, optimizer scaling, train-validation shift, or loss of condition phase information at the Haar interface.",
+  "v26_parent": {
+    "registry": "config/hong2021_v26_development_program.json",
+    "registry_sha256": "810e7ce430c0b9a1a7322bad3ef0ea650af80165cd26a16fc84e8d9b9e96ac2c",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/development_decision.json",
+    "decision_sha256": "b7427b049b8694301cd6c344385a5d3cf14ed51bc00a5a9eb3a0133bc0109d35",
+    "decision_digest_sha256": "9e0d518662fc80685f18fc0d8677f0de008c014e354ec8e681ca6ec648317266",
+    "automatic_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/automatic_failure_audit.json",
+    "automatic_failure_audit_sha256": "67456080cc91d2ecac24a76f60a35ed2189e44de6d98f32de41c511d4d96e753",
+    "development_pass": false,
+    "Astrid_used": false,
+    "historical_EAGLE_used": false
+  },
+  "trained_flow_mechanism_audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/trained_flow_mechanism_audit_v2.json",
+    "sha256": "658076ff96a9ba53b8a2b53f4280dcf9180639fb86b95ac843656facd6977cb8",
+    "audit_code_commit": "c8713fb",
+    "classification": "coarse_scale_conditional_underfit_and_cross_scale_tail_miscalibration_under_fine_scale_dominated_likelihood",
+    "stored_member_replay_maximum_absolute_y_difference": 1.1920928955078125e-07,
+    "trained_flow_roundtrip_rms": 0.0005478033943258256,
+    "maximum_roundtrip_error_over_generated_tail_excess": 0.006474582702188356,
+    "generated_absolute_latent_at_least_5_over_truth": {
+      "TNG100": 3.725,
+      "SIMBA": 1.2991071428571428,
+      "Swift": 5.1875
+    },
+    "truth_base_z_standard_deviation_first_two_scales_at_30000": {
+      "TNG100": [1.608697387926216, 1.4864776785398028],
+      "SIMBA": [1.3291798558401389, 1.0387834692534479],
+      "Swift": [1.1836802645652518, 1.0702564578148002]
+    },
+    "first_two_validation_scales_worsened_from_10000_to_30000_in_every_domain": true
+  },
+  "optimizer_audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/gradient_scale_audit_v2.json",
+    "sha256": "d4fad670ee65dadc7d543cf4180e457ff23a201b0d8339abc5771257ade4e7c7",
+    "audit_code_commit": "e7ebe53",
+    "classification": "coarse_failure_not_explained_by_optimizer_update_magnitude",
+    "raw_registered_gradient_fraction_of_global_l2_coarse_to_fine": [
+      0.0018624093568212167,
+      0.0033648501327301367,
+      null,
+      null,
+      null,
+      0.9872836355094862
+    ],
+    "actual_adam_data_update_fraction_of_global_l2_coarse_to_fine": [
+      0.43902391752804787,
+      0.43337829482564816,
+      0.4456551335434721,
+      0.4338587335554061,
+      0.38554672717791616,
+      0.28974657174639024
+    ],
+    "actual_weight_decay_over_data_update_norm_range": [
+      1.7254025892718617e-05,
+      3.184834724411458e-05
+    ],
+    "optimizer_steps_completed": 29988,
+    "amp_skipped_steps": 12,
+    "conclusion": "Adam moment normalization compensates the raw dimension weighting. Per-scale loss reweighting or another horizon extension is not justified."
+  },
+  "train_validation_coordinate_shift": {
+    "definition": "Per-domain validation standard deviation divided by the same-domain train standard deviation after the frozen source-balanced Haar affine map; scales are coarse to fine.",
+    "TNG100": [1.489, 1.365, 1.174, 1.051, 1.006, 0.994],
+    "SIMBA": [1.066, 0.984, 1.06, 1.005, 0.997, 0.999],
+    "Swift": [0.995, 0.965, 0.979, 1.005, 1.003, 1.007],
+    "interpretation": "TNG100 has a material coarse train-validation shift, but SIMBA and Swift do not. The shared all-domain coarse base-z failure therefore cannot be reduced to the TNG split alone."
+  },
+  "context_interface_audit": {
+    "registered_target_at_scale_r": "seven Haar child-contrast channels on an r by r by r parent grid",
+    "implemented_local_condition_at_scale_r": "four condition channels adaptively average-pooled directly to r by r by r",
+    "lost_information": "the eight 2r-grid child phases inside every Haar parent, whose signed contrasts define the target detail coefficients",
+    "coarsest_case": {
+      "target": "seven oriented contrasts among the 2 by 2 by 2 box octants",
+      "implemented_condition": "four whole-box channel averages plus eight cube-isometry-invariant scalar features and a zero latent DC",
+      "orientation_or_octant_information_available": false
+    },
+    "augmentation_interaction": "All 48 signed cube isometries rotate or reflect the target details, but the coarsest V26 context is invariant under those operations. The model therefore cannot align the sampled coarsest latent structure with the observed condition orientation.",
+    "code_location": "src/hong2021_v26_flow.py:scale_context",
+    "regression_test": "tests/test_hong2021_v26_flow.py:test_coarsest_context_discards_condition_orientation",
+    "classification": "parent_child_phase_aliasing_in_conditional_haar_context"
+  },
+  "ruled_out_as_primary": [
+    "stored ensemble RNG, checkpoint, or inverse-chain mismatch",
+    "trained spline numerical roundtrip error",
+    "persistent AMP divergence",
+    "raw dimension weighting after actual Adam moment normalization",
+    "AdamW weight decay",
+    "global gradient clipping at the final checkpoint",
+    "TNG100 train-validation shift as an all-domain explanation",
+    "more V26 training steps",
+    "post-hoc clipping, A(k), or changed field thresholds"
+  ],
+  "conclusion": "V26 conditions each Haar detail on parent averages after discarding the child-phase contrasts at that same scale. This interface error is sufficient to explain coarse conditional underfit, cross-scale misalignment, loss of morphology, and rare voxel-latent support excursions despite a well-calibrated generated base normal.",
+  "eligible_single_next_change": "At every Haar scale r, replace the four r-grid pooled condition channels by a parent-aligned 2x2x2 child-phase representation of all four condition fields, giving 32 local channels at r. Retain the V26 exact likelihood, Haar target, optimizer, horizon, seeds, data, inverse maps, and gates.",
+  "ineligible_next_changes": [
+    "per-scale loss reweighting or separate optimizers",
+    "another horizon extension",
+    "spline-bound, bin-count, mask, or capacity tuning based on V26 outputs",
+    "post-sample clipping or rank remapping",
+    "opening Astrid or historical EAGLE"
+  ],
+  "Astrid_accessed": false,
+  "historical_EAGLE_accessed": false
+}

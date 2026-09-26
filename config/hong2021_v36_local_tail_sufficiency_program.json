@@ -1,0 +1,81 @@
+{
+  "schema": "hong2021-v36-local-conditional-scale-tail-sufficiency-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Determine whether V31 tail explosion is caused by conditioning the residual distribution only on scalar backbone bins, and whether full local/multiscale target-free context materially improves held-out conditional quantiles before implementing a new likelihood.",
+  "parent_evidence": {
+    "v35_record": "config/hong2021_v35_result_record.json",
+    "v35_record_sha256": "bc48420b7cfbda4c6b017cc75a70dec49662bfd9fe6240a21966b2937cfad5f3",
+    "required_classification": "v35_material_mechanisms:finite_conditional_copula_support_is_material",
+    "required_next": "freeze_joint_conditional_residual_model_with_repairs:replace_endpoint_saturation_with_train_only_conditional_tail_likelihood"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "rule": "reuse and reverify every V35 TNG100/SIMBA/Swift train/validation data, V21 backbone cache, V31 conditional-copula artifact/report, and frozen 16-object selection byte-for-byte"
+  },
+  "native_voxel_quantile_audit": {
+    "voxel_mpc_h": 0.3125,
+    "target": "physical residual y_truth minus frozen V14 corrected backbone plus predicted residual DC",
+    "quantiles": [0.001, 0.01, 0.5, 0.99, 0.999],
+    "train_lattice": "for cube i use stride 4 with axis offsets ((i),(i//4),(i//16)) mod 4, yielding 16^3=4096 native voxels per cube",
+    "train_rows_per_source": 262144,
+    "train_selection": "without-replacement PCG64 permutation of each source lattice in TNG100,SIMBA,Swift order using seed 36031; then concatenate exactly equal source counts",
+    "validation_rows_per_source": 262144,
+    "validation_selection": "without-replacement PCG64 permutation of the full native validation voxel population in TNG100,SIMBA,Swift order using seed 36041; target-independent and frozen before validation access",
+    "V31_reference": "read the train-only V31 per-backbone-bin residual quantile at each requested probability; retain its constant finite endpoints exactly for diagnosis",
+    "scalar_features": [
+      "local V14 backbone",
+      "log1p native galaxy count",
+      "native mean radial peculiar velocity",
+      "native intrinsic radial-velocity dispersion",
+      "radius from observer divided by 10 Mpc/h"
+    ],
+    "oriented_local_multiscale_features": "scalar features plus lexicographically ordered periodic 3x3x3 native patches and 3x3x3 factor-4 parent patches of log1p count, mean velocity, intrinsic sig_v, and backbone; parent patches are repeated to their contained native voxels",
+    "models": [
+      "V31_scalar_backbone_bin_reference",
+      "nonlinear_scalar_quantile",
+      "nonlinear_oriented_multiscale_quantile"
+    ],
+    "fixed_learner": {
+      "implementation": "one sklearn HistGradientBoostingRegressor(loss=quantile) per probability and feature set",
+      "learning_rate": 0.05,
+      "max_iter": 128,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 128,
+      "l2_regularization": 1.0,
+      "early_stopping": false,
+      "random_state": 36021
+    },
+    "metrics": [
+      "per-domain pinball loss",
+      "empirical fraction residual<=predicted quantile",
+      "coverage error relative to requested probability",
+      "oriented/scalar and scalar/V31 pinball ratios"
+    ]
+  },
+  "translated_tail_causal_control": {
+    "objects": "exact V35/V31 frozen 16 validation source_index values per domain",
+    "translation": "V31 conditional quantile field rolled by 16 native cells (=5 Mpc/h) in the four V35 directions, then inverted at the unchanged query backbone and exact residual-mean projected",
+    "reference": "the same projected truth cubes repeated once per direction",
+    "metrics": "pooled Q3 delta q99.999 and maximum excess plus Q4 generated/truth mean-delta-squared ratio",
+    "transport_tail_material": "Q3 or Q4 fails the unchanged V31 thresholds in any domain"
+  },
+  "predeclared_interpretation": {
+    "local_tail_supported": "oriented/scalar pinball loss <=0.90 in all three domains at q=0.001 or q=0.999, or at both q=0.01 and q=0.99",
+    "nonlinear_scalar_tail_supported": "scalar/V31 pinball loss <=0.90 in all three domains under the same tail rule",
+    "tail_calibration_required": "absolute empirical coverage error <=0.002 at q=0.001/0.999 and <=0.005 at q=0.01/0.99",
+    "next_if_local_supported": "fit a train-only local conditional scale body plus non-saturating extreme-value tail continuation, then run a matched V31 donor transport control",
+    "next_if_only_scalar_supported": "replace V31 bins by a smooth nonlinear scalar conditional body plus train-only extreme-value continuation",
+    "next_if_neither_supported_but_transport_tail_material": "the tail failure is joint donor-query coupling rather than marginal tail prediction; replace donor transport with a joint query-aligned conditional stochastic field",
+    "next_if_neither_supported_and_transport_tail_not_material": "audit the pooled Q3/Q4 implementation and donor selection provenance before further model changes"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v36_local_tail_sufficiency/audit.json",
+  "firewall": {
+    "validation_used_for_fit_or_early_stopping": false,
+    "validation_extrema_used_for_tail_fit": false,
+    "field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

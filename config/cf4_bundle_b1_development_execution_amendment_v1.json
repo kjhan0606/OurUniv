@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-development-execution-amendment-v1",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "LOCAL_SYNTHETIC_64_MOCK_EXECUTION_GRANT_ONLY",
+  "purpose": "Record the bounded execution grant used for the corrected local synthetic development smoke and interface harness.",
+  "authorization": {
+    "basis": "User approval to proceed with the B1 repair after the first backup-audit NO-GO.",
+    "run_local_synthetic_development_mocks": true,
+    "development_seed_start_inclusive": 2026083000,
+    "development_seed_stop_exclusive": 2026083064,
+    "observational_data_read": false,
+    "GPFS_read": false,
+    "GPFS_write": false,
+    "Slurm_submission": false,
+    "untouched_validation_seeds": false,
+    "observational_posterior": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "scope": {
+    "runner": "src/cf4_b1_development_mock_calibration_v2.py",
+    "joint_interface_harness": "src/cf4_b1_joint_development_harness.py",
+    "semantics": "synthetic count-smoke plus contract/interface probes; not integrated joint calibration",
+    "validation_seed_opened": false
+  },
+  "result": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+  "promotion": {
+    "posterior": false,
+    "frontier": false,
+    "0p3_cMpc_h": false,
+    "B2_IC_FORWARD": false
+  },
+  "next": "Implement an integrated joint development harness before any further 64-seed rerun."
+}

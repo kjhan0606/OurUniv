@@ -1,0 +1,87 @@
+{
+  "schema": "ouruniv-cf4-v6-open-parent-key-overlap-canonical-read-only-analysis-authorized-wrapper-remediation-design-v4",
+  "status": "approved_design_only_runtime_false",
+  "date": "2026-09-03",
+  "purpose": "Replace the infeasible v3 lineage contract while preserving the byte-identical analyzer, loader, 17-artifact science contract, and exact path-aware immutable result validation.",
+  "supersedes": {
+    "v3_remediation_design_commit": "4b71d8a204468bca2fc92a180af2344b9d96eb3c",
+    "v3_pair_design_commit": "864e6e0468ab9135e2be47c773c3ea7614196a32",
+    "v3_runtime_state": "abandoned_before_commit_pair_issuance_receipt_science_read_or_slurm",
+    "v3_namespace_reuse_authorized": false
+  },
+  "blocking_findings": [
+    {
+      "id": "stale_branch_lineage",
+      "evidence": "v3 requires the implementation commit to be the direct child of 864e6e0 while runtime requires symbolic branch agent/freeze-zoom-pipeline and HEAD equal its upstream; that branch and upstream are already e73837c with later science commits",
+      "consequence": "the v3 contract cannot be satisfied at the fixed repository root without destructive branch or remote history movement"
+    },
+    {
+      "id": "unverifiable_implementation_tree",
+      "evidence": "v3 binds implementation_tree but its exact runtime Git whitelist contains no command that returns the implementation commit tree object",
+      "consequence": "a v3 implementation cannot validate every frozen binding using only authorized command outputs"
+    }
+  ],
+  "lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "expected_design_parent": "e73837ce8b106708f3ac821ada55a8e3e8aaf27a",
+    "implementation_parent": "the committed v4 remediation design",
+    "grant_head_rule": "HEAD equals configured upstream and the sealed local grant commit",
+    "history_rewrite_authorized": false,
+    "force_push_authorized": false
+  },
+  "science_invariance": {
+    "analyzer_path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_parent_key_overlap_read_only_analysis.py",
+    "analyzer_sha256": "076b249cece56c8ea2076aacffff65d029c950a6338e3bc898ca1b794ed98031",
+    "loader_path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_parent_key_overlap_canonical_read_only_analysis_wrapper_v1.py",
+    "loader_sha256": "fcf1f330f9423e9b9af26c09709259664f9d95fdda5eae9be385638107332d29",
+    "n_parents": 256,
+    "n_replicates": 4,
+    "pair_order": [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]],
+    "top_k": [1, 5, 10, 20, 50],
+    "only_science_facing_delta": "none"
+  },
+  "validator_contract": {
+    "model": "exact_path_aware_exact_schema",
+    "top_k_integer_key_exception_path": "pairs[0..5].top_k_cumulative_fraction",
+    "top_k_exact_integer_keys": [1, 5, 10, 20, 50],
+    "all_other_mapping_keys": "exact strings from the frozen field schema",
+    "arrays": "exact numpy.ndarray dtype and linked shape, non-object, non-writeable, base is None",
+    "bool_as_int_rejected": true,
+    "actual_synthetic_analyzer_return_test_required": true,
+    "full_fake_receipt_COMPLETE_lifecycle_test_required": true
+  },
+  "git_contract_correction": {
+    "required_branch_command": ["/usr/bin/git", "symbolic-ref", "--quiet", "--short", "HEAD"],
+    "required_head_command": ["/usr/bin/git", "rev-parse", "--verify", "HEAD"],
+    "required_upstream_command": ["/usr/bin/git", "rev-parse", "--verify", "@{upstream}"],
+    "required_implementation_tree_command_template": ["/usr/bin/git", "rev-parse", "--verify", "<implementation_commit>^{tree}"],
+    "dynamic_commit_tokens": "validated lowercase 40-hex argv elements only",
+    "shell": false,
+    "timeout_seconds": 30
+  },
+  "resource_contract": {
+    "submission": "Slurm_only",
+    "partition": "debug",
+    "node": "grammar-debug",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 4,
+    "maximum_expected_RSS_GiB": 6.5,
+    "requested_memory_GiB": 8,
+    "memory_margin_percent": 23.076923076923077,
+    "time_limit": "01:00:00",
+    "requeue": false
+  },
+  "authorization": {
+    "v4_fixture_only_implementation_authorized": true,
+    "v4_test_execution_authorized": true,
+    "external_pair_creation_authorized": false,
+    "local_grant_creation_authorized": false,
+    "science_artifact_read_authorized": false,
+    "receipt_creation_authorized": false,
+    "slurm_submission_authorized": false,
+    "PM_HOP_or_RAMSES_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "next": "commit this one-file correction, then implement and fixture-test the additive v4 six-file wrapper before any pair issuance or runtime action"
+}

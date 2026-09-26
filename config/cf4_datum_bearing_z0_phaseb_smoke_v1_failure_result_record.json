@@ -1,0 +1,100 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phaseb-smoke-v1-failure-result-record",
+  "date": "2026-09-01",
+  "status": "FAIL_CLOSED_IMPLEMENTATION_CORRECTION_REQUIRED_NO_SCIENCE_RESULT",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "047d6e0",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_phaseb_smoke_program_v1.json",
+      "sha256": "526cff06f08b93fd2382720b13c2d9ff7bc009c3d3972f49687079cf29fb3887"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phaseb_smoke.py",
+      "sha256": "85aa7fbdb957d527a7a593ca97ba095df4a2a907b64d260808553946ca6f0359"
+    },
+    "runner": "scripts/run_cf4_datum_bearing_z0_phaseb_smoke_v1.sbatch"
+  },
+  "execution": {
+    "Slurm_job_id": 329837,
+    "cluster": "syntax",
+    "partition": "a40",
+    "node": "syn06",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 65,
+    "requested_cpus": 8,
+    "requested_memory_MiB": 24576,
+    "reported_batch_MaxRSS_KiB": 2226776,
+    "GPU_count": 1,
+    "manual_numerical_execution_on_syntax_or_syn101": false
+  },
+  "failed_artifact": {
+    "staging_directory": "/gpfs/kjhan/CF4/z0_density/.datum_bearing_phaseb_smoke_v1.staging",
+    "preserve_for_audit": true,
+    "published_COMPLETE": false
+  },
+  "gate_summary": {
+    "failed": {
+      "RSD_mass_conservation": {
+        "measured_relative_error": 0.0000763937967219382,
+        "frozen_max": 2e-13
+      },
+      "directional_gradients": {
+        "measured_best_relative_errors": [
+          0.021599194232974468,
+          0.0029456233953161354,
+          0.014685384794026488
+        ],
+        "frozen_max": 0.0002
+      }
+    },
+    "passed": [
+      "radial_forward_match",
+      "truth_intensity_finite_nonnegative",
+      "truth_intensity_positive_on_exposed_support",
+      "positive_mock_count_has_positive_intensity",
+      "spherical_RSD_boundary_safe",
+      "RSD_mass_adjoint",
+      "optimizer_finite",
+      "optimizer_decreases_objective",
+      "HMC_mechanics_finite",
+      "HMC_at_least_one_accept",
+      "nuisance_Hessian_full_rank"
+    ]
+  },
+  "additional_metrics": {
+    "radial_forward_relative_error": 3.2706672416178374e-09,
+    "RSD_adjoint_relative_error": 2.1585429783322445e-16,
+    "RSD_max_abs_displacement_cMpc_h": 10.453969318389886,
+    "optimizer_relative_decrease": 5.767736063232667,
+    "HMC_accepted_of_4": 4,
+    "nuisance_Hessian_rank": 16,
+    "mock_2Mpp_count_total": 36620,
+    "selection_order4_to_order6_truth_lambda_relative_L1": 0.016210019080752168
+  },
+  "failure_analysis": {
+    "mass_conservation": "The batched advanced-index CIC GPU scatter did not conserve the pushed test mass to implementation precision and is rejected. The error is not repaired by relaxing the frozen gate.",
+    "directional_gradient": "The zero-field test places every cell-centred source exactly on the piecewise-CIC branch boundary. Central finite differences therefore cross opposite branches while autodiff returns one branch derivative; the starting state is not an acceptable differentiability test point for CIC.",
+    "GPU_log": "XLA emitted two 'Red zone modified' autotuner messages. The job nevertheless completed all computations and wrote the failed result. These messages are retained as a possible backend symptom but are not asserted to be the scientific cause.",
+    "data_or_science_failure": false
+  },
+  "correction_contract": {
+    "version": "V2_REQUIRED",
+    "retain_original_tolerances": true,
+    "deposition": "replace CIC with a periodic conservative C1 triangular-shaped-cloud kernel and avoid the batched advanced-index scatter by pushing each population separately",
+    "gradient_test": "retain the zero-field initial point; the C1 TSC kernel must pass there rather than moving the probe to hide the CIC cusp",
+    "truth_seed_reused": 2026083000,
+    "new_truth_seed_allowed": false,
+    "validation_seed_allowed": false,
+    "actual_observational_field_inference_allowed": false,
+    "Phase_C_allowed": false
+  },
+  "scientific_disposition": {
+    "Phase_B": "FAIL_IMPLEMENTATION",
+    "present_day_observational_posterior": "NOT_CREATED",
+    "observational_frontier_or_resolution_claim": "NOT_ALLOWED",
+    "target_0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "parent_or_seed_promotion": "NOT_ALLOWED"
+  }
+}

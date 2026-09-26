@@ -1,0 +1,168 @@
+{
+  "schema": "hong2021-v53-v50-v52-domainwise-extreme-backbone-audit-result-record-v1",
+  "status": "complete_common_train_high_backbone_miscalibration_tail_score_model_selected",
+  "program": "config/hong2021_v53_v50_v52_domainwise_audit_program.json",
+  "program_sha256": "d93dff7a1fff8ad49e9841b62e99d647bf2220b39ea9c165b0168e2ae5cae004",
+  "audit_code_commit": "5516e1b57a94aa18725ecdb31a72b2fb44fa808b",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v53_v50_v52_domainwise_audit/audit.json",
+    "sha256": "9af8fa5d11109683f9665a4552063bc08605ff0c681bffc044cb12dd134b3392",
+    "decision_digest_sha256": "8f05d402f3d7253bb4b90740b231413412569840949b31d967d34dff96c063df",
+    "classification": "risk_choice_does_not_remove_common_train_high_backbone_physical_tail_miscalibration",
+    "next": "freeze_a_matched_V50_risk_model_with_a_train_only_multi_threshold_Brier_tail_score_added_to_the_unchanged_bounded_NLL"
+  },
+  "integrity": {
+    "worktree_clean_at_audit": true,
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "pytest_passed": 408,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "e911116f4aa1ab570585a0fac57ba00ba7cb80a56c089be0f03a8faa30108346",
+    "audit_log_sha256": "de44c9de7aa231c8d822b2a6451ec1659ef72020d74db90b113c2b93656df5a3",
+    "decision_digest_independently_verified": true,
+    "paired_common_arrays_exact_all_domains": true,
+    "bootstrap_resamples": 50000,
+    "bootstrap_seed": 153053,
+    "maximum_V52_quadrature_32_to_64_relative_difference": 1.5370031996621856e-8,
+    "V52_recovered_AMP_overflow_count_acknowledged": 4
+  },
+  "train_only_top_backbone": {
+    "definition": "the q99.9-and-above stratum of the V51 fixed train-only query-backbone probe, using identical 4096-voxel probes per object and 64-point bounded-mixture quadrature",
+    "TNG100": {
+      "V50_over_truth_mean_delta_squared": 47.876897528517105,
+      "V52_over_truth_mean_delta_squared": 12.798747843350304,
+      "V52_over_V50_mean_delta_squared": 0.2673261740848378
+    },
+    "SIMBA": {
+      "V50_over_truth_mean_delta_squared": 5.225048329093988,
+      "V52_over_truth_mean_delta_squared": 4.346255342497351,
+      "V52_over_V50_mean_delta_squared": 0.8318115103924756
+    },
+    "Swift": {
+      "V50_over_truth_mean_delta_squared": 6.536330258125933,
+      "V52_over_truth_mean_delta_squared": 3.525056047833776,
+      "V52_over_V50_mean_delta_squared": 0.5393020102451898
+    },
+    "both_models_exceed_frozen_1p5_limit_every_domain": true,
+    "interpretation": "Removing structure risk substantially reduces the predicted train high-backbone physical second moment, especially in TNG100 and Swift, but every no-risk ratio remains more than twice the allowed upper limit. Risk is an amplifier rather than the common root cause."
+  },
+  "paired_development_effect": {
+    "TNG100": {
+      "V52_over_V50_global_mean_delta_squared": 1.005882133974024,
+      "global_paired_object_bootstrap_95": [
+        0.8071682965375002,
+        1.2748607058529426
+      ],
+      "V52_over_V50_top_backbone_mean_delta_squared": 1.041913168307279,
+      "top_backbone_paired_object_bootstrap_95": [
+        0.8039321831767348,
+        1.4667562918519452
+      ],
+      "paired_q99_999_change_dex": 0.02789282430281448,
+      "paired_q99_999_change_bootstrap_95": [
+        -0.016654022787328766,
+        0.07111085216508098
+      ]
+    },
+    "SIMBA": {
+      "V52_over_V50_global_mean_delta_squared": 0.41353891212101607,
+      "global_paired_object_bootstrap_95": [
+        0.2635160961874345,
+        0.7934235450284387
+      ],
+      "V52_over_V50_top_backbone_mean_delta_squared": 0.3670415816088518,
+      "top_backbone_paired_object_bootstrap_95": [
+        0.21448133211761278,
+        0.8628904762829238
+      ],
+      "paired_q99_999_change_dex": -0.04953686036326821,
+      "paired_q99_999_change_bootstrap_95": [
+        -0.08680816283499794,
+        -0.009535653358673454
+      ]
+    },
+    "Swift": {
+      "V52_over_V50_global_mean_delta_squared": 0.27248776436445976,
+      "global_paired_object_bootstrap_95": [
+        0.20536535157439328,
+        1.386462537298456
+      ],
+      "V52_over_V50_top_backbone_mean_delta_squared": 1.2409630094760538,
+      "top_backbone_paired_object_bootstrap_95": [
+        0.7965255906984265,
+        1.970487883173121
+      ],
+      "paired_q99_999_change_dex": 0.007291004762305153,
+      "paired_q99_999_change_bootstrap_95": [
+        -0.07975174141666289,
+        0.09601685254882568
+      ]
+    },
+    "domain_dependent_structure_risk_utility_confirmed": false,
+    "interpretation": "Only SIMBA has paired intervals that decisively favor V52 in the global physical moment, top-backbone physical moment, and q99.999. TNG100 and Swift intervals include no change, and Swift's top-backbone point estimate moves opposite to its global moment, so a domain-specific risk-dropout model is not selected."
+  },
+  "two_point_audit": {
+    "TNG100": {
+      "V50_failed_scale_groups": [
+        "0-1_mpc_h"
+      ],
+      "V52_failed_scale_groups": [
+        "0-1_mpc_h"
+      ],
+      "V50_deterministic_minus_generated_KS_mean_0_1_mpc_h": -0.11848958333333331,
+      "V52_deterministic_minus_generated_KS_mean_0_1_mpc_h": -0.13932291666666669
+    },
+    "SIMBA": {
+      "V50_failed_scale_groups": [
+        "0-1_mpc_h"
+      ],
+      "V52_failed_scale_groups": [],
+      "V50_deterministic_minus_generated_KS_mean_0_1_mpc_h": -0.020833333333333315,
+      "V52_deterministic_minus_generated_KS_mean_0_1_mpc_h": 0.006510416666666685
+    },
+    "Swift": {
+      "V50_failed_scale_groups": [],
+      "V52_failed_scale_groups": []
+    },
+    "interpretation": "The scale-group field failure is confined to 0-1 Mpc/h. It persists for both models in TNG100, is repaired by V52 in SIMBA, and is absent in Swift. This is a real secondary rank-copula or small-scale morphology issue, but it does not explain the common train-only high-backbone physical-tail failure."
+  },
+  "frozen_branch_evidence": {
+    "both_V50_and_V52_common_train_high_backbone_miscalibration": true,
+    "paired_domain_dependent_structure_risk_utility": false,
+    "both_train_top_backbone_marginals_calibrated": false,
+    "any_V50_or_V52_two_point_field_failure": true,
+    "top_backbone_point_direction_matches_sealed_mixed_result": false,
+    "selected_branch_precedence": 1
+  },
+  "selected_next_model": {
+    "base": "the full-information V50 five-component bounded-logit mixture with the observed standardized structure-risk channel retained",
+    "single_changed_factor": "add one predeclared train-only multi-threshold exceedance Brier tail score to the unchanged equal-source bounded negative log likelihood",
+    "unchanged": [
+      "seven input channels and structure-risk values",
+      "bounded support and five-component network",
+      "initialization, optimizer, schedule, augmentation, and equal-source batches",
+      "donor ranks, sampling, controls, and development gates"
+    ],
+    "reason": "A nonnegative sum of the unchanged log score and fixed exceedance Brier scores remains a proper scoring objective while giving the rare physical tail enough optimization weight to address the failure shared by both risk choices.",
+    "guaranteed_repair": false
+  },
+  "scientific_conclusion": [
+    "The V51 inference ablation identified a genuine amplifier, and matched V52 training reduces train high-backbone quadrature moments by factors 1.20 to 3.74 relative to V50. It nevertheless leaves 3.53 to 12.80 times the empirical physical second moment in the top backbone stratum, far above the frozen 1.5 limit.",
+    "The sealed V52 global development improvement in SIMBA is statistically supported by paired objects. The corresponding TNG100 and Swift changes are not resolved, and the Swift top-backbone effect reverses sign relative to its global effect; therefore a universal or domain-specific risk-removal mechanism is not established.",
+    "Small-scale two-point morphology is a secondary failure: the 0-1 Mpc/h scale group fails in TNG100 for both V50 and V52, while V52 repairs SIMBA and both models pass Swift. The next model must first repair the common train-only marginal physical tail without changing the empirical rank copula.",
+    "The pre-frozen branch selects one objective-only experiment: retain V50 information and likelihood, add fixed train-only proper exceedance Brier terms, and require the unchanged three-domain development gate before any independent data access."
+  ],
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_used_for_selection": false,
+    "support_changed": false,
+    "development_threshold_changed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

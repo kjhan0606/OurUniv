@@ -1,0 +1,127 @@
+{
+  "schema": "hong2021-v79-single-candidate-program-v1",
+  "status": "frozen_and_pushed_before_V79_sampling_or_selected_payload_access",
+  "purpose": "Define exactly one V80 calibrated spatial-quantile candidate and paired calibrated independent-marginal control for the single-use V79 target-unseen screen. Bind every scientific source, configuration, checkpoint, calibration, validation file, source index, sampler setting, seed, expected innovation digest, output, and terminal no-retry branch before selected payload access.",
+  "frozen_at": "2026-08-12T20:10:00+09:00",
+  "candidate_count": 1,
+  "V79_program_sha256": "1234ac864343b41cb08f6788892f7dcb2db60b68843bc00edad5d15284e3956d",
+  "V79_gate_implementation_commit": "2b0b06ffe4c52dad474b6d8277ba7a7276caa1cd",
+  "calibration_program_sha256": "5c4fec18d492c9871ab67815e72ffd5f135393944f33f0939ec28c999c6a346c",
+  "scientific_candidate": {
+    "name": "V80_consumed_development_calibrated_V72_spatial_quantile_transport",
+    "hypothesis": "The useful V70/V72 spatial dependence can transfer after a separately fitted domain-wise monotone one-point calibration removes the diagnosed domain-dependent upper-tail/Q4 bias.",
+    "construction": "Generate paired V72 conditioning-stratified spatial-quantile and independent V63 marginal fields from identical fixed innovations; transform both total y fields with the same single V80 domain calibration; restore exact residual DC relative to the unchanged conditional mean.",
+    "only_new_fitted_component": "the single consumed-development V80 histogram quantile map already sealed before this candidate freeze",
+    "trainable_parameters_added": 0,
+    "posthoc_Ak": false,
+    "sample_clipping": false,
+    "selected_target_conditioning_or_calibration": false,
+    "second_calibration_fit_or_candidate": false
+  },
+  "single_use_fresh_selection": {
+    "TNG100": [10,11,13,20,22,25,27,28,33,36,38,41,42,45,46,54,56,61,65,68,69,70,71,72,77,80,83,84,88,89,91,92],
+    "SIMBA": [1,5,6,10,11,12,17,20,21,23,26,27,28,29,30,32,33,37,38,40,42,43,44,45,46,48,49,51,53,54,57,58],
+    "Swift": [1,4,6,15,26,28,31,37,41,44,51,53,55,59,60,66,75,83,85,90,93,95,96,97,104,107,110,112,125,128,132,141]
+  },
+  "implementation_sources": {
+    "V80_sampling": {"path": "src/hong2021_v80_sample.py", "sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080"},
+    "V80_evaluator_wrapper": {"path": "src/hong2021_v80_evaluate.py", "sha256": "f09b552c25c1a6bc33387c224d4bd4a45568cc71ef09d078843ec62ab2864c6d"},
+    "V80_manifest": {"path": "src/hong2021_v80_manifest.py", "sha256": "c3932640e21fbf96e931d9d13559c25e6a6b9c030de752cb12077e1024c48fd0"},
+    "V80_calibration": {"path": "src/hong2021_v80_quantile_calibration.py", "sha256": "943bd80a28a94ec6e6bb88ed59b6c4a46950a9386cd4a789a5c8e5b5ab17ef13"},
+    "ensemble_evaluator": {"path": "src/hong2021_residual_evaluate.py", "sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42"},
+    "V79_gate": {"path": "src/hong2021_v79_complete_gate.py", "sha256": "ea0d60d48b4d8652b78c1410306de7e1b6cd73e4a50af544b2df38ef7031288d"},
+    "V72_transport": {"path": "src/hong2021_v72_sqt.py", "sha256": "e0d032c8629e19fa4c1390ae94a103201c804b0cfe68042eea6a94b7f41a755f"},
+    "V70_sampler": {"path": "src/hong2021_v70_train_gate.py", "sha256": "86924d1a3175bf0fcb066f5dcb288d172f1ba748e70d39da52c3dc50f5b60b00"},
+    "V70_latent_cache_loader": {"path": "src/hong2021_v70_latent_cache.py", "sha256": "ed637adbf3e57d41fdbf593917c95c7060a0bf2265ae3fd6579272a5dac7c1ce"},
+    "bounded_marginal_network": {"path": "src/hong2021_v50_network.py", "sha256": "8e1458d8657c2674c5708feb01e378b6bfec4325878ef307eef244e71f83e7da"},
+    "condition_cube": {"path": "src/hong2021_v48_train.py", "sha256": "537cd46a5fb4111289faa52c4faaded9cfb21c53b10d2a61cb6556276ca7d8b1"},
+    "split_loader": {"path": "src/hong2021_v35_spectrum_phase.py", "sha256": "83a32014eb5ee882b5eec2ddbc12452c4117e0aecb67a805a78905cfcd15639e"}
+  },
+  "frozen_artifacts": {
+    "V80_sampling_configuration": {"path": "config/hong2021_v80_sampling_configuration.json", "sha256": "b611f6aa3b13bd50152b6cbdf6d2912ddaba14cbe4595959d545f29e50ddf606"},
+    "V80_calibration": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/calibration.npz", "sha256": "21b80b6c9582648c087a25aeb8617ce8f2c80ca01780b6d9257faba08eae0393"},
+    "V80_calibration_report": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v80_quantile_calibration/training_report.json", "sha256": "a8a843b41dc4b3b553bd4a90439b85a97155627332de57c91ef9869e34e2bd7e"},
+    "V70_checkpoint": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt", "sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf"},
+    "V63_checkpoint": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt", "sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d"},
+    "V70_training_report": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json", "sha256": "831697545e4b73ea1f875a5cbf07ba4eb82b5602964b0165851433a7553ef519"},
+    "conditioning_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5", "sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153"},
+    "V70_model_program": {"path": "config/hong2021_v70_latent_spatial_score_model_program.json", "sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42"},
+    "V70_train_gate_program": {"path": "config/hong2021_v70_train_joint_structure_gate_program.json", "sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728"}
+  },
+  "fresh_file_bindings": {
+    "TNG100_source_data": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5", "sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3"},
+    "TNG100_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5", "sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff"},
+    "SIMBA_source_data": {"path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5", "sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c"},
+    "SIMBA_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5", "sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e"},
+    "Swift_source_data": {"path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5", "sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add"},
+    "Swift_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46"}
+  },
+  "frozen_execution_provenance": {
+    "candidate_count": 1,
+    "queries_per_domain": 32,
+    "members_per_query": 16,
+    "sampler": {"name": "deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map", "steps": 40, "batch": 4, "sigma_minimum": 0.002, "sigma_maximum": 40.0, "rho": 7.0, "stochastic_churn": 0.0},
+    "seeds_by_domain": {
+      "TNG100": {"candidate": 180080, "control": 180080},
+      "SIMBA": {"candidate": 180081, "control": 180081},
+      "Swift": {"candidate": 180082, "control": 180082}
+    },
+    "frozen_code_configuration_checkpoint_and_cache_artifacts": {
+      "candidate_sampling_source": {"path": "src/hong2021_v80_sample.py", "sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080"},
+      "control_sampling_source": {"path": "src/hong2021_v80_sample.py", "sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080"},
+      "candidate_configuration": {"path": "config/hong2021_v80_sampling_configuration.json", "sha256": "b611f6aa3b13bd50152b6cbdf6d2912ddaba14cbe4595959d545f29e50ddf606"},
+      "control_configuration": {"path": "config/hong2021_v80_sampling_configuration.json", "sha256": "b611f6aa3b13bd50152b6cbdf6d2912ddaba14cbe4595959d545f29e50ddf606"},
+      "candidate_checkpoint_or_frozen_state": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt", "sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf"},
+      "control_checkpoint_or_frozen_state": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt", "sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d"},
+      "TNG100_source_data": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5", "sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3"},
+      "TNG100_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5", "sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff"},
+      "SIMBA_source_data": {"path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5", "sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c"},
+      "SIMBA_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5", "sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e"},
+      "Swift_source_data": {"path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5", "sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add"},
+      "Swift_source_cache": {"path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5", "sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46"}
+    },
+    "innovation_pairing_digests": {
+      "TNG100": "670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55",
+      "SIMBA": "3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed",
+      "Swift": "d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544"
+    },
+    "post_disclosure_sampler_seed_member_checkpoint_or_cache_change": false
+  },
+  "frozen_domain_execution_contracts": {
+    "TNG100": {
+      "candidate_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180080,"checkpoint_sha256":"dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf","source_data_sha256":"4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3","source_cache_sha256":"2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55","worktree_clean_at_sampling":true,"complete":true},
+      "control_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180080,"checkpoint_sha256":"25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d","source_data_sha256":"4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3","source_cache_sha256":"2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55","worktree_clean_at_sampling":true,"complete":true},
+      "pairing": {"rule":"candidate and control use the identical 32x16 fixed PCG64 float32 innovations; candidate alone changes within-stratum spatial ranks before the common marginal inverse and V80 calibration","innovation_pairing_digest":"670b8ffad2c3fd782f2d2d159d9077d26c757d40901dbe03c7b69a4f51e97e55","candidate_control_pairing_proven":true}
+    },
+    "SIMBA": {
+      "candidate_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180081,"checkpoint_sha256":"dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf","source_data_sha256":"f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c","source_cache_sha256":"36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed","worktree_clean_at_sampling":true,"complete":true},
+      "control_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180081,"checkpoint_sha256":"25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d","source_data_sha256":"f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c","source_cache_sha256":"36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed","worktree_clean_at_sampling":true,"complete":true},
+      "pairing": {"rule":"candidate and control use the identical 32x16 fixed PCG64 float32 innovations; candidate alone changes within-stratum spatial ranks before the common marginal inverse and V80 calibration","innovation_pairing_digest":"3337b17bfc119d4a4b83d10bef759d8f34f7b5ba5059a10f01bf8a45af972fed","candidate_control_pairing_proven":true}
+    },
+    "Swift": {
+      "candidate_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180082,"checkpoint_sha256":"dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf","source_data_sha256":"c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add","source_cache_sha256":"0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544","worktree_clean_at_sampling":true,"complete":true},
+      "control_expected_attrs": {"ensemble_members":16,"sampler":"deterministic_EDM_probability_flow_Heun_plus_V72_SQT_plus_V80_monotone_map","sampler_steps":40,"sampling_batch_size":4,"noise_seed":180082,"checkpoint_sha256":"25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d","source_data_sha256":"c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add","source_cache_sha256":"0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46","sampling_code_commit":"d3bc5c7bfd59e6f30d29e4d571ce1efc858b127d","innovation_pairing_digest":"d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544","worktree_clean_at_sampling":true,"complete":true},
+      "pairing": {"rule":"candidate and control use the identical 32x16 fixed PCG64 float32 innovations; candidate alone changes within-stratum spatial ranks before the common marginal inverse and V80 calibration","innovation_pairing_digest":"d6faf3acd7b44b3ac88cf25fbb127990693c34e2a194db8310acbc694a0db544","candidate_control_pairing_proven":true}
+    }
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/preflight.json",
+    "ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_calibrated_sqt_single_candidate",
+    "manifest": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/execution_manifest.json",
+    "V79_gate_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_v79_single_use_gate",
+    "refuse_existing": true
+  },
+  "authorization": {
+    "user_instruction": "The user explicitly approved the separately frozen V79 candidate design and single-use execution with '승인'.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "explicit_user_approval_for_candidate_design_and_single_use_execution": true,
+    "V79_single_use_gate_execution": true,
+    "post_disclosure_candidate_change_or_retry": false,
+    "second_candidate_seed_sampler_metric_partition_or_calibration": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "modify_or_stop_RAMSES": false,
+    "terminal_pass": "seal and await a new explicit user decision about independent confirmation or CF4",
+    "terminal_fail": "seal and stop with no retry, seed change, metric change, partition change, calibration change, or alternative candidate"
+  }
+}

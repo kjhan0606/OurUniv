@@ -1,0 +1,28 @@
+{
+  "decision": "ZOOM_EARLY_NONLINEAR_PILOT_PASS",
+  "stage": 8,
+  "job_id": 388638,
+  "run_dir": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_evolution_pilot_v1/job_388638",
+  "ic": "/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3",
+  "binary": "/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax_maxiter30/ramses_lb_minimax3d_maxiter30",
+  "evolution": {
+    "a_start": 0.02,
+    "a_final": 0.0544719070579354,
+    "levelmin": 8,
+    "runtime_levelmax": 19,
+    "max_refined_level_seen": 17,
+    "peak_memory_report": "53.4%"
+  },
+  "outputs": [
+    {"path": "output_00001", "aexp": 0.02, "role": "initial snapshot"},
+    {"path": "output_00002", "aexp": 0.0544719070579354, "role": "target early-a snapshot"}
+  ],
+  "gates": {
+    "run_completed": true,
+    "boundary_warning_count": 0,
+    "fine_poisson_warning_count": 0,
+    "nan_or_negative_state_count": 0,
+    "target_output_present": true
+  },
+  "interpretation": "The trace-derived zoom hierarchy is dynamically stable through early nonlinear evolution. This does not demonstrate z=0 MW/M31/M33 reproduction and is not a production IC acceptance claim."
+}

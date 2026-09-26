@@ -1,0 +1,18 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v4-decision-v1",
+  "date": "2026-09-20",
+  "job": "388352",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v4b/result.json",
+  "decision": "EXTERNAL_FOG_PRIOR_INJECTED_HOLDOUT_PASS_PRODUCTION_CONDITIONAL",
+  "resolved": [
+    "CAMELS velocity-conditioned FoG prior is injected into the CF4 tracer likelihood",
+    "ARES angular/radial survival remains explicit",
+    "physical FoG prior is kept distinct from negative-binomial count dispersion",
+    "all six population holdout log-scores remain improved"
+  ],
+  "holdout_log_score_improvement": [9.2364124811, 3.2021922070, 1.6927560198, 0.0051437642, 1.2828008479, 2.3463239604],
+  "remaining_conservative_gate": "CAMELS stellar-mass bins are only an ordered prior mapping, not a direct CF4 luminosity-selection calibration.",
+  "production_condition": "Before final IC, run one untouched CF4-disjoint holdout with survival nuisance widened and require no population degradation; otherwise retain NO-GO.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "cf4-p2-lg-targets-v12-parent-b3292-beta025-l9-environment",
+  "frozen_before_forwarding": true,
+  "frozen_date": "2026-09-22",
+  "extends": "config/p2_lg_targets_v11_parent_b3292_beta025_l9.json",
+  "extends_sha256": "95bcdb63bf56967f6dc0a707d049e5606f0e80e279e2ac8a1c2e3d824f96fcff",
+  "change_from_v11": "Apply the already-frozen definitive Local-Volume exclusion during the PM screen instead of discovering a nearby group only after the RAMSES forward.",
+  "screen": {
+    "observer_environment_gate": {
+      "mass_definition": "PM FoF screening proxy for the preregistered HOP/M200c gate",
+      "mass_threshold_msun_h": 5000000000000.0,
+      "radius_mpc_h": 8.0,
+      "centres": ["observer", "promoted_LG_midpoint"],
+      "policy": "A proxy failure rejects a candidate before RAMSES; a proxy pass still requires HOP/M200c confirmation."
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "schema": "ouruniv-cf4-phasec-syn06-physical-gpu-sweep-v1-result-record-v1",
+  "date": "2026-09-01",
+  "status": "DEVICE_DEPENDENT_FAILURE_CONFIRMED_QUARANTINE_SYN06_BEFORE_GATE_RERUN",
+  "lineage": {
+    "commit": "162ed7a7d13aee10668443c0dad412e8e927a1ed",
+    "program": {
+      "path": "config/cf4_phasec_syn06_gpu_sweep_v1.json",
+      "sha256": "10305f22b40a88370d34bc2c5d1c3c5ced8386e3f0db3262ed01f5bc758fba2b"
+    },
+    "worker": {
+      "path": "scripts/run_cf4_phasec_syn06_gpu_sweep_worker_v1.sh",
+      "sha256": "4591f3519b94ee98064bf9e57143359bc8916f4c473a92671d7e5ac22c01b5b5"
+    },
+    "slurm_sweep_job_id": 329941,
+    "slurm_GPU_health_job_id": 329943
+  },
+  "execution": {
+    "node": "syn06",
+    "partition": "a40",
+    "distinct_physical_GPU_count": 2,
+    "concurrent_workers": 2,
+    "task_artifact_count": 6,
+    "valid_task_artifact_count": 6,
+    "elapsed": "00:00:47",
+    "requested_host_memory_MiB": 18432,
+    "maximum_worker_sacct_MaxRSS_KiB": 485220,
+    "memory_headroom_contract_satisfied": true,
+    "sweep_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sweep_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "devices": {
+    "passing_device": {
+      "uuid": "GPU-53c15d39-350a-5498-2988-a100418300b1",
+      "pci_bus_id": "00000000:8D:00.0",
+      "name": "NVIDIA A40",
+      "driver_version": "580.82.07",
+      "device_record_sha256": "12d55c671f9cfef6f4bbb24161c60b2b62fdc3adc3e9a57ccc164ab144d804de",
+      "passing_probe_count": 3,
+      "failing_probe_count": 0
+    },
+    "failing_device": {
+      "uuid": "GPU-906578dd-9007-fdbd-3c6a-a0c5821e24d6",
+      "pci_bus_id": "00000000:CD:00.0",
+      "name": "NVIDIA A40",
+      "driver_version": "580.82.07",
+      "device_record_sha256": "caffcebc3762b6ba3fd37cae194b353846e3186dd5b66d63298ab8efcfdbcb9a",
+      "passing_probe_count": 0,
+      "failing_probe_count": 3
+    }
+  },
+  "task_outcomes": [
+    {
+      "device_role": "passing_device",
+      "seed": 2026083001,
+      "pass": true,
+      "result_sha256": "24f89c638dc01e0abb75b45b9624be7ef93290ed03997e77efa63e08b8e5373e"
+    },
+    {
+      "device_role": "passing_device",
+      "seed": 2026083006,
+      "pass": true,
+      "result_sha256": "f9225f7d3e61b629429a09d04d105a6908b7e5ae771cc80b681698366bcf5827"
+    },
+    {
+      "device_role": "passing_device",
+      "seed": 2026083002,
+      "pass": true,
+      "result_sha256": "a0101ca915f1b7528a3e2ae3dee7baa987e59da54efa3152f8425b991b9fb369"
+    },
+    {
+      "device_role": "failing_device",
+      "seed": 2026083001,
+      "pass": false,
+      "failure": "both candidates have entirely nonfinite LPT displacement and velocity",
+      "result_sha256": "f641aa12e9f61249c6bae9b22bcc8073ebb2c66b9a6bb991a37dfc4a609bd501"
+    },
+    {
+      "device_role": "failing_device",
+      "seed": 2026083006,
+      "pass": false,
+      "failure": "1/128 LPT is finite but all velocity values become nonfinite at PM step 77; 1/256 LPT is entirely nonfinite",
+      "result_sha256": "4b6c30a5b6cad1fbff36711ea6a0461c26e598a22f2f3c138dc503a318d1abca"
+    },
+    {
+      "device_role": "failing_device",
+      "seed": 2026083002,
+      "pass": false,
+      "failure": "both candidates have entirely nonfinite LPT displacement and velocity",
+      "result_sha256": "db79043ca44c9f2e721544fe8a1ffd1d9d545b9690a72438773933e4ea7aec5b"
+    }
+  ],
+  "hardware_health_audit": {
+    "job_id": 329943,
+    "stdout_sha256": "f1c3e258b9b5942cb59267581a52083876f2b49675ee1cbbb14c04ab743e3715",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "volatile_uncorrectable_ECC_total": 0,
+    "aggregate_uncorrectable_ECC_total": 0,
+    "retired_pages": 0,
+    "remapped_rows": 0,
+    "interpretation": "The device-dependent PMWD/JAX failure is reproducible, but NVIDIA's exposed ECC and remapping counters do not report a hardware error. The exact lower-level cause remains unresolved."
+  },
+  "causal_audit": {
+    "same_node": true,
+    "same_wall_clock_window": true,
+    "same_driver_and_GPU_model": true,
+    "same_code_program_seeds_and_environment": true,
+    "different_physical_GPU_UUID": true,
+    "outcome_separation": "3/3 pass versus 0/3 pass",
+    "conclusion": "The previous moving-seed failures are confounded by physical GPU assignment. They cannot be attributed to the white fields, PM time-step, or scan versus monolithic lowering from the prior evidence."
+  },
+  "decision": {
+    "device_dependent_failure_confirmed": true,
+    "failing_UUID_allowed_for_CF4_PM_or_sampler_work": false,
+    "temporarily_exclude_entire_syn06_node": true,
+    "run_sampler_mechanics_pilot": false,
+    "run_actual_observational_posterior": false,
+    "next_allowed_work": "rerun the exact all-eight scan generator gate under Slurm with syn06 excluded and per-task physical GPU identity recorded"
+  },
+  "scope_firewall": {
+    "actual_observational_datum_used": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

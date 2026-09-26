@@ -1,0 +1,23 @@
+{
+  "output_name": "spatial_diffusion_v1",
+  "widths": [48, 96, 192, 384],
+  "steps": 30000,
+  "diffusion_steps": 100,
+  "learning_rate": 0.0002,
+  "weight_decay": 0.01,
+  "ema_decay": 0.999,
+  "training_seed": 902101,
+  "normalization_seed": 902102,
+  "normalization_cubes": 8,
+  "checkpoint_every": 10000,
+  "operational_updates": 32,
+  "sample_seed": 99803,
+  "draws_per_case": 4,
+  "heldout_origins_1p5_cells": [[33, 0, 0], [33, 17, 17]],
+  "learning_cap_seconds": 79200,
+  "total_cap_seconds": 86100,
+  "host_peak_limit_GiB": 12,
+  "gpu_peak_limit_GiB": 20,
+  "branch_version": "cf4_mixed_joint_canonical_v1",
+  "limits": "One conditional native fine-field prior trial, no q_S, actual CF4/LG posterior, global environment training, IC, automatic extension or new bundle."
+}

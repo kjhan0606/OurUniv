@@ -1,0 +1,229 @@
+{
+  "schema": "hong2021-v53-v50-v52-domainwise-extreme-backbone-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Explain the sealed mixed V52 result by separating paired model changes from object sampling, locating the failed TNG100 two-point scales, and testing whether V50 and V52 both remain physically miscalibrated in train-only high-backbone strata before selecting at most one new model.",
+  "parent_evidence": {
+    "v52_record": "config/hong2021_v52_result_record.json",
+    "v52_record_sha256": "5a80c4b5bd83a47ef9bcc2776f75b455814a4f91ed111a0d5a61e4f02030d2ba",
+    "required_status": "complete_development_failure_mixed_domain_risk_removal",
+    "required_classification": "matched_no_risk_result_is_mixed_or_not_a_common_domain_repair",
+    "required_next": "audit_V52_vs_V50_domainwise_extremes_field_checks_and_high_backbone_strata_before_any_new_model",
+    "required_development_pass": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_records": {
+    "v50_record": "config/hong2021_v50_result_record.json",
+    "v50_record_sha256": "965ecdbccf384d43b58f027ff89f07f3bb68debe9334f4ec517cba0f612dcdce",
+    "v51_record": "config/hong2021_v51_result_record.json",
+    "v51_record_sha256": "ff724d3b54b57c2b3e69d5bbd86c3f69dfcc5d576e8ae346354d06c1331322cd",
+    "v52_program": "config/hong2021_v52_no_risk_bounded_mixture_program.json",
+    "v52_program_sha256": "4831c79c1c0e2a06a62d48d8665b3b8a57eea32e92b3bf1a4ae16acd67437413"
+  },
+  "frozen_train_inputs": {
+    "v51_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v51_bounded_support_calibration_audit/audit.json",
+    "v51_audit_sha256": "a73395b3d99a727cf371cc25205e57c314eebe56fc84389df9e7d2f4c22769d2",
+    "v51_audit_decision_digest_sha256": "4e3f0082f552a85062ad5f56656d0259d88104a276ea8d71b1ee3ef5242a19ba",
+    "v52_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.pt",
+    "v52_checkpoint_sha256": "3ef1178a7f8a93dfda9fcd7e2904134924bf9c23ec347a4d2bfded8722bd657b",
+    "v52_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.json",
+    "v52_training_report_sha256": "254eed7ac92242ff768c4432275f0ea375b58693a81720209b3f7733f7f25643",
+    "v52_training_report_decision_digest_sha256": "79f709b758a92f91c5718534b1bb06f0e1acbd24b0cb90aafb95fbb40eaf3cc3",
+    "v52_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_no_risk_bounded_mixture_sequence/preflight.json",
+    "v52_preflight_sha256": "431ea718b1f742b66e5510c92ceb63c986c5250b7287cafb2882141da3655a93",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "frozen_development_inputs": {
+    "v50_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "v50_decision_sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "v50_decision_digest_sha256": "17dc814404609dbd517cc5a50354720cdf3011fc476849a005d72858bd210dc0",
+    "v52_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/development_decision.json",
+    "v52_decision_sha256": "1c7bb6abdf2d66e6f4601e38ef5b714a7ef2f1e1579da23beae67423efbb6776",
+    "v52_decision_digest_sha256": "be66f2f698baa3848478f08497c5649a57aabf2fa8f0aa00c458286ee8011526",
+    "domains": {
+      "TNG100": {
+        "key": "tng",
+        "v50_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/tng/ensemble16.h5",
+        "v50_ensemble_sha256": "e3f6f052890bc1ea70ad47a8d5a597e2a5c04d51563a6dab31fd9255e8b0b2e9",
+        "v50_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/tng/ensemble_evaluation/metrics.json",
+        "v50_metrics_sha256": "24604a7c180e97f7841842dc6a8e4849702d1df369b611e96c052aa35c13a9c8",
+        "v52_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/tng/ensemble16.h5",
+        "v52_ensemble_sha256": "a7dd4839bf4eef68e2a610cfd2af8ab3febcd1da9dc47b900d3b3542dc2240c1",
+        "v52_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/tng/ensemble_evaluation/metrics.json",
+        "v52_metrics_sha256": "27e118cc35889e79b626598ce463dec897d6710cd6449653b572243db7c0f4c6"
+      },
+      "SIMBA": {
+        "key": "simba_dev",
+        "v50_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/simba_dev/ensemble16.h5",
+        "v50_ensemble_sha256": "eb54a98313b7ceca3d9aa5632ae3d7a7c5d24ad35c070af60923e34d44ea5e71",
+        "v50_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/simba_dev/ensemble_evaluation/metrics.json",
+        "v50_metrics_sha256": "c286b4efeb057e371edbaeebc370d5c9fbfcc47e9a5e53557024dd588e71c645",
+        "v52_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/simba_dev/ensemble16.h5",
+        "v52_ensemble_sha256": "ecdbdf3567e95865554bcaff85bf6c175db3e4ccd967b14c6992c6b681e895d9",
+        "v52_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/simba_dev/ensemble_evaluation/metrics.json",
+        "v52_metrics_sha256": "34a5ec5be67bbb75d3b3d74469d61c7be56bdd6aafd44ddd84212ba71b36ad7c"
+      },
+      "Swift": {
+        "key": "swift_dev",
+        "v50_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/swift_dev/ensemble16.h5",
+        "v50_ensemble_sha256": "edcbea344de2f125e01fbc755349a57391b933c727fd169cbfa5bf77b8bb8d25",
+        "v50_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/bounded_query_local_mixture_copula/development_candidate/swift_dev/ensemble_evaluation/metrics.json",
+        "v50_metrics_sha256": "62cbe390bcbec6ec10c6fe15c39038b24e118b4ec0a4380e81126e91882980b2",
+        "v52_ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/swift_dev/ensemble16.h5",
+        "v52_ensemble_sha256": "b711ced87b3251a6d9982785400107ecbb8cb45a09a6e7fdc2c0910ad9cd168f",
+        "v52_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/no_risk_query_local_mixture_copula/development_candidate/swift_dev/ensemble_evaluation/metrics.json",
+        "v52_metrics_sha256": "90c2d371c5e12f6f2715a1915a0d0de26498520c8d346f55599354a9d2a86a90"
+      }
+    }
+  },
+  "paired_development_audit": {
+    "population": "the same 16 frozen development objects and 16 paired members per object in each domain",
+    "required_exact_equal_arrays": [
+      "truth",
+      "conditional_mean",
+      "source_index",
+      "donor_source",
+      "donor_index",
+      "donor_isometry",
+      "donor_distance",
+      "predicted_residual_dc",
+      "predicted_band_scales",
+      "conditional_rank_multiset_sha256",
+      "object_amplitude_prediction"
+    ],
+    "physical_definition": "log10rho=4.5*y; delta=10**log10rho-1",
+    "per_object_metrics": [
+      "generated log10rho q99.99 and q99.999 pooled over 16 members",
+      "generated maximum log10rho pooled over 16 members",
+      "generated mean delta squared pooled over 16 members",
+      "the paired V52-minus-V50 change of each metric"
+    ],
+    "object_bootstrap": {
+      "resamples": 50000,
+      "seed": 153053,
+      "unit": "the 16 paired source objects",
+      "interval": [
+        0.025,
+        0.975
+      ],
+      "member_resampling": false
+    },
+    "backbone_strata": {
+      "variable": "the exactly shared conditional_mean physical y",
+      "domainwise_quantile_boundaries": [
+        0.9,
+        0.99,
+        0.999
+      ],
+      "labels": [
+        "below_q90",
+        "q90_to_q99",
+        "q99_to_q99_9",
+        "q99_9_and_above"
+      ],
+      "metrics": [
+        "truth and each model mean delta squared",
+        "each model generated-over-truth mean delta squared",
+        "V52-over-V50 generated mean delta squared",
+        "paired object-bootstrap 95 percent interval for V52-over-V50 generated mean delta squared",
+        "truth and generated q99.9 log10rho within the stratum",
+        "fraction of total truth or generated delta squared contributed by the stratum"
+      ]
+    },
+    "two_point_audit": "reproduce the unchanged V6 comparison at all 32 radii and three fixed scale groups; report deterministic-minus-generated KS margins and exactly which radii and scales fail for V50 and V52",
+    "new_sampling": false,
+    "threshold_change": false
+  },
+  "matched_train_only_high_backbone_probe": {
+    "V50": "reuse and integrity-check the sealed V51 64-point quadrature backbone strata",
+    "V52": "evaluate the frozen V52 EMA model on exactly the V51 train objects and seed-146046 4096-voxel probe per object with channel 5 exactly standardized zero",
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "probe_voxels_per_object": 4096,
+    "augmentation": false,
+    "backbone_quantile_boundaries": [
+      0.9,
+      0.99,
+      0.999
+    ],
+    "primary_quadrature": "64-point Gauss-Hermite over all five bounded latent Gaussian components in float64",
+    "convergence_control": "32-point Gauss-Hermite",
+    "metrics": [
+      "truth and quadrature mean delta squared in every backbone stratum",
+      "quadrature-over-truth and V52-over-V50 quadrature mean delta squared",
+      "domainwise q99.9-and-above backbone result"
+    ],
+    "forbidden": [
+      "training or refitting",
+      "Monte Carlo replacement of quadrature",
+      "support or threshold changes",
+      "tail weighting selected from development values"
+    ]
+  },
+  "fixed_thresholds": {
+    "physical_mean_delta_squared_ratio_min": 0.6666666666666666,
+    "physical_mean_delta_squared_ratio_max": 1.5,
+    "quadrature_32_to_64_relative_difference_max": 0.005,
+    "paired_bootstrap_interval": [
+      0.025,
+      0.975
+    ],
+    "two_point_improvement_rule": "generated KS mean is strictly below deterministic KS mean independently in 0-1, 1-3, and 3-10 Mpc/h"
+  },
+  "fixed_branches": [
+    {
+      "condition": "both the sealed V50 and newly audited V52 train-only q99.9-and-above backbone strata have quadrature-over-truth mean delta squared above 1.5 in every domain, with all V52 32-to-64 quadrature relative differences at most 0.005",
+      "classification": "risk_choice_does_not_remove_common_train_high_backbone_physical_tail_miscalibration",
+      "next": "freeze_a_matched_V50_risk_model_with_a_train_only_multi_threshold_Brier_tail_score_added_to_the_unchanged_bounded_NLL"
+    },
+    {
+      "condition": "the paired top-backbone V52-over-V50 generated mean-delta-squared bootstrap interval lies wholly above one in TNG100 and wholly below one in SIMBA and Swift, matching the sealed direction of all three extreme metrics",
+      "classification": "structure_risk_has_domain_dependent_high_backbone_utility",
+      "next": "freeze_a_matched_V50_model_with_train_only_Bernoulli_structure_risk_dropout_and_all_other_factors_unchanged"
+    },
+    {
+      "condition": "both V50 and V52 train-only top-backbone physical moment ratios lie within [2/3,1.5] in every domain but either model fails the unchanged development two-point field check",
+      "classification": "calibrated_train_marginals_leave_empirical_rank_copula_two_point_failure",
+      "next": "audit_only_conditional_rank_tail_dependence_without_changing_the_bounded_likelihood_or_training"
+    },
+    {
+      "condition": "the point directions match the sealed mixed result but any required paired top-backbone bootstrap interval contains one and the common train high-backbone branch is false",
+      "classification": "sixteen_object_development_sample_does_not_resolve_domain_dependent_risk_utility",
+      "next": "seal_without_model_selection_and_freeze_a_larger_paired_development_diagnostic_that_cannot_change_the_V52_gate"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "V50_V52_mixed_domain_failure_not_explained_by_risk_backbone_or_two_point_audits",
+      "next": "stop_new_model_selection_and_reassess_the_observable_information_ceiling"
+    }
+  ],
+  "hard_checks": [
+    "clean committed worktree, full pytest, Lageunha Ada GPU, exact parent records and all listed artifact SHA-256 values and canonical decision digests",
+    "strict JSON for the V52 report and decisions and exact acknowledgement of four recovered V52 AMP overflows",
+    "exact equality of all listed V50/V52 development arrays other than sample and model-specific inverse-CDF diagnostics",
+    "exact 16 by 16 by 1 by 64 by 64 by 64 sample shapes and finite values",
+    "reproduce the sealed V50 and V52 pooled Q3/Q4 values to floating-point tolerance before stratification",
+    "exact V51 probe indices, train object counts, immutable preprocessing, open support, model parameter count, and V52 zero-risk condition",
+    "finite train quadrature and maximum aggregate 32-to-64 relative difference at most 0.005",
+    "no new development samples, no validation selection, no support or gate change, and no independent data access"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v53_v50_v52_domainwise_audit/audit.json",
+  "firewall": {
+    "training_or_refit": false,
+    "new_development_sampling": false,
+    "support_change": false,
+    "development_threshold_change": false,
+    "posthoc_scale_or_clipping": false,
+    "posthoc_DC_or_Ak": false,
+    "donor_change": false,
+    "validation_selection": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

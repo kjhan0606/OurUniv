@@ -1,0 +1,77 @@
+{
+  "schema": "hong2021-v32-local-context-velocity-dispersion-audit-record-v1",
+  "status": "complete_development_only_prerequisite_audit",
+  "program": "config/hong2021_v32_context_audit_program.json",
+  "program_sha256": "c4c88d0719cf4a806c0058045c03e7fbf26d4a401c8d8bc10c751aa84d2f3314",
+  "implementation_commit": "7e1078b",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v32_context_audit/audit.json",
+    "sha256": "f31ff2cf092e50c182eb1884587d95586de3331031f8204fb4d15d7db944ea88",
+    "decision_digest_sha256": "6f94f15727fd384d4d199b897a9974c347e42b8a538d8373bc45592965958082",
+    "classification": "velocity_second_moment_supported_without_linear_local_patch_gain",
+    "next": "rebuild_development_inputs_with_explicit_velocity_second_moments_before_generative_training"
+  },
+  "native_multiplicity": {
+    "materiality_threshold_galaxy_fraction": 0.1,
+    "material": true,
+    "within_native_cell_velocity_dispersion_recoverable_from_v14_hdf5": false,
+    "validation_galaxy_fraction_in_cells_with_count_ge_2": {
+      "TNG100": 0.4549723526633138,
+      "SIMBA": 0.3170164165403582,
+      "Swift": 0.2962950011365027
+    }
+  },
+  "recoverable_mean_velocity_controls": {
+    "scale_1p25_mpc_h": {
+      "plus_recoverable_sig_v_over_base_validation_rmse": {
+        "TNG100": 0.9989646642054336,
+        "SIMBA": 0.9993231039962578,
+        "Swift": 0.9992637440259026
+      },
+      "plus_linear_3x3x3_context_over_base_validation_rmse": {
+        "TNG100": 0.9973100445265883,
+        "SIMBA": 0.9987010989862032,
+        "Swift": 0.9987476491567683
+      }
+    },
+    "scale_2p5_mpc_h": {
+      "plus_recoverable_sig_v_over_base_validation_rmse": {
+        "TNG100": 0.9949568128010333,
+        "SIMBA": 0.9975858073404374,
+        "Swift": 0.9980810652154988
+      },
+      "plus_linear_3x3x3_context_over_base_validation_rmse": {
+        "TNG100": 0.9944413332563844,
+        "SIMBA": 0.997054515769781,
+        "Swift": 0.9977368519087007
+      }
+    },
+    "sig_v_supported_factors": [],
+    "local_patch_supported_factors": []
+  },
+  "scientific_conclusion": [
+    "The velocity dispersion reconstructed after V14 voxelization is only a lower bound derived from differences among retained cell means. It improves validation RMSE by less than one percent in at least one domain at both audited scales and therefore fails the preregistered common-domain support rule.",
+    "A linear oriented 3x3x3 local-context control also fails its preregistered two-percent common-domain improvement rule. This does not exclude nonlinear spatial conditioning, but it does exclude citing this linear audit as evidence for immediately expanding the generative architecture.",
+    "The discarded native second moment is material: 29.6 to 45.5 percent of selected validation galaxies occupy voxels containing at least two galaxies. The next controlled experiment must regenerate the same cubes and byte-identical targets from raw catalogues while adding intrinsic within-voxel radial-velocity dispersion.",
+    "Intrinsic velocity dispersion and propagated observational uncertainty are different quantities. Development simulations must not fabricate a sigma-of-the-mean channel; the later CF4 interface may retain that observational channel separately."
+  ],
+  "next_experiment_boundary": {
+    "development_input_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s",
+      "within_voxel_radial_velocity_dispersion_km_s"
+    ],
+    "required_invariants": [
+      "same observers, galaxy selections, mask, voxel assignment, cube origins, train-validation partitions, and targets as V14",
+      "recomputed count and mean-velocity channels must match the frozen V14 inputs before an augmented file is accepted",
+      "dispersion is computed from individual selected-galaxy radial velocities before voxel aggregation",
+      "no target, validation statistic, post-hoc A(k), Astrid, or historical EAGLE information enters input reconstruction"
+    ]
+  },
+  "firewall": {
+    "posthoc_Ak_used": false,
+    "validation_truth_used_for_fit": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

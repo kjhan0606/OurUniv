@@ -1,0 +1,80 @@
+{
+  "bundle": "Q4.0-Q4.1",
+  "geometry": {
+    "actual_composite_key_entries_hashed": 7077888,
+    "actual_composite_key_payload_sha256": "8971a5ff8bf2c7bd8af840441a799036a3da860edab7869973199b9dc0d0dc13",
+    "boundary_id_checks": 6912,
+    "chunk_count": 6912,
+    "chunk_size": 1024,
+    "composite_key_injectivity": "ANALYTIC_ARGUMENT_BY_POSITION_REFINEMENT: the bitwise position+LOS+scale key cannot collide when bitwise positions are unique; LOS/scale do not weaken position uniqueness.",
+    "compression_ratio_implied_M_over_G": 1.0,
+    "device_ceiling_bytes": 17179869184,
+    "device_memory_gate": "PASS_PROJECTED_BELOW_CEILING",
+    "dictionary_allocation_performed": false,
+    "full_pm_geometry_allocated": false,
+    "gpfs_used": false,
+    "group_count_implied_by_injective_lattice": 7077888,
+    "host_ceiling_bytes": 68719476736,
+    "host_memory_gate": "PASS_PROJECTED_BELOW_CEILING",
+    "key_payload_bytes": 56,
+    "metadata": {
+      "M": 7077888,
+      "N_parent": 192,
+      "box_size_cMpc_h": 384.0,
+      "cell_spacing_cMpc_h": 2.0,
+      "displacement_bound_cMpc_h": 2.316206864681996,
+      "displacement_scale_formula": "1.0 cMpc/h for every procedural source",
+      "dtype": "float64",
+      "generation_order": "for z in range(N): for y in range(N): for x in range(N)",
+      "los_formula": "[1.0,0.0,0.0] for every procedural source",
+      "observer": [
+        192.0,
+        192.0,
+        192.0
+      ],
+      "position_formula": "((x+0.5)*2, (y+0.5)*2, (z+0.5)*2) cMpc/h",
+      "sigma_total_bound_km_s": 310.4834939252005
+    },
+    "metadata_sha256": "aca9cc26265fed399461d29b95f2c651a6fbbffbbb8c730897ee75fb197ad39a",
+    "persistent_array_bytes": {
+      "displacement_scales_bytes": 56623104,
+      "los_bytes": 169869312,
+      "output_N192_bytes": 339738624,
+      "population_masses_bytes": 339738624,
+      "positions_bytes": 169869312,
+      "source_to_group_bytes": 56623104
+    },
+    "projected_dictionary_bytes": 1358954496,
+    "projected_dictionary_entry_bytes": 192,
+    "projected_dictionary_entry_bytes_assumption": "Conservative CPython bytes+dict+integer estimate; projected, not measured.",
+    "projected_persistent_array_total_bytes": 1132462080,
+    "projected_persistent_plus_dictionary_bytes": 2491416576,
+    "q4_3_gradient_timing": "SKIPPED_BY_TERMINAL_BRANCH",
+    "schema": "ouruniv-cf4-q4-procedural-geometry-preflight-v1",
+    "slurm_used": false,
+    "source_count": 7077888,
+    "streamed_injective_entries": 7077888,
+    "terminal_exact_grouping_decision": "NO_GO_M_OVER_G_LE_1.01",
+    "terminal_scope": "Undisplaced procedural N192 lattice only; a later displaced PM realization must be measured separately and cannot inherit this ratio.",
+    "unique_positions_asserted_by_construction": 7077888,
+    "unique_positions_expected": 7077888,
+    "uniqueness_method": "analytic injectivity plus chunk-boundary streaming over integer lattice IDs"
+  },
+  "independent_bundle_audit": {
+    "agy": "GO",
+    "opus5": "CONDITIONAL-PASS",
+    "scope": "Final Q4.0/Q4.1 read-only preflight audit; no Q4.2/Q4.3, JAX, held-out or posterior.",
+    "promotion": "NO_GO_EXACT_GEOMETRY_GROUPING"
+  },
+  "next": "Write candidate-2/3 design-only plan; do not run Q4.3 gradient timing or heldout evaluation.",
+  "schema": "ouruniv-cf4-q4-preflight-result-v1",
+  "seed_firewall": {
+    "development_count": 192,
+    "heldout_count": 256,
+    "heldout_evaluated": false,
+    "within_and_cross_namespace_disjoint": true
+  },
+  "seed_manifest": "/home/kjhan/BACKUP/CF4/config/cf4_q4_seed_manifest_v1.json",
+  "seed_manifest_sha256": "fa746035fa7f493e598f0f8b77dbb6e9f5d8f94433bb0050cb4c4a8d577e3760",
+  "status": "COMPLETE_Q4_0_Q4_1_TERMINAL_EXACT_GROUPING_NO_GO"
+}

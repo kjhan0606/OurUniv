@@ -1,0 +1,23 @@
+VERDICT: CONDITIONAL
+
+RISK_LEVEL: MODERATE (provenance and stale-base metadata; science-boundary risk low)
+
+Opus v17 audit of HEAD 1048fec:
+
+1. The numerical periodic/edge test, superseded count-information label, and
+   dependency pins in the primary mode/calibration/derivative chain are good.
+2. The old base result v1/v2 still names 2026083064..2026083320 as untouched
+   validation; these must be superseded or regenerated.
+3. The pooled guard lacks generator/dependency pins; calibration diagnosis and
+   width repair lack implementation pins. The exact regression selection and
+   shell hash receipt should be recorded.
+4. Reported metrics remain internally faithful: 64/64 fits, strict 8/64,
+   47/47 coverage failures, mode coverage 0.744140625/0.96875, pooled guard
+   failure at both levels, and derivative maxima near 1e-6.
+5. No posterior, validation opening, frontier promotion or B2 path exists.
+
+REQUIRED_NEXT: supersede stale base results; retain a successor result record;
+byte-verify hashes; add implementation/dependency pins; record generator
+provenance and exact regression selection; keep validation/B2 sealed.
+
+RECOMMENDATION: CONDITIONAL. Complete these local repairs, then re-audit.

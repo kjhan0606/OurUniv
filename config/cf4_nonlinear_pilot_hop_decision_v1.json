@@ -1,0 +1,22 @@
+{
+  "schema": "ouruniv-cf4-nonlinear-pilot-hop-decision-v1",
+  "date": "2026-09-20",
+  "job": "388421",
+  "stage": "7/8 preliminary",
+  "decision": "HOP_PRELIMINARY_CATALOG_PASS_Z0_STRUCTURE_PENDING",
+  "source": "/gpfs/kjhan/CF4/ramses/cf4_production_ic_nonlinear_pilot_v1/job_388412/output_00004",
+  "hop_build": "/gpfs/kjhan/CF4/hop/clean_rebuild_v1/job_388420",
+  "work": "/gpfs/kjhan/CF4/hop/cf4_nonlinear_pilot_v1_clean/job_388421",
+  "checks": {
+    "ramse_particle_count": 16777216,
+    "hop_reader_completed": true,
+    "hop_density_and_grouping_completed": true,
+    "regroup_completed": true,
+    "group_count": 107044,
+    "tag_count": 16777216,
+    "tag_file_nonempty": true,
+    "output_scale_factor": 0.211821195005763
+  },
+  "interpretation": "A preliminary HOP catalog exists at a=0.212. It is not a z=0 halo catalog and cannot establish MW/M31/M33, Virgo/Coma, or Local/Bootes Void reproduction.",
+  "next": "Extend the same DMO run to a=1.0 in a separate Slurm run, then apply HOP and environment diagnostics at z=0."
+}

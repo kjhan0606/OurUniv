@@ -1,0 +1,206 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-likelihood-contract-amendment-v1",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "DESIGN_COMPLETE_CALIBRATION_AND_EXECUTION_BLOCKED",
+  "purpose": "Close the active B1 likelihood and independent-mock contracts without opening an observational posterior or reading GPFS artifacts.",
+  "supersedes": {
+    "path": "config/cf4_bundle_b1_z0_posterior_result_v1.json",
+    "policy": "The earlier result remains immutable history; this amendment is the effective B1 contract addendum."
+  },
+  "authorization": {
+    "basis": "User approval on 2026-09-04 for one consolidated B1 closure amendment.",
+    "write_contract_and_tests": true,
+    "run_local_contract_tests": true,
+    "read_actual_catalog_or_GPFS": false,
+    "run_observational_inference": false,
+    "run_development_mocks": false,
+    "open_untouched_validation_seeds": false,
+    "KF_EXPAND": false,
+    "Slurm_submission": false,
+    "GPFS_read": false,
+    "GPFS_write": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "active_B1_factorization": {
+    "posterior_target": "p(eta_z0, theta | D_CF4_groups, D_2Mpp_disjoint_counts)",
+    "density_factor": {
+      "owner": "2Mpp_grid_counts",
+      "datum": "six integer N32 count grids and raw selection exposure",
+      "object_overlap_policy": "exclude the 17,007 securely crossmatched 2M++ targets before binning",
+      "independent_twompp_redshift_factor": false
+    },
+    "velocity_factor": {
+      "owner": "CF4_group_marks_shared_redshift",
+      "datum": "grouped CF4 distance and radial-velocity marks",
+      "shared_latent": "one shared redshift latent per canonical secure CF4 1PGC group",
+      "independent_cf4_galaxy_factor": false
+    },
+    "dependence_policy": "The factors share the latent z=0 field and declared nuisance parameters; object-level redshift reuse is forbidden. Disjoint objects do not imply independent cosmic-field or catalog-systematic errors.",
+    "posterior_promotion": "forbidden until the development-mock and held-out gates below pass"
+  },
+  "selection_contract": {
+    "status": "frozen_design_external_calibration_required",
+    "population_order": [
+      "apparent_0_absolute_0",
+      "apparent_0_absolute_1",
+      "apparent_0_absolute_2",
+      "apparent_1_absolute_0",
+      "apparent_1_absolute_1",
+      "apparent_1_absolute_2"
+    ],
+    "definition": "Cartesian product of K<=11.5 or 11.5<K<=12.5 with three equal-width absolute-K bins over -25<M_K<-21",
+    "angular_response": {
+      "source": "official ARES/BORG NSIDE=512 RING completeness maps",
+      "coordinate_convention": "verified equatorial convention, sampled after supergalactic-to-ICRS transformation",
+      "empty_sky_required": true,
+      "raw_exposure_only": true
+    },
+    "radial_response": {
+      "source": "six-population Schechter response under the frozen cosmology",
+      "parameters": {
+        "Mstar": -23.28,
+        "alpha": -0.94
+      },
+      "corrections": ["K_correction", "evolution", "extinction"],
+      "population_mean_density": "six nuisance normalizations with external calibration priors"
+    },
+    "voxel_integration": {
+      "grid": [6, 32, 32, 32],
+      "subpoints_per_voxel": 8,
+      "quadrature": "two-point Gauss per Cartesian axis",
+      "normalization": "never rescale exposure to observed population totals",
+      "positive_count_zero_exposure": "hard failure"
+    },
+    "artifact_use": "A source-bound selection artifact must be available before inference; this amendment records the contract but performs no external read."
+  },
+  "redshift_space_and_deposition_contract": {
+    "line_of_sight": "observer-centred spherical rhat(x), recomputed at every source location",
+    "coherent_displacement_cMpc_h": "h*v_r/(a*H(a))",
+    "velocity_convention": "physical_peculiar_km_s_observer_subtracted",
+    "small_scale_broadening": "population-specific positive FoG dispersion combined in quadrature with measurement-redshift uncertainty",
+    "quadrature": {
+      "baseline_order": 3,
+      "comparison_orders": [7, 9],
+      "stress_case_id": "RSD_FOG_boundary_v1",
+      "relative_L1_tolerance": 0.005,
+      "science_frontier_claim_from_this_gate": false
+    },
+    "predicted_intensity": {
+      "deposition": "periodic conservative differentiable TSC push with tested adjoint",
+      "observed_count_assignment": "integer NGP/floor only",
+      "selection_application": "after redshift-space deposition",
+      "mass_conservation": "required in the R_p=1 synthetic limit"
+    },
+    "boundary_policy": {
+      "observer_sphere": "finite radial support inside the periodic box",
+      "maximum_displacement": "must remain below the declared sphere-to-face margin",
+      "periodic_images": "suppressed by the support contract; no silent image contribution"
+    }
+  },
+  "nuisance_and_discrepancy_contract": {
+    "population_normalization": {
+      "parameters": 6,
+      "parameterization": "alpha_p on an unconstrained log-intensity scale",
+      "prior": "external luminosity-function/selection calibration; observed totals may not set the prior centre"
+    },
+    "luminosity_bias": {
+      "parameters": 6,
+      "parameterization": "b_p=exp(logbias_p)>0",
+      "prior": "population-specific calibration prior; a universal scalar bias is forbidden"
+    },
+    "baseline_count_model": "independent Poisson conditional on positive selected intensity",
+    "stress_count_models": [
+      "population-dependent overdispersed count model",
+      "HOD-calibrated count model"
+    ],
+    "model_discrepancy": {
+      "form": "smooth, low-rank log-intensity discrepancy templates with shrinkage priors",
+      "constraints": [
+        "templates are frozen before validation truth is opened",
+        "zero monopole after the eta gauge is applied",
+        "no arbitrary per-voxel freedom",
+        "must not absorb retained cosmological modes or move the k frontier"
+      ],
+      "alternative_model_decision": "select or reject only from development-mock evidence, then evaluate once on untouched validation mocks"
+    },
+    "identifiability_reports": [
+      "posterior rank",
+      "alpha-bias-selection correlation",
+      "local Hessian or Fisher singular values",
+      "chain diagnostics"
+    ]
+  },
+  "cf4_covariance_and_overlap_contract": {
+    "secure_mapping": {
+      "mapping_path": "data/cf4_2mpp_crossmatch_v1.csv",
+      "mapping_sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
+      "secure_cf4_groups": 11610,
+      "excluded_twompp_targets": 17007,
+      "quarantine_conflicts": true
+    },
+    "group_redshift_covariance": "Sherman-Morrison shared-latent covariance per canonical CF4 group; no independent 2M++ Vcmb term",
+    "residual_dependence": "Common eta_z0 and declared nuisance parameters remain shared. Disjoint-object filtering is not treated as proof of zero catalog-systematic covariance.",
+    "failure_rule": "If a development mock shows material residual cross-factor covariance not represented by the declared latent/nuisance model, posterior promotion is blocked and the contract must be amended before validation."
+  },
+  "structure_summary_scope": {
+    "B1_active_likelihood": false,
+    "targets": ["Local_Group", "Virgo", "Coma", "Local_Void", "Bootes_Void", "observer_environment"],
+    "role_in_B1": "held as preregistered validation targets and future structure-conditioned factors, not independent likelihood terms",
+    "reason": "Complete provenance, uncertainty, covariance, and forward-discrepancy contracts are not yet bound.",
+    "no_claim": "No B1 posterior may claim that these structures are observationally reconstructed solely from the active field factors."
+  },
+  "independent_mock_firewall": {
+    "seed_policy": "seed ranges and assignment are frozen before candidate or validation inspection; no seed or parent ranking",
+    "development": {
+      "count": 64,
+      "seed_start_inclusive": 2026083000,
+      "seed_stop_exclusive": 2026083064,
+      "assignment": "16 mocks per arm A-D, each seed exactly once",
+      "purpose": "calibration and model-choice only"
+    },
+    "untouched_validation": {
+      "count": 256,
+      "seed_start_inclusive": 2026083064,
+      "seed_stop_exclusive": 2026083320,
+      "assignment": "sealed until all code, nuisance priors, discrepancy basis, bins and gates are frozen",
+      "purpose": "one-time coverage, held-out prediction and frontier validation"
+    },
+    "arms": [
+      {"id": "A", "truth": "positive Poisson log-intensity without RSD", "purpose": "self-consistency"},
+      {"id": "B", "truth": "positive Poisson intensity with coherent spherical RSD", "purpose": "large-scale RSD recovery"},
+      {"id": "C", "truth": "coherent RSD plus population-dependent FoG and redshift errors", "purpose": "velocity-model robustness"},
+      {"id": "D", "truth": "overdispersed/HOD counts with selection perturbation and smooth discrepancy", "purpose": "misspecification robustness and alternative-model choice"}
+    ],
+    "truth_source": "same predeclared generator family and frozen LCDM covariance; TNG100 may inform nuisance distributions but cannot supply 384 cMpc/h cosmic-variance truth",
+    "data_split": "row-level deterministic split before voxelization; no spatially adjacent holdout",
+    "execution_state": "bindings frozen, mocks not executed in this amendment"
+  },
+  "promotion_gates": {
+    "required_before_observational_posterior": [
+      "selection exposure including empty-sky response",
+      "positive Poisson intensity and zero-support rejection",
+      "GH3 versus GH7/9 boundary-stress convergence",
+      "TSC mass conservation and adjoint",
+      "CF4/2M++ source-bound identity and no-double-counting",
+      "independent development calibration across arms A-D",
+      "untouched 256-mock coverage and held-out prediction",
+      "strict contiguous density, velocity and joint k-frontier gates",
+      "identifiability and posterior diagnostics"
+    ],
+    "frontier_rule": "all declared bins from k_f through the declared analysis Nyquist; first failed bin terminates the contiguous prefix",
+    "numerical_resolution_target_cMpc_h": 0.3,
+    "observational_resolution_claim": false,
+    "high_k_completion": "conditional/prior-dominated until the above gates pass"
+  },
+  "closure_decision": {
+    "contract_amendment": "COMPLETE",
+    "development_calibration": "COMPLETE_TECHNICAL_GATE_FAIL_V2_JOINT_PROBES_PASS",
+    "actual_z0_posterior": "NOT_CREATED",
+    "KF_EXPAND": "BLOCKED_PENDING_DIAGNOSTIC_REPAIR",
+    "B2_IC_FORWARD": "NOT_STARTED",
+    "next_single_bundle_action": "Diagnose the remaining information loss and estimator/field parameterization without opening validation seeds; then update the B1 dossier and request closure audit.",
+    "requires_new_user_approval": true
+  }
+}

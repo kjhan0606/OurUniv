@@ -1,0 +1,73 @@
+! OurUniv LG zoom pilot: IC/startup validation only (two coarse steps).
+! Candidate: conditioned parent 3429, explicit mid-k seed 5108.
+! IC hierarchy: global L9, zoom-particle L12; runtime AMR ceiling L19.
+
+&RUN_PARAMS
+cosmo=.true.
+pic=.true.
+poisson=.true.
+hydro=.false.
+sink=.false.
+sidm=.false.
+nrestart=0
+nstepmax=2
+nremap=1
+nsubcycle=1,1,9*2
+ncontrol=1
+ordering='ksection'
+memory_balance=.true.
+use_fftw=.true.
+ksec_level_balance_alpha=0.5
+ksec_level_min_fraction=0.03
+ksec_level_bins=256
+jobcontrolfile='jobcontrol.txt'
+verbose=.false.
+/
+
+&OUTPUT_PARAMS
+noutput=1
+aout=1.0
+foutput=1000000
+fbackup=1000000
+/
+
+&INIT_PARAMS
+filetype='grafic'
+! The RAMSES build stores initfile in CHARACTER(LEN=80). This stable GPFS
+! symlink avoids truncating the canonical source directory and resolves to the
+! pad6 IC, whose fine-level file edge is six L9 cells beyond the sparse mask.
+initfile(1)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_009'
+initfile(2)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_010'
+initfile(3)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_011'
+initfile(4)='/gpfs/kjhan/CF4/ramses/ic/lg5108/level_012'
+/
+
+&AMR_PARAMS
+levelmin=9
+levelmax=19
+nexpand=1,1,9*1
+ngridtot=120000000
+nparttot=220000000
+/
+
+&COSMO_PARAMS
+omega_b=0.0
+omega_m=0.31
+omega_l=0.69
+h0=0.746
+/
+
+&REFINE_PARAMS
+m_refine=11*8.
+ivar_refine=0
+! Finest IC particles have code mass 2^(-3*12)=1.45519e-11.
+! The 2^(-35) cut includes L12 particles and excludes L11 and coarser ones.
+mass_cut_refine=2.9103830457d-11
+interpol_var=1
+interpol_type=0
+q_refine_holdback=.false.
+/
+
+&POISSON_PARAMS
+epsilon=1.d-4
+/

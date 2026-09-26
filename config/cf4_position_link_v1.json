@@ -1,0 +1,19 @@
+{
+  "output_name": "position_link_v2",
+  "source_location_commit": "aa024b40f7ae95cfe0bdf2d0d03b6d8947395c8d",
+  "h": 0.6774,
+  "integration_tolerance": 1e-10,
+  "integration_tighter_tolerance": 1e-12,
+  "tail_standard_deviations": 12,
+  "gradient_mixture_interior": 0.05,
+  "gradient_steps": [0.0001, 0.00005],
+  "gradient_absolute_tolerance": 0.0001,
+  "gradient_relative_tolerance": 0.01,
+  "application_seconds": 1500,
+  "host_peak_GiB": 4.5,
+  "gpu_reserved_peak_GiB": 8,
+  "zero_additional_stellar_halo_offset_development_only": true,
+  "field_selection": false,
+  "density_posterior": false,
+  "training_updates": 0
+}

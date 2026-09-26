@@ -1,0 +1,38 @@
+{
+  "schema": "ouruniv-cf4-z0-density-likelihood-repair-opus-closure-audit-v1",
+  "date": "2026-09-05",
+  "auditor": "claude-opus-5",
+  "bundle": "Z0-DENSITY-LIKELIHOOD-REPAIR",
+  "verdict": "CONDITIONAL-GO",
+  "verified": [
+    "All eight development task artifacts and the aggregate have valid hashes and task/program/implementation lineage.",
+    "The repaired mock-only sampler has 8192 draws, latent dimension 32792, max Rhat below 1.017, minimum bulk ESS 237.7, and zero sampling divergences.",
+    "Actual 2M++ counts and observed CF4 velocities were not used as an inference datum; the result is development mock calibration only."
+  ],
+  "blocking_record_corrections": [
+    "Rename the aggregate PASS label to make clear it is mock mechanics, not calibrated observational inference.",
+    "Surface coverage, ROI and k-shell summaries and record the wide-interval calibration diagnostic without promoting it.",
+    "Track the Q0 GH/TSC boundary-convolution science NO-GO as a project result record."
+  ],
+  "nonblocking_cautions": [
+    "Rhat/ESS covers only eight white-field coordinates plus nuisance/projection quantities.",
+    "N32 named-structure ROIs are sub-cell and underresolved.",
+    "The inference model is linear while the development truth is nonlinear PMWD.",
+    "No high-k frontier, 0.3 cMpc/h, IC, PM, HOP or RAMSES claim is established."
+  ],
+  "next_bundle": {
+    "id": "Z1-CALIBRATION-ADJUDICATION-OPERATOR-REPAIR",
+    "scope": "development-only calibration adjudication, Q1 cell-integrated/analytic LOS convolution, wider field convergence monitoring, and provenance hardening",
+    "actual_CF4_inference": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "firewall": {
+    "actual_2Mpp_counts": false,
+    "observed_CF4_velocity_datum": false,
+    "validation_seed": false,
+    "parent_posterior_promotion": false,
+    "high_k_frontier_claim": false,
+    "resolution_0p3_cMpc_h_claim": false,
+    "IC_PM_HOP_RAMSES": false
+  }
+}

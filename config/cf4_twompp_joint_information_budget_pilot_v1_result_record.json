@@ -1,0 +1,196 @@
+{
+  "schema": "ouruniv-cf4-twompp-joint-information-budget-pilot-v1-result-record",
+  "date": "2026-09-01",
+  "status": "NO_GO_KNOWN_CEILING_INSUFFICIENT_NO_PARENT_PROMOTION",
+  "scope": "N32 covariance-only technical feasibility pilot combining the completed CF4 marginalized-s1 velocity information spectrum with the frozen 36,635-tracer CF4-disjoint 2M++ selection and Gaussianized-Poisson density Fisher operator.",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "5d53c4e70e802f8db42323b4323e3bb698b38b47",
+    "remote": "origin",
+    "remote_commit_at_submission": "5d53c4e70e802f8db42323b4323e3bb698b38b47",
+    "program": {
+      "path": "config/cf4_twompp_joint_information_budget_pilot_program_v1.json",
+      "bytes": 10365,
+      "sha256": "7ffa68d6996572ec9088bd349e4adf7809d3678635ebab69fecba23c87a1b7f2"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_joint_information_budget_pilot_v1.py",
+      "bytes": 35147,
+      "sha256": "d318031ef47a4063671f77d564565afd63ca97bb0920580cb779f2004e83df22"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_joint_information_budget_pilot_v1.sbatch",
+      "bytes": 3610,
+      "sha256": "7606abdb01befd194df8ee4339d5eb524e5a17306f588153eb8344637fb45039"
+    },
+    "tests": {
+      "path": "tests/test_cf4_twompp_joint_information_budget_pilot_v1.py",
+      "bytes": 7699,
+      "sha256": "97b5e5bdb91168a9a1806122deabfe182ae70a9a65b0d5a8d1a0ed10477aff53"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329559,
+    "controller": "syntax",
+    "cluster": "syntax",
+    "node": "syn01",
+    "partition": "a10",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 94,
+    "time_limit_seconds": 3600,
+    "requested_cpus": 4,
+    "requested_memory_MiB": 3072,
+    "expected_peak_memory_MiB": 2500,
+    "memory_headroom_multiplier_over_expected": 1.2288,
+    "reported_batch_MaxRSS_KiB": 636972,
+    "reported_batch_MaxRSS_MiB": 622.04296875,
+    "requested_memory_headroom_over_observed": 4.938565656286784,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot",
+    "selection": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot/selection.npz",
+      "bytes": 258530,
+      "sha256": "11080fbcd2dabf2958e9cd2d5bc9c9ce5f0042e27adb6c682eb9cdd208101f1e"
+    },
+    "metrics": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot/metrics.npz",
+      "bytes": 29781,
+      "sha256": "bdf225d720696c0af02266e5ea25650d94b15e4b045ae841bed6066868df9920"
+    },
+    "result": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot/result.json",
+      "bytes": 19157,
+      "sha256": "6e3dad2520dfb5ec050bcc2ca9369dbac6424e8d6d5207b3bf8c6f63c98c8bb2"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot/manifest.json",
+      "bytes": 499,
+      "sha256": "6a80069ffc03b4ef92a05824d16858ecbe41d5fdfab36a6eb9742ef273eaca4d"
+    },
+    "COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot/COMPLETE",
+      "bytes": 502,
+      "sha256": "6aa345cea4fe5ea55dacf4eb58d3a461f2354f2a75219df37aa1f6fcca6901a7"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/logs/pilot-329559.out",
+      "bytes": 911,
+      "sha256": "8649993da0b960b72801ca9c7771999930a422625050dcaa12a6cdc2c6c6bb26"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/logs/pilot-329559.err",
+      "bytes": 216,
+      "sha256": "889da800d5e30dfd71a994640bba1787333a365847c4e5ac927f40f7c11008a9"
+    }
+  },
+  "selection_result": {
+    "retained_tracer_count": 36635,
+    "population_counts": [
+      9617,
+      3463,
+      527,
+      15671,
+      6197,
+      1160
+    ],
+    "expected_count_sums_reproduce_population_counts": true,
+    "retained_Ksmag_range": [
+      5.96,
+      12.5
+    ],
+    "Ksmag_9_lower_cut_applied": false,
+    "Ksmag_9_lower_cut_reason": "The frozen retained sample contains objects brighter than Ksmag=9; applying the ARES example lower cut would be inconsistent with the approved Ksmag<=11.5 population.",
+    "positive_selection_voxel_fraction_by_population": [
+      0.164794921875,
+      0.031005859375,
+      0.005950927734375,
+      0.2752685546875,
+      0.07098388671875,
+      0.014007568359375
+    ],
+    "volume_quadrature_subpoints_per_voxel": 8
+  },
+  "lowest_bin_information": {
+    "required_information_and_numerical_lower": 0.8,
+    "velocity_only_frozen_marginalized_s1": {
+      "recovered_information_fraction": 0.30409692861112114
+    },
+    "known_selection_reference_bias_ceiling": {
+      "recovered_information_fraction": 0.5172811153231445,
+      "numerical_95_lower": 0.5012693120924485,
+      "posterior_prior_trace_fraction": 0.48271888467685553,
+      "expected_correlation_r": 0.7192225770393644,
+      "information_gain_over_velocity_only": 0.21318418671202333,
+      "strict_pass": false
+    },
+    "normalization_marginalized_reference_bias": {
+      "recovered_information_fraction": 0.5105045033861877,
+      "numerical_95_lower": 0.4937760661941655,
+      "posterior_prior_trace_fraction": 0.48949549661381225,
+      "strict_pass": false
+    },
+    "normalization_marginalized_half_Fisher_sensitivity": {
+      "recovered_information_fraction": 0.48890887862168586,
+      "numerical_95_lower": 0.47344516261087743,
+      "posterior_prior_trace_fraction": 0.5110911213783141,
+      "strict_pass": false
+    },
+    "normalization_marginalized_quarter_Fisher_sensitivity": {
+      "recovered_information_fraction": 0.46387705377313093,
+      "numerical_95_lower": 0.4500369012303309,
+      "posterior_prior_trace_fraction": 0.5361229462268691,
+      "strict_pass": false
+    }
+  },
+  "numerical_audit": {
+    "trace_probe_count": 32,
+    "maximum_CG_iterations_over_scenarios": 94,
+    "maximum_CG_relative_residual_over_scenarios": 2.9999798630928094e-06,
+    "CG_relative_tolerance": 3e-06,
+    "all_solvers_converged": true,
+    "all_artifact_validators_passed": true,
+    "related_unit_and_contract_tests_passed": 33
+  },
+  "warning_audit": {
+    "message": "Astropy divide by zero encountered in log10 while reconstructing catalog distance moduli.",
+    "cause": "The inherited full-catalog classification evaluates distance modulus before excluding invalid or nonpositive-redshift rows.",
+    "effect_on_retained_selection": "none observed; all 36,635 retained rows and six population totals passed the frozen finite-selection and normalization gates",
+    "rerun_required": false
+  },
+  "scientific_interpretation": {
+    "primary": "The independent 2M++ density tracer materially improves the lowest-bin covariance information relative to velocity alone, but even the most optimistic frozen known-selection/reference-bias scenario reaches only 0.5173 with a numerical lower value of 0.5013, far below 0.8.",
+    "joint_frontier": "Every scenario has a zero-bin contiguous joint delta-theta prefix under the frozen strict gate.",
+    "NO_GO_scope": "This is a NO-GO for promoting the N32 parent posterior from this linear Gaussianized-Poisson reference design. It is not a theorem that every possible nonlinear 2M++ likelihood or every additional density tracer must fail.",
+    "velocity_covariance_limit": "The completed velocity artifact exposes per-bin trace fractions rather than a full posterior covariance, so the velocity term is an isotropic diagonal trace-matched surrogate.",
+    "bias_limit": "The luminosity-dependent bias vector is a frozen sensitivity reference, not a calibrated physical upper bound; exact bias marginalization is not identifiable at the datum-free homogeneous Fisher point.",
+    "nuisance_limit": "RSD, FoG, selection-calibration uncertainty, and forward-model discrepancy were not and are not claimed to be marginalized.",
+    "resolution": "The pilot grid is N32 with 12 cMpc/h cells. No 0.3 cMpc/h observational or numerical resolution claim follows."
+  },
+  "scientific_disposition": {
+    "N32_joint_information_technical_pilot": "COMPLETE_NO_GO",
+    "metadata_consistent_2Mpp_subset": "RETAINED_VALID_INPUT",
+    "parent_posterior_promotion": "NO_GO",
+    "present_density_posterior": "NOT_CREATED",
+    "field_inference": "NOT_RUN",
+    "IC_inference": "NOT_RUN",
+    "IC_PM_HOP_RAMSES": "NOT_RUN",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "automatic_follow_on": "STOPPED"
+  },
+  "recommended_next_stage_requiring_user_approval": {
+    "name": "science_design_after_joint_information_NO_GO",
+    "first_action": "Audit whether the 0.8 lowest-bin requirement, velocity full-covariance export, and the selected 2M++ population/bias model form the correct parent-posterior decision problem before any field inference.",
+    "candidate_directions": [
+      "Export or recompute the full velocity posterior covariance instead of the isotropic bin-trace surrogate, then repeat only if the approximation can materially change the lowest-bin result.",
+      "Calibrate luminosity bias, RSD, FoG, selection uncertainty, and model discrepancy on development mocks and run an honest joint count-likelihood information test.",
+      "Add independent density tracers with complementary selection and quantify their incremental Fisher information before attempting a z=0 field posterior.",
+      "Do not increase numerical resolution, infer an IC, or start PM/HOP/RAMSES until a parent information gate passes."
+    ],
+    "field_inference_authorized": false,
+    "new_Slurm_submission_authorized": false
+  }
+}

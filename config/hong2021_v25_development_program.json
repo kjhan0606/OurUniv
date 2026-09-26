@@ -1,0 +1,148 @@
+{
+  "schema": "hong2021-v25-proper-unweighted-score-development-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Test whether the remaining V24 physical-tail failure is caused by training a target-density-reweighted denoiser while sampling and evaluating the unreweighted conditional data distribution.",
+  "controlled_baseline": {
+    "experiment": "V24 base-48 conditional-affine EDM",
+    "registry": "config/hong2021_v24_development_program.json",
+    "registry_sha256": "b0c4503cd084feef0658bb78074d42aa87e8203fe63e3a43fcdf22195e2cc7d2",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/development_decision.json",
+    "decision_sha256": "eba4cee2f3136a90643216abac211c0ffa2e3e4d9f799c2904bec39c1034562b",
+    "decision_digest_sha256": "6907485273c67e85f4e688c2ffaa228e5f0e9b9437f174a12e0214ef1d226309",
+    "checkpoint_schema": "hong2021-v24-base48-capacity-multiscale-edm-v1",
+    "base_channels": 48,
+    "parameters": 8133361,
+    "steps": 30000,
+    "loss_coefficients": {
+      "unweighted": 0.5,
+      "tail_weighted": 0.5
+    },
+    "failure_classification": "base48_capacity_increase_insufficient_at_convergence"
+  },
+  "mechanism_audit": {
+    "attestation": "config/hong2021_v24_tail_sampler_audit.json",
+    "attestation_sha256": "d05243a9cea457cc9cf78175a51f3105a9c75212b109631578965a5240833895",
+    "physical_tail_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/tail_mechanism_audit.json",
+    "physical_tail_audit_sha256": "0c3e8fe8dee402b1aa88bdfe40ec89a1390e7f545ba550e0cd0ea699206dd851",
+    "physical_tail_audit_digest_sha256": "e4413e4c8b43173b23a8a858c6f3f832ed98f4f053588bdd5d7b179d32313480",
+    "terminal_sampler_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/terminal_sampler_audit.json",
+    "terminal_sampler_audit_sha256": "fb51d6d40da47557a6dc0befe7f6c02ffbabecb51da8347a67a701b6e4677683",
+    "terminal_sampler_audit_digest_sha256": "f83175829893d09fd3252332543f067f7941e572522fb933032145ae9ac257bc",
+    "findings": [
+      "TNG100 and SIMBA failures are distributed across 23 and 12 ensemble fields rather than one corrupt member.",
+      "Generated G21 upper-support occupancy is lower than truth in all three domains.",
+      "No one of the 35 replayed failed fields has terminal centered latent z at or above 5; ordinary fields do, so support clipping is not necessary for failure.",
+      "The 208 replayed fields reproduce the frozen ensembles within 5.960464477539063e-08 y, exactly one-half float32 machine epsilon.",
+      "On three frozen audited batches the target-tail gradient is 1.60-2.12 times the unweighted gradient norm and has cosine -0.36 to -0.06 against it.",
+      "The target-dependent weighted denoising objective is not a proper score objective for the unreweighted conditional distribution used by the sampler and gate."
+    ],
+    "Astrid_used": false,
+    "historical_EAGLE_used": false
+  },
+  "single_change": {
+    "description": "Change only the EDM denoising objective from 0.5*unweighted+0.5*target-density-tail-weighted to 1.0*unweighted proper score matching.",
+    "checkpoint_schema": "hong2021-v25-base48-unweighted-score-edm-v1",
+    "loss_coefficients_from": {
+      "unweighted": 0.5,
+      "tail_weighted": 0.5
+    },
+    "loss_coefficients_to": {
+      "unweighted": 1.0,
+      "tail_weighted": 0.0
+    },
+    "tail_weight_fit_role": "retain frozen weights in provenance and diagnostics only; they must not enter the optimized loss, gradients, validation selection, or checkpoint choice",
+    "training_from_scratch": true,
+    "continuation_checkpoint": null,
+    "base_channels": 48,
+    "parameters": 8133361,
+    "steps": 30000,
+    "candidate_steps": [
+      10000,
+      20000,
+      30000
+    ]
+  },
+  "scientific_rationale": {
+    "proper_objective": "For Gaussian corruption, uniform EDM denoising estimates the score of the original conditional latent distribution. Multiplying voxel errors by a function of the clean target changes the conditional optimum and therefore trains a reweighted distribution that the unchanged probability-flow sampler is not intended to generate.",
+    "why_not_clip_or_change_sampler": "The exact replay establishes that failed fields do not require terminal support overflow and that global terminal maxima correlate only 0.003 with TNG physical maxima and 0.157 with SIMBA physical maxima.",
+    "why_not_more_capacity_or_steps": "V24 plateaued from step 25000 to 30000 and moderate capacity scaling improved Q4 but did not remove the multi-field Q3 maximum failure.",
+    "why_not_rectified_flow": "The frozen V6 fair comparison already found flow comparable at the field gate but rejected it at every paired grid-HOP abundance interval, so repeating it without a new mechanism is not justified.",
+    "historical_unweighted_note": "V8 used a different Laplacian residual, two-domain representation, base-32 model, 10000-step horizon, and no V14 multiscale standardization, V21 conditional Gaussianization, or prior-matched initialization; it is not a controlled test of this single V25 change."
+  },
+  "inherited_byte_identical_from_v24": [
+    "six frozen V21 conditional-affine caches and their train-only profile/G21 transform",
+    "TNG100, SIMBA, and Swift train/validation data and development subsets",
+    "input preprocessing, condition channels, observable-context features, and all 48 cube isometries",
+    "ObservableContextUNet base_channels=48 architecture and parameter count",
+    "batch=6 with equal-source 2/2/2 sampling",
+    "optimizer, learning rates, weight decay, gradient clip, EMA, and 30000-step cosine schedule",
+    "EDM sigma_data, p_mean, p_std, and noise draws",
+    "prior-matched spectral initializer and band variances",
+    "training, validation, and sampling seeds",
+    "40-step deterministic Heun probability-flow sampler",
+    "16-member ensembles",
+    "field evaluator, Q3/Q4/Q5/Q6 definitions, gate thresholds, and smallest-passing-candidate rule"
+  ],
+  "implementation_requirements": [
+    "implement a dedicated unweighted EDM loss path rather than calling the weighted loss with nominal zero coefficients",
+    "record unweighted train and balanced validation losses; tail-weighted loss may be measured under no_grad for diagnostics only",
+    "prove by a fixed-batch gradient test that the optimized loss gradient equals the unweighted gradient exactly and contains no tail-weight contribution",
+    "preserve model, optimizer, RNG, batch-source balance, augmentation, and sampler code paths",
+    "run the complete test suite and a sealed Lageunha Ada hard preflight before training",
+    "train one model from scratch with no mid-run changes"
+  ],
+  "diagnostics_and_selection": {
+    "selection": "smallest candidate passing every unchanged V6 field check plus Q3 and Q4 independently in TNG100, SIMBA, and Swift",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+      "generated_max_above_truth_max_dex": 0.3
+    },
+    "Q4": {
+      "generated_over_truth_mean_delta_squared_max": 1.5
+    },
+    "Q5": "unchanged no-harm checks; selection role unchanged",
+    "Q6": "conditional residual and forward-latent mean/std profiles; diagnostic only",
+    "new_diagnostics": [
+      "V24-to-V25 Q3/Q4/Q6 change at each frozen candidate",
+      "generated field maxima per object and number above domain truth maximum plus 0.3 dex",
+      "high-k power, peak/void, rank, coverage, and density-PDF changes to detect loss of small filaments",
+      "unweighted and frozen tail-weighted validation trajectories, with selection based only on the frozen gate"
+    ]
+  },
+  "failure_classification_at_step_30000": [
+    {
+      "condition": "all-domain field plus Q3/Q4 pass",
+      "classification": "proper_unweighted_score_objective_sufficient",
+      "next": "seal V25 and await explicit user approval before independent-data access"
+    },
+    {
+      "condition": "Q3 maximum failures improve in TNG100 and SIMBA but any domain loses high-k, peak/void, coverage, or another frozen field check",
+      "classification": "tail_reweighting_created_a_calibration_morphology_tradeoff",
+      "next": "stop without tuning mixture coefficients; design a proper conditional likelihood or representation that preserves morphology"
+    },
+    {
+      "condition": "Q3 maximum failures do not improve in both TNG100 and SIMBA",
+      "classification": "target_tail_reweighting_not_the_primary_remaining_mechanism",
+      "next": "stop EDM loss variants and design an explicitly conditional alternative likelihood/objective"
+    },
+    {
+      "condition": "Q3 improves and field gates remain no worse but Q4 or another unchanged scalar gate alone fails",
+      "classification": "proper_score_near_miss_without_rescue",
+      "next": "stop and audit the preregistered trajectories; do not change thresholds, steps, seeds, or coefficients"
+    }
+  ],
+  "fixed_decision_order": [
+    "freeze this registry before implementation",
+    "implement and test only the 1.0/0.0 objective change",
+    "seal the exact code and run a Lageunha Ada preflight",
+    "train once from scratch to 30000 without interventions",
+    "evaluate 10000, 20000, and 30000 in ascending order",
+    "select the smallest all-domain pass or apply the frozen failure classification",
+    "never try an intermediate tail-loss coefficient, post-hoc clipping, A(k), extra capacity, extra steps, alternate seed, or threshold change after results"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "schema": "hong2021-v74-query-count-energy-gate-redesign-result-record-v1",
+  "status": "complete_query_count_and_energy_redesign_sufficient_full_gate_incomplete",
+  "purpose": "Bind the prospective V74 redesign of only the query count and maximum-energy rule after V73 measured excessive finite-query false rejection. Preserve all physical and morphology thresholds, use independent calibration and verification Monte Carlo seeds, and leave V72 and every fresh-data firewall unchanged.",
+  "completed_at": "2026-08-12T14:01:36+09:00",
+  "record_base_commit": "047a26352b65b3c48a2df2dcb066f5a6fa9a8ebe",
+  "frozen_program": {
+    "path": "config/hong2021_v74_query_count_energy_gate_redesign_program.json",
+    "sha256": "7b08cf433396b673430909dd8caa676da669e7ef61c8dab39d6ae9d0037850fb",
+    "freeze_commit": "f1b07a27d630bdbde2db3cff09a56856d4eeae00",
+    "implementation_commit": "047a26352b65b3c48a2df2dcb066f5a6fa9a8ebe"
+  },
+  "parent": {
+    "V73_result_record": "config/hong2021_v73_result_record.json",
+    "V73_result_record_sha256": "2af963ef3ad9e940e4022e9440643202122efc867136c84584db831a16efa7a2",
+    "V73_decision_preserved": true,
+    "V72_decision_preserved": true
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "logical CPU 64, nice 15, one process",
+    "runner": "scripts/hong2021_v74_gate_redesign_lageunha.sh",
+    "runner_sha256": "e9c78e43b82ef2c8d42b8804d34c9b9104ea8d1532935c4d9dfd84f33317c592",
+    "source": "src/hong2021_v74_gate_redesign.py",
+    "source_sha256": "5f1d0d50d3e510016e47ffca20e80ff57acb6d48cc602468c1454a20d4bf06cf",
+    "calibration_seed": 740001,
+    "verification_seed": 740002,
+    "trials_per_query_count_domain_and_phase": 20000,
+    "total_bootstrap_trials": 240000,
+    "raw_train_truth_reread": false,
+    "training_or_model_sampling_performed": false
+  },
+  "sixteen_query_reproduction": {
+    "V73_all_domain_joint": 0.7633,
+    "V74_independent_verification_all_domain_joint": 0.7661,
+    "difference": 0.0028000000000000247,
+    "maximum_absolute_probability_difference_over_frozen_rows": 0.0028000000000000247,
+    "frozen_tolerance": 0.02,
+    "pass": true
+  },
+  "query_count_redesign": {
+    "all_physical_and_morphology_thresholds_unchanged": true,
+    "selection_rule": "Choose the lowest query count for which the 95-percent Wilson lower bound is at least 0.8 for the aligned all-three-domain joint and every single-domain absolute core.",
+    "query_16": {
+      "all_domain_joint_probability": 0.7661,
+      "all_domain_joint_Wilson_95": [0.7601825797551616, 0.7719152186557796],
+      "TNG100_absolute_core_probability": 0.84695,
+      "TNG100_absolute_core_Wilson_95": [0.841893658984015, 0.8518730871966539],
+      "attainable": false
+    },
+    "query_32": {
+      "all_domain_joint_probability": 0.91975,
+      "all_domain_joint_Wilson_95": [0.9159036702510015, 0.9234351154798985],
+      "domain_absolute_core_probability": {
+        "TNG100": 0.95075,
+        "SIMBA": 1.0,
+        "Swift": 1.0
+      },
+      "domain_absolute_core_Wilson_lower": {
+        "TNG100": 0.9476635275849811,
+        "SIMBA": 0.9998079639438954,
+        "Swift": 0.9998079639438954
+      },
+      "domain_joint_probability": {
+        "TNG100": 0.9198,
+        "SIMBA": 1.0,
+        "Swift": 0.99995
+      },
+      "TNG100_component_pass_probability": {
+        "q99_999": 0.96955,
+        "Q4": 0.96295,
+        "high_k_power": 1.0,
+        "residual_RMS": 1.0,
+        "density_PDF": 1.0,
+        "two_point_all_scales": 0.95425,
+        "environment_all_fields": 0.998
+      },
+      "attainable": true
+    },
+    "selected_minimum_query_count": 32,
+    "interpretation": "Doubling the query count resolves the V73 finite-query instability without relaxing q99.999, Q4, spectral, RMS, PDF, two-point, or environment criteria."
+  },
+  "maximum_energy_redesign": {
+    "old_rule": "strict candidate-better-than-control in every domain",
+    "old_rule_problem": "Two exchangeable truth oracles satisfy strict A-better-than-B with probability approximately one half, so the rule is not a calibrated model-validity null.",
+    "new_rule": "The mean candidate-minus-control maximum-energy score must not exceed a domain-and-query-count truth-oracle upper margin calibrated at the linear 59/60 quantile.",
+    "multiplicity": "one-sided 0.05 family-wise level using three-domain Bonferroni calibration",
+    "query_32_upper_margin": {
+      "TNG100": 0.028462714285900095,
+      "SIMBA": 0.015223586541704012,
+      "Swift": 0.012684019496664395
+    },
+    "independent_verification_query_32": {
+      "domain_false_rejection_probability": {
+        "TNG100": 0.0156,
+        "SIMBA": 0.0166,
+        "Swift": 0.0159
+      },
+      "family_wise_false_rejection_probability": 0.04735,
+      "family_wise_false_rejection_Wilson_95": [0.04449245333886584, 0.05038139690272568],
+      "frozen_point_limit": 0.06,
+      "frozen_Wilson_upper_limit": 0.065,
+      "calibrated": true
+    },
+    "consumed_V72_diagnostic_under_query_16_margin": {
+      "TNG100": {
+        "candidate_minus_control_mean": 0.07424502708017826,
+        "upper_margin": 0.039616283290087956,
+        "pass": false
+      },
+      "SIMBA": {
+        "candidate_minus_control_mean": 0.004717292760809266,
+        "upper_margin": 0.021898178830742833,
+        "pass": true
+      },
+      "Swift": {
+        "candidate_minus_control_mean": -0.000456520790855096,
+        "upper_margin": 0.018453844479388647,
+        "pass": true
+      }
+    },
+    "V72_verdict_changed": false
+  },
+  "decision": {
+    "classification": "query_count_and_energy_redesign_sufficient_full_gate_incomplete",
+    "selected_query_count": 32,
+    "query_count_redesign_sufficient": true,
+    "energy_redesign_calibrated": true,
+    "full_prospective_gate_complete": false,
+    "remaining_gap": "Rank histogram and finite-ensemble voxel coverage still lack a defensible exact-conditional truth null. The V73 coarse cross-query oracle is invalid for those aligned-voxel calibration statistics.",
+    "next": "Run a separately frozen rank-and-coverage exact-conditional-null audit before freezing or executing a complete prospective Hong gate."
+  },
+  "scientific_interpretation": {
+    "what_is_established": [
+      "Thirty-two grouped queries are sufficient for the unchanged V73 physical and morphology gate under the frozen empirical-population oracle.",
+      "The calibrated no-detectable-inferiority energy rule controls the independent three-domain family-wise false-rejection probability near five percent.",
+      "The V73 sixteen-query audit is reproduced by the independent V74 verification seed.",
+      "V72 TNG100 fails even the new prospective energy rule, so the redesigned rule does not retrospectively rescue V72."
+    ],
+    "what_is_not_established": [
+      "The complete Hong gate is not yet frozen because rank and coverage are unresolved.",
+      "The empirical fit-train oracle does not establish independent-box or fresh-domain generalization.",
+      "No new candidate, fresh partition, Stage B, Astrid, or EAGLE access is authorized."
+    ]
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign",
+    "audit_result": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/audit_result.json",
+      "sha256": "6560cace57fc95fa0c45cce798a9a09c08f062972f31f64695a966f86428524d",
+      "decision_digest_sha256": "b76ba4998b1100543d15661462aba4f90d515c31ade19a3d799ad77339d68ed2"
+    },
+    "calibration_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/calibration_arrays.npz",
+      "sha256": "3da4543260628b0af0ff1bd2e6daa9a53d5e2721b846ae2e10ce89dff69f855d"
+    },
+    "verification_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/verification_arrays.npz",
+      "sha256": "01122bc0cac23d47edf80b055460f55bbda214a8d1323d779bd09fc724603aa2"
+    },
+    "sequence_pytest_log_sha256": "433b615ca270de65187e39db45d965f19838db73dda08629eddbee24ab5c9da7",
+    "sequence_audit_log_sha256": "2026a1e0eae9bbbc57795d3e269e78b0da49df6d855bb000e33937392c5500de",
+    "sequence_status_sha256": "7086e02a346633409476d980943bba4b2c0852d7857ee41546865b3161fe3c0f"
+  },
+  "verification": {
+    "local_full_tests": "604 passed in 49.89s",
+    "local_V73_V74_tests": "18 passed in 6.83s",
+    "Lageunha_V74_tests": "8 passed in 9.28s",
+    "test_source": "tests/test_hong2021_v74_gate_redesign.py",
+    "test_source_sha256": "30cbbfe2473154062195ace84edcba0d3d0b8afe9f51ee1139148133e14b10a8",
+    "arrays_per_phase": 150,
+    "array_rows": 20000,
+    "nonfinite_values": 0,
+    "decision_digest_recomputed_equal": true,
+    "repository_clean_during_audit": true
+  },
+  "firewall": {
+    "raw_train_truth_reread": false,
+    "validation_or_fresh_payload_accessed": false,
+    "V72_stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_or_independent_EAGLE_accessed": false,
+    "model_checkpoint_accessed": false,
+    "training_or_model_sampling_performed": false,
+    "new_candidate_constructed": false,
+    "physical_or_morphology_threshold_relaxed": false
+  },
+  "authorization": {
+    "rerun_or_reinterpret_V72": false,
+    "freeze_or_execute_a_complete_prospective_gate": false,
+    "implement_or_train_a_new_generator": false,
+    "open_fresh_validation_Stage_B_Astrid_or_EAGLE": false,
+    "required_next": "Await explicit approval for a target-free rank-and-coverage exact-conditional-null audit."
+  }
+}

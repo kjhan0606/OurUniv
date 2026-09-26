@@ -1,0 +1,116 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-design-v4",
+  "status": "frozen_design_only_execution_unauthorized",
+  "frozen_date": "2026-08-16",
+  "purpose": "Define a versioned, fail-closed, one-shot authorization boundary around the audited aggregate-evidence SMC runner while keeping production execution and every cache, selection, downstream, retry, retune, scale-up, and follow-on action unauthorized.",
+  "lineage": {
+    "authorization_design_base_commit": "d3213fa8fa2effe82dc6874911d21132dc088b4b",
+    "runner_implementation_commit": "f4e282cb1fe1e80a1184ead23d1fe5892a0c7c5e",
+    "runner_implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_runner_implementation_result_record.json",
+      "sha256": "d96708a9f6b4998237aba4b4078918e2b483b7bb7cbf370bb1866da692d9f92a"
+    }
+  },
+  "immutability": {
+    "existing_false_program_source_runner_status_and_science_files_immutable": true,
+    "authorization_is_additive_and_versioned": true,
+    "runtime_override_allowed": false,
+    "existing_GPFS_namespace_reuse_allowed": false,
+    "restart_or_checkpoint_import_allowed": false
+  },
+  "authorization": {
+    "versioned_one_shot_authorization_design_and_implementation_authorized": true,
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "future_grant_interface": {
+    "canonical_path": "config/cf4_aggregate_evidence_smc_execution_grant_v4.json",
+    "present_in_this_change": false,
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v4",
+    "required_status": "sealed_one_shot_execution_authorization",
+    "must_be_a_single_addition_in_a_separately_audited_commit": true,
+    "grant_parent_commit_is_the_authorization_v4_implementation_result_record_commit": true,
+    "grant_parent_is_direct_child_of_authorization_v4_implementation_commit": true,
+    "grant_commit_is_direct_child_of_grant_parent": true,
+    "result_record_and_grant_commits_are_each_exactly_one_file_additions": true,
+    "must_bind_authorization_program_SHA256": true,
+    "must_bind_runner_implementation_commit_and_result_record_SHA256": true,
+    "must_bind_authorization_v4_implementation_commit": true,
+    "must_bind_authorization_v4_implementation_result_record_path_and_SHA256": true,
+    "must_bind_the_seven_authorization_v4_files_SHA256_blob_OID_and_mode_from_that_result_record": true,
+    "seven_file_bytes_SHA256_blob_OID_and_mode_verified_at_exact_implementation_commit": true,
+    "must_bind_exact_data_and_state_namespaces": true,
+    "must_be_identical_in_worktree_HEAD_local_tracking_and_remote": true,
+    "must_record_precommit_EXECUTION_GO": true,
+    "postcommit_audit_field_inside_grant_forbidden": true,
+    "absence_wrong_path_wrong_schema_wrong_status_unsealed_or_dirty_is_fatal_before_reservation": true
+  },
+  "prospective_placeholder_resolution": {
+    "authorization_v4_implementation_commit": "Resolved only after these seven design and implementation files are committed and independently audited.",
+    "authorization_v4_implementation_result_record": "A later immutable result record must bind that implementation commit and the exact seven SHA256, Git blob OID, and mode values; its own commit becomes the only valid grant_parent_commit.",
+    "no_self_reference": "Neither this design nor its program attempts to predict its own commit, result-record SHA256, or Git blob OIDs. The future grant resolves them only by loading the immutable result record from its parent commit.",
+    "existing_false_files_remain_immutable": true
+  },
+  "external_pre_execution_release": {
+    "required_verdict": "LINEAGE GO",
+    "canonical_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v4_release.json",
+    "present_in_this_change": false,
+    "must_bind_grant_commit_parent_SHA256_and_result_record_SHA256": true,
+    "must_be_created_only_after_independent_postcommit_grant_lineage_audit": true,
+    "must_not_be_committed_in_the_grant_commit_or_self_attested_by_the_grant": true,
+    "absence_wrong_or_unsealed_is_fatal_before_reservation": true,
+    "runner_snapshots_path_and_SHA256_immediately_after_authorization": true,
+    "runner_records_path_and_SHA256_in_RUNNING_environment_and_COMPLETE": true,
+    "runner_rehashes_after_science_core_and_revalidates_full_authorization_postflight": true,
+    "mutation_or_removal_after_reservation_is_invalid_FAILED": true
+  },
+  "public_entry_contract": {
+    "canonical_program_path_only": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v4.json",
+    "runtime_arguments": [
+      "program"
+    ],
+    "grant_path_override_allowed": false,
+    "evaluator_core_cache_state_data_or_output_creation_before_authorization": false,
+    "delegates_only_after_sealed_grant": "cf4_aggregate_evidence_smc_execution._execute_authorized_program"
+  },
+  "runner_contract": {
+    "host": "lageunha",
+    "CPU_worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "minimum_free_disk_GiB": 40,
+    "minimum_MemAvailable_GiB": 64,
+    "CUDA_VISIBLE_DEVICES": "",
+    "read_only_preflight_before_reservation": true,
+    "reuse_existing_status_checker": "scripts/status_cf4_aggregate_evidence_smc_production.sh",
+    "process_table_scan": false,
+    "monitoring_loop": false,
+    "retry_loop": false,
+    "automatic_follow_on": false
+  },
+  "storage": {
+    "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v4",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v4_run",
+    "exclusive_atomic_reservation_only_after_authorization": true
+  },
+  "decision": {
+    "design_and_implementation_may_be_tested_without_science_execution": true,
+    "future_grant_created_or_authorized": false,
+    "production_execution_or_cache_population": false,
+    "selection_or_downstream_execution": false,
+    "automatic_retry_retune_scale_up_or_follow_on": false
+  }
+}
+
+
