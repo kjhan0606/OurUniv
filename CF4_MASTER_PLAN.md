@@ -255,6 +255,27 @@ used as a quality-thinning law. The single literal ARES-map zero-support
 point remains; no posterior promotion follows. Source evidence and limits are
 recorded in the point/mark contract.
 
+Coarsened-observation bundle 2026-09-26: the pinned ARES `2MPP.txt` has 67,224
+rows, of which 67,222 bridge uniquely to the VizieR source under fixed
+position/redshift/magnitude tolerances (typed-H200 Slurm405649). The map-zero
+recno 67100 is present in ARES's *own* input, so a wrong-catalogue explanation
+is rejected. The original ARES/BORG2M++ paper's actual observation model is
+voxel-integrated selection and counts, not a full individual-point process.
+The source-bound N128 count control 405668 (metadata-corrected version 405676)
+counts all 57,238 eligible galaxies in 45,776 occupied population-cells, including the
+map-zero point's positive-exposure cell; occupied zero-expected cells=0.
+Three numerical tests pass and one published-rate homogeneous log PMF is
+finite, but is NOT a field fit/evidence/posterior. Crucially a full joint law
+also requires within-cell point-location, CF4/2M++ association/selection and
+conditional CF4 group-distance/velocity factors. The old inclusive-count ×
+BGc product remains NO-GO. The redshift-space field-to-count mapping is still
+uncalibrated. Fable5 gave a conditional development pass; the driver rejected
+its unsupported group-redshift determinism and selected-only inclusion
+calibration claims. Do not launch N256 sampling before the conditional CF4
+group-mark and inclusion law is defensible. See
+`CF4_R2_COARSENED_MARKED_COUNTS_20260926.md` and
+`CF4_R2_COARSENED_FABLE_DISPOSITION_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

@@ -125,3 +125,10 @@ development infrastructure; the literal full-sample point-process likelihood
 is **NO-GO** because of the observed zero-support point and unresolved
 map/catalogue relationship. The actual CF4 conditional group-distance law is
 still absent. No R2 posterior or high-resolution local density/IC was made.
+
+Later same-day correction: an individual-point likelihood is **not mandatory**
+for the N128 density factor. The ARES/BORG source uses voxel counts and
+voxel-integrated selection. The source-coherent coarsened-count development
+route and its remaining association/CF4-mark factors are recorded in
+`CF4_R2_COARSENED_MARKED_COUNTS_20260926.md`. This addendum does not promote
+the old binned-count × BGc product or the uncalibrated point kernel.
