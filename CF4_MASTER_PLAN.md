@@ -189,9 +189,18 @@ Source aggregation check405317 then found exact `Ngal`/listed-member-count
 agreement for38,023 CF4 groups, but group V3k differs from the arithmetic
 mean of individual CF4 member Vcmb by median206/p90 620 km/s over all groups.
 Thus CF4 distance-contributor membership is available, while a simple member-mean replacement
-for the published group redshift is not source-justified. The planned realistic
-joint survey mock must model that distinction, not infer the offset as a pure
-redshift measurement error. No posterior or simulation was run in this check.
+for the published group redshift is not source-justified. The official EDD
+column definition attributes group CMB velocity to the Tully (2015) 2MASS
+K<11.75 group catalogue, whose velocity-member population differs from the
+CF4 distance contributors. The planned joint observation model must represent
+that distinction rather than infer the measured offset as pure redshift error.
+No posterior or simulation was run in this check.
+The source-only CF4-to-2M++ group-catalogue bridge is submitted as typed
+A100 Slurm405399 (one CPU,3 GiB,10min); H200/H100/A100 preflights passed.
+Its pending/source-comparison status is recorded in the grouped/member stress
+document. Do not equate the Lavaux--Hudson 2M++ `GID`, Tully (2015) group
+membership and CF4 `1PGC` without a measured bridge. No source-aware survey
+mock or joint likelihood is promoted by this submission.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.

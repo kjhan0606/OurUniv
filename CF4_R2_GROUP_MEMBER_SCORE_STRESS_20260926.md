@@ -106,3 +106,29 @@ The [CF4 catalogue paper](https://inspirehep.net/files/0509066626daba3d8e951586c
 describes group systemic velocity and group distances built from member
 distance contributions; it does not justify replacing the published group
 velocity by an unweighted mean of the listed individual velocities.
+The [official EDD CF4 column definitions](https://edd.ifa.hawaii.edu/describe_columns.php?table=kcf4allgroup)
+make the distinction stronger: `Ngal`-like distance contributions and the
+group CMB-frame velocity have different source populations. EDD describes
+the latter as averaged from the Tully (2015) 2MASS K<11.75 group catalogue,
+**not** from just the CF4 galaxies with measured distance moduli. Thus the
+`Ngal` equality above cannot close the redshift-generation part of a mock.
+The local [2M++ catalogue ReadMe](data/2mpp_ReadMe.txt) separately identifies
+its `GID` as a Lavaux--Hudson group-finder identifier; it must not be equated
+with CF4's `1PGC` or with the Tully (2015) group membership. A short
+source-only bridge therefore measures the actual overlap and velocity
+agreement without assuming those group catalogues coincide. The frozen
+script is `scripts/cf4_r2_group_catalog_bridge.py`; Syntax Slurm405399 was
+submitted on A100 (H200/H100/A100 typed preflights passed) with one CPU,
+3 GiB and 10 minutes. At submission it was PENDING(Resources). Its result,
+when available, is not a survey mock or an accepted group-redshift law.
+
+The R2 decision is narrower than the earlier mock suggestion: do not simulate
+published CF4 group velocity by averaging CF4 distance contributors. A joint
+survey mock requires the applicable velocity-member group catalogue and its
+selection/grouping process, or a separately validated conditional law. An
+alternative is to model the individual CF4 distance marks jointly with the
+matched 2M++ redshifts through shared latent distances and group/method
+errors. That alternative also needs explicit selection and covariance; it
+has not been implemented or validated here. MW/M31/M33 are not inferred from
+this source audit, and any later role model must identify ambiguous or
+unresolved members from the same newly generated field without native IDs.
