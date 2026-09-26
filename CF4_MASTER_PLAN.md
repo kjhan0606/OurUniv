@@ -139,6 +139,35 @@ construction and shared redshift must be handled before catalogue replacement
 or sampling. Details and driver/Fable dispositions:
 `CF4_R2_SURVIVAL_CAUSE_20260926.md`.
 
+The follow-up source-bound group audit finds that only15,211 of the17,007
+crossmatched 2M++ targets are in the current N128 eligible parent, including
+14,878 secure matches. For eligible secure matches, CF4 *group* V3k differs
+from the individual 2M++ Vcmb by median52/p90 437/p99 1,467 km/s, and1,635
+CF4 groups have multiple eligible secure members. This makes a literal
+restoration of all17,007 objects, or an untested product of inclusive binned
+counts and the existing grouped BGc factor, scientifically invalid as a
+production repair. The old frozen tracer contract already requires a shared
+redshift latent upon reintroduction. No count catalogue, posterior or IC was
+changed. Details: `CF4_R2_OVERLAP_GROUP_AUDIT_20260926.md`. The next R2
+science step is a bounded inclusive-count **partial-likelihood candidate**
+and grouped/member mock control, with metadata anomalies separated. Fable5
+gave CONDITIONAL PASS for this lean candidate, but the driver does not accept
+its unproved no-bias claim or its angle-only-mask conversion of individual
+metadata failures (56 of63 residual calibration failures). If the conditional
+mark approximation fails, implement the fuller joint point/mark model. Neither
+candidate is a production likelihood yet; do not treat the older
+factor-ownership guard as an implementation of the required dependence.
+One preserved inclusive *diagnostic* count view now exists (Slurm405248,
+COMPLETED/exit0, two seconds):57,238 eligible parent rows,34,301 train,
+11,435 heldout,11,502 calibration and15,211 crossmatched; all have positive
+integrated N128 cell exposure, and the old disjoint sparse count view is
+recovered exactly. There are340 noncrossmatched metadata anomalies in the
+full parent, of which63 fall in the calibration slice. Positive *voxel*
+exposure does not validate these object-level exceptions or the joint
+likelihood. Result and limits are in the overlap group audit record. Next
+science action is the one group/member-dependent mock/conditional-mark test,
+not immediate actual-data posterior sampling.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
