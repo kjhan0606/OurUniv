@@ -231,6 +231,30 @@ uncalibrated. Neither result licenses the old binned-count/BGc product or an
 actual R2 posterior. Details and next full point/mark requirement:
 `CF4_R2_CONDITIONAL_GROUP_MARK_20260926.md`.
 
+The next source-bound individual-point/CF4-group contract completed in typed-
+H200 Slurm405614 (after a builder-only missing-group correction from failed
+405612). It preserves57,238 eligible 2M++ rows,15,211 crossmatched points and
+15,239 association edges with exact inclusive-count projection; four secure
+edges have no canonical CF4 group row. The pointwise official-map selection
+has one observed zero-support point (recno67100, heldout; source mark0.5),
+while442 rows have catalogue/map mismatch. A normalized cell-modulated point-
+process kernel passed2/2 algebra/support tests, but the full actual-data
+likelihood is **NO-GO** pending a source-justified point-selection discrepancy
+model and CF4 group-distance/selection conditional. Individual locations do
+not add field information beyond counts under a piecewise-constant N128 cell
+response; they are retained to model shared CF4 group/member redshifts, not
+to claim0.3-cMpc/h information. No posterior/IC promotion. Details:
+`CF4_R2_POINT_MARK_CONTRACT_20260926.md`.
+Locality check405619 found only98/442 map/catalogue differences agree with an
+immediate HEALPix neighbour; a one-pixel shift cannot justify a global repair.
+The original2M++ source labels the catalogue completeness columns as
+redshift-incompleteness quantities, whereas the ARES example loads separate
+HEALPix masks. Their exact pointwise equality is not source-established, so
+the442 differences must not automatically be treated as442 bad galaxies or
+used as a quality-thinning law. The single literal ARES-map zero-support
+point remains; no posterior promotion follows. Source evidence and limits are
+recorded in the point/mark contract.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
