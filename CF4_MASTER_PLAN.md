@@ -331,6 +331,20 @@ or source-mock calibration and that conditional connection, not more generic
 residual/root checks or another gravity run. Evidence and explicit limits:
 `CF4_R2_GROUP_DISTANCE_MARGINAL_BUNDLE_20260926.md`.
 
+R2 source-membership/conditional-position bundle: H200406012 completed2m11s,
+four tests pass. Official Tempel tables connect9,945/10,020 FP rows by exact
+photometric ID, with no matched group/richness disagreement;75 unmatched IDs
+remain explicit. Saved full30,113-member velocity sample for4,422 source
+groups. Published dispersion is reproduced (median ratio1.000000294) but
+comes from the SAME redshifts, so it is not independent covariance calibration.
+Count plus within-cell conditional position reproduces point-process algebra;
+actual recno67100 still has zero literal selection support. Preserve all rows,
+no floor or posterior promotion. Next: source-based unmatched-ID resolution,
+single group/member/selection law accounting for selected velocity membership,
+and justified point-selection support; not another gravity run. Selected-group
+distance prior and COM/model discrepancy remain unresolved. Details and result
+paths: `CF4_R2_TEMPEL_SOURCE_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

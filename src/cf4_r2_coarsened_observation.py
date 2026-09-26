@@ -13,6 +13,35 @@ import numpy as np
 from scipy.special import gammaln
 
 
+def within_cell_logdensity(point_keys, intensity_at_points, integral_at_points,
+                           *, unordered=True):
+    """Conditional positions given cell counts, for a supplied intensity law.
+
+    q(x|cell,F)=lambda(x,F)/Lambda_cell(F). The caller must compute Lambda
+    by integrating the SAME lambda over the cell. For unordered point sets,
+    include n_cell! to cancel the factorial in the count PMF. No support
+    floor or field-independence assumption is made here. The formula does
+    not calibrate the supplied intensity/selection law.
+    """
+    keys = np.asarray(point_keys)
+    intensity, integral = np.asarray(intensity_at_points), np.asarray(integral_at_points)
+    if keys.ndim != 1 or intensity.shape != keys.shape or integral.shape != keys.shape:
+        raise ValueError('point arrays must be matching vectors')
+    if not np.issubdtype(keys.dtype, np.integer) or np.any(keys < 0):
+        raise ValueError('invalid population-cell keys')
+    if not np.isfinite(intensity).all() or not np.isfinite(integral).all():
+        raise ValueError('nonfinite point intensity or integral')
+    if np.any(intensity <= 0) or np.any(integral <= 0):
+        raise CountSupportError('conditional position outside positive support')
+    _, counts = np.unique(keys,return_counts=True)
+    order = np.argsort(keys)
+    repeated = keys[order][1:] == keys[order][:-1]
+    if np.any(repeated & (integral[order][1:] != integral[order][:-1])):
+        raise ValueError('inconsistent cell integral for repeated key')
+    value = np.sum(np.log(intensity)-np.log(integral))
+    return float(value + (np.sum(gammaln(counts+1)) if unordered else 0.))
+
+
 class CountSupportError(ValueError):
     """An occupied cell has zero expected count."""
 
