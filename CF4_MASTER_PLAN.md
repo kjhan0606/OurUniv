@@ -127,6 +127,18 @@ evaluation took 0.336 s, without establishing sampler stability. The rate
 shape, survival, bias and FoG law remain uncalibrated; no posterior or target
 resolution map is delivered. See `CF4_R2_RATE_NUISANCE_N128_SCREEN_20260926.md`.
 
+Slurm405237 tested the disjoint tracer's calibration marks and found strong
+population/shell-conditional octant nonexchangeability; its Beta prior-draw
+holdout integration collapsed to importance ESS2.76/1.64, so that predictive
+number is WITHDRAWN. Slurm405241 attributed3120/3183 (98.0%) failed marks
+to CF4–2M++ crossmatch exclusion; the residual noncrossmatched sky test was
+much weaker, not certified absent. The current scalar survival-thinned count
+likelihood is **NO-GO for production R2 inference**. A marked-point-process
+overlap-aware datum is a candidate repair, but the grouped/BGc CF4 velocity
+construction and shared redshift must be handled before catalogue replacement
+or sampling. Details and driver/Fable dispositions:
+`CF4_R2_SURVIVAL_CAUSE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
