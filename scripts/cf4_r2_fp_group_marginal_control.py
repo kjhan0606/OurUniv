@@ -1,5 +1,6 @@
 """Actual-source conditional group integration; provisional covariance sensitivity."""
 import csv
+import argparse
 import hashlib
 import json
 import os
@@ -17,7 +18,7 @@ from scipy.special import logsumexp
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from cf4_r2_fp_group_marginal import (redshift_sufficient, joint_redshift_logkernel,
-    conditional_group_scores, shared_zero_logfactor)
+    conditional_group_scores, shared_zero_logfactor, selected_group_logweights)
 from cf4_z0_physical_field import read_centred
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
@@ -26,12 +27,18 @@ SOURCE = Path('/gpfs/kjhan/CF4/external/sdss_pv_6824749/SDSS_PV_public.dat')
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--same-field-density', action='store_true')
+    args = parser.parse_args()
+    out = BASE/'r2_fp_same_field_radial_v1' if args.same_field_density else OUT
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
-    if OUT.exists():
-        raise FileExistsError(OUT)
+    if out.exists():
+        raise FileExistsError(out)
     start = time.monotonic()
-    with np.load(BASE/'r2_sdss_fp_source_link_v1/source_link.npz') as f:
+    input_path = (BASE/'r2_source_observation_assembly_v1/observations.npz'
+                  if args.same_field_density else BASE/'r2_sdss_fp_source_link_v1/source_link.npz')
+    with np.load(input_path) as f:
         data = {k: f[k].copy() for k in f.files}
     if hashlib.md5(SOURCE.read_bytes()).hexdigest() != 'b5b6e31caf7ea469c2ac2cb775fa8d14':
         raise ValueError('source checksum mismatch')
@@ -93,13 +100,16 @@ def main():
             y = [299792.458*zgroup[g]]+[float(members[r]['Vcmb']) for r in recs]
             output.append(redshift_sufficient(y,covariance,[f'SDSS:{group_labels[g]}']+[f'2mpp:{r}' for r in recs]))
         return jnp.asarray(np.array(output))
-    suff = {s:sufficient(s) for s in (150.,300.)}
+    sigmas = (150.,) if args.same_field_density else (150.,300.)
+    zero_stds = (.004,) if args.same_field_density else (.004, float(np.hypot(.004,.0116)))
+    suff = {s:sufficient(s) for s in sigmas}
     ztab = np.linspace(0,.2,20001)
     dtab = 2997.92458*cumulative_trapezoid(1/np.sqrt(.31*(1+ztab)**3+.69),ztab,initial=0)
     dzgroup = np.interp(zgroup,ztab,dtab)
     dzrow = jnp.asarray(np.interp(data['zgroup'],ztab,dtab))
     with np.load(BASE/'r2_pm128_unconditional_v1/state.npz') as f:
         velocity = jnp.asarray(f['velocity_km_s'],dtype=jnp.float64)
+        density = jnp.asarray(f['rho'],dtype=jnp.float64) if args.same_field_density else None
     gid = jnp.asarray(row_group)
     moments = [jnp.asarray(data[k]) for k in ('eta_mean','eta_std','eta_alpha')]
     train = jnp.asarray(~group_hold)
@@ -116,9 +126,10 @@ def main():
         zcos = jnp.asarray(np.interp(dist,dtab,ztab))
         positions = jnp.asarray(192.+dirs[:,None,:]*dist[:,:,None])
         radial = sum(read_centred(velocity[k],positions,384.)*jnp.asarray(dirs[:,k,None]) for k in range(3))
+        rho = read_centred(density,positions,384.) if args.same_field_density else None
         d = jnp.asarray(dist)
-        for sigma in (150.,300.):
-            for zpstd in (.004, float(np.hypot(.004,.0116))):
+        for sigma in sigmas:
+            for zpstd in zero_stds:
                 # A global calibration can be much narrower than its prior
                 # after thousands of rows. Use a dense grid, not sparse
                 # prior-centred GH; refine distance AND calibration quadrature.
@@ -127,11 +138,17 @@ def main():
                 logzw_np = -.5*(np.asarray(zero)/zpstd)**2
                 logzw_np[[0,-1]] += np.log(.5)
                 logzw = jnp.asarray(logzw_np)
-                logdw = jnp.asarray(np.log(weight)+2*np.log(dist))
-                def scores(a):
+                uniform_logdw = jnp.asarray(np.log(weight)+2*np.log(dist))
+                # b=1, group inclusion=1 are an explicit mechanics fixture,
+                # NOT measured bias or a calibrated selected-group prior.
+                logdw = (selected_group_logweights(d,jnp.asarray(weight),rho,1.,jnp.zeros_like(d))
+                         if args.same_field_density else uniform_logdw)
+                def scores(a, bias=1.):
                     prediction = 299792.458*zcos+(1+zcos)*a*radial
                     kernel = joint_redshift_logkernel(prediction,zcos,suff[sigma])
-                    return conditional_group_scores(d,logdw,kernel,gid,dzrow,*moments,zero)
+                    w = (selected_group_logweights(d,jnp.asarray(weight),rho,bias,jnp.zeros_like(d))
+                         if args.same_field_density else logdw)
+                    return conditional_group_scores(d,w,kernel,gid,dzrow,*moments,zero)
                 calculate = jax.jit(scores)
                 state_scores = calculate(1.)
                 zero_scores = calculate(0.)
@@ -142,6 +159,11 @@ def main():
                     all_logratio_to_zero_velocity=get(state_scores,allgroups)-get(zero_scores,allgroups))
                 # Heldout conditional on training updates the SAME zero point.
                 trial['holdout_conditional_logratio'] = trial['all_logratio_to_zero_velocity']-trial['train_logratio_to_zero_velocity']
+                if args.same_field_density:
+                    kernel = joint_redshift_logkernel(299792.458*zcos+(1+zcos)*radial,zcos,suff[sigma])
+                    uniform_scores = conditional_group_scores(d,uniform_logdw,kernel,gid,dzrow,*moments,zero)
+                    trial['train_density_weight_minus_uniform'] = get(state_scores,train)-get(uniform_scores,train)
+                    trial['zero_density_quadrature_nodes'] = int(np.sum(np.asarray(rho)<=0))
                 prediction = 299792.458*zcos+(1+zcos)*radial
                 base = logdw+joint_redshift_logkernel(prediction,zcos,suff[sigma])
                 base_np = np.asarray(base)
@@ -153,13 +175,20 @@ def main():
                     fd = (float(f(1.0001))-float(f(.9999)))/.0002
                     trial.update(amplitude_derivative=derivative,finite_difference=fd,
                         gradient_agreement=bool(np.isclose(derivative,fd,rtol=2e-3,atol=1e-4)))
+                    if args.same_field_density:
+                        fb = lambda b: shared_zero_logfactor(scores(1.,b),logzw,train)
+                        db = float(jax.jit(jax.grad(fb))(1.))
+                        fdb = (float(fb(1.0001))-float(fb(.9999)))/.0002
+                        trial.update(radial_bias_derivative=db,radial_bias_finite_difference=fdb,
+                            radial_bias_gradient_agreement=bool(np.isclose(db,fdb,rtol=2e-3,atol=1e-4)))
                     saved_scores = dict(group_scores=np.asarray(state_scores),zero_nodes=np.asarray(zero),
                         log_zero_weights=np.asarray(logzw),group_labels=group_labels,group_holdout=group_hold)
                 if not np.isfinite(list(trial.values())).all():
                     raise FloatingPointError('nonfinite marginal calculation')
                 trials.append(trial)
                 print(json.dumps(trial),flush=True)
-    differences = [abs(trials[i]['train_logratio_to_zero_velocity']-trials[i+4]['train_logratio_to_zero_velocity']) for i in range(4)]
+    half = len(trials)//2
+    differences = [abs(trials[i]['train_logratio_to_zero_velocity']-trials[i+half]['train_logratio_to_zero_velocity']) for i in range(half)]
     result = dict(classification='CONDITIONAL_GROUP_DISTANCE_AND_SHARED_ZERO_IMPLEMENTATION_CONTROL',
         job_id=os.environ['SLURM_JOB_ID'],rows=len(row_group),source_groups=ng,
         train_groups=int((~group_hold).sum()),holdout_groups=int(group_hold.sum()),
@@ -168,7 +197,10 @@ def main():
         ambiguous_2mpp_covariates_omitted=ambiguous,
         trials=trials,max_train_ratio_quadrature_difference=max(differences),
         normalized_conditional_redshift_denominator=True,shared_zero_point_integrated_once=True,
-        group_covariance_calibrated=False,selected_group_distance_prior='provisional r^2 dd in recorded finite radial window',
+        group_covariance_calibrated=False,
+        same_state_density_radial_measure=args.same_field_density,
+        selected_group_distance_prior=('r^2 rho dd; bias1/inclusion1 mechanics fixture, NOT calibrated'
+                                      if args.same_field_density else 'provisional r^2 dd in recorded finite radial window'),
         within_count_cell_point_law_implemented=False,complete_joint_likelihood=False,
         independent_holdout_validation=False,R2_posterior=False,new_gravity_runs=0,
         code_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
@@ -176,9 +208,9 @@ def main():
         source_sha256={name:hashlib.sha256((ROOT/'data'/name).read_bytes()).hexdigest()
                        for name in ('2mpp_catalog.csv','cf4_2mpp_crossmatch_v1.csv')},
         runtime_seconds=time.monotonic()-start)
-    OUT.mkdir(parents=True)
-    np.savez_compressed(OUT/'group_factors.npz',**saved_scores)
-    (OUT/'result.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
+    out.mkdir(parents=True)
+    np.savez_compressed(out/'group_factors.npz',**saved_scores)
+    (out/'result.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print(json.dumps(result,indent=2),flush=True)
 
 

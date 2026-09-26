@@ -359,6 +359,18 @@ its inclusive count is retained, literal full-point support still unresolved.
 Next: joint group-distance/selection law, not another matching/residual sweep
 or gravity run. See `CF4_R2_SOURCE_SEMANTICS_BUNDLE_20260926.md`.
 
+R2 same-field radial connection406119 completed1m29s; three tests pass.
+The group-distance measure can now use dd*d^2*rho_F^b*S_group from the SAME
+state as its velocity predictor, in BOTH conditional numerator/denominator.
+All10,020 FP rows/6,821 groups evaluated; refined train log-ratio change
+0.000225857 and both scalar velocity/radial-bias derivatives agree with finite
+differences. Accept this interface, not calibration: b=1,inclusion=1 and the
+old covariance are explicit mechanics controls. No fitting, new gravity or
+posterior. Next source-constrained group inclusion/tracer/velocity law must
+feed this interface and agree with count/shared-redshift ownership; no more
+scalar derivative-control series. See
+`CF4_R2_SAME_FIELD_RADIAL_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

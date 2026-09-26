@@ -13,6 +13,31 @@ import numpy as np
 from cf4_r2_fp_distance import fp_log_likelihood_ratio
 
 
+def selected_group_logweights(distance, quadrature_weight, density_ratio,
+                             tracer_bias, log_group_inclusion):
+    """Selected-group radial measure from the SAME state's matter density.
+
+    w = dd * d^2 * rho^b * P(group included | d, F, covariates).
+    This is a caller-specified power-law tracer model, not calibrated bias.
+    Inclusion means group/sample inclusion, NOT the FP fn correction already
+    present in source distance summaries. Use w in BOTH conditional integrals.
+    A distance-independent amplitude cancels; spatial shape generally does not.
+    Zero density/inclusion remains zero support, without a numerical floor.
+    Requires positive distance, weights, bias; nonnegative finite density;
+    inclusion log probability <=0. Invalid inputs return NaN, not a fit repair.
+    """
+    positive = density_ratio > 0
+    log_rho = jnp.log(jnp.where(positive, density_ratio, 1.))
+    log_intensity = jnp.where(positive, tracer_bias*log_rho, -jnp.inf)
+    valid = ((distance > 0) & jnp.isfinite(distance)
+             & (quadrature_weight > 0) & jnp.isfinite(quadrature_weight)
+             & (density_ratio >= 0) & jnp.isfinite(density_ratio)
+             & (tracer_bias > 0) & jnp.isfinite(tracer_bias)
+             & (log_group_inclusion <= 0))
+    return jnp.where(valid, jnp.log(quadrature_weight)+2*jnp.log(distance)
+                     +log_intensity+log_group_inclusion, jnp.nan)
+
+
 def redshift_sufficient(observed_cz, covariance_v, redshift_ids):
     """Compress a supplied correlated Gaussian with common model mean.
 
