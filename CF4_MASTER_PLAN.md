@@ -371,6 +371,18 @@ feed this interface and agree with count/shared-redshift ownership; no more
 scalar derivative-control series. See
 `CF4_R2_SAME_FIELD_RADIAL_BUNDLE_20260926.md`.
 
+R2 official mock bridge:406142 downloaded only5.3MB of the10.6GB archive,
+then failed on missing CSV delimiter; corrected406148 and direct-velocity
+readout406149 completed1s each from saved source. First fixed mock has33,881
+galaxies,14,775 centrals/19,106 satellites. Host/member LOS scatter397.593km/s
+is NOT a real group-COM error or replacement for the provisional covariance.
+Mock eta uses individual redshift; both measured/truth eta now convert to
+the host numerator with residual preserved to5.55e-17. No Tempel recovered
+membership or pre-selection parent is provided, so group inclusion and PM
+COM discrepancy remain uncalibrated. Do not download the full archive merely
+to repeat this schema. Reusable inputs and next model limits:
+`CF4_R2_SDSS_MOCK_BRIDGE_20260926.md`. No new gravity or posterior.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
