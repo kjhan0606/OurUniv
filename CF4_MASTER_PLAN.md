@@ -276,6 +276,25 @@ group-mark and inclusion law is defensible. See
 `CF4_R2_COARSENED_MARKED_COUNTS_20260926.md` and
 `CF4_R2_COARSENED_FABLE_DISPOSITION_20260926.md`.
 
+The combined follow-up source/conditional bundle (typed-H200 Slurm405895 and
+405896, both exit0; superseding the native-only graph in405888/405893)
+finds only1,759 mutually one-to-one CF4-to-2M++ group
+pairs, versus3,912 eligible 2M++ GIDs and19,313 native CF4 groups. Of those
+GIDs1,430 have no secure *any-CF4* link, but they are **not** known CF4
+distance non-detections or an inclusion denominator: group definitions,
+crossmatch coverage and distance-method selection differ. One fixed-df4
+velocity conditional on the mutual-pair subset has heldout aggregate90%
+coverage87.57%, within its weak two-SE screen; at Vcmb>=10,000 km/s the
+heldout90% coverage falls to80.99% (two-SE width5.45 points), and FP-only
+training90% coverage is83.50%. Do not promote this undercovered restricted
+law, retune it on the holdout, or call the apparent aggregate pass a complete
+CF4 likelihood. The method-specific CF4 distance-mark selection and
+field-linked joint observation law remain the next essential science task;
+no actual R2 posterior or IC was produced. Q-GOAL: tests the missing R2
+observation dependence. Q-LEAN: two bounded source evaluations, no new PM,
+sampler or validation ladder. See
+`CF4_R2_GROUP_SELECTION_AND_CONDITIONAL_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
