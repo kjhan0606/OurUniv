@@ -195,9 +195,11 @@ K<11.75 group catalogue, whose velocity-member population differs from the
 CF4 distance contributors. The planned joint observation model must represent
 that distinction rather than infer the measured offset as pure redshift error.
 No posterior or simulation was run in this check.
-The source-only CF4-to-2M++ group-catalogue bridge is submitted as typed
-A100 Slurm405399 (one CPU,3 GiB,10min); H200/H100/A100 preflights passed.
-Its pending/source-comparison status is recorded in the grouped/member stress
+The source-only CF4-to-2M++ group-catalogue bridge was first submitted as
+typed A100 Slurm405399, then cancelled while still pending at the user's
+direction. The same one-CPU/3-GiB/10-min script is now typed H200 Slurm405476
+(`--partition=h200 --gres=gpu:H200:1`), initially PENDING(Priority).
+H200/H100/A100 preflights passed. Its source-comparison status is recorded in the grouped/member stress
 document. Do not equate the Lavaux--Hudson 2M++ `GID`, Tully (2015) group
 membership and CF4 `1PGC` without a measured bridge. No source-aware survey
 mock or joint likelihood is promoted by this submission.

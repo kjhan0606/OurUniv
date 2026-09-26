@@ -119,7 +119,11 @@ source-only bridge therefore measures the actual overlap and velocity
 agreement without assuming those group catalogues coincide. The frozen
 script is `scripts/cf4_r2_group_catalog_bridge.py`; Syntax Slurm405399 was
 submitted on A100 (H200/H100/A100 typed preflights passed) with one CPU,
-3 GiB and 10 minutes. At submission it was PENDING(Resources). Its result,
+3 GiB and 10 minutes. It remained PENDING(Resources) and was cancelled
+before execution at the user's direction. The same script was resubmitted
+as H200 Slurm405476 with `--partition=h200 --gres=gpu:H200:1`, one CPU,
+3 GiB and 10 minutes; Slurm confirms the typed H200 GRES. Its initial state
+is PENDING(Priority). Its result,
 when available, is not a survey mock or an accepted group-redshift law.
 
 The R2 decision is narrower than the earlier mock suggestion: do not simulate
