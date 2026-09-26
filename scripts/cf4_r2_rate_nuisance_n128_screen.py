@@ -28,7 +28,10 @@ CATALOGUE = Path('/gpfs/kjhan/CF4/z0_density/r2_common_catalogue_128_v1')
 SELECTION = Path('/gpfs/kjhan/CF4/z0_density/r2_common_selection_128_v1')
 CF4 = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1/native_data_v2/CF4_native.npz')
 PM_STATE = Path('/gpfs/kjhan/CF4/z0_density/r2_pm128_unconditional_v1/state.npz')
-OUTPUT = Path('/gpfs/kjhan/CF4/z0_density/r2_rate_nuisance_n128_screen_v1')
+VERSION = os.environ.get('CF4_R2_SCREEN_VERSION','v1')
+if VERSION not in ('v1','v2'):
+    raise ValueError('screen version must be v1 or v2')
+OUTPUT = Path('/gpfs/kjhan/CF4/z0_density/r2_rate_nuisance_n128_screen_'+VERSION)
 N = 128
 BOX = 384.
 
@@ -137,8 +140,9 @@ def main():
         return jnp.sum(objective_parts(white))
 
     white = jnp.asarray(np.random.default_rng(2026092501).standard_normal(N**3))
+    value_and_grad = jax.jit(jax.value_and_grad(objective))
     start = time.monotonic()
-    value, gradient = jax.jit(jax.value_and_grad(objective))(white)
+    value, gradient = value_and_grad(white)
     gradient.block_until_ready()
     gradient_seconds = time.monotonic()-start
     gradient_np = np.asarray(gradient)
@@ -162,6 +166,36 @@ def main():
         survival_Beta_marginalized=False,bias_calibrated=False,FoG_calibrated=False,
         derivative_finite_step_validated=False,actual_data_posterior=False,
         target_N256_map_or_LG_roles_delivered=False)
+    if VERSION == 'v2':
+        start = time.monotonic()
+        _warm_value, warm_gradient = value_and_grad(white)
+        warm_gradient.block_until_ready()
+        report['warm_gradient_seconds'] = time.monotonic()-start
+        direction = np.random.default_rng(2026092602).standard_normal(N**3)
+        direction /= np.sqrt(np.mean(direction**2))
+        direction_j = jnp.asarray(direction)
+        tangent = float(jnp.vdot(gradient,direction_j))
+        parts = jax.jit(objective_parts)
+        baseline = np.asarray(parts(white))
+        ladder = []
+        for epsilon in (1e-4,5e-5,2e-5,1e-5):
+            plus = np.asarray(parts(white+epsilon*direction_j))
+            minus = np.asarray(parts(white-epsilon*direction_j))
+            derivative = (plus-minus)/(2*epsilon)
+            ladder.append(dict(epsilon=epsilon,
+                prior_derivative=float(derivative[0]),
+                count_derivative=float(derivative[1]),
+                CF4_derivative=float(derivative[2]),
+                total_derivative=float(derivative.sum())))
+        report['objective_components'] = dict(zip(
+            ('white_prior','negative_rate_marginal_count_ll','negative_CF4_ll'),
+            baseline.tolist()))
+        report['directional_autodiff'] = tangent
+        report['directional_finite_difference_ladder'] = ladder
+        report['relative_smallest_step_discrepancy'] = abs(
+            tangent-ladder[-1]['total_derivative'])/max(
+            1.,abs(tangent),abs(ladder[-1]['total_derivative']))
+        report['one_direction_step_ladder_computed'] = True
     OUTPUT.mkdir(parents=True)
     (OUTPUT/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(json.dumps(report,allow_nan=False),flush=True)
