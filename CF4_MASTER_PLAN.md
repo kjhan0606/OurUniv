@@ -218,6 +218,19 @@ later-CF4 velocity operator or validated 2M++ join. No R2 likelihood,
 posterior or IC was promoted. Detailed evidence and the narrow next decision:
 `CF4_R2_GROUP_MEMBER_SCORE_STRESS_20260926.md`.
 
+Next conditional-model entry2026-09-26: source-bound Slurm405550 fitted the
+CF4 group CMB redshift conditional on the mean of its eligible secure-matched
+individual 2M++ redshifts, separated into one/multiple-member strata and
+tested on the frozen native CF4 holdout. Although fixed-df4 Student-t mean
+log score exceeds a Gaussian baseline, heldout nominal90/95% coverage for
+one-member groups is only82.0/86.1%. This simple empirical conditional is
+**NO-GO** as a calibrated group-redshift law. A separate normalized Gaussian
+conditional group-Vcmb/distance-modulus kernel passed3/3 numerical tests in
+Slurm405551, but its externally supplied joint covariance and selection are
+uncalibrated. Neither result licenses the old binned-count/BGc product or an
+actual R2 posterior. Details and next full point/mark requirement:
+`CF4_R2_CONDITIONAL_GROUP_MARK_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
