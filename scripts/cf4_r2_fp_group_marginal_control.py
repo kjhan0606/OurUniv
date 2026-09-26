@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from cf4_r2_fp_group_marginal import (redshift_sufficient, joint_redshift_logkernel,
     conditional_group_scores, shared_zero_logfactor, selected_group_logweights,
-    conditional_latent_group_scores)
+    conditional_latent_group_scores, nonfp_modulus_logmarks)
 from cf4_z0_physical_field import read_centred
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
@@ -31,11 +31,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--same-field-density', action='store_true')
     parser.add_argument('--latent-group', action='store_true')
+    parser.add_argument('--cross-method-anchors', action='store_true')
     args = parser.parse_args()
-    args.same_field_density = args.same_field_density or args.latent_group
+    if args.latent_group and args.cross_method_anchors:
+        parser.error('do not combine uncalibrated latent-role and anchor controls')
+    args.same_field_density = args.same_field_density or args.latent_group or args.cross_method_anchors
     out = BASE/'r2_fp_same_field_radial_v1' if args.same_field_density else OUT
     if args.latent_group:
         out = BASE/'r2_fp_latent_group_v1'
+    if args.cross_method_anchors:
+        out = BASE/'r2_cross_method_same_field_v1'
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
     if out.exists():
@@ -70,6 +75,21 @@ def main():
     if np.any((hold != 0) & (hold != nrows)):
         raise ValueError('split leaks source group')
     group_hold = hold > 0
+    anchor_data = None
+    if args.cross_method_anchors:
+        anchor_base = BASE/'r2_cross_method_anchors_v1'
+        with np.load(anchor_base/'anchors.npz') as f:
+            anchor_data = {k:f[k].copy() for k in f.files}
+        with np.load(anchor_base/'fp_group_moments.npz') as f:
+            np.testing.assert_array_equal(f['group_labels'], group_labels)
+            group_hold = f['holdout'].copy()
+        binding = json.loads((anchor_base/'result.json').read_text())
+        fit = binding['conditional_diagnostic_fit']
+        method_map = {m:i for i,m in enumerate(fit['methods'])}
+        anchor_method = jnp.asarray([method_map[m] for m in anchor_data['method']])
+        anchor_offset = jnp.asarray(fit['offset_mag'])
+        np.testing.assert_array_equal(group_labels[anchor_data['group_index']],anchor_data['source_group'])
+        np.testing.assert_array_equal(group_hold[anchor_data['group_index']],anchor_data['holdout'])
     pgc_to_group = dict(zip(map(int,data['PGC']),map(int,row_group)))
     rec_groups = defaultdict(set)
     with (ROOT/'data/cf4_2mpp_crossmatch_v1.csv').open() as f:
@@ -137,6 +157,14 @@ def main():
         radial = sum(read_centred(velocity[k],positions,384.)*jnp.asarray(dirs[:,k,None]) for k in range(3))
         rho = read_centred(density,positions,384.) if args.same_field_density else None
         d = jnp.asarray(dist)
+        extra_marks = None
+        if args.cross_method_anchors:
+            # Frozen observed-z luminosity convention, matching the conditional
+            # calibration diagnostic; not exact relativistic distance modelling.
+            mu_prediction = 5*jnp.log10((1+jnp.asarray(zgroup[:,None]))*d/.746)+25
+            extra_marks = nonfp_modulus_logmarks(mu_prediction,
+                jnp.asarray(anchor_data['group_index']),jnp.asarray(anchor_data['modulus']),
+                jnp.asarray(anchor_data['error']),anchor_method,anchor_offset)
         for sigma in sigmas:
             for zpstd in zero_stds:
                 # A global calibration can be much narrower than its prior
@@ -164,7 +192,8 @@ def main():
                     if args.latent_group:
                         return conditional_latent_group_scores(d,w,kernel,gid,dzrow,*moments,zero,
                             log_none,log_central,-.005,.005,group_offset,log_group_weight)
-                    return conditional_group_scores(d,w,kernel,gid,dzrow,*moments,zero)
+                    return conditional_group_scores(d,w,kernel,gid,dzrow,*moments,zero,
+                                                     extra_log_marks=extra_marks)
                 calculate = jax.jit(scores)
                 state_scores = calculate(1.)
                 zero_scores = calculate(0.)
@@ -184,6 +213,10 @@ def main():
                             observed_central_probability=.5,
                             train_latent_minus_baseline=get(state_scores,train)-get(baseline_scores,train),
                             all_latent_minus_baseline=get(state_scores,allgroups)-get(baseline_scores,allgroups))
+                    elif args.cross_method_anchors:
+                        fp_only = jax.jit(conditional_group_scores)(d,logdw,kernel,gid,dzrow,*moments,zero)
+                        trial['train_anchor_on_minus_off'] = get(state_scores,train)-get(fp_only,train)
+                        trial['all_anchor_on_minus_off'] = get(state_scores,allgroups)-get(fp_only,allgroups)
                     else:
                         uniform_scores = conditional_group_scores(d,uniform_logdw,kernel,gid,dzrow,*moments,zero)
                         trial['train_density_weight_minus_uniform'] = get(state_scores,train)-get(uniform_scores,train)
@@ -193,7 +226,7 @@ def main():
                 base_np = np.asarray(base)
                 edge = np.exp(logsumexp(base_np[:,[0,-1]],axis=1)-logsumexp(base_np,axis=1))
                 trial['max_endpoint_weight'] = float(edge.max())
-                if nq == 513 and sigma == 150. and zpstd == .004 and not args.latent_group:
+                if nq == 513 and sigma == 150. and zpstd == .004 and not (args.latent_group or args.cross_method_anchors):
                     f = lambda a: shared_zero_logfactor(scores(a),logzw,train)
                     derivative = float(jax.jit(jax.grad(f))(1.))
                     fd = (float(f(1.0001))-float(f(.9999)))/.0002
@@ -212,6 +245,10 @@ def main():
                         log_zero_weights=np.asarray(logzw),group_labels=group_labels,group_holdout=group_hold,
                         group_offset_nodes=np.asarray(group_offset),log_group_offset_weights=np.asarray(log_group_weight),
                         row_group=row_group,log_none_weight=np.asarray(log_none),log_central_weight=np.asarray(log_central))
+                if args.cross_method_anchors and nq == 513:
+                    saved_scores = dict(group_scores=np.asarray(state_scores),zero_nodes=np.asarray(zero),
+                        log_zero_weights=np.asarray(logzw),group_labels=group_labels,group_holdout=group_hold,
+                        method_names=np.asarray(fit['methods']),method_offsets=np.asarray(anchor_offset))
                 if not np.isfinite(list(trial.values())).all():
                     raise FloatingPointError('nonfinite marginal calculation')
                 trials.append(trial)
@@ -244,6 +281,16 @@ def main():
             max_latent_baseline_quadrature_difference=max(abs(trials[0][k]-trials[1][k])
                 for k in ('train_latent_minus_baseline','all_latent_minus_baseline')),
             full_adjoint_cost_measured=False)
+    if args.cross_method_anchors:
+        result.update(classification='ACTUAL_NONFP_SAME_FIELD_CONDITIONAL_MARK_CONNECTION',
+            nonfp_rows=len(anchor_data['PGC']),nonfp_groups=len(set(anchor_data['group_index'])),
+            method_offsets_conditioned_from_training_diagnostic=True,
+            fitted_offsets_used_as_independent_prior=False,
+            relative_excess_scatter_used_as_FP_group_error=False,
+            exact_luminosity_Doppler_model=False,
+            anchor_source_result_sha256=hashlib.sha256((anchor_base/'result.json').read_bytes()).hexdigest(),
+            max_anchor_factor_quadrature_difference=max(abs(trials[0][k]-trials[1][k])
+                for k in ('train_anchor_on_minus_off','all_anchor_on_minus_off')))
     out.mkdir(parents=True)
     np.savez_compressed(out/'group_factors.npz',**saved_scores)
     (out/'result.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')

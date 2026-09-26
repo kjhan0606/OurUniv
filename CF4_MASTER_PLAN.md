@@ -408,6 +408,23 @@ law, distinguishing available observation information from missing preselection
 parent/recovered-group mocks. More rows of the same selected-mock schema do
 not solve that absence. Record: `CF4_R2_LATENT_GROUP_MARKS_20260926.md`.
 
+R2 cross-method bundle406182/406183 completed25s/55s; six focused/reused
+tests pass. Exact PGC/explicit T17 links attach114 non-FP measurements in96
+source groups (SN Ia88, TF12, SBF12, SN II2); combined DM/DMfp are not reused.
+Two membership conflicts remain recorded; one FP row moves to holdout after
+new-edge closure. Method-specific moduli have free relative zero points.
+One training-only Gaussian moment diagnostic estimates total RELATIVE group
+excess0.17851mag, but heldout improvement is only0.33092nat over42 rows;
+do not interpret/copy this as pure FP common variance or an independent prior.
+Actual raw anchors now enter the SAME group-distance integral on the saved
+N128 field, with coarse/fine contrast change<=0.00073727. Conditional offset
+values in this connection are not a joint calibration posterior. No new
+gravity, observed field or IC. Close this scalar diagnostic; next specify
+joint method/source-calibration uncertainty and the selected-group radial/
+inclusion/FoG law, using each datum once.96 anchored groups do not calibrate
+all6,821 groups or latent central roles. Record and preserved artifacts:
+`CF4_R2_CROSS_METHOD_ANCHORS_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

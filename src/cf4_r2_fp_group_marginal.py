@@ -72,13 +72,17 @@ def joint_redshift_logkernel(predicted_cz, zcos, sufficient):
 
 
 def conditional_group_scores(distance, log_distance_weight, redshift_logkernel,
-                             row_group, dz_row, mean, std, alpha, zero_nodes):
+                             row_group, dz_row, mean, std, alpha, zero_nodes,
+                             extra_log_marks=None):
     """Return log conditional mark factor per zero-point node and group.
 
     distance/weights/kernel are (groups, quadrature). weights include dd and
     the explicit selected-group prior, not another FP measurement correction.
     Product of member distance likelihoods is INSIDE the group integral.
     The fixed reference eta=0 only cancels source-data constants.
+    Optional extra_log_marks (groups, quadrature) adds OTHER observations
+    conditional on this SAME distance and caller's shared nuisance values.
+    Do not supply a separately marginalized factor or duplicated FP/BGc data.
     """
     groups = distance.shape[0]
     base = log_distance_weight + redshift_logkernel
@@ -88,6 +92,8 @@ def conditional_group_scores(distance, log_distance_weight, redshift_logkernel,
         member = fp_log_likelihood_ratio(eta+b, 0., mean[:, None],
                                         std[:, None], alpha[:, None])
         marks = jax.ops.segment_sum(member, row_group, num_segments=groups)
+        if extra_log_marks is not None:
+            marks = marks+extra_log_marks
         return logsumexp(base + marks, axis=-1) - denominator
     return jax.lax.map(at_zero, zero_nodes)
 
@@ -154,7 +160,8 @@ def conditional_latent_group_scores(distance, log_distance_weight, redshift_logk
                                     row_group, dz_row, mean, std, alpha, zero_nodes,
                                     log_none_weight, log_central_weight,
                                     central_offset, satellite_offset,
-                                    group_offset_nodes, log_group_offset_weights):
+                                    group_offset_nodes, log_group_offset_weights,
+                                    extra_log_marks=None):
     """Conditional group marks including latent roles and ONE shared offset.
 
     eta_pred + global_zero + group_offset + role_offset is evaluated against
@@ -171,6 +178,11 @@ def conditional_latent_group_scores(distance, log_distance_weight, redshift_logk
     Weights/offsets are explicit nuisance inputs, NOT measurements inferred
     from mock truth. An extra group scatter may overlap source-fit uncertainty;
     fitting/calibration must resolve that, not automatically add variances.
+    extra_log_marks is for non-FP observations of the SAME group distance,
+    conditional on their nuisance values. The FP-specific group/role offsets
+    must NOT also shift those independent distance indicators. Shared source
+    calibration covariance still requires caller modelling, not a product
+    of independently marginalized calibrations.
     """
     base = log_distance_weight + redshift_logkernel
     denominator = _supported_logsumexp(base, axis=-1)
@@ -188,7 +200,27 @@ def conditional_latent_group_scores(distance, log_distance_weight, redshift_logk
                                           std[:, None], alpha[:, None])
             marks = latent_central_logmark(sat, cen, row_group,
                                            log_none_weight, log_central_weight)
+            if extra_log_marks is not None:
+                marks = marks+extra_log_marks
             return _supported_logsumexp(base+marks, axis=-1)
         integrals = jax.lax.map(at_offset, group_offset_nodes)
         return _supported_logsumexp(integrals+loguw[:, None], axis=0)-denominator
     return jax.lax.map(at_zero, zero_nodes)
+
+
+def nonfp_modulus_logmarks(predicted_modulus, row_group, observed_modulus,
+                           error, method_index, method_offset, reference_modulus=35.):
+    """Conditional Gaussian non-FP marks at the SAME caller-predicted distance.
+
+    predicted_modulus is (groups, distance nodes), already in luminosity
+    distance modulus with the caller's redshift/Doppler convention. Do not
+    silently equate comoving Mpc/h with luminosity Mpc. method_offset is a
+    SHARED nuisance vector, not one independent calibration per galaxy.
+    This conditional independent-error approximation is NOT a calibrated
+    source-fit covariance, and is not yet adopted for production inference.
+    The fixed data reference is common to all models/offsets.
+    """
+    prediction = predicted_modulus[row_group]+method_offset[method_index, None]
+    member = -.5*((observed_modulus[:, None]-prediction)**2
+                   -(observed_modulus[:, None]-reference_modulus)**2)/error[:, None]**2
+    return jax.ops.segment_sum(member, row_group, num_segments=predicted_modulus.shape[0])
