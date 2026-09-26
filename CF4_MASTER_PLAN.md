@@ -295,6 +295,24 @@ observation dependence. Q-LEAN: two bounded source evaluations, no new PM,
 sampler or validation ladder. See
 `CF4_R2_GROUP_SELECTION_AND_CONDITIONAL_BUNDLE_20260926.md`.
 
+R2 source-distance implementation follow-up: H200 Slurm405997 completed75s
+with two focused tests passed. Official SDSS FP v1.1 source entries join to
+10,020 eligible native CF4 FP members in5,450 groups. The source supplies
+selection-corrected skew-normal eta summaries with a flat eta prior; use
+their likelihood ratios, not another BGc/selection correction. The preferred
+richness-corrected columns require group-level shared zero-point treatment.
+All rows connect numerically to the SAME unconditional N128 velocity state;
+damped inversion plus Newton refinement has maximum redshift residual
+1.66e-10 km/s. The source-factor amplitude derivative-35.22357127 agrees
+with finite difference-35.22356983. No parameters were fit, no new gravity
+run was made, and no R2 posterior or IC was produced. The published FP fit
+used its whole sample, so even the group-closed native holdout scores are
+not independent end-to-end validation. Next: source-group distance/velocity
+and shared-zero-point marginalization, conditional on overlapping observed
+redshifts, not more empirical residual tuning or cold-root controls.
+TF/6dFGSv remain separate source/calibration tasks. Full details and failed
+numerical attempts are preserved in `CF4_R2_SOURCE_DISTANCE_BUNDLE_20260926.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
