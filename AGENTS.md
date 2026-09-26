@@ -46,3 +46,10 @@ material goal changes or an impasse that cannot be resolved in scope.
 User confirmation2026-09-13: no approval procedure is needed when there is
 no major issue; continue work rather than stopping at routine boundaries.
 External-review triggers above and scientific/resource limits still apply.
+
+User update2026-09-26: for the time being, submit GPU calculations using the
+H200/H100/A100 Slurm modes. The node GRES types are `gpu:H200:1` on `h200`,
+`gpu:H100:1` on `h100`, and `gpu:A100:1` on `a100`; H200 must include the
+literal `H200` type. A single typed GRES request cannot represent all three
+types, so check the three modes and submit one compatible job, recording the
+chosen mode. Do not use manual node execution.
