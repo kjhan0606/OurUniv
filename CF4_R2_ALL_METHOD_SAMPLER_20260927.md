@@ -191,3 +191,48 @@ predictions. The current HMC v3 remains a sampler-geometry test of its frozen
 chains with 5,000 warmup transitions and NUTS show that our 64-retained-step
 test cannot certify stationarity, but their survey, dynamics and sampler do not
 set a transferable run length or calibration for our CF4+2M++ target.
+
+## Long-path v3 result and disposition
+
+H100 **406521 COMPLETED/exit0 in58m30s** (batch peak RSS
+10,406,448 KiB under30 GiB); dependent A100 **406522 COMPLETED/exit0 in3s**.
+Both chains finished the exact96 warmup+64 retained transitions under the
+redshift-error-convolved *partial* target. The realized sampling steps were
+0.005006/0.004491 with randomized32–48 leapfrog steps, retained acceptance
+0.869/0.881, retained divergences0/0, and rejected nonfinite proposal
+energies3/2. Those are execution checks, not stationarity.
+
+The retained log-target half means rise by **2,963.53/2,183.72 nats**.
+Rank-normalized split R-hat is **2.329** for log target, **1.749** for IC
+white mean-square, and **1.550–2.346** for the seven count-tracer nuisance
+coordinates. The scalar split-ESS approximation is only **2.25–3.99** for
+these monitored quantities over128 nominal retained draws. The two terminal
+24-cMpc/h density blocks have Pearson correlation **0.1773** and RMS
+difference **0.6557**, larger than their individual spatial RMS
+0.5322/0.4888. The latter is endpoint disagreement, not a calibrated
+posterior-variance statistic. Frozen source artifacts:
+`/gpfs/kjhan/CF4/z0_density/r2_all_method_sampler_pilot_v3_long_path/{result,assessment}.json`.
+
+**NO-GO_R2_POSTERIOR_AND_N256; CLOSE_IDENTITY_MASS_HMC_PATH_LENGTH_LINE.**
+The longer trajectory did not equilibrate these starts at this budget, even
+with high acceptance and no retained divergences. Because v3 also changes the
+TF redshift-error convolution from v2, the v2/v3 diagnostic differences are
+not a controlled same-target performance ratio, nor proof that long paths
+are intrinsically worse. Do not extend these chains again, pool their states,
+use their spread as field uncertainty, infer source-calibration parameters
+from the drifting trace, or select the better-looking terminal LG. The
+count/TF and FP selected-source covariance/inclusion, galaxy bias/FoG and
+selection-coordinate law remain uncalibrated independently of sampling.
+
+Next substantial work is a *joint* observation/sampler redesign: specify
+the source-consistent generative order for the six galaxy populations and
+selected CF4 marks, then test a meaningfully different conditioned/blocked
+sampler on a fixed target with independent starts and heldout predictions.
+This is not another identity-mass trajectory-length/warmup sweep or a move
+to N256 before N128 calibration. Q-GOAL: remove two demonstrated barriers to
+an actual CF4+galaxy z=0 posterior. Q-LEAN: reuse the frozen input/source
+products and existing partial-target code, with one redesigned algorithm and
+one source-model comparison, rather than new gravity or repeated diagnostic
+gates. MW/M31/M33 remain latent roles on each NEW state in R3; these coarse
+chains do not identify them, and unresolved M33 and same-state LG observables
+remain explicit future requirements.

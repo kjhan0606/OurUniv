@@ -691,6 +691,19 @@ or N256 promotion; see `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`. The active
 long-path HMC job remains only a geometry comparison of its frozen partial
 target. No email or additional simulation was launched for this cross-check.
 
+Long-path HMC result2026-09-27: H100406521 and dependent A100406522 both
+COMPLETED/exit0. Both chains ran96 warmup+64 retained transitions at32–48
+leapfrog steps, with acceptance0.869/0.881 and no retained divergences, but
+retained logtarget halves still rise by2,963.53/2,183.72 nats. Split R-hat
+is2.329 for logtarget,1.749 for IC white variance and1.550–2.346 for seven
+count-tracer coordinates; their approximate scalar ESS is only2.25–3.99.
+Terminal24-cMpc/h density correlation is0.177. **NO-GO R2/N256; close the
+identity-mass HMC path-length line.** This is a different partial target from
+v2 due to TF redshift-error convolution, so a numerical v2/v3 performance
+ratio is not established. Next scientific work must redesign observation
+selection/covariance and sampler conditioning together, not lengthen these
+chains or promote their maps. See `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
