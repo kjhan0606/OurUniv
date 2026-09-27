@@ -1,6 +1,6 @@
 # R2/5 — 2M++ selection-coordinate repair boundary
 
-Status: bounded source-model comparison completed in Slurm **406563**; it is
+Status: bounded source-model comparison completed in Slurm **406565**; it is
 not an R2 posterior or a calibrated galaxy likelihood. No email/contact was
 sent. Startup attempts 406560/406561/406562 are preserved: unavailable
 `pytest`, a reversed test expectation, and the wrong Python environment for
@@ -35,10 +35,14 @@ Let `r` be true comoving distance, `s` the model observed-redshift distance,
 `M` intrinsic K absolute magnitude in the adopted h convention, and
 `mu(r)` the corresponding luminosity-distance modulus. The forward marks are
 
-    m = M + mu(r)
-    M_observed = m - mu(s) = M + mu(r) - mu(s).
+    m_corrected = M + mu(r) + Delta_K(z_true,z_observed)
+    M_observed = m_corrected - mu(s).
 
-For every source, classify `m` into the published bright/faint apparent bins
+Here `Delta_K` is the change in the published redshift-dependent 2M++ K
+correction from the true to observed redshift; fixed-sightline extinction
+cancels. This is a mean correction model, not object-specific photometry.
+
+For every source, classify `m_corrected` into the published bright/faint apparent bins
 and `M_observed` into the three observed absolute bins; apply observed-radius
 support, angular completeness and source survival to that selected mark.
 Deposit the source at `s`. Integrate the intrinsic luminosity distribution
@@ -48,9 +52,22 @@ over the joint inequalities, including true magnitudes outside the observed
 The selection and group membership of any CF4-matched objects must be handled
 jointly rather than multiplied again as an independent CF4 group mark.
 
-`src/cf4_r2_observed_magnitude_transfer.py` implements the exact Schechter-LF
-conditional bin-transfer geometry, including bright/faint intrinsic tails.
-It deliberately does not supply intrinsic luminosity-dependent bias, overall
+`src/cf4_r2_observed_magnitude_transfer.py` implements exact conditional
+bin-transfer integrals **under an assumed Schechter LF**, including
+bright/faint intrinsic tails. The [2M++ source paper, §2.2 and §2.6](https://arxiv.org/html/1105.6107)
+defines a redshift-dependent correction to the published K magnitude. Its
+Table 2 `|b|>10, K<11.5` row, whose `alpha=-0.94, M*=-23.28` are imported by
+the [ARES/BORG 2M++ analysis](https://arxiv.org/html/1509.05040), was fitted
+over `-25<M_K<-17`—not just the six observed populations' `-25<M_K<-21`.
+Thus `-21<M_K<-17` is within that fit's magnitude interval, whereas
+`M_K<-25` and `M_K>-17` require extrapolation. The source also notes an LF
+inflection near `-21` and bright-end Schechter departure, so fit-domain
+membership alone does not calibrate these migration probabilities for our
+survey/field model. The code now requires an explicit
+K-correction shift; the source's mean redshift-dependent formula is applied
+in the fixed-distance comparison. Galaxy-specific photometric/aperture
+deviations remain outside this model. It deliberately does not supply intrinsic
+luminosity-dependent bias, overall
 rate, survey angular map, observed radial cut, CF4 inclusion/covariance, or
 source redshift/FoG calibration. None of these can be filled by relabeling the
 old six `nbar` values. Its r=s limit must reproduce the existing six LF
@@ -59,19 +76,30 @@ fractions, while r!=s can move absolute-magnitude labels.
 One fixed-radius test uses the adopted cosmology at true radii 10, 30, 90,
 175 cMpc/h and observed shifts -3, 0, +3 cMpc/h. It isolates selection
 geometry and is **not** an estimate of the actual survey's velocity law or
-posterior bias. Slurm406563 completed in12s, three focused regressions pass,
-and its preserved result is
+posterior bias. Initial Slurm406563 completed in12s with3/3 tests but set the
+redshift-dependent K-correction shift to zero. Source-corrected Slurm406565
+completed in3s with4/4 tests; its preserved result is
+`/gpfs/kjhan/CF4/z0_density/r2_selection_coordinate_control_v2.json`.
+The superseded no-correction result remains at
 `/gpfs/kjhan/CF4/z0_density/r2_selection_coordinate_control_v1.json`.
 The zero-RSD source/voxel comparison agrees exactly at all four radii. At
-30 cMpc/h with s-r=+3, 10.47% of *selected LF measure* comes from intrinsic
-central bins that change observed absolute-K bin; another8.90% comes from
-intrinsically outside `-25<M<-21`. The six-bin LF selection vector differs
-from post-RSD voxel selection by8.74% in L1, normalized by the selected LF
-measure. At10 cMpc/h, s-r=-3 gives47.41% central-bin migration and53.12%
-normalized L1 difference. These are fixed-displacement sensitivity numbers,
-not actual 2M++ frequencies, a field-level bias estimate or a full selected
-intensity comparison. Velocity distribution, angular completeness, radial
-support, intrinsic bias and CF4 overlap are deliberately absent.
+30 cMpc/h with s-r=+3, the paper's mean K-correction changes by+0.00269mag;
+10.34% of *selected LF measure* comes from central intrinsic bins that change
+observed absolute-K bin. Another8.79% comes from the **faint-side** intrinsic
+range outside the six observed bins, `M>-21`; at this radius and apparent
+cut, that contribution lies inside the source LF's `-25<M<-17` fitted interval,
+but its exact fraction is still LF-model dependent. Restricting
+the denominator to selected in-range intrinsic sources, central-bin migration
+is 10.34/(100-8.79)=11.34%. The six-bin LF selection vector differs from
+post-RSD voxel selection by8.64% in L1, normalized by the selected LF
+measure. The additional redshift-dependent K-correction changes that vector
+by0.112% in L1. At10 cMpc/h, s-r=-3 gives47.21% central-bin migration and
+52.85% normalized L1 difference; its0.145% bright-side tail relies on
+`M<-25` extrapolation. These are fixed-displacement sensitivity
+numbers under an assumed LF, **not** actual
+2M++ frequencies, a field-level bias estimate or a full selected intensity
+comparison. Velocity distribution, angular completeness, radial support,
+intrinsic bias and CF4 overlap are deliberately absent.
 
 ## Decision before another field fit
 

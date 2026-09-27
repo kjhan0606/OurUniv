@@ -14,11 +14,12 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 from cf4_r2_observed_magnitude_transfer import (
-    _schechter_interval_probability, observed_magnitude_transfer)
+    _schechter_interval_probability, observed_magnitude_transfer,
+    twompp_k_correction_delta)
 from cf4_twompp_joint_information_budget_pilot_v1 import (
     _cosmology_distance_table, schechter_fraction)
 
-OUT = Path('/gpfs/kjhan/CF4/z0_density/r2_selection_coordinate_control_v1.json')
+OUT = Path('/gpfs/kjhan/CF4/z0_density/r2_selection_coordinate_control_v2.json')
 TRUE_EDGES = (-np.inf, -25., -23.6666666666667,
               -22.3333333333333, -21., np.inf)
 OBS_EDGES = TRUE_EDGES[1:-1]
@@ -27,7 +28,10 @@ OBS_EDGES = TRUE_EDGES[1:-1]
 def one_case(r_true, r_observed, cosmology):
     dl_h = _cosmology_distance_table(np.array([r_true, r_observed]), cosmology) * cosmology['h']
     mu_r, mu_s = 5*np.log10(dl_h) + 25
-    transfer = observed_magnitude_transfer(mu_r, mu_s)
+    z_true, z_obs = dl_h / np.array([r_true, r_observed]) - 1
+    correction = twompp_k_correction_delta(z_true, z_obs)
+    transfer = observed_magnitude_transfer(mu_r, mu_s,
+                                           correction_shift_mag=correction)
     intrinsic_lf = np.array([
         _schechter_interval_probability(TRUE_EDGES[j], TRUE_EDGES[j+1],
                                         mstar=-23.28, alpha=-.94)
@@ -46,11 +50,16 @@ def one_case(r_true, r_observed, cosmology):
     migrated_core = sum(float(joint[p, j]) for p in range(6)
                         for j in (1, 2, 3) if p%3 != j-1) / total
     difference = float(np.abs(source_consistent-old_observed_voxel).sum()) / total
+    zero_correction = (observed_magnitude_transfer(
+        mu_r, mu_s, correction_shift_mag=0.) @ intrinsic_lf)
+    correction_effect = float(np.abs(source_consistent-zero_correction).sum()) / total
     return dict(true_radius_cMpc_h=r_true, observed_radius_cMpc_h=r_observed,
                 modulus_shift_mag=float(mu_s-mu_r), selected_lf_measure=total,
+                k2mpp_correction_shift_mag=float(correction),
                 bright_faint_intrinsic_tail_fraction=tail,
                 core_absolute_bin_migration_fraction=migrated_core,
-                post_RSD_exposure_L1_difference_over_selected=difference)
+                post_RSD_exposure_L1_difference_over_selected=difference,
+                redshift_correction_L1_difference_over_selected=correction_effect)
 
 
 def main():
@@ -65,7 +74,7 @@ def main():
     if max(x['post_RSD_exposure_L1_difference_over_selected'] for x in zero) > 1e-12:
         raise AssertionError('zero-displacement source and voxel laws differ')
     report = dict(status='SELECTION_COORDINATE_DIAGNOSTIC_NOT_CALIBRATED',
-                  model='Schechter LF only; no bias, angular mask, grouped marks or actual velocities',
+                  model='Schechter LF and published mean K2M++ redshift correction; no bias, angular mask, grouped marks or actual velocities',
                   displacement_cMpc_h=[-3., 0., 3.],
                   true_radii_cMpc_h=[10., 30., 90., 175.],
                   redshift_radial_cut_not_applied=True,

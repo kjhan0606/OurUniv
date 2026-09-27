@@ -1,15 +1,34 @@
-"""Exact LF selection transfer for the observed 2M++ K-bin convention.
+"""LF selection transfer under an explicit 2M++ K-bin approximation.
 
-This is a source-model component, not a calibrated galaxy likelihood.  It
-keeps the apparent magnitude at true distance and computes the catalogue's
-absolute magnitude from observed-redshift distance after RSD.  In particular,
-it does not reuse an observed-space voxel exposure as a source weight.
+This is a source-model component, not a calibrated galaxy likelihood.  The
+published K_2M++ correction uses redshift, so its true-to-observed change is
+an explicit input.  The imported LF parameters were fitted over
+-25<M_K<-17, wider than the six observed bins (-25<M_K<-21).  Bright-side
+probability below -25 is extrapolated; faint-side probabilities are within
+that fitted range only down to -17.  Neither is a calibrated transfer law.
 """
 
 from __future__ import annotations
 
 import numpy as np
 from scipy.special import gammainc
+
+
+def twompp_k_correction_delta(true_redshift, observed_redshift):
+    """Change in published corrected K_2M++ from true to observed redshift.
+
+    Lavaux & Hudson (2011), eqs. (3), (4), (6): k(z)=-2.1z,
+    e(z)=0.8z, and the aperture term is -1.6log10(1+z).  The Galactic
+    extinction term is fixed for one sightline and cancels in the delta.
+    This uses the paper's mean aperture correction, not a galaxy-specific
+    profile or a new photometric-error model.
+    """
+    z_true, z_obs = np.broadcast_arrays(np.asarray(true_redshift, dtype=float),
+                                        np.asarray(observed_redshift, dtype=float))
+    if (not np.all(np.isfinite(z_true)) or not np.all(np.isfinite(z_obs))
+            or np.any(z_true <= -1) or np.any(z_obs <= -1)):
+        raise ValueError("finite redshifts above -1 required")
+    return 1.16*2.9*(z_obs-z_true) - 1.6*np.log10((1+z_obs)/(1+z_true))
 
 
 def _schechter_interval_probability(lower, upper, *, mstar, alpha):
@@ -27,7 +46,7 @@ def _schechter_interval_probability(lower, upper, *, mstar, alpha):
 
 
 def observed_magnitude_transfer(
-    true_modulus_h, observed_modulus_h, *,
+    true_modulus_h, observed_modulus_h, *, correction_shift_mag,
     true_edges=(-np.inf, -25.0, -23.6666666666667,
                 -22.3333333333333, -21.0, np.inf),
     observed_edges=(-25.0, -23.6666666666667,
@@ -38,17 +57,26 @@ def observed_magnitude_transfer(
 
     Output shape is ``(6, n_true_bins, *broadcast_modulus_shape)``.  Apparent
     populations are K<=11.5 and 11.5<K<=12.5; each has three observed
-    absolute-K bins.  Intrinsic edges include bright/faint tails by default,
-    because objects outside -25<M_h<-21 can migrate into that observed range.
+    absolute-K bins. ``correction_shift_mag`` is the change in K_2M++'s
+    redshift-dependent correction between true and observed redshift; it must
+    be explicit even when a zero-shift approximation is intended. Intrinsic
+    edges include bright/faint tails by default, because objects outside
+    -25<M_h<-21 can migrate into that observed range. The imported LF was
+    fitted over -25<M_h<-17: the bright outer bin and faint values above -17
+    extrapolate beyond it, whereas -21<M_h<-17 does not. The outer-bin
+    probabilities are model-sensitive, not calibrated survey frequencies.
     The survey angular mask, redshift-space radial cut, row survival and
     population-dependent tracer bias are deliberately NOT part of this
     conditional transfer.  A calibrated intrinsic LF/rate and bias law are
     required before this may replace the existing development operator.
     """
-    mu_r, mu_s = np.broadcast_arrays(np.asarray(true_modulus_h, dtype=float),
-                                     np.asarray(observed_modulus_h, dtype=float))
-    if not np.all(np.isfinite(mu_r)) or not np.all(np.isfinite(mu_s)):
-        raise ValueError("finite true and observed distance moduli required")
+    mu_r, mu_s, correction = np.broadcast_arrays(
+        np.asarray(true_modulus_h, dtype=float),
+        np.asarray(observed_modulus_h, dtype=float),
+        np.asarray(correction_shift_mag, dtype=float))
+    if (not np.all(np.isfinite(mu_r)) or not np.all(np.isfinite(mu_s))
+            or not np.all(np.isfinite(correction))):
+        raise ValueError("finite moduli and K correction shift required")
     true_edges = np.asarray(true_edges, dtype=float)
     observed_edges = np.asarray(observed_edges, dtype=float)
     if (true_edges.ndim != 1 or observed_edges.shape != (4,)
@@ -56,7 +84,9 @@ def observed_magnitude_transfer(
             or not np.all(np.diff(observed_edges) > 0)):
         raise ValueError("strictly increasing intrinsic/observed edges required")
     result = np.empty((6, len(true_edges)-1) + mu_r.shape, dtype=float)
-    shift = mu_s - mu_r
+    # m_corrected = M_true + mu(r) + correction;
+    # M_observed = m_corrected - mu(s).
+    shift = mu_s - mu_r - correction
     for j in range(len(true_edges)-1):
         lo_true, hi_true = true_edges[j:j+2]
         normalizer = _schechter_interval_probability(
@@ -64,8 +94,8 @@ def observed_magnitude_transfer(
         if not np.isfinite(normalizer) or normalizer <= 0:
             raise ValueError("intrinsic luminosity bin has zero LF measure")
         for a, (m_lo, m_hi) in enumerate(((-np.inf, 11.5), (11.5, 12.5))):
-            apparent_lo = m_lo - mu_r
-            apparent_hi = m_hi - mu_r
+            apparent_lo = m_lo - mu_r - correction
+            apparent_hi = m_hi - mu_r - correction
             for b in range(3):
                 lo = np.maximum.reduce(np.broadcast_arrays(
                     lo_true, apparent_lo, observed_edges[b] + shift))

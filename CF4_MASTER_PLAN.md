@@ -12,13 +12,19 @@ Direct subsequent user instructions take precedence over this file.
 R2 selection-coordinate control2026-09-27: the observed six K-population
 labels use redshift-derived absolute magnitude, while the current count
 operator applies six archived radial/angular exposures after redshift-space
-deposition. An exact Schechter-LF true/observed-magnitude transfer and
-fixed-radius comparison (`CF4_R2_SELECTION_COORDINATE_20260927.md`) completed
-in Slurm406563 with3/3 tests. Zero displacement reproduces the old radial
-fraction; a fixed +3 cMpc/h shift at true30 cMpc/h moves10.47% of selected
-LF measure between central absolute-K bins and brings8.90% from intrinsic
-bright/faint tails, with8.74% six-bin selection-vector L1 difference from
-post-RSD exposure. This is **model sensitivity only**, not a calibrated
+deposition. The original fixed-radius transfer406563 omitted the source's
+redshift-dependent corrected-K shift. Source-corrected406565 passed4/4 tests
+(`CF4_R2_SELECTION_COORDINATE_20260927.md`). Zero displacement reproduces
+the old radial fraction; a fixed +3 cMpc/h shift at true30 cMpc/h moves
+10.34% of selected LF measure between central absolute-K bins (11.34% of
+selected in-range intrinsic sources). The8.79% from faint-side intrinsic
+`M_K>-21` is inside the imported LF's fitted `[-25,-17]` magnitude interval
+at this radius, but remains model dependent. The bright-side `M_K<-25` tail
+is extrapolated and the source notes LF shape systematics near `-21`.
+The six-bin LF selection
+vector differs from post-RSD exposure by8.64% in L1 for this fixed shift,
+of which the corrected-K change itself contributes0.112% L1. This remains
+**model sensitivity only**, not a calibrated
 actual-data velocity/bias correction. Intrinsic LF/rates, tracer bias, survey
 angular/radial selection, source overlap and CF4 grouped marks still require
 joint calibration. Do not plug old six published `nbar` values into a new
