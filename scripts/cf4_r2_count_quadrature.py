@@ -6,6 +6,7 @@ fit a field, or claim a CF4-conditioned posterior.
 
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import resource
@@ -18,13 +19,15 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_count_quadrature_v4'
+OUT = BASE/'r2_count_quadrature_v5'
+BASELINE = BASE/'r2_count_quadrature_v4'
 SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
 SOURCE = BASE/'r2_marked_source_geometry_v1/geometry.npz'
 STATE = BASE/'r2_pm128_unconditional_v1/state.npz'
 COSMO = ROOT/'config/cf4_r2_common_cosmology_v1.json'
 N, BOX = 128, 384.
-ORDERS = (3, 9, 15)
+ORDERS = (21,)
+REFERENCE_ORDERS = (3, 9, 15)
 
 
 def main():
@@ -52,7 +55,6 @@ def main():
         predict_source_marked_intensity_los_node,
         sparse_marked_poisson_log_likelihood,
     )
-    from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
     from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 
     with np.load(SPLIT, allow_pickle=False) as f:
@@ -92,17 +94,30 @@ def main():
         sigma_los_km_s=100., radial_min_cMpc_h=5., radial_max_cMpc_h=180.)
 
     paths = (SPLIT, SOURCE, STATE, COSMO)
+    input_hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in paths}
+    baseline_report = json.loads((BASELINE/'result.json').read_text())
+    if (baseline_report.get('status') !=
+            'COMPLETED_TRAIN_ONLY_QUADRATURE_SENSITIVITY_NOT_CALIBRATION'
+            or baseline_report.get('input_sha256') != input_hashes):
+        raise ValueError('frozen GH3/GH9/GH15 baseline or its inputs changed')
+    means_by_order = {
+        order: np.load(BASELINE/f'means_gh{order}.npy', allow_pickle=False)
+        for order in REFERENCE_ORDERS}
+    if any(values.shape != train_keys.shape for values in means_by_order.values()):
+        raise ValueError('baseline means do not align with frozen training keys')
     report = dict(
-        classification='R2_TRAIN_COUNT_QUADRATURE_NUMERICAL_DIAGNOSTIC',
+        classification='R2_TRAIN_COUNT_GH21_VS_FROZEN_BASELINE_DIAGNOSTIC',
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'],
         source_commit=source_commit,
         N=N, box_cMpc_h=BOX, quadrature_orders=list(ORDERS),
+        comparison_baseline_job=baseline_report['job_id'],
+        comparison_baseline_source_commit=baseline_report['source_commit'],
         training_count_points=int(train_counts.sum()),
         training_population_voxel_keys=int(len(train_keys)),
         heldout_count_points_read=0, FP_marks_read=0,
         field_fit=False, sampler=False, R2_posterior=False, N256=False,
-        input_sha256={str(p): hashlib.sha256(p.read_bytes()).hexdigest()
-                      for p in paths},
+        input_sha256=input_hashes,
         interpretation='One archived unconditional N128 state; higher-order '
                         'GH comparison measures numerical count-integral '
                         'sensitivity, not the continuous individual-redshift '
@@ -119,14 +134,21 @@ def main():
             json.dumps(report, indent=2, allow_nan=False)+'\n')
 
     save()
-    means_by_order = {}
+    report['orders'] = {str(order): baseline_report['orders'][str(order)]
+                        for order in REFERENCE_ORDERS}
     try:
         key_array = jnp.asarray(train_keys)
         count_array = jnp.asarray(train_counts)
         train_voxel_mask = jnp.asarray(mask)
         for order in ORDERS:
             t0 = time.monotonic()
-            nodes, weights = _gaussian_hermite_rule(order)
+            hermite_nodes, hermite_weights = np.polynomial.hermite.hermgauss(order)
+            nodes = math.sqrt(2.)*hermite_nodes
+            weights = hermite_weights/math.sqrt(math.pi)
+            if (not np.isclose(weights.sum(), 1., rtol=0., atol=2e-14)
+                    or not np.allclose(nodes, -nodes[::-1], rtol=0., atol=2e-14)
+                    or not np.allclose(weights, weights[::-1], rtol=0., atol=2e-14)):
+                raise ValueError('Gauss-Hermite rule normalization/symmetry failed')
             one_node = jax.jit(
                 predict_source_marked_intensity_los_node,
                 static_argnames=('grid_size', 'radial_min_cMpc_h',
@@ -154,9 +176,9 @@ def main():
                 max_train_key_mean=float(np.max(means)))
             save()
 
-        reference = means_by_order[15]
+        reference = means_by_order[21]
         comparison = {}
-        for order in (3, 9):
+        for order in REFERENCE_ORDERS:
             relative = np.abs(means_by_order[order]/reference-1.)
             top_index = np.argsort(relative)[-10:][::-1]
             worst_keys = []
@@ -169,20 +191,20 @@ def main():
                     voxel=[int(v) for v in np.unravel_index(
                         key % (N**3), (N,)*3)],
                     observed_count=int(train_counts[index]),
-                    mean_order=mean_order, mean_GH15=mean_reference,
+                    mean_order=mean_order, mean_GH21=mean_reference,
                     relative_error=float(relative[index]),
                     observed_count_log_term_delta=float(
                         train_counts[index]*np.log(mean_order/mean_reference))))
-            comparison[f'GH{order}_vs_GH15'] = dict(
+            comparison[f'GH{order}_vs_GH21'] = dict(
                 relative_error_quantiles=dict(zip(
                     ('p50','p90','p95','p99','max'),
                     np.quantile(relative, [0.50,0.90,0.95,0.99,1.0]).tolist())),
                 worst_keys=worst_keys,
-                poisson_loglike_delta_vs_GH15=(
+                poisson_loglike_delta_vs_GH21=(
                     report['orders'][str(order)]['train_log_likelihood']
-                    - report['orders']['15']['train_log_likelihood']))
+                    - report['orders']['21']['train_log_likelihood']))
         report.update(comparison=comparison,
-                      status='COMPLETED_TRAIN_ONLY_QUADRATURE_SENSITIVITY_NOT_CALIBRATION')
+                      status='COMPLETED_GH21_VS_FROZEN_LOWER_ORDER_TRAIN_ONLY_NOT_CALIBRATION')
     except Exception as exc:
         report['status'] = 'FAILED'
         report['error'] = f'{type(exc).__name__}: {exc}'
