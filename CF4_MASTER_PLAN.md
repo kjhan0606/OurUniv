@@ -2041,10 +2041,14 @@ et al. describe `in_mask` as membership in the NYU-VAGC DR7 polygon mask, not a
 complete DR8–DR14 selection function. The output JSON's Tempel/FP row-count
 fields are wrong (`len(dict)` gives7/8); parser gates establish584,449 and
 34,059, and the script is corrected without rerunning the preserved job.
-Five mixed-role Tempel parents invalidate v5 split closure for this expanded
-graph. No heldout field score, fit, posterior, map or gravity run. R2 remains
-NO-GO. Next: securely obtain the exact DR7 MANGLE polygon artifact or
-verifiably identical mirror and compare against native flags; do not infer a
-mask from random-neighbour thresholds. If unavailable, close only this
-denominator route descriptively. Details, Q-GOAL/Q-LEAN and MW/M31/M33 limits:
+Six mixed-role Tempel parents invalidate v5 split closure for this expanded
+graph; five are within the now-withdrawn proxy-mask/redshift window, while
+one is outside it. No heldout field score, fit, posterior, map or gravity run.
+R2 remains NO-GO. A bounded exact-name search did not recover the official
+DR7 MANGLE polygon or a verifiably identical mirror, and the NYU host fails
+strict TLS validation after redirect; no verification bypass was used.
+Close this denominator subroute descriptively, not R2. Next build a v6
+source-graph-closed split that buffers mixed train/heldout components and
+their aggregated count keys before further fitting. Details, Q-GOAL/Q-LEAN
+and MW/M31/M33 limits:
 `CF4_R2_TEMPEL_PARENT_DENOMINATOR_20260928.md`. No email.

@@ -52,12 +52,17 @@ public KIAS 0.025-degree raster is a different, supplemented product and is
 not silently substituted for the exact polygon mask.
 
 The published random catalogue was used only as a failed diagnostic, not as
-an exposure law. No random-neighbour threshold/pixel-size sweep was run.
+an exposure law. A bounded exact-name search found no trusted mirror of the
+NYU `lss_combmask.dr72.ply`; the original host redirects HTTP to HTTPS and
+strict TLS validation fails. No certificate bypass or substitute mask was
+used. No random-neighbour threshold/pixel-size sweep was run.
 
 ## Split and scientific limits
 
-Five Tempel parents now contain members assigned to both v5 train and heldout
-roles. Therefore v5 is not closed for any model that includes this expanded
+Six Tempel parents contain linked members assigned to both v5 train and
+heldout roles across the full source graph. Five of those six fall inside the
+now-withdrawn proxy-mask/redshift window; the sixth is outside that proxy
+window. Therefore v5 is not closed for any model that includes this expanded
 Tempel-parent graph. Existing v5 results remain valid only for their original
 narrower graph; do not relabel them as leakage-free Tempel holdout results.
 The run examined heldout role/selection counts descriptively to identify this
@@ -83,12 +88,14 @@ large mocks, gravity runs, or sampler work are not justified by this result.
 
 ## Next R2 action
 
-Retrieve the exact NYU-VAGC DR7 polygon artifact (or a verifiably identical
-trusted mirror) and test its `in_mask` convention against the published FP
-flags. If that precise artifact cannot be recovered, close this denominator
+The exact NYU polygon artifact was not recovered, so close this denominator
 route at the descriptive source-graph result rather than manufacturing a
-common-footprint rate. Even an exact DR7-mask reproduction would not calibrate
-the full DR8–DR14 selection or complete the R2 posterior; the selected-group,
+common-footprint rate. This does not close R2. Independently, v5 is not safe
+for any future likelihood that uses the expanded Tempel/2M++ graph; the next
+bounded step constructs a new component-closed split from the frozen source
+identities, buffering whole mixed train/heldout components and their count
+keys. Even an exact DR7-mask reproduction would not calibrate the full
+DR8–DR14 selection or complete the R2 posterior; the selected-group,
 true-distance selection, tracer/bias and shared-covariance terms still need a
 defensible joint observation model.
 
