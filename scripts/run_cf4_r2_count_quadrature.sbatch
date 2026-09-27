@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=cf4_R2_A100_count_quad_v3
+#SBATCH --job-name=cf4_R2_A100_count_quad_v4
 #SBATCH --partition=a100
 #SBATCH --gres=gpu:A100:1
 #SBATCH --nodes=1

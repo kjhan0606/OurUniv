@@ -18,7 +18,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_count_quadrature_v3'
+OUT = BASE/'r2_count_quadrature_v4'
 SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
 SOURCE = BASE/'r2_marked_source_geometry_v1/geometry.npz'
 STATE = BASE/'r2_pm128_unconditional_v1/state.npz'
@@ -146,6 +146,7 @@ def main():
                 intensity, key_array, count_array,
                 selected_voxel_mask=train_voxel_mask))
             means_by_order[order] = means
+            np.save(OUT/f'means_gh{order}.npy', means)
             report.setdefault('orders', {})[str(order)] = dict(
                 elapsed_seconds=time.monotonic()-t0,
                 train_log_likelihood=loglike,
@@ -165,7 +166,8 @@ def main():
                 mean_reference = float(reference[index])
                 worst_keys.append(dict(
                     key=key, population=key//(N**3),
-                    voxel=list(np.unravel_index(key % (N**3), (N,)*3)),
+                    voxel=[int(v) for v in np.unravel_index(
+                        key % (N**3), (N,)*3)],
                     observed_count=int(train_counts[index]),
                     mean_order=mean_order, mean_GH15=mean_reference,
                     relative_error=float(relative[index]),
