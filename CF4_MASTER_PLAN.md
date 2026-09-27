@@ -1927,3 +1927,18 @@ this footprint. The count kernel now integrates only its selected sky
 window. This fixes direct count/group train-test leakage for a future fit,
 not the missing selected-group law, sampler stationarity, independent mock
 coverage or R2 posterior. See CF4_R2_SKY_CLOSED_HOLDOUT_20260927.md.
+
+Same-day correction before field fitting: octant5 had no FP validation.
+Footprint-only choice406581 selected octant2 without viewing field/mark
+scores; anchor-inclusive graph closure406584 froze split v4 with9,696
+2M++ heldout points,2,867 native CF4 and764 FP sky-validation groups.
+Intermediate v3 omitted114 cross-method anchor links; its first same-field
+job406583 was cancelled before scores. Direct secure 2M++→FP member closure
+406586 found3,062 edges (395 heldout) and changed zero group roles; **v5**
+is the authoritative prospective split. Source-selected count+FP same-prior-IC
+gradient/support control406585 COMPLETED4m32s on role-identical v4: all
+occupied sky count cells have positive intensity and IC directional gradient
+agrees to9.10e-6 relative, with5.40GiB host peak. This is a numerical
+partial-target bridge, **not** a fitted heldout prediction, calibrated
+source/group law, converged sampler or R2/N256 posterior. Old identity-mass
+HMC remains closed. No email. Details in the split record.

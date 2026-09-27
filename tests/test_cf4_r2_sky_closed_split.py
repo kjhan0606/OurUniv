@@ -24,3 +24,13 @@ def test_invalid_edge_index_fails_closed():
         pass
     else:
         raise AssertionError('out-of-range point index accepted')
+
+
+def test_cross_method_anchor_is_a_group_graph_edge():
+    # The first FP row links CF4 10 to source group A. The second edge is a
+    # non-FP distance anchor, not an FP row, but must close CF4 20 as well.
+    cf4, fp = close_group_marks(
+        [True], [0], [10], [], [10,20],
+        np.array(['A','A']), [False,False])
+    assert cf4 == {10,20}
+    assert fp == {'A'}
