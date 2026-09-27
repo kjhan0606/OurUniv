@@ -87,7 +87,8 @@ def main():
             x, hyper, group, tracer, fp, source, calibration_sd,
             count['train_keys'], count['train_counts'],
             count['heldout_keys'], count['heldout_counts'], mask,
-            box=BOX, hubble=common['H0_km_s_Mpc'], h=common['h'], n=N)
+            box=BOX, hubble=common['H0_km_s_Mpc'], h=common['h'], n=N,
+            rate_parameterization='all_faint_historical')
         minimum = jnp.min(intensity.reshape(-1)[count['train_keys']])
         held_minimum = jnp.min(intensity.reshape(-1)[count['heldout_keys']])
         return parts, jnp.stack((minimum, held_minimum))

@@ -20,7 +20,8 @@ def source_sky_count_fp_parts(rho_node, velocity_node, white_ic, white_hyper,
                               source_geometry, calibration_sd,
                               train_keys, train_counts, heldout_keys,
                               heldout_counts, heldout_voxel_mask, *,
-                              box=384., hubble=74.6, h=.746, n=128):
+                              box=384., hubble=74.6, h=.746, n=128,
+                              rate_parameterization='reference'):
     """Return train count, train FP, white prior, heldout count, and intensity.
 
     The nine tracer coordinates are development regularizers, not calibrated
@@ -35,16 +36,23 @@ def source_sky_count_fp_parts(rho_node, velocity_node, white_ic, white_hyper,
     # Match the old zero-coordinate prediction at the development LF centre,
     # while making the rate coordinate refer to the source's finite bright
     # interval. The broad white prior remains development regularization.
-    centre_reference_fraction = jnp.sum(
-        intrinsic_lf_bin_fractions(mstar=-23.28, alpha=-.94)[1:4])
-    log_rate = jnp.log(centre_reference_fraction) + 2.*white_tracer[0]
+    if rate_parameterization == 'reference':
+        centre_reference_fraction = jnp.sum(
+            intrinsic_lf_bin_fractions(mstar=-23.28, alpha=-.94)[1:4])
+        log_rate = jnp.log(centre_reference_fraction) + 2.*white_tracer[0]
+        reference_interval = (-25., -21.)
+    elif rate_parameterization == 'all_faint_historical':
+        log_rate = 2.*white_tracer[0]
+        reference_interval = None
+    else:
+        raise ValueError('unknown source-rate parameterization')
     bias = jnp.exp(.5*white_tracer[1:6])
     sigma_los = 100.*jnp.exp(.5*white_tracer[6])
     alpha = -1. + .06*jnp.exp(.5*white_tracer[7])
     mstar = -23.28 + .2*white_tracer[8]
     intrinsic = intrinsic_biased_source_masses(
         rho, log_rate, bias, mstar=mstar, alpha=alpha,
-        reference_interval=(-25., -21.))
+        reference_interval=reference_interval)
     intensity = predict_source_marked_intensity(
         source_geometry['positions'],
         jnp.moveaxis(velocity, 0, -1).reshape(-1, 3),

@@ -34,7 +34,8 @@ reference fraction reproduces the old five-bin masses exactly; the focused
 unit test checks this also near `alpha=-0.99`. The new prior on the reference
 rate remains a **development regularizer**, not a source-derived prior. The
 existing prior-IC control406585 and its scores remain historical outputs of
-the old rate coordinate; no previous result is silently relabelled.
+the old rate coordinate; its fixed control runner explicitly requests the
+historical parameterization, so no previous result is silently relabelled.
 
 Typed-H100 Slurm **406587 COMPLETED/exit0** (2m10s, peak host1.34GiB
 under5GiB request): all seven focused marked-count tests pass, including
