@@ -5,7 +5,9 @@ import jax.numpy as jnp
 import numpy as np
 
 from cf4_r2_marked_tracer_jax import (
+    intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
     predict_source_marked_intensity, source_mark_transfer,
+    sparse_marked_poisson_log_likelihood,
 )
 from cf4_r2_observed_magnitude_transfer import (
     observed_magnitude_transfer, twompp_k_correction_delta,
@@ -29,6 +31,30 @@ class MarkedTracerTests(unittest.TestCase):
             mu_r, mu_s, correction_shift_mag=twompp_k_correction_delta(
                 z_r, z_s))
         np.testing.assert_allclose(actual, expected, rtol=2e-12, atol=2e-13)
+
+    def test_intrinsic_rate_and_bias_are_distinct_mass_coordinates(self):
+        density = jnp.array([0., .5, 1.5])
+        bias = jnp.array([.6, .8, 1., 1.2, 1.4])
+        log_rate = jnp.log(2.)
+        source = intrinsic_biased_source_masses(density,log_rate,bias)
+        fraction = intrinsic_lf_bin_fractions()
+        np.testing.assert_allclose(np.asarray(source).sum(axis=1),
+                                   6.*np.asarray(fraction),rtol=1e-13)
+        np.testing.assert_array_equal(np.asarray(source)[:,0],0.)
+        derivative = jax.grad(lambda r: intrinsic_biased_source_masses(
+            density,r,bias).sum())(log_rate)
+        self.assertAlmostEqual(float(derivative),6.,places=11)
+
+    def test_sparse_marked_count_includes_all_empty_voxel_exposure(self):
+        intensity = jnp.array([[.5,1.2],[2.,.7]])
+        keys = jnp.array([1,2])
+        counts = jnp.array([2,1])
+        actual = sparse_marked_poisson_log_likelihood(intensity,keys,counts)
+        expected = 2*np.log(1.2)+np.log(2.)-np.log(2.)-4.4
+        self.assertAlmostEqual(float(actual),float(expected),places=12)
+        absent = sparse_marked_poisson_log_likelihood(
+            intensity.at[0,1].set(0.),keys,counts)
+        self.assertEqual(float(absent),float('-inf'))
 
     def test_deposited_mass_uses_source_selection_and_velocity_gradient(self):
         box = 96.
@@ -76,6 +102,53 @@ class MarkedTracerTests(unittest.TestCase):
         self.assertTrue(np.isfinite(derivative))
         self.assertGreater(abs(derivative), 1e-8)
         self.assertAlmostEqual(derivative, finite_difference, delta=2e-5)
+
+    def test_lf_shape_is_shared_by_intrinsic_mass_and_transfer(self):
+        fractions = intrinsic_lf_bin_fractions(mstar=-23.17, alpha=-.73)
+        np.testing.assert_allclose(np.asarray(fractions).sum(), 1., rtol=1e-13)
+        mass = jnp.asarray(fractions)[:, None]
+        position = jnp.array([[15., 12., 12.]])
+        radii = jnp.linspace(.001, 30., 3001)
+        kwargs = dict(observer=jnp.array([12., 12., 12.]),
+                      box_size_cMpc_h=24., hubble_km_s_Mpc=75., little_h=.75,
+                      radius_table_cMpc_h=radii,
+                      modulus_table_h=5*jnp.log10(radii)+25.,
+                      redshift_table=radii/3000., grid_size=4,
+                      radial_min_cMpc_h=1., radial_max_cMpc_h=10.,
+                      mstar=-23.17, alpha=-.73)
+        def selected(mstar):
+            true_mass = intrinsic_lf_bin_fractions(mstar=mstar, alpha=-.73)[:,None]
+            return predict_source_marked_intensity(
+                position, jnp.zeros((1,3)), true_mass, jnp.ones((2,1)),
+                **{**kwargs, 'mstar':mstar}).sum()
+        value = selected(-23.17)
+        self.assertTrue(np.isfinite(float(value)))
+        self.assertTrue(np.isfinite(float(jax.grad(selected)(-23.17))))
+        def selected_alpha(alpha):
+            true_mass = intrinsic_lf_bin_fractions(mstar=-23.17, alpha=alpha)[:,None]
+            return predict_source_marked_intensity(
+                position, jnp.zeros((1,3)), true_mass, jnp.ones((2,1)),
+                **{**kwargs, 'alpha':alpha}).sum()
+        alpha_gradient = float(jax.grad(selected_alpha)(-.73))
+        finite_difference = float((selected_alpha(-.7299)
+                                   -selected_alpha(-.7301))/.0002)
+        self.assertTrue(np.isfinite(alpha_gradient))
+        self.assertAlmostEqual(alpha_gradient, finite_difference, delta=2e-5)
+        trial = predict_source_marked_intensity(
+            position, jnp.zeros((1,3)), mass, jnp.ones((2,1)), **kwargs)
+        np.testing.assert_allclose(np.asarray(trial).sum(), float(value), rtol=1e-12)
+        # The imported low-z shape has alpha+1=0.06 and is the numerically
+        # more demanding current development reference.
+        def imported_alpha(alpha):
+            true_mass = intrinsic_lf_bin_fractions(mstar=-23.28, alpha=alpha)[:,None]
+            return predict_source_marked_intensity(
+                position, jnp.zeros((1,3)), true_mass, jnp.ones((2,1)),
+                **{**kwargs, 'mstar':-23.28, 'alpha':alpha}).sum()
+        imported_gradient = float(jax.grad(imported_alpha)(-.94))
+        imported_finite = float((imported_alpha(-.9399)
+                                 -imported_alpha(-.9401))/.0002)
+        self.assertTrue(np.isfinite(imported_gradient))
+        self.assertAlmostEqual(imported_gradient, imported_finite, delta=2e-5)
 
 
 if __name__ == '__main__':

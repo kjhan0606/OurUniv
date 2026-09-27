@@ -14,7 +14,7 @@ likelihood without those ingredients and a held-out/mock assessment.
 from __future__ import annotations
 
 import jax.numpy as jnp
-from jax.scipy.special import gammainc
+from jax.scipy.special import gammainc, gammaln
 
 from cf4_2mpp_joint_likelihood_jax import (
     _gaussian_hermite_rule, observer_centred_spherical_rsd_jax,
@@ -29,11 +29,17 @@ OBS_EDGES = (-25., -23.6666666666667, -22.3333333333333, -21.)
 
 def _lf_interval(lower, upper, *, mstar, alpha):
     shape = alpha + 1.
-    x_lower = jnp.power(10., .4*(mstar-lower))
-    x_upper = jnp.power(10., .4*(mstar-upper))
+    # Keep the argument to gammainc finite even at the unbounded intrinsic
+    # bin edges.  Masking its *output* is insufficient: reverse-mode AD can
+    # still encounter 0*inf at those inactive branches.
+    lower_infinite = jnp.isneginf(lower)
+    upper_infinite = jnp.isposinf(upper)
+    x_lower = jnp.power(10., .4*(mstar-jnp.where(lower_infinite,mstar,lower)))
+    x_upper = jnp.power(10., .4*(mstar-jnp.where(upper_infinite,mstar,upper)))
+    cdf_lower = jnp.where(lower_infinite,1.,gammainc(shape,x_lower))
+    cdf_upper = jnp.where(upper_infinite,0.,gammainc(shape,x_upper))
     return jnp.where(upper > lower,
-                     jnp.maximum(gammainc(shape, x_lower)
-                                 - gammainc(shape, x_upper), 0.), 0.)
+                     jnp.maximum(cdf_lower-cdf_upper, 0.), 0.)
 
 
 def source_mark_transfer(true_modulus_h, observed_modulus_h,
@@ -68,6 +74,64 @@ def source_mark_transfer(true_modulus_h, observed_modulus_h,
     return jnp.stack(rows)
 
 
+def intrinsic_lf_bin_fractions(*, mstar=-23.28, alpha=-.94):
+    """Five true-K LF fractions for the same shape used by the transfer.
+
+    The full faint tail is integrable only for ``alpha > -1``.  This helper
+    does not supply the LF normalization or a prior on its shape. Both LF
+    coordinates can be differentiated by the installed JAX incomplete-gamma
+    rule within the physically allowed ``alpha > -1`` domain.
+    """
+    if isinstance(alpha, (int, float)) and alpha <= -1.:
+        raise ValueError('unbounded intrinsic LF requires alpha > -1')
+    total = _lf_interval(-jnp.inf, jnp.inf, mstar=mstar, alpha=alpha)
+    return jnp.stack([_lf_interval(TRUE_EDGES[i], TRUE_EDGES[i+1],
+                                   mstar=mstar, alpha=alpha)/total
+                      for i in range(5)])
+
+
+def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
+                                   intrinsic_bias, *, mstar=-23.28,
+                                   alpha=-.94):
+    """Five intrinsic true-K masses from one matter field and LF shape.
+
+    Each luminosity response is normalized to unit spatial mean over the
+    full periodic box before multiplication by its LF fraction.  This keeps
+    the single intrinsic rate distinct from clustering bias. It does not
+    specify priors, unresolved/empty-cell galaxies, or source calibration.
+    The caller must keep intrinsic biases positive and alpha above -1.
+    """
+    flat = jnp.asarray(density).reshape(-1)
+    bias = jnp.asarray(intrinsic_bias)
+    if bias.shape != (5,) or flat.size == 0:
+        raise ValueError('five true-K biases and a nonempty density required')
+    occupied = flat[None, :] > 0
+    safe_density = jnp.where(occupied, flat[None, :], 1.)
+    response = jnp.where(occupied,
+                         jnp.exp(bias[:, None]*jnp.log(safe_density)), 0.)
+    response /= jnp.mean(response, axis=1, keepdims=True)
+    fractions = intrinsic_lf_bin_fractions(mstar=mstar, alpha=alpha)
+    return (jnp.exp(log_mean_rate_per_cell)*fractions[:, None]*response)
+
+
+def sparse_marked_poisson_log_likelihood(intensity, observed_keys,
+                                          observed_counts):
+    """One Poisson factor for binned selected counts, with no support floor.
+
+    ``intensity`` must already be scaled to the *same* sampling fraction and
+    mark definition as ``observed_counts``. All zero-count voxels contribute
+    through the dense integral. This factor must not be multiplied by another
+    likelihood for the same observed absolute-K bin frequencies.
+    """
+    if observed_keys.shape != observed_counts.shape:
+        raise ValueError('sparse observed count geometry mismatch')
+    flat = jnp.asarray(intensity).reshape(-1)
+    occupied = jnp.take(flat, observed_keys)
+    counts = jnp.asarray(observed_counts, dtype=flat.dtype)
+    return (jnp.sum(counts*jnp.log(occupied)-gammaln(counts+1.))
+            -jnp.sum(flat))
+
+
 def predict_source_marked_intensity(
     source_positions, source_velocities_km_s, intrinsic_bin_masses,
     angular_completeness, *, observer, box_size_cMpc_h,
@@ -75,6 +139,7 @@ def predict_source_marked_intensity(
     modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s=0., radial_min_cMpc_h=5.,
     radial_max_cMpc_h=180., quadrature_order=3,
+    mstar=-23.28, alpha=-.94,
 ):
     """Deposit source-selected K counts after spherical RSD/LOS convolution.
 
@@ -83,6 +148,8 @@ def predict_source_marked_intensity(
     has shape (2, nsource), one fixed-sightline value per apparent-K sample.
     The radial lookup tables must be monotone and include the selected volume.
     The supplied count masses/rates and LF shape are not calibrated here.
+    If LF parameters vary, the caller must rebuild the five intrinsic bin
+    masses using the same parameters (e.g. intrinsic_lf_bin_fractions).
     """
     positions = jnp.asarray(source_positions)
     velocity = jnp.asarray(source_velocities_km_s)
@@ -123,7 +190,8 @@ def predict_source_marked_intensity(
         observed_redshift = jnp.interp(observed_radius, radius_table,
                                        redshift_values)
         transfer = source_mark_transfer(true_modulus, observed_modulus,
-                                        true_redshift, observed_redshift)
+                                        true_redshift, observed_redshift,
+                                        mstar=mstar, alpha=alpha)
         selected = (observed_radius >= radial_min_cMpc_h) & (
             observed_radius <= radial_max_cMpc_h)
         for population in range(6):

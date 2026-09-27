@@ -9,6 +9,28 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+R2 LF-shape holdout2026-09-27: typed-H100406570 completed the first actual
+2M++ conditional-K check on49,489 eligible source-window rows, fitting seven
+predeclared sky octants and holding out8,368 rows in octant3. The imported
+low-z bright LF `alpha=-.94,Mstar=-23.28` scores only2.60 log units below
+the paper-default `-.73,-23.17` on that one correlated heldout region;
+neither is decisively certified, and the training fit is not an independent
+prior for the same count data. The source-selected count operator now carries
+consistent variable LF shape into its intrinsic fractions and observed-bin
+transfer; an unbounded-edge reverse-gradient NaN exposed by406571 was fixed,
+then three GPU regressions including alpha finite difference passed in
+406573 and the imported near-alpha=-1 shape passed406574. A separate
+intrinsic-rate/five-bias mass response and sparse Poisson factor passed the
+five-test A100406576 regression. This is observation-model evidence/numerical wiring, not rate,
+bias, FoG, CF4 group-selection or sampler calibration. Do not multiply the
+diagnostic apparent-class conditional-K score by the six-bin count score:
+it would reuse absolute-bin frequencies. R2/N256 posterior remains NO-GO.
+Prior joint count pilots consumed all57,238 eligible galaxies; their 2M++
+heldout prediction is missing despite frozen split flags. The next field
+target must train on a declared subset, scale its thinning intensity, and
+close CF4 group/point links across the heldout split to prevent leakage.
+No email. Details: `CF4_R2_LF_SHAPE_HELDOUT_20260927.md`.
+
 R2 selection-coordinate control2026-09-27: the observed six K-population
 labels use redshift-derived absolute magnitude, while the current count
 operator applies six archived radial/angular exposures after redshift-space
