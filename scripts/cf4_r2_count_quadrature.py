@@ -18,7 +18,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_count_quadrature_v2'
+OUT = BASE/'r2_count_quadrature_v3'
 SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
 SOURCE = BASE/'r2_marked_source_geometry_v1/geometry.npz'
 STATE = BASE/'r2_pm128_unconditional_v1/state.npz'
@@ -157,10 +157,25 @@ def main():
         comparison = {}
         for order in (3, 9):
             relative = np.abs(means_by_order[order]/reference-1.)
+            top_index = np.argsort(relative)[-10:][::-1]
+            worst_keys = []
+            for index in top_index:
+                key = int(train_keys[index])
+                mean_order = float(means_by_order[order][index])
+                mean_reference = float(reference[index])
+                worst_keys.append(dict(
+                    key=key, population=key//(N**3),
+                    voxel=list(np.unravel_index(key % (N**3), (N,)*3)),
+                    observed_count=int(train_counts[index]),
+                    mean_order=mean_order, mean_GH15=mean_reference,
+                    relative_error=float(relative[index]),
+                    observed_count_log_term_delta=float(
+                        train_counts[index]*np.log(mean_order/mean_reference))))
             comparison[f'GH{order}_vs_GH15'] = dict(
                 relative_error_quantiles=dict(zip(
                     ('p50','p90','p95','p99','max'),
                     np.quantile(relative, [0.50,0.90,0.95,0.99,1.0]).tolist())),
+                worst_keys=worst_keys,
                 poisson_loglike_delta_vs_GH15=(
                     report['orders'][str(order)]['train_log_likelihood']
                     - report['orders']['15']['train_log_likelihood']))
