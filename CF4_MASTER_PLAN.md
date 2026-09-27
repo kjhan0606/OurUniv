@@ -631,6 +631,15 @@ only the securely matched TF training subset alongside all counts and FP;
 unmatched TF source groups are not silently assigned count identities.
 Record: `CF4_R2_MATCHED_TF_CONDITIONAL_20260927.md`.
 
+The bounded matched-subset HMC development run is typed-H100 Slurm406501
+(2 archived count+FP terminal starts,192 warmup+128 retained per chain,
+all57,238 eligible counts, FP marks and2,484 securely matched TF training
+marks). The unlinked5,394 TF groups are not in this target. Typed-A100
+read-only assessment406502 depends `afterok:406501` and has no posterior
+promotion or N256 follow-on. Submission alone is not a chain or science pass;
+source selection/shared covariance remain R2 barriers. Record:
+`CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

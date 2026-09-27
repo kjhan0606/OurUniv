@@ -66,3 +66,10 @@ Output is isolated at
 `/gpfs/kjhan/CF4/z0_density/r2_all_method_sampler_pilot_v2_matched/`.
 Submission is not completion or a posterior pass. Source selection and
 shared covariance remain unresolved even if HMC traces stabilize.
+
+Read-only scalar/endpoint assessment job **406502** has an Slurm
+`afterok:406501` dependency. It will not start on a failed sampler; it
+checks exact192+128 transition ownership, split drift/Rhat/ESS for target,
+IC variance, shared TF zero and seven count nuisances, plus the two terminal
+24-cMpc/h blocked density states. Endpoint agreement is not a posterior
+mean check. No automatic posterior promotion or N256 job is chained.
