@@ -31,6 +31,21 @@ joint calibration. Do not plug old six published `nbar` values into a new
 true-bin process or restart long HMC before its target is fixed. No email was
 sent and no R2/N256 posterior was promoted.
 
+R2 source-marked count entry2026-09-27: a new differentiable source-side
+five-intrinsic-to-six-observed K operator moves corrected apparent/absolute
+marks with each coherent+stochastic LOS displacement, then deposits selected
+mass; it does not multiply the old exposure after RSD. A100406567 passed two
+reference/mass/velocity-gradient tests. First H100406568 failed before science
+on a missing `healpy` import in the GPU environment; two-environment retry
+H100406569 COMPLETED/exit0. On one saved **unconditional** N128 PM state,
+all45,776 observed population-cells have positive model intensity, compiled
+forward time42.13s, host peak2.71GiB. The unit intrinsic rate, fixed b=1,
+Schechter within-bin shape and eight-subcell angular map are development
+assumptions, not a fit. Source group/point inclusion and shared covariance
+remain uncalibrated, and the old nonstationary identity-mass HMC line stays
+closed. No heldout predictive pass, R2/N256 posterior, LG role or email.
+Details: `CF4_R2_SELECTION_COORDINATE_20260927.md`.
+
 The user directs omitting new TNG data if they are not indispensable. They
 are not needed to begin the R2 actual CF4+galaxy present-field inference, so
 the proposed hydro-to-Dark matching download and its unsubmitted Slurm job

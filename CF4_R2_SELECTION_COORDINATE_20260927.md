@@ -112,6 +112,67 @@ materially different blocked/preconditioned sampler be tested with independent
 starts; no N256 posterior or uncertainty map is licensed by this diagnostic.
 The existing identity-mass HMC geometry line is closed.
 
+## Source-marked count connection (bounded next control)
+
+`src/cf4_r2_marked_tracer_jax.py` now implements a differentiable source-side
+alternative: five intrinsic absolute-K masses at each real-space count voxel,
+the published mean corrected-K shift and apparent/observed-absolute binning
+at each coherent+stochastic LOS destination, fixed-sightline angular
+completeness and observed-radius support, then deposition into six observed
+count populations. It does **not** multiply the archived observed-voxel
+exposure afterward. Intrinsic rates, within-bin LF shape, nonlinear bias,
+FoG, survey inclusion and CF4 group overlap remain assumptions or unknowns;
+the old six published `nbar`/bias values are not reused as intrinsic values.
+
+The two small numerical tests in typed-A100 Slurm406567 passed: the JAX mark
+transfer agrees with the NumPy reference including corrected K, and source
+selection followed by deposition preserves the expected selected mass and
+has a finite, matched LOS-velocity derivative. This is kernel wiring only.
+
+The next one-state N128 check uses the preserved **unconditional** PM state,
+conservative native-node mass/momentum readout at count-voxel centres, and
+eight-subcell angular averages from the existing public ARES masks. It sets
+one arbitrary unit intrinsic count per source cell and b=1, partitioned by
+the assumed Schechter LF; these are deliberately not fitted parameters or
+new priors. Evaluate forward cost and whether the 45,776 actually occupied
+population-cells have positive support. Do not score or fit a posterior,
+launch another HMC chain, infer bias from this state, or certify angular
+quadrature from one support result. Typed H100/4 CPU/24 GiB/30 min is a
+bounded upper resource request (estimated host peak <=20 GiB plus 20%).
+
+Q-GOAL: this tests whether a source-consistent K/RSD count operator can be
+connected to the same kind of evolved matter/velocity state needed for R2.
+Q-LEAN: one saved-state forward evaluation, no new gravity simulation or
+validation ladder. MW/M31/M33 are **not** identified on this coarse state;
+at R3 their candidate roles (including unresolved M33) must be inferred
+from each NEW evolved state and their observables condition that same state,
+without native-truth IDs selecting candidates.
+
+The first H100 submission **406568 FAILED before calculation** because the
+JAX environment lacks `healpy`; the separate geometry environment has it.
+The same-scope retry **406569 COMPLETED/exit0** in 61 s. It prepared the
+fixed public-mask/cosmology tables using Python 3.13, then ran the source-
+marked forward operator in the GPU JAX environment. The result is
+`/gpfs/kjhan/CF4/z0_density/r2_marked_source_n128_v2/result.json`, with
+geometry in `r2_marked_source_geometry_v1/geometry.npz`. All **45,776**
+occupied population-cells have positive intensity (minimum `1.07025e-5` in
+the arbitrary unit-rate model); compiled forward time was **42.13 s** and
+host peak **2.71 GiB**. The six predicted totals are deliberately *not*
+compared to 57,238 observed galaxies as a fit: the unit intrinsic rate and
+b=1 were declared mechanics inputs. This establishes forward feasibility
+and support for one saved state, **not** a CF4+2M++ likelihood calibration,
+heldout prediction, mixing, an N256 map or posterior uncertainty. In
+particular, eight angular subcell samples are not certified at mask edges,
+the selected-group/point law is unresolved, and no new gravity evolution ran.
+
+Next substantive R2 work is to make the intrinsic rate, luminosity-dependent
+bias and LOS scatter *joint uncertain parameters* of the source-selected
+count law while preserving full-count/conditional-CF4 ownership. Any
+training-only fit must test heldout counts/CF4 marks and simulation-based
+coverage, and a distinct preconditioned/blocked IC sampler must then reach
+stationarity before N256. The passed forward screen alone does not justify
+another identity-mass HMC path-length trial.
+
 Q-GOAL: correct the observational mapping that informs the same evolved IC
 and its z=0 density/velocity state. Q-LEAN: one analytic transfer and one
 fixed comparison, without a new gravity simulation, training series or
