@@ -17,7 +17,11 @@ minimum-image wrapping it is `(-174.25,33.12,0)`. The changed ray contributes
 at observed radius 177.37 cMpc/h, still within the 180 cMpc/h selection limit,
 while both targets built from the original signed ray have exactly zero TSC
 weight in that voxel. The focused regression
-`test_periodic_coherent_wrap_can_leave_original_two_ray_support` passes.
+`test_periodic_coherent_wrap_can_leave_original_two_ray_support` compares a
+two-source wrapped/unwrapped case: a local neighborhood rebuilt from the
+actual shifted positions matches full-source five-bin densities and the
+normalized mark factor; the original-ray list drops the wrapped source and
+changes the factor. It passes.
 
 Therefore:
 
@@ -29,15 +33,29 @@ Therefore:
   source positions of one archived state. It is a frozen-state approximation
   control only, not a live-field support construction.
 
-## Next bounded calculation
+## Fixed-state v6 comparison
 
-Run the existing source-linked continuous FP factor on the v6 graph-closed
-training singleton set, comparing each fixed-state 8-sigma neighborhood
-against the full 2,097,152-source calculation. Report all per-group
-unnormalized five-bin source-density discrepancies and normalized FP-factor
-differences. Compare v5/v6 training identities explicitly; do not read
-heldout marks. This detects indexing errors on the archived state but does
-not prove validity as the field changes.
+Typed-H100 Slurm **407082** completed all 1,414 v6 training groups in 312 s
+(4 GiB requested; host peak 1.33 GiB). Per-group state-frozen 8-sigma
+neighborhood factors agree with the full 2,097,152-source reference within
+`1.78e-15` absolute normalized log-factor error and `1.74e-13` maximum
+relative five-bin density-sum error. Candidate counts are p50 612, p90 696,
+p99 766, maximum 884. The v6 training identity set removes exactly three
+v5 groups (`T60475`, `T66514`, `T81318`) and adds none, as expected from the
+graph buffer. Heldout marks were not read.
+
+The focused wrap regression passes after the synthetic two-source comparison.
+`py_compile` also passes. The full marked-tracer unittest module was started
+on the login node but stopped by the driver after three minutes while an
+existing incomplete-gamma shape-gradient test was still computing; this was
+not an assertion failure, and that broader suite is not claimed as passed.
+
+This establishes fixed-state index mechanics only. The dynamic shifted-point
+wrap regression validates a two-source perturbation, not an all-group live
+field transition or sampler. The 8-sigma candidate truncation remains an
+explicit approximation despite its tiny discrepancy on this saved state. No
+field fit, sampler, heldout score, N256 calculation, or production posterior
+was run.
 
 The run must not perform a field fit, sampler, heldout prediction, N256
 calculation, new gravity simulation, external archive download, or output
@@ -55,8 +73,12 @@ the CF4-conditioned z=0 target and keeps the same evolved field observable to
 future low-k/high-k and LG constraints. It is not itself the delivered z=0
 posterior.
 
-**Q-LEAN:** one full-source reference comparison across the v6 training links
-is proportionate; no support-threshold sweep or new simulation is justified.
+**Q-LEAN:** the one full-source comparison across v6 training links is complete;
+no support-threshold sweep or new simulation is justified. The next necessary
+work is not another mechanics sweep: it is a defensible selection/association
+and shared group-redshift/FP covariance model, followed by a live-field
+stationary posterior and untouched heldout prediction. Do not advance to R3
+or label R2 complete without that science result.
 
 **MW/M31/M33:** all remain latent roles on the same NEW field. MW/M31 identity
 remains ambiguous and M33 can remain unresolved; their observables must

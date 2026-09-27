@@ -1,4 +1,5 @@
 import unittest
+import math
 
 import jax
 import jax.numpy as jnp
@@ -299,26 +300,34 @@ class MarkedTracerTests(unittest.TestCase):
         """A face-crossing source can rotate the post-RSD ray in a periodic box."""
         box, grid_size = 384., 128
         observer = jnp.array([192., 192., 192.])
-        position = jnp.array([[382., 222., 192.]])
+        wrapped_position = jnp.array([[382., 222., 192.]])
         # The velocity is radial at the original source and produces a
         # 20 cMpc/h coherent displacement. It crosses the +x box face.
         direction = jnp.array([190., 30., 0.])
         direction = direction/jnp.linalg.norm(direction)
-        velocity = (2000.*direction)[None, :]
-        shifted, displacement, shifted_rhat = observer_centred_spherical_rsd_jax(
-            position, velocity, observer, box, 74.6, little_h=.746,
+        wrapped_velocity = (2000.*direction)[None, :]
+        shifted_wrapped, displacement, shifted_rhat = observer_centred_spherical_rsd_jax(
+            wrapped_position, wrapped_velocity, observer, box, 74.6, little_h=.746,
             scale_factor=1.)
         self.assertAlmostEqual(float(displacement[0]), 20., places=12)
-        shifted_relative = (shifted-observer+box/2.) % box-box/2.
+        shifted_relative = (shifted_wrapped-observer+box/2.) % box-box/2.
         observed_radius = float(jnp.linalg.norm(shifted_relative[0]))
         self.assertGreater(float(jnp.linalg.norm(
             shifted_rhat[0]-direction)), .5)
 
-        # This cell receives nonzero mass from the actual post-wrap direction.
+        # A second, unwrapped source at the same shifted point makes the
+        # normalized mark factor sensitive to omitting the wrapped source.
+        position = jnp.concatenate((wrapped_position, shifted_wrapped), axis=0)
+        velocity = jnp.concatenate((wrapped_velocity, jnp.zeros((1, 3))), axis=0)
+        shifted, _, _ = observer_centred_spherical_rsd_jax(
+            position, velocity, observer, box, 74.6, little_h=.746,
+            scale_factor=1.)
         voxel = (5, 75, 64)
         # The wrap/support assertion is geometric; a two-point interpolation
         # table keeps this unit test independent of the production distance grid.
-        radii = jnp.array([.001, 384.])
+        true_relative = (wrapped_position-observer+box/2.) % box-box/2.
+        true_radius = float(jnp.linalg.norm(true_relative[0]))
+        radii = jnp.asarray(sorted((.001, observed_radius, true_radius, 384.)))
         args = dict(observer=observer, box_size_cMpc_h=box,
                     hubble_km_s_Mpc=74.6, little_h=.746,
                     radius_table_cMpc_h=radii,
@@ -326,13 +335,29 @@ class MarkedTracerTests(unittest.TestCase):
                     redshift_table=radii/3000., grid_size=grid_size,
                     sigma_los_km_s=100., radial_min_cMpc_h=5.,
                     radial_max_cMpc_h=180.)
+        intrinsic = jnp.ones((5, 2))
         density = predict_source_marked_radial_key_density(
-            position, velocity, jnp.ones((5, 1)), jnp.ones((2, 1)),
+            position, velocity, intrinsic, jnp.ones((2, 2)),
             0, voxel, observed_radius, **args)
-        self.assertGreater(float(jnp.sum(density)), 0.)
+        self.assertTrue(np.all(np.asarray(density.sum(axis=0)) > 0.))
 
-        # But both signed targets built from the original ray miss that same
-        # voxel. A static original-ray support list is therefore not exact.
+        # A dynamic neighborhood around actual shifted positions contains both
+        # sources and agrees with all-source density and mark-factor totals.
+        spacing = box/grid_size
+        center = (np.asarray(voxel, dtype=np.float64)+.5)*spacing
+        shifted_host = np.asarray(shifted)
+        delta = (shifted_host-center+box/2.) % box-box/2.
+        search_radius = math.sqrt(3.)*1.5*spacing + 8.*(.746*100./74.6)
+        local_ids = np.flatnonzero(np.sum(delta*delta, axis=1)
+                                   <= search_radius**2+1e-9)
+        np.testing.assert_array_equal(local_ids, [0, 1])
+        local_density = density[:, local_ids]
+        np.testing.assert_allclose(np.asarray(local_density.sum(axis=1)),
+                                   np.asarray(density.sum(axis=1)),
+                                   rtol=1e-12, atol=1e-14)
+
+        # The two original signed rays omit source 0 even though it contributes
+        # after wrapping; the correct dynamically shifted neighborhood does not.
         original_relative = (position-observer+box/2.) % box-box/2.
         original_direction = original_relative/jnp.linalg.norm(
             original_relative, axis=1)[:, None]
@@ -342,8 +367,21 @@ class MarkedTracerTests(unittest.TestCase):
             original_plus, voxel, grid_size, box)
         minus_weight = tsc_weight_at_voxel(
             original_minus, voxel, grid_size, box)
-        self.assertEqual(float(plus_weight[0]), 0.)
-        self.assertEqual(float(minus_weight[0]), 0.)
+        ray_ids = np.flatnonzero(np.asarray(plus_weight+minus_weight) > 0.)
+        np.testing.assert_array_equal(ray_ids, [1])
+
+        log_association = jnp.zeros((5, 2))
+        log_mark = jnp.zeros((5, 2)).at[:, 1].set(jnp.log(4.))
+        full_factor = conditional_single_link_logfactor(
+            density, log_association, log_mark)
+        local_factor = conditional_single_link_logfactor(
+            density[:, local_ids], log_association[:, local_ids],
+            log_mark[:, local_ids])
+        original_ray_factor = conditional_single_link_logfactor(
+            density[:, ray_ids], log_association[:, ray_ids],
+            log_mark[:, ray_ids])
+        self.assertAlmostEqual(float(full_factor), float(local_factor), places=12)
+        self.assertGreater(abs(float(full_factor-original_ray_factor)), 1e-3)
 
     def test_lf_shape_is_shared_by_intrinsic_mass_and_transfer(self):
         fractions = intrinsic_lf_bin_fractions(mstar=-23.17, alpha=-.73)

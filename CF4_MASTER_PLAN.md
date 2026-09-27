@@ -2083,14 +2083,22 @@ the current operator contributes to a TSC voxel missed by both signed
 original rays. A focused regression test covers this failure. Do not adopt a
 no-wrap posterior restriction or change the operator silently. The existing
 8-sigma neighborhood is built from actual shifted positions at one saved
-field, so it is a frozen-state control, not live-field support. Next run one
-v6 train-only all-source comparison of every secure one-point/one-FP-row link
-against that frozen-state neighborhood, reporting v5/v6 identity removals.
-This is mechanics only: no field fit, sampler, heldout score, N256 or
-production posterior. Afterwards the source/selection and shared-group
-covariance model still need calibration before R2 inference. MW/M31/M33 remain
+field, so it is a frozen-state control, not live-field support. Typed-H100
+Slurm407082 then compared all1,414 v6 secure one-point/one-FP-row training
+links against the full2,097,152-source calculation: max normalized log-factor
+error1.78e-15 and max relative five-bin density-sum error1.74e-13. The v6
+training link set removes v5 groups T60475/T66514/T81318 and adds none. A
+focused two-source wrap regression confirms the dynamically shifted-position
+neighborhood matches the full factor while the original-ray list omits the
+wrapped source. These are fixed-state/support mechanics only: the 8-sigma
+truncation remains an approximation, no live-field posterior, sampler,
+heldout score or N256 result exists. R2 still requires defensible
+selection/association and shared group-redshift/FP covariance, followed by a
+stationary live-field posterior and untouched heldout prediction; do not
+advance to R3 or label R2 complete without them. MW/M31/M33 remain
 latent same-new-field roles (MW/M31 ambiguity; M33 may be unresolved); native
 truth IDs remain evaluation-only. Q-GOAL: this validates one necessary
 same-field likelihood factor and preserves graph-closed heldout separation.
-Q-LEAN: one exact full-source comparison, no new simulation/archive/search
-ladder. Details: `CF4_R2_LIVE_SUPPORT_GEOMETRY_20260928.md`. No email.
+Q-LEAN: one full-source reference comparison, no new simulation/archive/search
+ladder or further threshold sweep. Details:
+`CF4_R2_LIVE_SUPPORT_GEOMETRY_20260928.md`. No email.
