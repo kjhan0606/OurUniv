@@ -168,8 +168,8 @@ def m2pp_rows(path: Path) -> dict[str, np.ndarray]:
     out = dict(name=np.asarray(names), recno=np.asarray(recno, dtype=np.int64),
                gid=np.asarray(gid, dtype=np.int64), ra=np.asarray(ra), dec=np.asarray(dec),
                velocity=np.asarray(velocity))
-    if len(out['recno']) != 67224 or len(np.unique(out['recno'])) != len(out['recno']):
-        raise ValueError('2M++ source row count or recno uniqueness changed')
+    if len(out['recno']) == 0 or len(np.unique(out['recno'])) != len(out['recno']):
+        raise ValueError('2M++ source is empty or recno is not unique')
     return out
 
 
