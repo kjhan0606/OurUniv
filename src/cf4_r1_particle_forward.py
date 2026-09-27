@@ -75,7 +75,14 @@ def make_dynamics(settings, *, mesh_ratio=1, time_factor=1):
 
 
 def particle_grid(position, velocity, mass, conf):
-    """CIC integrals with EXPLICIT weights, consistent for any mesh/particle ratio."""
+    """CIC integrals with explicit weights on native NODE-origin0 PM meshes.
+
+    Sample locations are i*cell_size, not (i+.5)*cell_size: scatter's offset
+    defaults to0. Consumers must use origin_fraction=0 or explicitly remap
+    conserved moments. Calling a cell-centre reader without that override
+    shifts the observation read by half a cell. Valid for any mesh/particle
+    ratio; this convention does not move particles or the observer.
+    """
     from pmwd import scatter
     from pmwd.particles import Particles
     particles = Particles.from_pos(conf, position)

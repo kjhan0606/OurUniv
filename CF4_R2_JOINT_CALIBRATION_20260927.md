@@ -1,5 +1,12 @@
 # R2/5 — joint calibration and selected-radial-shape bundle
 
+Subsequent2026-09-27 correction: this preserved fixed-state calculation read
+native PM node meshes with a half-cell-centre convention. Its numerical
+sampling result is not a correctly registered field calibration. Values below
+remain historical evidence, not transferable priors. The confirmed origin0
+contract and live-field repair are recorded in
+`CF4_R2_LIVE_FIELD_BUNDLE_20260927.md`; original files are preserved.
+
 Reuse the saved unconditional N128/384 state and the original10,020 FP and
 114 linked non-FP measurements. No new gravity, TNG, group-scatter sweep or
 independent prior made from the preceding fit. Deliver one conditional joint

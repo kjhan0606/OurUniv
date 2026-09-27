@@ -33,11 +33,14 @@ def main():
     parser.add_argument('--latent-group', action='store_true')
     parser.add_argument('--cross-method-anchors', action='store_true')
     parser.add_argument('--joint-calibration-cache', action='store_true')
+    parser.add_argument('--live-field-geometry', action='store_true')
     args = parser.parse_args()
-    if sum((args.latent_group, args.cross_method_anchors, args.joint_calibration_cache)) > 1:
+    if sum((args.latent_group, args.cross_method_anchors, args.joint_calibration_cache,
+            args.live_field_geometry)) > 1:
         parser.error('do not combine uncalibrated latent-role and anchor controls')
     args.same_field_density = (args.same_field_density or args.latent_group
-                              or args.cross_method_anchors or args.joint_calibration_cache)
+                              or args.cross_method_anchors or args.joint_calibration_cache
+                              or args.live_field_geometry)
     out = BASE/'r2_fp_same_field_radial_v1' if args.same_field_density else OUT
     if args.latent_group:
         out = BASE/'r2_fp_latent_group_v1'
@@ -45,6 +48,8 @@ def main():
         out = BASE/'r2_cross_method_same_field_v1'
     if args.joint_calibration_cache:
         out = BASE/'r2_joint_calibration_cache_v1'
+    if args.live_field_geometry:
+        out = BASE/'r2_live_field_geometry_v1'
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
     if out.exists():
@@ -80,7 +85,7 @@ def main():
         raise ValueError('split leaks source group')
     group_hold = hold > 0
     anchor_data = None
-    if args.cross_method_anchors or args.joint_calibration_cache:
+    if args.cross_method_anchors or args.joint_calibration_cache or args.live_field_geometry:
         anchor_base = BASE/'r2_cross_method_anchors_v1'
         with np.load(anchor_base/'anchors.npz') as f:
             anchor_data = {k:f[k].copy() for k in f.files}
@@ -143,9 +148,10 @@ def main():
     dtab = 2997.92458*cumulative_trapezoid(1/np.sqrt(.31*(1+ztab)**3+.69),ztab,initial=0)
     dzgroup = np.interp(zgroup,ztab,dtab)
     dzrow = jnp.asarray(np.interp(data['zgroup'],ztab,dtab))
-    with np.load(BASE/'r2_pm128_unconditional_v1/state.npz') as f:
-        velocity = jnp.asarray(f['velocity_km_s'],dtype=jnp.float64)
-        density = jnp.asarray(f['rho'],dtype=jnp.float64) if args.same_field_density else None
+    if not args.live_field_geometry:
+        with np.load(BASE/'r2_pm128_unconditional_v1/state.npz') as f:
+            velocity = jnp.asarray(f['velocity_km_s'],dtype=jnp.float64)
+            density = jnp.asarray(f['rho'],dtype=jnp.float64) if args.same_field_density else None
     gid = jnp.asarray(row_group)
     moments = [jnp.asarray(data[k]) for k in ('eta_mean','eta_std','eta_alpha')]
     train = jnp.asarray(~group_hold)
@@ -161,6 +167,24 @@ def main():
         weight[:,[0,-1]] *= .5
         zcos = jnp.asarray(np.interp(dist,dtab,ztab))
         positions = jnp.asarray(192.+dirs[:,None,:]*dist[:,:,None])
+        if args.live_field_geometry:
+            # Geometry is independent of the PM state. Never carry cached rho
+            # or a frozen velocity kernel into live-field inference.
+            cache = dict(distance=dist,quadrature_weight=weight,directions=dirs,
+                zcos=np.asarray(zcos),redshift_sufficient=np.asarray(suff[150.]),
+                row_group=row_group,dz_row=np.asarray(dzrow),group_holdout=group_hold,
+                group_labels=group_labels,method_names=np.asarray(method_names),
+                predicted_modulus=5*np.log10((1+zgroup[:,None])*dist/.746)+25,
+                anchor_group=anchor_data['group_index'],anchor_modulus=anchor_data['modulus'],
+                anchor_error=anchor_data['error'],anchor_method=np.asarray(anchor_method),
+                **{k:data[k] for k in ('eta_mean','eta_std','eta_alpha')})
+            out.mkdir(parents=True,exist_ok=True)
+            np.savez_compressed(out/f'geometry_q{nq}.npz',**cache)
+            print(f'field-independent source geometry Q={nq} saved',flush=True)
+            continue
+        # Historical fixed-state controls used a half-cell origin. Preserve
+        # these paths for exact reproduction only; the live module uses the
+        # native PMWD node origin0. See CF4_R2_LIVE_FIELD_BUNDLE_20260927.md.
         radial = sum(read_centred(velocity[k],positions,384.)*jnp.asarray(dirs[:,k,None]) for k in range(3))
         rho = read_centred(density,positions,384.) if args.same_field_density else None
         d = jnp.asarray(dist)
@@ -278,14 +302,19 @@ def main():
                     raise FloatingPointError('nonfinite marginal calculation')
                 trials.append(trial)
                 print(json.dumps(trial),flush=True)
-    if args.joint_calibration_cache:
+    if args.joint_calibration_cache or args.live_field_geometry:
         inputs = [input_path,anchor_base/'anchors.npz',anchor_base/'fp_group_moments.npz',
-                  BASE/'r2_pm128_unconditional_v1/state.npz']
-        manifest = dict(classification='FIXED_STATE_CONDITIONAL_CALIBRATION_GEOMETRY',
+                  ROOT/'data/2mpp_catalog.csv',ROOT/'data/cf4_2mpp_crossmatch_v1.csv',
+                  BASE/'r2_point_mark_manifest_v1/points.npz',SOURCE]
+        if not args.live_field_geometry:
+            inputs.append(BASE/'r2_pm128_unconditional_v1/state.npz')
+        manifest = dict(classification=('LIVE_FIELD_INDEPENDENT_OBSERVATION_GEOMETRY'
+                            if args.live_field_geometry else 'FIXED_STATE_CONDITIONAL_CALIBRATION_GEOMETRY'),
             job_id=os.environ['SLURM_JOB_ID'],train_groups=int((~group_hold).sum()),
             holdout_groups=int(group_hold.sum()),FP_rows=len(row_group),
             nonFP_rows=len(anchor_data['PGC']),method_names=method_names,
             fitted_offsets_used=False,new_gravity_runs=0,R2_posterior=False,
+            field_dependent_values_cached=not args.live_field_geometry,
             source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},
             code_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in (Path(__file__),ROOT/'src/cf4_r2_fp_group_marginal.py')},

@@ -441,6 +441,31 @@ remain unresolved. No new gravity, field inference or actual R2 posterior.
 Evidence, explicit development prior and MW/M31/M33 same-new-field limits:
 `CF4_R2_JOINT_CALIBRATION_20260927.md`.
 
+R2 live-field entry2026-09-27 identifies a native PM registration error:
+particle_grid uses PMWD node-origin0 scatter while recent source/group
+controls read it with half-cell origin.5 (1.5cMpc/h per axis at N128).
+Native scatter/gather test confirms this; prior conditional/quadrature passes
+do not certify that spatial registration. Preserve their raw results, but do
+not transfer their fitted offsets to field inference. New live source-mark
+operator explicitly reads origin0 and reconstructs its density measure AND
+velocity-dependent kernel from every evolved field. No observer/particle
+shift or gravity-kernel change, no inclusive-count/BGc product or production.
+Fable returned no verdict within300s; Astra backup CONDITIONALLY supports
+the bounded partial-model coupling, with its mark-only adjoint correction
+adopted.406349 failed on a radial-constant synthetic fixture assumption;
+corrected same-scope H100406350 COMPLETED8m42s/exit0 with4 tests passed.
+Two N128 IC/nuisance chains each ran32 warmup+32 retained transitions,
+acceptance.9359/.8996, retained divergences0. Mark-only initial adjoint error
+0.00252%; last-state Q257/513 sensitivity-0.00233/+0.00115 train/heldout.
+Four predetermined IC+same-current-field states and one starting state are
+preserved (~432MB including reusable geometry). This is transition/cost
+implementation, not convergence, a calibrated full R2 posterior, target1.5
+resolution or LG identification. Close the bounded pilot; next selected-
+group/shared-error model and legitimate galaxy-data connection must enter
+the LIVE operator, not another frozen-field sweep or blind chain extension.
+Record:
+`CF4_R2_LIVE_FIELD_BUNDLE_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
