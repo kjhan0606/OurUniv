@@ -2073,3 +2073,24 @@ identity closure, no new simulation or calibration ladder. MW/M31 remain
 ambiguous latent roles, M33 remains unresolved when unsupported; all three
 observables must act on that same NEW evolved field and native identities are
 evaluation-only. Details and limits: `CF4_R2_GRAPH_CLOSURE_20260928.md`.
+
+R2 linked-FP live-support geometry check2026-09-28: the proposed static
+original-direction ray list is not exact under the current periodic RSD
+operator. A 20 cMpc/h coherent displacement of a source at minimum-image
+relative position (190,30,0) in the 384 cMpc/h box wraps x and changes the
+post-RSD radial direction; at observed radius177.37 cMpc/h (inside the180 cut)
+the current operator contributes to a TSC voxel missed by both signed
+original rays. A focused regression test covers this failure. Do not adopt a
+no-wrap posterior restriction or change the operator silently. The existing
+8-sigma neighborhood is built from actual shifted positions at one saved
+field, so it is a frozen-state control, not live-field support. Next run one
+v6 train-only all-source comparison of every secure one-point/one-FP-row link
+against that frozen-state neighborhood, reporting v5/v6 identity removals.
+This is mechanics only: no field fit, sampler, heldout score, N256 or
+production posterior. Afterwards the source/selection and shared-group
+covariance model still need calibration before R2 inference. MW/M31/M33 remain
+latent same-new-field roles (MW/M31 ambiguity; M33 may be unresolved); native
+truth IDs remain evaluation-only. Q-GOAL: this validates one necessary
+same-field likelihood factor and preserves graph-closed heldout separation.
+Q-LEAN: one exact full-source comparison, no new simulation/archive/search
+ladder. Details: `CF4_R2_LIVE_SUPPORT_GEOMETRY_20260928.md`. No email.

@@ -13,7 +13,9 @@ from cf4_r2_marked_tracer_jax import (
     source_mark_transfer, tsc_weight_at_voxel,
     sparse_marked_poisson_log_likelihood,
 )
-from cf4_2mpp_joint_likelihood_jax import tsc_deposit_jax
+from cf4_2mpp_joint_likelihood_jax import (
+    observer_centred_spherical_rsd_jax, tsc_deposit_jax,
+)
 from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
 from cf4_r2_observed_magnitude_transfer import (
     observed_magnitude_transfer, twompp_k_correction_delta,
@@ -292,6 +294,56 @@ class MarkedTracerTests(unittest.TestCase):
         self.assertAlmostEqual(float(observed.sum()),
                                transfer*(pdf_plus*plus+pdf_minus*minus),
                                delta=1e-12)
+
+    def test_periodic_coherent_wrap_can_leave_original_two_ray_support(self):
+        """A face-crossing source can rotate the post-RSD ray in a periodic box."""
+        box, grid_size = 384., 128
+        observer = jnp.array([192., 192., 192.])
+        position = jnp.array([[382., 222., 192.]])
+        # The velocity is radial at the original source and produces a
+        # 20 cMpc/h coherent displacement. It crosses the +x box face.
+        direction = jnp.array([190., 30., 0.])
+        direction = direction/jnp.linalg.norm(direction)
+        velocity = (2000.*direction)[None, :]
+        shifted, displacement, shifted_rhat = observer_centred_spherical_rsd_jax(
+            position, velocity, observer, box, 74.6, little_h=.746,
+            scale_factor=1.)
+        self.assertAlmostEqual(float(displacement[0]), 20., places=12)
+        shifted_relative = (shifted-observer+box/2.) % box-box/2.
+        observed_radius = float(jnp.linalg.norm(shifted_relative[0]))
+        self.assertGreater(float(jnp.linalg.norm(
+            shifted_rhat[0]-direction)), .5)
+
+        # This cell receives nonzero mass from the actual post-wrap direction.
+        voxel = (5, 75, 64)
+        # The wrap/support assertion is geometric; a two-point interpolation
+        # table keeps this unit test independent of the production distance grid.
+        radii = jnp.array([.001, 384.])
+        args = dict(observer=observer, box_size_cMpc_h=box,
+                    hubble_km_s_Mpc=74.6, little_h=.746,
+                    radius_table_cMpc_h=radii,
+                    modulus_table_h=5*jnp.log10(radii)+25.,
+                    redshift_table=radii/3000., grid_size=grid_size,
+                    sigma_los_km_s=100., radial_min_cMpc_h=5.,
+                    radial_max_cMpc_h=180.)
+        density = predict_source_marked_radial_key_density(
+            position, velocity, jnp.ones((5, 1)), jnp.ones((2, 1)),
+            0, voxel, observed_radius, **args)
+        self.assertGreater(float(jnp.sum(density)), 0.)
+
+        # But both signed targets built from the original ray miss that same
+        # voxel. A static original-ray support list is therefore not exact.
+        original_relative = (position-observer+box/2.) % box-box/2.
+        original_direction = original_relative/jnp.linalg.norm(
+            original_relative, axis=1)[:, None]
+        original_plus = (observer+observed_radius*original_direction) % box
+        original_minus = (observer-observed_radius*original_direction) % box
+        plus_weight = tsc_weight_at_voxel(
+            original_plus, voxel, grid_size, box)
+        minus_weight = tsc_weight_at_voxel(
+            original_minus, voxel, grid_size, box)
+        self.assertEqual(float(plus_weight[0]), 0.)
+        self.assertEqual(float(minus_weight[0]), 0.)
 
     def test_lf_shape_is_shared_by_intrinsic_mass_and_transfer(self):
         fractions = intrinsic_lf_bin_fractions(mstar=-23.17, alpha=-.73)

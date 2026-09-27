@@ -23,8 +23,10 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_linked_fp_sparse_train_v1'
-SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
+DEFAULT_OUT = BASE/'r2_linked_fp_sparse_train_v1'
+DEFAULT_SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
+OUT = Path(os.environ.get('CF4_R2_OUT_DIR', str(DEFAULT_OUT)))
+SPLIT = Path(os.environ.get('CF4_R2_SPLIT_PATH', str(DEFAULT_SPLIT)))
 POINTS = BASE/'r2_point_mark_manifest_v1/points.npz'
 FP = BASE/'r2_source_observation_assembly_v1/observations.npz'
 GROUP = BASE/'r2_hierarchical_field_geometry_v1/geometry_q257.npz'
@@ -38,8 +40,8 @@ TAIL_SIGMA = 8.
 MAX_PAD_WIDTH = 8192
 
 
-def load_train_singletons():
-    with np.load(SPLIT, allow_pickle=False) as f:
+def load_train_singletons(split_path=SPLIT):
+    with np.load(split_path, allow_pickle=False) as f:
         recno = f['point_recno'].copy()
         labels = f['fp_source_group'].copy()
         roles = f['fp_role'].copy()
@@ -180,12 +182,12 @@ def main():
 
     paths = (SPLIT, POINTS, FP, GROUP, SOURCE, STATE, CROSSMATCH, COSMO)
     report = dict(
-        classification='R2_TRAIN_SINGLE_LINKED_FP_CONTINUOUS_MARK_SPARSE_CONTROL',
+        classification='R2_V6_TRAIN_SINGLE_LINKED_FP_FIXED_STATE_FULL_SOURCE_COMPARISON',
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'],
         source_commit=source_commit, N=N, box_cMpc_h=BOX,
         training_one_countpoint_one_FProw_groups=len(options),
-        candidate_padding_width=width, source_neighborhood='periodic shifted-source '
-            'bins; exact support within 8 sigma plus TSC support radius',
+        candidate_padding_width=width, source_neighborhood='state-frozen periodic '
+            'shifted-source bins; 8-sigma plus TSC support; not a live-field list',
         sigma_los_cMpc_h=sigma_radius, spatial_search_radius_cMpc_h=search_radius,
         Gaussian_tail_probability_beyond_8sigma=math.erfc(TAIL_SIGMA/math.sqrt(2.)),
         association_probability_assumed_field_independent_constant=True,
@@ -196,6 +198,13 @@ def main():
                     'their observables must constrain the same evolved field.',
         input_sha256={str(p): hashlib.sha256(p.read_bytes()).hexdigest()
                       for p in paths})
+    if SPLIT != DEFAULT_SPLIT:
+        v5_labels = {option[0] for option in load_train_singletons(DEFAULT_SPLIT)[0]}
+        v6_labels = {option[0] for option in options}
+        report['v5_v6_training_linked_group_identity_delta'] = dict(
+            v5_only=sorted(v5_labels-v6_labels),
+            v6_only=sorted(v6_labels-v5_labels),
+            v5_count=len(v5_labels), v6_count=len(v6_labels))
     OUT.mkdir(parents=True)
 
     def save():
@@ -288,6 +297,8 @@ def main():
             raise AssertionError('8-sigma source neighborhood disagrees with full source')
 
         rows = []
+        max_score_error = (0., None)
+        max_bin_error = (0., None)
         for k, option in enumerate(options):
             if k == control_index:
                 result = sparse
@@ -298,14 +309,43 @@ def main():
             if (not np.isfinite(float(score)) or not np.isfinite(bins).all()
                     or np.sum(bins) <= 0):
                 raise FloatingPointError(f'conditional source support failed for {label}')
+            if k == control_index:
+                full_score, full_bins = exact_score, exact_bins
+            else:
+                full_score, full_bins = scorers[pop](
+                    source['positions'], source_velocity, intrinsic,
+                    source['angular'], jnp.asarray(voxel), radius,
+                    float(fp['dz_row'][option[4]]),
+                    float(fp['eta_mean'][option[4]]),
+                    float(fp['eta_std'][option[4]]),
+                    float(fp['eta_alpha'][option[4]]))
+                full_score, full_bins = float(full_score), np.asarray(full_bins)
+            score_error = abs(float(score)-full_score)
+            relative_bins = np.abs(bins-full_bins)/np.maximum(np.abs(full_bins),1e-30)
+            bin_error = float(np.max(relative_bins))
+            if score_error > max_score_error[0]:
+                max_score_error = (score_error, label)
+            if bin_error > max_bin_error[0]:
+                max_bin_error = (bin_error, label)
+            if score_error > 1e-8 or bin_error > 1e-8:
+                raise AssertionError(
+                    f'fixed-state sparse/full mismatch for {label}: '
+                    f'logfactor={score_error:.3g}, trueK={bin_error:.3g}')
             rows.append(dict(source_group=label, population=pop,
                              voxel=[int(v) for v in voxel],
                              observed_radius_cMpc_h=radius,
                              candidate_sources=candidate_count,
-                             conditional_FP_logfactor=float(score)))
-            if (k+1) % 128 == 0 or k+1 == len(options):
+                             conditional_FP_logfactor=float(score),
+                             full_source_FP_logfactor=full_score,
+                             sparse_minus_full_conditional_logfactor=
+                                 float(score)-full_score,
+                             max_relative_trueK_density_sum_error=bin_error))
+            if (k+1) % 32 == 0 or k+1 == len(options):
                 report['completed_training_groups'] = k+1
                 report['groups'] = rows
+                report['largest_full_source_discrepancies'] = dict(
+                    conditional_logfactor_abs=(max_score_error[0],max_score_error[1]),
+                    trueK_density_relative=(max_bin_error[0],max_bin_error[1]))
                 report['partial_score_range'] = [
                     min(row['conditional_FP_logfactor'] for row in rows),
                     max(row['conditional_FP_logfactor'] for row in rows)]
@@ -321,7 +361,10 @@ def main():
                 ('p05','p50','p95','min','max'),
                 [*np.quantile(score_values,[.05,.5,.95]).tolist(),
                  float(score_values.min()),float(score_values.max())])),
-            status='COMPLETED_TRAIN_SINGLETON_CONTINUOUS_MARK_MECHANICS_NOT_CALIBRATION')
+            largest_full_source_discrepancies=dict(
+                conditional_logfactor_abs=(max_score_error[0],max_score_error[1]),
+                trueK_density_relative=(max_bin_error[0],max_bin_error[1])),
+            status='COMPLETED_V6_FIXED_STATE_FULL_SOURCE_TRAINING_COMPARISON_NOT_CALIBRATION')
     except Exception as exc:
         report['status'] = 'FAILED'
         report['error'] = f'{type(exc).__name__}: {exc}'
