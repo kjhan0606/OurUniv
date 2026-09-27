@@ -72,3 +72,25 @@ with4CPU/16GiB/2h. The four focused/reused tracer tests passed in its
 allocation; the chains are still running. Partial/final result path:
 `/gpfs/kjhan/CF4/z0_density/r2_joint_nuisance_pilot_v1/result.json`.
 Submission and tests are not a sampling or science pass.
+
+First H100406431 FAILED after11m54s. Chain0 completed64 warmup/64 retained
+with64 development maps, acceptance0.7883 and retained divergences0;
+chain1 reached warmup28/64 then the generic trace checker rejected a
+nonfinite record. The saved chain1 accepted states through step28 and its
+gradient were finite; warmup had one recorded divergence and a rapidly
+increasing step size. This does not yet prove whether the failing proposal
+was an ordinary rejected divergent trajectory or an invalid accepted state.
+Preserve the v1 result, scalar traces, chain0 map/state and Slurm logs.
+Slurm sampled MaxRSS was~17.49GiB, above the original16GiB request, though
+the process-reported peak was10.06GiB and Slurm reported exit1 rather than
+OOM. The retry request is22GiB, exceeding sampled peak by>20%.
+
+Scoped v2 recovery keeps identical observations, seeds, target and HMC
+settings. It accepts a nonfinite **proposal energy only if that proposal is
+flagged divergent/rejected**, counts those events, and still stops on a
+nonfinite accepted position, log density, acceptance, step, or state gradient.
+One exact synthetic regression runs before the survey arrays. This correction
+does not clip likelihood support or silently repair a bad state. The new
+result path is
+`/gpfs/kjhan/CF4/z0_density/r2_joint_nuisance_pilot_v2/result.json`.
+Typed-H100 retry **406462** submitted; result pending.

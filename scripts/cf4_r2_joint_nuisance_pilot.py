@@ -6,6 +6,7 @@ from pathlib import Path
 import resource
 import sys
 import time
+from types import SimpleNamespace
 
 import h5py
 import jax
@@ -14,15 +15,29 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
-from cf4_chunked_hmc import make_chunks, checked_record
+from cf4_chunked_hmc import make_chunks
 from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_coarsened_live_joint import count_and_mark_parts
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_joint_nuisance_pilot_v1'
+OUT = BASE/'r2_joint_nuisance_pilot_v2'
 N, BOX = 128, 384.
 SEEDS = (2026092801, 2026092807)
 WARMUP = RETAINED = 64
+
+
+def checked_development_record(record, state):
+    """Keep finite accepted states; count nonfinite *rejected* HMC proposals."""
+    arrays = tuple(np.asarray(a) for a in record)
+    for index in (0, 1, 2, 5, 6, 7):
+        if not np.isfinite(arrays[index]).all():
+            raise FloatingPointError(f'nonfinite HMC accepted/step record field {index}')
+    if not np.isfinite(np.asarray(state.logdensity_grad)).all():
+        raise FloatingPointError('nonfinite accepted HMC state gradient')
+    rejected_bad_energy = ~np.isfinite(arrays[4])
+    if np.any(rejected_bad_energy & ~arrays[3]):
+        raise FloatingPointError('nonfinite proposal energy without divergence rejection')
+    return arrays, int(np.count_nonzero(rejected_bad_energy))
 
 
 def main():
@@ -30,6 +45,15 @@ def main():
         raise RuntimeError('Slurm GPU allocation required')
     if OUT.exists():
         raise FileExistsError(OUT)
+    # Exact recovery regression: rejected bad proposal energy is observable,
+    # while the accepted state/gradient must still be finite.
+    toy_record = (np.zeros((2, 2)), np.zeros(2), np.ones(2),
+        np.array([False, True]), np.array([0., np.inf]), np.ones(2),
+        np.ones(2), np.ones(2))
+    _, toy_rejected = checked_development_record(toy_record,
+        SimpleNamespace(logdensity_grad=np.zeros(2)))
+    if toy_rejected != 1:
+        raise AssertionError('rejected divergent proposal accounting failed')
     started = time.monotonic()
     geometry_path = BASE/'r2_hierarchical_field_geometry_v1/geometry_q257.npz'
     count_path = BASE/'r2_inclusive_count_diagnostic_v1/inclusive_counts_3_sparse.npz'
@@ -148,7 +172,7 @@ def main():
                 initial_factors=np.asarray(initial_parts).tolist(),
                 initial_min_occupied_unit_intensity=float(support),
                 warmup_completed=0, retained_completed=0,
-                map_samples=0)
+                map_samples=0, rejected_nonfinite_proposal_energies=0)
             report['chains'].append(row)
             buffers = {name:[] for name in ('summary', 'acceptance', 'divergent', 'step', 'leapfrog_steps', 'phase')}
             mean = m2 = None
@@ -163,7 +187,18 @@ def main():
                         state, record = sample(state, step, keys_chunk)
                     else:
                         (state, adaptation), record = warm(state, adaptation, keys_chunk)
-                    a = checked_record(record, state)
+                    try:
+                        a, bad_energy = checked_development_record(record, state)
+                    except FloatingPointError:
+                        raw = tuple(np.asarray(item) for item in record)
+                        row['failed_chunk'] = dict(phase=phase, offset=offset,
+                            nonfinite_by_record_field=[int(np.count_nonzero(~np.isfinite(item)))
+                                for item in raw], divergent=raw[3].tolist(),
+                            accepted_state_gradient_finite=bool(
+                                np.isfinite(np.asarray(state.logdensity_grad)).all()))
+                        write()
+                        raise
+                    row['rejected_nonfinite_proposal_energies'] += bad_energy
                     x = a[0]
                     tracer = x[:, size+nh+ng:]
                     summary = np.column_stack((a[1], np.mean(x[:, :size]**2, axis=1),
