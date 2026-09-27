@@ -602,6 +602,21 @@ independent zero/error or selection calibration. No parameter was tuned,
 sampler run, or R2 posterior promoted. Record:
 `CF4_R2_TF_CROSS_METHOD_20260927.md`.
 
+TF-only/2M++ point-ownership check406492 and matched-redshift extension
+406493 both completed/exit0. Of6,745 TF training groups,2,761 have a
+secure link to an eligible counted 2M++ point (3,686 secure edges over all
+TF-only groups). Secure CF4-group vs matched 2M++ point Vcmb absolute
+differences have median9/p90 115/p99 420.45 km/s. Overlap is NOT by itself
+proof of double counting: a normalized conditional mark given an observed
+point can factor from a voxel count under explicit within-cell/selection
+assumptions. The present TF factor conditions on group cz and does not
+demonstrate equivalence to that count-conditioned law; inclusion/covariance
+remain uncalibrated. Driver cancelled long HMC406491 after2m18s rather than
+spend up to3h on the potentially changing partial target. No chain result
+or posterior. Next: source-linked matched-group conditional or robust model
+sensitivity, then sampler work. Record: `CF4_R2_TF_COUNT_OVERLAP_20260927.md`
+and `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
