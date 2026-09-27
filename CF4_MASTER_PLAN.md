@@ -562,6 +562,20 @@ response calibration and an equilibrating IC sampler jointly, not another
 fixed-state sensitivity ladder. MW/M31/M33 remain same-NEW-state latent roles,
 including unresolved M33. Record: `CF4_R2_JOINT_NUISANCE_PILOT_20260927.md`.
 
+The next R2 all-sky method connection is a **TF-only source/field control**:
+H100406479 COMPLETED25s/exit0, two focused tests pass. From corrected CF4
+group `DMtf/e_DMtf`,8,502 native TF-only groups (9,124 summarized TF
+measurements;6,745 train/1,757 heldout) are disjoint from the existing FP
+source components and non-FP anchors. One unconditional N128/384 state gives
+a finite conditional TF group modulus factor with velocity-amplitude
+derivative-519.68006577 versus finite difference-519.68006559. Q257/513
+training log-ratio changes only-0.0397nat in this state. This is **not** a
+TF bias/group-selection/FoG calibration, posterior, independent mock or
+permission for N256. The next live partial-target connection must share the
+existing TF relative zero point and not count group redshifts twice; actual
+source covariance and selected-group dependence remain R2 barriers.
+Record: `CF4_R2_TF_SOURCE_LINK_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
