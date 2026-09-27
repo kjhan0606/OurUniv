@@ -2028,3 +2028,23 @@ The next R2 calculation is the actual-source continuous-radius linked-mark
 comparison and scalable key support, with held-out marks untouched. Details,
 including preserved OOM and reporting failures: `CF4_R2_COUNT_QUADRATURE_20260927.md`.
 No email.
+
+Update2026-09-28 R2 Tempel parent source/denominator check: Slurm407002
+completed5m14s/exit0. Exact SDSS-PV↔Tempel joins match33,641/34,059 rows,
+including9,945/10,020 currently eligible FP rows; no matched group/richness
+conflicts. An independent position/redshift-only Tempel-member↔2M++ bridge
+has17,714 reciprocal one-to-one member links. This is catalogue identity
+evidence only. The p99 nearest-random mask proxy has98.998% sensitivity but
+43.390% false-positive rate on native `in_mask=0`; therefore the68,103
+proxy-footprint denominator and its derived rates are **withdrawn**. Howlett
+et al. describe `in_mask` as membership in the NYU-VAGC DR7 polygon mask, not a
+complete DR8–DR14 selection function. The output JSON's Tempel/FP row-count
+fields are wrong (`len(dict)` gives7/8); parser gates establish584,449 and
+34,059, and the script is corrected without rerunning the preserved job.
+Five mixed-role Tempel parents invalidate v5 split closure for this expanded
+graph. No heldout field score, fit, posterior, map or gravity run. R2 remains
+NO-GO. Next: securely obtain the exact DR7 MANGLE polygon artifact or
+verifiably identical mirror and compare against native flags; do not infer a
+mask from random-neighbour thresholds. If unavailable, close only this
+denominator route descriptively. Details, Q-GOAL/Q-LEAN and MW/M31/M33 limits:
+`CF4_R2_TEMPEL_PARENT_DENOMINATOR_20260928.md`. No email.
