@@ -576,6 +576,18 @@ existing TF relative zero point and not count group redshifts twice; actual
 source covariance and selected-group dependence remain R2 barriers.
 Record: `CF4_R2_TF_SOURCE_LINK_20260927.md`.
 
+The same-state count+FP+TF control H100406482 COMPLETED3m47s/exit0. It
+evaluates57,238 2M++ counts, existing FP groups and6,745 disjoint TF-only
+training groups from ONE predeclared evolved N128/384 IC. The TF-specific IC
+directional reverse gradient agrees with finite difference to relative
+6.41e-8; occupied count support is positive. This is a numerical wiring
+pass, not a model fit or posterior. TF group inclusion/source covariance and
+count bias/FoG remain uncalibrated, and the previous two chains remain
+nonstationary. **NO-GO for R2/N256 promotion.** Next, attack observation
+calibration and sampler equilibration together, with source/holdout
+separation and no truth-selected IC. Record:
+`CF4_R2_LIVE_TF_JOINT_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
