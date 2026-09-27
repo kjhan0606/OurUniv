@@ -489,6 +489,21 @@ galaxy counts. Close short pilots; next substantive joint count/point/mark
 factorization must state and test retained versus approximated dependence.
 No blind chain extension, R2 delivery, N256 or LG resolution promotion.
 
+The next bounded R2 bundle is a single-state live **coarsened 2M++ count +
+conditional CF4 mark** control; see `CF4_R2_COARSENED_LIVE_JOINT_20260927.md`.
+It scores all57,238 eligible galaxy voxel counts once under integrated ARES
+selection and uses linked member redshifts only inside the existing CF4 group
+kernel. Native PM node mass/momentum are conservatively read at count-voxel
+centres; CF4 rays remain native-origin0. Within-cell coordinates and the
+observed association/selected-group graph have an explicitly assumed
+field-independent conditional law. Their actual selection probabilities,
+six-population nonlinear bias/FoG and source covariance are uncalibrated;
+this is a partial development target, not a full R2 posterior or permission
+for N256. One prior-state score/adjoint test only, no chain or new simulation.
+Q-GOAL: bring the missing bulk galaxy density information into the same
+field. Q-LEAN: reuse operators and source products with one short Slurm job.
+MW/M31/M33 remain new-state latent roles with unresolved M33 for R3.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
