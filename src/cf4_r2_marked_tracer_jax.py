@@ -13,6 +13,8 @@ likelihood without those ingredients and a held-out/mock assessment.
 
 from __future__ import annotations
 
+import math
+
 import jax.numpy as jnp
 from jax.scipy.special import gammainc, gammaln
 
@@ -90,15 +92,38 @@ def intrinsic_lf_bin_fractions(*, mstar=-23.28, alpha=-.94):
                       for i in range(5)])
 
 
+def intrinsic_lf_reference_weights(*, mstar=-23.28, alpha=-.94,
+                                   reference_interval=(-25., -21.)):
+    """True-K bin weights per galaxy in a finite reference-M interval.
+
+    These weights need not sum to one: the outer bins retain possible
+    migration into the observed sample.  The reference rate avoids defining
+    its amplitude by the unobserved, extrapolated all-faint Schechter tail.
+    The current unbounded faint bin still requires alpha > -1; this is not
+    a validated faint-end law or a relaxation of that domain restriction.
+    """
+    if isinstance(alpha, (int, float)) and alpha <= -1.:
+        raise ValueError('unbounded intrinsic LF requires alpha > -1')
+    lower, upper = reference_interval
+    if not (math.isfinite(lower) and math.isfinite(upper) and lower < upper):
+        raise ValueError('finite ordered LF reference interval required')
+    reference = _lf_interval(lower, upper, mstar=mstar, alpha=alpha)
+    return jnp.stack([_lf_interval(TRUE_EDGES[i], TRUE_EDGES[i+1],
+                                   mstar=mstar, alpha=alpha)/reference
+                      for i in range(5)])
+
+
 def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
                                    intrinsic_bias, *, mstar=-23.28,
-                                   alpha=-.94):
+                                   alpha=-.94, reference_interval=None):
     """Five intrinsic true-K masses from one matter field and LF shape.
 
     Each luminosity response is normalized to unit spatial mean over the
-    full periodic box before multiplication by its LF fraction.  This keeps
-    the single intrinsic rate distinct from clustering bias. It does not
-    specify priors, unresolved/empty-cell galaxies, or source calibration.
+    full periodic box.  With ``reference_interval``, the log rate denotes
+    galaxies in that finite intrinsic magnitude interval, not all galaxies
+    down to an unobserved infinitely faint limit.  This keeps the single
+    intrinsic rate distinct from clustering bias. It does not specify priors,
+    unresolved/empty-cell galaxies, or source calibration.
     The caller must keep intrinsic biases positive and alpha above -1.
     """
     flat = jnp.asarray(density).reshape(-1)
@@ -110,8 +135,12 @@ def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
     response = jnp.where(occupied,
                          jnp.exp(bias[:, None]*jnp.log(safe_density)), 0.)
     response /= jnp.mean(response, axis=1, keepdims=True)
-    fractions = intrinsic_lf_bin_fractions(mstar=mstar, alpha=alpha)
-    return (jnp.exp(log_mean_rate_per_cell)*fractions[:, None]*response)
+    weights = (intrinsic_lf_bin_fractions(mstar=mstar, alpha=alpha)
+               if reference_interval is None else
+               intrinsic_lf_reference_weights(
+                   mstar=mstar, alpha=alpha,
+                   reference_interval=reference_interval))
+    return (jnp.exp(log_mean_rate_per_cell)*weights[:, None]*response)
 
 
 def sparse_marked_poisson_log_likelihood(intensity, observed_keys,

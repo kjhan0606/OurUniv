@@ -1942,3 +1942,15 @@ agrees to9.10e-6 relative, with5.40GiB host peak. This is a numerical
 partial-target bridge, **not** a fitted heldout prediction, calibrated
 source/group law, converged sampler or R2/N256 posterior. Old identity-mass
 HMC remains closed. No email. Details in the split record.
+
+R2 observable-rate repair2026-09-27: the source-selected count control's
+all-faint Schechter rate makes the predicted `[-25,-21]` bright fraction fall
+from0.09596 at alpha=-.94 to0.01634 at alpha=-.99, creating artificial
+rate/shape coupling near the unobserved faint-tail divergence. The new joint
+target uses a finite `[-25,-21]` intrinsic reference-rate coordinate, with
+the old centre's physical intensity preserved. Typed-H100406587
+COMPLETED/exit0 with7/7 focused tests, including JIT and old/new equivalence.
+This exact parameterization
+repair does not calibrate the faint LF, survey/group selection, bias/FoG or
+sampler; no R2 posterior or N256 map follows. See
+`CF4_R2_LF_RATE_IDENTIFIABILITY_20260927.md`. No email.

@@ -6,6 +6,7 @@ import numpy as np
 
 from cf4_r2_marked_tracer_jax import (
     intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
+    intrinsic_lf_reference_weights,
     predict_source_marked_intensity, source_mark_transfer,
     sparse_marked_poisson_log_likelihood,
 )
@@ -44,6 +45,34 @@ class MarkedTracerTests(unittest.TestCase):
         derivative = jax.grad(lambda r: intrinsic_biased_source_masses(
             density,r,bias).sum())(log_rate)
         self.assertAlmostEqual(float(derivative),6.,places=11)
+
+    def test_reference_rate_preserves_physical_intensity_at_matched_rate(self):
+        density = jnp.array([.5, 1., 1.5])
+        bias = jnp.array([.6, .8, 1., 1.2, 1.4])
+        for alpha in (-.94, -.99):
+            all_fractions = intrinsic_lf_bin_fractions(alpha=alpha)
+            reference_fraction = jnp.sum(all_fractions[1:4])
+            weights = intrinsic_lf_reference_weights(alpha=alpha)
+            np.testing.assert_allclose(np.asarray(weights[1:4]).sum(), 1.,
+                                       rtol=1e-12)
+            old = intrinsic_biased_source_masses(
+                density, jnp.log(.8), bias, alpha=alpha)
+            new = intrinsic_biased_source_masses(
+                density, jnp.log(.8*reference_fraction), bias, alpha=alpha,
+                reference_interval=(-25., -21.))
+            np.testing.assert_allclose(np.asarray(new), np.asarray(old),
+                                       rtol=2e-12, atol=1e-12)
+        # At fixed *bright* rate, changing the faint LF slope must not move
+        # the average intrinsic reference-bin count.
+        for alpha in (-.94, -.99):
+            masses = intrinsic_biased_source_masses(
+                density, jnp.log(.1), bias, alpha=alpha,
+                reference_interval=(-25., -21.))
+            self.assertAlmostEqual(float(masses[1:4].sum()), .3, places=11)
+        jit_mass = jax.jit(lambda a: intrinsic_biased_source_masses(
+            density, jnp.log(.1), bias, alpha=a,
+            reference_interval=(-25., -21.)))
+        self.assertTrue(np.isfinite(np.asarray(jit_mass(-.94))).all())
 
     def test_sparse_marked_count_includes_all_empty_voxel_exposure(self):
         intensity = jnp.array([[.5,1.2],[2.,.7]])

@@ -8,7 +8,8 @@ import jax.numpy as jnp
 
 from cf4_r2_hierarchical_marks import hierarchical_group_scores
 from cf4_r2_marked_tracer_jax import (
-    intrinsic_biased_source_masses, predict_source_marked_intensity,
+    intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
+    predict_source_marked_intensity,
     sparse_marked_poisson_log_likelihood,
 )
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
@@ -31,13 +32,19 @@ def source_sky_count_fp_parts(rho_node, velocity_node, white_ic, white_hyper,
         raise ValueError('source tracer requires nine white coordinates')
     rho, velocity = native_mass_momentum_to_count_cells(
         rho_node, velocity_node, box)
-    log_rate = 2.*white_tracer[0]
+    # Match the old zero-coordinate prediction at the development LF centre,
+    # while making the rate coordinate refer to the source's finite bright
+    # interval. The broad white prior remains development regularization.
+    centre_reference_fraction = jnp.sum(
+        intrinsic_lf_bin_fractions(mstar=-23.28, alpha=-.94)[1:4])
+    log_rate = jnp.log(centre_reference_fraction) + 2.*white_tracer[0]
     bias = jnp.exp(.5*white_tracer[1:6])
     sigma_los = 100.*jnp.exp(.5*white_tracer[6])
     alpha = -1. + .06*jnp.exp(.5*white_tracer[7])
     mstar = -23.28 + .2*white_tracer[8]
     intrinsic = intrinsic_biased_source_masses(
-        rho, log_rate, bias, mstar=mstar, alpha=alpha)
+        rho, log_rate, bias, mstar=mstar, alpha=alpha,
+        reference_interval=(-25., -21.))
     intensity = predict_source_marked_intensity(
         source_geometry['positions'],
         jnp.moveaxis(velocity, 0, -1).reshape(-1, 3),
