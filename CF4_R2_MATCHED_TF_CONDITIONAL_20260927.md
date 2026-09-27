@@ -157,3 +157,19 @@ TF observables, treating the 2020 `DMbest` as an independent datum, or
 mixing overlapping marks in one target. A prospective forward-TF factor
 would need a disjoint ownership contract and its own selected-sample mock/
 heldout calibration. FP/group selection remains a separate R2 barrier.
+
+Source-model cross-check (2026-09-27, read-only): the [Boubel et al. forward-TF
+paper](https://arxiv.org/html/2301.12648v2) models observed magnitude
+conditional on H I linewidth/flux and redshift. Its Section 2.1 assumes that selection does
+not depend on sky position or true comoving distance, explicitly warning that
+this may fail for heterogeneous samples. Section 4 obtains an *empirical*
+magnitude-selection curve from the selected CF4 TF magnitude distribution and
+an approximate Euclidean unselected count slope; it also applies redshift,
+linewidth and survey-flux criteria. The public 2020 table supplies the relevant
+individual observables, but neither that table nor the paper establishes the
+selection law for our **secure TF and counted-2M++ singleton intersection**,
+which has an additional cross-catalogue/linking selection. Therefore the
+published curve/TF fit cannot be transplanted as a calibrated likelihood or
+prior for the live IC posterior. This is a source-based limitation, not a
+failed fit; the existing HMC geometry comparison remains a partial-target
+test. No author was contacted and no email was sent.
