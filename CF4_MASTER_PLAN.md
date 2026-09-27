@@ -680,6 +680,17 @@ calibration, an additional independent TF term or an R2 posterior. No email
 was sent; full identity/count/source limitations are in
 `CF4_R2_MATCHED_TF_CONDITIONAL_20260927.md`.
 
+Public-method cross-check2026-09-27: the present count operator multiplies
+radial/angular exposure after redshift-space displacement, whereas the recent
+2MRS reconstruction of Nusser (2026) applies radial selection at model
+real-space distance before deposition to avoid a Kaiser-rocket term. This is
+not an established software bug because our six population labels/cuts are
+based on observed-redshift distances. It is an unresolved generative-selection
+choice that must be specified and tested on matched mocks/heldout before R2
+or N256 promotion; see `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`. The active
+long-path HMC job remains only a geometry comparison of its frozen partial
+target. No email or additional simulation was launched for this cross-check.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

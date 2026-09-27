@@ -166,3 +166,28 @@ alone cannot plausibly certify the 384-box field posterior. If v3 still
 drifts, consider a *different* blocked/conditioned geometry and a calibrated
 observation model before any long N128 or N256 production, not a repeated
 identity-mass trajectory-length sweep.
+
+## Selection-coordinate cross-check (public source, no email)
+
+The current six-population count operator in
+`src/cf4_r2_continuous_tracer.py` multiplies its voxel-integrated radial and
+angular exposure **after** displacing model tracers into redshift space. In
+contrast, [Nusser (2026), §IV.4.4–5](https://arxiv.org/html/2606.08593v2)
+weights each tracer by the survey radial selection at its **model real-space**
+distance before redshift-space deposition, to avoid a Kaiser-rocket term.
+This is a consequential alternative observation model, not evidence by itself
+that our current operator has a software bug: our six absolute-K population
+labels and catalogue cuts use distances computed from *observed redshifts*,
+and the archived exposure also integrates angular completeness. A direct
+replacement of its exposure by a real-space weight would change the datum
+definition and potentially mishandle the angular mask.
+
+Before any R2 posterior/N256 promotion, specify the joint generative order of
+true distance, apparent magnitude, observed redshift, absolute-K bin and
+angular completeness; compare the current post-RSD exposure approximation
+with a source-consistent pre-RSD selection construction on matched mock/heldout
+predictions. The current HMC v3 remains a sampler-geometry test of its frozen
+**partial** target regardless of the outcome. The cited paper's five N128
+chains with 5,000 warmup transitions and NUTS show that our 64-retained-step
+test cannot certify stationarity, but their survey, dynamics and sampler do not
+set a transferable run length or calibration for our CF4+2M++ target.
