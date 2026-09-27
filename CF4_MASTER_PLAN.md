@@ -2009,3 +2009,22 @@ Post-control signed-LOS-branch completion406610 passed all nine tests; the
 actual one-group control406607 preceded this small addition, whose reverse
 branch underflows at that fixed83.923-cMpc/h point. No score or posterior
 promotion follows from the branch test.
+
+R2 count-kernel quadrature2026-09-27: frozen training split v5 has47,542
+count points/38,194 population-voxel keys. On one saved **unconditional**
+N128/384 state, dynamic one-GH-node accumulation passed9/9 focused tests and
+GH3/9/15; GH21 was compared to the frozen means without repeating those
+orders. Relative to GH21, GH15 has p95 key change0.0475%, p99 0.315%, and
+maximum20.0%; its total training Poisson score differs by only+0.028. The
+largest relative errors are count-1, low-predicted-rate population3 keys at
+the180-cMpc/h radial-selection edge. GH3 differs by-4.615 in total score and
+has p95 0.616%; its extreme tail is not uniformly negligible. Preserve the
+per-key edge qualification; do not infer the continuous individual-redshift
+law from a high-order count integral. The R2 posterior is still NO-GO: no
+field fit, held-out prediction, calibrated association/group-selection law,
+shared multi-member covariance, or N256/LG-resolution result. MW/M31/M33 stay
+latent on a new field with M33 unresolved; native truth IDs were not used.
+The next R2 calculation is the actual-source continuous-radius linked-mark
+comparison and scalable key support, with held-out marks untouched. Details,
+including preserved OOM and reporting failures: `CF4_R2_COUNT_QUADRATURE_20260927.md`.
+No email.
