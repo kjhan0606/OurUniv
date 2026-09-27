@@ -504,6 +504,22 @@ Q-GOAL: bring the missing bulk galaxy density information into the same
 field. Q-LEAN: reuse operators and source products with one short Slurm job.
 MW/M31/M33 remain new-state latent roles with unresolved M33 for R3.
 
+Execution2026-09-27: first H100406376 computed the actual joint score,
+reverse gradient and positive occupied support but failed only in a diagnostic
+JVP call unsupported by PMWD's custom VJP. Same-data/seed/physical-target
+retry H100406377 COMPLETED3m53s/exit0: node-to-voxel conservation test passes;
+all45,776 occupied cells have positive intensity with no diffuse floor; count
+and mark directional reverse-versus-finite-difference discrepancies are
+0.0946% and0.00696% at the smaller fixed step. First compiled value+gradient
+took75.39s, peak host5.083GiB. At the random prior state, published-rate
+prior means predict~48,611 counts versus57,238 observed, not a fit or bias
+calibration. Accept numerical **partial-target wiring only**. The within-cell,
+association and selected-group laws and six-population nonlinear bias/RSD/FoG
+remain uncalibrated. No R2 posterior/map, N256 run or LG identification is
+promoted; next quantify actual count/CF4 field tension and observation-model
+sensitivity before sampling escalation. Evidence and limits:
+`CF4_R2_COARSENED_LIVE_JOINT_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

@@ -86,4 +86,55 @@ historical zoom seed reuse.
 
 ## Execution
 
-Implementation pending.
+The first H100 Slurm run, 406376, passed the native-node/voxel conservation
+test and evaluated the actual-data joint value and reverse gradient on its
+fresh prior IC. All 45,776 occupied population/cells had positive unit-rate
+intensity. The run then FAILED in the *diagnostic*: PMWD's evolution uses a
+custom VJP and cannot be called through JAX forward-mode `jvp`. Its partial
+score and support readout are preserved in
+`/gpfs/kjhan/CF4/z0_density/r2_coarsened_live_joint_v1/result.json`;
+neither a physical support failure nor a derivative pass is inferred from it.
+
+Retry 406377 uses the same data, IC seed and physical target in a new `v2`
+directory. It obtains the mark tangent by reverse differentiation, takes
+the analytic white-prior tangent, and derives the count tangent by subtracting
+those from the full reverse gradient. Each count/mark tangent is then compared
+with a separately evaluated symmetric finite difference. The identity of the
+decomposed sum is not counted as an independent test. This is a scoped
+technical recovery, not a new model, posterior or approval to run N256.
+
+## Result and decision
+
+H100 Slurm **406377 COMPLETED/exit0** in 3m53s. The conservation test passed;
+the numerical report is
+`/gpfs/kjhan/CF4/z0_density/r2_coarsened_live_joint_v2/result.json`.
+All 45,776 occupied population/cells have positive model intensity with
+zero diffuse/floor component. At the frozen unconditional IC, log factors
+are count −279,661.856, conditional CF4 mark +1,391.895, and Gaussian
+white prior −1,051,731.380. These absolute factors have different
+normalizations and are **not** a goodness-of-fit ranking or a fitted field.
+Full-IC/mark gradient RMS is finite (2.25934); the count directional
+reverse/finite-difference discrepancy is 0.1324% at step2e-5 and 0.0946%
+at step1e-5, while the mark discrepancy is 0.000124%/0.00696% respectively.
+PMWD's custom VJP was respected; the count reverse tangent was decomposed
+from the full target and independently checked against finite differences.
+Host peak was 5.083GiB (16GiB requested), and first value+gradient including
+compilation took 75.39s. No chain or z=0 sample map was generated.
+
+Rate-one count exposure sums to 757,343.745 over six populations. Multiplying
+each population by its *published prior-mean* rate yields totals
+`[5952.64,9842.12,2420.36,6989.20,18464.97,4941.55]`, sum ~48,610.84
+versus 57,238 observed. This one random state and the broad integrated Gamma
+rates do not calibrate bias, selection, FoG or a posterior. In particular,
+the fixed nonlinear `rho^b` response is a development law; its published
+linear-regime biases must not be treated as measured effective N128 biases.
+
+Decision: **PASS numerical same-state partial-target wiring; R2 posterior
+remains NO-GO.** The missing field-dependent point/association/inclusion
+probabilities and calibrated tracer/RSD/group covariance remain substantive,
+not numerical, omissions. Next scientific step should use this live target to
+quantify actual count–CF4 field tension and selection/bias sensitivity before
+any N256 inference; a longer chain or a nominally finer grid alone would
+not resolve those omissions. MW/M31/M33 identification and <=0.3-cMpc/h LG
+constraints remain R3 work on each new evolved state, including ambiguous
+MW/M31 and unresolved M33 branches.

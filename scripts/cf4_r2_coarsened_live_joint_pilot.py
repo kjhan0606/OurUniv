@@ -18,7 +18,7 @@ from cf4_r1_particle_forward import make_dynamics,particle_grid
 from cf4_r2_coarsened_live_joint import count_and_mark_parts
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
-OUT=BASE/'r2_coarsened_live_joint_v1'
+OUT=BASE/'r2_coarsened_live_joint_v2'
 N,BOX=128,384.
 
 
@@ -82,6 +82,7 @@ def main():
              ROOT/'config/cf4_r2_rate_nuisance_v1.json']
     report=dict(classification='R2_COARSENED_COUNTS_AND_CONDITIONAL_CF4_MARKS_ONE_LIVE_IC',
         job_id=os.environ['SLURM_JOB_ID'],status='STARTED',N=N,box_cMpc_h=BOX,
+        previous_job='406376: diagnostic JVP unsupported by PMWD custom VJP; physical target unchanged',
         native_PM_origin_fraction=0.,observed_count_voxel_origin_fraction=.5,
         observed_2mpp_points=point_count,occupied_population_cells=len(keys),
         literal_pointwise_map_zero=point_zero,source_groups=int(g['distance'].shape[0]),
@@ -144,7 +145,10 @@ def main():
         occ=unit_np.reshape(-1)[keys]
         if not np.isfinite(unit_np).all() or np.any(unit_np<0) or np.any(occ<=0):
             raise ValueError('occupied count intensity support failure')
-        report['initial_rate_one_expected_total']=float(unit_np.sum())
+        unit_totals=unit_np.sum(axis=(1,2,3))
+        report['initial_rate_one_expected_total']=float(unit_totals.sum())
+        report['initial_rate_one_expected_per_population']=unit_totals.tolist()
+        report['published_prior_mean_expected_per_population']=(unit_totals*nbar).tolist()
         report['occupied_zero_unit_intensity']=int(np.count_nonzero(occ<=0))
         report['support_check_seconds']=time.monotonic()-t
         del unit_np,occ,unit
@@ -155,10 +159,18 @@ def main():
         @jax.jit
         def parts_only(x):
             return parts_and_unit(x)[0]
-        tangent=np.asarray(jax.jvp(parts_only,(first,),(direction,))[1])
+        # PMWD's custom VJP supports reverse differentiation, not jax.jvp.
+        # Extract the mark gradient independently; the count directional
+        # gradient is the full-target gradient minus mark and Gaussian prior.
+        mark_grad=jax.jit(jax.grad(lambda x: parts_only(x)[1]))(first)
+        mark_grad.block_until_ready()
         prior_tangent=-float(jnp.vdot(first,direction))
-        if abs(tangent[2]-prior_tangent)>1e-6:
-            raise FloatingPointError('analytic white prior tangent mismatch')
+        total_tangent=float(jnp.vdot(grad,direction))
+        mark_tangent=float(jnp.vdot(mark_grad,direction))
+        count_tangent=total_tangent-mark_tangent-prior_tangent
+        tangent=np.array([count_tangent,mark_tangent,prior_tangent])
+        if not np.isfinite(tangent).all():
+            raise FloatingPointError('nonfinite reverse-mode component tangent')
         finite=[]
         for epsilon in (2e-5,1e-5):
             plus=np.asarray(parts_only(first+epsilon*direction))
@@ -168,14 +180,12 @@ def main():
                 conditional_mark=float(derivative[1]),
                 count_scaled_error=float(abs(derivative[0]-tangent[0])/max(1.,abs(derivative[0]),abs(tangent[0]))),
                 mark_scaled_error=float(abs(derivative[1]-tangent[1])/max(1.,abs(derivative[1]),abs(tangent[1])))))
-        report['directional_derivative']=dict(autodiff_count=float(tangent[0]),
-            autodiff_mark=float(tangent[1]),analytic_prior=prior_tangent,
-            total_autodiff=float(jnp.vdot(grad,direction)),finite_differences=finite)
-        report['directional_derivative']['total_vs_parts_difference']=float(
-            jnp.vdot(grad,direction)-sum(tangent))
+        report['directional_derivative']=dict(reverse_decomposition_count=count_tangent,
+            reverse_mark=mark_tangent,analytic_prior=prior_tangent,
+            total_reverse=total_tangent,finite_differences=finite,
+            count_reverse_derived_from_total_minus_mark_and_prior=True)
         report['status']='PASS_NUMERICAL_PARTIAL_TARGET_NOT_CALIBRATED' if (
             finite[-1]['count_scaled_error']<.02 and finite[-1]['mark_scaled_error']<.02
-            and abs(report['directional_derivative']['total_vs_parts_difference'])<1e-5
         ) else 'NO_GO_DIRECTIONAL_DERIVATIVE'
     except Exception as exc:
         report.update(status='FAILED',error=f'{type(exc).__name__}: {exc}')
