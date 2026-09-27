@@ -15,4 +15,4 @@ module purge
 cd /home/kjhan/BACKUP/CF4
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
-exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_r2_all_method_assess.py
+exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_r2_all_method_assess.py "$@"

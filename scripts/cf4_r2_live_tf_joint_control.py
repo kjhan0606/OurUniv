@@ -29,7 +29,7 @@ def main():
     parser.add_argument("--linked", action="store_true",
                         help="use the secure-singleton count-point TF bridge")
     args = parser.parse_args()
-    out = BASE / ("r2_live_tf_matched_point_control_v1" if args.linked
+    out = BASE / ("r2_live_tf_matched_point_control_v2_redshift" if args.linked
                   else "r2_live_tf_joint_control_v1")
     if not os.environ.get("SLURM_JOB_ID") or jax.default_backend() != "gpu":
         raise RuntimeError("Slurm GPU allocation required")
@@ -134,7 +134,7 @@ def main():
         raise AssertionError(f"TF IC directional derivative discrepancy {relative:g}")
     baseline = None
     if args.linked:
-        baseline_path = BASE / "r2_live_tf_joint_control_v1/result.json"
+        baseline_path = BASE / "r2_live_tf_matched_point_control_v1/result.json"
         baseline = json.loads(baseline_path.read_text())
         if baseline["saved_state"] != str(state_path) or baseline["observed_count_points"] != int(counts.sum()):
             raise ValueError("baseline state/count datum changed")
@@ -153,8 +153,9 @@ def main():
         TF_secure_singleton_training_groups=int(np.count_nonzero(
             (tf_host.get("point_population", np.full(len(tf_host["group_pgc"]), -1)) >= 0)
             & ~tf_host["holdout"])),
-        TF_factor_change_from_old_same_state=(float(parts[2])-baseline["factors"]["TF"]
-                                               if baseline is not None else None),
+        TF_factor_change_from_preconvolution_same_state=(
+            float(parts[2])-baseline["factors"]["TF"] if baseline is not None else None),
+        TF_matched_point_redshift_error_convolved=bool(args.linked),
         TF_redshift_conditioned_not_multiplied=True,
         calibration_claim=False, sampler_run=False, R2_posterior=False,
         TF_group_inclusion_and_covariance_calibrated=False,

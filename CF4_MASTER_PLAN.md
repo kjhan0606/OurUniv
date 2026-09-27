@@ -640,6 +640,34 @@ promotion or N256 follow-on. Submission alone is not a chain or science pass;
 source selection/shared covariance remain R2 barriers. Record:
 `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
 
+Update2026-09-27:406501 and dependent read-only406502 both COMPLETED/exit0.
+The two192-warmup/128-retained matched-TF partial-target chains have zero
+retained divergences but strong retained drift: logtarget split Rhat2.064,
+IC-white-square2.031, seven tracer coordinates1.381–2.871, approximate
+ESS2.12–5.28, terminal24-cMpc/h density correlation0.244. **NO-GO for R2
+posterior/map and N256**; no blind extension or pooling. The short HMC
+trajectory length (about0.029–0.063 in white coordinates) is a plausible
+mixing mechanism, not a proved unique cause. TF count-linked redshift-error
+convolution was absent in these frozen chains and is being corrected in a
+separate same-state numerical control; source selection/covariance and
+sampler geometry remain R2 blockers. No LG member identification is claimed.
+The scoped matched-TF redshift-error convolution406514 then passed four
+tests and a same-IC gradient check (relative discrepancy9.81e-8), changing
+the TF log factor by+1.85127nat at that state. It does not reclassify the
+frozen406501 chains or resolve the count/TF selection and shared-covariance
+law. Record: `CF4_R2_MATCHED_TF_CONDITIONAL_20260927.md`.
+One bounded long-path HMC geometry comparison is now H100406521, with
+dependent A100 scalar/endpoint assessment406522. It starts from the two
+unranked406501 terminal states under the *corrected* partial target and
+tests32–48 rather than4–8 leapfrog steps,96 warmup+64 retained per chain.
+This is not exact continuation, posterior production, source calibration or
+permission for N256. Stop this identity-mass HMC line if nonstationarity
+persists rather than sweeping lengths. Q-GOAL: test the specific sampler
+obstacle to an actual CF4+galaxy z=0 field. Q-LEAN: one bounded comparison
+and reuse of the same assessment; no new gravity simulation or map stream.
+MW/M31/M33 remain unresolved latent NEW-state roles. Record:
+`CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

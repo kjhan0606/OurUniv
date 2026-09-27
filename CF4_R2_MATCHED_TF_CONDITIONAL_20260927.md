@@ -66,3 +66,25 @@ not show posterior robustness, calibrated selection, or correctness of the
 count-linked population model. For the next sampler-development run the
 unmatched/ambiguous TF groups will be excluded rather than kept as a
 provisional training likelihood. The existing FP+count factors remain.
+
+Explicit residual mismatch for interpretation: matched TF groups share the
+count population's **FoG parameter**, but the TF conditional redshift kernel
+does not separately convolve the count model's fixed35–50km/s redshift-error
+term; its selected radial measure also omits the 2M++ exposure and the
+probability of receiving a TF measurement. Therefore the current linked
+factor is not algebraically identical to the full marked point-process
+conditional, even for secure one-to-one groups. This is recorded before
+the development-chain verdict; do not promote its source model solely from
+sampler stationarity.
+
+Post-chain scoped correction: the matched conditional now uses the same
+population's fixed redshift measurement error in quadrature with its FoG
+width. H100 **406514 COMPLETED/exit0 in4m04s**, all four focused tests pass,
+including vector/scalar Gaussian-convolution identity and invalid-width
+rejection. At the **same predeclared IC** as406496 the TF factor changes by
++1.85127nat; count, FP and white-prior factors are unchanged. The TF IC
+directional reverse/finite-difference discrepancy is9.81e-8. Frozen406501
+chains remain from the preceding target and are not retroactively corrected.
+This numerical fix does **not** calibrate the count/TF true-distance
+selection, shared source covariance or group inclusion. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_live_tf_matched_point_control_v2_redshift/`.

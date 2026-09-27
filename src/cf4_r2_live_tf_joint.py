@@ -37,12 +37,15 @@ def count_fp_tf_parts(rho, velocity, white_ic, white_hyper, white_group,
         safe_population = jnp.maximum(population, 0)
         selected_bias = jnp.where(matched, count_bias[safe_population], tf_selected_bias)
         sigma_v = jnp.where(matched, count_fog[safe_population], tf_group_sigma_v)
+        sigma_redshift = jnp.where(matched, count_redshift[safe_population], 0.)
     else:
         selected_bias, sigma_v = tf_selected_bias, tf_group_sigma_v
+        sigma_redshift = 0.
     tf_scores = tf_group_logratios(rho, velocity, tf_geometry['directions'],
         tf_geometry['observed_cz'], tf_geometry['modulus'],
         tf_geometry['modulus_error'], distance_nodes, quadrature_weights,
         zcos_nodes, box=box, h=h, selected_bias=selected_bias,
-        sigma_v=sigma_v, modulus_zero=parameters[4])
+        sigma_v=sigma_v, sigma_redshift=sigma_redshift,
+        modulus_zero=parameters[4])
     tf = jnp.where(tf_geometry['holdout'], 0., tf_scores).sum()
     return jnp.stack((base[0], base[1], tf, base[2])), unit

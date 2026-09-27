@@ -56,6 +56,31 @@ class TFGroupMarksTest(unittest.TestCase):
             for i in range(2)]
         np.testing.assert_allclose(np.asarray(vector), np.asarray(scalar), rtol=1e-6)
 
+    def test_redshift_error_convolution_matches_gaussian_quadrature_width(self):
+        rho = jnp.ones((8, 8, 8))
+        velocity = jnp.zeros((3, 8, 8, 8))
+        direction = jnp.array([[1., 0., 0.], [1., 0., 0.]])
+        cz = jnp.array([600., 820.])
+        modulus = jnp.array([28., 29.])
+        error = jnp.array([.25, .4])
+        distance = jnp.array([1., 2., 3.])
+        weight = jnp.array([.5, 1., .5])
+        zcos = jnp.array([.001, .002, .003])
+        fog = jnp.array([100., 250.])
+        redshift = jnp.array([35., 50.])
+        convolved = tf_group_logratios(rho, velocity, direction, cz, modulus,
+            error, distance, weight, zcos, box=8., sigma_v=fog,
+            sigma_redshift=redshift)
+        width = jnp.hypot(fog, redshift)
+        combined = tf_group_logratios(rho, velocity, direction, cz, modulus,
+            error, distance, weight, zcos, box=8., sigma_v=width)
+        np.testing.assert_allclose(np.asarray(convolved), np.asarray(combined), rtol=1e-12)
+        invalid = tf_group_logratios(rho, velocity, direction, cz, modulus,
+            error, distance, weight, zcos, box=8., sigma_v=fog,
+            sigma_redshift=jnp.array([35., -1.]))
+        self.assertTrue(np.isfinite(float(invalid[0])))
+        self.assertTrue(np.isnan(float(invalid[1])))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
-"""Bounded count+FP+TF same-current-field HMC equilibration test."""
+"""Bounded count+FP+TF same-current-field HMC geometry tests."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -21,10 +22,7 @@ from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_live_tf_joint import count_fp_tf_parts
 
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
-OUT = BASE / "r2_all_method_sampler_pilot_v2_matched"
 N, BOX = 128, 384.
-WARMUP, RETAIN = 192, 128
-SEEDS = (2026092911, 2026092919)
 
 
 def checked(record, state):
@@ -42,6 +40,26 @@ def checked(record, state):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pilot", choices=("matched_v2", "long_path_v3"),
+                        default="matched_v2")
+    args = parser.parse_args()
+    if args.pilot == "long_path_v3":
+        OUT = BASE / "r2_all_method_sampler_pilot_v3_long_path"
+        WARMUP, RETAIN = 96, 64
+        SEEDS = (2026093011, 2026093019)
+        start_dir = BASE / "r2_all_method_sampler_pilot_v2_matched"
+        hmc = dict(initial_step_size=.006, maximum_step_size=.05,
+                   target_acceptance=.8, divergence_threshold=1000.,
+                   integration_steps=40, integration_steps_range=[32, 48])
+    else:
+        OUT = BASE / "r2_all_method_sampler_pilot_v2_matched"
+        WARMUP, RETAIN = 192, 128
+        SEEDS = (2026092911, 2026092919)
+        start_dir = BASE / "r2_joint_nuisance_pilot_v2"
+        hmc = dict(initial_step_size=.003, maximum_step_size=.05,
+                   target_acceptance=.8, divergence_threshold=1000.,
+                   integration_steps=6, integration_steps_range=[4, 8])
     if not os.environ.get("SLURM_JOB_ID") or jax.default_backend() != "gpu":
         raise RuntimeError("Slurm GPU allocation required")
     if OUT.exists():
@@ -52,7 +70,7 @@ def main():
     anchor_path = BASE / "r2_cross_method_anchors_v1/anchors.npz"
     count_path = BASE / "r2_inclusive_count_diagnostic_v1/inclusive_counts_3_sparse.npz"
     selection_path = BASE / "r2_common_selection_128_v1/selection_3.h5"
-    starts = [BASE / f"r2_joint_nuisance_pilot_v2/chain{chain}_terminal_white_state.npz"
+    starts = [start_dir / f"chain{chain}_terminal_white_state.npz"
               for chain in range(2)]
     with np.load(geometry_path, allow_pickle=False) as f:
         fp = {k: jnp.asarray(f[k]) for k in f.files if k not in ("method_names", "group_labels")}
@@ -131,12 +149,10 @@ def main():
 
     target = lambda x: factors(x)[0].sum()
     factor_fn = jax.jit(factors)
-    hmc = dict(initial_step_size=.003, maximum_step_size=.05,
-               target_acceptance=.8, divergence_threshold=1000.,
-               integration_steps=6, integration_steps_range=[4, 8])
     initialize, warm, sample, final = make_chunks(target, dimension, hmc, record_steps=True)
     report = dict(classification="R2_ALL_METHOD_PARTIAL_TARGET_SAMPLER_TEST",
-        status="STARTED", job_id=os.environ["SLURM_JOB_ID"], N=N, box_cMpc_h=BOX,
+        status="STARTED", job_id=os.environ["SLURM_JOB_ID"], pilot=args.pilot,
+        N=N, box_cMpc_h=BOX,
         count_points=int(counts.sum()), count_occupied_cells=len(keys),
         FP_training_groups=ng, TF_training_groups=int((~tf_host["holdout"]).sum()),
         TF_holdout_groups=int(tf_host["holdout"].sum()),
@@ -144,7 +160,8 @@ def main():
         warmup_per_chain=WARMUP, retained_per_chain=RETAIN,
         source_calibrated=False, group_inclusion_calibrated=False,
         posterior_converged=False, R2_delivery=False,
-        starts_are_prior_partial_target_terminal_states=True,
+        starts_are_prior_partial_target_terminal_states=args.pilot == "matched_v2",
+        starts_are_old_partial_target_endpoints=args.pilot == "long_path_v3",
         TF_secure_matched_groups_share_count_bias_and_FoG=True,
         sampler=hmc, chains=[],
         source_paths=list(map(str, (geometry_path, tf_path, anchor_path, count_path,

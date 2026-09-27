@@ -18,4 +18,4 @@ export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
 "$PY" -m unittest discover -s tests -p test_cf4_r2_tf_group_marks.py -q
-exec "$PY" scripts/cf4_r2_all_method_sampler.py
+exec "$PY" scripts/cf4_r2_all_method_sampler.py "$@"
