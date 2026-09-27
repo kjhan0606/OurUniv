@@ -41,8 +41,9 @@ Keep physical velocity dispersion distinct from uncertainty in mean velocity.
 If a chain fails numerically, preserve its partial output and do not extend
 or mask the problem.
 
-One typed-H100 Slurm job,4CPU,16GiB host (measured 6.52GiB fixed-state
-peak, estimated HMC peak<=13GiB including retained map moments),2h cap.
+The first typed-H100 Slurm request was4CPU/16GiB host (measured 6.52GiB
+fixed-state peak, estimated HMC peak<=13GiB including retained map moments),
+2h cap. Its measured Slurm MaxRSS required a22GiB retry request.
 No new simulation, raw snapshot, external survey download or N256 job.
 Run the focused variable-bias empty-cell derivative test in the same job.
 
@@ -69,7 +70,7 @@ Implementation is in `scripts/cf4_r2_joint_nuisance_pilot.py` with the
 variable-exponent empty-cell response in
 `src/cf4_r2_continuous_tracer.py`. Typed-H100 job **406431** was submitted
 with4CPU/16GiB/2h. The four focused/reused tracer tests passed in its
-allocation; the chains are still running. Partial/final result path:
+allocation. Partial result path:
 `/gpfs/kjhan/CF4/z0_density/r2_joint_nuisance_pilot_v1/result.json`.
 Submission and tests are not a sampling or science pass.
 
@@ -93,4 +94,64 @@ One exact synthetic regression runs before the survey arrays. This correction
 does not clip likelihood support or silently repair a bad state. The new
 result path is
 `/gpfs/kjhan/CF4/z0_density/r2_joint_nuisance_pilot_v2/result.json`.
-Typed-H100 retry **406462** submitted; result pending.
+Typed-H100 retry **406462 COMPLETED/exit0 in14m27s**. Both fresh chains
+finished64 warmup and64 retained transitions and saved64 present-field maps
+each. Their retained acceptance means are0.8155/0.8588, retained divergences
+are0/0, and observed occupied-cell unit intensities remain positive at the
+terminal states (minimum0.000199/0.000204). The process peak is10.155GiB
+under the22GiB request; the Slurm batch MaxRSS is approximately10.03GiB.
+The retry counted **zero** rejected nonfinite proposal energies. It crossed
+the earlier failure point but does not establish the cause of the v1 failure;
+GPU numerical trajectory variation or an unrecorded v1 proposal/record
+condition remains possible. Do not label the v2 checker change a demonstrated
+physics or sampler fix.
+
+The count log factor improves by about76,191/77,332 nats between the two
+predetermined prior starts and their terminal states. This is expected
+burn-in movement of an initially count-unfitted IC, not a Bayes factor,
+calibrated bias estimate or evidence of equilibrium. The shared FoG white
+means1.386/1.458 correspond to development widths~264/~277 km/s, and the
+fourth tracer-bias white means-2.146/-1.805 correspond to multipliers
+~0.342/~0.405 of the transferred exponent. These visibly differ across
+short chains; source-calibrated FoG and bias remain absent. Neither the source
+status string nor finite HMC traces certify an R2 posterior.
+
+### Chain/map assessment and science decision
+
+Typed-A100 Slurm **406467 COMPLETED/exit0 in8s**. Its read-only assessment
+`/gpfs/kjhan/CF4/z0_density/r2_joint_nuisance_pilot_v2/assessment.json`
+compares the exact two saved64-draw traces and chain-wise field moments;
+no gravity or new likelihood was run. The implementation is
+`scripts/cf4_r2_joint_nuisance_assess.py`.
+
+The retained logtarget first-half to last-half means rise by4,829/4,528
+nats, and all six bias-white coordinates drift in both chains. The FoG-white
+coordinate moves downward in both. Rank-normalized split Rhat for logtarget
+is1.818, for the IC mean square2.630, and for the seven tracer coordinates
+1.755–2.437. Approximate split raw ESS is only2.18–3.49 over128 retained
+draws. With two short, visibly drifting chains these ESS values are only
+warning diagnostics, not precise effective posterior sample counts.
+
+The two chain-wise development mean density fields have Pearson correlation
+0.139 in the predeclared15–180 cMpc/h observer shell,0.487 inside15 cMpc/h,
+and0.207 after24-cMpc/h box blocking. In the shell their mean-density RMS
+difference is2.518 versus each field's spatial RMS~1.89/1.95; mean velocity
+vector RMS difference is692 km/s. Even the coarse maps are not mutually
+stable. Map differences alone need not mean an incorrect likelihood because
+a broad posterior could contain disparate modes; together with clear trace
+drift they rule out treating these short chain moments as an equilibrated
+posterior mean or uncertainty. The retained within-chain sample SDs are
+autocorrelated trajectory variation, not calibrated posterior SDs.
+
+Decision: **NO-GO for R2 posterior/map promotion and NO-GO for a blind
+extension or N256 escalation.** The numerical same-state pilot is useful as
+an implementation/cost result only. The immediate bottlenecks are both the
+nonstationary high-dimensional sampler and the uncalibrated field-dependent
+galaxy response/selected-group law. The next substantive bundle must address
+an observation-model calibration/heldout mock and sampler equilibration
+strategy together, using an explicitly partial target until the group and
+selection dependencies are resolved. Do not use these drifted nuisance means
+as empirical priors or select a chain/map by how well it resembles LG.
+MW/M31/M33 remain latent NEW-state roles, with unresolved M33 preserved;
+their observables have not constrained the N128 maps and cannot be inferred
+from native truth IDs or these unseparated coarse peaks.

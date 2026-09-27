@@ -540,6 +540,28 @@ gates and retains the missing group-inclusion/association law as a production
 barrier. No current-field posterior or LG role was delivered. Record:
 `CF4_R2_LIVE_FACTOR_TENSION_20260927.md`.
 
+Joint live-field nuisance pilot2026-09-27: the first H100406431 failed after
+one complete and one partial chain on a nonfinite HMC record; its exact
+cause is unconfirmed, and failed output remains preserved. Same-target,
+same-seed H100406462 COMPLETED14m27s/exit0 with two64-warmup/64-retained
+N128/384 chains. Retained acceptance is0.816/0.859, retained divergences0/0,
+positive occupied count support, and64 separate development density/velocity
+maps per chain. The retry counted no rejected nonfinite energies, so its
+success does not establish that the checker amendment caused recovery.
+Initial-to-terminal count log factor rises~76k/~77k as count-unfitted prior
+starts adapt; this is not convergence, a calibrated tracer response or
+evidence for a current-field posterior. A100406467 assessment completes8s:
+logtarget split Rhat1.818, IC mean-square2.630, seven nuisance Rhat1.755–2.437;
+both logtarget traces rise by~4.5–4.8k nats between retained halves. The
+chain-mean density correlation is only0.139 in the15–180-cMpc/h shell and
+0.207 on24-cMpc/h box blocks. These values establish **NO-GO for convergence
+or map promotion**; short-chain within-trajectory SD is not posterior
+uncertainty. Do not blindly extend, pool maps, use nuisance means as priors,
+or launch N256. The next science bundle must confront selected-group/galaxy
+response calibration and an equilibrating IC sampler jointly, not another
+fixed-state sensitivity ladder. MW/M31/M33 remain same-NEW-state latent roles,
+including unresolved M33. Record: `CF4_R2_JOINT_NUISANCE_PILOT_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
