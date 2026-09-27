@@ -1954,3 +1954,14 @@ This exact parameterization
 repair does not calibrate the faint LF, survey/group selection, bias/FoG or
 sampler; no R2 posterior or N256 map follows. See
 `CF4_R2_LF_RATE_IDENTIFIABILITY_20260927.md`. No email.
+
+Train-only FP singleton prior sensitivity2026-09-27: typed-H100406598
+COMPLETED/exit0, comparing selected d²ρ, geometrical d² and log-distance-flat
+radial weights on3,535 overlap-free training FP groups in one unconditioned
+N128 PM state. Per-group score differences are generally small, but this is
+neither a fitted/posterior result nor a selected-group calibration; heldout
+marks were untouched. Do not promote a singleton-only model or use cross-state
+scores as information fractions. Next observation-law work must jointly own
+linked count/FP marks and address selected-group inclusion/shared covariance
+with source-backed evidence before a heldout fit. Details in
+`CF4_R2_FP_SINGLETON_PRIOR_SENSITIVITY_20260927.md`. No email.
