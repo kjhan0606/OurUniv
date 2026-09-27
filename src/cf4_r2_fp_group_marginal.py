@@ -19,8 +19,12 @@ def selected_group_logweights(distance, quadrature_weight, density_ratio,
 
     w = dd * d^2 * rho^b * P(group included | d, F, covariates).
     This is a caller-specified power-law tracer model, not calibrated bias.
-    Inclusion means group/sample inclusion, NOT the FP fn correction already
-    present in source distance summaries. Use w in BOTH conditional integrals.
+    Inclusion means residual group/sample inclusion, NOT another FP fn
+    correction already present in source distance summaries. A cut on the
+    group's FIXED observed redshift is constant across candidate distances
+    and cancels in this conditional mark factor; do not import the SDSS random
+    observed-n(z) as if it were a true-distance group-inclusion function.
+    Use w in BOTH conditional integrals.
     A distance-independent amplitude cancels; spatial shape generally does not.
     Zero density/inclusion remains zero support, without a numerical floor.
     Requires positive distance, weights, bias; nonnegative finite density;

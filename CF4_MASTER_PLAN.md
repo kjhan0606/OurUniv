@@ -1965,3 +1965,16 @@ scores as information fractions. Next observation-law work must jointly own
 linked count/FP marks and address selected-group inclusion/shared covariance
 with source-backed evidence before a heldout fit. Details in
 `CF4_R2_FP_SINGLETON_PRIOR_SENSITIVITY_20260927.md`. No email.
+
+Public SDSS FP radial-source check2026-09-27: typed-H100406602
+COMPLETED/exit0, streaming and hash-verifying4,000,000 official randoms
+without retaining the284MB raw file. Their relative observed-z shell density
+falls to0.614 at z=.050-.055 and0.239 at z=.095-.100 versus z=.030-.035.
+The8,708 in-mask CF4-eligible FP sky-training rows are sharply cut near
+z=.061 by the **known observed-group-redshift** d_z<180-cMpc/h eligibility;
+the full SDSS random n(z) cannot be inserted as a true-distance group prior.
+The source FP PDF already includes its own f_n selection correction. No
+heldout distance marks or field scores were used; full-source redshifts/randoms
+are not an independent sky holdout. Group incidence, count/FP joint ownership
+and sampler calibration remain open. See
+`CF4_R2_SDSS_RANDOM_RADIAL_20260927.md`. No email.
