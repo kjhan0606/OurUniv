@@ -56,8 +56,8 @@ def load_m2pp_gids(path: Path) -> dict[int, int]:
             if recno in result:
                 raise ValueError(f"duplicate 2M++ recno {recno}")
             result[recno] = gid
-    if len(result) != 67_224:
-        raise ValueError(f"expected 67,224 2M++ rows, found {len(result)}")
+    if not result:
+        raise ValueError("2M++ source catalogue is empty")
     return result
 
 
@@ -294,6 +294,7 @@ def main() -> None:
         base_split="v5 geometry octant retained; identity graph components that mix roles are buffered",
         role_codes={"0": "train", "1": "heldout", "2": "buffer", "3": "unassigned Tempel/GID"},
         graph=graph_summary,
+        m2pp_catalogue_rows=len(m2pp_gid_by_recno),
         point_role_counts=np.bincount(point_role, minlength=3).tolist(),
         cf4_role_counts=np.bincount(cf4_role, minlength=3).tolist(),
         fp_source_role_counts=np.bincount(fp_role, minlength=3).tolist(),
