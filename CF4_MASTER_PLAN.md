@@ -588,6 +588,17 @@ calibration and sampler equilibration together, with source/holdout
 separation and no truth-selected IC. Record:
 `CF4_R2_LIVE_TF_JOINT_20260927.md`.
 
+TF source-consistency screen406487 COMPLETED/exit0 (same A100 request406486
+cancelled pending for resources). Across CF4 group-method overlaps,
+TF-minus-FP median is+0.016mag/669 groups; TF-minus-SNIa is-0.1375mag/264
+groups. The8,502 TF-only groups have median and90th-percentile TF
+contributor count one, so the provisional150-km/s *group* redshift width
+needs singleton-specific scrutiny. Shared CF4 calibration and unknown
+cross-method covariance mean these internal differences do not provide an
+independent zero/error or selection calibration. No parameter was tuned,
+sampler run, or R2 posterior promoted. Record:
+`CF4_R2_TF_CROSS_METHOD_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
