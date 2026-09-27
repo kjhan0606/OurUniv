@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=cf4-r2-tf-cross
-#SBATCH --partition=a100
-#SBATCH --gres=gpu:A100:1
+#SBATCH --partition=h100
+#SBATCH --gres=gpu:H100:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2

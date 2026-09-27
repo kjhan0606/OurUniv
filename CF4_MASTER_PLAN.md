@@ -592,8 +592,11 @@ TF source-consistency screen406487 COMPLETED/exit0 (same A100 request406486
 cancelled pending for resources). Across CF4 group-method overlaps,
 TF-minus-FP median is+0.016mag/669 groups; TF-minus-SNIa is-0.1375mag/264
 groups. The8,502 TF-only groups have median and90th-percentile TF
-contributor count one, so the provisional150-km/s *group* redshift width
-needs singleton-specific scrutiny. Shared CF4 calibration and unknown
+*distance-contributor* count one; this alone does NOT establish CF4 `Ngal`
+group richness. Corrected H100406489 separately checks the source `Ngal`
+for the exact TF-only IDs: median/p90=1/1, and95.01% have `Ngal=1`.
+Thus these groups really are mostly singletons, but no velocity width is
+calibrated by that fact. Shared CF4 calibration and unknown
 cross-method covariance mean these internal differences do not provide an
 independent zero/error or selection calibration. No parameter was tuned,
 sampler run, or R2 posterior promoted. Record:

@@ -30,9 +30,10 @@ script ran on typed-H100 **406487 COMPLETED/exit0**. Pinned result:
 The source has38,053 groups;10,035 have positive TF measurements, and9,533
 meet this screen's broad cz/error range. TF-only training/heldout medians in
 cz are5917/5739 km/s. The8,502 TF-only groups have median and90th-percentile
-TF contributor count **one**; their quoted modulus-error median is0.41mag.
-Thus a fixed150-km/s *group* velocity width is especially provisional for
-this mostly-singleton sample.
+TF *distance-contributor* count **one**; their quoted modulus-error median is
+0.41mag. This count is NOT the number of galaxies in the CF4 `Ngal` group.
+The v1 screen did not report `Ngal`, so it cannot support a mostly-singleton
+*group* statement. A v2 correction checks `Ngal` explicitly below.
 
 Within the *same source groups*, TF-minus-FP has669 overlaps, median
 +0.016mag, MAD0.354mag. TF-minus-SNIa has264 overlaps, median-0.1375mag,
@@ -44,9 +45,19 @@ included in the JSON only as a screen; they cannot estimate a source-error
 inflation because the CF4 method calibrations are shared.
 
 Decision: no obvious large TF-vs-FP source mismatch, but the method-specific
-SN offset, mostly-singleton TF sample and unknown cross-method covariance
+SN offset, mostly-one-TF-contributor sample and unknown cross-method covariance
 prevent fixing the TF zero/width or declaring a calibrated likelihood from
 this check. Do not tune on these same overlaps, double-use them as independent
 validation, or launch N256. The next model must distinguish singleton/group
 redshift scatter and carry method-calibration uncertainty while testing
 selected-sample sensitivity and joint-field sampler equilibration.
+
+Correction **H100406489 COMPLETED/exit0**:
+`/gpfs/kjhan/CF4/z0_density/r2_tf_cross_method_screen_v2/result.json`
+reads source `Ngal` for the exact8,502 pinned TF-only IDs. Its group-size
+median/p90 are independently1/1, and **95.01% have `Ngal=1`**. Thus the
+mostly-singleton *group* observation is verified, though the v1 inference
+from TF contributor count alone was invalid. This reinforces the need for a
+singleton-specific observed-redshift/velocity-discrepancy treatment; it does
+not numerically calibrate that width or group inclusion. The field likelihood
+was unchanged by this source-data correction.

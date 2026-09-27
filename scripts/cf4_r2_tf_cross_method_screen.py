@@ -11,7 +11,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "data/cf4_groups.csv"
 CATALOGUE = Path("/gpfs/kjhan/CF4/z0_density/r2_tf_source_link_v1/tf_only_groups.npz")
-OUT = Path("/gpfs/kjhan/CF4/z0_density/r2_tf_cross_method_screen_v1")
+OUT = Path("/gpfs/kjhan/CF4/z0_density/r2_tf_cross_method_screen_v2")
 SOURCE_SHA = "bfdc0cfc0f172b48468e3a8fd05e87978c1ec68c341fb2d929fc1200f0123334"
 METHODS = (("FP", "o_DMfp", "DMfp", "e_DMfp"),
            ("SNIa", "o_DMsnIa", "DMsnIa", "e_DMsnIa"),
@@ -52,9 +52,21 @@ def main():
         raise ValueError("CF4 group source changed")
     overlap = {method: [] for method, *_ in METHODS}
     total, tf_positive, eligible = 0, 0, 0
+    with np.load(CATALOGUE, allow_pickle=False) as saved:
+        tf_only_ids = set(map(int, saved["group_pgc"]))
+        train = ~saved["holdout"]
+        catalogue = {"training_groups": int(train.sum()),
+                     "heldout_groups": int((~train).sum()),
+                     "TF_only_distance_contributor_count": summary(saved["member_count"]),
+                     "TF_only_reported_modulus_error": summary(saved["modulus_error"]),
+                     "training_cz": summary(saved["observed_cz"][train]),
+                     "heldout_cz": summary(saved["observed_cz"][~train])}
+    tf_only_group_size = []
     with SOURCE.open(newline="") as stream:
         for row in csv.DictReader(stream):
             total += 1
+            if int(row["1PGC"]) in tf_only_ids:
+                tf_only_group_size.append(int(row["Ngal"]))
             if not row["o_DMtf"] or int(row["o_DMtf"]) <= 0:
                 continue
             tf_positive += 1
@@ -77,14 +89,10 @@ def main():
                 overlap[method].append(dict(delta=difference,
                     normalized=difference/np.hypot(tf_err, error), cz=cz, SGB=b,
                     n_tf=int(row["o_DMtf"])))
-    with np.load(CATALOGUE, allow_pickle=False) as saved:
-        train = ~saved["holdout"]
-        catalogue = {"training_groups": int(train.sum()),
-                     "heldout_groups": int((~train).sum()),
-                     "TF_only_member_count": summary(saved["member_count"]),
-                     "TF_only_reported_modulus_error": summary(saved["modulus_error"]),
-                     "training_cz": summary(saved["observed_cz"][train]),
-                     "heldout_cz": summary(saved["observed_cz"][~train])}
+    if len(tf_only_group_size) != len(tf_only_ids):
+        raise ValueError("TF-only group ID coverage changed")
+    catalogue["TF_only_catalogue_Ngal"] = summary(tf_only_group_size)
+    catalogue["TF_only_Ngal_eq_1_fraction"] = float(np.mean(np.asarray(tf_only_group_size) == 1))
     result = {"classification": "INTERNAL_CROSS_METHOD_CONSISTENCY_ONLY",
               "job_id": os.environ["SLURM_JOB_ID"], "source_groups": total,
               "TF_positive_groups": tf_positive, "TF_eligible_overlap_window": eligible,
