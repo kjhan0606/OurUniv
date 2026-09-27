@@ -16,7 +16,7 @@ from __future__ import annotations
 import math
 
 import jax.numpy as jnp
-from jax.scipy.special import gammainc, gammaln
+from jax.scipy.special import gammainc, gammaln, logsumexp
 
 from cf4_2mpp_joint_likelihood_jax import (
     _gaussian_hermite_rule, observer_centred_spherical_rsd_jax,
@@ -143,6 +143,61 @@ def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
     return (jnp.exp(log_mean_rate_per_cell)*weights[:, None]*response)
 
 
+def tsc_weight_at_voxel(positions, voxel_ijk, grid_size, box_size_cMpc_h):
+    """Weight of each source in ONE observed voxel of the deposit kernel.
+
+    This is the transpose of the *same* periodic, cell-centred TSC stencil
+    used by ``tsc_deposit_jax``. It evaluates a specified voxel without
+    allocating a source-by-observed-voxel matrix. ``grid_size >= 3`` avoids
+    aliased TSC neighbours on smaller periodic grids.
+    """
+    if grid_size < 3 or jnp.asarray(voxel_ijk).shape != (3,):
+        raise ValueError('TSC target requires three voxel indices and grid_size >= 3')
+    cell = (jnp.asarray(positions) % box_size_cMpc_h) / (
+        box_size_cMpc_h/grid_size) - .5
+    target = jnp.asarray(voxel_ijk)
+    delta = (target[None, :] - cell + grid_size/2.) % grid_size - grid_size/2.
+    distance = jnp.abs(delta)
+    axis_weight = jnp.where(distance < .5, .75-distance**2,
+                            jnp.where(distance < 1.5,
+                                      .5*(1.5-distance)**2, 0.))
+    return jnp.prod(axis_weight, axis=1)
+
+
+def _source_marked_nodes(positions, velocity, observer, box_size_cMpc_h,
+                         hubble_km_s_Mpc, little_h, radius_table,
+                         modulus_table, redshift_values, sigma_los_km_s,
+                         radial_min_cMpc_h, radial_max_cMpc_h,
+                         quadrature_order, mstar, alpha):
+    """Yield the shared source selection/K/RSD transfer for count and link."""
+    shifted, _, rhat = observer_centred_spherical_rsd_jax(
+        positions, velocity, observer, box_size_cMpc_h,
+        hubble_km_s_Mpc, little_h=little_h, scale_factor=1.)
+    true_relative = (positions-observer+box_size_cMpc_h/2.) % box_size_cMpc_h
+    true_relative -= box_size_cMpc_h/2.
+    true_radius = jnp.linalg.norm(true_relative, axis=1)
+    true_modulus = jnp.interp(true_radius, radius_table, modulus_table)
+    true_redshift = jnp.interp(true_radius, radius_table, redshift_values)
+    nodes, weights = _gaussian_hermite_rule(quadrature_order)
+    for node, weight in zip(nodes, weights):
+        extra = node*little_h*sigma_los_km_s/hubble_km_s_Mpc
+        observed_positions = (shifted + extra*rhat) % box_size_cMpc_h
+        observed_relative = ((observed_positions-observer
+                              +box_size_cMpc_h/2.) % box_size_cMpc_h
+                             -box_size_cMpc_h/2.)
+        observed_radius = jnp.linalg.norm(observed_relative, axis=1)
+        observed_modulus = jnp.interp(observed_radius, radius_table,
+                                      modulus_table)
+        observed_redshift = jnp.interp(observed_radius, radius_table,
+                                       redshift_values)
+        transfer = source_mark_transfer(true_modulus, observed_modulus,
+                                        true_redshift, observed_redshift,
+                                        mstar=mstar, alpha=alpha)
+        selected = (observed_radius >= radial_min_cMpc_h) & (
+            observed_radius <= radial_max_cMpc_h)
+        yield observed_positions, selected, transfer, weight
+
+
 def sparse_marked_poisson_log_likelihood(intensity, observed_keys,
                                           observed_counts, *,
                                           selected_voxel_mask=None):
@@ -212,35 +267,160 @@ def predict_source_marked_intensity(
         raise ValueError('radial lookup geometry mismatch')
     if grid_size < 1 or radial_min_cMpc_h >= radial_max_cMpc_h:
         raise ValueError('invalid count grid or selected radial interval')
-    shifted, _, rhat = observer_centred_spherical_rsd_jax(
-        positions, velocity, observer, box_size_cMpc_h,
-        hubble_km_s_Mpc, little_h=little_h, scale_factor=1.)
-    true_relative = (positions-observer+box_size_cMpc_h/2.) % box_size_cMpc_h
-    true_relative -= box_size_cMpc_h/2.
-    true_radius = jnp.linalg.norm(true_relative, axis=1)
-    true_modulus = jnp.interp(true_radius, radius_table, modulus_table)
-    true_redshift = jnp.interp(true_radius, radius_table, redshift_values)
-    nodes, weights = _gaussian_hermite_rule(quadrature_order)
     outputs = [jnp.zeros((grid_size,)*3, dtype=intrinsic.dtype) for _ in range(6)]
-    for node, weight in zip(nodes, weights):
-        extra = node*little_h*sigma_los_km_s/hubble_km_s_Mpc
-        observed_positions = (shifted + extra*rhat) % box_size_cMpc_h
-        observed_relative = ((observed_positions-observer
-                              +box_size_cMpc_h/2.) % box_size_cMpc_h
-                             -box_size_cMpc_h/2.)
-        observed_radius = jnp.linalg.norm(observed_relative, axis=1)
-        observed_modulus = jnp.interp(observed_radius, radius_table,
-                                      modulus_table)
-        observed_redshift = jnp.interp(observed_radius, radius_table,
-                                       redshift_values)
-        transfer = source_mark_transfer(true_modulus, observed_modulus,
-                                        true_redshift, observed_redshift,
-                                        mstar=mstar, alpha=alpha)
-        selected = (observed_radius >= radial_min_cMpc_h) & (
-            observed_radius <= radial_max_cMpc_h)
+    for observed_positions, selected, transfer, weight in _source_marked_nodes(
+            positions, velocity, observer, box_size_cMpc_h,
+            hubble_km_s_Mpc, little_h, radius_table, modulus_table,
+            redshift_values, sigma_los_km_s, radial_min_cMpc_h,
+            radial_max_cMpc_h, quadrature_order, mstar, alpha):
         for population in range(6):
             mass = (weight * selected * angular[population//3]
                     * jnp.sum(transfer[population]*intrinsic, axis=0))
             outputs[population] = outputs[population] + tsc_deposit_jax(
                 observed_positions, mass, grid_size, box_size_cMpc_h)
     return jnp.stack(outputs)
+
+
+def predict_source_marked_key_contributions(
+    source_positions, source_velocities_km_s, intrinsic_bin_masses,
+    angular_completeness, population, voxel_ijk, *, observer,
+    box_size_cMpc_h, hubble_km_s_Mpc, little_h,
+    radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
+    sigma_los_km_s=0., radial_min_cMpc_h=5.,
+    radial_max_cMpc_h=180., quadrature_order=3,
+    mstar=-23.28, alpha=-.94,
+):
+    """Five-true-K-by-source contributions to ONE count population/voxel.
+
+    Summing both axes must reproduce the corresponding element of
+    ``predict_source_marked_intensity`` with identical inputs. The entries
+    provide an exact **coarsened count-key** source mixture; they are not yet
+    conditioned on an individual's measured redshift, FP inclusion, or group
+    association. Never multiply their marginal intensity into a second count
+    likelihood for the same point.
+    """
+    positions = jnp.asarray(source_positions)
+    velocity = jnp.asarray(source_velocities_km_s)
+    intrinsic = jnp.asarray(intrinsic_bin_masses)
+    angular = jnp.asarray(angular_completeness)
+    radius_table = jnp.asarray(radius_table_cMpc_h)
+    modulus_table = jnp.asarray(modulus_table_h)
+    redshift_values = jnp.asarray(redshift_table)
+    count = positions.shape[0]
+    if (not isinstance(population, int) or population < 0 or population >= 6
+            or positions.shape != (count, 3) or velocity.shape != positions.shape
+            or intrinsic.shape != (5, count) or angular.shape != (2, count)
+            or radius_table.ndim != 1 or modulus_table.shape != radius_table.shape
+            or redshift_values.shape != radius_table.shape or radius_table.size < 2
+            or radial_min_cMpc_h >= radial_max_cMpc_h):
+        raise ValueError('invalid source-marked key geometry')
+    # Also checks the target shape. The array value is allowed to be traced.
+    tsc_weight_at_voxel(positions[:1], voxel_ijk, grid_size,
+                        box_size_cMpc_h)
+    result = jnp.zeros_like(intrinsic)
+    for observed_positions, selected, transfer, weight in _source_marked_nodes(
+            positions, velocity, observer, box_size_cMpc_h,
+            hubble_km_s_Mpc, little_h, radius_table, modulus_table,
+            redshift_values, sigma_los_km_s, radial_min_cMpc_h,
+            radial_max_cMpc_h, quadrature_order, mstar, alpha):
+        spatial = tsc_weight_at_voxel(observed_positions, voxel_ijk, grid_size,
+                                      box_size_cMpc_h)
+        result = result + (weight*selected*angular[population//3]*spatial)[None, :] * (
+            transfer[population]*intrinsic)
+    return result
+
+
+def predict_source_marked_radial_key_density(
+    source_positions, source_velocities_km_s, intrinsic_bin_masses,
+    angular_completeness, population, voxel_ijk, observed_radius_cMpc_h,
+    *, observer, box_size_cMpc_h, hubble_km_s_Mpc, little_h,
+    radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
+    sigma_los_km_s, radial_min_cMpc_h=5., radial_max_cMpc_h=180.,
+    mstar=-23.28, alpha=-.94,
+):
+    """Source contribution per unit *observed comoving radius* at one key.
+
+    Both signed LOS branches through the observer are included. Integrating
+    over observed radius approaches the count-key source contribution when
+    periodic-image aliases are negligible and the quadrature is converged.
+    The current count operator uses finite Gaussian-Hermite quadrature, so
+    equality is **not** automatic at finite order or near K/radial cuts.
+    A measured individual redshift can supply ``observed_radius``;
+    multiplying by dr/dz converts to density per unit z, but that Jacobian
+    cancels from a mark factor conditioned on the same observed redshift.
+    This does not model FP-group inclusion or association probability.
+    """
+    positions = jnp.asarray(source_positions)
+    velocity = jnp.asarray(source_velocities_km_s)
+    intrinsic = jnp.asarray(intrinsic_bin_masses)
+    angular = jnp.asarray(angular_completeness)
+    radius_table = jnp.asarray(radius_table_cMpc_h)
+    modulus_table = jnp.asarray(modulus_table_h)
+    redshift_values = jnp.asarray(redshift_table)
+    count = positions.shape[0]
+    if (not isinstance(population, int) or population < 0 or population >= 6
+            or positions.shape != (count, 3) or velocity.shape != positions.shape
+            or intrinsic.shape != (5, count) or angular.shape != (2, count)
+            or radius_table.ndim != 1 or modulus_table.shape != radius_table.shape
+            or redshift_values.shape != radius_table.shape or radius_table.size < 2
+            or sigma_los_km_s <= 0 or radial_min_cMpc_h >= radial_max_cMpc_h
+            or radial_max_cMpc_h > box_size_cMpc_h/2.):
+        raise ValueError('invalid continuous source-marked radial geometry')
+    tsc_weight_at_voxel(positions[:1], voxel_ijk, grid_size,
+                        box_size_cMpc_h)
+    shifted, _, rhat = observer_centred_spherical_rsd_jax(
+        positions, velocity, observer, box_size_cMpc_h,
+        hubble_km_s_Mpc, little_h=little_h, scale_factor=1.)
+    relative = (positions-observer+box_size_cMpc_h/2.) % box_size_cMpc_h
+    relative -= box_size_cMpc_h/2.
+    true_radius = jnp.linalg.norm(relative, axis=1)
+    shifted_relative = (shifted-observer+box_size_cMpc_h/2.) % box_size_cMpc_h
+    shifted_relative -= box_size_cMpc_h/2.
+    shifted_radius = jnp.linalg.norm(shifted_relative, axis=1)
+    r_observed = jnp.asarray(observed_radius_cMpc_h)
+    sigma_radius = little_h*sigma_los_km_s/hubble_km_s_Mpc
+    log_normalizer = -jnp.log(sigma_radius)-.5*jnp.log(2*jnp.pi)
+    radial_pdf_plus = jnp.exp(
+        -.5*((r_observed-shifted_radius)/sigma_radius)**2+log_normalizer)
+    radial_pdf_minus = jnp.exp(
+        -.5*((-r_observed-shifted_radius)/sigma_radius)**2+log_normalizer)
+    observed_plus = (observer + r_observed*rhat) % box_size_cMpc_h
+    observed_minus = (observer - r_observed*rhat) % box_size_cMpc_h
+    spatial = (radial_pdf_plus*tsc_weight_at_voxel(
+        observed_plus, voxel_ijk, grid_size, box_size_cMpc_h)
+        + radial_pdf_minus*tsc_weight_at_voxel(
+            observed_minus, voxel_ijk, grid_size, box_size_cMpc_h))
+    transfer = source_mark_transfer(
+        jnp.interp(true_radius, radius_table, modulus_table),
+        jnp.interp(r_observed, radius_table, modulus_table),
+        jnp.interp(true_radius, radius_table, redshift_values),
+        jnp.interp(r_observed, radius_table, redshift_values),
+        mstar=mstar, alpha=alpha)[population]
+    selected = ((r_observed >= radial_min_cMpc_h)
+                & (r_observed <= radial_max_cMpc_h))
+    return (selected*spatial*angular[population//3])[None, :] * transfer*intrinsic
+
+
+def conditional_single_link_logfactor(source_key_radial_density,
+                                      log_association, log_fp_mark):
+    """Normalized FP-mark factor given a counted point's key and redshift.
+
+    All arguments are (five true-K bins, source cells). The caller supplies
+    the *same* selected source response as the count factor, a calibrated or
+    explicitly conditional association law, and a source-corrected FP mark
+    log likelihood ratio. Count occurrence and observed redshift are not
+    multiplied again. Group-shared offsets/anchors require an outer group
+    calculation; this function alone is not the all-group R2 likelihood.
+    """
+    mass = jnp.asarray(source_key_radial_density)
+    association = jnp.asarray(log_association)
+    mark = jnp.asarray(log_fp_mark)
+    if (mass.ndim != 2 or mass.shape[0] != 5
+            or association.shape != mass.shape or mark.shape != mass.shape):
+        raise ValueError('linked mark requires aligned five-bin source arrays')
+    safe = jnp.where(mass > 0., mass, 1.)
+    base = jnp.where(mass > 0., jnp.log(safe), -jnp.inf) + association
+    normalizer = logsumexp(base)
+    numerator = logsumexp(base+mark)
+    return jnp.where((mass >= 0.).all() & jnp.isfinite(normalizer),
+                     numerator-normalizer, -jnp.inf)

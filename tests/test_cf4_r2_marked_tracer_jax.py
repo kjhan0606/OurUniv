@@ -5,11 +5,15 @@ import jax.numpy as jnp
 import numpy as np
 
 from cf4_r2_marked_tracer_jax import (
+    conditional_single_link_logfactor,
     intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
     intrinsic_lf_reference_weights,
-    predict_source_marked_intensity, source_mark_transfer,
+    predict_source_marked_intensity, predict_source_marked_key_contributions,
+    predict_source_marked_radial_key_density,
+    source_mark_transfer, tsc_weight_at_voxel,
     sparse_marked_poisson_log_likelihood,
 )
+from cf4_2mpp_joint_likelihood_jax import tsc_deposit_jax
 from cf4_r2_observed_magnitude_transfer import (
     observed_magnitude_transfer, twompp_k_correction_delta,
 )
@@ -147,6 +151,131 @@ class MarkedTracerTests(unittest.TestCase):
         self.assertTrue(np.isfinite(derivative))
         self.assertGreater(abs(derivative), 1e-8)
         self.assertAlmostEqual(derivative, finite_difference, delta=2e-5)
+
+    def test_source_to_count_key_contributions_reproduce_same_deposit(self):
+        box = 96.
+        positions = jnp.array([[78., 48., 48.], [48., 88., 48.],
+                               [95.5, 10., 10.]])
+        velocity = jnp.array([[300., 0., 0.], [0., 0., 0.],
+                              [-120., 0., 0.]])
+        intrinsic = jnp.array([[.3, .2, .4], [.4, .5, .6], [.6, .7, .8],
+                               [.8, .9, 1.], [1.2, .3, .2]])
+        angular = jnp.array([[1., .8, .7], [.5, .4, .6]])
+        radii = jnp.linspace(.001, 80., 8001)
+        args = dict(observer=jnp.array([48., 48., 48.]),
+                    box_size_cMpc_h=box, hubble_km_s_Mpc=75., little_h=.75,
+                    radius_table_cMpc_h=radii,
+                    modulus_table_h=5*jnp.log10(radii)+25.,
+                    redshift_table=radii/3000., grid_size=4,
+                    radial_min_cMpc_h=5., radial_max_cMpc_h=80.,
+                    sigma_los_km_s=120.)
+        intensity = predict_source_marked_intensity(
+            positions, velocity, intrinsic, angular, **args)
+        for population, ijk in ((0, (3, 2, 2)), (2, (0, 0, 0)),
+                                (5, (2, 3, 2))):
+            contrib = predict_source_marked_key_contributions(
+                positions, velocity, intrinsic, angular, population, ijk,
+                **args)
+            self.assertEqual(contrib.shape, intrinsic.shape)
+            self.assertGreaterEqual(float(jnp.min(contrib)), 0.)
+            np.testing.assert_allclose(float(jnp.sum(contrib)),
+                                       float(intensity[(population,)+ijk]),
+                                       rtol=2e-12, atol=2e-12)
+        voxel = (3, 2, 2)
+        for positions_at in (positions, positions.at[2].set(jnp.array([.5, 10., 10.]))):
+            weights = tsc_weight_at_voxel(positions_at, voxel, 4, box)
+            for source in range(len(positions_at)):
+                deposited = tsc_deposit_jax(
+                    positions_at[source:source+1], jnp.ones(1), 4, box)
+                np.testing.assert_allclose(float(weights[source]),
+                                           float(deposited[voxel]),
+                                           rtol=1e-13, atol=1e-13)
+        def key_total(v):
+            trial = velocity.at[0, 0].set(v)
+            return jnp.sum(predict_source_marked_key_contributions(
+                positions, trial, intrinsic, angular, 0, voxel, **args))
+        def full_total(v):
+            trial = velocity.at[0, 0].set(v)
+            return predict_source_marked_intensity(
+                positions, trial, intrinsic, angular, **args)[(0,)+voxel]
+        self.assertAlmostEqual(float(jax.grad(key_total)(300.)),
+                               float(jax.grad(full_total)(300.)), delta=2e-10)
+
+    def test_continuous_radial_key_density_and_normalized_mark_factor(self):
+        radii = jnp.linspace(.001, 50., 5001)
+        positions = jnp.array([[78., 48., 48.]])
+        velocity = jnp.zeros((1, 3))
+        intrinsic = jnp.array([[.1], [.2], [.3], [.4], [.5]])
+        angular = jnp.ones((2, 1))
+        args = dict(observer=jnp.array([48., 48., 48.]),
+                    box_size_cMpc_h=96., hubble_km_s_Mpc=75., little_h=.75,
+                    radius_table_cMpc_h=radii,
+                    modulus_table_h=5*jnp.log10(radii)+25.,
+                    redshift_table=radii/3000., grid_size=4,
+                    radial_min_cMpc_h=5., radial_max_cMpc_h=45.,
+                    sigma_los_km_s=120.)
+        key = (3, 2, 2)
+        gh_count = float(jnp.sum(predict_source_marked_key_contributions(
+            positions, velocity, intrinsic, angular, 0, key, **args)))
+        self.assertGreater(gh_count, 0.)
+        observed_r = jnp.linspace(23., 37., 113)
+        radial_density = jax.vmap(lambda radius: jnp.sum(
+            predict_source_marked_radial_key_density(
+                positions, velocity, intrinsic, angular, 0, key, radius,
+                **args)))(observed_r)
+        ys, xs = np.asarray(radial_density), np.asarray(observed_r)
+        integral = float(np.sum(.5*(ys[1:]+ys[:-1])*np.diff(xs)))
+        self.assertAlmostEqual(integral, gh_count, delta=.02*gh_count)
+        self.assertGreater(float(radial_density[56]), 0.)
+
+        mass = jnp.array([[.1, .3], [.2, .1], [.4, .2],
+                          [.1, .6], [.2, .4]])
+        log_association = jnp.log(jnp.array([[.8, .7], [.6, .5], [.9, .8],
+                                             [.7, .8], [.5, .6]]))
+        log_mark = jnp.log(jnp.array([[1.1, .8], [1.3, .7], [1.5, .6],
+                                      [1.2, .9], [.9, 1.4]]))
+        weights = np.asarray(mass*jnp.exp(log_association))
+        expected = np.log(np.sum(weights*np.exp(np.asarray(log_mark)))
+                          /np.sum(weights))
+        score = conditional_single_link_logfactor(mass,log_association,log_mark)
+        self.assertAlmostEqual(float(score),float(expected),places=13)
+        self.assertAlmostEqual(float(conditional_single_link_logfactor(
+            10.*mass,log_association,log_mark)),float(expected),places=13)
+        self.assertAlmostEqual(float(conditional_single_link_logfactor(
+            mass,log_association,jnp.zeros_like(mass))),0.,places=13)
+        self.assertEqual(float(conditional_single_link_logfactor(
+            jnp.zeros_like(mass),log_association,log_mark)),float('-inf'))
+
+        # A broad LOS kernel can cross the observer. Both signed-radius
+        # branches then contribute to the same observed radial density.
+        near_radii = jnp.linspace(.001, 12., 1201)
+        near_args = dict(observer=jnp.array([12.,12.,12.]),
+                         box_size_cMpc_h=24.,hubble_km_s_Mpc=75.,little_h=.75,
+                         radius_table_cMpc_h=near_radii,
+                         modulus_table_h=5*jnp.log10(near_radii)+25.,
+                         redshift_table=near_radii/3000.,grid_size=4,
+                         radial_min_cMpc_h=.1,radial_max_cMpc_h=10.,
+                         sigma_los_km_s=300.)
+        source = jnp.array([[13.,12.,12.]])
+        true_mass = jnp.array([[0.],[1.],[0.],[0.],[0.]])
+        opposite_key = (1,2,2)
+        observed = predict_source_marked_radial_key_density(
+            source,jnp.zeros((1,3)),true_mass,jnp.ones((2,1)),
+            0,opposite_key,1.,**near_args)
+        sigma_r=3.
+        pdf_plus=np.exp(-.5*0.**2)/(np.sqrt(2*np.pi)*sigma_r)
+        pdf_minus=np.exp(-.5*(2./sigma_r)**2)/(np.sqrt(2*np.pi)*sigma_r)
+        plus=float(tsc_weight_at_voxel(source,opposite_key,4,24.)[0])
+        minus=float(tsc_weight_at_voxel(
+            jnp.array([[11.,12.,12.]]),opposite_key,4,24.)[0])
+        self.assertGreater(pdf_minus*minus,0.)
+        mu=float(5*np.log10(1.)+25.)
+        transfer=float(source_mark_transfer(
+            jnp.array([mu]),jnp.array([mu]),
+            jnp.array([1./3000.]),jnp.array([1./3000.]))[0,1,0])
+        self.assertAlmostEqual(float(observed.sum()),
+                               transfer*(pdf_plus*plus+pdf_minus*minus),
+                               delta=1e-12)
 
     def test_lf_shape_is_shared_by_intrinsic_mass_and_transfer(self):
         fractions = intrinsic_lf_bin_fractions(mstar=-23.17, alpha=-.73)

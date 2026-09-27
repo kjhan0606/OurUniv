@@ -1991,3 +1991,21 @@ a qualified partial target, not automatically literal double counting or a
 complete joint likelihood. No FP heldout mark, field fit, N256, email or R2
 posterior. Next implementation ownership and limits:
 `CF4_R2_LINKED_POINT_MARK_OWNERSHIP_20260927.md`.
+
+R2 one-link source-kernel entry2026-09-27: typed-H100406603/406605 passed
+the source-to-count-key TSC/K/RSD identity and smooth-case continuous radial
+normalization controls. The actual-source one-group H100406607
+COMPLETED/exit0: nine tests pass, full count-key mean and its five-K/source
+sum agree at0.01243817430227125; the conditional FP mark score on the saved
+**unconditional** N128/384 state is-0.3097834, with velocity-scale derivative
+-0.4686775166 versus finite difference-0.4686775148. This selected training
+group was frozen by identities/geometry before scores, not chosen by fit.
+Association/FP/group redshift covariance and inclusion remain uncalibrated,
+GH3-vs-continuous error at actual keys is not measured, and the all-source
+single-key reference is not scalable to full HMC. No heldout prediction,
+field fit, R2/N256 posterior, LG identity or email. Source and limits:
+`CF4_R2_LINKED_POINT_MARK_OWNERSHIP_20260927.md`.
+Post-control signed-LOS-branch completion406610 passed all nine tests; the
+actual one-group control406607 preceded this small addition, whose reverse
+branch underflows at that fixed83.923-cMpc/h point. No score or posterior
+promotion follows from the branch test.
