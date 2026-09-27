@@ -195,19 +195,19 @@ def main() -> None:
     EXTERNAL.mkdir(parents=True, exist_ok=True)
 
     table1_path, table1_url = acquire_vizier(
-        'table1', ['GalID', 'objID', 'GroupID', 'Ngal', 'zcmb', 'RAdeg', 'DEdeg'],
-        'table1_parent_positions.tsv')
+        'table1', ['GalID', 'objID', 'GroupID', 'Ngal', 'zcmb', 'RAJ2000', 'DEJ2000'],
+        'table1_parent_positions_v2.tsv')
     table2_path, table2_url = acquire_vizier(
-        'table2', ['GroupID', 'Ngal', 'zcmb', 'RAdeg', 'DEdeg'],
-        'table2_parent_centers.tsv')
+        'table2', ['GroupID', 'Ngal', 'zcmb', 'RAJ2000', 'DEJ2000'],
+        'table2_parent_centers_v2.tsv')
     members = numeric_table(table1_path,
-        ['GalID', 'objID', 'GroupID', 'Ngal', 'zcmb', 'RAdeg', 'DEdeg'], TABLE_ROWS['table1'],
+        ['GalID', 'objID', 'GroupID', 'Ngal', 'zcmb', 'RAJ2000', 'DEJ2000'], TABLE_ROWS['table1'],
         dict(GalID=np.int64, objID=np.uint64, GroupID=np.int32, Ngal=np.int16,
-             zcmb=np.float64, RAdeg=np.float64, DEdeg=np.float64))
+             zcmb=np.float64, RAJ2000=np.float64, DEJ2000=np.float64))
     groups = numeric_table(table2_path,
-        ['GroupID', 'Ngal', 'zcmb', 'RAdeg', 'DEdeg'], TABLE_ROWS['table2'],
+        ['GroupID', 'Ngal', 'zcmb', 'RAJ2000', 'DEJ2000'], TABLE_ROWS['table2'],
         dict(GroupID=np.int32, Ngal=np.int16, zcmb=np.float64,
-             RAdeg=np.float64, DEdeg=np.float64))
+             RAJ2000=np.float64, DEJ2000=np.float64))
     order_g = np.argsort(groups['GroupID'])
     groups = {k: v[order_g] for k, v in groups.items()}
     expected_ids = np.arange(1, TABLE_ROWS['table2']+1, dtype=np.int32)
@@ -227,8 +227,8 @@ def main() -> None:
     single_rows = np.flatnonzero(members['GroupID'] == 0)
     parent_richness = np.concatenate((groups['Ngal'], np.ones(len(single_rows), dtype=np.int16)))
     parent_z = np.concatenate((groups['zcmb'], members['zcmb'][single_rows]))
-    parent_ra = np.concatenate((groups['RAdeg'], members['RAdeg'][single_rows]))
-    parent_dec = np.concatenate((groups['DEdeg'], members['DEdeg'][single_rows]))
+    parent_ra = np.concatenate((groups['RAJ2000'], members['RAJ2000'][single_rows]))
+    parent_dec = np.concatenate((groups['DEJ2000'], members['DEJ2000'][single_rows]))
     parent_xyz = unit_vectors(parent_ra, parent_dec)
 
     fp = source_fp_rows(FP_SOURCE)
@@ -280,7 +280,7 @@ def main() -> None:
 
     # Link all Tempel members to 2M++ galaxies without using FP identities.
     m2 = m2pp_rows(M2PP)
-    tempel_xyz = unit_vectors(members['RAdeg'], members['DEdeg'])
+    tempel_xyz = unit_vectors(members['RAJ2000'], members['DEJ2000'])
     source_i, member_i, link_diag = unique_velocity_matches(
         tempel_xyz, C_KMS*members['zcmb'], unit_vectors(m2['ra'], m2['dec']),
         m2['velocity'], max_sep_arcsec=10.0, max_dv_km_s=300.0)
