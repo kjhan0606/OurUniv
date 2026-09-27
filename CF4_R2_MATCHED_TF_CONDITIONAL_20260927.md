@@ -88,3 +88,72 @@ chains remain from the preceding target and are not retroactively corrected.
 This numerical fix does **not** calibrate the count/TF true-distance
 selection, shared source covariance or group inclusion. Output:
 `/gpfs/kjhan/CF4/z0_density/r2_live_tf_matched_point_control_v2_redshift/`.
+
+## Public individual-TF source option (not a calibrated replacement)
+
+The user directed **no email** for the Qin et al. CF4TF mocks. No author
+request was sent. A public, smaller source path exists: CDS/VizieR
+[J/ApJ/902/145](https://cdsarc.cds.unistra.fr/viz-bin/cat/J/ApJ/902/145)
+provides Kourkchi et al. (2020) `table1` with 10,737 individual PGC IDs,
+H I linewidths/flux proxies and optical/WISE magnitudes, and `table4` with
+9,792 published distances. Its `ReadMe` gives fixed-width definitions and
+flags. The exact files were downloaded from the CDS `/ftp/cats/J/ApJ/902/145/`
+archive to `/gpfs/kjhan/CF4/source_catalogues/J_ApJ_902_145/`; both gzip
+streams pass integrity checks and have the documented record counts. SHA256:
+`ReadMe` 45fa3cca5346aff29bcf9785e7b08e8ab34b1d67e80b359c0d28bdbd18e42581,
+`table1.dat.gz` 59a16536ff62aa63729f1b1a6fc11155b0f63613e80ebd8c3469966385a64b0c,
+`table4.dat.gz` 7199960877ccd38b4f499b342e9732951d32e7bc643bb90a08211ab524de7246.
+
+[Boubel et al. (2024)](https://arxiv.org/abs/2301.12648) derive a
+forward conditional likelihood for individual TF apparent magnitude given
+linewidth, flux, observed redshift and a velocity prediction; a magnitude-
+dependent selection factor appears in both numerator and normalization.
+This suggests a *possible* source-constrained alternative to treating every
+grouped `DMtf` as an independently selected Gaussian distance. It does not
+license simply inserting their fitted velocity parameters or selection curve
+into this project: their analysis conditions on a fixed redshift-space
+velocity model, whereas ours infers the same evolving IC/field as the count
+data; their sample, photometry availability and group aggregation may differ
+from the CF4 `DMtf` rows.
+
+Next bounded source task: determine exact PGC-level overlap among this
+individual catalogue, the frozen CF4 TF-only group membership, and the
+secure 2M++ counted points; preserve unavailable/ambiguous associations.
+Only if that bridge and the paper's observable/selection definitions cover a
+useful disjoint training subset should one field-dependent conditional-TF
+factor be implemented and checked on untouched heldout galaxies. Do **not**
+multiply it by the existing group-`DMtf` factor for the same measurements,
+call a selected-only overlap an inclusion denominator, or claim this TF-only
+option calibrates the FP/group source model. Q-GOAL: directly probes the R2
+CF4 selection barrier. Q-LEAN: reuse a 1.1-MB public source table and one
+bounded bridge before considering a new likelihood, rather than procuring
+large mocks or expanding the sampler blindly. MW/M31/M33 remain unresolved
+R3 latent roles on each NEW field, including an unresolved-M33 branch;
+native identities cannot seed or rank generated states, and their
+observables must eventually constrain that same evolved field.
+
+The first PGC-only bridge **406523 FAILED/exit1 after4s** before writing a
+result because it assumed every CDS `table4` line had exactly100 characters;
+the archive omits trailing absent columns on some rows. The parser now
+accepts these variable-length rows without changing source bytes or the
+specified PGC/`DMbest` columns. Same-scope typed-H200 **406524
+COMPLETED/exit0 in1s**. Its frozen
+[`result.json`](/gpfs/kjhan/CF4/z0_density/r2_public_tf_source_bridge_v1/result.json)
+shows 7,020/8,502 TF-only groups have at least one 2020 raw-TF member and
+6,924 have a 2020 distance member. Of the **secure counted-point singleton**
+groups, the exact CF4 edge member appears in the raw source for1,801/2,484
+training and472/624 heldout groups; the 2020 distance table covers1,792
+and470 respectively. Thus a useful public overlap exists, but it is neither
+complete CF4 TF membership nor the missing 2M++ parent selection law.
+
+For the directly comparable individual member rows, absolute current-CF4
+`DMtf` minus 2020 `DMbest` is median/p90 **0.125/0.345 mag** in training and
+**0.135/0.355 mag** in heldout (1,792/469 finite comparisons). These are
+*differences of published products*, not measurement residuals, calibration
+errors, or evidence that either catalogue is wrong; source-vintage, modulus
+zero, estimator/selection and group summarization may all contribute. The
+bridge therefore does **not** authorize replacing all group marks with raw
+TF observables, treating the 2020 `DMbest` as an independent datum, or
+mixing overlapping marks in one target. A prospective forward-TF factor
+would need a disjoint ownership contract and its own selected-sample mock/
+heldout calibration. FP/group selection remains a separate R2 barrier.

@@ -668,6 +668,18 @@ and reuse of the same assessment; no new gravity simulation or map stream.
 MW/M31/M33 remain unresolved latent NEW-state roles. Record:
 `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
 
+No-email public-source follow-up2026-09-27: CDS J/ApJ/902/145 individual
+Kourkchi+2020 TF observables/distances were hash-frozen without contacting
+authors. A one-second typed-H200 source bridge406524 finds exact raw-TF
+coverage for1,801/2,484 secure matched training singletons and472/624
+heldout. Their current CF4 individual `DMtf` versus 2020 `DMbest` absolute
+differences have median0.125/0.135mag by split, so these published products
+are not interchangeable as written. This is a viable *investigation path*
+for a field-dependent conditional raw-TF likelihood, not a selection
+calibration, an additional independent TF term or an R2 posterior. No email
+was sent; full identity/count/source limitations are in
+`CF4_R2_MATCHED_TF_CONDITIONAL_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
