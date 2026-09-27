@@ -466,6 +466,18 @@ the LIVE operator, not another frozen-field sweep or blind chain extension.
 Record:
 `CF4_R2_LIVE_FIELD_BUNDLE_20260927.md`.
 
+Next bounded R2 implementation propagates selected-density slope and excess
+FP group-offset uncertainty through the SAME live IC/current state, instead
+of simply lengthening406350. One common offset per training group, shared
+global calibration, raw non-FP marks at the same distance, and member2M++
+redshifts inside the joint conditional kernel; no independent count/BGc
+product. New bias/tau priors are explicit development regularization, NOT
+externally calibrated selection or source-fit covariance. Heldout new-group
+offsets are integrated, not fitted. Plan/code/testing scope and unchanged
+MW/M31/M33 same-new-state limits:
+`CF4_R2_HIERARCHICAL_FIELD_20260927.md`. Numerical result pending; no R2
+posterior, N256 production or LG resolution promotion.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

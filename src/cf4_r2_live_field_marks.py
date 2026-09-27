@@ -10,7 +10,8 @@ from cf4_r2_fp_group_marginal import selected_group_logweights, joint_redshift_l
 from cf4_r2_joint_calibration import group_scores
 
 
-def bind_state_geometry(rho, velocity, geometry, *, box=384., origin_fraction=0.):
+def bind_state_geometry(rho, velocity, geometry, *, box=384., origin_fraction=0.,
+                        selected_bias=1.):
     """Recompute BOTH density measure and redshift kernel from this state.
 
     origin_fraction=.5 exists solely for the recorded historical-error
@@ -22,7 +23,8 @@ def bind_state_geometry(rho, velocity, geometry, *, box=384., origin_fraction=0.
     density = read_centred(rho,pos,box,origin_fraction)
     radial = sum(read_centred(velocity[k],pos,box,origin_fraction)*dirs[:,k,None]
                  for k in range(3))
-    logw = selected_group_logweights(d,geometry['quadrature_weight'],density,1.,jnp.zeros_like(d))
+    logw = selected_group_logweights(d,geometry['quadrature_weight'],density,
+                                    selected_bias,jnp.zeros_like(d))
     redshift = joint_redshift_logkernel(299792.458*zcos+(1+zcos)*radial,
                                       zcos,geometry['redshift_sufficient'])
     return dict(geometry,log_distance_weight=logw,redshift_logkernel=redshift)

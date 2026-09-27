@@ -34,7 +34,10 @@ def main():
     parser.add_argument('--cross-method-anchors', action='store_true')
     parser.add_argument('--joint-calibration-cache', action='store_true')
     parser.add_argument('--live-field-geometry', action='store_true')
+    parser.add_argument('--hierarchical-field-geometry', action='store_true')
     args = parser.parse_args()
+    hierarchical = args.hierarchical_field_geometry
+    args.live_field_geometry = args.live_field_geometry or hierarchical
     if sum((args.latent_group, args.cross_method_anchors, args.joint_calibration_cache,
             args.live_field_geometry)) > 1:
         parser.error('do not combine uncalibrated latent-role and anchor controls')
@@ -49,7 +52,7 @@ def main():
     if args.joint_calibration_cache:
         out = BASE/'r2_joint_calibration_cache_v1'
     if args.live_field_geometry:
-        out = BASE/'r2_live_field_geometry_v1'
+        out = BASE/('r2_hierarchical_field_geometry_v1' if hierarchical else 'r2_live_field_geometry_v1')
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
     if out.exists():
@@ -124,10 +127,10 @@ def main():
     # Trial law: shared unresolved COM scatter100, independent member scatter
     #150/300, group mean covariance sigma^2/N; extra group-catalogue scatter50.
     # These are declared sensitivity values, NOT source-calibrated errors.
-    def sufficient(sigma):
+    def sufficient(sigma, include_members=True):
         output = []
         for g in range(ng):
-            recs = sorted(grouped_records[g])
+            recs = sorted(grouped_records[g]) if include_members else []
             if len(recs) > richness[g]:
                 raise ValueError('more matched velocity members than source group richness')
             n = 1+len(recs)
@@ -144,6 +147,7 @@ def main():
     sigmas = (150.,) if args.same_field_density else (150.,300.)
     zero_stds = (.004,) if args.same_field_density else (.004, float(np.hypot(.004,.0116)))
     suff = {s:sufficient(s) for s in sigmas}
+    group_only = sufficient(150.,False) if hierarchical else None
     ztab = np.linspace(0,.2,20001)
     dtab = 2997.92458*cumulative_trapezoid(1/np.sqrt(.31*(1+ztab)**3+.69),ztab,initial=0)
     dzgroup = np.interp(zgroup,ztab,dtab)
@@ -178,6 +182,10 @@ def main():
                 anchor_group=anchor_data['group_index'],anchor_modulus=anchor_data['modulus'],
                 anchor_error=anchor_data['error'],anchor_method=np.asarray(anchor_method),
                 **{k:data[k] for k in ('eta_mean','eta_std','eta_alpha')})
+            if hierarchical:
+                cache.update(group_only_redshift_sufficient=np.asarray(group_only),
+                    train_group_index=np.flatnonzero(~group_hold),
+                    twompp_member_count=np.array([len(grouped_records[g]) for g in range(ng)]))
             out.mkdir(parents=True,exist_ok=True)
             np.savez_compressed(out/f'geometry_q{nq}.npz',**cache)
             print(f'field-independent source geometry Q={nq} saved',flush=True)
@@ -314,6 +322,10 @@ def main():
             holdout_groups=int(group_hold.sum()),FP_rows=len(row_group),
             nonFP_rows=len(anchor_data['PGC']),method_names=method_names,
             fitted_offsets_used=False,new_gravity_runs=0,R2_posterior=False,
+            hierarchical_geometry=hierarchical,
+            conditioned_unique_2mpp_members=sum(map(len,grouped_records.values())),
+            groups_with_2mpp_members=sum(bool(v) for v in grouped_records.values()),
+            ambiguous_2mpp_covariates_omitted=ambiguous,
             field_dependent_values_cached=not args.live_field_geometry,
             source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},
             code_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
