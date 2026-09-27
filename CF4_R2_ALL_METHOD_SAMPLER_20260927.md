@@ -152,3 +152,17 @@ Typed-H100 **406521 submitted** with4CPU/30GiB/3h for this one
 `afterok:406521` and no automatic production successor. Submission is not
 a mixing or source-calibration pass; result path is
 `/gpfs/kjhan/CF4/z0_density/r2_all_method_sampler_pilot_v3_long_path/`.
+
+Literature-scale context, not a transfer prescription: the
+[Manticore-Local 2M++ field-level analysis](https://arxiv.org/html/2505.10682)
+sampled initial fields with HMC but updated galaxy-bias nuisances in a
+separate slice-sampling block. Its five chains used 4,750 burn-in and 2,400
+post-burn-in steps each at a coarser 3.9-Mpc inference grid; low-k modes
+could remain correlated for hundreds of steps. Their approximate likelihood,
+selection, dynamics and computing resources differ from ours, so these counts
+are neither a required schedule nor proof that our current target can be
+calibrated by longer chains. They do establish that 64 retained transitions
+alone cannot plausibly certify the 384-box field posterior. If v3 still
+drifts, consider a *different* blocked/conditioned geometry and a calibrated
+observation model before any long N128 or N256 production, not a repeated
+identity-mass trajectory-length sweep.
