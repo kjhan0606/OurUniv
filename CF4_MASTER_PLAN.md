@@ -617,6 +617,20 @@ or posterior. Next: source-linked matched-group conditional or robust model
 sensitivity, then sampler work. Record: `CF4_R2_TF_COUNT_OVERLAP_20260927.md`
 and `CF4_R2_ALL_METHOD_SAMPLER_20260927.md`.
 
+Secure singleton matched-point TF bridge406494 completed/exit0:3,108
+groups (2,484 train/624 heldout) have exactly one secure 2M++ point edge,
+catalogue `Ngal=1`, and unique count-point identity. Matched CF4-group vs
+point Vcmb difference median5/p90 85.3km/s. The linked control first
+failed406495 in a vector-width validity-mask broadcasting unit test before
+gravity, then corrected406496 completed3m52s/exit0 with three tests passed.
+At the same predefined IC, all-group linked TF score changes-9.3879nat
+and TF IC directional gradient agrees to relative3.19e-8; count/FP scores
+are unchanged. This closes numerical wiring, **not** source selection,
+shared covariance or sampler equilibration. The next bounded sampler tests
+only the securely matched TF training subset alongside all counts and FP;
+unmatched TF source groups are not silently assigned count identities.
+Record: `CF4_R2_MATCHED_TF_CONDITIONAL_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;

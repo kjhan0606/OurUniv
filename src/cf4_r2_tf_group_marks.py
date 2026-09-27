@@ -31,6 +31,12 @@ def tf_group_logratios(rho, velocity, directions, observed_cz, modulus, modulus_
     density = read_centred(rho, position, box, 0.)
     radial = sum(read_centred(velocity[k], position, box, 0.) * directions[:, k, None]
                  for k in range(3))
+    selected_bias = jnp.asarray(selected_bias)
+    sigma_v = jnp.asarray(sigma_v)
+    if selected_bias.ndim == 1:
+        selected_bias = selected_bias[:, None]
+    if sigma_v.ndim == 1:
+        sigma_v = sigma_v[:, None]
     log_measure = selected_group_logweights(d, q, density, selected_bias,
                                             jnp.zeros_like(d))
     sigma_cz = sigma_v * (1. + z)
@@ -42,7 +48,8 @@ def tf_group_logratios(rho, velocity, directions, observed_cz, modulus, modulus_
     sigma_dm = modulus_error[:, None]
     mark = -.5*((modulus[:, None]-predicted_modulus-modulus_zero)/sigma_dm)**2
     reference = -.5*((modulus-reference_modulus)/modulus_error)**2
+    sigma_valid = sigma_v[:, 0] if sigma_v.ndim == 2 else sigma_v
     valid = ((modulus_error > 0) & jnp.isfinite(modulus_error)
-             & jnp.isfinite(modulus) & (sigma_v > 0) & jnp.isfinite(sigma_v))
+             & jnp.isfinite(modulus) & (sigma_valid > 0) & jnp.isfinite(sigma_valid))
     result = logsumexp(base+mark, axis=1)-logsumexp(base, axis=1)-reference
     return jnp.where(valid, result, jnp.nan)

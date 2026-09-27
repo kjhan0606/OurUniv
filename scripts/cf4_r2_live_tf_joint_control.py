@@ -1,5 +1,6 @@
 """Single predetermined IC adjoint for live 2M++ count + FP + TF marks."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -20,18 +21,24 @@ from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_live_tf_joint import count_fp_tf_parts
 
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
-OUT = BASE / "r2_live_tf_joint_control_v1"
 N, BOX = 128, 384.
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--linked", action="store_true",
+                        help="use the secure-singleton count-point TF bridge")
+    args = parser.parse_args()
+    out = BASE / ("r2_live_tf_matched_point_control_v1" if args.linked
+                  else "r2_live_tf_joint_control_v1")
     if not os.environ.get("SLURM_JOB_ID") or jax.default_backend() != "gpu":
         raise RuntimeError("Slurm GPU allocation required")
-    if OUT.exists():
-        raise FileExistsError(OUT)
+    if out.exists():
+        raise FileExistsError(out)
     started = time.monotonic()
     geometry_path = BASE / "r2_hierarchical_field_geometry_v1/geometry_q257.npz"
-    tf_path = BASE / "r2_tf_source_link_v1/tf_only_groups.npz"
+    tf_path = BASE / ("r2_tf_matched_point_bridge_v1/tf_groups_linked.npz" if args.linked
+                      else "r2_tf_source_link_v1/tf_only_groups.npz")
     anchor_path = BASE / "r2_cross_method_anchors_v1/anchors.npz"
     count_path = BASE / "r2_inclusive_count_diagnostic_v1/inclusive_counts_3_sparse.npz"
     selection_path = BASE / "r2_common_selection_128_v1/selection_3.h5"
@@ -125,7 +132,14 @@ def main():
     relative = abs(tangent-finite)/max(1., abs(tangent), abs(finite))
     if relative > .01:
         raise AssertionError(f"TF IC directional derivative discrepancy {relative:g}")
-    report = dict(classification="R2_LIVE_COUNT_FP_TF_PARTIAL_TARGET_NUMERICAL_CONTROL",
+    baseline = None
+    if args.linked:
+        baseline_path = BASE / "r2_live_tf_joint_control_v1/result.json"
+        baseline = json.loads(baseline_path.read_text())
+        if baseline["saved_state"] != str(state_path) or baseline["observed_count_points"] != int(counts.sum()):
+            raise ValueError("baseline state/count datum changed")
+    report = dict(classification=("R2_LIVE_COUNT_FP_TF_MATCHED_POINT_PARTIAL_TARGET_CONTROL"
+                                  if args.linked else "R2_LIVE_COUNT_FP_TF_PARTIAL_TARGET_NUMERICAL_CONTROL"),
         job_id=os.environ["SLURM_JOB_ID"], saved_state=str(state_path),
         factors=dict(zip(("count", "FP", "TF", "white_prior"), map(float, np.asarray(parts)))),
         total=float(total), observed_count_cells=len(keys), observed_count_points=int(counts.sum()),
@@ -135,6 +149,12 @@ def main():
         TF_IC_directional_reverse=tangent, TF_IC_directional_finite_difference=finite,
         TF_IC_directional_relative_discrepancy=relative,
         TF_same_relative_zero_as_FP_anchors=True,
+        TF_secure_singleton_point_conditional=bool(args.linked),
+        TF_secure_singleton_training_groups=int(np.count_nonzero(
+            (tf_host.get("point_population", np.full(len(tf_host["group_pgc"]), -1)) >= 0)
+            & ~tf_host["holdout"])),
+        TF_factor_change_from_old_same_state=(float(parts[2])-baseline["factors"]["TF"]
+                                               if baseline is not None else None),
         TF_redshift_conditioned_not_multiplied=True,
         calibration_claim=False, sampler_run=False, R2_posterior=False,
         TF_group_inclusion_and_covariance_calibrated=False,
@@ -145,8 +165,8 @@ def main():
                                ROOT / "src/cf4_r2_tf_group_marks.py")},
         runtime_seconds=time.monotonic()-started,
         host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
-    OUT.mkdir(parents=True)
-    (OUT / "result.json").write_text(json.dumps(report, indent=2, allow_nan=False)+"\n")
+    out.mkdir(parents=True)
+    (out / "result.json").write_text(json.dumps(report, indent=2, allow_nan=False)+"\n")
     print(json.dumps(report, indent=2, allow_nan=False), flush=True)
 
 

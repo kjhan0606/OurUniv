@@ -35,6 +35,27 @@ class TFGroupMarksTest(unittest.TestCase):
             jnp.array([.001, .002]), box=8.)
         self.assertTrue(np.isnan(float(result[0])))
 
+    def test_groupwise_bias_and_velocity_width_match_scalar_evaluations(self):
+        rho = jnp.ones((8, 8, 8)).at[4, :, :].set(2.)
+        velocity = jnp.zeros((3, 8, 8, 8))
+        direction = jnp.array([[1., 0., 0.], [1., 0., 0.]])
+        cz = jnp.array([600., 820.])
+        modulus = jnp.array([28., 29.])
+        error = jnp.array([.25, .4])
+        distance = jnp.array([1., 2., 3.])
+        weight = jnp.array([.5, 1., .5])
+        zcos = jnp.array([.001, .002, .003])
+        bias = jnp.array([.8, 1.3])
+        width = jnp.array([100., 250.])
+        vector = tf_group_logratios(rho, velocity, direction, cz, modulus,
+            error, distance, weight, zcos, box=8., selected_bias=bias,
+            sigma_v=width)
+        scalar = [tf_group_logratios(rho, velocity, direction[i:i+1],
+            cz[i:i+1], modulus[i:i+1], error[i:i+1], distance, weight,
+            zcos, box=8., selected_bias=bias[i], sigma_v=width[i])[0]
+            for i in range(2)]
+        np.testing.assert_allclose(np.asarray(vector), np.asarray(scalar), rtol=1e-6)
+
 
 if __name__ == "__main__":
     unittest.main()

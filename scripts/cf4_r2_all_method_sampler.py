@@ -21,7 +21,7 @@ from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_live_tf_joint import count_fp_tf_parts
 
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
-OUT = BASE / "r2_all_method_sampler_pilot_v1"
+OUT = BASE / "r2_all_method_sampler_pilot_v2_matched"
 N, BOX = 128, 384.
 WARMUP, RETAIN = 192, 128
 SEEDS = (2026092911, 2026092919)
@@ -48,7 +48,7 @@ def main():
         raise FileExistsError(OUT)
     started = time.monotonic()
     geometry_path = BASE / "r2_hierarchical_field_geometry_v1/geometry_q257.npz"
-    tf_path = BASE / "r2_tf_source_link_v1/tf_only_groups.npz"
+    tf_path = BASE / "r2_tf_matched_point_bridge_v1/tf_groups_linked.npz"
     anchor_path = BASE / "r2_cross_method_anchors_v1/anchors.npz"
     count_path = BASE / "r2_inclusive_count_diagnostic_v1/inclusive_counts_3_sparse.npz"
     selection_path = BASE / "r2_common_selection_128_v1/selection_3.h5"
@@ -65,6 +65,10 @@ def main():
             raise ValueError("TF-only group overlaps an existing FP anchor")
     if len(tf_host["group_pgc"]) != 8502 or int((~tf_host["holdout"]).sum()) != 6745:
         raise ValueError("TF catalogue identity/split changed")
+    matched = tf_host["point_population"] >= 0
+    if int(matched.sum()) != 3108 or int(np.count_nonzero(matched & ~tf_host["holdout"])) != 2484:
+        raise ValueError("secure singleton TF subset changed")
+    tf_host = {key: value[matched] for key, value in tf_host.items()}
     tf = {k: jnp.asarray(v) for k, v in tf_host.items() if k != "group_pgc"}
     with np.load(count_path, allow_pickle=False) as f:
         keys = np.asarray(f["parent_keys"], dtype=np.int32)
@@ -103,7 +107,7 @@ def main():
     zcos = np.interp(nodes, dtable, ztable)
     nodes, weights, zcos = (jnp.asarray(v) for v in (nodes, weights, zcos))
     e, k, c = jnp.asarray(exposure), jnp.asarray(keys), jnp.asarray(counts)
-    size, nh, ng, nt = N**3, 8, len(fp["train_group_index"]), 9
+    size, nh, ng, nt = N**3, 8, len(fp["train_group_index"]), 7
     dimension = size+nh+ng+nt
     evolve, _initial, conf, _cosmo, particle_mass = make_dynamics(settings)
     mass = jnp.full((size,), particle_mass)
@@ -121,8 +125,7 @@ def main():
             jnp.asarray(nbar), shape, bias0*jnp.exp(.5*nuisance[:6]),
             fog0*jnp.exp(.7*nuisance[6]), redshift,
             nodes, weights, zcos, box=BOX, hubble=common["H0_km_s_Mpc"],
-            h=common["h"], tf_selected_bias=jnp.exp(.5*nuisance[7]),
-            tf_group_sigma_v=150.*jnp.exp(.7*nuisance[8]))
+            h=common["h"])
         parts = parts.at[3].add(-.5*jnp.vdot(nuisance, nuisance))
         return parts, jnp.min(jnp.take(unit.reshape(-1), k))
 
@@ -137,12 +140,12 @@ def main():
         count_points=int(counts.sum()), count_occupied_cells=len(keys),
         FP_training_groups=ng, TF_training_groups=int((~tf_host["holdout"]).sum()),
         TF_holdout_groups=int(tf_host["holdout"].sum()),
+        TF_unmatched_or_ambiguous_groups_not_in_target=5394,
         warmup_per_chain=WARMUP, retained_per_chain=RETAIN,
         source_calibrated=False, group_inclusion_calibrated=False,
         posterior_converged=False, R2_delivery=False,
         starts_are_prior_partial_target_terminal_states=True,
-        TF_sigma_median_km_s=150., TF_sigma_log_sd=.7,
-        TF_selected_density_bias_median=1., TF_bias_log_sd=.5,
+        TF_secure_matched_groups_share_count_bias_and_FoG=True,
         sampler=hmc, chains=[],
         source_paths=list(map(str, (geometry_path, tf_path, anchor_path, count_path,
                                     selection_path, *starts))),
@@ -173,7 +176,7 @@ def main():
             if (old[0].shape != (size,) or old[1].shape != (nh,) or
                     old[2].shape != (ng,) or old[3].shape != (7,)):
                 raise ValueError(f"saved chain{chain} state shape changed")
-            vector = jnp.asarray(np.r_[*old, np.zeros(2)])
+            vector = jnp.asarray(np.concatenate(old))
             parts, support = factor_fn(vector)
             if not np.isfinite(np.asarray(parts)).all() or float(support) <= 0:
                 raise FloatingPointError(f"chain{chain} initial target/support invalid")
