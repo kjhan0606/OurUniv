@@ -140,6 +140,7 @@ def main() -> None:
         parent_kind = z["parent_kind"].astype(np.int8)
         parent_id = z["parent_id"].astype(np.int64)
         old_parent_role = z["role"].astype(np.int8)
+        parent_common_proxy_window = z["common_footprint_z_window"].astype(bool)
     with np.load(LINKS, allow_pickle=False) as z:
         linked_recno = z["m2pp_recno"].astype(np.int64)
         linked_gid = z["m2pp_gid"].astype(np.int64)
@@ -301,8 +302,7 @@ def main() -> None:
         tempel_parent_role_counts=np.bincount(parent_role, minlength=4).tolist(),
         Tempel_parent_mixed_in_full_source=int(np.count_nonzero(old_parent_role == 3)),
         Tempel_parent_mixed_inside_withdrawn_proxy_window=int(np.count_nonzero(
-            (old_parent_role == 3) & np.load(PARENTS, allow_pickle=False)[
-                "approx_mask_support_and_tempel_z_window"])),
+            (old_parent_role == 3) & parent_common_proxy_window)),
         Tempel_FP_source_identity_mismatches=source_parent_mismatches,
         Tempel_FP_source_rows_linked=int(fp_found.sum()),
         direct_secure_count_FP_edges=len(secure_direct_edges),
