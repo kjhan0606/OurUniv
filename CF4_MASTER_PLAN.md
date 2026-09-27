@@ -1978,3 +1978,16 @@ heldout distance marks or field scores were used; full-source redshifts/randoms
 are not an independent sky holdout. Group incidence, count/FP joint ownership
 and sampler calibration remain open. See
 `CF4_R2_SDSS_RANDOM_RADIAL_20260927.md`. No email.
+
+R2 direct-link ownership check2026-09-27: the frozen v5 sky graph has3,062
+secure counted-point→FP-source-group edges. Training FP groups split into
+1,836 with one direct counted point,273 with multiple, and3,925 without a
+direct point; heldout roles remain separate. A normalized one-point FP mark
+given its observed count key and redshift requires source-to-key intensity
+contributions from the SAME count transfer, not a separately assumed `d²ρ^b`
+distance prior. Multi-point groups require one shared group latent; unlinked
+groups require their own selected-group law. The present count×FP product is
+a qualified partial target, not automatically literal double counting or a
+complete joint likelihood. No FP heldout mark, field fit, N256, email or R2
+posterior. Next implementation ownership and limits:
+`CF4_R2_LINKED_POINT_MARK_OWNERSHIP_20260927.md`.
