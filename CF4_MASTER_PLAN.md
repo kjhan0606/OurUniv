@@ -520,6 +520,23 @@ promoted; next quantify actual count/CF4 field tension and observation-model
 sensitivity before sampling escalation. Evidence and limits:
 `CF4_R2_COARSENED_LIVE_JOINT_20260927.md`.
 
+Fixed-state R2 factor-stress follow-up2026-09-27: first H100406425 failed
+only while serializing the open high-k band as JSON Infinity; same-data
+retry406426 COMPLETED3m13s/exit0, peak host6.522GiB. On the archived initial
+and two predetermined CF4-mark-only endpoints, the count IC-gradient norm
+is~94–223 times the mark norm. Initial low-k cosine is-0.372 but the two
+mark-only endpoints are near orthogonal overall; these are NOT equilibrated
+samples or physical evidence of survey conflict. Fixed-state count log
+scores change by +15.6k...+16.6k/-20.6k...-22.0k nats for all six published
+bias exponents x0.8/x1.2, and by -664...-689/+2161...+2244 for FoG x0.5/x2.
+This is strong model-response sensitivity, not a calibrated parameter range
+or Bayes factor. Decision: do not freeze the transferred bias/FoG settings
+for production R2 sampling, do not fit them to these three states, and do not
+launch N256. Next prioritize a source-matched joint nuisance/selection
+treatment or independent calibration while retaining CF4 group conditional
+dependence. No current-field posterior or LG role was delivered. Record:
+`CF4_R2_LIVE_FACTOR_TENSION_20260927.md`.
+
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
 Keep those as latent/nuisance quantities tied to the **same evolved state**;
