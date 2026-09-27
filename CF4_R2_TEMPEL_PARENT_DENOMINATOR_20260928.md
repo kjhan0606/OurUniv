@@ -90,14 +90,13 @@ large mocks, gravity runs, or sampler work are not justified by this result.
 
 The exact NYU polygon artifact was not recovered, so close this denominator
 route at the descriptive source-graph result rather than manufacturing a
-common-footprint rate. This does not close R2. Independently, v5 is not safe
-for any future likelihood that uses the expanded Tempel/2M++ graph; the next
-bounded step constructs a new component-closed split from the frozen source
-identities, buffering whole mixed train/heldout components and their count
-keys. Even an exact DR7-mask reproduction would not calibrate the full
-DR8–DR14 selection or complete the R2 posterior; the selected-group,
-true-distance selection, tracer/bias and shared-covariance terms still need a
-defensible joint observation model.
+common-footprint rate. This does not close R2. The unsafe v5 split has now
+been superseded for expanded-graph work by the identity-closed v6 split;
+details, source hashes and buffered-row counts are in
+`CF4_R2_GRAPH_CLOSURE_20260928.md`. Even an exact DR7-mask reproduction would
+not calibrate the full DR8–DR14 selection or complete the R2 posterior; the
+selected-group, true-distance selection, tracer/bias and shared-covariance
+terms still need a defensible joint observation model.
 
 No email was sent.
 

@@ -2052,3 +2052,24 @@ source-graph-closed split that buffers mixed train/heldout components and
 their aggregated count keys before further fitting. Details, Q-GOAL/Q-LEAN
 and MW/M31/M33 limits:
 `CF4_R2_TEMPEL_PARENT_DENOMINATOR_20260928.md`. No email.
+
+R2 source-graph closure2026-09-28: source-pinned H100 Slurm407069 completed
+after three preserved pre-output submission/schema failures. The new v6 split
+closes count points/keys, M2++ GIDs, Tempel parents, CF4 groups and FP source
+groups under frozen observed links. It preserves an exact count projection:
+47,121 train,8,475 heldout and1,642 buffered points;879 keys are withheld from
+their respective count exposure windows. The 1,642-row buffer includes421
+formerly training and1,221 formerly heldout points. Twenty-seven graph
+components mixed train/heldout roles; existing buffers propagated to74 total
+components. CF4/FP buffer roles increase by131/36. This is leakage control
+under a conservative, uncalibrated catalogue-association graph—not physical
+membership, a field likelihood or a posterior. No heldout score, field fit,
+gravity, sampler or N256 run. Exact NYU mask denominator route is closed
+descriptively; R2 remains NO-GO. Use
+`/gpfs/kjhan/CF4/z0_density/r2_sky_closed_split_v6/split.npz` for prospective
+expanded-graph fitting, excluding its train/heldout buffered exposure keys.
+Q-GOAL: enables clean future same-field heldout assessment. Q-LEAN: one source
+identity closure, no new simulation or calibration ladder. MW/M31 remain
+ambiguous latent roles, M33 remains unresolved when unsupported; all three
+observables must act on that same NEW evolved field and native identities are
+evaluation-only. Details and limits: `CF4_R2_GRAPH_CLOSURE_20260928.md`.

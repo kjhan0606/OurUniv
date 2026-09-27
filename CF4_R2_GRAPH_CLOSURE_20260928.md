@@ -69,3 +69,45 @@ of this bundle.
 The R2 posterior remains NO-GO until source/selection, tracer and shared
 covariance assumptions are defensible, and an actual field fit has stationary
 uncertainty and untouched heldout predictions.
+
+## Execution result
+
+Typed-H100 Slurm **407069** completed in 6 seconds and wrote
+`/gpfs/kjhan/CF4/z0_density/r2_sky_closed_split_v6/`. The output projects all
+57,238 source count points exactly into 47,121 train, 8,475 heldout and 1,642
+buffered rows. There are 37,951 occupied training keys, 6,946 heldout keys,
+and 879 buffered keys. The 1,642 buffered points comprise 421 formerly
+training and 1,221 formerly heldout rows; 243 of the buffered keys came from
+the old training side and 636 from the heldout octant. Thus the original
+9,696-point count holdout is reduced, not silently replenished.
+
+The closure saw 148,577 graph nodes and 136,561 edges, yielding 42,257
+components; 27 components directly mixed train/heldout labels, and 74
+components were buffered after propagating either a mixed role or an existing
+boundary buffer. This also moves 131 CF4 and 36 FP source-group roles to
+buffer. Exact Tempel source-object matching has zero group-ID conflicts, and
+the full count projection assertion passed. The six mixed Tempel parents
+were independently reproduced; five lie in the withdrawn proxy-mask/redshift
+window and one does not.
+
+Jobs 407066, 407067 and 407068 failed before output creation on, respectively,
+a short submitted commit pin, an unjustified hard-coded total-row expectation
+for the complete local 2M++ catalogue, and a misnamed archived NPZ field.
+Those operational/code errors were corrected; their failures and logs are
+preserved. They are not scientific evidence. The successful source and all
+input SHA-256 hashes are frozen in the v6 result JSON.
+
+This is a conservative split under the *observed association graph*, not proof
+that the 10-arcsec/300-km-s-1 Tempel↔2M++ matches are physical identities, and
+not a new likelihood. The 1,642-point buffer costs data and could be
+conservative. No heldout values or scores were read. No field fit, sampler,
+posterior, map, gravity run or N256 calculation ran. Use v6—not v5—for any
+prospective fit that includes this expanded graph; adapt its Poisson exposure
+window to exclude `train_window_excluded_keys` and
+`heldout_window_excluded_keys`.
+
+**Next R2 work:** reuse the frozen v6 training roles for the existing scalable
+linked-source factor and then complete the missing normalized point/group
+selection and shared-covariance ownership. The conditional factor results are
+still only source/forward mechanics until those terms are calibrated and a
+stationary actual-field fit is evaluated on the untouched v6 holdout.
