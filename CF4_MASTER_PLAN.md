@@ -1918,3 +1918,12 @@ design targets continuous physical-budget distribution, not amplitude repair.
   sampler pass, scientific acceptance and final-goal completion.
 - At every bundle boundary report the result, goal contribution, unresolved
   risk and next deliverable. When approval is needed say **승인해주세요**.
+
+Update2026-09-27 R2: a source-bound spatial count holdout and graph-closed
+CF4/FP mark roles are frozen in `r2_sky_closed_split_v2` (Slurm406580).
+Octant5 withholds3,400/57,238 2M++ points; 1,877 CF4 groups are sky
+validation and23 are boundary buffer; FP has no sky-validation groups in
+this footprint. The count kernel now integrates only its selected sky
+window. This fixes direct count/group train-test leakage for a future fit,
+not the missing selected-group law, sampler stationarity, independent mock
+coverage or R2 posterior. See CF4_R2_SKY_CLOSED_HOLDOUT_20260927.md.

@@ -115,21 +115,36 @@ def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
 
 
 def sparse_marked_poisson_log_likelihood(intensity, observed_keys,
-                                          observed_counts):
+                                          observed_counts, *,
+                                          selected_voxel_mask=None):
     """One Poisson factor for binned selected counts, with no support floor.
 
-    ``intensity`` must already be scaled to the *same* sampling fraction and
-    mark definition as ``observed_counts``. All zero-count voxels contribute
-    through the dense integral. This factor must not be multiplied by another
-    likelihood for the same observed absolute-K bin frequencies.
+    ``intensity`` must have the same mark definition as ``observed_counts``.
+    A spatial holdout uses a boolean mask over *voxels*, shared by every
+    population; its exact integral includes empty selected voxels only.
+    It is not a globally thinned catalogue, so no fraction rescales rates.
+    This factor must not be multiplied by another likelihood for the same
+    observed absolute-K bin frequencies.
     """
     if observed_keys.shape != observed_counts.shape:
         raise ValueError('sparse observed count geometry mismatch')
     flat = jnp.asarray(intensity).reshape(-1)
     occupied = jnp.take(flat, observed_keys)
     counts = jnp.asarray(observed_counts, dtype=flat.dtype)
-    return (jnp.sum(counts*jnp.log(occupied)-gammaln(counts+1.))
-            -jnp.sum(flat))
+    integral = jnp.sum(flat)
+    valid = jnp.array(True)
+    if selected_voxel_mask is not None:
+        mask = jnp.asarray(selected_voxel_mask, dtype=bool).reshape(-1)
+        if mask.size == 0 or flat.size % mask.size:
+            raise ValueError('spatial count mask does not divide intensity geometry')
+        nvoxel = mask.size
+        keys = jnp.asarray(observed_keys)
+        valid_keys = (keys >= 0) & (keys < flat.size)
+        safe_voxels = jnp.clip(keys % nvoxel, 0, nvoxel-1)
+        valid = jnp.all(valid_keys & jnp.take(mask, safe_voxels))
+        integral = jnp.sum(jnp.reshape(flat, (-1, nvoxel))*mask[None, :])
+    score = jnp.sum(counts*jnp.log(occupied)-gammaln(counts+1.))-integral
+    return jnp.where(valid, score, -jnp.inf)
 
 
 def predict_source_marked_intensity(

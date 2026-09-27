@@ -56,6 +56,22 @@ class MarkedTracerTests(unittest.TestCase):
             intensity.at[0,1].set(0.),keys,counts)
         self.assertEqual(float(absent),float('-inf'))
 
+    def test_sky_window_integrates_only_selected_cells_and_rejects_crossing(self):
+        intensity = jnp.array([[.5,1.2],[2.,.7]])
+        train = jnp.array([True,False])
+        keys = jnp.array([0,2])
+        counts = jnp.array([2,1])
+        actual = sparse_marked_poisson_log_likelihood(
+            intensity,keys,counts,selected_voxel_mask=train)
+        expected = 2*np.log(.5)+np.log(2.)-np.log(2.)-(.5+2.)
+        self.assertAlmostEqual(float(actual),float(expected),places=12)
+        wrong = sparse_marked_poisson_log_likelihood(
+            intensity,jnp.array([1]),jnp.array([1]),selected_voxel_mask=train)
+        self.assertEqual(float(wrong),float('-inf'))
+        gradient = np.asarray(jax.grad(lambda x: sparse_marked_poisson_log_likelihood(
+            x,keys,counts,selected_voxel_mask=train))(intensity))
+        np.testing.assert_array_equal(gradient[:,1],0.)
+
     def test_deposited_mass_uses_source_selection_and_velocity_gradient(self):
         box = 96.
         observer = jnp.array([48., 48., 48.])
