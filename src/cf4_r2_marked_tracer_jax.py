@@ -281,6 +281,64 @@ def predict_source_marked_intensity(
     return jnp.stack(outputs)
 
 
+def predict_source_marked_intensity_los_node(
+    source_positions, source_velocities_km_s, intrinsic_bin_masses,
+    angular_completeness, los_node, quadrature_weight, *, observer,
+    box_size_cMpc_h, hubble_km_s_Mpc, little_h,
+    radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
+    sigma_los_km_s=0., radial_min_cMpc_h=5.,
+    radial_max_cMpc_h=180., mstar=-23.28, alpha=-.94,
+):
+    """One Gaussian-Hermite LOS node of the selected count intensity.
+
+    This exposes a single node so callers can accumulate high-order rules
+    without statically unrolling every node into one large XLA graph. Summing
+    this result over the nodes and weights from ``_gaussian_hermite_rule``
+    reproduces ``predict_source_marked_intensity``.
+    """
+    positions = jnp.asarray(source_positions)
+    velocity = jnp.asarray(source_velocities_km_s)
+    intrinsic = jnp.asarray(intrinsic_bin_masses)
+    angular = jnp.asarray(angular_completeness)
+    radius_table = jnp.asarray(radius_table_cMpc_h)
+    modulus_table = jnp.asarray(modulus_table_h)
+    redshift_values = jnp.asarray(redshift_table)
+    count = positions.shape[0]
+    if (positions.shape != (count, 3) or velocity.shape != positions.shape
+            or intrinsic.shape != (5, count) or angular.shape != (2, count)
+            or radius_table.ndim != 1 or modulus_table.shape != radius_table.shape
+            or redshift_values.shape != radius_table.shape or radius_table.size < 2
+            or grid_size < 1 or radial_min_cMpc_h >= radial_max_cMpc_h):
+        raise ValueError('source, intrinsic-bin or angular geometry mismatch')
+    shifted, _, rhat = observer_centred_spherical_rsd_jax(
+        positions, velocity, observer, box_size_cMpc_h,
+        hubble_km_s_Mpc, little_h=little_h, scale_factor=1.)
+    relative = (positions-observer+box_size_cMpc_h/2.) % box_size_cMpc_h
+    relative -= box_size_cMpc_h/2.
+    true_radius = jnp.linalg.norm(relative, axis=1)
+    true_modulus = jnp.interp(true_radius, radius_table, modulus_table)
+    true_redshift = jnp.interp(true_radius, radius_table, redshift_values)
+    extra = (los_node*little_h*sigma_los_km_s/hubble_km_s_Mpc)
+    observed_positions = (shifted+extra*rhat) % box_size_cMpc_h
+    observed_relative = ((observed_positions-observer+box_size_cMpc_h/2.)
+                         % box_size_cMpc_h-box_size_cMpc_h/2.)
+    observed_radius = jnp.linalg.norm(observed_relative, axis=1)
+    observed_modulus = jnp.interp(observed_radius, radius_table, modulus_table)
+    observed_redshift = jnp.interp(observed_radius, radius_table, redshift_values)
+    transfer = source_mark_transfer(true_modulus, observed_modulus,
+                                    true_redshift, observed_redshift,
+                                    mstar=mstar, alpha=alpha)
+    selected = ((observed_radius >= radial_min_cMpc_h)
+                & (observed_radius <= radial_max_cMpc_h))
+    outputs = []
+    for population in range(6):
+        mass = (quadrature_weight*selected*angular[population//3]
+                *jnp.sum(transfer[population]*intrinsic, axis=0))
+        outputs.append(tsc_deposit_jax(
+            observed_positions, mass, grid_size, box_size_cMpc_h))
+    return jnp.stack(outputs)
+
+
 def predict_source_marked_key_contributions(
     source_positions, source_velocities_km_s, intrinsic_bin_masses,
     angular_completeness, population, voxel_ijk, *, observer,

@@ -14,6 +14,7 @@ from cf4_r2_marked_tracer_jax import (
     sparse_marked_poisson_log_likelihood,
 )
 from cf4_2mpp_joint_likelihood_jax import tsc_deposit_jax
+from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
 from cf4_r2_observed_magnitude_transfer import (
     observed_magnitude_transfer, twompp_k_correction_delta,
 )
@@ -126,6 +127,21 @@ class MarkedTracerTests(unittest.TestCase):
         self.assertEqual(intensity.shape, (6, 4, 4, 4))
         self.assertTrue(np.isfinite(intensity).all())
         self.assertGreaterEqual(float(intensity.min()), -1e-13)
+
+        # Dynamic one-node accumulation is the bounded-memory equivalent of
+        # the existing statically unrolled GH rule.
+        from cf4_r2_marked_tracer_jax import predict_source_marked_intensity_los_node
+        one_node = jax.jit(
+            predict_source_marked_intensity_los_node,
+            static_argnames=('grid_size','radial_min_cMpc_h',
+                             'radial_max_cMpc_h'))
+        nodes, weights = _gaussian_hermite_rule(3)
+        accumulated = jnp.zeros_like(jnp.asarray(intensity))
+        for node, weight in zip(nodes, weights):
+            accumulated += one_node(positions, velocities, intrinsic, angular,
+                                    node, weight, **args)
+        np.testing.assert_allclose(np.asarray(accumulated), intensity,
+                                   rtol=2e-12, atol=2e-12)
 
         true_r = np.array([30., 40.])
         observed_r = np.array([33., 40.])

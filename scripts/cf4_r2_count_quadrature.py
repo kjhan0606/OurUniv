@@ -18,7 +18,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
-OUT = BASE/'r2_count_quadrature_v1'
+OUT = BASE/'r2_count_quadrature_v2'
 SPLIT = BASE/'r2_sky_closed_split_v5/split.npz'
 SOURCE = BASE/'r2_marked_source_geometry_v1/geometry.npz'
 STATE = BASE/'r2_pm128_unconditional_v1/state.npz'
@@ -49,8 +49,10 @@ def main():
 
     from cf4_r2_marked_tracer_jax import (
         intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
-        predict_source_marked_intensity, sparse_marked_poisson_log_likelihood,
+        predict_source_marked_intensity_los_node,
+        sparse_marked_poisson_log_likelihood,
     )
+    from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
     from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 
     with np.load(SPLIT, allow_pickle=False) as f:
@@ -124,13 +126,18 @@ def main():
         train_voxel_mask = jnp.asarray(mask)
         for order in ORDERS:
             t0 = time.monotonic()
-            fn = jax.jit(
-                predict_source_marked_intensity,
-                static_argnames=('grid_size', 'quadrature_order',
-                                 'radial_min_cMpc_h', 'radial_max_cMpc_h'))
-            intensity = fn(
-                source['positions'], source_velocity, intrinsic,
-                source['angular'], quadrature_order=order, **args)
+            nodes, weights = _gaussian_hermite_rule(order)
+            one_node = jax.jit(
+                predict_source_marked_intensity_los_node,
+                static_argnames=('grid_size', 'radial_min_cMpc_h',
+                                 'radial_max_cMpc_h'))
+            intensity = jnp.zeros((6, N, N, N), dtype=intrinsic.dtype)
+            for node, weight in zip(nodes, weights):
+                node_intensity = one_node(
+                    source['positions'], source_velocity, intrinsic,
+                    source['angular'], node, weight, **args)
+                node_intensity.block_until_ready()
+                intensity = intensity + node_intensity
             intensity.block_until_ready()
             means = np.asarray(intensity.reshape(-1)[key_array])
             if not np.isfinite(means).all() or np.any(means <= 0):
