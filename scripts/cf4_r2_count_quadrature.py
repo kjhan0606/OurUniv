@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import subprocess
 import time
 
 import jax
@@ -29,6 +30,19 @@ ORDERS = (3, 9, 15)
 def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
+    expected_commit = os.environ.get('CF4_EXPECTED_COMMIT')
+    if not expected_commit:
+        raise RuntimeError('CF4_EXPECTED_COMMIT must pin the submitted source')
+    source_commit = subprocess.check_output(
+        ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    if source_commit != expected_commit:
+        raise RuntimeError(f'source commit mismatch: {source_commit} != {expected_commit}')
+    dirty = subprocess.run(
+        ['git', 'diff', '--quiet', expected_commit, '--',
+         'scripts/cf4_r2_count_quadrature.py',
+         'scripts/run_cf4_r2_count_quadrature.sbatch'], cwd=ROOT)
+    if dirty.returncode:
+        raise RuntimeError('submitted diagnostic sources changed after commit')
     if OUT.exists():
         raise FileExistsError(OUT)
     started = time.monotonic()
@@ -79,6 +93,7 @@ def main():
     report = dict(
         classification='R2_TRAIN_COUNT_QUADRATURE_NUMERICAL_DIAGNOSTIC',
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'],
+        source_commit=source_commit,
         N=N, box_cMpc_h=BOX, quadrature_orders=list(ORDERS),
         training_count_points=int(train_counts.sum()),
         training_population_voxel_keys=int(len(train_keys)),
@@ -142,9 +157,7 @@ def main():
                 poisson_loglike_delta_vs_GH15=(
                     report['orders'][str(order)]['train_log_likelihood']
                     - report['orders']['15']['train_log_likelihood']))
-        relative_9_15 = np.abs(means_by_order[9]/reference-1.)
         report.update(comparison=comparison,
-                      GH9_GH15_p95_relative_key_change=float(np.quantile(relative_9_15,.95)),
                       status='COMPLETED_TRAIN_ONLY_QUADRATURE_SENSITIVITY_NOT_CALIBRATION')
     except Exception as exc:
         report['status'] = 'FAILED'
