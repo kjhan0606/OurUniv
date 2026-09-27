@@ -96,4 +96,87 @@ best-match shortlist, seed promotion or historical40349 halo reuse.
 
 ## Execution/result
 
-Implementation in progress; no numerical pass yet.
+Source da6c5ff committed/pushed. Syntax Slurm406356 started on syn08/H100
+with the above14GiB/4CPU/25min allocation. All6 checks (two reused, four new)
+pass. Source geometry export9.576s, unchanged5,330/1,491 closed group split,
+3,0622M++ members in2,413 groups; no ambiguous member associations in this
+subset. No new fitted-data priors or field-dependent geometry cache.
+
+Initial mark-only directional derivative: AD92.528816; FD92.524785 at2e-5
+and92.518952 at1e-5, scaled discrepancies0.00436% and0.01066%. The analytic
+prior tangent1832.667034 was removed. Pass the bounded local derivative
+screen, not a general HMC stability claim.
+
+At this SAME initial state/group nuisance realization, adding member2M++
+redshifts versus the group-only kernel changes the training conditional
+factor by+0.301197nat and IC mark gradient L2 by1.136202, versus full mark
+gradient L2=31.297144 (3.6304%). This establishes nonzero conditional wiring,
+not externally calibrated information, count-data use, or posterior recovery.
+The completed results below supersede the initial running status.
+
+### Completion and interpretation
+
+H100406356 COMPLETED8m54s/exit0. All6 tests, two chains and endpoint
+diagnostics finish in the same allocation. Main-driver runtime445.38s,
+first joint gradient compile/evaluation43.83s, process peak7.443GiB;
+Slurm sampled MaxRSS7,447,796KiB. No OOM. The14GiB request was conservative;
+an unchanged repeat would need about9GiB for measured peak+20%, rounded to
+10GiB. This is not a memory estimate for N256 or a new count model. The same
+nonfatal hwloc CPU-binding warnings as406350 remain; no system probes added.
+
+| Quantity | Chain0 | Chain1 |
+| --- | ---: | ---: |
+| Warmup / retained transitions | 32 / 32 | 32 / 32 |
+| Retained mean acceptance | .871677 | .946268 |
+| Retained divergences | 0 | 0 |
+| Frozen retained step | .01259252 | .01175776 |
+| IC RMS change from own start | .568148 | .566779 |
+| Endpoint b_eff | .652396 | .739602 |
+| Endpoint excess tau, dex | .00321904 | .00299864 |
+| Endpoint rho mean | 1 | 1 |
+| Endpoint rho RMS | 1.959988 | 1.947604 |
+| Endpoint mean-velocity RMS, km/s | 252.389 | 236.102 |
+
+These are short-trajectory ENDPOINTS, not posterior means, credible intervals
+or source calibration. In particular, movement of tau from its starting
+.02dex to~.003dex is NOT a measurement of negligible common source error.
+Noncentred group/field/hyperparameter equilibration has not been established;
+the added lognormal discrepancy prior and missing source covariance remain.
+Do not fix these endpoint bias/tau values for the next run, turn them into
+independent priors, or infer improved reconstruction from higher mark scores.
+No prior-only matched chain was run, so not all IC motion is attributable to
+observations. No individual halo or observed density truth was supplied.
+
+At the fixed final chain1 state, Q513-minus-Q257 training logfactor is
+0.002457884nat. Heldout NEW-offset GH9 and GH17 conditional factors agree
+to1.14e-13nat per group (summed difference-1.04e-13nat). Accept these endpoint
+numerical checks, not an all-state quadrature bound. The reference-dependent
+heldout logfactor1879.775152 is not an absolute predictive density or a
+field/hyperparameter-averaged posterior prediction, and cannot be compared
+naively to the previous frozen/zero-offset values as a quality improvement.
+
+Outputs: `/gpfs/kjhan/CF4/z0_density/r2_hierarchical_field_pilot_v1/`
+contains `result.json`, initial and two predetermined endpoint state NPZs,
+`transition_summaries.npz`, and `endpoint_factor_checks.npz`.
+The three state files total208,207,805bytes and include the same-state IC,
+hyperparameters, training-group whitened offsets, density, mean velocity and
+physical diagonal velocity variance. Physical variance is NOT uncertainty in
+the mean field. Geometry files in `r2_hierarchical_field_geometry_v1` total
+85,249,666bytes. Seven numeric artifacts total293,538,495bytes (~294MB).
+No existing raw output was removed and no per-step full fields were stored.
+
+Driver decision: **PASS_BOUNDED_HIERARCHICAL_WIRING_ONLY**. The fixed b=1 and
+zero extra common-offset assumptions are no longer hardwired into this new
+partial target; field dependence, source sharing, non-FP ownership and
+heldout-offset integration work. CLOSE this short-transition bundle without
+claiming a full R2 delivery or extending it blindly.
+
+Next substantive work remains a coherent galaxy-count/point + CF4 conditional
+mark law, with selected-group/velocity/source discrepancy exposed and tested
+as part of that model. The present member-redshift conditional does not use
+the bulk2M++ density information. Do not replace the missing likelihood with
+more fixed-field calibration, historical inclusive-count/BGc multiplication,
+an apparent nuisance fit, or an N256 production launch. The next implementation
+must explicitly state its observation factorization and which dependence is
+retained/approximated before using counts to update these same live fields.
+MW/M31/M33 and R3–R5 restrictions above remain unchanged.

@@ -475,8 +475,19 @@ product. New bias/tau priors are explicit development regularization, NOT
 externally calibrated selection or source-fit covariance. Heldout new-group
 offsets are integrated, not fitted. Plan/code/testing scope and unchanged
 MW/M31/M33 same-new-state limits:
-`CF4_R2_HIERARCHICAL_FIELD_20260927.md`. Numerical result pending; no R2
-posterior, N256 production or LG resolution promotion.
+`CF4_R2_HIERARCHICAL_FIELD_20260927.md`. H100406356 COMPLETED8m54s/exit0:
+six tests pass, each chain32 warmup+32 retained, acceptance.8717/.9463,
+retained divergences0. Initial mark-only IC+nuisance derivative discrepancy
+0.01066%; fixed endpoint Q257/513 training difference.002458nat; heldout new
+offset GH9/17 difference at roundoff. One initial +two predetermined final
+IC/current states and geometry use~294MB, process peak7.443GiB. Accept bounded
+hierarchical wiring only, NOT calibrated bias/shared scatter or a converged
+posterior. Endpoint tau~.003dex/b_eff~.65–.74 are not calibration measurements
+or future priors. Member2M++ data change the initial IC mark gradient by3.63%
+in this conditional model, not certified information gain or use of the full
+galaxy counts. Close short pilots; next substantive joint count/point/mark
+factorization must state and test retained versus approximated dependence.
+No blind chain extension, R2 delivery, N256 or LG resolution promotion.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the
 MW/M31/M33 assignment, M33 non-detection or galaxy–DMO discrepancy known.
