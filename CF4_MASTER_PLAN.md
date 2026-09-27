@@ -9,6 +9,22 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+R2 selection-coordinate control2026-09-27: the observed six K-population
+labels use redshift-derived absolute magnitude, while the current count
+operator applies six archived radial/angular exposures after redshift-space
+deposition. An exact Schechter-LF true/observed-magnitude transfer and
+fixed-radius comparison (`CF4_R2_SELECTION_COORDINATE_20260927.md`) completed
+in Slurm406563 with3/3 tests. Zero displacement reproduces the old radial
+fraction; a fixed +3 cMpc/h shift at true30 cMpc/h moves10.47% of selected
+LF measure between central absolute-K bins and brings8.90% from intrinsic
+bright/faint tails, with8.74% six-bin selection-vector L1 difference from
+post-RSD exposure. This is **model sensitivity only**, not a calibrated
+actual-data velocity/bias correction. Intrinsic LF/rates, tracer bias, survey
+angular/radial selection, source overlap and CF4 grouped marks still require
+joint calibration. Do not plug old six published `nbar` values into a new
+true-bin process or restart long HMC before its target is fixed. No email was
+sent and no R2/N256 posterior was promoted.
+
 The user directs omitting new TNG data if they are not indispensable. They
 are not needed to begin the R2 actual CF4+galaxy present-field inference, so
 the proposed hydro-to-Dark matching download and its unsubmitted Slurm job
