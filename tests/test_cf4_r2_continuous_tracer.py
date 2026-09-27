@@ -61,3 +61,21 @@ class TestContinuousTracer(unittest.TestCase):
         )
         self.assertTrue(np.isfinite(np.asarray(result)).all())
         self.assertGreaterEqual(float(result.min()), 0.)
+
+    def test_variable_bias_empty_cell_adjoint_is_finite(self):
+        rho = jnp.ones((2, 2, 2), dtype=jnp.float64).at[0, 0, 0].set(0.)
+        velocity = jnp.zeros((3, 2, 2, 2), dtype=jnp.float64)
+        exposure = jnp.ones((6, 2, 2, 2), dtype=jnp.float64)
+        def score(log_bias, density):
+            return predict_continuous_intensity(
+                density, velocity, exposure, jnp.ones(6),
+                jnp.ones(6)*jnp.exp(log_bias), jnp.zeros(6),
+                box=12., observer=jnp.array([6., 6., 6.]), hubble=75.,
+                little_h=.75, sigma_fog=jnp.zeros(6),
+                sigma_redshift=jnp.zeros(6)).sum()
+        value, (bias_grad, density_grad) = jax.value_and_grad(
+            score, argnums=(0, 1))(-0.2, rho)
+        self.assertTrue(np.isfinite(float(value)))
+        self.assertTrue(np.isfinite(float(bias_grad)))
+        self.assertTrue(np.isfinite(np.asarray(density_grad)).all())
+        self.assertEqual(float(density_grad[0, 0, 0]), 0.)

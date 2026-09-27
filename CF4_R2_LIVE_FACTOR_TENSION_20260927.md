@@ -104,11 +104,34 @@ at these states, but their meaning depends on uncalibrated survey and source
 selection laws.
 
 Decision: **NO-GO for freezing the transferred six bias exponents and FoG
-widths in a production R2 sampler.** A longer chain using the same fixed
-model would measure a conditional distribution whose density field can be
-highly sensitive to those unsupported choices. The next useful work is a
-joint nuisance/selection treatment constrained or stress-tested by external
-source-matched mocks or independent information, retaining the CF4 group
-conditional dependence and heldout ownership. Do not retune bias to maximize
-these three saved-state scores or use the mark-only endpoints as calibration
-data. N256 and <=0.3 LG inference remain on hold.
+widths in a production R2 sampler.** This rests on the uncalibrated transfer
+of ARES/older dynamics parameters to the current PMWD+RSD response; the
+large fixed-state score differences alone do **not** demonstrate sensitivity
+of a nuisance-marginalized posterior field. The count may prefer a flatter
+response simply because these states were not fitted to the galaxy counts.
+The next bounded development step is to sample these seven response nuisances
+jointly with the live IC and existing CF4/source variables, then examine
+whether they are identified and whether actual-field inference is stable.
+External source-matched mocks or independent calibration are still needed
+before production claims if the model/selection dependence remains unresolved,
+but are not a prerequisite to this bounded development pilot. Do not retune
+bias to maximize these three saved-state scores or use the mark-only endpoints
+as calibration data. N256 and <=0.3 LG inference remain on hold.
+
+### Important-finding Fable advice and driver disposition
+
+A read-only Fable5 plan audit returned **CONDITIONAL PASS**. The driver adopts
+its central correction that fixed-state score sensitivity is not posterior
+sensitivity, and its suggestion to test jointly sampled bias/FoG nuisance
+before insisting on a new external mock programme. This moves toward the
+actual current-field target and uses existing live HMC machinery.
+
+The driver does **not** adopt Fable's proposed SD/prior threshold of 0.8,
+three-SD between-chain coordinate test, low-k chain-mean cosine threshold 0.5,
+or automatic one-time chain extension. These are not calibrated convergence
+or identifiability criteria in a strongly correlated ~2-million-dimensional
+target; any short chain remains a feasibility control. Nor is the initial
+low-k cosine known to be statistically non-random from one prior draw. The
+source-group inclusion and within-cell/association laws remain omitted from
+the partial target even if the seven nuisances mix. External calibration is
+deferred for the development run, not waived for production.

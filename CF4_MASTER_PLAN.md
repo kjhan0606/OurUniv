@@ -529,12 +529,15 @@ mark-only endpoints are near orthogonal overall; these are NOT equilibrated
 samples or physical evidence of survey conflict. Fixed-state count log
 scores change by +15.6k...+16.6k/-20.6k...-22.0k nats for all six published
 bias exponents x0.8/x1.2, and by -664...-689/+2161...+2244 for FoG x0.5/x2.
-This is strong model-response sensitivity, not a calibrated parameter range
-or Bayes factor. Decision: do not freeze the transferred bias/FoG settings
-for production R2 sampling, do not fit them to these three states, and do not
-launch N256. Next prioritize a source-matched joint nuisance/selection
-treatment or independent calibration while retaining CF4 group conditional
-dependence. No current-field posterior or LG role was delivered. Record:
+This is fixed-state model-response sensitivity, **not** evidence of posterior
+field sensitivity, a calibrated parameter range or a Bayes factor. Decision:
+do not freeze the transferred bias/FoG settings for production R2 sampling,
+do not fit them to these three states, and do not launch N256. Important-finding
+Fable5 advice CONDITIONALLY supports a bounded live IC + six bias + shared FoG
+nuisance pilot before requiring new external mocks; driver adopts that
+development order but rejects arbitrary short-chain SD/cosine convergence
+gates and retains the missing group-inclusion/association law as a production
+barrier. No current-field posterior or LG role was delivered. Record:
 `CF4_R2_LIVE_FACTOR_TENSION_20260927.md`.
 
 For R3, TNG is not a mandatory gate, but omitting it does not make the

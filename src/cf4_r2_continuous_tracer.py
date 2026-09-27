@@ -36,11 +36,14 @@ def predict_continuous_intensity(
     if nbar.shape != (6,) or bias.shape != (6,) or diffuse_fraction.shape != (6,):
         raise ValueError("six-population parameter geometry mismatch")
     positions = cell_centres(n, box, origin_fraction)
-    # CIC-deposited PM cells can be exactly empty. At the fixed published
-    # biases (all >=1), rho**b is well-defined without an arbitrary floor.
-    # Differentiation with respect to a free b at rho=0 needs a separate
-    # smooth occupancy model; this development operator does not assert it.
-    response = density.reshape(1, -1) ** bias[:, None]
+    # CIC-deposited PM cells can be exactly empty. Differentiate the positive
+    # branch with respect to free bias, and assign exactly zero response and
+    # zero subgradient at an empty cell. This is not an intensity floor; the
+    # power law remains nonsmooth at zero for b<1, a development-model limit.
+    flat_density = density.reshape(1, -1)
+    occupied = flat_density > 0
+    safe_density = jnp.where(occupied, flat_density, 1.)
+    response = jnp.where(occupied, jnp.exp(bias[:, None]*jnp.log(safe_density)), 0.)
     response = response / jnp.mean(response, axis=1, keepdims=True)
     clustered_mass = nbar[:, None] * (1.0 - diffuse_fraction[:, None]) * response
     clustered = predict_selected_intensity_jax(
