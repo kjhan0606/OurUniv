@@ -113,5 +113,6 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         total=jax.lax.cond(jnp.any(w>0),
             lambda t:jax.lax.scan(add_node,t,(q,w))[0],lambda t:t,total)
         return total,None
+    dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
     return jax.lax.scan(add_image,jnp.zeros((6,grid_size,grid_size,grid_size),
-                                          dtype=pos.dtype),images)[0]
+                                          dtype=dtype),images)[0]

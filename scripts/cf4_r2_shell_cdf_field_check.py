@@ -19,7 +19,7 @@ from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
 from cf4_r2_shell_cdf_count import predict_shell_cdf_intensity
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
-OUT=BASE/'r2_shell_cdf_field_check_v1'
+OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_shell_cdf_field_check_v1')))
 
 
 def main():

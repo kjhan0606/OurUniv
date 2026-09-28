@@ -45,7 +45,8 @@ class ShellCDFTests(unittest.TestCase):
         box=384.
         radius=jnp.linspace(.001,400.,4001)
         def intensity(v,order):
-            return predict_shell_cdf_intensity(jnp.array([[371.9,192.,192.]]),
+            # Real archive coordinates are float32, fields/masses float64.
+            return predict_shell_cdf_intensity(jnp.array([[371.9,192.,192.]],dtype=jnp.float32),
                 jnp.array([[v,0.,0.]]),jnp.ones((5,1)),jnp.ones((2,1)),
                 observer=jnp.full(3,192.),box_size_cMpc_h=box,hubble_km_s_Mpc=74.6,
                 little_h=.746,radius_table_cMpc_h=radius,
