@@ -42,6 +42,11 @@ def main():
                     density_min=float(rho.min()),density_max=float(rho.max()),
                     white_IC_mean_square=float(np.mean(f['white_ic']**2)),
                     white_tracer=f['tracer'].tolist())
+                if 'physical_velocity_variance_km2_s2' in f:
+                    variance=f['physical_velocity_variance_km2_s2']
+                    summary[name]['mass_weighted_physical_dispersion_km_s']=np.sqrt(
+                        (variance*rho[None]).sum(axis=(1,2,3))/rho.sum()).tolist()
+                    summary[name]['dispersion_definition']='sqrt(mass-weighted native-node velocity variance); NOT posterior uncertainty or tracer sigma_los'
             # Log floor is for display only; saved physical fields unchanged.
             im=axes[0,col].imshow(np.log10(np.maximum(density,1e-5)).T,origin='lower',
                 extent=(-192,192,-192,192),vmin=-1,vmax=1,cmap='magma')

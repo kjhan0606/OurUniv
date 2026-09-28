@@ -9,14 +9,25 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
-Latest R2 execution2026-09-28:408032/sourcec8d6af6 is the new actual-data
-bounded fit, H2002CPU12GiB/45min,20 iterations/35min application. It uses
+Latest R2 execution2026-09-28:408032/sourcec8d6af6 completed35m59s,17 accepted
+updates, on its application time budget, NOT convergence. Objective
+231875.999→175535.453, maximum gradient756.69→129.91; count score improves
+−231771.137→−174395.939 while FP score.0859→−50.9406 is worse than its
+near-uniform optimizer start. Readout408033 supplies the actual final field
+and comparison image. Visible bands/large flows are not validated named
+structures. Both counts and field changed; rate normalization increased by
+exp(2*.459742)=2.508, and the predicted training count is still40625 vs47121.
+The fit used H2002CPU12GiB/45min,20 iterations/35min application. It uses
 shell-CDF4x32 counts plus429 strict singleton FP marks on the frozen v6
 training graph; no heldout. IC optimizer initialization is.01 times the
 predeclared seed draw, NOT a prior realization; cosmological prior/power and
 parameter domain unchanged. Do not restart the stagnated407805/407886 states.
-Initial same-state adjoint and20%-margin combined device-memory check precede
-updates.408033 is afterany readout, not automatic science approval.
+The initial same-state adjoint passed (4.39e-5 normalized error); combined
+derivative temporary device memory16.82GiB, Python host peak6.71GiB.408078
+checks4x32/8x32 integration on this terminal field without new PM evolution
+or heldout scoring. Conditional next work is bounded same-target refinement,
+not N256 or posterior promotion. Keep physical particle velocity dispersion
+separate from posterior uncertainty and phenomenological tracer LOS width.
 
 Preceding numerical repair:407901 identified finite-GH radial-cut switches.
 Gaussian-probability integration on physical-distance strata preserves5–180,

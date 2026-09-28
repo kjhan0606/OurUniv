@@ -38,6 +38,9 @@ class ParticleEntryTest(unittest.TestCase):
         np.testing.assert_allclose(out['mass'].sum(), self.m.sum(), rtol=1e-12)
         np.testing.assert_allclose(out['momentum'].sum(axis=(0, 1, 2)), (self.m[:, None]*self.v).sum(axis=0), atol=1e-9)
         np.testing.assert_allclose(out['second_moment'].sum(axis=(0, 1, 2)), (self.m[:, None]*self.v**2).sum(axis=0), rtol=1e-12)
+        reconstructed=out['mass'][...,None]*(out['variance_km2_s2']+out['mean_velocity_km_s']**2)
+        np.testing.assert_allclose(reconstructed,out['second_moment'],rtol=1e-12,atol=1e-9)
+        self.assertTrue(bool(jnp.all(out['variance_km2_s2']>=0)))
         self.assertAlmostEqual(float(out['rho'].mean()), 1., places=12)
 
     def test_empty_node_mass_weighted_velocity_adjoint(self):

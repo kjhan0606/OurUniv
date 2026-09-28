@@ -129,6 +129,12 @@ def main():
     cdf_segments=int(os.environ.get('CF4_R2_CDF_SEGMENTS','32'))
     if count_integration not in ('gh','shell_cdf') or min(cdf_order,cdf_segments)<1:
         raise ValueError('invalid count integration choice')
+    maxiter=int(os.environ.get('CF4_R2_MAXITER','128'))
+    cap=int(os.environ.get('CF4_R2_SECONDS_CAP','2700'))
+    norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
+    norm_cap=None if norm_cap is None else float(norm_cap)
+    if maxiter<1 or cap<1 or (norm_cap is not None and (not np.isfinite(norm_cap) or norm_cap<=0)):
+        raise ValueError('invalid bounded fit budget/initial step norm')
     report = dict(status='STARTED', source_commit=expected,
         job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         classification='TRAINING_ONLY_PARTIAL_MAP_ATTEMPT_NOT_POSTERIOR',
@@ -142,7 +148,8 @@ def main():
                      'continuous mark and GH15 count approximation differ near selection edges',
                      'MW/M31 roles ambiguous and M33 unresolved on this NEW coarse state; '
                      'LG observables must constrain the same field in R3; no truth IDs'],
-        trace=[])
+        maxiter=maxiter,application_seconds_cap=cap,
+        initial_step_norm_cap=norm_cap,score_only_line_search=True,trace=[])
     report['count_integration']=dict(family=count_integration,gh_order=15,
                                     cdf_order=cdf_order,cdf_segments=cdf_segments)
     if count_integration=='shell_cdf':
@@ -193,6 +200,16 @@ def main():
             pos, vel = evolve(white)
             result = particle_grid(pos, vel, mass, conf)
             return result['rho'], jnp.moveaxis(result['mean_velocity_km_s'], -1, 0)
+
+        @jax.jit
+        def terminal_field(white):
+            # Replace the existing final forward/readout, not an extra simulation.
+            # Physical particle dispersion is NOT posterior uncertainty or the
+            # phenomenological tracer sigma_los nuisance in the likelihood.
+            pos,vel=evolve(white)
+            result=particle_grid(pos,vel,mass,conf)
+            return (result['rho'],jnp.moveaxis(result['mean_velocity_km_s'],-1,0),
+                    jnp.moveaxis(result['variance_km2_s2'],-1,0),result['valid'])
 
         @jax.jit
         def shifted_positions(rho, vel):
@@ -250,8 +267,7 @@ def main():
         data_vg = jax.jit(jax.value_and_grad(data_target,argnums=(0,1,2,3),has_aux=True))
         report.update(training_count_keys=int(keys.size),training_counts=int(counts.sum()),
                       training_singletons=len(options),IC_seed=2026092702,
-                      nuisance_precondition_scale=100.,maxiter=128,
-                      application_seconds_cap=2700)
+                      nuisance_precondition_scale=100.)
         start_scale=float(os.environ.get('CF4_R2_IC_START_SCALE','1.'))
         if not np.isfinite(start_scale) or start_scale<=0:
             raise ValueError('positive finite optimizer starting scale required')
@@ -457,27 +473,22 @@ def main():
         save_report()
         if error>=.02:
             raise AssertionError('initial refreshed-support IC adjoint mismatch')
-        maxiter=int(os.environ.get('CF4_R2_MAXITER','128'))
-        cap=int(os.environ.get('CF4_R2_SECONDS_CAP','2700'))
-        norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
-        norm_cap=None if norm_cap is None else float(norm_cap)
-        if maxiter<1 or cap<1 or (norm_cap is not None and (not np.isfinite(norm_cap) or norm_cap<=0)):
-            raise ValueError('invalid bounded fit budget/initial step norm')
-        report.update(maxiter=maxiter,application_seconds_cap=cap,
-                      initial_step_norm_cap=norm_cap,score_only_line_search=True)
         solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
             seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
             value_only=trial_value,initial_norm_cap=norm_cap,
             initial_evaluation=(value0,gradient0))
-        rho,vel=field(jnp.asarray(solution[:N**3]))
+        rho,vel,variance,valid=terminal_field(jnp.asarray(solution[:N**3]))
         np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
                  tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],
-                 rho=np.asarray(rho),velocity_km_s=np.asarray(vel))
+                 rho=np.asarray(rho),velocity_km_s=np.asarray(vel),
+                 physical_velocity_variance_km2_s2=np.asarray(variance),
+                 velocity_valid=np.asarray(valid))
         np.savez(OUT/'accepted_checkpoint.npz',parameters=solution)
         report.update(status='PARTIAL_MAP_OPTIMIZER_STOP_NOT_POSTERIOR',
             optimizer_success=message=='gradient tolerance',optimizer_message=message,
             iterations=len(report['trace']),final_objective=float(value),
-            final_gradient_inf=float(np.max(np.abs(gradient))))
+            final_gradient_inf=float(np.max(np.abs(gradient))),
+            physical_dispersion_saved=True,posterior_velocity_uncertainty=False)
         save_report()
     except Exception as exc:
         report.update(status='STOPPED_NOT_POSTERIOR',error=f'{type(exc).__name__}: {exc}')

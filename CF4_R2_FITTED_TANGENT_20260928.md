@@ -290,3 +290,38 @@ still applies ONLY to its original reference field. Submit afterok408032,
 H2002CPU12GiB/15min (previous actual check7m02s, host3.84GiB). This checks
 that the numerical accuracy used for inference survives the field update;
 it is not another model-selection ladder or R2 completion gate framework.
+
+408032 COMPLETED35m59s on the application budget, not stationarity:17 accepted
+updates,18 full evaluations. Objective231875.999→175535.453, count
+−231771.137→−174395.939, FP.0859→−50.9406, maximum gradient756.69→129.91.
+IC quadratic penalty increased from104.948 to1088.293;
+the improvement is not solely prior shrinkage as in
+the failed older run. Mean density remains1; white-IC mean-square.000100086→
+.001037877. White rate coordinate.459742 implies2.508x rate normalization,
+but the field also changes (density range .947–1.169→.0093–497.55).
+408033 created the actual density/velocity illustration. Visible band-like
+features and large flows are not proof of physical filaments, nor evidence
+of a specific defect without a matched control. No named object is identified.
+
+The next same-target continuation, contingent on terminal integral evidence,
+is bounded to32 updates/70min application, H2002CPU12GiB/80min Slurm. Restart
+the accepted coordinates with fresh L-BFGS history and initial step-norm cap16;
+this is not exact history continuation or a new prior. Keep4x32, all429/47121
+training inputs and all observational priors fixed. Repeat the actual-start
+directional check, no heldout. Save native-node physical particle velocity
+variance/validity in the existing final forward readout, not by adding a
+second simulation. Existing second-moment conservation fixture checks its
+mass*(variance+mean^2) identity; optimizer tests also precede the run. Budget
+metadata is now recorded before computation rather than after the first check.
+Storage remains below.5GiB/run; no new snapshots or high-resolution launch.
+Q-GOAL: usable same-state present-field inference; Q-LEAN: refine a descending
+fit with existing code, not another diagnostic ladder. R2 scientific limits
+remain, MW/M31 roles are ambiguous, M33 unresolved, and R3 must constrain
+these components from the SAME new field without truth-ID seeding.
+
+408078 completed its terminal-state comparison:4x32 reproduces the fit
+count score to3e-11,4x32/8x32 delta−.000862329, exposure L1=1.40715e-6,
+max occupied log delta=.00104405. Scalar velocity derivative discrepancy
+1.934e-6. Python peak4.10GiB, calculation286.2s plus seven small tests.
+No new PM evolution or heldout score. These results support the bounded
+same-target continuation above, not calibration or posterior certification.
