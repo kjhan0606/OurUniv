@@ -269,6 +269,7 @@ def main():
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         latest = {}
         diagnostic_baseline = {}
+        data_executable=None
         def score_only(x):
             tracer=jnp.asarray(x[N**3:N**3+9]/100.)
             rho,vel=field(jnp.asarray(x[:N**3]))
@@ -288,13 +289,27 @@ def main():
             return value
 
         def objective(x):
+            nonlocal data_executable
             tic = time.monotonic()
             white = jnp.asarray(x[:N**3])
             tracer = jnp.asarray(x[N**3:N**3+9]/100.)
             zero = jnp.asarray(x[-1])
             (rho,vel), pullback = jax.vjp(field,white)
             links,width = build_support(rho,vel,np.asarray(tracer))
-            (value,parts), grads = data_vg(rho,vel,tracer,zero,links)
+            if data_executable is None:
+                data_executable=data_vg.lower(rho,vel,tracer,zero,links).compile()
+                analysis=data_executable.memory_analysis()
+                stats=jax.devices()[0].memory_stats() or {}
+                if analysis is not None:
+                    report['data_derivative_memory']=dict(
+                        temporary_GiB=analysis.temp_size_in_bytes/1024**3,
+                        current_device_GiB=stats.get('bytes_in_use',0)/1024**3,
+                        device_limit_GiB=stats.get('bytes_limit',0)/1024**3)
+                    save_report()
+                    peak=stats.get('bytes_in_use',0)+analysis.temp_size_in_bytes+analysis.output_size_in_bytes
+                    if stats.get('bytes_limit') and 1.2*peak>stats['bytes_limit']:
+                        raise MemoryError('combined derivative lacks 20 percent device-memory margin')
+            (value,parts), grads = data_executable(rho,vel,tracer,zero,links)
             icgrad, = pullback((grads[0],grads[1]))
             value = float(value-.5*jnp.vdot(white,white))
             gradient = np.r_[np.asarray(icgrad-white),np.asarray(grads[2])/100.,float(grads[3])]

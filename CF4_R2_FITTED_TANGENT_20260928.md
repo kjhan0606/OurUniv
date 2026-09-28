@@ -241,3 +241,36 @@ remain unchanged. This is NOT a cosmological prior draw or posterior sample;
 readout labels distinguish it. Do not continue the already-stalled v2/v3
 state merely to spend more iterations. A fresh bounded fit still requires
 the actual new initial-state directional check; no posterior/IC promotion.
+
+Streaming408010 COMPLETED7m02s,2 LF+5 quadrature tests pass. Saved GH15 and
+CDF4x32 scores reproduce exactly; CDF4x32 scalar adjoint discrepancy2.83e-6.
+Compiled derivative temporary memory14.01GiB plus.80GiB current device use,
+against104.85GiB effective allocator limit, replaces the failed96.92GiB
+single allocation. Coupled-target408011 passed4 optimizer tests and the
+nonempty-count GH/CDF+unchanged-FP/prior/heldout wiring test (139.2s).
+
+## New bounded actual-data fit
+
+Use the explicit shell-CDF4x32 count branch with429 strict singleton FP marks
+and47,121 training counts on the frozen v6 graph. Same384 box/N128 grid,
+cosmology, prior, LF/bias/width nuisance law, shared FP zero and live support.
+Start white_IC at.01 times seed2026092702, white nuisance coordinates zero,
+without restarting/ranking prior fitted ICs. This is an optimizer start only;
+it is neither a prior realization nor posterior uncertainty. No physical
+parameter bounds, likelihood floor, new smoothing or heldout score.
+
+One H2002CPU12GiB/45min Slurm allocation:20 accepted iterations maximum,
+35min application cap, adaptive initial coordinate-step norm1.0. The actual
+start must pass the prior-subtracted directional check at eps2e-5. A combined
+count+FP derivative compile-memory check now precedes allocation, retaining
+20% device margin; host estimate<=10GiB with12GiB requested. Save only initial,
+last accepted and final fields/parameters, below.5GiB; no RAMSES dumps.
+
+Judge count and FP changes, gradient, meaningful field response and cost.
+Do not confuse a budget stop or a low MAP score with a posterior. If there is
+real progress, continue within bounded R2 work; if another pathology occurs,
+retain evidence and fix it instead of extending a blind run. Calibration,
+shared source covariance, posterior uncertainty and untouched heldout
+prediction remain required before R2 closure or N256. MW/M31 roles stay
+ambiguous and M33 unresolved at this coarse stage; R3 must identify them
+from the SAME new state and attach their actual observables, not truth IDs.
