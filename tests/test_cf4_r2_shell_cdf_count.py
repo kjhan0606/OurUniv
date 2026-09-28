@@ -5,6 +5,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.special import ndtr
+from scipy.integrate import quad
 
 from cf4_r2_shell_cdf_count import shell_cdf_nodes,predict_shell_cdf_intensity
 
@@ -40,6 +41,23 @@ class ShellCDFTests(unittest.TestCase):
             mass+=float(w.sum())
         # Central sphere q<=180 and wrapped neighbour q>=384-180=204.
         self.assertAlmostEqual(mass,ndtr(-1)+ndtr(-1.4),places=13)
+
+    def test_physical_strata_resolve_a_five_sigma_TSC_tail(self):
+        def kernel(x):
+            d=np.abs(x-105.)
+            return np.where(d<.5,.75-d*d,np.where(d<1.5,.5*(1.5-d)**2,0.))
+        expected=quad(lambda x:float(kernel(x))*np.exp(-.5*(x-100)**2)/np.sqrt(2*np.pi),
+                      103.5,106.5,points=[104.5,105.5],epsabs=1e-15)[0]
+        values=[]
+        for order,segments in ((16,1),(4,16),(8,16)):
+            q,w=shell_cdf_nodes(jnp.array([100.]),jnp.array([[1.,0.,0.]]),
+                1.,jnp.zeros(3),order=order,segments=segments)
+            values.append(float(np.sum(np.asarray(w)*kernel(np.asarray(q)))))
+        self.assertEqual(values[0],0.)
+        self.assertGreater(values[1],0.)
+        self.assertLess(abs(values[2]/expected-1),.001)
+        print('five_sigma_TSC_tail',dict(reference=expected,global16=values[0],
+              strata16_order4=values[1],strata16_order8=values[2]),flush=True)
 
     def test_full_source_K_TSC_values_and_velocity_gradient(self):
         box=384.

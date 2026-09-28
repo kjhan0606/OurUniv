@@ -159,3 +159,25 @@ GH score reproduced within1e-7, exposure-L1 difference<.001, count-score
 difference<.5 and scalar derivative discrepancy<.001; failing any criterion
 does not authorize fitting or loosening it. Even passing does not establish
 all-IC derivative conditioning, survey calibration or R2 completion.
+
+Saved-field407919 failed before CDF evaluation on float32/float64 scan carry;
+f92530e repairs accumulator promotion and adds mixed-precision coordinates.
+Retry407922 completed7m16s, four tests passed first. GH15 reproduces the old
+count score to~2e-9. CDF16/CDF32 exposure-L1 difference is1.51e-4, but count
+score difference−4.28487 exceeds.5 and maximum occupied log-intensity
+difference1.9963 is large. The CDF16 velocity-scale derivative is internally
+consistent (relative difference7.02e-7). This numerical candidate therefore
+does NOT qualify for fitting; good gradients alone do not mean an accurate
+integral. Host Python peak5.05GiB. No PM evolution, optimization or heldout.
+
+Narrow improvement: stratify each shell interval in physical signed distance
+before its probability-coordinate quadrature. Each subinterval retains its
+exact unconditional Gaussian probability; no low-weight interval is dropped.
+A compact five-sigma TSC-tail reference explicitly probes what a single
+global probability rule can miss despite small total L1 error. Compare4-node
+rules with16 versus32 physical subintervals on the SAME saved state, preserving
+the previously stated.5 score and.001 L1/derivative criteria. Five small tests
+precede it in one H2002CPU12GiB25min allocation. Expected host<=10GiB including
+the measured5.05GiB and larger node buffers;12GiB includes20% margin. This is
+a finite numerical repair attempt, not a search over unrelated models or a
+longer field fit. M33 and all R2 calibration/uncertainty limits remain open.

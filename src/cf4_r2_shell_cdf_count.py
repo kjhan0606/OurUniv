@@ -19,15 +19,15 @@ from cf4_r2_marked_tracer_jax import source_mark_transfer
 
 
 def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
-                    radial_max=180., order=16, tail_sigma=8.):
-    """Signed ray coordinates/weights: (two shell segments, nodes, sources).
+                    radial_max=180., order=16, tail_sigma=8., segments=1):
+    """Signed ray coordinates/weights: (2*segments, nodes, sources).
 
     ``mu`` and ``direction`` describe coherent positions relative to the
     observer in its minimum-image cell. ``image_center`` is another observer
     image relative to that observer. Weights are *unconditional* Gaussian
     probabilities, never normalized to the selected region.
     """
-    if order<1 or not 0<radial_min<radial_max or tail_sigma<=0:
+    if order<1 or segments<1 or not 0<radial_min<radial_max or tail_sigma<=0:
         raise ValueError('invalid shell quadrature')
     if isinstance(sigma,numbers.Real) and sigma<=0:
         raise ValueError('positive LOS dispersion required')
@@ -46,6 +46,15 @@ def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
     lower=jnp.maximum(lower,mu-tail_sigma*sigma)
     upper=jnp.minimum(upper,mu+tail_sigma*sigma)
     active=outer_ok[None]&(upper>lower)&(jnp.sum(direction**2,axis=1)>0)[None]
+    # Physical-q stratification resolves spatially important rare tails that
+    # a single probability-interval rule can miss. Preserve each subinterval's
+    # unconditional Gaussian mass; do not drop low-probability intervals.
+    width=jnp.where(active,upper-lower,0.)
+    fraction=jnp.arange(segments,dtype=mu.dtype)/segments
+    starts=lower[:,None,:]+fraction[None,:,None]*width[:,None,:]
+    ends=starts+width[:,None,:]/segments
+    lower,upper=starts.reshape(-1,mu.size),ends.reshape(-1,mu.size)
+    active=jnp.broadcast_to(active[:,None,:],starts.shape).reshape(-1,mu.size)
     za=jnp.where(active,(lower-mu)/sigma,0.)
     zb=jnp.where(active,(upper-mu)/sigma,0.)
     # Positive-tail intervals use survival probabilities to retain precision.
@@ -65,7 +74,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     intrinsic_bin_masses,angular_completeness,*,observer,box_size_cMpc_h,
     hubble_km_s_Mpc,little_h,radius_table_cMpc_h,modulus_table_h,redshift_table,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
-    mstar=-23.28,alpha=-.94,order=16):
+    mstar=-23.28,alpha=-.94,order=16,segments=1):
     """Same source-selected K/TSC count integrand, boundary-fitted LOS law.
 
     Caller owns current-width support checks and calibration. This does not
@@ -108,7 +117,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     @jax.checkpoint
     def add_image(total,center):
         q,w=shell_cdf_nodes(mu,direction,sigma,center,radial_min=radial_min_cMpc_h,
-                            radial_max=radial_max_cMpc_h,order=order)
+                            radial_max=radial_max_cMpc_h,order=order,segments=segments)
         q,w=q.reshape(-1,pos.shape[0]),w.reshape(-1,pos.shape[0])
         total=jax.lax.cond(jnp.any(w>0),
             lambda t:jax.lax.scan(add_node,t,(q,w))[0],lambda t:t,total)

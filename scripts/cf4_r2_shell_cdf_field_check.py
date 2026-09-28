@@ -72,14 +72,20 @@ def main():
                     velocity,masses,source['angular'],node,weight,**geometry),None
             return jax.lax.scan(add,jnp.zeros((6,128,128,128)),
                                 (jnp.asarray(nodes),jnp.asarray(weights)))[0]
-        def cdf(scale,velocity,masses,order):
+        def cdf(scale,velocity,masses,order,segments):
             return predict_shell_cdf_intensity(source['positions'],scale*velocity,masses,
-                                               source['angular'],order=order,**geometry)
-        evaluate=jax.jit(cdf,static_argnums=3)
+                source['angular'],order=order,segments=segments,**geometry)
+        evaluate=jax.jit(cdf,static_argnums=(3,4))
+        stratified=os.environ.get('CF4_R2_CDF_STRATIFIED')=='1'
+        rules=(('CDF4x16',4,16),('CDF4x32',4,32)) if stratified else (
+               ('CDF16',16,1),('CDF32',32,1))
+        low_name,low_order,low_segments=rules[0]
+        high_name,_,_=rules[1]
         fields={}
-        for name,call in [('GH15',lambda:gh15(vel,intrinsic)),
-                          ('CDF16',lambda:evaluate(1.,vel,intrinsic,16)),
-                          ('CDF32',lambda:evaluate(1.,vel,intrinsic,32))]:
+        calls=[('GH15',lambda:gh15(vel,intrinsic))]+[
+            (name,lambda order=order,segments=segments:evaluate(1.,vel,intrinsic,order,segments))
+            for name,order,segments in rules]
+        for name,call in calls:
             tic=time.monotonic()
             fields[name]=call(); fields[name].block_until_ready()
             value=float(score(fields[name]))
@@ -89,20 +95,20 @@ def main():
                      expected_training_count=float(jnp.sum(fields[name].reshape(-1)*exposure)))
             report['comparisons'][name]=row
             save(); print(json.dumps({name:row}),flush=True)
-        for left,right in [('GH15','CDF32'),('CDF16','CDF32')]:
+        for left,right in [('GH15',high_name),(low_name,high_name)]:
             a,b=fields[left].reshape(-1),fields[right].reshape(-1)
             report[f'{left}_vs_{right}']=dict(
                 exposure_L1_relative=float(jnp.sum(jnp.abs(a-b)*exposure)/jnp.sum(b*exposure)),
                 max_occupied_log_difference=float(jnp.max(jnp.abs(jnp.log(a[keys])-jnp.log(b[keys])))),
                 count_score_difference=report['comparisons'][left]['score']-report['comparisons'][right]['score'])
         save()
-        derivative=jax.jit(jax.grad(lambda scale,v,m:score(cdf(scale,v,m,16))))
+        derivative=jax.jit(jax.grad(lambda scale,v,m:score(cdf(scale,v,m,low_order,low_segments))))
         reverse=float(derivative(1.,vel,intrinsic))
         epsilon=1e-6
-        finite=float((score(evaluate(1.+epsilon,vel,intrinsic,16))-
-                      score(evaluate(1.-epsilon,vel,intrinsic,16)))/(2*epsilon))
+        finite=float((score(evaluate(1.+epsilon,vel,intrinsic,low_order,low_segments))-
+                      score(evaluate(1.-epsilon,vel,intrinsic,low_order,low_segments)))/(2*epsilon))
         error=abs(reverse-finite)/max(1.,abs(reverse),abs(finite))
-        report['velocity_scale_adjoint']=dict(epsilon=epsilon,reverse=reverse,
+        report['velocity_scale_adjoint']=dict(rule=low_name,epsilon=epsilon,reverse=reverse,
                                              finite_difference=finite,relative_discrepancy=error)
         report['status']='SAVED_FIELD_COMPARISON_COMPLETE_NOT_POSTERIOR'
         save(); print(json.dumps(report,allow_nan=False),flush=True)
