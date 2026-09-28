@@ -90,3 +90,39 @@ It creates initial/final density and mean-velocity comparison figures only
 if a final state exists; no heldout observation is opened or scored. If the
 fit fails, it instead records the preserved failure and checkpoint status.
 Driver assessment is still required before any uncertainty/validation fit.
+
+### First fit stopped; same-target bounded-step correction
+
+407793 FAILED/exit1 after19m56s (peak batch8.29GiB, Python8.34GiB).
+The first value/gradient took737.0s including compilation; warm evaluations
+took34–38s. The refreshed-support directional check differs by4.32e-6
+relative under its original whole-objective normalization. Six optimizer
+steps were accepted before the next trial had a nonfinite value or derivative.
+The old combined error omitted which component failed and did not save that
+trial, so a zero-support cause is **not established**. Preserve that limitation.
+Readout407795 completed4s and correctly produced a failure summary, no final
+map. Accepted checkpoint is retained; no heldout data were scored.
+
+The objective fell1,299,959→1,079,270 but the count log factor worsened
+−250,478→−275,825 and FP factor−1.15→−233.62, while the prior improved.
+This is neither convergence nor an improved observation fit. Do not report
+the aggregate descent as scientific reconstruction success.
+
+Same-target retry uses the last accepted coordinates with fresh L-BFGS history,
+not a claimed exact continuation. Limit EACH proposed step (not the parameter
+domain) to IC-white RMS .1, tracer-white change .1, and zero-white change .5;
+backtrack for actual sufficient decrease. A genuine minus-infinite log target
+rejects the trial with no floor; a finite value with a nonfinite derivative,
+NaN target, or positive-infinite target stops and saves the exact failed
+coordinates/current field and component finiteness for diagnosis. The existing
+initial derivative check now subtracts the analytic Gaussian-prior tangent
+from both sides, without extra PM evaluations. One tiny quadratic/support
+test runs inside the same allocation to check the new step controller.
+
+Keep the45min application/55min Slurm cap. A normal time-budget stop now saves
+the last accepted current field, not just parameters; it is still explicitly
+unconverged. Observed peak8.34GiB plus bounded optimizer/history/diagnostic
+buffers gives estimated peak<=10GiB; request12GiB (~20% headroom),2CPU,typedH100.
+JAX's ordinary compilation cache is enabled to avoid paying identical future
+compilations repeatedly; no filesystem test or diagnostic is introduced.
+New output root `r2_v6_partial_map_v2`; v1 results unchanged. R2 remains open.

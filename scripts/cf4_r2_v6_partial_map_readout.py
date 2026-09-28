@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-BASE = Path('/gpfs/kjhan/CF4/z0_density/r2_v6_partial_map_v1')
+BASE = Path(os.environ.get('CF4_R2_OUT_DIR', '/gpfs/kjhan/CF4/z0_density/r2_v6_partial_map_v1'))
 
 
 def main():
@@ -44,7 +44,8 @@ def main():
             im=axes[1,col].imshow(bulk.T,origin='lower',extent=(-192,192,-192,192),
                 vmin=-500,vmax=500,cmap='RdBu_r')
             fig.colorbar(im,ax=axes[1,col],label='mass-weighted v_SGZ (km/s)')
-            axes[0,col].set_title('Unconditioned start' if col==0 else 'Training-only partial MAP iterate')
+            axes[0,col].set_title(('Accepted restart' if report.get('restart') else 'Unconditioned start')
+                                 if col==0 else 'Training-only partial MAP iterate')
             for ax in axes[:,col]:
                 ax.set_xlabel('SGX (cMpc/h)'); ax.set_ylabel('SGY (cMpc/h)')
                 ax.plot(0,0,'+',color='lime',markersize=6)

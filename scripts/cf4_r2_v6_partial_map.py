@@ -16,7 +16,6 @@ import time
 import jax
 import jax.numpy as jnp
 import numpy as np
-from scipy.optimize import minimize
 from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +30,66 @@ from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
 SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
 N, BOX, WIDTH = 128, 384., 8192
-OUT = BASE/'r2_v6_partial_map_v1'
+OUT = Path(os.environ.get('CF4_R2_OUT_DIR', str(BASE/'r2_v6_partial_map_v2')))
+
+
+def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128):
+    """Descent-only L-BFGS with bounded trial steps, not parameter bounds.
+
+    An infinite objective means a genuine zero-probability trial and is
+    rejected, never replaced by a likelihood floor. A finite objective with
+    nonfinite derivative is an implementation/nondifferentiability failure;
+    the objective callable must stop rather than mask that case.
+    """
+    x=initial.copy()
+    value,grad=fun(x)
+    if not np.isfinite(value) or not np.isfinite(grad).all():
+        raise FloatingPointError('restart is not a finite differentiable state')
+    history=[]
+    message='iteration limit'
+    for iteration in range(maxiter):
+        if np.max(np.abs(grad))<1e-4:
+            message='gradient tolerance'; break
+        if seconds_left()<=0:
+            message='application time budget'; break
+        q=grad.copy()
+        alphas=[]
+        for s,y,inverse in reversed(history):
+            a=inverse*np.dot(s,q); alphas.append(a); q-=a*y
+        scale=(np.dot(history[-1][0],history[-1][1])/np.dot(history[-1][1],history[-1][1])
+               if history else 1.)
+        direction=scale*q
+        for (s,y,inverse),a in zip(history,reversed(alphas)):
+            direction+=s*(a-inverse*np.dot(y,direction))
+        direction=-direction
+        if np.dot(direction,grad)>=0:
+            history=[]; direction=-grad
+        # Coordinate limits affect trial size ONLY; the target/prior unchanged.
+        divisor=max(1.,np.linalg.norm(direction[:n_ic])/np.sqrt(n_ic)/.1,
+                    np.max(np.abs(direction[n_ic:n_ic+9]/100.))/.1,
+                    abs(direction[-1])/.5)
+        direction/=divisor
+        slope=np.dot(grad,direction)
+        accepted=False
+        for trial in range(12):
+            if seconds_left()<=0:
+                message='application time budget'; break
+            step=.5**trial
+            candidate=x+step*direction
+            fv,fg=fun(candidate)
+            if np.isfinite(fv) and fv<=value+1e-4*step*slope:
+                accepted=True; break
+        if not accepted:
+            if seconds_left()>0:
+                message='no finite sufficient-decrease trial'
+            break
+        s,y=candidate-x,fg-grad
+        sy=np.dot(s,y)
+        if sy>1e-10*np.linalg.norm(s)*np.linalg.norm(y):
+            history.append((s.copy(),y.copy(),1./sy)); history=history[-8:]
+        x,value,grad=candidate,fv,fg
+        callback(x)
+    return x,value,grad,message
 
 
 def main():
@@ -157,14 +215,20 @@ def main():
         data_vg = jax.jit(jax.value_and_grad(data_target,argnums=(0,1,2,3),has_aux=True))
         report.update(training_count_keys=int(keys.size),training_counts=int(counts.sum()),
                       training_singletons=len(options),IC_seed=2026092702,
-                      nuisance_precondition_scale=100.,maxiter=128,maxfun=192,
+                      nuisance_precondition_scale=100.,maxiter=128,
                       application_seconds_cap=2700)
         initial = np.r_[np.random.default_rng(2026092702).standard_normal(N**3),np.zeros(10)]
+        restart=os.environ.get('CF4_R2_RESTART')
+        if restart:
+            with np.load(restart,allow_pickle=False) as f:
+                initial=f['parameters'].copy()
+            if initial.shape!=(N**3+10,) or not np.isfinite(initial).all():
+                raise ValueError('invalid accepted restart coordinates')
+            report['restart']=restart
+            report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         latest = {}
 
         def objective(x):
-            if time.monotonic()-started > 2700:
-                raise TimeoutError('bounded MAP budget reached; preserve accepted checkpoint')
             tic = time.monotonic()
             white = jnp.asarray(x[:N**3])
             tracer = jnp.asarray(x[N**3:N**3+9]/100.)
@@ -176,7 +240,22 @@ def main():
             value = float(value-.5*jnp.vdot(white,white))
             gradient = np.r_[np.asarray(icgrad-white),np.asarray(grads[2])/100.,float(grads[3])]
             if not np.isfinite(value) or not np.isfinite(gradient).all():
-                raise FloatingPointError('nonfinite objective/gradient; no surrogate penalty')
+                bad=dict(parts=[float(v) if np.isfinite(v) else str(v) for v in np.asarray(parts)],
+                    objective_finite=bool(np.isfinite(value)),
+                    nonfinite_derivative_counts=[int(np.count_nonzero(~np.isfinite(np.asarray(g)))) for g in grads],
+                    nonfinite_IC_derivatives=int(np.count_nonzero(~np.isfinite(gradient[:N**3]))),
+                    max_neighbors=width)
+                if not report.get('nonfinite_trials'):
+                    np.savez(OUT/'first_nonfinite_trial.npz',parameters=x,
+                             rho=np.asarray(rho),velocity_km_s=np.asarray(vel))
+                report.setdefault('nonfinite_trials',[]).append(bad)
+                save_report()
+                if np.isfinite(value):
+                    raise FloatingPointError('finite target but nonfinite derivative; preserved exact trial')
+                if np.isnan(value) or value==np.inf:
+                    raise FloatingPointError('undefined or positive-infinite log target; preserved exact trial')
+                # Exact zero support: let line search shrink, no model floor.
+                return np.inf,np.zeros_like(x)
             latest.update(parts=list(map(float,np.asarray(parts))),objective=-value,
                           gradient_inf=float(np.max(np.abs(gradient))),
                           max_neighbors=width,sigma_los_km_s=float(100*np.exp(.5*float(tracer[6]))),
@@ -206,22 +285,29 @@ def main():
         minus,_=objective(initial-epsilon*direction)
         reverse=float(gradient0@direction)
         finite=(plus-minus)/(2*epsilon)
-        error=abs(reverse-finite)/max(1.,abs(reverse),abs(finite))
+        analytic_prior=np.dot(np.r_[initial[:N**3],initial[N**3:N**3+9]/100.**2,
+                                      initial[-1]],direction)
+        data_reverse,data_finite=reverse-analytic_prior,finite-analytic_prior
+        error=abs(data_reverse-data_finite)/max(1.,abs(data_reverse),abs(data_finite))
         report['initial_adjoint']=dict(reverse=reverse,finite_difference=finite,
+                                      analytic_prior_direction=analytic_prior,
+                                      observation_reverse=data_reverse,
+                                      observation_finite_difference=data_finite,
                                       relative_discrepancy=error)
         save_report()
         if error>=.02:
             raise AssertionError('initial refreshed-support IC adjoint mismatch')
-        result=minimize(objective,initial,jac=True,method='L-BFGS-B',callback=callback,
-                        options=dict(maxiter=128,maxfun=192,maxcor=8,maxls=12,gtol=1e-4,ftol=1e-10))
-        rho,vel=field(jnp.asarray(result.x[:N**3]))
-        np.savez(OUT/'final_state.npz',white_ic=result.x[:N**3],
-                 tracer=result.x[N**3:N**3+9]/100.,white_fp_zero=result.x[-1],
+        solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
+            seconds_left=lambda:2700-(time.monotonic()-started))
+        rho,vel=field(jnp.asarray(solution[:N**3]))
+        np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
+                 tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],
                  rho=np.asarray(rho),velocity_km_s=np.asarray(vel))
+        np.savez(OUT/'accepted_checkpoint.npz',parameters=solution)
         report.update(status='PARTIAL_MAP_OPTIMIZER_STOP_NOT_POSTERIOR',
-            optimizer_success=bool(result.success),optimizer_message=str(result.message),
-            iterations=int(result.nit),final_objective=float(result.fun),
-            final_gradient_inf=float(np.max(np.abs(result.jac))))
+            optimizer_success=message=='gradient tolerance',optimizer_message=message,
+            iterations=len(report['trace']),final_objective=float(value),
+            final_gradient_inf=float(np.max(np.abs(gradient))))
         save_report()
     except Exception as exc:
         report.update(status='STOPPED_NOT_POSTERIOR',error=f'{type(exc).__name__}: {exc}')
