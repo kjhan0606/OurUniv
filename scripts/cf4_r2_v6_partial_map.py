@@ -298,8 +298,19 @@ def main():
                 if not np.isfinite(value):
                     raise FloatingPointError('nonfinite diagnostic score; no floor')
                 return value,np.asarray(parts),(rho,vel),width
+            epsilons=tuple(float(v) for v in os.environ.get(
+                'CF4_R2_DIAG_EPSILONS','0.01,0.0001,0.000001').split(','))
+            if not epsilons or not all(np.isfinite(e) and e>0 for e in epsilons):
+                raise ValueError('diagnostic epsilons must be finite and positive')
+            baseline,_,base_field,_=score_only(initial)
+            report['forward_repeat_objective_delta']=baseline-value0
+            base_rho=np.asarray(base_field[0])
+            occupied=base_rho>0
+            report['native_density_diagnostic']=dict(empty_cells=int((~occupied).sum()),
+                positive_min=float(base_rho[occupied].min()),
+                positive_quantiles=np.quantile(base_rho[occupied],[.001,.01,.5]).tolist())
             rows=[]
-            for epsilon in (.01,.0001,.000001):
+            for epsilon in epsilons:
                 plus,pp,fp,wp=score_only(initial+epsilon*direction)
                 minus,pm,fm,wm=score_only(initial-epsilon*direction)
                 fd=(plus-minus)/(2*epsilon)
@@ -314,6 +325,15 @@ def main():
                     plus_objective_delta=plus-value0,minus_objective_delta=minus-value0,
                     log_factor_finite_differences=((pp-pm)/(2*epsilon)).tolist(),
                     max_neighbors_plus=wp,max_neighbors_minus=wm)
+                row['field_tangent_rms']=[float(jnp.sqrt(jnp.mean(t*t))) for t in field_tangent]
+                row['native_occupancy_changes']=int(jnp.count_nonzero((fp[0]>0)!=(fm[0]>0)))
+                products=(grads[0]*field_tangent[0],grads[1]*field_tangent[1])
+                row['observation_field_tangent_contributions']=[-float(jnp.sum(t)) for t in products]
+                # Evidence only: these bins never alter fields, likelihoods or gradients.
+                row['velocity_contribution_by_native_density']=[
+                    -float(jnp.sum(jnp.where(jnp.asarray(mask)[None],products[1],0.)))
+                    for mask in (base_rho==0,(base_rho>0)&(base_rho<1e-6),
+                                 (base_rho>=1e-6)&(base_rho<1e-3),base_rho>=1e-3)]
                 rows.append(row)
                 report['descent_direction_check']=rows
                 save_report()

@@ -152,3 +152,20 @@ field inference/uncertainty. Q-LEAN: one actual-state derivative separation,
 not another generic prior-state validation ladder or longer blind fit.
 MW/M31/M33 remain ambiguous same-NEW-state roles with M33 unresolved; their
 observables belong on that state in R3, not in truth-selected candidates.
+
+### Retry result: line-search exhaustion, not convergence
+
+407805 completed normally in41m40s, but its optimizer stopped after44
+evaluations and4 accepted steps: `no finite sufficient-decrease trial`.
+The objective decreased1,079,270.1868→1,039,923.9003; the last accepted
+count/FP factors are−244,374.6471/−97.6784. Maximum gradient26,890.3 is not
+stationary. No undefined trial was reported during this retry. This is not
+a walltime failure or an R2 posterior. Readout407806 completed9s and saved
+the comparison image; strong structures in an unconverged image are not
+evidence that observed structures have been reconstructed. Both initial and
+final fields have mean density1. Peak Python memory9.52GiB, within12GiB.
+
+Follow-up407840 runs the predeclared fitted-state derivative separation on
+sourcebc99057. Its first evaluation reproduces the accepted score within
+6e-10 and uses the identical source support. Do not restart a longer fit or
+compute a Laplace posterior while this actual-state issue is unresolved.

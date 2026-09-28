@@ -19,6 +19,6 @@ export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export JAX_COMPILATION_CACHE_DIR=/gpfs/kjhan/CF4/cache/r2_linked_map
 export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
 export CF4_R2_DIRECTION_DIAG=1
-export CF4_R2_OUT_DIR=/gpfs/kjhan/CF4/z0_density/r2_v6_map_direction_diag_v1
+export CF4_R2_OUT_DIR=${CF4_R2_OUT_DIR:-/gpfs/kjhan/CF4/z0_density/r2_v6_map_direction_diag_v1}
 export CF4_R2_RESTART=/gpfs/kjhan/CF4/z0_density/r2_v6_partial_map_v2/accepted_checkpoint.npz
 exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_r2_v6_partial_map.py
