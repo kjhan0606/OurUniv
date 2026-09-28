@@ -9,26 +9,28 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
-Latest R2 disposition2026-09-28: adaptive fit407886 was cancelled for
-stagnation, not convergence (10 steps, gain.1216, max gradient11770.7).
-407901 confirmed actual GH15 radial-selection switches in the fitted-state
-trials. Do not continue that optimizer blindly. Boundary-fitted Gaussian-CDF
-shell integration preserves5–180, signed LOS and periodic images, with
-explicit8sigma tails and no selected-domain renormalization.407922 passed
-its scalar derivative but failed numerical accuracy (CDF16/32 score delta4.28).
-Physical-distance strata improve tails.407946's tail reference test failed
-before any field calculation; refined-reference407950 passed5 tests and
-completed the saved-field check:4x16/4x32 score delta.1727, exposure L1
-1.31e-5, max occupied log delta.04547, scalar adjoint discrepancy3.53e-6.
-No gravity, fitting or heldout scoring was done in those checks. This is
-not a calibrated posterior; prefer checking4x32 against8x32 before fitting.
-407975/sourcee89e5bf is that next H2002CPU12GiB25min check, after tests of an
-algebraic LF-boundary reuse that avoids repeated gamma evaluations. It must
-reproduce old GH15/4x32 scores before accepting the cost optimization.
-407971 was cancelled while pending to preserve strict empty-LF-interval
-subgradients and strengthen the equality-boundary test. No data removed.
-R2 remains open; MW/M31 ambiguous, M33 unresolved, same-NEW-state roles.
-Details, Fable advice, driver corrections and preserved failures:
+Latest R2 execution2026-09-28:408032/sourcec8d6af6 is the new actual-data
+bounded fit, H2002CPU12GiB/45min,20 iterations/35min application. It uses
+shell-CDF4x32 counts plus429 strict singleton FP marks on the frozen v6
+training graph; no heldout. IC optimizer initialization is.01 times the
+predeclared seed draw, NOT a prior realization; cosmological prior/power and
+parameter domain unchanged. Do not restart the stagnated407805/407886 states.
+Initial same-state adjoint and20%-margin combined device-memory check precede
+updates.408033 is afterany readout, not automatic science approval.
+
+Preceding numerical repair:407901 identified finite-GH radial-cut switches.
+Gaussian-probability integration on physical-distance strata preserves5–180,
+negative LOS, periodic images and unnormalized selection, with explicit8sigma
+tails. Exact LF-boundary reuse reproduces previous scores.407975 established
+4x32/8x32 score delta.00154245, L1=1.494e-6, max occupied log delta=.001073,
+but its backward graph requested96.92GiB and OOMed. Streaming408010 then
+passed the unchanged value checks and scalar derivative (2.83e-6 relative),
+with14.01GiB temporary device estimate.408011 passed4 optimizer tests and the
+nonempty coupled count/FP/heldout wiring test. Failures remain recorded, not
+relabeled as passes. R2 is NOT complete: calibration, source covariance,
+posterior uncertainty, untouched heldout prediction and N256 remain open.
+MW/M31 ambiguous, M33 unresolved; future observables constrain the same NEW
+state. Details and advisory-review corrections:
 `CF4_R2_FITTED_TANGENT_20260928.md`.
 
 Current R2 checkpoint2026-09-28:407805 stopped after4 accepted steps/44
