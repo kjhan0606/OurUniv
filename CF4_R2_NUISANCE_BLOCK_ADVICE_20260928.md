@@ -173,3 +173,27 @@ the corrections above rather than importing its arbitrary thresholds. Still
 N128/3cMpc/h development, not N256 or full calibrated CF4. MW/M31 ambiguous,
 M33 unresolved; all future candidates/observations must concern this SAME NEW
 field, no native truth IDs. R2 remains incomplete and no emails are sent.
+
+Submitted on sourceeb877a6/pushed branch:408158 joint optimization
+(`r2_v6_joint_secant_map_v1`),408159 afterany field readout,408160 afterok
+saved-field integration/radial readout (`r2_shell_cdf_field_check_v10`).
+Nine optimizer/rate/curvature/metric tests plus one particle-moment test run
+before408158's main calculation. Same fresh-state adjoint and exact restart
+score check remain. Only one joint follow-up is submitted, not a retry chain.
+
+408158 FAILED35s on syn104 before main GPU execution: cuInit(0) returned
+CUDA_ERROR_NOT_INITIALIZED. The9 pure optimizer tests passed; the particle
+test fell back to CPU, which is NOT GPU validation. The main GPU requirement
+correctly stopped inference; no objective/field/result was produced.408159
+then failed8s because no source report existed.408160 was explicitly cancelled
+while pending DependencyNeverSatisfied. Logs are retained; no data deleted,
+no GPU reset/manual run, and no cause beyond CUDA initialization is asserted.
+
+Same source/target retry408163 uses typedH100,2CPU20GiB/75min and the SAME
+32-update/60min application bound, output `r2_v6_joint_secant_map_v2`. This
+replaces a failed pre-inference allocation, not another completed science run.
+Dependent readout408164 uses H1001CPU2GiB/5min; saved-field checker408165 uses
+H1002CPU6GiB/15min (`r2_shell_cdf_field_check_v11`). The latter gets5min more
+Slurm time for the different GPU/cache, not a new diagnostic or fit; request
+caps now95min for the retry bundle. Reconfirm GPU and target startup before
+claiming that inference resumed. Source remains eb877a6.
