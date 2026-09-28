@@ -326,3 +326,21 @@ Keep the actual volume integrand. Next short count-only control compares
 LOS4x8 strata to4x32 at the SAME4^3 source rule and six predetermined keys.
 This changes numerical precision, not source mass/RSD/selection physics; retain
 measured differences and do not infer global error bounds from six examples.
+
+408352/source506d266 COMPLETED1m18s: LOS4x8 versus4x32 changes these six4^3
+count means by at most.0162%, with absolute velocity-derivative differences
+<=5.8e-5. Keep this as a cheaper DEVELOPMENT rule candidate, not a verified
+whole-field/ensemble error bound. No inaccurate PCS surrogate was adopted.
+
+Next substantive bundle expands the live raw observation readout to ALL1414
+training rows, rather than more single-object controls. Share global field
+normalization once; stream packed components across multiple rows and reuse
+six compiled support kernels. Compare the existing seven-row26-coordinate
+dense gradient within the full adapter, then the full-cohort directional
+derivative and measured runtime. The population prior is counted ONCE.
+Fresh support union is specific to these current/finite-difference states;
+future field trials must rebuild it. Save compact cell/bin/subnode IDs, not
+duplicated coordinates or a frozen fitted-weight model. Bound40million entries,
+12GiB host (estimated<=10GiB plus20%), H1001GPU/2CPU/45min; application22e2s
+preparation bound. No PM, optimizer, heldout, production chain or count-target
+replacement. Same-field MW/M31 ambiguity and unresolvedM33 are retained.

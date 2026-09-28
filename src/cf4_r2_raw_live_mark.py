@@ -25,18 +25,28 @@ def logadd_nonempty(a,b):
 
 def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observation,
                     *,population,geometry,magnitude_order=24,cut_order=64,
-                    component_bin=None):
+                    component_bin=None,component_row=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
-    mass=predict_source_marked_radial_key_density(positions,velocities,intrinsic,angular,
-        population,o['voxel'],o['radius'],**geometry)
+    if component_row is None:
+        mass=predict_source_marked_radial_key_density(positions,velocities,intrinsic,angular,
+            population,o['voxel'],o['radius'],**geometry)
+        geometric=o
+    else:
+        if component_bin is None:raise ValueError('multirow stream requires packed bin IDs')
+        geometric={k:o[k][component_row] for k in ('voxel','radius','dz','ksmag')}
+        def one(pos,vel,mass,sky,voxel,radius):
+            return predict_source_marked_radial_key_density(pos[None],vel[None],mass[:,None],sky[:,None],
+                population,voxel,radius,**geometry)[:,0]
+        mass=jax.vmap(one,in_axes=(0,0,1,1,0,0),out_axes=1)(positions,velocities,intrinsic,angular,
+            geometric['voxel'],geometric['radius'])
     relative=(positions-geometry['observer']+geometry['box_size_cMpc_h']/2)%geometry['box_size_cMpc_h']-geometry['box_size_cMpc_h']/2
     rt=jnp.linalg.norm(relative,axis=1)
     table=geometry['radius_table_cMpc_h']
     mt=jnp.interp(rt,table,geometry['modulus_table_h'])
-    mo=jnp.interp(o['radius'],table,geometry['modulus_table_h'])
+    mo=jnp.interp(geometric['radius'],table,geometry['modulus_table_h'])
     zt=jnp.interp(rt,table,geometry['redshift_table'])
-    zo=jnp.interp(o['radius'],table,geometry['redshift_table'])
+    zo=jnp.interp(geometric['radius'],table,geometry['redshift_table'])
     correction=1.16*2.9*(zo-zt)-1.6*jnp.log10((1+zo)/(1+zt))
     shift=mo-mt-correction
     lo=jnp.maximum(jnp.maximum(jnp.asarray(TRUE_EDGES[:-1])[:,None],
@@ -54,8 +64,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
     # derivative is zero, not0*NaN. No floor is applied to any active density.
     lo=jnp.where(valid,lo,-24.).reshape(-1)
     hi=jnp.where(valid,hi,-23.).reshape(-1)
-    eta=jnp.broadcast_to(jnp.log10(o['dz']/rt)[None],mass.shape).reshape(-1)
-    observed_m=jnp.broadcast_to((o['ksmag']-mt-correction)[None],mass.shape).reshape(-1)
+    eta=jnp.broadcast_to(jnp.log10(geometric['dz']/rt)[None],mass.shape).reshape(-1)
+    observed_m=jnp.broadcast_to((geometric['ksmag']-mt-correction)[None],mass.shape).reshape(-1)
     safe_mass=jnp.where(valid,mass,1.).reshape(-1)
     logw=jnp.where(valid.reshape(-1),jnp.log(safe_mass),-jnp.inf)
     t,w=np.polynomial.legendre.leggauss(magnitude_order)
@@ -72,21 +82,31 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         observed_M=observed_m,magnitude=magnitude,logq=logq-norm[:,None],
         log_weight=logw,log_M_density=logmd,cut_lower=o['cut_lower'][None],
         cut_upper=o['cut_upper'][None])
+    if component_row is not None:
+        data.update(row=component_row,**{k:o[k] for k in
+            ('x','error_covariance','richness','cut_lower','cut_upper')})
     t,w=np.polynomial.legendre.leggauss(cut_order)
     a,b=row_logpdf(parameters,data,jnp.asarray((t+1)/2),jnp.asarray(w/2),return_log_terms=True)
-    return a[0],b[0]
+    return (a[0],b[0]) if component_row is None else (a,b)
 
 
 def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observation,
-                       *,population,geometry,component_bins=None):
+                       *,population,geometry,component_bins=None,component_rows=None,
+                       return_log_terms=False):
     """Chunk-major geometry; intrinsic(chunk,5,source), angular(chunk,2,source)."""
     @jax.checkpoint
     def step(acc,parts):
         a,b=chunk_log_terms(parameters,*parts[:4],observation,population=population,geometry=geometry,
-            component_bin=None if component_bins is None else parts[4])
+            component_bin=None if component_bins is None else parts[4],
+            component_row=None if component_rows is None else parts[5])
         return (logadd_nonempty(acc[0],a),logadd_nonempty(acc[1],b)),None
     parts=(positions,velocities,intrinsic,angular)
     if component_bins is not None:parts+= (component_bins,)
-    (numerator,denominator),_=jax.lax.scan(step,(-jnp.inf,-jnp.inf),
+    if component_rows is not None:
+        if component_bins is None:raise ValueError('multirow stream requires packed bins')
+        parts+=(component_rows,)
+    initial=-jnp.inf if component_rows is None else jnp.full(observation['x'].shape[0],-jnp.inf)
+    (numerator,denominator),_=jax.lax.scan(step,(initial,initial),
         parts)
+    if return_log_terms:return numerator,denominator
     return numerator-denominator

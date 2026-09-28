@@ -90,6 +90,11 @@ def main():
             little_h=.746,radius_table_cMpc_h=jnp.asarray(source['radial_table']),
             modulus_table_h=jnp.asarray(source['modulus_table']),redshift_table=jnp.asarray(source['redshift_table']),
             grid_size=N)
+        if os.environ.get('CF4_R2_RAW_COHORT')=='1':
+            from cf4_r2_raw_cohort_check import run
+            run(out,report,save,started,source,mix,optical,richness,density,velocity,
+                chosen,point,z,direction,geometry,radius)
+            return
         def objective(q,pack,o,density,velocity,mode,population):
             tr=q[:9]; parameters=jnp.asarray(POPULATION_ORIGIN)+jnp.asarray(POPULATION_SCALE)*q[9:24]
             rho=density*jnp.exp(q[25]*mode);rho/=jnp.mean(rho)
