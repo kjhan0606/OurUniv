@@ -33,7 +33,8 @@ N, BOX, WIDTH = 128, 384., 8192
 OUT = Path(os.environ.get('CF4_R2_OUT_DIR', str(BASE/'r2_v6_partial_map_v2')))
 
 
-def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128):
+def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
+                  value_only=None, initial_norm_cap=None):
     """Descent-only L-BFGS with bounded trial steps, not parameter bounds.
 
     An infinite objective means a genuine zero-probability trial and is
@@ -46,6 +47,7 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128):
     if not np.isfinite(value) or not np.isfinite(grad).all():
         raise FloatingPointError('restart is not a finite differentiable state')
     history=[]
+    norm_cap=initial_norm_cap
     message='iteration limit'
     for iteration in range(maxiter):
         if np.max(np.abs(grad))<1e-4:
@@ -69,21 +71,41 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128):
                     np.max(np.abs(direction[n_ic:n_ic+9]/100.))/.1,
                     abs(direction[-1])/.5)
         direction/=divisor
+        if norm_cap is not None:
+            direction/=max(1.,np.linalg.norm(direction)/norm_cap)
         slope=np.dot(grad,direction)
         accepted=False
-        for trial in range(12):
+        step=1.
+        for trial in range(40):
             if seconds_left()<=0:
                 message='application time budget'; break
-            step=.5**trial
             candidate=x+step*direction
-            fv,fg=fun(candidate)
+            if value_only is None:
+                fv,fg=fun(candidate)
+            else:
+                fv=value_only(candidate)
             if np.isfinite(fv) and fv<=value+1e-4*step*slope:
+                if value_only is not None:
+                    checked,fg=fun(candidate)
+                    if not np.isclose(checked,fv,rtol=1e-12,atol=1e-7):
+                        raise FloatingPointError('accepted score-only/full objective mismatch')
+                    fv=checked
+                    if fv>value+1e-4*step*slope:
+                        step*=.5
+                        continue
                 accepted=True; break
+            # Safeguarded quadratic interpolation, never accept predicted gain.
+            curvature=fv-value-step*slope
+            proposal=(-slope*step*step/(2*curvature)
+                      if np.isfinite(curvature) and curvature>0 else .5*step)
+            step=float(np.clip(proposal,.1*step,.5*step))
         if not accepted:
             if seconds_left()>0:
                 message='no finite sufficient-decrease trial'
             break
         s,y=candidate-x,fg-grad
+        if norm_cap is not None:
+            norm_cap=max(np.finfo(float).eps, np.linalg.norm(s)*(4. if trial==0 else 2.))
         sy=np.dot(s,y)
         if sy>1e-10*np.linalg.norm(s)*np.linalg.norm(y):
             history.append((s.copy(),y.copy(),1./sy)); history=history[-8:]
@@ -228,6 +250,23 @@ def main():
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         latest = {}
         diagnostic_baseline = {}
+        def score_only(x):
+            tracer=jnp.asarray(x[N**3:N**3+9]/100.)
+            rho,vel=field(jnp.asarray(x[:N**3]))
+            links,width=build_support(rho,vel,np.asarray(tracer))
+            data,parts=data_target(rho,vel,tracer,jnp.asarray(x[-1]),links)
+            value=-float(data)+.5*np.dot(x[:N**3],x[:N**3])
+            if np.isnan(value) or value==-np.inf:
+                raise FloatingPointError('undefined diagnostic/trial score; no floor')
+            return value,np.asarray(parts),(rho,vel),width
+
+        def trial_value(x):
+            value,parts,_,width=score_only(x)
+            report['score_only_trials']=report.get('score_only_trials',0)+1
+            print(json.dumps(dict(score_trial=report['score_only_trials'],
+                objective=float(value) if np.isfinite(value) else str(value),
+                max_neighbors=width)),flush=True)
+            return value
 
         def objective(x):
             tic = time.monotonic()
@@ -289,15 +328,6 @@ def main():
             direction=-gradient0/np.linalg.norm(gradient0)
             reverse=float(gradient0@direction)
             grads=diagnostic_baseline['data_gradients']
-            def score_only(x):
-                tracer=jnp.asarray(x[N**3:N**3+9]/100.)
-                rho,vel=field(jnp.asarray(x[:N**3]))
-                links,width=build_support(rho,vel,np.asarray(tracer))
-                data,parts=data_target(rho,vel,tracer,jnp.asarray(x[-1]),links)
-                value=-float(data)+.5*np.dot(x[:N**3],x[:N**3])
-                if not np.isfinite(value):
-                    raise FloatingPointError('nonfinite diagnostic score; no floor')
-                return value,np.asarray(parts),(rho,vel),width
             epsilons=tuple(float(v) for v in os.environ.get(
                 'CF4_R2_DIAG_EPSILONS','0.01,0.0001,0.000001').split(','))
             if not epsilons or not all(np.isfinite(e) and e>0 for e in epsilons):
@@ -345,7 +375,9 @@ def main():
             return
         direction=np.random.default_rng(2026092801).standard_normal(initial.size)
         direction/=np.linalg.norm(direction)
-        epsilon=2e-5
+        epsilon=float(os.environ.get('CF4_R2_ADJOINT_EPS','2e-5'))
+        if not np.isfinite(epsilon) or epsilon<=0:
+            raise ValueError('invalid initial adjoint epsilon')
         plus,_=objective(initial+epsilon*direction)
         minus,_=objective(initial-epsilon*direction)
         reverse=float(gradient0@direction)
@@ -354,7 +386,7 @@ def main():
                                       initial[-1]],direction)
         data_reverse,data_finite=reverse-analytic_prior,finite-analytic_prior
         error=abs(data_reverse-data_finite)/max(1.,abs(data_reverse),abs(data_finite))
-        report['initial_adjoint']=dict(reverse=reverse,finite_difference=finite,
+        report['initial_adjoint']=dict(epsilon=epsilon,reverse=reverse,finite_difference=finite,
                                       analytic_prior_direction=analytic_prior,
                                       observation_reverse=data_reverse,
                                       observation_finite_difference=data_finite,
@@ -362,8 +394,17 @@ def main():
         save_report()
         if error>=.02:
             raise AssertionError('initial refreshed-support IC adjoint mismatch')
+        maxiter=int(os.environ.get('CF4_R2_MAXITER','128'))
+        cap=int(os.environ.get('CF4_R2_SECONDS_CAP','2700'))
+        norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
+        norm_cap=None if norm_cap is None else float(norm_cap)
+        if maxiter<1 or cap<1 or (norm_cap is not None and (not np.isfinite(norm_cap) or norm_cap<=0)):
+            raise ValueError('invalid bounded fit budget/initial step norm')
+        report.update(maxiter=maxiter,application_seconds_cap=cap,
+                      initial_step_norm_cap=norm_cap,score_only_line_search=True)
         solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
-            seconds_left=lambda:2700-(time.monotonic()-started))
+            seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
+            value_only=trial_value,initial_norm_cap=norm_cap)
         rho,vel=field(jnp.asarray(solution[:N**3]))
         np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
                  tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],
