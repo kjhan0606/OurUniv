@@ -29,10 +29,17 @@ but failed a strict endpoint check;408348 verified the cause was archive
 float32 vs promoted geometry (original-precision error1.27e-13) and added
 seven8^3 controls. Centre->volume count changes~5–12%,4^3->8^3<.05% on the six
 count examples; raw velocity derivatives also change materially. PDFs viewed.
-408349 now checks a streaming LIVE source-volume raw mark adapter, including
-shared population/tracer coordinates and density/velocity directions on the
-same seven examples. No gravity evolution, fitting, heldout or count-target
-replacement yet. Numerical local controls are not global posterior validation.
+408349/408350 passed live dense/sparse raw-mark value and26-coordinate checks;
+sparse core~.25–.34s/row, packing/compilation reported separately.408351's cheap
+count-kernel surrogate was rejected (up to6.12% error).408352's unchanged-volume
+LOS4x8 control differed from4x32 by<=.0162% on six keys, not a global bound.
+408353 now expands the live mark readout to ALL1414 training rows; shared
+normalization and priors ONCE, fresh state support, bounded45min/H100/12GiB.
+No gravity evolution, fitting, heldout or count-target replacement yet.
+This marked cohort is an FP SUBSET, not all CF4 methods or multi-FP groups.
+Focused delivery/coverage/cost advice is requested in
+`config/cf4_r2_delivery_advice_20260929.md` after the substantive volume finding.
+Numerical local controls are not global posterior validation.
 See `CF4_R2_RAW_SELECTED_MODEL_20260929.md`. R2 remains open; N256/long HMC
 not launched, heldout untouched, MW/M31 ambiguous, M33 unresolved.
 
