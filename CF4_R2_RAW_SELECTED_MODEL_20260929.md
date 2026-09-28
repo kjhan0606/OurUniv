@@ -112,3 +112,23 @@ sampling or N256 in this bounded component bundle. Fitting shared parameters
 and interfacing actual source weights are substantive next work, not implied
 by a kernel test. Do not add many generic audit gates or require a new user
 approval for the ordinary continuation.
+
+408343/sourcebb68681 COMPLETED7s: six component tests passed. Correlated
+orthant probabilities agree with the independent analytic formula to9.22e-8;
+joint example density integrates to1.0000000000000013. All1414 actual rows
+are inside the known magnitude/raw-sigma cuts. Reconstructing aperture-corrected
+s from raw dispersion, angular radius and plate gives maximum discrepancy
+5.02e-6dex, consistent with released precision. Host peak0.124GiB. Driver
+viewed both rendered pages of `r2_raw_selected_component_v1/`'s Korean PDF.
+This is component correctness/source geometry, NOT fitted survey calibration.
+
+Continue immediately with the existing accepted408337 field: export its
+UNCOLLAPSED true-K/source distance mixture and exact count-LF intersections
+for the same1414 training links. No PM evolution, parameter fitting or new
+field sampling. Reconstruct the OLD FP score from the sparse export before
+using the cache for a replacement raw model, so data/weights cannot silently
+change. The current accepted-state checkpoint, not the last rejected proposal,
+is authoritative. H1002CPU8GiB/15min bound using the existing saved-field
+readout, with ~6GiB estimated host demand plus headroom. No extra large field
+snapshots; retain sparse positive-weight components only. This connects the
+new component to the actual same field, not another synthetic universe.

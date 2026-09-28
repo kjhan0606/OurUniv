@@ -13,7 +13,7 @@ set -euo pipefail
 module purge
 cd /home/kjhan/BACKUP/CF4
 : "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}"
-git diff --exit-code "$CF4_EXPECTED_COMMIT" -- src scripts/cf4_r2_fp_restart_check.py scripts/cf4_r2_linked_fp_sparse_train.py scripts/run_cf4_r2_fp_restart_check.sbatch tests/test_cf4_r2_linked_singleton_jax.py
+git diff --exit-code "$CF4_EXPECTED_COMMIT" -- src scripts/cf4_r2_fp_restart_check.py scripts/cf4_r2_raw_source_mixture.py scripts/cf4_r2_linked_fp_sparse_train.py scripts/run_cf4_r2_fp_restart_check.sbatch tests/test_cf4_r2_linked_singleton_jax.py
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts${PYTHONPATH:+:$PYTHONPATH}"

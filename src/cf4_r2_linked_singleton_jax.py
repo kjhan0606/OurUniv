@@ -34,6 +34,7 @@ def linked_singleton_logfactors_for_population(
     fp_zero_dex=0.,
     return_eta_moments=False,
     return_eta_mixture=False,
+    return_source_bin_mixture=False,
 ):
     """Evaluate batched linked singleton marks for one observed population.
 
@@ -60,6 +61,9 @@ def linked_singleton_logfactors_for_population(
     normalized count/association log weights, collapsing only true-K bins.
     It permits exact fixed-field zero-point comparisons without rerunning
     the source-selection kernel; it does not change the live target.
+    ``return_source_bin_mixture`` additionally appends the UNCOLLAPSED
+    normalized (true-K-bin,source) log weights for raw-mark development.
+    It requires the eta-mixture readout and does not apply the FP mark.
     """
     positions = jnp.asarray(source_positions)
     velocities = jnp.asarray(source_velocities_km_s)
@@ -77,6 +81,8 @@ def linked_singleton_logfactors_for_population(
     groups = ids.shape[0] if ids.ndim == 2 else -1
     if return_eta_mixture and not return_eta_moments:
         raise ValueError('eta mixture readout requires eta moments')
+    if return_source_bin_mixture and not return_eta_mixture:
+        raise ValueError('source-bin readout requires eta mixture')
     if (population not in range(6) or positions.ndim != 2
             or positions.shape[1] != 3 or velocities.shape != positions.shape
             or intrinsic.shape != (5, positions.shape[0])
@@ -115,6 +121,9 @@ def linked_singleton_logfactors_for_population(
             eta_variance = jnp.sum(probability*(eta[None, :]-eta_bar)**2)
             if return_eta_mixture:
                 log_weight = logsumexp(base, axis=0)-logsumexp(base)
+                if return_source_bin_mixture:
+                    return (factor, jnp.sum(density, axis=1), eta_bar, eta_variance,
+                            eta, log_weight, base-logsumexp(base))
                 return factor, jnp.sum(density, axis=1), eta_bar, eta_variance, eta, log_weight
             return factor, jnp.sum(density, axis=1), eta_bar, eta_variance
         return factor, jnp.sum(density, axis=1)

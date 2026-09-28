@@ -25,6 +25,8 @@ N, BOX, WIDTH = 128, 384., 8192
 
 def saved_fp_endpoint(report):
     """Full-target endpoint for either joint or fixed-field optimization."""
+    if 'sampler' in report and 'final_parts' in report:
+        return float(report['final_parts'][1])
     if 'full_gradient_after_block' in report:
         return float(report['full_gradient_after_block']['parts'][1])
     if report.get('trace'):
@@ -50,11 +52,14 @@ def main():
     flat_check = os.environ.get('CF4_R2_FP_FLAT_CHECK') == '1'
     science_state = os.environ.get('CF4_R2_FP_SCIENCE_STATE')
     response = os.environ.get('CF4_R2_FP_RESPONSE') == '1'
+    raw_mixture = os.environ.get('CF4_R2_RAW_MIXTURE') == '1'
     include_grouped = os.environ.get('CF4_R2_INCLUDE_GROUPED_SINGLE_MARK') == '1'
     if include_grouped and not science_state:
         raise ValueError('broader single-mark cohort requires explicit science state')
     if response and not science_state:
         raise ValueError('FP response requires the explicit current saved state')
+    if raw_mixture and (not science_state or response or not include_grouped):
+        raise ValueError('raw mixture requires one explicit1414-row state, not response fitting')
     if science_state and (combined_check or compact_check or flat_check):
         raise ValueError('science readout must not launch compiler diagnostics')
     paths = ([Path(science_state)] if science_state else
@@ -85,6 +90,11 @@ def main():
     options, point, fp = load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz')
     with np.load(FP, allow_pickle=False) as f:
         membership = f['membership_state'].astype(str)
+        source_pgc = f['PGC'].copy()
+    if raw_mixture:
+        from cf4_r2_linked_fp_sparse_train import POINTS
+        with np.load(POINTS, allow_pickle=False) as f:
+            point_ksmag = f['ksmag'].copy()
     original = select_training_single_mark_links(options,membership)
     options = select_training_single_mark_links(options,membership,include_grouped=include_grouped)
     assert len(original)==429 and len(options)==(1414 if include_grouped else 429)
@@ -138,10 +148,10 @@ def main():
             source['positions'],jnp.moveaxis(v,0,-1).reshape(-1,3),intrinsic,source['angular'],
             **links[p],population=p,sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
             radial_geometry=geometry,fp_zero_dex=.004*zero,return_eta_moments=bool(science_state),
-            return_eta_mixture=response)
+            return_eta_mixture=response or raw_mixture,return_source_bin_mixture=raw_mixture)
             for p in range(6) if len(selected[p])]
         if science_state:
-            indices = (0,2,3,4,5) if response else (0,2,3)
+            indices = (0,2,3,4,5,6) if raw_mixture else ((0,2,3,4,5) if response else (0,2,3))
             return tuple(jnp.concatenate([batch[k] for batch in batches]) for k in indices)
         return jnp.concatenate([batch[0] for batch in batches])
     rows_compiled = jax.jit(per_row)
@@ -229,7 +239,7 @@ def main():
                      labels=np.array([o[0] for p in range(6) for o in selected[p]]))
             save(); print(json.dumps(summary),flush=True)
         if science_state and not response:
-            mean,var = map(np.asarray,evaluated[1:])
+            mean,var = map(np.asarray,evaluated[1:3])
             observed = np.concatenate([np.asarray(metadata[p]['eta_mean']) for p in range(6)])
             std = np.concatenate([np.asarray(metadata[p]['eta_std']) for p in range(6)])
             zero = .004*float(state['white_fp_zero'])
@@ -241,6 +251,12 @@ def main():
                     or not np.isclose(reference_rows.sum(),reference,rtol=0.,atol=1e-7)
                     or not np.isclose(rows.sum(),value,rtol=0.,atol=1e-10)):
                 raise AssertionError('training readout is invalid or does not reproduce fitted FP factor')
+            if raw_mixture:
+                from cf4_r2_raw_source_mixture import export_raw_source_mixture
+                report['raw_source_mixture'] = export_raw_source_mixture(
+                    out, evaluated, selected, metadata, source, source_pgc, point,
+                    point_ksmag, state, rows)
+                save()
             np.savez(out/'training_distance_prediction.npz',
                 labels=np.array([o[0] for p in range(6) for o in selected[p]]),
                 eta_source_mean=observed,eta_source_std=std,

@@ -33,6 +33,8 @@ class LinkedSingletonBatchTests(unittest.TestCase):
         self.assertEqual(saved_fp_endpoint({'trace':[{'parts':[1.,-2.,3.]}]}),-2.)
         self.assertEqual(saved_fp_endpoint({'trace':[],
             'full_gradient_after_block':{'parts':[1.,-4.,3.]}}),-4.)
+        self.assertEqual(saved_fp_endpoint({'sampler':{},'final_parts':[1.,-5.,3.],
+            'trace':[{'parts':[1.,-99.,3.]}]}),-5.)
         with self.assertRaises(ValueError):
             saved_fp_endpoint({'trace':[]})
 
@@ -90,7 +92,7 @@ class LinkedSingletonBatchTests(unittest.TestCase):
                 positions,velocities,intrinsic,angular,ids,active,association,
                 voxels,radius,dz,eta_mean,eta_std,eta_alpha,population=0,
                 sigma_los_km_s=100.,radial_geometry=radial,fp_zero_dex=zero,
-                return_eta_moments=True,return_eta_mixture=True)
+                return_eta_moments=True,return_eta_mixture=True,return_source_bin_mixture=True)
         moments=jax.jit(readout)(0.)
         shifted=jax.jit(readout)(.04)
         np.testing.assert_allclose(np.asarray(moments[0]),np.asarray(factors),atol=1e-12)
@@ -101,6 +103,8 @@ class LinkedSingletonBatchTests(unittest.TestCase):
         for left,right in zip(moments[2:],shifted[2:]):
             np.testing.assert_array_equal(np.asarray(left),np.asarray(right))
         np.testing.assert_allclose(np.exp(np.asarray(moments[5])).sum(axis=1),1.,atol=1e-12)
+        np.testing.assert_allclose(np.exp(np.asarray(moments[6])).sum(axis=(1,2)),1.,atol=1e-12)
+        np.testing.assert_allclose(jax.scipy.special.logsumexp(moments[6],axis=1),moments[5],atol=1e-12)
         for zero, expected in ((0.,moments[0]),(.04,shifted[0])):
             cached=cached_eta_mixture_logfactors(moments[4],moments[5],eta_mean,
                                                 eta_std,eta_alpha,zero)
