@@ -67,8 +67,10 @@ def main():
         with np.load(path, allow_pickle=False) as f:
             states.append({k:f[k].copy() for k in
                 ('white_ic','rho','velocity_km_s','tracer','white_fp_zero')})
-    references = ([saved_fp_endpoint(json.loads((path.parent/'result.json').read_text()))
-                   for path in paths] if science_state else [])
+    parent_reports = ([json.loads((path.parent/'result.json').read_text()) for path in paths]
+                      if science_state else [])
+    references = [saved_fp_endpoint(parent) for parent in parent_reports]
+    reference_counts = [parent['training_singletons'] for parent in parent_reports]
     if response:
         states.append(dict(states[0],rho=np.ones_like(states[0]['rho']),
                            velocity_km_s=np.zeros_like(states[0]['velocity_km_s'])))
@@ -167,8 +169,10 @@ def main():
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         if science_state and index<len(references):
-            if not np.isclose(rows[~grouped].sum(),references[index],rtol=0.,atol=1e-7):
-                raise AssertionError('unchanged429 cohort failed saved endpoint reproduction')
+            selected_rows=rows if reference_counts[index]==len(rows) else rows[~grouped]
+            if (reference_counts[index]!=len(selected_rows)
+                    or not np.isclose(selected_rows.sum(),references[index],rtol=0.,atol=1e-7)):
+                raise AssertionError('matching saved cohort failed endpoint reproduction')
         save(); print(json.dumps(report['states'][-1]),flush=True)
         if response:
             from scipy.optimize import minimize_scalar
@@ -231,9 +235,10 @@ def main():
             zero = .004*float(state['white_fp_zero'])
             predicted = mean+zero
             reference=references[index]
+            reference_rows=rows if reference_counts[index]==len(rows) else rows[~grouped]
             if (not np.isfinite(np.r_[rows,mean,var,observed,std]).all()
                     or np.any(var<0.) or np.any(std<=0.)
-                    or not np.isclose(rows[~grouped].sum(),reference,rtol=0.,atol=1e-7)
+                    or not np.isclose(reference_rows.sum(),reference,rtol=0.,atol=1e-7)
                     or not np.isclose(rows.sum(),value,rtol=0.,atol=1e-10)):
                 raise AssertionError('training readout is invalid or does not reproduce fitted FP factor')
             np.savez(out/'training_distance_prediction.npz',

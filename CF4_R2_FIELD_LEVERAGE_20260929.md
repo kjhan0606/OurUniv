@@ -198,3 +198,27 @@ Q-GOAL: broaden actual CF4 distance conditioning. Q-LEAN: selected single-mark
 marginal avoids unnecessary full-group construction without claiming to solve
 its missing physics. MW/M31 ambiguous,M33 unresolved; same NEW field remains
 the later LG-observable target. Heldout untouched.
+
+408221/source36fd5f9 completed the1414-row saved-field comparison and all3
+regressions. The original429 scores reproduce. Current/pre-joint/homogeneous
+conditional zero-penalized scores=-44.93093/-43.94968/18.85248; current trails
+the benchmark by63.78342. Current conditional best zero.0329084dex=8.227prior
+SD, versus benchmark.0141368dex=3.534SD. More data exposes rather than removes
+the calibration/flow tension. These are fixed-state plug-in comparisons, not
+evidence ratios or reasons to widen priors.
+
+For grouped985, |log10(d_group/d_point)|/reportedFPstd has median.0325,p90.1056,
+max.3796 (ungrouped median.0030,p90.0164,max.0892). Thus a gross, many-errorbar
+group-reference/point-distance mismatch is not present in this selected cohort;
+this does NOT validate virial or shared-source errors. No independent group
+average was added. Saved field FP total at ORIGINAL zero=-49.306358986928174.
+
+Driver continues with ONE broadened joint fit, not a repeat of the429 target:
+same acceptedIC/tracer/zero warm start, fresh L-BFGS,32updates/60min application,
+H1002CPU24GiB/75min Slurm. Host request allows roughly3x previous6.1GiB plus20%
+for larger linked arrays/derivatives. Existing count/FP/particle/optimizer tests
+and actual startup primal/adjoint checks remain. Initial objective must equal
+old objective +oldFP-newFP; counts and priors must independently reproduce.
+This is not same-target continuation and no old metric is imported. Afterward
+reuse field, count and1414-row distance readouts. No additional unchanged
+optimization cycles are authorized by this local decision.

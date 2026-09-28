@@ -27,7 +27,8 @@ from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax
 from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
-from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
+from cf4_r2_linked_fp_sparse_train import (
+    load_train_singletons, select_training_single_mark_links, FP, SOURCE)
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
 SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
@@ -238,7 +239,11 @@ def main():
     norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
     norm_cap=None if norm_cap is None else float(norm_cap)
     nuisance_only=os.environ.get('CF4_R2_NUISANCE_ONLY')=='1'
+    include_grouped=os.environ.get('CF4_R2_INCLUDE_GROUPED_SINGLE_MARK')=='1'
+    cohort_reference=os.environ.get('CF4_R2_FP_COHORT_REFERENCE')
     metric_report=os.environ.get('CF4_R2_NUISANCE_METRIC_REPORT')
+    if include_grouped and (not cohort_reference or metric_report or nuisance_only):
+        raise ValueError('broader cohort requires its fixed-state reference and a fresh joint optimizer')
     if metric_report and (nuisance_only or any(os.environ.get(k)=='1' for k in (
             'CF4_R2_DIRECTION_DIAG','CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
         raise ValueError('secant block metric is for joint optimization only')
@@ -265,6 +270,11 @@ def main():
         initial_step_norm_cap=norm_cap,score_only_line_search=True,trace=[])
     report['count_integration']=dict(family=count_integration,gh_order=15,
                                     cdf_order=cdf_order,cdf_segments=cdf_segments)
+    if include_grouped:
+        report['source_membership']='429 ungrouped +985 grouped; ONE FP/point per source group, no anchors'
+        report['classification']='EXPANDED_SINGLE_MARK_CONDITIONAL_WORKING_MAP_NOT_POSTERIOR'
+        report['limitations'].append('group-redshift reference is NOT extra velocity data; '
+            'no multi-member average or calibrated group-environment LOS/shared FP covariance')
     if nuisance_only:
         report.update(classification='CONDITIONAL_NUISANCE_OPTIMIZATION_FIXED_FIELD_NOT_POSTERIOR',
             optimization_block='ten nuisances at fixed IC/field',field_changed=False,
@@ -295,10 +305,12 @@ def main():
             source_labels = f['source_group'].astype(str)
         if any(source_labels[o[3]] != o[0] for o in options):
             raise ValueError('source membership and mark row alignment changed')
-        allowed = {'source_ungrouped_catalogue_present', 'source_ungrouped_catalogue_absent'}
-        options = [o for o in options if membership[o[3]] in allowed]
-        if len(options) != 429:
-            raise ValueError(f'expected 429 strict singleton links, got {len(options)}')
+        original=select_training_single_mark_links(options,membership)
+        options=select_training_single_mark_links(options,membership,include_grouped=include_grouped)
+        if len(original)!=429 or len(options)!=(1414 if include_grouped else 429):
+            raise ValueError('frozen single-mark cohort cardinality changed')
+        if not set(original).issubset(set(options)):
+            raise ValueError('broader cohort changed original429 links')
         with np.load(SOURCE, allow_pickle=False) as f:
             source = {k:jnp.asarray(f[k]) for k in f.files}
         keys, counts, exposure = map(jnp.asarray,
@@ -407,6 +419,24 @@ def main():
             report['restart']=restart
             report['initialization']='accepted checkpoint'
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
+        expanded_reference=None
+        if include_grouped:
+            comparison=json.loads(Path(cohort_reference).read_text())
+            if (not restart or comparison['status']!='FP_ZERO_RESPONSE_COMPLETE_NOT_POSTERIOR'
+                    or comparison['single_mark_cohort']['grouped']!=985
+                    or Path(comparison['states'][0]['path']).parent!=Path(restart).parent):
+                raise ValueError('expanded cohort reference must be completed at the same warm-start state')
+            previous=json.loads((Path(restart).parent/'result.json').read_text())
+            if (previous['training_singletons']!=429 or previous['training_counts']!=47121
+                    or previous['count_integration']!=report['count_integration']):
+                raise ValueError('expanded comparison requires the unchanged429/count baseline')
+            old_parts=np.asarray(previous['trace'][-1]['parts'])
+            new_parts=old_parts.copy(); new_parts[1]=comparison['states'][0]['FP']
+            expanded_reference=dict(parts=new_parts.tolist(),
+                objective=previous['final_objective']+old_parts[1]-new_parts[1],
+                reference_report=cohort_reference)
+            report['expanded_target_reference']=expanded_reference
+            report['restart_policy']='changed1414-row target; accepted429-state warm start, fresh optimizer'
         nuisance_metric=None
         metric_reference=None
         if metric_report:
@@ -538,6 +568,10 @@ def main():
         # One necessary check of the newly composed PM + refreshed-support
         # adjoint, not a separate validation ladder. No heldout score involved.
         value0,gradient0=objective(initial)
+        if expanded_reference is not None:
+            if (not np.allclose(latest['parts'],expanded_reference['parts'],rtol=0.,atol=1e-7)
+                    or not np.isclose(value0,expanded_reference['objective'],rtol=0.,atol=1e-7)):
+                raise AssertionError('broader target does not reproduce unchanged counts/prior plus new FP')
         if metric_reference is not None and not np.isclose(value0,metric_reference,rtol=0.,atol=1e-7):
             raise AssertionError('secant-restart full target changed; do not reuse optimizer metric')
         if os.environ.get('CF4_R2_RATE_WARM_START')=='1':

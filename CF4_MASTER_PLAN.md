@@ -9,6 +9,19 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Active R2 bundle2026-09-29: expand the conditional distance working model from
+429 to1414 links, retaining exactlyONE FP andONE secure point per source group,
+zero anchors and graph-closed training.985 are physically grouped but are NOT
+985 multi-FP averages. Their published groupz only defines the FP distance
+reference; do not independently score it as extra velocity data. No full
+group/shared-source covariance calibration is claimed.408221 reproduces the429
+subset and finds a larger conditional FP deficit vs homogeneous benchmark
+(63.78log units after same-prior zero profiling); this is not a Bayes factor.
+One broadened joint32-step/60min fit is next, with unchanged counts/priors,
+fresh optimizer and exact expanded-target startup comparison. R2 incomplete,
+heldout untouched,MW/M31 ambiguous,M33 unresolved. Evidence, Fable advice and
+driver corrections: `CF4_R2_FIELD_LEVERAGE_20260929.md`.
+
 Latest R2 outcome2026-09-29:408188 completed32 joint steps/59m05s but did NOT
 converge. F149990.00->146824.16,count gain2544.82,IC-prior gain~624.08,FP
 slightly worse(-18.9454->-19.0348).408191 passes count integration/derivative
