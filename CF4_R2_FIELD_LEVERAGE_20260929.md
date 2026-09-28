@@ -1,0 +1,98 @@
+# R2: completed joint follow-up and actual distance readout
+
+R1 -> **R2 incomplete** -> R3 same-state LG -> R4 precision evolution -> R5 zoom IC.
+This is a development MAP at N128/384 (3 cMpc/h), not the requested surrounding
+1–2 cMpc/h posterior, and not an LG <=0.3 cMpc/h reconstruction.
+
+## Completed evidence
+
+| Slurm job | Result | Scientific interpretation |
+|---|---|---|
+|408188 / source3f04209|59m05s,32 accepted joint updates; all11 prerequisites passed|Iteration limit, NOT convergence|
+|408190|6s, saved density/velocity comparison|Actual NEW field readout, not named-structure validation|
+|408191|7m25s, final count integration/readout|Numerical count agreement, not calibration|
+|408216 / source254b25a|2m30s,429 FP training-row predictions|Training plug-in readout, NOT heldout/PPC|
+
+408188 objective149990.00403363275 ->146824.16396973614. Count log score
+-144315.2348776422 ->-141770.41500053153 (gain2544.82); FP score
+-18.94538017978734 ->-19.03477667725891 (slightly worse). About624.08 of the
+total3165.84 improvement comes from shrinking the IC prior penalty, while the
+nuisance penalty grows. Therefore total objective improvement does not mean
+that CF4 distances improved. IC gradient L2 ends857.20 (started683.98), maximum
+coordinate6.934; no stationarity or posterior-covariance claim.
+
+Final tracer LOS width38.55 km/s; physical mass-weighted velocity dispersions
+[67.55,67.06,73.17] km/s are distinct quantities. White-IC mean square.004785
+is a MAP property, NOT an LCDM posterior realization. Do not restore power by
+hand. The field has visible structure but MW/M31 remain unidentified/ambiguous
+and M33 unresolved. Their later observables must constrain this SAME NEW field;
+native truth IDs may not seed or select candidates.
+
+408191 reproduces the count score exactly. CDF4x32 versus8x32 score difference
+-0.00033708; exposure relativeL1=2.17e-7; scalar velocity derivative relative
+difference7.65e-9. Total expected47006.39 vs observed47121 masks radial shape
+residuals: predicted/observed6252.18/5530 at84–96,1445.66/1801 at168–180 cMpc/h.
+
+408216 reproduces FP=-19.03477667725893 with the per-row sum. Shared zero is
+5.0966 prior SD=+.0203865dex (prior SD.004); down from5.3016, not up. Predicted
+eta before zero has mean-.0279605 and SD.0153028; source means have mean
+.0176132 and SD.0812815. Mean source reported uncertainty.0951991dex. The
+observed/predicted correlation is-.0775964, not demonstrated positive distance
+agreement. Mean residual is.0455737 before zero and.0251872 after; RMS.0954508
+and.0875687. This alone does NOT establish model failure: the field is not
+stationary, measurements are noisy, and these are source PDF moments with
+shared calibration, not an independently calibrated Gaussian sampling law.
+
+## Readout figures (real results, not illustrative simulations)
+
+- [Field comparison](/gpfs/kjhan/CF4/z0_density/r2_v6_joint_secant_map_v3/readout/field_comparison.png)
+- [Training radial counts](/gpfs/kjhan/CF4/z0_density/r2_shell_cdf_field_check_v12/training_radial_counts.png)
+- [Training FP distances and residuals](/gpfs/kjhan/CF4/z0_density/r2_v6_joint_fp_readout_v2/training_distance_prediction.png)
+
+Every test included in a later nonexpert Korean PDF must have an example
+figure. These readouts are available for that report; no PDF is claimed here.
+
+## Narrow input checks and limits
+
+The catalogue builder `scripts/cf4_r2_common_catalogue.py` uses observed
+`Vcmb`; `src/cf4_twompp_disjoint_tracer_pilot.py:226` computes comoving distance
+from Vcmb/c then multiplies by h. No Carrick flow-corrected distance is inserted
+by that builder. A hypothesized double-RSD input error is NOT established.
+
+[Howlett et al.2022, sec.5, eq.20](https://arxiv.org/html/2201.03112) describes
+mean/std/shape to skew-normal location/scale conversion, matching
+`src/cf4_r2_fp_distance.py`. It describes a flat eta prior and already-included
+selection correction; skewness is small. Thus neither an extra Jacobian nor
+another selection factor nor an unverified skewness explanation is justified.
+The web PDF parser failed, but a streamed74.7kB PDF read with Ghostscript
+subsequently confirmed the exact catalogue columns: logdist_corr and its error
+are the mean and standard deviation, NOT location and scale; alpha is the
+skew-normal shape. The corrected columns come from richness-specific FP fits.
+The catalogue explicitly cautions that zero calibration is group-level, not
+independent member-level. This supports retaining the grouped-row exclusion
+until its shared model is implemented, not dropping group data forever.
+Source: [release column description](https://zenodo.org/records/6824749/files/data_description.pdf).
+
+Current fit uses47121 counts and429 strict ungrouped linked FP rows only;
+985 grouped links and other CF4 methods are not in this live likelihood.
+Selection/bias/association/shared covariance remain incomplete. The zero prior
+is relative to CF3, not a full absolute-scale calibration. Heldout untouched.
+
+## Workflow correction
+
+408215/sourcec5a06ad was cancelled after39s. A static syntax check had failed,
+but the driver's semicolon-separated shell continued to commit/submit anyway.
+Fix254b25a passed static checks; fresh408216 completed. Preserve the partialv1
+output, do not use it scientifically. Use `set -e` for validation followed by
+commit/submission. No accepted fit was altered or deleted; no filesystem
+mechanism is needed to address this driver error.
+
+## Next decision
+
+No automatic identical MAP extension or large posterior run. Seek one focused
+science/cost consultation about the minimum substantive action that measures
+and improves CF4 leverage, distinguishing noise, calibration, optimization and
+model adequacy. The goal/order, unchanged likelihood weights/priors, training
+split, no new TNG, and same-NEW-field MW/M31/M33 requirement remain in force.
+Q-GOAL: actual CF4-conditioned current-state posterior. Q-LEAN: no diagnostic
+ladder or arbitrary correlation threshold; use saved state where possible.

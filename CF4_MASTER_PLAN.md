@@ -9,6 +9,18 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 outcome2026-09-29:408188 completed32 joint steps/59m05s but did NOT
+converge. F149990.00->146824.16,count gain2544.82,IC-prior gain~624.08,FP
+slightly worse(-18.9454->-19.0348).408191 passes count integration/derivative
+checks but radial residuals remain.408216 gives actual429-row training FP
+prediction, correlation-.0776 and fitted shared zero+.0203865dex (5.10 prior
+SD). This is not positive distance agreement, but noisy nonstationary training
+readout alone does not prove model failure. No identical automatic MAP cycle,
+posterior promotion or N256. Next address actual CF4 leverage/calibration with
+one focused science/cost decision; evidence/plots and workflow correction in
+`CF4_R2_FIELD_LEVERAGE_20260929.md`. MW/M31 ambiguous,M33 unresolved; heldout
+untouched. Older execution entries below are history, not active job status.
+
 R2 execution-path repair2026-09-29:408185 confirmed that differentiating the
 same FP function BEFORE the sole outer JIT restores its exact reference value
 and gradient; the nested-JIT derivative was discrepant. Apply flat compilation
