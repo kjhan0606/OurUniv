@@ -9,6 +9,24 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 disposition2026-09-28: same-target adaptive retry407886 passed3
+optimizer regressions and its fitted-state adjoint but stalled after10
+accepted steps: total gain.1216, last gain~1e-6, max gradient11770.7. Driver
+cancelled at14m19s;407887 readout completed with no final state. Do not extend
+that fit.407901 then confirmed actual GH15 radial-selection switches at
+eps1e-6 (one plus/two minus sky-active source-nodes), none at1e-8. This is a
+numerical discontinuity mechanism, not proof it explains all stiffness.
+The boundary-fitted Gaussian-CDF shell integral candidate preserves5–180,
+both signed LOS branches and periodic images, with explicit8sigma tail
+truncation and no selected-region renormalization. H200407913 passed4 tests
+in2m28s. Full saved-field check407919 reproduced the old count score but
+failed on float32 geometry/float64 accumulator mismatch;f92530e fixes the
+carry dtype and adds the real mixed-precision fixture.407922 runs those4
+tests then GH15/CDF16/CDF32 comparison and one count-velocity derivative on
+the SAVED N128 field (H2002CPU12GiB25min, no gravity/fit/heldout). R2 remains
+open; do not promote this candidate before its numerical evidence. Details,
+Fable advice and driver corrections: `CF4_R2_FITTED_TANGENT_20260928.md`.
+
 Current R2 checkpoint2026-09-28:407805 stopped after4 accepted steps/44
 evaluations on insufficient line-search decrease (normal process exit, NOT
 convergence). Readout407806 saved the unconverged present field. Fitted-state
