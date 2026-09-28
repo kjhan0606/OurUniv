@@ -290,3 +290,14 @@ modelling choices; no fitted covariance is made into an independent prior and
 no redundant old FP zero is added. Stream small chunks with rematerialization
 instead of a dense whole-cohort source-by-cut matrix. One H100/2CPU/8GiB/20min
 readout pilot; measure actual cost before expanding to all1414 or chains.
+
+408349/source69b52a1 COMPLETED8m03s: seven raw values reproduce to2.1e-14,
+velocity derivatives to6.3e-14; joint26-coordinate directional discrepancies
+max2.55e-8. Temporary GPU memory.829GiB. The dense streaming implementation
+costs10.9–12.5s PER ROW/gradient: do not extrapolate it into costly whole-cohort
+chains. Next implementation-only action packs individually contributing
+(source subnode,true-K-bin) components, keeping allpositive components at the
+current AND two local finite-difference states. Compare all26 gradient entries
+against the dense reference with the same1e-7 tolerance. This is an explicit
+state-refreshed local control, NEVER a frozen support cache for future HMC.
+No likelihood/population/field prior changes, refit or large computation.

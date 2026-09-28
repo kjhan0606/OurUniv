@@ -24,7 +24,8 @@ def logadd_nonempty(a,b):
 
 
 def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observation,
-                    *,population,geometry,magnitude_order=24,cut_order=64):
+                    *,population,geometry,magnitude_order=24,cut_order=64,
+                    component_bin=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
     mass=predict_source_marked_radial_key_density(positions,velocities,intrinsic,angular,
@@ -42,6 +43,12 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         (-jnp.inf if population//3==0 else 11.5)-mt-correction),OBS_EDGES[population%3]+shift)
     hi=jnp.minimum(jnp.minimum(jnp.asarray(TRUE_EDGES[1:])[:,None],
         (11.5 if population//3==0 else 12.5)-mt-correction),OBS_EDGES[population%3+1]+shift)
+    if component_bin is not None:
+        # Sparse entries are individual (bin,subnode) components. A source
+        # repeated for distinct bins is intentional; each bin appears once.
+        index=jnp.arange(positions.shape[0])
+        mass=mass[component_bin,index][None]
+        lo=lo[component_bin,index][None];hi=hi[component_bin,index][None]
     valid=(hi>lo)&(mass>0)
     # Inactive geometry has zero mass and finite dummy LF integrals so its
     # derivative is zero, not0*NaN. No floor is applied to any active density.
@@ -71,12 +78,15 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
 
 
 def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observation,
-                       *,population,geometry):
+                       *,population,geometry,component_bins=None):
     """Chunk-major geometry; intrinsic(chunk,5,source), angular(chunk,2,source)."""
     @jax.checkpoint
     def step(acc,parts):
-        a,b=chunk_log_terms(parameters,*parts,observation,population=population,geometry=geometry)
+        a,b=chunk_log_terms(parameters,*parts[:4],observation,population=population,geometry=geometry,
+            component_bin=None if component_bins is None else parts[4])
         return (logadd_nonempty(acc[0],a),logadd_nonempty(acc[1],b)),None
+    parts=(positions,velocities,intrinsic,angular)
+    if component_bins is not None:parts+= (component_bins,)
     (numerator,denominator),_=jax.lax.scan(step,(-jnp.inf,-jnp.inf),
-        (positions,velocities,intrinsic,angular))
+        parts)
     return numerator-denominator

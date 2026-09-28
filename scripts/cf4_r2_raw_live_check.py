@@ -13,7 +13,8 @@ from scipy.spatial import cKDTree
 
 from cf4_r2_linked_fp_sparse_train import load_train_singletons,select_training_single_mark_links,FP,SOURCE
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
-from cf4_r2_marked_tracer_jax import intrinsic_biased_source_masses,intrinsic_lf_bin_fractions
+from cf4_r2_marked_tracer_jax import (intrinsic_biased_source_masses,intrinsic_lf_bin_fractions,
+    predict_source_marked_radial_key_density)
 from cf4_r2_raw_live_mark import streaming_raw_mark,POPULATION_ORIGIN,POPULATION_SCALE,logadd_nonempty
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density'); BOX=384.;N=128;CHUNK=64
@@ -35,6 +36,11 @@ def main():
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
     try:
+        packed=os.environ.get('CF4_R2_RAW_PACKED')=='1'
+        report['sparse_components']=packed
+        if packed:
+            with np.load(BASE/'r2_raw_live_check_v1/live_derivatives.npz',allow_pickle=False) as f:
+                old_gradients=dict(zip(f['cohort_rows'],f['gradient']))
         predecessor=json.loads((BASE/'r2_source_cell_quadrature_v2/result.json').read_text())
         rows=predecessor['order8_rows']
         reference={r['row']:r for r in predecessor['rows'] if r['nodes_per_axis']==4}
@@ -91,14 +97,26 @@ def main():
             mass=intrinsic_biased_source_masses(rho,
                 jnp.log(jnp.sum(intrinsic_lf_bin_fractions()[1:4]))+2*tr[0],
                 jnp.exp(.5*tr[1:6]),mstar=mstar,alpha=alpha,reference_interval=(-25.,-21.))
-            ids=pack['ids'];nc=ids.shape[0]//CHUNK
-            pos=((pack['positions'][:,None,:]+offsets[None])%BOX).reshape(nc,CHUNK*64,3)
-            v=jnp.broadcast_to(((1+q[24])*velocity[ids])[:,None,:],(len(ids),64,3)).reshape(nc,CHUNK*64,3)
-            m=(mass[:,ids,None]*pack['mask'][None,:,None]*volumes[None,None,:])
-            m=jnp.moveaxis(m.reshape(5,nc,CHUNK*64),0,1)
-            sky=jnp.moveaxis(jnp.repeat(pack['angular'],64,axis=1).reshape(2,nc,CHUNK*64),0,1)
+            ids=pack['ids']
+            if packed:
+                nc=len(ids)//4096
+                pos=pack['positions'].reshape(nc,4096,3)
+                v=((1+q[24])*velocity[ids]).reshape(nc,4096,3)
+                m=mass[:,ids]*pack['mask'][None]*pack['volume'][None]
+                m=jnp.moveaxis(m.reshape(5,nc,4096),0,1)
+                sky=jnp.moveaxis(pack['angular'].reshape(2,nc,4096),0,1)
+                bins=pack['bin'].reshape(nc,4096)
+            else:
+                nc=ids.shape[0]//CHUNK
+                pos=((pack['positions'][:,None,:]+offsets[None])%BOX).reshape(nc,CHUNK*64,3)
+                v=jnp.broadcast_to(((1+q[24])*velocity[ids])[:,None,:],(len(ids),64,3)).reshape(nc,CHUNK*64,3)
+                m=(mass[:,ids,None]*pack['mask'][None,:,None]*volumes[None,None,:])
+                m=jnp.moveaxis(m.reshape(5,nc,CHUNK*64),0,1)
+                sky=jnp.moveaxis(jnp.repeat(pack['angular'],64,axis=1).reshape(2,nc,CHUNK*64),0,1)
+                bins=None
             score=streaming_raw_mark(parameters,pos,v,m,sky,o,population=population,
-                geometry=dict(geometry,mstar=mstar,alpha=alpha,sigma_los_km_s=100*jnp.exp(.5*tr[6])))
+                geometry=dict(geometry,mstar=mstar,alpha=alpha,sigma_los_km_s=100*jnp.exp(.5*tr[6])),
+                component_bins=bins)
             return score-.5*jnp.vdot(q[:24],q[:24]),score
         evaluate=jax.jit(jax.value_and_grad(objective,has_aux=True),static_argnums=6)
         # The explicit all-empty chunk accumulator must have a finite zero derivative.
@@ -110,8 +128,40 @@ def main():
             if time.monotonic()-started>1000:raise TimeoutError('bounded live-mark readout')
             ids=np.asarray(sorted(ids),dtype=np.int32); used=len(ids)
             ids=np.pad(ids,(0,width-used),constant_values=ids[0])
-            pack={k:jnp.asarray(v) for k,v in dict(ids=ids,positions=source['positions'][ids].astype(float),
-                mask=np.arange(width)<used,angular=source['angular'][:,ids]).items()}
+            packing_seconds=0.
+            if packed:
+                packing_start=time.monotonic()
+                positions=(source['positions'][ids,None,:]+np.asarray(offsets)[None])%BOX
+                positions=positions.reshape(-1,3)
+                expanded_ids=np.repeat(ids,64)
+                sky=source['angular'][:,expanded_ids]
+                # REFRESH union at all three local test states. This is not a
+                # permanent candidate cache and must be rebuilt at new field states.
+                def weights(q):
+                    return predict_source_marked_radial_key_density(jnp.asarray(positions),
+                        (1+q[24])*velocity[expanded_ids],jnp.ones((5,len(expanded_ids))),
+                        jnp.asarray(sky),int(mix['population'][row]),jnp.asarray(voxel),
+                        float(mix['observed_radius'][row]),**geometry,
+                        mstar=-23.28+.2*q[8],alpha=-1+.06*jnp.exp(.5*q[7]),
+                        sigma_los_km_s=100*jnp.exp(.5*q[6]))
+                read_weights=jax.jit(weights)
+                positive=np.zeros((5,len(expanded_ids)),dtype=bool)
+                for q in (z,z+delta*direction,z-delta*direction):
+                    positive|=np.asarray(read_weights(jnp.asarray(q)))>0
+                positive[:,used*64:]=False
+                bins,points=np.nonzero(positive)
+                count=len(points); pad=(-count)%4096
+                packed_ids=np.pad(expanded_ids[points],(0,pad),constant_values=expanded_ids[points[0]])
+                packed_positions=np.concatenate([positions[points],np.repeat(positions[points[:1]],pad,axis=0)])
+                pack=dict(ids=packed_ids,positions=packed_positions,mask=np.arange(count+pad)<count,
+                    angular=source['angular'][:,packed_ids],bin=np.pad(bins,(0,pad)).astype(np.int32),
+                    volume=np.pad(np.tile(np.asarray(volumes),width)[points],(0,pad)))
+                report['support_policy']='refreshed union for current and two finite-difference states; NOT a frozen HMC cache'
+                packing_seconds=time.monotonic()-packing_start
+            else:
+                pack=dict(ids=ids,positions=source['positions'][ids].astype(float),
+                    mask=np.arange(width)<used,angular=source['angular'][:,ids])
+            pack={k:jnp.asarray(v) for k,v in pack.items()}
             o={k:jnp.asarray(v) for k,v in dict(voxel=voxel,radius=mix['observed_radius'][row],
                 dz=mix['dz_row'][row],ksmag=mix['observed_ksmag'][row],x=optical['x'][row],
                 error_covariance=optical['optical_error_covariance'][row],richness=richness[row],
@@ -133,11 +183,17 @@ def main():
                 velocity_derivative_reference_error=float(gradient[24]-reference[row]['velocity_derivative']),
                 joint_direction_analytic=ad,joint_direction_finite_difference=fd,
                 joint_direction_relative_error=abs(fd-ad)/max(1.,abs(fd),abs(ad)),
-                first_value_gradient_seconds=seconds,device_temporary_GiB=memory)
+                first_value_gradient_seconds=seconds,device_temporary_GiB=memory,
+                packing_seconds=packing_seconds)
+            if packed:
+                entry.update(positive_components=count,
+                    dense_gradient_max_abs_difference=float(np.max(np.abs(gradient-old_gradients[row]))))
             if (not np.isfinite(np.r_[score,gradient,fd]).all() or abs(entry['reference_error'])>1e-7
                 or abs(entry['velocity_derivative_reference_error'])>1e-7
                 or entry['joint_direction_relative_error']>2e-5):
                 report['rows'].append(entry);save();raise AssertionError('live mark value/derivative comparison')
+            if packed and entry['dense_gradient_max_abs_difference']>1e-7:
+                report['rows'].append(entry);save();raise AssertionError('dense/sparse26-coordinate gradient mismatch')
             report['rows'].append(entry);gradients.append(gradient);save();print(json.dumps(entry),flush=True)
         np.savez(out/'live_derivatives.npz',cohort_rows=rows,gradient=np.array(gradients),
             canonical=z,joint_direction=direction,population_origin=POPULATION_ORIGIN,population_scale=POPULATION_SCALE)
