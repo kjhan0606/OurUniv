@@ -24,9 +24,15 @@ inference with explicit weak priors, rather than freezing fitted calibration
 or insisting that only an external zero can make conditional inference possible.
 Focused Fable advice returned ADVISE PROCEED with source-cell quadrature first.
 Driver adopted that priority but corrected its normalization/gauge claims;
-see the recorded disposition.408347 now compares centre/2^3/4^3 source-volume
-integration on24 prespecified training rows of the SAME408337 field, with
-six scalar count-key comparisons. No gravity evolution or calibration refit.
+see the recorded disposition.408347 completed all24 centre/2^3/4^3 comparisons
+but failed a strict endpoint check;408348 verified the cause was archive
+float32 vs promoted geometry (original-precision error1.27e-13) and added
+seven8^3 controls. Centre->volume count changes~5–12%,4^3->8^3<.05% on the six
+count examples; raw velocity derivatives also change materially. PDFs viewed.
+408349 now checks a streaming LIVE source-volume raw mark adapter, including
+shared population/tracer coordinates and density/velocity directions on the
+same seven examples. No gravity evolution, fitting, heldout or count-target
+replacement yet. Numerical local controls are not global posterior validation.
 See `CF4_R2_RAW_SELECTED_MODEL_20260929.md`. R2 remains open; N256/long HMC
 not launched, heldout untouched, MW/M31 ambiguous, M33 unresolved.
 
