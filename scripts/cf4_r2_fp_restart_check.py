@@ -175,7 +175,7 @@ def main():
             extent=max(4.,float(np.ceil(np.max(np.abs(np.r_[
                 (observed-mean)/std,(observed-predicted)/std])))))
             bins=np.linspace(-extent,extent,41)  # Include every row, not only central residuals.
-            for label,residual in [('before shared zero',(observed-mean)/std],
+            for label,residual in [('before shared zero',(observed-mean)/std),
                                    ('after fitted shared zero',(observed-predicted)/std)]:
                 axes[1].hist(residual,bins=bins,histtype='step',label=label)
             axes[1].axvline(0.,color='black',lw=1)
