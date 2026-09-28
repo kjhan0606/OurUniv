@@ -18,7 +18,7 @@ export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts${PYTHONPATH:+:$PYTHONPATH}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
-if [[ "${CF4_R2_CELL_FOLLOWUP:-0}" != 1 ]]; then
+if [[ "${CF4_R2_CELL_FOLLOWUP:-0}" != 1 && "${CF4_R2_COUNT_ONLY:-0}" != 1 ]]; then
   "$PY" -m unittest discover -s tests -p test_cf4_r2_shell_cdf_count.py -v
   "$PY" -m unittest discover -s tests -p test_cf4_r2_raw_selected_fp.py -v
 fi

@@ -47,6 +47,8 @@ def main():
     try:
         followup=os.environ.get('CF4_R2_CELL_FOLLOWUP')=='1'
         pcs=os.environ.get('CF4_R2_CELL_PCS')=='1'
+        count_only=os.environ.get('CF4_R2_COUNT_ONLY')=='1'
+        cdf_segments=int(os.environ.get('CF4_R2_CDF_SEGMENTS','32'))
         if followup:
             previous_path=BASE/'r2_source_cell_quadrature_v1/result.json'
             previous=json.loads(previous_path.read_text())
@@ -128,28 +130,40 @@ def main():
         radial=jax.jit(radial,static_argnums=6)
         def count(pos,vel,mass,angular,voxel,pop):
             f=lambda scale:predict_shell_cdf_intensity(pos,scale*vel,mass,angular,**geometry,
-                order=4,segments=32,target_population=pop,target_voxel=voxel,source_cell_average=pcs)
+                order=4,segments=cdf_segments,target_population=pop,target_voxel=voxel,source_cell_average=pcs)
             return jax.jvp(f,(jnp.array(1.),),(jnp.array(1.),))
         count=jax.jit(count,static_argnums=5)
-        if pcs:
+        if pcs or count_only:
             reference=json.loads((BASE/'r2_source_cell_quadrature_v2/result.json').read_text())
-            ref={r['row']:r for r in reference['rows'] if r['nodes_per_axis']==8}
-            report['definition']='centre LF/RSD with analytically cell-averaged TSC; approximate, NOT full volume integration'
+            ref={r['row']:r for r in reference['rows'] if r['nodes_per_axis']==(8 if pcs else 4)}
+            report['definition']=('centre LF/RSD with analytically cell-averaged TSC; approximate, NOT full volume integration'
+                if pcs else 'same4^3 source-volume integrand; LOS strata sensitivity ONLY')
+            report['cdf_segments']=cdf_segments
+            q=1 if pcs else 4
+            qt,qw=np.polynomial.legendre.leggauss(q)
+            indices=np.array(list(product(range(q),repeat=3)))
+            subpositions=qt[indices]*1.5
+            subweight=np.prod(qw[indices]/2,axis=1)
             for row,voxel,ids in zip(rows,voxels,neighbors):
                 if int(row) not in count_rows:continue
                 ids=np.array(sorted(ids),dtype=int);used=len(ids)
                 ids=np.pad(ids,(0,width-used),constant_values=ids[0])
-                mass=masses[:,ids].copy();mass[:,used:]=0.
-                args=tuple(map(jnp.asarray,(source['positions'][ids].astype(float),velocity[ids],
-                                           mass,source['angular'][:,ids],voxel)))
+                pos=(source['positions'][ids,None,:]+subpositions[None])%BOX
+                vel=np.broadcast_to(velocity[ids,None,:],pos.shape).reshape(-1,3)
+                mass=masses[:,ids,None]*subweight[None,None,:];mass[:,used:]=0.
+                args=tuple(map(jnp.asarray,(pos.reshape(-1,3),vel,mass.reshape(5,-1),
+                    np.repeat(source['angular'][:,ids],q**3,axis=1),voxel)))
+                evaluated_at=time.monotonic()
                 value,derivative=map(float,count(*args,int(mix['population'][row])))
                 entry=dict(row=int(row),PGC=int(mix['PGC'][row]),count_mean=value,
                     reference_count=ref[int(row)]['count_mean'],
                     count_relative_error=value/ref[int(row)]['count_mean']-1,
                     velocity_derivative=derivative,
-                    reference_derivative=ref[int(row)]['count_velocity_derivative'])
+                    reference_derivative=ref[int(row)]['count_velocity_derivative'],
+                    evaluation_including_compile_seconds=time.monotonic()-evaluated_at)
                 report['rows'].append(entry);save();print(json.dumps(entry),flush=True)
-            report['status']='CELL_AVERAGED_KERNEL_APPROXIMATION_MEASURED_NOT_TARGET';save()
+            report['status']=('CELL_AVERAGED_KERNEL_APPROXIMATION_MEASURED_NOT_TARGET' if pcs else
+                              'LOS_STRATA_SENSITIVITY_MEASURED_NOT_TARGET');save()
             return
         diagnostic_rows=set(count_rows)
         if followup:

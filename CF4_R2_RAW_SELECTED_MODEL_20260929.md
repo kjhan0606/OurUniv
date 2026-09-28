@@ -310,3 +310,19 @@ this is not an exact count-volume solution. Compare to saved8^3 count values
 AND velocity derivatives. Scalar diagnostic only, no full-grid target option,
 no automatic adoption regardless of speed. One8GiB/H10020min bound reuses the
 existing comparison loader and CDF integrator; no PM, new field or fitting.
+
+408350/source0d389e2 COMPLETED5m14s: sparse live marks reproduce dense raw
+values and ALL26 derivatives (max differences at roundoff). Core row-gradient
+cost~.25–.34s vs~11–13s; .360GiB temporary memory. Packing/compilation costs
+~7–11s per row in this prototype and were NOT hidden in a claimed end-to-end
+speedup. Full-cohort work must reuse compiled packing kernels and rebuild
+support for each new field state. No posterior/selection-calibration claim.
+
+408351/source6de9772 COMPLETED4m11s,14 tests passed. Driver REJECTS the simple
+cell-averaged-TSC surrogate for now: six count errors vs8^3 are approximately
+(-.72,-.85,-6.12,-.50,-.10,+1.00)%, with derivative discrepancies too. No target
+was changed. Do not pursue increasingly elaborate analytic smoothing patches.
+Keep the actual volume integrand. Next short count-only control compares
+LOS4x8 strata to4x32 at the SAME4^3 source rule and six predetermined keys.
+This changes numerical precision, not source mass/RSD/selection physics; retain
+measured differences and do not infer global error bounds from six examples.
