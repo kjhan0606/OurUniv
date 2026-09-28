@@ -61,3 +61,34 @@ this SAME generated field and constrain its physical components with LG data;
 truth identities never provide candidates or select favorable realizations.
 Q-LEAN: one changed trajectory length,64 force evaluations, existing readouts;
 no Hessian sweep, arbitrary zero broadening, shell refit or new audit gate.
+
+## Terminal result and decision
+
+408337 COMPLETED in52m14s (application3100.12s), sourcef3a0bf6. Five of eight
+fixed-step proposals accepted; proposals3,4,8 were ordinary finite-energy
+Metropolis rejections. No adaptation or seed selection. The initial coordinate
+seam differs by3.49e-10, adjoint relative discrepancy2.05e-5; independent
+endpoint primal checks all passed their unchanged tolerances. Host peak5.56GiB.
+The final checkpoint is accepted proposal7, not the rejected proposal8.
+
+IC white mean-square0.33691468 ->0.64929123 and physical common FP zero
++0.03094645 ->+0.03527850dex still drift. Full potential823123.9657605602;
+final component log scores[-142244.2927826451,-4.7389681311,-43.7346268374].
+These are not stationarity, calibrated zero-point recovery or posterior UQ.
+Mean accepted squared canonical jump per force (rejections count as zero)
+is0.01034147 versus0.00398784 for the preceding fixed L2 phase (~2.59x).
+Different sequential cold starts prevent a controlled causal efficiency claim;
+this movement proxy is NOT ESS. The run stopped at its proposal limit.
+
+408338 scalar PDF and408339 terminal-field readouts completed. The driver
+visually inspected both rendered PDF pages and the actual density/velocity
+field comparison. Broad structures persist; radial features remain. There
+is no justified Virgo/Coma/LG identification or stationary posterior map.
+Artifacts: `/gpfs/kjhan/CF4/z0_density/r2_prior_split_long_v1/` and
+`/gpfs/kjhan/CF4/z0_density/r2_prior_split_long_readout_v1/`.
+
+Do not automatically launch a longer conditional chain or N256. The next
+substantive priority is the selected-mark/shared-calibration observation law,
+using the actual raw FP/K training join408340, not another sampler gate.
+R2 remains open, including resolution, mixing, heldout prediction and physical
+model calibration. MW/M31 remain ambiguous; M33 unresolved.

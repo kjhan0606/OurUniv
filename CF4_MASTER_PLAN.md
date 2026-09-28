@@ -9,6 +9,20 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Current R2 status2026-09-29:408337 completed52m14s,5/8 fixed L8 proposals
+accepted. Numerical checks passed, but white power .336915->.649291 and FP
+zero .030946->.035278dex still drift. This is NOT posterior convergence.
+408338/408339 illustrated scalar/field readouts completed and were viewed.
+No automatic longer chain or N256.408340 joined actual raw training FP/K
+observables (8,901 parent rows, same1,414 selected links);408341 PDF rendered
+and viewed. Next priority: selected-mark/shared-calibration joint observation
+law. A brighter observed subset is not itself proof of a latent-distance bias.
+Focused Fable advice was substantively amended/rejected where its proposed
+association weighting double-used selection or inferred latent-distance slopes
+from apparent-magnitude incidence. See `CF4_R2_SELECTED_FP_ADVICE_20260929.md`
+and terminal `CF4_R2_LONG_TRAJECTORY_20260929.md`. R2 incomplete; MW/M31
+ambiguous,M33 unresolved. Historical job states below are not current status.
+
 Latest R2 update2026-09-29:408296 completed32 split-HMC feasibility proposals
 in58m42s,27 accepted overall and15/16 after discarded warmup; NOT stationary
 posterior samples. IC white mean-square .004747->.336915 still drifts.

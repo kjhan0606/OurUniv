@@ -1,6 +1,6 @@
 # Selected FP marks: driver assessment of focused Fable advice
 
-R2 remains incomplete. No active target was changed.408337 continues the
+R2 remains incomplete. No active target was changed.408337 completed the
 approved same-target sampler-mechanics comparison, not production inference.
 Read-only Fable5 returned ADVISE MODIFY to the request in
 `config/cf4_r2_selected_fp_advice_20260929.md`; no files/jobs were changed by it.
@@ -73,3 +73,37 @@ roles remain ambiguous/unresolved; no truth identities seed candidates.
 Q-LEAN: no new slope-fitting pipeline, control simulations or arbitrary
 selection-offset family follows. Resolve actual model identifiability and
 target definition before any calibrated-posterior promotion.
+
+## Actual raw inputs, not a new correction
+
+408340/sourcef02ad1f completed6s: joined existing training optical FP columns
+and uncertainties to2M++ K photometry for the SAME1,414 links; the existing
+CF4-linked training parent contains8,901 rows, NOT all34,059 SDSS galaxies.
+Result: `/gpfs/kjhan/CF4/z0_density/r2_raw_fp_inputs_v1/`.
+The actual figure shows a brighter optical distribution in the selected
+intersection and strong apparent-r/K association. This confirms the changed
+observed sample, NOT the size or sign of a distance bias conditional on true
+distance. No parameter was fitted, no heldout score or field run occurred.
+
+Magnitude systems were preserved separately; the2M++ table used here has no
+K measurement-error column. No zero error, diagonal optical covariance, or
+physical colour conversion is silently inferred. Raw r is still the source's
+group-redshift-based radius, not an independent true size/distance. The public
+release [file list](https://zenodo.org/records/6824749) supplies no separate shared FP-fit covariance artifact;
+this is not proof that no such information exists elsewhere.
+
+Next priority is a defensible selected-mark/shared-calibration model using
+these actual observables, not an automatic longer conditional chain. The
+present coefficients/selection PDFs cannot simply be refitted on the narrow
+intersection and reused as independent priors. A raw-observable likelihood or
+a rigorously derived conditional alternative needs an explicit joint law.
+
+The within-count-cell radial refinement is another unresolved approximation,
+but it must not be 'fixed' just by appending a log radial density minus log
+cell intensity: current TSC count response and measured-point radius have to
+be coarsenings of the SAME observation law. The existing continuous mark
+kernel also neglects periodic aliases represented by the count quadrature.
+Before a refinement, define its measure/support/normalizer and demonstrate
+that marginalizing the added observable restores the count law. A conditional
+design approximation can be declared, but does not establish physical
+calibration by itself. No new radial likelihood has been implemented.
