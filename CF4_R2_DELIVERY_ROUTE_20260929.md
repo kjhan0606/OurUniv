@@ -122,3 +122,33 @@ The default-off fast option is measured, not assumed faster. PM, optimization
 and final posterior remain absent until this full field connection is checked.
 State-local eight-sigma source neighborhoods remain a declared numerical tail
 approximation, not a proof that normalized conditional tails vanish everywhere.
+
+The11-row cut comparison408372 COMPLETED9m33s: new shortcut/full axis1/256
+max log-value difference2.66e-15, max26-coordinate gradient difference3.98e-13,
+FD3.08e-9. The old axis0/64 differs by at most1.49e-6 per row. Core timings
+3.59s(full fine),2.37s(shortcut fine),2.30s(legacy): accuracy retention, NOT a
+large speedup over legacy.408375 corrected-sampler tests all3 passed in13s:
+reversal, rejection cache and fine-target moments under deliberately different
+force dynamics.408374 starts automatically after408372, and its2 support/rule
+tests have passed. Its actual all-native derivative remains pending.
+
+Next bounded joint pilot:8 proposals maximum (4 discarded warmup,4 fixed-step),
+two integrations/proposal,N128,110min application/120min Slurm,H1002CPU24GiB
+(estimated host<=20GiB plus20%). Fine target uses source4^3 and conditional
+Gaussian axis1/256/tol1e-12; coarse forces use source2^3 with the SAME other
+settings. Both use genuine volume integrands, not the rejected PCS surrogate.
+No likelihood tempering, old eta factor, frozen population fit or separate FP
+zero;24 canonical nuisances have proper N(0,1) modelling priors exactly once.
+ICs retain the LCDM prior. Rebuild support for every proposal/energy; bucket
+array capacity only, not membership. Startup reproduces saved IC's actual PM
+field, compares primal with/without AD, then one full IC+24nuisance directional
+FD before proposing. Errors stop rather than silently loosening tolerances.
+The fixed proposal metric is a conservative guess (IC inverse-laplacian6000,
+nuisance inverse mass1e-5), never called posterior covariance. Save accepted
+IC/nuisance/fine-energy/coarse-gradient checkpoints including rejected states.
+No independent convergence claim from this short pilot; no N256/heldout/R3.
+Q-GOAL: joins raw observables, counts and LCDM history in ONE present-state
+posterior target. Q-LEAN: a bounded direct transition test reuses measured
+count/raw controls; no new simulation archive or audit ladder. MW/M31/M33
+identification remains from this SAME NEW field, not truth-selected candidates;
+the sparse local FP coverage and unresolved M33 are not hidden by this pilot.
