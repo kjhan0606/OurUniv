@@ -80,3 +80,65 @@ new observational data, or validation framework. MW/M31 remain ambiguous,
 M33 unresolved on this NEW state; their observables must constrain it in R3,
 never native-truth-selected candidates. Surroundings1–2cMpc/h and LG<=.3
 remain the final resolutions; N128/384 is only3cMpc/h development. No email.
+
+## Retry disposition and next cause test
+
+407886 passed all3 optimizer tests and the actual-state random-direction
+check (prior-subtracted relative difference .0001309). Score-only and full
+objectives agree. Accepted decreases then became negligible: total decrease
+about.122 from1,039,923.9003, recent decreases~1e-6, maximum gradient still
+~11,770. Other tiny candidate steps repeatedly jump upward by~.525. The
+driver cancelled this allocation early for scientific stagnation, NOT OOM,
+test failure or convergence. Preserve its accepted checkpoints and trace;
+no final-state snapshot was promised after forced cancellation. Readout407887
+is afterany, so missing final state must not be interpreted as a map success.
+
+407901 is the queued15min/H1002CPU12GiB cause test on the SAME v2 accepted
+state used for the derivative comparison. It counts, separately for every
+GH15 node, source radial-cut crossings under eps1e-6 and1e-8, and reports
+which have nonzero angular exposure. No fitting, changed mask, smoothing,
+heldout score or new simulation archive. Zero crossings would exclude this
+particular discrete-cut explanation at those trials; nonzero counts alone
+would not quantify their contribution to the objective jump. Any subsequent
+integral repair must preserve the actual observational cut and be supported
+by a count-factor comparison, not an arbitrary likelihood floor.
+
+407901 completed3m29s: at eps1e-6 one sky-active source-node crosses the
+radial cut on the plus side and two on the minus side; at1e-8 there are zero
+crossings. This identifies actual finite-GH selection switches, but does not
+by itself attribute the entire count jump or all field stiffness to them.
+407886 was CANCELLED by the driver at14m19s;10 accepted steps, total objective
+decrease.121594473, final accepted max gradient11770.6683. Its readout407887
+completed4s, explicitly no final map. Its historical status STARTED is a stale
+application marker, not a running job; future readouts now label that case
+INCOMPLETE_RUN_NO_FINAL_STATE without inventing the scheduler exit cause.
+
+## Boundary-fitted integral repair candidate
+
+`src/cf4_r2_shell_cdf_count.py` integrates the same source-selected LF/K/TSC
+integrand over ray intersections with periodic observer shells5–180. Gaussian
+probability-coordinate quadrature removes the hard GH radial-selection atoms.
+27 disjoint observer images retain wrapped aliases; both signed LOS branches
+and the inner5 cut are included. The existing8*sigma_radius<box/2 live-support
+bound suffices for those images. Tails beyond8sigma are explicitly omitted
+(unconditional Gaussian mass<1.3e-15); probabilities are NOT renormalized to
+the selected shell. Positive tails use survival probabilities. Inactive
+square roots/quantiles are guarded before nonlinear operations, not hidden
+with a likelihood floor. Only identically zero interval weights are skipped.
+Integrated Schechter interval fractions are continuous at moving K-bin
+intersections; no apparent-K point indicator is newly introduced.
+
+Fable conceptual follow-up returned CONDITIONAL PASS, Q-GOAL/Q-LEAN aligned.
+Adopt normalization, tail, signed-image, finite-gradient and numerical-error
+controls. Reject its assumed0.3125cMpc/h TSC scale: the current count grid is
+3cMpc/h. Also reject globally parameter-independent geometry/smoothness:
+post-wrap rhat can depend on velocity; tangencies and other field nonlinearities
+remain. Do not claim this fixes every fitted-state pathology. The driver uses
+the explicit probability-transform derivation; unverified literature details
+suggested by the adviser are not recorded as established citations.
+
+Four focused controls precede any full-state use: analytic cut probability
+and derivative, signed inner-exclusion mass, periodic-image tail mass, and
+the full LF/K/TSC source integral at16/32 nodes with velocity finite difference.
+One H1002CPU6GiB/15min allocation (estimated host<=5GiB with20% margin).
+This candidate is not yet wired into a fit or declared production-ready.

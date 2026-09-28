@@ -1,0 +1,68 @@
+"""Analytic probability, alias/negative-branch and actual K/TSC controls."""
+from itertools import product
+import unittest
+import jax
+import jax.numpy as jnp
+import numpy as np
+from scipy.special import ndtr
+
+from cf4_r2_shell_cdf_count import shell_cdf_nodes,predict_shell_cdf_intensity
+
+
+class ShellCDFTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        jax.config.update('jax_enable_x64',True)
+
+    def test_boundary_probability_and_derivative(self):
+        def probability(mu):
+            q,w=shell_cdf_nodes(jnp.array([mu]),jnp.array([[1.,0.,0.]]),
+                               1.,jnp.zeros(3),order=12)
+            return w.sum()
+        for mu in (179.9,180.,180.1):
+            self.assertAlmostEqual(float(probability(mu)),ndtr(180.-mu),places=13)
+        derivative=float(jax.grad(probability)(180.))
+        self.assertAlmostEqual(derivative,-1/np.sqrt(2*np.pi),places=12)
+
+    def test_inner_exclusion_both_signed_branches_and_weights(self):
+        q,w=shell_cdf_nodes(jnp.array([0.]),jnp.array([[1.,0.,0.]]),
+                           3.,jnp.zeros(3),order=12)
+        active=np.asarray(w)>0
+        self.assertTrue((np.abs(np.asarray(q)[active])>=5.).all())
+        self.assertAlmostEqual(float(w.sum()),2*ndtr(-5/3),places=13)
+        self.assertAlmostEqual(float(w[0].sum()),float(w[1].sum()),places=14)
+
+    def test_periodic_image_tail_is_not_omitted(self):
+        mass=0.
+        for image in product((-1,0,1),repeat=3):
+            q,w=shell_cdf_nodes(jnp.array([190.]),jnp.array([[1.,0.,0.]]),
+                               10.,jnp.array(image)*384.,order=8)
+            mass+=float(w.sum())
+        # Central sphere q<=180 and wrapped neighbour q>=384-180=204.
+        self.assertAlmostEqual(mass,ndtr(-1)+ndtr(-1.4),places=13)
+
+    def test_full_source_K_TSC_values_and_velocity_gradient(self):
+        box=384.
+        radius=jnp.linspace(.001,400.,4001)
+        def intensity(v,order):
+            return predict_shell_cdf_intensity(jnp.array([[371.9,192.,192.]]),
+                jnp.array([[v,0.,0.]]),jnp.ones((5,1)),jnp.ones((2,1)),
+                observer=jnp.full(3,192.),box_size_cMpc_h=box,hubble_km_s_Mpc=74.6,
+                little_h=.746,radius_table_cMpc_h=radius,
+                modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+                grid_size=16,sigma_los_km_s=100.,order=order)
+        evaluate=jax.jit(intensity,static_argnums=1)
+        low=np.asarray(evaluate(0.,16)); high=np.asarray(evaluate(0.,32))
+        self.assertTrue(np.isfinite(high).all())
+        self.assertTrue((high>=0).all())
+        self.assertGreater(high.sum(),0.)
+        self.assertLess(np.abs(low-high).sum()/high.sum(),.001)
+        gradient=float(jax.jit(jax.grad(lambda v:intensity(v,16).sum()))(0.))
+        fd=float((evaluate(.001,16).sum()-evaluate(-.001,16).sum())/.002)
+        self.assertTrue(np.isfinite(gradient))
+        self.assertGreater(abs(gradient),1e-8)
+        np.testing.assert_allclose(gradient,fd,rtol=1e-4,atol=1e-8)
+
+
+if __name__=='__main__':
+    unittest.main()

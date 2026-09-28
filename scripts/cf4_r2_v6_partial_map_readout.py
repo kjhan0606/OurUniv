@@ -19,6 +19,11 @@ def main():
         'final_gradient_inf','initial_adjoint','host_peak_GiB','elapsed_seconds')}
     summary.update(R2_complete=False,posterior_uncertainty=False,heldout_scored=False,
                    map_available=(BASE/'final_state.npz').is_file())
+    if summary['status']=='STARTED' and not summary['map_available']:
+        summary['source_run_status']='STARTED'
+        summary['status']='INCOMPLETE_RUN_NO_FINAL_STATE'
+        # This readout does not know whether Slurm cancelled, failed or timed out.
+        # Never infer a terminal scientific verdict from a stale startup marker.
     if summary['map_available']:
         import matplotlib
         matplotlib.use('Agg')
