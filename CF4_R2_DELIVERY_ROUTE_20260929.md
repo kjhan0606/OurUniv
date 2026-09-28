@@ -85,3 +85,40 @@ One algebraically exact speedup: with wrapped coherent source positions and
 truncated LOS path. Skip its large shell arrays, retaining all27-image logic
 outside that domain. Check value/gradient against forced27-image evaluation.
 This does NOT assert that untruncated radial-mark aliases are identically zero.
+
+## Measured costs and the next connection
+
+408353 whole1414 raw readout passed:208.77s packing,226.01s26-coordinate
+gradient,2.62GiB temporary device memory; actual-core and wall costs separate.
+408357 genuine volume count/native adjoint passed: source2^3=86.31s,
+source4^3=685.79s; fine forward pair including compilation429.93s; temporary
+device16.47GiB,host4.25GiB. Fine count score-143208.74835 vs coarse-143223.26411.
+Expected selected training counts46477.951 vs46477.883 hide a14.51576 log-score
+difference: total counts are NOT the accuracy criterion. Native velocity AD/FD
+relative error2.47e-6. Full count gradients were saved compactly, no raw snapshot.
+
+Driver response: finish all-native raw derivative wiring, then benchmark a
+bounded coarse-force/fine-energy proposal. Existing split mechanics are reused;
+a separate corrected step keeps the fine accepted energy AND its matching
+coarse force cache. It never asserts the coarse and fine primal values agree.
+Rejection preserves both. Test reversal, rejected-state caching and known fine
+Gaussian moments despite deliberately different force posterior. This is a
+routine implementation of the reviewed route, not another external audit gate.
+
+Optional Gaussian cut shortcut: for retained eventA and broad second eventB,
+P(B-complement)/P(A)<=tol bounds the replacement by P(A) without independence.
+The per-chunk runtime condition must hold for all active components; otherwise
+fall back to full correlated quadrature. Default remains off. Axis1/order256
+is compared directly with/without the shortcut on7 prior control rows plus
+4 rows nearest actual observed cut edges; full26-coordinate gradients and FD.
+Axis0/order64 legacy differences are separately numerical-quadrature changes,
+not improvements in calibration. Probability bounds alone do not bound force
+errors; actual derivative controls are retained. No heldout selection/tuning.
+
+408374 then differentiates every native rho/velocity cell and24 nuisances,
+rebuilding source support at the baseline and both FD states. The initial raw
+legacy value/nuisance/velocity-direction must reproduce the checked1414 readout.
+The default-off fast option is measured, not assumed faster. PM, optimization
+and final posterior remain absent until this full field connection is checked.
+State-local eight-sigma source neighborhoods remain a declared numerical tail
+approximation, not a proof that normalized conditional tails vanish everywhere.

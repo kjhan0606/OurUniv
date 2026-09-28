@@ -9,6 +9,29 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Current R2 continuation2026-09-29:408353 COMPLETED the entire1414-row live
+raw-mark readout (21m47s); packing208.77s, core full26-coordinate value/gradient
+226.01s, seven-row gradient agreement2.91e-13, whole directional error3.84e-6.
+408357 COMPLETED the source-volume count/native-field adjoint (26m29s).
+Source2^3/4^3 gradients cost86.31/685.79s; fine velocity-direction error2.47e-6.
+Fine-minus-coarse count log score14.51576 is NOT negligible merely because
+expected total counts differ only.068. Do not replace the fine target by the
+coarse one. The next native raw adjoint408374 is dependent on the bounded
+actual-cut comparison408372. Conditional Gaussian marginal acceleration is
+default-OFF and requires both mathematical probability and actual derivative
+controls. Shared field/count/raw operators and fresh state-local support are
+implemented; not yet a checked PM sampler. Coarse-force/fine-energy corrected
+proposals are under focused mechanics tests408375, not production. All these
+jobs are Slurm; no new PM evolution or heldout scoring in this bundle.
+Corrected3-page actual-example Korean report408370 was rendered and every
+page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.
+Finite delivery route and Fable advice disposition are in
+`CF4_R2_DELIVERY_ROUTE_20260929.md`: actual conditional N256/1.5 posterior,
+numerical/prior sensitivities and current untouched-split prediction remain
+required. N128/3 is development, not completion. MW/M31 remain ambiguous,
+M33 unresolved; later roles/observables must constrain this SAME new field.
+Historical status paragraphs below are not the current job/target state.
+
 Latest R2 work2026-09-29: the raw FP/K observation component is implemented,
 not merely proposed.408343 passed6 tests and actual1414-row cut/aperture checks;
 408344 exported219401 exact same-field source/bin weights and reproduced the
