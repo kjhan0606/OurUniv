@@ -142,3 +142,20 @@ and derivative, signed inner-exclusion mass, periodic-image tail mass, and
 the full LF/K/TSC source integral at16/32 nodes with velocity finite difference.
 One H1002CPU6GiB/15min allocation (estimated host<=5GiB with20% margin).
 This candidate is not yet wired into a fit or declared production-ready.
+
+H200407913 completed2m28s,4/4 tests pass (126.6s test time,2.44GiB RSS).
+Next is one saved-field comparison, not another gravity run: recompute the
+GH15 training-count factor on the v2 final state, compare CDF16/CDF32 fields,
+their training-exposure L1 and occupied-cell log errors, and a CDF16 coherent
+velocity-scale derivative against finite difference. No heldout counts or
+marks loaded. Preserve the original sigma/LF/bias,5–180 cut and v6 exposure.
+H2002CPU12GiB/25min; estimated host<=10GiB includes prior9.52GiB actual-state
+peak and new compilation buffers,~20% requested margin. Keep three count
+fields only in memory and write compact JSON; no new raw simulation output.
+
+Two quadrature orders are a numerical comparison, not an exact oracle or
+calibrated posterior. A usable engineering candidate requires the original
+GH score reproduced within1e-7, exposure-L1 difference<.001, count-score
+difference<.5 and scalar derivative discrepancy<.001; failing any criterion
+does not authorize fitting or loosening it. Even passing does not establish
+all-IC derivative conditioning, survey calibration or R2 completion.
