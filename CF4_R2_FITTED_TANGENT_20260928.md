@@ -181,3 +181,31 @@ precede it in one H2002CPU12GiB25min allocation. Expected host<=10GiB including
 the measured5.05GiB and larger node buffers;12GiB includes20% margin. This is
 a finite numerical repair attempt, not a search over unrelated models or a
 longer field fit. M33 and all R2 calibration/uncertainty limits remain open.
+
+407946 stopped in the new toy-tail test, before any full-state evaluation:
+16 physical subintervals with8 within-interval nodes gave .7519% relative
+error, exceeding the unchanged .1% reference requirement. Refine that
+reference to32 physical intervals; do not relabel the failed result a pass.
+407950 then passed5/5 tests. The five-sigma TSC integral is1.3563983584e-5;
+globalCDF16 misses it entirely, 4x16 gives1.1842245372e-5, and the8x32
+reference gives1.3563961971e-5 (relative1.59e-6). Thus coarse-tail accuracy is
+explicitly not certified just because it is now nonzero.
+
+Its saved-field4x16/4x32 comparison reduces total-score difference to.1727
+and exposure L1 to1.31e-5, but maximum occupied log difference remains.04547.
+Prefer verifying4x32 against8x32 before fitting, rather than using the cheaper
+4x16 solely because the aggregate criteria pass. No new gravity/heldout.
+
+Cost repair for this same integral: monotonic Schechter survival lets the
+LF/K transfer evaluate six varying boundary arrays once, then reuse min/max
+intersections; the old definition evaluated60 gamma arrays. This is algebraic
+reuse, not a new LF approximation. Retain the original expression as a small
+regression reference. Check values and all four parameter derivatives at
+three LF shapes, plus equality-boundary subgradients. The next single
+H2002CPU12GiB25min job runs those2 tests, the5 integration tests, then the
+saved-field4x32/8x32 check. Reproduce the previous4x32 count score before
+accepting the optimization; only then assess integration error and derivative.
+Q-GOAL: usable same-state current-field inference; Q-LEAN: reuse analytic
+boundaries rather than raising simulation resolution or adding a solver.
+MW/M31 roles remain ambiguous, M33 unresolved; their observables constrain
+the same NEW field in R3, not native-truth-selected components.

@@ -79,6 +79,8 @@ def main():
         stratified=os.environ.get('CF4_R2_CDF_STRATIFIED')=='1'
         rules=(('CDF4x16',4,16),('CDF4x32',4,32)) if stratified else (
                ('CDF16',16,1),('CDF32',32,1))
+        if os.environ.get('CF4_R2_CDF_FINE')=='1':
+            rules=(('CDF4x32',4,32),('CDF8x32',8,32))
         low_name,low_order,low_segments=rules[0]
         high_name,_,_=rules[1]
         fields={}
@@ -101,6 +103,14 @@ def main():
                 exposure_L1_relative=float(jnp.sum(jnp.abs(a-b)*exposure)/jnp.sum(b*exposure)),
                 max_occupied_log_difference=float(jnp.max(jnp.abs(jnp.log(a[keys])-jnp.log(b[keys])))),
                 count_score_difference=report['comparisons'][left]['score']-report['comparisons'][right]['score'])
+        if os.environ.get('CF4_R2_CDF_FINE')=='1':
+            previous=json.loads((BASE/'r2_shell_cdf_field_check_v4/result.json').read_text())
+            deltas={name:report['comparisons'][name]['score']-
+                    previous['comparisons'][name]['score'] for name in ('GH15','CDF4x32')}
+            report['LF_reuse_previous_score_differences']=deltas
+            save()
+            if any(abs(d)>1e-7 for d in deltas.values()):
+                raise AssertionError('LF algebra reuse changed the saved-field score')
         save()
         derivative=jax.jit(jax.grad(lambda scale,v,m:score(cdf(scale,v,m,low_order,low_segments))))
         reverse=float(derivative(1.,vel,intrinsic))

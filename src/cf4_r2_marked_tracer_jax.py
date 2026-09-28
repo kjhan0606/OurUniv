@@ -45,7 +45,7 @@ def _lf_interval(lower, upper, *, mstar, alpha):
                      jnp.maximum(cdf_lower-cdf_upper, 0.), 0.)
 
 
-def source_mark_transfer(true_modulus_h, observed_modulus_h,
+def _source_mark_transfer_reference(true_modulus_h, observed_modulus_h,
                          true_redshift, observed_redshift, *,
                          mstar=-23.28, alpha=-.94):
     """Return six-by-five-by-source intrinsic-to-observed K probabilities.
@@ -74,6 +74,39 @@ def source_mark_transfer(true_modulus_h, observed_modulus_h,
                                / _lf_interval(true_lo, true_hi,
                                               mstar=mstar, alpha=alpha))
             rows.append(jnp.stack(columns))
+    return jnp.stack(rows)
+
+
+def source_mark_transfer(true_modulus_h, observed_modulus_h,
+                         true_redshift, observed_redshift, *,
+                         mstar=-23.28, alpha=-.94):
+    """Same transfer, evaluating unique LF boundaries before intersections.
+
+    The Schechter survival function S(M) is decreasing: S(max bounds) equals
+    min S(bounds), and vice versa. This exact algebra reuses six varying
+    boundary arrays instead of evaluating gamma functions at 60 intersections.
+    The slower pre-rewrite definition is retained as a regression reference.
+    """
+    def survival(bound):
+        finite=jnp.isfinite(bound)
+        safe=jnp.where(finite,bound,mstar)
+        value=gammainc(alpha+1.,jnp.power(10.,.4*(mstar-safe)))
+        return jnp.where(jnp.isneginf(bound),1.,
+                         jnp.where(jnp.isposinf(bound),0.,value))
+    correction=(1.16*2.9*(observed_redshift-true_redshift)
+                -1.6*jnp.log10((1.+observed_redshift)/(1.+true_redshift)))
+    shift=observed_modulus_h-true_modulus_h-correction
+    true=[survival(edge) for edge in TRUE_EDGES]
+    observed=[survival(edge+shift) for edge in OBS_EDGES]
+    apparent=[jnp.ones_like(shift)]+[
+        survival(edge-true_modulus_h-correction) for edge in (11.5,12.5)]
+    rows=[]
+    for app in range(2):
+        for obs in range(3):
+            rows.append(jnp.stack([
+                jnp.maximum(jnp.minimum(jnp.minimum(true[i],apparent[app]),observed[obs])
+                    -jnp.maximum(jnp.maximum(true[i+1],apparent[app+1]),observed[obs+1]),0.)
+                /(true[i]-true[i+1]) for i in range(5)]))
     return jnp.stack(rows)
 
 
