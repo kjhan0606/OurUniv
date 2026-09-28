@@ -78,6 +78,19 @@ class ShellCDFTests(unittest.TestCase):
         db=jax.jit(jax.grad(lambda v:score(v,False).sum()))(0.)
         np.testing.assert_allclose(da,db,rtol=1e-10,atol=1e-12)
 
+    def test_image_gap_shortcut_preserves_value_and_gradient(self):
+        radius=jnp.linspace(.001,400.,4001)
+        def score(v,force_all):
+            return predict_shell_cdf_intensity(jnp.array([[371.9,192.,192.]]),
+                jnp.array([[v,0.,0.]]),jnp.ones((5,1)),jnp.ones((2,1)),
+                observer=jnp.full(3,192.),box_size_cMpc_h=384.,hubble_km_s_Mpc=74.6,
+                little_h=.746,radius_table_cMpc_h=radius,modulus_table_h=5*jnp.log10(radius)+25.,
+                redshift_table=radius/3000.,grid_size=16,sigma_los_km_s=100.,order=4,segments=8,
+                target_population=0,target_voxel=jnp.array([15,8,8]),force_all_images=force_all)
+        a=jax.jit(jax.value_and_grad(lambda v:score(v,False)))(0.)
+        b=jax.jit(jax.value_and_grad(lambda v:score(v,True)))(0.)
+        np.testing.assert_allclose(a,b,rtol=1e-12,atol=1e-13)
+
     def test_inner_exclusion_both_signed_branches_and_weights(self):
         q,w=shell_cdf_nodes(jnp.array([0.]),jnp.array([[1.,0.,0.]]),
                            3.,jnp.zeros(3),order=12)

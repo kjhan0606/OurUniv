@@ -68,3 +68,20 @@ MW/M31 identities remain ambiguous; M33 remains unresolved. R3 must identify
 roles from the NEW field/state and let their observables constrain that SAME
 field. No truth IDs, hardwired known components or arbitrary high-k rescaling.
 No GPFS diagnostics, new TNG dependency, mail, manual syntax runs or watchers.
+
+## Immediate full-count cost measurement
+
+Alongside the whole-cohort raw readout, implement the genuine source-volume
+count integral by streaming GL nodes, not the rejected analytic surrogate.
+Profile source2^3 and4^3 with LOS4x8 on the actual training counts at408337's
+field. Differentiate ALL native density/velocity cells and9 tracer coordinates,
+then compare the native velocity-direction derivative with finite differences.
+No PM/fit/heldout or surrogate sampler. One H1002CPU8GiB45min bounded job;
+estimated host<=6.5GiB plus20%, device temporary limit60GiB. Save only compact
+summary and fine gradients, no large simulation snapshots.
+
+One algebraically exact speedup: with wrapped coherent source positions and
+8*sigma_radius < L/2-Rmax, no noncentral observer image can intersect the
+truncated LOS path. Skip its large shell arrays, retaining all27-image logic
+outside that domain. Check value/gradient against forced27-image evaluation.
+This does NOT assert that untruncated radial-mark aliases are identically zero.

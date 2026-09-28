@@ -94,7 +94,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     hubble_km_s_Mpc,little_h,radius_table_cMpc_h,modulus_table_h,redshift_table,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
     mstar=-23.28,alpha=-.94,order=16,segments=1,
-    target_population=None,target_voxel=None,source_cell_average=False):
+    target_population=None,target_voxel=None,source_cell_average=False,
+    force_all_images=False):
     """Same source-selected K/TSC count integrand, boundary-fitted LOS law.
 
     Caller owns current-width support checks and calibration. This does not
@@ -152,7 +153,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         return total+contribution,None
 
     @jax.checkpoint
-    def add_image(total,center):
+    def integrate_image(total,center):
         lower,upper,active=_shell_intervals(mu,direction,sigma,center,
             radial_min_cMpc_h,radial_max_cMpc_h,8.)
         width=jnp.where(active,upper-lower,0.)
@@ -171,6 +172,16 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         total=jax.lax.cond(jnp.any(active),
             lambda t:jax.lax.scan(add_segment,t,jnp.arange(2*segments))[0],lambda t:t,total)
         return total,None
+    @jax.checkpoint
+    def add_image(total,center):
+        # Every coherent-RSD source is wrapped inside the observer's cube.
+        # Its distance to any NONCENTRAL image's selected sphere is at least
+        # L/2-Rmax. An8sigma path shorter than this gap cannot intersect it.
+        # This exact shortcut belongs to the existing truncated count law;
+        # it is not a new tail approximation or a radial-mark alias claim.
+        possible=(jnp.all(center==0) | (8*sigma>=box_size_cMpc_h/2-radial_max_cMpc_h)
+                  | force_all_images)
+        return jax.lax.cond(possible,lambda t:integrate_image(t,center)[0],lambda t:t,total),None
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
     shape=() if scalar else (6,grid_size,grid_size,grid_size)
     return jax.lax.scan(add_image,jnp.zeros(shape,dtype=dtype),images)[0]

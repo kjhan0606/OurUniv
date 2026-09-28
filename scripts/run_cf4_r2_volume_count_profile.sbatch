@@ -19,4 +19,5 @@ export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts:$PWD/tests${PYTHONPATH:+:$PYTHONPATH}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
 "$PY" -m unittest test_cf4_r2_shell_cdf_count.ShellCDFTests.test_streamed_volume_equals_materialized_subnodes -v
+"$PY" -m unittest test_cf4_r2_shell_cdf_count.ShellCDFTests.test_image_gap_shortcut_preserves_value_and_gradient -v
 exec "$PY" scripts/cf4_r2_volume_count_profile.py
