@@ -9,6 +9,29 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Active R2 follow-up2026-09-28:408119/source474939c is the single bounded
+extension after usable Fable science/cost advice (driver assessment in
+`CF4_R2_FIRST_FIELD_ADVICE_20260928.md`). Same partial joint target/data,
+v2 accepted state, one exact prior-preserving common-rate warm start, then
+up to64 joint updates/120min application,H2002CPU12GiB/130min Slurm.408120
+is afterany field readout;408121 is afterok three-direction finite-gradient
+curvature feasibility,25min application/30min Slurm. Requested GPU time caps
+sum165min including5min readout; no automatic further MAP extension.
+This is not posterior sampling, a Hessian certification, N256 or R2 closure.
+Heldout data remain untouched. MW/M31 roles ambiguous, M33 unresolved; their
+later observables/candidates must belong to the same NEW state, not truth IDs.
+
+408084 completed57m06s,32 updates on iteration limit: objective175535.45→
+159462.61, FP−50.94→−43.95, gradient_inf129.91→73.96 with a late rebound
+from~31. Not stationary.408093 reproduced the count score and passed
+4x32/8x32 comparison (delta.00210,L1=1.437e-6,max occupied log delta.000406)
+and scalar derivative(1.56e-6). Its radial-count figure shows shape mismatch,
+not only normalization. Expected total50818.60 versus47121 accounts exactly
+for the largest gradient in the common rate coordinate. The next scalar
+warm start does NOT change the field, likelihood weights or Gaussian prior;
+the full target must reproduce its analytic score change before proceeding.
+Physical velocity dispersion was saved separately from inference uncertainty.
+
 Latest R2 execution2026-09-28:408032/sourcec8d6af6 completed35m59s,17 accepted
 updates, on its application time budget, NOT convergence. Objective
 231875.999→175535.453, maximum gradient756.69→129.91; count score improves

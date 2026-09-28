@@ -413,3 +413,16 @@ check, not indefinite MAP repetition or a mock/tuning ladder. MW/M31 remain
 ambiguous and M33 unresolved; the same NEW state must later supply their
 candidates and receive their actual observational constraints, without truth
 IDs. The broader calibration/covariance/R2 resolution limits remain open.
+
+408093 completed the v2 terminal readout:4x32/8x32 score delta.00209658,
+exposure L1=1.43687e-6,max occupied log delta=.00040595, scalar derivative
+discrepancy1.5645e-6. Its training radial-count image shows excess at middle
+distances and a deficit at the far end; a single rate correction cannot
+remove this shape discrepancy. It remains training evidence only.
+
+The next envelope is submitted on source474939c:408119 joint refinement
+(`r2_v6_shell_map_v3`),408120 afterany readout,408121 afterok curvature
+(`r2_v6_shell_map_v3_curvature_v1`). The first job must verify the full-target
+rate update and initial adjoint. Six small optimizer/rate/curvature tests and
+one existing particle-moment test precede each numerical job. The final
+curvature readout is not an automatic science approval or posterior product.
