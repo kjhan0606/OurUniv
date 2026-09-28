@@ -338,3 +338,13 @@ is the observed voxel-centre radius, binned at12cMpc/h for display only; this
 is not true-distance calibration, a change of reconstruction resolution,
 posterior predictive uncertainty or heldout validation. No extra forward
 evolution or fitted parameters are needed for the figure.
+
+One bounded cost check408099/sourceec46f05 did NOT justify a deposition
+rewrite. Six-population contiguous-axis TSC agrees with six separate scatters
+to3.56e-15 in values and5.33e-15 in tested gradients. On2,097,152 synthetic
+non-lattice sources, separate/batched forward medians are.00746/.01717s and
+derivative medians.01626/.01033s. The small127-source case looks faster but
+does not predict production-size forward cost. These are isolated kernels,
+not end-to-end fits; no speedup of the actual likelihood is established.
+Keep the existing production scatter unchanged; do not start a tuning sweep.
+The fixture contains no survey calibration, PM evolution or heldout data.
