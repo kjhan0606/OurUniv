@@ -9,6 +9,21 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+R2 v6 continuation2026-09-28: wiring-only407731 passed17 tests (9m28s,
+7.59GiB RSS), but driver source review found the new linked target omitted
+count LOS width and widened the frozen radial180 cut to192. Commit4077f07
+fixes both, adds a nonempty-count/radial-edge regression, shares one FP zero,
+uses memory-bounded GH15 accumulation, and permits fitting without any
+heldout-data arguments. Corrected tests407790 precede typed-H100 partial MAP
+407793 via afterok. The N128/384 fit uses only47,121 training counts and429
+strict ungrouped linked FP marks, refreshed shifted-source support at EVERY
+optimizer evaluation, including trials. Grouped985 links are not treated as
+singletons. Source645072c;24GiB/2CPU/55min,45min application bound. No
+heldout scoring, Laplace uncertainty, calibration, N256 or R2 completion is
+established by submission. Details and next in-R2 decisions:
+`CF4_R2_V6_PARTIAL_MAP_20260928.md`. MW/M31 roles remain ambiguous, M33
+unresolved; actual LG observables must later constrain the SAME new field.
+
 R2 LF-shape holdout2026-09-27: typed-H100406570 completed the first actual
 2M++ conditional-K check on49,489 eligible source-window rows, fitting seven
 predeclared sky octants and holding out8,368 rows in octant3. The imported
