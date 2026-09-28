@@ -36,6 +36,7 @@ def main():
     save()
     combined_check = os.environ.get('CF4_R2_FP_COMBINED_CHECK') == '1'
     compact_check = os.environ.get('CF4_R2_FP_COMPACT_CHECK') == '1'
+    flat_check = os.environ.get('CF4_R2_FP_FLAT_CHECK') == '1'
     paths = [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
              BASE/'r2_v6_joint_secant_map_v2/initial_state.npz']
     states = []
@@ -116,6 +117,16 @@ def main():
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         save(); print(json.dumps(report['states'][-1]),flush=True)
+        if flat_check and index == 1:
+            # Same mathematical FP function/inputs as the nested-jit discrepancy;
+            # differentiate the underlying function before the sole outer jit.
+            flat = jax.jit(jax.value_and_grad(mark.__wrapped__,argnums=(0,1,2,3)))
+            flat_value,flat_grad = flat(*args,links)
+            report['flat_vg'] = dict(FP=float(flat_value),
+                tracer_gradient=np.asarray(flat_grad[2]).tolist(),zero_gradient=float(flat_grad[3]))
+            save(); print(json.dumps(report['flat_vg']),flush=True)
+            if not np.isclose(float(flat_value),value,rtol=0.,atol=1e-10):
+                raise AssertionError('flat FP autodiff still changes primal value')
         if compact_check and index == 1:
             density,velocity = native_mass_momentum_to_count_cells(*args[:2],BOX)
             tracer,zero = args[2:]
