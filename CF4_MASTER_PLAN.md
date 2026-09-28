@@ -9,6 +9,20 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 outcome2026-09-29:408222 completed32 expanded1414-row joint updates
+in42m57s, stopping at its iteration limit, NOT convergence. F146854.44->
+144835.84; count log score -141770.42->-139803.43 and FP -49.3064->-31.0739.
+408225 independently reproduces the final FP score; training correlation
+-.00380, fitted shared zero+.0247702dex (6.19 priorSD), residual mean+.01918dex.
+Those plug-in statistics do not demonstrate calibrated distance recovery.
+408223 supplies the actual field figure;3cMpc/h development mesh, no named
+structure or posterior claim.408224 terminal count readout still pending.
+The next bounded action is ONE prior-split HMC feasibility pilot after those
+readouts:16 discarded warmup+16 fixed-step proposals, same target/priors,
+no heldout, no covariance or ESS claim. Mechanics/adapter7 tests passed408273.
+Plan/advisory corrections: `CF4_R2_SPLIT_SAMPLING_20260929.md`. R2 remains open;
+MW/M31 ambiguous,M33 unresolved. Historical entries below are not live status.
+
 Active R2 bundle2026-09-29: expand the conditional distance working model from
 429 to1414 links, retaining exactlyONE FP andONE secure point per source group,
 zero anchors and graph-closed training.985 are physically grouped but are NOT

@@ -18,7 +18,7 @@ def main():
     if not os.environ.get('SLURM_JOB_ID'):
         raise RuntimeError('submit report generation through Slurm')
     fit=BASE/'r2_v6_single_mark_map_v1'
-    counts=BASE/'r2_shell_cdf_field_check_v13'
+    counts=BASE/'r2_shell_cdf_field_check_v14'
     distance=BASE/'r2_v6_single_mark_fp_readout_v1'
     prelude=BASE/'r2_fp_single_mark_response_v1'
     out=Path(os.environ['CF4_R2_OUT_DIR'])
@@ -26,6 +26,7 @@ def main():
     fitted,check,fp,comparison=reports
     if (not (fit/'final_state.npz').is_file()
             or check['status']!='SAVED_FIELD_COMPARISON_COMPLETE_NOT_POSTERIOR'
+            or 'CDF4x32_vs_CDF8x32' not in check
             or fp['status']!='TRAINING_FP_DISTANCE_READOUT_COMPLETE_NOT_POSTERIOR'
             or comparison['status']!='FP_ZERO_RESPONSE_COMPLETE_NOT_POSTERIOR'):
         raise ValueError('required saved result is incomplete; do not fabricate a report')

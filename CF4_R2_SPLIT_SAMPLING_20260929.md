@@ -1,5 +1,25 @@
 # R2 uncertainty-side feasibility, not posterior delivery
 
+## Execution update
+
+408222 ended normally after32 accepted updates/42m57s, iteration limit rather
+than convergence. Its final objective is144835.83910873727, FP log factor
+-31.073932470664015; the saved-field readout408225 independently reproduces
+that factor. FP shared zero+.0247701845dex=6.1925 priorSD, training correlation
+-.003795 and residual mean+.0191765dex remain limitations, not calibrated
+distance recovery.408224 count readout must finish before the proposed pilot.
+408273 passed all7 mechanics/adapter tests, including checkpoint units and
+rejection-preserving finite-target mechanics. The real-target adapter is now
+implemented; no CF4 sampling has yet run. Future pilot reporting must not
+mistake the last rejected force evaluation for the last accepted state.
+
+The Korean six-page example-figure PDF is queued as408276 after readouts.
+408226 was canceled while pending to correct SGZ velocity labeling (not LOS)
+and add page rendering for visual verification. No science calculation was
+canceled, and no result was removed.
+
+## Original prospective plan and advisory disposition
+
 R1 -> **R2 in progress** -> R3 same-state MW/M31/M33 -> R4 -> R5.
 The1414-row working-target fit408222 is still running when this plan is
 recorded. Its finite endpoint and readouts must be inspected before launch.
