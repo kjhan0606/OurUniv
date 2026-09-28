@@ -22,8 +22,11 @@ or posterior UQ. All three new Korean PDFs were actually rendered and viewed.
 The field target is still unchanged. Next: joint raw-population/LCDM-field
 inference with explicit weak priors, rather than freezing fitted calibration
 or insisting that only an external zero can make conditional inference possible.
-Focused Fable advice is requested before this substantive target revision,
-including whether source-cell quadrature is the more urgent numerical action.
+Focused Fable advice returned ADVISE PROCEED with source-cell quadrature first.
+Driver adopted that priority but corrected its normalization/gauge claims;
+see the recorded disposition.408347 now compares centre/2^3/4^3 source-volume
+integration on24 prespecified training rows of the SAME408337 field, with
+six scalar count-key comparisons. No gravity evolution or calibration refit.
 See `CF4_R2_RAW_SELECTED_MODEL_20260929.md`. R2 remains open; N256/long HMC
 not launched, heldout untouched, MW/M31 ambiguous, M33 unresolved.
 

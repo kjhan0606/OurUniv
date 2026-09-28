@@ -45,6 +45,15 @@ def main():
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
     try:
+        followup=os.environ.get('CF4_R2_CELL_FOLLOWUP')=='1'
+        if followup:
+            previous_path=BASE/'r2_source_cell_quadrature_v1/result.json'
+            previous=json.loads(previous_path.read_text())
+            if len(previous['rows'])!=72:
+                raise ValueError('complete three-rule comparison required')
+            report.update(rows=previous['rows'],precision_control_rows=[],
+                predecessor=str(previous_path),predecessor_status=previous['status'],
+                precision_control='original float32 source geometry; same strict1e-7 reproduction check')
         with np.load(BASE/'r2_prior_split_long_v1/final_state.npz',allow_pickle=False) as f:
             state={k:f[k].copy() for k in ('rho','velocity_km_s','tracer')}
         with np.load(SOURCE,allow_pickle=False) as f:
@@ -93,6 +102,13 @@ def main():
         radius=.01*(vmax*(1+2*eps)+8*sigma)+np.sqrt(3)*2*BOX/N
         tree=cKDTree(source['positions']%BOX,boxsize=BOX)
         neighbors=tree.query_ball_point((voxels+.5)*BOX/N,radius,workers=1)
+        # Per-cell velocity bounds tighten the conservative global query,
+        # without choosing cells from their realised likelihood weights.
+        for k,(voxel,ids) in enumerate(zip(voxels,neighbors)):
+            ids=np.array(ids,dtype=int)
+            delta=(source['positions'][ids]-(voxel+.5)*BOX/N+BOX/2)%BOX-BOX/2
+            bound=.01*(np.linalg.norm(velocity[ids],axis=1)*(1+2*eps)+8*sigma)+np.sqrt(3)*2*BOX/N
+            neighbors[k]=ids[np.linalg.norm(delta,axis=1)<=bound].tolist()
         width=((max(map(len,neighbors))+255)//256)*256
         if width>16384: raise ValueError('source support exceeds bounded comparison budget')
         report.update(PGC= mix['PGC'][rows].tolist(),cohort_rows=rows.tolist(),sigma_km_s=sigma,
@@ -114,17 +130,30 @@ def main():
                 order=4,segments=32,target_population=pop,target_voxel=voxel)
             return jax.jvp(f,(jnp.array(1.),),(jnp.array(1.),))
         count=jax.jit(count,static_argnums=5)
-        for q in (1,2,4):
+        diagnostic_rows=set(count_rows)
+        if followup:
+            old={(r['row'],r['nodes_per_axis']):r for r in previous['rows']}
+            worst=max(rows,key=lambda r:abs(old[int(r),4]['velocity_derivative']-
+                                           old[int(r),2]['velocity_derivative']))
+            diagnostic_rows.add(int(worst))
+            report['order8_rows']=sorted(diagnostic_rows)
+            report['order8_selection']='six prespecified count rows plus largest2->4 raw derivative change; diagnostic only'
+        radius_function=jax.jit(lambda pos:jnp.linalg.norm(
+            (pos-geometry['observer']+BOX/2)%BOX-BOX/2,axis=1))
+        for q in ((1,8) if followup else (1,2,4)):
             nodes,weights=np.polynomial.legendre.leggauss(q)
             ijk=np.array(list(product(range(q),repeat=3)))
             offsets=nodes[ijk]*(BOX/N)/2
             volume=np.prod(weights[ijk]/2,axis=1)
             np.testing.assert_allclose(volume.sum(),1.,atol=2e-15)
             for row,voxel,ids in zip(rows,voxels,neighbors):
+                if followup and q==8 and int(row) not in diagnostic_rows: continue
                 if time.monotonic()-started>1000: raise TimeoutError('bounded source-volume comparison')
                 ids=np.asarray(sorted(ids),dtype=int); used=len(ids)
                 padded=np.pad(ids,(0,width-used),constant_values=ids[0])
                 pos=(source['positions'][padded,None,:]+offsets[None,:,:])%BOX
+                if followup and q==1:
+                    pos=source['positions'][padded,None,:].copy()
                 vel=np.broadcast_to(velocity[padded,None,:],pos.shape).reshape(-1,3)
                 mass=(masses[:,padded,None]*volume[None,None,:])
                 mass[:,used:,:]=0.;mass=mass.reshape(5,-1)
@@ -135,8 +164,7 @@ def main():
                 # Keep every component with positive weight at ANY derivative point.
                 bi,si=np.nonzero(np.maximum.reduce([w,wp,wm])>0)
                 vectors=np.stack([a[bi,si] for a in (w,dw,wp,wm)])
-                relative=(pos[si]-192.+BOX/2)%BOX-BOX/2
-                rt=np.linalg.norm(relative,axis=1)
+                rt=np.asarray(radius_function(jnp.asarray(pos)))[si].astype(float)
                 eta=np.log10(mix['dz_row'][row]/rt)
                 mt=np.interp(rt,source['radial_table'],source['modulus_table'])
                 zt=np.interp(rt,source['radial_table'],source['redshift_table'])
@@ -178,13 +206,19 @@ def main():
                     finite_difference=finite_difference,
                     derivative_error=abs(derivative-finite_difference)/max(1.,abs(derivative),abs(finite_difference)),
                     reference_center_difference=score0-float(reference[row]) if q==1 else None)
-                if row in count_rows:
+                if row in count_rows and not (followup and q==1):
                     value,grad=map(float,count(*args,pop))
                     entry.update(count_mean=value,count_velocity_derivative=grad)
                 if not np.isfinite([score0,derivative,finite_difference]).all():
                     raise FloatingPointError('nonfinite source-cell comparison')
-                report['rows'].append(entry);save();print(json.dumps(entry),flush=True)
-        baseline=[r for r in report['rows'] if r['nodes_per_axis']==1]
+                target='precision_control_rows' if followup and q==1 else 'rows'
+                report[target].append(entry);save();print(json.dumps(entry),flush=True)
+            if followup and q==1:
+                error=max(abs(r['reference_center_difference']) for r in report['precision_control_rows'])
+                report['native_precision_reproduction_error']=error;save()
+                if error>1e-7: raise AssertionError('native-precision centre reproduction failed')
+        baseline=(report['precision_control_rows'] if followup else
+                  [r for r in report['rows'] if r['nodes_per_axis']==1])
         report['maximum_center_reproduction_error']=max(abs(r['reference_center_difference']) for r in baseline)
         report['maximum_derivative_error']=max(r['derivative_error'] for r in report['rows'])
         # Only implementation-reproduction checks; no arbitrary science pass gate.
@@ -228,7 +262,9 @@ def make_pdf(out,report):
             if 'count_mean' in rr[0]:
                 axes[1,0].plot(q,[r['count_mean']/rr[0]['count_mean'] for r in rr],'.-',label=label)
                 axes[1,1].plot(q,[r['count_velocity_derivative'] for r in rr],'.-')
-        for a in axes.flat: a.set_xticks([1,2,4]);a.set_xlabel('한 축 내부 적분점 수')
+        for a in axes.flat:
+            a.set_xticks(sorted({r['nodes_per_axis'] for r in report['rows']}))
+            a.set_xlabel('한 축 내부 적분점 수')
         axes[0,0].set_title('24개 실제 관측: 원자료 로그밀도 변화')
         axes[0,1].set_title('원자료 점수의 속도 변화에 대한 기울기')
         axes[1,0].set_title('6개 실제 관측 위치: 예상 개수 / 중심점 값')

@@ -247,3 +247,24 @@ quantified model/numerical/prior limitations. No claim that a universal
 absolute-calibration solution is prerequisite for any conditional delivery;
 also no3cMpc/h mechanics pilot labelled R2 completion. Large-chain/resolution
 scope remains a separate evidence-based decision, not automatic advice authority.
+
+408347/source5c29748 terminated FAILED9m57s AFTER all72 comparisons, because
+the centre reproduction error1.615e-7 exceeded1e-7. All13 unit tests passed;
+directional derivative discrepancy maximum2.86e-6 passed its2e-5 check. Results
+are preserved, not relabelled PASS. Host2.74GiB. Source centres were promoted
+from archive float32 to float64 by the subnode constructor; the old eta/true
+radius used original geometry precision. This is a hypothesis for the small
+endpoint difference, not a proven explanation until the next exact control.
+
+Substantive measured effect: first-six count means change~5–12% centre->4^3,
+whereas2^3->4^3 changes<.5% for these rows. Raw velocity directional scores can
+change much more than the log densities themselves;4^3 convergence is not
+yet demonstrated. Next bounded followup: reproduce ALL24 original centres in
+their native geometry precision (same1e-7 tolerance), then8^3 on the six
+prespecified count examples plus the largest2->4 raw-gradient discrepancy.
+That last example is explicitly outcome-selected for a numerical stress test,
+not heldout evaluation or a representative population estimate. Reuse old
+1/2/4 results; no full rerun, new field or fit. Tighten conservative support
+with EACH source cell's own fixed velocity bound, never its likelihood weight.
+One H1002CPU8GiB20min job. Keep failed predecessor and precision-control result
+separate; no post hoc loosening of the implementation-reproduction tolerance.
