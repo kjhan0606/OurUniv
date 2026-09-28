@@ -165,3 +165,24 @@ that field or establish absolute FP calibration. It prepares a replacement
 raw observation component and exposes fit cost/degeneracy. No same-field
 posterior, heldout score, source-wide selection solution or R2 completion is
 implied. No automatic large HMC or resolution upgrade follows the fit.
+
+408345/source0937c6f COMPLETED59s. The fixed-field15-parameter fit stopped
+after29 iterations by relative objective reduction, with scaled gradient
+norm6.14e-5. Total log-density improvement over the data-derived least-squares
+initializer is only~0.0223nat: no dramatic scientific improvement is claimed.
+Initial/final CPU-row comparisons are4.44e-15/1.60e-14; directional derivative
+relative discrepancy2.32e-12. Cut order64->96 changes the total score by
+0.000203nat (max row2.11e-6). Host peak2.39GiB, device temporary5.65GiB.
+Driver viewed the rendered Korean PDF. These are feasible raw-likelihood
+calculations and a conditional fit, not independent validation or calibration.
+
+Immediately check the fitted model against the ACTUAL training observables:
+draw selected optical/K marks from its generative law at the same saved source
+mixtures, and compare observed ranks and distributions. Use the same Schechter
+intervals, correlated optical errors, richness and cuts; never perturb the
+actual field or draw a new cosmological simulation.1000 accepted mark draws
+per row, fixed seed, max2e7 proposals, one5min/1CPU/1GiB Slurm allocation.
+This is a training model-misspecification check, NOT heldout validation,
+posterior predictive UQ, a p-value or proof of physical selection transfer.
+It can expose a bad raw population/incidence law before expensive field
+inference. No outcome-dependent row deletion or threshold adaptation.
