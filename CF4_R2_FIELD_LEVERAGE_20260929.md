@@ -96,3 +96,53 @@ model adequacy. The goal/order, unchanged likelihood weights/priors, training
 split, no new TNG, and same-NEW-field MW/M31/M33 requirement remain in force.
 Q-GOAL: actual CF4-conditioned current-state posterior. Q-LEAN: no diagnostic
 ladder or arbitrary correlation threshold; use saved state where possible.
+
+## Fable advice and independent driver disposition
+
+Read-only Fable5 returned CONDITIONAL PROCEED after inspecting this record,
+the linked-singleton kernel and saved-field readout. It recommended one
+prior-consistent FP zero-response comparison, followed by985 grouped links
+and a bounded joint rerun, before sampling; proposed combined cap4GPU-hours.
+No files were edited or jobs launched by the advisor.
+
+Adopt: no automatic identical MAP loop; compare current/pre-joint/homogeneous
+benchmark using ONE shared zero with the SAME prior; broader group-aware data
+is a substantive next implementation, not an optional cosmetic readout.
+
+Amend/reject the following unsupported inferences:
+
+- FP score movement is NOT its information fraction, and it does not prove
+  that FP was ignored. The numerical "99.99%" posterior interpretation is invalid.
+- Pearson significance1/sqrt(N), an asserted attainable-correlation cap, and
+  ~11 effective constraints need assumptions not established for these
+  correlated, selected, fitted observations; retain them only as unverified
+  heuristics, not quantitative conclusions or thresholds.
+- `load_train_singletons` already selects ONE FP row and ONE point per source
+  group. The985 excluded Tempel-grouped links are NOT985 multi-FP systems whose
+  measurement precision automatically improves by averaging. Their shared
+  redshift/member law needs actual source evidence.
+- Matching the source PDF formula does not calibrate tracer selection/bias,
+  shared FP errors or association. Existing calibration limits do not vanish.
+- No independent-row bootstrap: shared fit/systematics and sky correlations
+  make it an unjustified significance scale. A plug-in score difference cannot
+  establish that anti-correlation is merely noise or certify model adequacy.
+- Do not assume a group-aware live likelihood is a trivial addition, nor
+  submit a fit of it before its shared-data ownership is implemented correctly.
+
+Driver's immediate bounded action: reuse saved current and pre-joint states,
+plus a homogeneous zero-flow BENCHMARK (not another PM state). Keep each saved
+tracer fixed; the benchmark uses final tracer. Extract exact count-conditioned
+candidate eta weights once, refit only shared zero against the unchanged
+N(0,.004dex^2) prior, and plot the conditional score curves. No PM, count fit,
+heldout, field gradient or bootstrap is needed to answer this narrower question.
+One H100 job,2CPU8GiB/30min; the previous readout's~2.2GiB RSS plus candidate
+cache leaves margin. Unit regression verifies cached-mixture reconstruction
+and that FP/zero does not contaminate its conditioning weights. Stop the
+diagnostic after this comparison; it is not the substantive R2 endpoint.
+
+Then connect grouped-source semantics to the existing group kernels, rather
+than adding independent marks or importing old fitted nuisance priors. If
+essential covariance/membership information is unavailable, state precisely
+what sensitivity approximation is possible and what remains uncalibrated;
+do not label an unspecified shared covariance physical calibration. MW/M31
+ambiguity and unresolved M33 remain explicit same-NEW-field R3 obligations.

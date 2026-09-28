@@ -11,7 +11,8 @@ from scipy.spatial import cKDTree
 
 from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
 from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
-from cf4_r2_linked_singleton_jax import linked_singleton_logfactors_for_population
+from cf4_r2_linked_singleton_jax import (
+    linked_singleton_logfactors_for_population, cached_eta_mixture_logfactors)
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_marked_tracer_jax import intrinsic_biased_source_masses, intrinsic_lf_bin_fractions
@@ -38,17 +39,30 @@ def main():
     compact_check = os.environ.get('CF4_R2_FP_COMPACT_CHECK') == '1'
     flat_check = os.environ.get('CF4_R2_FP_FLAT_CHECK') == '1'
     science_state = os.environ.get('CF4_R2_FP_SCIENCE_STATE')
+    response = os.environ.get('CF4_R2_FP_RESPONSE') == '1'
+    if response and not science_state:
+        raise ValueError('FP response requires the explicit current saved state')
     if science_state and (combined_check or compact_check or flat_check):
         raise ValueError('science readout must not launch compiler diagnostics')
     paths = ([Path(science_state)] if science_state else
              [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
               BASE/'r2_v6_joint_secant_map_v2/initial_state.npz'])
+    if response:
+        paths.append(BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz')
     states = []
     for path in paths:
         with np.load(path, allow_pickle=False) as f:
             states.append({k:f[k].copy() for k in
                 ('white_ic','rho','velocity_km_s','tracer','white_fp_zero')})
-    if len(states)==2:
+    if response:
+        states.append(dict(states[0],rho=np.ones_like(states[0]['rho']),
+                           velocity_km_s=np.zeros_like(states[0]['velocity_km_s'])))
+        paths.append(Path('HOMOGENEOUS_ZERO_FLOW_BENCHMARK_NOT_PM_STATE'))
+        report['response_limits'] = ('Fixed-field/tracer TRAINING comparisons; only shared zero refit '
+            'with the same N(0,.004dex^2) prior. Reference uses its saved tracer; homogeneous '
+            'benchmark uses final tracer. Not field-only evidence, Bayes factors, posterior '
+            'validation or calibrated significance. No row bootstrap of correlated sky data.')
+    elif len(states)==2:
         report['state_max_abs_differences'] = {
             k:float(np.max(np.abs(states[0][k]-states[1][k]))) for k in states[0]}
     options, point, fp = load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz')
@@ -97,13 +111,16 @@ def main():
         batches = [linked_singleton_logfactors_for_population(
             source['positions'],jnp.moveaxis(v,0,-1).reshape(-1,3),intrinsic,source['angular'],
             **links[p],population=p,sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
-            radial_geometry=geometry,fp_zero_dex=.004*zero,return_eta_moments=bool(science_state))
+            radial_geometry=geometry,fp_zero_dex=.004*zero,return_eta_moments=bool(science_state),
+            return_eta_mixture=response)
             for p in range(6) if len(selected[p])]
         if science_state:
-            return tuple(jnp.concatenate([batch[k] for batch in batches]) for k in (0,2,3))
+            indices = (0,2,3,4,5) if response else (0,2,3)
+            return tuple(jnp.concatenate([batch[k] for batch in batches]) for k in indices)
         return jnp.concatenate([batch[0] for batch in batches])
     rows_compiled = jax.jit(per_row)
     report['states'] = []
+    response_curves = []
     for index, state in enumerate(states):
         args = [jnp.asarray(state[k]) for k in ('rho','velocity_km_s','tracer','white_fp_zero')]
         radius = 8*.01*100*np.exp(.5*state['tracer'][6])+np.sqrt(3)*1.5*BOX/N
@@ -126,7 +143,52 @@ def main():
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         save(); print(json.dumps(report['states'][-1]),flush=True)
-        if science_state:
+        if response:
+            from scipy.optimize import minimize_scalar
+            mean,std,alpha = [jnp.concatenate([metadata[p][key] for p in range(6)])
+                             for key in ('eta_mean','eta_std','eta_alpha')]
+            eta,logw = evaluated[3:5]
+            def row_score(z):
+                return cached_eta_mixture_logfactors(eta,logw,mean,std,alpha,.004*z)
+            scores = jax.jit(row_score)
+            reproduced = np.asarray(scores(args[3]))
+            np.testing.assert_allclose(reproduced,rows,rtol=0.,atol=1e-10)
+            np.testing.assert_allclose(np.asarray(jax.scipy.special.logsumexp(logw,axis=1)),
+                                       0.,rtol=0.,atol=1e-10)
+            if index < 2:
+                parent=json.loads((paths[index].parent/'result.json').read_text())
+                if not np.isclose(value,parent['trace'][-1]['parts'][1],rtol=0.,atol=1e-7):
+                    raise AssertionError('saved FP endpoint not reproduced')
+            def objective(z):
+                return -jnp.sum(row_score(z))+.5*z*z
+            fast = jax.jit(objective)
+            # The grid brackets a local conditional mode, not a truncation of
+            # the Gaussian prior or a global-optimality certification.
+            zgrid = np.linspace(-12.,12.,97)
+            curve=np.asarray(jax.jit(jax.lax.map,static_argnums=0)(objective,jnp.asarray(zgrid)))
+            best=int(np.argmin(curve))
+            if not 0 < best < len(zgrid)-1 or not np.isfinite(curve).all():
+                raise ValueError('zero comparison did not bracket a finite interior mode')
+            fit=minimize_scalar(lambda z:float(fast(z)),method='brent',
+                bracket=tuple(zgrid[best-1:best+2]),options={'xtol':1e-8,'maxiter':100})
+            if not fit.success:
+                raise RuntimeError('shared zero response did not converge')
+            fitted=np.asarray(scores(fit.x))
+            summary=dict(label=('current','pre_joint','homogeneous')[index],
+                white_zero_mode=float(fit.x),zero_dex=.004*float(fit.x),
+                raw_FP_at_zero=float(scores(0.).sum()),
+                raw_FP_at_fitted_zero=float(fitted.sum()),
+                zero_log_prior=-.5*float(fit.x)**2,penalized_FP=float(-fit.fun),
+                zero_mode_gradient=float(jax.jit(jax.grad(objective))(fit.x)),
+                same_fitted_tracer_as_current=index!=1)
+            report['states'][-1]['zero_response']=summary
+            response_curves.append(curve)
+            np.savez(out/f'zero_response_{index}.npz',white_zero=zgrid,
+                     penalized_negative_FP=curve,rows_at_mode=fitted,
+                     rows_at_zero=np.asarray(scores(0.)),
+                     labels=np.array([o[0] for p in range(6) for o in selected[p]]))
+            save(); print(json.dumps(summary),flush=True)
+        if science_state and not response:
             mean,var = map(np.asarray,evaluated[1:])
             observed = np.concatenate([np.asarray(metadata[p]['eta_mean']) for p in range(6)])
             std = np.concatenate([np.asarray(metadata[p]['eta_std']) for p in range(6)])
@@ -265,7 +327,26 @@ def main():
             report['combined_vg'] = dict(parts=np.asarray(parts).tolist(),value=float(value),
                 tracer_gradient=np.asarray(grad[2]).tolist(),zero_gradient=float(grad[3]))
             save(); print(json.dumps(report['combined_vg']),flush=True)
-    report['status'] = ('TRAINING_FP_DISTANCE_READOUT_COMPLETE_NOT_POSTERIOR' if science_state
+    if response:
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        fig,axes=plt.subplots(1,2,figsize=(11,4),constrained_layout=True)
+        labels=['current','pre_joint','homogeneous']
+        for label,curve in zip(labels,response_curves):
+            axes[0].plot(.004*zgrid,-curve,label=label)
+        axes[0].set(xlabel='ONE shared FP zero (dex)',ylabel='FP log factor + zero log prior',
+                    title='Same Gaussian zero prior; conditional training scores')
+        axes[0].legend()
+        mode_scores=[entry['zero_response']['penalized_FP'] for entry in report['states']]
+        axes[1].bar(labels,mode_scores)
+        axes[1].set(ylabel='FP log factor + zero log prior at fitted zero',
+                    title='Plug-in comparison, NOT Bayes evidence')
+        fig.savefig(out/'zero_response.png',dpi=150); plt.close(fig)
+        report['current_minus_pre_joint_penalized_FP']=mode_scores[0]-mode_scores[1]
+        report['current_minus_homogeneous_penalized_FP']=mode_scores[0]-mode_scores[2]
+    report['status'] = ('FP_ZERO_RESPONSE_COMPLETE_NOT_POSTERIOR' if response else
+                       'TRAINING_FP_DISTANCE_READOUT_COMPLETE_NOT_POSTERIOR' if science_state
                         else 'SAVED_STATE_FP_CHECK_COMPLETE_NOT_POSTERIOR')
     save()
 

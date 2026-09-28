@@ -33,6 +33,7 @@ def linked_singleton_logfactors_for_population(
     radial_geometry,
     fp_zero_dex=0.,
     return_eta_moments=False,
+    return_eta_mixture=False,
 ):
     """Evaluate batched linked singleton marks for one observed population.
 
@@ -51,6 +52,10 @@ def linked_singleton_logfactors_for_population(
     The static readout option ``return_eta_moments`` additionally returns
     count/association-conditioned eta mean and variance BEFORE the FP mark
     or zero point is applied. These are NOT posterior field uncertainty.
+    ``return_eta_mixture`` requires moments and appends candidate eta and
+    normalized count/association log weights, collapsing only true-K bins.
+    It permits exact fixed-field zero-point comparisons without rerunning
+    the source-selection kernel; it does not change the live target.
     """
     positions = jnp.asarray(source_positions)
     velocities = jnp.asarray(source_velocities_km_s)
@@ -66,6 +71,8 @@ def linked_singleton_logfactors_for_population(
     std = jnp.asarray(eta_std)
     alpha = jnp.asarray(eta_alpha)
     groups = ids.shape[0] if ids.ndim == 2 else -1
+    if return_eta_mixture and not return_eta_moments:
+        raise ValueError('eta mixture readout requires eta moments')
     if (population not in range(6) or positions.ndim != 2
             or positions.shape[1] != 3 or velocities.shape != positions.shape
             or intrinsic.shape != (5, positions.shape[0])
@@ -102,8 +109,24 @@ def linked_singleton_logfactors_for_population(
             probability = jnp.exp(base-logsumexp(base))
             eta_bar = jnp.sum(probability*eta[None, :])
             eta_variance = jnp.sum(probability*(eta[None, :]-eta_bar)**2)
+            if return_eta_mixture:
+                log_weight = logsumexp(base, axis=0)-logsumexp(base)
+                return factor, jnp.sum(density, axis=1), eta_bar, eta_variance, eta, log_weight
             return factor, jnp.sum(density, axis=1), eta_bar, eta_variance
         return factor, jnp.sum(density, axis=1)
 
     return jax.vmap(one_group)(
         ids, active, association, voxels, radius, dz, mean, std, alpha)
+
+
+def cached_eta_mixture_logfactors(eta, log_weight, mean, std, alpha, zero_dex):
+    """Exact fixed-field FP factors; ONE caller-owned shared zero coordinate.
+
+    Inputs eta/log_weight are (rows,candidates), already conditioned on count
+    key/redshift/association but NOT this FP measurement. A row-specific zero
+    or re-estimated association is not implied. No Gaussian approximation to
+    the source PDF or to the candidate mixture is made.
+    """
+    marks = fp_log_likelihood_ratio(eta+zero_dex, 0., mean[:, None],
+                                    std[:, None], alpha[:, None])
+    return logsumexp(log_weight+marks, axis=-1)

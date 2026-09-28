@@ -4,7 +4,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from cf4_r2_linked_singleton_jax import linked_singleton_logfactors_for_population
+from cf4_r2_linked_singleton_jax import (
+    linked_singleton_logfactors_for_population, cached_eta_mixture_logfactors)
 
 
 class LinkedSingletonBatchTests(unittest.TestCase):
@@ -62,15 +63,21 @@ class LinkedSingletonBatchTests(unittest.TestCase):
                 positions,velocities,intrinsic,angular,ids,active,association,
                 voxels,radius,dz,eta_mean,eta_std,eta_alpha,population=0,
                 sigma_los_km_s=100.,radial_geometry=radial,fp_zero_dex=zero,
-                return_eta_moments=True)
+                return_eta_moments=True,return_eta_mixture=True)
         moments=jax.jit(readout)(0.)
         shifted=jax.jit(readout)(.04)
         np.testing.assert_allclose(np.asarray(moments[0]),np.asarray(factors),atol=1e-12)
-        self.assertTrue(np.isfinite(np.asarray(moments[2:])).all())
+        self.assertTrue(np.isfinite(np.asarray(moments[2:4])).all())
         self.assertTrue((np.asarray(moments[3])>=0.).all())
         # Count-conditioned distances must not be reweighted by the observed
         # FP mark/zero point: otherwise this would condition twice on that mark.
-        np.testing.assert_array_equal(np.asarray(moments[2:]),np.asarray(shifted[2:]))
+        for left,right in zip(moments[2:],shifted[2:]):
+            np.testing.assert_array_equal(np.asarray(left),np.asarray(right))
+        np.testing.assert_allclose(np.exp(np.asarray(moments[5])).sum(axis=1),1.,atol=1e-12)
+        for zero, expected in ((0.,moments[0]),(.04,shifted[0])):
+            cached=cached_eta_mixture_logfactors(moments[4],moments[5],eta_mean,
+                                                eta_std,eta_alpha,zero)
+            np.testing.assert_allclose(np.asarray(cached),np.asarray(expected),atol=1e-12)
         self.assertGreater(float(jnp.max(jnp.abs(moments[0]-shifted[0]))),1e-8)
         lower=np.log10(np.asarray(dz)/8.)
         upper=np.log10(np.asarray(dz)/5.)
