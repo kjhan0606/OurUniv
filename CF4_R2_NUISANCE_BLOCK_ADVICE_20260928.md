@@ -259,3 +259,23 @@ nonempty target regression now checks derivative primal components as well;
 actual-size startup checking is needed because the small fixtures alone did
 not reproduce this path-dependent error. No arbitrary likelihood tolerance is
 enlarged. Resume only the already-assessed32-update/60min joint follow-up.
+
+Submitted408188 on pushed source3f04209: H1002CPU20GiB/75min,application60min,
+max32 joint steps,secant metric/accepted coordinates from408154,initial step
+norm16. Output`r2_v6_joint_secant_map_v3`. Nine optimizer tests, one particle
+moment test and the strengthened nonempty target regression run first in
+Slurm.408190 is the existing afterany field readout;408191 is afterok saved
+field integration/radial check,H1002CPU6GiB/15min,output
+`r2_shell_cdf_field_check_v12`. No extra inference chain, new simulation suite,
+heldout data or arbitrary power adjustment. Verify startup before claiming
+joint optimization actually resumed.
+
+408188 startup: all11 prerequisite tests passed (9 optimizer,1 particle,1
+nonempty target; target regression174.0s). Actual full objective exactly
+reproduces149990.00403363275. Direct/derivative primal difference is0 for the
+total/count/prior and-7.11e-15 for FP. Whole-direction finite difference versus
+adjoint differs by2.95e-7 under the declared max(1,...) normalization. Initial
+full derivative including compilation took504.2s. The score-only first trial
+increased the objective to217310.68 and is rejected by Armijo; this is not an
+accepted update or a failure. Backtracking remains enabled. No extra tolerance,
+prior or physical field modification was needed for the restart repair.
