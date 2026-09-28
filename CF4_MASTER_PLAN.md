@@ -24,6 +24,21 @@ established by submission. Details and next in-R2 decisions:
 `CF4_R2_V6_PARTIAL_MAP_20260928.md`. MW/M31 roles remain ambiguous, M33
 unresolved; actual LG observables must later constrain the SAME new field.
 
+Follow-up:407790 passed all17 corrections/regressions (9m25s,3.21GiB).
+407793 stopped after19m56s on a nonfinite optimizer trial, not OOM; six
+accepted states exist but no final/converged map. The combined error did not
+identify value versus derivative failure, so its physical/numerical cause
+is not yet established. Count and FP scores at the last accepted point
+worsened despite a lower total negative log target; do not call prior-driven
+descent an improved reconstruction. Readout407795 reported this failure.
+Source94a18ef adds bounded trial steps (not parameter-domain restrictions),
+rejects genuine zero-support trials without a floor, and preserves exact
+state/component evidence for undefined targets or derivative failures.
+Same-target407805 restarts the accepted coordinates with fresh L-BFGS history,
+typedH100/2CPU/12GiB/55min; ordinary45min-budget termination now saves an
+explicitly unconverged field. Heldout data remain unused. See the same R2
+v6 partial-MAP record for limits; this is not N256/R2 completion.
+
 R2 LF-shape holdout2026-09-27: typed-H100406570 completed the first actual
 2M++ conditional-K check on49,489 eligible source-window rows, fitting seven
 predeclared sky octants and holding out8,368 rows in octant3. The imported
