@@ -50,8 +50,13 @@ def partial_v6_count_singleton_parts(
     the same evolved IC. ``links_by_population`` contains only strict training
     one-point/one-FP-row links with a caller-provided live-state candidate
     support. That support must be refreshed or bounded for optimizer trials.
-    The 985 Tempel-grouped rows are deliberately not accepted here: their
-    shared group-distance and FP covariance require a separate group factor.
+    Default caller cohort is429 strict ungrouped links. A declared extension
+    may include physically grouped rows only when exactly ONE FP mark and
+    one secure point per source group are retained, with no same-group anchor.
+    Its group redshift is the fixed FP distance reference, not an extra
+    velocity observation. Multiple scored members need a different shared
+    factor. The broader single-mark option does NOT supply calibrated group
+    LOS/selection/shared source-FP covariance.
 
     Return order is training-count, linked-singleton-mark, Gaussian-white
     prior, and untouched-heldout-count readout, followed by predicted count

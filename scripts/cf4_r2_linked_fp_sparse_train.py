@@ -40,6 +40,25 @@ TAIL_SIGMA = 8.
 MAX_PAD_WIDTH = 8192
 
 
+def select_training_single_mark_links(options, membership, *, include_grouped=False):
+    """Retain one scored FP and one secure point per source group.
+
+    ``options`` must come from load_train_singletons's frozen structural/role
+    checks (one source FP, one linked point, no anchor). Grouped physical
+    membership does not turn a single distance mark into multiple measurements.
+    Enabling it is a CONDITIONAL WORKING model, not a calibrated group law.
+    The source group redshift is only the FP distance-indicator reference;
+    the linked point's individual redshift supplies the conditioning kernel.
+    """
+    allowed={'source_ungrouped_catalogue_present','source_ungrouped_catalogue_absent'}
+    if include_grouped:
+        allowed.add('source_grouped_catalogue_present')
+    chosen=[o for o in options if membership[o[3]] in allowed]
+    if any(len({o[k] for o in chosen})!=len(chosen) for k in (0,1,2,3)):
+        raise ValueError('single-mark cohort repeats a source group, point or FP row')
+    return chosen
+
+
 def load_train_singletons(split_path=SPLIT):
     with np.load(split_path, allow_pickle=False) as f:
         recno = f['point_recno'].copy()

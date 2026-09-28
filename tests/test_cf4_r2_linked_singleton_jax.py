@@ -9,6 +9,25 @@ from cf4_r2_linked_singleton_jax import (
 
 
 class LinkedSingletonBatchTests(unittest.TestCase):
+    def test_single_mark_group_selection_and_distance_reference(self):
+        from cf4_r2_linked_fp_sparse_train import select_training_single_mark_links
+        from cf4_r2_fp_distance import fp_log_likelihood_ratio
+        labels=np.array(['source_ungrouped_catalogue_present',
+                         'source_grouped_catalogue_present','source_ungrouped_catalogue_absent'])
+        options=[('a',0,10,0,0),('b',1,11,1,1),('c',2,12,2,2)]
+        self.assertEqual(select_training_single_mark_links(options,labels),[options[0],options[2]])
+        self.assertEqual(select_training_single_mark_links(options,labels,include_grouped=True),options)
+        with self.assertRaises(ValueError):
+            select_training_single_mark_links(options+[options[1]],labels,include_grouped=True)
+        # Re-referencing BOTH eta and its reported PDF mean changes the fixed
+        # reference-zero likelihood by a data-only constant. Between-field
+        # score differences, NOT individual reference-zero scores, are invariant.
+        eta_a,eta_b,mean,std,alpha=.035,-.025,.01,.09,.3
+        old=fp_log_likelihood_ratio(eta_a,eta_b,mean,std,alpha)
+        shift=.04
+        new=fp_log_likelihood_ratio(eta_a+shift,eta_b+shift,mean+shift,std,alpha)
+        np.testing.assert_allclose(float(old),float(new),rtol=0.,atol=1e-12)
+
     def test_saved_endpoint_supports_both_optimizer_records(self):
         from cf4_r2_fp_restart_check import saved_fp_endpoint
         self.assertEqual(saved_fp_endpoint({'trace':[{'parts':[1.,-2.,3.]}]}),-2.)

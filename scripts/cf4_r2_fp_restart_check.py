@@ -9,7 +9,8 @@ import jax.numpy as jnp
 import numpy as np
 from scipy.spatial import cKDTree
 
-from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
+from cf4_r2_linked_fp_sparse_train import (
+    load_train_singletons, select_training_single_mark_links, FP, SOURCE)
 from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
 from cf4_r2_linked_singleton_jax import (
     linked_singleton_logfactors_for_population, cached_eta_mixture_logfactors)
@@ -49,6 +50,9 @@ def main():
     flat_check = os.environ.get('CF4_R2_FP_FLAT_CHECK') == '1'
     science_state = os.environ.get('CF4_R2_FP_SCIENCE_STATE')
     response = os.environ.get('CF4_R2_FP_RESPONSE') == '1'
+    include_grouped = os.environ.get('CF4_R2_INCLUDE_GROUPED_SINGLE_MARK') == '1'
+    if include_grouped and not science_state:
+        raise ValueError('broader single-mark cohort requires explicit science state')
     if response and not science_state:
         raise ValueError('FP response requires the explicit current saved state')
     if science_state and (combined_check or compact_check or flat_check):
@@ -79,12 +83,21 @@ def main():
     options, point, fp = load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz')
     with np.load(FP, allow_pickle=False) as f:
         membership = f['membership_state'].astype(str)
-    options = [o for o in options if membership[o[3]] in {
-        'source_ungrouped_catalogue_present','source_ungrouped_catalogue_absent'}]
-    assert len(options) == 429
+    original = select_training_single_mark_links(options,membership)
+    options = select_training_single_mark_links(options,membership,include_grouped=include_grouped)
+    assert len(original)==429 and len(options)==(1414 if include_grouped else 429)
+    assert set(original).issubset(set(options))
+    report['single_mark_cohort']=dict(ungrouped=429,grouped=len(options)-429,
+        grouped_reference_only=include_grouped,
+        interpretation='one FP per source group; no group redshift scored independently; '
+        'source FP-fit covariance, selected association and group-environment LOS remain uncalibrated')
     with np.load(SOURCE, allow_pickle=False) as f:
         source = {k:jnp.asarray(f[k]) for k in f.files}
     selected = {p:[o for o in options if point['population'][o[2]] == p] for p in range(6)}
+    grouped = np.array([membership[o[3]]=='source_grouped_catalogue_present'
+                        for p in range(6) for o in selected[p]])
+    source_delta = np.array([np.log10(fp['dz_row'][o[4]]/point['radius_cMpc_h'][o[2]])
+                             for p in range(6) for o in selected[p]])
     metadata, centers = {}, {}
     for p, batch in selected.items():
         voxels = np.array([np.unravel_index(int(point['flat_cell'][o[2]]),(N,)*3)
@@ -153,6 +166,9 @@ def main():
         np.savez(out/f'rows_{index}.npz',factors=rows,
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
+        if science_state and index<len(references):
+            if not np.isclose(rows[~grouped].sum(),references[index],rtol=0.,atol=1e-7):
+                raise AssertionError('unchanged429 cohort failed saved endpoint reproduction')
         save(); print(json.dumps(report['states'][-1]),flush=True)
         if response:
             from scipy.optimize import minimize_scalar
@@ -166,9 +182,6 @@ def main():
             np.testing.assert_allclose(reproduced,rows,rtol=0.,atol=1e-10)
             np.testing.assert_allclose(np.asarray(jax.scipy.special.logsumexp(logw,axis=1)),
                                        0.,rtol=0.,atol=1e-10)
-            if index < 2:
-                if not np.isclose(value,references[index],rtol=0.,atol=1e-7):
-                    raise AssertionError('saved FP endpoint not reproduced')
             def objective(z):
                 return -jnp.sum(row_score(z))+.5*z*z
             fast = jax.jit(objective)
@@ -190,12 +203,25 @@ def main():
                 raw_FP_at_fitted_zero=float(fitted.sum()),
                 zero_log_prior=-.5*float(fit.x)**2,penalized_FP=float(-fit.fun),
                 zero_mode_gradient=float(jax.jit(jax.grad(objective))(fit.x)),
-                same_fitted_tracer_as_current=index!=1)
+                same_fitted_tracer_as_current=index!=1,
+                ungrouped_FP_at_shared_mode=float(fitted[~grouped].sum()),
+                grouped_FP_at_shared_mode=float(fitted[grouped].sum()))
             report['states'][-1]['zero_response']=summary
+            summary['cohorts']={}
+            for label,mask in (('ungrouped',~grouped),('grouped',grouped)):
+                if not mask.any():
+                    continue
+                summary['cohorts'][label]=dict(rows=int(mask.sum()),
+                    fitted_FP_row_quantiles=np.quantile(fitted[mask],[0.,.1,.5,.9,1.]).tolist(),
+                    abs_log_group_to_point_distance_quantiles=np.quantile(
+                        np.abs(source_delta[mask]),[.5,.9,1.]).tolist(),
+                    source_reference_offset_over_reported_std_quantiles=np.quantile(
+                        np.abs(source_delta[mask])/np.asarray(std)[mask],[.5,.9,1.]).tolist())
             response_curves.append(curve)
             np.savez(out/f'zero_response_{index}.npz',white_zero=zgrid,
                      penalized_negative_FP=curve,rows_at_mode=fitted,
                      rows_at_zero=np.asarray(scores(0.)),
+                     grouped=grouped,log_group_to_point_redshift_distance=source_delta,
                      labels=np.array([o[0] for p in range(6) for o in selected[p]]))
             save(); print(json.dumps(summary),flush=True)
         if science_state and not response:
@@ -207,14 +233,15 @@ def main():
             reference=references[index]
             if (not np.isfinite(np.r_[rows,mean,var,observed,std]).all()
                     or np.any(var<0.) or np.any(std<=0.)
-                    or not np.isclose(value,reference,rtol=0.,atol=1e-7)
+                    or not np.isclose(rows[~grouped].sum(),reference,rtol=0.,atol=1e-7)
                     or not np.isclose(rows.sum(),value,rtol=0.,atol=1e-10)):
                 raise AssertionError('training readout is invalid or does not reproduce fitted FP factor')
             np.savez(out/'training_distance_prediction.npz',
                 labels=np.array([o[0] for p in range(6) for o in selected[p]]),
                 eta_source_mean=observed,eta_source_std=std,
                 eta_prediction_before_zero=mean,eta_prediction_with_zero=predicted,
-                count_conditioned_eta_variance=var,FP_log_factors=rows)
+                count_conditioned_eta_variance=var,FP_log_factors=rows,grouped=grouped,
+                log_group_to_point_redshift_distance=source_delta)
             report['training_distance_readout']=dict(rows=len(rows),white_fp_zero=float(state['white_fp_zero']),
                 zero_dex=zero,mean_residual_before_zero=float(np.mean(observed-mean)),
                 mean_residual_after_zero=float(np.mean(observed-predicted)),
@@ -241,7 +268,7 @@ def main():
             limits=(float(min(observed.min(),predicted.min())),float(max(observed.max(),predicted.max())))
             ax.plot(limits,limits,'k--',lw=1,label='equal values')
             ax.set(xlabel='Predicted eta (fitted field + fitted shared zero)',
-                   ylabel='Published FP eta mean',title='429 training FP links: direct distance comparison')
+                   ylabel='Published FP eta mean',title=f'{len(rows)} training FP links: direct distance comparison')
             ax.legend()
             extent=max(4.,float(np.ceil(np.max(np.abs(np.r_[
                 (observed-mean)/std,(observed-predicted)/std])))))

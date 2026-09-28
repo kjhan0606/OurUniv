@@ -155,3 +155,46 @@ references before GPU scoring. This is not a likelihood failure. Current-state
 partial result is retained but the three-way comparison is not yet complete.
 No checkpoint or target changed. One corrected run replaces this failed
 readout; do not introduce a general provenance framework.
+
+## Completed FP comparison and broader single-mark implementation
+
+Corrected408218/source0fbd783 COMPLETED2m55s,2.55GiB batch RSS; two regressions
+passed. No PM evolution. With the same shared-zero Gaussian prior, conditional
+penalized FP scores are current=-32.02186,pre-joint=-32.97307,homogeneous=3.96855.
+Current improves.95121 relative to pre-joint but trails the homogeneous
+benchmark by35.99041. Best zeros are.020500,.020520,.008462dex respectively.
+This establishes a descriptive distance-score deficit, not its statistical
+significance, a Bayes factor, full-target preference or cause. Keep calibration
+and conditioning-model uncertainty active; do not say the negative correlation
+was "only noise". Figure:
+[shared-zero comparison](/gpfs/kjhan/CF4/z0_density/r2_fp_zero_response_v2/zero_response.png).
+
+Focused follow-up Fable advice agrees the blanket grouped-galaxy exclusion is
+not mathematically required for the selected ONE-FP-per-source-group marginal.
+Its fixed d(z_group) reference cancels from the field-dependent distance
+residual, rather than acting as another independently scored velocity datum.
+The exact likelihood representation is supported by Howlett sec2.2–2.3.
+Retain one secure point, one observed FP, zero anchors and graph-closed training
+roles. This does not justify independent factors for multiple observed members.
+
+Driver corrections to that advice: (1) re-referencing eta AND its source mean
+does not leave a fixed-reference-zero log ratio unchanged; it changes a
+data-only constant. BETWEEN-FIELD log-score differences are invariant and are
+what the regression tests. (2) Missing group-shared physics is NOT guaranteed
+to be already included in the published marginal error just because only one
+row is scored. (3) Current LOSwidth is38.55km/s, not the100km/s initialization;
+environment-dependent virial errors remain a risk in the conditioning model.
+
+Implement a separately labelled1414-row CONDITIONAL WORKING target (429
+unchanged+985 physically grouped, each still only ONE scored FP). No new
+independent group-redshift factor, group-average measurement, inferred host
+identity or invented error reduction. Counts and marks retain the SAME global
+LOS parameter, source priors and weighting. Source-fit covariance, association,
+selection/bias and group-environment LOS remain uncalibrated; not production.
+First reuse the saved-state comparison on that cohort, prove the original429
+scores are unchanged, and record cohort-specific source-reference offsets and
+row scores. Then assess one bounded joint fit, not a hierarchy or test ladder.
+Q-GOAL: broaden actual CF4 distance conditioning. Q-LEAN: selected single-mark
+marginal avoids unnecessary full-group construction without claiming to solve
+its missing physics. MW/M31 ambiguous,M33 unresolved; same NEW field remains
+the later LG-observable target. Heldout untouched.

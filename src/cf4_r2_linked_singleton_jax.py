@@ -41,8 +41,12 @@ def linked_singleton_logfactors_for_population(
     caller must rebuild or conservatively bound it whenever the live RSD
     source state changes. No physical association calibration is implied;
     ``association_logprob`` is explicit and may be zero for the declared
-    field-independent sensitivity model. Grouped FP systems must use a
-    shared group-distance/covariance factor, not this singleton function.
+    field-independent sensitivity model. MULTIPLE scored FP members of one
+    source group need a shared group-distance/covariance factor. A physically
+    grouped galaxy with exactly ONE scored FP mark and one linked point may
+    use this conditional working marginal: dz_row is the fixed source FP
+    reference, not an independently scored group redshift. This does not
+    calibrate its LOS kernel or missing common fitted-FP errors.
 
     Arrays are group-major: candidate IDs/mask ``(group, padded-source)``,
     association log probabilities ``(group, true-K-bin, padded-source)``,
