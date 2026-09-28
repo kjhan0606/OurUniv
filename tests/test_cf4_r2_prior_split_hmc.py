@@ -5,6 +5,9 @@ import unittest
 import json
 import tempfile
 import time
+import contextlib
+import io
+from unittest.mock import patch
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
@@ -57,20 +60,45 @@ class PriorSplitTests(unittest.TestCase):
             reference=same_target_reference(out/'accepted_checkpoint.npz',parent)
             self.assertEqual(reference['objective'],oracle(initial)[0])
             report={}
-            run_pilot(initial=initial,value=oracle(initial)[0],gradient=oracle(initial)[1],
-                objective=oracle,score_only=score,terminal_field=field,
-                metric_report=out/'result.json',report=report,save_report=lambda:None,
-                out=out,started=time.monotonic(),cap=1000.,n=2)
+            with contextlib.redirect_stdout(io.StringIO()):
+                run_pilot(initial=initial,value=oracle(initial)[0],gradient=oracle(initial)[1],
+                    objective=oracle,score_only=score,terminal_field=field,
+                    metric_report=out/'result.json',report=report,save_report=lambda:None,
+                    out=out,started=time.monotonic(),cap=1000.,n=2)
             self.assertEqual(report['retained_proposals'],16)
             self.assertEqual(report['retained_accepted'],16)
             self.assertEqual(len(report['sampler_trace']),32)
             self.assertEqual(report['status'],'SPLIT_HMC_FEASIBILITY_STOP_NOT_POSTERIOR')
             with np.load(out/'accepted_checkpoint.npz') as checkpoint:
                 np.testing.assert_allclose(checkpoint['canonical_gradient'],checkpoint['parameters']/scale)
+                continuation=checkpoint['parameters'].copy()
+            completed=dict(parent,**report)
+            (out/'result.json').write_text(json.dumps(completed))
+            ref=same_target_reference(out/'accepted_checkpoint.npz',parent)
+            self.assertTrue(ref['sampling_parent'])
+            later=out/'long'; later.mkdir()
+            followup={'same_target_sampling_reference':ref}
+            with contextlib.redirect_stdout(io.StringIO()):
+                run_pilot(initial=continuation,value=oracle(continuation)[0],
+                    gradient=oracle(continuation)[1],objective=oracle,score_only=score,
+                    terminal_field=field,metric_report=out/'result.json',report=followup,
+                    save_report=lambda:None,out=later,started=time.monotonic(),cap=1000.,n=2,
+                    long_trajectory=True)
+            self.assertEqual(followup['proposals'],8)
+            self.assertEqual(followup['sampler']['integration_steps'],8)
+            self.assertEqual(followup['warmup_proposals'],0)
+            self.assertTrue(all(row['step_size']==ref['frozen_step'] for row in followup['sampler_trace']))
             bad=dict(parent,training_singletons=429)
             (out/'result.json').write_text(json.dumps(bad))
             with self.assertRaises(ValueError):
                 same_target_reference(out/'accepted_checkpoint.npz',parent)
+
+    def test_nonfinite_hamiltonian_is_error_not_acceptance(self):
+        for values in ([np.nan],[np.inf],[1.,np.nan],[1.,np.inf]):
+            with patch.object(self.metric,'kinetic',side_effect=values):
+                with self.assertRaises(FloatingPointError):
+                    split_hmc_step(self.oracle,self.metric,self.q,*self.oracle(self.q),
+                        self.rng,step=.1,steps=1)
 
     def test_metric_and_bounded_pilot_freeze_step_and_keep_rejections(self):
         symbol=inverse_laplacian_metric_symbol(4)

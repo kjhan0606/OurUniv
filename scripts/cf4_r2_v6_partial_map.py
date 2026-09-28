@@ -240,6 +240,9 @@ def main():
     norm_cap=None if norm_cap is None else float(norm_cap)
     nuisance_only=os.environ.get('CF4_R2_NUISANCE_ONLY')=='1'
     split_sampling=os.environ.get('CF4_R2_SPLIT_SAMPLING')=='1'
+    split_long=os.environ.get('CF4_R2_SPLIT_LONG')=='1'
+    if split_long and not split_sampling:
+        raise ValueError('long trajectory flag is only valid in split sampling mode')
     include_grouped=os.environ.get('CF4_R2_INCLUDE_GROUPED_SINGLE_MARK')=='1'
     cohort_reference=os.environ.get('CF4_R2_FP_COHORT_REFERENCE')
     metric_report=os.environ.get('CF4_R2_NUISANCE_METRIC_REPORT')
@@ -717,7 +720,8 @@ def main():
             run_pilot(initial=initial,value=value0,gradient=gradient0,
                 objective=objective,score_only=score_only,terminal_field=terminal_field,
                 metric_report=os.environ['CF4_R2_SAMPLER_METRIC_REPORT'],
-                report=report,save_report=save_report,out=OUT,started=started,cap=cap,n=N)
+                report=report,save_report=save_report,out=OUT,started=started,cap=cap,n=N,
+                long_trajectory=split_long)
             return
         if os.environ.get('CF4_R2_CURVATURE_DIAG')=='1':
             # Few directions only, no posterior draw and no optimization.

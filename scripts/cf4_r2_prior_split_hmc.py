@@ -145,6 +145,8 @@ def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_valu
     """One fixed-metric MH-corrected proposal, including rejected states."""
     p=metric.momentum(rng)
     start=float(value)+metric.kinetic(p)
+    if not np.isfinite(start):
+        raise FloatingPointError('nonfinite initial Hamiltonian')
     calls=0
     def counted(position):
         nonlocal calls
@@ -160,6 +162,8 @@ def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_valu
             raise FloatingPointError('HMC endpoint value/derivative primal disagreement')
         new_value=exact  # MH uses the independently evaluated full target.
     delta=(new_value+metric.kinetic(pend)-start if np.isfinite(new_value) else np.inf)
+    if np.isfinite(new_value) and not np.isfinite(delta):
+        raise FloatingPointError('nonfinite Hamiltonian error at finite target')
     log_accept=min(0.,-delta)
     accepted=bool(np.log(rng.uniform())<log_accept)
     if accepted:

@@ -24,6 +24,9 @@ export CF4_R2_SECONDS_CAP=4500
 unset CF4_R2_NUISANCE_ONLY CF4_R2_NUISANCE_METRIC_REPORT CF4_R2_FP_COHORT_REFERENCE
 unset CF4_R2_DIRECTION_DIAG CF4_R2_CURVATURE_DIAG CF4_R2_RATE_WARM_START
 export CF4_R2_RESTART=/gpfs/kjhan/CF4/z0_density/r2_v6_single_mark_map_v1/accepted_checkpoint.npz
+if [[ "${CF4_R2_SPLIT_LONG:-0}" == 1 ]]; then
+    export CF4_R2_RESTART=/gpfs/kjhan/CF4/z0_density/r2_prior_split_pilot_v1/accepted_checkpoint.npz
+fi
 export CF4_R2_SAMPLER_METRIC_REPORT=/gpfs/kjhan/CF4/z0_density/r2_v6_joint_secant_map_v3/result.json
 /home/kjhan/miniconda3/envs/circle/bin/python3.11 tests/test_cf4_r2_prior_split_hmc.py
 /home/kjhan/miniconda3/envs/circle/bin/python3.11 tests/test_cf4_r2_bounded_map_optimizer.py
