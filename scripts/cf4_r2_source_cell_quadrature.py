@@ -46,6 +46,7 @@ def main():
     save()
     try:
         followup=os.environ.get('CF4_R2_CELL_FOLLOWUP')=='1'
+        pcs=os.environ.get('CF4_R2_CELL_PCS')=='1'
         if followup:
             previous_path=BASE/'r2_source_cell_quadrature_v1/result.json'
             previous=json.loads(previous_path.read_text())
@@ -127,9 +128,29 @@ def main():
         radial=jax.jit(radial,static_argnums=6)
         def count(pos,vel,mass,angular,voxel,pop):
             f=lambda scale:predict_shell_cdf_intensity(pos,scale*vel,mass,angular,**geometry,
-                order=4,segments=32,target_population=pop,target_voxel=voxel)
+                order=4,segments=32,target_population=pop,target_voxel=voxel,source_cell_average=pcs)
             return jax.jvp(f,(jnp.array(1.),),(jnp.array(1.),))
         count=jax.jit(count,static_argnums=5)
+        if pcs:
+            reference=json.loads((BASE/'r2_source_cell_quadrature_v2/result.json').read_text())
+            ref={r['row']:r for r in reference['rows'] if r['nodes_per_axis']==8}
+            report['definition']='centre LF/RSD with analytically cell-averaged TSC; approximate, NOT full volume integration'
+            for row,voxel,ids in zip(rows,voxels,neighbors):
+                if int(row) not in count_rows:continue
+                ids=np.array(sorted(ids),dtype=int);used=len(ids)
+                ids=np.pad(ids,(0,width-used),constant_values=ids[0])
+                mass=masses[:,ids].copy();mass[:,used:]=0.
+                args=tuple(map(jnp.asarray,(source['positions'][ids].astype(float),velocity[ids],
+                                           mass,source['angular'][:,ids],voxel)))
+                value,derivative=map(float,count(*args,int(mix['population'][row])))
+                entry=dict(row=int(row),PGC=int(mix['PGC'][row]),count_mean=value,
+                    reference_count=ref[int(row)]['count_mean'],
+                    count_relative_error=value/ref[int(row)]['count_mean']-1,
+                    velocity_derivative=derivative,
+                    reference_derivative=ref[int(row)]['count_velocity_derivative'])
+                report['rows'].append(entry);save();print(json.dumps(entry),flush=True)
+            report['status']='CELL_AVERAGED_KERNEL_APPROXIMATION_MEASURED_NOT_TARGET';save()
+            return
         diagnostic_rows=set(count_rows)
         if followup:
             old={(r['row'],r['nodes_per_axis']):r for r in previous['rows']}

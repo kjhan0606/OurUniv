@@ -7,7 +7,7 @@ import numpy as np
 from scipy.special import ndtr
 from scipy.integrate import quad
 
-from cf4_r2_shell_cdf_count import shell_cdf_nodes,predict_shell_cdf_intensity
+from cf4_r2_shell_cdf_count import shell_cdf_nodes,predict_shell_cdf_intensity,cell_averaged_tsc_weight
 
 
 class ShellCDFTests(unittest.TestCase):
@@ -41,6 +41,19 @@ class ShellCDFTests(unittest.TestCase):
         scalar=jax.jit(jax.value_and_grad(lambda v:read(v,True)))(0.)
         np.testing.assert_allclose(scalar,full,rtol=1e-11,atol=1e-12)
         self.assertGreater(float(scalar[0]),0.)
+
+    def test_cell_averaged_kernel_is_top_hat_integral_not_full_RSD_claim(self):
+        # Unit-spacing periodic grid, separable integrals evaluated independently.
+        voxel=np.array([5,6,7])
+        for delta in ([.1,.7,1.4],[1.9,.1,.2],[-.6,.8,-1.1]):
+            pos=(voxel+.5-np.asarray(delta))%16
+            def tsc(d):
+                d=abs(d)
+                return .75-d*d if d<.5 else (.5*(1.5-d)**2 if d<1.5 else 0.)
+            expected=np.prod([quad(lambda s:tsc(d-s),-.5,.5,epsabs=1e-12,
+                points=[p for p in (d-1.5,d-.5,d+.5,d+1.5) if -.5<p<.5])[0] for d in delta])
+            got=float(cell_averaged_tsc_weight(jnp.asarray(pos[None]),voxel,16,16.)[0])
+            self.assertAlmostEqual(got,expected,places=12)
 
     def test_inner_exclusion_both_signed_branches_and_weights(self):
         q,w=shell_cdf_nodes(jnp.array([0.]),jnp.array([[1.,0.,0.]]),

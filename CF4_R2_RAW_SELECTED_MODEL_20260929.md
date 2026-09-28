@@ -301,3 +301,12 @@ current AND two local finite-difference states. Compare all26 gradient entries
 against the dense reference with the same1e-7 tolerance. This is an explicit
 state-refreshed local control, NEVER a frozen support cache for future HMC.
 No likelihood/population/field prior changes, refit or large computation.
+
+In parallel, test ONE inexpensive candidate for accelerating the count-volume
+operator, on the SAME six count examples: TSC convolved with a cell top-hat is
+the cubic B-spline kernel (verified against independent1D integrals). Source
+LF/angular/coherent mapping held at the centre are EXTRA approximations, so
+this is not an exact count-volume solution. Compare to saved8^3 count values
+AND velocity derivatives. Scalar diagnostic only, no full-grid target option,
+no automatic adoption regardless of speed. One8GiB/H10020min bound reuses the
+existing comparison loader and CDF integrator; no PM, new field or fitting.

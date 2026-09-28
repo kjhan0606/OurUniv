@@ -18,6 +18,20 @@ from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, ts
 from cf4_r2_marked_tracer_jax import source_mark_transfer, tsc_weight_at_voxel
 
 
+def cell_averaged_tsc_weight(positions,voxel,grid_size,box):
+    """TSC convolved with one cell top-hat = separable cubic B-spline.
+
+    Exact for translation of the deposit kernel ONLY. Holding source LF,
+    angular completeness and coherent radial mapping at the cell centre is
+    an additional approximation; this is NOT the full source-volume integral.
+    """
+    if grid_size<4:raise ValueError('cell-averaged kernel requires grid>=4')
+    cell=(positions%box)/(box/grid_size)-.5
+    d=jnp.abs((jnp.asarray(voxel)[None]-cell+grid_size/2)%grid_size-grid_size/2)
+    w=jnp.where(d<1.,(4.-6*d*d+3*d**3)/6.,jnp.where(d<2.,(2.-d)**3/6.,0.))
+    return jnp.prod(w,axis=1)
+
+
 def _shell_intervals(mu,direction,sigma,image_center,radial_min,radial_max,tail_sigma):
     center=jnp.asarray(image_center)
     middle=jnp.sum(direction*center,axis=-1)
@@ -80,7 +94,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     hubble_km_s_Mpc,little_h,radius_table_cMpc_h,modulus_table_h,redshift_table,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
     mstar=-23.28,alpha=-.94,order=16,segments=1,
-    target_population=None,target_voxel=None):
+    target_population=None,target_voxel=None,source_cell_average=False):
     """Same source-selected K/TSC count integrand, boundary-fitted LOS law.
 
     Caller owns current-width support checks and calibration. This does not
@@ -94,6 +108,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     scalar = target_population is not None
     if scalar != (target_voxel is not None):
         raise ValueError('population and voxel must be supplied together')
+    if source_cell_average and not scalar:
+        raise ValueError('approximate cell-averaged kernel is a scalar diagnostic only')
     if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
                    or jnp.asarray(target_voxel).shape!=(3,) or grid_size<3):
         raise ValueError('invalid scalar count key')
@@ -126,8 +142,9 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
             jnp.interp(radius,radius_table_cMpc_h,redshift_table),mstar=mstar,alpha=alpha)
         if scalar:
             p=target_population
+            kernel=cell_averaged_tsc_weight if source_cell_average else tsc_weight_at_voxel
             contribution=jnp.sum(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0)
-                *tsc_weight_at_voxel(observed,target_voxel,grid_size,box_size_cMpc_h))
+                *kernel(observed,target_voxel,grid_size,box_size_cMpc_h))
         else:
             contribution=jnp.stack([tsc_deposit_jax(observed,
                 weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0),
