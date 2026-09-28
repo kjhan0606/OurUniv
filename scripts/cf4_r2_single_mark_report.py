@@ -1,6 +1,7 @@
 """Illustrated Korean R2 progress PDF from completed saved readouts only."""
 import json
 import os
+import subprocess
 from pathlib import Path
 
 import matplotlib
@@ -45,7 +46,7 @@ def main():
         ax=fig.add_axes((.055,.25,.89,.57)); ax.imshow(plt.imread(path)); ax.axis('off')
     with PdfPages(out/'R2_진행보고_예제그림.pdf') as pdf:
         fig=page('1. 어떤 현재 우주 지도가 만들어졌나?',
-            '색은 밀도(위)와 시선에 해당하는 속도 성분(아래)을 나타냅니다. 왼쪽은 시작, 오른쪽은 이번 적합 후입니다.\n'
+            '색은 밀도(위)와 SGZ 방향 속도 성분(아래)을 나타냅니다. 왼쪽은 시작, 오른쪽은 이번 적합 후입니다.\n'
             '현재 한 칸은 3 cMpc/h입니다. 주변 목표 1–2, 국부은하군 목표 ≤0.3보다 아직 거칩니다.\n'
             '무늬가 보인다는 것만으로 관측 구조를 복원한 것은 아닙니다. MW·M31은 미식별, M33도 미해결입니다.')
         picture(fig,fit/'readout/field_comparison.png'); pdf.savefig(fig); plt.close(fig)
@@ -98,6 +99,9 @@ def main():
             '당시 거리 점수는 균일장 기준보다 약 63.78 낮았습니다. 같은 보정 사전분포를 적용해도 부족함이 남았습니다.\n'
             '그래서 거리 자료를 확장해 장 자체를 다시 적합했습니다. 균일장이 실제 우주라는 결론이나 Bayes 증거는 아닙니다.')
         picture(fig,prelude/'zero_response.png'); pdf.savefig(fig); plt.close(fig)
+    subprocess.run(['gs','-q','-dSAFER','-dBATCH','-dNOPAUSE','-sDEVICE=png16m',
+        '-r90',f'-sOutputFile={out}/page_%02d.png',str(out/'R2_진행보고_예제그림.pdf')],
+        check=True,timeout=90)
     manifest=dict(job_id=os.environ['SLURM_JOB_ID'],pages=6,R2_complete=False,
         numerical_work='saved readouts only; no fit, PM, heldout or new likelihood',
         source_directories=[str(p) for p in (fit,counts,distance,prelude)],
