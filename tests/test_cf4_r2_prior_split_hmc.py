@@ -2,6 +2,9 @@
 import sys
 from pathlib import Path
 import unittest
+import json
+import tempfile
+import time
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
@@ -33,6 +36,41 @@ class PriorSplitTests(unittest.TestCase):
         value,gradient=oracle(q)
         self.assertAlmostEqual(value,.5*q@q,places=12)
         np.testing.assert_allclose(gradient,q,rtol=0,atol=1e-14)
+
+    def test_live_adapter_checkpoint_and_parent_reference(self):
+        from cf4_r2_split_sampling_run import run_pilot,same_target_reference
+        with tempfile.TemporaryDirectory() as temporary:
+            out=Path(temporary)
+            scale=np.r_[np.ones(8),np.full(9,100.),1.]
+            initial=self.rng.normal(size=18)*scale
+            def oracle(x):
+                return .5*np.sum((x/scale)**2),x/scale**2
+            def score(x):
+                return oracle(x)[0],np.zeros(3),None,1
+            field=lambda _: (np.ones((2,2,2)),np.zeros((3,2,2,2)),
+                             np.zeros((3,2,2,2)),np.ones((2,2,2),bool))
+            parent=dict(N=2,box_cMpc_h=384.,count_integration={'family':'shell_cdf'},
+                status='PARTIAL_MAP_OPTIMIZER_STOP_NOT_POSTERIOR',training_singletons=1414,
+                training_counts=47121,trace=[{'parts':[0.,0.,0.]}],final_objective=oracle(initial)[0],
+                nuisance_optimizer_metric={'matrix':np.diag(scale[8:]**2).tolist()})
+            (out/'result.json').write_text(json.dumps(parent))
+            reference=same_target_reference(out/'accepted_checkpoint.npz',parent)
+            self.assertEqual(reference['objective'],oracle(initial)[0])
+            report={}
+            run_pilot(initial=initial,value=oracle(initial)[0],gradient=oracle(initial)[1],
+                objective=oracle,score_only=score,terminal_field=field,
+                metric_report=out/'result.json',report=report,save_report=lambda:None,
+                out=out,started=time.monotonic(),cap=1000.,n=2)
+            self.assertEqual(report['retained_proposals'],16)
+            self.assertEqual(report['retained_accepted'],16)
+            self.assertEqual(len(report['sampler_trace']),32)
+            self.assertEqual(report['status'],'SPLIT_HMC_FEASIBILITY_STOP_NOT_POSTERIOR')
+            with np.load(out/'accepted_checkpoint.npz') as checkpoint:
+                np.testing.assert_allclose(checkpoint['canonical_gradient'],checkpoint['parameters']/scale)
+            bad=dict(parent,training_singletons=429)
+            (out/'result.json').write_text(json.dumps(bad))
+            with self.assertRaises(ValueError):
+                same_target_reference(out/'accepted_checkpoint.npz',parent)
 
     def test_metric_and_bounded_pilot_freeze_step_and_keep_rejections(self):
         symbol=inverse_laplacian_metric_symbol(4)

@@ -239,10 +239,17 @@ def main():
     norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
     norm_cap=None if norm_cap is None else float(norm_cap)
     nuisance_only=os.environ.get('CF4_R2_NUISANCE_ONLY')=='1'
+    split_sampling=os.environ.get('CF4_R2_SPLIT_SAMPLING')=='1'
     include_grouped=os.environ.get('CF4_R2_INCLUDE_GROUPED_SINGLE_MARK')=='1'
     cohort_reference=os.environ.get('CF4_R2_FP_COHORT_REFERENCE')
     metric_report=os.environ.get('CF4_R2_NUISANCE_METRIC_REPORT')
-    if include_grouped and (not cohort_reference or metric_report or nuisance_only):
+    if split_sampling and (not include_grouped or cohort_reference or metric_report or nuisance_only
+            or not os.environ.get('CF4_R2_RESTART')
+            or not os.environ.get('CF4_R2_SAMPLER_METRIC_REPORT')
+            or any(os.environ.get(k)=='1' for k in ('CF4_R2_DIRECTION_DIAG',
+                'CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
+        raise ValueError('split pilot requires same1414 target restart and no MAP/diagnostic modes')
+    if include_grouped and not split_sampling and (not cohort_reference or metric_report or nuisance_only):
         raise ValueError('broader cohort requires its fixed-state reference and a fresh joint optimizer')
     if metric_report and (nuisance_only or any(os.environ.get(k)=='1' for k in (
             'CF4_R2_DIRECTION_DIAG','CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
@@ -420,7 +427,12 @@ def main():
             report['initialization']='accepted checkpoint'
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         expanded_reference=None
-        if include_grouped:
+        if split_sampling:
+            from cf4_r2_split_sampling_run import same_target_reference
+            expanded_reference=same_target_reference(restart,report)
+            report['same_target_sampling_reference']=expanded_reference
+            report['restart_policy']='same1414-row working target; new fixed-metric HMC feasibility pilot'
+        elif include_grouped:
             comparison=json.loads(Path(cohort_reference).read_text())
             if (not restart or comparison['status']!='FP_ZERO_RESPONSE_COMPLETE_NOT_POSTERIOR'
                     or comparison['single_mark_cohort']['grouped']!=985
@@ -700,6 +712,13 @@ def main():
         save_report()
         if error>=.02:
             raise AssertionError('initial refreshed-support IC adjoint mismatch')
+        if split_sampling:
+            from cf4_r2_split_sampling_run import run_pilot
+            run_pilot(initial=initial,value=value0,gradient=gradient0,
+                objective=objective,score_only=score_only,terminal_field=terminal_field,
+                metric_report=os.environ['CF4_R2_SAMPLER_METRIC_REPORT'],
+                report=report,save_report=save_report,out=OUT,started=started,cap=cap,n=N)
+            return
         if os.environ.get('CF4_R2_CURVATURE_DIAG')=='1':
             # Few directions only, no posterior draw and no optimization.
             random=np.r_[np.random.default_rng(2026092809).standard_normal(N**3),np.zeros(10)]
