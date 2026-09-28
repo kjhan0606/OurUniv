@@ -49,15 +49,15 @@ class ShellCDFTests(unittest.TestCase):
         expected=quad(lambda x:float(kernel(x))*np.exp(-.5*(x-100)**2)/np.sqrt(2*np.pi),
                       103.5,106.5,points=[104.5,105.5],epsabs=1e-15)[0]
         values=[]
-        for order,segments in ((16,1),(4,16),(8,16)):
+        for order,segments in ((16,1),(4,16),(8,32)):
             q,w=shell_cdf_nodes(jnp.array([100.]),jnp.array([[1.,0.,0.]]),
                 1.,jnp.zeros(3),order=order,segments=segments)
             values.append(float(np.sum(np.asarray(w)*kernel(np.asarray(q)))))
+        print('five_sigma_TSC_tail',dict(reference=expected,global16=values[0],
+              strata16_order4=values[1],strata32_order8=values[2]),flush=True)
         self.assertEqual(values[0],0.)
         self.assertGreater(values[1],0.)
         self.assertLess(abs(values[2]/expected-1),.001)
-        print('five_sigma_TSC_tail',dict(reference=expected,global16=values[0],
-              strata16_order4=values[1],strata16_order8=values[2]),flush=True)
 
     def test_full_source_K_TSC_values_and_velocity_gradient(self):
         box=384.
