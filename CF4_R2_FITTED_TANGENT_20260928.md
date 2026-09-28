@@ -325,3 +325,8 @@ max occupied log delta=.00104405. Scalar velocity derivative discrepancy
 1.934e-6. Python peak4.10GiB, calculation286.2s plus seven small tests.
 No new PM evolution or heldout score. These results support the bounded
 same-target continuation above, not calibration or posterior certification.
+
+Continuation submitted as408084/sourceece86ee, output
+`/gpfs/kjhan/CF4/z0_density/r2_v6_shell_map_v2`; afterany readout408085.
+The source-state mean density, rate, count/FP components and gradient remain
+the baseline for its evaluation. No repeated heldout peek or R2 promotion.

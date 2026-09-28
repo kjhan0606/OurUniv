@@ -24,9 +24,12 @@ predeclared seed draw, NOT a prior realization; cosmological prior/power and
 parameter domain unchanged. Do not restart the stagnated407805/407886 states.
 The initial same-state adjoint passed (4.39e-5 normalized error); combined
 derivative temporary device memory16.82GiB, Python host peak6.71GiB.408078
-checks4x32/8x32 integration on this terminal field without new PM evolution
-or heldout scoring. Conditional next work is bounded same-target refinement,
-not N256 or posterior promotion. Keep physical particle velocity dispersion
+passed terminal4x32/8x32 comparison (score delta.0008623, exposure L1=1.407e-6)
+and scalar derivative (1.93e-6), without new PM evolution or heldout scoring.
+Same-target continuation408084/sourceece86ee uses32 updates/70min application,
+H2002CPU12GiB/80min Slurm, accepted v1 coordinates/fresh optimizer history,
+initial step norm16.408085 is afterany readout. This is NOT N256 or posterior
+promotion. Keep physical particle velocity dispersion
 separate from posterior uncertainty and phenomenological tracer LOS width.
 
 Preceding numerical repair:407901 identified finite-GH radial-cut switches.
