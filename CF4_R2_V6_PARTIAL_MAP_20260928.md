@@ -74,3 +74,19 @@ observables, not import native truth IDs or declare them found here.
 
 No emails. Any nonexpert Korean PDF must illustrate each reported test with
 an example figure, clearly separating schematic examples from actual results.
+
+## Execution record
+
+Corrected typed-H100 regression407790 COMPLETED/exit0 in9m25s; all17 tests
+passed, batch MaxRSS3,366,804KiB (3.21GiB). The nonempty-count/reference test
+specifically detects the two repaired width/window errors. This is not a
+field-fit or posterior result.
+
+Dependent typed-H100407793 started normally on source645072c. Its55min Slurm
+limit includes the first PM/observation adjoint compilation; application
+checks a45min cap between evaluations. Read-only terminal summary407795 is
+queued afterany:407793 (typedH100,1CPU,2GiB/5min; host estimate<=1.6GiB).
+It creates initial/final density and mean-velocity comparison figures only
+if a final state exists; no heldout observation is opened or scored. If the
+fit fails, it instead records the preserved failure and checkpoint status.
+Driver assessment is still required before any uncertainty/validation fit.
