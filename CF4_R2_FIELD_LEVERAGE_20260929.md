@@ -146,3 +146,12 @@ essential covariance/membership information is unavailable, state precisely
 what sensitivity approximation is possible and what remains uncalibrated;
 do not label an unspecified shared covariance physical calibration. MW/M31
 ambiguity and unresolved M33 remain explicit same-NEW-field R3 obligations.
+
+408217/sourcea76ee35 stopped in saved-reference parsing, after reproducing the
+current and pre-joint FP scores. The conditional optimizer writes its terminal
+full score under full_gradient_after_block, not the joint trace (empty here).
+Driver fixes the reader and tests BOTH report shapes, resolving endpoint
+references before GPU scoring. This is not a likelihood failure. Current-state
+partial result is retained but the three-way comparison is not yet complete.
+No checkpoint or target changed. One corrected run replaces this failed
+readout; do not introduce a general provenance framework.

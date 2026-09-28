@@ -22,6 +22,15 @@ BASE = Path('/gpfs/kjhan/CF4/z0_density')
 N, BOX, WIDTH = 128, 384., 8192
 
 
+def saved_fp_endpoint(report):
+    """Full-target endpoint for either joint or fixed-field optimization."""
+    if 'full_gradient_after_block' in report:
+        return float(report['full_gradient_after_block']['parts'][1])
+    if report.get('trace'):
+        return float(report['trace'][-1]['parts'][1])
+    raise ValueError('saved report has no accepted full-target endpoint')
+
+
 def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU required')
@@ -54,6 +63,8 @@ def main():
         with np.load(path, allow_pickle=False) as f:
             states.append({k:f[k].copy() for k in
                 ('white_ic','rho','velocity_km_s','tracer','white_fp_zero')})
+    references = ([saved_fp_endpoint(json.loads((path.parent/'result.json').read_text()))
+                   for path in paths] if science_state else [])
     if response:
         states.append(dict(states[0],rho=np.ones_like(states[0]['rho']),
                            velocity_km_s=np.zeros_like(states[0]['velocity_km_s'])))
@@ -156,8 +167,7 @@ def main():
             np.testing.assert_allclose(np.asarray(jax.scipy.special.logsumexp(logw,axis=1)),
                                        0.,rtol=0.,atol=1e-10)
             if index < 2:
-                parent=json.loads((paths[index].parent/'result.json').read_text())
-                if not np.isclose(value,parent['trace'][-1]['parts'][1],rtol=0.,atol=1e-7):
+                if not np.isclose(value,references[index],rtol=0.,atol=1e-7):
                     raise AssertionError('saved FP endpoint not reproduced')
             def objective(z):
                 return -jnp.sum(row_score(z))+.5*z*z
@@ -194,8 +204,7 @@ def main():
             std = np.concatenate([np.asarray(metadata[p]['eta_std']) for p in range(6)])
             zero = .004*float(state['white_fp_zero'])
             predicted = mean+zero
-            previous=json.loads((paths[index].parent/'result.json').read_text())
-            reference=previous['trace'][-1]['parts'][1]
+            reference=references[index]
             if (not np.isfinite(np.r_[rows,mean,var,observed,std]).all()
                     or np.any(var<0.) or np.any(std<=0.)
                     or not np.isclose(value,reference,rtol=0.,atol=1e-7)

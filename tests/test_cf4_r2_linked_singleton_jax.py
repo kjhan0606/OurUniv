@@ -9,6 +9,14 @@ from cf4_r2_linked_singleton_jax import (
 
 
 class LinkedSingletonBatchTests(unittest.TestCase):
+    def test_saved_endpoint_supports_both_optimizer_records(self):
+        from cf4_r2_fp_restart_check import saved_fp_endpoint
+        self.assertEqual(saved_fp_endpoint({'trace':[{'parts':[1.,-2.,3.]}]}),-2.)
+        self.assertEqual(saved_fp_endpoint({'trace':[],
+            'full_gradient_after_block':{'parts':[1.,-4.,3.]}}),-4.)
+        with self.assertRaises(ValueError):
+            saved_fp_endpoint({'trace':[]})
+
     def test_batched_factors_match_individual_and_trace_los_nuisance(self):
         positions = jnp.array([[20., 12., 12.], [17., 12., 12.]])
         velocities = jnp.zeros((2, 3))
