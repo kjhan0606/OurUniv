@@ -25,6 +25,7 @@ from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax
+from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
 from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
@@ -334,6 +335,22 @@ def main():
                 raise ValueError('diagnostic epsilons must be finite and positive')
             baseline,_,base_field,_=score_only(initial)
             report['forward_repeat_objective_delta']=baseline-value0
+            @jax.jit
+            def cut_flags(rho,vel,tracer):
+                _,v=native_mass_momentum_to_count_cells(rho,vel,BOX)
+                shifted,_,rhat=observer_centred_spherical_rsd_jax(source['positions'],
+                    jnp.moveaxis(v,0,-1).reshape(-1,3),jnp.full(3,BOX/2),BOX,
+                    common['H0_km_s_Mpc'],little_h=common['h'],scale_factor=1.)
+                nodes,_=_gaussian_hermite_rule(15)
+                sigma=common['h']*100*jnp.exp(.5*tracer[6])/common['H0_km_s_Mpc']
+                def one(node):
+                    pos=(shifted+node*sigma*rhat)%BOX
+                    radius=jnp.linalg.norm((pos-BOX/2+BOX/2)%BOX-BOX/2,axis=1)
+                    return (radius>=5.)&(radius<=180.)
+                return jax.lax.map(one,jnp.asarray(nodes))
+            check_cuts=os.environ.get('CF4_R2_DIAG_CUTS')=='1'
+            if check_cuts:
+                baseline_cuts=cut_flags(*base_field,jnp.asarray(initial[N**3:N**3+9]/100.))
             base_rho=np.asarray(base_field[0])
             occupied=base_rho>0
             report['native_density_diagnostic']=dict(empty_cells=int((~occupied).sum()),
@@ -364,6 +381,15 @@ def main():
                     -float(jnp.sum(jnp.where(jnp.asarray(mask)[None],products[1],0.)))
                     for mask in (base_rho==0,(base_rho>0)&(base_rho<1e-6),
                                  (base_rho>=1e-6)&(base_rho<1e-3),base_rho>=1e-3)]
+                if check_cuts:
+                    for name,fields,params in (('plus',fp,initial+epsilon*direction),
+                                               ('minus',fm,initial-epsilon*direction)):
+                        flags=cut_flags(*fields,jnp.asarray(params[N**3:N**3+9]/100.))
+                        row[f'GH_radial_cut_changes_{name}']=np.asarray(
+                            jnp.sum(flags!=baseline_cuts,axis=1)).tolist()
+                        row[f'GH_radial_cut_sky_active_changes_{name}']=np.asarray(
+                            jnp.sum((flags!=baseline_cuts)&
+                                jnp.any(source['angular']>0,axis=0)[None,:],axis=1)).tolist()
                 rows.append(row)
                 report['descent_direction_check']=rows
                 save_report()
