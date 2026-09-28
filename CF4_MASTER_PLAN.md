@@ -9,6 +9,17 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 follow-up2026-09-29:408154 completed19m13s,5 fixed-field nuisance
+updates before application-budget stop;NOT convergence. F151825.92→149990.00,
+nuisance max gradient42.68→5.60,IC L2 norm490→684. FP zero grows to5.30 prior
+SD and radial residuals remain. Nuisance-only derivatives still cost75–76s,
+so the proposed cheap Hessian sweep is not justified. One jointly updated
+follow-up will use an SPD optimizer metric from the SAVED conditional secants,
+not a Hessian/covariance:32 updates/60min application,75min Slurm,H2002CPU20GiB
+(larger observed Slurm RSS~16GiB plus margin),with existing readouts. No
+automatic repeated cycles,prior/weight changes,heldout consumption or posterior
+promotion. Decision/evidence: `CF4_R2_NUISANCE_BLOCK_ADVICE_20260928.md`.
+
 Latest R2 result2026-09-28:408119 completed64 updates/1h51m08s on iteration
 limit,NOT convergence. F159462.61→151825.92,FP−43.95→−25.56;max gradient42.68
 still on a luminosity bias. Shared FP zero moved1.67→4.09 prior SD, so the

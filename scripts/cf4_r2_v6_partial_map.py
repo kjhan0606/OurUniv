@@ -85,8 +85,48 @@ def finite_gradient_curvature(fun,point,directions,*,epsilons,seconds_left,recor
             record(row)
 
 
+def secant_inverse_metric(points,gradients,history_size=8):
+    """Small SPD L-BFGS optimizer metric; NEVER a posterior covariance.
+
+    Reuse accepted conditional secants, not new Hessian evaluations. Discard
+    nonpositive-curvature secants as in the existing bounded optimizer.
+    """
+    points,gradients=np.asarray(points),np.asarray(gradients)
+    if (points.ndim!=2 or gradients.shape!=points.shape or len(points)<2
+            or not np.isfinite(points).all() or not np.isfinite(gradients).all()
+            or history_size<1):
+        raise ValueError('finite aligned secant coordinates and gradients required')
+    history=[]; skipped=0
+    for s,y in zip(np.diff(points,axis=0),np.diff(gradients,axis=0)):
+        sy=np.dot(s,y)
+        if sy>1e-10*np.linalg.norm(s)*np.linalg.norm(y):
+            history.append((s,y,1./sy)); history=history[-history_size:]
+        else:
+            skipped+=1
+    if not history:
+        raise ValueError('no positive-curvature accepted secants for optimizer metric')
+    scale=np.dot(history[-1][0],history[-1][1])/np.dot(history[-1][1],history[-1][1])
+    def apply(vector):
+        q=vector.copy(); alphas=[]
+        for s,y,inverse in reversed(history):
+            a=inverse*np.dot(s,q); alphas.append(a); q-=a*y
+        result=scale*q
+        for (s,y,inverse),a in zip(history,reversed(alphas)):
+            result+=s*(a-inverse*np.dot(y,result))
+        return result
+    metric=np.column_stack([apply(v) for v in np.eye(points.shape[1])])
+    if not np.allclose(metric,metric.T,rtol=1e-12,atol=1e-12):
+        raise ValueError('secant metric is not numerically symmetric')
+    metric=.5*(metric+metric.T)
+    np.linalg.cholesky(metric)  # Reject a non-SPD metric; do not clip eigenvalues.
+    return metric,dict(used_pairs=len(history),skipped_pairs=skipped,
+                       eigenvalues=np.linalg.eigvalsh(metric).tolist(),
+                       interpretation='conditional secant optimizer preconditioner, NOT covariance')
+
+
 def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
-                  value_only=None, initial_norm_cap=None,initial_evaluation=None):
+                  value_only=None, initial_norm_cap=None,initial_evaluation=None,
+                  nuisance_inverse_metric=None):
     """Descent-only L-BFGS with bounded trial steps, not parameter bounds.
 
     An infinite objective means a genuine zero-probability trial and is
@@ -97,6 +137,12 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
     x=initial.copy()
     if n_ic < 0 or x.shape != (n_ic+10,):
         raise ValueError('expected IC block plus nine tracer and one zero coordinates')
+    if nuisance_inverse_metric is not None:
+        nuisance_inverse_metric=np.asarray(nuisance_inverse_metric)
+        if (nuisance_inverse_metric.shape!=(10,10) or not np.isfinite(nuisance_inverse_metric).all()
+                or not np.allclose(nuisance_inverse_metric,nuisance_inverse_metric.T,rtol=1e-12,atol=1e-12)):
+            raise ValueError('finite symmetric ten-nuisance optimizer metric required')
+        np.linalg.cholesky(nuisance_inverse_metric)
     value,grad=fun(x) if initial_evaluation is None else initial_evaluation
     if not np.isfinite(value) or not np.isfinite(grad).all():
         raise FloatingPointError('restart is not a finite differentiable state')
@@ -115,6 +161,10 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
         scale=(np.dot(history[-1][0],history[-1][1])/np.dot(history[-1][1],history[-1][1])
                if history else 1.)
         direction=scale*q
+        if nuisance_inverse_metric is not None:
+            # H0 is block diagonal/SPD. The joint secants still couple IC and
+            # nuisances in the second loop; likelihood/prior coordinates stay put.
+            direction[n_ic:]=nuisance_inverse_metric@q[n_ic:]
         for (s,y,inverse),a in zip(history,reversed(alphas)):
             direction+=s*(a-inverse*np.dot(y,direction))
         direction=-direction
@@ -188,6 +238,10 @@ def main():
     norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
     norm_cap=None if norm_cap is None else float(norm_cap)
     nuisance_only=os.environ.get('CF4_R2_NUISANCE_ONLY')=='1'
+    metric_report=os.environ.get('CF4_R2_NUISANCE_METRIC_REPORT')
+    if metric_report and (nuisance_only or any(os.environ.get(k)=='1' for k in (
+            'CF4_R2_DIRECTION_DIAG','CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
+        raise ValueError('secant block metric is for joint optimization only')
     if nuisance_only and (not os.environ.get('CF4_R2_RESTART') or any(
             os.environ.get(k)=='1' for k in ('CF4_R2_DIRECTION_DIAG',
             'CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
@@ -349,6 +403,26 @@ def main():
             report['restart']=restart
             report['initialization']='accepted checkpoint'
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
+        nuisance_metric=None
+        metric_reference=None
+        if metric_report:
+            metric_path=Path(metric_report).resolve()
+            previous=json.loads(metric_path.read_text())
+            if (previous['status']!='CONDITIONAL_NUISANCE_OPTIMIZER_STOP_NOT_POSTERIOR'
+                    or previous['N']!=N or previous['box_cMpc_h']!=BOX
+                    or previous['count_integration']!=report['count_integration']
+                    or not restart or Path(restart).resolve()!=metric_path.parent/'accepted_checkpoint.npz'):
+                raise ValueError('metric must come from this restart and the same partial target')
+            rows=[previous['conditional_baseline']]+previous['nuisance_trace']
+            points=np.array([np.r_[100.*np.asarray(row['white_tracer']),row['white_fp_zero']]
+                             for row in rows])
+            gradients=np.array([row['conditional_gradient_optimizer_coordinates'] for row in rows])
+            if not np.allclose(initial[N**3:],points[-1],rtol=0.,atol=1e-12):
+                raise ValueError('restart and secant endpoint nuisance coordinates differ')
+            nuisance_metric,metric_info=secant_inverse_metric(points,gradients)
+            metric_reference=previous['final_objective']
+            report['nuisance_optimizer_metric']=dict(source=str(metric_path),**metric_info,
+                                                     matrix=nuisance_metric.tolist())
         latest = {}
         diagnostic_baseline = {}
         data_executable=None
@@ -445,6 +519,8 @@ def main():
         # One necessary check of the newly composed PM + refreshed-support
         # adjoint, not a separate validation ladder. No heldout score involved.
         value0,gradient0=objective(initial)
+        if metric_reference is not None and not np.isclose(value0,metric_reference,rtol=0.,atol=1e-7):
+            raise AssertionError('secant-restart full target changed; do not reuse optimizer metric')
         if os.environ.get('CF4_R2_RATE_WARM_START')=='1':
             if (os.environ.get('CF4_R2_DIRECTION_DIAG')=='1'
                     or os.environ.get('CF4_R2_CURVATURE_DIAG')=='1'):
@@ -743,7 +819,7 @@ def main():
             solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
                 seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
                 value_only=trial_value,initial_norm_cap=norm_cap,
-                initial_evaluation=(value0,gradient0))
+                initial_evaluation=(value0,gradient0),nuisance_inverse_metric=nuisance_metric)
         rho,vel,variance,valid=terminal_field(jnp.asarray(solution[:N**3]))
         np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
                  tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],

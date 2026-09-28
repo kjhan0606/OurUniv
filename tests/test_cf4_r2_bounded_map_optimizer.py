@@ -5,10 +5,36 @@ import unittest
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from cf4_r2_v6_partial_map import bounded_lbfgs,finite_gradient_curvature,conditional_rate_mode
+from cf4_r2_v6_partial_map import (
+    bounded_lbfgs,finite_gradient_curvature,conditional_rate_mode,secant_inverse_metric)
 
 
 class BoundedMapTests(unittest.TestCase):
+    def test_secant_metric_reuses_positive_pairs_not_negative_curvature(self):
+        points=np.array([[0.,0.],[1.,0.],[1.,1.],[0.,1.]])
+        gradients=np.array([[0.,0.],[2.,0.],[2.,5.],[4.,5.]])
+        metric,info=secant_inverse_metric(points,gradients)
+        np.testing.assert_allclose(metric,np.diag([.5,.2]),atol=1e-12)
+        self.assertEqual(info['used_pairs'],2)
+        self.assertEqual(info['skipped_pairs'],1)
+        with self.assertRaisesRegex(ValueError,'no positive-curvature'):
+            secant_inverse_metric(points[-2:],gradients[-2:])
+
+    def test_nuisance_metric_is_optimizer_only_and_preserves_joint_optimum(self):
+        curvature=np.r_[1.,np.geomspace(.1,20.,10)]
+        def fun(x):
+            return .5*np.dot(curvature*x,x),curvature*x
+        accepted=[]
+        solution,_,_,message=bounded_lbfgs(fun,np.full(11,.01),
+            lambda x:accepted.append(x.copy()),n_ic=1,seconds_left=lambda:10.,maxiter=4,
+            nuisance_inverse_metric=np.diag(1./curvature[1:]))
+        self.assertEqual(message,'gradient tolerance')
+        self.assertEqual(len(accepted),1)
+        np.testing.assert_allclose(solution,0.,atol=1e-12)
+        with self.assertRaises(np.linalg.LinAlgError):
+            bounded_lbfgs(fun,np.zeros(11),lambda x:None,n_ic=1,seconds_left=lambda:10.,
+                nuisance_inverse_metric=-np.eye(10))
+
     def test_empty_ic_conditional_block_does_not_claim_joint_stationarity(self):
         # One fixed IC coordinate coupled to the first of ten nuisance
         # coordinates. Conditional optimum is NOT the joint optimum.
