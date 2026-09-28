@@ -9,23 +9,27 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
-Latest R2 disposition2026-09-28: same-target adaptive retry407886 passed3
-optimizer regressions and its fitted-state adjoint but stalled after10
-accepted steps: total gain.1216, last gain~1e-6, max gradient11770.7. Driver
-cancelled at14m19s;407887 readout completed with no final state. Do not extend
-that fit.407901 then confirmed actual GH15 radial-selection switches at
-eps1e-6 (one plus/two minus sky-active source-nodes), none at1e-8. This is a
-numerical discontinuity mechanism, not proof it explains all stiffness.
-The boundary-fitted Gaussian-CDF shell integral candidate preserves5–180,
-both signed LOS branches and periodic images, with explicit8sigma tail
-truncation and no selected-region renormalization. H200407913 passed4 tests
-in2m28s. Full saved-field check407919 reproduced the old count score but
-failed on float32 geometry/float64 accumulator mismatch;f92530e fixes the
-carry dtype and adds the real mixed-precision fixture.407922 runs those4
-tests then GH15/CDF16/CDF32 comparison and one count-velocity derivative on
-the SAVED N128 field (H2002CPU12GiB25min, no gravity/fit/heldout). R2 remains
-open; do not promote this candidate before its numerical evidence. Details,
-Fable advice and driver corrections: `CF4_R2_FITTED_TANGENT_20260928.md`.
+Latest R2 disposition2026-09-28: adaptive fit407886 was cancelled for
+stagnation, not convergence (10 steps, gain.1216, max gradient11770.7).
+407901 confirmed actual GH15 radial-selection switches in the fitted-state
+trials. Do not continue that optimizer blindly. Boundary-fitted Gaussian-CDF
+shell integration preserves5–180, signed LOS and periodic images, with
+explicit8sigma tails and no selected-domain renormalization.407922 passed
+its scalar derivative but failed numerical accuracy (CDF16/32 score delta4.28).
+Physical-distance strata improve tails.407946's tail reference test failed
+before any field calculation; refined-reference407950 passed5 tests and
+completed the saved-field check:4x16/4x32 score delta.1727, exposure L1
+1.31e-5, max occupied log delta.04547, scalar adjoint discrepancy3.53e-6.
+No gravity, fitting or heldout scoring was done in those checks. This is
+not a calibrated posterior; prefer checking4x32 against8x32 before fitting.
+407975/sourcee89e5bf is that next H2002CPU12GiB25min check, after tests of an
+algebraic LF-boundary reuse that avoids repeated gamma evaluations. It must
+reproduce old GH15/4x32 scores before accepting the cost optimization.
+407971 was cancelled while pending to preserve strict empty-LF-interval
+subgradients and strengthen the equality-boundary test. No data removed.
+R2 remains open; MW/M31 ambiguous, M33 unresolved, same-NEW-state roles.
+Details, Fable advice, driver corrections and preserved failures:
+`CF4_R2_FITTED_TANGENT_20260928.md`.
 
 Current R2 checkpoint2026-09-28:407805 stopped after4 accepted steps/44
 evaluations on insufficient line-search decrease (normal process exit, NOT
