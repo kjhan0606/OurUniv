@@ -197,3 +197,20 @@ H1002CPU6GiB/15min (`r2_shell_cdf_field_check_v11`). The latter gets5min more
 Slurm time for the different GPU/cache, not a new diagnostic or fit; request
 caps now95min for the retry bundle. Reconfirm GPU and target startup before
 claiming that inference resumed. Source remains eb877a6.
+
+408163 FAILED6m30s on H100/syn08 after one full evaluation and zero optimizer
+updates. Nine optimizer tests and the particle test passed with GPU available.
+The exact restart guard detected objective149990.1429854582 instead of
+149990.00403363275. Count and nuisance-prior terms match to rounding; the
+entire0.13895182545 discrepancy is in the FP term (-19.0843320053 instead of
+-18.9453801798).408164 readout completed;408165 pending DependencyNeverSatisfied
+was cancelled. No tolerance was relaxed, no target/prior changed, no data deleted.
+The cause is not yet established; PM uses float64, and count agreement does
+not support casually attributing this to a float32 PM calculation.
+
+Bounded diagnostic408178,source2e606db,H1002CPU8GiB/15min, compares the saved
+H200 terminal and H100 initial arrays and scores their429 training FP rows.
+No PM evolution, optimization, count-integration sweep, heldout or new data.
+Q-GOAL: restore a reproducible actual-distance target before joint inference.
+Q-LEAN: isolate the differing factor using existing saved states. MW/M31/M33
+identification remains pending on this same NEW field, with no truth IDs used.

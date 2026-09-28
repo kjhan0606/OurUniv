@@ -13,6 +13,7 @@ from cf4_r2_linked_fp_sparse_train import load_train_singletons, FP, SOURCE
 from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
 from cf4_r2_linked_singleton_jax import linked_singleton_logfactors_for_population
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
+from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_marked_tracer_jax import intrinsic_biased_source_masses, intrinsic_lf_bin_fractions
 from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax
 
@@ -33,6 +34,7 @@ def main():
         report['seconds'] = time.monotonic()-started
         (out/'result.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     save()
+    combined_check = os.environ.get('CF4_R2_FP_COMBINED_CHECK') == '1'
     paths = [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
              BASE/'r2_v6_joint_secant_map_v2/initial_state.npz']
     states = []
@@ -113,6 +115,27 @@ def main():
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         save(); print(json.dumps(report['states'][-1]),flush=True)
+        if combined_check and index == 1:
+            isolated_value, isolated_grad = jax.jit(jax.value_and_grad(
+                mark,argnums=(0,1,2,3)))(*args,links)
+            report['isolated_vg'] = dict(FP=float(isolated_value),
+                tracer_gradient=np.asarray(isolated_grad[2]).tolist(),zero_gradient=float(isolated_grad[3]))
+            save(); print(json.dumps(report['isolated_vg']),flush=True)
+            with np.load(BASE/'r2_sky_closed_split_v6/split.npz',allow_pickle=False) as f:
+                keys,counts = jnp.asarray(f['train_keys']),jnp.asarray(f['train_counts'])
+                exposure,_ = build_population_exposure_masks(N,f['heldout_flat_voxels'],
+                    f['train_window_excluded_keys'],f['heldout_window_excluded_keys'])
+            exposure = jnp.asarray(exposure)
+            def combined(rho,vel,tracer,zero,links):
+                parts,_ = partial_v6_count_singleton_parts(rho,vel,jnp.zeros(0),tracer,
+                    source,links,keys,counts,exposure,white_fp_zero=zero,
+                    count_integration='shell_cdf')
+                return jnp.sum(parts[:3]),parts[:3]
+            (value,parts),grad = jax.jit(jax.value_and_grad(combined,
+                argnums=(0,1,2,3),has_aux=True))(*args,links)
+            report['combined_vg'] = dict(parts=np.asarray(parts).tolist(),value=float(value),
+                tracer_gradient=np.asarray(grad[2]).tolist(),zero_gradient=float(grad[3]))
+            save(); print(json.dumps(report['combined_vg']),flush=True)
     report['status'] = 'SAVED_STATE_FP_CHECK_COMPLETE_NOT_POSTERIOR'
     save()
 
