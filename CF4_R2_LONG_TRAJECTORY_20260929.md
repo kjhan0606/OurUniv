@@ -18,6 +18,12 @@ structures or radial features are not identified as actual Virgo/Coma/LG.
 
 ## Driver decision: one bounded continuation, not production
 
+Submitted408337/sourcef3a0bf6 after8 regression tests passed408336. Independent
+saved-diagnostic PDF408338 and terminal-field illustration408339 depend on
+afterany408337; these must report failures honestly, not infer scientific
+success from job exit. Initial target494475.56117645063 reproduces408296's
+terminal target to rounding precision. No science claim from startup alone.
+
 Keep the identical1414 FP/47121 count target, N128/384 geometry, priors,
 proposal metric arrays and full Metropolis correction. Start from the accepted
 terminal state, freeze the same step, use8 integration steps per proposal and
