@@ -2,6 +2,23 @@
 
 ## Execution update
 
+408296/sourcef63eb13 is the ONE real-target feasibility pilot, submitted
+after final count/FP values both reproduced to1e-7. H1002CPU24GiB,90minSlurm,
+75min application;16 warmup+16 retained proposals,2 steps each, same1414 target.
+It is not a posterior-delivery or large-chain authorization.
+
+Correction:408224 ran the default GH/CDF16/32 readout because the submission
+omitted CF4_R2_CDF_FINE=1. It was not the promised4x32/8x32 check.408276 PDF
+then failed on the absent comparison key; its partial output is preserved.
+408282/v14 reran ONLY the saved-field readout with the explicit fine option:
+4m55s,exact fitted count score,4x32/8x32 delta+.0003436150,exposure relativeL1
+2.0363e-7,scalar velocity-gradient discrepancy4.3061e-8. No PM or fit repeated.
+408284 produced the corrected6-page Korean report in
+`/gpfs/kjhan/CF4/z0_density/r2_single_mark_report_v2/R2_진행보고_예제그림.pdf`;
+all6 rendered pages were visually inspected, with actual figures for every
+reported test. Training count total46432.72vs47121 and radial shape residuals
+are limitations, not proof of selection calibration.
+
 408222 ended normally after32 accepted updates/42m57s, iteration limit rather
 than convergence. Its final objective is144835.83910873727, FP log factor
 -31.073932470664015; the saved-field readout408225 independently reproduces

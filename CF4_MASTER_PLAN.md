@@ -16,8 +16,9 @@ in42m57s, stopping at its iteration limit, NOT convergence. F146854.44->
 -.00380, fitted shared zero+.0247702dex (6.19 priorSD), residual mean+.01918dex.
 Those plug-in statistics do not demonstrate calibrated distance recovery.
 408223 supplies the actual field figure;3cMpc/h development mesh, no named
-structure or posterior claim.408224 terminal count readout still pending.
-The next bounded action is ONE prior-split HMC feasibility pilot after those
+structure or posterior claim. Corrected terminal count readout408282 passes
+4x32/8x32 and scalar-gradient comparisons;408224 had omitted the fine option.
+408296 is ONE prior-split HMC feasibility pilot after the completed
 readouts:16 discarded warmup+16 fixed-step proposals, same target/priors,
 no heldout, no covariance or ESS claim. Mechanics/adapter7 tests passed408273.
 Plan/advisory corrections: `CF4_R2_SPLIT_SAMPLING_20260929.md`. R2 remains open;
