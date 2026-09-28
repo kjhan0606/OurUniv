@@ -51,6 +51,13 @@ class RawSelectedTests(unittest.TestCase):
         args[1] = np.array([-22.5, -22.8])
         self.assertTrue(np.isneginf(selected_mark_logpdf(*args)))
 
+    def test_component_terms_reconstruct_selected_density(self):
+        from scipy.special import logsumexp
+        *_, args=normalized_example()
+        numerator,denominator=selected_mark_logpdf(*args,return_component_terms=True)
+        value=logsumexp(args[2]+numerator,axis=-1)-logsumexp(args[2]+denominator)
+        np.testing.assert_allclose(value,selected_mark_logpdf(*args),atol=1e-13)
+
     def test_source_covariance_and_aperture_geometry(self):
         cov = optical_error_covariance(.01, .02, .02)
         self.assertEqual(cov[0, 2], -.0002)

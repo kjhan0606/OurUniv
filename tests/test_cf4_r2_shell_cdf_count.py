@@ -25,6 +25,23 @@ class ShellCDFTests(unittest.TestCase):
         derivative=float(jax.grad(probability)(180.))
         self.assertAlmostEqual(derivative,-1/np.sqrt(2*np.pi),places=12)
 
+    def test_scalar_gather_equals_full_deposit_and_derivative(self):
+        radius=jnp.linspace(.001,400.,4001)
+        kwargs=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+            grid_size=16,sigma_los_km_s=100.,order=4,segments=8)
+        voxel=jnp.array([15,8,8]); pop=0
+        def read(v,scalar):
+            result=predict_shell_cdf_intensity(jnp.array([[371.9,192.,192.]]),
+                jnp.array([[v,0.,0.]]),jnp.ones((5,1)),jnp.ones((2,1)),
+                **kwargs,**(dict(target_population=pop,target_voxel=voxel) if scalar else {}))
+            return result if scalar else result[pop,15,8,8]
+        full=jax.jit(jax.value_and_grad(lambda v:read(v,False)))(0.)
+        scalar=jax.jit(jax.value_and_grad(lambda v:read(v,True)))(0.)
+        np.testing.assert_allclose(scalar,full,rtol=1e-11,atol=1e-12)
+        self.assertGreater(float(scalar[0]),0.)
+
     def test_inner_exclusion_both_signed_branches_and_weights(self):
         q,w=shell_cdf_nodes(jnp.array([0.]),jnp.array([[1.,0.,0.]]),
                            3.,jnp.zeros(3),order=12)

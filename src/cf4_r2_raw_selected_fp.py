@@ -105,7 +105,8 @@ def log_schechter(magnitude, *, mstar=-23.28, alpha=-.94):
 def selected_mark_logpdf(x, observed_magnitude_by_candidate, log_weight, eta,
                          magnitude_lower, magnitude_upper, mu, beta, covariance,
                          cut_matrix, cut_lower, cut_upper, *, m0=-23.,
-                         mstar=-23.28, alpha=-.94, magnitude_order=24, cut_order=96):
+                         mstar=-23.28, alpha=-.94, magnitude_order=24, cut_order=96,
+                         return_component_terms=False):
     """Joint optical/within-bin-K density conditional on both selections.
 
     Candidate weights ALREADY include count K-bin/flux selection. Each finite
@@ -153,4 +154,8 @@ def selected_mark_logpdf(x, observed_magnitude_by_candidate, log_weight, eta,
     value = logsumexp(log_weight+np.where(support, log_f, -np.inf), axis=-1)-denominator
     projected = x@matrix.T
     inside = ((projected >= lower) & (projected <= upper)).all(axis=-1)
+    if return_component_terms:
+        # Unweighted terms permit exact streaming across disjoint source
+        # chunks. They are NOT separately normalized conditional densities.
+        return np.where(inside[..., None] & support,log_f,-np.inf),log_selected
     return np.where(inside, value, -np.inf)

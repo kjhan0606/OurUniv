@@ -15,7 +15,7 @@ from jax.scipy.special import ndtr, ndtri
 import numpy as np
 
 from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, tsc_deposit_jax
-from cf4_r2_marked_tracer_jax import source_mark_transfer
+from cf4_r2_marked_tracer_jax import source_mark_transfer, tsc_weight_at_voxel
 
 
 def _shell_intervals(mu,direction,sigma,image_center,radial_min,radial_max,tail_sigma):
@@ -79,15 +79,24 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     intrinsic_bin_masses,angular_completeness,*,observer,box_size_cMpc_h,
     hubble_km_s_Mpc,little_h,radius_table_cMpc_h,modulus_table_h,redshift_table,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
-    mstar=-23.28,alpha=-.94,order=16,segments=1):
+    mstar=-23.28,alpha=-.94,order=16,segments=1,
+    target_population=None,target_voxel=None):
     """Same source-selected K/TSC count integrand, boundary-fitted LOS law.
 
     Caller owns current-width support checks and calibration. This does not
     replace the production target automatically, nor the continuous FP mark.
+    An optional population/voxel pair reads one scalar with the transpose of
+    the identical deposit kernel; it does not change the integration rule.
     """
     pos=jnp.asarray(source_positions)
     intrinsic=jnp.asarray(intrinsic_bin_masses)
     angular=jnp.asarray(angular_completeness)
+    scalar = target_population is not None
+    if scalar != (target_voxel is not None):
+        raise ValueError('population and voxel must be supplied together')
+    if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
+                   or jnp.asarray(target_voxel).shape!=(3,) or grid_size<3):
+        raise ValueError('invalid scalar count key')
     if (pos.ndim!=2 or pos.shape[1]!=3 or intrinsic.shape!=(5,pos.shape[0])
             or angular.shape!=(2,pos.shape[0]) or radial_max_cMpc_h>=box_size_cMpc_h/2
             or not 0<radial_min_cMpc_h<radial_max_cMpc_h or min(order,segments)<1):
@@ -115,9 +124,14 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         transfer=source_mark_transfer(true_modulus,
             jnp.interp(radius,radius_table_cMpc_h,modulus_table_h),true_redshift,
             jnp.interp(radius,radius_table_cMpc_h,redshift_table),mstar=mstar,alpha=alpha)
-        contribution=jnp.stack([tsc_deposit_jax(observed,
-            weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0),
-            grid_size,box_size_cMpc_h) for p in range(6)])
+        if scalar:
+            p=target_population
+            contribution=jnp.sum(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0)
+                *tsc_weight_at_voxel(observed,target_voxel,grid_size,box_size_cMpc_h))
+        else:
+            contribution=jnp.stack([tsc_deposit_jax(observed,
+                weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0),
+                grid_size,box_size_cMpc_h) for p in range(6)])
         return total+contribution,None
 
     @jax.checkpoint
@@ -141,5 +155,5 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
             lambda t:jax.lax.scan(add_segment,t,jnp.arange(2*segments))[0],lambda t:t,total)
         return total,None
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
-    return jax.lax.scan(add_image,jnp.zeros((6,grid_size,grid_size,grid_size),
-                                          dtype=dtype),images)[0]
+    shape=() if scalar else (6,grid_size,grid_size,grid_size)
+    return jax.lax.scan(add_image,jnp.zeros(shape,dtype=dtype),images)[0]

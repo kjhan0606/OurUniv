@@ -206,3 +206,44 @@ Do not add a redundant zero coordinate or silently fix these15 parameters.
 Plan and weak-prior proposal sent for focused advice in
 `config/cf4_r2_joint_raw_field_advice_20260929.md`; no large calculation or
 live target replacement is authorized by the advice request itself.
+
+## Joint-model advice disposition and source-cell comparison
+
+Fable returned ADVISE PROCEED, choosing source-cell quadrature BEFORE the live
+raw-field adapter. Driver adopts that priority: the current sigma_LOS~38km/s
+corresponds to .38cMpc/h, much smaller than a3cMpc/h source cell. This is a
+testable numerical concern, NOT proof that observed field features are artifacts.
+
+Driver corrects substantive advice errors: our density normalizes jointly over
+optical x AND within-bin observed K, not x alone. A hypothetical d->lambda*d
+has eta->eta-log10(lambda), not plus; with M->M-5log10(lambda), mean invariance
+would require b0->b0+(e_r+5*bM)*log10(lambda). Fixed LF/bins, counts and field
+dynamics break the asserted exact full-target gauge. A weak common-scale
+direction remains plausible and must be measured. Richness is a FIXED observed
+covariate, not another live-field gradient. Proper priors alone are not a
+universal posterior-integrability proof. Training marginal agreement is not
+physical-selection calibration. The suggested .01nat/row gate is arbitrary:
+measure value/derivative convergence rather than manufacture a passing cutoff.
+
+Next bounded comparison uses the SAME408337 field and15 fitted parameters,
+first four source-label-ordered training rows per population (24 total), fixed
+before scores. Compare1,2^3,4^3 Gauss-Legendre nodes per source cell; preserve
+cell mass, velocity and angular completeness. Conservative fresh source-cell
+support includes global coherent displacement,8sigma, TSC radius and cell
+half-diagonal. Not merely subdividing surviving centre components. Read raw
+mark values/coherent-velocity derivatives for24rows and count-key means for
+the first row per population. Counts reuse boundary-fitted4x32 CDF integration;
+the scalar gather must match full deposition and its derivative. Gaussian
+tails/source aliases and cell-constant completeness remain declared limits.
+No PM evolution, calibration refit, heldout scoring, new cosmology or ensemble.
+One H100/2CPU/8GiB/20min job; memory headroom above prior~4.7GiB readout.
+Outputs small JSON/NPZ and a Korean PDF with actual-object examples per test.
+MW/M31 identities remain ambiguous and M33 unresolved; this changes the
+observation link to the SAME NEW field, never seeds named objects or truths.
+
+Finite R2 destination adopted: actual1–2cMpc/h conditional field maps and UQ,
+multiple-chain mixing evidence, one untouched predictive evaluation and
+quantified model/numerical/prior limitations. No claim that a universal
+absolute-calibration solution is prerequisite for any conditional delivery;
+also no3cMpc/h mechanics pilot labelled R2 completion. Large-chain/resolution
+scope remains a separate evidence-based decision, not automatic advice authority.

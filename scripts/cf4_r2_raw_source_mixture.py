@@ -7,7 +7,7 @@ from cf4_r2_marked_tracer_jax import TRUE_EDGES, OBS_EDGES
 
 
 def export_raw_source_mixture(out, evaluated, selected, metadata, source,
-                              source_pgc, point, point_ksmag, state, rows):
+                              source_pgc, point, point_ksmag, state, rows, links):
     eta = np.asarray(evaluated[3])
     bin_logw = np.asarray(evaluated[5])
     if bin_logw.shape != (len(rows), 5, eta.shape[1]):
@@ -18,6 +18,8 @@ def export_raw_source_mixture(out, evaluated, selected, metadata, source,
     row_id, bin_id, candidate_id = np.nonzero(mask)
     logw = bin_logw[mask]
     eta_flat = eta[row_id,candidate_id]
+    grid_ids=np.concatenate([np.asarray(links[p]['candidate_source_ids']) for p in range(6)])
+    source_cell_id=grid_ids[row_id,candidate_id]
     ptr = np.r_[0,np.cumsum(mask.sum(axis=(1,2)))]
     if np.any(np.diff(ptr)==0):
         raise ValueError('empty source row')
@@ -59,6 +61,7 @@ def export_raw_source_mixture(out, evaluated, selected, metadata, source,
         PGC=np.array([source_pgc[o[3]] for o in chosen]),
         source_group=np.array([o[0] for o in chosen]),
         eta=eta_flat,true_k_bin=bin_id.astype(np.int8),log_weight=logw,
+        source_cell_id=source_cell_id,
         magnitude_lower=lower,magnitude_upper=upper,observed_M=observed_M,
         observed_ksmag=ksmag,population=population,dz_row=dz,
         observed_radius=observed_radius,mstar=mstar,lf_alpha=lf_alpha)

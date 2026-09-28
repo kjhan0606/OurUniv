@@ -255,7 +255,7 @@ def main():
                 from cf4_r2_raw_source_mixture import export_raw_source_mixture
                 report['raw_source_mixture'] = export_raw_source_mixture(
                     out, evaluated, selected, metadata, source, source_pgc, point,
-                    point_ksmag, state, rows)
+                    point_ksmag, state, rows, links)
                 save()
             np.savez(out/'training_distance_prediction.npz',
                 labels=np.array([o[0] for p in range(6) for o in selected[p]]),
