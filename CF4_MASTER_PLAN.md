@@ -9,6 +9,20 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 result2026-09-28:408119 completed64 updates/1h51m08s on iteration
+limit,NOT convergence. F159462.61→151825.92,FP−43.95→−25.56;max gradient42.68
+still on a luminosity bias. Shared FP zero moved1.67→4.09 prior SD, so the
+FP gain is not field-only evidence.408150 passed terminal integration and
+scalar-gradient comparisons, but radial shape residuals remain.408121 found
+strong step dependence of IC Hessian actions (14% fundamental,102% random),
+despite an exact rate-axis control. No Hessian covariance/Laplace promotion.
+One bounded fixed-field ten-nuisance optimization is next, following Fable
+CONDITIONAL PROCEED with concrete driver amendments in
+`CF4_R2_NUISANCE_BLOCK_ADVICE_20260928.md`:no21-evaluation nuisance Hessian,
+no conditional-residual=>model-failure claim,mandatory full gradient afterward,
+unchanged priors and no automatic alternating cycles. R2 remains incomplete;
+heldout untouched,N256 not launched,MW/M31 ambiguous,M33 unresolved.
+
 Active R2 follow-up2026-09-28:408119/source474939c is the single bounded
 extension after usable Fable science/cost advice (driver assessment in
 `CF4_R2_FIRST_FIELD_ADVICE_20260928.md`). Same partial joint target/data,

@@ -426,3 +426,69 @@ The next envelope is submitted on source474939c:408119 joint refinement
 rate update and initial adjoint. Six small optimizer/rate/curvature tests and
 one existing particle-moment test precede each numerical job. The final
 curvature readout is not an automatic science approval or posterior product.
+
+Terminal numerical/readout addition:408150/source7f2a928 runs the EXISTING
+saved-field checker afterok408119 on the v3 final state, output
+`r2_shell_cdf_field_check_v9`. It compares4x32/8x32 integration and the scalar
+velocity derivative and plots training radial counts from that same readout.
+No new PM evolution, fit, heldout score or implementation. H2002CPU6GiB/10min;
+the previous checker peak4.11GiB plus20% fits this host request. The envelope's
+requested GPU allocation caps now total175min, still below3GPU-hours.
+Reason: the substantially changed terminal field needs its own numerical
+accuracy and radial-residual readout; the v2 comparison is not a v3 result.
+
+### Bounded v3 fit finished, not stationary
+
+408119 COMPLETED/exit0 in1h51m08s (Python6641.32s,peak5.91GiB),64 accepted
+joint updates,66 full-gradient evaluations,70 score-only trials. Stop reason
+is **iteration limit**, not convergence. Objective159462.614936→151825.923500;
+count−156978.833864→−146150.539323; conditional FP−43.947229→−25.563497.
+The initial scalar-rate change−137.92777589 matched the analytic prediction
+to~1.5e-12; its residual scaled derivative was−9.5e-13. It was a one-time
+MAP initialization, not rate marginalization. The restart adjoint passed
+with normalized discrepancy2.56e-5.
+
+Final maximum gradient42.6823 is still optimizer coordinate2097154, i.e.
+white tracer index2 (bias for true K interval[-25,-23.6666666666667]). IC
+maximum3.65466. These coordinate-scaled values are not directly comparable
+physical uncertainties. Last-step objective gain53.6857; real descent, but
+neither stationarity nor permission for another identical restart.
+
+The FP shared white zero moved1.66710→4.08892, corresponding to
+.00666839→.01635569dex with the fixed .004-dex prior scale. Thus the improved
+FP score must NOT be attributed to the density/velocity field alone. A
+4.09-prior-SD fitted zero is a model/calibration tension to investigate, not
+proof of an implementation error or a license to widen that prior. Its
+remaining objective derivative is−1.81574 in white-zero coordinates.
+
+408120 completed15s and produced the final comparison image. Native mean
+density1,range0–252.521; white-IC mean-square.00537995, not a posterior draw
+or a restored LCDM spectrum. Physical mass-weighted node dispersions are
+100.75,100.26,108.67km/s, separately defined from tracer width99.729km/s
+and posterior uncertainty. Visible coherent structures and bands remain
+unvalidated; MW/M31/M33 are not identified. Curvature408121 and saved-field
+integration/radial readout408150 remain to be assessed. Heldout is untouched.
+
+408150 subsequently COMPLETED5m51s. It reproduces the v3 count score;
+4x32/8x32 delta.00119886,exposureL1=1.46911e-6,max occupied log delta.00072355.
+Scalar velocity derivative reverse528.2393764 versus FD528.2393831,
+relative discrepancy1.27e-8,Python peak4.11GiB. Expected training count
+47586.02 versus47121, but the shape mismatch persists: predicted/observed
+4979.7/4417 at48–60cMpc/h and1366.6/1801 at168–180. It is not just overall
+normalization. The image `r2_shell_cdf_field_check_v9/training_radial_counts.png`
+is a training readout, not independent validation. No heldout was read.
+
+408121 completed the three-direction finite-gradient curvature feasibility
+check (13 full gradients;Python1077.82s,peak5.91GiB). Rate-axis curvature
+19.0345070956/19.0345070945 matches analytic19.0345070942; vector change
+3.90e-10. IC fundamental-x directional curvatures6036.486/5879.556 have
+14.32% relative vector change. Fixed random-IC directional curvatures
+1.165796/1.169114 look similar, but vector norms60.088/31.823 and relative
+vector change1.02080 do NOT support a stable Hessian action at the tested
+epsilons. Each two-gradient action costs~151s. No Hessian/covariance is
+certified and no larger finite-difference Hessian calculation follows.
+This scale dependence does not by itself identify an incorrect first derivative
+or a unique cause. No negative direction was seen in these THREE probes;
+that is not an SPD test. The unchanged-gradient checks remain valid within
+their stated scope. Next conditional-block decision and Fable corrections:
+`CF4_R2_NUISANCE_BLOCK_ADVICE_20260928.md`.

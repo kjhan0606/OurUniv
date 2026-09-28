@@ -9,6 +9,27 @@ from cf4_r2_v6_partial_map import bounded_lbfgs,finite_gradient_curvature,condit
 
 
 class BoundedMapTests(unittest.TestCase):
+    def test_empty_ic_conditional_block_does_not_claim_joint_stationarity(self):
+        # One fixed IC coordinate coupled to the first of ten nuisance
+        # coordinates. Conditional optimum is NOT the joint optimum.
+        fixed_ic=.4
+        matrix=np.eye(11); matrix[0,0]=4.; matrix[1,1]=3.
+        matrix[0,1]=matrix[1,0]=1.
+        def fun(z):
+            full=np.r_[fixed_ic,z]
+            return .5*full@matrix@full,(matrix@full)[1:]
+        accepted=[]
+        with np.errstate(divide='raise',invalid='raise'):
+            z,value,grad,message=bounded_lbfgs(fun,np.zeros(10),
+                lambda z:accepted.append(fun(z)[0]),n_ic=0,
+                seconds_left=lambda:10.,maxiter=30)
+        self.assertEqual(message,'gradient tolerance')
+        self.assertLess(np.max(np.abs(grad)),1e-4)
+        self.assertAlmostEqual(z[0],-fixed_ic/3.,places=8)
+        self.assertTrue(np.all(np.diff(accepted)<=0))
+        self.assertGreater(abs((matrix@np.r_[fixed_ic,z])[0]),1.)
+        self.assertAlmostEqual(value,fun(z)[0])
+
     def test_conditional_rate_update_preserves_gaussian_prior(self):
         for expected,observed,old in ((12.,7.,.3),(.05,10.,-.7),(50818.59736822603,47121.,.578451172091188)):
             new=conditional_rate_mode(expected,observed,old)

@@ -95,6 +95,8 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
     the objective callable must stop rather than mask that case.
     """
     x=initial.copy()
+    if n_ic < 0 or x.shape != (n_ic+10,):
+        raise ValueError('expected IC block plus nine tracer and one zero coordinates')
     value,grad=fun(x) if initial_evaluation is None else initial_evaluation
     if not np.isfinite(value) or not np.isfinite(grad).all():
         raise FloatingPointError('restart is not a finite differentiable state')
@@ -119,7 +121,8 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
         if np.dot(direction,grad)>=0:
             history=[]; direction=-grad
         # Coordinate limits affect trial size ONLY; the target/prior unchanged.
-        divisor=max(1.,np.linalg.norm(direction[:n_ic])/np.sqrt(n_ic)/.1,
+        ic_step=(np.linalg.norm(direction[:n_ic])/np.sqrt(n_ic)/.1 if n_ic else 0.)
+        divisor=max(1.,ic_step,
                     np.max(np.abs(direction[n_ic:n_ic+9]/100.))/.1,
                     abs(direction[-1])/.5)
         direction/=divisor
@@ -184,6 +187,11 @@ def main():
     cap=int(os.environ.get('CF4_R2_SECONDS_CAP','2700'))
     norm_cap=os.environ.get('CF4_R2_INITIAL_NORM_CAP')
     norm_cap=None if norm_cap is None else float(norm_cap)
+    nuisance_only=os.environ.get('CF4_R2_NUISANCE_ONLY')=='1'
+    if nuisance_only and (not os.environ.get('CF4_R2_RESTART') or any(
+            os.environ.get(k)=='1' for k in ('CF4_R2_DIRECTION_DIAG',
+            'CF4_R2_CURVATURE_DIAG','CF4_R2_RATE_WARM_START'))):
+        raise ValueError('conditional block needs a restart and no other diagnostic/warm-start mode')
     if maxiter<1 or cap<1 or (norm_cap is not None and (not np.isfinite(norm_cap) or norm_cap<=0)):
         raise ValueError('invalid bounded fit budget/initial step norm')
     report = dict(status='STARTED', source_commit=expected,
@@ -203,6 +211,10 @@ def main():
         initial_step_norm_cap=norm_cap,score_only_line_search=True,trace=[])
     report['count_integration']=dict(family=count_integration,gh_order=15,
                                     cdf_order=cdf_order,cdf_segments=cdf_segments)
+    if nuisance_only:
+        report.update(classification='CONDITIONAL_NUISANCE_OPTIMIZATION_FIXED_FIELD_NOT_POSTERIOR',
+            optimization_block='ten nuisances at fixed IC/field',field_changed=False,
+            nuisance_trace=[],mandatory_full_gradient_after_block=True)
     if count_integration=='shell_cdf':
         report['quadrature_order']=None
         report['limitations'][1]='finite count integration and continuous mark differ; periodic-mark aliases remain uncalibrated'
@@ -307,13 +319,16 @@ def main():
                     association_logprob=jnp.zeros((len(batch),5,WIDTH)))
             return links,max_neighbors
 
-        @jax.jit
-        def data_target(rho,vel,tracer,zero,links):
-            parts,_ = partial_v6_count_singleton_parts(rho,vel,jnp.zeros(0),tracer,
+        def target_parts(rho,vel,tracer,zero,links):
+            return partial_v6_count_singleton_parts(rho,vel,jnp.zeros(0),tracer,
                 source,links,keys,counts,exposure,box=BOX,
                 hubble=common['H0_km_s_Mpc'],h=common['h'],white_fp_zero=zero,
                 count_integration=count_integration,count_cdf_order=cdf_order,
                 count_cdf_segments=cdf_segments)
+
+        @jax.jit
+        def data_target(rho,vel,tracer,zero,links):
+            parts,_ = target_parts(rho,vel,tracer,zero,links)
             return jnp.sum(parts[:3]),parts[:3]
         data_vg = jax.jit(jax.value_and_grad(data_target,argnums=(0,1,2,3),has_aux=True))
         report.update(training_count_keys=int(keys.size),training_counts=int(counts.sum()),
@@ -400,6 +415,8 @@ def main():
             latest.update(parts=list(map(float,np.asarray(parts))),objective=-value,
                           gradient_inf=float(np.max(np.abs(gradient))),
                           gradient_inf_IC=float(np.max(np.abs(gradient[:N**3]))),
+                          gradient_l2_IC=float(np.linalg.norm(gradient[:N**3])),
+                          gradient_l2_nuisance_optimizer=float(np.linalg.norm(gradient[N**3:])),
                           gradient_max_coordinate=int(np.argmax(np.abs(gradient))),
                           objective_nuisance_gradient_optimizer_coordinates=(-gradient[N**3:]).tolist(),
                           max_neighbors=width,sigma_los_km_s=float(100*np.exp(.5*float(tracer[6]))),
@@ -407,6 +424,9 @@ def main():
             report['evaluations']=report.get('evaluations',0)+1
             print(json.dumps(dict(evaluation=report['evaluations'],**latest)),flush=True)
             if report['evaluations']==1:
+                if nuisance_only:
+                    diagnostic_baseline['fixed_field']=(rho,vel)
+                    report['full_gradient_before_block']=dict(latest)
                 if os.environ.get('CF4_R2_DIRECTION_DIAG') == '1':
                     diagnostic_baseline['data_gradients'] = grads
                 np.savez(OUT/'initial_state.npz',white_ic=np.asarray(white),
@@ -580,10 +600,150 @@ def main():
             report.update(status='CURVATURE_FEASIBILITY_COMPLETE_NOT_POSTERIOR')
             save_report()
             return
-        solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
-            seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
-            value_only=trial_value,initial_norm_cap=norm_cap,
-            initial_evaluation=(value0,gradient0))
+        if nuisance_only:
+            # This is a conditional OPTIMIZER block, not a reduced posterior.
+            # All ten coordinates remain free in any later joint inference.
+            fixed_rho,fixed_vel=diagnostic_baseline['fixed_field']
+            ic_prior=.5*np.dot(initial[:N**3],initial[:N**3])
+            coordinate=(np.arange(N)+.5)*(BOX/N)-BOX/2.
+            radius=np.sqrt(coordinate[:,None,None]**2+coordinate[None,:,None]**2
+                           +coordinate[None,None,:]**2).reshape(-1)
+            bins=jnp.asarray(np.minimum(16,(radius/12.).astype(np.int32)))
+            edges=np.arange(0.,193.,12.)
+            observed,_=np.histogram(radius[np.asarray(keys)%N**3],bins=edges,
+                                    weights=np.asarray(counts))
+
+            @jax.jit
+            def conditional_target(rho,vel,tracer,zero,links):
+                parts,intensity=target_parts(rho,vel,tracer,zero,links)
+                prediction=(intensity.reshape(6,-1)*exposure.reshape(6,-1)).sum(axis=0)
+                radial=jnp.bincount(bins,weights=prediction,length=17)[:16]
+                return jnp.sum(parts[:3]),(parts[:3],radial)
+
+            conditional_vg=jax.jit(jax.value_and_grad(
+                conditional_target,argnums=(2,3),has_aux=True))
+            conditional_compiled=None
+            conditional_latest={}
+
+            def conditional_evaluate(z,*,derivative):
+                nonlocal conditional_compiled
+                tic=time.monotonic()
+                tracer,zero=jnp.asarray(z[:9]/100.),jnp.asarray(z[-1])
+                links,width=build_support(fixed_rho,fixed_vel,np.asarray(tracer))
+                args=(fixed_rho,fixed_vel,tracer,zero,links)
+                if derivative:
+                    if conditional_compiled is None:
+                        conditional_compiled=conditional_vg.lower(*args).compile()
+                        analysis=conditional_compiled.memory_analysis()
+                        stats=jax.devices()[0].memory_stats() or {}
+                        if analysis is not None:
+                            report['nuisance_derivative_memory']=dict(
+                                temporary_GiB=analysis.temp_size_in_bytes/1024**3,
+                                current_device_GiB=stats.get('bytes_in_use',0)/1024**3,
+                                device_limit_GiB=stats.get('bytes_limit',0)/1024**3)
+                            save_report()
+                            peak=(stats.get('bytes_in_use',0)+analysis.temp_size_in_bytes
+                                  +analysis.output_size_in_bytes)
+                            if stats.get('bytes_limit') and 1.2*peak>stats['bytes_limit']:
+                                raise MemoryError('nuisance derivative lacks 20 percent device margin')
+                    (log_value,(parts,radial)),grads=conditional_compiled(*args)
+                    grad=-np.r_[np.asarray(grads[0])/100.,float(grads[1])]
+                else:
+                    log_value,(parts,radial)=conditional_target(*args)
+                val=-float(log_value)+ic_prior
+                if not np.isfinite(val) or (derivative and not np.isfinite(grad).all()):
+                    if derivative or val!=np.inf:
+                        full=initial.copy(); full[N**3:]=z
+                        np.savez(OUT/'nonfinite_nuisance_trial.npz',parameters=full)
+                    if val==np.inf:
+                        return (val,np.zeros(10)) if derivative else val
+                    raise FloatingPointError('undefined conditional target/derivative; trial preserved')
+                if not derivative:
+                    report['nuisance_score_only_trials']=report.get('nuisance_score_only_trials',0)+1
+                    return val
+                report['nuisance_evaluations']=report.get('nuisance_evaluations',0)+1
+                conditional_latest.update(objective=val,parts=np.asarray(parts).tolist(),
+                    conditional_gradient_inf=float(np.max(np.abs(grad))),
+                    conditional_gradient_optimizer_coordinates=grad.tolist(),
+                    white_tracer=(z[:9]/100.).tolist(),white_fp_zero=float(z[-1]),
+                    predicted_radial_counts=np.asarray(radial).tolist(),
+                    max_neighbors=width,seconds=time.monotonic()-tic)
+                print(json.dumps(dict(nuisance_evaluation=report['nuisance_evaluations'],
+                                      **conditional_latest)),flush=True)
+                return val,grad
+
+            z0=initial[N**3:].copy()
+            cv,cg=conditional_evaluate(z0,derivative=True)
+            if not np.isfinite(cv):
+                raise AssertionError('conditional baseline nonfinite although the full target is finite')
+            report['conditional_baseline']=dict(conditional_latest)
+            report['conditional_full_baseline_agreement']=dict(
+                objective_difference=float(cv-value0),
+                gradient_max_difference=float(np.max(np.abs(cg-gradient0[N**3:]))))
+            save_report()
+            if (not np.isclose(cv,value0,rtol=0.,atol=1e-7)
+                    or not np.allclose(cg,gradient0[N**3:],rtol=1e-10,atol=1e-8)):
+                raise AssertionError('conditional/full baseline target or derivative mismatch')
+
+            @jax.jit
+            def fp_only(rho,vel,tracer,zero,links):
+                # Only the FP output is used; count integration is dead code.
+                return data_target(rho,vel,tracer,zero,links)[1][1]
+
+            def zero_sensitivity(z,fitted_fp):
+                tracer=jnp.asarray(z[:9]/100.)
+                links,_=build_support(fixed_rho,fixed_vel,np.asarray(tracer))
+                prior_mean=float(fp_only(fixed_rho,fixed_vel,tracer,jnp.asarray(0.),links))
+                if np.isnan(prior_mean) or prior_mean==np.inf:
+                    raise FloatingPointError('undefined fixed-field FP-zero sensitivity')
+                return dict(fitted_white_zero=float(z[-1]),fitted_FP_score=float(fitted_fp),
+                    prior_mean_zero_FP_score=prior_mean if np.isfinite(prior_mean) else '-inf',
+                    fitted_minus_prior_mean_FP=float(fitted_fp-prior_mean) if np.isfinite(prior_mean) else None,
+                    interpretation='fixed NEW field and other nuisances; NOT decomposition of earlier field-fit gains')
+
+            report['FP_zero_sensitivity_before_block']=zero_sensitivity(z0,conditional_latest['parts'][1])
+            save_report()
+            conditional_accepted=dict(conditional_latest)
+
+            def nuisance_callback(z):
+                conditional_accepted.clear(); conditional_accepted.update(conditional_latest)
+                report['nuisance_trace'].append(dict(iteration=len(report['nuisance_trace'])+1,
+                                                    **conditional_latest))
+                full=initial.copy(); full[N**3:]=z
+                np.savez(OUT/'accepted_checkpoint.npz',parameters=full)
+                save_report()
+
+            z,conditional_value,conditional_gradient,block_message=bounded_lbfgs(
+                lambda z:conditional_evaluate(z,derivative=True),z0,nuisance_callback,n_ic=0,
+                seconds_left=lambda:cap-(time.monotonic()-started)-180.,maxiter=maxiter,
+                value_only=lambda z:conditional_evaluate(z,derivative=False),
+                initial_norm_cap=norm_cap,initial_evaluation=(cv,cg))
+            solution=initial.copy(); solution[N**3:]=z
+            report['conditional_endpoint']=dict(conditional_accepted)
+            report['FP_zero_sensitivity_after_block']=zero_sensitivity(z,conditional_accepted['parts'][1])
+            report.update(nuisance_iterations=len(report['nuisance_trace']),
+                nuisance_optimizer_message=block_message,
+                nuisance_optimizer_success=block_message=='gradient tolerance',
+                final_conditional_gradient_inf=float(np.max(np.abs(conditional_gradient))),
+                conditional_objective_gain=float(cv-conditional_value),
+                training_radial_profile=dict(radius_edges_cMpc_h=edges.tolist(),
+                    observed=observed.tolist(),
+                    before=report['conditional_baseline']['predicted_radial_counts'],
+                    after=conditional_accepted['predicted_radial_counts'],
+                    interpretation='training prediction at fixed field; not heldout or posterior uncertainty'))
+            save_report()
+            # Required: conditional stationarity is not joint stationarity.
+            value,gradient=objective(solution)
+            if (not np.isclose(value,conditional_value,rtol=0.,atol=1e-7)
+                    or not np.allclose(gradient[N**3:],conditional_gradient,rtol=1e-10,atol=1e-8)):
+                raise AssertionError('conditional/full endpoint target or derivative mismatch')
+            report['full_gradient_after_block']=dict(latest)
+            message='conditional block: '+block_message
+        else:
+            solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
+                seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
+                value_only=trial_value,initial_norm_cap=norm_cap,
+                initial_evaluation=(value0,gradient0))
         rho,vel,variance,valid=terminal_field(jnp.asarray(solution[:N**3]))
         np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
                  tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],
@@ -591,12 +751,28 @@ def main():
                  physical_velocity_variance_km2_s2=np.asarray(variance),
                  velocity_valid=np.asarray(valid))
         np.savez(OUT/'accepted_checkpoint.npz',parameters=solution)
-        report.update(status='PARTIAL_MAP_OPTIMIZER_STOP_NOT_POSTERIOR',
-            optimizer_success=message=='gradient tolerance',optimizer_message=message,
+        # Keep the endpoint derivative for later decisions without another PM VJP.
+        np.save(OUT/'final_gradient.npy',gradient)
+        report.update(status=('CONDITIONAL_NUISANCE_OPTIMIZER_STOP_NOT_POSTERIOR' if nuisance_only
+                              else 'PARTIAL_MAP_OPTIMIZER_STOP_NOT_POSTERIOR'),
+            optimizer_success=not nuisance_only and message=='gradient tolerance',optimizer_message=message,
             iterations=len(report['trace']),final_objective=float(value),
             final_gradient_inf=float(np.max(np.abs(gradient))),
             physical_dispersion_saved=True,posterior_velocity_uncertainty=False)
         save_report()
+        if nuisance_only:
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            profile=report['training_radial_profile']
+            fig,ax=plt.subplots(figsize=(8,4.5),constrained_layout=True)
+            for name,color in (('observed','black'),('before','tab:orange'),('after','tab:blue')):
+                ax.stairs(profile[name],profile['radius_edges_cMpc_h'],label=name,color=color)
+            ax.set(xlabel='Observed-key cell radius (cMpc/h)',ylabel='Training galaxy count',
+                   title='Same FIXED field, nuisance parameters only\nNOT calibration, heldout validation or posterior uncertainty')
+            ax.legend()
+            fig.savefig(OUT/'conditional_radial_counts.png',dpi=150)
+            plt.close(fig)
     except Exception as exc:
         report.update(status='STOPPED_NOT_POSTERIOR',error=f'{type(exc).__name__}: {exc}')
         save_report()
