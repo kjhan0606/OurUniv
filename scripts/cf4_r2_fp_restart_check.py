@@ -35,6 +35,7 @@ def main():
         (out/'result.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
     save()
     combined_check = os.environ.get('CF4_R2_FP_COMBINED_CHECK') == '1'
+    compact_check = os.environ.get('CF4_R2_FP_COMPACT_CHECK') == '1'
     paths = [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
              BASE/'r2_v6_joint_secant_map_v2/initial_state.npz']
     states = []
@@ -115,6 +116,54 @@ def main():
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         save(); print(json.dumps(report['states'][-1]),flush=True)
+        if compact_check and index == 1:
+            density,velocity = native_mass_momentum_to_count_cells(*args[:2],BOX)
+            tracer,zero = args[2:]
+            intrinsic = intrinsic_biased_source_masses(density,
+                jnp.log(jnp.sum(intrinsic_lf_bin_fractions()[1:4]))+2*tracer[0],
+                jnp.exp(.5*tracer[1:6]),mstar=-23.28+.2*tracer[8],
+                alpha=-1+.06*jnp.exp(.5*tracer[7]),reference_interval=(-25.,-21.))
+            velocity = jnp.moveaxis(velocity,0,-1).reshape(-1,3)
+            compact_rows, compact_vg_rows = [], []
+            for p in range(6):
+                if not len(selected[p]):
+                    continue
+                link = links[p]
+                width = int(np.max(np.asarray(link['candidate_mask']).sum(axis=1)))
+                ids = link['candidate_source_ids'][:,:width]
+                positions = source['positions'][ids]
+                velocities = velocity[ids]
+                masses = jnp.moveaxis(intrinsic[:,ids],0,1)*link['candidate_mask'][:,:width,None].transpose(0,2,1)
+                sky = jnp.moveaxis(source['angular'][:,ids],0,1)
+                def one(pos,vel,mass,angular,voxel,radius,dz,mean,std,alpha,zero,tracer):
+                    geometry = dict(observer=jnp.full(3,192.),box_size_cMpc_h=BOX,
+                        hubble_km_s_Mpc=74.6,little_h=.746,
+                        radius_table_cMpc_h=source['radial_table'],modulus_table_h=source['modulus_table'],
+                        redshift_table=source['redshift_table'],grid_size=N,
+                        radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
+                        mstar=-23.28+.2*tracer[8],alpha=-1+.06*jnp.exp(.5*tracer[7]))
+                    return linked_singleton_logfactors_for_population(pos,vel,mass,angular,
+                        jnp.arange(width)[None],jnp.ones((1,width),dtype=bool),jnp.zeros((1,5,width)),
+                        voxel[None],radius[None],dz[None],mean[None],std[None],alpha[None],
+                        population=p,sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
+                        radial_geometry=geometry,fp_zero_dex=.004*zero)[0][0]
+                batched = jax.vmap(one,in_axes=(0,0,0,0,0,0,0,0,0,0,None,None))
+                inputs = (positions,velocities,masses,sky,*[link[k] for k in (
+                    'voxel_ijk','observed_radius_cMpc_h','dz_row','eta_mean','eta_std','eta_alpha')],zero,tracer)
+                plain = np.asarray(jax.jit(batched)(*inputs))
+                def summed(*values):
+                    factors = batched(*values)
+                    return factors.sum(),factors
+                (total, factors),grad = jax.jit(jax.value_and_grad(summed,
+                    argnums=(1,2,10,11),has_aux=True))(*inputs)
+                compact_rows.extend(plain.tolist()); compact_vg_rows.extend(np.asarray(factors).tolist())
+                report.setdefault('compact_populations',[]).append(dict(population=p,width=width,
+                    plain=float(plain.sum()),vg=float(total),
+                    max_row_difference=float(np.max(np.abs(plain-np.asarray(factors)))),
+                    zero_gradient=float(grad[2])))
+                save(); print(json.dumps(report['compact_populations'][-1]),flush=True)
+            np.savez(out/'compact_rows.npz',plain=compact_rows,vg=compact_vg_rows,
+                     labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         if combined_check and index == 1:
             isolated_value, isolated_grad = jax.jit(jax.value_and_grad(
                 mark,argnums=(0,1,2,3)))(*args,links)
