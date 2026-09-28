@@ -38,7 +38,39 @@ def unpack(parameters):
     return mean, lower@lower.T
 
 
-def row_logpdf(parameters, data, cut_t, cut_w, *, return_log_terms=False):
+def correlated_rectangle_logprob(lo,hi,rho,cut_t,cut_w,*,integration_axis=0,
+                                 marginal_tolerance=0.,active=None):
+    """Correlated Gaussian rectangle, optionally using a certified marginal.
+
+    If P(B^c)/P(A)<=tol, then (1-tol)P(A)<=P(A and B)<=P(A).
+    Replacing the joint probability by P(A) has relative error<=tol/(1-tol),
+    without assuming independence. The expensive conditional quadrature is
+    skipped only when this bound holds for EVERY active component in a chunk.
+    Axis choice changes the numerical quadrature, never the exact Gaussian law.
+    """
+    if integration_axis not in (0,1) or not 0<=marginal_tolerance<1:
+        raise ValueError('invalid Gaussian rectangle integration choice')
+    if integration_axis==1:lo,hi=lo[:,::-1],hi[:,::-1]
+    flip=lo[:,0]>0
+    a,b=jnp.where(flip,-hi[:,0],lo[:,0]),jnp.where(flip,-lo[:,0],hi[:,0])
+    corr=jnp.where(flip,-rho,rho)
+    mass=log_interval(a,b)
+    def full(_):
+        logu=jnp.logaddexp(log_ndtr(a)[:,None],mass[:,None]+jnp.log(cut_t))
+        z=inverse_log_cdf(logu)
+        csd=jnp.sqrt(1-corr*corr)[:,None]
+        shift=corr[:,None]*z
+        conditional=log_interval((lo[:,1,None]-shift)/csd,(hi[:,1,None]-shift)/csd)
+        return mass+jax.scipy.special.logsumexp(jnp.log(cut_w)+conditional,axis=-1)
+    if marginal_tolerance==0:return full(None)
+    log_failure=jnp.logaddexp(log_ndtr(lo[:,1]),log_ndtr(-hi[:,1]))
+    eligible=log_failure-mass<=jnp.log(marginal_tolerance)
+    if active is not None:eligible=eligible|~active
+    return jax.lax.cond(jnp.all(eligible),lambda _:mass,full,operand=None)
+
+
+def row_logpdf(parameters, data, cut_t, cut_w, *, return_log_terms=False,
+               cut_integration_axis=0,cut_marginal_tolerance=0.):
     """Exact saved-candidate mixture; LF quadrature supplied as normalized q."""
     b, intrinsic = unpack(parameters)
     x, row = data['x'], data['row']
@@ -63,16 +95,9 @@ def row_logpdf(parameters, data, cut_t, cut_w, *, return_log_terms=False):
         magnitude, logq = inputs
         cm = cut_base+(magnitude[:,None]+23.)*cut_slope
         lo, hi = (data['cut_lower'][row]-cm)/sd, (data['cut_upper'][row]-cm)/sd
-        flip = lo[:,0]>0
-        a, bb = jnp.where(flip,-hi[:,0],lo[:,0]), jnp.where(flip,-lo[:,0],hi[:,0])
-        corr = jnp.where(flip,-rho,rho)
-        mass = log_interval(a,bb)
-        logu = jnp.logaddexp(log_ndtr(a)[:,None],mass[:,None]+jnp.log(cut_t))
-        z = inverse_log_cdf(logu)
-        csd = jnp.sqrt(1-corr*corr)[:,None]
-        shift = corr[:,None]*z
-        logconditional = log_interval((lo[:,1,None]-shift)/csd,(hi[:,1,None]-shift)/csd)
-        logz = mass+jax.scipy.special.logsumexp(jnp.log(cut_w)+logconditional,axis=-1)
+        logz=correlated_rectangle_logprob(lo,hi,rho,cut_t,cut_w,
+            integration_axis=cut_integration_axis,marginal_tolerance=cut_marginal_tolerance,
+            active=jnp.isfinite(data['log_weight']))
         return jnp.logaddexp(acc,logq+logz), None
     logz,_ = jax.lax.scan(jax.checkpoint(selected_at_magnitude),
         jnp.full_like(data['eta'],-jnp.inf),(data['magnitude'].T,data['logq'].T))

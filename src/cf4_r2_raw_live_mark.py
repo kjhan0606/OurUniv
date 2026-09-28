@@ -25,7 +25,8 @@ def logadd_nonempty(a,b):
 
 def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observation,
                     *,population,geometry,magnitude_order=24,cut_order=64,
-                    component_bin=None,component_row=None):
+                    component_bin=None,component_row=None,
+                    cut_integration_axis=0,cut_marginal_tolerance=0.):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
     if component_row is None:
@@ -86,19 +87,22 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         data.update(row=component_row,**{k:o[k] for k in
             ('x','error_covariance','richness','cut_lower','cut_upper')})
     t,w=np.polynomial.legendre.leggauss(cut_order)
-    a,b=row_logpdf(parameters,data,jnp.asarray((t+1)/2),jnp.asarray(w/2),return_log_terms=True)
+    a,b=row_logpdf(parameters,data,jnp.asarray((t+1)/2),jnp.asarray(w/2),return_log_terms=True,
+        cut_integration_axis=cut_integration_axis,cut_marginal_tolerance=cut_marginal_tolerance)
     return (a[0],b[0]) if component_row is None else (a,b)
 
 
 def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observation,
                        *,population,geometry,component_bins=None,component_rows=None,
-                       return_log_terms=False):
+                       return_log_terms=False,cut_order=64,
+                       cut_integration_axis=0,cut_marginal_tolerance=0.):
     """Chunk-major geometry; intrinsic(chunk,5,source), angular(chunk,2,source)."""
     @jax.checkpoint
     def step(acc,parts):
         a,b=chunk_log_terms(parameters,*parts[:4],observation,population=population,geometry=geometry,
             component_bin=None if component_bins is None else parts[4],
-            component_row=None if component_rows is None else parts[5])
+            component_row=None if component_rows is None else parts[5],cut_order=cut_order,
+            cut_integration_axis=cut_integration_axis,cut_marginal_tolerance=cut_marginal_tolerance)
         return (logadd_nonempty(acc[0],a),logadd_nonempty(acc[1],b)),None
     parts=(positions,velocities,intrinsic,angular)
     if component_bins is not None:parts+= (component_bins,)
