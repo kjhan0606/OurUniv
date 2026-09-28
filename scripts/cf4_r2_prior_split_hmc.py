@@ -16,6 +16,26 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 
+def canonical_from_optimizer_oracle(optimizer_oracle,n_ic):
+    """Adapt this project's IC +100*9tracer +zero optimizer coordinates.
+
+    The constant coordinate Jacobian has no effect on MH energy differences;
+    gradients DO require the chain rule. Priors are unchanged, not rescaled.
+    """
+    def oracle(q):
+        q=np.asarray(q,dtype=float)
+        if q.shape!=(n_ic+10,):
+            raise ValueError('expected IC plus9 white tracers and1 white zero')
+        x=q.copy(); x[n_ic:n_ic+9]*=100.
+        value,gradient=optimizer_oracle(x)
+        if float(value)==np.inf:
+            return value,None
+        gradient=np.array(gradient,dtype=float,copy=True)
+        gradient[n_ic:n_ic+9]*=100.
+        return value,gradient
+    return oracle
+
+
 class FixedSplitMetric:
     def __init__(self, ic_inverse_mass, nuisance_inverse_mass):
         c=np.asarray(ic_inverse_mass,dtype=float)

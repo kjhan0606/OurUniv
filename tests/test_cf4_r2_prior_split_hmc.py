@@ -5,13 +5,16 @@ import unittest
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from cf4_r2_prior_split_hmc import FixedSplitMetric,split_trajectory,split_hmc_step
+from cf4_r2_prior_split_hmc import (
+    FixedSplitMetric,split_trajectory,split_hmc_step,canonical_from_optimizer_oracle)
 
 
 class PriorSplitTests(unittest.TestCase):
     def setUp(self):
         self.rng=np.random.default_rng(270929)
-        self.metric=FixedSplitMetric(np.full((2,2,2),.4),np.array([[.5,.1],[.1,1.2]]))
+        modes=np.meshgrid(*[np.fft.fftfreq(2)]*3,indexing='ij')
+        symbol=1./(1.+4.*sum(k*k for k in modes))
+        self.metric=FixedSplitMetric(symbol,np.array([[.5,.1],[.1,1.2]]))
         self.q=self.rng.normal(size=10); self.p=self.metric.momentum(self.rng)
         a=self.rng.normal(size=(3,10))*.2
         self.precision=np.eye(10)+a.T@a
@@ -19,6 +22,16 @@ class PriorSplitTests(unittest.TestCase):
 
     def oracle(self,q):
         return .5*q@self.precision@q-self.linear@q,self.precision@q-self.linear
+
+    def test_optimizer_coordinate_adapter_preserves_standard_normal_prior(self):
+        scale=np.r_[np.ones(2),np.full(9,100.),1.]
+        def old(x):
+            return .5*np.sum((x/scale)**2),x/scale**2
+        oracle=canonical_from_optimizer_oracle(old,2)
+        q=self.rng.normal(size=12)
+        value,gradient=oracle(q)
+        self.assertAlmostEqual(value,.5*q@q,places=12)
+        np.testing.assert_allclose(gradient,q,rtol=0,atol=1e-14)
 
     def test_prior_flow_energy_and_reverse(self):
         q,p=self.metric.prior_flow(self.q,self.p,.71)
