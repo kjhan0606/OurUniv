@@ -18,20 +18,7 @@ from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, ts
 from cf4_r2_marked_tracer_jax import source_mark_transfer
 
 
-def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
-                    radial_max=180., order=16, tail_sigma=8., segments=1):
-    """Signed ray coordinates/weights: (2*segments, nodes, sources).
-
-    ``mu`` and ``direction`` describe coherent positions relative to the
-    observer in its minimum-image cell. ``image_center`` is another observer
-    image relative to that observer. Weights are *unconditional* Gaussian
-    probabilities, never normalized to the selected region.
-    """
-    if order<1 or segments<1 or not 0<radial_min<radial_max or tail_sigma<=0:
-        raise ValueError('invalid shell quadrature')
-    if isinstance(sigma,numbers.Real) and sigma<=0:
-        raise ValueError('positive LOS dispersion required')
-    mu,direction=jnp.asarray(mu),jnp.asarray(direction)
+def _shell_intervals(mu,direction,sigma,image_center,radial_min,radial_max,tail_sigma):
     center=jnp.asarray(image_center)
     middle=jnp.sum(direction*center,axis=-1)
     transverse=jnp.maximum(jnp.sum(center*center)-middle*middle,0.)
@@ -46,15 +33,10 @@ def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
     lower=jnp.maximum(lower,mu-tail_sigma*sigma)
     upper=jnp.minimum(upper,mu+tail_sigma*sigma)
     active=outer_ok[None]&(upper>lower)&(jnp.sum(direction**2,axis=1)>0)[None]
-    # Physical-q stratification resolves spatially important rare tails that
-    # a single probability-interval rule can miss. Preserve each subinterval's
-    # unconditional Gaussian mass; do not drop low-probability intervals.
-    width=jnp.where(active,upper-lower,0.)
-    fraction=jnp.arange(segments,dtype=mu.dtype)/segments
-    starts=lower[:,None,:]+fraction[None,:,None]*width[:,None,:]
-    ends=starts+width[:,None,:]/segments
-    lower,upper=starts.reshape(-1,mu.size),ends.reshape(-1,mu.size)
-    active=jnp.broadcast_to(active[:,None,:],starts.shape).reshape(-1,mu.size)
+    return lower,upper,active
+
+
+def _probability_nodes(mu,sigma,lower,upper,active,order):
     za=jnp.where(active,(lower-mu)/sigma,0.)
     zb=jnp.where(active,(upper-mu)/sigma,0.)
     # Positive-tail intervals use survival probabilities to retain precision.
@@ -68,6 +50,29 @@ def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
     q=mu[None,None,:]+sigma*jnp.where(positive[:,None,:],-ndtri(u),ndtri(u))
     weight=probability[:,None,:]*jnp.asarray(weights/2)[None,:,None]
     return q,weight
+
+
+def shell_cdf_nodes(mu, direction, sigma, image_center, *, radial_min=5.,
+                    radial_max=180., order=16, tail_sigma=8., segments=1):
+    """Reference node materialization (2*segments, nodes, sources).
+
+    Production-size contractions below stream segments instead. Weights are
+    unconditional Gaussian probabilities, never selected-region normalized.
+    """
+    if order<1 or segments<1 or not 0<radial_min<radial_max or tail_sigma<=0:
+        raise ValueError('invalid shell quadrature')
+    if isinstance(sigma,numbers.Real) and sigma<=0:
+        raise ValueError('positive LOS dispersion required')
+    mu,direction=jnp.asarray(mu),jnp.asarray(direction)
+    lower,upper,active=_shell_intervals(mu,direction,sigma,image_center,
+                                      radial_min,radial_max,tail_sigma)
+    width=jnp.where(active,upper-lower,0.)
+    fraction=jnp.arange(segments,dtype=mu.dtype)/segments
+    starts=lower[:,None,:]+fraction[None,:,None]*width[:,None,:]
+    ends=starts+width[:,None,:]/segments
+    lower,upper=starts.reshape(-1,mu.size),ends.reshape(-1,mu.size)
+    active=jnp.broadcast_to(active[:,None,:],starts.shape).reshape(-1,mu.size)
+    return _probability_nodes(mu,sigma,lower,upper,active,order)
 
 
 def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
@@ -84,7 +89,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     intrinsic=jnp.asarray(intrinsic_bin_masses)
     angular=jnp.asarray(angular_completeness)
     if (pos.ndim!=2 or pos.shape[1]!=3 or intrinsic.shape!=(5,pos.shape[0])
-            or angular.shape!=(2,pos.shape[0]) or radial_max_cMpc_h>=box_size_cMpc_h/2):
+            or angular.shape!=(2,pos.shape[0]) or radial_max_cMpc_h>=box_size_cMpc_h/2
+            or not 0<radial_min_cMpc_h<radial_max_cMpc_h or min(order,segments)<1):
         raise ValueError('invalid source geometry or overlapping observer shells')
     sigma=little_h*sigma_los_km_s/hubble_km_s_Mpc
     if isinstance(sigma,numbers.Real) and not 0<8*sigma<box_size_cMpc_h/2:
@@ -116,11 +122,23 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
 
     @jax.checkpoint
     def add_image(total,center):
-        q,w=shell_cdf_nodes(mu,direction,sigma,center,radial_min=radial_min_cMpc_h,
-                            radial_max=radial_max_cMpc_h,order=order,segments=segments)
-        q,w=q.reshape(-1,pos.shape[0]),w.reshape(-1,pos.shape[0])
-        total=jax.lax.cond(jnp.any(w>0),
-            lambda t:jax.lax.scan(add_node,t,(q,w))[0],lambda t:t,total)
+        lower,upper,active=_shell_intervals(mu,direction,sigma,center,
+            radial_min_cMpc_h,radial_max_cMpc_h,8.)
+        width=jnp.where(active,upper-lower,0.)
+        # Do not materialize (images,segments,nodes,sources) on the reverse
+        # tape. Each physical segment regenerates its own few quadrature nodes.
+        @jax.checkpoint
+        def add_segment(current,index):
+            branch=index//segments
+            fraction=(index%segments).astype(mu.dtype)/segments
+            start=lower[branch]+fraction*width[branch]
+            end=start+width[branch]/segments
+            def integrate(value):
+                q,w=_probability_nodes(mu,sigma,start[None],end[None],active[branch][None],order)
+                return jax.lax.scan(add_node,value,(q[0],w[0]))[0]
+            return jax.lax.cond(jnp.any(active[branch]),integrate,lambda v:v,current),None
+        total=jax.lax.cond(jnp.any(active),
+            lambda t:jax.lax.scan(add_segment,t,jnp.arange(2*segments))[0],lambda t:t,total)
         return total,None
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
     return jax.lax.scan(add_image,jnp.zeros((6,grid_size,grid_size,grid_size),

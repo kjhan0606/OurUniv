@@ -6,6 +6,7 @@ import numpy as np
 
 from cf4_r2_continuous_tracer import cell_centres
 from cf4_r2_linked_singleton_target import partial_v6_count_singleton_parts
+from cf4_r2_shell_cdf_count import predict_shell_cdf_intensity
 from cf4_r2_marked_tracer_jax import (
     intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
     predict_source_marked_intensity, sparse_marked_poisson_log_likelihood,
@@ -60,13 +61,14 @@ class PartialV6TargetTests(unittest.TestCase):
         train_keys = jnp.array([source_id], dtype=jnp.int32)
         train_counts = jnp.array([2.])
 
-        def evaluate(width_white):
+        def evaluate(width_white,mode='gh'):
             tracer = jnp.zeros(9).at[6].set(width_white)
             parts, _ = partial_v6_count_singleton_parts(
                 jnp.ones((n, n, n)), jnp.zeros((3, n, n, n)),
                 jnp.zeros(4), tracer, source_geometry, links,
                 train_keys, train_counts, train_exposure, box=box,
-                quadrature_order=3)
+                quadrature_order=3,count_integration=mode,
+                count_cdf_order=4,count_cdf_segments=4)
             return parts
 
         parts = jax.jit(evaluate)(0.)
@@ -103,6 +105,20 @@ class PartialV6TargetTests(unittest.TestCase):
         reference_derivative = float((reference(.001, 180.)-reference(-.001, 180.))/.002)
         self.assertGreater(abs(reference_derivative), 1e-10)
         np.testing.assert_allclose(count_derivative, reference_derivative, atol=1e-8)
+        # Independent shell-integral reference checks the new target branch's
+        # nonempty count, width and frozen survey window wiring.
+        direct=predict_shell_cdf_intensity(positions,jnp.zeros_like(positions),
+            intrinsic,source_geometry['angular'],observer=observer,box_size_cMpc_h=box,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=rtab,
+            modulus_table_h=source_geometry['modulus_table'],
+            redshift_table=source_geometry['redshift_table'],grid_size=n,
+            sigma_los_km_s=100.,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
+            order=4,segments=4)
+        expected=sparse_marked_poisson_log_likelihood(direct,train_keys,train_counts,
+                                                    selected_voxel_mask=train_exposure)
+        shell_parts=jax.jit(lambda width:evaluate(width,'shell_cdf'))(0.)
+        np.testing.assert_allclose(float(shell_parts[0]),float(expected),atol=1e-10)
+        np.testing.assert_allclose(np.asarray(shell_parts[1:]),np.asarray(parts[1:]),atol=1e-12)
 
 
 if __name__ == '__main__':

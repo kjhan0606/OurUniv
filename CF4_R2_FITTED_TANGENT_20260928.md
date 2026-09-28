@@ -209,3 +209,35 @@ Q-GOAL: usable same-state current-field inference; Q-LEAN: reuse analytic
 boundaries rather than raising simulation resolution or adding a solver.
 MW/M31 roles remain ambiguous, M33 unresolved; their observables constrain
 the same NEW field in R3, not native-truth-selected components.
+
+407950 completed the scalar adjoint (relative3.53e-6),13m02s application,
+6.80GiB Python peak. Pending407971 was replaced by407975 before execution to
+preserve the original strict empty-LF-interval derivative convention.
+407975 passed2 LF and5 integral tests, and reproduces old GH15/4x32 scores
+exactly.4x32/8x32 score delta is−.00154245, exposure L1=1.494e-6, max occupied
+log delta=.00107253. The reused-boundary4x32 forward took47.7s including
+compilation versus206.7s previously (not an isolated warm-kernel benchmark).
+
+However, its4x32 derivative FAILED on GPU workspace allocation96.92GiB,
+not host RAM or a failed value-accuracy check. Slurm elapsed6m29s. The next
+repair streams one physical interval at a time, checkpointing each interval,
+rather than constructing all image/interval/node/source arrays on the reverse
+path. It preserves quadrature nodes, weights and accumulation order. Repeat
+the saved-field score and derivative check; inspect compiled device memory
+with20% margin before attempting the derivative allocation. This is a direct
+response to measured OOM, not a filesystem/resource-scanning framework.
+
+The combined count/singleton target now has an explicit optional shell-CDF
+branch (default historical GH unchanged), awaiting its nonempty-count
+reference test and the full-state derivative result. The optimizer can reuse
+its already-checked initial gradient and perform its directional finite
+differences with score-only calls. No fit has been launched on the new branch.
+
+When numerics are usable, a small-perturbation initial optimizer state is
+available explicitly, not as a new prior: white_IC=.01 times the predeclared
+unranked seed draw. It avoids an exactly uniform CIC-knot starting point.
+The Gaussian IC prior, cosmological power, likelihood and parameter domain
+remain unchanged. This is NOT a cosmological prior draw or posterior sample;
+readout labels distinguish it. Do not continue the already-stalled v2/v3
+state merely to spend more iterations. A fresh bounded fit still requires
+the actual new initial-state directional check; no posterior/IC promotion.

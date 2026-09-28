@@ -35,7 +35,7 @@ OUT = Path(os.environ.get('CF4_R2_OUT_DIR', str(BASE/'r2_v6_partial_map_v2')))
 
 
 def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
-                  value_only=None, initial_norm_cap=None):
+                  value_only=None, initial_norm_cap=None,initial_evaluation=None):
     """Descent-only L-BFGS with bounded trial steps, not parameter bounds.
 
     An infinite objective means a genuine zero-probability trial and is
@@ -44,7 +44,7 @@ def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
     the objective callable must stop rather than mask that case.
     """
     x=initial.copy()
-    value,grad=fun(x)
+    value,grad=fun(x) if initial_evaluation is None else initial_evaluation
     if not np.isfinite(value) or not np.isfinite(grad).all():
         raise FloatingPointError('restart is not a finite differentiable state')
     history=[]
@@ -124,6 +124,11 @@ def main():
                     'scripts/cf4_r2_linked_fp_sparse_train.py'], cwd=ROOT, check=True)
     OUT.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
+    count_integration=os.environ.get('CF4_R2_COUNT_INTEGRATION','gh')
+    cdf_order=int(os.environ.get('CF4_R2_CDF_ORDER','4'))
+    cdf_segments=int(os.environ.get('CF4_R2_CDF_SEGMENTS','32'))
+    if count_integration not in ('gh','shell_cdf') or min(cdf_order,cdf_segments)<1:
+        raise ValueError('invalid count integration choice')
     report = dict(status='STARTED', source_commit=expected,
         job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         classification='TRAINING_ONLY_PARTIAL_MAP_ATTEMPT_NOT_POSTERIOR',
@@ -138,6 +143,11 @@ def main():
                      'MW/M31 roles ambiguous and M33 unresolved on this NEW coarse state; '
                      'LG observables must constrain the same field in R3; no truth IDs'],
         trace=[])
+    report['count_integration']=dict(family=count_integration,gh_order=15,
+                                    cdf_order=cdf_order,cdf_segments=cdf_segments)
+    if count_integration=='shell_cdf':
+        report['quadrature_order']=None
+        report['limitations'][1]='finite count integration and continuous mark differ; periodic-mark aliases remain uncalibrated'
 
     def save_report():
         report['elapsed_seconds'] = time.monotonic()-started
@@ -233,14 +243,21 @@ def main():
         def data_target(rho,vel,tracer,zero,links):
             parts,_ = partial_v6_count_singleton_parts(rho,vel,jnp.zeros(0),tracer,
                 source,links,keys,counts,exposure,box=BOX,
-                hubble=common['H0_km_s_Mpc'],h=common['h'],white_fp_zero=zero)
+                hubble=common['H0_km_s_Mpc'],h=common['h'],white_fp_zero=zero,
+                count_integration=count_integration,count_cdf_order=cdf_order,
+                count_cdf_segments=cdf_segments)
             return jnp.sum(parts[:3]),parts[:3]
         data_vg = jax.jit(jax.value_and_grad(data_target,argnums=(0,1,2,3),has_aux=True))
         report.update(training_count_keys=int(keys.size),training_counts=int(counts.sum()),
                       training_singletons=len(options),IC_seed=2026092702,
                       nuisance_precondition_scale=100.,maxiter=128,
                       application_seconds_cap=2700)
-        initial = np.r_[np.random.default_rng(2026092702).standard_normal(N**3),np.zeros(10)]
+        start_scale=float(os.environ.get('CF4_R2_IC_START_SCALE','1.'))
+        if not np.isfinite(start_scale) or start_scale<=0:
+            raise ValueError('positive finite optimizer starting scale required')
+        initial = np.r_[start_scale*np.random.default_rng(2026092702).standard_normal(N**3),np.zeros(10)]
+        report.update(IC_start_scale=start_scale,initialization=(
+            'prior draw' if start_scale==1 else 'small-perturbation optimizer start, NOT a prior draw; prior unchanged'))
         restart=os.environ.get('CF4_R2_RESTART')
         if restart:
             with np.load(restart,allow_pickle=False) as f:
@@ -248,6 +265,7 @@ def main():
             if initial.shape!=(N**3+10,) or not np.isfinite(initial).all():
                 raise ValueError('invalid accepted restart coordinates')
             report['restart']=restart
+            report['initialization']='accepted checkpoint'
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         latest = {}
         diagnostic_baseline = {}
@@ -349,6 +367,8 @@ def main():
                     return (radius>=5.)&(radius<=180.)
                 return jax.lax.map(one,jnp.asarray(nodes))
             check_cuts=os.environ.get('CF4_R2_DIAG_CUTS')=='1'
+            if check_cuts and count_integration!='gh':
+                raise ValueError('GH atom-crossing diagnostic applies only to GH target')
             if check_cuts:
                 baseline_cuts=cut_flags(*base_field,jnp.asarray(initial[N**3:N**3+9]/100.))
             base_rho=np.asarray(base_field[0])
@@ -404,8 +424,10 @@ def main():
         epsilon=float(os.environ.get('CF4_R2_ADJOINT_EPS','2e-5'))
         if not np.isfinite(epsilon) or epsilon<=0:
             raise ValueError('invalid initial adjoint epsilon')
-        plus,_=objective(initial+epsilon*direction)
-        minus,_=objective(initial-epsilon*direction)
+        plus,_,_,_=score_only(initial+epsilon*direction)
+        minus,_,_,_=score_only(initial-epsilon*direction)
+        if not np.isfinite(plus) or not np.isfinite(minus):
+            raise FloatingPointError('initial finite-difference trial outside support; no floor')
         reverse=float(gradient0@direction)
         finite=(plus-minus)/(2*epsilon)
         analytic_prior=np.dot(np.r_[initial[:N**3],initial[N**3:N**3+9]/100.**2,
@@ -430,7 +452,8 @@ def main():
                       initial_step_norm_cap=norm_cap,score_only_line_search=True)
         solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
             seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
-            value_only=trial_value,initial_norm_cap=norm_cap)
+            value_only=trial_value,initial_norm_cap=norm_cap,
+            initial_evaluation=(value0,gradient0))
         rho,vel=field(jnp.asarray(solution[:N**3]))
         np.savez(OUT/'final_state.npz',white_ic=solution[:N**3],
                  tracer=solution[N**3:N**3+9]/100.,white_fp_zero=solution[-1],

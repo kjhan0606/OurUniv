@@ -56,6 +56,18 @@ class BoundedMapTests(unittest.TestCase):
             bounded_lbfgs(objective,np.zeros(11),lambda x:None,n_ic=1,
                 seconds_left=lambda:10.,value_only=lambda x:-100.)
 
+    def test_cached_initial_evaluation_avoids_redundant_gradient(self):
+        calls=[]
+        def fun(x):
+            calls.append(1)
+            return .5*np.dot(x,x),x.copy()
+        x=np.ones(11)*.01
+        initial=fun(x)
+        solution,_,_,_=bounded_lbfgs(fun,x,lambda x:None,n_ic=1,
+            seconds_left=lambda:10.,maxiter=1,initial_evaluation=initial)
+        self.assertEqual(len(calls),2)
+        np.testing.assert_allclose(solution,0.,atol=1e-12)
+
 
 if __name__=='__main__':
     unittest.main()

@@ -113,7 +113,20 @@ def main():
                 raise AssertionError('LF algebra reuse changed the saved-field score')
         save()
         derivative=jax.jit(jax.grad(lambda scale,v,m:score(cdf(scale,v,m,low_order,low_segments))))
-        reverse=float(derivative(1.,vel,intrinsic))
+        compiled=derivative.lower(1.,vel,intrinsic).compile()
+        analysis=compiled.memory_analysis()
+        device_stats=jax.devices()[0].memory_stats() or {}
+        if analysis is not None:
+            report['derivative_memory']=dict(temporary_GiB=analysis.temp_size_in_bytes/1024**3,
+                arguments_GiB=analysis.argument_size_in_bytes/1024**3,
+                outputs_GiB=analysis.output_size_in_bytes/1024**3,
+                current_device_GiB=device_stats.get('bytes_in_use',0)/1024**3,
+                device_limit_GiB=device_stats.get('bytes_limit',0)/1024**3)
+            save()
+            peak=device_stats.get('bytes_in_use',0)+analysis.temp_size_in_bytes+analysis.output_size_in_bytes
+            if device_stats.get('bytes_limit') and 1.2*peak>device_stats['bytes_limit']:
+                raise MemoryError('compiled derivative lacks 20 percent device-memory margin')
+        reverse=float(compiled(1.,vel,intrinsic))
         epsilon=1e-6
         finite=float((score(evaluate(1.+epsilon,vel,intrinsic,low_order,low_segments))-
                       score(evaluate(1.-epsilon,vel,intrinsic,low_order,low_segments)))/(2*epsilon))

@@ -14,6 +14,7 @@ from cf4_r2_marked_tracer_jax import (
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_r2_linked_singleton_jax import linked_singleton_logfactors_for_population
 from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
+from cf4_r2_shell_cdf_count import predict_shell_cdf_intensity
 
 
 def partial_v6_count_singleton_parts(
@@ -39,6 +40,9 @@ def partial_v6_count_singleton_parts(
     quadrature_order=15,
     white_fp_zero=0.,
     fp_zero_sd_dex=.004,
+    count_integration='gh',
+    count_cdf_order=4,
+    count_cdf_segments=32,
 ):
     """Score v6 counts and strict training singleton marks on one live field.
 
@@ -107,8 +111,15 @@ def partial_v6_count_singleton_parts(
         return total + contribution, None
 
     # One compiled body, rematerialized on reverse mode; no GH15 graph unroll.
-    intensity, _ = jax.lax.scan(add_node, jnp.zeros((6, n, n, n), dtype=rho.dtype),
-                                (jnp.asarray(nodes), jnp.asarray(weights)))
+    if count_integration=='gh':
+        intensity, _ = jax.lax.scan(add_node, jnp.zeros((6, n, n, n), dtype=rho.dtype),
+                                    (jnp.asarray(nodes), jnp.asarray(weights)))
+    elif count_integration=='shell_cdf':
+        intensity=predict_shell_cdf_intensity(source_geometry['positions'],
+            source_velocity,intrinsic,source_geometry['angular'],sigma_los_km_s=sigma_los,
+            order=count_cdf_order,segments=count_cdf_segments,**radial_geometry)
+    else:
+        raise ValueError('unknown count integration rule')
     count_train = sparse_marked_poisson_log_likelihood(
         intensity, jnp.asarray(train_keys), jnp.asarray(train_counts),
         selected_voxel_mask=jnp.asarray(train_exposure_mask))

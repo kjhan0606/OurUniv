@@ -49,7 +49,10 @@ def main():
             im=axes[1,col].imshow(bulk.T,origin='lower',extent=(-192,192,-192,192),
                 vmin=-500,vmax=500,cmap='RdBu_r')
             fig.colorbar(im,ax=axes[1,col],label='mass-weighted v_SGZ (km/s)')
-            axes[0,col].set_title(('Accepted restart' if report.get('restart') else 'Unconditioned start')
+            start_label=('Accepted restart' if report.get('restart') else
+                ('Unconditioned start' if report.get('IC_start_scale',1.)==1. else
+                 'Optimizer start (NOT a prior draw)'))
+            axes[0,col].set_title(start_label
                                  if col==0 else 'Training-only partial MAP iterate')
             for ax in axes[:,col]:
                 ax.set_xlabel('SGX (cMpc/h)'); ax.set_ylabel('SGY (cMpc/h)')
