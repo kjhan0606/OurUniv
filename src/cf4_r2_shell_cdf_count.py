@@ -174,3 +174,29 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
     shape=() if scalar else (6,grid_size,grid_size,grid_size)
     return jax.lax.scan(add_image,jnp.zeros(shape,dtype=dtype),images)[0]
+
+
+def predict_source_volume_intensity(positions,velocities,intrinsic,angular,*,
+                                    source_spacing,volume_order=4,**geometry):
+    """Stream cell-volume GL nodes through the UNCHANGED source count law.
+
+    Mass/velocity/angular completeness are cell-constant. No approximate
+    cell-averaged TSC kernel; LF, radial mapping and cuts are re-evaluated at
+    every subnode. Source spacing need not equal the observed count grid.
+    """
+    if volume_order<1 or source_spacing<=0 or geometry.get('source_cell_average',False):
+        raise ValueError('positive source cell/rule; no second smoothing kernel')
+    nodes,weights=np.polynomial.legendre.leggauss(volume_order)
+    indices=np.array(list(product(range(volume_order),repeat=3)))
+    offsets=jnp.asarray(nodes[indices]*source_spacing/2)
+    volume=jnp.asarray(np.prod(weights[indices]/2,axis=1))
+    @jax.checkpoint
+    def add(total,item):
+        offset,weight=item
+        field=predict_shell_cdf_intensity((positions+offset)%geometry['box_size_cMpc_h'],
+            velocities,intrinsic*weight,angular,**geometry)
+        return total+field,None
+    n=geometry['grid_size']
+    shape=() if geometry.get('target_population') is not None else (6,n,n,n)
+    dtype=jnp.result_type(positions,velocities,intrinsic,angular,offsets)
+    return jax.lax.scan(add,jnp.zeros(shape,dtype=dtype),(offsets,volume))[0]

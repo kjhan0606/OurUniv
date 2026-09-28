@@ -7,7 +7,8 @@ import numpy as np
 from scipy.special import ndtr
 from scipy.integrate import quad
 
-from cf4_r2_shell_cdf_count import shell_cdf_nodes,predict_shell_cdf_intensity,cell_averaged_tsc_weight
+from cf4_r2_shell_cdf_count import (shell_cdf_nodes,predict_shell_cdf_intensity,
+    cell_averaged_tsc_weight,predict_source_volume_intensity)
 
 
 class ShellCDFTests(unittest.TestCase):
@@ -54,6 +55,28 @@ class ShellCDFTests(unittest.TestCase):
                 points=[p for p in (d-1.5,d-.5,d+.5,d+1.5) if -.5<p<.5])[0] for d in delta])
             got=float(cell_averaged_tsc_weight(jnp.asarray(pos[None]),voxel,16,16.)[0])
             self.assertAlmostEqual(got,expected,places=12)
+
+    def test_streamed_volume_equals_materialized_subnodes(self):
+        radius=jnp.linspace(.001,400.,4001)
+        geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+            grid_size=16,sigma_los_km_s=100.,order=4,segments=8)
+        pos=jnp.array([[371.9,192.,192.]])
+        offsets=jnp.asarray(list(product((-1/np.sqrt(3),1/np.sqrt(3)),repeat=3)))*1.5
+        def score(v,stream):
+            velocity=jnp.array([[v,0.,0.]])
+            if stream:
+                return predict_source_volume_intensity(pos,velocity,jnp.ones((5,1)),
+                    jnp.ones((2,1)),source_spacing=3.,volume_order=2,**geometry)
+            return predict_shell_cdf_intensity((pos+offsets)%384.,
+                jnp.broadcast_to(velocity,(8,3)),jnp.ones((5,8))/8,jnp.ones((2,8)),**geometry)
+        a=jax.jit(lambda v:score(v,True))(0.)
+        b=jax.jit(lambda v:score(v,False))(0.)
+        np.testing.assert_allclose(a,b,rtol=1e-11,atol=1e-13)
+        da=jax.jit(jax.grad(lambda v:score(v,True).sum()))(0.)
+        db=jax.jit(jax.grad(lambda v:score(v,False).sum()))(0.)
+        np.testing.assert_allclose(da,db,rtol=1e-10,atol=1e-12)
 
     def test_inner_exclusion_both_signed_branches_and_weights(self):
         q,w=shell_cdf_nodes(jnp.array([0.]),jnp.array([[1.,0.,0.]]),
