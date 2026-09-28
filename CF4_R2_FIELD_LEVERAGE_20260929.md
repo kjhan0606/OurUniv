@@ -222,3 +222,18 @@ old objective +oldFP-newFP; counts and priors must independently reproduce.
 This is not same-target continuation and no old metric is imported. Afterward
 reuse field, count and1414-row distance readouts. No additional unchanged
 optimization cycles are authorized by this local decision.
+
+Submitted408222/source9ebd06b with the above32step/60min bound.408223 is the
+afterany field readout;408224 the afterok count check (H1002CPU6GiB/15min), and
+408225 the afterok1414-row distance readout (H1002CPU12GiB/20min). The existing
+full-source comparison407082 already covered these1414 labels on a saved
+state; no repeated2million-source reference sweep is needed. Submission is
+not successful startup or completion. Await the actual numerical evidence.
+
+For the next scientific decision, keep model error distinct from source-formula
+correctness. [Jasche & Lavaux2019, sec3.4–3.5](https://arxiv.org/html/1806.11117)
+use a more flexible nonlinear bias and explicitly discuss likelihood model
+error in 2M++ inference, including a tempered working posterior. That is
+precedent for taking model discrepancy seriously, NOT permission to copy their
+temperature or bias-fit values into this different linked CF4 target. No
+tempering, prior widening, noise floor or bias-model change has been made here.
