@@ -6,7 +6,8 @@ import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from cf4_r2_prior_split_hmc import (
-    FixedSplitMetric,split_trajectory,split_hmc_step,canonical_from_optimizer_oracle)
+    FixedSplitMetric,split_trajectory,split_hmc_step,canonical_from_optimizer_oracle,
+    inverse_laplacian_metric_symbol,bounded_split_pilot)
 
 
 class PriorSplitTests(unittest.TestCase):
@@ -32,6 +33,30 @@ class PriorSplitTests(unittest.TestCase):
         value,gradient=oracle(q)
         self.assertAlmostEqual(value,.5*q@q,places=12)
         np.testing.assert_allclose(gradient,q,rtol=0,atol=1e-14)
+
+    def test_metric_and_bounded_pilot_freeze_step_and_keep_rejections(self):
+        symbol=inverse_laplacian_metric_symbol(4)
+        self.assertEqual(symbol[0,0,0],1.)
+        self.assertAlmostEqual(symbol[1,0,0],1./6000.)
+        FixedSplitMetric(symbol,np.eye(2))
+        rows=[]
+        _,_,_,trace,message=bounded_split_pilot(self.oracle,self.metric,self.q,
+            *self.oracle(self.q),self.rng,warmup=3,retained=3,steps=2,
+            seconds_left=lambda:100.,callback=lambda q,u,g,row:rows.append(row),
+            endpoint_value=lambda q:self.oracle(q)[0])
+        self.assertEqual(len(rows),6)
+        self.assertEqual(len({row['step_size'] for row in trace[3:]}),1)
+        self.assertEqual(message,'proposal limit')
+        rows=[]
+        q,_,_,trace,_=bounded_split_pilot(lambda q:(np.inf,None),self.metric,self.q,
+            *self.oracle(self.q),self.rng,warmup=1,retained=2,
+            seconds_left=lambda:100.,callback=lambda q,u,g,row:rows.append(q.copy()))
+        np.testing.assert_array_equal(q,self.q)
+        self.assertEqual(len(rows),3)
+        self.assertTrue(all(row['canonical_jump_rms']==0. for row in trace))
+        with self.assertRaises(FloatingPointError):
+            split_hmc_step(self.oracle,self.metric,self.q,*self.oracle(self.q),self.rng,
+                step=.1,steps=1,endpoint_value=lambda q:self.oracle(q)[0]+1.)
 
     def test_prior_flow_energy_and_reverse(self):
         q,p=self.metric.prior_flow(self.q,self.p,.71)

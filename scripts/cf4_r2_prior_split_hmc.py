@@ -36,6 +36,20 @@ def canonical_from_optimizer_oracle(optimizer_oracle,n_ic):
     return oracle
 
 
+def inverse_laplacian_metric_symbol(n,fundamental_mass=6000.):
+    """Positive even proposal metric guess, NOT a fitted Hessian or prior.
+
+    M(k)=1+(fundamental_mass-1)/|integer_mode|^2 for k!=0; M(0)=1.
+    The finite-grid high-k mass is greater than1, not exactly the prior mass.
+    """
+    if not isinstance(n,int) or n<2 or not np.isfinite(fundamental_mass) or fundamental_mass<1:
+        raise ValueError('grid>=2 and finite fundamental mass>=1 required')
+    modes=np.meshgrid(*[np.fft.fftfreq(n)*n]*3,indexing='ij',sparse=True)
+    k2=sum(k*k for k in modes)
+    mass=1.+np.divide(fundamental_mass-1.,k2,out=np.zeros_like(k2),where=k2>0)
+    return 1./mass
+
+
 class FixedSplitMetric:
     def __init__(self, ic_inverse_mass, nuisance_inverse_mass):
         c=np.asarray(ic_inverse_mass,dtype=float)
@@ -127,7 +141,7 @@ def split_trajectory(oracle,metric,q,p,step,steps,initial_evaluation=None):
     return q,p,value,gradient
 
 
-def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps):
+def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_value=None):
     """One fixed-metric MH-corrected proposal, including rejected states."""
     p=metric.momentum(rng)
     start=float(value)+metric.kinetic(p)
@@ -138,6 +152,13 @@ def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps):
         return oracle(position)
     proposed,pend,new_value,new_gradient=split_trajectory(
         counted,metric,q,p,step,steps,initial_evaluation=(value,gradient))
+    if endpoint_value is not None:
+        exact=float(endpoint_value(proposed))
+        if not ((exact==np.inf and new_value==np.inf) or
+                (np.isfinite(exact) and np.isfinite(new_value)
+                 and np.isclose(exact,new_value,rtol=0.,atol=1e-7))):
+            raise FloatingPointError('HMC endpoint value/derivative primal disagreement')
+        new_value=exact  # MH uses the independently evaluated full target.
     delta=(new_value+metric.kinetic(pend)-start if np.isfinite(new_value) else np.inf)
     log_accept=min(0.,-delta)
     accepted=bool(np.log(rng.uniform())<log_accept)
@@ -145,3 +166,58 @@ def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps):
         q,value,gradient=proposed,new_value,new_gradient
     return q,value,gradient,dict(accepted=accepted,log_acceptance=log_accept,
                                 energy_error=delta,force_evaluations=calls)
+
+
+class PilotBudgetStop(RuntimeError):
+    pass
+
+
+def bounded_split_pilot(oracle,metric,q,value,gradient,rng,*,step=.1,warmup=16,
+                        retained=16,steps=2,seconds_left,callback,endpoint_value=None):
+    """Bounded mechanics pilot; short retained trace is NOT posterior UQ.
+
+    Adapt only the discarded warmup, then freeze the last step. Fixed metric
+    throughout. A budget expiry mid-trajectory returns the last accepted
+    state; a numerical/capacity failure propagates instead of truncating target.
+    """
+    if min(warmup,retained)<0 or warmup+retained<1 or not 1e-6<=step<=.3:
+        raise ValueError('invalid pilot length/initial step')
+    def checked(q):
+        if seconds_left()<=0:
+            raise PilotBudgetStop()
+        return oracle(q)
+    trace=[]; rejection_streak=0
+    message='proposal limit'
+    for i in range(warmup+retained):
+        previous=q.copy()
+        used_step=step
+        try:
+            q,value,gradient,info=split_hmc_step(checked,metric,q,value,gradient,rng,
+                step=used_step,steps=steps,endpoint_value=endpoint_value)
+        except PilotBudgetStop:
+            message='application time budget'; break
+        delta=q-previous
+        cube=q[:metric.n_ic].reshape(metric.c.shape)
+        wave=np.cos(2*np.pi*np.arange(cube.shape[0])/cube.shape[0])
+        # Same normalized cosine direction as the historical curvature probe.
+        norm=np.sqrt(cube.shape[0]**2*np.sum(wave**2))
+        projections=[float(np.dot(cube.sum(axis=tuple(a for a in range(3) if a!=axis)),wave)/norm)
+                     for axis in range(3)]
+        dcube=delta[:metric.n_ic].reshape(cube.shape)
+        jumps=[float(np.dot(dcube.sum(axis=tuple(a for a in range(3) if a!=axis)),wave)/norm)
+               for axis in range(3)]
+        row=dict(iteration=i+1,warmup=i<warmup,step_size=used_step,
+            objective=float(value),**info,IC_mean_square=float(np.mean(cube*cube)),
+            canonical_jump_rms=float(np.sqrt(np.mean(delta*delta))),
+            fundamental_cosine=projections,fundamental_cosine_jump=jumps,
+            white_nuisance=q[metric.n_ic:].tolist(),white_zero_jump=float(delta[-1]),
+            canonical_nuisance_jump_l2=float(np.linalg.norm(delta[metric.n_ic:])))
+        trace.append(row); callback(q,value,gradient,row)
+        if i<warmup:
+            probability=float(np.exp(info['log_acceptance']))
+            step*=np.exp((probability-.65)/np.sqrt(i+1.))
+            rejection_streak=0 if info['accepted'] else rejection_streak+1
+            if rejection_streak==3:
+                step*=.5; rejection_streak=0
+            step=float(np.clip(step,1e-6,.3))
+    return q,value,gradient,trace,message
