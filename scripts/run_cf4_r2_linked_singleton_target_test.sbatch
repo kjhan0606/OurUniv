@@ -13,9 +13,8 @@ set -euo pipefail
 : "${SLURM_JOB_ID:?}"
 module purge
 cd /home/kjhan/BACKUP/CF4
-EXPECTED_COMMIT=ad46e9b
-test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
-git diff --quiet "$EXPECTED_COMMIT" -- \
+EXPECTED_CODE_COMMIT=ad46e9b
+git diff --quiet "$EXPECTED_CODE_COMMIT" -- \
   src/cf4_r2_count_exposure.py \
   src/cf4_r2_linked_singleton_jax.py \
   src/cf4_r2_linked_singleton_target.py \
