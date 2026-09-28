@@ -38,7 +38,7 @@ def unpack(parameters):
     return mean, lower@lower.T
 
 
-def row_logpdf(parameters, data, cut_t, cut_w):
+def row_logpdf(parameters, data, cut_t, cut_w, *, return_log_terms=False):
     """Exact saved-candidate mixture; LF quadrature supplied as normalized q."""
     b, intrinsic = unpack(parameters)
     x, row = data['x'], data['row']
@@ -78,8 +78,11 @@ def row_logpdf(parameters, data, cut_t, cut_w):
         jnp.full_like(data['eta'],-jnp.inf),(data['magnitude'].T,data['logq'].T))
     def segment_lse(values):
         maximum = jax.lax.stop_gradient(jax.ops.segment_max(values,row,num_segments=n))
-        total = jax.ops.segment_sum(jnp.exp(values-maximum[row]),row,num_segments=n)
-        return maximum+jnp.log(total)
+        safe_maximum=jnp.where(jnp.isfinite(maximum),maximum,0.)
+        total = jax.ops.segment_sum(jnp.exp(values-safe_maximum[row]),row,num_segments=n)
+        return jnp.where(total>0,safe_maximum+jnp.log(jnp.where(total>0,total,1.)),-jnp.inf)
     lognumerator = segment_lse(data['log_weight']+data['log_M_density']+log_g)
     logdenominator = segment_lse(data['log_weight']+logz)
+    if return_log_terms:
+        return lognumerator,logdenominator
     return lognumerator-logdenominator

@@ -268,3 +268,25 @@ not heldout evaluation or a representative population estimate. Reuse old
 with EACH source cell's own fixed velocity bound, never its likelihood weight.
 One H1002CPU8GiB20min job. Keep failed predecessor and precision-control result
 separate; no post hoc loosening of the implementation-reproduction tolerance.
+
+408348/source9c3868e COMPLETED6m10s. Original-precision centre reproduction
+error1.27e-13 verifies that the predecessor's1.6e-7 discrepancy was geometry
+precision, not likelihood inconsistency. No threshold was loosened. The seven
+4^3->8^3 raw log-density differences have max.001080nat; velocity-direction
+differences max.016929. These are local numerical controls, not a global error
+bound. Six count means change by at most.0463% between4^3 and8^3, compared with
+roughly5–12% centre->volume changes. Host2.98GiB. Two-page actual-object Korean
+PDF rendered and viewed. R2 remains open; named LG roles still unresolved.
+
+Driver decision: do not keep the point-source likelihood solely because its
+own derivatives are consistent. Implement a streaming source-volume raw mark
+adapter with LIVE tracer parameters, shared15 population parameters and field
+mass/velocity dependence. Use4^3 as a development rule with the measured8^3
+residual explicitly retained, not declared exact. First exercise the same
+seven rows, no fit/PM/heldout: CPU endpoint, analytic velocity derivative and
+joint directional finite difference. The count target is NOT yet replaced.
+Proper weak Gaussian population priors from the advice prompt are explicit
+modelling choices; no fitted covariance is made into an independent prior and
+no redundant old FP zero is added. Stream small chunks with rematerialization
+instead of a dense whole-cohort source-by-cut matrix. One H100/2CPU/8GiB/20min
+readout pilot; measure actual cost before expanding to all1414 or chains.
