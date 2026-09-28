@@ -20,6 +20,7 @@ from cf4_r2_shell_cdf_count import predict_shell_cdf_intensity
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
 OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_shell_cdf_field_check_v1')))
+REFERENCE_STATE=BASE/'r2_v6_partial_map_v2/final_state.npz'
 
 
 def main():
@@ -30,7 +31,8 @@ def main():
     report=dict(status='STARTED',source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         job_id=os.environ['SLURM_JOB_ID'],R2_complete=False,heldout_scored=False,
         PM_evolutions=0,optimizer_steps=0,
-        state='r2_v6_partial_map_v2/final_state.npz',comparisons={})
+        state=str(Path(os.environ.get('CF4_R2_CHECK_STATE',str(REFERENCE_STATE))).resolve()),
+        comparisons={})
     def save():
         report.update(elapsed_seconds=time.monotonic()-started,
                       host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
@@ -103,7 +105,8 @@ def main():
                 exposure_L1_relative=float(jnp.sum(jnp.abs(a-b)*exposure)/jnp.sum(b*exposure)),
                 max_occupied_log_difference=float(jnp.max(jnp.abs(jnp.log(a[keys])-jnp.log(b[keys])))),
                 count_score_difference=report['comparisons'][left]['score']-report['comparisons'][right]['score'])
-        if os.environ.get('CF4_R2_CDF_FINE')=='1':
+        if (os.environ.get('CF4_R2_CDF_FINE')=='1'
+                and Path(report['state'])==REFERENCE_STATE.resolve()):
             previous=json.loads((BASE/'r2_shell_cdf_field_check_v4/result.json').read_text())
             deltas={name:report['comparisons'][name]['score']-
                     previous['comparisons'][name]['score'] for name in ('GH15','CDF4x32')}

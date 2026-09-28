@@ -274,3 +274,19 @@ shared source covariance, posterior uncertainty and untouched heldout
 prediction remain required before R2 closure or N256. MW/M31 roles stay
 ambiguous and M33 unresolved at this coarse stage; R3 must identify them
 from the SAME new state and attach their actual observables, not truth IDs.
+
+Live408032 has passed its initial observation-only directional check
+(absolute discrepancy4.39e-5, normalized by max(1,|derivatives|)). Seven
+accepted updates reduce objective231875.999 to203571.746 and maximum gradient
+756.69 to546.91. Counts improve while FP score is lower than the initial
+near-uniform start; do not equate joint-objective decrease with improvement
+of every observation or a calibrated map.
+
+Reuse the existing saved-field integral check once on this run's terminal
+field: CDF4x32 versus8x32 and the existing scalar derivative, without PM
+evolution, fitting or heldout measurements. An explicit state-path option
+replaces the old hardcoded fitted state; the old-score reproduction assertion
+still applies ONLY to its original reference field. Submit afterok408032,
+H2002CPU12GiB/15min (previous actual check7m02s, host3.84GiB). This checks
+that the numerical accuracy used for inference survives the field update;
+it is not another model-selection ladder or R2 completion gate framework.
