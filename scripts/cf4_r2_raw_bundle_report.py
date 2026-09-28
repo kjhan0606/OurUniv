@@ -31,7 +31,7 @@ def main():
     pdf=out/'R2_전체자료연결_예제보고.pdf'
     with PdfPages(pdf) as pages:
         d,s=dense['rows'],sparse['rows'];x=np.arange(len(d))
-        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.23,hspace=.5,wspace=.35)
+        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.30,hspace=.55,wspace=.35)
         labels=[str(r['PGC']) for r in d]
         ax[0,0].plot(x,[r['raw_logpdf'] for r in d],'o',label='전체 성분');ax[0,0].plot(x,[r['raw_logpdf'] for r in s],'x',label='희소 성분')
         ax[0,0].set(title='실제 7개 은하: 같은 관측 점수');ax[0,0].legend()
@@ -43,9 +43,9 @@ def main():
         for a in ax.flat:a.set_xticks(x,labels,rotation=35,fontsize=7);a.set_xlabel('실제 관측 은하의 PGC 번호')
         fig.suptitle('검사 1 — 관측모형을 바꾸지 않고 계산량 줄이기',fontsize=17)
         fig.text(.06,.12,'밝기·크기·속도분산·속도 정보를 같은 밀도장에 연결합니다. 기여하지 않는 성분만 제외합니다.\n'
-            '핵심 계산의 가속과 전체 실행시간의 가속은 다릅니다. 위 비용은 소규모 시제품의 측정값입니다.',fontsize=11,linespacing=1.7)
+            '핵심 계산의 가속과 전체 실행시간의 가속은 다릅니다. 위 비용은 소규모 시제품의 측정값입니다.',fontsize=11,linespacing=1.7,va='top')
         pages.savefig(fig);plt.close(fig)
-        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.23,hspace=.45,wspace=.3)
+        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.30,hspace=.55,wspace=.3)
         x=np.arange(6);labels=[str(r['PGC']) for r in pcs['rows']]
         ax[0,0].bar(x,[100*r['count_relative_error'] for r in pcs['rows']],color='tomato')
         ax[0,0].set(title='채택하지 않은 단순 격자 평균 근사',ylabel='정밀 적분 대비 예상 개수 차이 (%)')
@@ -56,9 +56,9 @@ def main():
         for a in ax.flat:a.set_xticks(x,labels,rotation=35,fontsize=7);a.set_xlabel('실제 관측 은하의 PGC 번호')
         fig.suptitle('검사 2 — 더 빠른 은하 개수 예측이 정확한가?',fontsize=17)
         fig.text(.06,.12,'왼쪽 근사는 최대 약 6% 오차로 채택하지 않았습니다. 오른쪽은 모형을 유지한 수치 적분 비교입니다.\n'
-            '6개 실제 위치의 결과이지, 전체 밀도장·posterior의 오차가 이 값 이하라는 보장은 아닙니다.',fontsize=11,linespacing=1.7)
+            '6개 실제 위치의 결과이지, 전체 밀도장·posterior의 오차가 이 값 이하라는 보장은 아닙니다.',fontsize=11,linespacing=1.7,va='top')
         pages.savefig(fig);plt.close(fig)
-        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.25,hspace=.48,wspace=.3)
+        fig,ax=plt.subplots(2,2,figsize=(11.69,8.27));fig.subplots_adjust(top=.86,bottom=.34,hspace=.55,wspace=.3)
         change=values-old
         ax[0,0].scatter(np.arange(len(values)),change,s=3);ax[0,0].set(title='1,414개 훈련 은하의 점수 변화',xlabel='고정된 자료 순서',ylabel='부피 적분 − 중심점 계산')
         ax[0,1].hist(change,bins=40);ax[0,1].set(title='그 변화의 분포',xlabel='관측 로그밀도 차이',ylabel='은하 수')
@@ -69,10 +69,10 @@ def main():
         ax[1,1].set_xticks([0,1],['미분 계산','변수를 조금 바꿔 직접 계산'])
         ax[1,1].set_title('밀도·속도·공통 보정변수를 함께 바꿀 때')
         fig.suptitle('검사 3 — 실제 훈련 자료 전체를 하나의 관측모형에 연결',fontsize=17)
-        fig.text(.06,.16,'같은 현재장·같은 보정변수를 평가한 결과입니다. 점수 상승을 재현 품질 향상으로 해석하지 않습니다.\n'
+        fig.text(.06,.20,'같은 현재장·같은 보정변수를 평가한 결과입니다. 점수 상승을 재현 품질 향상으로 해석하지 않습니다.\n'
             '새 중력 진화·최적화·posterior 표본추출·검증자료 평가는 하지 않았습니다.\n'
             'R1 → R2 진행 중 → R3 동일 장의 MW/M31/M33 → R4 정밀 진화 → R5 줌 IC\n'
-            '현재 격자는 3 cMpc/h 개발용. MW/M31 역할은 모호하고 M33는 미해결입니다.',fontsize=10,linespacing=1.7)
+            '현재 격자는 3 cMpc/h 개발용. MW/M31 역할은 모호하고 M33는 미해결입니다.',fontsize=10,linespacing=1.7,va='top')
         pages.savefig(fig);plt.close(fig)
     subprocess.run(['gs','-q','-dSAFER','-dBATCH','-dNOPAUSE','-sDEVICE=png16m','-r90',
         f'-sOutputFile={out}/pdf_page_%02d.png',str(pdf)],check=True,timeout=90)

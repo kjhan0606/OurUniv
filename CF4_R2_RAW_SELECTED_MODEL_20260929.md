@@ -344,3 +344,13 @@ duplicated coordinates or a frozen fitted-weight model. Bound40million entries,
 12GiB host (estimated<=10GiB plus20%), H1001GPU/2CPU/45min; application22e2s
 preparation bound. No PM, optimizer, heldout, production chain or count-target
 replacement. Same-field MW/M31 ambiguity and unresolvedM33 are retained.
+
+408353/sourced66339e COMPLETED21m47s: all1414 training rows,19,879,783 positive
+source/subnode/bin components; packing208.8s with six reused kernels. Full
+raw value/26-coordinate gradient226.0s, temporary GPU2.62GiB, host4.03GiB.
+Seven-row reference embedded in the full adapter matches all26 derivatives
+to2.91e-13; whole-cohort directional error3.84e-6 passes the unchanged2e-5
+check. Raw score5982.9213 is a training density, not posterior evidence or
+improvement. No PM/fit/heldout or field-ensemble inference occurred.
+408356 automatically produced the illustrated report; driver viewed all
+three pages and found label/footer overlap, now correcting layout only.
