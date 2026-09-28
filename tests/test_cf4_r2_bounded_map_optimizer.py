@@ -5,10 +5,31 @@ import unittest
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from cf4_r2_v6_partial_map import bounded_lbfgs
+from cf4_r2_v6_partial_map import bounded_lbfgs,finite_gradient_curvature,conditional_rate_mode
 
 
 class BoundedMapTests(unittest.TestCase):
+    def test_conditional_rate_update_preserves_gaussian_prior(self):
+        for expected,observed,old in ((12.,7.,.3),(.05,10.,-.7),(50818.59736822603,47121.,.578451172091188)):
+            new=conditional_rate_mode(expected,observed,old)
+            new_expected=expected*np.exp(2*(new-old))
+            self.assertAlmostEqual(2*(new_expected-observed)+new,0.,places=8)
+            change=(-2*observed*(new-old)+expected*np.expm1(2*(new-old))
+                    +.5*(new**2-old**2))
+            self.assertLessEqual(change,1e-12)
+
+    def test_finite_curvature_preserves_negative_direction_and_step_check(self):
+        matrix=np.diag([-2.,3.])
+        def fun(x):
+            return .5*x@matrix@x,matrix@x
+        rows=[]
+        finite_gradient_curvature(fun,np.array([.2,.3]),
+            dict(negative=np.array([1.,0.]),positive=np.array([0.,1.])),
+            epsilons=(1e-3,3e-4),seconds_left=lambda:10.,record=rows.append)
+        np.testing.assert_allclose([r['directional_curvature'] for r in rows],[-2.,-2.,3.,3.],atol=1e-10)
+        self.assertLess(rows[1]['relative_HVP_change_from_larger_step'],1e-10)
+        self.assertLess(rows[3]['relative_HVP_change_from_larger_step'],1e-10)
+
     def test_quadratic_decreases_and_zero_support_trial_is_rejected(self):
         rejected=[]
         accepted=[]

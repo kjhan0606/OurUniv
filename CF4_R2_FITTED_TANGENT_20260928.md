@@ -360,3 +360,56 @@ kernel's older `observer_subtracted` convention name is not evidence that a
 second subtraction of the physical local observer velocity is required.
 No numerical change or extra simulation follows from that name alone;
 these code paths do not separately certify the original catalogue transforms.
+
+## Second fit and one bounded next extension
+
+408084/sourceece86ee COMPLETED57m06s (application3403.8s),32 accepted steps,
+on the iteration limit, NOT convergence. Objective175535.453→159462.615;
+count−174395.939→−156978.834; FP−50.9406→−43.9472. Gradient_inf129.91→73.96,
+with an intermediate low~31 and a late rebound; do not report monotonic
+gradient convergence. Last accepted gain262.91 is far from407886 stagnation.
+Python peak5.91GiB.408085 saved the final image and physical particle velocity
+variance; mass-weighted per-axis dispersion is95.73,96.48,100.31km/s. It is not
+posterior uncertainty or a calibration of the tracer width100.13km/s.
+
+The current terminal4x32 count readout reproduces−156978.8338641434 and
+predicts50818.597368226 galaxies versus47121 observed. This identifies the
+largest gradient: with rate white coordinate t=.5784511721 and numerical
+coordinate x=100t, d(-log target)/dx=[2(E−N)+t]/100=73.95773188, exactly
+the recorded maximum. This is evidence about the gradient's source, not
+proof that all other optimization or science limitations are solved.
+
+Before the next joint refinement, make ONE scalar conditional-rate MAP
+initialization. Solve2[E exp(2(t_new−t_old))−N]+t_new=0, retaining the Gaussian
+prior. All count intensities share this amplitude; it cancels from the
+conditional FP factor. Check the predicted full-objective change against
+the actual joint implementation and check its rate derivative before using
+that accepted state. This is neither rate marginalization nor profiling
+throughout the fit, no likelihood reweighting, and no altered field/prior.
+The normal joint optimization, including that rate variable, follows.
+
+Following `CF4_R2_FIRST_FIELD_ADVICE_20260928.md`, the prospective budget is
+one <=3 H200 GPU-hour envelope: joint continuation up to64 updates/120min
+application (130min Slurm), then three-direction curvature feasibility
+(25min application/30min Slurm), plus5min terminal readout. Total requested
+GPU allocation limits165min, not an unbounded series of restarts. Same
+N128 data/target,2CPU12GiB per numerical job (host estimate<=10GiB), no
+heldout, N256, HMC or posterior promotion. Initial step-norm cap16 remains
+an optimizer control only. The actual restart adjoint must still pass.
+
+Curvature uses central finite differences of full gradients at eps1e-3 and
+3e-4, along the scaled rate coordinate, one IC fundamental mode and one
+predeclared normalized random IC direction. The scalar rate curvature has
+the analytic reference(4E+1)/10000. Save step-size dependence, signs, norms
+and cost; never infer positive definiteness, covariance or coverage from
+three directions. No unsupported PMWD forward-JVP promise. A quadratic
+fixture preserves both positive and negative curvature. Per-coordinate
+gradient summaries distinguish IC and nuisance contributions with negligible
+storage, rather than adding a new diagnostics framework.
+
+Q-GOAL: reach a usable actual-field state and decide how its uncertainty can
+be computed. Q-LEAN: one evidence-supported extension and a small cost/sign
+check, not indefinite MAP repetition or a mock/tuning ladder. MW/M31 remain
+ambiguous and M33 unresolved; the same NEW state must later supply their
+candidates and receive their actual observational constraints, without truth
+IDs. The broader calibration/covariance/R2 resolution limits remain open.

@@ -17,6 +17,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.spatial import cKDTree
+from scipy.optimize import brentq
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
@@ -32,6 +33,56 @@ BASE = Path('/gpfs/kjhan/CF4/z0_density')
 SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
 N, BOX, WIDTH = 128, 384., 8192
 OUT = Path(os.environ.get('CF4_R2_OUT_DIR', str(BASE/'r2_v6_partial_map_v2')))
+
+
+def conditional_rate_mode(expected_count,observed_count,white_rate):
+    """One exact scalar MAP update; no marginalization or prior change.
+
+    The rate multiplies every count intensity by exp(2*t); it cancels from
+    the conditional FP factor. The Gaussian prior is -.5*t**2.
+    """
+    if not (np.isfinite(expected_count) and expected_count>0
+            and np.isfinite(observed_count) and observed_count>0
+            and np.isfinite(white_rate)):
+        raise ValueError('finite positive counts required for conditional rate mode')
+    poisson_mode=white_rate+.5*(np.log(observed_count)-np.log(expected_count))
+    if poisson_mode==0.:
+        return 0.
+    derivative=lambda t:2*observed_count*np.expm1(2*(t-poisson_mode))+t
+    return brentq(derivative,min(0.,poisson_mode),max(0.,poisson_mode),xtol=1e-13)
+
+
+def finite_gradient_curvature(fun,point,directions,*,epsilons,seconds_left,record):
+    """Finite differences of full gradients, NOT exact/autodiff Hessians.
+
+    Positive curvatures in these few directions do not prove a positive
+    definite Hessian or a valid Laplace posterior. Preserve scale dependence.
+    """
+    for name,direction in directions.items():
+        previous=None
+        for epsilon in epsilons:
+            if epsilon<=0 or not np.isfinite(epsilon):
+                raise ValueError('positive finite curvature displacement required')
+            gradients=[]
+            start=time.monotonic()
+            for sign in (1.,-1.):
+                if seconds_left()<=0:
+                    raise TimeoutError('curvature feasibility time budget')
+                value,gradient=fun(point+sign*epsilon*direction)
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('curvature trial outside differentiable support')
+                gradients.append(gradient)
+            hv=(gradients[0]-gradients[1])/(2*epsilon)
+            if not np.isfinite(hv).all():
+                raise FloatingPointError('nonfinite finite-difference Hessian action')
+            row=dict(direction=name,epsilon=float(epsilon),
+                directional_curvature=float(direction@hv),HVP_norm=float(np.linalg.norm(hv)),
+                seconds=time.monotonic()-start)
+            if previous is not None:
+                row['relative_HVP_change_from_larger_step']=float(np.linalg.norm(hv-previous)
+                    /max(1.,np.linalg.norm(hv),np.linalg.norm(previous)))
+            previous=hv
+            record(row)
 
 
 def bounded_lbfgs(fun, initial, callback, *, n_ic, seconds_left, maxiter=128,
@@ -348,6 +399,9 @@ def main():
                 return np.inf,np.zeros_like(x)
             latest.update(parts=list(map(float,np.asarray(parts))),objective=-value,
                           gradient_inf=float(np.max(np.abs(gradient))),
+                          gradient_inf_IC=float(np.max(np.abs(gradient[:N**3]))),
+                          gradient_max_coordinate=int(np.argmax(np.abs(gradient))),
+                          objective_nuisance_gradient_optimizer_coordinates=(-gradient[N**3:]).tolist(),
                           max_neighbors=width,sigma_los_km_s=float(100*np.exp(.5*float(tracer[6]))),
                           seconds=time.monotonic()-tic)
             report['evaluations']=report.get('evaluations',0)+1
@@ -371,6 +425,30 @@ def main():
         # One necessary check of the newly composed PM + refreshed-support
         # adjoint, not a separate validation ladder. No heldout score involved.
         value0,gradient0=objective(initial)
+        if os.environ.get('CF4_R2_RATE_WARM_START')=='1':
+            if (os.environ.get('CF4_R2_DIRECTION_DIAG')=='1'
+                    or os.environ.get('CF4_R2_CURVATURE_DIAG')=='1'):
+                raise ValueError('do not alter the state of a fixed-state diagnostic')
+            old_rate=initial[N**3]/100.
+            expected_count=47121.+.5*(100.*gradient0[N**3]-old_rate)
+            new_rate=conditional_rate_mode(expected_count,47121.,old_rate)
+            delta=new_rate-old_rate
+            predicted_change=(-2*47121.*delta+expected_count*np.expm1(2*delta)
+                              +.5*(new_rate**2-old_rate**2))
+            candidate=initial.copy(); candidate[N**3]=100.*new_rate
+            checked,checked_gradient=objective(candidate)
+            report['conditional_rate_warm_start']=dict(expected_count_before=float(expected_count),
+                white_rate_before=float(old_rate),white_rate_after=float(new_rate),
+                predicted_objective_change=float(predicted_change),
+                actual_objective_change=float(checked-value0),
+                final_scaled_rate_gradient=float(checked_gradient[N**3]),
+                policy='one scalar conditional MAP update; same joint target and Gaussian prior')
+            save_report()
+            if (not np.isclose(checked-value0,predicted_change,rtol=0.,atol=1e-6)
+                    or checked>value0+1e-8 or abs(checked_gradient[N**3])>1e-7):
+                raise AssertionError('conditional rate update disagrees with the full joint target')
+            initial,value0,gradient0=candidate,checked,checked_gradient
+            np.savez(OUT/'accepted_checkpoint.npz',parameters=initial)
         if os.environ.get('CF4_R2_DIRECTION_DIAG') == '1':
             # Diagnose the ACTUAL fitted state rather than another prior draw.
             # Three step sizes along descent separate the observation map from
@@ -473,6 +551,35 @@ def main():
         save_report()
         if error>=.02:
             raise AssertionError('initial refreshed-support IC adjoint mismatch')
+        if os.environ.get('CF4_R2_CURVATURE_DIAG')=='1':
+            # Few directions only, no posterior draw and no optimization.
+            random=np.r_[np.random.default_rng(2026092809).standard_normal(N**3),np.zeros(10)]
+            random/=np.linalg.norm(random)
+            wave=np.broadcast_to(np.cos(2*np.pi*np.arange(N)/N)[:,None,None],(N,N,N)).reshape(-1)
+            low_k=np.r_[wave/np.linalg.norm(wave),np.zeros(10)]
+            rate=np.zeros_like(initial); rate[N**3]=1.
+            rows=[]
+            def record_curvature(row):
+                rows.append(row)
+                report['finite_difference_curvature']=rows
+                save_report()
+                print(json.dumps(row,allow_nan=False),flush=True)
+            # The conditional FP factor cancels the common source amplitude.
+            # Poisson expected count and rate-axis curvature follow exactly
+            # from its gradient and the declared Gaussian rate prior.
+            expected_count=47121.+.5*(100.*gradient0[N**3]-initial[N**3]/100.)
+            report.update(diagnostic_only=True,optimizer_steps=0,
+                classification='FINITE_GRADIENT_CURVATURE_COST_NOT_UNCERTAINTY',
+                analytic_rate_axis_curvature=(4.*expected_count+1.)/10000.,
+                count_expectation_from_rate_gradient=float(expected_count),
+                curvature_limitations='finite differences, only three directions; no positive-definiteness or Laplace certification')
+            finite_gradient_curvature(objective,initial,
+                dict(rate_coordinate=rate,IC_fundamental_x=low_k,IC_random=random),
+                epsilons=(1e-3,3e-4),seconds_left=lambda:cap-(time.monotonic()-started),
+                record=record_curvature)
+            report.update(status='CURVATURE_FEASIBILITY_COMPLETE_NOT_POSTERIOR')
+            save_report()
+            return
         solution,value,gradient,message=bounded_lbfgs(objective,initial,callback,n_ic=N**3,
             seconds_left=lambda:cap-(time.monotonic()-started),maxiter=maxiter,
             value_only=trial_value,initial_norm_cap=norm_cap,
