@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=cf4_R2_linked_target_test
-#SBATCH --partition=h200,h100,a100
-#SBATCH --gres=gpu:1
+#SBATCH --partition=h100
+#SBATCH --gres=gpu:H100:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
+#SBATCH --mem=12G
 #SBATCH --time=00:20:00
 #SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%j.out
 #SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%j.err
@@ -13,7 +13,8 @@ set -euo pipefail
 : "${SLURM_JOB_ID:?}"
 module purge
 cd /home/kjhan/BACKUP/CF4
-EXPECTED_CODE_COMMIT=ad46e9b
+: "${CF4_EXPECTED_COMMIT:?submit with current implementation commit}"
+EXPECTED_CODE_COMMIT=$CF4_EXPECTED_COMMIT
 git diff --quiet "$EXPECTED_CODE_COMMIT" -- \
   src/cf4_r2_count_exposure.py \
   src/cf4_r2_linked_singleton_jax.py \

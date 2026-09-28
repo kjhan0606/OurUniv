@@ -30,6 +30,7 @@ def linked_singleton_logfactors_for_population(
     population,
     sigma_los_km_s,
     radial_geometry,
+    fp_zero_dex=0.,
 ):
     """Evaluate batched linked singleton marks for one observed population.
 
@@ -86,7 +87,7 @@ def linked_singleton_logfactors_for_population(
         true_radius = jnp.linalg.norm(relative, axis=1)
         eta = jnp.log10(group_dz/true_radius)
         log_mark = fp_log_likelihood_ratio(
-            eta, 0., fp_mean, fp_std, fp_alpha)
+            eta + fp_zero_dex, 0., fp_mean, fp_std, fp_alpha)
         mark_matrix = jnp.broadcast_to(log_mark[None, :], density.shape)
         factor = conditional_single_link_logfactor(
             density, group_association, mark_matrix)

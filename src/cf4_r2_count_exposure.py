@@ -40,7 +40,7 @@ def build_population_exposure_masks(
     if np.unique(heldout_indices).size != heldout_indices.size:
         raise ValueError('heldout voxel indices contain duplicates')
     heldout = np.zeros(nvoxel, dtype=bool)
-    heldout[heldout_indices] = True
+    heldout[heldout_indices.astype(np.int64)] = True
 
     train_mask = np.broadcast_to(~heldout, (populations, nvoxel)).copy()
     heldout_mask = np.broadcast_to(heldout, (populations, nvoxel)).copy()

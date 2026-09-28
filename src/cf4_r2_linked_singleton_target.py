@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+import jax
 import jax.numpy as jnp
 
 from cf4_r2_marked_tracer_jax import (
     intrinsic_biased_source_masses,
     intrinsic_lf_bin_fractions,
-    predict_source_marked_intensity,
+    predict_source_marked_intensity_los_node,
     sparse_marked_poisson_log_likelihood,
 )
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_r2_linked_singleton_jax import linked_singleton_logfactors_for_population
+from cf4_2mpp_joint_likelihood_jax import _gaussian_hermite_rule
 
 
 def partial_v6_count_singleton_parts(
@@ -24,14 +26,19 @@ def partial_v6_count_singleton_parts(
     train_keys,
     train_counts,
     train_exposure_mask,
-    heldout_keys,
-    heldout_counts,
-    heldout_exposure_mask,
+    heldout_keys=None,
+    heldout_counts=None,
+    heldout_exposure_mask=None,
     *,
     box=384.,
     hubble=74.6,
     h=.746,
     rate_parameterization='reference',
+    radial_min_cMpc_h=5.,
+    radial_max_cMpc_h=180.,
+    quadrature_order=15,
+    white_fp_zero=0.,
+    fp_zero_sd_dex=.004,
 ):
     """Score v6 counts and strict training singleton marks on one live field.
 
@@ -45,7 +52,10 @@ def partial_v6_count_singleton_parts(
     Return order is training-count, linked-singleton-mark, Gaussian-white
     prior, and untouched-heldout-count readout, followed by predicted count
     intensity. Only the first three terms belong in a MAP objective; heldout
-    data are diagnostic output and are not included in the target.
+    data are diagnostic output and are not included in the target. During
+    fitting omit ALL heldout arguments: no heldout data are needed or scored.
+    The shared FP zero point is a separate standard-normal coordinate;
+    .004 dex is the existing development prior, not survey calibration.
     Association log probabilities are explicit per link; a zero array is a
     field-independent association sensitivity assumption, not calibration.
     """
@@ -77,30 +87,39 @@ def partial_v6_count_singleton_parts(
         reference_interval=reference_interval)
     source_velocity = jnp.moveaxis(count_velocity, 0, -1).reshape(-1, 3)
     observer = jnp.full(3, box/2.)
-    intensity = predict_source_marked_intensity(
-        source_geometry['positions'], source_velocity, intrinsic,
-        source_geometry['angular'], observer=observer,
+    radial_geometry = dict(observer=observer,
         box_size_cMpc_h=box, hubble_km_s_Mpc=hubble, little_h=h,
         radius_table_cMpc_h=source_geometry['radial_table'],
         modulus_table_h=source_geometry['modulus_table'],
         redshift_table=source_geometry['redshift_table'], grid_size=n,
-        radial_min_cMpc_h=5.,
-        radial_max_cMpc_h=box/2., quadrature_order=3,
+        radial_min_cMpc_h=radial_min_cMpc_h,
+        radial_max_cMpc_h=radial_max_cMpc_h,
         mstar=mstar, alpha=alpha)
+    nodes, weights = _gaussian_hermite_rule(quadrature_order)
+
+    @jax.checkpoint
+    def add_node(total, node_weight):
+        node, weight = node_weight
+        contribution = predict_source_marked_intensity_los_node(
+            source_geometry['positions'], source_velocity, intrinsic,
+            source_geometry['angular'], node, weight,
+            sigma_los_km_s=sigma_los, **radial_geometry)
+        return total + contribution, None
+
+    # One compiled body, rematerialized on reverse mode; no GH15 graph unroll.
+    intensity, _ = jax.lax.scan(add_node, jnp.zeros((6, n, n, n), dtype=rho.dtype),
+                                (jnp.asarray(nodes), jnp.asarray(weights)))
     count_train = sparse_marked_poisson_log_likelihood(
         intensity, jnp.asarray(train_keys), jnp.asarray(train_counts),
         selected_voxel_mask=jnp.asarray(train_exposure_mask))
-    count_heldout = sparse_marked_poisson_log_likelihood(
-        intensity, jnp.asarray(heldout_keys), jnp.asarray(heldout_counts),
-        selected_voxel_mask=jnp.asarray(heldout_exposure_mask))
-
-    radial_geometry = dict(
-        observer=observer, box_size_cMpc_h=box, hubble_km_s_Mpc=hubble,
-        little_h=h, radius_table_cMpc_h=source_geometry['radial_table'],
-        modulus_table_h=source_geometry['modulus_table'],
-        redshift_table=source_geometry['redshift_table'], grid_size=n,
-        radial_min_cMpc_h=5.,
-        radial_max_cMpc_h=box/2., mstar=mstar, alpha=alpha)
+    if heldout_keys is None and heldout_counts is None and heldout_exposure_mask is None:
+        count_heldout = jnp.asarray(0., dtype=rho.dtype)
+    elif any(x is None for x in (heldout_keys, heldout_counts, heldout_exposure_mask)):
+        raise ValueError('supply all heldout arguments together, or none during fitting')
+    else:
+        count_heldout = sparse_marked_poisson_log_likelihood(
+            intensity, jnp.asarray(heldout_keys), jnp.asarray(heldout_counts),
+            selected_voxel_mask=jnp.asarray(heldout_exposure_mask))
     mark_train = jnp.asarray(0., dtype=intrinsic.dtype)
     for population in range(6):
         links = links_by_population[population]
@@ -114,7 +133,8 @@ def partial_v6_count_singleton_parts(
             links['observed_radius_cMpc_h'], links['dz_row'],
             links['eta_mean'], links['eta_std'], links['eta_alpha'],
             population=population, sigma_los_km_s=sigma_los,
-            radial_geometry=radial_geometry)
+            radial_geometry=radial_geometry,
+            fp_zero_dex=fp_zero_sd_dex*white_fp_zero)
         mark_train = mark_train + jnp.sum(factors)
-    prior = -.5*(jnp.vdot(white, white)+jnp.vdot(tracer, tracer))
+    prior = -.5*(jnp.vdot(white, white)+jnp.vdot(tracer, tracer)+white_fp_zero**2)
     return jnp.stack((count_train, mark_train, prior, count_heldout)), intensity
