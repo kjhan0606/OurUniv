@@ -14,6 +14,7 @@ likelihood without those ingredients and a held-out/mock assessment.
 from __future__ import annotations
 
 import math
+import numbers
 
 import jax.numpy as jnp
 from jax.scipy.special import gammainc, gammaln, logsumexp
@@ -204,8 +205,9 @@ def sparse_marked_poisson_log_likelihood(intensity, observed_keys,
     """One Poisson factor for binned selected counts, with no support floor.
 
     ``intensity`` must have the same mark definition as ``observed_counts``.
-    A spatial holdout uses a boolean mask over *voxels*, shared by every
-    population; its exact integral includes empty selected voxels only.
+    The boolean exposure mask may be over voxels shared by every population,
+    or flattened over population-by-voxel keys for population-specific
+    exposure. Its exact integral includes empty selected cells only.
     It is not a globally thinned catalogue, so no fraction rescales rates.
     This factor must not be multiplied by another likelihood for the same
     observed absolute-K bin frequencies.
@@ -406,6 +408,8 @@ def predict_source_marked_radial_key_density(
     A measured individual redshift can supply ``observed_radius``;
     multiplying by dr/dz converts to density per unit z, but that Jacobian
     cancels from a mark factor conditioned on the same observed redshift.
+    ``sigma_los_km_s`` must be positive; a traced JAX scalar is supported so
+    the LOS-width nuisance can be differentiated inside a live-field target.
     This does not model FP-group inclusion or association probability.
     """
     positions = jnp.asarray(source_positions)
@@ -421,7 +425,9 @@ def predict_source_marked_radial_key_density(
             or intrinsic.shape != (5, count) or angular.shape != (2, count)
             or radius_table.ndim != 1 or modulus_table.shape != radius_table.shape
             or redshift_values.shape != radius_table.shape or radius_table.size < 2
-            or sigma_los_km_s <= 0 or radial_min_cMpc_h >= radial_max_cMpc_h
+            or (isinstance(sigma_los_km_s, numbers.Real)
+                and sigma_los_km_s <= 0)
+            or radial_min_cMpc_h >= radial_max_cMpc_h
             or radial_max_cMpc_h > box_size_cMpc_h/2.):
         raise ValueError('invalid continuous source-marked radial geometry')
     tsc_weight_at_voxel(positions[:1], voxel_ijk, grid_size,

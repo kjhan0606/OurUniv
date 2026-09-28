@@ -115,5 +115,39 @@ external archive test. Reuse v6, the existing sparse factor and adjoint, and
 only one heldout comparison. Group selection/covariance and calibration of
 the count FoG remain open; no N256 or production posterior is promoted.
 
+## R2 continuation check — 2026-09-28
+
+No R2-specific Slurm job was present in the queue snapshot. The default login
+Python lacks JAX, so the focused code suite was run with the project's
+`circle` environment under two CPU threads; all **12** tests in
+`test_cf4_r2_marked_tracer_jax.py` passed in 161.0 s. The code/test change
+does two narrowly scoped readiness repairs:
+
+- `sparse_marked_poisson_log_likelihood` now documents and regression-tests a
+  flattened population-by-voxel exposure mask, including correct empty-cell
+  exposure integration, rejection of an observed key outside its population's
+  mask, and zero gradients outside the selected exposure. This supports the
+  v6 per-key buffer exclusions; it does not yet wire the v6 graph into a field
+  objective.
+- The continuous linked-FP radial factor now permits a JAX-traced positive
+  LOS-width nuisance. A compiled value/gradient regression verifies a finite,
+  nonzero width derivative. Previously its Python positivity check attempted
+  a Boolean conversion of a traced scalar, preventing nuisance differentiation.
+
+No field optimization, posterior, or prospective holdout score was run. The
+fixed-state 8-sigma neighborhoods from job 407305/its follow-up are still not
+live-state support and must not be reused as if they were. Before even the
+partial-target N128 MAP, the v6 count exposure and the 429 strict singleton
+mark factors need one live-field objective whose support is refreshed or
+otherwise bounded over optimization states. The 985 Tempel-grouped linked
+marks remain a separate shared-redshift/covariance term and are excluded from
+that partial target rather than falsely treated as independent singletons.
+Group incidence/association and count-FoG calibration remain unresolved; the
+6,946 heldout count keys and heldout singleton marks must stay untouched for
+one prospective evaluation. R2 therefore remains **NO-GO**, and no N256,
+production map, or LG-identified field is claimed. MW/M31 roles remain
+ambiguous and M33 unresolved; those observables must ultimately constrain the
+same new evolved field, with native truth identities used only for evaluation.
+
 References: [Howlett et al. 2022](https://arxiv.org/abs/2201.03112),
 [official SDSS-PV v1.1 data/mock release](https://zenodo.org/records/6824749).
