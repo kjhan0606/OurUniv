@@ -40,6 +40,24 @@ class ParticleEntryTest(unittest.TestCase):
         np.testing.assert_allclose(out['second_moment'].sum(axis=(0, 1, 2)), (self.m[:, None]*self.v**2).sum(axis=0), rtol=1e-12)
         self.assertAlmostEqual(float(out['rho'].mean()), 1., places=12)
 
+    def test_empty_node_mass_weighted_velocity_adjoint(self):
+        # Collapsing this small fixture leaves exactly empty nodes. Recovered
+        # total momentum has no position dependence, even through mean velocity.
+        x = jnp.full_like(self.x, .23)
+        out = particle_grid(x, self.v, self.m, self.conf)
+        self.assertGreater(int(jnp.count_nonzero(~out['valid'])), 0)
+        def recovered_momentum(pos, vel):
+            field = particle_grid(pos, vel, self.m, self.conf)
+            return jnp.sum(field['mass'][..., None]*field['mean_velocity_km_s'])
+        value, gradients = jax.value_and_grad(recovered_momentum, argnums=(0, 1))(x, self.v)
+        np.testing.assert_allclose(value, jnp.sum(self.m[:, None]*self.v), atol=1e-9)
+        self.assertTrue(np.isfinite(np.asarray(gradients[0])).all(),
+                        'empty-node momentum readout creates nonfinite position gradients')
+        self.assertTrue(np.isfinite(np.asarray(gradients[1])).all())
+        np.testing.assert_allclose(gradients[0], 0., atol=1e-8)
+        np.testing.assert_allclose(gradients[1], np.broadcast_to(np.asarray(self.m)[:, None], self.v.shape),
+                                   atol=1e-10)
+
     def test_weighted_force_reference_and_mass_split(self):
         from pmwd.gravity import gravity
         from pmwd.particles import Particles
