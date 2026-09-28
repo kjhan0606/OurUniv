@@ -2102,3 +2102,20 @@ same-field likelihood factor and preserves graph-closed heldout separation.
 Q-LEAN: one full-source reference comparison, no new simulation/archive/search
 ladder or further threshold sweep. Details:
 `CF4_R2_LIVE_SUPPORT_GEOMETRY_20260928.md`. No email.
+
+R2 bounded follow-up Slurm407305 COMPLETED/exit0 in2m51s on source commit
+`7e0071670d342d8d8ee6c0a61254a9da8c421051`. The v6 membership screen parsed
+8,901 training eta rows. Matched observed-cz/magnitude contrasts are
+descriptive only and do not calibrate true-distance inclusion; heldout eta
+values were not read. A mark-blind 48-link dynamic-neighborhood stress at
+velocity scales0.5/1/1.5 matches full-source factors to floating-point
+precision for those fixed-state copies, not arbitrary live posterior states.
+The existing one-box TNG TSC residual screen gives isotropic 1D sigma
+122.3km/s for resolved centrals and307.0km/s for satellites. This is auxiliary
+scale evidence, not CF4/2M++ calibration or a role classifier. Result files
+and limits are recorded in `CF4_R2_SDSS_MOCK_DISPOSITION_20260928.md`.
+R2 remains NO-GO: no field fit, posterior, or heldout prediction. The next
+candidate is the explicitly partial v6 N128 fit/evaluation; it must preserve
+the buffered-key exclusion and untouched heldout count/singleton-FP data, and
+must not be promoted as a calibrated posterior while selection, association,
+and shared covariance remain unresolved. No N256 or R3 escalation follows.

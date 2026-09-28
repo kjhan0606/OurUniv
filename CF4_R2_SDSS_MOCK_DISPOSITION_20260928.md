@@ -32,17 +32,52 @@ CF4/2M++ shared observation graph, or shared multi-member errors. The full
 SDSS mock selection also does not reproduce the full DR8–DR14 redshift-success
 law.
 
+## Completed bounded R2 bundle — Slurm 407305
+
+The source-pinned replacement for pending-only 407268 completed on the pinned
+commit `7e0071670d342d8d8ee6c0a61254a9da8c421051` in 2m51s (exit 0, peak RSS
+1.81 GiB). It ran the v6 source-membership/dynamic-support screen and the
+scale-matched TNG velocity-residual readout, using existing products only.
+No new mock rows, gravity run, fit, or posterior were produced.
+
+- The v6 audit parsed 8,901 training eta rows: 6,805 grouped, 2,022
+  catalogue-present singletons, and 74 catalogue-absent rows. Within matched
+  observed-cz/magnitude bins, singleton-minus-grouped eta contrast is
+  `-0.00788 ± 0.00203` dex (2,018 row pairs); catalogue-absent-minus-grouped
+  is `-0.03367 ± 0.00271` dex (74 pairs). These bins do not control true
+  distance, so neither contrast identifies eta independence or an inclusion
+  probability. No heldout eta values were parsed.
+- For the 429 strict training singleton links, 48 mark-blind, radius-stratified
+  groups were checked at velocity scales 0.5/1/1.5. Rebuilt periodic RSD
+  neighborhoods match the full-source likelihood to `<=1.8e-15` in log factor
+  and `<=3.8e-16` in density sum for this fixed-state stress. This verifies
+  bounded-subset mechanics only; it does not certify support over posterior
+  field states. The separate 1,414-link fixed-state reference also remains a
+  mechanics comparison, not inference.
+- In one existing 75 cMpc/h TNG box, the 3 cMpc/h TSC-smoothed total-matter
+  velocity residual has isotropic 1D dispersion 122.3 km/s for 144,044
+  resolved centrals and 307.0 km/s for 33,949 resolved satellites. Thus
+  100 km/s is of central-residual order in this particular sample, but is far
+  below the satellite value. The different cosmology, subhalo selection and
+  single box prohibit transferring either number as a CF4/2M++ calibration or
+  assigning an observed galaxy to a central/satellite class.
+
+Disposition: **diagnostic complete; R2 posterior still NO-GO**. Group
+selection, distance-dependent association, shared FP/group covariance and
+live-field posterior support remain uncalibrated. Full machine-readable
+outputs are `r2_v6_membership_live_support_v1/result.json` and
+`r2_tng_tsc_velocity_residual_v1/result.json` under
+`/gpfs/kjhan/CF4/z0_density/`.
+
 ## Next bounded R2 bundle
 
-Single-purpose Slurm407268 was cancelled while still pending; it produced no
-output. Its replacement is one source-pinned GPU job that runs the v6 support
-check followed by the scale-matched TNG velocity-residual readout. This avoids
-a source-pin change between two parts of the same bundle. It reads only
-existing TNG moment and native-catalog products and writes aggregate
-statistics, not mock rows.
-
-After those bounded diagnostics, proceed toward a clearly labelled
-**partial-target N128 posterior**, not production/R2 promotion:
+The next candidate is a clearly labelled **partial-target N128 field fit and
+prospective evaluation**, not production/R2 promotion. It must use the frozen
+v6 graph, keep buffered count exposure out, distinguish linked singleton and
+Tempel-grouped FP terms, and explicitly retain the uncalibrated selection and
+covariance assumptions. Do not interpret a MAP/Laplace product as a calibrated
+posterior. Keep the 6,946 heldout count keys and heldout singleton FP marks
+out of fitting and use them once for prospective evaluation.
 
 1. Use the frozen v6 training count graph and exclude its buffered keys from
    Poisson exposure. Couple those counts to the existing one-link FP mark
@@ -56,9 +91,11 @@ After those bounded diagnostics, proceed toward a clearly labelled
 3. Replace arbitrary shared LOS widths only where source-backed quantities
    apply: test Tempel's published group dispersion for grouped FP members;
    bound the ungrouped field-galaxy residual against the 3 cMpc/h PM velocity
-   using the existing TNG moment/catalogue products. This one-box auxiliary
-   readout is not a CF4/2M++ FoG calibration. Do not launch new gravity or
-   download mocks for this.
+   using the existing TNG moment/catalogue products. The completed TNG screen
+   gives 122.3 km/s for centrals and 307.0 km/s for satellites; use only as
+   explicitly labelled sensitivity scales, never as a transferred CF4/2M++
+   FoG calibration or latent-role label. Do not launch new gravity or download
+   mocks for this.
 4. Use the existing N128 adjoint for MAP, then a Laplace/linear-response
    uncertainty approximation. Do not restart the previous identity-mass HMC
    path with ESS of only 2–5.
