@@ -126,3 +126,29 @@ buffers gives estimated peak<=10GiB; request12GiB (~20% headroom),2CPU,typedH100
 JAX's ordinary compilation cache is enabled to avoid paying identical future
 compilations repeatedly; no filesystem test or diagnostic is introduced.
 New output root `r2_v6_partial_map_v2`; v1 results unchanged. R2 remains open.
+
+### Bounded follow-up within R2
+
+Empty-node-adjoint candidate407818 COMPLETED47s,5/5 tests pass on the original
+particle moment code (1.04GiB RSS). A deliberately mostly empty native mesh
+has finite, correct derivatives of recovered mass-weighted velocity. This
+small fixture does NOT reproduce the suspected empty-node failure, so no
+particle-grid patch is adopted and the old failure cause remains unproved.
+
+Retry407805 reproduces its saved starting score exactly and passes the
+prior-subtracted observation adjoint. It subsequently needs severe step
+backtracking with large gradient changes. Do not infer a unique quadrature,
+PM-adjoint or selection cause from that trajectory. The next bounded check
+uses its last accepted state, not another random prior state: compare the
+actual descending gradient with symmetric finite differences at .01/1e-4/1e-6.
+Compose the observation VJP with a finite-difference PM-field tangent to
+separate observation nonlinearity/numerics from the PM reverse path. Rebuild
+support at all six trial states, report count and FP changes separately,
+perform no optimizer update and never read heldout scores. Existing compiled
+target/cache reused; one typedH100/2CPU/12GiB/25min allocation, no new solver.
+
+Q-GOAL: determine whether a fitted-state descent is trustworthy before further
+field inference/uncertainty. Q-LEAN: one actual-state derivative separation,
+not another generic prior-state validation ladder or longer blind fit.
+MW/M31/M33 remain ambiguous same-NEW-state roles with M33 unresolved; their
+observables belong on that state in R3, not in truth-selected candidates.

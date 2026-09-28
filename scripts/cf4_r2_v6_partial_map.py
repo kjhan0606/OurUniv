@@ -227,6 +227,7 @@ def main():
             report['restart']=restart
             report['restart_policy']='same target/accepted state; fresh L-BFGS history, not exact optimizer continuation'
         latest = {}
+        diagnostic_baseline = {}
 
         def objective(x):
             tic = time.monotonic()
@@ -263,14 +264,17 @@ def main():
             report['evaluations']=report.get('evaluations',0)+1
             print(json.dumps(dict(evaluation=report['evaluations'],**latest)),flush=True)
             if report['evaluations']==1:
+                if os.environ.get('CF4_R2_DIRECTION_DIAG') == '1':
+                    diagnostic_baseline['data_gradients'] = grads
                 np.savez(OUT/'initial_state.npz',white_ic=np.asarray(white),
-                         rho=np.asarray(rho),velocity_km_s=np.asarray(vel),tracer=np.asarray(tracer))
+                         rho=np.asarray(rho),velocity_km_s=np.asarray(vel),tracer=np.asarray(tracer),
+                         white_fp_zero=np.asarray(zero))
                 report['initial_objective']=-value
                 save_report()
             return -value,-gradient
 
         def callback(x):
-            # SciPy invokes this only after accepting an iterate.
+            # The step controller invokes this only after accepting an iterate.
             report['trace'].append(dict(iteration=len(report['trace'])+1,**latest))
             np.savez(OUT/'accepted_checkpoint.npz',parameters=x)
             save_report()
@@ -278,6 +282,47 @@ def main():
         # One necessary check of the newly composed PM + refreshed-support
         # adjoint, not a separate validation ladder. No heldout score involved.
         value0,gradient0=objective(initial)
+        if os.environ.get('CF4_R2_DIRECTION_DIAG') == '1':
+            # Diagnose the ACTUAL fitted state rather than another prior draw.
+            # Three step sizes along descent separate the observation map from
+            # the PM VJP using a finite-difference field tangent. No fit/holdout.
+            direction=-gradient0/np.linalg.norm(gradient0)
+            reverse=float(gradient0@direction)
+            grads=diagnostic_baseline['data_gradients']
+            def score_only(x):
+                tracer=jnp.asarray(x[N**3:N**3+9]/100.)
+                rho,vel=field(jnp.asarray(x[:N**3]))
+                links,width=build_support(rho,vel,np.asarray(tracer))
+                data,parts=data_target(rho,vel,tracer,jnp.asarray(x[-1]),links)
+                value=-float(data)+.5*np.dot(x[:N**3],x[:N**3])
+                if not np.isfinite(value):
+                    raise FloatingPointError('nonfinite diagnostic score; no floor')
+                return value,np.asarray(parts),(rho,vel),width
+            rows=[]
+            for epsilon in (.01,.0001,.000001):
+                plus,pp,fp,wp=score_only(initial+epsilon*direction)
+                minus,pm,fm,wm=score_only(initial-epsilon*direction)
+                fd=(plus-minus)/(2*epsilon)
+                field_tangent=tuple((a-b)/(2*epsilon) for a,b in zip(fp,fm))
+                via_field_fd=-float(jnp.vdot(grads[0],field_tangent[0])
+                    +jnp.vdot(grads[1],field_tangent[1])
+                    +jnp.vdot(grads[2],jnp.asarray(direction[N**3:N**3+9]/100.))
+                    +grads[3]*direction[-1])+float(np.dot(initial[:N**3],direction[:N**3]))
+                row=dict(epsilon=epsilon,reverse=reverse,finite_difference=fd,
+                    observation_vjp_with_field_fd=via_field_fd,
+                    relative_discrepancy=abs(reverse-fd)/max(1.,abs(reverse),abs(fd)),
+                    plus_objective_delta=plus-value0,minus_objective_delta=minus-value0,
+                    log_factor_finite_differences=((pp-pm)/(2*epsilon)).tolist(),
+                    max_neighbors_plus=wp,max_neighbors_minus=wm)
+                rows.append(row)
+                report['descent_direction_check']=rows
+                save_report()
+                print(json.dumps(row,allow_nan=False),flush=True)
+            report.update(status='FITTED_STATE_DIRECTION_DIAGNOSTIC_COMPLETE_NOT_POSTERIOR',
+                          diagnostic_only=True,optimizer_steps=0,
+                          gradient_max_coordinate=int(np.argmax(np.abs(gradient0))))
+            save_report()
+            return
         direction=np.random.default_rng(2026092801).standard_normal(initial.size)
         direction/=np.linalg.norm(direction)
         epsilon=2e-5
