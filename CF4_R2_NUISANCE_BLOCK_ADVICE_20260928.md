@@ -214,3 +214,48 @@ No PM evolution, optimization, count-integration sweep, heldout or new data.
 Q-GOAL: restore a reproducible actual-distance target before joint inference.
 Q-LEAN: isolate the differing factor using existing saved states. MW/M31/M33
 identification remains pending on this same NEW field, with no truth IDs used.
+
+408178 completed1m40s. The IC/tracer/FP-zero arrays are bit-identical; density
+and velocity differences are at most4.83e-13 and2.29e-11km/s. On H100 both
+saved states reproduce FP=-18.94538017978733 in value-only and per-row code.
+Thus changed scientific inputs or PM precision are not the explanation.
+
+408180/source5624b74 completed13m52s,MaxRSS6.10GiB. Its nested-JIT isolated
+FP value-and-gradient returns-19.084332005253486, reproducing the failure
+without any count integration. The flattened full count/FP value-and-gradient
+returns the correct-18.945380179787325 and reference nuisance gradients.
+The submission used CF4_EXPECTED_COMMIT=HEAD; the runner resolved its source
+check while HEAD was5624b74. This recording weakness is not target evidence;
+subsequent submissions again pin the explicit hash. No persistent compilation
+cache was used by this diagnostic, so a stale persistent cache is not necessary
+for the reproduced mismatch.
+
+408184/source2e47980 completed3m57s,MaxRSS2.62GiB. Compact per-observation
+candidate batches reproduce all six FP population scores; primal values from
+value-and-gradient agree with direct values to8.89e-16 per row. Local compact
+support uses every active neighbor, not a smaller physical support or floor.
+408185/source1286278 compares the exact same isolated function with autodiff
+BEFORE the sole outer JIT, to test the proposed removal of redundant nested
+JITs. H1002CPU12GiB/15min; no PM, optimization, heldout or science-model change.
+This is an observed compiled-execution discrepancy, not yet an identified
+upstream compiler defect. Do not infer that all nested JITs or H100s are wrong.
+
+408185 completed7m38s,MaxRSS4.84GiB. The SAME isolated FP function and inputs,
+with autodiff before the sole outer JIT, return-18.945380179787325 and
+zero-gradient5.000946304146577, matching the reference and compact calculation.
+The nested version returned-19.084332005253486 and4.998954868403673. This
+establishes a concrete execution-path workaround, not the upstream defective
+compiler pass. No scientific model, GPU precision, padding support or tolerance
+was changed. Old accepted H200 steps had explicit full/score-only agreement;
+this does not retrospectively show that they were invalid.
+
+Driver applies the flat value/gradient compilation to the full and conditional
+targets. Separate value-only JITs remain for line searches; the mathematical
+functions are unchanged. At every fit startup compare direct and derivative
+primal components on the SAME cached field/support before optimization, without
+an extra PM evolution. Preserve the exact endpoint restart guard, whole-adjoint
+finite-difference check and all accepted-trial score checks. The existing small
+nonempty target regression now checks derivative primal components as well;
+actual-size startup checking is needed because the small fixtures alone did
+not reproduce this path-dependent error. No arbitrary likelihood tolerance is
+enlarged. Resume only the already-assessed32-update/60min joint follow-up.

@@ -72,7 +72,14 @@ class PartialV6TargetTests(unittest.TestCase):
             return parts
 
         parts = jax.jit(evaluate)(0.)
-        total_grad = jax.jit(jax.grad(lambda x: jnp.sum(evaluate(x)[:3])))(0.)
+        def objective(x):
+            terms=evaluate(x)[:3]
+            return jnp.sum(terms),terms
+        (total,gradient_parts),total_grad = jax.jit(jax.value_and_grad(
+            objective,has_aux=True))(0.)
+        np.testing.assert_allclose(np.asarray(gradient_parts),np.asarray(parts[:3]),
+                                   rtol=0.,atol=1e-10)
+        self.assertAlmostEqual(float(total),float(jnp.sum(parts[:3])),places=10)
         self.assertEqual(parts.shape, (4,))
         self.assertTrue(np.isfinite(np.asarray(parts[:3])).all())
         self.assertAlmostEqual(float(parts[3]), 0., places=12)

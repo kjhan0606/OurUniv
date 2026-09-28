@@ -380,10 +380,14 @@ def main():
                 count_integration=count_integration,count_cdf_order=cdf_order,
                 count_cdf_segments=cdf_segments)
 
-        @jax.jit
         def data_target(rho,vel,tracer,zero,links):
             parts,_ = target_parts(rho,vel,tracer,zero,links)
             return jnp.sum(parts[:3]),parts[:3]
+        # Differentiate BEFORE compiling. On the installed GPU stack a nested
+        # jit(value_and_grad(jit(target))) changed the actual FP primal value
+        # at the saved 408154 state. 408180/408185 isolate the discrepancy;
+        # the flat derivative agrees with direct/compact-link evaluation.
+        data_value = jax.jit(data_target)
         data_vg = jax.jit(jax.value_and_grad(data_target,argnums=(0,1,2,3),has_aux=True))
         report.update(training_count_keys=int(keys.size),training_counts=int(counts.sum()),
                       training_singletons=len(options),IC_seed=2026092702,
@@ -430,7 +434,7 @@ def main():
             tracer=jnp.asarray(x[N**3:N**3+9]/100.)
             rho,vel=field(jnp.asarray(x[:N**3]))
             links,width=build_support(rho,vel,np.asarray(tracer))
-            data,parts=data_target(rho,vel,tracer,jnp.asarray(x[-1]),links)
+            data,parts=data_value(rho,vel,tracer,jnp.asarray(x[-1]),links)
             value=-float(data)+.5*np.dot(x[:N**3],x[:N**3])
             if np.isnan(value) or value==-np.inf:
                 raise FloatingPointError('undefined diagnostic/trial score; no floor')
@@ -466,6 +470,21 @@ def main():
                     if stats.get('bytes_limit') and 1.2*peak>stats['bytes_limit']:
                         raise MemoryError('combined derivative lacks 20 percent device-memory margin')
             (value,parts), grads = data_executable(rho,vel,tracer,zero,links)
+            if report.get('evaluations',0)==0:
+                # Same cached field and support, no extra PM. Small fixtures
+                # alone did not expose the actual-size compiled discrepancy.
+                plain,plain_parts=data_value(rho,vel,tracer,zero,links)
+                delta=np.asarray(parts)-np.asarray(plain_parts)
+                if not np.isfinite(np.asarray([value,plain])).all() or not np.isfinite(delta).all():
+                    raise FloatingPointError('nonfinite initial target primal comparison')
+                report['initial_value_gradient_primal_agreement']=dict(
+                    value_difference=float(value-plain),parts_differences=delta.tolist())
+                save_report()
+                if (not np.isclose(float(value),float(plain),rtol=0.,atol=1e-7)
+                        or not np.allclose(delta,0.,rtol=0.,atol=1e-7)):
+                    np.savez(OUT/'primal_mismatch_state.npz',parameters=x,
+                             rho=np.asarray(rho),velocity_km_s=np.asarray(vel))
+                    raise AssertionError('compiled derivative changed target primal; no optimization')
             icgrad, = pullback((grads[0],grads[1]))
             value = float(value-.5*jnp.vdot(white,white))
             gradient = np.r_[np.asarray(icgrad-white),np.asarray(grads[2])/100.,float(grads[3])]
@@ -689,7 +708,6 @@ def main():
             observed,_=np.histogram(radius[np.asarray(keys)%N**3],bins=edges,
                                     weights=np.asarray(counts))
 
-            @jax.jit
             def conditional_target(rho,vel,tracer,zero,links):
                 parts,intensity=target_parts(rho,vel,tracer,zero,links)
                 prediction=(intensity.reshape(6,-1)*exposure.reshape(6,-1)).sum(axis=0)
@@ -698,6 +716,7 @@ def main():
 
             conditional_vg=jax.jit(jax.value_and_grad(
                 conditional_target,argnums=(2,3),has_aux=True))
+            conditional_value_target=jax.jit(conditional_target)
             conditional_compiled=None
             conditional_latest={}
 
@@ -725,7 +744,7 @@ def main():
                     (log_value,(parts,radial)),grads=conditional_compiled(*args)
                     grad=-np.r_[np.asarray(grads[0])/100.,float(grads[1])]
                 else:
-                    log_value,(parts,radial)=conditional_target(*args)
+                    log_value,(parts,radial)=conditional_value_target(*args)
                 val=-float(log_value)+ic_prior
                 if not np.isfinite(val) or (derivative and not np.isfinite(grad).all()):
                     if derivative or val!=np.inf:

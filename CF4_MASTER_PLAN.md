@@ -9,6 +9,27 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+R2 execution-path repair2026-09-29:408185 confirmed that differentiating the
+same FP function BEFORE the sole outer JIT restores its exact reference value
+and gradient; the nested-JIT derivative was discrepant. Apply flat compilation
+to full/conditional targets, keep the likelihood/priors/support unchanged, and
+compare actual-size direct/derivative primal components at startup using the
+same cached field. Existing restart/adjoint/accepted-step checks remain. Small
+target regression is strengthened. This is a measured workaround, not proof of
+a particular upstream compiler pass defect. Resume the already-assessed bounded
+joint follow-up only; no posterior, heldout or R2 completion claim follows.
+
+Current R2 restart investigation2026-09-29:408163 stopped before any joint
+update because its FP value differed from the accepted endpoint by0.13895;
+count and prior agreed.408178 verified identical IC/nuisances and only rounding
+differences in saved fields.408180 reproduced an isolated compiled FP
+value/gradient mismatch, while a flattened full-target derivative reproduced
+the accepted score.408184 compact-link values and derivative primals agree.
+The exact execution cause is still under investigation; do not widen tolerances,
+blame PM float32 (it is float64), consume heldout or claim the fit resumed.
+These checks use saved states, not new simulations. Details and job provenance:
+`CF4_R2_NUISANCE_BLOCK_ADVICE_20260928.md`. R2 remains incomplete.
+
 Latest R2 follow-up2026-09-29:408154 completed19m13s,5 fixed-field nuisance
 updates before application-budget stop;NOT convergence. F151825.92→149990.00,
 nuisance max gradient42.68→5.60,IC L2 norm490→684. FP zero grows to5.30 prior
