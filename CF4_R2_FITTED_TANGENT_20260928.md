@@ -330,3 +330,11 @@ Continuation submitted as408084/sourceece86ee, output
 `/gpfs/kjhan/CF4/z0_density/r2_v6_shell_map_v2`; afterany readout408085.
 The source-state mean density, rate, count/FP components and gradient remain
 the baseline for its evaluation. No repeated heldout peek or R2 promotion.
+
+For the v2 terminal field, reuse the same saved-state integral readout once,
+after successful process completion. Its already-computed intensity also
+supplies a 2M++ training observed/predicted radial-count illustration. Radius
+is the observed voxel-centre radius, binned at12cMpc/h for display only; this
+is not true-distance calibration, a change of reconstruction resolution,
+posterior predictive uncertainty or heldout validation. No extra forward
+evolution or fitted parameters are needed for the figure.

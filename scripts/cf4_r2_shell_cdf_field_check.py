@@ -136,6 +136,32 @@ def main():
         error=abs(reverse-finite)/max(1.,abs(reverse),abs(finite))
         report['velocity_scale_adjoint']=dict(rule=low_name,epsilon=epsilon,reverse=reverse,
                                              finite_difference=finite,relative_discrepancy=error)
+        # Illustrate the SAME training prediction already computed above.
+        # Radius is that of the observed grid key, not a latent true distance.
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        coordinate=(np.arange(128)+.5)*3.-192.
+        radius=np.sqrt(coordinate[:,None,None]**2+coordinate[None,:,None]**2
+                       +coordinate[None,None,:]**2).reshape(-1)
+        edges=np.arange(0.,193.,12.)
+        observed,_=np.histogram(radius[np.asarray(keys)%128**3],bins=edges,
+                                weights=np.asarray(counts))
+        prediction=(np.asarray(fields[low_name]).reshape(6,-1)
+                    *np.asarray(exposure).reshape(6,-1)).sum(axis=0)
+        predicted,_=np.histogram(radius,bins=edges,weights=prediction)
+        report['training_radial_profile']=dict(radius_edges_cMpc_h=edges.tolist(),
+            observed=observed.tolist(),predicted=predicted.tolist(),
+            observed_total=int(np.asarray(counts).sum()),expected_total=float(prediction.sum()),
+            interpretation='observed-key cell radius; training only, NOT posterior predictive uncertainty')
+        fig,ax=plt.subplots(figsize=(8,4.5),constrained_layout=True)
+        ax.stairs(observed,edges,label='2M++ training observations',color='black')
+        ax.stairs(predicted,edges,label='Conditional model mean',color='tab:orange')
+        ax.set(xlabel='Observed-key cell radius (cMpc/h)',ylabel='Training galaxy count',
+               title='Same fitted field: observed vs predicted counts\nNOT heldout validation or posterior uncertainty')
+        ax.legend()
+        fig.savefig(OUT/'training_radial_counts.png',dpi=150)
+        plt.close(fig)
         report['status']='SAVED_FIELD_COMPARISON_COMPLETE_NOT_POSTERIOR'
         save(); print(json.dumps(report,allow_nan=False),flush=True)
     except Exception as exc:
