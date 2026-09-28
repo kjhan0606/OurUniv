@@ -9,6 +9,17 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 update2026-09-29:408296 completed32 split-HMC feasibility proposals
+in58m42s,27 accepted overall and15/16 after discarded warmup; NOT stationary
+posterior samples. IC white mean-square .004747->.336915 still drifts.
+408305/408331 completed scalar PDF/actual field readouts, visually inspected.
+Next bounded bundle:8 fixed-step proposals with8 integrations, same working
+target/metric, terminal restart, no new warmup;64 forces,75min application/
+90minSlurm,H1002CPU24GiB. Restart/finite-Hamiltonian8 tests passed408336.
+No N256, calibration-prior change or heldout scoring. Evidence and scope:
+`CF4_R2_LONG_TRAJECTORY_20260929.md`. MW/M31 ambiguous,M33 unresolved;
+R2 remains open. Entries below describe their own historical execution states.
+
 Latest R2 outcome2026-09-29:408222 completed32 expanded1414-row joint updates
 in42m57s, stopping at its iteration limit, NOT convergence. F146854.44->
 144835.84; count log score -141770.42->-139803.43 and FP -49.3064->-31.0739.

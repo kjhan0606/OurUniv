@@ -11,7 +11,10 @@ stationary posterior uncertainty. Final FP factor-12.90897 and zero+.03094645
 dex are conditional diagnostics, not proof of better calibrated predictions.
 Count/IC-prior changes make the full potential larger; sampling is NOT MAP
 minimization. Neither forcing white power to1 nor selecting the lowest-potential
-sample is valid here. Saved-field/PDF readouts408331/408305 require inspection.
+sample is valid here. Saved-field/PDF readouts408331/408305 completed; driver
+visually inspected the actual field and both rendered PDF pages. The cold MAP
+start and sampler endpoint are not maps of observational uncertainty; visible
+structures or radial features are not identified as actual Virgo/Coma/LG.
 
 ## Driver decision: one bounded continuation, not production
 
