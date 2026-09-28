@@ -9,6 +9,25 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Current R2 checkpoint2026-09-28:407805 stopped after4 accepted steps/44
+evaluations on insufficient line-search decrease (normal process exit, NOT
+convergence). Readout407806 saved the unconverged present field. Fitted-state
+derivative separation407840/407881 found strong scale dependence: reverse
+−403325.84 agrees with actual objective FD to.029% at1e-8 and.0018% at1e-10,
+but not at1e-6 or larger. Thus no PM-adjoint patch is established; the
+12-halving search did not reach a measured descending scale. Near-empty
+native-cell signed velocity contributions do not dominate that tested
+direction. Fable advice was assessed and several incorrect inferences were
+rejected explicitly in `CF4_R2_FITTED_TANGENT_20260928.md`.
+Same-target retry407886/source52bc3a3 starts with a measured1e-7 coordinate
+step norm and adaptive score-only backtracking,20 iterations/25min application,
+30min Slurm,H1002CPU12GiB. Three optimizer regressions precede it; readout407887
+is afterany. No physical smoothing/floor/prior change, heldout evaluation,
+posterior uncertainty or N256/R2 completion. MW/M31 remain ambiguous and
+M33 unresolved; same-NEW-state LG identification/constraints belong in R3.
+Do not extend negligible descent blindly or call process completion science
+completion. The older execution entries below are history.
+
 R2 v6 continuation2026-09-28: wiring-only407731 passed17 tests (9m28s,
 7.59GiB RSS), but driver source review found the new linked target omitted
 count LOS width and widened the frozen radial180 cut to192. Commit4077f07
