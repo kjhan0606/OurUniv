@@ -16,7 +16,10 @@ def main():
     output.mkdir(exist_ok=False)
     summary = {k: report.get(k) for k in ('status','error','iterations','evaluations',
         'optimizer_success','optimizer_message','initial_objective','final_objective',
-        'final_gradient_inf','initial_adjoint','host_peak_GiB','elapsed_seconds')}
+        'final_gradient_inf','initial_adjoint','host_peak_GiB','elapsed_seconds',
+        'proposals','sampler_message')}
+    sampling='sampler' in report
+    summary['state_kind']='HMC feasibility endpoint, NOT posterior ensemble' if sampling else 'MAP attempt'
     summary.update(R2_complete=False,posterior_uncertainty=False,heldout_scored=False,
                    map_available=(BASE/'final_state.npz').is_file())
     if summary['status']=='STARTED' and not summary['map_available']:
@@ -57,8 +60,9 @@ def main():
             start_label=('Accepted restart' if report.get('restart') else
                 ('Unconditioned start' if report.get('IC_start_scale',1.)==1. else
                  'Optimizer start (NOT a prior draw)'))
-            axes[0,col].set_title(start_label
-                                 if col==0 else 'Training-only partial MAP iterate')
+            end_label=('Training-only HMC feasibility endpoint' if sampling
+                       else 'Training-only partial MAP iterate')
+            axes[0,col].set_title(start_label if col==0 else end_label)
             for ax in axes[:,col]:
                 ax.set_xlabel('SGX (cMpc/h)'); ax.set_ylabel('SGY (cMpc/h)')
                 ax.plot(0,0,'+',color='lime',markersize=6)
