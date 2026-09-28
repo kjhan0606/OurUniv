@@ -2119,3 +2119,16 @@ candidate is the explicitly partial v6 N128 fit/evaluation; it must preserve
 the buffered-key exclusion and untouched heldout count/singleton-FP data, and
 must not be promoted as a calibrated posterior while selection, association,
 and shared covariance remain unresolved. No N256 or R3 escalation follows.
+
+R2 fit-readiness repair2026-09-28: commit68b0de9 allows the continuous linked
+FP radial factor to differentiate a traced positive LOS-width nuisance and
+adds a population-specific flattened exposure-mask regression for the v6
+buffered-key exclusions. All12 focused marked-tracer tests pass in the
+project's `circle` environment (161.0s, two CPU threads); no field fit or
+heldout value was evaluated. Fixed-state neighborhoods remain invalid as a
+live optimizer support. The next required action remains wiring refreshed or
+provably bounded singleton support into one v6 training objective, with the
+985 Tempel-grouped links kept out of the singleton term. R2 remains NO-GO;
+preserve untouched heldout counts/marks, association and shared-covariance
+limits, and latent MW/M31/M33 same-field treatment. Details:
+`CF4_R2_SDSS_MOCK_DISPOSITION_20260928.md`. No N256, R3, or email.
