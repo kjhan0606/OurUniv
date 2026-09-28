@@ -348,3 +348,15 @@ does not predict production-size forward cost. These are isolated kernels,
 not end-to-end fits; no speedup of the actual likelihood is established.
 Keep the existing production scatter unchanged; do not start a tuning sweep.
 The fixture contains no survey calibration, PM evolution or heldout data.
+
+Driver frame-path review: the 2M++ parent coordinates are built from Vcmb in
+`scripts/cf4_r2_common_catalogue.py`; FP source `zgroup` is `zcmb_group` in
+`scripts/cf4_r2_sdss_fp_source_link.py`, and the hierarchical geometry builder
+interpolates that `zgroup` into `dz_row` in
+`scripts/cf4_r2_fp_group_marginal_control.py`. The live fit supplies the PM
+peculiar velocity directly. This is consistent with a CMB-rest reference
+observer, not an uncorrected heliocentric/LG redshift target. The low-level
+kernel's older `observer_subtracted` convention name is not evidence that a
+second subtraction of the physical local observer velocity is required.
+No numerical change or extra simulation follows from that name alone;
+these code paths do not separately certify the original catalogue transforms.
