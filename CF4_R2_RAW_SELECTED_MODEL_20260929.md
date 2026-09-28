@@ -132,3 +132,36 @@ is authoritative. H1002CPU8GiB/15min bound using the existing saved-field
 readout, with ~6GiB estimated host demand plus headroom. No extra large field
 snapshots; retain sparse positive-weight components only. This connects the
 new component to the actual same field, not another synthetic universe.
+
+408344/source7eaaf6a COMPLETED2m44s, no PM. The sparse cache contains219401
+positive source/bin components for1414 rows (maximum332 per row). Recombining
+them reproduces every old FP row to1.55e-15; accepted total-4.73896813107675.
+The count LF at this endpoint is Mstar=-23.6011745, alpha=-.93715799; these
+ACTUAL nuisance values must be used, not the defaults. Host MaxRSS4.73GiB.
+
+Next bounded action: a fixed-field JOINT raw-population feasibility fit on
+these SAME1414 rows, with the selected raw likelihood, not a refit treated
+as an independent prior. Use a single conditional optical Gaussian whose
+mean is affine in the count luminosity proxy and log(1+source richness),
+plus a common positive-definite intrinsic covariance (15 shared parameters).
+This is an explicit working population model; its adequacy/transfer is not
+established. The r intercept absorbs the fixed-field distance-scale convention;
+do NOT add an exactly redundant free zero or the old .004 prior here. Source
+optical error prescription stays fixed. Morphology/graph incidence remains
+constant as a declared unresolved assumption, not a calibrated quantity.
+
+Fit at most32 L-BFGS updates/10 application minutes, H1002CPU8GiB/15min Slurm,
+with differentiable correlated-cut quadrature and exact saved source weights.
+No candidate truncation, fixed best-distance approximation or hidden K-bin
+collapse. Preserve all training rows. Use CPU reference values and a directional
+finite difference before fitting; compare quadrature at the terminal state.
+These are direct necessities for a NEW likelihood implementation, not an
+independent science-validation claim or new generic gate hierarchy.
+
+Mean/covariance initializers are derived from these rows only as optimizer
+starts, NOT data-derived priors. This fixed field already used published
+summaries of the same observations, so the fit cannot independently validate
+that field or establish absolute FP calibration. It prepares a replacement
+raw observation component and exposes fit cost/degeneracy. No same-field
+posterior, heldout score, source-wide selection solution or R2 completion is
+implied. No automatic large HMC or resolution upgrade follows the fit.
