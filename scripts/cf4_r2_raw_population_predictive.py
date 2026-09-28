@@ -124,6 +124,8 @@ def main():
         pdf.savefig(fig);plt.close(fig)
     subprocess.run(['gs','-q','-dSAFER','-dBATCH','-dNOPAUSE','-sDEVICE=png16m','-r90',
         f'-sOutputFile={out}/pdf_page_%02d.png',str(pdfpath)],check=True,timeout=90)
+    result['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
+    (out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result),flush=True)
 
 

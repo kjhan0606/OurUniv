@@ -9,6 +9,24 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest R2 work2026-09-29: the raw FP/K observation component is implemented,
+not merely proposed.408343 passed6 tests and actual1414-row cut/aperture checks;
+408344 exported219401 exact same-field source/bin weights and reproduced the
+old FP factors to1.55e-15.408345 jointly fitted15 shared raw-population parameters
+at the accepted408337 field in59s;29 iterations, CPU/gradient checks passed.
+No data-derived independent prior and no old eta factor were added.408346
+completed1000 selected-mark draws per row: four marginal training mean ranks
+(.497,.496,.501,.507), no gross discrepancy in these marginal plots. These
+are SAME-data, fixed-field model checks, NOT independent calibration/validation
+or posterior UQ. All three new Korean PDFs were actually rendered and viewed.
+The field target is still unchanged. Next: joint raw-population/LCDM-field
+inference with explicit weak priors, rather than freezing fitted calibration
+or insisting that only an external zero can make conditional inference possible.
+Focused Fable advice is requested before this substantive target revision,
+including whether source-cell quadrature is the more urgent numerical action.
+See `CF4_R2_RAW_SELECTED_MODEL_20260929.md`. R2 remains open; N256/long HMC
+not launched, heldout untouched, MW/M31 ambiguous, M33 unresolved.
+
 Current R2 status2026-09-29:408337 completed52m14s,5/8 fixed L8 proposals
 accepted. Numerical checks passed, but white power .336915->.649291 and FP
 zero .030946->.035278dex still drift. This is NOT posterior convergence.

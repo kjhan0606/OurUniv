@@ -186,3 +186,23 @@ This is a training model-misspecification check, NOT heldout validation,
 posterior predictive UQ, a p-value or proof of physical selection transfer.
 It can expose a bad raw population/incidence law before expensive field
 inference. No outcome-dependent row deletion or threshold adaptation.
+
+408346/source6704743 COMPLETED26s:1,414,000 accepted mark draws from2,828,000
+proposals. The four marginal training mean ranks are(.4968,.4961,.5013,.5067)
+for(r_z,s,i,K); fractions below.1 are(.0955,.0912,.0926,.0884) and above.9
+(.0919,.0955,.1033,.0891). Known optical-cut acceptance ranges.9725–1 per row.
+Driver viewed both PDF pages, including three predetermined real-object
+examples. No gross marginal failure appears, but matching marginals neither
+proves the joint distribution nor calibrates actual physical selection, field
+uncertainty, graph incidence or transfer. No p-value/heldout claim is made.
+
+Driver refinement: lack of an external absolute anchor must not be equated
+with impossibility of ANY conditional field posterior. A proper joint model
+can infer population parameters and cosmic field together, with explicit
+prior dependence and weak common-scale directions. [Dam2020 sections3.4/4](https://arxiv.org/html/2002.05898)
+provides a primary-source precedent for shared FP calibration and velocity
+inference; its linear/mocked setup is NOT validation of our nonlinear target.
+Do not add a redundant zero coordinate or silently fix these15 parameters.
+Plan and weak-prior proposal sent for focused advice in
+`config/cf4_r2_joint_raw_field_advice_20260929.md`; no large calculation or
+live target replacement is authorized by the advice request itself.
