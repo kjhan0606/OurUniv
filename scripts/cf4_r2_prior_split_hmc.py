@@ -1,0 +1,127 @@
+"""Finite-dimensional, fixed-metric Gaussian-prior split HMC mechanics.
+
+Canonical coordinates ALL have independent N(0,1) priors. Never feed the
+optimizer's 100*tracer coordinates directly. C is inverse momentum mass, not
+a claimed posterior covariance. It must stay fixed during production steps.
+The oracle returns the FULL negative log target and canonical gradient.
+Gaussian-prior/kinetic flow is exact; likelihood kicks use grad(U)-q.
+The final Metropolis correction uses the FULL Hamiltonian, without tempering.
+
+This is a finite-dimensional splitting implementation, not a claim of the
+dimension-independent convergence results in Beskos et al.(2011),
+https://authors.library.caltech.edu/records/kbprr-5m424 . Actual CF4 mixing,
+metric construction, shared-data calibration and production are separate.
+"""
+import numpy as np
+from scipy.fft import fftn, ifftn
+
+
+class FixedSplitMetric:
+    def __init__(self, ic_inverse_mass, nuisance_inverse_mass):
+        c=np.asarray(ic_inverse_mass,dtype=float)
+        b=np.asarray(nuisance_inverse_mass,dtype=float)
+        if (c.ndim!=3 or len(set(c.shape))!=1 or not np.isfinite(c).all()
+                or np.any(c<=0) or b.ndim!=2 or b.shape[0]!=b.shape[1]
+                or not np.isfinite(b).all() or not np.allclose(b,b.T,rtol=0,atol=1e-12)):
+            raise ValueError('positive Fourier symbol and symmetric nuisance inverse mass required')
+        reflected=c
+        for axis in range(3):
+            reflected=np.take(reflected,(-np.arange(c.shape[axis]))%c.shape[axis],axis=axis)
+        if not np.allclose(c,reflected,rtol=0,atol=1e-12):
+            raise ValueError('Fourier metric must preserve real fields')
+        eigen,vectors=np.linalg.eigh(b)
+        if np.any(eigen<=0):
+            raise ValueError('nuisance inverse mass must be SPD; no eigenvalue clipping')
+        self.c,self.b=c.copy(),b.copy()
+        self.root,self.eigen,self.vectors=np.sqrt(c),eigen,vectors
+        self.n_ic=c.size
+        self.size=c.size+len(eigen)
+
+    def split(self,vector):
+        x=np.asarray(vector,dtype=float)
+        if x.shape!=(self.size,) or not np.isfinite(x).all():
+            raise ValueError('finite canonical vector with matching dimension required')
+        return x[:self.n_ic].reshape(self.c.shape),x[self.n_ic:]
+
+    def momentum(self,rng):
+        z=rng.standard_normal(self.size)
+        field,nuisance=self.split(z)
+        p=ifftn(fftn(field,norm='ortho',workers=1)/self.root,norm='ortho',workers=1).real
+        tail=self.vectors@(nuisance/np.sqrt(self.eigen))
+        return np.r_[p.ravel(),tail]
+
+    def kinetic(self,p):
+        field,tail=self.split(p)
+        spectral=fftn(field,norm='ortho',workers=1)
+        return .5*float(np.sum(self.c*np.abs(spectral)**2)+tail@self.b@tail)
+
+    def prior_flow(self,q,p,step):
+        """Exact flow of (q.q + p.C.p)/2 for positive OR negative time."""
+        if not np.isfinite(step):
+            raise ValueError('finite integration step required')
+        field,tail=self.split(q); momentum,ptail=self.split(p)
+        a=fftn(field,norm='ortho',workers=1)
+        b=fftn(momentum,norm='ortho',workers=1)
+        cosine,sine=np.cos(step*self.root),np.sin(step*self.root)
+        anew=cosine*a+sine*self.root*b
+        bnew=cosine*b-sine/self.root*a
+        field=ifftn(anew,norm='ortho',workers=1).real
+        momentum=ifftn(bnew,norm='ortho',workers=1).real
+        a,b=self.vectors.T@tail,self.vectors.T@ptail
+        root=np.sqrt(self.eigen)
+        cosine,sine=np.cos(step*root),np.sin(step*root)
+        tail=self.vectors@(cosine*a+sine*root*b)
+        ptail=self.vectors@(cosine*b-sine/root*a)
+        return np.r_[field.ravel(),tail],np.r_[momentum.ravel(),ptail]
+
+
+def checked_oracle(oracle,q):
+    value,gradient=oracle(q)
+    value=float(value)
+    if value==np.inf:
+        return value,None  # A true zero-density target point; NOT a floor.
+    gradient=np.asarray(gradient,dtype=float)
+    if not np.isfinite(value) or gradient.shape!=q.shape or not np.isfinite(gradient).all():
+        raise FloatingPointError('nonfinite target or derivative at finite-support state')
+    return value,gradient
+
+
+def split_trajectory(oracle,metric,q,p,step,steps,initial_evaluation=None):
+    """Reversible kick/rotation/kick map; caller owns deterministic support."""
+    if not isinstance(steps,int) or steps<1 or not np.isfinite(step) or step==0:
+        raise ValueError('nonzero finite step and positive integer length required')
+    q,p=np.array(q,dtype=float,copy=True),np.array(p,dtype=float,copy=True)
+    metric.split(q); metric.split(p)
+    value,gradient=(checked_oracle(oracle,q) if initial_evaluation is None else initial_evaluation)
+    gradient=None if gradient is None else np.asarray(gradient,dtype=float)
+    if (not np.isfinite(value) or gradient is None or gradient.shape!=q.shape
+            or not np.isfinite(gradient).all()):
+        raise ValueError('trajectory must start inside finite differentiable support')
+    p-=.5*step*(gradient-q)
+    for i in range(steps):
+        q,p=metric.prior_flow(q,p,step)
+        value,gradient=checked_oracle(oracle,q)
+        if value==np.inf:
+            return q,p,value,None
+        p-=(.5 if i==steps-1 else 1.)*step*(gradient-q)
+    return q,p,value,gradient
+
+
+def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps):
+    """One fixed-metric MH-corrected proposal, including rejected states."""
+    p=metric.momentum(rng)
+    start=float(value)+metric.kinetic(p)
+    calls=0
+    def counted(position):
+        nonlocal calls
+        calls+=1
+        return oracle(position)
+    proposed,pend,new_value,new_gradient=split_trajectory(
+        counted,metric,q,p,step,steps,initial_evaluation=(value,gradient))
+    delta=(new_value+metric.kinetic(pend)-start if np.isfinite(new_value) else np.inf)
+    log_accept=min(0.,-delta)
+    accepted=bool(np.log(rng.uniform())<log_accept)
+    if accepted:
+        q,value,gradient=proposed,new_value,new_gradient
+    return q,value,gradient,dict(accepted=accepted,log_acceptance=log_accept,
+                                energy_error=delta,force_evaluations=calls)
