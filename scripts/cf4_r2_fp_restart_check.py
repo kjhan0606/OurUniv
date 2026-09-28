@@ -1,4 +1,4 @@
-"""Localize a saved-state FP restart discrepancy; no PM, fit or heldout."""
+"""Saved-state FP consistency or training-distance readout; no PM/fit/heldout."""
 import json
 import os
 from pathlib import Path
@@ -37,15 +37,20 @@ def main():
     combined_check = os.environ.get('CF4_R2_FP_COMBINED_CHECK') == '1'
     compact_check = os.environ.get('CF4_R2_FP_COMPACT_CHECK') == '1'
     flat_check = os.environ.get('CF4_R2_FP_FLAT_CHECK') == '1'
-    paths = [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
-             BASE/'r2_v6_joint_secant_map_v2/initial_state.npz']
+    science_state = os.environ.get('CF4_R2_FP_SCIENCE_STATE')
+    if science_state and (combined_check or compact_check or flat_check):
+        raise ValueError('science readout must not launch compiler diagnostics')
+    paths = ([Path(science_state)] if science_state else
+             [BASE/'r2_v6_fixed_field_nuisance_v1/final_state.npz',
+              BASE/'r2_v6_joint_secant_map_v2/initial_state.npz'])
     states = []
     for path in paths:
         with np.load(path, allow_pickle=False) as f:
             states.append({k:f[k].copy() for k in
                 ('white_ic','rho','velocity_km_s','tracer','white_fp_zero')})
-    report['state_max_abs_differences'] = {
-        k:float(np.max(np.abs(states[0][k]-states[1][k]))) for k in states[0]}
+    if len(states)==2:
+        report['state_max_abs_differences'] = {
+            k:float(np.max(np.abs(states[0][k]-states[1][k]))) for k in states[0]}
     options, point, fp = load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz')
     with np.load(FP, allow_pickle=False) as f:
         membership = f['membership_state'].astype(str)
@@ -89,11 +94,14 @@ def main():
             modulus_table_h=source['modulus_table'],redshift_table=source['redshift_table'],
             grid_size=N,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
             mstar=-23.28+.2*tracer[8],alpha=-1+.06*jnp.exp(.5*tracer[7]))
-        return jnp.concatenate([linked_singleton_logfactors_for_population(
+        batches = [linked_singleton_logfactors_for_population(
             source['positions'],jnp.moveaxis(v,0,-1).reshape(-1,3),intrinsic,source['angular'],
             **links[p],population=p,sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
-            radial_geometry=geometry,fp_zero_dex=.004*zero)[0]
-            for p in range(6) if len(selected[p])])
+            radial_geometry=geometry,fp_zero_dex=.004*zero,return_eta_moments=bool(science_state))
+            for p in range(6) if len(selected[p])]
+        if science_state:
+            return tuple(jnp.concatenate([batch[k] for batch in batches]) for k in (0,2,3))
+        return jnp.concatenate([batch[0] for batch in batches])
     rows_compiled = jax.jit(per_row)
     report['states'] = []
     for index, state in enumerate(states):
@@ -112,11 +120,72 @@ def main():
             links[p] = dict(metadata[p],candidate_source_ids=jnp.asarray(ids),
                 candidate_mask=jnp.asarray(active),association_logprob=jnp.zeros((len(batch),5,WIDTH)))
         value = float(mark(*args,links))
-        rows = np.asarray(rows_compiled(*args,links))
+        evaluated = rows_compiled(*args,links)
+        rows = np.asarray(evaluated[0] if science_state else evaluated)
         np.savez(out/f'rows_{index}.npz',factors=rows,
                  labels=np.array([o[0] for p in range(6) for o in selected[p]]))
         report['states'].append(dict(path=str(paths[index]),FP=value,per_row_sum=float(rows.sum())))
         save(); print(json.dumps(report['states'][-1]),flush=True)
+        if science_state:
+            mean,var = map(np.asarray,evaluated[1:])
+            observed = np.concatenate([np.asarray(metadata[p]['eta_mean']) for p in range(6)])
+            std = np.concatenate([np.asarray(metadata[p]['eta_std']) for p in range(6)])
+            zero = .004*float(state['white_fp_zero'])
+            predicted = mean+zero
+            previous=json.loads((paths[index].parent/'result.json').read_text())
+            reference=previous['trace'][-1]['parts'][1]
+            if (not np.isfinite(np.r_[rows,mean,var,observed,std]).all()
+                    or np.any(var<0.) or np.any(std<=0.)
+                    or not np.isclose(value,reference,rtol=0.,atol=1e-7)
+                    or not np.isclose(rows.sum(),value,rtol=0.,atol=1e-10)):
+                raise AssertionError('training readout is invalid or does not reproduce fitted FP factor')
+            np.savez(out/'training_distance_prediction.npz',
+                labels=np.array([o[0] for p in range(6) for o in selected[p]]),
+                eta_source_mean=observed,eta_source_std=std,
+                eta_prediction_before_zero=mean,eta_prediction_with_zero=predicted,
+                count_conditioned_eta_variance=var,FP_log_factors=rows)
+            report['training_distance_readout']=dict(rows=len(rows),white_fp_zero=float(state['white_fp_zero']),
+                zero_dex=zero,mean_residual_before_zero=float(np.mean(observed-mean)),
+                mean_residual_after_zero=float(np.mean(observed-predicted)),
+                RMS_residual_before_zero=float(np.sqrt(np.mean((observed-mean)**2))),
+                RMS_residual_after_zero=float(np.sqrt(np.mean((observed-predicted)**2))),
+                correlation=(float(np.corrcoef(observed,predicted)[0,1])
+                             if np.std(observed)>0 and np.std(predicted)>0 else None),
+                mean_source_reported_std=float(std.mean()),
+                standardized_residual_mean=float(np.mean((observed-predicted)/std)),
+                standardized_residual_std=float(np.std((observed-predicted)/std)),
+                classification='TRAINING_PLUG_IN_DISTANCE_READOUT_NOT_POSTERIOR_PREDICTIVE',
+                interpretation='moments conditioned on count key/redshift/association at the fitted field; '
+                    'not reweighted by this FP mark; not field posterior variance or independent validation',
+                limits='published source PDF moments are not a calibrated Gaussian residual law; '
+                    'shared zero was fitted to these same training rows; no chi-square significance claim',
+                MW_M31_M33='Not identified here; MW/M31 ambiguous and M33 unresolved on same NEW field; no truth IDs')
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            fig,axes=plt.subplots(1,2,figsize=(12,5),constrained_layout=True)
+            ax=axes[0]
+            ax.errorbar(predicted,observed,xerr=np.sqrt(var),yerr=std,
+                        fmt='.',markersize=2,alpha=.2,elinewidth=.4,color='tab:blue')
+            limits=(float(min(observed.min(),predicted.min())),float(max(observed.max(),predicted.max())))
+            ax.plot(limits,limits,'k--',lw=1,label='equal values')
+            ax.set(xlabel='Predicted eta (fitted field + fitted shared zero)',
+                   ylabel='Published FP eta mean',title='429 training FP links: direct distance comparison')
+            ax.legend()
+            extent=max(4.,float(np.ceil(np.max(np.abs(np.r_[
+                (observed-mean)/std,(observed-predicted)/std])))))
+            bins=np.linspace(-extent,extent,41)  # Include every row, not only central residuals.
+            for label,residual in [('before shared zero',(observed-mean)/std],
+                                   ('after fitted shared zero',(observed-predicted)/std)]:
+                axes[1].hist(residual,bins=bins,histtype='step',label=label)
+            axes[1].axvline(0.,color='black',lw=1)
+            axes[1].set(xlabel='(source mean - prediction) / source reported std',
+                        ylabel='Training rows',title='Descriptive residuals; NOT a calibrated Gaussian test')
+            axes[1].legend()
+            fig.suptitle('eta = log10(redshift distance / true distance)\nTraining plug-in readout, NOT posterior prediction or independent validation')
+            fig.savefig(out/'training_distance_prediction.png',dpi=150)
+            plt.close(fig)
+            save()
         if flat_check and index == 1:
             # Same mathematical FP function/inputs as the nested-jit discrepancy;
             # differentiate the underlying function before the sole outer jit.
@@ -196,7 +265,8 @@ def main():
             report['combined_vg'] = dict(parts=np.asarray(parts).tolist(),value=float(value),
                 tracer_gradient=np.asarray(grad[2]).tolist(),zero_gradient=float(grad[3]))
             save(); print(json.dumps(report['combined_vg']),flush=True)
-    report['status'] = 'SAVED_STATE_FP_CHECK_COMPLETE_NOT_POSTERIOR'
+    report['status'] = ('TRAINING_FP_DISTANCE_READOUT_COMPLETE_NOT_POSTERIOR' if science_state
+                        else 'SAVED_STATE_FP_CHECK_COMPLETE_NOT_POSTERIOR')
     save()
 
 

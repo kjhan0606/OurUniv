@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import jax
 import jax.numpy as jnp
+from jax.scipy.special import logsumexp
 
 from cf4_r2_fp_distance import fp_log_likelihood_ratio
 from cf4_r2_marked_tracer_jax import (
@@ -31,6 +32,7 @@ def linked_singleton_logfactors_for_population(
     sigma_los_km_s,
     radial_geometry,
     fp_zero_dex=0.,
+    return_eta_moments=False,
 ):
     """Evaluate batched linked singleton marks for one observed population.
 
@@ -46,6 +48,9 @@ def linked_singleton_logfactors_for_population(
     voxels ``(group,3)``, and the remaining observations ``(group,)``.
     The returned per-group factors are conditional FP mark log-likelihood
     ratios; count occurrence and observed redshift are not scored again.
+    The static readout option ``return_eta_moments`` additionally returns
+    count/association-conditioned eta mean and variance BEFORE the FP mark
+    or zero point is applied. These are NOT posterior field uncertainty.
     """
     positions = jnp.asarray(source_positions)
     velocities = jnp.asarray(source_velocities_km_s)
@@ -91,6 +96,13 @@ def linked_singleton_logfactors_for_population(
         mark_matrix = jnp.broadcast_to(log_mark[None, :], density.shape)
         factor = conditional_single_link_logfactor(
             density, group_association, mark_matrix)
+        if return_eta_moments:
+            safe = jnp.where(density > 0., density, 1.)
+            base = jnp.where(density > 0., jnp.log(safe), -jnp.inf) + group_association
+            probability = jnp.exp(base-logsumexp(base))
+            eta_bar = jnp.sum(probability*eta[None, :])
+            eta_variance = jnp.sum(probability*(eta[None, :]-eta_bar)**2)
+            return factor, jnp.sum(density, axis=1), eta_bar, eta_variance
         return factor, jnp.sum(density, axis=1)
 
     return jax.vmap(one_group)(

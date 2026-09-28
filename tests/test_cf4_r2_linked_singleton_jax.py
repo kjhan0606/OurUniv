@@ -57,6 +57,26 @@ class LinkedSingletonBatchTests(unittest.TestCase):
         np.testing.assert_allclose(np.asarray(factors), individual,
                                    rtol=1e-12, atol=1e-12)
 
+        def readout(zero):
+            return linked_singleton_logfactors_for_population(
+                positions,velocities,intrinsic,angular,ids,active,association,
+                voxels,radius,dz,eta_mean,eta_std,eta_alpha,population=0,
+                sigma_los_km_s=100.,radial_geometry=radial,fp_zero_dex=zero,
+                return_eta_moments=True)
+        moments=jax.jit(readout)(0.)
+        shifted=jax.jit(readout)(.04)
+        np.testing.assert_allclose(np.asarray(moments[0]),np.asarray(factors),atol=1e-12)
+        self.assertTrue(np.isfinite(np.asarray(moments[2:])).all())
+        self.assertTrue((np.asarray(moments[3])>=0.).all())
+        # Count-conditioned distances must not be reweighted by the observed
+        # FP mark/zero point: otherwise this would condition twice on that mark.
+        np.testing.assert_array_equal(np.asarray(moments[2:]),np.asarray(shifted[2:]))
+        self.assertGreater(float(jnp.max(jnp.abs(moments[0]-shifted[0]))),1e-8)
+        lower=np.log10(np.asarray(dz)/8.)
+        upper=np.log10(np.asarray(dz)/5.)
+        self.assertTrue((np.asarray(moments[2])>=lower-1e-12).all())
+        self.assertTrue((np.asarray(moments[2])<=upper+1e-12).all())
+
 
 if __name__ == '__main__':
     unittest.main()
