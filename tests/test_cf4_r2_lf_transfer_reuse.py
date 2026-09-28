@@ -34,8 +34,9 @@ class LFReuseTests(unittest.TestCase):
 
     def test_identical_intrinsic_and_observed_edges_keep_subgradient(self):
         true=jnp.array([26.,30.,34.,38.]); z=jnp.array([.001,.01,.04,.08])
+        weight=jnp.sin(jnp.arange(120,dtype=float).reshape(6,5,4)+.3)
         def total(shift,method):
-            return method(true,true+shift,z,z).sum()
+            return jnp.sum(method(true,true+shift,z,z)*weight)
         for method in (source_mark_transfer,_source_mark_transfer_reference):
             value=float(total(0.,method))
             grad=float(jax.grad(lambda s:total(s,method))(0.))

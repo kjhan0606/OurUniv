@@ -97,16 +97,27 @@ def source_mark_transfer(true_modulus_h, observed_modulus_h,
                 -1.6*jnp.log10((1.+observed_redshift)/(1.+true_redshift)))
     shift=observed_modulus_h-true_modulus_h-correction
     true=[survival(edge) for edge in TRUE_EDGES]
-    observed=[survival(edge+shift) for edge in OBS_EDGES]
-    apparent=[jnp.ones_like(shift)]+[
-        survival(edge-true_modulus_h-correction) for edge in (11.5,12.5)]
+    observed_magnitude=[edge+shift for edge in OBS_EDGES]
+    apparent_magnitude=[jnp.full_like(shift,-jnp.inf)]+[
+        edge-true_modulus_h-correction for edge in (11.5,12.5)]
+    observed=[survival(edge) for edge in observed_magnitude]
+    apparent=[jnp.ones_like(shift)]+[survival(edge) for edge in apparent_magnitude[1:]]
     rows=[]
     for app in range(2):
         for obs in range(3):
-            rows.append(jnp.stack([
-                jnp.maximum(jnp.minimum(jnp.minimum(true[i],apparent[app]),observed[obs])
-                    -jnp.maximum(jnp.maximum(true[i+1],apparent[app+1]),observed[obs+1]),0.)
-                /(true[i]-true[i+1]) for i in range(5)]))
+            columns=[]
+            for i in range(5):
+                lower=jnp.maximum(jnp.maximum(TRUE_EDGES[i],apparent_magnitude[app]),
+                                  observed_magnitude[obs])
+                upper=jnp.minimum(jnp.minimum(TRUE_EDGES[i+1],apparent_magnitude[app+1]),
+                                  observed_magnitude[obs+1])
+                difference=jnp.minimum(jnp.minimum(true[i],apparent[app]),observed[obs])\
+                    -jnp.maximum(jnp.maximum(true[i+1],apparent[app+1]),observed[obs+1])
+                # Preserve the original strict empty-interval subgradient;
+                # max(difference,0) alone has a different derivative at ties.
+                columns.append(jnp.where(upper>lower,jnp.maximum(difference,0.),0.)
+                               /jnp.maximum(true[i]-true[i+1],0.))
+            rows.append(jnp.stack(columns))
     return jnp.stack(rows)
 
 
