@@ -35,8 +35,10 @@ The retry changes the count readout algebra, not the likelihood or wall cap:
 exact Poisson sufficient statistics retain all occupied intensities AND the
 integrated intensity over all exposed cells, including empty cells.408406
 passed3 compact-deposit tests;408407 passed its volume/LOS/periodic gradient
-test and is comparing the full native gradient against408357.408408 is a
-dependent45min N256 source-workspace retry, not actual N256 dynamics.
+test and is comparing the full native gradient against408357. Pending408408
+was cancelled before execution to increase the compact source batch8x;
+its replacement retains the45min cap and20% compiled device margin.
+This is a source-workspace retry, not actual N256 dynamics.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.

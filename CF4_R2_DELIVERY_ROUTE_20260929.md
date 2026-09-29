@@ -206,11 +206,16 @@ not necessarily the runtime.408406 passed3 deposit controls, including empty
 observed keys and invalid/duplicate keys.408407 passed a full volume/LOS/
 periodic small value-gradient control and compares all native gradients and
 score/expected counts to408357 with the unchanged1e-7 absolute tolerance.
-408408 starts only after that job succeeds and its status confirms equality;
-it retries the lifted N256 source-workspace problem with131072-source chunks
+The N256 retry starts only after that job succeeds and confirms equality;
+it retries the lifted N256 source-workspace problem with1048576-source chunks
 and compressed readout, same45min cap. Check global rate derivative and
 normalized-density scale direction; save only a small report, no full
 gradient/simulation archive. No actual N256 evolved field is claimed.
+Pending408408 was cancelled before execution to increase the batch from131072
+to1048576 sources: the small batch's native N128 reference comparison already
+takes longer than the full-grid baseline, despite much lower memory. Use the
+available H100 memory to reduce nested scan overhead; the compiled20% memory
+margin still rejects an unsafe allocation. No physics/quadrature change.
 
 Prepared actual N256 dynamics pilot (not submitted until the source-cost
 measurement is usable): one conditional white-spectrum prolongation from the
