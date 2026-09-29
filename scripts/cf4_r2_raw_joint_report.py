@@ -17,7 +17,8 @@ def main():
     if pilot['status']!='RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR':raise ValueError('terminal pilot required')
     with np.load(BASE/'r2_cut_benchmark_v1/readouts.npz',allow_pickle=False) as f:cut={k:f[k] for k in f.files}
     with np.load(BASE/'r2_raw_joint_pilot_v1/accepted_present_state.npz',allow_pickle=False) as f:
-        rho=f['rho'];dispersion=np.sqrt(f['physical_velocity_variance_km2_s2'].mean(axis=0))
+        rho=f['rho']
+        dispersion=np.where(f['velocity_valid'],np.sqrt(f['physical_velocity_variance_km2_s2'].mean(axis=0)),np.nan)
     with np.load(BASE/'r2_prior_split_long_v1/final_state.npz',allow_pickle=False) as f:oldrho=f['rho']
     import matplotlib
     matplotlib.use('Agg')
@@ -57,7 +58,8 @@ def main():
         pages.savefig(fig);plt.close(fig)
         fig,a=page('시험 표본추출 — 현재장 자체를 함께 움직였는가?',
             'N128, 격자 3 cMpc/h의 개발 시험입니다. 지도는 수락한 마지막 한 상태이지 posterior 평균이 아닙니다.\n'
-            '물리적 속도분산은 같은 격자 안 입자 운동의 분산이며, posterior 불확실성이나 관측오차가 아닙니다.',(2,3))
+            '물리적 속도분산은 같은 격자 안 입자 운동의 분산이며, posterior 불확실성이나 관측오차가 아닙니다. 빈 격자는 제외합니다.\n'
+            '표본추출은 손실 최소화가 아닙니다. 수락·기각은 운동에너지까지 포함한 변화로 판정합니다.',(2,3))
         # Pixel centres represent native PM NODES (origin0), not voxel centres.
         dx=384/rho.shape[0];extent=(-192-dx/2,192-dx/2,-192-dx/2,192-dx/2)
         for axis,density,title in zip(a[:2],(oldrho,rho),('시험 시작의 밀도 단면','마지막 수락 상태의 밀도 단면')):
@@ -66,7 +68,7 @@ def main():
         im=a[2].imshow(dispersion[:,:,64].T,origin='lower',extent=extent,cmap='magma')
         a[2].set(title='마지막 상태의 물리적 속도분산',xlabel='x (cMpc/h)');fig.colorbar(im,ax=a[2],label='km/s')
         trace=pilot['trace'];x=[r['iteration'] for r in trace]
-        a[3].plot(x,[r['fine_energy'] for r in trace],'o-');a[3].set(title='정밀 목표 확률로 수락·기각',xlabel='제안 횟수',ylabel='음의 로그 posterior')
+        a[3].plot(x,[r['fine_energy'] for r in trace],'o-');a[3].set(title='수락 상태의 확률값 추이',xlabel='제안 횟수',ylabel='음의 로그 posterior')
         a[4].bar(x,[int(r['accepted']) for r in trace]);a[4].set(title='실제 수락(1) / 기각(0)',xlabel='제안 횟수',ylim=(0,1.2))
         a[5].plot(x,[r['white_mean_square'] for r in trace],'o-');a[5].set(title='IC 백색변수 평균 제곱',xlabel='제안 횟수')
         for axis in a[3:]:axis.axvspan(.5,4.5,color='grey',alpha=.12)
