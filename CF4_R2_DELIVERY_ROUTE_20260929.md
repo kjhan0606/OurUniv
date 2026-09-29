@@ -152,3 +152,22 @@ posterior target. Q-LEAN: a bounded direct transition test reuses measured
 count/raw controls; no new simulation archive or audit ladder. MW/M31/M33
 identification remains from this SAME NEW field, not truth-selected candidates;
 the sparse local FP coverage and unresolved M33 are not hidden by this pilot.
+
+Concrete N256 preparation, not a production launch: the current unchunked
+native count adjoint uses16.47GiB temporary storage for2.10million sources.
+Naively increasing to16.78million sources risks H100 capacity. Added disjoint
+source-chunk streaming in `src/cf4_r2_chunked_volume_count.py`;408387 passed
+full intensity and nonuniform-cotangent gradient equality with a partial final
+chunk (2m07s). This does not change source-volume/LOS rules, drop sources or
+normalize each chunk. Large-scale memory/cost remains unmeasured; the current
+joint pilot still uses its already-pinned unchunked N128 implementation.
+
+Before N256, preserve the physical prior on tracer number density: the current
+rate is per3-cMpc/h reference cell. A1.5-cMpc/h source cell must carry1/8 the
+reference mass at unchanged canonical rate; do not shift its prior implicitly
+by simply adding8times as many sources. Likewise distinguish the source-field
+grid from the frozen observed count keys/exposure (currentlyN128); increasing
+field resolution does not silently redefine the split or improve the data's
+effective resolution. Higher-resolution angular completeness and IC phases
+need explicit, consistent transfer. These are implementation necessities for
+the already-approved1.5-cMpc/h target, not new filesystem/calibration gates.
