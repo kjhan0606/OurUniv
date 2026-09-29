@@ -65,6 +65,17 @@ prior high modes and is NOT evidence that inherited low modes converged.
 rho1.08e-12 and velocity8.12e-10km/s. No N256 accepted proposal yet.
 Report408428 corrects an unsupported subscript glyph in408413, and all three
 pages were visually checked: `r2_raw_joint_report_v2/` (N128 transition report).
+408412 has passed coarse AD/value equality and full PM+24-nuisance FD
+(relative6.90e-5). Fine-value memory estimate5.66GiB, first fine value398.16s;
+steady coarse gradients147s. First N256 transition is pending. The initial
+restricted128 white power.6981094277 reproduces its parent, while total256
+power.9627204 includes newly drawn prior modes. Fable's larger-sampling advice
+is CONDITIONAL; driver corrections and finite next scope are recorded in
+`CF4_R2_N256_SAMPLING_ADVICE_20260929.md`. No large production submitted.
+Streaming posterior moments are newly implemented but not wired into current
+pilot:408436 passed3 tests (repeated rejected states, occupied-cell velocity
+conditioning, checkpoint continuation). Physical and posterior variances are
+separate; sample variance is not MC-error evidence.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.
