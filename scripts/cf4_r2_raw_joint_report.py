@@ -64,7 +64,7 @@ def main():
         dx=384/rho.shape[0];extent=(-192-dx/2,192-dx/2,-192-dx/2,192-dx/2)
         for axis,density,title in zip(a[:2],(oldrho,rho),('시험 시작의 밀도 단면','마지막 수락 상태의 밀도 단면')):
             im=axis.imshow(np.log10(np.maximum(density[:,:,64].T,1e-6)),origin='lower',extent=extent,vmin=-1.5,vmax=1.5,cmap='RdBu_r')
-            axis.set(title=title,xlabel='관측자 상대 x (cMpc/h)',ylabel='y (cMpc/h)');fig.colorbar(im,ax=axis,label='log₁₀(밀도/평균)')
+            axis.set(title=title,xlabel='관측자 상대 x (cMpc/h)',ylabel='y (cMpc/h)');fig.colorbar(im,ax=axis,label='log10(밀도/평균)')
         im=a[2].imshow(dispersion[:,:,64].T,origin='lower',extent=extent,cmap='magma')
         a[2].set(title='마지막 상태의 물리적 속도분산',xlabel='x (cMpc/h)');fig.colorbar(im,ax=a[2],label='km/s')
         trace=pilot['trace'];x=[r['iteration'] for r in trace]
