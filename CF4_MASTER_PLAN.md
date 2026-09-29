@@ -15,6 +15,17 @@ gradient/value match, estimated GPU30.56GiB, host18.40GiB. Low-band power
 Next bounded two-chain exploration and its limits are specified in
 `CF4_R2_TWO_CHAIN_BUNDLE_20260929.md`. It wires actual field-moment accumulation
 and richer traces before up to2x24GPU-hours, not a production science claim.
+408499 passed11 sampler/schedule/moment regressions.408500 generated chain B's
+independent high-mode initializer.408501/408502 now run the two bounded
+chains: each first L4 warmup proposal accepted, low-band powers .704224 and
+.702354, still drifting.408504 passed3 scalar-diagnostic tests;408505 runs
+after BOTH chains terminate to produce diagnostics and an illustrated report.
+408508 passed whole1414-row exact streaming-value equivalence in6m34s,
+max batch1.069million of18.843million components, no dropped support.408509
+compares GL2/GL4 on two saved pilot fields without new PM evolution; currently
+running, not a posterior sensitivity result. Source4501657 pushed. R2 remains
+incomplete; sampling, numerical/prior sensitivity and untouched prediction
+must not be replaced by these implementation successes.
 The paragraphs below preserve chronology and may refer to now-terminal jobs.
 
 Current R2 continuation2026-09-29:408353 COMPLETED the entire1414-row live

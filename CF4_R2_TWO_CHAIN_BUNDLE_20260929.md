@@ -95,3 +95,11 @@ state-dependent numerical correction early, but cannot replace sensitivity
 on usable posterior draws. No reweighting/ESS claim from two pilot states.
 One illustrated PDF will show row-streaming equivalence, count/raw changes,
 per-row examples and the change between states; view before sharing.
+
+The pair job is408509, source4501657, on Slurm. Initial GL4 count estimated
+device4.05GiB; its actual runtime/score and raw GL4 result remain pending.
+408501 and408502 each completed one accepted L4 WARMUP proposal. Their
+low-band powers are .704224/.702354 and Hamiltonian errors -19.976/-23.464;
+the large negative errors include fine/proxy changes -14.675/-16.469. Movement
+is real but a fixed local affine correction may degrade away from its anchor.
+Track that directly; high early acceptance is not evidence of stationary mixing.
