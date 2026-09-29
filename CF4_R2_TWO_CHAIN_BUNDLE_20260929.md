@@ -79,3 +79,19 @@ cannot mark R2 complete. Rendered pages must be visually reviewed before
 sharing. Batch-means MCSE/ESS are rough within-chain estimates conditional
 on stationarity; rank/folded split Rhat and all shared-ancestry limits remain
 explicit. A terminal report is not automatic production authorization.
+
+408508 COMPLETED6m34s: the whole1414-row N256 GL2 raw score exactly matches
+the saved affine-pilot state (5978.923105883818). Total18,843,365 components
+retained; maximum batch1,069,371; host5.89GiB. This checks value equivalence,
+not a new derivative or GL4 accuracy. New row-streamed code is separate from
+the running chain source. It shares one spatial tree but refreshes physical
+source support, keeping each observational row's full normalization intact.
+
+While chains run, compare GL2/GL4 count+raw scores at the saved initial and
+two-accepted-move states, with NO gravity rerun or refit. One bounded A100/H100
+job,2CPU24GiB/150min, estimated host<=20GiB and compiled20% device margin;
+full source4 counts plus row-streamed source4 raw marks. This can flag a
+state-dependent numerical correction early, but cannot replace sensitivity
+on usable posterior draws. No reweighting/ESS claim from two pilot states.
+One illustrated PDF will show row-streaming equivalence, count/raw changes,
+per-row examples and the change between states; view before sharing.
