@@ -63,3 +63,8 @@ MW/M31 remain ambiguous and M33 unresolved. Later identification and their
 observables must constrain this SAME NEW field. No truth IDs or fixed known
 components are inserted. This environment calculation does not resolve LG
 halos or deliver the final <=.3-cMpc/h LG/zoom objective by itself.
+
+Submitted after408499 passed11 focused regressions in14s:408500 independent
+high-mode initializer,408501 chain A,408502 chain B (afterok408500). All use
+source4af620d; the two chains each reserve48GiB and24h. Source pushed to
+origin/agent/freeze-zoom-pipeline. Jobs are not yet evidence of usable draws.
