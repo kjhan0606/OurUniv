@@ -13,7 +13,7 @@ set -euo pipefail
 module purge
 cd /home/kjhan/BACKUP/CF4
 : "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}"
-git diff --quiet "$CF4_EXPECTED_COMMIT" -- src/cf4_r2_chunked_volume_count.py src/cf4_r2_raw_volume_target.py src/cf4_r2_raw_live_mark.py src/cf4_r2_marked_tracer_jax.py src/cf4_r2_native_to_count_cells.py src/cf4_r2_shell_cdf_count.py scripts/cf4_r2_raw_field_profile.py scripts/cf4_r2_n256_source_profile.py scripts/run_cf4_r2_n256_source_profile.sbatch
+git diff --quiet "$CF4_EXPECTED_COMMIT" -- src/cf4_r2_chunked_volume_count.py src/cf4_r2_count_statistics.py src/cf4_r2_count_statistic_integral.py src/cf4_r2_raw_volume_target.py src/cf4_r2_raw_live_mark.py src/cf4_r2_marked_tracer_jax.py src/cf4_r2_native_to_count_cells.py src/cf4_r2_shell_cdf_count.py scripts/cf4_r2_raw_field_profile.py scripts/cf4_r2_n256_source_profile.py scripts/run_cf4_r2_n256_source_profile.sbatch
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts${PYTHONPATH:+:$PYTHONPATH}"
