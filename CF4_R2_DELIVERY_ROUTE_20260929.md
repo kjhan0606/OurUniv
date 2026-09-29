@@ -234,3 +234,16 @@ change or invented acceptance gate. MW/M31 remain ambiguous, M33 unresolved;
 no identities are inserted during prolongation, and later observables must
 constrain the SAME NEW field. No posterior, heldout or LG claim follows from
 this dynamics-only result.
+
+Runtime disposition:408407 reached its30min limit without a full native
+comparison. Small compact tests passed, but the backend is NOT promoted;
+408409's blocked dependency is cancelled, no further compression benchmark.
+Use the already-verified full-grid law/source-chunk identity instead, with
+2097152-source batches (the existing N128 full-grid reference used this many
+sources and16.47GiB temporary device memory). The failed N25632768 batching
+made4096 source-volume calls; the larger batch needs64, still exactly the
+same sources/nodes and global normalization. This is a bounded45min retry,
+not a time-limit increase or an approximation. Check the compiled memory
+before launch with20% margin; estimated N256 host<=13GiB plus20%,16GiB request.
+The earlier compact implementation remains experimental, not a requirement
+blocking the current-field science delivery. Actual speedup remains unknown.

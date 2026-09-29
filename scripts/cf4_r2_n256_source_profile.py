@@ -26,7 +26,8 @@ def main():
     # Compressed output leaves room for larger source batches. Avoid paying
     # hundreds of nested shell scans merely to minimize already-small memory.
     # The compiled20% device margin below remains mandatory before execution.
-    chunk=1048576 if compact else 32768
+    chunk=int(os.environ.get('CF4_R2_SOURCE_CHUNK',1048576 if compact else 32768))
+    if chunk<1:raise ValueError('positive explicit source batch required')
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,PM_evolutions=0,heldout_scored=False,field_information_resolution_cMpc_h=3.,
         source_integration_grid=256,observed_count_grid=128,source_chunk=chunk,compressed_readout=compact,

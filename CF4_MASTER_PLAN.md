@@ -35,9 +35,12 @@ The retry changes the count readout algebra, not the likelihood or wall cap:
 exact Poisson sufficient statistics retain all occupied intensities AND the
 integrated intensity over all exposed cells, including empty cells.408406
 passed3 compact-deposit tests;408407 passed its volume/LOS/periodic gradient
-test and is comparing the full native gradient against408357. Pending408408
-was cancelled before execution to increase the compact source batch8x;
-its replacement retains the45min cap and20% compiled device margin.
+test but TIMEOUT at30min before the native reference comparison completed.
+Do NOT promote the compact backend. Pending408408/408409 were cancelled
+before execution. Continue with the already-tested full-grid/source-chunked
+law, increasing the source batch from32768 to2097152, with unchanged45min
+cap and20% compiled device margin. This reduces4096 volume/source calls to64
+without changing the quadrature; runtime improvement is not yet measured.
 This is a source-workspace retry, not actual N256 dynamics.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
