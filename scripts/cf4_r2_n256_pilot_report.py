@@ -106,7 +106,7 @@ def main():
         coarse=lambda q:(.5*float(q@q)+float(q.sum()),q+1.)
         corrected=AffineCorrectedForce(coarse,np.array([.5]),np.array([-3.]))
         z=np.linspace(-2,2,41)
-        a[3].plot(z,z+1,label='거친 힘의 기울기');a[3].plot(z,z-2,label='정밀 기울기')
+        a[3].plot(z,z+1,label='거친 포텐셜 기울기');a[3].plot(z,z-2,label='정밀 포텐셜 기울기')
         a[3].plot(z,[corrected(np.array([v]))[1][0] for v in z],'--',label='고정 보정 후')
         a[3].set(title='같은 곡률의 두 포텐셜: 보정 예제',xlabel='변수');a[3].legend(fontsize=8)
         pages.savefig(fig);plt.close(fig)
