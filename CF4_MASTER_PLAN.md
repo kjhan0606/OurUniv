@@ -27,10 +27,16 @@ physical dispersion from the SAME fine-energy forward, no reporting rerun.
 Startup PM field agrees with the saved IC state; AD/value primal agrees;
 full IC+24nuisance directional error.001421 passes the predefined.002 check.
 Acceptance uses fine4^3 energies, forces use2^3; proper priors once, no old eta.
-408390 is its dependent actual-example PDF.408392 measures source-streaming
-resources for a lifted N128 field on256 source cells/axis, NOT new N256
-dynamics/information; physical rate is preserved with1/8 cell mass. Its
-estimated device peak5.43GiB; runtime/native gradient still pending.
+408393 is its dependent actual-example PDF (408390 replaced before execution
+to correct native-node pixel origins).408392 TIMEOUT after45m02s, NOT OOM:
+lifted N128 field on256 source cells/axis,1/8 cell mass, estimated device
+peak5.43GiB and host2.48GiB, but no completed native-gradient/score result.
+The retry changes the count readout algebra, not the likelihood or wall cap:
+exact Poisson sufficient statistics retain all occupied intensities AND the
+integrated intensity over all exposed cells, including empty cells.408406
+passed3 compact-deposit tests;408407 passed its volume/LOS/periodic gradient
+test and is comparing the full native gradient against408357.408408 is a
+dependent45min N256 source-workspace retry, not actual N256 dynamics.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.

@@ -182,7 +182,7 @@ AD-13.0877781 vs FD-13.0878291, relative3.90e-6. No PM/heldout in that job.
 408389 is the actual raw joint pilot. Queued408381 was cancelled/replaced
 before launch, not killed during calculation. Fine-energy forwards now also
 read physical velocity dispersion and preserve the latest ACCEPTED field;
-rejected candidate fields cannot overwrite it.408390 renders the dependent
+rejected candidate fields cannot overwrite it.408393 renders the dependent
 Korean actual-example report without an extra evolution. Startup408389
 reproduces saved rho/velocity to1.85e-13/4.79e-11km/s; coarse force and
 value-only energies match exactly. The full joint PM directional test gives
@@ -195,6 +195,19 @@ oracle479.18s includes compilation/support. Production/mixing not yet proven.
 piecewise-constant N128 cells into8 children,1/8 mass,sourceGL2/countLOS4x8,
 unchanged observedN128 keys/split. No new gravity, optimizer, heldout or
 high-resolution-field claim. Full-grid intrinsic mass ratio=.9999999999999999;
-32768-source streaming estimated device peak5.43GiB. Time/derivatives remain
-pending. Check global rate derivative and normalized-density scale direction;
-save only a small resource/result report, no full gradient/simulation archive.
+32768-source streaming estimated device peak5.43GiB. It TIMEOUT at45m02s,
+host peak2.48GiB: not OOM and no completed score/derivative. Preserve this
+failed runtime result; stale STARTED JSON is not evidence of an active job.
+
+Bounded response: exact Poisson output projection, not a new approximation.
+Keep lambda at37951 positive-count training keys plus the integral over ALL
+exposed cells (including empty cells). This compresses the output331.55x,
+not necessarily the runtime.408406 passed3 deposit controls, including empty
+observed keys and invalid/duplicate keys.408407 passed a full volume/LOS/
+periodic small value-gradient control and compares all native gradients and
+score/expected counts to408357 with the unchanged1e-7 absolute tolerance.
+408408 starts only after that job succeeds and its status confirms equality;
+it retries the lifted N256 source-workspace problem with131072-source chunks
+and compressed readout, same45min cap. Check global rate derivative and
+normalized-density scale direction; save only a small report, no full
+gradient/simulation archive. No actual N256 evolved field is claimed.
