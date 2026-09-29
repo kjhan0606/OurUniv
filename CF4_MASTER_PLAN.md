@@ -56,6 +56,15 @@ N256 dynamics initializer;408412 then performs four bounded joint transitions
 Source4 sensitivity, convergence and posterior UQ remain outstanding.
 The actual-example report is now408413: pending408393 replaced before launch
 to mask empty velocity cells and clarify sampling vs optimization.
+408411 then COMPLETED1m06s: actual N256/1.5 LCDM initialization, not replicated
+coarse density. Fourier restriction error2.00e-15; imaginary residual1.25e-15;
+rho mean1. Forward plus smooth-probe adjoint7.01s after compilation, estimated
+device19.36GiB/host4.13GiB. The overall white mean-square.96272 includes NEW
+prior high modes and is NOT evidence that inherited low modes converged.
+408412 RUNNING the actual joint pilot; same-IC reconstruction agrees to
+rho1.08e-12 and velocity8.12e-10km/s. No N256 accepted proposal yet.
+Report408428 corrects an unsupported subscript glyph in408413, and all three
+pages were visually checked: `r2_raw_joint_report_v2/` (N128 transition report).
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.

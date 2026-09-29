@@ -311,3 +311,15 @@ that proposal was accepted probabilistically. White mean-square rises from
 .64929123 to.69810943, so this is transition evidence, not equilibrium draws.
 Saved accepted IC and present moments require no extra reporting evolution.
 408411/408413 dependencies released normally;408412 waits for408411.
+
+Actual dynamics result:408411 COMPLETED1m06s. N256 restriction max2.00e-15,
+imaginary residual1.25e-15,rho mean1, nonempty native fraction.995551;
+forward plus smooth-probe adjoint7.01s, estimated device19.36GiB, host4.13GiB.
+The saved1.5-cMpc/h field is a genuine new evolved initializer, not a lifted
+coarse field or posterior sample. Total white mean-square.962720 includes
+prior high modes and cannot diagnose inherited low-band convergence.
+408412 started normally and reconstructed that saved field to1.08e-12rho /
+8.12e-10km/s; first observation adjoint pending. The physical N256 particle
+mass is2.903639e11Msun/h: this is environment inference, not resolved LG halos.
+Report408428 (`r2_raw_joint_report_v2/`) fixes408413's unsupported log-subscript
+font glyph. All3 actual-example pages were viewed; no further PM evolution.
