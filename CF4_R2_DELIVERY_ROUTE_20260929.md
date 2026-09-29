@@ -211,3 +211,21 @@ it retries the lifted N256 source-workspace problem with131072-source chunks
 and compressed readout, same45min cap. Check global rate derivative and
 normalized-density scale direction; save only a small report, no full
 gradient/simulation archive. No actual N256 evolved field is claimed.
+
+Prepared actual N256 dynamics pilot (not submitted until the source-cost
+measurement is usable): one conditional white-spectrum prolongation from the
+accepted raw joint initializer, seed2026092915, then native N256 PM forward
+and a smooth density/momentum adjoint resource measurement. Preserve the
+variance-normalized Fourier restriction including Nyquist folds; check that
+restriction and Hermitian reality. Added high modes are PRIOR initialization,
+not observed reconstruction, and inherited low modes are not converged draws.
+Use the same cosmology/time steps; save one reusable IC/rho/mean/physical-var
+state, no particle/trajectory/gradient archive. H1002CPU32GiB/60min (estimated
+host<=26GiB plus20%); compiled device allocation must also leave20% margin.
+This separates real dynamics cost from the lifted-field source profile.
+Q-GOAL: reaches the approved1.5-cMpc/h field machinery before science chains.
+Q-LEAN: one reused initializer/resource readout, no parameter sweep, likelihood
+change or invented acceptance gate. MW/M31 remain ambiguous, M33 unresolved;
+no identities are inserted during prolongation, and later observables must
+constrain the SAME NEW field. No posterior, heldout or LG claim follows from
+this dynamics-only result.
