@@ -68,3 +68,14 @@ Submitted after408499 passed11 focused regressions in14s:408500 independent
 high-mode initializer,408501 chain A,408502 chain B (afterok408500). All use
 source4af620d; the two chains each reserve48GiB and24h. Source pushed to
 origin/agent/freeze-zoom-pipeline. Jobs are not yet evidence of usable draws.
+
+408500 completed the alternative initializer and both chains started.408504
+passed3 diagnostic controls (IID vs shifted chains, autocorrelated/stuck
+chains, preserving rejected repeats). Pending408503 was replaced before
+execution to avoid waiting for an H100 for CPU-only scalar tests.
+408505 is an afterany408501/408502 terminal diagnostic and4-page illustrated
+Korean report, pinned to9225c0a. It does not refit or score heldout data and
+cannot mark R2 complete. Rendered pages must be visually reviewed before
+sharing. Batch-means MCSE/ESS are rough within-chain estimates conditional
+on stationarity; rank/folded split Rhat and all shared-ancestry limits remain
+explicit. A terminal report is not automatic production authorization.
