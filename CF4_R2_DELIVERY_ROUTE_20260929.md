@@ -171,3 +171,30 @@ field resolution does not silently redefine the split or improve the data's
 effective resolution. Higher-resolution angular completeness and IC phases
 need explicit, consistent transfer. These are implementation necessities for
 the already-approved1.5-cMpc/h target, not new filesystem/calibration gates.
+
+Latest connection outcomes:408374 COMPLETED20m47s. Legacy raw readout is
+unchanged to6.22e-15 across1414 rows, nuisance gradients5.91e-12 and velocity
+direction2.49e-14. Full native raw gradients cost220.80s(legacy),236.90s(fine
+shortcut); no speedup over legacy. Fine-cut total change+.000384016nat,
+max row3.84e-6. Rebuilt supports at BOTH physical/nuisance perturbations give
+AD-13.0877781 vs FD-13.0878291, relative3.90e-6. No PM/heldout in that job.
+
+408389 is the actual raw joint pilot. Queued408381 was cancelled/replaced
+before launch, not killed during calculation. Fine-energy forwards now also
+read physical velocity dispersion and preserve the latest ACCEPTED field;
+rejected candidate fields cannot overwrite it.408390 renders the dependent
+Korean actual-example report without an extra evolution. Startup408389
+reproduces saved rho/velocity to1.85e-13/4.79e-11km/s; coarse force and
+value-only energies match exactly. The full joint PM directional test gives
+AD3473.63275 vs FD3468.69661, relative.001421<the predefined.002 bound. This
+is less accurate than the observation-only adjoint, not falsely called exact;
+fine-target Metropolis energies still determine acceptance. First coarse
+oracle479.18s includes compilation/support. Production/mixing not yet proven.
+
+408392 is a45min/H100/16GiB source resource profile: replicate the existing
+piecewise-constant N128 cells into8 children,1/8 mass,sourceGL2/countLOS4x8,
+unchanged observedN128 keys/split. No new gravity, optimizer, heldout or
+high-resolution-field claim. Full-grid intrinsic mass ratio=.9999999999999999;
+32768-source streaming estimated device peak5.43GiB. Time/derivatives remain
+pending. Check global rate derivative and normalized-density scale direction;
+save only a small resource/result report, no full gradient/simulation archive.

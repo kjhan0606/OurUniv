@@ -16,13 +16,22 @@ raw-mark readout (21m47s); packing208.77s, core full26-coordinate value/gradient
 Source2^3/4^3 gradients cost86.31/685.79s; fine velocity-direction error2.47e-6.
 Fine-minus-coarse count log score14.51576 is NOT negligible merely because
 expected total counts differ only.068. Do not replace the fine target by the
-coarse one. The next native raw adjoint408374 is dependent on the bounded
-actual-cut comparison408372. Conditional Gaussian marginal acceleration is
-default-OFF and requires both mathematical probability and actual derivative
-controls. Shared field/count/raw operators and fresh state-local support are
-implemented; not yet a checked PM sampler. Coarse-force/fine-energy corrected
-proposals are under focused mechanics tests408375, not production. All these
-jobs are Slurm; no new PM evolution or heldout scoring in this bundle.
+coarse one.408372 passed the actual-cut comparison;408374 COMPLETED20m47s
+with full native-field/24-nuisance adjoints and refreshed support at all FD
+states (error3.90e-6). Its legacy1414 readout agrees to6.22e-15; native
+gradient220.80s legacy vs236.90s fine-cut shortcut, not a legacy speedup.
+408375 corrected-sampler mechanics tests passed.408389 is now the bounded
+N128 joint IC/raw/count transition pilot (max8 proposals,120min Slurm);
+replaces queued408381 before launch to retain accepted rho/mean velocity/
+physical dispersion from the SAME fine-energy forward, no reporting rerun.
+Startup PM field agrees with the saved IC state; AD/value primal agrees;
+full IC+24nuisance directional error.001421 passes the predefined.002 check.
+Acceptance uses fine4^3 energies, forces use2^3; proper priors once, no old eta.
+408390 is its dependent actual-example PDF.408392 measures source-streaming
+resources for a lifted N128 field on256 source cells/axis, NOT new N256
+dynamics/information; physical rate is preserved with1/8 cell mass. Its
+estimated device peak5.43GiB; runtime/native gradient still pending.
+All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.
 Finite delivery route and Fable advice disposition are in
