@@ -80,15 +80,25 @@ def main():
         def field(white):
             pos,vel=evolve(white);state=particle_grid(pos,vel,mass,conf)
             return state['rho'],jnp.moveaxis(state['mean_velocity_km_s'],-1,0)
+        @jax.jit
+        def field_with_dispersion(white):
+            # Read moments from the SAME forward needed for a fine energy;
+            # do not evolve an accepted endpoint a second time for its plot.
+            pos,vel=evolve(white);state=particle_grid(pos,vel,mass,conf)
+            return (state['rho'],jnp.moveaxis(state['mean_velocity_km_s'],-1,0),
+                jnp.moveaxis(state['variance_km2_s2'],-1,0),state['valid'])
         with np.load(BASE/'r2_prior_split_long_v1/final_state.npz',allow_pickle=False) as f:
             q=np.r_[f['white_ic'].ravel(),np.asarray(tracer),np.asarray(pop)]
         n=N**3
         def split(q):return tuple(map(jnp.asarray,(q[:n],q[n:n+9],q[n+9:])))
         def deadline():
             if time.monotonic()-started>cap-240:raise PilotBudgetStop()
+        latest_fine={}
         def oracle(q,order,gradient):
+            nonlocal latest_fine
             deadline();tic=time.monotonic();white,t,p=split(q)
             if gradient:(r,v),pullback=jax.vjp(field,white)
+            elif order==4:r,v,variance,valid=field_with_dispersion(white)
             else:r,v=field(white)
             packs,info=support(r,v,t,order)
             if gradient:
@@ -108,6 +118,11 @@ def main():
             else:(score,parts),grad=value(r,v,t,p,packs,source_jax,o,order),None
             energy=.5*float(q@q)-float(score)
             if not np.isfinite(energy):raise FloatingPointError('nonfinite full target, no floor')
+            if order==4 and not gradient:
+                latest_fine=dict(rho=np.asarray(r),mean_velocity_km_s=np.asarray(v),
+                    physical_velocity_variance_km2_s2=np.asarray(variance),velocity_valid=np.asarray(valid))
+                if not all(np.isfinite(x).all() for x in latest_fine.values()):
+                    raise FloatingPointError('nonfinite accepted-state moment candidate')
             entry=dict(order=order,gradient=gradient,energy=energy,parts=np.asarray(parts).tolist(),
                 seconds=time.monotonic()-tic,**info)
             report['evaluations'].append(entry);save();print(json.dumps(entry),flush=True)
@@ -134,6 +149,7 @@ def main():
         report['joint_PM_direction']=dict(likelihood_AD=ad,likelihood_FD=fd,relative_error=error);save()
         if error>2e-3:raise AssertionError('joint PM/raw/count derivative mismatch')
         energy,_=oracle(q,4,False)
+        accepted_field=latest_fine
         metric=FixedSplitMetric(inverse_laplacian_metric_symbol(N),np.eye(24)*1e-5)
         report['metric']='fixed inverse mass: IC inverse-laplacian6000; nuisance1e-5; proposal guess, not covariance'
         rng=np.random.default_rng(2026092913);step=.1
@@ -146,6 +162,7 @@ def main():
                 q,energy,coarse,gradient,info=corrected_split_step(lambda x:oracle(x,2,True),
                     lambda x:oracle(x,4,False)[0],metric,q,energy,coarse,gradient,rng,step=step,steps=2)
             except PilotBudgetStop:break
+            if info['accepted']:accepted_field=latest_fine
             row=dict(iteration=i+1,warmup=i<4,step_size=step,fine_energy=energy,force_energy=coarse,
                 white_mean_square=float(np.mean(q[:n]**2)),canonical_jump_rms=float(np.sqrt(np.mean((q-before)**2))),
                 **{k:(str(v) if isinstance(v,float) and not np.isfinite(v) else v) for k,v in info.items()})
@@ -155,6 +172,10 @@ def main():
             if i<4:step=float(np.clip(step*np.exp((np.exp(info['log_acceptance'])-.65)/np.sqrt(i+1)),1e-6,.3))
         report.update(status='RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR',final_fine_energy=energy,
             completed_proposals=len(report['trace']),final_white_mean_square=float(np.mean(q[:n]**2)))
+        np.savez(out/'accepted_present_state.npz',**accepted_field,white_ic=q[:n],
+            tracer=q[n:n+9],population_white=q[n+9:],fine_energy=energy,box_cMpc_h=BOX,
+            native_mesh_origin_fraction=0.,R2_complete=False)
+        report['present_state_readout']='same accepted fine-energy forward; physical dispersion is NOT posterior uncertainty or tracer LOS nuisance'
         save()
     except Exception as error:
         report.update(status='FAILED_RAW_JOINT_PILOT',error=repr(error));save();raise
