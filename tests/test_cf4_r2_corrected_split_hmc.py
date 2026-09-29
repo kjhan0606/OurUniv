@@ -39,5 +39,19 @@ class CorrectedSplitTests(unittest.TestCase):
         self.assertAlmostEqual(float(np.mean(samples)),.75,delta=.05)
         self.assertAlmostEqual(float(np.var(samples)),.25,delta=.04)
 
+    def test_finite_rejection_energy_attribution_uses_starting_cache(self):
+        rng=np.random.default_rng(44);q=np.zeros(9);c,g=coarse(q)
+        sharp=lambda x:1e6*float(x@x)
+        result=corrected_split_step(coarse,sharp,self.metric,q,sharp(q),c,g,rng,step=.3,steps=2)
+        info=result[-1]
+        self.assertFalse(info['accepted'])
+        self.assertAlmostEqual(info['energy_error'],
+            info['force_hamiltonian_error']+info['fine_force_correction_change'],places=7)
+        self.assertEqual(info['initial_force_energy'],c)
+        self.assertEqual(info['initial_fine_energy'],0.)
+        self.assertAlmostEqual(info['fine_force_correction_change'],
+            info['proposed_fine_energy']-info['proposed_force_energy']+c,places=7)
+        self.assertEqual(result[1],0.);self.assertEqual(result[2],c)
+
 
 if __name__=='__main__':unittest.main()
