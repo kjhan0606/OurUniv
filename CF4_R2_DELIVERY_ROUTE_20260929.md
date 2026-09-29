@@ -50,7 +50,7 @@ Corrections independently checked by driver:
    independent science-resolution chains. Keep actual covariance/mixing
    unclaimed until supported. If cost is excessive, consider deterministic
    coarse-force HMC with fixed fine-target Metropolis energies ONLY after
-   comparing costs; it is not implemented or selected now. A support union
+   comparing costs; the bounded implementation is now recorded below. A support union
    frozen at a trajectory's start is NOT a reversible state-local rule.
    Fine energy/rule and metric stay fixed after warmup; rejected states and
    their accepted fine energy are retained. Do not substitute a smaller-grid
@@ -251,8 +251,8 @@ blocking the current-field science delivery. Actual speedup remains unknown.
 ## Direct N256 connection after the two resource results
 
 408410 is the full-grid large-batch resource retry;408411 depends on both
-408389 and408410 and performs the actual N256 dynamics initializer. Prepared
-next: a single four-proposal N256 joint pilot, maximum110min application /
+408389 and408410 and performs the actual N256 dynamics initializer.408412 is
+the dependent four-proposal N256 joint pilot, maximum110min application /
 120min Slurm, H1002CPU48GiB (host estimate<=40GiB plus20%). Both coarse-adjoint
 and fine-value compiled allocations must leave20% device margin. It reuses
 the corrected sampler, current conditional raw/count law and proper24 white
@@ -288,3 +288,17 @@ no compression gate, grid sweep or duplicate simulation archive. Same-field
 MW/M31 roles remain ambiguous; M33 may remain unresolved. No native truth
 IDs or known components are inserted. Their observational constraints and
 the LG<=.3-cMpc/h zoom remain R3–R5, not falsely delivered by this R2 pilot.
+
+Measured source outcome:408410 COMPLETED10m17s, full native gradient532.10s,
+host3.26GiB/device estimated peak20.41GiB. Score-143209.634037887,
+expected training count46477.9607111954. Physical intrinsic mass ratio1;
+rate derivative1286.07857760927 equals2*(47121-expected), density-scale
+direction-5.68e-13. Thus the earlier small source batches created the runtime
+problem. Retain the established full-grid law, no compact-backend promotion.
+The lifted N128 field at child-cell GL2 differs by-.88568334 log-score from
+the original parent-cell GL4 rule; this is a different quadrature on the same
+piecewise-constant field, NOT an actual N256-field result or global posterior
+error bound. Keep the planned SAME-N256 finer-rule sensitivity requirement.
+Korean report408413 replaces pending408393 before execution: empty velocity
+cells are masked rather than called cold, and sampling energy is not presented
+as an optimization loss. No extra PM forward for reporting.

@@ -42,6 +42,17 @@ law, increasing the source batch from32768 to2097152, with unchanged45min
 cap and20% compiled device margin. This reduces4096 volume/source calls to64
 without changing the quadrature; runtime improvement is not yet measured.
 This is a source-workspace retry, not actual N256 dynamics.
+408410 COMPLETED10m17s with the unchanged full-grid law and2097152-source
+batches. Full native gradient532.10s, estimated device20.41GiB, host3.26GiB;
+physical mass ratio1, rate AD agrees with2*(47121-expected) to1e-12, density
+normalization directional derivative-5.68e-13. Small-batch overhead, not
+insufficient memory, prevented the preceding45min profile from finishing.
+The compact backend is not needed or promoted.408411 is the dependent actual
+N256 dynamics initializer;408412 then performs four bounded joint transitions
+(source force1/fine2, frozen observed128 keys/exposure, physical rate1/8).
+Source4 sensitivity, convergence and posterior UQ remain outstanding.
+The actual-example report is now408413: pending408393 replaced before launch
+to mask empty velocity cells and clarify sampling vs optimization.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.
