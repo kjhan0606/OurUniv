@@ -20,8 +20,11 @@ coarse one.408372 passed the actual-cut comparison;408374 COMPLETED20m47s
 with full native-field/24-nuisance adjoints and refreshed support at all FD
 states (error3.90e-6). Its legacy1414 readout agrees to6.22e-15; native
 gradient220.80s legacy vs236.90s fine-cut shortcut, not a legacy speedup.
-408375 corrected-sampler mechanics tests passed.408389 is now the bounded
-N128 joint IC/raw/count transition pilot (max8 proposals,120min Slurm);
+408375 corrected-sampler mechanics tests passed.408389 COMPLETED1h43m40s:
+bounded N128 joint IC/raw/count pilot,7/8 accepted (3/4 after discarded warmup),
+host7.92GiB. Accepted IC/rho/mean velocity/physical dispersion saved; white
+mean-square.649291->.698109 is still drifting, not stationary posterior UQ.
+The pilot (max8 proposals,120min Slurm)
 replaces queued408381 before launch to retain accepted rho/mean velocity/
 physical dispersion from the SAME fine-energy forward, no reporting rerun.
 Startup PM field agrees with the saved IC state; AD/value primal agrees;

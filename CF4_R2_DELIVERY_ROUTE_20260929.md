@@ -302,3 +302,12 @@ error bound. Keep the planned SAME-N256 finer-rule sensitivity requirement.
 Korean report408413 replaces pending408393 before execution: empty velocity
 cells are masked rather than called cold, and sampling energy is not presented
 as an optimization loss. No extra PM forward for reporting.
+
+408389 COMPLETED1h43m40s, host7.92GiB. All8 proposals finished:7 accepted,
+including3/4 at the fixed post-warmup step.152960795. Iteration7 rejected and
+preserved the previous state's fine energy/coarse cache/field. Largest
+positive Hamiltonian error1.08784 does not mean rejection is mandatory;
+that proposal was accepted probabilistically. White mean-square rises from
+.64929123 to.69810943, so this is transition evidence, not equilibrium draws.
+Saved accepted IC and present moments require no extra reporting evolution.
+408411/408413 dependencies released normally;408412 waits for408411.
