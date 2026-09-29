@@ -58,7 +58,8 @@ def main():
         fig,a=page('시험 표본추출 — 현재장 자체를 함께 움직였는가?',
             'N128, 격자 3 cMpc/h의 개발 시험입니다. 지도는 수락한 마지막 한 상태이지 posterior 평균이 아닙니다.\n'
             '물리적 속도분산은 같은 격자 안 입자 운동의 분산이며, posterior 불확실성이나 관측오차가 아닙니다.',(2,3))
-        extent=(-192,192,-192,192)
+        # Pixel centres represent native PM NODES (origin0), not voxel centres.
+        dx=384/rho.shape[0];extent=(-192-dx/2,192-dx/2,-192-dx/2,192-dx/2)
         for axis,density,title in zip(a[:2],(oldrho,rho),('시험 시작의 밀도 단면','마지막 수락 상태의 밀도 단면')):
             im=axis.imshow(np.log10(np.maximum(density[:,:,64].T,1e-6)),origin='lower',extent=extent,vmin=-1.5,vmax=1.5,cmap='RdBu_r')
             axis.set(title=title,xlabel='관측자 상대 x (cMpc/h)',ylabel='y (cMpc/h)');fig.colorbar(im,ax=axis,label='log₁₀(밀도/평균)')
