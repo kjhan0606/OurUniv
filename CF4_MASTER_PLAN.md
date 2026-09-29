@@ -76,6 +76,16 @@ Streaming posterior moments are newly implemented but not wired into current
 pilot:408436 passed3 tests (repeated rejected states, occupied-cell velocity
 conditioning, checkpoint continuation). Physical and posterior variances are
 separate; sample variance is not MC-error evidence.
+Terminal408412 COMPLETED59m45s but0/4 proposals accepted: Hamiltonian errors
+19.6921,12.8524,4.3137,4.2649. This is a FAILED TRANSPORT PILOT, not R2
+posterior success. Fine endpoint cost~289s, steady force~147s, host16.16GiB.
+No large two-chain run.408447 is the bounded two-proposal fixed-anchor force
+repair, depending on408445 corrected-sampler regressions. It continues from
+the saved same-target state, step.0522046,L2,no adaptation; one fine derivative
+sets a frozen linear correction to the surrogate, never to the fine target.
+408439 passed2 analytic affine-wrapper tests. Actual efficacy is unproven.
+408444 rendered the N256/transport/mechanics example PDF, all3 pages viewed:
+`r2_n256_pilot_report_v1/`. It shows the0/4 result, not an equilibrium map.
 All jobs are Slurm; heldout untouched, no stationary posterior claim.
 Corrected3-page actual-example Korean report408370 was rendered and every
 page viewed: `/gpfs/kjhan/CF4/z0_density/r2_raw_bundle_report_v2/`.

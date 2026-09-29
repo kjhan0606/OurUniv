@@ -123,3 +123,23 @@ Q-GOAL: make actual N256 posterior exploration viable, not merely draw a map.
 Q-LEAN: reuse the same target/sampler; one reference derivative and a fixed
 linear addition, no new survey/proxy/gate ladder. MW/M31/M33 same-field role
 ambiguity and all previously stated delivery limits remain unchanged.
+
+408412 terminal: COMPLETED59m45s, host16.16GiB,0/4 accepted. Final two errors
+4.313656/4.264864 at fixed step.0329685; accepted field/IC remain the initializer.
+This is failed transport, not failed execution and not R2 completion.
+Actual fine values~289s, coarse gradients~147s. Report408444 has3 actual/toy
+illustrated pages, all viewed (`r2_n256_pilot_report_v1/`). It distinguishes
+the genuine N256 initialization from a posterior and shows rejection error
+attribution; examples of moment accumulation and affine forces are explicitly
+toy checks, not claims of CF4 efficiency.
+
+408447 implements the planned repair after408445's sampler regressions:
+same accepted N256 state and GL2 target, ONE fine gradient checked against
+its value, then2 proposals at fixed step.0522045778,L2,seed2026092917 with no
+adaptation. Anchor and correction are saved and fixed throughout. Matching
+surrogate potential/gradient/caches are used; no per-trajectory refresh.
+Both derivative orders get their own compiled20% device-margin checks.
+The sampler now records the coarse/proxy Hamiltonian error and change in
+fine-minus-proxy energy separately, plus initial/proposed energies. All24
+nuisances are included in each trace row, even rejected states. This does
+NOT yet implement a long science chain or its moment accumulation.
