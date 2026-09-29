@@ -26,7 +26,8 @@ def main():
     started=time.monotonic()
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],
         source_commit=os.environ['CF4_EXPECTED_COMMIT'],N=256,box_cMpc_h=384.,dx_cMpc_h=1.5,
-        R2_complete=False,posterior_draw=False,heldout_scored=False,seed=2026092915,
+        R2_complete=False,posterior_draw=False,heldout_scored=False,
+        seed=int(os.environ.get('CF4_R2_INITIAL_SEED','2026092915')),
         purpose='actual N256 forward/adjoint resource pilot and reusable initializer, not data-target validation',
         limits='unconverged inherited low modes; added modes are prior, MW/M31 ambiguous and M33 unresolved')
     def save():

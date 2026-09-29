@@ -9,6 +9,14 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Active direction — 2026-09-25: no new TNG dependency
 
+Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
+gradient/value match, estimated GPU30.56GiB, host18.40GiB. Low-band power
+.698109->.700069 still drifts; no stationary posterior or R2 completion.
+Next bounded two-chain exploration and its limits are specified in
+`CF4_R2_TWO_CHAIN_BUNDLE_20260929.md`. It wires actual field-moment accumulation
+and richer traces before up to2x24GPU-hours, not a production science claim.
+The paragraphs below preserve chronology and may refer to now-terminal jobs.
+
 Current R2 continuation2026-09-29:408353 COMPLETED the entire1414-row live
 raw-mark readout (21m47s); packing208.77s, core full26-coordinate value/gradient
 226.01s, seven-row gradient agreement2.91e-13, whole directional error3.84e-6.

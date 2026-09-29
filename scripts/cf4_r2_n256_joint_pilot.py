@@ -16,6 +16,8 @@ from cf4_r2_resolution_target import source_geometry_at_resolution,ResolutionObs
 from cf4_r2_prior_split_hmc import FixedSplitMetric,inverse_laplacian_metric_symbol,PilotBudgetStop
 from cf4_r2_corrected_split_hmc import corrected_split_step
 from cf4_r2_affine_force import AffineCorrectedForce
+from cf4_r2_chain_schedule import ChainSchedule
+from cf4_r2_posterior_moments import PresentMomentAccumulator
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density');ROOT=Path(__file__).resolve().parents[1]
 N=256;BOX=384.;NIC=N**3
@@ -25,19 +27,26 @@ def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend()!='gpu':raise RuntimeError('Slurm GPU required')
     out=Path(os.environ['CF4_R2_OUT_DIR']);out.mkdir(exist_ok=False);started=time.monotonic()
     affine=os.environ.get('CF4_R2_AFFINE_FORCE')=='1'
-    maximum=2 if affine else 4;warmup=0 if affine else 2
+    long_chain=os.environ.get('CF4_R2_LONG_CHAIN')=='1'
+    if long_chain and not affine:raise ValueError('long-chain mode requires checked affine force')
+    schedule=ChainSchedule() if long_chain else None
+    maximum=schedule.proposals if long_chain else (2 if affine else 4)
+    warmup=schedule.warmup if long_chain else (0 if affine else 2)
+    budget=23*3600 if long_chain else 6300
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         N=N,box_cMpc_h=BOX,dx_cMpc_h=1.5,observed_count_grid=128,R2_complete=False,heldout_scored=False,
         force_volume_order=1,fine_volume_order=2,source_cell_rate_factor=.125,trace=[],evaluations=[],
         target='conditional1414 rawFP/K marks plus47121 training counts, LCDM and24 proper nuisance priors once',
         max_proposals=maximum,warmup_proposals=warmup,frozen_affine_force=affine,
+        long_chain=long_chain,application_budget_seconds=budget,
+        sampling_status='NOT_ASSESSED_FOR_STATIONARITY',
         limitations='bounded development transitions, no stationarity/UQ; fine2 needs fine4 sensitivity; conditional selection; MW/M31 ambiguous,M33 unresolved')
     def save():
         report.update(seconds=time.monotonic()-started,host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
     try:
-        parent=BASE/'r2_n256_dynamics_profile_v1'
+        parent=Path(os.environ.get('CF4_R2_INITIAL_DIR',str(BASE/'r2_n256_dynamics_profile_v1')))
         if json.loads((parent/'result.json').read_text())['status']!='N256_DYNAMICS_INITIALIZER_NOT_POSTERIOR':
             raise ValueError('completed actual N256 initializer required')
         if json.loads((BASE/'r2_n256_source_profile_v3/result.json').read_text())['status']!='N256_SOURCE_WORKSPACE_PROFILE_NOT_N256_FIELD':
@@ -75,7 +84,7 @@ def main():
         latest_fine={}
         def oracle(q,order,gradient):
             nonlocal latest_fine
-            if time.monotonic()-started>6300:raise PilotBudgetStop()
+            if time.monotonic()-started>budget:raise PilotBudgetStop()
             tic=time.monotonic();white,t,p=map(jnp.asarray,(q[:NIC],q[NIC:NIC+9],q[NIC+9:]))
             if gradient:(r,v),pullback=jax.vjp(field,white)
             elif order==2:r,v,variance,valid=moments(white)
@@ -113,6 +122,7 @@ def main():
                 latest_fine=dict(rho=np.asarray(r),mean_velocity_km_s=np.asarray(v),
                     physical_velocity_variance_km2_s2=np.asarray(variance),velocity_valid=np.asarray(valid))
                 if not all(np.isfinite(x).all() for x in latest_fine.values()):raise FloatingPointError('nonfinite moments')
+                latest_fine['count_raw_scores']=np.asarray(parts)
             row=dict(order=order,gradient=gradient,energy=energy,parts=np.asarray(parts).tolist(),seconds=time.monotonic()-tic,**info)
             report['evaluations'].append(row);save();print(json.dumps(row),flush=True)
             return energy,grad
@@ -125,7 +135,7 @@ def main():
         coarse,gradient=oracle(q,1,True)
         direct,_=oracle(q,1,False)
         if abs(coarse-direct)>1e-7:raise AssertionError('N256 AD/value primal mismatch')
-        seed=2026092917 if affine else 2026092916
+        seed=int(os.environ.get('CF4_R2_CHAIN_SEED',str(2026092917 if affine else 2026092916)))
         report['seed']=seed;rng=np.random.default_rng(seed)
         wave=np.broadcast_to(np.cos(2*np.pi*np.arange(N)/N)[:,None,None],(N,)*3)
         direction=np.r_[.03*wave.ravel(),.01*rng.normal(size=24)/np.sqrt(24)]
@@ -153,12 +163,16 @@ def main():
             np.savez(out/'fixed_force_anchor.npz',anchor=force.anchor,gradient_correction=force.correction)
             save()
         metric=FixedSplitMetric(inverse_laplacian_metric_symbol(N),np.eye(24)*1e-5)
-        step=.05220457782250625 if affine else .1
+        step=schedule.initial_step if long_chain else (.05220457782250625 if affine else .1)
+        accumulator=PresentMomentAccumulator((N,)*3) if long_chain else None
+        report['schedule']=schedule.__dict__ if schedule else None
         def white_summary(q):
             spectrum=fft.fftn(q[:NIC].reshape((N,)*3),norm='ortho',workers=2)
             coarse_spectrum=restrict_spectrum_preserve_dtype(spectrum,128)
             return dict(white_mean_square=float(np.mean(q[:NIC]**2)),
-                inherited_low_white_mean_square=float(np.mean(np.abs(coarse_spectrum)**2)))
+                inherited_low_white_mean_square=float(np.mean(np.abs(coarse_spectrum)**2)),
+                fundamental_real=[float(spectrum[index].real) for index in ((1,0,0),(0,1,0),(0,0,1))],
+                fundamental_imag=[float(spectrum[index].imag) for index in ((1,0,0),(0,1,0),(0,0,1))])
         report.update(phase='BOUNDED_TRANSITIONS',initial_fine_energy=energy,initial_force_energy=coarse,
             initial_white=white_summary(q))
         def checkpoint():
@@ -166,21 +180,44 @@ def main():
         checkpoint();save()
         for i in range(maximum):
             before=q.copy()
+            integrations=schedule.steps(i) if long_chain else 2
             try:
                 q,energy,coarse,gradient,info=corrected_split_step(force,
-                    lambda x:oracle(x,2,False)[0],metric,q,energy,coarse,gradient,rng,step=step,steps=2)
-            except PilotBudgetStop:break
+                    lambda x:oracle(x,2,False)[0],metric,q,energy,coarse,gradient,rng,step=step,steps=integrations)
+            except PilotBudgetStop:
+                report['stopped_at_application_budget']=True
+                break
             if info['accepted']:accepted_field=latest_fine
-            row=dict(iteration=i+1,warmup=i<warmup,step_size=step,fine_energy=energy,force_energy=coarse,
+            row=dict(iteration=i+1,warmup=i<warmup,step_size=step,integration_steps=integrations,
+                fine_energy=energy,force_energy=coarse,
                 nuisance_white=q[NIC:].tolist(),force_linear_offset=force.offset(q) if affine else 0.,**white_summary(q),
+                count_raw_scores=accepted_field['count_raw_scores'].tolist(),
+                density_octant_means=[float(accepted_field['rho'][a:a+N//2,b:b+N//2,c:c+N//2].mean())
+                    for a in (0,N//2) for b in (0,N//2) for c in (0,N//2)],
                 canonical_jump_rms=float(np.sqrt(np.mean((q-before)**2))),
                 **{k:(str(v) if isinstance(v,float) and not np.isfinite(v) else v) for k,v in info.items()})
+            if long_chain and i>=warmup:
+                # Every retained chain state counts, including repeated rejections.
+                accumulator.update(accepted_field)
+                report['retained_states']=accumulator.n
+                if accumulator.n%8==0:
+                    np.savez(out/f'draw_{accumulator.n:04d}.npz',canonical=q,
+                        rho=accepted_field['rho'].astype(np.float32),
+                        mean_velocity_km_s=accepted_field['mean_velocity_km_s'].astype(np.float32),
+                        velocity_valid=accepted_field['velocity_valid'],fine_energy=energy,
+                        iteration=i+1,native_mesh_origin_fraction=0.,R2_complete=False)
+                    np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             report['trace'].append(row);report['rng_state']=rng.bit_generator.state
             checkpoint();save();print(json.dumps(row),flush=True)
-            if i<warmup:step=float(np.clip(step*np.exp((np.exp(info['log_acceptance'])-.65)/np.sqrt(i+1)),1e-6,.3))
+            if long_chain:step=schedule.next_step(step,i,info['log_acceptance'])
+            elif i<warmup:step=float(np.clip(step*np.exp((np.exp(info['log_acceptance'])-.65)/np.sqrt(i+1)),1e-6,.3))
+        if long_chain and accumulator.n:
+            np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
+            np.savez(out/'present_moments_unassessed.npz',**accumulator.arrays())
         np.savez(out/'accepted_present_state.npz',**accepted_field,white_ic=q[:NIC],tracer=q[NIC:NIC+9],
             population_white=q[NIC+9:],fine_energy=energy,box_cMpc_h=BOX,native_mesh_origin_fraction=0.,R2_complete=False)
-        report.update(status='N256_RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR',completed_proposals=len(report['trace']),
+        report.update(status=('N256_CHAIN_FINISHED_REQUIRES_DIAGNOSTICS' if long_chain else
+            'N256_RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR'),completed_proposals=len(report['trace']),
             final_white=white_summary(q),final_fine_energy=energy);save()
     except Exception as error:
         report.update(status='FAILED_N256_RAW_JOINT_PILOT',error=repr(error));save();raise
