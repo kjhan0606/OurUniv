@@ -103,3 +103,32 @@ low-band powers are .704224/.702354 and Hamiltonian errors -19.976/-23.464;
 the large negative errors include fine/proxy changes -14.675/-16.469. Movement
 is real but a fixed local affine correction may degrade away from its anchor.
 Track that directly; high early acceptance is not evidence of stationary mixing.
+
+408509 COMPLETED1h55m17s, host7.25GiB. Full sourceGL4 raw component totals
+150,581,357/150,695,010 were retained via row batches, max8,549,503 per batch.
+Initial GL4-minus-GL2 count/raw scores +.27241766/+.09562372, sum+.36804138;
+after the two accepted pilot moves +.22674394/+.07510420, sum+.30184814.
+The between-state correction change is-.06619324nat. This does not expose a
+large discrepancy on these TWO NEARBY PILOT states, but is NOT a bound for
+the posterior or a reweighted-field/UQ result. Count GL4 costs2387s/state on
+A100; row-streamed raw1169/944s. No new PM evolution or heldout evaluation.
+The one-page actual-example PDF in `r2_n256_gl4_pair_v1` was rendered and
+visually reviewed, and the review flag updated. It includes row-streaming
+equality, per-row raw examples and both-state count/raw score changes.
+
+408565 COMPLETED3s, source60fe8b4: read-only comparison of immutable affine
+anchors at the initial and two-move states, with zero new target evaluations.
+The measured fine-minus-fixed-affine change -6.81034nat is close to the
+gradient-secant trapezoidal prediction -7.03873 (difference-.22838). IC
+coordinate contribution -7.03327 dominates the prediction; nuisance-coordinate
+contribution -.005459. This coordinate split is not causal separation of
+cross-Hessian terms. It supports changing local curvature along this ONE
+displacement, not an identified full Hessian or a validated new kernel.
+Simple Fourier-shell scalar secants leave96.5–100% gradient residual across
+shells. Therefore do NOT add an unvalidated isotropic/spectral rescaling or
+claim it solves transport. Keep the existing running chains, check subsequent
+mixing/force drift, and use more evidence if a proposal repair becomes needed.
+
+At this point A/B each have6/6 accepted discarded-warmup proposals, restricted
+low-band powers .746770/.744296 and still drifting. Both have entered the
+planned L8 portion of warmup. Actual posterior moments and R2 are NOT complete.

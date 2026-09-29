@@ -22,8 +22,15 @@ chains: each first L4 warmup proposal accepted, low-band powers .704224 and
 after BOTH chains terminate to produce diagnostics and an illustrated report.
 408508 passed whole1414-row exact streaming-value equivalence in6m34s,
 max batch1.069million of18.843million components, no dropped support.408509
-compares GL2/GL4 on two saved pilot fields without new PM evolution; currently
-running, not a posterior sensitivity result. Source4501657 pushed. R2 remains
+compared GL2/GL4 on two saved pilot fields without new PM evolution: COMPLETED
+1h55m17s, corrections+.368041/+.301848nat, change-.066193nat. This is two
+nearby-state evidence, not posterior sensitivity or a global error bound.
+Its one-page actual-example PDF was viewed.408565 completed a3s read-only
+saved-gradient secant: curvature change approximately explains affine-force
+residual, but simple shellwise scaling leaves96.5–100% gradient residual;
+do not promote a new correction from one direction. Source60fe8b4 pushed.
+Chains A/B each reached6 accepted warmup moves and entered L8; low-band power
+still drifts (.746770/.744296), no retained posterior claim. R2 remains
 incomplete; sampling, numerical/prior sensitivity and untouched prediction
 must not be replaced by these implementation successes.
 The paragraphs below preserve chronology and may refer to now-terminal jobs.
