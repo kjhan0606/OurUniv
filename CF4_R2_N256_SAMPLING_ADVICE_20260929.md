@@ -86,3 +86,40 @@ AD321802.89445, FD321780.67501, relative6.90468e-5 (predeclared limit.002).
 This does not yet supply acceptance, stationarity, covariance or heldout
 prediction. The pilot continues; final larger-run lengths/settings remain
 conditional on its measured outcomes.
+
+## Measured N256 rejection and bounded response (pilot still running)
+
+The first two408412 proposals reject: step.1 gives fine Hamiltonian error
+19.6921; reduced step.0522046 gives12.8524. Reconstructing from saved endpoint
+energies separates coarse-integrator error from the change in fine-minus-
+coarse potential: first approximately-26.759+46.451=19.692, second
+-2.335+15.187=12.852. Thus after reducing step, surrogate-force mismatch
+dominates the remaining rejection; high-dimensional data/force geometry is
+not repaired merely by granting longer wall time. This is not evidence of
+a wrong fine Metropolis rule or failure of the checked directional derivative.
+Finish the remaining two predefined proposals, but do NOT launch the large
+two-chain allocation solely because the code runs.
+
+Prepared bounded response, same fine GL2 target and priors: evaluate ONE
+fine gradient at the accepted starting state q0 and form
+d=grad(Ufine)(q0)-grad(Ucoarse)(q0). Use the fixed surrogate potential
+Uproxy(q)=Ucoarse(q)+d dot(q-q0), its matching gradient and the unchanged
+fine-target Hamiltonian for acceptance. Freeze d/q0 for the whole run;
+refreshing the anchor each production trajectory is NOT this reversible
+fixed proposal. This changes only the proposal and is not a field/likelihood
+correction, power rescaling or posterior calibration.
+
+`cf4_r2_affine_force.py` implements only this fixed affine wrapper.408439
+passed2 analytic controls: same-anchor fine gradient and potential derivative,
+and global equality of force for equal-curvature Gaussian potentials (up to
+an irrelevant potential constant). These are mechanics checks, not evidence
+that an affine correction suffices for the nonlinear CF4 target. Integration
+with the actual pilot and measured transport/acceptance remain to be done
+AFTER408412 releases its pinned code. Use a bounded trial before any larger
+allocation; if the fixed correction is inadequate, use the evidence to
+choose a more accurate force rather than weakening the Metropolis target.
+
+Q-GOAL: make actual N256 posterior exploration viable, not merely draw a map.
+Q-LEAN: reuse the same target/sampler; one reference derivative and a fixed
+linear addition, no new survey/proxy/gate ladder. MW/M31/M33 same-field role
+ambiguity and all previously stated delivery limits remain unchanged.
