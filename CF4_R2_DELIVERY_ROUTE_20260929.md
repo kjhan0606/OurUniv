@@ -247,3 +247,44 @@ not a time-limit increase or an approximation. Check the compiled memory
 before launch with20% margin; estimated N256 host<=13GiB plus20%,16GiB request.
 The earlier compact implementation remains experimental, not a requirement
 blocking the current-field science delivery. Actual speedup remains unknown.
+
+## Direct N256 connection after the two resource results
+
+408410 is the full-grid large-batch resource retry;408411 depends on both
+408389 and408410 and performs the actual N256 dynamics initializer. Prepared
+next: a single four-proposal N256 joint pilot, maximum110min application /
+120min Slurm, H1002CPU48GiB (host estimate<=40GiB plus20%). Both coarse-adjoint
+and fine-value compiled allocations must leave20% device margin. It reuses
+the corrected sampler, current conditional raw/count law and proper24 white
+nuisance priors. No new calibration or heldout scores.
+
+Native source grid256/1.5, observed count keys/exposure STILL128/3. Angular
+completeness is the inherited piecewise-constant128 selection, not newly
+measured survey coverage. Multiply count source masses by1/8 at unchanged
+physical rate prior. This constant cancels in normalized conditional raw
+marks, not in the Poisson occurrence likelihood. Rebuild source membership
+for each state; existing capacity ceilings stop, never truncate.
+
+Declare numerical rules: force1^3, Metropolis target2^3 per1.5-cMpc/h source
+cell, LOS4x8 and optical axis1/256 unchanged. These are NOT claimed identical
+to the N128/3 target or to N256 source4^3. Finer4^3 sensitivity on the SAME
+N256 posterior remains required before delivery. Start from408411's same-IC
+field, check native reconstruction, coarse AD/value equality and one full
+PM+24-nuisance FD at the existing.002 tolerance. Four proposals only:
+two discarded warmup then two fixed-step, L2, initial step.1; use the prior
+inverse-Laplacian6000 metric guess and nuisance inverse mass1e-5. This is
+actual science-grid wiring/transition evidence, NOT posterior convergence.
+
+Track restricted128 low-band white power as well as total256 white power:
+the newly drawn high-k prior can make total power look nearly stationary
+while inherited low modes still drift. Keep accepted-state fields separate
+from rejected candidates and store one reusable final IC/moment state, no
+particle or trajectory archive. Long independent chains require measured
+cost/mixing evidence and focused external advice before a large allocation.
+Q-GOAL: connect observed counts/raw distances directly to the approved1.5
+current field and its LCDM history. Q-LEAN: reuse tested physics/sampler and
+combine necessary wiring/resource/transition checks in one bounded pilot;
+no compression gate, grid sweep or duplicate simulation archive. Same-field
+MW/M31 roles remain ambiguous; M33 may remain unresolved. No native truth
+IDs or known components are inserted. Their observational constraints and
+the LG<=.3-cMpc/h zoom remain R3–R5, not falsely delivered by this R2 pilot.
