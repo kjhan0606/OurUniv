@@ -34,6 +34,8 @@ def main():
     out = Path(os.environ['CF4_R2_OUT_DIR'])
     out.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
+    reanchor_only = os.environ.get('CF4_R2_REANCHOR_ONLY') == '1'
+    application_budget = 4*3600 if reanchor_only else APPLICATION_BUDGET
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
@@ -43,9 +45,14 @@ def main():
                              nuisance_inverse_mass_diagonal=1e-5),
         matched_momenta=True, heldout_scored=False, posterior_claim=False,
         Q_GOAL='local sampler diagnosis for the actual R2 z=0 field posterior; no LG identification claim',
-        Q_LEAN='two fixed endpoints, two forces each, no new field/PM run or stored particle histories',
+        Q_LEAN='two fixed endpoints; reuse the same forward model, no new cosmological simulation or particle histories',
         MW_M31='ambiguous; M33 unresolved; native truth IDs cannot seed or select generated components',
-        evaluations=[], trials=[], application_budget_seconds=APPLICATION_BUDGET)
+        evaluations=[], trials=[], application_budget_seconds=application_budget)
+    if reanchor_only:
+        report['force_comparison'] = 'terminal-state re-anchored GL1 affine vs saved force-pair references'
+        report['reanchor_policy'] = 'one GL2 tangent per predetermined terminal state; correction frozen for one trajectory'
+        report['prior_force_pair_result'] = str(BASE/'r2_n256_force_pair_v1/result.json')
+        report['Q_LEAN'] = 'two predetermined endpoints, one tangent and one trajectory each; reuse prior comparison, no new cosmological simulation or particle histories'
 
     def save():
         report['seconds'] = time.monotonic() - started
@@ -54,7 +61,7 @@ def main():
         tmp.replace(out/'result.json')
 
     def check_budget():
-        remaining = APPLICATION_BUDGET - (time.monotonic() - started)
+        remaining = application_budget - (time.monotonic() - started)
         if remaining < MIN_CALL_REMAINING:
             raise TimeoutError('application cap reached before another expensive force evaluation')
 
@@ -135,9 +142,15 @@ def main():
             return energy, derivative
 
         metric = FixedSplitMetric(inverse_laplacian_metric_symbol(N), np.eye(24)*1e-5)
+        previous_trials = {}
+        if reanchor_only:
+            previous = json.loads((BASE/'r2_n256_force_pair_v1/result.json').read_text())
+            if previous.get('status') != 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR':
+                raise ValueError('completed terminal force-pair reference required')
+            previous_trials = {(r['chain'], r['force']): r for r in previous['trials']}
 
         def run_trial(chain_label, force_label, q, fine_energy, force, force_value,
-                      force_gradient, seed):
+                      force_gradient, seed, setup_seconds=0.):
             check_budget()
             rng = np.random.default_rng(seed)
             tic = time.monotonic()
@@ -165,6 +178,9 @@ def main():
                 acceptance_weighted_ic_rms=probability*ic_rms,
                 acceptance_weighted_nuisance_rms=probability*nuisance_rms,
                 acceptance_weighted_ic_rms_per_second=probability*ic_rms/max(time.monotonic()-tic, 1e-9),
+                anchor_setup_seconds=setup_seconds,
+                acceptance_weighted_ic_rms_per_total_setup_second=probability*ic_rms/
+                    max(setup_seconds+time.monotonic()-tic, 1e-9),
                 fundamental_mode_displacement=fundamental,
                 actual_accepted_displacement_rms=float(np.sqrt(np.mean(displacement**2))) if accepted else 0.,
                 elapsed_seconds=time.monotonic()-tic)
@@ -183,22 +199,58 @@ def main():
             if q.shape != (NIC+24,) or cached_proxy_gradient.shape != q.shape:
                 raise ValueError(f'{label}: invalid terminal canonical checkpoint')
 
+            force_setup_started = time.monotonic()
             proxy = AffineCorrectedForce(lambda x: oracle(x, 1, True), anchor, correction)
             proxy_value, proxy_gradient = proxy(q)
             if (abs(proxy_value-cached_proxy_energy) > 1e-7
                     or not np.allclose(proxy_gradient, cached_proxy_gradient, rtol=0., atol=1e-7)):
                 raise AssertionError(f'{label}: saved proxy cache does not match its fixed force')
             actual_fine_energy, actual_fine_gradient = oracle(q, 2, True)
+            force_setup_seconds = time.monotonic()-force_setup_started
             if abs(actual_fine_energy-fine_energy) > 1e-7:
                 raise AssertionError(f'{label}: saved state no longer matches the GL2 fine target')
 
             seed = 2026093001 + index
-            run_trial(label.upper(), 'frozen_GL1_affine', q, fine_energy,
-                proxy, proxy_value, proxy_gradient, seed)
-            run_trial(label.upper(), 'exact_GL2', q, fine_energy,
-                lambda x: oracle(x, 2, True), actual_fine_energy, actual_fine_gradient, seed)
+            if reanchor_only:
+                raw_gl1_gradient = proxy_gradient - correction
+                raw_gl1_energy = proxy_value - float(correction@(q-anchor))
+                local_correction = actual_fine_gradient - raw_gl1_gradient
+                local_base = AffineCorrectedForce(
+                    lambda x: oracle(x, 1, True), q, local_correction)
+                energy_shift = actual_fine_energy - raw_gl1_energy
+                def local_proxy(x):
+                    value, gradient = local_base(x)
+                    return value+energy_shift, gradient
+                local_gradient = raw_gl1_gradient + local_correction
+                tangent_gradient_max_error = float(np.max(np.abs(local_gradient-actual_fine_gradient)))
+                tangent_value_error = abs(raw_gl1_energy+energy_shift-actual_fine_energy)
+                if tangent_gradient_max_error > 1e-7 or tangent_value_error > 1e-7:
+                    raise AssertionError(f'{label}: re-anchored affine force fails its tangent check')
+                report.setdefault('anchor_setups', []).append(dict(chain=label.upper(),
+                    exact_gradient_seconds=report['evaluations'][-1]['seconds'],
+                    anchor_state='predetermined terminal accepted checkpoint',
+                    correction_norm=float(np.linalg.norm(local_correction)),
+                    energy_shift_to_fine_target=energy_shift,
+                    tangent_value_abs_error=tangent_value_error,
+                    tangent_gradient_max_abs_error=tangent_gradient_max_error,
+                    frozen_for_one_trajectory=True))
+                run_trial(label.upper(), 'terminal_reanchored_GL1_affine', q, fine_energy,
+                    local_proxy, raw_gl1_energy, local_gradient, seed, force_setup_seconds)
+                for trial in report['trials'][-1:]:
+                    trial['comparison_references'] = {
+                        force: {key: previous_trials[(label.upper(), force)][key] for key in
+                            ('energy_error', 'acceptance_probability', 'elapsed_seconds',
+                             'acceptance_weighted_ic_rms_per_second')}
+                        for force in ('frozen_GL1_affine', 'exact_GL2')}
+                save()
+            else:
+                run_trial(label.upper(), 'frozen_GL1_affine', q, fine_energy,
+                    proxy, proxy_value, proxy_gradient, seed)
+                run_trial(label.upper(), 'exact_GL2', q, fine_energy,
+                    lambda x: oracle(x, 2, True), actual_fine_energy, actual_fine_gradient, seed)
 
-        report['status'] = 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR'
+        report['status'] = ('TWO_REANCHORED_AFFINE_TRIALS_COMPLETE_NOT_POSTERIOR' if reanchor_only
+                            else 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR')
         report['conclusion_scope'] = 'local proposal efficiency at two predetermined terminal states only; no stationarity or global mixing inference'
         report['same_field_LG_constraint'] = 'later MW/M31/M33 role assignment and observables must constrain this same NEW field; M33 remains unresolved; truth IDs are evaluation-only'
         report['source_head'] = subprocess.check_output(
