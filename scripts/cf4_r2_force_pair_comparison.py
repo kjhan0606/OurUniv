@@ -35,7 +35,10 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
     reanchor_only = os.environ.get('CF4_R2_REANCHOR_ONLY') == '1'
-    application_budget = 4*3600 if reanchor_only else APPLICATION_BUDGET
+    exact_one_step = os.environ.get('CF4_R2_EXACT_ONE_STEP') == '1'
+    if reanchor_only and exact_one_step:
+        raise ValueError('select only one diagnostic mode')
+    application_budget = 4*3600 if (reanchor_only or exact_one_step) else APPLICATION_BUDGET
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
@@ -53,6 +56,12 @@ def main():
         report['reanchor_policy'] = 'one GL2 tangent per predetermined terminal state; correction frozen for one trajectory'
         report['prior_force_pair_result'] = str(BASE/'r2_n256_force_pair_v1/result.json')
         report['Q_LEAN'] = 'two predetermined endpoints, one tangent and one trajectory each; reuse prior comparison, no new cosmological simulation or particle histories'
+        report['anchor_depends_on_start_state'] = True
+        report['transition_probability_valid_for_chain'] = False
+    if exact_one_step:
+        report['force_comparison'] = 'state-independent exact GL2 one-step force vs saved exact GL2 eight-step reference'
+        report['Q_LEAN'] = 'two predetermined endpoints, one exact GL2 one-step trajectory each; reuse prior comparison, no new cosmological simulation or particle histories'
+        report['transition_probability_valid_for_chain'] = True
 
     def save():
         report['seconds'] = time.monotonic() - started
@@ -143,21 +152,21 @@ def main():
 
         metric = FixedSplitMetric(inverse_laplacian_metric_symbol(N), np.eye(24)*1e-5)
         previous_trials = {}
-        if reanchor_only:
+        if reanchor_only or exact_one_step:
             previous = json.loads((BASE/'r2_n256_force_pair_v1/result.json').read_text())
             if previous.get('status') != 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR':
                 raise ValueError('completed terminal force-pair reference required')
             previous_trials = {(r['chain'], r['force']): r for r in previous['trials']}
 
         def run_trial(chain_label, force_label, q, fine_energy, force, force_value,
-                      force_gradient, seed, setup_seconds=0.):
+                      force_gradient, seed, setup_seconds=0., steps=STEPS):
             check_budget()
             rng = np.random.default_rng(seed)
             tic = time.monotonic()
             p = metric.momentum(rng)
             initial_h = fine_energy + metric.kinetic(p)
             proposal, p_end, path_force_value, _ = split_trajectory(
-                force, metric, q, p, STEP, STEPS,
+                force, metric, q, p, STEP, steps,
                 initial_evaluation=(force_value, force_gradient))
             proposed_fine_energy, _ = oracle(proposal, 2, False)
             delta_h = proposed_fine_energy + metric.kinetic(p_end) - initial_h
@@ -171,6 +180,7 @@ def main():
             fundamental = {str(mode): [float(spectrum[mode].real), float(spectrum[mode].imag)]
                 for mode in ((1,0,0), (0,1,0), (0,0,1))}
             row = dict(chain=chain_label, force=force_label, seed=seed,
+                integration_steps=steps,
                 proposed_fine_energy=proposed_fine_energy, path_force_energy=float(path_force_value),
                 energy_error=float(delta_h), acceptance_probability=probability,
                 common_uniform_decision=accepted, proposal_ic_white_rms=ic_rms,
@@ -194,12 +204,29 @@ def main():
                 fine_energy = float(f['fine_energy'])
                 cached_proxy_energy = float(f['force_energy'])
                 cached_proxy_gradient = f['force_gradient'].astype(np.float64)
-            with np.load(chain/'fixed_force_anchor.npz', allow_pickle=False) as f:
-                anchor, correction = f['anchor'].copy(), f['gradient_correction'].copy()
-            if q.shape != (NIC+24,) or cached_proxy_gradient.shape != q.shape:
+            if q.shape != (NIC+24,) or (not exact_one_step and cached_proxy_gradient.shape != q.shape):
                 raise ValueError(f'{label}: invalid terminal canonical checkpoint')
 
+            seed = 2026093001 + index
+            if exact_one_step:
+                setup_started = time.monotonic()
+                actual_fine_energy, actual_fine_gradient = oracle(q, 2, True)
+                setup_seconds = time.monotonic()-setup_started
+                if abs(actual_fine_energy-fine_energy) > 1e-7:
+                    raise AssertionError(f'{label}: saved state no longer matches the GL2 target')
+                run_trial(label.upper(), 'exact_GL2_one_step', q, fine_energy,
+                    lambda x: oracle(x, 2, True), actual_fine_energy,
+                    actual_fine_gradient, seed, setup_seconds, steps=1)
+                report['trials'][-1]['comparison_reference'] = {
+                    key: previous_trials[(label.upper(), 'exact_GL2')][key]
+                    for key in ('energy_error', 'acceptance_probability', 'elapsed_seconds',
+                                'acceptance_weighted_ic_rms_per_second')}
+                save()
+                continue
+
             force_setup_started = time.monotonic()
+            with np.load(chain/'fixed_force_anchor.npz', allow_pickle=False) as f:
+                anchor, correction = f['anchor'].copy(), f['gradient_correction'].copy()
             proxy = AffineCorrectedForce(lambda x: oracle(x, 1, True), anchor, correction)
             proxy_value, proxy_gradient = proxy(q)
             if (abs(proxy_value-cached_proxy_energy) > 1e-7
@@ -210,7 +237,6 @@ def main():
             if abs(actual_fine_energy-fine_energy) > 1e-7:
                 raise AssertionError(f'{label}: saved state no longer matches the GL2 fine target')
 
-            seed = 2026093001 + index
             if reanchor_only:
                 raw_gl1_gradient = proxy_gradient - correction
                 raw_gl1_energy = proxy_value - float(correction@(q-anchor))
@@ -249,8 +275,12 @@ def main():
                 run_trial(label.upper(), 'exact_GL2', q, fine_energy,
                     lambda x: oracle(x, 2, True), actual_fine_energy, actual_fine_gradient, seed)
 
-        report['status'] = ('TWO_REANCHORED_AFFINE_TRIALS_COMPLETE_NOT_POSTERIOR' if reanchor_only
-                            else 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR')
+        if reanchor_only:
+            report['status'] = 'TWO_REANCHORED_AFFINE_TRIALS_COMPLETE_NOT_POSTERIOR'
+        elif exact_one_step:
+            report['status'] = 'TWO_EXACT_GL2_ONE_STEP_TRIALS_COMPLETE_NOT_POSTERIOR'
+        else:
+            report['status'] = 'FOUR_MATCHED_FORCE_TRIALS_COMPLETE_NOT_POSTERIOR'
         report['conclusion_scope'] = 'local proposal efficiency at two predetermined terminal states only; no stationarity or global mixing inference'
         report['same_field_LG_constraint'] = 'later MW/M31/M33 role assignment and observables must constrain this same NEW field; M33 remains unresolved; truth IDs are evaluation-only'
         report['source_head'] = subprocess.check_output(
