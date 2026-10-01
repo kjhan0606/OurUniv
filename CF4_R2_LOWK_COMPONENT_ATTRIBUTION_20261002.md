@@ -101,9 +101,19 @@ must constrain those latent roles on the same NEW field. Native truth
 identities remain evaluation/calibration only and never seed or select a
 candidate. This R2 force attribution performs no R3 identification.
 
-Execution: job410050 was submitted from commit`db6bc13` and started on H200
-node syn104. It requests1 GPU,4 CPUs,32 GiB host memory, and2h30 wall time;
-the application guard is2h20. Output:
+First execution410050 (`db6bc13`, H200/syn104) failed after22m23s on a code
+unpack error: the derivative API returns four blocks `(rho, velocity, tracer,
+population)`, but the driver unpacked three. This is an implementation failure,
+not a physics result. Before failure, the deterministic A replay reproduced its
+saved exact energy to7.45e-9 and returned count/FP scores-135382.44/+5980.75;
+no component gradient was retained, so no attribution conclusion follows.
+Preserve its result/logs under
 `/gpfs/kjhan/CF4/z0_density/r2_n256_lowk_component_attribution_20261002_v1/`.
-The terminal outcome, numerical resource use, and driver disposition will be
-added here; a running job is not a scientific result.
+
+The driver now maps all four derivative blocks through the PMWD pullback and
+adds two small tests for block layout and rejection of incomplete tuples. The
+retry writes to a new `_v2` directory. It retains the same checkpoints,
+training factors, numerical tolerances and2h20 application cap; nothing about
+the target or requested physics changed. No approval/audit ladder or new
+simulation is added. The retry's terminal outcome and resource use will be
+recorded below.

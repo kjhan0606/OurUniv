@@ -67,8 +67,12 @@ one deterministic PMWD replay per same accepted state, followed by two
 component adjoints. This repeats the forward computation but creates no new IC,
 field sample or independent simulation. It is bounded by one H200 Slurm job
 (2h30 wall; 2h20 application;32GiB host); no chain extension or target edit.
-Job410050 is RUNNING on syn104 from commit`db6bc13`. Plan and result record:
-`CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
+Job410050 failed after22m23s on a driver bug unpacking three instead of four
+component gradient blocks. A's same-state energy replay matched to7.45e-9,
+but no adjoint was retained and no scientific attribution resulted. The driver
+fixed the mapping and added two focused block-layout tests. Preserve the v1
+failed output; a same-scope H200 retry writes a separate v2 result. Plan and
+run record: `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 

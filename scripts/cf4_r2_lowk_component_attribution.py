@@ -31,6 +31,17 @@ def complex_pair(value):
     return [float(value.real), float(value.imag)]
 
 
+def merge_component_score_gradient(field_pullback, gradients):
+    """Map (rho,velocity,tracer,population) score gradients to canonical q."""
+    if len(gradients) != 4:
+        raise ValueError('component target must return four input-gradient blocks')
+    rho_gradient, velocity_gradient, tracer_gradient, population_gradient = gradients
+    ic_gradient, = field_pullback((rho_gradient, velocity_gradient))
+    blocks = (ic_gradient, tracer_gradient, population_gradient)
+    return np.concatenate([np.asarray(jax.device_get(x), dtype=np.float64).ravel()
+                           for x in blocks])
+
+
 def mode_summary(field, q_modes):
     spectrum = np.fft.fftn(field[:NIC].reshape((N,)*3), norm='ortho')
     output = []
@@ -169,11 +180,7 @@ def main():
                 jax.block_until_ready((component_score, gradients))
                 component_score = float(component_score)
                 component_score_error = abs(component_score-float(parts[component_index]))
-                field_gradient, tracer_gradient, population_gradient = gradients
-                ic_gradient, = field_pullback(field_gradient)
-                score_gradient = np.concatenate((np.asarray(jax.device_get(ic_gradient)).ravel(),
-                    np.asarray(jax.device_get(tracer_gradient)).ravel(),
-                    np.asarray(jax.device_get(population_gradient)).ravel()))
+                score_gradient = merge_component_score_gradient(field_pullback, gradients)
                 if score_gradient.shape != q.shape or not np.isfinite(score_gradient).all():
                     raise FloatingPointError(f'{label}/{name}: invalid component gradient')
                 modes = mode_summary(score_gradient, q_modes)
