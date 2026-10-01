@@ -71,6 +71,59 @@ Keep the target, step .08, nuisance mass and MH correction fixed; compare
 energy error, exact acceptance and fundamental-mode displacement. This
 preserves the posterior target but tests a sampler geometry hypothesis; it is
 not a production chain.
-Fable/Astra CLI tools were unavailable in the current session, so no external
-audit was performed; the bounded driver assessment and Q-GOAL/Q-LEAN rationale
-are recorded above. Do not submit a longer run until this sensitivity is read.
+No external audit was performed for the 2026-10-01 short-chain result; the
+bounded driver assessment and Q-GOAL/Q-LEAN rationale are recorded above.
+Do not submit a longer run until this sensitivity is read.
+
+## 2026-10-02 result and disposition
+
+Jobs409763/409764 both completed/exit0 on H100. Each ran one state-independent
+exact-GL2 proposal from the accepted terminal checkpoint of409590/409591,
+using the unchanged target, step.08, four integrations, nuisance inverse
+mass1e-5, and fundamental-mass parameter600. They were valid MH rejections:
+
+| Chain | delta H | Acceptance probability | Force evaluations | White-field jump |
+| --- | ---: | ---: | ---: | ---: |
+| A | 6.5127 | .0014845 | 4 | 0 |
+| B | 19.1332 | 4.90e-9 | 4 | 0 |
+
+The endpoint energy/gradient primal check passed. Estimated device peaks were
+30.56/30.07GiB under the69.81GiB device limit; Slurm host MaxRSS was
+12.2/15.7GiB under24GiB. Both took about1h23–1h27. This is evidence against
+the tested600/.08/four-integration proposal configuration, not target failure,
+posterior nonexistence, or a metric-family conclusion. No heldout data or new
+gravity evolution was used, and no map or posterior sample was promoted.
+
+Code review found a reporting defect: the trace hardcoded
+`integration_steps=1`, although the call passed four and `force_evaluations`
+was four. The local recorder now writes the configured integration count.
+The chain runner also previously reseeded on checkpoint continuation despite
+already saving RNG state. It now restores that state by default, supports an
+explicit seed override for deliberate matched replay, and records whether a
+seed or restored state was used. Focused HMC tests pass9/9; Python compile,
+batch-script syntax, and `git diff --check` pass. Historical results remain
+unchanged.
+
+Fable's read-only advice was usable. It judged the result a sampler-tuning
+failure rather than an astrophysical discovery (driver agrees); Q-GOAL is
+directly aligned with R2, while the original comparison was not fully lean
+because metric and integration count changed together. The driver's
+independent review rejects attributing the failure to metric600: the prior
+6000 same-checkpoint chain had one integration, and the existing eight-step
+6000 force trials used other states/momenta. Therefore the smallest useful
+control is one exact-GL2 proposal per chain at6000, step.08/four integrations,
+reusing the same initial states and RNG seeds2026100201/2026100202. Compared
+with the already-saved600/four-step proposals, this isolates the metric at
+fixed trajectory settings without rerunning the600 arm. Estimated cost is
+about2.8 H100 GPU-hours total (two independent 4h wall-capped jobs,4CPU and
+24GiB host each). The device estimate retains the20% guard. No per-step
+Hamiltonian instrumentation or three-arm step-size sweep is adopted; if this
+single contrast is inconclusive, stop and redesign the sampler rather than
+automatically expanding the tuning grid.
+
+The R2 science target itself remains provisional: no stationary posterior,
+ESS, heldout predictive validation, or completed CF4 z=0 density/velocity
+delivery follows. R3 same-field MW/M31/M33 identification has not started;
+MW/M31 remain role-ambiguous, M33 unresolved, and their observations must
+later constrain this same NEW field. Native truth identities remain evaluation
+only.

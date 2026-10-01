@@ -13,7 +13,7 @@ import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from cf4_r2_prior_split_hmc import (
     FixedSplitMetric,split_trajectory,split_hmc_step,canonical_from_optimizer_oracle,
-    inverse_laplacian_metric_symbol,bounded_split_pilot)
+    inverse_laplacian_metric_symbol,bounded_split_pilot,restore_numpy_rng)
 
 
 class PriorSplitTests(unittest.TestCase):
@@ -126,6 +126,17 @@ class PriorSplitTests(unittest.TestCase):
         with self.assertRaises(FloatingPointError):
             split_hmc_step(self.oracle,self.metric,self.q,*self.oracle(self.q),self.rng,
                 step=.1,steps=1,endpoint_value=lambda q:self.oracle(q)[0]+1.)
+
+    def test_numpy_rng_checkpoint_restores_next_draw_and_explicit_seed_replays(self):
+        original=restore_numpy_rng(12345)
+        original.standard_normal(7)
+        saved_state=original.bit_generator.state
+        expected=original.standard_normal(5)
+        resumed=restore_numpy_rng(state=saved_state)
+        np.testing.assert_array_equal(resumed.standard_normal(5),expected)
+        replayed=restore_numpy_rng(12345)
+        replayed.standard_normal(7)
+        np.testing.assert_array_equal(replayed.standard_normal(5),expected)
 
     def test_prior_flow_energy_and_reverse(self):
         q,p=self.metric.prior_flow(self.q,self.p,.71)

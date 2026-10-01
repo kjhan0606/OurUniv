@@ -16,6 +16,16 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 
+def restore_numpy_rng(seed=None, state=None):
+    """Create a generator from a seed or restore its exact saved state."""
+    if seed is None and state is None:
+        raise ValueError('a seed or saved NumPy bit-generator state is required')
+    rng=np.random.default_rng(0 if seed is None else int(seed))
+    if state is not None:
+        rng.bit_generator.state=state
+    return rng
+
+
 def canonical_from_optimizer_oracle(optimizer_oracle,n_ic):
     """Adapt this project's IC +100*9tracer +zero optimizer coordinates.
 

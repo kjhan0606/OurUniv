@@ -14,7 +14,7 @@ from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_affine_force import AffineCorrectedForce
 from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_prior_split_hmc import (
-    FixedSplitMetric, inverse_laplacian_metric_symbol, split_hmc_step,
+    FixedSplitMetric, inverse_laplacian_metric_symbol, restore_numpy_rng, split_hmc_step,
     split_trajectory,
 )
 from cf4_r2_raw_field_profile import load_inputs
@@ -245,6 +245,8 @@ def main():
             with np.load(initial_checkpoint, allow_pickle=False) as f:
                 q = f['canonical'].astype(np.float64)
                 saved_energy = float(f['fine_energy'])
+                saved_rng_state = (json.loads(str(f['rng_state'].item()))
+                    if 'rng_state' in f else None)
             if q.shape != (NIC+24,):
                 raise ValueError(f'{chain_label}: invalid canonical chain checkpoint')
 
@@ -252,9 +254,16 @@ def main():
             fine_energy, gradient = oracle(q, 2, True)
             if abs(fine_energy-saved_energy) > 1e-7:
                 raise AssertionError(f'{chain_label}: checkpoint energy differs from the exact GL2 target')
-            rng = np.random.default_rng(2026100200 + (1 if chain_label == 'a' else 2))
+            default_seed = 2026100200 + (1 if chain_label == 'a' else 2)
+            explicit_seed = os.environ.get('CF4_R2_CHAIN_SEED')
+            rng_seed = int(explicit_seed) if explicit_seed is not None else (
+                None if saved_rng_state is not None else default_seed)
+            rng = restore_numpy_rng(rng_seed,
+                saved_rng_state if explicit_seed is None else None)
             chain_result = dict(label=chain_label.upper(),
                 initial_source=str(initial_checkpoint),
+                rng_seed=rng_seed,
+                rng_state_restored=saved_rng_state is not None and explicit_seed is None,
                 initial_exact_gradient_seconds=time.monotonic()-setup_started,
                 initial_fine_energy=fine_energy, completed_transitions=0, trace=[])
             report['chain'] = chain_result
@@ -272,7 +281,7 @@ def main():
                     endpoint_value=lambda x: oracle(x, 2, False)[0])
                 displacement = q-previous_q
                 spectrum = np.fft.fftn(q[:NIC].reshape((N,)*3), norm='ortho')
-                row = dict(transition=index+1, integration_steps=1,
+                row = dict(transition=index+1, integration_steps=exact_chain_integrations,
                     step_size=STEP, accepted=bool(info['accepted']),
                     energy_error=json_number(info['energy_error']),
                     acceptance_probability=math.exp(info['log_acceptance'])

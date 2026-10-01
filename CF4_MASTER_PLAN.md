@@ -7,22 +7,32 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 continuation — 2026-10-01
+## Current R2 continuation — 2026-10-02
 
-409484 completed the exact state-independent GL2 one-step pilot; 409590/409591
-then completed eight one-step transitions each from the saved A/B accepted
-states. Acceptance was8/8 and5/8, but fundamental modes changed only about
-1e-3–3e-3 in absolute Fourier components. Total white-power was stable, not
-evidence of mixing. With fundamental mass6000, one .08 step advances the
-fundamental prior-flow phase only.00103rad. Do not fund a long same-metric run.
-Next bounded sensitivity: exact GL2, four steps, fixed .08, change only the
-inverse-Laplacian fundamental-mass parameter to600 (tenfold larger inverse
-mass at |k|=1, with a smooth change across low modes), starting from the latest
-accepted checkpoints. This is a proposal-metric test, not a target change or
-posterior claim. Jobs409590/409591 requested24GiB host, measured
-14.2/14.4GiB MaxRSS; exact GL2 device peak30.56GiB and the20% guard remain.
-MW/M31 ambiguous, M33 unresolved; later observables must constrain the same
-NEW field. Details: `CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md`.
+R2 remains incomplete and is still the current actual-data z=0 field stage;
+the N256 grid is1.5 cMpc/h, not the final <=0.3 cMpc/h LG resolution.
+409763/409764 each completed one exact-target HMC proposal at step.08, four
+integrations and fundamental-mass parameter600. Both were valid rejections
+(deltaH6.5127/19.1332; acceptance.0014845/4.90e-9), so neither moved its
+accepted field state. The result trace initially mislabeled the integration
+count as1; force_evaluations=4, settings, and source confirm four integrations.
+The recorder is corrected, and the runner now records an explicit seed or
+restores the saved RNG state on continuation. Target, prior, and MH correction
+were unchanged. This rejects that single proposal configuration, not the
+posterior or metric family.
+
+It does not isolate the metric parameter: the prior6000 comparison at the
+same checkpoints used one integration, while these used four; old prior6000
+eight-step force trials also came from different states/momenta. Do not infer
+that mass600 alone caused the rejection. Next bounded control: replay the same
+starting checkpoints and momenta at prior6000, step.08/four integrations,
+one proposal per chain, and compare directly to the existing mass600/four-step
+results. H100 x2,4CPU/24GiB each,4h cap; no warmup, adaptation, heldout score,
+gravity evolution, map promotion, or posterior claim. Then decide whether this
+sampler line is useful; no automatic long chain. MW/M31 remain ambiguous and
+M33 unresolved; subsequent observables must constrain those roles on this same
+NEW field. Details: `CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md` and
+`CF4_R2_METRIC_SENSITIVITY_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
