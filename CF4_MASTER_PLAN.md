@@ -166,9 +166,11 @@ error is0.0 and tracer-gradient relative error is8.906e-16. Objective improves
 168.654nat (count log score+168.352; Gaussian-prior NLL decreases.302), but
 population-by-radius L1 only falls.06410→.05854; terminal gradient norm remains
 595.8. Expected training counts move46,810.54→47,395.38 against47,121 observed.
-Across the59 aggregate bins with expected>=5 including the>=180cMpc/h tail,
-Pearson discrepancy is328.06→291.94; population0's16-bin discrepancy barely
-changes144.02→144.77. These are one fixed, short-lineage field's in-sample
+Correction to the earlier Pearson threshold label:328.062→291.938 used all59
+bins with positive expected count, not the expected>=5 subset. With expected>=5,
+the comparison is53 bins,326.197→290.009. For population0, the corresponding
+positive-mean calculation is16 bins,144.019→144.773; at expected>=5 it is15
+bins,142.229→142.920. These are one fixed, short-lineage field's in-sample
 conditional diagnostics, not calibration or posterior evidence.
 
 Fable's read-only important-result audit returned CONDITIONAL PASS. The driver
@@ -182,25 +184,70 @@ from a nonstationary fixed field and has diminishing gains. Correct the old
 profile's final radial-bin label: values clipped to that bin mean>=180, not
 180–192; the v3 historical JSON is preserved, and new summaries label the tail.
 
-Next bounded R2 action: one forward-only fixed-field voxel-count operator
-closure control at saved endpoint A's initial tracer coordinates. Reuse the
-source-volume GL2, analytic redshift-derived K transfer, angular selection,
-coherent/stochastic LOS law, radial cut and training graph-closed exposure;
-compare the unchanged active TSC expected counts against the diagnostic NGP
-mapping matching catalogue `floor(x/dx)`, then draw one seeded Poisson training
-voxel-count realization from the NGP mean and score it under both. The K-label
-transfer remains analytically marginalized rather than materializing raw
-galaxy rows; this deliberately isolates only the voxel/operator difference.
-One saved N256 field, one deterministic PMWD replay, two forward count maps,
-no adjoint, fit, chain, heldout outcomes or law edit. A mismatch diagnoses
-operator sensitivity only, not actual-data calibration. Output v1 is a new
-path. Q-GOAL: R2's actual z=0 count factor upstream of LG history. Q-LEAN: one
-fixed state and one mock, existing six-population/radial table only. MW/M31
-remain role-ambiguous and M33 unresolved; all their eventual observables must
-constrain the same NEW field at<=0.3cMpc/h; native identities are for
-calibration/evaluation only. R2 remains NO-GO for posterior promotion and
-N256 is1.5cMpc/h, not final LG resolution.
+Closure result410117 completed/exit0 on H200/syn104 in10m28s; the Slurm batch
+MaxRSS was3,521,324K. Its12 existing count-operator regression tests and3
+diagnostic tests passed. The exact active-TSC reference gate passed: saved-score
+absolute error2.91e-11 and max radial x population mean error5.21e-11. At the
+same endpoint-A field and initial tracer coordinates, TSC and diagnostic NGP
+exposed means are46,810.537 and46,820.573 (difference10.036); maximum single
+aggregate mean difference28.854. One seeded NGP Poisson voxel-count mock has
+47,103 objects; aggregate Pearson checks are71.715/53 bins under NGP and
+72.099/53 under TSC, both inside the approximate one-draw95% interval. This
+verifies mechanics only; the one draw is upper-tail and is not validation.
 
+Driver independently recomputed actual TRAINING-only radial x population
+aggregates (96 bins; this is not the full voxel likelihood): the un-factorialized
+binned score is292,733.987 (TSC) vs292,746.405 (NGP), delta+12.418nat; L1 is
+3020.466 vs2903.874; the expected>=5 Pearson statistic is326.197/53 bins vs
+305.005/53. NGP's apparent gain is concentrated: the population3 `>=180`
+tail has38 observed vs66.685 (TSC) and37.830 (NGP), accounting for12.34 of the
+21.19 Pearson-statistic decrease. Excluding that bin leaves313.858 vs305.004
+over52 bins. Population0's total is8,859 observed vs9,837.428/9,836.761
+expected (TSC/NGP); its expected>=5 Pearson rises142.229→144.012. Across
+36–96cMpc/h, observed population0 shares are.116,.152,.218,.350,.560; TSC
+shares are.144,.183,.272,.397,.596, and the NGP share shifts by at most.0033.
+Thus NGP plausibly accounts for much of the single outer-tail deficit, not the
+bright population split. Actual-data voxel score under NGP was not computed;
+do not generalize this coarse-bin result to the full voxel likelihood.
+
+Fable5's read-only result audit returned CONDITIONAL PASS and independently
+reproduced the coarse aggregate numbers. Driver verified the catalogue's NGP
+`floor(pos/dx)` mapping in `scripts/cf4_r2_common_catalogue.py` and the
+deposition passthrough through the chunked predictor. Record the Pearson
+threshold correction above; these are bins in a same-data, nonstationary
+conditional check, not inferential degrees of freedom. Q-GOAL: yes, this
+removes one possible R2 operator explanation without promoting a z=0
+posterior. Q-LEAN: yes, one field/two operators/one mock was proportionate.
+
+The audit's next suggestion was a field-free K/LF-transfer share calculation.
+`scripts/cf4_r2_uniform_transfer_shape.py` implements its bounded form: one
+uniform-density, zero-velocity field, 24-point radial GL quadrature in the
+36–96cMpc/h training shells, and a61-by-61 grid over the existing standard-normal
+alpha/mstar coordinates. At the saved initial alpha/mstar coordinates
+(.103,-1.608), the field-free pop0 shares are.153,.213,.299,.427,.621, above
+the observed.116,.152,.218,.350,.560. A nearby grid point (.2,.1) gives
+.104,.154,.230,.353,.557, with conditional-binomial deviance6.35 and only
+.025 prior NLL. This is a shape-capacity diagnostic on reused training counts,
+not a fit or calibration. The five luminosity-bias coordinates cannot affect
+the uniform-field shares: full-box-normalized rho^beta is identically1 at
+rho=1. In the actual fixed-field TSC table, population0 shares are instead
+.144,.183,.272,.397,.596, so the remaining deficit is coupled to field/bias
+weighting and/or the observation law; the field-free result cannot decide it.
+
+Next bounded R2 test: one deterministic forward evaluation on the same saved
+N256 endpoint-A field, changing only the two LF white coordinates to their
+prior centre(alpha_white=mstar_white=0), all other tracer coordinates frozen.
+Use active TSC, compare the exact saved baseline score/table to this one
+candidate's training score, prior penalty, and same radial x population
+summaries. One PMWD replay, no optimization/adjoint/chain/mock/heldout or law
+edit. This tests whether the field-density coupling preserves the field-free
+LF shape sensitivity; a favorable training result is not posterior evidence.
+Q-GOAL: test a concrete R2 split residual on the actual z=0 state before R3.
+Q-LEAN: one fixed field, one prior-centre point, one TSC forward count map.
+This is the marked-count factor only; the raw-FP factor is not reevaluated.
+MW/M31 remain role-ambiguous and M33 unresolved; eventual observables must
+constrain these roles on the same NEW field at<=0.3cMpc/h, with native truth
+identities reserved for calibration/evaluation.
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
