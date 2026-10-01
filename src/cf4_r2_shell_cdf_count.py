@@ -18,6 +18,19 @@ from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, ts
 from cf4_r2_marked_tracer_jax import source_mark_transfer, tsc_weight_at_voxel
 
 
+def ngp_deposit_jax(positions, masses, grid_size, box_size_cMpc_h):
+    """Periodic nearest-grid-point deposit matching catalogue ``floor(x/dx)``."""
+    positions=jnp.asarray(positions);masses=jnp.asarray(masses)
+    if (positions.ndim!=2 or positions.shape[1]!=3
+            or masses.shape!=(positions.shape[0],) or grid_size<1
+            or box_size_cMpc_h<=0):
+        raise ValueError('invalid NGP source geometry or masses')
+    spacing=box_size_cMpc_h/grid_size
+    cell=jnp.floor((positions%box_size_cMpc_h)/spacing).astype(jnp.int32)%grid_size
+    result=jnp.zeros((grid_size,grid_size,grid_size),dtype=masses.dtype)
+    return result.at[cell[:,0],cell[:,1],cell[:,2]].add(masses)
+
+
 def cell_averaged_tsc_weight(positions,voxel,grid_size,box):
     """TSC convolved with one cell top-hat = separable cubic B-spline.
 
@@ -95,13 +108,15 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
     mstar=-23.28,alpha=-.94,order=16,segments=1,
     target_population=None,target_voxel=None,source_cell_average=False,
-    force_all_images=False):
-    """Same source-selected K/TSC count integrand, boundary-fitted LOS law.
+    force_all_images=False,deposition='tsc'):
+    """Same source-selected K/count integrand with TSC or diagnostic NGP deposit.
 
     Caller owns current-width support checks and calibration. This does not
     replace the production target automatically, nor the continuous FP mark.
     An optional population/voxel pair reads one scalar with the transpose of
-    the identical deposit kernel; it does not change the integration rule.
+    the selected deposit kernel; it does not change the integration rule.
+    ``deposition='tsc'`` is the unchanged active default. NGP exists only for
+    forward-only operator-closure diagnostics.
     """
     pos=jnp.asarray(source_positions)
     intrinsic=jnp.asarray(intrinsic_bin_masses)
@@ -109,7 +124,9 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     scalar = target_population is not None
     if scalar != (target_voxel is not None):
         raise ValueError('population and voxel must be supplied together')
-    if source_cell_average and not scalar:
+    if deposition not in ('tsc','ngp'):
+        raise ValueError('deposition must be tsc or diagnostic ngp')
+    if source_cell_average and (not scalar or deposition!='tsc'):
         raise ValueError('approximate cell-averaged kernel is a scalar diagnostic only')
     if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
                    or jnp.asarray(target_voxel).shape!=(3,) or grid_size<3):
@@ -143,11 +160,18 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
             jnp.interp(radius,radius_table_cMpc_h,redshift_table),mstar=mstar,alpha=alpha)
         if scalar:
             p=target_population
-            kernel=cell_averaged_tsc_weight if source_cell_average else tsc_weight_at_voxel
-            contribution=jnp.sum(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0)
-                *kernel(observed,target_voxel,grid_size,box_size_cMpc_h))
+            mass=(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0))
+            if deposition=='ngp':
+                cells=(jnp.floor((observed%box_size_cMpc_h)/
+                    (box_size_cMpc_h/grid_size)).astype(jnp.int32)%grid_size)
+                kernel=jnp.all(cells==jnp.asarray(target_voxel)[None,:],axis=1)
+                contribution=jnp.sum(mass*kernel.astype(mass.dtype))
+            else:
+                kernel=cell_averaged_tsc_weight if source_cell_average else tsc_weight_at_voxel
+                contribution=jnp.sum(mass*kernel(observed,target_voxel,grid_size,box_size_cMpc_h))
         else:
-            contribution=jnp.stack([tsc_deposit_jax(observed,
+            deposit=tsc_deposit_jax if deposition=='tsc' else ngp_deposit_jax
+            contribution=jnp.stack([deposit(observed,
                 weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0),
                 grid_size,box_size_cMpc_h) for p in range(6)])
         return total+contribution,None

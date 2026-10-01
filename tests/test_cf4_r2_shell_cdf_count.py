@@ -8,7 +8,7 @@ from scipy.special import ndtr
 from scipy.integrate import quad
 
 from cf4_r2_shell_cdf_count import (shell_cdf_nodes,predict_shell_cdf_intensity,
-    cell_averaged_tsc_weight,predict_source_volume_intensity)
+    cell_averaged_tsc_weight,predict_source_volume_intensity,ngp_deposit_jax)
 
 
 class ShellCDFTests(unittest.TestCase):
@@ -42,6 +42,52 @@ class ShellCDFTests(unittest.TestCase):
         scalar=jax.jit(jax.value_and_grad(lambda v:read(v,True)))(0.)
         np.testing.assert_allclose(scalar,full,rtol=1e-11,atol=1e-12)
         self.assertGreater(float(scalar[0]),0.)
+
+    def test_ngp_deposit_matches_periodic_catalogue_floor_mapping(self):
+        position=jnp.array([[.1,.9,1.2],[4.,4.,4.],[1.99,2.01,3.99]])
+        mass=jnp.array([1.,2.,3.])
+        got=np.asarray(ngp_deposit_jax(position,mass,4,4.))
+        expected=np.zeros((4,4,4))
+        expected[0,0,1]=1.
+        expected[0,0,0]=2.
+        expected[1,2,3]=3.
+        np.testing.assert_array_equal(got,expected)
+        self.assertEqual(got.sum(),6.)
+
+    def test_source_count_ngp_closure_conserves_mass_but_changes_kernel(self):
+        radius=jnp.linspace(.001,400.,4001)
+        geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+            grid_size=16,sigma_los_km_s=100.,order=4,segments=8)
+        pos=jnp.array([[280.3,192.,192.]])
+        vel=jnp.zeros((1,3));intrinsic=jnp.ones((5,1));angular=jnp.ones((2,1))
+        def field(deposition=None):
+            extra={} if deposition is None else {'deposition':deposition}
+            return predict_source_volume_intensity(pos,vel,intrinsic,angular,
+                source_spacing=3.,volume_order=2,**geometry,**extra)
+        default=jax.jit(field)(None)
+        explicit=jax.jit(lambda:field('tsc'))()
+        ngp=jax.jit(lambda:field('ngp'))()
+        np.testing.assert_array_equal(default,explicit)
+        np.testing.assert_allclose(np.asarray(default).sum(),np.asarray(ngp).sum(),
+                                   rtol=1e-12,atol=1e-13)
+        self.assertGreater(float(jnp.sum(jnp.abs(default-ngp))),1e-8)
+
+    def test_scalar_ngp_gather_matches_full_ngp_deposit(self):
+        radius=jnp.linspace(.001,400.,4001)
+        kwargs=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+            grid_size=16,sigma_los_km_s=100.,order=4,segments=8,deposition='ngp')
+        position=jnp.array([[280.3,192.,192.]])
+        full=predict_shell_cdf_intensity(position,jnp.zeros_like(position),
+            jnp.ones((5,1)),jnp.ones((2,1)),**kwargs)
+        voxel=jnp.array([11,8,8])
+        scalar=predict_shell_cdf_intensity(position,jnp.zeros_like(position),
+            jnp.ones((5,1)),jnp.ones((2,1)),**kwargs,
+            target_population=0,target_voxel=voxel)
+        np.testing.assert_allclose(scalar,full[0,11,8,8],rtol=1e-12,atol=1e-13)
 
     def test_cell_averaged_kernel_is_top_hat_integral_not_full_RSD_claim(self):
         # Unit-spacing periodic grid, separable integrals evaluated independently.

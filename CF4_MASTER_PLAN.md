@@ -158,6 +158,49 @@ to a new v3 output directory; no target, prior, data, field, heldout access or
 resource cap changes. R2 remains incomplete; MW/M31 are ambiguous and M33
 unresolved.
 
+2026-10-02 frozen-field profile410105 completed/exit0 in1h09m13s (H200,
+MaxRSS3.89GiB), but stopped at the predeclared eight-evaluation limit:
+`FROZEN_FIELD_TRACER_PROFILE_BOUNDED_NOT_CONVERGED`. The v3 JSON corrects an
+audit-prompt transcription error: its actual initial saved-score absolute
+error is0.0 and tracer-gradient relative error is8.906e-16. Objective improves
+168.654nat (count log score+168.352; Gaussian-prior NLL decreases.302), but
+population-by-radius L1 only falls.06410→.05854; terminal gradient norm remains
+595.8. Expected training counts move46,810.54→47,395.38 against47,121 observed.
+Across the59 aggregate bins with expected>=5 including the>=180cMpc/h tail,
+Pearson discrepancy is328.06→291.94; population0's16-bin discrepancy barely
+changes144.02→144.77. These are one fixed, short-lineage field's in-sample
+conditional diagnostics, not calibration or posterior evidence.
+
+Fable's read-only important-result audit returned CONDITIONAL PASS. The driver
+independently confirmed its bookkeeping and additionally read the saved
+endpoint-A raw-FP tracer gradient: its L2 norm is7.37 versus1,952.67 for the
+count-plus-prior profile gradient (0.38% at that initial point). The derived
+final rate-coordinate gradient is about+549 of the595.8 norm, but the remaining
+gradient is still large and the radial/population residual persists. Do not
+extend nuisance optimization; it cannot distinguish count-law misspecification
+from a nonstationary fixed field and has diminishing gains. Correct the old
+profile's final radial-bin label: values clipped to that bin mean>=180, not
+180–192; the v3 historical JSON is preserved, and new summaries label the tail.
+
+Next bounded R2 action: one forward-only fixed-field voxel-count operator
+closure control at saved endpoint A's initial tracer coordinates. Reuse the
+source-volume GL2, analytic redshift-derived K transfer, angular selection,
+coherent/stochastic LOS law, radial cut and training graph-closed exposure;
+compare the unchanged active TSC expected counts against the diagnostic NGP
+mapping matching catalogue `floor(x/dx)`, then draw one seeded Poisson training
+voxel-count realization from the NGP mean and score it under both. The K-label
+transfer remains analytically marginalized rather than materializing raw
+galaxy rows; this deliberately isolates only the voxel/operator difference.
+One saved N256 field, one deterministic PMWD replay, two forward count maps,
+no adjoint, fit, chain, heldout outcomes or law edit. A mismatch diagnoses
+operator sensitivity only, not actual-data calibration. Output v1 is a new
+path. Q-GOAL: R2's actual z=0 count factor upstream of LG history. Q-LEAN: one
+fixed state and one mock, existing six-population/radial table only. MW/M31
+remain role-ambiguous and M33 unresolved; all their eventual observables must
+constrain the same NEW field at<=0.3cMpc/h; native identities are for
+calibration/evaluation only. R2 remains NO-GO for posterior promotion and
+N256 is1.5cMpc/h, not final LG resolution.
+
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine

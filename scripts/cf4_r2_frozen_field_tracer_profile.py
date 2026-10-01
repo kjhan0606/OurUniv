@@ -80,7 +80,10 @@ def radial_population_table(observed, expected, edges=RADIAL_EDGES):
             o, e = int(obs[pop, radial]), float(exp[pop, radial])
             rows.append(dict(population=pop,
                 radius_lower_cMpc_h=float(edges[radial]),
-                radius_upper_cMpc_h=float(edges[radial+1]),
+                radius_upper_cMpc_h=(None if radial == len(edges)-2
+                                      else float(edges[radial+1])),
+                radius_bin_label=(f'>={edges[radial]:g}' if radial == len(edges)-2
+                                  else f'{edges[radial]:g}-{edges[radial+1]:g}'),
                 observed_count=o, expected_training_count=e,
                 observed_to_expected=float(o/e) if e > 0.0 else None))
     return rows

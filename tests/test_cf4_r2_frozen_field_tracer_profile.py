@@ -44,6 +44,8 @@ class FrozenFieldTracerProfileTest(unittest.TestCase):
         self.assertIsNone(rows[0]['observed_to_expected'])
         self.assertEqual(rows[1]['observed_to_expected'], 2.)
         self.assertEqual(radial_population_l1(rows), .5)
+        self.assertEqual(rows[1]['radius_bin_label'], '>=1')
+        self.assertIsNone(rows[1]['radius_upper_cMpc_h'])
 
 
 if __name__ == '__main__':

@@ -389,3 +389,77 @@ eight-evaluation/time caps are retained; the next Slurm attempt writes to a
 new v3 directory. This is a driver repair only, not evidence about tracer
 nuisance adequacy or the count law. Q-GOAL/Q-LEAN and same-new-field
 MW/M31/M33 constraints are unchanged.
+
+### Completed v3 profile and independent Fable5 result audit
+
+Job410105 (`de86df4`, H200/syn104) completed in1h09m13s/exit0, MaxRSS3.89GiB.
+It reached exactly8 evaluations and correctly reports
+`FROZEN_FIELD_TRACER_PROFILE_BOUNDED_NOT_CONVERGED`; it is not a converged
+conditional optimum. At the saved A start, v3 reports score absolute error
+0.0 and tracer-gradient relative error8.906e-16. The earlier audit request
+incorrectly copied2.91e-11 and2.47e-15 from prior runs; these are not the v3
+reproduction values. No heldout outcomes were read/scored, PMWD adjoints or
+chain transitions occurred, and the count law was not changed.
+
+The initial conditional objective135387.0284 falls to135218.3741
+(-168.6543nat): count log score improves168.3521nat and prior NLL falls only
+0.3022nat. Training population-by-radius L1 is.064100→.058544 (8.7% relative
+reduction), expected count46,810.537→47,395.376 against47,121 observed. The
+saved terminal gradient norm is595.803, so the eight-evaluation cap was reached
+well before convergence. Recomputed from the saved table, Pearson discrepancy
+over59 bins with expected>=5 is328.06→291.94; population0 retains16 radial
+bins with discrepancy144.02→144.77 and8,859 observed against9,838 expected.
+Population0's radial deficit is essentially unchanged, while some smaller
+population-conditioned residuals move. These are descriptive conditional
+in-sample statistics on one nonstationary field, not a Poisson test or
+calibration result.
+
+Fable5 independently audited the result read-only and returned **CONDITIONAL
+PASS**. It caught the audit prompt's stale reproduction numbers; the driver
+verified the actual v3 values above. It also identified that the old radial
+summary clips every cell at/above180 into its final slot while labelling that
+slot180–192. The historical JSON is preserved; reporting code now labels it
+`>=180` with no finite upper edge. From the saved component-attribution JSON,
+the initial raw-FP NLL gradient in the same nine tracer coordinates has norm
+7.370, versus1952.673 for count plus prior (0.377%); adding it changes the
+initial joint gradient norm to1954.578. This does not make the count-only
+profile a joint optimum, but rules out a large opposing raw-FP force at this
+particular start.
+
+Driver adopts Fable's principal conclusion: no more fixed-field nuisance
+profile. The objective has diminishing gains, rate normalization accounts for
+about85% of the remaining gradient norm, and the population0 split signature
+survives. The exact rate-coordinate gradient inferred from the source law and
+final expected total is about+549; this is a derived component, not a stored
+full gradient vector. A converged conditional optimum on this one field would
+not close R2 or justify sampling.
+
+### Next bounded R2 test: TSC-prediction / NGP-count operator closure
+
+Implement one forward-only operator control at the saved endpoint-A initial
+nuisances (not the profiled coordinates). Recover the same saved N256 field
+once, compute expected training voxel counts with the active TSC deposit and
+with a diagnostic periodic NGP deposit matching the actual catalogue's
+`floor(position/dx)`, then draw one fixed-seed Poisson voxel-count mock from
+the NGP mean on training graph-closed exposure only. Both means use the same
+source-volume GL2 integral, existing analytic redshift-derived absolute-K
+transfer, angular completeness, RSD/FoG quadrature and radial cut; only the
+final voxel assignment changes. Sampling from the integrated NGP mean is the
+minimal binned Poisson-process mock, not a row-level mock archive: it isolates
+TSC-versus-NGP sensitivity but cannot calibrate source-group survival, the
+luminosity law, CF4 marks or the actual-data selection. Exact saved TSC score
+and radial/population means are mandatory gates before interpreting the mock.
+The predeclared report compares the same radial x population bins, the
+population0 share within observed bright populations0–2 at selected shells,
+and the correctly labelled `>=180` tail. It reports a Pearson/Poisson
+reference as a descriptive one-realization check only; no pass promotes a
+posterior. No adjoint, fit, chain, heldout outcome, or observation-law edit.
+
+Q-GOAL: isolates whether the known voxel operator mismatch contributes to the
+R2 actual z=0 field residual before R3. Q-LEAN: one fixed field, two forward
+operators and one seeded voxel-count draw; analytically integrate K labels
+instead of building/archiving individual fake galaxies. MW/M31 remain
+ambiguous and M33 unresolved; later observables must constrain those roles on
+the same NEW field at<=0.3 cMpc/h, with truth IDs used only for calibration or
+evaluation. R2 remains incomplete at1.5 cMpc/h; this is not LG identification,
+calibration, heldout validation, or production inference.
