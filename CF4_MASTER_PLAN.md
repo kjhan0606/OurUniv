@@ -68,11 +68,40 @@ component adjoints. This repeats the forward computation but creates no new IC,
 field sample or independent simulation. It is bounded by one H200 Slurm job
 (2h30 wall; 2h20 application;32GiB host); no chain extension or target edit.
 Job410050 failed after22m23s on a driver bug unpacking three instead of four
-component gradient blocks. A's same-state energy replay matched to7.45e-9,
-but no adjoint was retained and no scientific attribution resulted. The driver
-fixed the mapping and added two focused block-layout tests. Preserve the v1
-failed output; same-scope H200 retry410059 (`739fc12`) is pending priority and
-writes a separate v2 result. Plan and run record:
+component gradient blocks. Preserve its v1 output/logs; no gradient was retained.
+The driver fixed the mapping and added two focused block-layout tests. Same-scope
+H200 retry410059 (`739fc12`) completed in1h09m42s/exit0; both tests passed.
+Saved accepted states A/B reproduced exact energies to7.45e-9/1.68e-8, and
+independent component values matched within9.1e-13. The count+raw-FP gradients
+reconstructed the saved exact target gradients with relative L2 errors
+3.78e-15/3.72e-15. Across the three N256 fundamental IC-white conjugate pairs,
+the NLL radial derivative sums were A: count-8425.34, selected raw FP marks
++36.87, total likelihood-8388.47; B: count-2611.38, raw FP+92.29, total
+likelihood-2519.09. Thus, at these two fixed nuisance states, the partial
+2M++ count factor dominates the outward low-k likelihood force; the selected
+raw-FP radial term is small and opposes it. This is evidence of stress in the
+current partial observation model, not physical data support, posterior
+stationarity/ESS, or a promoted z=0 map. A/B share one short-chain lineage and
+are not independent universes. The active target omits TF/SNIa/SBF terms;
+heldout data were untouched and no new chain or gravity evolution ran. Next:
+audit the count likelihood's exposure/normalization and nuisance coupling
+against its actual observation law before modifying the target or sampling
+again. Fable5's read-only review returned CONDITIONAL PASS and agrees this is a
+real count-law stress signal at the tested states, not physical-data support.
+The driver independently verified the saved `fine_gradient=q-grad(logL)`
+contract in the checkpoint writer and the observer `[192,192,192]`/384-box
+geometry. Adopt Fable's smaller next step: reuse saved q and total gradient
+only, sum radial NLL derivatives in exact integer `|n|^2` shells for
+`0<|n|<=8`, and project the centered phase-corrected Fourier force coefficients
+into monopole/dipole/quadrupole components. Since component IC-gradient fields were not saved and FP is small
+but nonzero, label the field as combined, count-dominated likelihood force,
+not pure count. This geometry diagnostic will decide whether to audit radial
+selection/LF/K-correction, angular completeness/exposure, or low-intensity
+count/bias behavior; no target edit or chain yet. Q-GOAL: this locates an
+upstream R2 field artifact that could corrupt local-flow/LG conditioning.
+Q-LEAN: two frozen checkpoints and FFT/mode algebra only, no replay, chain,
+heldout or simulation. Keep R2 incomplete; MW/M31 remain role-ambiguous and
+M33 unresolved. Details and advisory disposition:
 `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency

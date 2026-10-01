@@ -112,10 +112,95 @@ Preserve its result/logs under
 
 The driver now maps all four derivative blocks through the PMWD pullback and
 adds two small tests for block layout and rejection of incomplete tuples. The
-retry writes to a new `_v2` directory. It retains the same checkpoints,
-training factors, numerical tolerances and2h20 application cap; nothing about
-the target or requested physics changed. No approval/audit ladder or new
-simulation is added. Retry job410059 (`739fc12`) is submitted to H200 and is
-currently PENDING(Priority). Output:
+retry preserved the same checkpoints, training factors, numerical tolerances
+and2h20 application cap; the target and requested physics did not change. No
+new simulation, chain transition or heldout score was added.
+
+Retry job410059 (`739fc12`) completed on H200/syn104 in1h09m42s, exit0; batch
+MaxRSS13,304,076K. Both focused tests passed. Output:
 `/gpfs/kjhan/CF4/z0_density/r2_n256_lowk_component_attribution_20261002_v2/`.
-Its terminal outcome and resource use will be recorded below.
+Both saved-state exact-energy replays matched: A absolute error7.45e-9,
+B1.68e-8. Independent component score errors were0 (count A/B),9.1e-13 (FP A)
+and0 (FP B). At both accepted endpoints, count+FP reconstructed the stored
+full exact target gradient: relative L23.78e-15(A),3.72e-15(B); relative
+max2.99e-15/2.46e-15. Thus the 4-block mapping, pullback, sign and component
+sum pass the same-state algebraic check.
+
+For the three fundamental IC-white conjugate-pair modes, NLL radial derivative
+sums were:
+
+| Endpoint | 2M++ count NLL | Selected raw CF4 FP-mark NLL | Combined likelihood NLL |
+|---|---:|---:|---:|
+| A | -8425.34 | +36.87 | -8388.47 |
+| B | -2611.38 | +92.29 | -2519.09 |
+
+The negative values mean the partial likelihood NLL locally decreases as the
+tested latent mode amplitudes grow, against the Gaussian prior's inward force.
+The count factor accounts for nearly all of that outward low-k force at both
+states; selected raw FP marks are small and oppose it. Count IC-gradient
+all-mode RMS was .3212/.2410 (A/B), versus FP .00463/.00568. This is a genuine
+diagnosis of which implemented factor drives the force in these two states,
+not evidence that the underlying observations physically support extreme IC
+modes. These states share one short-chain lineage, are not independent
+replicates, and nuisance values are held fixed. Nuisance gradient norms are
+large/state-dependent (count 1951/2071; FP 2737/4939, mostly population
+parameters), so the IC-force attribution does not establish calibrated
+joint likelihood behavior.
+
+The active target is partial: graph-closed 2M++ voxel counts plus a selected
+raw CF4 FP-distance-mark subset; TF/SNIa/SBF terms are absent. No heldout data,
+chain extension, target change, map promotion or gravity re-evolution occurred.
+R2 remains incomplete at N256/1.5 cMpc/h; this does not meet the <=0.3 LG
+resolution goal. MW/M31 role ambiguity remains and M33 is unresolved; their
+observables must ultimately constrain roles on this same newly inferred field.
+## Fable5 terminal advisory and driver disposition
+
+Fable5 returned **CONDITIONAL PASS** on the implementation and interpretation.
+It independently rederived the score/NLL sign, conjugate-pair factor,
+four-block pullback and prior-once reconstruction; the saved-gradient
+reconstruction and independent component scores provide strong numerical
+cross-checks. It agrees the graph-closed count factor, not selected raw FP
+marks, supplies nearly all of the low-k radial force at these two fixed states.
+It cautions that this is not evidence that the observations physically support
+the large latent modes: count strength changes by about3.2x between the two
+nearby states and nuisance gradients are large. Rate-coordinate residuals
+imply total normalization mismatch alone is unlikely to explain the shape
+force. It also corrected the wording: raw FP opposes count in five of six
+mode-state pairs, but weakly reinforces it in A's `(1,0,0)` mode; “small”
+describes the three-mode sum, not every individual mode.
+
+The driver verified the writer's exact target gradient in
+`scripts/cf4_r2_force_pair_comparison.py`: `fine_gradient = q - grad(logL)`;
+therefore `fine_gradient-q` is the full likelihood NLL gradient. The active
+observer is `[192,192,192]` in a384 cMpc/h periodic box. The saved component
+IC-gradients are summaries, not full arrays; the next geometric localization
+will therefore analyze the **combined count-dominated** likelihood gradient,
+not mislabel it as pure count. FP contributes only about1.4%/2.4% of the
+count all-mode IC-gradient RMS at A/B, but it is nonzero.
+
+The driver adopts Fable's recommended smallest next step before auditing or
+editing the count law: from the same two saved q/gradient checkpoints, compute
+the full-field and low-k-shell radial NLL derivatives through8 fundamental
+harmonics (`0 < |n| <= 8`, grouped by exact integer `n_x^2+n_y^2+n_z^2`);
+phase-correct the Fourier coefficients for the centered observer and
+compare shellwise monopole against dipole/quadrupole angular components. The
+alternating phase template follows the verified half-box observer convention.
+This needs FFT/mode algebra only: no PMWD replay, heldout read, chain, target
+change, or gravity evolution. Predeclared routing: a dominant radial monopole
+points to radial selection/LF/K-correction and volume normalization (including
+the unexposed outer volume); anisotropy points to angular completeness/exposure;
+an incoherent remainder points to low-intensity occupied cells/bias behavior.
+No null p-value or physical peak claim will be made. Q-GOAL: a radial count
+artifact would contaminate local flows/voids and therefore the LG environment;
+localizing it advances R2 before MW/M31/M33 are identified on the same NEW
+field. Q-LEAN: two existing states, inexpensive saved-gradient FFT only; no
+replay or repeated sampler work. MW/M31 remain ambiguous and M33 unresolved;
+their observables still must constrain the same generated field at <=0.3
+cMpc/h. The first unit run exposed a false-anisotropy risk from grouping
+different |k| values in rounded shells; the implementation now uses exact
+|k|^2 shells, and all3 focused tests pass. Fable could not open the original
+checkpoint-writer file, so the
+driver checked it directly; its remaining extra whole-field/radial-profile
+estimates will be treated as hypotheses until this next computation reproduces
+them. Advisory is not authority; substantive recommendations were independently
+checked and their limits recorded here.
