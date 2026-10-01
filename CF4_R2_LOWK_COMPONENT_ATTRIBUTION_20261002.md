@@ -204,3 +204,81 @@ driver checked it directly; its remaining extra whole-field/radial-profile
 estimates will be treated as hypotheses until this next computation reproduces
 them. Advisory is not authority; substantive recommendations were independently
 checked and their limits recorded here.
+
+## Saved-gradient geometry outcome
+
+The focused follow-up job410076 used only the saved IC-white q and exact target
+gradient at A/B; it performed zero PMWD replays, chain transitions, heldout
+scores or new simulations. H100/syn08 completed in10s/exit0 with3 focused
+tests passing; batch MaxRSS3,516K. The full-field radial derivatives reproduce
+Fable's prior rough estimates: A -4128.52 and B -777.69. By exact integer
+`|n|^2` Fourier shells, the likelihood NLL radial derivative over
+`0<|n|<=8` is -4972.07(A)/-2102.56(B). The `|n|^2=1` fundamental shell alone
+is -8388.47/-2519.09; the remaining shells inside the band add+3416.40/+416.53,
+and modes outside the band add+843.54/+1324.87. Thus the anomalous radial force
+is concentrated in the fundamental triplet and is partly opposed by the other
+coordinates.
+
+The low-k **score-force Fourier energy** decomposes into centered monopole,
+dipole, quadrupole and higher/unmodelled shares:
+
+| Region | Endpoint | Monopole l=0 | Dipole l=1 | Quadrupole l=2 | Higher / unmodelled |
+|---|---|---:|---:|---:|---:|
+| `|n|<=8` | A | 43.5% | 14.7% | 16.7% | 25.1% |
+| `|n|<=8` | B | 5.9% | 18.7% | 27.5% | 47.9% |
+| Fundamental `|n|^2=1` | A | 78.1% | 11.9% | 10.0% | ~0%* |
+| Fundamental `|n|^2=1` | B | 33.1% | 50.6% | 16.3% | ~0%* |
+
+`*` The six axial modes on this shell are exactly spanned by l=0/1/2; this
+zero residual is algebraic completeness, not model fit evidence. Fit ranks are
+stored per shell. Fundamental derivative values match job410059 within4e-11.
+The result is **not** a robust observer-centred monopole pattern: A's
+fundamental has a strong monopole share, but B's is more dipolar; over all
+low-k modes the monopole share changes from43.5% to5.9%. A/B remain correlated
+states, so this is evidence of state-dependent force geometry, not independent
+replication or an identified sky dipole. These coefficients describe the
+latent Fourier likelihood force, not z=0 mass overdensity or observed-sky
+multipoles.
+
+The driver therefore rejects a radial-selection-only diagnosis and does not
+edit the count observation law yet. Fable5's second read-only review returned
+CONDITIONAL PASS. It verified the reported algebra and emphasized that the
+fundamental shell's six axial modes are exactly spanned by l=0/1/2, so its
+zero residual degrees of freedom are algebraic, not evidence for that model.
+The fundamental monopole cannot diagnose radial shape: its angular kernel is
+positive across the survey radius. A's/B's dipole share is comparatively stable
+while the monopole collapses, and the dipole rotates; this is state dependence,
+not a robust centered peak. Fable's earlier speculative “central overdensity
+0.5–1” illustration has no reproducible source in the artifacts and is
+withdrawn from inference and planning. Generic latent Fourier anisotropy does
+not diagnose an angular-exposure defect; no mask multipole projection is
+warranted.
+
+The driver independently checked the count-law context: the intrinsic
+population bias response is normalized to unit mean over the full periodic
+source box (`intrinsic_biased_source_masses`), whereas the active count
+likelihood integrates only the graph-closed training exposure (empty exposed
+cells included). Therefore the next discriminating readout is in data space,
+not another latent Fourier decomposition. It will use the SAME accepted A/B q
+states and exactly reproduce each saved GL2 count score, then aggregate
+observed/predicted training counts by observed-key-cell radius x population,
+geometric octant among training-exposed cells, and model-intensity quantile
+within radius/population. A radial trend shared across regions may implicate
+selection/LF; a sky residual conditional on radius/population/intensity may
+implicate angular exposure; a residual by predicted intensity may implicate
+the bias/low-intensity regime. These are routing clues, not automatic model
+edits or significance tests.
+
+Because the accepted checkpoints contain canonical q and total gradient but
+not rho/velocity, recovering the same count prediction requires two
+deterministic PMWD forward replays (one per q); this is not a new independent
+gravity realization, chain, adjoint, posterior prediction, or heldout score.
+Only training counts and the frozen heldout/buffer geometry needed to form
+the training exposure are read; heldout count/mark values remain unopened.
+The existing component score is an exact reproducibility gate (absolute score
+error <=1e-7). Q-GOAL: diagnose the partial likelihood driving the actual R2
+z=0 environment before it contaminates LG history. Q-LEAN: two fixed states,
+two forward-only evaluations, no sampling or target changes. MW/M31 remain
+role-ambiguous; M33 unresolved; all three must eventually be constrained by
+observables on the same NEW field at<=0.3 cMpc/h. R2 remains incomplete at
+1.5 cMpc/h.

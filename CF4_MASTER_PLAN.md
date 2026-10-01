@@ -86,23 +86,44 @@ are not independent universes. The active target omits TF/SNIa/SBF terms;
 heldout data were untouched and no new chain or gravity evolution ran. Next:
 audit the count likelihood's exposure/normalization and nuisance coupling
 against its actual observation law before modifying the target or sampling
-again. Fable5's read-only review returned CONDITIONAL PASS and agrees this is a
-real count-law stress signal at the tested states, not physical-data support.
-The driver independently verified the saved `fine_gradient=q-grad(logL)`
-contract in the checkpoint writer and the observer `[192,192,192]`/384-box
-geometry. Adopt Fable's smaller next step: reuse saved q and total gradient
-only, sum radial NLL derivatives in exact integer `|n|^2` shells for
-`0<|n|<=8`, and project the centered phase-corrected Fourier force coefficients
-into monopole/dipole/quadrupole components. Since component IC-gradient fields were not saved and FP is small
-but nonzero, label the field as combined, count-dominated likelihood force,
-not pure count. This geometry diagnostic will decide whether to audit radial
-selection/LF/K-correction, angular completeness/exposure, or low-intensity
-count/bias behavior; no target edit or chain yet. Q-GOAL: this locates an
-upstream R2 field artifact that could corrupt local-flow/LG conditioning.
-Q-LEAN: two frozen checkpoints and FFT/mode algebra only, no replay, chain,
-heldout or simulation. Keep R2 incomplete; MW/M31 remain role-ambiguous and
-M33 unresolved. Details and advisory disposition:
-`CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
+again. Fable5's read-only review of the component result returned CONDITIONAL
+PASS: the graph-closed count factor drives this tested force, but this is not
+physical-data support. Job410076 then computed the full-field and low-k
+geometry from saved gradients only (H100/syn08,10s,exit0,3 tests). The
+likelihood NLL radial derivative over the whole IC field is-4128.52(A)/-777.69(B);
+within `0<|n|<=8` it is-4972.07/-2102.56. The exact fundamental shell
+contributes-8388.47/-2519.09, while other shells within that band contribute
++3416.40/+416.53 against it; modes outside the band add+843.54/+1324.87.
+Fundamental-shell score-force monopole/dipole/quadrupole energy shares are
+.781/.119/.100(A) and .331/.506/.163(B). Across the full low-k band the
+monopole shares are only.435(A)/.059(B); the geometry therefore does **not**
+support a robust observer-centred monopole/radial-selection explanation.
+The saved gradient contract and centered phase `(-1)^(nx+ny+nz)` were
+independently verified; fundamental-mode derivatives match410059 within4e-11.
+This remains latent Fourier-gradient geometry, not a physical density peak.
+Fable5's second read-only review returned CONDITIONAL PASS. It independently
+confirmed the arithmetic, but notes the six-mode fundamental shell is exactly
+spanned by l=0/1/2 (zero residual degrees of freedom), its monopole cannot
+diagnose radial shape, and A/B's apparent dipole change mainly reflects the
+monopole collapsing while a similarly sized dipole rotates. Generic Fourier
+anisotropy is not evidence of an angular-selection error; only a data-space
+sky residual conditional on radius/population/intensity can localize one.
+The speculative “central overdensity 0.5–1” illustration has no reproducible
+source and is explicitly rejected for inference. Do not project out mask
+multipoles, edit radial selection/prior, or sample another chain from this
+geometry. The force is state-dependent, and intrinsic bias masses are
+normalized over the full periodic box while counts integrate only graph-closed
+training exposure. The next bounded check therefore replays PMWD forward at
+the SAME two q checkpoints (density/velocity were not saved) and exactly
+reproduces the active GL2 training-count score before reporting observed versus
+expected counts by observed-cell radius x population, exposed geometric
+octant, and model-intensity quantile. This uses training count values and
+frozen split geometry only; no heldout outcomes, adjoints, chain transitions,
+or likelihood edits. It is a deterministic saved-state replay, not a new
+independent gravity realization. R2 remains incomplete, MW/M31 ambiguous,
+M33 unresolved; R3 observables must constrain these roles on the same NEW
+field at <=0.3 cMpc/h. Full records:
+`CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md` and its linked geometry JSON.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
