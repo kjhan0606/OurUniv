@@ -115,5 +115,7 @@ adds two small tests for block layout and rejection of incomplete tuples. The
 retry writes to a new `_v2` directory. It retains the same checkpoints,
 training factors, numerical tolerances and2h20 application cap; nothing about
 the target or requested physics changed. No approval/audit ladder or new
-simulation is added. The retry's terminal outcome and resource use will be
-recorded below.
+simulation is added. Retry job410059 (`739fc12`) is submitted to H200 and is
+currently PENDING(Priority). Output:
+`/gpfs/kjhan/CF4/z0_density/r2_n256_lowk_component_attribution_20261002_v2/`.
+Its terminal outcome and resource use will be recorded below.

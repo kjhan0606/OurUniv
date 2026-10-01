@@ -71,8 +71,9 @@ Job410050 failed after22m23s on a driver bug unpacking three instead of four
 component gradient blocks. A's same-state energy replay matched to7.45e-9,
 but no adjoint was retained and no scientific attribution resulted. The driver
 fixed the mapping and added two focused block-layout tests. Preserve the v1
-failed output; a same-scope H200 retry writes a separate v2 result. Plan and
-run record: `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
+failed output; same-scope H200 retry410059 (`739fc12`) is pending priority and
+writes a separate v2 result. Plan and run record:
+`CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
