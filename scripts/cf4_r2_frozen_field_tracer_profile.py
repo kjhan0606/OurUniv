@@ -34,7 +34,7 @@ COMPONENT_REPORT = BASE/'r2_n256_lowk_component_attribution_20261002_v2/result.j
 COUNT_REPORT = BASE/'r2_n256_training_count_residual_20261002_v1/result.json'
 SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
 OUT = Path(os.environ.get('CF4_R2_OUT_DIR',
-    str(BASE/'r2_n256_frozen_field_tracer_profile_20261002_v1')))
+    str(BASE/'r2_n256_frozen_field_tracer_profile_20261002_v2')))
 MAX_PROFILE_EVALUATIONS = 8
 APPLICATION_BUDGET_SECONDS = 2*3600 + 15*60
 FINALIZATION_RESERVE_SECONDS = 10*60
@@ -93,6 +93,12 @@ def radial_population_l1(rows):
         raise ValueError('cannot normalize an empty radial training table')
     return float(sum(abs(row['observed_count']-row['expected_training_count'])
                      for row in rows)/observed)
+
+
+def unpack_profile_result(result):
+    """Unpack JAX value_and_grad(has_aux=True): ((value, aux), gradient)."""
+    (objective, (score, means)), gradient = result
+    return objective, score, means, gradient
 
 
 def main():
@@ -222,7 +228,7 @@ def main():
         if stats.get('bytes_limit') and 1.2*peak > stats['bytes_limit']:
             raise MemoryError('count nuisance profile misses the required 20 percent GPU memory margin')
 
-        (objective0, (score0, expected0)), gradient0 = compiled(*args)
+        objective0, score0, expected0, gradient0 = unpack_profile_result(compiled(*args))
         objective0, score0 = float(objective0), float(score0)
         expected0 = np.asarray(expected0, dtype=np.float64)
         gradient0 = np.asarray(gradient0, dtype=np.float64)
@@ -271,9 +277,9 @@ def main():
                 raise ProfileBudgetStop('predeclared eight profile evaluations reached')
             if time.monotonic()-started >= APPLICATION_BUDGET_SECONDS-FINALIZATION_RESERVE_SECONDS:
                 raise ProfileBudgetStop('profile time budget reserve reached')
-            value, (score, expected), gradient = compiled(
+            value, score, expected, gradient = unpack_profile_result(compiled(
                 jnp.asarray(theta), density, velocity, positions, angular,
-                key_j, count_j, exposure_j)
+                key_j, count_j, exposure_j))
             value, score = float(value), float(score)
             gradient = np.asarray(gradient, dtype=np.float64)
             expected = np.asarray(expected, dtype=np.float64)

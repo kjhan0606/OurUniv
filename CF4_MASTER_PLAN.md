@@ -144,6 +144,10 @@ the existing radial/population bins only. R2 remains incomplete at
 must later constrain these roles on the same NEW field at <=0.3 cMpc/h, with
 native truth IDs used only for calibration/evaluation. Full records:
 `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md` and its linked geometry JSON.
+The first execution410100 failed before any optimizer trial due to a newly
+written JAX auxiliary-return unpack bug; initial count score/gradient checks
+passed, but there is no profile result. The unpack contract now has a focused
+test, and the bounded retry writes to a new output directory.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 

@@ -354,6 +354,17 @@ non-equilibration only; it does not validate the model. If structured
 residuals remain, external bias/survival and RSD/FoG calibration remain
 necessary before sampling. Stop extra octant/quantile slicing.
 
+First execution410100 failed after18m19s on a driver tuple-unpacking error at
+the first optimizer trial: JAX `value_and_grad(has_aux=True)` returns the
+nested pair `((objective, auxiliary), gradient)`, not three top-level values.
+Before the failure, the deterministic A field replay took17s; the initial
+score matched by2.91e-11, saved tracer-gradient relative error was5.26e-16,
+and compiled device estimate20.43GiB/104.85GiB. **Zero optimizer trials
+completed**, so this is solely an implementation failure and gives no
+nuisance-profile or science conclusion. The nested return is now handled by
+one tested unpacker; the retry uses a new v2 output directory and the same
+data, field, target, prior and eight-evaluation cap.
+
 Q-GOAL: this tests whether a nuisance starting point is the immediate R2
 obstacle to the actual z=0 field; it does not supply LG information. Q-LEAN:
 one fixed endpoint, nine variables, existing radial/population bins, bounded
