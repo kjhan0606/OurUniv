@@ -74,6 +74,10 @@ class ResolutionObservationTarget:
             return count+raw,jnp.array([count,raw])
         self.value=jax.jit(data,static_argnums=7)
         self.derivative=jax.jit(jax.value_and_grad(data,argnums=(0,1,2,3),has_aux=True),static_argnums=7)
+        def component(r,v,t,p,packs,source,o,order,component_index):
+            return data(r,v,t,p,packs,source,o,order)[1][component_index]
+        self.component_derivative=jax.jit(
+            jax.value_and_grad(component,argnums=(0,1,2,3)),static_argnums=(7,8))
 
     def support(self,r,v,t,order):
         _,cv=self.centred(r,v,self.box)

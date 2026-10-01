@@ -33,6 +33,42 @@ those roles on this same NEW field. Details:
 `CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md` and
 `CF4_R2_METRIC_SENSITIVITY_20261002.md`.
 
+2026-10-02 low-k follow-up: Fable5's second read-only audit recommends
+projecting the saved exact-target gradient onto the three N256 fundamental
+modes before spending more on chains. The driver adopts this two-checkpoint
+diagnostic but rejects using the sampler metric parameter6000 as a Hessian:
+source defines `fine_gradient=grad(0.5*q.q-log_likelihood)`, while6000 is only
+an inverse-Laplacian momentum-mass proposal parameter, not target curvature.
+Job410046 performs four orthonormal FFTs on the saved410010/410011 accepted
+checkpoints, reporting prior/likelihood/total gradient decomposition and
+signed radial derivatives without a post-hoc threshold. It completed/exit0
+in14 seconds. In all six endpoint/mode pairs, the partial-target likelihood
+gradient points radially outward more strongly than the Gaussian prior points
+inward (three-mode radial total derivatives-8190.7 for A and-2319.9 for B).
+This is a model-stress finding, not proof the physical data support those
+extreme IC-white modes: the observation law remains incomplete. It is not a
+posterior/equilibrium or density-structure result. The driver will not extend
+HMC or alter the prior; after advisory review of this important discovery, the
+smallest follow-up is same-state attribution between count and CF4 mark
+forces, with no new simulation or heldout access. Record:
+`CF4_R2_LOWK_GRADIENT_PROJECTION_20261002.md`.
+
+Fable5's focused follow-up returned CONDITIONAL PASS for a single count-vs-raw
+FP mark gradient attribution. It confirms the sign and conjugate-pair
+normalization, while warning that the force is state-dependent and the A/B
+coefficients share one observer-centred phase pattern; this is not independent
+evidence or a physical density feature. The driver adopts Fable's numerical
+conditions (replay exact energy, reconstruct the saved total gradient, compare
+complex/radial/phase mode vectors, all-mode gradient RMS and all24 nuisance
+gradients) and rejects a random-phase p-value. The active target has only the
+selected 2M++ count and raw FP-mark factors; TF/SNIa/SBF are not attributed.
+Because the checkpoints saved only q and the summed gradient, this requires
+one deterministic PMWD replay per same accepted state, followed by two
+component adjoints. This repeats the forward computation but creates no new IC,
+field sample or independent simulation. It is bounded by one H200 Slurm job
+(2h30 wall; 2h20 application;32GiB host); no chain extension or target edit.
+Plan: `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
+
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
