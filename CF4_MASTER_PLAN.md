@@ -7,7 +7,23 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Active direction — 2026-09-25: no new TNG dependency
+## Current R2 continuation — 2026-10-01
+
+409484 COMPLETED the exact state-independent GL2 one-step pilot: both matched
+endpoint proposals were accepted, with probabilities .9896/.9311 and IC-white
+proposal RMS .0661/.0660. The saved exact-GL2 eight-step references moved farther
+(RMS .522) with probabilities .4798/.5505, but each is only one trial and the
+setup/trajectory timing differs; neither pair establishes mixing. The next
+bounded check is two sequential exact-GL2 chains, eight one-step transitions
+each, fixed step .08/metric, initialized from the existing accepted A/B states.
+This tests repeat-state handling, acceptance and drift at chain level; it is
+not a stationary posterior or final z=0 map. Each Slurm task is capped at3.5h
+application/4h wall, one H100,24GiB host memory (409484 peaked at16.6GiB), with exact GL2 device
+peak30.56GiB and the20% margin check retained. MW/M31 remain ambiguous and
+M33 unresolved; later observables must constrain that same NEW field.
+Details/results: `CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md`.
+
+## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
 gradient/value match, estimated GPU30.56GiB, host18.40GiB. Low-band power

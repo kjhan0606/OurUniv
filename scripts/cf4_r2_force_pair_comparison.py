@@ -13,7 +13,10 @@ import numpy as np
 from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_affine_force import AffineCorrectedForce
 from cf4_r2_count_exposure import build_population_exposure_masks
-from cf4_r2_prior_split_hmc import FixedSplitMetric, inverse_laplacian_metric_symbol, split_trajectory
+from cf4_r2_prior_split_hmc import (
+    FixedSplitMetric, inverse_laplacian_metric_symbol, split_hmc_step,
+    split_trajectory,
+)
 from cf4_r2_raw_field_profile import load_inputs
 from cf4_r2_resolution_target import source_geometry_at_resolution, ResolutionObservationTarget
 
@@ -36,9 +39,11 @@ def main():
     started = time.monotonic()
     reanchor_only = os.environ.get('CF4_R2_REANCHOR_ONLY') == '1'
     exact_one_step = os.environ.get('CF4_R2_EXACT_ONE_STEP') == '1'
-    if reanchor_only and exact_one_step:
-        raise ValueError('select only one diagnostic mode')
-    application_budget = 4*3600 if (reanchor_only or exact_one_step) else APPLICATION_BUDGET
+    exact_chain_steps = int(os.environ.get('CF4_R2_EXACT_CHAIN_STEPS', '0'))
+    if exact_chain_steps < 0 or sum((reanchor_only, exact_one_step, exact_chain_steps > 0)) > 1:
+        raise ValueError('select one valid force-pair or exact-chain mode')
+    application_budget = (4*3600 if (reanchor_only or exact_one_step) else
+                          3.5*3600 if exact_chain_steps else APPLICATION_BUDGET)
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
@@ -62,6 +67,18 @@ def main():
         report['force_comparison'] = 'state-independent exact GL2 one-step force vs saved exact GL2 eight-step reference'
         report['Q_LEAN'] = 'two predetermined endpoints, one exact GL2 one-step trajectory each; reuse prior comparison, no new cosmological simulation or particle histories'
         report['transition_probability_valid_for_chain'] = True
+    if exact_chain_steps:
+        report.update(
+            force_comparison='state-independent exact GL2 one-step HMC chain',
+            chain_settings=dict(step_size=STEP, integration_steps=1,
+                requested_transitions=exact_chain_steps, warmup=0, adaptation=False,
+                fixed_metric='same inverse-Laplacian IC symbol and nuisance mass as the matched pilot'),
+            posterior_claim=False, stationarity_claimed=False, heldout_scored=False,
+            Q_GOAL='advance the actual N256 z=0 field posterior with target-preserving transitions; not a final map or LG identification',
+            Q_LEAN='one fixed metric, one exact GL2 leapfrog per transition, one chain per Slurm task, no new gravity simulation or proxy ladder',
+            MW_M31='remain role-ambiguous; this bundle does not identify either component',
+            M33='unresolved; later observables must constrain this same NEW field; native truth identities are evaluation-only',
+            transition_probability_valid_for_chain=True)
 
     def save():
         report['seconds'] = time.monotonic() - started
@@ -197,6 +214,86 @@ def main():
             report['trials'].append(row)
             save()
 
+        if exact_chain_steps:
+            chain_label = os.environ.get('CF4_R2_CHAIN_LABEL', '').lower()
+            if chain_label not in ('a', 'b'):
+                raise ValueError('CF4_R2_CHAIN_LABEL must be a or b')
+
+            def json_number(value):
+                value = float(value)
+                return value if math.isfinite(value) else None
+
+            def checkpoint(path, q, energy, gradient, completed, rng):
+                temporary = path.with_name(path.name + '.tmp')
+                with temporary.open('wb') as stream:
+                    np.savez(stream, canonical=q, fine_energy=energy,
+                        fine_gradient=gradient, completed_transitions=completed,
+                        rng_state=np.array(json.dumps(rng.bit_generator.state)))
+                temporary.replace(path)
+
+            chain_path = BASE/f'r2_n256_chain_{chain_label}_v1'
+            with np.load(chain_path/'accepted_checkpoint.npz', allow_pickle=False) as f:
+                q = f['canonical'].astype(np.float64)
+                saved_energy = float(f['fine_energy'])
+            if q.shape != (NIC+24,):
+                raise ValueError(f'{chain_label}: invalid canonical chain checkpoint')
+
+            setup_started = time.monotonic()
+            fine_energy, gradient = oracle(q, 2, True)
+            if abs(fine_energy-saved_energy) > 1e-7:
+                raise AssertionError(f'{chain_label}: checkpoint energy differs from the exact GL2 target')
+            rng = np.random.default_rng(2026100100 + (1 if chain_label == 'a' else 2))
+            chain_result = dict(label=chain_label.upper(),
+                initial_source=str(chain_path/'accepted_checkpoint.npz'),
+                initial_exact_gradient_seconds=time.monotonic()-setup_started,
+                initial_fine_energy=fine_energy, completed_transitions=0, trace=[])
+            report['chain'] = chain_result
+            state_path = out/f'chain_{chain_label}_accepted_checkpoint.npz'
+            checkpoint(state_path, q, fine_energy, gradient, 0, rng)
+            save()
+
+            for index in range(exact_chain_steps):
+                check_budget()
+                previous_q = q.copy()
+                tic = time.monotonic()
+                q, fine_energy, gradient, info = split_hmc_step(
+                    lambda x: oracle(x, 2, True), metric, q, fine_energy, gradient,
+                    rng, step=STEP, steps=1,
+                    endpoint_value=lambda x: oracle(x, 2, False)[0])
+                displacement = q-previous_q
+                spectrum = np.fft.fftn(q[:NIC].reshape((N,)*3), norm='ortho')
+                row = dict(transition=index+1, integration_steps=1,
+                    step_size=STEP, accepted=bool(info['accepted']),
+                    energy_error=json_number(info['energy_error']),
+                    acceptance_probability=math.exp(info['log_acceptance'])
+                        if math.isfinite(info['log_acceptance']) else 0.,
+                    force_evaluations=info['force_evaluations'],
+                    elapsed_seconds=time.monotonic()-tic,
+                    accepted_ic_white_jump_rms=float(np.sqrt(np.mean(displacement[:NIC]**2))),
+                    current_ic_white_mean_square=float(np.mean(q[:NIC]**2)),
+                    current_nuisance_white=q[NIC:].tolist(),
+                    fundamental_modes={str(mode): [float(spectrum[mode].real),
+                        float(spectrum[mode].imag)] for mode in
+                        ((1,0,0), (0,1,0), (0,0,1))})
+                chain_result['trace'].append(row)
+                chain_result['completed_transitions'] = index+1
+                checkpoint(state_path, q, fine_energy, gradient, index+1, rng)
+                save()
+
+            chain_result['checkpoint'] = str(state_path)
+            chain_result['requested_transitions'] = exact_chain_steps
+            report['status'] = ('ONE_EXACT_GL2_CHAIN_COMPLETE_NOT_POSTERIOR'
+                if chain_result['completed_transitions'] == exact_chain_steps
+                else 'ONE_EXACT_GL2_CHAIN_BUDGET_STOP_NOT_POSTERIOR')
+            report['conclusion_scope'] = ('one short state-independent exact-target chain from one prior accepted state; '
+                'not stationarity, posterior uncertainty, or global mixing evidence')
+            report['same_field_LG_constraint'] = ('MW/M31 remain ambiguous and M33 unresolved; later component '
+                'observables must constrain this same NEW field; truth IDs are evaluation-only')
+            report['source_head'] = subprocess.check_output(
+                ['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).resolve().parents[1], text=True).strip()
+            save()
+            return
+
         for index, label in enumerate(('a', 'b')):
             chain = BASE/f'r2_n256_chain_{label}_v1'
             with np.load(chain/'accepted_checkpoint.npz', allow_pickle=False) as f:
@@ -287,7 +384,9 @@ def main():
             ['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).resolve().parents[1], text=True).strip()
         save()
     except TimeoutError as error:
-        report.update(status='FORCE_PAIR_BUDGET_STOP_INCOMPLETE', stop_reason=str(error))
+        status = ('ONE_EXACT_GL2_CHAIN_BUDGET_STOP_NOT_POSTERIOR'
+            if exact_chain_steps else 'FORCE_PAIR_BUDGET_STOP_INCOMPLETE')
+        report.update(status=status, stop_reason=str(error))
         save()
     except Exception as error:
         report.update(status='FORCE_PAIR_DIAGNOSTIC_FAILED', error=repr(error))
