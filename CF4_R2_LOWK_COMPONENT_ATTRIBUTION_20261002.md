@@ -362,7 +362,7 @@ score matched by2.91e-11, saved tracer-gradient relative error was5.26e-16,
 and compiled device estimate20.43GiB/104.85GiB. **Zero optimizer trials
 completed**, so this is solely an implementation failure and gives no
 nuisance-profile or science conclusion. The nested return is now handled by
-one tested unpacker; the retry uses a new v2 output directory and the same
+one tested unpacker; retry410101 uses the v2 output directory and the same
 data, field, target, prior and eight-evaluation cap.
 
 Q-GOAL: this tests whether a nuisance starting point is the immediate R2
@@ -371,3 +371,21 @@ one fixed endpoint, nine variables, existing radial/population bins, bounded
 optimizer calls; no heldout use or target change. MW/M31 remain ambiguous and
 M33 unresolved; later observables for all three must constrain the same NEW
 field at<=0.3 cMpc/h, with native truth IDs used only for calibration/evaluation.
+
+### Retry410101 failure and guarded retry
+
+Retry410101 terminated after18m04s/exit1 with host MaxRSS3.82GiB. The saved
+fixed-field PMWD forward and initial exact score/tracer-gradient checks passed;
+the first optimizer evaluation returned, but the driver's finite-value guard
+then attempted to concatenate scalar/vector outputs and the two-dimensional
+population-by-radius expectation table via `np.r_`, raising a NumPy dimension
+error. Zero optimizer trials were recorded, so neither this run nor its initial
+training residual is a profile result. The v2 output/log are preserved.
+
+The guard now tests finiteness of each returned array independently, and a
+focused regression covers both a finite 2-D table and a NaN in that table.
+All four focused profile tests pass. Same field/data/likelihood/prior and
+eight-evaluation/time caps are retained; the next Slurm attempt writes to a
+new v3 directory. This is a driver repair only, not evidence about tracer
+nuisance adequacy or the count law. Q-GOAL/Q-LEAN and same-new-field
+MW/M31/M33 constraints are unchanged.

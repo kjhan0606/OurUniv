@@ -34,7 +34,7 @@ COMPONENT_REPORT = BASE/'r2_n256_lowk_component_attribution_20261002_v2/result.j
 COUNT_REPORT = BASE/'r2_n256_training_count_residual_20261002_v1/result.json'
 SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
 OUT = Path(os.environ.get('CF4_R2_OUT_DIR',
-    str(BASE/'r2_n256_frozen_field_tracer_profile_20261002_v2')))
+    str(BASE/'r2_n256_frozen_field_tracer_profile_20261002_v3')))
 MAX_PROFILE_EVALUATIONS = 8
 APPLICATION_BUDGET_SECONDS = 2*3600 + 15*60
 FINALIZATION_RESERVE_SECONDS = 10*60
@@ -99,6 +99,12 @@ def unpack_profile_result(result):
     """Unpack JAX value_and_grad(has_aux=True): ((value, aux), gradient)."""
     (objective, (score, means)), gradient = result
     return objective, score, means, gradient
+
+
+def profile_result_is_finite(value, score, gradient, expected):
+    """Check scalar/vector outputs alongside the 2-D population-radius table."""
+    return all(np.isfinite(np.asarray(part)).all()
+               for part in (value, score, gradient, expected))
 
 
 def main():
@@ -283,7 +289,7 @@ def main():
             value, score = float(value), float(score)
             gradient = np.asarray(gradient, dtype=np.float64)
             expected = np.asarray(expected, dtype=np.float64)
-            if not np.isfinite(np.r_[value, score, gradient, expected]).all():
+            if not profile_result_is_finite(value, score, gradient, expected):
                 raise FloatingPointError('nonfinite conditional profile evaluation')
             cache.update(theta=theta.copy(), objective=value, score=score,
                          gradient=gradient.copy(), expected=expected.copy())

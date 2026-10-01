@@ -4,7 +4,8 @@ import numpy as np
 
 from cf4_r2_frozen_field_tracer_profile import (
     observed_radial_population, radial_population_bins,
-    radial_population_l1, radial_population_table, unpack_profile_result)
+    radial_population_l1, radial_population_table, unpack_profile_result,
+    profile_result_is_finite)
 
 
 class FrozenFieldTracerProfileTest(unittest.TestCase):
@@ -17,6 +18,12 @@ class FrozenFieldTracerProfileTest(unittest.TestCase):
         self.assertEqual(score, 6.)
         np.testing.assert_array_equal(radial_means, means)
         np.testing.assert_array_equal(unpacked_gradient, gradient)
+
+    def test_finite_check_accepts_two_dimensional_population_radius_table(self):
+        expected = np.array([[1., 2.], [0., 3.]])
+        self.assertTrue(profile_result_is_finite(4., -3., np.array([1., 2.]), expected))
+        expected[1, 1] = np.nan
+        self.assertFalse(profile_result_is_finite(4., -3., np.array([1., 2.]), expected))
 
     def test_known_training_key_radius_population_and_octant_geometry(self):
         n = 4

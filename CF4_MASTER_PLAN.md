@@ -147,7 +147,16 @@ native truth IDs used only for calibration/evaluation. Full records:
 The first execution410100 failed before any optimizer trial due to a newly
 written JAX auxiliary-return unpack bug; initial count score/gradient checks
 passed, but there is no profile result. The unpack contract now has a focused
-test, and the bounded retry writes to a new output directory.
+test. Retry410101 also failed before an optimizer trial (18m04s, host peak
+3.82GiB): the finite-output guard attempted to concatenate the two-dimensional
+population-by-radius expectation table with scalar/vector arrays using
+`np.r_`. Initial score and gradient reproduction again passed; zero optimizer
+trials completed and there is no nuisance-profile result. The guard now checks
+each output array independently, with a regression covering 2-D finite and
+nonfinite tables. Four focused tests pass. The next bounded retry writes only
+to a new v3 output directory; no target, prior, data, field, heldout access or
+resource cap changes. R2 remains incomplete; MW/M31 are ambiguous and M33
+unresolved.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
