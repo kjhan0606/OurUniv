@@ -11,27 +11,26 @@ Direct subsequent user instructions take precedence over this file.
 
 R2 remains incomplete and is still the current actual-data z=0 field stage;
 the N256 grid is1.5 cMpc/h, not the final <=0.3 cMpc/h LG resolution.
-409763/409764 each completed one exact-target HMC proposal at step.08, four
-integrations and fundamental-mass parameter600. Both were valid rejections
-(deltaH6.5127/19.1332; acceptance.0014845/4.90e-9), so neither moved its
-accepted field state. The result trace initially mislabeled the integration
-count as1; force_evaluations=4, settings, and source confirm four integrations.
-The recorder is corrected, and the runner now records an explicit seed or
-restores the saved RNG state on continuation. Target, prior, and MH correction
-were unchanged. This rejects that single proposal configuration, not the
-posterior or metric family.
+409763/409764 at fundamental-mass600 and matched controls410010/410011 at
+6000 now form a same-state/same-momentum comparison: exact GL2 target, step.08,
+four integrations, same nuisance metric. At600 both proposals were rejected
+(deltaH6.5127/19.1332; acceptance.0014845/4.90e-9; zero accepted movement).
+At6000 both matched proposals were accepted (deltaH.04123/.19924; acceptance
+.9596/.8194; white-field jump RMS.26357/.26354). This identifies the metric
+change as the cause of failure for these two tested low-mass proposals and
+supports6000/four-step proposal geometry locally. It is not a stationarity,
+ESS, or posterior result; no long chain follows automatically.
 
-It does not isolate the metric parameter: the prior6000 comparison at the
-same checkpoints used one integration, while these used four; old prior6000
-eight-step force trials also came from different states/momenta. Do not infer
-that mass600 alone caused the rejection. Next bounded control: replay the same
-starting checkpoints and momenta at prior6000, step.08/four integrations,
-one proposal per chain, and compare directly to the existing mass600/four-step
-results. H100 x2,4CPU/24GiB each,4h cap; no warmup, adaptation, heldout score,
-gravity evolution, map promotion, or posterior claim. Then decide whether this
-sampler line is useful; no automatic long chain. MW/M31 remain ambiguous and
-M33 unresolved; subsequent observables must constrain those roles on this same
-NEW field. Details: `CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md` and
+The trace-label and checkpoint-RNG defects are fixed; focused HMC tests pass
+9/9. Maximum observed host RSS was about20.61GiB in A and14.39GiB in B; the24GiB
+request remained within limit, but future repeats must request at least32GiB
+to retain the20% margin over the new measured peak. No gravity evolution,
+heldout score, map promotion, or science-target change occurred. Close the
+600-metric tuning branch and return to the unresolved R2 likelihood/calibration
+and heldout-prediction requirements before considering posterior sampling.
+MW/M31 remain ambiguous and M33 unresolved; later observables must constrain
+those roles on this same NEW field. Details:
+`CF4_R2_EXACT_GL2_CHAIN_BUNDLE_20261001.md` and
 `CF4_R2_METRIC_SENSITIVITY_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency

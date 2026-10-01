@@ -67,6 +67,38 @@ check both were RUNNING. Output directories are
 the corresponding accepted checkpoint from the600/four-step pilot and the
 same explicit replay seed2026100201/2026100202.
 
+## Matched-control outcome
+
+Jobs410010/410011 completed/exit0 after1:22:38/1:26:34. Both validated the
+same starting energies and recorded the explicit matched seeds. The A result
+was deltaH=.0412326, acceptance probability.959606 and accepted white-field
+jump RMS.263571. B was deltaH=.199236, acceptance probability.819356 and jump
+RMS.263541. Both used four force evaluations and were accepted. Their paired
+600/four-step proposals from the same states/momenta had been rejected at
+deltaH6.51268/19.13324 with zero movement. This same-configuration contrast
+isolates the change in metric parameter for these two proposals: mass600 was
+the proximate cause of their failed acceptance, not the four-step trajectory
+length alone. It does not establish that6000 is optimal globally or that the
+chain is stationary. Four-step movement in one accepted proposal per chain is
+not ESS or posterior evidence.
+
+Host MaxRSS was21,611,792K (about20.61GiB) for A and15,091,172K (about14.39GiB)
+for B, both under the24GiB allocation. The higher A peak leaves less than the
+specified20% reserve; any further comparable job must request at least32GiB
+host memory. Device estimates were30.56/30.07GiB under the69.81GiB device
+limit. No OOM or solver failure occurred. The Fable advice's additional
+step-size arm is deferred because the matched metric-only control already
+explains the rejection at the tested settings. No further metric scan or
+automatic long chain is authorized by this result.
+
+Driver disposition: close the mass600 sensitivity experiment and resume the
+actual R2 science blockers. The current chain still lacks stationarity,
+effective-sample evidence, untouched heldout prediction, and a fully calibrated
+selection/association/shared-covariance observation law. Do not call the
+accepted A/B transitions a current density map. The next stage should address
+those target/readiness requirements, not spend more GPU time tuning this one
+metric.
+
 Q-GOAL: this is a narrow R2 sampler-mechanics check; it is necessary only to
 determine whether the current exact-target transition can support later
 present-field inference. It does not deliver the z=0 density/velocity map.
