@@ -59,6 +59,14 @@ automatically. If this contrast cannot distinguish a viable kernel, close the
 current metric tuning path and plan a sampler redesign. No heldout values,
 field selection, gravity evolution, training, final map or posterior claim.
 
+Submitted via Slurm on2026-10-02: job410010 (A) and410011 (B), both on
+H100/syn08, each requesting1GPU,4CPUs,24GiB host and4h wall. At first state
+check both were RUNNING. Output directories are
+`/gpfs/kjhan/CF4/z0_density/r2_n256_gl2_metric6000_control_a_v1/` and
+`/gpfs/kjhan/CF4/z0_density/r2_n256_gl2_metric6000_control_b_v1/`; each uses
+the corresponding accepted checkpoint from the600/four-step pilot and the
+same explicit replay seed2026100201/2026100202.
+
 Q-GOAL: this is a narrow R2 sampler-mechanics check; it is necessary only to
 determine whether the current exact-target transition can support later
 present-field inference. It does not deliver the z=0 density/velocity map.
