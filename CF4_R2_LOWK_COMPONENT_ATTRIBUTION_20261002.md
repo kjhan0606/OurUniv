@@ -282,3 +282,81 @@ two forward-only evaluations, no sampling or target changes. MW/M31 remain
 role-ambiguous; M33 unresolved; all three must eventually be constrained by
 observables on the same NEW field at<=0.3 cMpc/h. R2 remains incomplete at
 1.5 cMpc/h.
+
+## Same-state training-count residual and Fable5 audit
+
+Job410095 (`5ecaaa7`, H200/syn104) completed in5m54s/exit0, MaxRSS2.44GiB.
+It performed two deterministic PMWD forwards from the same accepted A/B q
+checkpoints; no new realization, chain step, PM adjoint, heldout score or law
+edit. Both exact fine count scores reproduce the component-attribution scores
+to2.91e-11. Observed training counts are47,121; expected counts are46,810.54
+(A) and47,061.09(B), so the total observed/expected ratios are1.0066/1.0013.
+Overall rate normalization at these states is close, but the in-sample
+population/radius residual is structured. Pooled ratios (A/B) are1.071/1.048
+at0–36,1.007/1.000 at36–72,.980/.976 at72–108,1.012/1.003 at108–144, and
+1.047/1.053 at144–180 cMpc/h. The180–192 edge bin has38 observed versus
+68.47/65.84 predicted; do not treat that small edge bin as a general radial
+trend.
+
+Population conditioning shows why the pooled radial profile is incomplete.
+Using the code-defined six populations (`3*apparent_bin+absolute_K_bin`),
+state A has O/E=.886 for population0 over0–132 cMpc/h,1.057 for population1
+over0–96,1.070 for population2 over0–60, and1.088 for population4 over
+108–168. Population0 rises broadly from O/E=.663 at12–24 to1.109 at168–180;
+it is not perfectly monotonic. The corresponding B broad ratios are.872,1.052,
+1.043 and1.079. These discrepancies are training residuals at two correlated,
+nonstationary states, not data-only evidence for a luminosity-function defect.
+
+As a descriptive octant margin after rescaling each population/radius stratum
+to its own total, `+-+` has O/E1.091(A)/1.078(B) and `-++` .949/.947; the
+other exposed sectors are near unity. Sector `-+-` has zero training exposure
+because it is held out. The stability across A/B is not replication: both
+states share one short lineage, and a fixed-field residual can arise from
+non-equilibration as well as exposure or bias mismatch.
+
+Quantile-label correction: an initial driver summary pooled the script's local
+intensity-bin indices as if they were five globally comparable quintiles. That
+pooling is invalid when tied cut values are merged. I retract those pooled
+Q0–Q4 ratios. Only29 of96 population/radius strata contain five distinct bins;
+the resulting restricted subgroup is not a calibration test, so no global
+intensity-quantile conclusion is retained. The script reports each shell's
+cut values, and its unit tests now also assert a known cell's exact radius,
+octant and high-intensity-bin assignment.
+
+Independent operator review also found a concrete boundary limitation in the
+current observation law: observed catalogue rows enter count cells by NGP
+`floor(position/dx)` (`cf4_r2_common_catalogue.py`), while predictions apply
+the radial cut before a TSC deposit whose support extends1.5 cells. Thus the
+180–192 cMpc/h predicted tail can include TSC leakage absent under the same
+NGP binning of the data. This is a plausible explanation for some edge-bin
+deficit, not a measured causal attribution; no kernel or cut was changed.
+It needs a matched mock or a consistent voxel-integrated observation operator
+before any correction.
+
+Fable5 read-only audit returned **CONDITIONAL PASS**. It checked the fine count
+score/operator identity, training-only geometry and representative radial
+arithmetic; the driver independently checked both endpoints and all quoted
+aggregates. It correctly warned that the previous pooled quantile indices
+were not global quintiles and that the radial pool hides population-by-distance
+structure. Its optional suggestion to add `OWNER.txt` was not adopted: no
+project or injected cluster instruction requires that duplicate marker; the
+Slurm result already stores job ID and source commit.
+
+Driver disposition: adopt Fable's single next test, a prior-regularized
+9-coordinate tracer-nuisance conditional profile at frozen field A. The
+checkpoint stores q but not rho/velocity, so one deterministic PMWD forward is
+needed to reconstruct the exact same field; there will be no PM adjoint,
+sampling, heldout values, or observation-law edit. Reproduce the active GL2
+count value/gradient at the initial nuisance state, then compare the existing
+population-by-radius table before/after a bounded profile. If the profile
+converges and reduces these residuals, that diagnoses nuisance
+non-equilibration only; it does not validate the model. If structured
+residuals remain, external bias/survival and RSD/FoG calibration remain
+necessary before sampling. Stop extra octant/quantile slicing.
+
+Q-GOAL: this tests whether a nuisance starting point is the immediate R2
+obstacle to the actual z=0 field; it does not supply LG information. Q-LEAN:
+one fixed endpoint, nine variables, existing radial/population bins, bounded
+optimizer calls; no heldout use or target change. MW/M31 remain ambiguous and
+M33 unresolved; later observables for all three must constrain the same NEW
+field at<=0.3 cMpc/h, with native truth IDs used only for calibration/evaluation.

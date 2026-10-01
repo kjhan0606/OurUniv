@@ -113,16 +113,36 @@ source and is explicitly rejected for inference. Do not project out mask
 multipoles, edit radial selection/prior, or sample another chain from this
 geometry. The force is state-dependent, and intrinsic bias masses are
 normalized over the full periodic box while counts integrate only graph-closed
-training exposure. The next bounded check therefore replays PMWD forward at
-the SAME two q checkpoints (density/velocity were not saved) and exactly
-reproduces the active GL2 training-count score before reporting observed versus
-expected counts by observed-cell radius x population, exposed geometric
-octant, and model-intensity quantile. This uses training count values and
-frozen split geometry only; no heldout outcomes, adjoints, chain transitions,
-or likelihood edits. It is a deterministic saved-state replay, not a new
-independent gravity realization. R2 remains incomplete, MW/M31 ambiguous,
-M33 unresolved; R3 observables must constrain these roles on the same NEW
-field at <=0.3 cMpc/h. Full records:
+training exposure. Job410095 then performed two deterministic saved-q PMWD
+forwards and reproduced the exact GL2 training-count scores to2.91e-11; no new
+realization, chain, adjoint or heldout outcome. Total observed/expected counts
+are47,121/46,810.54(A) and47,121/47,061.09(B), but population x radius
+profiles remain structured (e.g. population0 O/E=.886(A)/.872(B) over0–132,
+while population4 is1.088/1.079 over108–168 cMpc/h). A descriptive octant
+residual persists after normalizing within population/radius strata; it is not
+replication or proof of an exposure defect. Driver retracts an exploratory
+pooled Q0–Q4 ratio because merged tied cuts make those bins non-comparable.
+Fable5 audited read-only and returned CONDITIONAL PASS. The driver verified
+both endpoints and records one known limitation: observed counts use NGP
+`floor(position/dx)`, while the prediction applies the radial cut before a
+TSC deposit that can spill mass across the180 cMpc/h boundary. No operator
+correction is made from these nonstationary in-sample states.
+
+Next is Fable's one bounded frozen-field tracer nuisance profile at endpoint
+A: recover that same z=0 field with one deterministic PMWD forward because
+rho/velocity were not checkpointed; then optimize only the nine count-tracer
+coordinates with their Gaussian prior, at most8 value/gradient evaluations,
+no PM adjoint, chain, heldout outcome or law edit. Exact initial score and
+tracer gradient must reproduce the saved component reference. A closed radial
+x population training residual diagnoses nuisance non-equilibration only;
+failure to close still does not prove a wrong physical law, and external
+bias/survival plus RSD/FoG calibration remains required before sampling.
+Q-GOAL: this isolates an R2 obstacle upstream of actual z=0 LG conditioning,
+not LG identification. Q-LEAN: one field endpoint, nine nuisance dimensions,
+the existing radial/population bins only. R2 remains incomplete at
+1.5 cMpc/h; MW/M31 remain role-ambiguous and M33 unresolved. Their observables
+must later constrain these roles on the same NEW field at <=0.3 cMpc/h, with
+native truth IDs used only for calibration/evaluation. Full records:
 `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md` and its linked geometry JSON.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency

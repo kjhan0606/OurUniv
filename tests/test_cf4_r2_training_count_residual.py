@@ -6,6 +6,30 @@ from cf4_r2_training_count_residual import summarize_training_counts
 
 
 class TrainingCountResidualTest(unittest.TestCase):
+    def test_known_corner_lands_in_expected_radius_octant_and_high_intensity_bin(self):
+        n = 4
+        expected = np.zeros((6, n, n, n), dtype=float)
+        expected[0] = np.arange(1, n**3+1, dtype=float).reshape(n, n, n)
+        exposure = np.ones((6, n**3), dtype=bool)
+        keys = np.array([n**3-1], dtype=np.int64)  # population 0, cell (3,3,3)
+        counts = np.array([2], dtype=np.int64)
+        result = summarize_training_counts(expected, keys, counts, exposure.reshape(-1),
+            grid_size=n, box_size=4., radial_edges=np.array([0., 2., 3.]),
+            intensity_quantiles=5)
+
+        radial = next(r for r in result['radial_by_population']
+            if r['population'] == 0 and r['radius_lower_cMpc_h'] == 2.)
+        sector = next(r for r in result['radial_population_by_exposed_octant']
+            if r['population'] == 0 and r['radius_lower_cMpc_h'] == 2.
+            and r['sector'] == '+++')
+        high_bin = next(r for r in result['radial_population_by_model_intensity_quantile']
+            if r['population'] == 0 and r['radius_lower_cMpc_h'] == 2.
+            and r['model_intensity_quantile'] == 4)
+        self.assertEqual(radial['observed_count'], 2)
+        self.assertEqual(sector['observed_count'], 2)
+        self.assertEqual(sector['exposed_cells'], 4)
+        self.assertEqual(high_bin['observed_count'], 2)
+
     def test_radial_and_octant_bins_use_only_exposed_training_cells(self):
         n = 4
         expected = np.ones((6, n, n, n), dtype=float)

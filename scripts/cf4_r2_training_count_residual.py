@@ -190,7 +190,7 @@ def summarize_training_counts(intensity, keys, counts, exposure, *, grid_size,
         sector_definition='geometric sign octants relative to box centre; only training-exposed cells included',
         intensity_quantile_definition=(
             f'{intensity_quantiles} requested quantiles within each population/radial bin; '
-            'duplicate cut values are merged, and rows list resulting bins'),
+            'duplicate cuts are merged, so bin labels are local and are not globally poolable as quintiles'),
         total=dict(observed_training_count=total_observed,
             expected_training_count=total_expected,
             observed_to_expected=_ratio(float(total_observed), total_expected),
