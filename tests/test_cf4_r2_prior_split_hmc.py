@@ -104,7 +104,10 @@ class PriorSplitTests(unittest.TestCase):
         symbol=inverse_laplacian_metric_symbol(4)
         self.assertEqual(symbol[0,0,0],1.)
         self.assertAlmostEqual(symbol[1,0,0],1./6000.)
+        relaxed=inverse_laplacian_metric_symbol(4,fundamental_mass=600.)
+        self.assertAlmostEqual(relaxed[1,0,0],1./600.)
         FixedSplitMetric(symbol,np.eye(2))
+        FixedSplitMetric(relaxed,np.eye(2))
         rows=[]
         _,_,_,trace,message=bounded_split_pilot(self.oracle,self.metric,self.q,
             *self.oracle(self.q),self.rng,warmup=3,retained=3,steps=2,

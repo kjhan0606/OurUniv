@@ -40,16 +40,21 @@ def main():
     reanchor_only = os.environ.get('CF4_R2_REANCHOR_ONLY') == '1'
     exact_one_step = os.environ.get('CF4_R2_EXACT_ONE_STEP') == '1'
     exact_chain_steps = int(os.environ.get('CF4_R2_EXACT_CHAIN_STEPS', '0'))
+    exact_chain_integrations = int(os.environ.get('CF4_R2_CHAIN_INTEGRATION_STEPS', '1'))
+    fundamental_mass = float(os.environ.get('CF4_R2_FUNDAMENTAL_MASS', '6000'))
     if exact_chain_steps < 0 or sum((reanchor_only, exact_one_step, exact_chain_steps > 0)) > 1:
         raise ValueError('select one valid force-pair or exact-chain mode')
+    if (exact_chain_steps and exact_chain_integrations < 1) or not math.isfinite(fundamental_mass) or fundamental_mass < 1:
+        raise ValueError('invalid exact-chain length or positive fundamental mass')
     application_budget = (4*3600 if (reanchor_only or exact_one_step) else
                           3.5*3600 if exact_chain_steps else APPLICATION_BUDGET)
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
         fine_target='unchanged N256 GL2 target; same Gaussian prior and exact fine Hamiltonian',
-        matched_settings=dict(step_size=STEP, integration_steps=STEPS,
-                             inverse_laplacian_metric_fundamental_mass=6000,
+        matched_settings=dict(step_size=STEP,
+                             integration_steps=exact_chain_integrations if exact_chain_steps else STEPS,
+                             inverse_laplacian_metric_fundamental_mass=fundamental_mass,
                              nuisance_inverse_mass_diagonal=1e-5),
         matched_momenta=True, heldout_scored=False, posterior_claim=False,
         Q_GOAL='local sampler diagnosis for the actual R2 z=0 field posterior; no LG identification claim',
@@ -69,13 +74,14 @@ def main():
         report['transition_probability_valid_for_chain'] = True
     if exact_chain_steps:
         report.update(
-            force_comparison='state-independent exact GL2 one-step HMC chain',
-            chain_settings=dict(step_size=STEP, integration_steps=1,
+            force_comparison='state-independent exact GL2 HMC chain',
+            chain_settings=dict(step_size=STEP, integration_steps=exact_chain_integrations,
                 requested_transitions=exact_chain_steps, warmup=0, adaptation=False,
-                fixed_metric='same inverse-Laplacian IC symbol and nuisance mass as the matched pilot'),
+                inverse_laplacian_fundamental_mass_parameter=fundamental_mass,
+                fixed_metric='inverse-Laplacian IC symbol plus unchanged nuisance mass'),
             posterior_claim=False, stationarity_claimed=False, heldout_scored=False,
             Q_GOAL='advance the actual N256 z=0 field posterior with target-preserving transitions; not a final map or LG identification',
-            Q_LEAN='one fixed metric, one exact GL2 leapfrog per transition, one chain per Slurm task, no new gravity simulation or proxy ladder',
+            Q_LEAN='one fixed metric and one exact GL2 trajectory per transition; no new gravity simulation or proxy ladder',
             MW_M31='remain role-ambiguous; this bundle does not identify either component',
             M33='unresolved; later observables must constrain this same NEW field; native truth identities are evaluation-only',
             transition_probability_valid_for_chain=True)
@@ -167,7 +173,9 @@ def main():
             save()
             return energy, derivative
 
-        metric = FixedSplitMetric(inverse_laplacian_metric_symbol(N), np.eye(24)*1e-5)
+        metric = FixedSplitMetric(
+            inverse_laplacian_metric_symbol(N, fundamental_mass=fundamental_mass),
+            np.eye(24)*1e-5)
         previous_trials = {}
         if reanchor_only or exact_one_step:
             previous = json.loads((BASE/'r2_n256_force_pair_v1/result.json').read_text())
@@ -232,7 +240,9 @@ def main():
                 temporary.replace(path)
 
             chain_path = BASE/f'r2_n256_chain_{chain_label}_v1'
-            with np.load(chain_path/'accepted_checkpoint.npz', allow_pickle=False) as f:
+            initial_checkpoint = Path(os.environ.get('CF4_R2_INITIAL_CHECKPOINT',
+                str(chain_path/'accepted_checkpoint.npz')))
+            with np.load(initial_checkpoint, allow_pickle=False) as f:
                 q = f['canonical'].astype(np.float64)
                 saved_energy = float(f['fine_energy'])
             if q.shape != (NIC+24,):
@@ -242,9 +252,9 @@ def main():
             fine_energy, gradient = oracle(q, 2, True)
             if abs(fine_energy-saved_energy) > 1e-7:
                 raise AssertionError(f'{chain_label}: checkpoint energy differs from the exact GL2 target')
-            rng = np.random.default_rng(2026100100 + (1 if chain_label == 'a' else 2))
+            rng = np.random.default_rng(2026100200 + (1 if chain_label == 'a' else 2))
             chain_result = dict(label=chain_label.upper(),
-                initial_source=str(chain_path/'accepted_checkpoint.npz'),
+                initial_source=str(initial_checkpoint),
                 initial_exact_gradient_seconds=time.monotonic()-setup_started,
                 initial_fine_energy=fine_energy, completed_transitions=0, trace=[])
             report['chain'] = chain_result
@@ -258,7 +268,7 @@ def main():
                 tic = time.monotonic()
                 q, fine_energy, gradient, info = split_hmc_step(
                     lambda x: oracle(x, 2, True), metric, q, fine_energy, gradient,
-                    rng, step=STEP, steps=1,
+                    rng, step=STEP, steps=exact_chain_integrations,
                     endpoint_value=lambda x: oracle(x, 2, False)[0])
                 displacement = q-previous_q
                 spectrum = np.fft.fftn(q[:NIC].reshape((N,)*3), norm='ortho')

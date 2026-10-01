@@ -18,7 +18,9 @@ cd /home/kjhan/BACKUP/CF4
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/scripts:$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
-export CF4_R2_EXACT_CHAIN_STEPS=8
+export CF4_R2_EXACT_CHAIN_STEPS="${CF4_R2_EXACT_CHAIN_STEPS:-8}"
+export CF4_R2_CHAIN_INTEGRATION_STEPS="${CF4_R2_CHAIN_INTEGRATION_STEPS:-1}"
+export CF4_R2_FUNDAMENTAL_MASS="${CF4_R2_FUNDAMENTAL_MASS:-6000}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
 "$PY" -m unittest discover -s tests -p test_cf4_r2_prior_split_hmc.py -q
 exec "$PY" scripts/cf4_r2_force_pair_comparison.py

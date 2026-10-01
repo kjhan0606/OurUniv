@@ -47,8 +47,30 @@ never seed or select candidates.
 
 ## Result
 
-Pending Slurm completion. No posterior promotion is allowed from scheduler
-success alone. Record acceptance, repeated rejected states, white-field drift,
-time/force cost and any failure here and in the active master plan before
-choosing a longer run. A future multi-hour/long-chain allocation is a separate
-large-calculation decision; current short pilots do not authorize it.
+Jobs409590(A) and409591(B) both completed with exit0 in2:52:51 and2:55:33;
+MaxRSS14.2/14.4GiB against24GiB requested. All16 exact-target transitions
+completed. A accepted8/8, mean acceptance probability.9072; B accepted5/8,
+mean probability.8857. Energy errors remained between-.282 and+.327. Accepted
+IC-white jump RMS was about.0661 per move. Total white mean-square changed only
+.996829->.996840 in A and.996939->.996914 in B.
+
+This is a valid short-kernel check, not a stationary posterior. The three
+tracked fundamental complex modes changed by only about1e-3–3e-3 in absolute
+components across eight transitions (maximum component-relative change about
+.6%). With the fixed metric's fundamental mass6000, inverse mass is1/6000;
+the .08 one-step prior-flow phase advance is only.08/sqrt(6000)=.00103rad.
+This is consistent with the observed weak low-k movement and makes a long run
+with the same metric a poor next spend. It does not estimate ESS or prove that
+the target posterior itself is narrow.
+
+Driver next: run a bounded exact-GL2 metric sensitivity from these accepted
+checkpoints, changing only the inverse-Laplacian fundamental-mass parameter
+6000->600 (tenfold larger inverse mass at |k|=1, with the corresponding
+smooth change across low modes) and using four leapfrog steps per proposal.
+Keep the target, step .08, nuisance mass and MH correction fixed; compare
+energy error, exact acceptance and fundamental-mode displacement. This
+preserves the posterior target but tests a sampler geometry hypothesis; it is
+not a production chain.
+Fable/Astra CLI tools were unavailable in the current session, so no external
+audit was performed; the bounded driver assessment and Q-GOAL/Q-LEAN rationale
+are recorded above. Do not submit a longer run until this sensitivity is read.
