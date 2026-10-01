@@ -100,3 +100,10 @@ MW/M31 remain role-ambiguous and M33 unresolved. Their eventual observations
 must constrain those latent roles on the same NEW field. Native truth
 identities remain evaluation/calibration only and never seed or select a
 candidate. This R2 force attribution performs no R3 identification.
+
+Execution: job410050 was submitted from commit`db6bc13` and started on H200
+node syn104. It requests1 GPU,4 CPUs,32 GiB host memory, and2h30 wall time;
+the application guard is2h20. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_n256_lowk_component_attribution_20261002_v1/`.
+The terminal outcome, numerical resource use, and driver disposition will be
+added here; a running job is not a scientific result.

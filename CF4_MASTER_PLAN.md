@@ -67,7 +67,8 @@ one deterministic PMWD replay per same accepted state, followed by two
 component adjoints. This repeats the forward computation but creates no new IC,
 field sample or independent simulation. It is bounded by one H200 Slurm job
 (2h30 wall; 2h20 application;32GiB host); no chain extension or target edit.
-Plan: `CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
+Job410050 is RUNNING on syn104 from commit`db6bc13`. Plan and result record:
+`CF4_R2_LOWK_COMPONENT_ATTRIBUTION_20261002.md`.
 
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
