@@ -97,13 +97,26 @@ diagonal uniform-field test separately checks face-crossing invariance and
 its AD/FD. Job410793 completed in4m39s, peak MaxRSS5.58GB; future equivalent
 jobs request8GiB (>20% margin). Result:
 `/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v4`.
-Next is one targeted order16 evaluation of PGC49072 against its saved order4/8
-values. No automatic quadrature ladder follows if order8/16 still disagrees.
+Targeted order16 job410816 COMPLETED/exit0 on H100 in2m44s (batch MaxRSS
+2.05GiB). For PGC49072/index847/population4, logpdf4=4.4322654342,
+logpdf8=4.4297964675, and logpdf16=4.4331565979. Thus order4-vs16 is
+.000891 nat (inside .001), but order8-vs16 is .003360 nat (outside); the
+order sequence is non-monotonic. All radial and FP numerator/denominator
+periodic-image fractions remain zero. This is a one-row fixed-state
+quadrature finding, not a periodic-boundary or posterior result. One explicit
+diagnostic will compare orders16 and32 on this same row and record split
+numerator/denominator terms; it stops there and does not start a blind order
+ladder.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
 any row is nonfinite; its corrected first20 runtime guard separates one-time
 population compilation from warm throughput.
+User reviewer-routing update2026-10-02: Astra handles audits assigned to Fable;
+if that would duplicate an auditor or immediately repeat the same audit, the
+driver performs it. The current focused numerical follow-up is driver-reviewed
+under this rule; it does not trigger a duplicate outside review.
+
 Count/FP periodic-image semantics remain unreconciled and prevent target
 wiring regardless of this mechanics result. R2 remains incomplete; heldout
 untouched; MW/M31 roles ambiguous and M33 unresolved. Later LG observables must

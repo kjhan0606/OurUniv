@@ -243,10 +243,17 @@ def main():
             phase='REVIEW_REQUIRED',nonfinite_or_zero_support_PGC=nonfinite_rows)
         save();return
 
-    focus_order=int(os.environ.get('CF4_R2_FOCUS_ORDER','0'))
-    if focus_order:
-        if not base_result or focus_order<1:
-            raise ValueError('focused higher-order check requires a saved order8 parent')
+    focus_orders_raw=os.environ.get('CF4_R2_FOCUS_ORDERS')
+    if focus_orders_raw is None:
+        focus_order=int(os.environ.get('CF4_R2_FOCUS_ORDER','0'))
+        focus_orders=[focus_order] if focus_order else []
+    else:
+        focus_orders=[int(value) for value in focus_orders_raw.split(',') if value.strip()]
+    if focus_orders:
+        if not base_result or any(order<1 for order in focus_orders):
+            raise ValueError('focused higher-order check requires positive orders and a saved order8 parent')
+        if focus_orders!=sorted(set(focus_orders)):
+            raise ValueError('focused orders must be unique and strictly increasing')
         focus_pgc=int(os.environ['CF4_R2_FOCUS_PGC'])
         reference_path=os.environ['CF4_R2_FOCUS_REFERENCE_RESULT']
         with open(reference_path,encoding='utf-8') as stream:
@@ -257,22 +264,31 @@ def main():
             raise ValueError('focused row lacks exactly one finite order4 reference')
         index=int(np.flatnonzero(pgc==focus_pgc)[0]);population=int(mix['population'][index])
         obs=observation_at(index);angle=jnp.asarray(direction[index])
-        values=np.asarray(jax.tree_util.tree_map(lambda x:x.block_until_ready(),
-            make_eval(population,focus_order)(jnp.asarray(0.),angle,obs)),dtype=np.float64)
-        row4=float(ref_rows[0]['logpdf_order4']);row8=float(row8[index]['logpdf']);rowhi=float(values[0])
-        delta48=abs(row4-row8);delta8hi=abs(row8-rowhi)
+        row4=float(ref_rows[0]['logpdf_order4']);row8_value=float(row8[index]['logpdf'])
+        focused=[]
+        for focus_order in focus_orders:
+            values=np.asarray(jax.tree_util.tree_map(lambda x:x.block_until_ready(),
+                make_eval(population,focus_order)(jnp.asarray(0.),angle,obs)),dtype=np.float64)
+            focused.append(dict(order=focus_order,logpdf=float(values[0]),
+                log_numerator=float(values[1]),log_denominator=float(values[2]),
+                radial_selected_weight=float(values[7]),periodic_image_radial_mass_fraction=float(values[8]/values[7]),
+                periodic_image_numerator_fraction=float(values[9]),
+                periodic_image_denominator_fraction=float(values[10])))
+        for previous,current in zip(focused,focused[1:]):
+            current['absolute_delta_from_previous_order_nat']=abs(current['logpdf']-previous['logpdf'])
+        last_pair_delta=(focused[-1]['absolute_delta_from_previous_order_nat']
+            if len(focused)>1 else abs(focused[-1]['logpdf']-row8_value))
         report['focused_convergence']=dict(PGC=focus_pgc,index=index,population=population,
             parent_order8_result=base_result,order4_reference_result=reference_path,
-            logpdf_order4=row4,logpdf_order8=row8,logpdf_focus_order=rowhi,
-            focus_order=focus_order,absolute_delta_order4_order8_nat=delta48,
-            absolute_delta_order8_focus_nat=delta8hi,
-            image_radial_mass_fraction=float(values[8]/values[7]),
-            image_numerator_fraction=float(values[9]),image_denominator_fraction=float(values[10]),
-            per_row_tolerance_nat=1e-3,pass_=bool(np.isfinite([row4,row8,rowhi,delta48,delta8hi]).all()
-                and delta8hi<=1e-3))
-        report.update(status=('FOCUSED_ORDER8_TO_HIGHER_ORDER_CHECKED_NOT_POSTERIOR'
+            logpdf_order4=row4,logpdf_order8=row8_value,
+            absolute_delta_order4_order8_nat=abs(row4-row8_value),
+            per_row_tolerance_nat=1e-3,focused_orders=focused,
+            final_pair_delta_nat=last_pair_delta,
+            pass_=bool(np.isfinite([row4,row8_value]+[r['logpdf'] for r in focused]).all()
+                and last_pair_delta<=1e-3))
+        report.update(status=('FOCUSED_HIGH_ORDER_PAIR_CONSISTENT_NOT_POSTERIOR'
             if report['focused_convergence']['pass_'] else
-            'FOCUSED_HIGHER_ORDER_DISAGREEMENT_NOT_POSTERIOR'),phase='FOCUSED_CONVERGENCE_CHECK')
+            'FOCUSED_HIGH_ORDER_PAIR_DISAGREEMENT_NOT_POSTERIOR'),phase='FOCUSED_CONVERGENCE_CHECK')
         save();return
 
     report['phase']='ORDER4_CONVERGENCE_SAMPLE';save()
