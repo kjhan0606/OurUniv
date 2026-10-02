@@ -11,14 +11,14 @@ import jax.numpy as jnp
 import numpy as np
 from scipy.special import gammaln
 
-from cf4_r2_native_mock import distance_tables, place_native_halves
+from cf4_r2_native_mock import distance_tables, place_native_halves, observe
 from cf4_r2_raw_volume_target import tracer_masses, tracer_geometry
 from cf4_r2_shell_cdf_count import predict_source_volume_intensity
 
 jax.config.update('jax_enable_x64', True)
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
 SOURCE=BASE/'r2_native_rsd_mock_fit_20261002_v2'
-OUT=BASE/'r2_native_ngp_refinement_20261002_v1'
+OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_native_ngp_refinement_20261002_v1')))
 
 
 def main():
@@ -51,7 +51,8 @@ def main():
         no_fit=True,no_actual_CF4_outcomes=True,no_gravity=True,
         limits=endpoint['limits'],MW_M31=endpoint['MW_M31'],M33=endpoint['M33'])
     baseline=None
-    for volume,segments in ((2,8),(2,64),(4,64)):
+    controls=() if os.environ.get('CF4_R2_NATIVE_ROWS_ONLY')=='1' else ((2,8),(2,64),(4,64))
+    for volume,segments in controls:
         tic=time.monotonic()
         function=jax.jit(lambda:predict_source_volume_intensity(pos,vel,intrinsic,
             angular,source_spacing=1.5,volume_order=volume,order=4,
@@ -75,6 +76,36 @@ def main():
         report['elapsed_seconds']=time.monotonic()-start
         report['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
         (OUT/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    # Exact native rows behind the failed occupied training keys. Local
+    # cell-mean residual is evidence about the Gaussian closure, not proof
+    # that no OTHER source location can populate an observed voxel.
+    with np.load(endpoint['source_galaxies'],allow_pickle=False) as f:
+        galaxies={k:f[k] for k in f.files}
+    mapped=place_native_halves(galaxies['position'])
+    mock=observe(mapped,galaxies['velocity'],galaxies['K_h_proxy'],radius,z,modulus)
+    cell=np.floor((galaxies['position']%75.)/1.5).astype(int)
+    local_velocity=np.moveaxis(moments[1:4]/moments[0],0,-1)[tuple(cell.T)]
+    local_los=np.sum(local_velocity*mock['direction'],axis=1)
+    residual=mock['coherent_vlos']-local_los
+    sigma=endpoint['physical_sigma_los_km_s']
+    voxel=np.floor(mock['positions']/3.).astype(int)%128
+    row_keys=mock['population']*128**3+np.ravel_multi_index(tuple(voxel.T),(128,128,128))
+    failed_keys=[10098880,11246902] # pre-existing occupied zeros in410555
+    rows=np.flatnonzero(mock['selected']&np.isin(row_keys,failed_keys))
+    report['native_rows']=[dict(key=int(row_keys[i]),native_id=int(galaxies['native_id'][i]),
+        source_position=mapped[i].tolist(),observed_position=mock['positions'][i].tolist(),
+        source_voxel=cell[i].tolist(),galaxy_vlos_km_s=float(mock['coherent_vlos'][i]),
+        matter_cell_vlos_km_s=float(local_los[i]),residual_km_s=float(residual[i]),
+        residual_over_sigma=float(residual[i]/sigma),
+        K_h=float(galaxies['K_h_proxy'][i]),stellar_particles=int(galaxies['star_count'][i])) for i in rows]
+    selected_residual=np.abs(residual[mock['selected']])/sigma
+    report['selected_velocity_residual']=dict(sigma_km_s=sigma,
+        absolute_standardized_percentiles=np.percentile(selected_residual,[50,90,95,99,100]).tolist(),
+        number_beyond_eight_sigma=int(np.sum(selected_residual>8)),
+        interpretation='local-cell residual; source-volume alternate support remains separate')
+    report['elapsed_seconds']=time.monotonic()-start
+    report['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
+    (OUT/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     print(json.dumps(report,indent=2),flush=True)
 
 

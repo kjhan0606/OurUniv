@@ -148,3 +148,14 @@ One existing input allocation,2CPU/10GiB/typed GPU; expected<=5min, cap30min.
 No smoothing floor or NGP adoption. These outcomes discriminate numerical
 support loss from a physical stochastic-count/selection discrepancy before
 modifying the R2 observation law. Q-GOAL/Q-LEAN and latent roles unchanged.
+
+410555 COMPLETED/exit0 in54s. GL4/LOS64 still gives zero at training key
+10098880 and4.15e-15 at11246902. No useful support restoration or numerical
+convergence proof follows. Next short source-row readout uses exact two
+native IDs (labels only) to compare galaxy LOS velocity with its native
+matter-cell mean and fitted sigma182.2236. Also report all6050 selected
+absolute standardized residual quantiles and beyond8-sigma count. This
+tests local Gaussian-tail/geometry explanations; a local residual cannot
+alone prove absence of support from other source locations. No fit, field
+change, prior injection or repeated full integration. Same10GiB/2CPU Slurm
+GPU runner,30min cap, expected seconds. Source windows and roles unchanged.
