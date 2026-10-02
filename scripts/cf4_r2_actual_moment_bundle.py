@@ -1,7 +1,7 @@
 """Saved actual-data development state, shared moments and closure sensitivity.
 
 No PM evolution, optimizer, chain, heldout score or calibration-prior claim.
-All1414 training raw FP links and47121 training counts, sourceGL1 only.
+All1414 training raw FP links and47121 training counts; bounded source rule.
 """
 import json
 import os
@@ -23,11 +23,13 @@ def main():
         raise RuntimeError('Slurm GPU required')
     out=Path(os.environ['CF4_R2_OUT_DIR']);out.mkdir(exist_ok=False)
     started=time.monotonic()
+    volume_order=int(os.environ.get('CF4_R2_VOLUME_ORDER','2'))
+    if volume_order not in (1,2):raise ValueError('bounded GL1/2 source rule required')
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],
         source_commit=os.environ['CF4_EXPECTED_COMMIT'],R2_complete=False,
-        PM_evolutions=0,optimizer_steps=0,heldout_scored=False,volume_order=1,
+        PM_evolutions=0,optimizer_steps=0,heldout_scored=False,volume_order=volume_order,
         closure_prior_used=False,results=[],
-        limitations='Saved nonstationary N128/3 state, coarse GL1; FP subset only, not full CF4. Diagonal covariance, population/Ks/PM discrepancy uncalibrated. MW/M31 ambiguous,M33 unresolved.')
+        limitations='Saved nonstationary N128/3 state, unconfirmed source quadrature convergence; FP subset only, not full CF4. Diagonal covariance, population/Ks/PM discrepancy uncalibrated. MW/M31 ambiguous,M33 unresolved.')
     def save():
         report.update(seconds=time.monotonic()-started,
             host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
@@ -55,7 +57,7 @@ def main():
             exposure,_=build_population_exposure_masks(128,f['heldout_flat_voxels'],
                 f['train_window_excluded_keys'],f['heldout_window_excluded_keys'])
         target=MomentObservationTarget(128,source,mix['population'],o,g,keys,counts,jnp.asarray(exposure),
-            volume_orders=(1,),source_chunk=8192,raw_block=256,cut_order=64)
+            volume_orders=(volume_order,),source_chunk=8192,raw_block=256,cut_order=64)
         report.update(state=str(statepath),training_count=int(counts.sum()),raw_training_rows=len(o['x']),
             physical_alpha=float(-1+.5*t[6]),source_chunk=8192,
             sensitivity_design='Fixed core30km/s,fraction.5; broad scales .5,.25,1. Not a fit or independent calibration.',
@@ -64,9 +66,9 @@ def main():
         for scale in (.5,.25,1.):
             if time.monotonic()-started>1500:raise TimeoutError('25min application budget; no automatic extension')
             c=jnp.array([jnp.log(30.),jnp.log(scale),0.]);tic=time.monotonic()
-            packs,info=target.support(r,v,var,t,c,1)
+            packs,info=target.support(r,v,var,t,c,volume_order)
             report['phase']=f'JOINT_SCALE_{scale}';report['current_support']=info;save()
-            compiled=target.value.lower(r,v,var,t,p,c,packs,source,o,1).compile()
+            compiled=target.value.lower(r,v,var,t,p,c,packs,source,o,volume_order).compile()
             mem=compiled.memory_analysis();stats=jax.devices()[0].memory_stats() or {}
             estimate=stats.get('bytes_in_use',0)+mem.temp_size_in_bytes+mem.output_size_in_bytes
             if stats.get('bytes_limit') and 1.2*estimate>stats['bytes_limit']:

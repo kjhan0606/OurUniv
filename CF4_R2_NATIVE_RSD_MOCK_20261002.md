@@ -500,3 +500,14 @@ not another simulation or repeated native fit. The missing CF4 methods and
 uncertainty calibration remain explicit; R2 is incomplete. MW/M31 are still
 ambiguous and M33 unresolved on the SAME NEW state; later LG observations
 must constrain those roles at<=0.3, never oracle calibration identities.
+
+410643 COMPLETED/exit0 in3m41s; all10 tests passed, host batch peak1.61GiB.
+Actual-state410644/sourcea90370d FAILED24s at GL1 fresh support, zero selected
+source contribution for training raw row2; no likelihood evaluation or new
+simulation occurred. Preserve failed result/logs. It is not yet evidence
+the physical mixture law fails: exact-voxel rays from a single cell-centre
+node can miss the observed voxel, unlike TSC. Within this bundle, evaluate
+the SAME field/data/closure with sourceGL2 (8 volume nodes), same30min/12GiB
+cap and no floor/operator/heldout change. Do not label GL2 converged merely
+because support becomes positive; if support still fails, localize it before
+any larger fit, width retuning or chain. No automatic higher-order ladder.
