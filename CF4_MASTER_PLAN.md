@@ -128,12 +128,46 @@ give logpdfs4.431839080,4.431946422,4.431824091; adjacent differences are
 stable across these layouts, and all image fractions remain zero. This
 supports interval-partition sensitivity as the cause of the earlier
 unsegmented order8 discrepancy, but only on this one training row.
-Next run the same composite8×4 rule across all1414 training links and compare
-an equal-node-budget4×8 layout on the frozen79-row convergence sample. This
-is still fixed-state training-only mechanics; no target wiring, heldout score,
-posterior or field promotion follows from a pass. Request8GiB (>20% of the
-observed2.74GiB host peak). Preserve the unresolved count/FP image semantics;
-MW/M31 roles remain ambiguous and M33 unresolved on the same NEW field.
+The full composite census410849 COMPLETED/exit0 in10m15s on typed H100, with
+both regression suites passing. It evaluated1414/1414 training links at8×4;
+the frozen79-row equal-node-budget4×8 comparison had maximum absolute
+logpdf difference.000111315 nat and total absolute difference.000186513 nat.
+The maximum sampled training row is inside the predeclared.001-nat tolerance.
+Two fixed-state AD/FD checks passed at relative errors2.16e-11 and7.02e-12.
+All periodic-image numerator/denominator/radial fractions are zero. Result:
+`/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v8/result.json`.
+Batch MaxRSS was7,636,988K (7.28GiB) under an8GiB request; this job completed,
+but future equivalent full-cohort jobs request10GiB to retain>20% margin.
+This closes fixed-state training FP quadrature mechanics only. It is not a
+count-conditioned joint factor, posterior, heldout score or z=0 field.
+
+Next bundle: reconcile ownership on the predeclared PGC1085367 one-point/
+one-mark training control, before any target change. The current raw target
+already uses the count voxel and source-selection/RSD kernel in its normalized
+FP-mark source measure; the recent periodic observed-ray cohort is a distinct
+fixed-state approximation and is not a second likelihood. On the same saved
+field and frozen v6 graph, form `w(j,b)=lambda(j,b) K_count(k,z_2M++|j,b)`
+from the existing voxel-CDF count kernel at the linked point's individual
+observed radius, including its observed-K population, LOS mixture, periodic
+images, and source-volume weights. Apply the existing CF4 raw optical
+FP/K-selection numerator and denominator once, at the CF4 row's own observed
+redshift; do not multiply another count occurrence. Report the 2M++/CF4
+observed-radius difference and a control-radius identity against the current
+raw target, then compare the point-conditioned source mixture and normalized
+mark factor with the periodic observed-ray approximation. Check one same-state
+LOS-scale AD/FD direction using a support union rebuilt at the nominal and
+two finite-difference states. Do not add `d² rho^b`, extra `f_n`, a floor,
+truth-selected groups, or any posterior fit. This remains one conditional
+training control, not the all-group law: selection/association and multi-member
+covariance remain uncalibrated. Q-GOAL: connect CF4 distance information to the
+same z=0 field as counts with explicit catalogue ownership. Q-LEAN: one link,
+existing kernels, no new simulation, heldout reads, or target promotion.
+MW/M31 remain role-ambiguous and M33 unresolved; their observables must later
+constrain the same NEW field, with native IDs calibration/evaluation-only.
+Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
+audits; this immediate bundle is driver-reviewed because an outside reviewer
+would be consecutive to the preceding driver review. Keep R2 active and
+incomplete.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
@@ -2963,10 +2997,11 @@ design targets continuous physical-budget distribution, not amplitude repair.
 - GPFS is ordinary shared storage. Read/write scoped project artifacts;
   do not implement storage/inode/renameat2 probes or process-scan monitoring.
 - Use fixed job IDs and final artifacts for bounded checks; no pgrep loops.
-- The driver plans, implements, runs, evaluates and commits. External review
+  - The driver plans, implements, runs, evaluates and commits. External review
   is reserved for important discoveries, goal revisions or large calculations;
-  routine work is driver-reviewed. When required: Fable5 primary, Astra backup
-  if the invocation fails or produces no usable audit. Reviews answer
+  routine work is driver-reviewed. A Fable-assigned audit is performed by
+  Astra; if auditors would be duplicated or immediately consecutive, the driver
+  performs that audit instead of stacking another reviewer. Reviews answer
   Q-GOAL and Q-LEAN plus feasibility
   and essential/deferred scope. Do not turn these two questions into a new
   gate framework or per-step audit series. Prior Astra closure-audit waiver

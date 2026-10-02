@@ -28,7 +28,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
                     component_bin=None,component_row=None,
                     cut_integration_axis=0,cut_marginal_tolerance=0.,
                     source_velocity_variances_km2_s2=None,velocity_closure=None,
-                    radial_source_mass=None,source_radius_cMpc_h=None):
+                    radial_source_mass=None,source_radius_cMpc_h=None,
+                    source_conditioning_radius_cMpc_h=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
     if radial_source_mass is not None and component_row is not None:
@@ -51,17 +52,26 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         raise ValueError('mixture raw marks require same-field physical variances')
     variance=jnp.zeros_like(velocities) if source_velocity_variances_km2_s2 is None else source_velocity_variances_km2_s2
     if component_row is None:
-        mass=(response(positions,velocities,intrinsic,angular,o['voxel'],o['radius'],variance)
+        source_radius = (o['radius'] if source_conditioning_radius_cMpc_h is None
+                         else jnp.asarray(source_conditioning_radius_cMpc_h))
+        mass=(response(positions,velocities,intrinsic,angular,o['voxel'],source_radius,variance)
             if radial_source_mass is None else radial_source_mass)
         if mass.shape!=intrinsic.shape:raise ValueError('aligned preintegrated five-bin radial mass required')
         geometric=o
     else:
         if component_bin is None:raise ValueError('multirow stream requires packed bin IDs')
         geometric={k:o[k][component_row] for k in ('voxel','radius','dz','ksmag')}
+        source_radius=(o['radius'] if source_conditioning_radius_cMpc_h is None
+                       else jnp.asarray(source_conditioning_radius_cMpc_h))
+        if source_radius.ndim==0:
+            source_radius=jnp.broadcast_to(source_radius,o['radius'].shape)
+        if source_radius.shape!=o['radius'].shape:
+            raise ValueError('source-conditioning radii must align with observations')
+        conditioning_radius=source_radius[component_row]
         def one(pos,vel,mass,sky,voxel,radius,var):
             return response(pos[None],vel[None],mass[:,None],sky[:,None],voxel,radius,var[None])[:,0]
         mass=jax.vmap(one,in_axes=(0,0,1,1,0,0,0),out_axes=1)(positions,velocities,intrinsic,angular,
-            geometric['voxel'],geometric['radius'],variance)
+            geometric['voxel'],conditioning_radius,variance)
     if source_radius_cMpc_h is None:
         relative=(positions-geometry['observer']+geometry['box_size_cMpc_h']/2)%geometry['box_size_cMpc_h']-geometry['box_size_cMpc_h']/2
         rt=jnp.linalg.norm(relative,axis=1)
@@ -125,7 +135,8 @@ def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observa
                        *,population,geometry,component_bins=None,component_rows=None,
                        return_log_terms=False,cut_order=64,
                        cut_integration_axis=0,cut_marginal_tolerance=0.,
-                       source_velocity_variances_km2_s2=None,velocity_closure=None):
+                       source_velocity_variances_km2_s2=None,velocity_closure=None,
+                       source_conditioning_radius_cMpc_h=None):
     """Chunk-major geometry; intrinsic(chunk,5,source), angular(chunk,2,source)."""
     @jax.checkpoint
     def step(acc,parts):
@@ -134,7 +145,8 @@ def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observa
             component_row=None if component_rows is None else parts[5],cut_order=cut_order,
             cut_integration_axis=cut_integration_axis,cut_marginal_tolerance=cut_marginal_tolerance,
             source_velocity_variances_km2_s2=None if source_velocity_variances_km2_s2 is None else parts[-1],
-            velocity_closure=velocity_closure)
+            velocity_closure=velocity_closure,
+            source_conditioning_radius_cMpc_h=source_conditioning_radius_cMpc_h)
         return (logadd_nonempty(acc[0],a),logadd_nonempty(acc[1],b)),None
     parts=(positions,velocities,intrinsic,angular)
     if component_bins is not None:parts+= (component_bins,)

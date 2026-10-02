@@ -48,12 +48,15 @@ def tracer_masses(density,tracer):
 def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,observation,
                      geometry,*,source_spacing,volume_order=4,block=4096,
                      cut_order=64,cut_integration_axis=0,cut_marginal_tolerance=0.,
-                     velocity_variances=None,velocity_closure=None):
+                     velocity_variances=None,velocity_closure=None,
+                     source_conditioning_radius_cMpc_h=None):
     """All conditional raw marks, no prior and no repeated count occurrence.
 
     density is cell-centred; velocity is(source,3). Packs contain padded
     source-cell,node,bin,observation IDs and an explicit zero-padding mask.
-    Gradients pass through every cell's mass/velocity and all24 nuisances.
+    ``source_conditioning_radius_cMpc_h`` may separate a linked catalogue
+    point's redshift kernel from the CF4 row's mark redshift. Gradients pass
+    through every cell's mass/velocity and all24 nuisances.
     """
     offsets,weights=map(jnp.asarray,volume_rule(source_spacing,volume_order))
     masses=tracer_masses(density,tracer);g=tracer_geometry(tracer,geometry)
@@ -74,7 +77,8 @@ def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,obser
             return_log_terms=True,cut_order=cut_order,cut_integration_axis=cut_integration_axis,
             cut_marginal_tolerance=cut_marginal_tolerance,
             source_velocity_variances_km2_s2=None if velocity_variances is None else velocity_variances[ids].reshape(nc,block,3),
-            velocity_closure=velocity_closure)
+            velocity_closure=velocity_closure,
+            source_conditioning_radius_cMpc_h=source_conditioning_radius_cMpc_h)
         num=logadd_nonempty(num,a);den=logadd_nonempty(den,b)
     return num-den
 
@@ -109,9 +113,17 @@ class FreshRawSupport:
     proof for normalized marks. Host/device ceilings stop, never truncate.
     """
     def __init__(self,positions,angular,population,observation,geometry,*,source_spacing,
-                 volume_order=4,block=4096,max_components=40_000_000):
+                 volume_order=4,block=4096,max_components=40_000_000,
+                 source_conditioning_radius_cMpc_h=None):
         self.positions=np.asarray(positions);self.angular=np.asarray(angular)
         self.population=np.asarray(population,dtype=int);self.o=observation;self.g=geometry
+        self.source_conditioning_radius=(np.asarray(observation['radius'],dtype=np.float64)
+            if source_conditioning_radius_cMpc_h is None else
+            np.asarray(source_conditioning_radius_cMpc_h,dtype=np.float64))
+        if (self.source_conditioning_radius.shape!=(len(self.population),)
+                or not np.isfinite(self.source_conditioning_radius).all()
+                or np.any(self.source_conditioning_radius<=0)):
+            raise ValueError('one finite positive source-conditioning radius per observation required')
         self.box=float(geometry['box_size_cMpc_h']);self.spacing=source_spacing
         self.offsets,_=volume_rule(source_spacing,volume_order);self.block=block
         self.max_components=max_components;self.tree=cKDTree(self.positions%self.box,boxsize=self.box)
@@ -169,11 +181,11 @@ class FreshRawSupport:
             if velocity_closure is None:
                 value=self.weight(jnp.asarray(v[expanded]),jnp.asarray(tr),jnp.asarray(pos),
                     jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
-                    jnp.asarray(self.o['radius'][row]),int(self.population[row]))
+                    jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]))
             else:
                 value=self.mixed_weight(jnp.asarray(v[expanded]),jnp.asarray(pos),
                     jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
-                    jnp.asarray(self.o['radius'][row]),int(self.population[row]),
+                    jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]),
                     jnp.asarray(var[expanded]),core,scale,fraction,jnp.asarray(tr))
             positive=np.asarray(value)>0
             positive[:,used*self.nsub:]=False

@@ -44,6 +44,18 @@ class RawMixtureConnectionTests(unittest.TestCase):
             source_velocity_variances_km2_s2=self.var[None],velocity_closure=self.closure)
         np.testing.assert_allclose(stream,mixed,atol=2e-12)
 
+    def test_source_conditioning_radius_is_separate_from_fp_mark_radius(self):
+        args=(jnp.asarray(POPULATION_ORIGIN),self.pos,self.vel,self.mass,self.sky,self.o)
+        common=dict(population=1,geometry=self.g,cut_order=16,
+            source_velocity_variances_km2_s2=self.var,velocity_closure=self.closure)
+        default=chunk_log_terms(*args,**common)
+        same=chunk_log_terms(*args,**common,
+            source_conditioning_radius_cMpc_h=self.o['radius'])
+        shifted=chunk_log_terms(*args,**common,
+            source_conditioning_radius_cMpc_h=self.o['radius']+1.)
+        np.testing.assert_allclose(default,same,rtol=0.,atol=2e-12)
+        self.assertGreater(float(jnp.max(jnp.abs(default-shifted))),1e-10)
+
     def test_packed_rows_and_variance_adjoint(self):
         o={k:v[None] for k,v in self.o.items()}
         def score(logscale):
