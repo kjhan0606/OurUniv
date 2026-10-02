@@ -128,12 +128,18 @@ def _finite_reference_source_mark_transfer(true_modulus_h, observed_modulus_h,
 
 def _source_mark_transfer_reference(true_modulus_h, observed_modulus_h,
                          true_redshift, observed_redshift, *,
-                         mstar=-23.28, alpha=-.94):
+                         mstar=-23.28, alpha=-.94,
+                         finite_reference_interval=None):
     """Return six-by-five-by-source intrinsic-to-observed K probabilities.
 
     The within-intrinsic-bin LF is Schechter.  This is a conditional transfer,
     not an intrinsic rate or an actual-survey selection probability.
     """
+    if finite_reference_interval is not None:
+        return _finite_reference_source_mark_transfer(
+            true_modulus_h, observed_modulus_h, true_redshift,
+            observed_redshift, mstar=mstar, alpha=alpha,
+            reference_interval=finite_reference_interval)
     correction = (1.16*2.9*(observed_redshift-true_redshift)
                   - 1.6*jnp.log10((1.+observed_redshift)
                                     /(1.+true_redshift)))
