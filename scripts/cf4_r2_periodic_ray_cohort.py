@@ -131,12 +131,12 @@ def main():
     def observation_at(i):
         return {k:jnp.asarray(value[i]) for k,value in o.items()}
 
-    def make_eval(population,order):
+    def make_eval(population,order,segments=1):
         def evaluate(logscale,angle,obs):
             closure=dict(core_sigma_km_s=30.,dispersion_scale=.5*jnp.exp(logscale),broad_fraction=.5)
             positions,vel,intrinsic,selection,q,weights=observed_ray_components(
                 angle,obs['radius'],velocity,variance,masses,sky,population,g,closure,
-                source_grid=128,order=order)
+                source_grid=128,order=order,segments=segments)
             face_radius=BOX/2/jnp.max(jnp.abs(angle))
             near=weights*(q[None,:]<=face_radius)
             far=weights*(q[None,:]>face_radius)
@@ -254,6 +254,11 @@ def main():
             raise ValueError('focused higher-order check requires positive orders and a saved order8 parent')
         if focus_orders!=sorted(set(focus_orders)):
             raise ValueError('focused orders must be unique and strictly increasing')
+        focus_segments_raw=os.environ.get('CF4_R2_FOCUS_SEGMENTS')
+        focus_segments=([1]*len(focus_orders) if focus_segments_raw is None else
+            [int(value) for value in focus_segments_raw.split(',') if value.strip()])
+        if len(focus_segments)!=len(focus_orders) or any(value<1 for value in focus_segments):
+            raise ValueError('focused segment counts must be positive and align with the order list')
         focus_pgc=int(os.environ['CF4_R2_FOCUS_PGC'])
         reference_path=os.environ['CF4_R2_FOCUS_REFERENCE_RESULT']
         with open(reference_path,encoding='utf-8') as stream:
@@ -266,26 +271,28 @@ def main():
         obs=observation_at(index);angle=jnp.asarray(direction[index])
         row4=float(ref_rows[0]['logpdf_order4']);row8_value=float(row8[index]['logpdf'])
         focused=[]
-        for focus_order in focus_orders:
+        for focus_order,segment_count in zip(focus_orders,focus_segments):
             values=np.asarray(jax.tree_util.tree_map(lambda x:x.block_until_ready(),
-                make_eval(population,focus_order)(jnp.asarray(0.),angle,obs)),dtype=np.float64)
-            focused.append(dict(order=focus_order,logpdf=float(values[0]),
+                make_eval(population,focus_order,segment_count)(jnp.asarray(0.),angle,obs)),dtype=np.float64)
+            focused.append(dict(order=focus_order,segments_per_cell_interval=segment_count,
+                total_nodes_per_interval=focus_order*segment_count,logpdf=float(values[0]),
                 log_numerator=float(values[1]),log_denominator=float(values[2]),
                 radial_selected_weight=float(values[7]),periodic_image_radial_mass_fraction=float(values[8]/values[7]),
                 periodic_image_numerator_fraction=float(values[9]),
                 periodic_image_denominator_fraction=float(values[10])))
         for previous,current in zip(focused,focused[1:]):
             current['absolute_delta_from_previous_order_nat']=abs(current['logpdf']-previous['logpdf'])
-        last_pair_delta=(focused[-1]['absolute_delta_from_previous_order_nat']
-            if len(focused)>1 else abs(focused[-1]['logpdf']-row8_value))
+        adjacent_deltas=[r['absolute_delta_from_previous_order_nat'] for r in focused
+            if 'absolute_delta_from_previous_order_nat' in r]
+        max_adjacent_delta=max(adjacent_deltas,default=abs(focused[-1]['logpdf']-row8_value))
         report['focused_convergence']=dict(PGC=focus_pgc,index=index,population=population,
             parent_order8_result=base_result,order4_reference_result=reference_path,
             logpdf_order4=row4,logpdf_order8=row8_value,
             absolute_delta_order4_order8_nat=abs(row4-row8_value),
             per_row_tolerance_nat=1e-3,focused_orders=focused,
-            final_pair_delta_nat=last_pair_delta,
+            maximum_adjacent_delta_nat=max_adjacent_delta,
             pass_=bool(np.isfinite([row4,row8_value]+[r['logpdf'] for r in focused]).all()
-                and last_pair_delta<=1e-3))
+                and max_adjacent_delta<=1e-3))
         report.update(status=('FOCUSED_HIGH_ORDER_PAIR_CONSISTENT_NOT_POSTERIOR'
             if report['focused_convergence']['pass_'] else
             'FOCUSED_HIGH_ORDER_PAIR_DISAGREEMENT_NOT_POSTERIOR'),phase='FOCUSED_CONVERGENCE_CHECK')

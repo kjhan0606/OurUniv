@@ -53,10 +53,13 @@ class ObservedRayTests(unittest.TestCase):
         closure=dict(core_sigma_km_s=20.,dispersion_scale=.3,broad_fraction=.5)
         *_,weights=observed_ray_components(direction,radius,velocity,variance,masses,angular,1,g,closure,
             source_grid=4,order=32)
+        *_,split_weights=observed_ray_components(direction,radius,velocity,variance,masses,angular,1,g,closure,
+            source_grid=4,order=16,segments=2)
         transfer=source_mark_transfer(jnp.array([32.]),jnp.array([32.]),jnp.array([0.]),jnp.array([0.]),
             mstar=-23.28,alpha=-.94,finite_reference_interval=(-25.,-21.))[1].sum()
         mean_square=radius**2+.01**2*(20.**2+.5*.3**2*10000.)
         np.testing.assert_allclose(weights.sum(),transfer*mean_square/12.**3,rtol=3e-5)
+        np.testing.assert_allclose(split_weights.sum(),weights.sum(),rtol=2e-7,atol=1e-13)
 
     def test_periodic_uniform_fp_ray_is_direction_invariant_and_keeps_q(self):
         radius=26.;n=4;box=48.

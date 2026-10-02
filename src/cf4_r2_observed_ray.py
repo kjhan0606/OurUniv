@@ -84,31 +84,40 @@ def source_ray_intervals(direction,observer,n,box):
 
 
 def observed_ray_components(direction,observed_radius,velocity,variance,masses,angular,
-                            population,geometry,closure,*,source_grid,order=4):
+                            population,geometry,closure,*,source_grid,order=4,segments=1):
     """Periodic-ray nodes and UNNORMALIZED conditional optical-FP source masses.
 
     The fixed angular-selection probability is common to numerator and
     denominator of this per-direction conditional FP factor and cancels;
     therefore the cell-averaged sky map is intentionally not sampled along
-    wrapped cells. The five-bin mass retains the q²/source-cell-volume
+    wrapped cells. ``segments`` equally subdivides each ray/cell q interval
+    before Gaussian-CDF quadrature; its default of1 preserves the original
+    node layout. The five-bin mass retains the q²/source-cell-volume
     Jacobian, LF transfer, Gaussian mixture and source-field values.
 
     ``source_radius`` returned below is the unwrapped physical q. A caller
     must pass it to the raw-mark normalizer; minimum-image radius is wrong for
     wrapped ray nodes. The active count backend is unchanged.
     """
+    if segments<1:raise ValueError('ray quadrature needs at least one segment per cell interval')
     box=geometry['box_size_cMpc_h'];observer=geometry['observer']
     lo,hi,ids=source_ray_intervals(direction,observer,source_grid,box)
+    interval_width=hi-lo
+    segment_fraction=jnp.arange(segments,dtype=lo.dtype)/segments
+    starts=lo[:,None]+segment_fraction[None,:]*interval_width[:,None]
+    ends=starts+interval_width[:,None]/segments
+    lo=starts.reshape(-1);hi=ends.reshape(-1);ids=jnp.repeat(ids,segments)
     vel=velocity[ids];var=variance[ids]
     conversion=geometry['little_h']/geometry['hubble_km_s_Mpc']
     centre=observed_radius-conversion*jnp.sum(vel*direction[None],axis=1)
     nodes=[];weights=[];cell_ids=[]
-    for fraction,core,scale in mixture_components(closure):
+    for mixture_fraction,core,scale in mixture_components(closure):
         sigma=conversion*conditional_los_sigma(jnp.broadcast_to(direction,var.shape),core,var,scale)
-        lower=jnp.maximum(lo,centre-8*sigma);upper=jnp.minimum(hi,centre+8*sigma)
+        centre_cell=centre
+        lower=jnp.maximum(lo,centre_cell-8*sigma);upper=jnp.minimum(hi,centre_cell+8*sigma)
         active=upper>lower
-        q,w=_probability_nodes(centre,sigma,lower[None],upper[None],active[None],order)
-        q=q[0].reshape(-1);w=w[0].reshape(-1)*fraction
+        q,w=_probability_nodes(centre_cell,sigma,lower[None],upper[None],active[None],order)
+        q=q[0].reshape(-1);w=w[0].reshape(-1)*mixture_fraction
         # Zero padding is finite through the optical/eta kernel, not0*NaN.
         q=jnp.where((w>0)&(q!=0),q,observed_radius)
         nodes.append(q);weights.append(w);cell_ids.append(jnp.tile(ids,order))

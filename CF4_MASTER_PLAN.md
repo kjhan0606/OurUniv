@@ -107,6 +107,13 @@ quadrature finding, not a periodic-boundary or posterior result. One explicit
 diagnostic will compare orders16 and32 on this same row and record split
 numerator/denominator terms; it stops there and does not start a blind order
 ladder.
+The one-row follow-up410826 COMPLETED/exit0 in2m45s (batch MaxRSS2.10GiB).
+Order16→32 changes the log numerator by.001332 nat but the log denominator by
+only6.63e-7 nat; the resulting logpdf change is.001333 nat, still above
+tolerance. All image fractions remain zero. Rather than continue a polynomial
+order ladder, the next bounded check compares equal-work layouts8×4,16×2,32×1
+on this same row, testing interval-partition sensitivity while recording both
+terms. No target wiring or posterior action follows regardless of outcome.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
