@@ -309,8 +309,12 @@ holdout remains a development-only predictive check under that old mapping,
 not a validation of the present R2 bias parameters. The active N256 source
 field is 1.5 cMpc/h while its count grid is N128/3 cMpc/h; the old v8 was N32
 on a 384 cMpc/h box and used h=.6711, whereas the current fixed-field path uses
-h=.746. These differences further preclude treating its result as active-R2
-calibration. See `CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md`.
+h=.746. The current catalogue labels and model transfer consistently use
+the h-scaled absolute-magnitude convention; old v8 used unscaled physical
+magnitudes, so same-numbered K edges did not select the same rows. This
+further precludes treating its result as active-R2 calibration; it is not
+evidence of an h-convention defect in the current path. See
+`CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md`.
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
 must source and validate the radius-dependent selection/transfer and the

@@ -44,10 +44,22 @@ real-space, occupied-cell log-OLS response on 0.3125 cMpc/h cells. R2 has
 five true-K responses, including two unbounded tails, normalized over the
 periodic source field, then used in its own redshift-space observation law.
 The old CAMELS calibration/v8 program used h=0.6711; the current fixed-field
-N256 sensitivity path uses h=0.746. The N256 source spacing is 1.5 cMpc/h and
-the count deposition grid is N128/3 cMpc/h. Any future crosswalk must state
-and verify the h-scaled magnitude convention as well as population, scale,
-selection and estimator correspondence.
+N256 sensitivity path uses h=0.746. A follow-up driver source check resolved
+the convention within the current path: `scripts/cf4_r2_common_catalogue.py`
+converts physical absolute magnitude to `M_h=M-5 log10(h)` using
+`src/cf4_actual_selection.py:magnitude_h`, while
+`scripts/cf4_r2_marked_source_geometry.py` forms its modulus as
+`5 log10(D_L*h)+25`; the common-selection integral also supplies `D_L*h` to
+the same modulus calculation. Those current data labels and model transfer
+are internally consistent in the h-scaled convention. By contrast, the old
+v8 classifier called the physical distance modulus directly and did not apply
+`magnitude_h`. Thus identical numerical K edges in old v8 and current R2
+refer to different selected rows. This is a further reason not to transport
+the old holdout result; it does **not** establish an h-convention bug in the
+current R2 path. The N256 source spacing is 1.5 cMpc/h and the count
+deposition grid is N128/3 cMpc/h. Any future crosswalk must preserve this
+explicit magnitude convention along with population, scale, selection and
+estimator correspondence.
 
 The separate legacy CAMELS FoG artifact also has six stellar-mass-bin widths;
 the active R2 source model has one shared line-of-sight width. No validated
@@ -78,8 +90,10 @@ inferred z=0 density and velocity/environment field. Q-LEAN recommends this
 short source/provenance correction only; no new experiment, optimizer or
 gate ladder now. The driver independently verified the population indices,
 active true-K edges, prior application sites, old holdout construction, and
-the fixed-field N256/N128 grid settings, and adopts that scope. This review is
-advisory, not a posterior or promotion decision.
+the fixed-field N256/N128 grid settings, and adopts that scope. Fable flagged
+the h convention as an unchecked item; the driver subsequently resolved it
+from the current data-label and distance-table source as described above.
+This review is advisory, not a posterior or promotion decision.
 
 ## Next valid use, if needed
 
