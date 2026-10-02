@@ -589,6 +589,7 @@ def predict_source_marked_radial_key_density(
     sigma_los_km_s, radial_min_cMpc_h=5., radial_max_cMpc_h=180.,
     mstar=-23.28, alpha=-.94, finite_reference_interval=None,
     source_velocity_variances_km2_s2=None,dispersion_scale=1.,deposition='tsc',
+    radial_tail_sigma=8.,
 ):
     """Source contribution per unit *observed comoving radius* at one key.
 
@@ -667,7 +668,7 @@ def predict_source_marked_radial_key_density(
                 inside=jnp.all(cell==jnp.asarray(voxel_ijk)[None],axis=1)
                 z=(q-shifted_radius)/sigma_radius
                 pdf=jnp.exp(-.5*z*z+log_normalizer)
-                spatial+=jnp.where(active&inside&(jnp.abs(z)<=8.),pdf*r_observed/root,0.)
+                spatial+=jnp.where(active&inside&(jnp.abs(z)<=radial_tail_sigma),pdf*r_observed/root,0.)
             return spatial,None
         images=jnp.asarray(list(product((-1,0,1),repeat=3)))*box_size_cMpc_h
         spatial=jax.lax.scan(jax.checkpoint(add_image),jnp.zeros(count,dtype=positions.dtype),images)[0]
