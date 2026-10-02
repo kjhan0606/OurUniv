@@ -454,3 +454,49 @@ posterior is delivered; the original sampler remains disabled for this law.
 No numerical job from this bundle remains running. Next scientific deliverable
 is the actual-state moment-aware joint target and calibration uncertainty,
 not another native two-key support check or unconstrained sigma optimization.
+
+## Bundled continuation: actual-state joint moment target
+
+User requests grouping stages and executing the next bundle together.
+Deliverables: (1) shared native-to-cell mass/momentum/second-moment readout,
+(2) joint count/raw-FP target with density/mean/variance and active nuisance
+derivatives, (3) explicit uncertainty/old-coordinate handling, (4) one bounded
+actual-training-data sensitivity, (5) evidence-based next inference decision.
+No routine approval/audit microstages. External review remains reserved for
+important discoveries, goal changes or large computations.
+
+MomentObservationTarget removes obsolete sigma from the eight rate/bias/LF
+coordinates; three physical logcore/logscale/logitfraction coordinates enter
+both count and raw kernels. The target supplies NO priors: proper prior terms
+belong to the caller once, and no frozen native coefficient is a calibrated
+prior. Native-to-PM/Ks/population discrepancy and uncertain mixture calibration
+are still required. A future regularization must disclose its centre/width
+and sensitivity; this bundle does not certify that choice from one TNG box.
+The raw periodic radial integrator now streams image terms with lax.scan,
+preserving the measure and reducing graph duplication, not changing physics.
+
+Small Slurm410643/sourcecd63525 requests H100/2CPU/8GiB/30min (planning host
+<=6GiB plus20%). Joint six-block native-state/active-nuisance derivative is
+checked against fresh-support FD; previous shared and moment regressions are
+included. This is not an IC-through-gravity adjoint certification.
+
+After successful tests, the SAME bundle executes preserved nonstationary
+N128 accepted-state moments, ALL1414 graph-closed training FP links and47121
+training counts. No new PM evolution or heldout outcome. Preserve physical
+alpha via u7new=.12*exp(.5*u7old), not identical old coordinates. Three fixed
+development closure probes core30km/s,fraction.5,scales.5/.25/1 illustrate
+conditional model sensitivity; they are not native-derived priors, optimization
+or calibration. SourceGL1 is preliminary, NOT converged source integration.
+Report nonfinite support explicitly and stop that probe series, no floor.
+Full-grid counts include empty exposed cells. Host planning<=10GiB/request
+12GiB, source chunk8192 limits crossing workspace; typedH1002CPU30min Slurm,
+25min application cap. Compiled device bytes checked with20% margin.
+Never expand walltime or start chains automatically from this sensitivity.
+
+Q-GOAL: turn retained actual-state dispersion into a coherent joint R2 law,
+then quantify its influence before posterior inference. Q-LEAN: one saved
+state, existing observations, three physical probes and compact regressions,
+not another simulation or repeated native fit. The missing CF4 methods and
+uncertainty calibration remain explicit; R2 is incomplete. MW/M31 are still
+ambiguous and M33 unresolved on the SAME NEW state; later LG observations
+must constrain those roles at<=0.3, never oracle calibration identities.
