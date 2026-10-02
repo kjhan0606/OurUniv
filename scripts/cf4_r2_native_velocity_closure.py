@@ -15,7 +15,27 @@ from cf4_r2_native_mock import place_native_halves, distance_tables, observe
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
 ENDPOINT=BASE/'r2_native_rsd_mock_fit_20261002_v2/result.json'
-OUT=BASE/'r2_native_velocity_closure_20261002_v1'
+OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_native_velocity_closure_20261002_v1')))
+
+
+def fit_conditional_mixture(x,variance):
+    """Narrow core plus broad width tied to local matter variance proxy."""
+    def objective(q):
+        core=np.exp(q[0]);scale=np.exp(q[1]);broad=np.sqrt(core**2+scale**2*variance)
+        logn=lambda s:-.5*(x/s)**2-np.log(s)-.5*np.log(2*np.pi)
+        return -np.sum(logsumexp(np.stack((logn(core)-np.logaddexp(0,q[2]),
+            logn(broad)-np.logaddexp(0,-q[2]))),axis=0))
+    fits=[minimize(objective,[np.log(20.),np.log(scale),0.],method='L-BFGS-B',
+        bounds=[(np.log(.1),np.log(3000.)),(np.log(.001),np.log(100.)),(-12.,12.)],
+        options={'maxiter':200,'ftol':1e-12}) for scale in (.5,1.)]
+    best=min(fits,key=lambda r:r.fun)
+    core=np.exp(best.x[0]);scale=np.exp(best.x[1]);broad=np.sqrt(core**2+scale**2*variance)
+    return dict(success=bool(best.success),message=str(best.message),
+        sigma_core=float(core),matter_dispersion_scale=float(scale),
+        fraction_broad=float(expit(best.x[2])),log_likelihood=float(-best.fun),AIC=float(6+2*best.fun),
+        broad_sigma_percentiles=np.percentile(broad,[0,50,90,99,100]).tolist(),
+        competing_start_log_likelihoods=[float(-r.fun) for r in fits],
+        limit='diagonal matter velocity covariance only; not exact LOS covariance or calibrated R2 prior')
 
 
 def fit_laws(x):
@@ -69,7 +89,8 @@ def main():
     ngp=moment[tuple(cells.T)]/mass[tuple(cells.T)][:,None]
     # Interpolate mass and momentum, THEN divide. Not an unweighted average
     # of cell velocities, which would measure a different operator.
-    numerator=np.zeros_like(ngp);denominator=np.zeros(len(native))
+    second=np.moveaxis(m[4:7],0,-1)
+    numerator=np.zeros_like(ngp);second_numerator=np.zeros_like(ngp);denominator=np.zeros(len(native))
     for offset in product((-1,0,1),repeat=3):
         unwrapped=cells+offset;index=unwrapped%50
         distance=np.abs(native/1.5-.5-unwrapped)
@@ -77,6 +98,7 @@ def main():
             np.where(distance<1.5,.5*(1.5-distance)**2,0.)).prod(axis=1)
         denominator+=weights*mass[tuple(index.T)]
         numerator+=weights[:,None]*moment[tuple(index.T)]
+        second_numerator+=weights[:,None]*second[tuple(index.T)]
     interpolated=numerator/denominator[:,None]
     true_train=pos[:,1]-192.<-6.
     resolved=g['star_count']>=300
@@ -92,13 +114,21 @@ def main():
         central_satellite_labels=False,results={},limits=endpoint['limits'],
         MW_M31=endpoint['MW_M31'],M33=endpoint['M33'])
     residuals={}
-    for name,reference in (('cell_mean',ngp),('TSC_mass_momentum',interpolated)):
+    for name,reference,raw_second in (('cell_mean',ngp,second[tuple(cells.T)]/mass[tuple(cells.T)][:,None]),
+        ('TSC_mass_momentum',interpolated,second_numerator/denominator[:,None])):
         residual=mock['coherent_vlos']-np.sum(reference*mock['direction'],axis=1)
         residuals[name]=residual[source_train]
+        variance=raw_second-reference**2
+        if np.any(variance < -1e-8*np.maximum(1.,np.abs(raw_second))):
+            raise ValueError('matter diagonal second moments violate nonnegative variance')
+        los_variance=np.sum(np.maximum(variance,0.)*mock['direction']**2,axis=1)
+        residuals[name+'_matter_LOS_variance_proxy']=los_variance[source_train]
         masks={'preselection':source_train,'interior_3Mpc':source_train&(edge>=3.),
             'edge_3Mpc':source_train&(edge<3.),
             'observed_selected_comparison_only':source_train&mock['selected']}
         report['results'][name]={key:fit_laws(residual[mask]) for key,mask in masks.items()}
+        report['results'][name]['conditional_mixture']=fit_conditional_mixture(
+            residual[source_train],los_variance[source_train])
         rho=mass[tuple(cells.T)]/mass.mean()
         report['results'][name]['density_split']={label:dict(n=int(mask.sum()),
             rms=float(np.sqrt(np.mean(residual[mask]**2))),

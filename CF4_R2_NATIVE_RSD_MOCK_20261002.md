@@ -268,3 +268,27 @@ smoothing before R2 field inference. Q-LEAN: existing engine plus scalar
 boundary clip, five focused tests and two keys, no new framework. Same NEW
 field MW/M31 roles remain ambiguous, M33 unresolved, native IDs calibration
 labels only. Next full-count implementation depends on these readouts.
+
+410574 COMPLETED/exit0 in1m17s, application65.335s/host1.181GiB. All4
+native+5 voxel geometry tests pass. Broad-width FD relative errors1.05e-6
+and8.76e-7. SourceGL4/mark8 single Gaussian values0/4.3717e-15; mixture
+2.3871e-7/1.5811e-6 at the two keys. Mixture removes zero support but still
+assigns extremely low expectations to observed single galaxies. Refinement
+changes mixture by6.3%/-8.0%, so no complete marked-integral convergence
+claim. A globally fitted two-Gaussian velocity law is NOT declared adequate.
+
+Next cheap training readout410575 uses already available native second
+velocity moments: diagonal variance E[v_i^2]-E[v_i]^2, preserving mean AND
+dispersion. Compare same three-parameter mixture with broad width
+sqrt(core^2 + b^2 * diagonal-LOS-variance-proxy) against global widths, on
+the SAME preselection3785 rows. For both native cell and interpolated
+mass/momentum/raw-second variants. Nonnegative variance asserted (roundoff
+only clipped), no arbitrary scatter floor beyond fitted positive core law.
+Diagonal moments do not contain cross-axis covariance: explicitly a proxy,
+not exact LOS covariance. Free b accommodates galaxy/all-matter discrepancy
+but is NOT a hydro/PM/Ks cross-calibration. Two fixed small-MLE starts, no
+count refit or heldout tuning. This adds an existing physical predictor, not
+global sigma inflation or another native count-optimizer scan. Same2CPU/
+10GiB/typed H100,30min cap, expected seconds; output native-velocity v2.
+Q-GOAL/Q-LEAN and NEW-field role limitations remain unchanged. No new
+simulation or R2 prior injection; do not select the law on two rare keys.

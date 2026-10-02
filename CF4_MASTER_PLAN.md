@@ -478,6 +478,15 @@ development descriptors, not R2 priors or central/satellite labels. Next is
 consistent voxel-boundary marked-count integration and training population/
 environment support before one mixture count refit. No new simulation or
 posterior/IC promotion. Full assessment in the native-RSD bundle record.
+410574 scalar marked voxel-CDF probe COMPLETED1m17s,9tests pass and width
+derivatives agree~1e-6. Mixture restores support at the two keys but means
+remain2.387e-7/1.581e-6; source/mark refinement changes6–8%, not complete
+convergence. No claim that the global mixture closes tracer calibration.
+Next410575 cheap training-only readout measures conditional broad widths
+against existing matter diagonal velocity dispersion, retaining both mean
+and variance. Diagonal-LOS proxy excludes missing cross-axis covariance;
+native scalar fits remain development evidence, no R2 prior injection or
+test-selected law. No full-count refit until closure evidence is adequate.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
