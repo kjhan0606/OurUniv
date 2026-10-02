@@ -80,7 +80,9 @@ A lean cost profile was added in commit `54d4581` and resubmitted as Slurm
 finite transfer's compiled forward-plus-`(Mstar, alpha)` gradient for one
 population at 4,096, 65,536 and 262,144 synthetic sources. It requests one
 GPU, two CPUs, 6 GiB host memory (a 20% allowance over a conservative 5 GiB
-estimate), and has a 20-minute cap. Its result path is
+estimate), and has a 20-minute cap. At the latest check, `410445` is RUNNING
+on `syn101` through Slurm; its first test file passed6/6 in153.654s. Remaining
+test files and the dependent `410446` profile are not yet complete. Its result path is
 `/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
 This isolates transfer cost only: it uses no saved field, does not include
 fresh raw-support construction or the full target/PM adjoint, and is not

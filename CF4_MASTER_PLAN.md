@@ -383,7 +383,9 @@ adapter `TypeError` because its direct reference lacked the new optional
 `finite_reference_interval` keyword; the final raw-volume file did not run.
 Commitcff924a adds the keyword and finite-mode dispatch to the direct helper;
 the runner now requests4GiB (above the prior measured2.51GiB by>20%) and45min.
-Retry410445 is pending. The earlier dependent throughput job410425 could never
+Retry410445 is RUNNING on syn101 via Slurm; its first test file passed6/6 in
+153.654s, with the remaining files still in progress. The earlier dependent
+throughput job410425 could never
 run after410407 failed and was cancelled. Its replacement410446 is afterok
 410445; it profiles synthetic finite-transfer forward/gradient cost only and
 cannot authorize sampling. Output:
