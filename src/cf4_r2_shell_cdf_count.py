@@ -60,6 +60,26 @@ def conditional_los_sigma(direction, base_sigma, variances, scale):
     return jnp.sqrt(base_sigma**2+scale**2*jnp.sum(direction**2*variances,axis=1))
 
 
+def ray_grid_breakpoints(lower, upper, direction, observer, grid_size, box):
+    """All voxel-plane crossings in a bounded ray interval, including ends.
+
+    Caller guarantees interval width<box (from8sigma_radius<box/2).
+    grid_size+2 planes per axis therefore cover the interval without a
+    data-dependent truncation. Padding duplicates the upper endpoint.
+    """
+    spacing=box/grid_size
+    parallel=direction==0
+    denominator=jnp.where(parallel,1.,direction)
+    start=jnp.floor((observer[None,:]+lower[:,None]*direction)/spacing)
+    index=jnp.arange(grid_size+2)[None,None,:]
+    planes=start[:,:,None]+jnp.where(direction[:,:,None]>0,1+index,-index)
+    crossing=(planes*spacing-observer[None,:,None])/denominator[:,:,None]
+    crossing=jnp.where(parallel[:,:,None],upper[:,None,None],crossing)
+    crossing=jnp.clip(crossing,lower[:,None,None],upper[:,None,None])
+    events=jnp.concatenate((lower[:,None],crossing.reshape(lower.size,-1),upper[:,None]),axis=1)
+    return jnp.sort(events,axis=1).T
+
+
 def cell_averaged_tsc_weight(positions,voxel,grid_size,box):
     """TSC convolved with one cell top-hat = separable cubic B-spline.
 
@@ -157,10 +177,12 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     scalar = target_population is not None
     if scalar != (target_voxel is not None):
         raise ValueError('population and voxel must be supplied together')
-    if deposition not in ('tsc','ngp','voxel_cdf'):
-        raise ValueError('deposition must be tsc, diagnostic ngp, or scalar voxel_cdf')
+    if deposition not in ('tsc','ngp','voxel_cdf','voxel_cdf_grid'):
+        raise ValueError('unknown count deposition/integration rule')
     if deposition=='voxel_cdf' and not scalar:
         raise ValueError('voxel_cdf currently requires a scalar target voxel')
+    if deposition=='voxel_cdf_grid' and scalar:
+        raise ValueError('voxel_cdf_grid requires the full count grid')
     if source_cell_average and (not scalar or deposition!='tsc'):
         raise ValueError('approximate cell-averaged kernel is a scalar diagnostic only')
     if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
@@ -227,6 +249,37 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
                 grid_size,box_size_cMpc_h,center)
             lower=jnp.maximum(lower,lo[None]);upper=jnp.minimum(upper,hi[None])
             active=active&ray_active[None]&(upper>lower)
+        if deposition=='voxel_cdf_grid':
+            @jax.checkpoint
+            def integrate_branch(current,branch):
+                lo=jnp.where(active[branch],lower[branch],0.)
+                hi=jnp.where(active[branch],upper[branch],0.)
+                def integrate(value):
+                    boundaries=ray_grid_breakpoints(lo,hi,direction,observer,grid_size,box_size_cMpc_h)
+                    @jax.checkpoint
+                    def add_interval(value,index):
+                        left,right=boundaries[index],boundaries[index+1]
+                        occupied=active[branch]&(right>left)
+                        def evaluate(t):
+                            midpoint=(observer+.5*(left+right)[:,None]*direction)%box_size_cMpc_h
+                            cell=jnp.floor(midpoint/(box_size_cMpc_h/grid_size)).astype(jnp.int32)%grid_size
+                            nodes,weights=_probability_nodes(mu,sigma,left[None],right[None],occupied[None],order)
+                            @jax.checkpoint
+                            def add_mark(t,item):
+                                q,w=item
+                                observed=(observer+q[:,None]*direction)%box_size_cMpc_h
+                                radius=radius_of(observed)
+                                transfer=source_mark_transfer(true_modulus,
+                                    jnp.interp(radius,radius_table_cMpc_h,modulus_table_h),true_redshift,
+                                    jnp.interp(radius,radius_table_cMpc_h,redshift_table),
+                                    mstar=mstar,alpha=alpha,finite_reference_interval=finite_reference_interval)
+                                mass=jnp.stack([w*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0) for p in range(6)])
+                                return t.at[:,cell[:,0],cell[:,1],cell[:,2]].add(mass),None
+                            return jax.lax.scan(add_mark,t,(nodes[0],weights[0]))[0]
+                        return jax.lax.cond(jnp.any(occupied),evaluate,lambda t:t,value),None
+                    return jax.lax.scan(add_interval,value,jnp.arange(boundaries.shape[0]-1))[0]
+                return jax.lax.cond(jnp.any(active[branch]),integrate,lambda t:t,current),None
+            return jax.lax.scan(integrate_branch,total,jnp.arange(2))[0],None
         width=jnp.where(active,upper-lower,0.)
         # Do not materialize (images,segments,nodes,sources) on the reverse
         # tape. Each physical segment regenerates its own few quadrature nodes.

@@ -3,12 +3,25 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.special import ndtr
-from cf4_r2_shell_cdf_count import ray_voxel_interval,conditional_los_sigma
+from cf4_r2_shell_cdf_count import ray_voxel_interval,conditional_los_sigma,ray_grid_breakpoints
 
 jax.config.update('jax_enable_x64',True)
 
 
 class VoxelRayTests(unittest.TestCase):
+    def test_grid_breakpoints_cover_oblique_positive_and_negative_rays(self):
+        for direction in ([1.,.4,0.],[-.7,.2,.5]):
+            lo,hi=-3.,8.;observer=np.array([1.2,2.3,3.4])
+            actual=np.asarray(ray_grid_breakpoints(jnp.array([lo]),jnp.array([hi]),
+                jnp.array([direction]),jnp.array(observer),4,16.))[:,0]
+            expected=[lo,hi]
+            for d,o in zip(direction,observer):
+                if d:
+                    expected.extend((4*k-o)/d for k in range(-20,21) if lo<(4*k-o)/d<hi)
+            np.testing.assert_allclose(np.unique(actual),np.sort(expected),rtol=0,atol=1e-12)
+            probability=np.sum(ndtr((actual[1:]-2.)/.8)-ndtr((actual[:-1]-2.)/.8))
+            self.assertAlmostEqual(probability,ndtr((hi-2.)/.8)-ndtr((lo-2.)/.8),places=14)
+
     def test_conditional_width_projection_and_zero_variance_identity(self):
         d=jnp.array([[1.,0.,0.],[0.,1.,0.]])
         variance=jnp.array([[9.,16.,25.],[9.,16.,25.]])

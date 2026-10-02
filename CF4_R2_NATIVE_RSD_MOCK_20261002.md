@@ -323,3 +323,34 @@ injection.10GiB/2CPU/typed GPU/30min, expected<5min; same input sizes plus
 native diagonal variance. This is the physical mean+dispersion connection
 before full-count boundary integration, not yet a complete R2 observation
 likelihood. Q-GOAL/Q-LEAN and MW/M31 ambiguity/M33 unresolved unchanged.
+
+30c77c3 connection410587 COMPLETED/exit0 in1m49s;11tests pass. Conditional
+GL4/mark8 key means.000304812/.00282951 versus global2.387e-7/1.581e-6,
+improvement~1277/~1790 times. Conditional-scale derivative errors2.37e-7/
+1.47e-7. Not adequacy or convergence: source/mark refinement still changes
+values, and two rare training cells are not a calibration population.
+
+Next full-grid extension partitions each finite Gaussian ray at ALL observed
+voxel-plane crossings, integrates varying mark weights inside each interval,
+and deposits interval mass to its single voxel. No sampled NGP indicator or
+TSC smoothing. A fixed grid_size+2 plane budget PER axis is sufficient from
+the declared ray span<box (8sigma_radius<box/2); padding duplicates endpoints,
+not truncates physical crossings. Oblique/negative ray tests verify all
+breakpoints against explicit planes and conserve Gaussian interval measure.
+Eight focused tests plus four mock tests precede native full-grid prediction.
+
+One fixed conditional closure, sourceGL2/mark4, all six populations and both
+training/development-test exposures including empty cells. Check exact
+agreement with410587 scalar values at the SAME quadrature rule; report all
+occupied zero keys (never floor), count scores, means and radial tables.
+Store compressed conditional means, no field fit or closure/count refit.
+This is full-count operator evidence, not a valid CF4 posterior or pristine
+heldout test. Native inputs/windows/roles and diagonal/K/Ks limits unchanged.
+Array bounds: one streamed source-volume node,125000sources x392 crossings
+~392MB doubles, plus sort/scatter/compilation; plan host<=8GiB and device
+<=12GiB, request10GiB host/2CPU/one typed GPU/30min cap. Expected<10min;
+actual peaks/cost determine any next extension, no automatic larger fit.
+Q-GOAL: physically consistent observation operator over whole calibration
+population before R2 inference. Q-LEAN: existing source/mark integrator and
+one boundary partition, two component forward passes, no simulation or
+new validation framework. MW/M31/M33 same-NEW-field constraints unchanged.
