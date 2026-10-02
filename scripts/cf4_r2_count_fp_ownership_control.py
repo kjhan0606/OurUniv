@@ -63,6 +63,11 @@ def components(packs, population):
                    np.asarray(pack['bin'])[active].tolist()))
 
 
+def support_components_by_scale(support_by_scale, population):
+    return {scale: components(packs, population)
+            for scale, packs in support_by_scale.items()}
+
+
 def radius_summary(weight, radius):
     weight, radius = map(lambda x: np.asarray(x, dtype=np.float64), (weight, radius))
     total = float(weight.sum())
@@ -225,11 +230,10 @@ def main():
         info_by_scale = {}
         for value in (-EPS, 0., EPS):
             support_by_scale[value], info_by_scale[value] = build_support(point_builder, value)
-        support_sets = {value: components(packs, population)
-                        for value, (packs, _) in support_by_scale.items()}
+        support_sets = support_components_by_scale(support_by_scale, population)
         if not support_sets[-EPS] <= support_sets[EPS] or not support_sets[0.] <= support_sets[EPS]:
             raise ValueError('broad +epsilon support is not a superset of nearby count kernels')
-        point_packs, _ = support_by_scale[EPS]
+        point_packs = support_by_scale[EPS]
 
         def count_mark(logscale, packs=point_packs):
             return raw_field_logpdf(density, velocity, tracer, population_white,

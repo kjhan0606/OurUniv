@@ -191,6 +191,15 @@ that contract. Retry only the three tiny guard/split tests and this same
 training link in a fresh output path; retain the failed JSON/log. Q-GOAL: keeps
 the intended frozen training graph consistent. Q-LEAN: no data-law or model
 change, long test suite, gravity run or heldout access.
+The third retry410883 passed all three guard/split tests and matched the v6
+1414-row link table exactly, then failed before the likelihood at support-set
+collection: `FreshRawSupport.build` returns `(population_packs, metadata)`, but
+the caller had already separated those values and tried to unpack the
+six-population pack tuple a second time. No scientific comparison ran. The
+support collector now consumes the population-pack tuple directly and has a
+focused tuple-shape regression. Next retry uses only these four tiny tests and
+the same fixed link in a fresh output directory; no target/input/heldout or
+resource scope changes.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and

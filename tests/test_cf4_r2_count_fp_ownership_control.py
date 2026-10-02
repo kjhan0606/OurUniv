@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import call, patch
 
-from cf4_r2_count_fp_ownership_control import BASE, ROOT, SPLIT, verify_source_commit
+from cf4_r2_count_fp_ownership_control import (
+    BASE, ROOT, SPLIT, support_components_by_scale, verify_source_commit,
+)
 
 
 class SourceCommitGuardTests(unittest.TestCase):
@@ -30,6 +32,19 @@ class SourceCommitGuardTests(unittest.TestCase):
 
         with self.assertRaisesRegex(RuntimeError, 'source commit mismatch'):
             verify_source_commit('116018a')
+
+
+class SupportComponentTests(unittest.TestCase):
+    def test_support_scale_values_are_population_pack_tuples(self):
+        empty = dict(mask=[False], ids=[0], node=[0], bin=[0])
+        active = dict(mask=[True], ids=[42], node=[3], bin=[2])
+        packs = (empty, active, empty, empty, empty, empty)
+
+        found = support_components_by_scale({-1.: packs, 0.: packs, 1.: packs}, 1)
+
+        self.assertEqual(found, {-1.: {(42, 3, 2)},
+                                  0.: {(42, 3, 2)},
+                                  1.: {(42, 3, 2)}})
 
 
 if __name__ == '__main__':
