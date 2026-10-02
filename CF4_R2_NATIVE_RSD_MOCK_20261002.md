@@ -418,3 +418,26 @@ Q-LEAN: reuse the existing moment state and likelihood, no repeated native
 optimizer or new gravity simulation. MW/M31 remain ambiguous, M33 unresolved;
 future role observations must constrain this SAME NEW field at LG<=0.3,
 native truth identities are calibration labels only, not generated candidates.
+
+Shared-interface execution:410628 COMPLETED/exit0 in1m26s,15tests
+(4 shared radial/closure +3 legacy raw-volume +8 voxel geometry) passed;
+batch MaxRSS1,280,972K (~1.22GiB). Source tree matches0ce4e7b (committed
+after submission, no execution-code changes during that allocation).
+410630/source5326606 adds two raw-FP checks: unnormalized mixture agrees
+with separately computed component numerator/denominator sums, packed
+streaming matches dense and its log-dispersion derivative agrees with FD.
+These two tests passed in193.04s; remaining regressions are still running
+at this entry. This measures compile/test cost, not a warm CF4 evaluation.
+410632/source542b3b1 depends afterok:410630; two PM moment-readout/source-
+chunk tests,6GiB/2CPU/typedH100/15min, currently pending that dependency.
+Physical second moments are interpolated before variance reconstruction,
+retaining between-node mean-velocity dispersion. Source chunks now slice
+the corresponding variance and zero-mass padding instead of passing a
+global-length variance array to a local source batch.
+
+The N256 sampler and ResolutionObservationTarget DEFAULT remain unchanged.
+Optional joint interfaces do not yet enable full state/variance IC pullback
+or supply calibration uncertainty. Do not start production inference from
+these synthetic passes; next use the shared-moment connection in a bounded
+actual-state target comparison with unchanged protected CF4 heldout and an
+explicit closure-nuisance/prior design, not a freely retuned count width.
