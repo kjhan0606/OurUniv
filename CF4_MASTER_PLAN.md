@@ -73,6 +73,11 @@ v1 at `/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v1`.
 The corrected guard now separates six one-time population compiles from warm
 throughput and reserves additional convergence/AD compiles. Resubmit the same
 bounded cohort under a fresh output path; do not change the scientific target.
+First corrected submission410739 failed in one second before tests/calculation:
+the new HEAD guard compared the supplied abbreviated revision literally with
+the full SHA. No compute/output was produced; preserve the Slurm log. Resolve
+the expected revision through `git rev-parse --verify <rev>^{commit}` before
+comparing; validate this short-SHA path before another submission.
 It scores all1414 training links at order8, order4/8 on all39 previously
 uncertified plus40 deterministic safe rows, and AD/FD on one interior and one
 actually image-contributing row. It records per-row numerator/denominator
