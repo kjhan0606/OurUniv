@@ -452,6 +452,19 @@ Slurm on H100/syn08: identical source/model, fresh L-BFGS history, training
 rate reprofile, maximum200 iterations/240 evaluations. Stationarity requires
 optimizer success AND gradient_inf<=.001. The already inspected development
 test is not pristine validation; actual CF4 heldout remains untouched.
+410551 now COMPLETED/exit0 in3m57s,48iterations/53evaluations with proper
+gradient convergence (.0005615). Test mean remains2504.1049 vs2360;
+optimizer extension is closed, NOT an R2 promotion.410555 NGP refinement
+COMPLETED54s: GL4/LOS64 leaves one occupied training zero and one4.15e-15.
+410561 exact native-row readout COMPLETED9s: these galaxies' local matter-
+mean velocity residuals are8.55/9.76 fitted sigmas;8/6050 selected galaxies
+exceed8sigma. Native boundary locations and other source contributions
+prevent a unique support diagnosis. This important physical closure finding
+triggers bounded Fable5 advice on normalized velocity tails, count-operator
+mismatch and the minimal decisive computation (Q-GOAL/Q-LEAN). No arbitrary
+floor, sigma inflation, NGP adoption or calibration prior injection; native
+source roles never label generated field candidates. Request/result scope:
+`config/cf4_r2_native_velocity_tail_fable_20261002.txt`.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2

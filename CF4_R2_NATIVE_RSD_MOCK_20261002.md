@@ -159,3 +159,19 @@ tests local Gaussian-tail/geometry explanations; a local residual cannot
 alone prove absence of support from other source locations. No fit, field
 change, prior injection or repeated full integration. Same10GiB/2CPU Slurm
 GPU runner,30min cap, expected seconds. Source windows and roles unchanged.
+
+410561 COMPLETED/exit0 in9s: native ID100 residual1777.7945km/s=9.7561sigma,
+ID96511 residual1558.8406km/s=8.5545sigma; both source positions near window
+edges. All selected absolute residual percentiles50/90/95/99/100 are
+.17335/1.60549/2.54101/4.63396/9.75612sigma;8/6050 exceed8sigma. These are
+calibration labels, NOT inferred-field MW/M31/M33 IDs. Evidence identifies
+real non-Gaussian-tail/geometry concerns, not uniquely absent total support.
+Important finding warrants one bounded read-only Fable5 design consultation
+on minimal normalized FoG law and count-operator closure. Explicitly asks
+Q-GOAL/Q-LEAN, scientific claim limits, same-field member roles and essential
+versus deferred requirements. No further optimization or law adoption while
+advice is pending. Invocation uses claude-fable-5, plan permission mode,
+Read/Glob/Grep only, Edit/Write/Bash denied, medium effort, timeout600.
+Driver independently decides on usable advice; substantive disagreement is
+not tool failure. Prompt in config/cf4_r2_native_velocity_tail_fable_20261002.txt;
+output /gpfs/kjhan/CF4/logs/r2_native_velocity_tail_fable_20261002.txt.
