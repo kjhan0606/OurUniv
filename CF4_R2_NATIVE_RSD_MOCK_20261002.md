@@ -175,3 +175,41 @@ Read/Glob/Grep only, Edit/Write/Bash denied, medium effort, timeout600.
 Driver independently decides on usable advice; substantive disagreement is
 not tool failure. Prompt in config/cf4_r2_native_velocity_tail_fable_20261002.txt;
 output /gpfs/kjhan/CF4/logs/r2_native_velocity_tail_fable_20261002.txt.
+
+Fable advice returned CONDITIONAL PASS. Adopt: characterize native training
+residuals, compare narrow+broad Gaussian mixture with Gaussian and finite-
+variance Student-t, measure interpolation effect, prefer Gaussian mixture
+for compatibility with periodic Gaussian CDF machinery. NO immediate prior
+injection/count refit. Amend: all6050 previously summarized galaxies include
+test and observation selection; they are NOT a clean unconditional training
+sample. New fit uses source true y<-6, >=300 stars, intrinsic -25<=K_h<-21
+BEFORE apparent/radius/observed-K selection. Observation-selected comparison
+is explicitly diagnostic only. Narrow/broad are not central/satellite labels.
+
+Reject advice's strong claims that TSC quadrature is fully converged or the
+NGP zeros uniquely proven truncation artifacts: endpoint integral controls
+do not establish all derivatives or exact continuous support. A tail-scale
+number alone does not locate its physical source. Other source rays remain
+possible. Reject treating between-half spread as an independently calibrated
+prior width; correlated halves cannot certify cosmic/calibration coverage.
+Keep the6% mismatch unresolved rather than declaring sample variance proves
+adequacy. Exact NGP integration is a scientifically motivated design option,
+but selection/mark weights vary along each ray, so CDF differences alone
+cannot exactly integrate the FULL marked count law. No silent operator swap.
+
+410569 submitted Slurm H100 mode: short residual characterization on native
+training sample and >=3 versus<3Mpc source-window-edge distance. Compare
+native cell mean with TSC-interpolated mass/momentum THEN ratio, not mean of
+velocities. Save residual arrays/IDs/rho/K/edge distance, zero-mean Gaussian,
+ordered-width two-Gaussian mixture and finite-variance Student-t MLE/AIC,
+quantiles and rho split. Two fixed optimizer starts only stabilize the
+three-scalar mixture likelihood, not count-target scans. Empirical fit is
+conditional on the stated native stellar-resolution/intrinsic-K population,
+not luminosity-independent universal calibration. Tail uncertainty and
+native-to-CF4/Ks bridge remain open. No observed-test model selection, native
+role assignment, new simulation, field fit or R2 promotion. Native IDs label
+calibration only. Q-GOAL: inform normalized LOS closure on the R2 critical
+path. Q-LEAN: one cheap readout reusing known files; no generic gates.
+Runner2CPU/10GiB/30min, expected<2min; resource peak recorded by application.
+Exact reachability/operator redesign follows measured residual evidence,
+not the unsupported categorical assertions in the advisory.
