@@ -5,11 +5,24 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from cf4_r2_v6_redshift_overlap import (
     aggregate,
+    eligible_secure_edge,
     summarize_group_velocity_overlap,
 )
 
 
 class V6RedshiftOverlapTests(unittest.TestCase):
+    def test_secure_link_requires_the_frozen_count_point(self):
+        pgc_group = {1: "T1"}
+        self.assertTrue(eligible_secure_edge(
+            {"PGC": "1", "twompp_recno": "10", "match_class": "secure_joint_mark"},
+            pgc_group, {10}))
+        self.assertFalse(eligible_secure_edge(
+            {"PGC": "1", "twompp_recno": "11", "match_class": "secure_joint_mark"},
+            pgc_group, {10}))
+        self.assertFalse(eligible_secure_edge(
+            {"PGC": "1", "twompp_recno": "10", "match_class": "calibration_only"},
+            pgc_group, {10}))
+
     def test_group_and_member_velocities_stay_separate(self):
         rows = summarize_group_velocity_overlap(
             {"T1": [(1, "100", 10), (2, "100", 11)]},

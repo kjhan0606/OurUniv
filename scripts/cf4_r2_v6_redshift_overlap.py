@@ -17,12 +17,14 @@ from cf4_r2_t10106_source_identity import catalogue_relation
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
 FP = BASE / "r2_source_observation_assembly_v1/observations.npz"
+POINTS = BASE / "r2_point_mark_manifest_v1/points.npz"
 GRAPH_CENSUS = BASE / "r2_v6_multimember_graph_census_20261003_v2/result.json"
 IDENTITY_CENSUS = BASE / "r2_v6_multimember_group_identity_20261003_v1/result.json"
-OUT = BASE / "r2_v6_redshift_overlap_20261003_v2"
+OUT = BASE / "r2_v6_redshift_overlap_20261003_v3"
 GRAPH_CENSUS_SHA = "2b82b2e76b9b6e9eb2641bec8a31f21b6393ee0de2e269b6fb2ceaf298d67341"
 IDENTITY_CENSUS_SHA = "0bf09ede7230a17e71ceb983941d55fe4705be0e2eefb2362f11448737ef3692"
 FP_SHA = "90d6aecca7f62cd09767bd444df99cc60b8a557b21605cbdc31afdc38ea10b28"
+POINTS_SHA = "9377de48a3cc045b8432266ee5124d3540411fdcddd0d83b8036aa6744d11139"
 SOURCE_HASHES = {
     "cf4_2mpp_crossmatch_v1.csv": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
     "cf4_galaxies.csv": "28e7b8bd386f53716ed84cddd67a6f7602f98bc1394923a312f906555da7f709",
@@ -46,6 +48,12 @@ def selected_rows(path, columns, predicate):
         if not set(columns).issubset(reader.fieldnames or ()):
             raise ValueError(f"{Path(path).name} lacks required columns")
         return [{key: row[key] for key in columns} for row in reader if predicate(row)]
+
+
+def eligible_secure_edge(row, pgc_group, point_recnos):
+    return (row["match_class"] == "secure_joint_mark" and row["twompp_recno"].strip()
+            and int(row["PGC"]) in pgc_group
+            and int(row["twompp_recno"]) in point_recnos)
 
 
 def number(value):
@@ -168,13 +176,16 @@ def main():
         raise FileExistsError("unexpected or already-used output path")
 
     started = time.monotonic()
-    if sha256(IDENTITY_CENSUS) != IDENTITY_CENSUS_SHA or sha256(FP) != FP_SHA:
-        raise ValueError("frozen training identity census or FP source graph changed")
+    if (sha256(IDENTITY_CENSUS) != IDENTITY_CENSUS_SHA or sha256(FP) != FP_SHA
+            or sha256(POINTS) != POINTS_SHA):
+        raise ValueError("frozen identity census or source/point graph changed")
     census = json.loads(IDENTITY_CENSUS.read_text(encoding="utf-8"))
     labels = {row["source_group_label"] for row in census["groups"]}
     if (census.get("status") != "V6_TRAIN_MULTIMEMBER_CATALOGUE_IDENTITY_CENSUS_NOT_PHYSICAL_MEMBERSHIP"
             or census.get("eligible_training_group_count") != 272 or len(labels) != 272
-            or census.get("input_sha256", {}).get(str(GRAPH_CENSUS)) != GRAPH_CENSUS_SHA):
+            or census.get("input_sha256", {}).get(str(GRAPH_CENSUS)) != GRAPH_CENSUS_SHA
+            or census.get("input_sha256", {}).get(str(POINTS)) != POINTS_SHA
+            or census.get("input_sha256", {}).get(str(FP)) != FP_SHA):
         raise ValueError("frozen v6 training cohort contract changed")
 
     paths = {name: ROOT / "data" / name for name in SOURCE_HASHES}
@@ -189,17 +200,21 @@ def main():
             if int(pgc) in pgc_group and pgc_group[int(pgc)] != group:
                 raise ValueError(f"PGC {pgc} appears in multiple selected source groups")
             pgc_group[int(pgc)] = group
+    with np.load(POINTS, allow_pickle=False) as data:
+        point_recnos = set(map(int, data["recno"]))
 
     groups = defaultdict(list)
     selected_edges = selected_rows(paths["cf4_2mpp_crossmatch_v1.csv"],
         ("PGC", "1PGC", "twompp_recno", "match_class"),
-        lambda row: row["match_class"] == "secure_joint_mark" and row["twompp_recno"].strip()
-                    and int(row["PGC"]) in pgc_group)
+        lambda row: eligible_secure_edge(row, pgc_group, point_recnos))
     for edge in selected_edges:
         groups[pgc_group[int(edge["PGC"])]].append(
             (int(edge["PGC"]), edge["1PGC"], int(edge["twompp_recno"])))
-    if set(groups) != labels or sum(map(len, groups.values())) != 828:
-        raise ValueError("frozen cohort no longer has 272 groups and 828 secure member links")
+    expected_links = sum(row["secure_edge_count"] for row in census["groups"])
+    if set(groups) != labels or sum(map(len, groups.values())) != expected_links:
+        raise ValueError(
+            f"frozen cohort mismatch: groups={len(groups)}/{len(labels)}, "
+            f"links={sum(map(len, groups.values()))}/{expected_links}")
 
     cf4_pairs = {(pgc, str(group).strip()) for edges in groups.values()
                  for pgc, group, _ in edges}
@@ -247,13 +262,14 @@ def main():
     report = {
         "status": "V6_TRAIN_GROUP_REDSHIFT_OVERLAP_SOURCE_READOUT_NOT_COVARIANCE_CALIBRATION",
         "job_id": os.environ["SLURM_JOB_ID"], "source_commit": actual,
-        "group_count": len(rows), "secure_member_pair_count": 828,
+        "group_count": len(rows), "secure_member_pair_count": expected_links,
         "relation_counts": dict(relation_counts), "relation_summaries": aggregate(rows),
         "T10106_control": {key: value for key, value in control.items()
                             if key not in ("_samples", "_group_pairs")},
         "groups": [{key: value for key, value in row.items()
                     if key not in ("_samples", "_group_pairs")} for row in rows],
         "source_sha256": source_hashes, "FP_graph_sha256": FP_SHA,
+        "count_point_manifest_sha256": POINTS_SHA,
         "identity_census_sha256": IDENTITY_CENSUS_SHA, "graph_census_sha256": GRAPH_CENSUS_SHA,
         "heldout_measurement_values_used": False, "FP_distance_marks_read": False,
         "likelihood_scores_read": False, "field_state_read": False, "PM_evolutions": 0,

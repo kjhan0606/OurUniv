@@ -59,12 +59,16 @@ H200/H100/A100 modes are checked before choosing one compatible allocation.
 
 ## Result and next decision
 
-Initial typed-H100 Slurm job 410985 failed in the test phase after four
-seconds (MaxRSS 1.4 MiB): the test imported the previous helper name after a
-lean refactor renamed it. No source rows or science calculation were reached;
-the log is preserved at `/gpfs/kjhan/CF4/logs/cf4_R2_v6_zoverlap_410985.err`.
-The test import is corrected and the retry uses fresh output path
-`r2_v6_redshift_overlap_20261003_v2`.
+Typed-H100 job 410985 failed in the test phase after four seconds (MaxRSS
+1.4 MiB): a stale test import name. No source rows were reached; log preserved
+at `/gpfs/kjhan/CF4/logs/cf4_R2_v6_zoverlap_410985.err`. Retry 410986 passed
+all three tests, then caught a real selection omission before velocity
+summaries (5 s, MaxRSS 3.44 MiB): the reconstruction had not restricted secure
+links to the frozen 2M++ count-point manifest. Its log is preserved at
+`/gpfs/kjhan/CF4/logs/cf4_R2_v6_zoverlap_410986.err`; no velocity comparison
+or output directory was produced. The point-manifest hash/ID filter and a
+focused exclusion regression are now included. Retry uses fresh output path
+`r2_v6_redshift_overlap_20261003_v3`.
 
 Pending the corrected Slurm result. R2 remains incomplete and NO-GO for a
 production posterior or IC. No next covariance fit is implied: the driver
