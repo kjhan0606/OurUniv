@@ -511,3 +511,14 @@ the SAME field/data/closure with sourceGL2 (8 volume nodes), same30min/12GiB
 cap and no floor/operator/heldout change. Do not label GL2 converged merely
 because support becomes positive; if support still fails, localize it before
 any larger fit, width retuning or chain. No automatic higher-order ladder.
+
+GL2 retry410645/sourcebd91f7b FAILED24s at different training row76; no
+likelihood result. GL2 removes the first GL1 zero but not all rows. Source
+quadrature alone has NOT closed actual raw support. Continue within the same
+bundle with ALL-source readout for rows2/76 under the existing GL1/2 rules:
+compare finite8sigma/untruncated radial diagnostic weights and old TSC at the
+SAME core30/broadscale.5. Retain all source cells, density, LF and angular
+selection. Infinite-tail diagnostic retains27 images and is NOT an adopted
+periodic model/likelihood; it merely separates local Gaussian cutoff from
+ray/voxel coverage. No floor, larger width, new simulation or higher GL
+ladder. Same H1002CPU12GiB30min envelope; no production follow-on.

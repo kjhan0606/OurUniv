@@ -17,4 +17,4 @@ test "$(git rev-parse HEAD)" = "$CF4_EXPECTED_COMMIT"
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts${PYTHONPATH:+:$PYTHONPATH}"
-exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_r2_actual_moment_bundle.py
+exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 "${CF4_R2_DRIVER:-scripts/cf4_r2_actual_moment_bundle.py}"
