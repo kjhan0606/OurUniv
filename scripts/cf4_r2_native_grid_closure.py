@@ -14,10 +14,13 @@ from scipy.special import gammaln
 from cf4_r2_native_mock import distance_tables,place_native_halves,exposure_and_radial_bins,aggregate
 from cf4_r2_raw_volume_target import tracer_masses,tracer_geometry
 from cf4_r2_shell_cdf_count import predict_source_volume_intensity
+from cf4_r2_marked_tracer_jax import sparse_marked_poisson_log_likelihood
 
 jax.config.update('jax_enable_x64',True)
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
-OUT=BASE/'r2_native_grid_closure_20261002_v1'
+OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_native_grid_closure_20261002_v1')))
+VOLUME_ORDER=int(os.environ.get('CF4_R2_VOLUME_ORDER','2'))
+MARK_ORDER=int(os.environ.get('CF4_R2_MARK_ORDER','4'))
 
 
 def main():
@@ -51,13 +54,14 @@ def main():
     report=dict(job_id=os.environ['SLURM_JOB_ID'],classification='FULL_NATIVE_VOXEL_CDF_FIXED_CLOSURE_DEVELOPMENT',
         no_fit=True,no_CF4_outcomes=True,no_prior_injection=True,closure=closure,
         conservative_max_sigma_km_s=float(upper),prediction={},scalar_checks={},
-        limits=endpoint['limits']+['Only source GL2 and mark4 in this first full-grid readout; convergence unproven.'],
+        source_volume_order=VOLUME_ORDER,mark_order=MARK_ORDER,
+        limits=endpoint['limits']+['Finite source-volume/mark rules, not automatic convergence certification.'],
         MW_M31=endpoint['MW_M31'],M33=endpoint['M33'])
     def prediction(base,scale,conditional):
         geom=dict(geometry,sigma_los_km_s=base)
         if conditional:geom.update(source_velocity_variances_km2_s2=var,dispersion_scale=scale)
         return predict_source_volume_intensity(pos,vel,intrinsic,angular,source_spacing=1.5,
-            volume_order=2,order=4,segments=1,deposition='voxel_cdf_grid',**geom)
+            volume_order=VOLUME_ORDER,order=MARK_ORDER,segments=1,deposition='voxel_cdf_grid',**geom)
     core_fn=jax.jit(lambda width:prediction(width,1.,False))
     broad_fn=jax.jit(lambda scale:prediction(closure['sigma_core'],scale,True))
     tic=time.monotonic();core=core_fn(closure['sigma_core']);jax.block_until_ready(core)
@@ -68,7 +72,8 @@ def main():
     if not np.isfinite(host).all() or np.any(host<0):raise ValueError('invalid full-grid prediction')
     flat=host.reshape(-1)
     for key,record in scalar['keys'].items():
-        expected=record['rules']['GL2_mark4']['conditional_mixture'];value=float(flat[int(key)])
+        rule=f'GL{VOLUME_ORDER}_mark{MARK_ORDER}'
+        expected=record['rules'][rule]['conditional_mixture'];value=float(flat[int(key)])
         error=abs(value-expected)/max(1e-20,abs(value),abs(expected))
         report['scalar_checks'][key]=dict(scalar=expected,full_grid=value,relative_error=error)
         if error>1e-7:raise ValueError('full-grid/scalar boundary integral mismatch')
@@ -81,6 +86,42 @@ def main():
             count_logscore=None if zeros.any() else float(np.sum(nn*np.log(at)-gammaln(nn+1))-expected),
             aggregate_L1=float(np.abs(table-observed).sum()),predicted_table=table.tolist(),observed_table=observed.tolist())
     np.savez_compressed(OUT/'predicted_counts.npz',conditional=host)
+    report['gradient_status']='pending' if os.environ.get('CF4_R2_CHECK_GRADIENT')=='1' else 'not_requested'
+    report['elapsed_seconds']=time.monotonic()-start
+    report['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
+    (OUT/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    if os.environ.get('CF4_R2_CHECK_GRADIENT')=='1':
+        keep=train[keys%128**3]
+        key_j,count_j,mask_j=jnp.asarray(keys[keep]),jnp.asarray(counts[keep]),jnp.asarray(train)
+        def score(log_scale):
+            lam=(1-closure['fraction_broad'])*core+closure['fraction_broad']*prediction(
+                closure['sigma_core'],jnp.exp(log_scale),True)
+            return sparse_marked_poisson_log_likelihood(lam,key_j,count_j,selected_voxel_mask=mask_j)
+        tic=time.monotonic();log_scale=np.log(closure['matter_dispersion_scale']);eps=1e-4
+        scalar_score=jax.jit(score)
+        value,derivative=jax.jit(jax.value_and_grad(score))(log_scale)
+        jax.block_until_ready((value,derivative))
+        fd=float((scalar_score(log_scale+eps)-scalar_score(log_scale-eps))/(2*eps))
+        derivative=float(derivative);error=abs(fd-derivative)/max(1.,abs(fd),abs(derivative))
+        report['training_logscale_gradient']=dict(value=float(value),reverse=derivative,
+            finite_difference=fd,relative_error=error,seconds=time.monotonic()-tic)
+        if not np.isfinite(error) or error>1e-3:raise ValueError('full-grid score derivative failed')
+        report['gradient_status']='passed'
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    fig,axs=plt.subplots(2,2,figsize=(12,7),sharex=True,sharey=True)
+    tables=[np.asarray(report['prediction'][split][kind]) for split in ('train','test')
+            for kind in ('observed_table','predicted_table')]
+    vmax=max(np.log1p(x).max() for x in tables)
+    for ax,table,title in zip(axs.ravel(),tables,('Native training counts','Conditional prediction: train',
+        'Native development test counts','Conditional prediction: test')):
+        im=ax.imshow(np.log1p(table),origin='lower',aspect='auto',vmin=0,vmax=vmax,
+            extent=(0,192,-.5,5.5));ax.set_title(title);ax.set_xlabel('radius (cMpc/h); last bin >=180')
+        ax.set_ylabel('observed K population')
+    fig.colorbar(im,ax=axs.ravel().tolist(),label='log(1 + count)',shrink=.8)
+    fig.suptitle('Boundary-integrated native count prediction: development, not CF4 posterior')
+    fig.savefig(OUT/'population_radius_prediction.png',dpi=150);plt.close(fig)
     report['elapsed_seconds']=time.monotonic()-start
     report['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
     (OUT/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')

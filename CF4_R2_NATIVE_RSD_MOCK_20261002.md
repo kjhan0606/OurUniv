@@ -357,3 +357,24 @@ new validation framework. MW/M31/M33 same-NEW-field constraints unchanged.
 Source63324d6 submitted410592 typed H100,2CPU/10GiB/30min. Initial Slurm
 state PENDING Priority; missing log before allocation is not execution
 failure. No resubmission/cancellation follows merely from queued state.
+
+410592 now COMPLETED/exit0 in32s;12tests pass, native application17.892s,
+host peak1.220GiB. Full-grid/scalar key means agree exactly/to2.67e-16.
+All occupied training AND development-test keys have positive support.
+Train score-5135.0783,mean2653.8367 vs2656,L1=256.4940; test score-4434.0938,
+mean2499.0907 vs2360,L1=253.4782. Fixed conditional closure/operator improves
+sparse score versus old TSC/Gaussian but retains~5.9% test excess. No count
+refit, test-selected closure, independent calibration or posterior promotion.
+
+Next in the same bundle: refine full prediction to sourceGL4/mark8 and check
+training logscale score derivative at this fixed physical closure against
+FD. This tests the FULL empty-cell-inclusive objective, not just the two
+scalar values. Scalar reference uses matching410587 GL4/mark8. Keep exposures,
+galaxy rows, rates and all coefficients fixed; no score optimization. Save
+primal report before derivative so a failed reverse pass does not erase
+forward evidence, and make a real population/radius comparison PNG.
+Same10GiB/2CPU/typed GPU/30min cap; forward peak measured1.22GiB, refined
+streamed arrays same size; gradient/compilation planning bound<=8GiB host
+and<=24GiB device. Runtime estimate<10min, bounded by actual Slurm cap.
+No broad native count-optimizer restart. Q-GOAL/Q-LEAN and same-NEW-field
+MW/M31 ambiguity/M33 unresolved remain as above. Actual CF4 heldout untouched.
