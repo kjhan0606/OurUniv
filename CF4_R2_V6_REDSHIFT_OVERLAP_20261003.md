@@ -59,7 +59,14 @@ H200/H100/A100 modes are checked before choosing one compatible allocation.
 
 ## Result and next decision
 
-Pending the frozen Slurm result. R2 remains incomplete and NO-GO for a
+Initial typed-H100 Slurm job 410985 failed in the test phase after four
+seconds (MaxRSS 1.4 MiB): the test imported the previous helper name after a
+lean refactor renamed it. No source rows or science calculation were reached;
+the log is preserved at `/gpfs/kjhan/CF4/logs/cf4_R2_v6_zoverlap_410985.err`.
+The test import is corrected and the retry uses fresh output path
+`r2_v6_redshift_overlap_20261003_v2`.
+
+Pending the corrected Slurm result. R2 remains incomplete and NO-GO for a
 production posterior or IC. No next covariance fit is implied: the driver
 will compare this cohort readout with the already preserved source audits and
 decide whether it adds enough information to specify any shared factor.

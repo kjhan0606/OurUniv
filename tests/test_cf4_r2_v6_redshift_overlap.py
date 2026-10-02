@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from cf4_r2_v6_redshift_overlap import (
-    aggregate_relations,
+    aggregate,
     summarize_group_velocity_overlap,
 )
 
@@ -45,10 +45,10 @@ class V6RedshiftOverlapTests(unittest.TestCase):
             {12: {"GID": "mpp-1", "Vcmb": "190"}},
             {"mpp-1": {"Vcmb": "70"}},
         )[0]
-        aggregate = aggregate_relations([first, second])[first["relation_class"]]
-        self.assertEqual(aggregate["group_count"], 2)
-        self.assertEqual(aggregate["secure_member_pair_count"], 3)
-        self.assertEqual(aggregate[
+        relation_summary = aggregate([first, second])[first["relation_class"]]
+        self.assertEqual(relation_summary["group_count"], 2)
+        self.assertEqual(relation_summary["secure_member_pair_count"], 3)
+        self.assertEqual(relation_summary[
             "abs_CF4_group_Vcmb_minus_linked_2mpp_group_Vcmb_km_s"]["n"], 1)
 
     def test_ambiguous_cf4_member_velocity_is_not_arbitrarily_selected(self):
