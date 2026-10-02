@@ -1,10 +1,13 @@
 import unittest
 from unittest.mock import call, patch
 
-from cf4_r2_count_fp_ownership_control import ROOT, verify_source_commit
+from cf4_r2_count_fp_ownership_control import BASE, ROOT, SPLIT, verify_source_commit
 
 
 class SourceCommitGuardTests(unittest.TestCase):
+    def test_control_uses_the_graph_closed_v6_split(self):
+        self.assertEqual(SPLIT, BASE/'r2_sky_closed_split_v6/split.npz')
+
     @patch('cf4_r2_count_fp_ownership_control.subprocess.check_output')
     def test_abbreviated_expected_revision_is_resolved_before_comparison(self, check_output):
         revision = '116018a2f1971a756a1bfb385ad22899814fba63'

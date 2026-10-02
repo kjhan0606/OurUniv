@@ -12,7 +12,7 @@ import jax.numpy as jnp
 import numpy as np
 
 from cf4_r2_linked_fp_sparse_train import (
-    FP, SPLIT, SOURCE, load_train_singletons, select_training_single_mark_links,
+    FP, SOURCE, load_train_singletons, select_training_single_mark_links,
 )
 from cf4_r2_native_to_count_cells import native_moments_to_count_cells
 from cf4_r2_observed_ray import observed_ray_components
@@ -27,6 +27,7 @@ from cf4_r2_raw_volume_target import (
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
+SPLIT = BASE/'r2_sky_closed_split_v6/split.npz'
 STATE = BASE/'r2_raw_joint_pilot_v1/accepted_present_state.npz'
 CONTROL_PGC = 1085367
 BOX, N, SOURCE_SPACING = 384., 128, 3.

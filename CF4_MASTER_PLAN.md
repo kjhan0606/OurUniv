@@ -182,6 +182,15 @@ the same one-link calculation in a fresh output directory. Q-GOAL: restores
 the intended ownership diagnostic without changing its target. Q-LEAN: a
 two-test guard plus one existing control; no repeated long suite, simulation,
 heldout use or posterior promotion.
+The corrected retry410882 resolved the commit guard and passed both tests, then
+failed a pre-likelihood cohort join: the control imported the old v5 default
+split (1417 reconstructed links) while `load_inputs` correctly uses frozen v6
+(1414 rows). This is a split-path wiring defect; no likelihood term or science
+comparison ran. The control now explicitly binds v6 and adds a regression for
+that contract. Retry only the three tiny guard/split tests and this same
+training link in a fresh output path; retain the failed JSON/log. Q-GOAL: keeps
+the intended frozen training graph consistent. Q-LEAN: no data-law or model
+change, long test suite, gravity run or heldout access.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
