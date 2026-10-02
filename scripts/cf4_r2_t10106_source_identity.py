@@ -12,7 +12,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
 CENSUS = BASE / "r2_v6_multimember_graph_census_20261003_v2/result.json"
-OUT = Path("/gpfs/kjhan/CF4/z0_density/r2_t10106_source_identity_20261003_v1")
+OUT = Path("/gpfs/kjhan/CF4/z0_density/r2_t10106_source_identity_20261003_v2")
 SOURCES = {
     "cf4_2mpp_crossmatch_v1.csv": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
     "cf4_galaxies.csv": "28e7b8bd386f53716ed84cddd67a6f7602f98bc1394923a312f906555da7f709",
@@ -55,9 +55,12 @@ def summarize_bridge(expected_recnos, expected_pgcs, secure_edges,
     pgcs = tuple(sorted(map(int, expected_pgcs)))
     if not recnos or len(set(recnos)) != len(recnos) or not pgcs or len(set(pgcs)) != len(pgcs):
         raise ValueError("frozen member IDs must be nonempty and unique")
-    selected = [edge for edge in secure_edges if int(edge[0]) in set(pgcs)]
-    if len(selected) != len(pgcs) or len({int(edge[0]) for edge in selected}) != len(pgcs):
-        raise ValueError("each selected PGC must have exactly one secure edge")
+    pgc_set = set(pgcs)
+    selected = [edge for edge in secure_edges if int(edge[0]) in pgc_set]
+    if len({int(edge[0]) for edge in selected}) != len(selected):
+        raise ValueError("duplicate secure edges for a selected PGC")
+    if len(selected) != len(pgcs):
+        raise ValueError("a selected PGC lacks its secure edge")
     edge_by_pgc = {int(pgc): (str(group).strip(), int(recno))
                    for pgc, group, recno in selected}
     if tuple(sorted(recno for _, recno in edge_by_pgc.values())) != recnos:

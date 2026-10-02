@@ -47,6 +47,12 @@ H100 and A100 modes were checked before submission; H100 was selected. This is
 a source-identity check, not a GPU calculation; it remains on Slurm per the
 project's execution policy.
 
+The first submission, 410950, failed in the focused tests before any source
+join: its duplicate-edge fixture reached a generic cardinality error rather
+than the expected duplicate-specific branch. No output directory or catalogue
+calculation was produced; the Slurm log is preserved. The error branches are
+now distinct and the same control is retried into a fresh `_v2` output path.
+
 ## Interpretation boundary
 
 The result may establish whether these two catalogues assign the linked
