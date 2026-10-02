@@ -266,6 +266,21 @@ for a same-field shared-group factor); Q-LEAN yes (one group, IDs only,
 no scores, PM, heldout or fit). This follows the user's rule that a duplicated
 or consecutive Fable audit is conducted by the driver. R2 remains incomplete;
 MW/M31 ambiguous and M33 unresolved on the same NEW field.
+Initial job410950 failed in the duplicate-edge regression before source access;
+its log is preserved, and corrected retry410952 completed/exit0 in5s on typed
+H100 with2 tests passing (MaxRSS3.44MiB/2GiB). Both linked PGCs map to the same
+CF4 `1PGC=53982` and same 2M++`GID=2887`; each crossmatch `1PGC` agrees with its
+CF4 member-table assignment. This is catalogue concordance for one frozen
+training group only, not physical membership/covariance calibration or a
+posterior. Next bounded source bundle censuses the same ID concordance across
+the272 training multi-link groups (IDs and split roles only; no heldout
+measurement values or field state) before building the shared-latent factor;
+scope is `CF4_R2_V6_GROUP_IDENTITY_CENSUS_20261003.md`. Q-GOAL: necessary to
+prevent wrong group ownership in the same-field factor. Q-LEAN: one full but
+small source-identity join; no likelihood or validation ladder. External Fable/Astra review would
+repeat the immediately preceding driver review, so the driver performs this
+review under the user's routing rule. MW/M31 remain ambiguous and M33 unresolved
+on the same NEW field.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and

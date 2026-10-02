@@ -53,6 +53,20 @@ than the expected duplicate-specific branch. No output directory or catalogue
 calculation was produced; the Slurm log is preserved. The error branches are
 now distinct and the same control is retried into a fresh `_v2` output path.
 
+Corrected H100 job 410952 COMPLETED/exit0 in five seconds; both focused tests
+pass and batch MaxRSS was 3.44 MiB under the 2-GiB request. PGC 54049 maps to
+2M++ `recno=52802`, and PGC 54054 to `recno=52824`. Both CF4 members have
+`1PGC=53982`; both 2M++ points have `GID=2887`. For each PGC, the secure-edge
+CF4 group ID agrees with the CF4 member table. The output contains IDs only;
+no group velocities, distance marks, likelihood or field were read.
+
+Driver result review: this removes the catalogue-partition mismatch for this
+one preselected control and supports retaining one shared *catalogue-group*
+latent in its future factor. It does not establish common physical membership,
+group inclusion, covariance, or representativeness of the other 271 groups.
+The next bounded bundle extends only this ID concordance to the full
+training multi-link cohort before any shared-factor implementation.
+
 ## Interpretation boundary
 
 The result may establish whether these two catalogues assign the linked
