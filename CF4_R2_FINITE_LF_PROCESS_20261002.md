@@ -1,8 +1,10 @@
 # R2 finite selected-LF process — 2026-10-02
 
-Status at submission: implementation commit `2e6c8aa`; focused Slurm
-regression job `410407` is pending. No fit, chain, held-out score, PMWD
-evolution, map promotion or IC generation was run.
+Original implementation commit `2e6c8aa`; initial focused Slurm regression
+`410407` FAILED after18m34s (exit1, MaxRSS2,628,512K), not OOM. Its first two
+test files passed6/6 and13/13. The third file hit a test-reference API
+`TypeError` on `finite_reference_interval`; the fourth file did not run. No
+fit, chain, held-out score, PMWD evolution, map promotion or IC generation ran.
 
 ## Change and identity
 
@@ -67,8 +69,14 @@ checks are legacy-factorization value/gradient equality for `alpha>-1`,
 finite values/derivatives across `alpha=-1`, count-volume equivalence, and
 support wiring. Results and any limitations are appended after completion.
 
-While that regression job is pending, a lean cost profile was added in commit
-`54d4581` and submitted as Slurm `410425`, with `afterok:410407`. It times the
+The test-reference helper was corrected in commit `cff924a` to accept and
+dispatch the optional finite interval. The regression runner now requests4GiB
+(over20% above the measured2.51GiB peak) and45 minutes. Full retry `410445`
+is submitted to H200/H100/A100. The earlier cost job `410425` had
+`DependencyNeverSatisfied` and was cancelled after410407 failed.
+
+A lean cost profile was added in commit `54d4581` and resubmitted as Slurm
+`410446`, with `afterok:410445`. It times the
 finite transfer's compiled forward-plus-`(Mstar, alpha)` gradient for one
 population at 4,096, 65,536 and 262,144 synthetic sources. It requests one
 GPU, two CPUs, 6 GiB host memory (a 20% allowance over a conservative 5 GiB
@@ -77,4 +85,4 @@ estimate), and has a 20-minute cap. Its result path is
 This isolates transfer cost only: it uses no saved field, does not include
 fresh raw-support construction or the full target/PM adjoint, and is not
 evidence for a fit, posterior, held-out prediction, or LG identification.
-If 410407 fails, Slurm will not execute this dependent profile.
+If 410445 fails, Slurm will not execute this dependent profile.

@@ -376,11 +376,18 @@ the old `I_bin/I_reference * I_selected/I_bin` factorization where alpha>-1.
 The active alpha coordinate is now the broad development regularizer
 `alpha=-1+.5*u7`; the finite selected process remains defined below -1 without
 normalizing an unobserved infinite faint tail. Four focused source/transfer/
-count/support test files are queued in Slurm410407 (H200/H100/A100, 12GiB,
-30min). Validation is pending; no sampling or field fit follows automatically.
-Slurm410425 is a bounded finite-transfer forward/gradient throughput profile,
-dependent on410407 success; it uses synthetic inputs only and cannot authorize
-sampling. Output: `/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
+count/support test files were submitted as Slurm410407 (H200/H100/A100, 12GiB,
+30min). It FAILED after18m34s (exit1, MaxRSS2,628,512K), not OOM: the first
+two files passed6/6 and13/13; `test_cf4_r2_shell_cdf_count.py` reached a test
+adapter `TypeError` because its direct reference lacked the new optional
+`finite_reference_interval` keyword; the final raw-volume file did not run.
+Commitcff924a adds the keyword and finite-mode dispatch to the direct helper;
+the runner now requests4GiB (above the prior measured2.51GiB by>20%) and45min.
+Retry410445 is pending. The earlier dependent throughput job410425 could never
+run after410407 failed and was cancelled. Its replacement410446 is afterok
+410445; it profiles synthetic finite-transfer forward/gradient cost only and
+cannot authorize sampling. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
 Old saved tracer coordinates require the mapping in the decision record to
 preserve physical alpha and are not directly reusable unchanged. Existing
 fixed-field sensitivities remain historical diagnostics, not invalidated
