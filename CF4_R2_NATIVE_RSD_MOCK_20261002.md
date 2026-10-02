@@ -354,3 +354,6 @@ Q-GOAL: physically consistent observation operator over whole calibration
 population before R2 inference. Q-LEAN: existing source/mark integrator and
 one boundary partition, two component forward passes, no simulation or
 new validation framework. MW/M31/M33 same-NEW-field constraints unchanged.
+Source63324d6 submitted410592 typed H100,2CPU/10GiB/30min. Initial Slurm
+state PENDING Priority; missing log before allocation is not execution
+failure. No resubmission/cancellation follows merely from queued state.

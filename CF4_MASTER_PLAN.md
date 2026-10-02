@@ -494,6 +494,17 @@ using field mean AND local dispersion, not an all-space Gaussian width.
 Still native training-only, not independent validation or R2 prior. Next
 connect conditional variance to boundary-integrated marked count prediction;
 preserve diagonal-covariance, K/Ks and full-population calibration limits.
+30c77c3 connection410587 COMPLETED1m49s,11tests pass: conditional two-key
+means.000304812/.00282951 versus global2.387e-7/1.581e-6. Scale derivatives
+agree~1e-7; not population calibration or full quadrature convergence.
+63324d6 implements full-grid voxel-boundary partition and marked integration:
+all plane crossings covered by the finite8sigma periodic-domain proof,
+no point-NGP indicator or TSC smoothing.410592 SUBMITTED typed H100/2CPU/
+10GiB/30min; currently PENDING Priority, not failed. One fixed native
+conditional forward prediction, sourceGL2/mark4, no fit or CF4 outcomes;
+requires scalar/full-grid agreement plus all occupied-key support and
+empty-cell-inclusive count readout. Full record remains the native-RSD
+bundle document. R2 posterior remains NO-GO; no IC or LG role promotion.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
