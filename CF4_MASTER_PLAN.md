@@ -291,7 +291,12 @@ posterior. MW/M31 remain ambiguous and M33 unresolved on the same NEW field.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
-incomplete.
+incomplete. The bounded implementation plan is
+`CF4_R2_V6_REDSHIFT_OVERLAP_20261003.md`: reuse the older all-sample source
+audits without repeating their redshift fit, and report only the 272-group
+v6 training cohort's member/group `Vcmb` associations by relation class.
+This remains descriptive source evidence, not covariance calibration or a
+likelihood.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
