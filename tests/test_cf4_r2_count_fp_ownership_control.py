@@ -3,7 +3,6 @@ from unittest.mock import call, patch
 
 from cf4_r2_count_fp_ownership_control import (
     BASE, ROOT, SPLIT, support_components_by_scale, verify_source_commit,
-    select_median_nonzero_offset_index,
 )
 
 
@@ -46,13 +45,6 @@ class SupportComponentTests(unittest.TestCase):
         self.assertEqual(found, {-1.: {(42, 3, 2)},
                                   0.: {(42, 3, 2)},
                                   1.: {(42, 3, 2)}})
-
-    def test_geometry_only_control_is_nearest_median_nonzero_radius_offset(self):
-        index, median = select_median_nonzero_offset_index(
-            [30, 10, 20, 40], [10., 10., 10., 10.], [10., 11., 13., 15.])
-        self.assertEqual(index, 2)
-        self.assertEqual(median, 3.)
-
 
 if __name__ == '__main__':
     unittest.main()

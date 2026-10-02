@@ -214,19 +214,31 @@ cMpc/h. Result: `/gpfs/kjhan/CF4/z0_density/r2_count_fp_ownership_20261002_v4/re
 Driver accepts fixed-state mechanics only: equal radii mean this row does not
 exercise distinct point/group redshift conditioning; one mark is not evidence
 for group-selection/covariance calibration or posterior validity. Continue
-the same bounded bundle with one geometry-only, score-blind training link
-nearest the median nonzero absolute point/group radius offset, then close this
-operator check. Q-GOAL: exercise the actual count-to-mark information path on
-the same new field. Q-LEAN: one additional link, no cohort census, refit,
-heldout access, gravity or posterior promotion. MW/M31 remain ambiguous and
-M33 unresolved; all eventual LG observables must constrain those roles on the
-same NEW field, not native truth identities.
-The offset-selected extension is implemented by
-`select_median_nonzero_offset_index`: among the same1414 v6 training links it
-chooses the row nearest the median nonzero absolute observed-radius offset,
-breaking ties by PGC, without reading any likelihood scores. Its five focused
-guard/selection regressions pass. The next job uses this single geometry-only
-choice and otherwise unchanged field/operator/resources in a fresh output.
+the same one-point operator check only to its stated fixed-state scope.
+410888 passed all five guard/split/support/selection tests, then stopped before
+score evaluation because **none** of the1414 v6 one-point training links has
+an absolute CF4-group versus linked-2M++ radius difference above1e-8 cMpc/h.
+This is a cohort property under the frozen input convention, not a likelihood
+result; the median-nonzero selector correctly found no candidate. Its failed
+JSON/log are preserved at
+`/gpfs/kjhan/CF4/z0_density/r2_count_fp_offset_control_20261003_v1/`.
+Do not retry or retain a selector for a nonexistent singleton case. Together,
+410884 and410888 close only the one-point count/mark mechanics: a same-radius
+identity and its fixed-row ray comparison, with no full-population law,
+selection calibration, posterior or heldout evidence. The material remaining
+branch is multi-member CF4 groups, where group and member redshifts can differ.
+Next bundle: use the source-bound v6 graph to build one normalized shared-
+group-latent count/mark factor with member-redshift covariance and explicit
+group-inclusion uncertainty; first freeze current-v6 member degrees and one
+training-only multi-member control before reading mark scores. Do not multiply
+member marks independently, score another count occurrence, or infer group
+membership from native truth. No posterior sampling until selection and
+covariance are defensible. Q-GOAL: connect actual group-distance information
+to the same new z=0 field while preserving the 2M++ count ownership. Q-LEAN:
+move directly to the missing group law, no more singleton/ray ladders, gravity
+run, heldout values or target promotion. MW/M31 remain role-ambiguous and M33
+unresolved; their observables must later constrain those roles on the same NEW
+field at LG<=0.3 cMpc/h, with native truth IDs only for calibration/evaluation.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
