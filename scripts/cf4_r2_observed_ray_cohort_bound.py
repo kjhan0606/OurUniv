@@ -57,7 +57,8 @@ def main():
     variance_max=float(jnp.max(variance))
     sigma_bound=float(jnp.sqrt(30.**2+.5**2*variance_max))
     displacement_bound=.01*(vmax+8*sigma_bound)
-    margin=192.-radius-displacement_bound
+    face_exit=192./np.max(np.abs(direction),axis=1)
+    margin=face_exit-radius-displacement_bound
     safe=margin>0.
     result=dict(status=('ALL_TRAINING_LINKS_WITHIN_NO_WRAP_BOUND' if np.all(safe)
                         else 'NO_WRAP_BOUND_NOT_VALID_FOR_ALL_TRAINING_LINKS'),
@@ -67,13 +68,16 @@ def main():
         bound=dict(box_half_cMpc_h=192.,conversion_h_over_H0=.01,
             maximum_count_grid_speed_km_s=vmax,maximum_diagonal_variance_km2_s2=variance_max,
             mixture_sigma_upper_bound_km_s=sigma_bound,eight_sigma_plus_coherent_shift_cMpc_h=displacement_bound),
+        first_periodic_face_cMpc_h=dict(minimum=float(np.min(face_exit)),
+            p05=float(np.quantile(face_exit,.05)),median=float(np.median(face_exit)),
+            p95=float(np.quantile(face_exit,.95)),maximum=float(np.max(face_exit))),
         margin_cMpc_h=dict(minimum=float(np.min(margin)),p05=float(np.quantile(margin,.05)),
             median=float(np.median(margin)),p95=float(np.quantile(margin,.95)),maximum=float(np.max(margin))),
         positive_margin_rows=int(safe.sum()),nonpositive_margin_rows=int((~safe).sum()),
         nonpositive_examples=[dict(PGC=int(pgc[i]),observed_radius_cMpc_h=float(radius[i]),
             margin_cMpc_h=float(margin[i])) for i in np.flatnonzero(~safe)[:20]],
         FP_direction_norm_max_error=direction_norm_error,
-        interpretation='A positive margin proves the stated fixed-ray 8-sigma support cannot reach a periodic face for that row under this saved field; a nonpositive margin means the bound is inconclusive, not that the row has zero physical support.',
+        interpretation='The direction-specific exit radius is 192/max(abs(n_i)), the first periodic cube face along the ray. A positive margin proves the stated fixed-ray 8-sigma support cannot reach that face under this saved field; a nonpositive margin means the bound is inconclusive, not that the row has zero physical support.',
         R2_complete=False,posterior=False)
     result['seconds']=time.monotonic()-started
     result['host_peak_GiB']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2
