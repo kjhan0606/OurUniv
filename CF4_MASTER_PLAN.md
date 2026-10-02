@@ -316,10 +316,28 @@ selected different rows and its Mstar=-23.28 knee was nominally about0.87mag
 too faint at h=.6711. This further precludes treating its result as active-R2
 calibration; it is not evidence of an h-convention defect in the current
 source path. See `CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md`.
+Separate from CAMELS, the six bias exponents in Lavaux & Jasche (2016) Table 1
+are same-catalogue plug-in estimates: ARES inferred luminosity-dependent bias
+from 2M++ and the authors then fixed those estimates in BORG on the same
+catalogue. They are external to CF4 distance marks, but not independent of
+2M++ count data; do not use them as an informative prior alongside those same
+counts without modelling their dependence. The historical six-observed-bin
+partial sampler did center bias nuisances on these values, but remains
+explicitly uncalibrated and not an R2 delivery; the current N256 five-true-K
+GL2 target uses unit-centred broad regularizers and does not inject the
+six-vector. The two bin definitions are not interchangeable. A local heldout
+score is prospective only if the bias estimate excluded those rows; that
+independence is not established for the paper's full-catalogue ARES estimates.
+The paper also maps ARES linear-regime bias to BORG's power-law exponent via
+an approximate equality that its authors say is not exact. Fable5 concurs
+(CONDITIONAL PASS for documentation only; Q-GOAL/Q-LEAN pass). Exact row-level
+overlap with the paper input was not re-derived. Preserve the paper values
+only as historical reference points.
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
-must source and validate the radius-dependent selection/transfer and the
-calibration inputs for the actual five-true-K/six-observed-bin model.
+must source and validate the radius-dependent selection/transfer and obtain
+genuinely independent or explicitly joint calibration inputs for the actual
+five-true-K/six-observed-bin model.
 
 The source audit also exposed an exact-tie LF-transfer gradient discrepancy:
 before correction, transfer values matched the direct reference but an exact

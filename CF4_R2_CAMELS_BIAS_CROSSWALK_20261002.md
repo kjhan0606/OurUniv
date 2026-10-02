@@ -8,6 +8,39 @@ unchanged, reverse their order, or promote the old v8 holdout as current-R2
 calibration. This is a source/provenance correction only: no likelihood,
 prior, field, posterior, selection law or heldout result changed.
 
+A separate literature-prior issue is now resolved: the six bias exponents in
+[Lavaux & Jasche (2016), Table 1](https://academic.oup.com/mnras/article/455/3/3169/2892571),
+are **not independent external calibration**.
+Their ARES first step inferred luminosity-dependent bias from the 2M++ data;
+the authors then held those estimates fixed in the BORG reconstruction of
+that same catalogue. Table 1 fixes one observed subsample to bias 1, so the
+other five values are relative estimates. Reusing them as an informative prior
+while the same 2M++ counts enter this project's likelihood would reuse
+catalogue information without carrying its dependence and can make the bias/
+density constraint spuriously tight. The values are external to the CF4
+distance marks, but not independent of the 2M++ count catalogue. They remain
+useful as historical reference points, not independent prior information.
+Exact row-by-row overlap between the paper input and the locally pinned
+catalogue was not re-derived here; both are nevertheless the same named 2M++
+survey catalogue.
+There is also a model-step approximation: the paper derives a linear-regime
+bias with ARES and carries it into BORG's power-law bias exponent using
+`b ≃ alpha`; the authors explicitly note this equality is not exact and may
+bias the reconstructed density.
+
+This distinction applies to old six-observed-bin development code that reads
+`published_prior` and multiplies its six bias centres by lognormal nuisance
+factors (for example `scripts/cf4_r2_all_method_sampler.py`). That partial
+sampler includes the same 2M++ count datum and explicitly records
+`source_calibrated=False` and `R2_delivery=False`; its output is not an
+independent validation result or a promoted posterior. A local heldout score
+is prospective only if the bias estimate was built without using those heldout
+rows; the paper's full-catalogue ARES estimate does not establish that
+independence for a within-2M++ split. The current N256
+five-true-K exact-GL2 path instead uses five unit-centred broad white-coordinate
+regularizers and does not inject the six Lavaux--Jasche values. Do not confuse
+the historical six-bin pilot with that active target.
+
 ## What the source actually estimates
 
 `scripts/cf4_camels_external_bias_calibration.py` forms six equal-number bins
@@ -36,7 +69,9 @@ normalized over the full source box and then mixed through the LF/selection
 transfer into six observed populations. `src/cf4_r2_source_sky_joint.py`
 labels these as development regularizers, not calibrated priors; the active
 coordinates are `exp(0.5*white_tracer[1:6])` under the broad white-coordinate
-Gaussian penalty. No active R2 source path consumes `external_bias_prior`.
+Gaussian penalty. This five-bin target does not consume the six-vector
+`external_bias_prior`; older six-observed-bin partial targets do, as noted
+above, but are uncalibrated development artifacts.
 
 The discrepancy is not only an ordering problem. CAMELS has stellar-mass
 sextiles without a K-band luminosity or M*/L_K crosswalk; it estimates a
@@ -112,6 +147,17 @@ subsequently verified the source convention from the primary article and
 resolved both current-path consistency and the legacy mismatch above. This
 review is advisory, not a posterior or promotion decision.
 
+Fable5 read-only follow-up on Lavaux & Jasche (2016): **CONDITIONAL PASS** for
+this documentation-only clarification; **NO** to treating the six Table 1
+values as an independent prior or injecting them into the active five-bin
+model. It verified the same-catalogue ARES-to-BORG sequence, the fiducial
+normalization, the historical six-bin sampler use, and the active five-bin
+unit-centred code path. Q-GOAL and Q-LEAN both pass for a concise provenance
+correction; no code, configuration, target, fit, or calculation change is
+needed. The driver independently checked the primary paper and source wiring.
+Fable could not directly fetch the MNRAS page/PDF and exact paper-input-to-local
+row overlap was not reproduced, so those points are not claimed as verified.
+
 ## Next valid use, if needed
 
 Do not fit a crosswalk until it is needed by the active likelihood. A valid
@@ -122,6 +168,13 @@ and normalization convention, and matching selection/redshift-space
 estimands. Train-only construction and an actually prospective, independent
 CF4-disjoint prediction would then be needed before that calibration could
 inform R2. This note authorizes none of those calculations.
+
+Likewise, Lavaux--Jasche Table 1 values alone cannot fill the active R2
+calibration requirement: they are same-catalogue plug-in estimates for a
+different six-observed-bin law. A future reuse would need an explicit joint
+likelihood or a training-only estimate with its dependence and prospective
+validation handled; they must not be presented as independent external
+calibration.
 
 No legacy CAMELS or v8 result identifies MW, M31 or M33. Later role inference
 must use LG observables on the same new z=0 field at zoom resolution, retain
