@@ -16,9 +16,10 @@ from scipy.optimize import minimize_scalar
 from scipy.special import logsumexp
 
 RAW = Path('/scratch/kjhan/IllustrisTNG/TNG100-1/output/groups_099')
+CATALOGUE = Path('/gpfs/kjhan/CF4/z0_density/r2_tng_native_k_catalog_20261002_v1.h5')
 MATTER = Path('/gpfs/kjhan/CF4/z0_density/bundle_c_v1/total_matter_v1/matter_moments.h5')
 OUT = Path(os.environ.get('CF4_R2_OUT_DIR',
-    '/gpfs/kjhan/CF4/z0_density/r2_tng_native_k_response_20261002_v1'))
+    '/gpfs/kjhan/CF4/z0_density/r2_tng_native_k_response_20261002_v2'))
 EDGES = np.array([-np.inf, -25., -23.-2./3., -22.-1./3., -21., np.inf])
 
 
@@ -67,25 +68,29 @@ def main():
     if abs(control['beta']-1.) > 1e-6 or abs(control['predicted_test_count']-40.) > 1e-4:
         raise ValueError('known-response/rate control failed')
     OUT.mkdir(parents=True, exist_ok=False)
-    with h5py.File(RAW/'fof_subhalo_tab_099.0.hdf5', 'r') as f:
-        h = float(f['Header'].attrs['HubbleParam'])
-        box = float(f['Header'].attrs['BoxSize'])/1000.
-        files = int(f['Header'].attrs['NumFiles'])
-        expected = int(f['Header'].attrs['Nsubgroups_Total'])
+    with h5py.File(CATALOGUE, 'r') as f:
+        if f.attrs['status'] != 'COMPLETE_NATIVE_FIELD_COPY_NO_SELECTION':
+            raise ValueError('incomplete staged catalogue')
+        header = f['chunks/0/Header'].attrs
+        h = float(header['HubbleParam'])
+        box = float(header['BoxSize'])/1000.
+        files = int(header['NumFiles'])
+        expected = int(header['Nsubgroups_Total'])
     pieces = {k: [] for k in ('position', 'velocity', 'K_physical', 'star_count', 'native_id')}
     seen = 0
     invalid_stellar_photometry = 0
-    for index in range(files):
-        with h5py.File(RAW/f'fof_subhalo_tab_099.{index}.hdf5', 'r') as f:
+    with h5py.File(CATALOGUE, 'r') as catalogue:
+        for index in range(files):
+            f = catalogue[f'chunks/{index}']
             header = f['Header'].attrs
             if float(header['HubbleParam']) != h or float(header['BoxSize'])/1000. != box:
                 raise ValueError('inconsistent native catalogue header')
             n = int(header['Nsubgroups_ThisFile'])
             if n:
                 sub = f['Subhalo']
-                stars = sub['SubhaloLenType'][:, 4]
+                stars = sub['star_count'][:]
                 flag = sub['SubhaloFlag'][:].astype(bool)
-                mag = sub['SubhaloStellarPhotometrics'][:, 3]
+                mag = sub['K_physical'][:]
                 stellar = flag & (stars > 0)
                 valid = stellar & np.isfinite(mag) & (np.abs(mag) < 90.)
                 invalid_stellar_photometry += int(np.sum(stellar & ~valid))
@@ -95,8 +100,8 @@ def main():
                 pieces['star_count'].append(stars[valid])
                 pieces['native_id'].append(np.arange(seen, seen+n, dtype=np.int64)[valid])
             seen += n
-        if (index+1) % 64 == 0:
-            print(f'catalogue {index+1}/{files}, native rows {seen}', flush=True)
+            if (index+1) % 64 == 0:
+                print(f'catalogue {index+1}/{files}, native rows {seen}', flush=True)
     if seen != expected:
         raise ValueError('incomplete native catalogue')
     data = {k: np.concatenate(v) for k, v in pieces.items()}
@@ -140,6 +145,7 @@ def main():
     payload = dict(status='EXTERNAL_NATIVE_K_PROXY_RESPONSE_NOT_R2_CALIBRATION',
         git_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         slurm_job_id=os.environ.get('SLURM_JOB_ID'), catalogue=str(RAW),
+        staged_catalogue=str(CATALOGUE),
         matter=str(MATTER), files=files, native_rows=seen,
         selected_galaxies=len(population), invalid_stellar_photometry=invalid_stellar_photometry,
         h=h, Omega_m=omega, box_cMpc_h=box, spacing_cMpc_h=dx,

@@ -22,6 +22,10 @@ supported by [the TNG team's clarification](https://www.tng-project.org/data/for
 Native K is not automatically calibrated 2MASS Ks. Passband, dust and aperture
 correspondence remain unresolved; this calculation cannot yield an immediately
 usable external bias prior. The h convention is explicitly M_h=M-5log10(h).
+The [official photometric model documentation](https://temet.tng-project.org/source/temet.util.html)
+confirms UBVK are Vega magnitudes and native K uses the IR K filter with
+Palomar200 detectors/atmosphere. The unresolved issue is the K-to-Ks
+passband/galaxy-light correspondence, not an unknown AB/Vega offset.
 
 ## One executable bundle
 
@@ -66,3 +70,11 @@ PENDING(Resources); chosen mode A100 after checking h200/h100/a100.
 Static AST, shell syntax and diff checks passed. The numerical known-response
 control and real source extraction run inside this Slurm allocation.
 No scientific calibration result exists at submission.
+
+410483 FAILED/exit1 after3s before source extraction because the Syntax-visible
+`/scratch` source was absent on the allocated node. The known-response control
+passed first; no native fit or scientific result exists. The repair copies only
+the fixed catalogue fields (~150MB) to one shared HDF5 file, under a120-second
+I/O-only Syntax bound; all calibration and numerical field work remain Slurm.
+Retry writes a new v2 directory. This repairs input availability without
+filesystem diagnostics or changing the scientific model.
