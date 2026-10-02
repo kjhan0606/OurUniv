@@ -97,3 +97,37 @@ stellar particles with the SAME spatial split and response estimator. It
 tests luminosity/resolution dependence before treating pooled faint bias as
 relevant evidence. No new field, observations or model prior; same20min/4GiB
 typed A100 job, new v3 directory. Direct model adequacy/calibration remains open.
+
+Source dd66f7f extension410505 COMPLETED/exit0 in5s on typed A100/syn101.
+Primary v2 counts/betas reproduce exactly. Native beta>=1 versus>=100 stars:
+
+| Native K_h proxy interval | all stellar objects | >=100 stars |
+| --- | ---: | ---: |
+| [-21,-20) | 1.0817 | 1.0817 |
+| [-20,-19) | 1.0424 | 1.0424 |
+| [-19,-18) | 1.0539 | 1.0519 |
+| [-18,-17) | 1.0674 | 1.0654 |
+| [-17,-16) | 1.0742 | 1.2180 |
+| [-16,+inf) | 1.0304 | 1.4858 |
+
+The stellar-count cut changes the population and may correlate with
+environment; this table does not isolate a numerical resolution defect.
+It identifies a usable external luminosity range for a calibration mock,
+while the pooled unbounded tail is not a useful plug-in prior. Retain the
+K/Ks, velocity-COM, scatter, hydro/cosmology and one-box limits. Slurm's3.5MB
+RSS reports on these3–5s jobs do not measure Python's transient peak and
+must not be used to shrink a subsequent larger calculation's allocation.
+
+Driver closes this source-support bundle. Next deliverable is one native
+galaxy RSD observation mock from these SAME positions/velocities/luminosities
+and the preserved matter field, at1.5 source/3 count spacing. Generate
+selected observed-K populations with declared observer/cuts, fit the active
+count tracer nuisances on training sky/space, and test independent heldout
+mock observations plus luminosity-resolution dependence. The native matter
+field is known external calibration input; no IC or gravity evolution is
+needed. Native K-to-Ks and NGP/TSC correspondence must be represented and
+checked in that comparison. A successful uniform reference or summed count
+alone cannot certify it; actual population/radius/count predictions and
+RSD/FoG residuals must be examined. These external mock cells remain one-box
+correlated, and the actual CF4/2M++ holdout is untouched. No native identity
+supplies MW/M31/M33 roles on the NEW inferred R2 field.

@@ -421,6 +421,14 @@ enter R2 as priors yet: the faint tail has only40,223 objects with>=100 stellar
 particles, and K-to-Ks/NGP-to-PM/hydro/cosmology correspondence remains open.
 Next same-source extension compares finite faint-K slices and stellar
 resolution floors with the existing spatial split; no gravity or CF4 holdout.
+That extension410505/source dd66f7f COMPLETED/exit0 in5s. Native beta changes
+by<=.002 under the100-star cut for[-21,-17), but1.074->1.218 in[-17,-16).
+The cut changes populations and does not uniquely diagnose numerical error.
+Source-support bundle is closed; next is a native position/velocity/K RSD
+observation mock with matched source/count spacings, joint tracer fitting and
+heldout mock prediction. This reuses the known matter field, no IC/evolution.
+K-to-Ks, NGP-to-PM response and one-box/hydro/cosmology limits must enter the
+calibration assessment before any external coefficients become R2 priors.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
