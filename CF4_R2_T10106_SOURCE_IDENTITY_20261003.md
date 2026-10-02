@@ -64,8 +64,10 @@ Driver result review: this removes the catalogue-partition mismatch for this
 one preselected control and supports retaining one shared *catalogue-group*
 latent in its future factor. It does not establish common physical membership,
 group inclusion, covariance, or representativeness of the other 271 groups.
-The next bounded bundle extends only this ID concordance to the full
-training multi-link cohort before any shared-factor implementation.
+The following full training-cohort census, recorded in
+`CF4_R2_V6_GROUP_IDENTITY_CENSUS_20261003.md`, finds that only167/272 groups
+have one shared within-catalogue assignment in both catalogues; therefore
+T10106 must not be generalized to every multi-link group.
 
 ## Interpretation boundary
 

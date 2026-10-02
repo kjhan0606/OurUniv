@@ -41,3 +41,37 @@ set), and 10 minutes. H200/H100/A100 modes were checked; H100 was selected.
 This answers only whether observed catalogue partitions align in the training
 multi-link sample. It cannot establish physical membership, inclusion
 probabilities, member-redshift/FP covariance, or a same-field likelihood.
+
+## Result and driver assessment
+
+Typed-H100 Slurm job 410960 COMPLETED/exit0 in five seconds; the focused test
+passed and MaxRSS was 3.44 MiB under 2 GiB. All 828 secure crossmatch edges
+agree with the CF4 member table's `1PGC` assignment. Across the 272 eligible
+training groups, the CF4 and 2M++ within-catalogue relations are:
+
+| CF4 `1PGC` relation | 2M++ `GID` relation | Groups |
+|---|---|---:|
+| shared | shared | 167 |
+| shared | partly unassigned | 32 |
+| shared | all unassigned | 54 |
+| shared | distinct | 11 |
+| distinct | shared | 4 |
+| distinct | partly unassigned | 4 |
+
+Thus 167/272 (61.4%) have a single shared catalogue assignment within each
+catalogue; the other 105 require explicit unassigned/multiple-group handling.
+This does **not** mean that CF4 `1PGC` equals 2M++ `GID`, nor that either
+catalogue grouping is physical truth. T10106 is reproduced as two PGCs in
+`1PGC=53982`, two count points in `GID=2887`, and two consistent crossmatch
+edges. No velocities, FP marks, likelihood, heldout measurement, field state,
+or PM evolution were read.
+
+Driver assessment: Q-GOAL is yes because this determines observed group
+ownership required by the shared same-field mark factor. Q-LEAN is yes because
+one complete small ID census resolves the cohort structure with no score or
+posterior gates. This is not covariance calibration. The next single source
+bundle will read only training group/member redshift fields for these existing
+272 groups, summarize shared-member and group-velocity overlap by the above
+relation classes, and then decide whether a covariance can be specified from
+available source definitions. It will not fit that covariance to produce a
+posterior; group inclusion remains uncalibrated.

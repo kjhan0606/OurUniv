@@ -272,15 +272,22 @@ H100 with2 tests passing (MaxRSS3.44MiB/2GiB). Both linked PGCs map to the same
 CF4 `1PGC=53982` and same 2M++`GID=2887`; each crossmatch `1PGC` agrees with its
 CF4 member-table assignment. This is catalogue concordance for one frozen
 training group only, not physical membership/covariance calibration or a
-posterior. Next bounded source bundle censuses the same ID concordance across
-the272 training multi-link groups (IDs and split roles only; no heldout
-measurement values or field state) before building the shared-latent factor;
-scope is `CF4_R2_V6_GROUP_IDENTITY_CENSUS_20261003.md`. Q-GOAL: necessary to
-prevent wrong group ownership in the same-field factor. Q-LEAN: one full but
-small source-identity join; no likelihood or validation ladder. External Fable/Astra review would
-repeat the immediately preceding driver review, so the driver performs this
-review under the user's routing rule. MW/M31 remain ambiguous and M33 unresolved
-on the same NEW field.
+posterior. Full score-blind training identity census410960 COMPLETED/exit0 in5s
+on typed H100; one focused test passed, MaxRSS3.44MiB/2GiB. All828 secure edges
+agree with the CF4 member table. Of272 eligible multi-link training groups,
+167 have one shared assignment within both catalogues;32 have partially
+unassigned 2M++ GIDs,54 have all GIDs unassigned,11 span distinct 2M++ GIDs,
+and8 span distinct CF4 `1PGC` groups (four with a shared and four with partly
+unassigned 2M++ GIDs). Exact cross-tab and limits:
+`CF4_R2_V6_GROUP_IDENTITY_CENSUS_20261003.md`. This structural result is not
+physical membership, inclusion/covariance calibration or a posterior. Driver
+Q-GOAL review: necessary source ownership for the same-field shared factor.
+Q-LEAN: proportionate single census; no scores, redshift values, PM, field,
+or posterior gates. Under the user's routing rule the driver performs any
+consecutive/duplicated Fable audit. Next bundle is one training-only source
+redshift-overlap readout over these272 groups, to establish which group/member
+redshift terms share galaxies before defining covariance; it does not fit a
+posterior. MW/M31 remain ambiguous and M33 unresolved on the same NEW field.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
