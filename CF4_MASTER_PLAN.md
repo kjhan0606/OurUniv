@@ -412,8 +412,15 @@ catalogue read plus a7MB preserved moment grid, bounded20min/4GiB Slurm.
 MW/M31 remain ambiguous and M33 unresolved on the NEW inferred field; native
 IDs label external calibration only. Record:
 `CF4_R2_NATIVE_K_RESPONSE_20261002.md`.
-Source246f036 is submitted as Slurm410483 (typed A100,2CPU,4GiB,20min),
-initially PENDING(Resources). Numerical source/calibration outcome pending.
+Source246f036 Slurm410483 failed before extraction because its Syntax-visible
+scratch source was absent on the compute node. I/O-only staging copied146MB
+of fixed catalogue fields to the shared project path; retry410484/source78c1d83
+COMPLETED/exit0 in3s on typed A100. Five native-K proxy bins have119/637/3181/
+4993/318394 objects and native beta1.792/1.364/1.204/1.136/1.035. These cannot
+enter R2 as priors yet: the faint tail has only40,223 objects with>=100 stellar
+particles, and K-to-Ks/NGP-to-PM/hydro/cosmology correspondence remains open.
+Next same-source extension compares finite faint-K slices and stellar
+resolution floors with the existing spatial split; no gravity or CF4 holdout.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2

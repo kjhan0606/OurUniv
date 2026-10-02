@@ -78,3 +78,22 @@ the fixed catalogue fields (~150MB) to one shared HDF5 file, under a120-second
 I/O-only Syntax bound; all calibration and numerical field work remain Slurm.
 Retry writes a new v2 directory. This repairs input availability without
 filesystem diagnostics or changing the scientific model.
+
+The I/O-only stage completed448/448 files,4,371,211 rows,146,432,411 bytes.
+Source78c1d83 retry410484 completed/exit0 in3s on A100/syn101. All five proxy
+populations have support:119/637/3181/4993/318394. Fitted native betas are
+1.792/1.364/1.204/1.136/1.035; residual1D RMS148/184/205/207/217km/s.
+These are external native-field conditional estimates, not R2 priors.
+Bright bins0–3 are all resolved by>=300 stellar particles, while only40,223
+of318,394 faint-tail objects have>=100 (24,764 have>=300). Pooling that entire
+tail does not calibrate its actually selected luminosity range. In the faint
+heldout cells with expected>=5, Pearson4947.2 over2536 cells combines model
+mean errors and scatter; it does not identify a unique stochasticity cause.
+The known-response/rate identity passed. Full results are in the v2 directory.
+
+One same-source v3 extension now slices the faint tail into one-magnitude
+intervals -21 through -16 plus the remaining tail, comparing>=1 and>=100
+stellar particles with the SAME spatial split and response estimator. It
+tests luminosity/resolution dependence before treating pooled faint bias as
+relevant evidence. No new field, observations or model prior; same20min/4GiB
+typed A100 job, new v3 directory. Direct model adequacy/calibration remains open.

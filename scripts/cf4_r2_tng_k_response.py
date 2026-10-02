@@ -140,6 +140,20 @@ def main():
             residual_sigma_xyz_km_s=rr.std(axis=0).tolist() if len(rr) else None,
             residual_rms_1d_km_s=float(np.sqrt(np.mean(rr**2))) if len(rr) else None)
         profiles.append(report)
+    # The faint true-K tail mixes highly different stellar resolutions and
+    # luminosities. Examine finite slices before interpreting its pooled beta.
+    faint_slices = []
+    for lower, upper in zip((-21.,-20.,-19.,-18.,-17.,-16.),
+                            (-20.,-19.,-18.,-17.,-16.,np.inf)):
+        in_slice = (data['K_h_proxy'] >= lower) & (data['K_h_proxy'] < upper)
+        for floor in (1,100):
+            use = in_slice & (data['star_count'] >= floor)
+            keys = np.ravel_multi_index(tuple(cells[use].T), mass.shape)
+            counts = np.bincount(keys, minlength=mass.size).reshape(mass.shape)
+            report = response(counts,rho,train,test)
+            report.update(lower_K_h=lower,upper_K_h=upper if np.isfinite(upper) else None,
+                          minimum_stellar_particles=floor,native_count=int(use.sum()))
+            faint_slices.append(report)
     # IDs label this external calibration source only, never generated candidates.
     np.savez_compressed(OUT/'native_k_galaxies.npz', **data)
     payload = dict(status='EXTERNAL_NATIVE_K_PROXY_RESPONSE_NOT_R2_CALIBRATION',
@@ -152,7 +166,8 @@ def main():
         magnitude_transform='M_h_proxy = native_K_physical - 5 log10(native_h)',
         finite_true_K_edges=EDGES[1:-1].tolist(),
         split='x<45 train; 45<=x<52.5 buffer; x>=52.5 test (cMpc/h)',
-        known_response_control=control, profiles=profiles, elapsed_seconds=time.monotonic()-start,
+        known_response_control=control, profiles=profiles, finite_faint_slices=faint_slices,
+        elapsed_seconds=time.monotonic()-start,
         limits=['Native K is not calibrated observational 2MASS Ks; no passband/dust crosswalk.',
             'One 75 cMpc/h hydro box, different cosmology from R2; correlated spatial test.',
             'Native NGP total-matter cells differ from the PM source scatter operator.',
