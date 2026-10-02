@@ -21,3 +21,22 @@ def native_mass_momentum_to_count_cells(rho_node, mean_velocity_node, box):
                           .reshape(n,n,n) for k in range(3)])
     safe_mass = jnp.where(mass>0,mass,1.)
     return mass,jnp.where(mass[None]>0,momentum/safe_mass[None],0.)
+
+
+def native_moments_to_count_cells(rho_node,mean_velocity_node,variance_node,box):
+    """Read mass, momentum AND raw second moment before taking ratios.
+
+    Interpolating variance alone omits the between-node velocity dispersion.
+    Output has three diagonal variances, not an inferred mean-field error.
+    Nonnegative input variances are the caller's physical state contract;
+    convex interpolation guarantees nonnegative output up to roundoff.
+    """
+    if variance_node.shape!=mean_velocity_node.shape:
+        raise ValueError('three native physical variances required')
+    mass,mean=native_mass_momentum_to_count_cells(rho_node,mean_velocity_node,box)
+    n=rho_node.shape[0];positions=cell_centres(n,box,.5)
+    second=jnp.stack([read_centred(rho_node*(variance_node[k]+mean_velocity_node[k]**2),
+        positions,box,0.).reshape(n,n,n) for k in range(3)])
+    safe_mass=jnp.where(mass>0,mass,1.)
+    variance=jnp.where(mass[None]>0,second/safe_mass[None]-mean**2,0.)
+    return mass,mean,jnp.maximum(variance,0.)

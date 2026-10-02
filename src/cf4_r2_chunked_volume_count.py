@@ -22,9 +22,15 @@ def predict_chunked_volume_intensity(positions,velocities,intrinsic,angular,*,
     @jax.checkpoint
     def add(total,item):
         ids,mask=item
+        local_geometry=dict(geometry)
+        variance=local_geometry.get('source_velocity_variances_km2_s2')
+        if variance is not None:
+            if variance.shape!=positions.shape:
+                raise ValueError('global variance must align with global source positions')
+            local_geometry['source_velocity_variances_km2_s2']=variance[ids]
         piece=predict_source_volume_intensity(positions[ids],velocities[ids],
             intrinsic[:,ids]*mask[None],angular[:,ids],source_spacing=source_spacing,
-            volume_order=volume_order,**geometry)
+            volume_order=volume_order,**local_geometry)
         return total+piece,None
     n=geometry['grid_size'];shape=() if geometry.get('target_population') is not None else (6,n,n,n)
     dtype=jnp.result_type(positions,velocities,intrinsic,angular,jnp.asarray(0.,dtype=jnp.float64))
