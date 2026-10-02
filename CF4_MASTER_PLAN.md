@@ -62,7 +62,17 @@ across a face and proof that replacing q with minimum-image radius changes the
 factor. Commit `f042518` pushed. Q-GOAL: this directly repairs the still-failing
 R2 observed FP mechanics. Q-LEAN: one fixed-state training-only cohort census
 is proportionate; no count-target wiring, heldout, PM, posterior promotion or
-new simulation. Job410733 is pending H100 (`gpu:H100:1`), 2CPU,12GiB,30min.
+new simulation. Job410733 completed on H100 (`gpu:H100:1`), 2CPU,12GiB,30min.
+Both Slurm test suites passed (4 ray tests, 2 raw-mixture regressions). Its
+runtime guard stopped after20/1414 order8 rows: all20 were finite and PGC26124
+reproduced the prior order8 value to rounding. First-row-per-population JIT
+compiles took76.975s total; the14 warmed rows averaged0.04775s. The initial
+guard incorrectly divided compile time over all rows and projected6,276.5s;
+this was a runtime-estimator false stop, not a likelihood failure. Preserve
+v1 at `/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v1`.
+The corrected guard now separates six one-time population compiles from warm
+throughput and reserves additional convergence/AD compiles. Resubmit the same
+bounded cohort under a fresh output path; do not change the scientific target.
 It scores all1414 training links at order8, order4/8 on all39 previously
 uncertified plus40 deterministic safe rows, and AD/FD on one interior and one
 actually image-contributing row. It records per-row numerator/denominator

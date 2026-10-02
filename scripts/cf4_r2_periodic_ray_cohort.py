@@ -163,10 +163,12 @@ def main():
     by_population=[np.flatnonzero(np.asarray(mix['population'])==p) for p in range(6)]
     eval_order=[int(by_population[p][j]) for j in range(max(map(len,by_population)))
         for p in range(6) if j<len(by_population[p])]
-    row8={};started_first20=None
+    row8={};compiled_order8_populations=set()
     report['phase']='ORDER8_ALL_TRAINING_LINKS';save()
     for count,i in enumerate(eval_order,1):
         p=int(mix['population'][i]);obs=observation_at(i);angle=jnp.asarray(direction[i])
+        first_population_compile=p not in compiled_order8_populations
+        compiled_order8_populations.add(p)
         tic=time.monotonic();values=order8[p](jnp.asarray(0.),angle,obs)
         values=np.asarray(jax.tree_util.tree_map(lambda x:x.block_until_ready(),values),dtype=np.float64)
         elapsed=time.monotonic()-tic
@@ -188,11 +190,27 @@ def main():
             periodic_image_numerator_fraction=float(frac_num) if np.isfinite(frac_num) else None,
             periodic_image_denominator_fraction=float(frac_den) if np.isfinite(frac_den) else None,
             numerator_denominator_split_error=decomposition_error,
-            status='FINITE' if finite else 'NONFINITE_OR_ZERO_SUPPORT',seconds=elapsed)
+            status='FINITE' if finite else 'NONFINITE_OR_ZERO_SUPPORT',seconds=elapsed,
+            first_population_compile=first_population_compile)
         row8[i]=record;report['rows'].append(record);report['order8_completed']=count
         if count==20:
             first20=time.monotonic()-started
-            projected=first20/20.*len(chosen)
+            compile_seconds=[r['seconds'] for r in report['rows'] if r['first_population_compile']]
+            warm=[r['seconds'] for r in report['rows'] if not r['first_population_compile']]
+            if len(compile_seconds)!=6 or len(warm)<5:
+                report.update(status='STOPPED_RUNTIME_ESTIMATE_UNRESOLVED',phase='STOPPED_AFTER_FIRST20')
+                save();return
+            warm_rate=float(np.mean(warm))
+            # All six order-8 populations have now compiled. Forecast only the
+            # warm per-row run, then reserve six order-4 and two AD compilations.
+            projected=(first20+(len(chosen)-count+len(convergence_rows))*warm_rate
+                +8*max(compile_seconds))
+            report['runtime_forecast_after_20_rows']=dict(
+                elapsed_first20_seconds=first20,order8_population_compile_seconds=float(sum(compile_seconds)),
+                warmed_rows=len(warm),warm_seconds_per_row=warm_rate,
+                remaining_order8_rows=len(chosen)-count,order4_convergence_rows=len(convergence_rows),
+                reserved_additional_compilations=8,reserved_compile_seconds=8*max(compile_seconds),
+                total_projected_seconds=projected)
             report['runtime_projection_after_20_rows_seconds']=projected
             if projected>1200.:
                 report.update(status='STOPPED_RUNTIME_PROJECTION_GT20MIN',phase='STOPPED_AFTER_FIRST20')
