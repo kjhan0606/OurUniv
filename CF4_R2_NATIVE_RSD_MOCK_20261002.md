@@ -213,3 +213,31 @@ path. Q-LEAN: one cheap readout reusing known files; no generic gates.
 Runner2CPU/10GiB/30min, expected<2min; resource peak recorded by application.
 Exact reachability/operator redesign follows measured residual evidence,
 not the unsupported categorical assertions in the advisory.
+
+410569 COMPLETED/exit0 in8s (application2.065s). Preselection training3785
+galaxies: cell-mean residual Gaussian sigma204.32 versus mixture widths
+21.13/303.05km/s and broad weight.4519. Mixture AIC46569.18 versus Gaussian
+51013.49, restricted finite-variance t47390.03. The t fit hits its nu>2
+lower boundary (nu2.000045); do not claim an unrestricted t comparison.
+Mass/momentum TSC reference mixture31.53/317.80km/s,weight.4416, likewise
+strongly preferred to Gaussian. This is training descriptive evidence only.
+No central/satellite assignment, independent calibration, or count refit.
+
+Interior>=3Mpc mixture16.29/188.39km/s versus boundary24.56/400.81km/s,
+weights.4590/.5427: source geometry/environment heterogeneity remains
+material. Selection-only comparison shifts widths19.88/284.55, confirming
+the importance of the preselection population. Density below native mean
+has only ONE training galaxy; a rho<1 versus>=1 split cannot calibrate
+density dependence or void tracers. Also this K/stars selection does not
+cover the entire five-true-K latent process or its unbounded tails.
+
+Driver next design: normalized narrow+broad LOS Gaussian mixture is supported
+as a development candidate, not a universal R2 coefficient. Before the single
+count refit, implement consistent voxel-count integration with boundaries
+explicitly integrated, keeping varying luminosity/selection weights inside
+the integral. Establish geometry reachability on the two actual rays and
+training-only population/environment sensitivity of mixture parameters.
+Do not resume count fitting by silently retaining the materially mismatched
+TSC operator, injecting the fitted mixture as certified prior, or selecting
+based on the consumed test. Native-K/Ks, full true-bin/tail coverage and
+calibration uncertainty remain R2 prerequisites; no new simulation yet.

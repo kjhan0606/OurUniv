@@ -465,6 +465,19 @@ mismatch and the minimal decisive computation (Q-GOAL/Q-LEAN). No arbitrary
 floor, sigma inflation, NGP adoption or calibration prior injection; native
 source roles never label generated field candidates. Request/result scope:
 `config/cf4_r2_native_velocity_tail_fable_20261002.txt`.
+Fable returned CONDITIONAL PASS. Driver adopts normalized Gaussian-mixture
+candidate and interpolation/residual readout, but amends selected-sample
+calibration and rejects claims that endpoint checks prove all convergence,
+zeros uniquely locate truncation, or correlated-half scatter certifies prior
+uncertainty.410569 COMPLETED8s:3785 preselection training galaxies yield
+mixture21.13/303.05km/s,weight.4519 versus single Gaussian204.32; TSC
+mass/momentum interpolation preserves mixture structure. Edge/interior broad
+width400.81/188.39 signals heterogeneity; only ONE rho<1 training galaxy.
+The finite-variance t comparison hits its lower nu bound. These are native
+development descriptors, not R2 priors or central/satellite labels. Next is
+consistent voxel-boundary marked-count integration and training population/
+environment support before one mixture count refit. No new simulation or
+posterior/IC promotion. Full assessment in the native-RSD bundle record.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
