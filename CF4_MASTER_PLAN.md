@@ -47,6 +47,32 @@ earlier pending410662 cancelled before calculation to repair a queued-runner
 HEAD-vs-documentation check. Quota QOSMaxGRESPerUser is not bypassed; other
 projects are untouched. Await this bounded prototype rather than a simulation.
 
+Next grouped R2 bundle (2026-10-02): resolve observed-ray periodic geometry,
+then census the same saved-state training FP factor. Driver source review
+confirmed three concrete defects in the first-face prototype: ray intervals
+stopped at the first cube face; `chunk_log_terms` reconstructed a minimum-image
+radius after wrapping; and per-cell sky completeness was read from the wrapped
+cell rather than treated as the fixed observed-direction selection scalar.
+The implementation now wraps only field-cell lookup, carries unfolded q into
+distance modulus/redshift/eta/K terms, removes the positive direction-constant
+selection factor from this conditional numerator/denominator, and extends the
+saved 192-cMpc/h distance lookup with a checked local quadratic z(q) extension.
+Four focused tests pass, including uniform-field axis/diagonal agreement
+across a face and proof that replacing q with minimum-image radius changes the
+factor. Commit `f042518` pushed. Q-GOAL: this directly repairs the still-failing
+R2 observed FP mechanics. Q-LEAN: one fixed-state training-only cohort census
+is proportionate; no count-target wiring, heldout, PM, posterior promotion or
+new simulation. Job410733 is pending H100 (`gpu:H100:1`), 2CPU,12GiB,30min.
+It scores all1414 training links at order8, order4/8 on all39 previously
+uncertified plus40 deterministic safe rows, and AD/FD on one interior and one
+actually image-contributing row. It records per-row numerator/denominator
+image fractions and stops after a full order8 census if any row is nonfinite;
+the runtime guard also stops if the first20-row projection exceeds20min.
+Count/FP periodic-image semantics remain unreconciled and prevent target
+wiring regardless of this mechanics result. R2 remains incomplete; heldout
+untouched; MW/M31 roles ambiguous and M33 unresolved. Later LG observables must
+constrain those roles on the same NEW field.
+
 R2 remains incomplete and is still the current actual-data z=0 field stage;
 the N256 grid is1.5 cMpc/h, not the final <=0.3 cMpc/h LG resolution.
 409763/409764 at fundamental-mass600 and matched controls410010/410011 at

@@ -69,6 +69,8 @@ def main():
     velocity=jnp.moveaxis(velocity,0,-1).reshape(-1,3)
     variance=jnp.moveaxis(variance,0,-1).reshape(-1,3)
     g=tracer_geometry(tracer,g)
+    if not np.allclose(np.asarray(g['observer']),np.full(3,BOX/2),rtol=0.,atol=1e-12):
+        raise ValueError('directional face formula assumes the registered box-centre observer')
     masses=tracer_masses(rho,tracer)
     sky=jnp.asarray(source['angular'])
 
@@ -87,6 +89,9 @@ def main():
     margin=face-radius-displacement_bound
     uncertified=np.flatnonzero(margin<=0.)
     safe=np.flatnonzero(margin>0.)
+    if (len(safe)!=int(prior_bound['positive_margin_rows'])
+            or len(uncertified)!=int(prior_bound['nonpositive_margin_rows'])):
+        raise ValueError('saved-state first-face cohort differs from the recorded certificate')
     representative_safe=(safe[np.linspace(0,len(safe)-1,min(40,len(safe)),dtype=int)]
                          if len(safe) else np.zeros(0,dtype=np.int64))
     convergence_rows=np.asarray(sorted(set(map(int,uncertified))|

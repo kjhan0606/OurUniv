@@ -13,6 +13,14 @@ set -euo pipefail
 : "${SLURM_JOB_ID:?}" "${CF4_R2_OUT_DIR:?}" "${CF4_EXPECTED_COMMIT:?}"
 module purge
 cd /home/kjhan/BACKUP/CF4
+HEAD_REV=$(git rev-parse HEAD)
+if [[ "$HEAD_REV" != "$CF4_EXPECTED_COMMIT" ]]; then
+    echo "source revision mismatch: expected=$CF4_EXPECTED_COMMIT actual=$HEAD_REV" >&2
+    exit 2
+fi
+git diff --cached --quiet "$CF4_EXPECTED_COMMIT" -- \
+    src/cf4_r2_observed_ray.py src/cf4_r2_raw_live_mark.py \
+    scripts/cf4_r2_periodic_ray_cohort.py tests/test_cf4_r2_observed_ray.py
 git diff --quiet "$CF4_EXPECTED_COMMIT" -- \
     src/cf4_r2_observed_ray.py src/cf4_r2_raw_live_mark.py \
     scripts/cf4_r2_periodic_ray_cohort.py tests/test_cf4_r2_observed_ray.py
