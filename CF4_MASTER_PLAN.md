@@ -295,15 +295,42 @@ covariance estimate. Full table, driver decision and preserved failure details:
 `/gpfs/kjhan/CF4/z0_density/r2_v6_redshift_overlap_20261003_v3/result.json`.
 The official EDD definitions say CF4 group Vcmb derives from Tully2015
 2MASS-group members, while the FP-group table separately exposes `gVcmb`,
-`Nest`, and `Ng`. Next bundle links the frozen272 cohort's matched PGCs to the
-already archived Tully member list and its parent Nest assignments. This is
-source-ownership evidence only; it cannot by itself calibrate the later EDD
-revision's covariance or selection. No posterior or IC is promoted. MW/M31
-remain role-ambiguous and M33 unresolved on the same NEW field. Under the
-user's routing rule this immediate audit is driver-run: Astra is not invoked
-for duplicated/consecutive review. Plan and implementation:
+`Nest`, and `Ng`. Typed-H100 job411000 completed the frozen-v6 PGC/Nest
+crosswalk: 441/828 secure PGCs occur in Tully tables4/5, all441 table
+assignments match and agree with the parent Tully Nest reached through the
+CF4 `1PGC`; 387 are absent from the archived member list. Across272 groups,
+member-Nest relations are shared62/partial163/unassigned47; parent-Nest
+relations are shared253/distinct6/partial2/unassigned11. This is archive
+identity evidence, not physical membership or current-EDD source proof.
+
+The driver also checked the primary-source velocity semantics: Tully2015
+table4 contains adjusted `Vcmba`, not raw member `Vcmb`; the source ReadMe
+refers to the CF2 cosmological adjustment, whose Eq.15 modifies negative
+peculiar velocities using distance uncertainty. The archived table lacks the
+raw member value and the complete inputs for inversion, so do not compare or
+invert `Vcmba` as if it were raw redshift and do not infer covariance from
+that offset. The local CF4 files are pinned in `data/PROVENANCE.md` to a
+2026-07-07 VizieR J/ApJ/944/94 snapshot (38,053 groups, 55,877 individual
+galaxies); the current official EDD description reports 38,057 All Groups
+entries and defines group `Vcmb` as the average of all Tully-2015 2MASS
+K<11.75 members. Thus selected-row identity between local July input and
+current EDD is not proven by the four-row global count difference. A direct
+EDD query from syntax failed TLS certificate verification, and no bypass was
+used. Q-GOAL: yes for identifying potential shared source rows, but no direct
+new-field constraint. Q-LEAN: one ID join and source-semantics check, no fit
+or simulation. This Fable-directed audit immediately followed a driver audit;
+per user rule the driver performed it rather than repeating an outside review
+(Astra is the normal Fable-audit substitute when warranted).
+Details and raw result:
 `CF4_R2_V6_TULLY_MEMBERSHIP_20261003.md`,
-`scripts/cf4_r2_v6_tully_membership.py`. R2 remains NO-GO and incomplete.
+`/gpfs/kjhan/CF4/z0_density/r2_v6_tully_membership_20261003_v1/result.json`.
+Next bounded action: compare only the frozen272 `1PGC` rows between the
+pinned July VizieR snapshot and the current EDD table, avoiding a full-catalog
+reprocess. If selected rows cannot be fetched with valid TLS, keep July as the
+explicit analysis version and mark current-EDD equivalence unresolved; never
+construct an ad-hoc Tully conversion. No posterior or IC is promoted. MW/M31 remain
+role-ambiguous and M33 unresolved on the same NEW field at <=0.3 cMpc/h; native
+truth identities label evaluation only. R2 remains NO-GO and incomplete.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
