@@ -296,11 +296,25 @@ of other tracer coordinates or a corrected observation law.
 Read-only source audit confirmed two apparent-K samples x three observed
 absolute-K bins, true/observed modulus plus redshift correction and RSD before
 TSC deposition, and five true-K bias responses normalized over the full
-periodic box (not per chunk). No simple radius-wiring defect was established;
-external survival/bias and RSD/FoG calibration remain absent. The fixed-field
-LF-only sensitivity line is closed: no Mstar scan, broad optimizer, chain or
-simulation follows from it. Next R2 work must source and validate the
-radius-dependent selection/transfer and calibration inputs before another fit.
+periodic box (not per chunk). No simple radius-wiring defect was established.
+Legacy external CAMELS bias and FoG artifacts do exist, so saying that such
+external evidence is wholly absent was too broad. However, the six CAMELS bias
+values are ordered by ascending stellar-mass sextile, while the old N32 v8
+calibration applied them index-for-index to six observed 2M++ bins ordered by
+apparent-K sample and bright-to-faint absolute K. The active R2 target instead
+has five latent true-K bins including unbounded tails, transferred into six
+observed bins; no validated conditional crosswalk connects these estimands.
+Therefore neither unchanged nor reversed injection is justified. The old v8
+holdout remains a development-only predictive check under that old mapping,
+not a validation of the present R2 bias parameters. The active N256 source
+field is 1.5 cMpc/h while its count grid is N128/3 cMpc/h; the old v8 was N32
+on a 384 cMpc/h box and used h=.6711, whereas the current fixed-field path uses
+h=.746. These differences further preclude treating its result as active-R2
+calibration. See `CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md`.
+The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
+broad optimizer, chain or simulation follows from it. Before another fit, R2
+must source and validate the radius-dependent selection/transfer and the
+calibration inputs for the actual five-true-K/six-observed-bin model.
 
 The source audit also exposed an exact-tie LF-transfer gradient discrepancy:
 before correction, transfer values matched the direct reference but an exact
