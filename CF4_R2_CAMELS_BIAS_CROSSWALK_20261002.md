@@ -50,16 +50,32 @@ converts physical absolute magnitude to `M_h=M-5 log10(h)` using
 `src/cf4_actual_selection.py:magnitude_h`, while
 `scripts/cf4_r2_marked_source_geometry.py` forms its modulus as
 `5 log10(D_L*h)+25`; the common-selection integral also supplies `D_L*h` to
-the same modulus calculation. Those current data labels and model transfer
-are internally consistent in the h-scaled convention. By contrast, the old
-v8 classifier called the physical distance modulus directly and did not apply
+the same modulus calculation. The current label-generation and transfer
+source code are internally consistent in the h-scaled convention; this source
+audit did not independently verify the provenance/hash of the on-disk products.
+The extant catalogue, geometry and common-selection result metadata each
+record the active h=0.746 cosmology; the geometry/selection artifacts remain
+explicitly `NOT_CALIBRATED`, and their result records do not bind the
+generator-source commit. This supports the configured-convention statement,
+not a full byte-to-source reproduction claim. By contrast, the old v8
+classifier called the physical distance modulus directly and did not apply
 `magnitude_h`. Thus identical numerical K edges in old v8 and current R2
-refer to different selected rows. This is a further reason not to transport
-the old holdout result; it does **not** establish an h-convention bug in the
-current R2 path. The N256 source spacing is 1.5 cMpc/h and the count
-deposition grid is N128/3 cMpc/h. Any future crosswalk must preserve this
-explicit magnitude convention along with population, scale, selection and
-estimator correspondence.
+refer to different selected rows. For the h-only conversion,
+`5 log10(0.6711)=-0.866` mag: the old physical edges `[-25,-21]` map
+nominally to `[-24.13,-20.13]` in the h-scaled convention, before small
+cosmology-shape differences. More importantly, the literature
+`Mstar=-23.28` is specified at H0=100, while old v8 evaluated that same number
+against physical distance moduli at h=.6711. Its LF knee was therefore
+nominally about0.87mag too faint relative to the data. This issue applies to
+the shared legacy v1-v8 classifier/model source path; exact offsets depend on
+each configured cosmology. The primary 2M++ catalogue paper states the H0=100
+convention in §§2.2 and 2.6 and lists `Mstar=-23.28` in its K<11.5 LF row:
+[Lavaux & Hudson (2011)](https://academic.oup.com/mnras/article/416/4/2840/975884).
+This is a further reason not to transport the old holdout result; it does
+**not** establish an h-convention bug in the current R2 path. The N256 source
+spacing is 1.5 cMpc/h and the count deposition grid is N128/3 cMpc/h. Any
+future crosswalk must preserve this explicit magnitude convention along with
+population, scale, selection and estimator correspondence.
 
 The separate legacy CAMELS FoG artifact also has six stellar-mass-bin widths;
 the active R2 source model has one shared line-of-sight width. No validated
@@ -91,9 +107,10 @@ short source/provenance correction only; no new experiment, optimizer or
 gate ladder now. The driver independently verified the population indices,
 active true-K edges, prior application sites, old holdout construction, and
 the fixed-field N256/N128 grid settings, and adopts that scope. Fable flagged
-the h convention as an unchecked item; the driver subsequently resolved it
-from the current data-label and distance-table source as described above.
-This review is advisory, not a posterior or promotion decision.
+the h convention as unchecked and could not access the paper; the driver
+subsequently verified the source convention from the primary article and
+resolved both current-path consistency and the legacy mismatch above. This
+review is advisory, not a posterior or promotion decision.
 
 ## Next valid use, if needed
 
