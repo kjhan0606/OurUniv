@@ -23,8 +23,8 @@ PRIOR = BASE / "r2_v6_redshift_overlap_20261003_v3/result.json"
 PRIOR_SHA = "47fd803bab67eb96094489a4c8d725314a43ac896e315a55bbcfbbf741d13da0"
 MEMBERSHIP = BASE / "r2_v6_tully_membership_20261003_v1/result.json"
 MEMBERSHIP_SHA = "10a53c2dd5d10487670bc898dbce0f73e496103dafd78859fe22b62508703594"
-OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v1"
-HUCHRA_2MRS = "2012ApJS..199...26H"
+OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v2"
+EXPLICIT_2MRS_PREFIX = "20112MRS."
 
 
 def sha256(path):
@@ -45,26 +45,44 @@ def describe(values):
 
 def summarize_source_rows(rows):
     by_reference = defaultdict(list)
+    by_class = defaultdict(list)
     exact_equal = Counter()
     rounded_equal = Counter()
     for row in rows:
         reference = row["reference"] or "MISSING"
+        source_class = ("missing_reference" if reference == "MISSING" else
+                        "explicit_2MRS_source_code" if reference.startswith(EXPLICIT_2MRS_PREFIX)
+                        else "other_or_unresolved_reference")
         by_reference[reference].append(row["abs_delta_km_s"])
+        by_class[source_class].append(row["abs_delta_km_s"])
         exact_equal[reference] += row["abs_delta_km_s"] == 0.0
         rounded_equal[reference] += row["abs_delta_km_s"] <= 0.5
     return {
         "linked_member_count": len(rows),
         "reference_counts": {key: len(vals) for key, vals in sorted(by_reference.items())},
+        "reference_class_counts": {key: len(vals) for key, vals in sorted(by_class.items())},
+        "absolute_velocity_agreement_counts": {
+            "exact_equal": sum(row["abs_delta_km_s"] == 0.0 for row in rows),
+            "equal_within_0p5_km_s": sum(row["abs_delta_km_s"] <= 0.5 for row in rows),
+        },
         "absolute_CF4_individual_minus_2mpp_point_Vcmb_km_s": describe(
             [row["abs_delta_km_s"] for row in rows]),
+        "by_reference_class": {
+            key: {"count": len(vals), "abs_delta_km_s": describe(vals),
+                  "exact_equal_count": sum(value == 0.0 for value in vals),
+                  "equal_within_0p5_km_s_count": sum(value <= 0.5 for value in vals)}
+            for key, vals in sorted(by_class.items())
+        },
         "by_reference": {
             key: {"count": len(vals), "abs_delta_km_s": describe(vals),
                   "exact_equal_count": exact_equal[key],
                   "equal_within_0p5_km_s_count": rounded_equal[key]}
             for key, vals in sorted(by_reference.items())
         },
-        "Huchra_2012_2MRS_reference_count": len(by_reference.get(HUCHRA_2MRS, ())),
-        "Huchra_2012_2MRS_equal_within_0p5_km_s_count": rounded_equal[HUCHRA_2MRS],
+        "explicit_2MRS_reference_codes": {
+            key: len(vals) for key, vals in sorted(by_reference.items())
+            if key.startswith(EXPLICIT_2MRS_PREFIX)
+        },
     }
 
 
@@ -201,7 +219,9 @@ def main():
         "Tully_membership_mismatch_count": membership_status["mismatch"],
         "Tully_membership_ambiguous_count": membership_status["ambiguous"],
         "2mpp_velocity_reference_semantics": (
-            "Ref is the 2M++ source bibcode; 2012ApJS..199...26H is the Huchra et al. 2012 2MRS reference."
+            "Ref is the source bibcode. Only explicit 20112MRS.* codes are classified as 2MRS; "
+            "other literature codes remain unresolved because a compiled reference need not identify "
+            "whether that redshift was also incorporated into 2MRS."
         ),
         "velocity_comparison_semantics": (
             "Compares only raw individual CMB-frame Vcmb in CF4 and 2M++; "

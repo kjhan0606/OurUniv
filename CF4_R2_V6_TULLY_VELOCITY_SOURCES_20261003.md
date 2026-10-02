@@ -36,18 +36,19 @@ The selected cohort is fixed at 272 training groups/828 secure PGC links,
 then restricted to the 441 PGCs whose table-4 Nest matches the Tully parent
 Nest reached through CF4 `1PGC`. Compare only the ordinary CMB-frame CF4
 individual `Vcmb` and 2M++ point `Vcmb`; group values and Tully adjusted
-`Vcmba` are excluded. Use the 2M++ `Ref` bibcode as a source label, with
-`2012ApJS..199...26H` identified as Huchra et al. (2012), the 2MRS catalogue
-referenced by the Tully-2015 ReadMe. A matching bibcode and close velocities
-are evidence for likely source overlap, not proof of identical spectra,
-individual measurement-error covariance, or a group-mean covariance law.
+`Vcmba` are excluded. The 2M++ `Ref` is the contributing source bibcode.
+Only explicit `20112MRS.*` codes are labeled as 2MRS; other cited literature
+references remain unresolved because a source paper may also have contributed
+to the 2MRS compilation. Even a matching source label and close velocities
+would not prove identical spectra, individual measurement-error covariance,
+or a group-mean covariance law.
 
 Sources: [EDD CF4 individual distances](https://edd.ifa.hawaii.edu/describe_columns.php?table=kallcf4),
 [EDD CF4 All Groups](https://edd.ifa.hawaii.edu/describe_columns.php?table=kcf4allgroup),
 [2M++ CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/MNRAS/416/2840?format=html),
 and [Tully-2015 CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/AJ/149/171?format=html).
 
-One typed-H100 Slurm job runs three focused tests and the pinned source join:
+One typed-H100 Slurm job runs four focused tests and the pinned source join:
 one CPU, 2 GiB memory (more than 20% above the <1-GiB estimate), 10-minute
 limit. H200/H100/A100 are checked; H100 is selected with the required typed
 GRES. The source snapshot and upstream cohort/result hashes are checked before
@@ -55,5 +56,13 @@ writing a fresh, non-overwriting result directory.
 
 ## Result
 
-Pending. The result may refine the source-overlap description but cannot
-promote R2, estimate a calibrated covariance, or authorize a posterior/IC.
+The first run, 411020, completed successfully in6s, but its summary incorrectly
+looked only for the Huchra et al. 2012 catalogue bibcode instead of the 2M++
+source-specific `20112MRS.*` reference codes. The observed velocities and
+member selection are retained, but that initial source classification is
+superseded and must not be interpreted as zero 2MRS-source overlap. It is
+preserved at `/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v1/result.json`.
+The corrected classifier distinguishes explicit 2MRS codes from all other
+or unresolved references and runs into a new output directory. R2 remains
+NO-GO; neither run estimates calibrated covariance or authorizes a
+posterior/IC.
