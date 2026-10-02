@@ -655,9 +655,7 @@ def predict_source_marked_radial_key_density(
         # counts. Each image sphere has two signed ray roots; dr/dq requires
         # the radial Jacobian, not merely a central-image Gaussian PDF.
         from itertools import product
-        spatial=jnp.zeros(count,dtype=positions.dtype)
-        for image in product((-1,0,1),repeat=3):
-            center=jnp.asarray(image)*box_size_cMpc_h
+        def add_image(spatial,center):
             middle=jnp.sum(rhat*center,axis=1)
             transverse=jnp.maximum(jnp.sum(center**2)-middle**2,0.)
             active=(r_observed**2>transverse)&(jnp.sum(rhat**2,axis=1)>0)
@@ -670,6 +668,9 @@ def predict_source_marked_radial_key_density(
                 z=(q-shifted_radius)/sigma_radius
                 pdf=jnp.exp(-.5*z*z+log_normalizer)
                 spatial+=jnp.where(active&inside&(jnp.abs(z)<=8.),pdf*r_observed/root,0.)
+            return spatial,None
+        images=jnp.asarray(list(product((-1,0,1),repeat=3)))*box_size_cMpc_h
+        spatial=jax.lax.scan(jax.checkpoint(add_image),jnp.zeros(count,dtype=positions.dtype),images)[0]
     elif deposition!='tsc':
         raise ValueError('radial key requires tsc or voxel_cdf deposition')
     transfer = source_mark_transfer(
