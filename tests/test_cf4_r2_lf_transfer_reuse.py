@@ -45,6 +45,29 @@ class LFReuseTests(unittest.TestCase):
             else:
                 np.testing.assert_allclose(candidate,(value,grad),rtol=1e-10,atol=1e-10)
 
+    def test_jitted_apparent_and_three_way_ties_match_all_reference_gradients(self):
+        true=jnp.array([36.5])
+        z=jnp.array([.01])
+        weight=jnp.arange(30,dtype=float).reshape(6,5,1)/30
+
+        def output(parameters,method):
+            return jnp.sum(method(true,true+parameters[0],z,z,
+                mstar=parameters[1],alpha=parameters[2])*weight)
+
+        fast=jax.jit(jax.value_and_grad(
+            lambda p:output(p,source_mark_transfer)))
+        reference=jax.jit(jax.value_and_grad(
+            lambda p:output(p,_source_mark_transfer_reference)))
+        # shift=0 gives a three-way true/apparent/observed edge tie at M=-25;
+        # shift=.17 keeps the true/apparent tie but separates observed edges.
+        for shift in (0.,.17):
+            parameters=jnp.array([shift,-23.28,-.94])
+            fast_value,fast_gradient=fast(parameters)
+            ref_value,ref_gradient=reference(parameters)
+            np.testing.assert_allclose(fast_value,ref_value,rtol=1e-10,atol=1e-10)
+            np.testing.assert_allclose(fast_gradient,ref_gradient,
+                                       rtol=1e-10,atol=1e-10)
+
 
 if __name__=='__main__':
     unittest.main()

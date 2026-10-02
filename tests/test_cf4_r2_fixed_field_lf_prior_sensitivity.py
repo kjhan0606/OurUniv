@@ -33,6 +33,24 @@ class FixedFieldLfPriorSensitivityTest(unittest.TestCase):
         expected = 3*np.log(3/2)+np.log(1/2)
         self.assertAlmostEqual(result, expected)
 
+    def test_profiled_aggregate_decomposition_uses_both_profiled_tables(self):
+        observed = np.array([[6, 4]])
+        baseline = np.array([[2., 6.]])
+        candidate = np.array([[1., 4.]])
+        baseline_scale = observed.sum()/baseline.sum()
+        candidate_scale = observed.sum()/candidate.sum()
+        baseline_profiled = baseline*baseline_scale
+        candidate_profiled = candidate*candidate_scale
+
+        baseline_score = float(np.sum(
+            observed*np.log(baseline_profiled)-baseline_profiled))
+        candidate_score = float(np.sum(
+            observed*np.log(candidate_profiled)-candidate_profiled))
+        aggregate_delta = aggregate_score_delta(
+            observed, baseline_profiled, candidate_profiled)
+
+        self.assertAlmostEqual(aggregate_delta, candidate_score-baseline_score)
+
 
 if __name__ == '__main__':
     unittest.main()

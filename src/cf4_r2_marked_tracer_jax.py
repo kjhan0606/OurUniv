@@ -80,22 +80,36 @@ def _source_mark_transfer_reference(true_modulus_h, observed_modulus_h,
 def source_mark_transfer(true_modulus_h, observed_modulus_h,
                          true_redshift, observed_redshift, *,
                          mstar=-23.28, alpha=-.94):
-    """Same transfer, evaluating unique LF boundaries before intersections.
+    """Fast boundary reuse with the reference subgradient at exact ties.
 
     The Schechter survival function S(M) is decreasing: S(max bounds) equals
-    min S(bounds), and vice versa. This exact algebra reuses six varying
-    boundary arrays instead of evaluating gamma functions at 60 intersections.
-    The slower pre-rewrite definition is retained as a regression reference.
+    min S(bounds), and vice versa. Precomputing S at unique true-K, apparent-K
+    and observed-K edges avoids repeating LF integrals for all 30
+    intrinsic/observed-bin intersections.
+    Select survival values using comparisons of the original magnitude bounds;
+    at an exact tie, average the tied survival values. Nested selection then
+    reproduces the direct max/min subgradient (including three-way ties)
+    elementwise without a slow whole-array fallback.
     """
+    correction=(1.16*2.9*(observed_redshift-true_redshift)
+                -1.6*jnp.log10((1.+observed_redshift)/(1.+true_redshift)))
+    shift=observed_modulus_h-true_modulus_h-correction
     def survival(bound):
         finite=jnp.isfinite(bound)
         safe=jnp.where(finite,bound,mstar)
         value=gammainc(alpha+1.,jnp.power(10.,.4*(mstar-safe)))
         return jnp.where(jnp.isneginf(bound),1.,
                          jnp.where(jnp.isposinf(bound),0.,value))
-    correction=(1.16*2.9*(observed_redshift-true_redshift)
-                -1.6*jnp.log10((1.+observed_redshift)/(1.+true_redshift)))
-    shift=observed_modulus_h-true_modulus_h-correction
+
+    def extreme(a, b, sa, sb, *, take_max):
+        if take_max:
+            magnitude=jnp.maximum(a,b)
+            value=jnp.where(a>b,sa,jnp.where(b>a,sb,.5*(sa+sb)))
+        else:
+            magnitude=jnp.minimum(a,b)
+            value=jnp.where(a<b,sa,jnp.where(b<a,sb,.5*(sa+sb)))
+        return magnitude,value
+
     true=[survival(edge) for edge in TRUE_EDGES]
     observed_magnitude=[edge+shift for edge in OBS_EDGES]
     apparent_magnitude=[jnp.full_like(shift,-jnp.inf)]+[
@@ -107,12 +121,19 @@ def source_mark_transfer(true_modulus_h, observed_modulus_h,
         for obs in range(3):
             columns=[]
             for i in range(5):
-                lower=jnp.maximum(jnp.maximum(TRUE_EDGES[i],apparent_magnitude[app]),
-                                  observed_magnitude[obs])
-                upper=jnp.minimum(jnp.minimum(TRUE_EDGES[i+1],apparent_magnitude[app+1]),
-                                  observed_magnitude[obs+1])
-                difference=jnp.minimum(jnp.minimum(true[i],apparent[app]),observed[obs])\
-                    -jnp.maximum(jnp.maximum(true[i+1],apparent[app+1]),observed[obs+1])
+                lower,lower_survival=extreme(
+                    TRUE_EDGES[i],apparent_magnitude[app],true[i],apparent[app],
+                    take_max=True)
+                lower,lower_survival=extreme(
+                    lower,observed_magnitude[obs],lower_survival,observed[obs],
+                    take_max=True)
+                upper,upper_survival=extreme(
+                    TRUE_EDGES[i+1],apparent_magnitude[app+1],true[i+1],
+                    apparent[app+1],take_max=False)
+                upper,upper_survival=extreme(
+                    upper,observed_magnitude[obs+1],upper_survival,observed[obs+1],
+                    take_max=False)
+                difference=lower_survival-upper_survival
                 # Preserve the original strict empty-interval subgradient;
                 # max(difference,0) alone has a different derivative at ties.
                 columns.append(jnp.where(upper>lower,jnp.maximum(difference,0.),0.)

@@ -210,6 +210,7 @@ def _run():
 
     baseline_scale = observed_total/baseline_mean_total
     baseline_delta_u0 = 0.5*float(np.log(baseline_scale))
+    baseline_profiled_table = baseline_table*baseline_scale
     baseline_profiled_score = rate_scaled_score(
         baseline_score, observed_total, baseline_mean_total, baseline_scale)
     baseline_prior = float(profile['initial']['gaussian_tracer_prior_nll'])
@@ -219,7 +220,8 @@ def _run():
         *(tracer_profiled[0]+tracer1[0]))
     baseline_obj = baseline_profiled_prior-baseline_profiled_score
     candidate_obj = profiled_prior-profiled_score
-    aggregate_delta = aggregate_score_delta(observed_table, baseline_table, profiled_table)
+    aggregate_delta = aggregate_score_delta(
+        observed_table, baseline_profiled_table, profiled_table)
     full_delta = profiled_score-baseline_profiled_score
     within_bin_delta = full_delta-aggregate_delta
 
@@ -290,7 +292,9 @@ def _run():
             sum_check=aggregate_delta+within_bin_delta),
         training_aggregate=dict(
             observed_total=observed_total,
-            baseline_rate_profiled=shares_and_metrics(baseline_table),
+            observed_radial_population_count_table=observed_table.tolist(),
+            baseline_unprofiled=shares_and_metrics(baseline_table),
+            baseline_rate_profiled=shares_and_metrics(baseline_profiled_table),
             candidate_prior_center_unprofiled=shares_and_metrics(candidate_table),
             candidate_prior_center_rate_profiled=shares_and_metrics(profiled_table)),
         heldout_outcome_values_read=False, heldout_scored=False,

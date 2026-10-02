@@ -7,6 +7,10 @@ import numpy as np
 from scipy.special import ndtr
 from scipy.integrate import quad
 
+import cf4_r2_shell_cdf_count as shell_module
+from cf4_r2_marked_tracer_jax import (
+    _source_mark_transfer_reference, source_mark_transfer,
+)
 from cf4_r2_shell_cdf_count import (shell_cdf_nodes,predict_shell_cdf_intensity,
     cell_averaged_tsc_weight,predict_source_volume_intensity,ngp_deposit_jax)
 
@@ -42,6 +46,36 @@ class ShellCDFTests(unittest.TestCase):
         scalar=jax.jit(jax.value_and_grad(lambda v:read(v,True)))(0.)
         np.testing.assert_allclose(scalar,full,rtol=1e-11,atol=1e-12)
         self.assertGreater(float(scalar[0]),0.)
+
+    def test_inactive_clamped_sources_do_not_change_shell_cdf_gradient(self):
+        radius=jnp.array([1.,192.])
+        geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,
+            redshift_table=radius/3000.,grid_size=8,sigma_los_km_s=100.,
+            radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,order=2,segments=1)
+        # The first source contributes in the selected shell. The corner source
+        # is beyond the lookup table and shell, so its inactive quadrature node
+        # clamps true/observed modulus together and has exactly zero weight.
+        positions=jnp.array([[292.,192.,192.],[350.,350.,350.]])
+        intrinsic=jnp.ones((5,2));angular=jnp.ones((2,2))
+        velocities=jnp.zeros((2,3))
+
+        def evaluate(transfer):
+            original=shell_module.source_mark_transfer
+            try:
+                shell_module.source_mark_transfer=transfer
+                def value(v):
+                    return jnp.sum(shell_module.predict_shell_cdf_intensity(
+                        positions,v,intrinsic,angular,**geometry))
+                return jax.jit(jax.value_and_grad(value))(velocities)
+            finally:
+                shell_module.source_mark_transfer=original
+
+        fast=evaluate(source_mark_transfer)
+        reference=evaluate(_source_mark_transfer_reference)
+        np.testing.assert_allclose(fast[0],reference[0],rtol=1e-11,atol=1e-12)
+        np.testing.assert_allclose(fast[1],reference[1],rtol=1e-10,atol=1e-11)
 
     def test_ngp_deposit_matches_periodic_catalogue_floor_mapping(self):
         position=jnp.array([[.1,.9,1.2],[4.,4.,4.],[1.99,2.01,3.99]])

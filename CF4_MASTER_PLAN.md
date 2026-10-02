@@ -262,21 +262,65 @@ than matching them, and all five density-bias coordinates and sigma_los were
 held fixed. The unprofiled candidate's L1/Pearson are not the rate-profiled
 statistics. The raw-FP factor was not reevaluated.
 
-Next, adopt Fable's proportionate follow-up: repeat this same prior-centre
-candidate on the same saved field, persist its6x16 radial x population table,
-and make a second active-TSC forward map at u0+0.108298. Verify map-level
-exp(2*u0) scaling and direct Poisson score against the analytic identity. Profile
-baseline/candidate total rate on the same rule, then exactly decompose their
-full count-score change into the radial x population aggregate contribution
-and within-bin conditional voxel allocation. This is one PMWD replay and two
-candidate TSC maps, no other nuisance fit/adjoint/chain/mock/heldout/law edit.
-Q-GOAL: localize whether the actual z=0 count discrepancy is population/radial
-or sub-bin before R3. Q-LEAN: no new fit; save the missing small table and one
-scaling-control map already implied by the Poisson-rate coordinate. This remains
-count-only, not raw-FP recalibration or posterior evidence. MW/M31 remain
-role-ambiguous and M33 unresolved; observables must constrain those roles on
-the same NEW field at<=0.3cMpc/h, with native truth IDs reserved for
-calibration/evaluation.
+Job410128 completed/exit0 on H200/syn104 in5m24s (batch MaxRSS3,507,112K).
+Its TSC scalar-rate identity passed (map error3.55e-15; direct-vs-analytic
+score error0), and four focused sensitivity tests passed. Fable5's read-only
+result audit returned CONDITIONAL PASS. Driver independently reconstructed
+the6x16 training-only observed, baseline and candidate tables from the saved
+profile, closure and v2 outputs; the historical v2 JSON is preserved. The
+audit found two reporting defects: `baseline_rate_profiled` actually held the
+unprofiled closure table, and the aggregate score delta compared the candidate
+profiled table with the unprofiled baseline while the full score delta used
+both profiled scores. The JSON generator and regression test are corrected;
+future outputs store the observed table and separately named unprofiled and
+profiled baseline metrics.
+
+Corrected derived baseline metrics after profiling its rate are mean47,121,
+radialxpopulation L1 2,964.260 and expected>=5 Pearson321.977/53 bins. The
+prior-centre candidate has the same profiled total but L1 7,380.534 and
+Pearson2,109.859/53. Its population0 share is closer to observed in each of
+five36–96cMpc/h shells, but crosses to the low side; this share-only improvement
+is not a count fit. The candidate is mainly an Mstar shift: baseline
+Mstar≈-23.602, alpha≈-.9368 versus candidate -23.28/-.94. With the five bias
+coordinates and sigma_los frozen, count-score delta is-866.970nat, correctly
+decomposed as radialxpopulation aggregate-803.099 plus within-bin voxel
+allocation-63.871. Aggregate score contributions by population are
+pop0-294.774, pop1-4.643, pop2-52.636, pop3-190.900, pop4-96.424,
+pop5-163.721nat. Pop0 contributes-337.650nat beyond96cMpc/h; pop3 contributes
+-197.310nat beyond96, especially144–180. These are fixed-field in-sample
+diagnostics, not a significance test, law rejection, posterior or independent
+prediction. The count-plus-prior conditional objective is still865.707nat worse
+at count-only MLE rates; it is not a joint MAP and cannot exclude joint fitting
+of other tracer coordinates or a corrected observation law.
+
+Read-only source audit confirmed two apparent-K samples x three observed
+absolute-K bins, true/observed modulus plus redshift correction and RSD before
+TSC deposition, and five true-K bias responses normalized over the full
+periodic box (not per chunk). No simple radius-wiring defect was established;
+external survival/bias and RSD/FoG calibration remain absent. The fixed-field
+LF-only sensitivity line is closed: no Mstar scan, broad optimizer, chain or
+simulation follows from it. Next R2 work must source and validate the
+radius-dependent selection/transfer and calibration inputs before another fit.
+
+The source audit also exposed an exact-tie LF-transfer gradient discrepancy:
+before correction, transfer values matched the direct reference but an exact
+boundary shift gradient was-2.53536 vs-1.58306. A whole-call reference fallback
+was rejected because inactive out-of-table source nodes can tie on every
+production chunk. The final fix selects by original magnitude bounds and
+averages tied survival values, preserving the nested direct max/min
+subgradient elementwise without a slow chunk fallback. `test_cf4_r2_lf_transfer_reuse.py`
+passes3/3, including apparent/three-way ties, JIT, shift, Mstar and alpha
+gradients; the inactive-clamped-source shell-CDF test, four observed-magnitude
+tests and five LF sensitivity tests also pass. Job410128 was forward-only and
+is unaffected. No blanket old-gradient rerun is justified; odd-order
+GH/zero-velocity gradient results remain tie-sensitive unless their saved-state
+weighted tie contribution is shown zero.
+Q-GOAL: correct R2 interpretation/gradient mechanics without claiming LG
+identification. Q-LEAN: one saved-field replay, exact table decomposition and
+one compact derivative fix; no scan or new chain. No heldout outcomes read.
+R2 remains NO-GO at1.5cMpc/h. MW/M31 stay role-ambiguous and M33 unresolved;
+their observables must constrain the same NEW field at<=0.3cMpc/h, with truth
+IDs reserved for calibration/evaluation.
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
