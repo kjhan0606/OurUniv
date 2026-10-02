@@ -538,3 +538,38 @@ is authoritative (Slurm reported only~3.4MiB). External Fable5 advice is
 warranted for this important actual-model discovery, not a routine audit.
 Request: config/cf4_r2_actual_voxel_support_fable_20261002.txt; result log:
 /gpfs/kjhan/CF4/logs/r2_actual_voxel_support_fable_20261002.txt.
+
+Fable returned CONDITIONAL PASS (usable read-only report). Driver ADOPTS
+moving quadrature to observed-ray/source-radius and observed-voxel volume
+coordinates, rejects a blind GL ladder/floor/width inflation. AMENDS the
+"proven registration" assertion: radius inside voxel's corner bounds is
+necessary but not a full1414/47121 source-frame registration check. REJECTS
+the proposed raw numerator f(r)/integral_ray_voxel(f): it is a redshift
+density, not the actual optical FP/K numerator and optical-selection/LF
+denominator, and would change factor ownership. Our prototype instead
+preserves `chunk_log_terms`'s actual FP/K conditional at the measured radius,
+mixing source intensities before its normalization; no extra p(r) factor.
+REJECTS the guaranteed-support/remaining-zero=>physical-incompatibility claim
+and unmeasured12GiB/30min whole-count cost. The fixed-ray expression also
+omits coherent/post-RSD periodic angle changes; same-source counterexample
+already exists. A no-wrap sufficient bound must be proved, otherwise the
+prototype is explicitly incomplete and cannot replace the periodic law.
+Dropping angular incidence is an explicit partial-model assumption, not
+justified by a small apparent pixel alone. No production defaults changed.
+
+Within the SAME bundle, `cf4_r2_observed_ray.py` defines exact signed native
+cube cell intervals and Gaussian-CDF source-radius weights including source
+q²/cell-volume Jacobian, LF transfer, angular selection and physical mixture.
+`chunk_log_terms` accepts these unnormalized source masses without changing
+its FP optical numerator/denominator. Probe first verifies ALL47121 training
+point RA/Dec/radius-to-voxel registration and the1414 link correspondence;
+then rows2/76 at radial rules4/8 and log-scale AD/FD. Explicit sufficient
+no-wrap margin is reported; it is not silently assumed. Two small partition/
+uniform-intensity tests precede actual data. This is not a new full count
+backend, actual IC adjoint, calibrated closure prior or posterior.
+Source2f8b3a2 submitted410662 typedH1002CPU8GiB20min (host planning<=6GiB
+plus20%). It is queued QOSMaxGRESPerUser, not running or failed. Do not
+bypass quota or cancel other projects. Runner source check is corrected to
+verify imported code, not demand unchanged HEAD after documentation commits;
+replace the still-pending spooled runner once so the known check defect does
+not create a preventable future failure. Queue quota is unchanged.
