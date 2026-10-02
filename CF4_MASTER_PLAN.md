@@ -487,6 +487,13 @@ against existing matter diagonal velocity dispersion, retaining both mean
 and variance. Diagonal-LOS proxy excludes missing cross-axis covariance;
 native scalar fits remain development evidence, no R2 prior injection or
 test-selected law. No full-count refit until closure evidence is adequate.
+410575 now COMPLETED20s with9tests pass. Three-parameter conditional
+matter-dispersion mixture improves training AIC43968.17 vs46569.18 for
+global widths (TSC-moment variant45268.52 vs47833.52). Evidence supports
+using field mean AND local dispersion, not an all-space Gaussian width.
+Still native training-only, not independent validation or R2 prior. Next
+connect conditional variance to boundary-integrated marked count prediction;
+preserve diagonal-covariance, K/Ks and full-population calibration limits.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2

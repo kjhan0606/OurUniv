@@ -292,3 +292,17 @@ global sigma inflation or another native count-optimizer scan. Same2CPU/
 10GiB/typed H100,30min cap, expected seconds; output native-velocity v2.
 Q-GOAL/Q-LEAN and NEW-field role limitations remain unchanged. No new
 simulation or R2 prior injection; do not select the law on two rare keys.
+
+410575 COMPLETED/exit0 in20s;9tests pass. On3785 preselection training rows,
+conditional matter-dispersion mixture AIC43968.17 versus global46569.18,
+with SAME three parameters; core7.989km/s, matter-dispersion scale.76622,
+broad weight.75607. Broad sigma median92.48/p99448.59/max450.64km/s.
+TSC-moment variant likewise improves AIC45268.52 versus47833.52, core8.704,
+scale.74406,weight.83618. Both fixed MLE starts agree. This favors an
+environment-conditioned velocity closure over global widths in training,
+not independent validation or a calibrated universal satellite fraction.
+The mixture labels remain mathematical narrow/broad components, not galaxy
+identity assignments; diagonal covariance and one-box/K/resolution limits
+persist. Next: connect mean AND native dispersion proxy consistently to
+the voxel-boundary marked integral and check conditional count prediction,
+before a full R2 use. No stochastic-floor rescue or widening by hand.
