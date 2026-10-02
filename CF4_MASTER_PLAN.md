@@ -282,21 +282,26 @@ unassigned 2M++ GIDs). Exact cross-tab and limits:
 `CF4_R2_V6_GROUP_IDENTITY_CENSUS_20261003.md`. This structural result is not
 physical membership, inclusion/covariance calibration or a posterior. Driver
 Q-GOAL review: necessary source ownership for the same-field shared factor.
-Q-LEAN: proportionate single census; no scores, redshift values, PM, field,
-or posterior gates. Under the user's routing rule the driver performs any
-consecutive/duplicated Fable audit. Next bundle is one training-only source
-redshift-overlap readout over these272 groups, to establish which group/member
-redshift terms share galaxies before defining covariance; it does not fit a
-posterior. MW/M31 remain ambiguous and M33 unresolved on the same NEW field.
-Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
-audits; this immediate bundle is driver-reviewed because an outside reviewer
-would be consecutive to the preceding driver review. Keep R2 active and
-incomplete. The bounded implementation plan is
-`CF4_R2_V6_REDSHIFT_OVERLAP_20261003.md`: reuse the older all-sample source
-audits without repeating their redshift fit, and report only the 272-group
-v6 training cohort's member/group `Vcmb` associations by relation class.
-This remains descriptive source evidence, not covariance calibration or a
-likelihood.
+Q-LEAN: proportionate source census; no scores, PM, field or posterior gate.
+The following v6-specific group/member `Vcmb` readout (Slurm410985 and410986
+failed before science work; corrected H100410988 COMPLETED/exit0 in5s, four
+tests, MaxRSS3.29MiB) reproduces272 training groups and828 secure links.
+Across167 shared/shared catalogue groups, matched individual velocities differ
+by median7 km/s, while CF4 group-to-linked-member differs by205 km/s and
+CF4-to-2M++ group velocity differs by79 km/s across148 unique group pairs.
+Offsets vary sharply by relation class and are not independent noise or a
+covariance estimate. Full table, driver decision and preserved failure details:
+`CF4_R2_V6_REDSHIFT_OVERLAP_20261003.md`; result:
+`/gpfs/kjhan/CF4/z0_density/r2_v6_redshift_overlap_20261003_v3/result.json`.
+The official EDD definitions say CF4 group Vcmb derives from Tully2015
+2MASS-group members, while the FP-group table separately exposes `gVcmb`,
+`Nest`, and `Ng`. Next bundle links the frozen272 cohort's matched PGCs to the
+already archived Tully member list and its parent Nest assignments. This is
+source-ownership evidence only; it cannot by itself calibrate the later EDD
+revision's covariance or selection. No posterior or IC is promoted. MW/M31
+remain role-ambiguous and M33 unresolved on the same NEW field. Under the
+user's routing rule this immediate audit is driver-run: Astra is not invoked
+for duplicated/consecutive review. R2 remains NO-GO and incomplete.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if

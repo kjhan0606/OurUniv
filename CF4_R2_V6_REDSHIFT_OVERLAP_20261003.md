@@ -70,7 +70,38 @@ or output directory was produced. The point-manifest hash/ID filter and a
 focused exclusion regression are now included. Retry uses fresh output path
 `r2_v6_redshift_overlap_20261003_v3`.
 
-Pending the corrected Slurm result. R2 remains incomplete and NO-GO for a
-production posterior or IC. No next covariance fit is implied: the driver
-will compare this cohort readout with the already preserved source audits and
-decide whether it adds enough information to specify any shared factor.
+Corrected typed-H100 job 410988 completed in five seconds, MaxRSS 3.29 MiB;
+all four focused regressions passed. It reproduced the frozen 272-group,
+828-secure-link cohort and all six relation-class counts exactly. Grouped
+velocity residuals (absolute km/s; unique CF4/2M++ group pairs for the final
+column) are:
+
+| CF4 / 2M++ relation | Groups | Member-pair Vcmb Δ median (p90) | CF4 group / linked CF4 member Δ median (p90) | CF4 / 2M++ group Vcmb Δ: pairs, median (p90) |
+|---|---:|---:|---:|---:|
+| shared / shared | 167 | 7 (51) | 205 (679) | 148, 79 (285) |
+| shared / partly unassigned | 32 | 7 (39) | 451 (1,398) | 30, 100 (1,724) |
+| shared / all unassigned | 54 | 7 (33) | 139 (535) | unavailable |
+| shared / distinct | 11 | 4 (33) | 408 (1,140) | 21, 551 (1,422) |
+| distinct / shared | 4 | 7 (9) | 178 (587) | 8, 194 (749) |
+| distinct / partly unassigned | 4 | 5 (40) | 209 (370) | 4, 22 (43) |
+
+All 828 crossmatch group IDs agree with the CF4 member table. The direct
+individual velocity pairs are repeated catalogue measurements of matched
+objects; the large and relation-dependent group/member offsets do not estimate
+independent redshift noise. The driver therefore answers the planned question
+NO: these fields do not specify a covariance law or calibrated shared-group
+factor. Q-GOAL is satisfied as a prerequisite diagnosis; Q-LEAN is satisfied
+because this one frozen-cohort readout reuses prior all-sample source audits
+and adds no fit, gate, simulation, heldout outcome, or posterior claim.
+
+The official EDD [CF4 All Groups definition](https://edd.ifa.hawaii.edu/describe_columns.php?table=kcf4allgroup)
+distinguishes `Vcmb` (group velocity averaged over Tully 2015 2MASS group
+members) from the [FP Groups table](https://edd.ifa.hawaii.edu/describe_columns.php?table=kcf4fpgroup)'s
+`gVcmb` (average over all group members), `Nest`, and `Ng`. The v6 relation census above uses
+CF4 `1PGC` and local 2M++ `GID`, not the Tully member identity. The next
+bounded source step is a v6-subset crosswalk to the already archived Tully
+member list: test exact matched-PGC membership in the Tully nest associated
+with each CF4 `1PGC`, and report unresolved/multiple associations separately.
+This may clarify source ownership but still cannot calibrate the later EDD
+revision's covariance or selection law. No posterior or IC is promoted; R2
+remains NO-GO. MW/M31 role ambiguity and unresolved M33 remain unchanged.
