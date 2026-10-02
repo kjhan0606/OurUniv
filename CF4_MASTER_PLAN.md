@@ -116,11 +116,24 @@ on this same row, testing interval-partition sensitivity while recording both
 terms. No target wiring or posterior action follows regardless of outcome.
 Submission410823 was cancelled during the test suite before the science runner;
 to avoid ambiguity in Slurm's comma-delimited export syntax, the corrected
-order list was passed by environment inheritance on410826. Test-only job410835 then exposed
-an overstrict new assertion comparing order32 with composite16×2 despite the
-nonconstant q² integrand; no science result/output was produced. The fixture
-is being narrowed to a small Gaussian and each layout checked against the
-analytic second moment, without asserting distinct quadrature layouts agree.
+order list was passed by environment inheritance on410826. Test-only job410835
+exposed an overstrict assertion comparing distinct quadrature layouts despite
+the nonconstant q² integrand; no science result/output was produced. Commit
+586fcde narrows that regression fixture to a small Gaussian and checks each
+layout against its analytic second moment.
+The equal-work comparison job410837 COMPLETED/exit0 in3m05s (batch MaxRSS
+2.74GiB; both regression suites passed). On PGC49072, the layouts8×4,16×2,32×1
+give logpdfs4.431839080,4.431946422,4.431824091; adjacent differences are
+.0001073/.0001223 nat, below.001. Numerator and denominator terms are both
+stable across these layouts, and all image fractions remain zero. This
+supports interval-partition sensitivity as the cause of the earlier
+unsegmented order8 discrepancy, but only on this one training row.
+Next run the same composite8×4 rule across all1414 training links and compare
+an equal-node-budget4×8 layout on the frozen79-row convergence sample. This
+is still fixed-state training-only mechanics; no target wiring, heldout score,
+posterior or field promotion follows from a pass. Request8GiB (>20% of the
+observed2.74GiB host peak). Preserve the unresolved count/FP image semantics;
+MW/M31 roles remain ambiguous and M33 unresolved on the same NEW field.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if

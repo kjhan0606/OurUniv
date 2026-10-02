@@ -96,6 +96,10 @@ def main():
                          if len(safe) else np.zeros(0,dtype=np.int64))
     convergence_rows=np.asarray(sorted(set(map(int,uncertified))|
         set(map(int,representative_safe))),dtype=np.int64)
+    census_segments=int(os.environ.get('CF4_R2_CENSUS_SEGMENTS','1'))
+    convergence_segments=int(os.environ.get('CF4_R2_CONVERGENCE_SEGMENTS','1'))
+    if census_segments<1 or convergence_segments<1:
+        raise ValueError('census and convergence segment counts must be positive')
 
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],
         source_commit=os.environ['CF4_EXPECTED_COMMIT'],R2_complete=False,
@@ -108,6 +112,10 @@ def main():
         count_law_semantics=dict(observed_radial_shell_cMpc_h=[5.,180.],
             box_half_cMpc_h=BOX/2,uses_27_periodic_RSD_shell_images=True,
             count_FP_image_fraction_reconciliation='NOT DONE; no target wiring in this bundle'),
+        quadrature_layout=dict(training_order=8,training_segments_per_cell_interval=census_segments,
+            training_nodes_per_cell_interval=8*census_segments,
+            convergence_order=4,convergence_segments_per_cell_interval=convergence_segments,
+            convergence_nodes_per_cell_interval=4*convergence_segments),
         FP_first_face_margin_cMpc_h=dict(positive=int(len(safe)),nonpositive=int(len(uncertified))),
         previous_bound_job=int(prior_bound['job_id']),
         bound=dict(maximum_grid_speed_km_s=vmax,maximum_diagonal_variance_km2_s2=float(jnp.max(variance)),
@@ -158,8 +166,8 @@ def main():
                 radial_total,radial_image,frac_num,frac_den))
         return jax.jit(evaluate)
 
-    order8={p:make_eval(p,8) for p in range(6)}
-    order4={p:make_eval(p,4) for p in range(6)}
+    order8={p:make_eval(p,8,census_segments) for p in range(6)}
+    order4={p:make_eval(p,4,convergence_segments) for p in range(6)}
     by_population=[np.flatnonzero(np.asarray(mix['population'])==p) for p in range(6)]
     eval_order=[int(by_population[p][j]) for j in range(max(map(len,by_population)))
         for p in range(6) if j<len(by_population[p])]
