@@ -250,6 +250,22 @@ singleton/ray ladders, gravity run, heldout values or target promotion.
 MW/M31 remain role-ambiguous and M33 unresolved; their observables must later
 constrain those roles on the same NEW field at LG<=0.3 cMpc/h, with native
 truth IDs only for calibration/evaluation.
+Expanded score-blind census410928 (source `e9c06d3`) COMPLETED/exit0 in4s;
+two tests pass, MaxRSS3.5MiB. The selected minimum-complexity training control
+is Tempel groupT10106, with2 direct secure count members (`recno`52802/52824),
+2 FP rows (PGC54049/54054), no anchor, and two distinct population/voxel keys.
+Both count points are population3; their radii are125.5622 and121.6602
+cMpc/h. The census read no FP mark values/scores, heldout rows, field state
+or PM evolution. It defines a concrete control but does not establish physical
+group membership or a likelihood. The next bounded source join checks whether
+these two count points share their independently defined CF4 `1PGC` and
+2M++`GID` groups; catalogue namespaces remain distinct and this cannot
+calibrate group inclusion or covariance. Driver audit for this routine,
+consecutive-review-avoiding source step: Q-GOAL yes (necessary graph semantics
+for a same-field shared-group factor); Q-LEAN yes (one group, IDs only,
+no scores, PM, heldout or fit). This follows the user's rule that a duplicated
+or consecutive Fable audit is conducted by the driver. R2 remains incomplete;
+MW/M31 ambiguous and M33 unresolved on the same NEW field.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
