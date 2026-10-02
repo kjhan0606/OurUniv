@@ -5,7 +5,9 @@ This reads only the saved R2 training-bin table and source cosmology tables.
 It is not a fit to the active field, a calibration, or posterior inference.
 """
 import json
+import os
 from pathlib import Path
+import subprocess
 
 import jax
 import jax.numpy as jnp
@@ -20,12 +22,16 @@ jax.config.update('jax_enable_x64', True)
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
 PROFILE = BASE/'r2_n256_frozen_field_tracer_profile_20261002_v3/result.json'
 SOURCE = BASE/'r2_marked_source_geometry_v1/geometry.npz'
+OUT = Path(os.environ.get('CF4_R2_UNIFORM_TRANSFER_OUT_DIR',
+    str(BASE/'r2_n256_uniform_transfer_shape_20261002_v1')))
 SHELL_EDGES = np.arange(36.0, 96.0 + 12.0, 12.0)
 QUADRATURE_ORDER = 24
 GRID = np.linspace(-3.0, 3.0, 61)
 
 
 def main():
+    if OUT.exists():
+        raise FileExistsError(f'refusing to overwrite existing output directory: {OUT}')
     profile = json.loads(PROFILE.read_text())
     if profile.get('status') != 'FROZEN_FIELD_TRACER_PROFILE_BOUNDED_NOT_CONVERGED':
         raise ValueError('expected the saved, bounded, nonconverged training profile')
@@ -101,6 +107,8 @@ def main():
 
     report = dict(
         classification='FIELD_FREE_TRAINING_TRANSFER_SHAPE_DIAGNOSTIC_NOT_CALIBRATION',
+        source_commit=subprocess.check_output(['git','rev-parse','HEAD'],
+            cwd=Path(__file__).resolve().parents[1], text=True).strip(),
         data_source=str(PROFILE), source_geometry=str(SOURCE),
         observed_data='training counts only; populations 0-2; radial shells 36-96 cMpc/h',
         field='uniform density; zero coherent/stochastic velocity; no angular mask',
@@ -133,7 +141,12 @@ def main():
         Q_GOAL='diagnose one R2 population-split component upstream of same-new-field MW/M31/M33 inference',
         Q_LEAN='one uniform-field transfer calculation and a 61x61 two-coordinate grid; no PMWD, adjoint, chain, mock, heldout outcome or law edit',
         MW_M31='role-ambiguous; future observables must constrain both roles on the same NEW field',
-        M33='unresolved; future observables must constrain it on the same NEW field at <=0.3 cMpc/h')
+        M33='unresolved; future observables must constrain it on the same NEW field at <=0.3 cMpc/h',
+        native_truth_id_role='calibration/evaluation only; never seed/select generated fields')
+    OUT.mkdir(parents=True, exist_ok=False)
+    temporary = OUT/'result.json.tmp'
+    temporary.write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    temporary.replace(OUT/'result.json')
     print(json.dumps(report, indent=2, allow_nan=False))
 
 

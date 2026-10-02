@@ -220,7 +220,8 @@ removes one possible R2 operator explanation without promoting a z=0
 posterior. Q-LEAN: yes, one field/two operators/one mock was proportionate.
 
 The audit's next suggestion was a field-free K/LF-transfer share calculation.
-`scripts/cf4_r2_uniform_transfer_shape.py` implements its bounded form: one
+`scripts/cf4_r2_uniform_transfer_shape.py` implements its bounded form and
+records JSON at `/gpfs/kjhan/CF4/z0_density/r2_n256_uniform_transfer_shape_20261002_v1/result.json`: one
 uniform-density, zero-velocity field, 24-point radial GL quadrature in the
 36–96cMpc/h training shells, and a61-by-61 grid over the existing standard-normal
 alpha/mstar coordinates. At the saved initial alpha/mstar coordinates
@@ -234,20 +235,48 @@ rho=1. In the actual fixed-field TSC table, population0 shares are instead
 .144,.183,.272,.397,.596, so the remaining deficit is coupled to field/bias
 weighting and/or the observation law; the field-free result cannot decide it.
 
-Next bounded R2 test: one deterministic forward evaluation on the same saved
-N256 endpoint-A field, changing only the two LF white coordinates to their
-prior centre(alpha_white=mstar_white=0), all other tracer coordinates frozen.
-Use active TSC, compare the exact saved baseline score/table to this one
-candidate's training score, prior penalty, and same radial x population
-summaries. One PMWD replay, no optimization/adjoint/chain/mock/heldout or law
-edit. This tests whether the field-density coupling preserves the field-free
-LF shape sensitivity; a favorable training result is not posterior evidence.
-Q-GOAL: test a concrete R2 split residual on the actual z=0 state before R3.
-Q-LEAN: one fixed field, one prior-centre point, one TSC forward count map.
-This is the marked-count factor only; the raw-FP factor is not reevaluated.
-MW/M31 remain role-ambiguous and M33 unresolved; eventual observables must
-constrain these roles on the same NEW field at<=0.3cMpc/h, with native truth
-identities reserved for calibration/evaluation.
+Fixed-field prior-centre sensitivity410125 completed/exit0 on H200/syn104 in
+3m06s; batch MaxRSS3,409,652K. With only alpha_white/mstar_white set to0,
+the active-TSC marked-count mean falls46,810.537→37,944.431 against47,121
+training observations. The five bright-population0 shares move closer but
+cross to the low side: observed.116,.152,.218,.350,.560; baseline.144,.183,
+.272,.397,.596; prior-centre.097,.128,.205,.323,.530. The unprofiled count
+score falls1,895.595nat; that raw comparison is dominated by the19.5% mean
+deficit. Candidate full table was not saved in v1, so its reported L1/Pearson
+cannot be rate-adjusted after the fact. Record:
+`/gpfs/kjhan/CF4/z0_density/r2_n256_lf_prior_center_sensitivity_20261002_v1/result.json`.
+
+Fable5's read-only important-result audit returned CONDITIONAL PASS. Driver
+verified the source-law scaling: `tracer_masses` adds2*u0 to log rate,
+`intrinsic_biased_source_masses` multiplies masses linearly by exp(log-rate),
+and the sparse Poisson factor uses training-count sum47121 and the exposed-mean
+integral. The Poisson-MLE total-rate multiplier gives s=1.241842,
+delta_u0=.108298 for the candidate, and s=1.006632 for baseline. On a
+like-for-like rate-profiled comparison, the candidate count score is-136,248.385
+vs-135,381.415 baseline (delta-866.970nat); evaluating the Gaussian prior at
+these MLE rate points, the count-plus-prior objective is worse by865.707. This
+is not a joint MAP over the rate prior. These are one-field,
+training-only conditional sensitivities, not a posterior or independent
+prediction. The prior-centre share change brackets the observed shares rather
+than matching them, and all five density-bias coordinates and sigma_los were
+held fixed. The unprofiled candidate's L1/Pearson are not the rate-profiled
+statistics. The raw-FP factor was not reevaluated.
+
+Next, adopt Fable's proportionate follow-up: repeat this same prior-centre
+candidate on the same saved field, persist its6x16 radial x population table,
+and make a second active-TSC forward map at u0+0.108298. Verify map-level
+exp(2*u0) scaling and direct Poisson score against the analytic identity. Profile
+baseline/candidate total rate on the same rule, then exactly decompose their
+full count-score change into the radial x population aggregate contribution
+and within-bin conditional voxel allocation. This is one PMWD replay and two
+candidate TSC maps, no other nuisance fit/adjoint/chain/mock/heldout/law edit.
+Q-GOAL: localize whether the actual z=0 count discrepancy is population/radial
+or sub-bin before R3. Q-LEAN: no new fit; save the missing small table and one
+scaling-control map already implied by the Poisson-rate coordinate. This remains
+count-only, not raw-FP recalibration or posterior evidence. MW/M31 remain
+role-ambiguous and M33 unresolved; observables must constrain those roles on
+the same NEW field at<=0.3cMpc/h, with native truth IDs reserved for
+calibration/evaluation.
 ## Historical R2 continuation — 2026-09-25: no new TNG dependency
 
 Latest408447 COMPLETED59m50s,2/2 affine-corrected N256 moves accepted. Fine
