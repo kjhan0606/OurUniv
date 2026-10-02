@@ -18,4 +18,4 @@ export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
 "$PY" tests/test_cf4_r2_native_mock.py
-exec "$PY" scripts/cf4_r2_native_rsd_mock_fit.py
+exec "$PY" "${CF4_R2_DRIVER:-scripts/cf4_r2_native_rsd_mock_fit.py}"

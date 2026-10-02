@@ -130,3 +130,21 @@ No simulation, CF4 posterior promotion, NGP switch or new calibration prior.
 Output v2 in the same fixed native mock family. Request10GiB again: adequate
 measured headroom, unchanged input sizes, not an enlarged field calculation.
 Q-GOAL/Q-LEAN and NEW-field MW/M31 ambiguity/M33 unresolved remain as above.
+
+410551 COMPLETED/exit0 in3m57s:48 iterations/53 evaluations, gradient_inf
+.0005615, proper optimizer gradient convergence. Host peak2.010GiB.
+Training score-5954.1345; test-5160.7389, expected2504.1049 versus2360.
+Test aggregate L1=285.6283. Completing optimization does NOT fix prediction.
+sigma_LOS=182.2236km/s, alpha=-.939502, Mstar=-23.341070; conditional
+point estimates only, no posterior/prior injection. Close fit extension.
+
+Next diagnostic keeps these coordinates fixed, with NO refit: NGP source
+GL2/LOS8 baseline, GL2/LOS64 and GL4/LOS64. Examine all occupied zero keys,
+their observed galaxy counts and repaired intensities, training/test means
+and scores. NGP's discontinuous voxel indicator can miss small regions with
+finite quadrature; two baseline zeros do not prove physical absence of
+support. Conversely, a nonzero refined value is not proof of convergence.
+One existing input allocation,2CPU/10GiB/typed GPU; expected<=5min, cap30min.
+No smoothing floor or NGP adoption. These outcomes discriminate numerical
+support loss from a physical stochastic-count/selection discrepancy before
+modifying the R2 observation law. Q-GOAL/Q-LEAN and latent roles unchanged.
