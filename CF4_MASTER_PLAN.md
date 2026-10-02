@@ -369,12 +369,27 @@ above is distinct: those values are not injected into the active bias target,
 whereas the LF-shape coordinates are active through `u7` and `u8`. See
 `CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md` for the detailed disposition.
 
+Follow-up implementation2026-10-02 (`2e6c8aa`, decision record
+`CF4_R2_FINITE_LF_PROCESS_20261002.md`) rewrites the active selected count/raw-FP
+factor directly as finite `I_selected/I_reference`, algebraically cancelling
+the old `I_bin/I_reference * I_selected/I_bin` factorization where alpha>-1.
+The active alpha coordinate is now the broad development regularizer
+`alpha=-1+.5*u7`; the finite selected process remains defined below -1 without
+normalizing an unobserved infinite faint tail. Four focused source/transfer/
+count/support test files are queued in Slurm410407 (H200/H100/A100, 12GiB,
+30min). Validation is pending; no sampling or field fit follows automatically.
+Old saved tracer coordinates require the mapping in the decision record to
+preserve physical alpha and are not directly reusable unchanged. Existing
+fixed-field sensitivities remain historical diagnostics, not invalidated
+posterior results.
+
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
 must source and validate the radius-dependent selection/transfer and obtain
 genuinely independent or explicitly joint calibration inputs for the actual
-five-true-K/six-observed-bin model, and revise the same-data alpha regularizer
-before any sampling.
+five-true-K/six-observed-bin model. The new alpha regularizer remains
+development-only pending prior sensitivity and those same calibration
+requirements.
 
 The source audit also exposed an exact-tie LF-transfer gradient discrepancy:
 before correction, transfer values matched the direct reference but an exact
