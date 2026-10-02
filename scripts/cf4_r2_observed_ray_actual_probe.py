@@ -36,6 +36,9 @@ def main():
         training=np.isin(pop.astype(np.int64)*128**3+flat,f['train_keys'])
     if training.sum()!=47121:raise ValueError('training point ownership changed')
     failures=np.flatnonzero(training&(rebuilt_flat!=flat))
+    linked_points=np.asarray([a[2] for a in chosen])
+    np.testing.assert_array_equal(rebuilt[linked_points],np.asarray(o['voxel']))
+    np.testing.assert_allclose(rpoint[linked_points],np.asarray(o['radius']),rtol=0,atol=1e-10)
     with np.load(BASE/'r2_raw_joint_pilot_v1/accepted_present_state.npz',allow_pickle=False) as f:
         rho,v,var=map(jnp.asarray,(f['rho'],f['mean_velocity_km_s'],f['physical_velocity_variance_km2_s2']))
         old=f['tracer'];tracer=jnp.asarray(np.r_[old[:6],0.,.12*np.exp(.5*old[7]),old[8]])
@@ -47,7 +50,7 @@ def main():
     sigma_bound=float(jnp.sqrt(30.**2+.5**2*jnp.max(var)))
     report=dict(status='RUNNING',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,PM_evolutions=0,heldout_scored=False,training_points=int(training.sum()),
-        coordinate_mismatches=failures.tolist(),rows=[],
+        coordinate_mismatches=failures.tolist(),registered_FP_links=len(chosen),rows=[],
         count_backend_changed=False,within_voxel_angular_density_scored=False,
         limitations='Fixed-direction conditional optical FP/K prototype. No extra observed-redshift likelihood. No full periodic production or calibrated closure prior.')
     def save():

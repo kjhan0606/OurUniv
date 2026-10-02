@@ -7,7 +7,6 @@ otherwise this omits terms and is only a labelled diagnostic. No likelihood
 floor, native identities or observed-redshift likelihood is introduced.
 """
 import jax.numpy as jnp
-import numpy as np
 from cf4_r2_shell_cdf_count import _probability_nodes
 from cf4_r2_velocity_closure import mixture_components,conditional_los_sigma
 from cf4_r2_marked_tracer_jax import source_mark_transfer

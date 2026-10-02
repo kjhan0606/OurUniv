@@ -31,6 +31,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
                     radial_source_mass=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
+    if radial_source_mass is not None and component_row is not None:
+        raise ValueError('preintegrated ray masses currently support one observation only')
     def response(pos,vel,mass,sky,voxel,radius,variance):
         if velocity_closure is None:
             return predict_source_marked_radial_key_density(pos,vel,mass,sky,
