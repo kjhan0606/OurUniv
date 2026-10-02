@@ -114,6 +114,13 @@ tolerance. All image fractions remain zero. Rather than continue a polynomial
 order ladder, the next bounded check compares equal-work layouts8×4,16×2,32×1
 on this same row, testing interval-partition sensitivity while recording both
 terms. No target wiring or posterior action follows regardless of outcome.
+Submission410823 was cancelled during the test suite before the science runner;
+to avoid ambiguity in Slurm's comma-delimited export syntax, the corrected
+order list was passed by environment inheritance on410826. Test-only job410835 then exposed
+an overstrict new assertion comparing order32 with composite16×2 despite the
+nonconstant q² integrand; no science result/output was produced. The fixture
+is being narrowed to a small Gaussian and each layout checked against the
+analytic second moment, without asserting distinct quadrature layouts agree.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
