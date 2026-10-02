@@ -59,3 +59,10 @@ Output: `/gpfs/kjhan/CF4/z0_density/r2_tng_native_k_response_20261002_v1/`.
 Scripts: `scripts/cf4_r2_tng_k_response.py` and corresponding `.sbatch`.
 
 Submission and terminal science assessment will be appended from Slurm/artifacts.
+
+Source246f036 submitted as410483 at2026-10-02 15:25:01 KST. Initial
+PENDING(Resources); chosen mode A100 after checking h200/h100/a100.
+`scontrol` confirms `TresPerNode=gres/gpu:A100:1`,2 CPUs,4GiB,20min.
+Static AST, shell syntax and diff checks passed. The numerical known-response
+control and real source extraction run inside this Slurm allocation.
+No scientific calibration result exists at submission.

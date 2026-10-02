@@ -412,6 +412,8 @@ catalogue read plus a7MB preserved moment grid, bounded20min/4GiB Slurm.
 MW/M31 remain ambiguous and M33 unresolved on the NEW inferred field; native
 IDs label external calibration only. Record:
 `CF4_R2_NATIVE_K_RESPONSE_20261002.md`.
+Source246f036 is submitted as Slurm410483 (typed A100,2CPU,4GiB,20min),
+initially PENDING(Resources). Numerical source/calibration outcome pending.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
