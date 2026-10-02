@@ -8,7 +8,7 @@ import numpy as np
 from cf4_r2_marked_tracer_jax import (
     conditional_single_link_logfactor,
     intrinsic_biased_source_masses, intrinsic_lf_bin_fractions,
-    intrinsic_lf_reference_weights,
+    intrinsic_lf_reference_weights,intrinsic_biased_source_reference_rates,
     predict_source_marked_intensity, predict_source_marked_key_contributions,
     predict_source_marked_radial_key_density,
     source_mark_transfer, tsc_weight_at_voxel,
@@ -81,6 +81,33 @@ class MarkedTracerTests(unittest.TestCase):
             density, jnp.log(.1), bias, alpha=a,
             reference_interval=(-25., -21.)))
         self.assertTrue(np.isfinite(np.asarray(jit_mass(-.94))).all())
+
+    def test_finite_reference_rate_and_transfer_reproduce_legacy_selected_source_mass(self):
+        density=jnp.array([.2,.7,1.1,1.8])
+        bias=jnp.array([.55,.8,1.,1.25,1.5])
+        positions=jnp.array([26.,30.,34.,38.])
+        observed=positions+jnp.array([-.03,.01,.04,-.02])
+        redshift=jnp.array([.0001,.01,.04,.08])
+        log_rate=jnp.log(.13)
+        alpha=-.94;mstar=-23.28
+        legacy_mass=intrinsic_biased_source_masses(
+            density,log_rate,bias,mstar=mstar,alpha=alpha,
+            reference_interval=(-25.,-21.))
+        finite_mass=intrinsic_biased_source_reference_rates(density,log_rate,bias)
+        legacy_transfer=source_mark_transfer(positions,observed,redshift,redshift,
+            mstar=mstar,alpha=alpha)
+        finite_transfer=source_mark_transfer(positions,observed,redshift,redshift,
+            mstar=mstar,alpha=alpha,finite_reference_interval=(-25.,-21.))
+        np.testing.assert_allclose(legacy_mass[None,:,:]*legacy_transfer,
+                                   finite_mass[None,:,:]*finite_transfer,
+                                   rtol=2e-10,atol=2e-12)
+        # The finite process remains defined below alpha=-1, where the legacy
+        # all-faint bin mass does not exist.
+        below_one=source_mark_transfer(positions,observed,redshift,redshift,
+            mstar=mstar,alpha=-1.4,
+            finite_reference_interval=(-25.,-21.))
+        self.assertTrue(np.isfinite(np.asarray(below_one)).all())
+        self.assertGreater(float(below_one.sum()),0.)
 
     def test_sparse_marked_count_includes_all_empty_voxel_exposure(self):
         intensity = jnp.array([[.5,1.2],[2.,.7]])

@@ -6,10 +6,11 @@ the state-dependent eight-sigma neighborhood is a numerical approximation.
 
 The LF-shape coordinates in the caller are centred on a 2M++-derived
 Lavaux-Hudson reference, while this target also scores 2M++ counts. They are
-development regularizers, not independent LF calibration. In particular,
-the alpha > -1 transform is a consequence of the current unbounded faint bin,
-not a physically established cutoff; revise the tail and selection law
-together before future posterior sampling.
+development regularizers, not independent LF calibration. The active target
+integrates only the finite observed K-selection windows; it does not define
+the divergent all-faint galaxy total. Its broad alpha coordinate may cross
+-1. This is observation-law plumbing only, not an approval to sample before
+selection, association and independent/joint calibration are defensible.
 """
 from itertools import product
 import time
@@ -17,7 +18,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.spatial import cKDTree
-from cf4_r2_marked_tracer_jax import (intrinsic_biased_source_masses,
+from cf4_r2_marked_tracer_jax import (intrinsic_biased_source_reference_rates,
     intrinsic_lf_bin_fractions,predict_source_marked_radial_key_density,
     sparse_marked_poisson_log_likelihood)
 from cf4_r2_raw_live_mark import (streaming_raw_mark,logadd_nonempty,
@@ -34,14 +35,14 @@ def volume_rule(spacing,order):
 
 def tracer_geometry(tracer,geometry):
     return dict(geometry,mstar=-23.28+.2*tracer[8],
-        alpha=-1+.06*jnp.exp(.5*tracer[7]),sigma_los_km_s=100*jnp.exp(.5*tracer[6]))
+        alpha=-1+.5*tracer[7],sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
+        finite_reference_interval=(-25.,-21.))
 
 
 def tracer_masses(density,tracer):
-    return intrinsic_biased_source_masses(density,
+    return intrinsic_biased_source_reference_rates(density,
         jnp.log(jnp.sum(intrinsic_lf_bin_fractions()[1:4]))+2*tracer[0],
-        jnp.exp(.5*tracer[1:6]),mstar=-23.28+.2*tracer[8],
-        alpha=-1+.06*jnp.exp(.5*tracer[7]),reference_interval=(-25.,-21.))
+        jnp.exp(.5*tracer[1:6]))
 
 
 def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,observation,

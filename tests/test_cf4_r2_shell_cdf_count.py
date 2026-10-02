@@ -10,6 +10,7 @@ from scipy.integrate import quad
 import cf4_r2_shell_cdf_count as shell_module
 from cf4_r2_marked_tracer_jax import (
     _source_mark_transfer_reference, source_mark_transfer,
+    intrinsic_biased_source_masses,intrinsic_biased_source_reference_rates,
 )
 from cf4_r2_shell_cdf_count import (shell_cdf_nodes,predict_shell_cdf_intensity,
     cell_averaged_tsc_weight,predict_source_volume_intensity,ngp_deposit_jax)
@@ -29,6 +30,49 @@ class ShellCDFTests(unittest.TestCase):
             self.assertAlmostEqual(float(probability(mu)),ndtr(180.-mu),places=13)
         derivative=float(jax.grad(probability)(180.))
         self.assertAlmostEqual(derivative,-1/np.sqrt(2*np.pi),places=12)
+
+    def test_finite_reference_volume_count_matches_legacy_and_supports_alpha_below_minus_one(self):
+        table=jnp.linspace(.001,400.,4001)
+        geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=table,
+            modulus_table_h=5*jnp.log10(table)+25.,redshift_table=table/3000.,
+            grid_size=8,sigma_los_km_s=100.,order=2,segments=2)
+        positions=jnp.array([[280.,192.,192.],[275.,193.,191.],[315.,190.,193.]])
+        density=jnp.array([.45,.9,1.55]);bias=jnp.array([.6,.8,1.,1.25,1.45])
+        angular=jnp.ones((2,3));log_rate=jnp.log(.12)
+        cotangent=jnp.sin(jnp.arange(6*8**3,dtype=float)).reshape((6,8,8,8))
+
+        def field(parameters,finite):
+            alpha,velocity_scale=parameters
+            if finite:
+                intrinsic=intrinsic_biased_source_reference_rates(
+                    density,log_rate,bias)
+                interval={'finite_reference_interval':(-25.,-21.)}
+            else:
+                intrinsic=intrinsic_biased_source_masses(density,log_rate,bias,
+                    mstar=-23.28,alpha=alpha,reference_interval=(-25.,-21.))
+                interval={}
+            velocity=jnp.array([[0.,0.,0.],[80.,-20.,10.],[-40.,5.,15.]])*velocity_scale
+            return predict_source_volume_intensity(positions,velocity,intrinsic,angular,
+                source_spacing=3.,volume_order=1,mstar=-23.28,alpha=alpha,
+                **interval,**geometry)
+
+        for alpha in (-.94,-.73):
+            p=jnp.array([alpha,1.])
+            old=jax.jit(lambda x:field(x,False))(p)
+            new=jax.jit(lambda x:field(x,True))(p)
+            np.testing.assert_allclose(old,new,rtol=3e-9,atol=3e-11)
+            old_vg=jax.jit(jax.value_and_grad(
+                lambda x:jnp.sum(field(x,False)*cotangent)))(p)
+            new_vg=jax.jit(jax.value_and_grad(
+                lambda x:jnp.sum(field(x,True)*cotangent)))(p)
+            np.testing.assert_allclose(old_vg[0],new_vg[0],rtol=3e-9,atol=3e-10)
+            np.testing.assert_allclose(old_vg[1],new_vg[1],rtol=3e-7,atol=3e-8)
+
+        below=jax.jit(jax.value_and_grad(
+            lambda a:jnp.sum(field(jnp.array([a,1.]),True))))(-1.35)
+        self.assertTrue(np.isfinite(np.asarray(below)).all())
+        self.assertGreater(float(below[0]),0.)
 
     def test_scalar_gather_equals_full_deposit_and_derivative(self):
         radius=jnp.linspace(.001,400.,4001)

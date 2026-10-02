@@ -16,7 +16,9 @@ from __future__ import annotations
 import math
 import numbers
 
+import jax
 import jax.numpy as jnp
+import numpy as np
 from jax.scipy.special import gammainc, gammaln, logsumexp
 
 from cf4_2mpp_joint_likelihood_jax import (
@@ -28,6 +30,7 @@ from cf4_2mpp_joint_likelihood_jax import (
 TRUE_EDGES = (-jnp.inf, -25., -23.6666666666667,
               -22.3333333333333, -21., jnp.inf)
 OBS_EDGES = (-25., -23.6666666666667, -22.3333333333333, -21.)
+_LF_GL_X, _LF_GL_W = np.polynomial.legendre.leggauss(12)
 
 
 def _lf_interval(lower, upper, *, mstar, alpha):
@@ -43,6 +46,84 @@ def _lf_interval(lower, upper, *, mstar, alpha):
     cdf_upper = jnp.where(upper_infinite,0.,gammainc(shape,x_upper))
     return jnp.where(upper > lower,
                      jnp.maximum(cdf_lower-cdf_upper, 0.), 0.)
+
+
+def _lf_finite_interval(lower, upper, *, mstar, alpha):
+    """Integrate the Schechter shape on a finite magnitude interval.
+
+    Unlike ``_lf_interval``, this does not normalize an unbounded faint tail
+    and is therefore finite for alpha on either side of -1. Active selection
+    intersections are finite because the observed absolute-K edges are finite.
+    The common Schechter prefactor cancels in transfer ratios.
+    """
+    lower, upper = jnp.broadcast_arrays(jnp.asarray(lower), jnp.asarray(upper))
+    valid = upper > lower
+    lo = jnp.where(valid,jnp.minimum(lower, upper),-23.28)
+    width = jnp.where(valid, upper-lower, 1.)
+    # Bounds reaching this helper are finite by construction. The dummy width
+    # keeps inactive empty intervals numerically benign under reverse-mode AD.
+    magnitude = lo[..., None] + width[..., None] * jnp.asarray(
+        (_LF_GL_X+1.)/2.)
+    power = .4*jnp.log(10.)*(mstar-magnitude)
+    log_shape = (alpha+1.)*power-jnp.exp(power)
+    integral = width*.5*jnp.sum(
+        jnp.asarray(_LF_GL_W)*jnp.exp(log_shape), axis=-1)
+    return jnp.where(valid, integral, 0.)
+
+
+def _finite_reference_source_mark_transfer(true_modulus_h, observed_modulus_h,
+                                            true_redshift, observed_redshift,
+                                            *, mstar, alpha,
+                                            reference_interval):
+    """Selected LF measure per finite reference-window LF measure."""
+    lower_ref, upper_ref = reference_interval
+    if not (math.isfinite(lower_ref) and math.isfinite(upper_ref)
+            and lower_ref < upper_ref):
+        raise ValueError('finite ordered LF reference interval required')
+    true_modulus_h,observed_modulus_h,true_redshift,observed_redshift = (
+        jnp.broadcast_arrays(jnp.asarray(true_modulus_h),
+            jnp.asarray(observed_modulus_h),jnp.asarray(true_redshift),
+            jnp.asarray(observed_redshift)))
+    scalar_source = true_modulus_h.ndim == 0
+    if scalar_source:
+        true_modulus_h=jnp.atleast_1d(true_modulus_h)
+        observed_modulus_h=jnp.atleast_1d(observed_modulus_h)
+        true_redshift=jnp.atleast_1d(true_redshift)
+        observed_redshift=jnp.atleast_1d(observed_redshift)
+    correction = (1.16*2.9*(observed_redshift-true_redshift)
+                  - 1.6*jnp.log10((1.+observed_redshift)
+                                   /(1.+true_redshift)))
+    shift = observed_modulus_h-true_modulus_h-correction
+    app_lower = jnp.stack((jnp.full_like(shift,-jnp.inf),
+                           11.5-true_modulus_h-correction))
+    app_upper = jnp.stack((11.5-true_modulus_h-correction,
+                           12.5-true_modulus_h-correction))
+    observed_lower = jnp.asarray(OBS_EDGES[:-1])[:,None]+shift[None,:]
+    observed_upper = jnp.asarray(OBS_EDGES[1:])[:,None]+shift[None,:]
+    lower = jnp.maximum(
+        jnp.maximum(jnp.asarray(TRUE_EDGES[:-1])[None,:,None,None],
+                    app_lower[:,None,None,:]),
+        observed_lower[None,None,:,:])
+    upper = jnp.minimum(
+        jnp.minimum(jnp.asarray(TRUE_EDGES[1:])[None,:,None,None],
+                    app_upper[:,None,None,:]),
+        observed_upper[None,None,:,:])
+    @jax.checkpoint
+    def integrate_interval(bounds):
+        return _lf_finite_interval(bounds[0],bounds[1],
+                                   mstar=mstar,alpha=alpha)
+
+    # Stream the 30 population/bin intersections instead of materializing a
+    # (population,bin,source,quadrature-node) tensor. This keeps peak
+    # workspace proportional to source_count x quadrature_order.
+    flat_bounds=(lower.reshape((30,shift.shape[0])),
+                 upper.reshape((30,shift.shape[0])))
+    selected=jax.lax.map(integrate_interval,flat_bounds).reshape(lower.shape)
+    reference = _lf_finite_interval(lower_ref,upper_ref,
+                                    mstar=mstar,alpha=alpha)
+    by_population = jnp.transpose(selected/reference,(0,2,1,3))
+    result=by_population.reshape((6,5,shift.shape[0]))
+    return result[:,:,0] if scalar_source else result
 
 
 def _source_mark_transfer_reference(true_modulus_h, observed_modulus_h,
@@ -79,7 +160,8 @@ def _source_mark_transfer_reference(true_modulus_h, observed_modulus_h,
 
 def source_mark_transfer(true_modulus_h, observed_modulus_h,
                          true_redshift, observed_redshift, *,
-                         mstar=-23.28, alpha=-.94):
+                         mstar=-23.28, alpha=-.94,
+                         finite_reference_interval=None):
     """Fast boundary reuse with the reference subgradient at exact ties.
 
     The Schechter survival function S(M) is decreasing: S(max bounds) equals
@@ -89,8 +171,18 @@ def source_mark_transfer(true_modulus_h, observed_modulus_h,
     Select survival values using comparisons of the original magnitude bounds;
     at an exact tie, average the tied survival values. Nested selection then
     reproduces the direct max/min subgradient (including three-way ties)
-    elementwise without a slow whole-array fallback.
+    elementwise without a slow whole-array fallback. If
+    ``finite_reference_interval`` is supplied, return the selected finite LF
+    measure divided by that finite reference measure instead of conditioning
+    on each true bin's all-luminosity integral. Pair that mode with
+    ``intrinsic_biased_source_reference_rates``. The finite mode is defined
+    for alpha <= -1 because every selected interval is finite.
     """
+    if finite_reference_interval is not None:
+        return _finite_reference_source_mark_transfer(
+            true_modulus_h,observed_modulus_h,true_redshift,observed_redshift,
+            mstar=mstar,alpha=alpha,
+            reference_interval=finite_reference_interval)
     correction=(1.16*2.9*(observed_redshift-true_redshift)
                 -1.6*jnp.log10((1.+observed_redshift)/(1.+true_redshift)))
     shift=observed_modulus_h-true_modulus_h-correction
@@ -209,6 +301,28 @@ def intrinsic_biased_source_masses(density, log_mean_rate_per_cell,
     return (jnp.exp(log_mean_rate_per_cell)*weights[:, None]*response)
 
 
+def intrinsic_biased_source_reference_rates(density, log_reference_rate_per_cell,
+                                            intrinsic_bias):
+    """Five unit-mean spatial responses for a finite-reference LF process.
+
+    The finite LF integral lives in the selected transfer, so each true-K
+    response carries the common reference-window rate rather than an
+    unbounded-bin Schechter fraction. Multiplying these rates by the finite
+    selected transfer is algebraically equivalent to the legacy
+    ``I_bin/I_reference * I_selected/I_bin`` factorization when alpha > -1.
+    """
+    flat = jnp.asarray(density).reshape(-1)
+    bias = jnp.asarray(intrinsic_bias)
+    if bias.shape != (5,) or flat.size == 0:
+        raise ValueError('five true-K biases and a nonempty density required')
+    occupied = flat[None, :] > 0
+    safe_density = jnp.where(occupied, flat[None, :], 1.)
+    response = jnp.where(occupied,
+                         jnp.exp(bias[:, None]*jnp.log(safe_density)), 0.)
+    response /= jnp.mean(response, axis=1, keepdims=True)
+    return jnp.exp(log_reference_rate_per_cell)*response
+
+
 def tsc_weight_at_voxel(positions, voxel_ijk, grid_size, box_size_cMpc_h):
     """Weight of each source in ONE observed voxel of the deposit kernel.
 
@@ -234,7 +348,8 @@ def _source_marked_nodes(positions, velocity, observer, box_size_cMpc_h,
                          hubble_km_s_Mpc, little_h, radius_table,
                          modulus_table, redshift_values, sigma_los_km_s,
                          radial_min_cMpc_h, radial_max_cMpc_h,
-                         quadrature_order, mstar, alpha):
+                         quadrature_order, mstar, alpha,
+                         finite_reference_interval=None):
     """Yield the shared source selection/K/RSD transfer for count and link."""
     shifted, _, rhat = observer_centred_spherical_rsd_jax(
         positions, velocity, observer, box_size_cMpc_h,
@@ -258,7 +373,8 @@ def _source_marked_nodes(positions, velocity, observer, box_size_cMpc_h,
                                        redshift_values)
         transfer = source_mark_transfer(true_modulus, observed_modulus,
                                         true_redshift, observed_redshift,
-                                        mstar=mstar, alpha=alpha)
+                                        mstar=mstar, alpha=alpha,
+                                        finite_reference_interval=finite_reference_interval)
         selected = (observed_radius >= radial_min_cMpc_h) & (
             observed_radius <= radial_max_cMpc_h)
         yield observed_positions, selected, transfer, weight
@@ -305,7 +421,7 @@ def predict_source_marked_intensity(
     modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s=0., radial_min_cMpc_h=5.,
     radial_max_cMpc_h=180., quadrature_order=3,
-    mstar=-23.28, alpha=-.94,
+    mstar=-23.28, alpha=-.94, finite_reference_interval=None,
 ):
     """Deposit source-selected K counts after spherical RSD/LOS convolution.
 
@@ -339,7 +455,8 @@ def predict_source_marked_intensity(
             positions, velocity, observer, box_size_cMpc_h,
             hubble_km_s_Mpc, little_h, radius_table, modulus_table,
             redshift_values, sigma_los_km_s, radial_min_cMpc_h,
-            radial_max_cMpc_h, quadrature_order, mstar, alpha):
+            radial_max_cMpc_h, quadrature_order, mstar, alpha,
+            finite_reference_interval):
         for population in range(6):
             mass = (weight * selected * angular[population//3]
                     * jnp.sum(transfer[population]*intrinsic, axis=0))
@@ -355,6 +472,7 @@ def predict_source_marked_intensity_los_node(
     radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s=0., radial_min_cMpc_h=5.,
     radial_max_cMpc_h=180., mstar=-23.28, alpha=-.94,
+    finite_reference_interval=None,
 ):
     """One Gaussian-Hermite LOS node of the selected count intensity.
 
@@ -394,7 +512,8 @@ def predict_source_marked_intensity_los_node(
     observed_redshift = jnp.interp(observed_radius, radius_table, redshift_values)
     transfer = source_mark_transfer(true_modulus, observed_modulus,
                                     true_redshift, observed_redshift,
-                                    mstar=mstar, alpha=alpha)
+                                    mstar=mstar, alpha=alpha,
+                                    finite_reference_interval=finite_reference_interval)
     selected = ((observed_radius >= radial_min_cMpc_h)
                 & (observed_radius <= radial_max_cMpc_h))
     outputs = []
@@ -413,7 +532,7 @@ def predict_source_marked_key_contributions(
     radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s=0., radial_min_cMpc_h=5.,
     radial_max_cMpc_h=180., quadrature_order=3,
-    mstar=-23.28, alpha=-.94,
+    mstar=-23.28, alpha=-.94, finite_reference_interval=None,
 ):
     """Five-true-K-by-source contributions to ONE count population/voxel.
 
@@ -447,7 +566,8 @@ def predict_source_marked_key_contributions(
             positions, velocity, observer, box_size_cMpc_h,
             hubble_km_s_Mpc, little_h, radius_table, modulus_table,
             redshift_values, sigma_los_km_s, radial_min_cMpc_h,
-            radial_max_cMpc_h, quadrature_order, mstar, alpha):
+            radial_max_cMpc_h, quadrature_order, mstar, alpha,
+            finite_reference_interval):
         spatial = tsc_weight_at_voxel(observed_positions, voxel_ijk, grid_size,
                                       box_size_cMpc_h)
         result = result + (weight*selected*angular[population//3]*spatial)[None, :] * (
@@ -461,7 +581,7 @@ def predict_source_marked_radial_key_density(
     *, observer, box_size_cMpc_h, hubble_km_s_Mpc, little_h,
     radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s, radial_min_cMpc_h=5., radial_max_cMpc_h=180.,
-    mstar=-23.28, alpha=-.94,
+    mstar=-23.28, alpha=-.94, finite_reference_interval=None,
 ):
     """Source contribution per unit *observed comoving radius* at one key.
 
@@ -524,7 +644,8 @@ def predict_source_marked_radial_key_density(
         jnp.interp(r_observed, radius_table, modulus_table),
         jnp.interp(true_radius, radius_table, redshift_values),
         jnp.interp(r_observed, radius_table, redshift_values),
-        mstar=mstar, alpha=alpha)[population]
+        mstar=mstar, alpha=alpha,
+        finite_reference_interval=finite_reference_interval)[population]
     selected = ((r_observed >= radial_min_cMpc_h)
                 & (r_observed <= radial_max_cMpc_h))
     return (selected*spatial*angular[population//3])[None, :] * transfer*intrinsic

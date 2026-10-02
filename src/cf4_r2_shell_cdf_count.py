@@ -107,6 +107,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     hubble_km_s_Mpc,little_h,radius_table_cMpc_h,modulus_table_h,redshift_table,
     grid_size,sigma_los_km_s,radial_min_cMpc_h=5.,radial_max_cMpc_h=180.,
     mstar=-23.28,alpha=-.94,order=16,segments=1,
+    finite_reference_interval=None,
     target_population=None,target_voxel=None,source_cell_average=False,
     force_all_images=False,deposition='tsc'):
     """Same source-selected K/count integrand with TSC or diagnostic NGP deposit.
@@ -157,7 +158,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         radius=radius_of(observed)
         transfer=source_mark_transfer(true_modulus,
             jnp.interp(radius,radius_table_cMpc_h,modulus_table_h),true_redshift,
-            jnp.interp(radius,radius_table_cMpc_h,redshift_table),mstar=mstar,alpha=alpha)
+            jnp.interp(radius,radius_table_cMpc_h,redshift_table),mstar=mstar,alpha=alpha,
+            finite_reference_interval=finite_reference_interval)
         if scalar:
             p=target_population
             mass=(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0))

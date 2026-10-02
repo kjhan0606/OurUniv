@@ -2,7 +2,9 @@ import unittest
 import jax
 import jax.numpy as jnp
 import numpy as np
-from cf4_r2_raw_volume_target import FreshRawSupport,volume_rule
+from cf4_r2_raw_volume_target import (
+    FreshRawSupport,tracer_geometry,tracer_masses,volume_rule,
+)
 
 
 class RawVolumeTargetTests(unittest.TestCase):
@@ -30,6 +32,16 @@ class RawVolumeTargetTests(unittest.TestCase):
         v=np.zeros((2,3));self.assertEqual(ids(v),{0})
         v[1,0]=-6000.;self.assertEqual(ids(v),{0,1})
         v[1,0]=0.;self.assertEqual(ids(v),{0})
+
+    def test_active_lf_coordinate_crosses_minus_one_with_finite_selected_rate(self):
+        tracer=jnp.zeros(9).at[7].set(-1.)
+        geometry=tracer_geometry(tracer,{})
+        self.assertAlmostEqual(float(geometry['alpha']),-1.5,places=12)
+        self.assertEqual(geometry['finite_reference_interval'],(-25.,-21.))
+        density=jnp.array([.4,.8,1.2,1.6])
+        masses=tracer_masses(density,tracer)
+        self.assertTrue(np.isfinite(np.asarray(masses)).all())
+        self.assertEqual(masses.shape,(5,4))
 
 
 if __name__=='__main__':unittest.main()
