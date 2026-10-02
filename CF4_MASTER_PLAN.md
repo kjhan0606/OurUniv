@@ -231,9 +231,17 @@ Next bundle: use the source-bound v6 graph to build one normalized shared-
 group-latent count/mark factor with member-redshift covariance and explicit
 group-inclusion uncertainty. Its first bounded calculation is the source-only
 v6 graph census in `cf4_r2_v6_multimember_graph_census.py`: freeze current-v6
-member degrees and one lexically selected, training-only multi-member control
-before reading any mark score. This is the start of the group-law bundle, not a
-separate science gate. Do not multiply member marks independently, score
+member degrees and one training-only multi-member control before reading any
+mark score. 410927 COMPLETED/exit0 in4s, two tests pass, MaxRSS3.4MiB. Current
+v6 has6,028 training FP source groups:1,833 have one direct secure 2M++ point,
+272 have multiple, and3,923 have none. None of the272 has exactly one FP row
+and zero anchors, so the originally proposed isolated group control does not
+exist; this does not mean multi-member information is absent. No FP mark
+scores/values, heldout outcomes, field or likelihood were read. The next
+source-only census ranks candidates by fewest anchors, then fewest FP rows,
+then lexical source-group label, requiring at least one FP row and all linked
+points in training. This is the start of the group-law bundle, not a separate
+science gate. Do not multiply member marks independently, score
 another count occurrence, or infer group membership from native truth. No
 posterior sampling until selection and covariance are defensible. Q-GOAL:
 connect actual group-distance information to the same new z=0 field while

@@ -25,11 +25,12 @@ def eligible_multilink_training_groups(labels, fp_role, fp_row_count,
     eligible = []
     for index, label in enumerate(labels):
         members = sorted(group_members.get(str(label), ()))
-        if (int(fp_role[index]) == 0 and int(fp_row_count[index]) == 1
-                and int(anchor_count[index]) == 0 and len(members) >= 2
+        if (int(fp_role[index]) == 0 and int(fp_row_count[index]) >= 1
+                and len(members) >= 2
                 and all(point_role_by_recno.get(recno, 2) == 0 for recno in members)):
-            eligible.append(str(label))
-    return sorted(eligible)
+            eligible.append((int(anchor_count[index]), int(fp_row_count[index]),
+                             str(label)))
+    return [label for _, _, label in sorted(eligible)]
 
 
 def sha256(path):
@@ -117,6 +118,10 @@ def main():
         role_summary[name] = dict(groups=int(len(degrees)), zero_direct_points=int(np.sum(degrees == 0)),
             one_direct_point=int(np.sum(degrees == 1)),
             multiple_direct_points=int(np.sum(degrees >= 2)),
+            multiple_with_any_FP_row=int(np.sum(
+                (degrees >= 2) & (fp_row_count[fp_role == role] >= 1))),
+            multiple_with_no_anchor=int(np.sum(
+                (degrees >= 2) & (anchor_count[fp_role == role] == 0))),
             multiple_with_one_FP_row_no_anchor=int(np.sum(
                 (degrees >= 2) & (fp_row_count[fp_role == role] == 1)
                 & (anchor_count[fp_role == role] == 0))))
@@ -129,7 +134,8 @@ def main():
         label = eligible[0]
         members = sorted(group_members[label])
         selected = dict(source_group_label=label,
-            selection_rule='lexicographically first eligible v6 training group; no mark scores read',
+            selection_rule=('among v6 train groups with >=2 direct count members, >=1 FP row, '
+                'and all members training: fewest anchors, then fewest FP rows, then lexical label'),
             FP_rows=int(fp_row_count[label_index[label]]),
             anchor_rows=int(anchor_count[label_index[label]]),
             member_recno=members,
