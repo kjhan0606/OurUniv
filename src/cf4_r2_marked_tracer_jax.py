@@ -588,6 +588,7 @@ def predict_source_marked_radial_key_density(
     radius_table_cMpc_h, modulus_table_h, redshift_table, grid_size,
     sigma_los_km_s, radial_min_cMpc_h=5., radial_max_cMpc_h=180.,
     mstar=-23.28, alpha=-.94, finite_reference_interval=None,
+    source_velocity_variances_km2_s2=None,dispersion_scale=1.,deposition='tsc',
 ):
     """Source contribution per unit *observed comoving radius* at one key.
 
@@ -634,6 +635,10 @@ def predict_source_marked_radial_key_density(
     shifted_radius = jnp.linalg.norm(shifted_relative, axis=1)
     r_observed = jnp.asarray(observed_radius_cMpc_h)
     sigma_radius = little_h*sigma_los_km_s/hubble_km_s_Mpc
+    if source_velocity_variances_km2_s2 is not None:
+        from cf4_r2_velocity_closure import conditional_los_sigma
+        sigma_radius=little_h*conditional_los_sigma(rhat,sigma_los_km_s,
+            source_velocity_variances_km2_s2,dispersion_scale)/hubble_km_s_Mpc
     log_normalizer = -jnp.log(sigma_radius)-.5*jnp.log(2*jnp.pi)
     radial_pdf_plus = jnp.exp(
         -.5*((r_observed-shifted_radius)/sigma_radius)**2+log_normalizer)
@@ -645,6 +650,28 @@ def predict_source_marked_radial_key_density(
         observed_plus, voxel_ijk, grid_size, box_size_cMpc_h)
         + radial_pdf_minus*tsc_weight_at_voxel(
             observed_minus, voxel_ijk, grid_size, box_size_cMpc_h))
+    if deposition=='voxel_cdf':
+        # Density of the SAME eight-sigma, periodic voxel-CDF measure as
+        # counts. Each image sphere has two signed ray roots; dr/dq requires
+        # the radial Jacobian, not merely a central-image Gaussian PDF.
+        from itertools import product
+        spatial=jnp.zeros(count,dtype=positions.dtype)
+        for image in product((-1,0,1),repeat=3):
+            center=jnp.asarray(image)*box_size_cMpc_h
+            middle=jnp.sum(rhat*center,axis=1)
+            transverse=jnp.maximum(jnp.sum(center**2)-middle**2,0.)
+            active=(r_observed**2>transverse)&(jnp.sum(rhat**2,axis=1)>0)
+            root=jnp.sqrt(jnp.where(active,r_observed**2-transverse,1.))
+            for sign in (-1.,1.):
+                q=middle+sign*root
+                observed=(observer+q[:,None]*rhat)%box_size_cMpc_h
+                cell=jnp.floor(observed/(box_size_cMpc_h/grid_size)).astype(jnp.int32)%grid_size
+                inside=jnp.all(cell==jnp.asarray(voxel_ijk)[None],axis=1)
+                z=(q-shifted_radius)/sigma_radius
+                pdf=jnp.exp(-.5*z*z+log_normalizer)
+                spatial+=jnp.where(active&inside&(jnp.abs(z)<=8.),pdf*r_observed/root,0.)
+    elif deposition!='tsc':
+        raise ValueError('radial key requires tsc or voxel_cdf deposition')
     transfer = source_mark_transfer(
         jnp.interp(true_radius, radius_table, modulus_table),
         jnp.interp(r_observed, radius_table, modulus_table),

@@ -16,6 +16,7 @@ import numpy as np
 
 from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, tsc_deposit_jax
 from cf4_r2_marked_tracer_jax import source_mark_transfer, tsc_weight_at_voxel
+from cf4_r2_velocity_closure import conditional_los_sigma
 
 
 def ngp_deposit_jax(positions, masses, grid_size, box_size_cMpc_h):
@@ -47,17 +48,6 @@ def ray_voxel_interval(direction, observer, voxel, grid_size, box, image_center)
     inside=jnp.all(~parallel|((lower[None,:]<=0)&(upper[None,:]>0)),axis=1)
     active=inside&(hi>lo)&jnp.any(~parallel,axis=1)
     return jnp.where(active,lo,0.),jnp.where(active,hi,0.),active
-
-
-def conditional_los_sigma(direction, base_sigma, variances, scale):
-    """Diagonal-covariance proxy, recomputed for each source-volume ray.
-
-    Caller validates nonnegative cell variances and every component's
-    periodic support. No off-diagonal covariance or satellite identity claim.
-    """
-    if jnp.asarray(variances).shape!=direction.shape:
-        raise ValueError('one diagonal velocity variance vector per source required')
-    return jnp.sqrt(base_sigma**2+scale**2*jnp.sum(direction**2*variances,axis=1))
 
 
 def ray_grid_breakpoints(lower, upper, direction, observer, grid_size, box):

@@ -26,21 +26,35 @@ def logadd_nonempty(a,b):
 def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observation,
                     *,population,geometry,magnitude_order=24,cut_order=64,
                     component_bin=None,component_row=None,
-                    cut_integration_axis=0,cut_marginal_tolerance=0.):
+                    cut_integration_axis=0,cut_marginal_tolerance=0.,
+                    source_velocity_variances_km2_s2=None,velocity_closure=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
+    def response(pos,vel,mass,sky,voxel,radius,variance):
+        if velocity_closure is None:
+            return predict_source_marked_radial_key_density(pos,vel,mass,sky,
+                population,voxel,radius,**geometry)
+        from cf4_r2_velocity_closure import mixture_components
+        total=jnp.zeros_like(mass)
+        for weight,width,scale in mixture_components(velocity_closure):
+            g=dict(geometry,sigma_los_km_s=width,deposition='voxel_cdf',
+                source_velocity_variances_km2_s2=variance,dispersion_scale=scale)
+            total+=weight*predict_source_marked_radial_key_density(pos,vel,mass,sky,
+                population,voxel,radius,**g)
+        return total
+    if velocity_closure is not None and source_velocity_variances_km2_s2 is None:
+        raise ValueError('mixture raw marks require same-field physical variances')
+    variance=jnp.zeros_like(velocities) if source_velocity_variances_km2_s2 is None else source_velocity_variances_km2_s2
     if component_row is None:
-        mass=predict_source_marked_radial_key_density(positions,velocities,intrinsic,angular,
-            population,o['voxel'],o['radius'],**geometry)
+        mass=response(positions,velocities,intrinsic,angular,o['voxel'],o['radius'],variance)
         geometric=o
     else:
         if component_bin is None:raise ValueError('multirow stream requires packed bin IDs')
         geometric={k:o[k][component_row] for k in ('voxel','radius','dz','ksmag')}
-        def one(pos,vel,mass,sky,voxel,radius):
-            return predict_source_marked_radial_key_density(pos[None],vel[None],mass[:,None],sky[:,None],
-                population,voxel,radius,**geometry)[:,0]
-        mass=jax.vmap(one,in_axes=(0,0,1,1,0,0),out_axes=1)(positions,velocities,intrinsic,angular,
-            geometric['voxel'],geometric['radius'])
+        def one(pos,vel,mass,sky,voxel,radius,var):
+            return response(pos[None],vel[None],mass[:,None],sky[:,None],voxel,radius,var[None])[:,0]
+        mass=jax.vmap(one,in_axes=(0,0,1,1,0,0,0),out_axes=1)(positions,velocities,intrinsic,angular,
+            geometric['voxel'],geometric['radius'],variance)
     relative=(positions-geometry['observer']+geometry['box_size_cMpc_h']/2)%geometry['box_size_cMpc_h']-geometry['box_size_cMpc_h']/2
     rt=jnp.linalg.norm(relative,axis=1)
     table=geometry['radius_table_cMpc_h']
@@ -95,20 +109,25 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
 def streaming_raw_mark(parameters,positions,velocities,intrinsic,angular,observation,
                        *,population,geometry,component_bins=None,component_rows=None,
                        return_log_terms=False,cut_order=64,
-                       cut_integration_axis=0,cut_marginal_tolerance=0.):
+                       cut_integration_axis=0,cut_marginal_tolerance=0.,
+                       source_velocity_variances_km2_s2=None,velocity_closure=None):
     """Chunk-major geometry; intrinsic(chunk,5,source), angular(chunk,2,source)."""
     @jax.checkpoint
     def step(acc,parts):
         a,b=chunk_log_terms(parameters,*parts[:4],observation,population=population,geometry=geometry,
             component_bin=None if component_bins is None else parts[4],
             component_row=None if component_rows is None else parts[5],cut_order=cut_order,
-            cut_integration_axis=cut_integration_axis,cut_marginal_tolerance=cut_marginal_tolerance)
+            cut_integration_axis=cut_integration_axis,cut_marginal_tolerance=cut_marginal_tolerance,
+            source_velocity_variances_km2_s2=None if source_velocity_variances_km2_s2 is None else parts[-1],
+            velocity_closure=velocity_closure)
         return (logadd_nonempty(acc[0],a),logadd_nonempty(acc[1],b)),None
     parts=(positions,velocities,intrinsic,angular)
     if component_bins is not None:parts+= (component_bins,)
     if component_rows is not None:
         if component_bins is None:raise ValueError('multirow stream requires packed bins')
         parts+=(component_rows,)
+    if source_velocity_variances_km2_s2 is not None:
+        parts+=(source_velocity_variances_km2_s2,)
     initial=-jnp.inf if component_rows is None else jnp.full(observation['x'].shape[0],-jnp.inf)
     (numerator,denominator),_=jax.lax.scan(step,(initial,initial),
         parts)

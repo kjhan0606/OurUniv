@@ -506,6 +506,23 @@ requires scalar/full-grid agreement plus all occupied-key support and
 empty-cell-inclusive count readout. Full record remains the native-RSD
 bundle document. R2 posterior remains NO-GO; no IC or LG role promotion.
 
+Terminal update:410592 COMPLETED32s and410600 COMPLETED4m34s, both exit0.
+GL4/mark8 full native prediction has zero occupied support failures and
+training log-dispersion-scale adjoint relative FD error2.59e-8. Expected
+development-test counts2500.044 vs2360 retain5.93% excess; this is not an
+actual CF4 posterior or untouched validation. Host peak2.573GiB. Close the
+two-key/native-forward numerical branch. Next bounded shared-closure bundle
+connects the SAME normalized mixture, diagonal matter variance, periodic
+voxel radial density and fresh source support to count AND raw-FP interfaces.
+Existing production defaults remain unchanged; no native coefficient becomes
+an R2 prior, no long chain or new gravity evolution. Small Slurm regressions
+precede any actual-field pilot. Q-GOAL: remove the inconsistent omission of
+physical dispersion from the joint observation model; Q-LEAN: reuse existing
+field moments/operators, no new gate framework. MW/M31 remain ambiguous and
+M33 unresolved; their later observables constrain the SAME NEW state, not
+native calibration IDs. Full-population calibration, PM/hydro/passband
+crosswalk and actual CF4 posterior/heldout requirements remain unresolved.
+
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
 must source and validate the radius-dependent selection/transfer and obtain

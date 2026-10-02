@@ -47,7 +47,8 @@ def tracer_masses(density,tracer):
 
 def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,observation,
                      geometry,*,source_spacing,volume_order=4,block=4096,
-                     cut_order=64,cut_integration_axis=0,cut_marginal_tolerance=0.):
+                     cut_order=64,cut_integration_axis=0,cut_marginal_tolerance=0.,
+                     velocity_variances=None,velocity_closure=None):
     """All conditional raw marks, no prior and no repeated count occurrence.
 
     density is cell-centred; velocity is(source,3). Packs contain padded
@@ -71,16 +72,30 @@ def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,obser
         a,b=streaming_raw_mark(parameters,pos,vel,mass,sky,observation,population=p,geometry=g,
             component_bins=pack['bin'].reshape(nc,block),component_rows=pack['row'].reshape(nc,block),
             return_log_terms=True,cut_order=cut_order,cut_integration_axis=cut_integration_axis,
-            cut_marginal_tolerance=cut_marginal_tolerance)
+            cut_marginal_tolerance=cut_marginal_tolerance,
+            source_velocity_variances_km2_s2=None if velocity_variances is None else velocity_variances[ids].reshape(nc,block,3),
+            velocity_closure=velocity_closure)
         num=logadd_nonempty(num,a);den=logadd_nonempty(den,b)
     return num-den
 
 
 def count_field_loglike(density,velocity,tracer,source,geometry,keys,counts,exposure,
-                        *,source_spacing,volume_order=4,los_order=4,los_segments=8):
-    intensity=predict_source_volume_intensity(source['positions'],velocity,tracer_masses(density,tracer),
-        source['angular'],source_spacing=source_spacing,volume_order=volume_order,
-        **tracer_geometry(tracer,geometry),order=los_order,segments=los_segments)
+                        *,source_spacing,volume_order=4,los_order=4,los_segments=8,
+                        velocity_variances=None,velocity_closure=None):
+    mass=tracer_masses(density,tracer);g=tracer_geometry(tracer,geometry)
+    def predict(extra):
+        return predict_source_volume_intensity(source['positions'],velocity,mass,
+            source['angular'],source_spacing=source_spacing,volume_order=volume_order,
+            **dict(g,**extra),order=los_order,segments=los_segments)
+    if velocity_closure is None:
+        intensity=predict({})
+    else:
+        if velocity_variances is None:raise ValueError('mixture counts require same-field variances')
+        from cf4_r2_velocity_closure import mixture_components
+        intensity=0.
+        for weight,width,scale in mixture_components(velocity_closure):
+            intensity+=weight*predict(dict(sigma_los_km_s=width,deposition='voxel_cdf_grid',
+                source_velocity_variances_km2_s2=velocity_variances,dispersion_scale=scale))
     return sparse_marked_poisson_log_likelihood(intensity,keys,counts,selected_voxel_mask=exposure)
 
 
@@ -105,21 +120,44 @@ class FreshRawSupport:
             return predict_source_marked_radial_key_density(pos,vel,jnp.ones((5,len(pos))),sky,
                 pop,voxel,radius,**tracer_geometry(tr,geometry))
         self.weight=jax.jit(weight,static_argnums=6)
+        def mixed_weight(vel,pos,sky,voxel,radius,pop,var,core,scale,fraction,tr):
+            total=jnp.zeros((5,len(pos)))
+            for w,s in ((1-fraction,0.),(fraction,scale)):
+                g=dict(tracer_geometry(tr,geometry),sigma_los_km_s=core,
+                    deposition='voxel_cdf',source_velocity_variances_km2_s2=var,dispersion_scale=s)
+                total+=w*predict_source_marked_radial_key_density(pos,vel,jnp.ones((5,len(pos))),
+                    sky,pop,voxel,radius,**g)
+            return total
+        self.mixed_weight=jax.jit(mixed_weight,static_argnums=5)
 
-    def build(self,velocity,tracer):
+    def build(self,velocity,tracer,*,velocity_variances=None,velocity_closure=None):
         tic=time.monotonic();v=np.asarray(velocity);tr=np.asarray(tracer)
         if not np.isfinite(v).all() or not np.isfinite(tr).all():raise ValueError('finite support state required')
         sigma=100*np.exp(.5*tr[6]);conversion=float(self.g['little_h']/self.g['hubble_km_s_Mpc'])
-        if not 0<8*conversion*sigma<self.box/2:raise ValueError('LOS width outside existing27-image domain')
+        if velocity_closure is not None:
+            var=np.asarray(velocity_variances)
+            core=float(velocity_closure['core_sigma_km_s'])
+            scale=float(velocity_closure['dispersion_scale'])
+            fraction=float(velocity_closure['broad_fraction'])
+            if (var.shape!=v.shape or not np.isfinite(var).all() or np.any(var<0)
+                    or not np.isfinite([core,scale,fraction]).all()
+                    or core<=0 or scale<0 or not 0<fraction<1):
+                raise ValueError('finite nonnegative physical variance and valid mixture required')
+            # Conservative over ALL subnode ray directions, not a centre-LOS
+            # width that can omit a rotated source-volume contribution.
+            sigma=np.sqrt(core**2+scale**2*np.max(var,axis=1))
+        if not np.all((8*conversion*sigma>0)&(8*conversion*sigma<self.box/2)):
+            raise ValueError('LOS width outside existing27-image domain')
         speed=np.linalg.norm(v,axis=1)
         spatial=np.sqrt(3.)*(1.5*self.box/self.g['grid_size']+.5*self.spacing)
-        radius=conversion*(speed.max()+8*sigma)+spatial
+        radius=conversion*np.max(speed+8*sigma)+spatial
         centres=(np.asarray(self.o['voxel'])+.5)*self.box/self.g['grid_size']
         candidates=self.tree.query_ball_point(centres,radius,workers=1)
         for row,ids in enumerate(candidates):
             ids=np.asarray(sorted(ids),dtype=np.int32)
             delta=(self.positions[ids]-centres[row]+self.box/2)%self.box-self.box/2
-            candidates[row]=ids[np.linalg.norm(delta,axis=1)<=conversion*(speed[ids]+8*sigma)+spatial]
+            local_sigma=sigma if np.ndim(sigma)==0 else sigma[ids]
+            candidates[row]=ids[np.linalg.norm(delta,axis=1)<=conversion*(speed[ids]+8*local_sigma)+spatial]
         width=((max(map(len,candidates))+63)//64)*64
         if width>32768:raise MemoryError('support exceeds bounded source-cell workspace')
         batches=[{k:[] for k in ('ids','node','bin','row')} for _ in range(6)];total=0
@@ -128,9 +166,16 @@ class FreshRawSupport:
             used=len(ids);ids=np.pad(ids,(0,width-used),constant_values=ids[0])
             expanded=np.repeat(ids,self.nsub)
             pos=((self.positions[ids,None]+self.offsets[None])%self.box).reshape(-1,3)
-            positive=np.asarray(self.weight(jnp.asarray(v[expanded]),jnp.asarray(tr),jnp.asarray(pos),
-                jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
-                jnp.asarray(self.o['radius'][row]),int(self.population[row])))>0
+            if velocity_closure is None:
+                value=self.weight(jnp.asarray(v[expanded]),jnp.asarray(tr),jnp.asarray(pos),
+                    jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
+                    jnp.asarray(self.o['radius'][row]),int(self.population[row]))
+            else:
+                value=self.mixed_weight(jnp.asarray(v[expanded]),jnp.asarray(pos),
+                    jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
+                    jnp.asarray(self.o['radius'][row]),int(self.population[row]),
+                    jnp.asarray(var[expanded]),core,scale,fraction,jnp.asarray(tr))
+            positive=np.asarray(value)>0
             positive[:,used*self.nsub:]=False
             bins,indices=np.nonzero(positive)
             if not len(indices):raise ValueError(f'zero selected support at row{row}')

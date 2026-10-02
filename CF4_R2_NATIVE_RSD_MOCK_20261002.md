@@ -378,3 +378,43 @@ streamed arrays same size; gradient/compilation planning bound<=8GiB host
 and<=24GiB device. Runtime estimate<10min, bounded by actual Slurm cap.
 No broad native count-optimizer restart. Q-GOAL/Q-LEAN and same-NEW-field
 MW/M31 ambiguity/M33 unresolved remain as above. Actual CF4 heldout untouched.
+
+410600 COMPLETED/exit0 in4m34s (source5da0bf4);12tests passed. GL4/mark8
+training mean2654.330820/2656, score-5135.692133, radial/population L1
+258.062579; development-test mean2500.043781/2360, score-4431.490979,
+L1=262.825710. No occupied zero intensities. Full training log-broad-scale
+reverse214.965028 vs FD214.965034, relative error2.58875e-8. Application
+259.84s, host2.573GiB. Actual count comparison image is saved in
+`/gpfs/kjhan/CF4/z0_density/r2_native_grid_closure_20261002_v2/population_radius_prediction.png`.
+This closes the fixed-native forward/support/one-axis derivative work, not
+calibration, actual CF4 inference, density map or posterior uncertainty.
+
+## Next bundle: shared physical velocity closure in joint interfaces
+
+PM already returns density, mean velocity AND physical diagonal variances;
+the active field pullback previously discarded the variance likelihood path.
+First implement optional joint interfaces, preserving the old default law.
+One normalized mixture enters count intensities and raw-FP source weights
+BEFORE numerator/denominator normalization; separately normalizing and then
+mixing FP factors would be wrong. Fresh support uses conservative per-cell
+max diagonal variance over all volume-node ray directions, and is rebuilt
+for every state. Scalar radial density must match the count law's eight-sigma
+periodic voxel-CDF geometry, including signed roots and radial Jacobian.
+
+Bounded first job410628: typed H100/2CPU/6GiB/30min after checking all three
+GPU modes. Expected host<=5GiB (6GiB includes20% margin). Small synthetic
+count/radial mixture equality, variance/scale derivatives, periodic alias,
+fresh support and legacy regression tests. No new PM evolution, actual CF4
+heldout read, native coefficients/prior injection or production law switch.
+Further actual-field work requires consistent variance pullback and measured
+memory; these optional interfaces alone do not implement that full inference.
+The inherited ninth tracer-width coordinate must not silently remain an
+unused physical nuisance when a future sampler enables explicit closure.
+Full-population and native-to-PM/Ks/cosmology uncertainty remain scientific
+requirements; synthetic interface success cannot replace them.
+
+Q-GOAL: connect measured field dispersion to the actual R2 observation model.
+Q-LEAN: reuse the existing moment state and likelihood, no repeated native
+optimizer or new gravity simulation. MW/M31 remain ambiguous, M33 unresolved;
+future role observations must constrain this SAME NEW field at LG<=0.3,
+native truth identities are calibration labels only, not generated candidates.
