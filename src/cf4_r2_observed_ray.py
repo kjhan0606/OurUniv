@@ -13,14 +13,16 @@ from cf4_r2_marked_tracer_jax import source_mark_transfer
 
 
 def source_ray_intervals(direction,observer,n,box):
-    """All physical minimum-image cube crossings along signed source radius.
+    """Cube crossings on the forward observed ray, with source radius q>=0.
 
-    Domain length may exceed box on diagonal rays, but EACH axis spans<=box,
-    so n+2 planes per axis cover all crossings without a radius budget.
+    A sky direction is oriented: the antipodal half-line is a different
+    observation and must not enter this radial integral. Domain length may
+    exceed box on diagonal rays, but EACH axis spans<=box, so n+2 planes per
+    axis cover all forward crossings without a radius budget.
     """
     direction=jnp.asarray(direction)
     exit_radius=box/2/jnp.max(jnp.abs(direction))
-    lo=-exit_radius;hi=exit_radius;dx=box/n
+    lo=jnp.asarray(0.,dtype=direction.dtype);hi=exit_radius;dx=box/n
     parallel=direction==0;den=jnp.where(parallel,1.,direction)
     first=jnp.floor((observer+lo*direction)/dx)
     index=jnp.arange(n+2)[None,:]

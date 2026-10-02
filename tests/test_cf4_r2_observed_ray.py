@@ -10,12 +10,13 @@ class ObservedRayTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):jax.config.update('jax_enable_x64',True)
 
-    def test_signed_cube_partition(self):
+    def test_forward_ray_cube_partition(self):
         for direction in ([1.,0.,0.],[1.,-1.,1.],[-.2,.7,-.4]):
             direction=jnp.asarray(direction);direction/=jnp.linalg.norm(direction)
             lo,hi,ids=source_ray_intervals(direction,jnp.full(3,24.),4,48.)
             qexit=24/float(jnp.max(jnp.abs(direction)))
-            self.assertAlmostEqual(float(jnp.sum(hi-lo)),2*qexit,places=12)
+            self.assertAlmostEqual(float(jnp.sum(hi-lo)),qexit,places=12)
+            self.assertGreaterEqual(float(jnp.min(lo)),0.)
             self.assertTrue(np.all(np.asarray(hi>=lo)))
             self.assertTrue(np.all(np.asarray((ids>=0)&(ids<64))))
 
