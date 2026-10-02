@@ -102,13 +102,14 @@ ownership only. Q-GOAL: yes, it disambiguates a possible shared redshift
 source term but does not yet constrain a generated field. Q-LEAN: yes, one
 join and a primary-source frame check; no velocity refit, covariance fit,
 likelihood, posterior, heldout access, or simulation. R2 remains NO-GO for
-production posterior/IC promotion. The next bounded action is to establish
-the selected-272-row correspondence between the pinned July VizieR group
-snapshot and the current EDD table; do not download/reprocess the full catalog
-for a four-row global count discrepancy. Also keep the distinction between
-current group `Vcmb` and archived member `Vcmba`; no inferred transform is
-allowed. If the selected EDD rows cannot be obtained with valid TLS, retain
-the July snapshot as the explicit analysis version and keep the current-EDD
-equivalence unresolved. MW/M31 remain role-ambiguous and M33 unresolved; their
-observables must ultimately constrain those roles on the same NEW field at
-<=0.3 cMpc/h, and native truth identities remain labels for evaluation only.
+production posterior/IC promotion. Driver decision: retain the hash-pinned
+2026-07-07 VizieR J/ApJ/944/94 inputs as the canonical analysis snapshot.
+The mutable current EDD listing differs by four rows globally, but matching
+it row-for-row is not a science gate for this frozen, reproducible cohort;
+no TLS verification bypass is used. Keep group `Vcmb` distinct from archived
+member `Vcmba`, with no inferred transform. Next bounded action: classify the
+2M++ source bibcodes and raw individual `Vcmb` agreement for the 441 verified
+Tully-member PGCs in the frozen v6 cohort. MW/M31 remain role-ambiguous and
+M33 unresolved; their observables must ultimately constrain those roles on
+the same NEW field at <=0.3 cMpc/h, and native truth identities remain labels
+for evaluation only.

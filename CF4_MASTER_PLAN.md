@@ -324,13 +324,17 @@ per user rule the driver performed it rather than repeating an outside review
 Details and raw result:
 `CF4_R2_V6_TULLY_MEMBERSHIP_20261003.md`,
 `/gpfs/kjhan/CF4/z0_density/r2_v6_tully_membership_20261003_v1/result.json`.
-Next bounded action: compare only the frozen272 `1PGC` rows between the
-pinned July VizieR snapshot and the current EDD table, avoiding a full-catalog
-reprocess. If selected rows cannot be fetched with valid TLS, keep July as the
-explicit analysis version and mark current-EDD equivalence unresolved; never
-construct an ad-hoc Tully conversion. No posterior or IC is promoted. MW/M31 remain
-role-ambiguous and M33 unresolved on the same NEW field at <=0.3 cMpc/h; native
-truth identities label evaluation only. R2 remains NO-GO and incomplete.
+Driver decision: retain the hash-pinned 2026-07-07 VizieR J/ApJ/944/94 inputs
+as the canonical analysis snapshot. The mutable current EDD listing differs
+by four rows globally, but row-for-row EDD synchronization is not a gate for
+this frozen cohort; TLS verification is not bypassed. Next bounded bundle
+classifies 2M++ source bibcodes and raw individual `Vcmb` agreement for the
+441 verified Tully-member PGCs. It must not compare adjusted Tully `Vcmba` or
+claim a group covariance law. Plan/code/result:
+`CF4_R2_V6_TULLY_VELOCITY_SOURCES_20261003.md`,
+`scripts/cf4_r2_v6_tully_velocity_sources.py`. No posterior or IC is promoted.
+MW/M31 remain role-ambiguous and M33 unresolved on the same NEW field at
+<=0.3 cMpc/h; native truth identities label evaluation only. R2 remains NO-GO.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if

@@ -1,0 +1,239 @@
+"""Classify raw 2M++ redshift sources for secure CF4 links in Tully Nests."""
+
+import hashlib
+import json
+import os
+from collections import Counter, defaultdict
+from pathlib import Path
+import subprocess
+import time
+
+import numpy as np
+
+from cf4_r2_v6_redshift_overlap import (
+    FP, FP_SHA, IDENTITY_CENSUS, IDENTITY_CENSUS_SHA, POINTS, POINTS_SHA,
+    SOURCE_HASHES, eligible_secure_edge, number, selected_rows,
+)
+from cf4_r2_tully2015_source_bridge import HASHES as TULLY_HASHES, integer, records
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BASE = Path("/gpfs/kjhan/CF4/z0_density")
+PRIOR = BASE / "r2_v6_redshift_overlap_20261003_v3/result.json"
+PRIOR_SHA = "47fd803bab67eb96094489a4c8d725314a43ac896e315a55bbcfbbf741d13da0"
+MEMBERSHIP = BASE / "r2_v6_tully_membership_20261003_v1/result.json"
+MEMBERSHIP_SHA = "10a53c2dd5d10487670bc898dbce0f73e496103dafd78859fe22b62508703594"
+OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v1"
+HUCHRA_2MRS = "2012ApJS..199...26H"
+
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def describe(values):
+    values = np.asarray(values, dtype=np.float64)
+    if values.size == 0:
+        return {"n": 0, "median": None, "p90": None, "maximum": None}
+    return {"n": int(values.size), "median": float(np.median(values)),
+            "p90": float(np.percentile(values, 90)), "maximum": float(np.max(values))}
+
+
+def summarize_source_rows(rows):
+    by_reference = defaultdict(list)
+    exact_equal = Counter()
+    rounded_equal = Counter()
+    for row in rows:
+        reference = row["reference"] or "MISSING"
+        by_reference[reference].append(row["abs_delta_km_s"])
+        exact_equal[reference] += row["abs_delta_km_s"] == 0.0
+        rounded_equal[reference] += row["abs_delta_km_s"] <= 0.5
+    return {
+        "linked_member_count": len(rows),
+        "reference_counts": {key: len(vals) for key, vals in sorted(by_reference.items())},
+        "absolute_CF4_individual_minus_2mpp_point_Vcmb_km_s": describe(
+            [row["abs_delta_km_s"] for row in rows]),
+        "by_reference": {
+            key: {"count": len(vals), "abs_delta_km_s": describe(vals),
+                  "exact_equal_count": exact_equal[key],
+                  "equal_within_0p5_km_s_count": rounded_equal[key]}
+            for key, vals in sorted(by_reference.items())
+        },
+        "Huchra_2012_2MRS_reference_count": len(by_reference.get(HUCHRA_2MRS, ())),
+        "Huchra_2012_2MRS_equal_within_0p5_km_s_count": rounded_equal[HUCHRA_2MRS],
+    }
+
+
+def selected_tully_members(edges, table3, table4):
+    parent_by_pgc1 = defaultdict(set)
+    for line in table3:
+        nest, pgc1 = integer(line, 3, 9), integer(line, 14, 21)
+        if nest is not None and pgc1 is not None:
+            parent_by_pgc1[str(pgc1)].add(nest)
+    member_by_pgc = defaultdict(set)
+    for line in table4:
+        pgc, nest = integer(line, 10, 17), integer(line, 3, 9)
+        if pgc is not None and nest is not None:
+            member_by_pgc[pgc].add(nest)
+
+    included, missing, mismatch, ambiguous = [], 0, 0, 0
+    for pgc, one_pgc, recno, group in edges:
+        member_nests = member_by_pgc.get(pgc, set())
+        parent_nests = parent_by_pgc1.get(str(one_pgc).strip(), set())
+        if not member_nests or not parent_nests:
+            missing += 1
+        elif len(member_nests) != 1 or len(parent_nests) != 1:
+            ambiguous += 1
+        elif member_nests != parent_nests:
+            mismatch += 1
+        else:
+            included.append((pgc, one_pgc, recno))
+    return included, {"missing": missing, "mismatch": mismatch, "ambiguous": ambiguous}
+
+
+def main():
+    if not os.environ.get("SLURM_JOB_ID") or not os.environ.get("CF4_EXPECTED_COMMIT"):
+        raise RuntimeError("Slurm job and pinned source commit are required")
+    expected = subprocess.check_output(
+        ["git", "rev-parse", "--verify", f"{os.environ['CF4_EXPECTED_COMMIT']}^{{commit}}"],
+        cwd=ROOT, text=True).strip()
+    actual = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                                     text=True).strip()
+    if actual != expected:
+        raise RuntimeError("source commit mismatch")
+    if Path(os.environ["CF4_R2_OUT_DIR"]) != OUT or OUT.exists():
+        raise FileExistsError("unexpected or already-used output path")
+    started = time.monotonic()
+
+    if (sha256(PRIOR) != PRIOR_SHA or sha256(MEMBERSHIP) != MEMBERSHIP_SHA
+            or sha256(IDENTITY_CENSUS) != IDENTITY_CENSUS_SHA
+            or sha256(FP) != FP_SHA or sha256(POINTS) != POINTS_SHA):
+        raise ValueError("frozen v6 input/result hash changed")
+    for name in ("cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv"):
+        if sha256(ROOT / "data" / name) != SOURCE_HASHES[name]:
+            raise ValueError(f"frozen source changed: {name}")
+    for name in ("tully2015_table3.dat.gz", "tully2015_table4.dat.gz"):
+        if sha256(ROOT / "data" / name) != TULLY_HASHES[name]:
+            raise ValueError(f"frozen source changed: {name}")
+
+    prior = json.loads(PRIOR.read_text(encoding="utf-8"))
+    identity = json.loads(IDENTITY_CENSUS.read_text(encoding="utf-8"))
+    membership = json.loads(MEMBERSHIP.read_text(encoding="utf-8"))
+    if (prior.get("group_count") != 272 or prior.get("secure_member_pair_count") != 828
+            or membership.get("group_count") != 272
+            or membership.get("secure_member_pair_count") != 828
+            or identity.get("eligible_training_group_count") != 272):
+        raise ValueError("frozen v6 272/828 cohort changed")
+
+    labels = {row["source_group_label"] for row in prior["groups"]}
+    with np.load(FP, allow_pickle=False) as data:
+        pgcs = data["PGC"].astype(np.int64)
+        source_groups = data["source_group"].astype(str)
+    pgc_group = {}
+    for pgc, label in zip(pgcs, source_groups):
+        if label in labels:
+            if int(pgc) in pgc_group and pgc_group[int(pgc)] != label:
+                raise ValueError("selected PGC belongs to multiple FP source groups")
+            pgc_group[int(pgc)] = label
+    with np.load(POINTS, allow_pickle=False) as data:
+        point_recnos = set(map(int, data["recno"]))
+
+    crossmatch = ROOT / "data/cf4_2mpp_crossmatch_v1.csv"
+    raw_edges = selected_rows(crossmatch, ("PGC", "1PGC", "twompp_recno", "match_class"),
+                              lambda row: eligible_secure_edge(row, pgc_group, point_recnos))
+    edges = [(int(row["PGC"]), row["1PGC"], int(row["twompp_recno"]),
+              pgc_group[int(row["PGC"])]) for row in raw_edges]
+    if len(edges) != 828:
+        raise ValueError("frozen v6 secure edge count changed")
+
+    table3 = records("tully2015_table3.dat.gz")
+    table4 = records("tully2015_table4.dat.gz")
+    if (len(table3), len(table4)) != (25474, 43038):
+        raise ValueError("Tully source row counts changed")
+    selected, membership_status = selected_tully_members(edges, table3, table4)
+    if (len(selected) != 441 or membership_status !=
+            {"missing": 387, "mismatch": 0, "ambiguous": 0}):
+        raise ValueError("Tully member cohort differs from committed crosswalk")
+
+    recno_to_pgc = {recno: pgc for pgc, _one_pgc, recno in selected}
+    if len(recno_to_pgc) != 441:
+        raise ValueError("one 2M++ row maps to multiple selected PGCs")
+    selected_recnos = set(recno_to_pgc)
+    mpp_rows = selected_rows(ROOT / "data/2mpp_catalog.csv", ("recno", "Vcmb", "Ref"),
+                             lambda row: int(row["recno"]) in selected_recnos)
+    mpp_by_recno = {int(row["recno"]): row for row in mpp_rows}
+    if len(mpp_by_recno) != 441 or set(mpp_by_recno) != selected_recnos:
+        raise ValueError("Tully-member 2M++ source rows are missing or duplicated")
+
+    selected_pgcs = {pgc for pgc, _one_pgc, _recno in selected}
+    expected_cf4_group = {pgc: str(one_pgc).strip() for pgc, one_pgc, _recno in selected}
+    cf4_rows = selected_rows(ROOT / "data/cf4_galaxies.csv", ("PGC", "1PGC", "Vcmb"),
+                             lambda row: row["PGC"].strip()
+                             and int(row["PGC"]) in selected_pgcs)
+    by_pgc = defaultdict(list)
+    for row in cf4_rows:
+        if row["1PGC"].strip() != expected_cf4_group[int(row["PGC"])]:
+            raise ValueError("CF4 individual row has a different 1PGC than the frozen link")
+        if number(row["Vcmb"]) is not None:
+            by_pgc[int(row["PGC"])].append(number(row["Vcmb"]))
+    if set(by_pgc) != selected_pgcs or any(len(set(vals)) != 1 for vals in by_pgc.values()):
+        raise ValueError("selected CF4 individual raw Vcmb is absent or ambiguous")
+
+    rows = []
+    for pgc, _one_pgc, recno in selected:
+        point = mpp_by_recno[recno]
+        cf4_v, mpp_v = by_pgc[pgc][0], number(point["Vcmb"])
+        if mpp_v is None:
+            raise ValueError("selected 2M++ raw Vcmb is nonfinite")
+        rows.append({"reference": point["Ref"].strip(),
+                     "abs_delta_km_s": abs(cf4_v - mpp_v)})
+
+    report = {
+        "status": "V6_TULLY_MEMBER_RAW_VELOCITY_SOURCE_CROSSWALK_NOT_COVARIANCE",
+        "job_id": os.environ["SLURM_JOB_ID"], "source_commit": actual,
+        "v6_group_count": 272, "secure_member_pair_count": 828,
+        "Tully_member_link_count": len(selected),
+        "Tully_member_absent_from_archived_table4_count": membership_status["missing"],
+        "Tully_membership_mismatch_count": membership_status["mismatch"],
+        "Tully_membership_ambiguous_count": membership_status["ambiguous"],
+        "2mpp_velocity_reference_semantics": (
+            "Ref is the 2M++ source bibcode; 2012ApJS..199...26H is the Huchra et al. 2012 2MRS reference."
+        ),
+        "velocity_comparison_semantics": (
+            "Compares only raw individual CMB-frame Vcmb in CF4 and 2M++; "
+            "does not use group Vcmb or Tully adjusted Vcmba."
+        ),
+        "source_summary": summarize_source_rows(rows),
+        "input_sha256": {
+            "prior_redshift_overlap": PRIOR_SHA,
+            "prior_tully_membership": MEMBERSHIP_SHA,
+            "identity_census": IDENTITY_CENSUS_SHA,
+            "fp_observations": FP_SHA,
+            "count_point_manifest": POINTS_SHA,
+            **{name: SOURCE_HASHES[name] for name in (
+                "cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv")},
+            **{name: TULLY_HASHES[name] for name in (
+                "tully2015_table3.dat.gz", "tully2015_table4.dat.gz")},
+        },
+        "Tully_adjusted_Vcmba_read": False,
+        "heldout_values_read": False, "likelihood_or_field_read": False,
+        "PM_evolutions": 0, "posterior_promoted": False, "R2_complete": False,
+        "limitation": (
+            "2M++ Ref plus close raw CF4/2M++ Vcmb values identify a source-overlap proxy, "
+            "not proof of identical spectrum/measurement and not a group-mean covariance law. "
+            "No adjusted Tully Vcmba is compared."
+        ),
+        "elapsed_seconds": time.monotonic() - started,
+    }
+    OUT.mkdir(parents=True, exist_ok=False)
+    (OUT / "result.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n",
+                                      encoding="utf-8")
+    print(json.dumps(report, allow_nan=False), flush=True)
+
+
+if __name__ == "__main__":
+    main()
