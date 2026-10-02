@@ -301,7 +301,9 @@ source-ownership evidence only; it cannot by itself calibrate the later EDD
 revision's covariance or selection. No posterior or IC is promoted. MW/M31
 remain role-ambiguous and M33 unresolved on the same NEW field. Under the
 user's routing rule this immediate audit is driver-run: Astra is not invoked
-for duplicated/consecutive review. R2 remains NO-GO and incomplete.
+for duplicated/consecutive review. Plan and implementation:
+`CF4_R2_V6_TULLY_MEMBERSHIP_20261003.md`,
+`scripts/cf4_r2_v6_tully_membership.py`. R2 remains NO-GO and incomplete.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if
