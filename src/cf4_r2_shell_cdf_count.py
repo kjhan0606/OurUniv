@@ -31,6 +31,24 @@ def ngp_deposit_jax(positions, masses, grid_size, box_size_cMpc_h):
     return result.at[cell[:,0],cell[:,1],cell[:,2]].add(masses)
 
 
+def ray_voxel_interval(direction, observer, voxel, grid_size, box, image_center):
+    """Exact ray/half-open voxel intersection, per source and periodic image.
+
+    Geometry only; varying luminosity weights still require quadrature inside
+    this interval. Parallel rays use masked finite denominators for VJPs.
+    """
+    lower=jnp.asarray(voxel)*(box/grid_size)+jnp.asarray(image_center)-observer
+    upper=lower+box/grid_size
+    parallel=direction==0
+    denominator=jnp.where(parallel,1.,direction)
+    a=lower[None,:]/denominator;b=upper[None,:]/denominator
+    lo=jnp.max(jnp.where(parallel,-jnp.inf,jnp.minimum(a,b)),axis=1)
+    hi=jnp.min(jnp.where(parallel,jnp.inf,jnp.maximum(a,b)),axis=1)
+    inside=jnp.all(~parallel|((lower[None,:]<=0)&(upper[None,:]>0)),axis=1)
+    active=inside&(hi>lo)&jnp.any(~parallel,axis=1)
+    return jnp.where(active,lo,0.),jnp.where(active,hi,0.),active
+
+
 def cell_averaged_tsc_weight(positions,voxel,grid_size,box):
     """TSC convolved with one cell top-hat = separable cubic B-spline.
 
@@ -117,7 +135,9 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     An optional population/voxel pair reads one scalar with the transpose of
     the selected deposit kernel; it does not change the integration rule.
     ``deposition='tsc'`` is the unchanged active default. NGP exists only for
-    forward-only operator-closure diagnostics.
+    forward-only operator-closure diagnostics. Scalar ``voxel_cdf`` clips
+    each ray to the actual voxel before integrating varying mark weights;
+    it does not imply exact source-volume or mark quadrature convergence.
     """
     pos=jnp.asarray(source_positions)
     intrinsic=jnp.asarray(intrinsic_bin_masses)
@@ -125,8 +145,10 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     scalar = target_population is not None
     if scalar != (target_voxel is not None):
         raise ValueError('population and voxel must be supplied together')
-    if deposition not in ('tsc','ngp'):
-        raise ValueError('deposition must be tsc or diagnostic ngp')
+    if deposition not in ('tsc','ngp','voxel_cdf'):
+        raise ValueError('deposition must be tsc, diagnostic ngp, or scalar voxel_cdf')
+    if deposition=='voxel_cdf' and not scalar:
+        raise ValueError('voxel_cdf currently requires a scalar target voxel')
     if source_cell_average and (not scalar or deposition!='tsc'):
         raise ValueError('approximate cell-averaged kernel is a scalar diagnostic only')
     if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
@@ -163,7 +185,10 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         if scalar:
             p=target_population
             mass=(weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0))
-            if deposition=='ngp':
+            if deposition=='voxel_cdf':
+                # Ray has already been clipped to the exact voxel interval.
+                contribution=jnp.sum(mass)
+            elif deposition=='ngp':
                 cells=(jnp.floor((observed%box_size_cMpc_h)/
                     (box_size_cMpc_h/grid_size)).astype(jnp.int32)%grid_size)
                 kernel=jnp.all(cells==jnp.asarray(target_voxel)[None,:],axis=1)
@@ -182,6 +207,11 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     def integrate_image(total,center):
         lower,upper,active=_shell_intervals(mu,direction,sigma,center,
             radial_min_cMpc_h,radial_max_cMpc_h,8.)
+        if deposition=='voxel_cdf':
+            lo,hi,ray_active=ray_voxel_interval(direction,observer,target_voxel,
+                grid_size,box_size_cMpc_h,center)
+            lower=jnp.maximum(lower,lo[None]);upper=jnp.minimum(upper,hi[None])
+            active=active&ray_active[None]&(upper>lower)
         width=jnp.where(active,upper-lower,0.)
         # Do not materialize (images,segments,nodes,sources) on the reverse
         # tape. Each physical segment regenerates its own few quadrature nodes.

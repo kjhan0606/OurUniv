@@ -241,3 +241,30 @@ Do not resume count fitting by silently retaining the materially mismatched
 TSC operator, injecting the fitted mixture as certified prior, or selecting
 based on the consumed test. Native-K/Ks, full true-bin/tail coverage and
 calibration uncertainty remain R2 prerequisites; no new simulation yet.
+
+Next implementation is a scalar voxel-CDF branch in the existing marked
+source-volume count engine (TSC production default unchanged). Intersect
+each ray with the half-open observed voxel and periodic-image shell, THEN
+integrate the varying luminosity-transfer weights using Gaussian-CDF nodes.
+Not simply a CDF probability multiplied by a cell-centre mark. Five geometry
+tests cover parallel/half-open rays, periodic/negative direction, Gaussian
+cell-partition mass conservation, finite inactive intervals and derivatives.
+The two previously failed occupied training keys are explicit probe cases,
+not a new likelihood fit or test-selected candidate list.
+
+Probe Gaussian182.2236 and narrow/broad21.1317/303.0455 components with
+training weight.451921. Each component uses its own8sigma/27-image bound,
+unconditional probabilities; omitted Gaussian mass<1.3e-15 per component.
+No epsilon floor or selected-region renormalization. Source GL2/mark4 versus
+GL4/mark8 tests remaining integration sensitivity; finite-difference check
+of broad log-width derivative. Physical boundaries are exact along LOS;
+source-volume interpolation and mark integration remain numerical. No claim
+of complete-field NGP implementation or global calibration from two keys.
+Memory<=8GiB planning bound,10GiB request,2CPU/typed H100,30min cap, estimated
+<10min including compilation and derivatives. Output fixed native voxel
+closure v1. No new field evolution, actual CF4 outcome or R2 prior injection.
+Q-GOAL: separate supported velocity-tail closure from observation-bin
+smoothing before R2 field inference. Q-LEAN: existing engine plus scalar
+boundary clip, five focused tests and two keys, no new framework. Same NEW
+field MW/M31 roles remain ambiguous, M33 unresolved, native IDs calibration
+labels only. Next full-count implementation depends on these readouts.
