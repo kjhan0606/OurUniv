@@ -1,0 +1,92 @@
+# R2 native galaxy RSD/count calibration mock — 2026-10-02
+
+R1 complete -> R2 current/incomplete -> R3 LG -> R4 precise validation -> R5
+zoom IC. R2 must still deliver a validated actual384-box N256/1.5 z=0
+density/velocity posterior, uncertainties and actual untouched prediction.
+
+## Driver design and purpose
+
+Previous source-support bundle410484/410505 supplies native K, positions,
+velocities and a preserved1.5 total-matter field. It demonstrates relevant
+luminosity support, but a native real-space beta fit cannot calibrate the
+selected observed-K/RSD count operator. This bundle feeds native galaxy
+locations/velocities/luminosities through the SAME radius, apparent/absolute
+K and redshift-correction definitions as the active count law, then tests
+that law's nine tracer coordinates on a known native field.
+
+No galaxy mocks are drawn from the tested Poisson model: catalogue galaxies
+come from the existing independent hydro simulation, including their actual
+clustering and velocity residuals. The matter field is known calibration
+input, not an inferred IC/current universe or a new gravity calculation.
+
+## Finite source-window geometry
+
+Native75-cMpc/h material cannot cover all six apparent-K/absolute-K populations
+from a central observer. Split its x direction at37.5. Translate the whole
+cube by(154.5,154.5,154.5), and add84 in x for the far half. The fixed observer
+is(192,192,192) in the384 bookkeeping box. Matter cells and native galaxies
+use the identical map; each native cell/galaxy occurs once. The near half
+supplies close bright populations; the far half samples roughly84–133
+cMpc/h and supplies the fainter apparent sample. Translation changes radial
+projection but does not alter native local positions, luminosities, density
+or velocity vectors inside each half. This explicitly defined source window
+contains no galaxies outside those two volumes in either the mock or its
+intensity model. It is not a physical384-cMpc/h simulated universe.
+
+The full native75-box responses rho^beta have unit mean before the source
+window mapping. The common rate is per3-cMpc/h cell; each1.5 source carries
+1/8 of that volume. Native K_h=M_K-5log10(h), h=.6774, Om=.3089. Flat distance
+tables use native matter/Lambda cosmology. Observer peculiar velocity is0.
+RSD uses h/H0=.01, recomputed observed minimum-image radius, and the active
+redshift-dependent K correction. Observed objects satisfy5<=r<180, K<=12.5,
+and redshift-derived -25<=M_h<-21. NGP floor(position/3) matches catalogue
+counts; the active model retains TSC. No row selection uses a fitted score.
+
+Train/test are the negative/positive y sides with a12-cMpc/h central buffer,
+applied after RSD to counts AND predicted intensities. Observed counts and
+empty exposed cells enter once. No actual CF4/2M++ outcome is read. Earlier
+native-source diagnostics have consumed this same universe, so this is a
+development prediction check, not a pristine independent-validation claim.
+The two native parts are also correlated, not independent universes.
+
+## Fit, verification and outputs in one allocation
+
+Four small observation/placement/count tests run first. Start beta=1,
+alpha=-1,Mstar=-23.28,sigma_LOS=300km/s (predeclared, not truth-estimated).
+Use the active nine standard-normal development tracer priors once.
+An analytic training-only rate warm start preserves this target; confirm its
+mean and rate derivative. A flattened compiled derivative must match direct
+primal and one fixed finite-difference direction before optimization.
+Bound L-BFGS at24 iterations,40 suggested/48 hard evaluations and75min
+application time, including readouts. A stop at budget or optimizer failure
+is not convergence; save the last accepted finite coordinates.
+
+Fit GL2 source-volume/LOS4x8 on the training counts only. At the fixed final
+point, report training/test population-radius means, full sparse count scores,
+observed population migration and stellar-resolution counts. Compare source
+GL4, LOS4x16 and diagnostic NGP without refitting. Save mock sparse counts,
+initial/final predicted means and an actual population/radius PNG. These
+are necessary physical observation-model evidence, not more sampler tuning.
+
+Native K is IR/Palomar K(Vega), not calibrated2MASS Ks. Dust/aperture,
+all-matter versus stellar COM velocities, hydro/PM density response, native
+NGP moments, cosmology and finite-volume limits remain explicit. Fitted
+coefficients cannot automatically become R2 priors. Failure of prediction
+does not uniquely identify bias, FoG, LF shape or stochastic dependence.
+No extra LF likelihood on the same counts, unsupported floor, actual IC
+sample, native LG truth assignment or R2 posterior promotion.
+
+Q-GOAL: tests the unresolved luminosity/selection/RSD tracer law needed for
+the first actual z=0 field delivery. MW/M31 remain ambiguous and M33 unresolved
+on the NEW inferred field; their observables must constrain that same field
+later at<=0.3. Native IDs only label this external calibration input.
+Q-LEAN: reuses the existing forward/count machinery on125000 source cells;
+one9-coordinate fit plus three fixed endpoint controls, no PM adjoint,
+simulation, download, generic gate framework or closed600-metric branch.
+Routine bounded driver review under the current external-review policy.
+
+One typed H200/H100/A100 Slurm mode after checking availability. Host estimate
+<=8GiB for native arrays, several100MB means, JAX compilation/workspace and
+existing environments; request10GiB (>20% margin),2CPU,1GPU,90min Slurm.
+Output `/gpfs/kjhan/CF4/z0_density/r2_native_rsd_mock_fit_20261002_v1/`.
+Tests/driver/numerical results and actual memory are pending submission.

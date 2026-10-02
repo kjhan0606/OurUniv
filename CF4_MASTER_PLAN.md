@@ -429,6 +429,14 @@ observation mock with matched source/count spacings, joint tracer fitting and
 heldout mock prediction. This reuses the known matter field, no IC/evolution.
 K-to-Ks, NGP-to-PM response and one-box/hydro/cosmology limits must enter the
 calibration assessment before any external coefficients become R2 priors.
+Next bundle implemented in `CF4_R2_NATIVE_RSD_MOCK_20261002.md`: each native
+galaxy/cell occurs once in two disjoint translated source halves, supplying
+near/far apparent-K coverage with the SAME density/velocity/mark input.
+This is known source-window calibration geometry, not a physical384 mock.
+One training-only nine-tracer fit plus fixed source/LOS/deposition controls,
+125000 native1.5 source cells,3 count spacing;90min Slurm/75min application,
+10GiB host/2CPU/typed GPU. No actual CF4 heldout outcome, PM evolution or
+R2 posterior/IC promotion; source K/Ks and native/PM limitations remain.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
