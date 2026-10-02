@@ -78,6 +78,22 @@ the new HEAD guard compared the supplied abbreviated revision literally with
 the full SHA. No compute/output was produced; preserve the Slurm log. Resolve
 the expected revision through `git rev-parse --verify <rev>^{commit}` before
 comparing; validate this short-SHA path before another submission.
+Corrected job410740 passed preflight and completed the full order8 training
+census (1414/1414 finite; no zero-support rows). It found zero q>first-face
+radial, numerator, or denominator mass in all1414 links at this saved state;
+the earlier39 nonpositive global margins were conservative, not observed
+image support. The distance lookup extended from192 to233.581 cMpc/h with
+5.42e-10 max local-fit residual and 2.78e-12mag edge mismatch. Its 79-row
+order4/8 sample had max |delta logpdf|=.002469 nat (above the predeclared
+.001 row tolerance) but summed absolute delta=.005058 nat (within.1). The
+run stopped before AD/FD because its guard required an actually wrapped row;
+the fixed-state data contain none. The result at
+`/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v3` omits the
+row-level convergence sample, so a narrow continuation will recompute only
+the79 order4 values from its saved order8 census, persist/localize violators,
+and check AD/FD on one interior and one conservative-bound-uncertified row.
+It will not invent wrapped data; the synthetic uniform-ray test separately
+checks face-crossing periodic invariance and its AD/FD.
 It scores all1414 training links at order8, order4/8 on all39 previously
 uncertified plus40 deterministic safe rows, and AD/FD on one interior and one
 actually image-contributing row. It records per-row numerator/denominator

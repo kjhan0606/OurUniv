@@ -115,7 +115,7 @@ def main():
             maximum_supported_unwrapped_radius_cMpc_h=max_support,
             minimum_full_box_horizon_cMpc_h=BOX),
         distance_table_extension=table_extension,rows=[],
-        order8_completed=0,order4_sample_completed=0,AD_FD=[],
+        order8_completed=0,order4_sample_completed=0,convergence_sample=[],AD_FD=[],
         limitations=['fixed-state in-sample conditional factor mechanics only',
             'no count/FP image-semantics reconciliation or target wiring',
             'no calibration, heldout, PM/gravity, posterior, or production claim',
@@ -164,7 +164,26 @@ def main():
     eval_order=[int(by_population[p][j]) for j in range(max(map(len,by_population)))
         for p in range(6) if j<len(by_population[p])]
     row8={};compiled_order8_populations=set()
-    report['phase']='ORDER8_ALL_TRAINING_LINKS';save()
+    base_result=os.environ.get('CF4_R2_BASE_RESULT')
+    if base_result:
+        with open(base_result,encoding='utf-8') as stream:
+            parent=json.load(stream)
+        parent_rows=parent.get('rows',[])
+        if (parent.get('order8_completed')!=len(chosen) or len(parent_rows)!=len(chosen)
+                or parent.get('training_points')!=47121
+                or parent.get('registered_training_FP_links')!=1414
+                or any(r.get('status')!='FINITE' for r in parent_rows)):
+            raise ValueError('parent order8 result is not a complete finite training census')
+        row8={int(r['index']):r for r in parent_rows}
+        if (set(row8)!=set(range(len(chosen)))
+                or any(row8[i]['PGC']!=int(pgc[i]) for i in range(len(chosen)))):
+            raise ValueError('parent order8 PGC/index registration changed')
+        report.update(rows=parent_rows,order8_completed=len(chosen),
+            base_order8_result=base_result,base_order8_source_commit=parent.get('source_commit'))
+        eval_order=[]
+        report['phase']='ORDER4_AND_AD_FD_CONTINUATION';save()
+    else:
+        report['phase']='ORDER8_ALL_TRAINING_LINKS';save()
     for count,i in enumerate(eval_order,1):
         p=int(mix['population'][i]);obs=observation_at(i);angle=jnp.asarray(direction[i])
         first_population_compile=p not in compiled_order8_populations
@@ -235,6 +254,7 @@ def main():
         convergence.append(dict(index=int(i),PGC=int(pgc[i]),logpdf_order4=logpdf4 if np.isfinite(logpdf4) else None,
             logpdf_order8=logpdf8,absolute_delta_nat=delta,
             status='FINITE' if delta is not None else 'NONFINITE'))
+        report['convergence_sample']=convergence
         report['order4_sample_completed']=len(convergence)
         if len(convergence)%20==0:save()
     deltas=[r['absolute_delta_nat'] for r in convergence if r['absolute_delta_nat'] is not None]
@@ -245,6 +265,8 @@ def main():
         per_row_tolerance_nat=1e-3,total_absolute_tolerance_nat=.1,
         pass_=bool(len(deltas)==len(convergence) and max(deltas,default=np.inf)<=1e-3
             and sum(deltas)<=.1))
+    report['convergence_violators']=[r for r in convergence
+        if r['absolute_delta_nat'] is None or r['absolute_delta_nat']>1e-3]
     save()
 
     report['phase']='AD_FD_CHECKS';save()
@@ -252,12 +274,18 @@ def main():
     image_candidates=[i for i,r in row8.items()
         if r['periodic_image_radial_mass_fraction'] is not None
         and r['periodic_image_radial_mass_fraction']>0.]
-    if not image_candidates:
-        report.update(status='STOPPED_NO_FINITE_IMAGE_MASS_FOR_AD_FD',phase='REVIEW_REQUIRED')
-        save();return
-    wrapped=max(image_candidates,key=lambda i:row8[i]['periodic_image_radial_mass_fraction'])
-    anchor=[interior,wrapped]
-    for i in anchor:
+    if image_candidates:
+        second=max(image_candidates,key=lambda i:row8[i]['periodic_image_radial_mass_fraction'])
+        second_case='periodic_image_contributing'
+    else:
+        # The saved state has no nonzero q>first-face weight under its explicit
+        # 8-sigma law. Exercise the unresolved conservative-bound cohort rather
+        # than inventing a wrapped datum; the synthetic face-crossing test
+        # separately covers periodic geometry.
+        second=int(uncertified[0])
+        second_case='global_bound_uncertified_but_actual_8sigma_image_mass_zero'
+    anchor=[(interior,'interior_no_image'),(second,second_case)]
+    for i,case in anchor:
         p=int(mix['population'][i]);obs=observation_at(i);angle=jnp.asarray(direction[i]);fn=order8[p]
         scalar=lambda s:fn(s,angle,obs)[0]
         derivative=jax.jit(jax.value_and_grad(scalar))
@@ -266,7 +294,7 @@ def main():
         eps=1e-4;plus=float(scalar(jnp.asarray(eps)).block_until_ready())
         minus=float(scalar(jnp.asarray(-eps)).block_until_ready())
         fd=(plus-minus)/(2*eps);error=abs(ad-fd)/max(1.,abs(ad),abs(fd))
-        report['AD_FD'].append(dict(index=i,PGC=int(pgc[i]),case=('interior' if margin[i]>0 else 'periodic-image'),
+        report['AD_FD'].append(dict(index=i,PGC=int(pgc[i]),case=case,
             value=value,AD=ad,FD=fd,relative_error=error,seconds=time.monotonic()-tic,
             pass_=bool(np.isfinite([value,ad,fd,error]).all() and error<=2e-5)))
         save()

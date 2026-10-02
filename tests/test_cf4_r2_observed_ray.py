@@ -75,13 +75,14 @@ class ObservedRayTests(unittest.TestCase):
             cut_lower=jnp.array([2.,1.9]),cut_upper=jnp.array([4.,2.5]))
         params=jnp.asarray(POPULATION_ORIGIN)
 
-        def score(direction,override_radius=None):
+        def score(direction,override_radius=None,logscale=0.):
+            current=dict(closure,dispersion_scale=.3*jnp.exp(logscale))
             pos,vel,mass,sky,q,weights=observed_ray_components(direction,radius,velocity,
-                variance,masses,angular,1,g,closure,source_grid=n,order=16)
+                variance,masses,angular,1,g,current,source_grid=n,order=16)
             radial=q if override_radius is None else override_radius
             a,b=chunk_log_terms(params,pos,vel,mass,sky,obs,population=1,geometry=g,
                 cut_order=16,source_velocity_variances_km2_s2=jnp.full_like(pos,10000.),
-                velocity_closure=closure,radial_source_mass=weights,
+                velocity_closure=current,radial_source_mass=weights,
                 source_radius_cMpc_h=radial)
             return a-b,q,pos
 
@@ -96,6 +97,11 @@ class ObservedRayTests(unittest.TestCase):
         wrong=jnp.linalg.norm(min_image,axis=1)
         wrong_value,_,_=score(axis,wrong)
         self.assertGreater(abs(float(axis_value-wrong_value)),1e-4)
+        f=lambda scale:score(axis,logscale=scale)[0]
+        grad=float(jax.jit(jax.grad(f))(jnp.asarray(0.)))
+        eps=1e-4
+        finite_difference=float((f(eps)-f(-eps))/(2*eps))
+        np.testing.assert_allclose(grad,finite_difference,rtol=2e-5,atol=1e-9)
 
 
 if __name__=='__main__':unittest.main()
