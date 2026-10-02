@@ -26,7 +26,9 @@ def source_sky_count_fp_parts(rho_node, velocity_node, white_ic, white_hyper,
 
     The nine tracer coordinates have a caller-applied standard-normal
     regularizer: one log rate, five positive intrinsic-K bias responses, one
-    FoG width, and the shared LF alpha/Mstar. Only the five bias coordinates
+    FoG width, and the shared LF alpha/Mstar. The log-rate scale is 2 and its
+    reference centre includes the finite-window LF fraction at the default
+    same-catalogue LF shape. Only the five bias coordinates
     are unit-centred broad bias regularizers. The LF coordinates are centred
     on the Lavaux-Hudson (2011) 2M++ K<11.5 LF row; they are same-survey
     empirical regularization, not independent calibration. In particular the

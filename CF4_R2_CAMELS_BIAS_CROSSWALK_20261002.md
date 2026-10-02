@@ -45,7 +45,9 @@ This bias distinction does **not** make every active tracer prior independent
 of the 2M++ catalogue. The active target's additional LF-shape coordinates are
 `Mstar=-23.28 + 0.2*u8` and
 `alpha=-1 + 0.06*exp(0.5*u7)`, with standard-normal `u7,u8`; their reference
-comes from Lavaux & Hudson (2011), Table 2, `|b|>10, K<11.5`. Thus the Mstar
+comes from Lavaux & Hudson (2011), Table 2, `|b|>10, K<11.5`. The log-rate
+coordinate has scale 2 and is centered on the finite-reference-window LF
+fraction evaluated at those same LF defaults. Thus the Mstar
 regularizer is weak relative to that row's quoted 0.01-mag error, while alpha
 is materially centered at -0.94, restricted to alpha>-1, and has local width
 about 0.03 versus the row's quoted 0.02 error. The source paper estimates its

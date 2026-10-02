@@ -340,13 +340,16 @@ not every tracer nuisance. The active target's two LF-shape coordinates use
 the Lavaux--Hudson (2011) 2M++ row `|b|>10, K<11.5` as their reference:
 `Mstar=-23.28 + 0.2*u8` and
 `alpha=-1 + 0.06*exp(0.5*u7)`, with `u7,u8 ~ N(0,1)` from the caller's
-`.5*q.q` penalty. Thus `Mstar` has a weak empirical regularizer in physical
-units (0.2 mag versus the row's quoted 0.01-mag error), while `alpha` is
-restricted to `alpha>-1`, has median -0.94 and local width about 0.03,
-comparable to the row's quoted 0.02 error. The reference is estimated from a
-subset of the same 2M++ catalogue used by the active count likelihood; exact
-row-by-row overlap was not measured. These are same-survey empirical
-regularizers, not independent external LF calibration.
+`.5*q.q` penalty. The log-rate coordinate also has scale 2 and is centered on
+the reference-window fraction computed at these default LF values. Thus
+`Mstar` has a weak empirical regularizer in physical units (0.2 mag versus
+the row's quoted 0.01-mag error), while `alpha` is restricted to `alpha>-1`,
+has median -0.94 and local width about 0.03, comparable to the row's quoted
+0.02 error. The rate center is broad but also inherits that LF reference.
+These references are estimated from a subset of the same 2M++ catalogue used
+by the active count likelihood; exact row-by-row overlap was not measured.
+They are same-survey empirical regularizers, not independent external LF
+calibration.
 
 Fable5's read-only audit returned **CONDITIONAL PASS**. Driver verification
 against the primary paper and current target source confirms the lineage and
