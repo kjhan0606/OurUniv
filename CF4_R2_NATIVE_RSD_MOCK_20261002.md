@@ -522,3 +522,19 @@ selection. Infinite-tail diagnostic retains27 images and is NOT an adopted
 periodic model/likelihood; it merely separates local Gaussian cutoff from
 ray/voxel coverage. No floor, larger width, new simulation or higher GL
 ladder. Same H1002CPU12GiB30min envelope; no production follow-on.
+
+Localization410646/sourceb07f949 COMPLETED/exit0 in23s, application~18s,
+whole-source ray scan (2,097,152 source cells), not a support-tree subset.
+Row2/PGC26124/pop0/r97.90991262/voxel[82,88,51]: GL1 untruncated broad
+3.5914e-100 vs GL2 broad8sigma.00337527; GL2 core.00317484; GL2 oldTSC
+core30.00220644. Row76/PGC22913/pop0/r122.34667531/voxel[80,85,34]: GL2
+core/broad8sigma zero; untruncated core3.8773e-69/broad2.2771e-47 versus
+TSCcore30.00176014. GL1 untruncated voxel responses remainzero at row76.
+No arbitrary floor or width change. The saved finite source-node laws miss
+useful support, and local tree omission is excluded for these rules. This
+does not prove the continuous underlying galaxy process has zero support,
+nor that all source/coordinate semantics are valid. Peak host in result.json
+is authoritative (Slurm reported only~3.4MiB). External Fable5 advice is
+warranted for this important actual-model discovery, not a routine audit.
+Request: config/cf4_r2_actual_voxel_support_fable_20261002.txt; result log:
+/gpfs/kjhan/CF4/logs/r2_actual_voxel_support_fable_20261002.txt.

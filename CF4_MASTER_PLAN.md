@@ -9,6 +9,31 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-02
 
+Latest bundled continuation (user requests grouping stages): shared-moment
+actual-state target implemented in `cf4_r2_moment_target.py`, active8tracer
++15population+3physical closure coordinates, no obsolete sampled global sigma
+and no hidden priors.410643 COMPLETED3m41s,10tests passed, including density/
+mean/variance/active-nuisance joint finite differences with refreshed support.
+Actual saved N128 moment-state/all1414 training rawFP+47121counts attempt
+410644 failed at GL1 raw support row2 before likelihood; GL2 retry410645
+failed at row76, also24s and before likelihood. No PM evolution, fit or
+heldout score. Close blind source-rule escalation; do not floor or inflate
+width to obtain a finite target.
+All-source localization410646 COMPLETED23s: row2's GL1 untruncated broad
+radial weight3.59e-100 becomes.00337527 underGL2. Row76 remains0 at8sigma
+and only2.28e-47 without that cutoff underGL2, versus legacyTSC.00176014.
+Thus a local support-tree omission is excluded for those source rules, and
+removing the Gaussian cutoff alone does not supply useful row76 support.
+Finite source-ray/voxel/sphere geometry is implicated but coordinate/measure
+semantics and a concrete remedy require verification. Fable5 focused
+important-finding advice requested, Q-GOAL/Q-LEAN explicitly; prompt:
+`config/cf4_r2_actual_voxel_support_fable_20261002.txt`. Native/PM calibration
+uncertainty, missing CF4 methods, actual IC adjoint and stationary posterior
+remain unresolved. R2 incomplete; no production target/field promotion.
+MW/M31 ambiguous,M33 unresolved; later constraints act on the SAME NEW
+field, not native identities. Numerical allocations from this bundle are
+terminal; no new gravity simulation or chain is running.
+
 R2 remains incomplete and is still the current actual-data z=0 field stage;
 the N256 grid is1.5 cMpc/h, not the final <=0.3 cMpc/h LG resolution.
 409763/409764 at fundamental-mass600 and matched controls410010/410011 at
