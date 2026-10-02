@@ -24,10 +24,16 @@ def source_sky_count_fp_parts(rho_node, velocity_node, white_ic, white_hyper,
                               rate_parameterization='reference'):
     """Return train count, train FP, white prior, heldout count, and intensity.
 
-    The nine tracer coordinates are development regularizers, not calibrated
-    priors: one log rate, five positive intrinsic-K bias responses, one FoG
-    width, and the shared LF alpha/Mstar. No separate conditional-K likelihood
-    is multiplied in. The heldout count is a *readout*, never part of target.
+    The nine tracer coordinates have a caller-applied standard-normal
+    regularizer: one log rate, five positive intrinsic-K bias responses, one
+    FoG width, and the shared LF alpha/Mstar. Only the five bias coordinates
+    are unit-centred broad bias regularizers. The LF coordinates are centred
+    on the Lavaux-Hudson (2011) 2M++ K<11.5 LF row; they are same-survey
+    empirical regularization, not independent calibration. In particular the
+    alpha transform is support-restricted at -1 and must be redesigned with
+    the finite faint-end/selection law before future sampling. No separate
+    conditional-K likelihood is multiplied in. The heldout count is a
+    *readout*, never part of target.
     """
     if white_tracer.shape != (9,):
         raise ValueError('source tracer requires nine white coordinates')

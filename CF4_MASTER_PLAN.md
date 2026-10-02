@@ -324,8 +324,9 @@ catalogue. They are external to CF4 distance marks, but not independent of
 counts without modelling their dependence. The historical six-observed-bin
 partial sampler did center bias nuisances on these values, but remains
 explicitly uncalibrated and not an R2 delivery; the current N256 five-true-K
-GL2 target uses unit-centred broad regularizers and does not inject the
-six-vector. The two bin definitions are not interchangeable. A local heldout
+GL2 target uses broad unit-centred regularizers for its **five bias
+coordinates** and does not inject the six-vector. The two bin definitions are
+not interchangeable. A local heldout
 score is prospective only if the bias estimate excluded those rows; that
 independence is not established for the paper's full-catalogue ARES estimates.
 The paper also maps ARES linear-regime bias to BORG's power-law exponent via
@@ -333,11 +334,44 @@ an approximate equality that its authors say is not exact. Fable5 concurs
 (CONDITIONAL PASS for documentation only; Q-GOAL/Q-LEAN pass). Exact row-level
 overlap with the paper input was not re-derived. Preserve the paper values
 only as historical reference points.
+
+The “unit-centred” description applies only to those five bias coordinates,
+not every tracer nuisance. The active target's two LF-shape coordinates use
+the Lavaux--Hudson (2011) 2M++ row `|b|>10, K<11.5` as their reference:
+`Mstar=-23.28 + 0.2*u8` and
+`alpha=-1 + 0.06*exp(0.5*u7)`, with `u7,u8 ~ N(0,1)` from the caller's
+`.5*q.q` penalty. Thus `Mstar` has a weak empirical regularizer in physical
+units (0.2 mag versus the row's quoted 0.01-mag error), while `alpha` is
+restricted to `alpha>-1`, has median -0.94 and local width about 0.03,
+comparable to the row's quoted 0.02 error. The reference is estimated from a
+subset of the same 2M++ catalogue used by the active count likelihood; exact
+row-by-row overlap was not measured. These are same-survey empirical
+regularizers, not independent external LF calibration.
+
+Fable5's read-only audit returned **CONDITIONAL PASS**. Driver verification
+against the primary paper and current target source confirms the lineage and
+transforms. The paper also reports a CMB-frame estimate for
+`-25<M<-21, 5000<cz<20000 km/s` of `alpha=-0.73, Mstar=-23.17`; the active
+alpha coordinate places this alternative about three standard-normal units
+from its reference. This does not invalidate the existing fixed-field
+diagnostics, and R2 remains NO-GO for posterior promotion. Before any future
+sampling, revise the alpha coordinate together with the finite faint-end
+population law and radius-dependent selection/transfer. Do not add a second
+LF likelihood from the same 2M++ catalogue as if independent. Retaining the
+broad Mstar regularizer with explicit sensitivity is provisionally acceptable;
+an external LF crosswalk, formal dependence model, and exact row-overlap
+accounting are deferred unless needed by the revised likelihood. No fit, job,
+or target change was made for this audit. The Lavaux--Jasche six-bias issue
+above is distinct: those values are not injected into the active bias target,
+whereas the LF-shape coordinates are active through `u7` and `u8`. See
+`CF4_R2_CAMELS_BIAS_CROSSWALK_20261002.md` for the detailed disposition.
+
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
 must source and validate the radius-dependent selection/transfer and obtain
 genuinely independent or explicitly joint calibration inputs for the actual
-five-true-K/six-observed-bin model.
+five-true-K/six-observed-bin model, and revise the same-data alpha regularizer
+before any sampling.
 
 The source audit also exposed an exact-tie LF-transfer gradient discrepancy:
 before correction, transfer values matched the direct reference but an exact

@@ -36,10 +36,25 @@ sampler includes the same 2M++ count datum and explicitly records
 independent validation result or a promoted posterior. A local heldout score
 is prospective only if the bias estimate was built without using those heldout
 rows; the paper's full-catalogue ARES estimate does not establish that
-independence for a within-2M++ split. The current N256
-five-true-K exact-GL2 path instead uses five unit-centred broad white-coordinate
-regularizers and does not inject the six Lavaux--Jasche values. Do not confuse
-the historical six-bin pilot with that active target.
+independence for a within-2M++ split. The current N256 five-true-K exact-GL2
+path uses five unit-centred broad white-coordinate regularizers for the five
+bias responses and does not inject the six Lavaux--Jasche values. Do not
+confuse the historical six-bin pilot with that active target.
+
+This bias distinction does **not** make every active tracer prior independent
+of the 2M++ catalogue. The active target's additional LF-shape coordinates are
+`Mstar=-23.28 + 0.2*u8` and
+`alpha=-1 + 0.06*exp(0.5*u7)`, with standard-normal `u7,u8`; their reference
+comes from Lavaux & Hudson (2011), Table 2, `|b|>10, K<11.5`. Thus the Mstar
+regularizer is weak relative to that row's quoted 0.01-mag error, while alpha
+is materially centered at -0.94, restricted to alpha>-1, and has local width
+about 0.03 versus the row's quoted 0.02 error. The source paper estimates its
+LF from a subset of the 2M++ catalogue, and the active target also uses 2M++
+counts; exact row-level overlap was not recomputed. Treat these LF coordinates
+as same-survey empirical regularization, not independent external calibration.
+The paper's different CMB-frame `-25<M<-21`, `5000<cz<20000 km/s` row is
+`alpha=-0.73, Mstar=-23.17`; its alpha value is about three white-coordinate
+standard deviations from the active reference.
 
 ## What the source actually estimates
 
@@ -157,6 +172,19 @@ correction; no code, configuration, target, fit, or calculation change is
 needed. The driver independently checked the primary paper and source wiring.
 Fable could not directly fetch the MNRAS page/PDF and exact paper-input-to-local
 row overlap was not reproduced, so those points are not claimed as verified.
+
+Fable5's 2026-10-02 read-only follow-up on the active LF-shape coordinates
+returned **CONDITIONAL PASS**. The driver independently verified the exact
+transforms, Gaussian-coordinate prior application, and same-catalogue LF
+lineage against the primary 2M++ paper. The audit distinguishes the weak Mstar
+regularizer from the more consequential, support-restricted alpha prior; it
+does not invalidate the fixed-field diagnostics or require a job now. Before
+any future sampling, revise alpha together with the finite faint-end law and
+the radius-dependent selection/transfer model. Do not add an independent LF
+likelihood from the same 2M++ catalogue. The Lavaux--Jasche bias issue remains
+separate: those six exponents are absent from the active target, while the
+Lavaux--Hudson LF shape enters it. Full reasoning and Q-GOAL/Q-LEAN disposition
+are recorded in `CF4_MASTER_PLAN.md`.
 
 ## Next valid use, if needed
 

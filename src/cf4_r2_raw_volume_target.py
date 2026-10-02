@@ -3,6 +3,13 @@
 Proper priors belong to the caller, once. These terms do not claim selection
 calibration or a posterior. Source support must be refreshed at every state;
 the state-dependent eight-sigma neighborhood is a numerical approximation.
+
+The LF-shape coordinates in the caller are centred on a 2M++-derived
+Lavaux-Hudson reference, while this target also scores 2M++ counts. They are
+development regularizers, not independent LF calibration. In particular,
+the alpha > -1 transform is a consequence of the current unbounded faint bin,
+not a physically established cutoff; revise the tail and selection law
+together before future posterior sampling.
 """
 from itertools import product
 import time
