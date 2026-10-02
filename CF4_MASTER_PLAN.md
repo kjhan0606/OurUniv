@@ -86,19 +86,24 @@ image support. The distance lookup extended from192 to233.581 cMpc/h with
 5.42e-10 max local-fit residual and 2.78e-12mag edge mismatch. Its 79-row
 order4/8 sample had max |delta logpdf|=.002469 nat (above the predeclared
 .001 row tolerance) but summed absolute delta=.005058 nat (within.1). The
-run stopped before AD/FD because its guard required an actually wrapped row;
-the fixed-state data contain none. The result at
-`/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v3` omits the
-row-level convergence sample, so a narrow continuation will recompute only
-the79 order4 values from its saved order8 census, persist/localize violators,
-and check AD/FD on one interior and one conservative-bound-uncertified row.
-It will not invent wrapped data; the synthetic uniform-ray test separately
-checks face-crossing periodic invariance and its AD/FD.
-It scores all1414 training links at order8, order4/8 on all39 previously
-uncertified plus40 deterministic safe rows, and AD/FD on one interior and one
-actually image-contributing row. It records per-row numerator/denominator
-image fractions and stops after a full order8 census if any row is nonfinite;
-the runtime guard also stops if the first20-row projection exceeds20min.
+initial v3 record omitted the row-level convergence sample; job410793 reran
+only the79 order4 values from saved order8 results and persisted the violator.
+Only PGC49072/index847 violates the per-row threshold; its first-face margin
+is+33.57 cMpc/h and all image fractions are zero. AD/FD passed on PGC26124
+(relative error1.29e-11) and conservative-bound-uncertified PGC39989
+(7.75e-9); this is not a wrapped-row derivative because no training row has
+nonzero q>face weight under the current8sigma state. The synthetic axis/
+diagonal uniform-field test separately checks face-crossing invariance and
+its AD/FD. Job410793 completed in4m39s, peak MaxRSS5.58GB; future equivalent
+jobs request8GiB (>20% margin). Result:
+`/gpfs/kjhan/CF4/z0_density/r2_periodic_ray_fp_cohort_20261002_v4`.
+Next is one targeted order16 evaluation of PGC49072 against its saved order4/8
+values. No automatic quadrature ladder follows if order8/16 still disagrees.
+Job410740 scores all1414 training links at order8, order4/8 on all39
+uncertified plus40 deterministic safe rows, and reports per-row
+numerator/denominator image fractions. It stops only after a full census if
+any row is nonfinite; its corrected first20 runtime guard separates one-time
+population compilation from warm throughput.
 Count/FP periodic-image semantics remain unreconciled and prevent target
 wiring regardless of this mechanics result. R2 remains incomplete; heldout
 untouched; MW/M31 roles ambiguous and M33 unresolved. Later LG observables must

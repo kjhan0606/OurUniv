@@ -243,6 +243,38 @@ def main():
             phase='REVIEW_REQUIRED',nonfinite_or_zero_support_PGC=nonfinite_rows)
         save();return
 
+    focus_order=int(os.environ.get('CF4_R2_FOCUS_ORDER','0'))
+    if focus_order:
+        if not base_result or focus_order<1:
+            raise ValueError('focused higher-order check requires a saved order8 parent')
+        focus_pgc=int(os.environ['CF4_R2_FOCUS_PGC'])
+        reference_path=os.environ['CF4_R2_FOCUS_REFERENCE_RESULT']
+        with open(reference_path,encoding='utf-8') as stream:
+            reference=json.load(stream)
+        ref_rows=[r for r in reference.get('convergence_sample',[])
+            if int(r.get('PGC',-1))==focus_pgc]
+        if len(ref_rows)!=1 or ref_rows[0].get('status')!='FINITE':
+            raise ValueError('focused row lacks exactly one finite order4 reference')
+        index=int(np.flatnonzero(pgc==focus_pgc)[0]);population=int(mix['population'][index])
+        obs=observation_at(index);angle=jnp.asarray(direction[index])
+        values=np.asarray(jax.tree_util.tree_map(lambda x:x.block_until_ready(),
+            make_eval(population,focus_order)(jnp.asarray(0.),angle,obs)),dtype=np.float64)
+        row4=float(ref_rows[0]['logpdf_order4']);row8=float(row8[index]['logpdf']);rowhi=float(values[0])
+        delta48=abs(row4-row8);delta8hi=abs(row8-rowhi)
+        report['focused_convergence']=dict(PGC=focus_pgc,index=index,population=population,
+            parent_order8_result=base_result,order4_reference_result=reference_path,
+            logpdf_order4=row4,logpdf_order8=row8,logpdf_focus_order=rowhi,
+            focus_order=focus_order,absolute_delta_order4_order8_nat=delta48,
+            absolute_delta_order8_focus_nat=delta8hi,
+            image_radial_mass_fraction=float(values[8]/values[7]),
+            image_numerator_fraction=float(values[9]),image_denominator_fraction=float(values[10]),
+            per_row_tolerance_nat=1e-3,pass_=bool(np.isfinite([row4,row8,rowhi,delta48,delta8hi]).all()
+                and delta8hi<=1e-3))
+        report.update(status=('FOCUSED_ORDER8_TO_HIGHER_ORDER_CHECKED_NOT_POSTERIOR'
+            if report['focused_convergence']['pass_'] else
+            'FOCUSED_HIGHER_ORDER_DISAGREEMENT_NOT_POSTERIOR'),phase='FOCUSED_CONVERGENCE_CHECK')
+        save();return
+
     report['phase']='ORDER4_CONVERGENCE_SAMPLE';save()
     convergence=[]
     for i in convergence_rows:
