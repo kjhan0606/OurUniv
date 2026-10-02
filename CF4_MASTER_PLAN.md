@@ -33,6 +33,19 @@ remain unresolved. R2 incomplete; no production target/field promotion.
 MW/M31 ambiguous,M33 unresolved; later constraints act on the SAME NEW
 field, not native identities. Numerical allocations from this bundle are
 terminal; no new gravity simulation or chain is running.
+Fable advice is now complete: CONDITIONAL PASS for quadrature relocation.
+Driver adopts observed-direction integration but rejects its raw-redshift
+ratio as a substitute for actual opticalFP/K/selection normalization,
+guaranteed-support claims, ignored coherent periodic angle changes and an
+unmeasured full-count runtime guarantee. Within the same bundle, implement a
+signed source-cell ray/CDF prototype retaining the FP conditional and explicit
+no-wrap sufficiency bound. Registration checks all47121 training points and
+1414 links; two actual failed rows get radial4/8 and scalar AD/FD comparisons.
+No extra redshift factor, count-target replacement, prior injection or
+posterior claim. Sourcef813819 Slurm410664 typedH1002CPU8GiB20min submitted;
+earlier pending410662 cancelled before calculation to repair a queued-runner
+HEAD-vs-documentation check. Quota QOSMaxGRESPerUser is not bypassed; other
+projects are untouched. Await this bounded prototype rather than a simulation.
 
 R2 remains incomplete and is still the current actual-data z=0 field stage;
 the N256 grid is1.5 cMpc/h, not the final <=0.3 cMpc/h LG resolution.

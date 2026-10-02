@@ -573,3 +573,11 @@ bypass quota or cancel other projects. Runner source check is corrected to
 verify imported code, not demand unchanged HEAD after documentation commits;
 replace the still-pending spooled runner once so the known check defect does
 not create a preventable future failure. Queue quota is unchanged.
+
+Pending410662 was cancelled before numerical execution and replaced by410664,
+sourcef813819. Imported code is checked against the recorded revision; later
+documentation-only commits no longer cause an artificial pre-run rejection.
+The linked-row registration explicitly checks all1414 voxel/radius joins,
+not just two inspected rows. Count training ownership remains47121. Same
+H1002CPU8GiB20min, source/radial4/8 prototype only; no other-user/project
+cancellation, quota bypass, count-backend promotion or new simulation.
