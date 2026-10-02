@@ -229,16 +229,19 @@ selection calibration, posterior or heldout evidence. The material remaining
 branch is multi-member CF4 groups, where group and member redshifts can differ.
 Next bundle: use the source-bound v6 graph to build one normalized shared-
 group-latent count/mark factor with member-redshift covariance and explicit
-group-inclusion uncertainty; first freeze current-v6 member degrees and one
-training-only multi-member control before reading mark scores. Do not multiply
-member marks independently, score another count occurrence, or infer group
-membership from native truth. No posterior sampling until selection and
-covariance are defensible. Q-GOAL: connect actual group-distance information
-to the same new z=0 field while preserving the 2M++ count ownership. Q-LEAN:
-move directly to the missing group law, no more singleton/ray ladders, gravity
-run, heldout values or target promotion. MW/M31 remain role-ambiguous and M33
-unresolved; their observables must later constrain those roles on the same NEW
-field at LG<=0.3 cMpc/h, with native truth IDs only for calibration/evaluation.
+group-inclusion uncertainty. Its first bounded calculation is the source-only
+v6 graph census in `cf4_r2_v6_multimember_graph_census.py`: freeze current-v6
+member degrees and one lexically selected, training-only multi-member control
+before reading any mark score. This is the start of the group-law bundle, not a
+separate science gate. Do not multiply member marks independently, score
+another count occurrence, or infer group membership from native truth. No
+posterior sampling until selection and covariance are defensible. Q-GOAL:
+connect actual group-distance information to the same new z=0 field while
+preserving 2M++ count ownership. Q-LEAN: one source graph read, no more
+singleton/ray ladders, gravity run, heldout values or target promotion.
+MW/M31 remain role-ambiguous and M33 unresolved; their observables must later
+constrain those roles on the same NEW field at LG<=0.3 cMpc/h, with native
+truth IDs only for calibration/evaluation.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
