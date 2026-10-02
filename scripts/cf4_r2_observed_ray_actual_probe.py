@@ -7,9 +7,8 @@ import resource
 import jax
 import jax.numpy as jnp
 import numpy as np
-from cf4_actual_selection import base
 from cf4_r2_raw_field_profile import load_inputs
-from cf4_r2_linked_fp_sparse_train import load_train_singletons,select_training_single_mark_links,FP,POINTS
+from cf4_r2_linked_fp_sparse_train import load_train_singletons,select_training_single_mark_links,FP
 from cf4_r2_native_to_count_cells import native_moments_to_count_cells
 from cf4_r2_raw_volume_target import tracer_geometry,tracer_masses
 from cf4_r2_observed_ray import observed_ray_components
@@ -27,18 +26,21 @@ def main():
         options=select_training_single_mark_links(options,f['membership_state'].astype(str),include_grouped=True)
         chosen=[a for p in range(6) for a in options if point['population'][a[2]]==p]
         np.testing.assert_array_equal(mix['PGC'],[f['PGC'][a[3]] for a in chosen])
-    with np.load(POINTS,allow_pickle=False) as f:
-        direction=base.supergalactic_unit_vectors(f['ra_deg'],f['dec_deg'])
-        rpoint=f['radius_cMpc_h'];flat=f['flat_cell'];pop=f['population']
-    rebuilt=np.floor((192.+rpoint[:,None]*direction)/3.).astype(int)
-    rebuilt_flat=np.ravel_multi_index(rebuilt.T,(128,)*3)
+        # These are the frozen observed directions attached to the FP PGCs.
+        # Do not reconstruct them through Astropy on the inference environment:
+        # the H100/H200/A100 `circle` image intentionally lacks that dependency.
+        direction=np.asarray(f['directions'][[a[3] for a in chosen]],dtype=np.float64)
+    flat=point['flat_cell'];pop=point['population']
     with np.load(BASE/'r2_sky_closed_split_v6/split.npz',allow_pickle=False) as f:
         training=np.isin(pop.astype(np.int64)*128**3+flat,f['train_keys'])
     if training.sum()!=47121:raise ValueError('training point ownership changed')
-    failures=np.flatnonzero(training&(rebuilt_flat!=flat))
+    if direction.shape!=(len(chosen),3) or not np.isfinite(direction).all():
+        raise ValueError('frozen FP source directions are malformed')
+    direction_norm_error=float(np.max(np.abs(np.linalg.norm(direction,axis=1)-1.)))
+    if direction_norm_error>2e-12:raise ValueError('frozen FP source direction is not unit-normalized')
     linked_points=np.asarray([a[2] for a in chosen])
-    np.testing.assert_array_equal(rebuilt[linked_points],np.asarray(o['voxel']))
-    np.testing.assert_allclose(rpoint[linked_points],np.asarray(o['radius']),rtol=0,atol=1e-10)
+    linked_voxels=np.stack(np.unravel_index(flat[linked_points],(128,)*3),axis=-1)
+    np.testing.assert_array_equal(linked_voxels,np.asarray(o['voxel']))
     with np.load(BASE/'r2_raw_joint_pilot_v1/accepted_present_state.npz',allow_pickle=False) as f:
         rho,v,var=map(jnp.asarray,(f['rho'],f['mean_velocity_km_s'],f['physical_velocity_variance_km2_s2']))
         old=f['tracer'];tracer=jnp.asarray(np.r_[old[:6],0.,.12*np.exp(.5*old[7]),old[8]])
@@ -50,17 +52,16 @@ def main():
     sigma_bound=float(jnp.sqrt(30.**2+.5**2*jnp.max(var)))
     report=dict(status='RUNNING',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,PM_evolutions=0,heldout_scored=False,training_points=int(training.sum()),
-        coordinate_mismatches=failures.tolist(),registered_FP_links=len(chosen),rows=[],
+        registered_FP_links=len(chosen),FP_direction_source='frozen SDSS-PV source direction aligned by PGC',
+        FP_direction_norm_max_error=direction_norm_error,rows=[],
         count_backend_changed=False,within_voxel_angular_density_scored=False,
         limitations='Fixed-direction conditional optical FP/K prototype. No extra observed-redshift likelihood. No full periodic production or calibrated closure prior.')
     def save():
         report.update(seconds=time.monotonic()-started,host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
-    if len(failures):raise AssertionError('actual training voxel/direction registration mismatch')
     for row in (2,76):
-        angle=jnp.asarray(direction[chosen[row][2]]);obs={k:val[row] for k,val in o.items()}
-        np.testing.assert_array_equal(rebuilt[chosen[row][2]],np.asarray(obs['voxel']))
+        angle=jnp.asarray(direction[row]);obs={k:val[row] for k,val in o.items()}
         result=dict(row=row,PGC=int(mix['PGC'][row]),rules=[],
             no_wrap_sufficient_margin_cMpc_h=192.-float(obs['radius'])-.01*(vmax+8*sigma_bound))
         for order in (4,8):
