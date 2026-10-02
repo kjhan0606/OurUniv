@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=cf4_R2_LF_cost
-#SBATCH --partition=h200,h100,a100
-#SBATCH --gres=gpu:1
+#SBATCH --partition=a100
+#SBATCH --gres=gpu:A100:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2

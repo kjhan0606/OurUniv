@@ -80,11 +80,16 @@ A lean cost profile was added in commit `54d4581` and resubmitted as Slurm
 finite transfer's compiled forward-plus-`(Mstar, alpha)` gradient for one
 population at 4,096, 65,536 and 262,144 synthetic sources. It requests one
 GPU, two CPUs, 6 GiB host memory (a 20% allowance over a conservative 5 GiB
-estimate), and has a 20-minute cap. At the latest check, `410445` is RUNNING
-on `syn101` through Slurm; its first test file passed6/6 in153.654s. Remaining
-test files and the dependent `410446` profile are not yet complete. Its result path is
+estimate), and has a 20-minute cap. Both jobs now COMPLETED/exit0 on A100:
+410445 in19m16s with36/36 tests (6+13+14+3),410446 in11s. Test-file times were
+153.654/142.127/846.527/5.115 seconds. Retry batch MaxRSS was4,778,672K,
+approximately4.56GiB: the4GiB request based on the preceding failed run did
+not retain a20% margin. No OOM exit occurred; future full-suite requests are
+6GiB. Completed submissions used generic GRES, and current runners now use
+typed `gpu:A100:1`; check H200/H100/A100 modes before future submission.
+Kernel median times were1.36/2.26/4.86ms at the three source sizes. Result path:
 `/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
 This isolates transfer cost only: it uses no saved field, does not include
 fresh raw-support construction or the full target/PM adjoint, and is not
 evidence for a fit, posterior, held-out prediction, or LG identification.
-If 410445 fails, Slurm will not execute this dependent profile.
+No numerical rerun is required by these successful terminal results.

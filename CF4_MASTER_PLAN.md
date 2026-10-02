@@ -383,17 +383,35 @@ adapter `TypeError` because its direct reference lacked the new optional
 `finite_reference_interval` keyword; the final raw-volume file did not run.
 Commitcff924a adds the keyword and finite-mode dispatch to the direct helper;
 the runner now requests4GiB (above the prior measured2.51GiB by>20%) and45min.
-Retry410445 is RUNNING on syn101 via Slurm; its first test file passed6/6 in
-153.654s, with the remaining files still in progress. The earlier dependent
-throughput job410425 could never
-run after410407 failed and was cancelled. Its replacement410446 is afterok
-410445; it profiles synthetic finite-transfer forward/gradient cost only and
-cannot authorize sampling. Output:
+Retry410445 COMPLETED/exit0 on the A100 partition in19m16s: all four files
+passed,36 tests (6+13+14+3). Batch MaxRSS4,778,672K (~4.56GiB) exceeded the
+4GiB request without an OOM exit; future full-suite runs request6GiB to
+restore the20% margin. The earlier dependent throughput job410425 could never
+run after410407 failed and was cancelled. Replacement410446 COMPLETED/exit0
+in11s. Synthetic finite-transfer forward/gradient median times are1.36/2.26/
+4.86ms for4096/65536/262144 sources; this excludes PMWD, full target adjoints
+and support construction and cannot authorize sampling. Both historical
+submissions used generic GRES; current runners use typed A100 requests, with
+future mode selection checked across H200/H100/A100. Output:
 `/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
 Old saved tracer coordinates require the mapping in the decision record to
 preserve physical alpha and are not directly reusable unchanged. Existing
 fixed-field sensitivities remain historical diagnostics, not invalidated
 posterior results.
+
+Next bounded calibration-input bundle uses existing TNG100 native K photometry
+and the preserved1.5-cMpc/h total-matter moments to measure five true-K proxy
+responses and velocity residuals, with train/buffer/test spatial separation.
+No new data download or gravity evolution. It resolves whether existing
+external information has relevant luminosity-bin support; native K-to-2MASS
+Ks, hydro/cosmology, NGP-to-PM scatter and stellar-to-subhalo COM differences
+remain explicit before any R2 prior use. No CAMELS mass-sextile injection,
+actual CF4 heldout access or posterior promotion. Q-GOAL: supply missing R2
+tracer-law evidence upstream of the actual z=0 delivery. Q-LEAN: one448-file
+catalogue read plus a7MB preserved moment grid, bounded20min/4GiB Slurm.
+MW/M31 remain ambiguous and M33 unresolved on the NEW inferred field; native
+IDs label external calibration only. Record:
+`CF4_R2_NATIVE_K_RESPONSE_20261002.md`.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
