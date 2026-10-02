@@ -28,11 +28,13 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
                     component_bin=None,component_row=None,
                     cut_integration_axis=0,cut_marginal_tolerance=0.,
                     source_velocity_variances_km2_s2=None,velocity_closure=None,
-                    radial_source_mass=None):
+                    radial_source_mass=None,source_radius_cMpc_h=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
     if radial_source_mass is not None and component_row is not None:
         raise ValueError('preintegrated ray masses currently support one observation only')
+    if radial_source_mass is not None and source_radius_cMpc_h is None:
+        raise ValueError('preintegrated ray masses require their unwrapped physical radius')
     def response(pos,vel,mass,sky,voxel,radius,variance):
         if velocity_closure is None:
             return predict_source_marked_radial_key_density(pos,vel,mass,sky,
@@ -60,8 +62,16 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
             return response(pos[None],vel[None],mass[:,None],sky[:,None],voxel,radius,var[None])[:,0]
         mass=jax.vmap(one,in_axes=(0,0,1,1,0,0,0),out_axes=1)(positions,velocities,intrinsic,angular,
             geometric['voxel'],geometric['radius'],variance)
-    relative=(positions-geometry['observer']+geometry['box_size_cMpc_h']/2)%geometry['box_size_cMpc_h']-geometry['box_size_cMpc_h']/2
-    rt=jnp.linalg.norm(relative,axis=1)
+    if source_radius_cMpc_h is None:
+        relative=(positions-geometry['observer']+geometry['box_size_cMpc_h']/2)%geometry['box_size_cMpc_h']-geometry['box_size_cMpc_h']/2
+        rt=jnp.linalg.norm(relative,axis=1)
+    else:
+        rt=jnp.asarray(source_radius_cMpc_h)
+        if rt.shape!=(positions.shape[0],):
+            raise ValueError('unwrapped source radius must align with ray nodes')
+        if jnp.issubdtype(rt.dtype,jnp.inexact):
+            # Runtime finite/nonnegative checks stay compatible with JIT tracing.
+            rt=jnp.where(jnp.isfinite(rt)&(rt>=0),rt,jnp.nan)
     table=geometry['radius_table_cMpc_h']
     mt=jnp.interp(rt,table,geometry['modulus_table_h'])
     mo=jnp.interp(geometric['radius'],table,geometry['modulus_table_h'])

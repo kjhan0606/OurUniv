@@ -11,7 +11,7 @@ from cf4_r2_raw_field_profile import load_inputs
 from cf4_r2_linked_fp_sparse_train import load_train_singletons,select_training_single_mark_links,FP
 from cf4_r2_native_to_count_cells import native_moments_to_count_cells
 from cf4_r2_raw_volume_target import tracer_geometry,tracer_masses
-from cf4_r2_observed_ray import observed_ray_components
+from cf4_r2_observed_ray import observed_ray_components,extend_flat_distance_tables
 from cf4_r2_raw_live_mark import chunk_log_terms,POPULATION_ORIGIN,POPULATION_SCALE
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density')
@@ -50,10 +50,13 @@ def main():
     mass=tracer_masses(rho,tracer);sky=jnp.asarray(source['angular']);geometry=tracer_geometry(tracer,g)
     vmax=float(jnp.max(jnp.linalg.norm(v,axis=1)))
     sigma_bound=float(jnp.sqrt(30.**2+.5**2*jnp.max(var)))
+    required_radius=float(jnp.max(o['radius']))+.01*(vmax+8*sigma_bound)
+    geometry,table_extension=extend_flat_distance_tables(geometry,required_radius+1.)
     report=dict(status='RUNNING',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,PM_evolutions=0,heldout_scored=False,training_points=int(training.sum()),
         registered_FP_links=len(chosen),FP_direction_source='frozen SDSS-PV source direction aligned by PGC',
         FP_direction_norm_max_error=direction_norm_error,rows=[],
+        distance_table_extension=table_extension,
         count_backend_changed=False,within_voxel_angular_density_scored=False,
         limitations='Fixed-direction conditional optical FP/K prototype. No extra observed-redshift likelihood. No full periodic production or calibrated closure prior.')
     def save():
@@ -67,11 +70,11 @@ def main():
         for order in (4,8):
             def score(logscale,vel,variance,masses,angular):
                 closure=dict(core_sigma_km_s=30.,dispersion_scale=.5*jnp.exp(logscale),broad_fraction=.5)
-                positions,velocity,intrinsic,selection,weights=observed_ray_components(angle,obs['radius'],
+                positions,velocity,intrinsic,selection,source_radius,weights=observed_ray_components(angle,obs['radius'],
                     vel,variance,masses,angular,int(mix['population'][row]),geometry,closure,source_grid=128,order=order)
                 a,b=chunk_log_terms(params,positions,velocity,intrinsic,selection,obs,
                     population=int(mix['population'][row]),geometry=geometry,cut_order=64,
-                    radial_source_mass=weights)
+                    radial_source_mass=weights,source_radius_cMpc_h=source_radius)
                 return a-b,weights.sum()
             derivative=jax.jit(jax.value_and_grad(score,argnums=0,has_aux=True))
             tic=time.monotonic();(value,weight),grad=derivative(0.,v,var,mass,sky)

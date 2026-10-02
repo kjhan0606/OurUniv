@@ -1,28 +1,73 @@
-"""Observed-direction source integral prototype, NOT periodic production.
+"""Periodic observed-direction source integral prototype, not a production target.
 
-Piecewise-constant source-cell rates/mean/diagonal variance. Exact cell
-crossings and Gaussian-CDF source-radius integration remove discrete angular
-rays. Caller must PROVE boundary-wrap contributions cannot reach the datum;
-otherwise this omits terms and is only a labelled diagnostic. No likelihood
-floor, native identities or observed-redshift likelihood is introduced.
+Piecewise-constant source-cell rates/mean/diagonal variance are sampled from
+the wrapped field, while the physical observer-centred radius q stays
+unwrapped. The ray is oriented and forward-only. This is still a fixed-state
+conditional FP mechanics diagnostic, not a calibrated posterior.
 """
+import numpy as np
 import jax.numpy as jnp
 from cf4_r2_shell_cdf_count import _probability_nodes
 from cf4_r2_velocity_closure import mixture_components,conditional_los_sigma
 from cf4_r2_marked_tracer_jax import source_mark_transfer
 
 
+def extend_flat_distance_tables(geometry,max_radius_cMpc_h,*,fit_span_cMpc_h=12.):
+    """Extend the saved flat-cosmology lookup smoothly beyond its old edge.
+
+    The saved table ends at the box half-size (192 cMpc/h), but a periodic
+    observed ray can have physical q beyond that edge. Extrapolate z(q) with a
+    local quadratic fit to the final table segment, then use the flat-FLRW
+    identity D_L/h=(1+z)q. This is a bounded numerical adapter, not a new
+    cosmology; it rejects a large edge discontinuity or nonmonotone extension.
+    """
+    radius=np.asarray(geometry['radius_table_cMpc_h'],dtype=np.float64)
+    modulus=np.asarray(geometry['modulus_table_h'],dtype=np.float64)
+    redshift=np.asarray(geometry['redshift_table'],dtype=np.float64)
+    maximum=float(max_radius_cMpc_h)
+    if (radius.ndim!=1 or modulus.shape!=radius.shape or redshift.shape!=radius.shape
+            or not np.isfinite(radius).all() or not np.isfinite(modulus).all()
+            or not np.isfinite(redshift).all() or np.any(np.diff(radius)<=0)
+            or np.any(np.diff(redshift)<=0) or not radius[-1]>0
+            or maximum<=radius[-1] or fit_span_cMpc_h<=0):
+        raise ValueError('invalid saved distance table or requested extension')
+    edge=float(radius[-1]);select=radius>=edge-fit_span_cMpc_h
+    x=radius[select]-edge
+    coeff=np.polynomial.polynomial.polyfit(x,redshift[select],2)
+    step=min(float(np.min(np.diff(radius))),.01)
+    extension=np.r_[np.arange(edge+step,maximum,step),maximum]
+    extension=extension[extension>edge]
+    zext=np.polynomial.polynomial.polyval(extension-edge,coeff)
+    mu_ext=5*np.log10(extension*(1.+zext))+25.
+    edge_mu=5*np.log10(edge*(1.+redshift[-1]))+25.
+    if (not np.isfinite(zext).all() or not np.isfinite(mu_ext).all()
+            or np.any(np.diff(zext)<=0) or zext[0]<=redshift[-1]
+            or abs(edge_mu-modulus[-1])>2e-4):
+        raise ValueError('distance-table extension is not smooth/monotone')
+    extended=dict(geometry)
+    extended['radius_table_cMpc_h']=jnp.asarray(np.r_[radius,extension])
+    extended['redshift_table']=jnp.asarray(np.r_[redshift,zext])
+    extended['modulus_table_h']=jnp.asarray(np.r_[modulus,mu_ext])
+    diagnostics=dict(original_max_cMpc_h=edge,extended_max_cMpc_h=float(extension[-1]),
+        local_quadratic_fit_span_cMpc_h=float(fit_span_cMpc_h),
+        local_fit_max_abs_residual=float(np.max(np.abs(
+            np.polynomial.polynomial.polyval(x,coeff)-redshift[select]))),
+        luminosity_distance_edge_mismatch_mag=float(edge_mu-modulus[-1]))
+    return extended,diagnostics
+
+
 def source_ray_intervals(direction,observer,n,box):
-    """Cube crossings on the forward observed ray, with source radius q>=0.
+    """Periodic-cell crossings on one full box-length forward ray q>=0.
 
     A sky direction is oriented: the antipodal half-line is a different
-    observation and must not enter this radial integral. Domain length may
-    exceed box on diagonal rays, but EACH axis spans<=box, so n+2 planes per
-    axis cover all forward crossings without a radius budget.
+    observation and must not enter this radial integral. The endpoint is
+    ``box/max(abs(direction))``: each Cartesian axis traverses at most one
+    box length, so n+2 planes per axis cover all crossings. Callers must
+    verify that their finite radial support lies inside this horizon.
     """
     direction=jnp.asarray(direction)
-    exit_radius=box/2/jnp.max(jnp.abs(direction))
-    lo=jnp.asarray(0.,dtype=direction.dtype);hi=exit_radius;dx=box/n
+    ray_horizon=box/jnp.max(jnp.abs(direction))
+    lo=jnp.asarray(0.,dtype=direction.dtype);hi=ray_horizon;dx=box/n
     parallel=direction==0;den=jnp.where(parallel,1.,direction)
     first=jnp.floor((observer+lo*direction)/dx)
     index=jnp.arange(n+2)[None,:]
@@ -40,10 +85,17 @@ def source_ray_intervals(direction,observer,n,box):
 
 def observed_ray_components(direction,observed_radius,velocity,variance,masses,angular,
                             population,geometry,closure,*,source_grid,order=4):
-    """Quadrature source positions and UNNORMALIZED selected radial masses.
+    """Periodic-ray nodes and UNNORMALIZED conditional optical-FP source masses.
 
-    One same integrand can later define observed-volume counts via f/r².
-    This function is not authorization to replace the active count backend.
+    The fixed angular-selection probability is common to numerator and
+    denominator of this per-direction conditional FP factor and cancels;
+    therefore the cell-averaged sky map is intentionally not sampled along
+    wrapped cells. The five-bin mass retains the q²/source-cell-volume
+    Jacobian, LF transfer, Gaussian mixture and source-field values.
+
+    ``source_radius`` returned below is the unwrapped physical q. A caller
+    must pass it to the raw-mark normalizer; minimum-image radius is wrong for
+    wrapped ray nodes. The active count backend is unchanged.
     """
     box=geometry['box_size_cMpc_h'];observer=geometry['observer']
     lo,hi,ids=source_ray_intervals(direction,observer,source_grid,box)
@@ -68,6 +120,8 @@ def observed_ray_components(direction,observed_radius,velocity,variance,masses,a
         jnp.interp(observed_radius,table,geometry['redshift_table']),
         mstar=geometry['mstar'],alpha=geometry['alpha'],
         finite_reference_interval=geometry.get('finite_reference_interval'))[population]
-    radial=transfer*masses[:,ids]*angular[population//3,ids][None]*weight[None]*radius[None]**2/(box/source_grid)**3
+    # A direction-only completeness scalar cancels exactly from this
+    # conditional likelihood. Do not substitute the wrapped cell's sky mask.
+    radial=transfer*masses[:,ids]*weight[None]*radius[None]**2/(box/source_grid)**3
     positions=(observer+q[:,None]*direction)%box
-    return positions,velocity[ids],masses[:,ids],angular[:,ids],radial
+    return positions,velocity[ids],masses[:,ids],jnp.ones_like(angular[:,ids]),q,radial
