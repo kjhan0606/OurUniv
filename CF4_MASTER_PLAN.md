@@ -437,13 +437,21 @@ One training-only nine-tracer fit plus fixed source/LOS/deposition controls,
 125000 native1.5 source cells,3 count spacing;90min Slurm/75min application,
 10GiB host/2CPU/typed GPU. No actual CF4 heldout outcome, PM evolution or
 R2 posterior/IC promotion; source K/Ks and native/PM limitations remain.
-Source c5f0085 Slurm410544 is RUNNING on H100/syn08 with those typed resources.
+Source c5f0085 Slurm410544 COMPLETED/exit0 in2m44s on H100/syn08.
 All4 observation tests passed, and6050 unique selected galaxies populate all
 six bins. Train/test/buffer counts2656/2360/1034; all selected rows have>=300
 stellar particles, including156 true-faint-bin migrants. This removes the
 unresolved-tail concern for this selected proxy sample, not passband/model
-calibration. Initial count-target compilation is underway; fitting and
-prediction remain pending.
+calibration. Derivative error4.45e-6 passes; fit stopped at24 iterations,
+gradient_inf2.453, NOT convergence. Development test score improves198.379
+but expected counts2503.112 exceed2360 by6.1%, and population/radius L1
+worsens222.629 to285.717. GL4/LOS16 intensity changes<.1%; diagnostic NGP
+changes36.6% and has two occupied zero-support training cells. No law switch
+or calibrated-prior adoption follows. d7d2b25 continuation410551 RUNS through
+Slurm on H100/syn08: identical source/model, fresh L-BFGS history, training
+rate reprofile, maximum200 iterations/240 evaluations. Stationarity requires
+optimizer success AND gradient_inf<=.001. The already inspected development
+test is not pristine validation; actual CF4 heldout remains untouched.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
