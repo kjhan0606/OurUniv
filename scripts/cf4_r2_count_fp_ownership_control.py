@@ -40,6 +40,20 @@ def sha256(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def verify_source_commit(expected_commit):
+    def resolve(revision):
+        return subprocess.check_output(
+            ['git', 'rev-parse', '--verify', f'{revision}^{{commit}}'],
+            cwd=ROOT, text=True).strip()
+
+    expected_revision = resolve(expected_commit)
+    source_revision = resolve('HEAD')
+    if source_revision != expected_revision:
+        raise RuntimeError(
+            f'source commit mismatch: {source_revision} != {expected_revision}')
+    return source_revision
+
+
 def components(packs, population):
     pack = packs[population]
     active = np.asarray(pack['mask'], dtype=bool)
@@ -72,10 +86,7 @@ def main():
     expected_commit = os.environ.get('CF4_EXPECTED_COMMIT')
     if not expected_commit:
         raise RuntimeError('CF4_EXPECTED_COMMIT must pin the submitted source')
-    source_commit = subprocess.check_output(
-        ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-    if source_commit != expected_commit:
-        raise RuntimeError(f'source commit mismatch: {source_commit} != {expected_commit}')
+    source_commit = verify_source_commit(expected_commit)
     out = Path(os.environ['CF4_R2_OUT_DIR'])
     out.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()

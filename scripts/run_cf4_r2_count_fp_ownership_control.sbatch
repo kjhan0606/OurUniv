@@ -23,19 +23,17 @@ git diff --cached --quiet "$EXPECTED_REV" -- \
     src/cf4_r2_raw_live_mark.py src/cf4_r2_raw_volume_target.py \
     scripts/cf4_r2_count_fp_ownership_control.py \
     scripts/run_cf4_r2_count_fp_ownership_control.sbatch \
-    tests/test_cf4_r2_raw_mixture_connection.py
+    tests/test_cf4_r2_raw_mixture_connection.py \
+    tests/test_cf4_r2_count_fp_ownership_control.py
 git diff --quiet "$EXPECTED_REV" -- \
     src/cf4_r2_raw_live_mark.py src/cf4_r2_raw_volume_target.py \
     scripts/cf4_r2_count_fp_ownership_control.py \
     scripts/run_cf4_r2_count_fp_ownership_control.sbatch \
-    tests/test_cf4_r2_raw_mixture_connection.py
+    tests/test_cf4_r2_raw_mixture_connection.py \
+    tests/test_cf4_r2_count_fp_ownership_control.py
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/src:$PWD/scripts${PYTHONPATH:+:$PYTHONPATH}"
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
-"$PY" tests/test_cf4_r2_observed_ray.py
-"$PY" tests/test_cf4_r2_raw_mixture_connection.py
-"$PY" tests/test_cf4_r2_raw_selected_fp.py
-"$PY" tests/test_cf4_r2_shell_cdf_count.py
-"$PY" tests/test_cf4_r2_raw_volume_target.py
+"$PY" tests/test_cf4_r2_count_fp_ownership_control.py
 exec "$PY" scripts/cf4_r2_count_fp_ownership_control.py

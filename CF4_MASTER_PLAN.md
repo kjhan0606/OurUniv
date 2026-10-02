@@ -170,6 +170,18 @@ tuple as one array. The four observed-ray tests passed; two raw-mixture tests
 passed and the new one errored. No science output was written; preserve its
 Slurm stdout/stderr and host MaxRSS1732316K. Correct only the tuplewise
 assertion and resubmit this same one-link control.
+Retry410876 passed all31 focused numerical regressions (4+3+7+14+3) but
+failed before creating its output directory or entering the science control:
+the batch preflight resolved abbreviated commit `116018a`, while the Python
+entrypoint compared that short string literally with full `HEAD`. Batch
+MaxRSS was5,642,372K; no scientific result exists. `verify_source_commit`
+now resolves both revisions before comparison, with short-SHA and mismatch
+regressions. The prior numerical suites are already green at the unchanged
+scientific source, so the bounded retry runs only this new guard test before
+the same one-link calculation in a fresh output directory. Q-GOAL: restores
+the intended ownership diagnostic without changing its target. Q-LEAN: a
+two-test guard plus one existing control; no repeated long suite, simulation,
+heldout use or posterior promotion.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
