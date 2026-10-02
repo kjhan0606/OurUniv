@@ -54,7 +54,9 @@ class RawMixtureConnectionTests(unittest.TestCase):
         shifted=chunk_log_terms(*args,**common,
             source_conditioning_radius_cMpc_h=self.o['radius']+1.)
         np.testing.assert_allclose(default,same,rtol=0.,atol=2e-12)
-        self.assertGreater(float(jnp.max(jnp.abs(default-shifted))),1e-10)
+        difference=max(float(jnp.max(jnp.abs(a-b)))
+            for a,b in zip(default,shifted))
+        self.assertGreater(difference,1e-10)
 
     def test_packed_rows_and_variance_adjoint(self):
         o={k:v[None] for k,v in self.o.items()}

@@ -164,6 +164,12 @@ same z=0 field as counts with explicit catalogue ownership. Q-LEAN: one link,
 existing kernels, no new simulation, heldout reads, or target promotion.
 MW/M31 remain role-ambiguous and M33 unresolved; their observables must later
 constrain the same NEW field, with native IDs calibration/evaluation-only.
+First typed-H100 submission410874 failed in the test phase before the science
+runner: the new regression tried to subtract the raw `(numerator,denominator)`
+tuple as one array. The four observed-ray tests passed; two raw-mixture tests
+passed and the new one errored. No science output was written; preserve its
+Slurm stdout/stderr and host MaxRSS1732316K. Correct only the tuplewise
+assertion and resubmit this same one-link control.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and
