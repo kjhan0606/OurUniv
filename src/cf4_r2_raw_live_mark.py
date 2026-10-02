@@ -27,7 +27,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
                     *,population,geometry,magnitude_order=24,cut_order=64,
                     component_bin=None,component_row=None,
                     cut_integration_axis=0,cut_marginal_tolerance=0.,
-                    source_velocity_variances_km2_s2=None,velocity_closure=None):
+                    source_velocity_variances_km2_s2=None,velocity_closure=None,
+                    radial_source_mass=None):
     """UNNORMALIZED raw numerator/selection denominator on one source chunk."""
     o=observation
     def response(pos,vel,mass,sky,voxel,radius,variance):
@@ -46,7 +47,9 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         raise ValueError('mixture raw marks require same-field physical variances')
     variance=jnp.zeros_like(velocities) if source_velocity_variances_km2_s2 is None else source_velocity_variances_km2_s2
     if component_row is None:
-        mass=response(positions,velocities,intrinsic,angular,o['voxel'],o['radius'],variance)
+        mass=(response(positions,velocities,intrinsic,angular,o['voxel'],o['radius'],variance)
+            if radial_source_mass is None else radial_source_mass)
+        if mass.shape!=intrinsic.shape:raise ValueError('aligned preintegrated five-bin radial mass required')
         geometric=o
     else:
         if component_bin is None:raise ValueError('multirow stream requires packed bin IDs')
