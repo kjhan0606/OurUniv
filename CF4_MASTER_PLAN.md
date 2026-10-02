@@ -200,6 +200,33 @@ support collector now consumes the population-pack tuple directly and has a
 focused tuple-shape regression. Next retry uses only these four tiny tests and
 the same fixed link in a fresh output directory; no target/input/heldout or
 resource scope changes.
+410884 COMPLETED/exit0 in1m53s on typed H100; all four focused guard/split/
+support tests passed; batch MaxRSS6,638,792K (6.33GiB) under12GiB. For the
+predeclared PGC1085367 v6 training link, individual-point and CF4 group radii
+are exactly equal (83.923308106 cMpc/h). Existing/default and explicit
+same-radius raw log factors both equal2.314581544 nat exactly; the
+count-conditioned implementation reproduces that value. The independent
+periodic-ray comparator is2.351223827 nat, a fixed-row delta of-.036642283
+nat. Count/ray LOS-scale AD-vs-FD relative errors are1.97e-10/6.31e-10;
+the rebuilt +/- support union contains nominal/minus support. No ray mass
+lies beyond its first face, and the count-voxel geometric margin is108.077
+cMpc/h. Result: `/gpfs/kjhan/CF4/z0_density/r2_count_fp_ownership_20261002_v4/result.json`.
+Driver accepts fixed-state mechanics only: equal radii mean this row does not
+exercise distinct point/group redshift conditioning; one mark is not evidence
+for group-selection/covariance calibration or posterior validity. Continue
+the same bounded bundle with one geometry-only, score-blind training link
+nearest the median nonzero absolute point/group radius offset, then close this
+operator check. Q-GOAL: exercise the actual count-to-mark information path on
+the same new field. Q-LEAN: one additional link, no cohort census, refit,
+heldout access, gravity or posterior promotion. MW/M31 remain ambiguous and
+M33 unresolved; all eventual LG observables must constrain those roles on the
+same NEW field, not native truth identities.
+The offset-selected extension is implemented by
+`select_median_nonzero_offset_index`: among the same1414 v6 training links it
+chooses the row nearest the median nonzero absolute observed-radius offset,
+breaking ties by PGC, without reading any likelihood scores. Its five focused
+guard/selection regressions pass. The next job uses this single geometry-only
+choice and otherwise unchanged field/operator/resources in a fresh output.
 Per the 2026-10-02 reviewer-routing update, Astra covers Fable-assigned
 audits; this immediate bundle is driver-reviewed because an outside reviewer
 would be consecutive to the preceding driver review. Keep R2 active and

@@ -68,6 +68,25 @@ def support_components_by_scale(support_by_scale, population):
             for scale, packs in support_by_scale.items()}
 
 
+def select_median_nonzero_offset_index(pgc, point_radius, group_radius):
+    pgc = np.asarray(pgc, dtype=np.int64)
+    point_radius = np.asarray(point_radius, dtype=np.float64)
+    group_radius = np.asarray(group_radius, dtype=np.float64)
+    if (pgc.ndim != 1 or point_radius.shape != pgc.shape
+            or group_radius.shape != pgc.shape or not np.isfinite(point_radius).all()
+            or not np.isfinite(group_radius).all()):
+        raise ValueError('training PGC/radius arrays must be aligned and finite')
+    delta = group_radius-point_radius
+    candidates = np.flatnonzero(np.abs(delta) > 1.e-8)
+    if not candidates.size:
+        raise ValueError('no nonzero training point/group radius offsets')
+    median_abs_offset = float(np.median(np.abs(delta[candidates])))
+    order = np.lexsort((pgc[candidates],
+                        np.abs(np.abs(delta[candidates])-median_abs_offset)))
+    index = int(candidates[order[0]])
+    return index, median_abs_offset
+
+
 def radius_summary(weight, radius):
     weight, radius = map(lambda x: np.asarray(x, dtype=np.float64), (weight, radius))
     total = float(weight.sum())
@@ -99,7 +118,8 @@ def main():
     report = dict(status='STARTED', phase='INPUTS', job_id=os.environ['SLURM_JOB_ID'],
         source_commit=source_commit,
         classification='ONE_TRAINING_LINK_COUNT_FP_OWNERSHIP_CONTROL_NOT_POSTERIOR',
-        control_PGC=CONTROL_PGC, N=N, box_cMpc_h=BOX,
+        control_PGC=None, control_selection_rule=os.environ.get(
+            'CF4_CONTROL_SELECT', 'fixed_predeclared_PGC'), N=N, box_cMpc_h=BOX,
         field_state='saved N128 accepted pilot; fixed and nonstationary',
         count_occurrence_scored_once=True, heldout_values_read=False,
         PM_evolutions=0, field_fit=False, optimizer_steps=0, sampler=False,
@@ -130,7 +150,26 @@ def main():
             registered_pgc = np.asarray([f['PGC'][item[3]] for item in chosen], dtype=np.int64)
             fp_direction, membership = f['directions'].copy(), f['membership_state'].astype(str)
         np.testing.assert_array_equal(mix['PGC'], registered_pgc)
-        locations = np.flatnonzero(registered_pgc == CONTROL_PGC)
+        control_rule = os.environ.get('CF4_CONTROL_SELECT', 'fixed_predeclared_PGC')
+        if control_rule == 'median_nonzero_offset':
+            linked_point_radii = np.asarray(
+                [point['radius_cMpc_h'][item[2]] for item in chosen])
+            row, median_abs_offset = select_median_nonzero_offset_index(
+                registered_pgc, linked_point_radii, mix['observed_radius'])
+            control_pgc = int(registered_pgc[row])
+            offset_selection = dict(rule=control_rule,
+                criterion='nearest to median nonzero absolute observed point/group radius difference',
+                candidate_count=len(registered_pgc),
+                nonzero_offset_count=int(np.sum(np.abs(
+                    mix['observed_radius']-linked_point_radii) > 1.e-8)),
+                median_absolute_offset_cMpc_h=median_abs_offset)
+            locations = np.asarray([row], dtype=np.int64)
+        elif control_rule == 'fixed_predeclared_PGC':
+            control_pgc = CONTROL_PGC
+            locations = np.flatnonzero(registered_pgc == control_pgc)
+            offset_selection = dict(rule=control_rule, criterion='fixed training PGC')
+        else:
+            raise ValueError(f'unknown control selection rule: {control_rule}')
         if locations.size != 1:
             raise ValueError('predeclared control must occur once in the v6 training links')
         row = int(locations[0]); link = chosen[row]; point_index = int(link[2])
@@ -177,7 +216,8 @@ def main():
             dispersion_scale=BROAD_SCALE*jnp.exp(x), broad_fraction=BROAD_FRACTION)
 
         report.update(phase='REGISTERED_CONTROL',
-            link=dict(PGC=CONTROL_PGC, source_group_label=str(link[0]),
+            control_PGC=control_pgc, control_selection=offset_selection,
+            link=dict(PGC=control_pgc, source_group_label=str(link[0]),
                 count_population=population, count_voxel_ijk=voxel.tolist(),
                 count_key=count_key, linked_point_index=point_index,
                 point_individual_radius_cMpc_h=point_radius,
