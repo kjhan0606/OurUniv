@@ -306,3 +306,20 @@ identity assignments; diagonal covariance and one-box/K/resolution limits
 persist. Next: connect mean AND native dispersion proxy consistently to
 the voxel-boundary marked integral and check conditional count prediction,
 before a full R2 use. No stochastic-floor rescue or widening by hand.
+
+Next connection bundle: optional source diagonal-variance input to the
+existing marked integrator, recomputing projected width for EVERY shifted
+source-volume ray. Core and broad probabilities integrated independently,
+then normalized training mixture weights combined. No cached central-ray
+variance alias. Caller verifies nonnegative moments and conservative maximum
+width within8sigma_radius<192 (27-image domain); image possibility uses any
+source width, not a scalar-only predicate. Default constant-width production
+route remains unchanged. Seven focused geometry/projection/derivative tests
+plus four observation tests run inside Slurm before native two-key readout.
+GL2/mark4 versusGL4/mark8, fixed global-versus-conditional comparison and
+conditional log-scale FD. Existing tail keys are training diagnostics, NOT
+the criteria for fitting/choosing the conditional law. No fit or prior
+injection.10GiB/2CPU/typed GPU/30min, expected<5min; same input sizes plus
+native diagonal variance. This is the physical mean+dispersion connection
+before full-count boundary integration, not yet a complete R2 observation
+likelihood. Q-GOAL/Q-LEAN and MW/M31 ambiguity/M33 unresolved unchanged.

@@ -3,12 +3,26 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.special import ndtr
-from cf4_r2_shell_cdf_count import ray_voxel_interval
+from cf4_r2_shell_cdf_count import ray_voxel_interval,conditional_los_sigma
 
 jax.config.update('jax_enable_x64',True)
 
 
 class VoxelRayTests(unittest.TestCase):
+    def test_conditional_width_projection_and_zero_variance_identity(self):
+        d=jnp.array([[1.,0.,0.],[0.,1.,0.]])
+        variance=jnp.array([[9.,16.,25.],[9.,16.,25.]])
+        np.testing.assert_allclose(conditional_los_sigma(d,2.,variance,.5),
+            np.sqrt([4.+.25*9.,4.+.25*16.]))
+        np.testing.assert_allclose(conditional_los_sigma(d,2.,jnp.zeros_like(d),1.),[2.,2.])
+
+    def test_conditional_scale_derivative(self):
+        d=jnp.array([[1.,0.,0.]])
+        variance=jnp.array([[9.,16.,25.]])
+        value=lambda s:conditional_los_sigma(d,2.,variance,s)[0]
+        eps=1e-5;x=.5
+        self.assertAlmostEqual(float(jax.grad(value)(x)),float((value(x+eps)-value(x-eps))/(2*eps)),places=8)
+
     def test_zero_direction_has_finite_inactive_interval(self):
         lo,hi,active=ray_voxel_interval(jnp.zeros((1,3)),jnp.ones(3),
             (1,1,1),4,4.,jnp.zeros(3))

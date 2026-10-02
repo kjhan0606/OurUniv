@@ -49,6 +49,17 @@ def ray_voxel_interval(direction, observer, voxel, grid_size, box, image_center)
     return jnp.where(active,lo,0.),jnp.where(active,hi,0.),active
 
 
+def conditional_los_sigma(direction, base_sigma, variances, scale):
+    """Diagonal-covariance proxy, recomputed for each source-volume ray.
+
+    Caller validates nonnegative cell variances and every component's
+    periodic support. No off-diagonal covariance or satellite identity claim.
+    """
+    if jnp.asarray(variances).shape!=direction.shape:
+        raise ValueError('one diagonal velocity variance vector per source required')
+    return jnp.sqrt(base_sigma**2+scale**2*jnp.sum(direction**2*variances,axis=1))
+
+
 def cell_averaged_tsc_weight(positions,voxel,grid_size,box):
     """TSC convolved with one cell top-hat = separable cubic B-spline.
 
@@ -127,7 +138,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     mstar=-23.28,alpha=-.94,order=16,segments=1,
     finite_reference_interval=None,
     target_population=None,target_voxel=None,source_cell_average=False,
-    force_all_images=False,deposition='tsc'):
+    force_all_images=False,deposition='tsc',
+    source_velocity_variances_km2_s2=None,dispersion_scale=1.):
     """Same source-selected K/count integrand with TSC or diagnostic NGP deposit.
 
     Caller owns current-width support checks and calibration. This does not
@@ -163,6 +175,9 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         raise ValueError('27-image quadrature requires 0<8*sigma_radius<box/2')
     shifted,_,direction=observer_centred_spherical_rsd_jax(pos,source_velocities_km_s,
         observer,box_size_cMpc_h,hubble_km_s_Mpc,little_h=little_h,scale_factor=1.)
+    if source_velocity_variances_km2_s2 is not None:
+        sigma=little_h*conditional_los_sigma(direction,sigma_los_km_s,
+            source_velocity_variances_km2_s2,dispersion_scale)/hubble_km_s_Mpc
     relative=lambda x:(x-observer+box_size_cMpc_h/2)%box_size_cMpc_h-box_size_cMpc_h/2
     def radius_of(x):
         r2=jnp.sum(relative(x)**2,axis=1)
@@ -235,7 +250,7 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
         # L/2-Rmax. An8sigma path shorter than this gap cannot intersect it.
         # This exact shortcut belongs to the existing truncated count law;
         # it is not a new tail approximation or a radial-mark alias claim.
-        possible=(jnp.all(center==0) | (8*sigma>=box_size_cMpc_h/2-radial_max_cMpc_h)
+        possible=(jnp.all(center==0) | jnp.any(8*sigma>=box_size_cMpc_h/2-radial_max_cMpc_h)
                   | force_all_images)
         return jax.lax.cond(possible,lambda t:integrate_image(t,center)[0],lambda t:t,total),None
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
