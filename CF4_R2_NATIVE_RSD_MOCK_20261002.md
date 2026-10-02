@@ -441,3 +441,16 @@ or supply calibration uncertainty. Do not start production inference from
 these synthetic passes; next use the shared-moment connection in a bounded
 actual-state target comparison with unchanged protected CF4 heldout and an
 explicit closure-nuisance/prior design, not a freely retuned count width.
+
+Terminal outcome:410630 COMPLETED/exit0 in4m35s,17tests passed; batch
+MaxRSS2,255,504K (~2.15GiB). Dependent410632 COMPLETED/exit0 in39s,
+2tests passed; batch MaxRSS1,170,388K (~1.12GiB). All19 distinct tests
+in the final two allocations pass. Shared mixture normalization, raw
+streaming/adjoint, periodic radial/count measure, fresh support, additive
+moment conservation and source-chunk variance/gradient equality are verified
+on these SMALL synthetic fixtures. The bounded interface bundle is complete.
+No actual-data field fit, calibration prior, IC adjoint or stationary R2
+posterior is delivered; the original sampler remains disabled for this law.
+No numerical job from this bundle remains running. Next scientific deliverable
+is the actual-state moment-aware joint target and calibration uncertainty,
+not another native two-key support check or unconstrained sigma optimization.

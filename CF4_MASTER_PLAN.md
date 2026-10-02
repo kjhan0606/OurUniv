@@ -522,6 +522,15 @@ field moments/operators, no new gate framework. MW/M31 remain ambiguous and
 M33 unresolved; their later observables constrain the SAME NEW state, not
 native calibration IDs. Full-population calibration, PM/hydro/passband
 crosswalk and actual CF4 posterior/heldout requirements remain unresolved.
+Shared-interface bundle now numerically complete:410630 COMPLETED4m35s,
+17tests pass and dependent410632 COMPLETED39s,2tests pass. Optional count
+and raw-FP interfaces share normalized mixture weights, periodic voxel
+geometry and physical variances; moment readout preserves mass/momentum/raw
+second moments and chunk gradients match unchunked. This is a small-fixture
+wiring result, NOT actual-state IC adjoint or R2 posterior/calibration.
+Production sampler defaults are unchanged; no bundle job remains running.
+Next integrate the same moments in the actual-state joint target with
+explicit closure uncertainty before inference, preserving heldout data.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2
