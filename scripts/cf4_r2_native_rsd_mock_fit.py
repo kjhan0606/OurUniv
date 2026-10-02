@@ -28,7 +28,9 @@ BASE=Path('/gpfs/kjhan/CF4/z0_density')
 GALAXIES=BASE/'r2_tng_native_k_response_20261002_v3/native_k_galaxies.npz'
 MATTER=BASE/'bundle_c_v1/total_matter_v1/matter_moments.h5'
 OUT=Path(os.environ.get('CF4_R2_OUT_DIR',str(BASE/'r2_native_rsd_mock_fit_20261002_v1')))
-MAX_EVALUATIONS=48
+MAX_EVALUATIONS=int(os.environ.get('CF4_R2_MAX_EVALUATIONS','48'))
+MAX_ITERATIONS=int(os.environ.get('CF4_R2_MAX_ITERATIONS','24'))
+RESTART=os.environ.get('CF4_R2_RESTART_RESULT')
 APPLICATION_SECONDS=75*60
 
 
@@ -48,7 +50,8 @@ def main():
         near_origin=[154.5,154.5,154.5],far_translation_x_cMpc_h=84.,
         native_split_x_cMpc_h=37.5,observer=[192.,192.,192.],
         actual_CF4_2Mpp_outcomes_read=False,gravity_evolutions=0,
-        maximum_fit_evaluations=MAX_EVALUATIONS,application_seconds=APPLICATION_SECONDS,
+        maximum_fit_evaluations=MAX_EVALUATIONS,maximum_fit_iterations=MAX_ITERATIONS,
+        application_seconds=APPLICATION_SECONDS,
         priors='same nine standard-normal tracer development coordinates; one penalty',
         source_volume_order=2,LOS_order=4,LOS_segments=8,trace=[],
         limits=['Native IR K Vega is a Ks proxy; dust/passband/aperture mapping remains open.',
@@ -134,6 +137,19 @@ def main():
     vg=jax.jit(jax.value_and_grad(target,has_aux=True))
     scalar=jax.jit(lambda q:target(q)[0])
     q=np.zeros(9);q[6]=2*np.log(3.) # predeclared300km/s start; not native-truth fit.
+    if RESTART:
+        previous=json.loads(Path(RESTART).read_text())
+        if (previous['source_galaxies']!=str(GALAXIES)
+            or previous['source_matter']!=str(MATTER)
+            or previous['classification']!=report['classification']
+            or previous['source_volume_order']!=2 or previous['LOS_segments']!=8):
+            raise ValueError('restart source/model contract mismatch')
+        q=np.asarray(previous['final_coordinates'],dtype=float)
+        if q.shape!=(9,) or not np.isfinite(q).all():
+            raise ValueError('invalid restart coordinates')
+        report['restart']=dict(result=RESTART,coordinates=q.tolist(),
+            optimizer_history='fresh L-BFGS history; training-only rate reprofiling',
+            original_job=previous['job_id'])
     tic=time.monotonic();(value,(score,initial)),grad=vg(jnp.asarray(q))
     jax.block_until_ready((value,score,initial,grad))
     report['first_gradient_compile_seconds']=time.monotonic()-tic
@@ -191,7 +207,8 @@ def main():
 
     try:
         fit=minimize(objective,q,jac=True,method='L-BFGS-B',callback=callback,
-            options=dict(maxiter=24,maxfun=40,maxls=8,ftol=1e-9,gtol=1e-3))
+            options=dict(maxiter=MAX_ITERATIONS,maxfun=MAX_EVALUATIONS-8,
+                         maxls=8,ftol=1e-12,gtol=1e-3))
         accepted=fit.x.copy()
         report['optimizer']=dict(success=bool(fit.success),message=str(fit.message),iterations=int(fit.nit))
     except BudgetStop:
@@ -205,6 +222,8 @@ def main():
         physical_beta=np.exp(.5*accepted[1:6]).tolist(),
         physical_sigma_los_km_s=float(100*np.exp(.5*accepted[6])),
         physical_alpha=float(-1+.5*accepted[7]),physical_Mstar=float(-23.28+.2*accepted[8]))
+    report['stationarity_verified']=bool(report['optimizer']['success']
+        and report['final_gradient_inf']<=1e-3)
     save()
 
     def metrics(lam,mask):

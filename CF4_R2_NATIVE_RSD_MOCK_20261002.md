@@ -101,3 +101,32 @@ the earlier unresolved all-faint population does not describe these actually
 selected rows. It does not certify native luminosity/dust/baryonic accuracy.
 Initial target compilation/gradient is in progress; no fitted law or predictive
 result exists yet. Logs/artifacts use the fixed410544/v1 paths above.
+
+## Terminal result and bounded stationarity continuation
+
+410544 COMPLETED exit0 in2m44s. Application peak host memory2.012GiB;
+four tests pass; directional derivative relative error4.45e-6. L-BFGS
+stopped at24 iterations, gradient infinity norm2.453: NOT converged.
+Training score improves -6168.625 to-5954.164; development test score
+improves -5358.851 to-5160.472. However test counts grow from2454.926
+to2503.112 versus2360 observed, and population/radius aggregate L1 worsens
+222.629 to285.717. Neither score improvement nor exit0 proves adequacy.
+
+GL4 relative intensity L1=.000413; LOS16=.000823. These controls barely
+change population totals; sparse likelihood changes are nevertheless finite.
+Diagnostic NGP changes intensity by36.6%, improves test sparse score, but
+has TWO occupied training cells with zero support. Do not select a new law
+using the already consumed development test, or fix support with a floor.
+The image population_radius_prediction.png is the actual count comparison.
+
+Next action: restart the same GL2/TSC training objective from the final
+coordinates with fresh L-BFGS history and disclosed training-rate reprofiling;
+200 iterations/240 hard evaluations maximum. Runtime expectation~12min from
+2.47s/evaluation plus compilation/controls, within existing90min allocation.
+Repeat derivative/rate checks, retain the same populations/exposures/prior,
+and report stationarity only if optimizer success AND gradient_inf<=.001.
+No independent validation claim: test outcomes have already been inspected.
+No simulation, CF4 posterior promotion, NGP switch or new calibration prior.
+Output v2 in the same fixed native mock family. Request10GiB again: adequate
+measured headroom, unchanged input sizes, not an enlarged field calculation.
+Q-GOAL/Q-LEAN and NEW-field MW/M31 ambiguity/M33 unresolved remain as above.
