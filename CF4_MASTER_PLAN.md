@@ -378,6 +378,9 @@ The active alpha coordinate is now the broad development regularizer
 normalizing an unobserved infinite faint tail. Four focused source/transfer/
 count/support test files are queued in Slurm410407 (H200/H100/A100, 12GiB,
 30min). Validation is pending; no sampling or field fit follows automatically.
+Slurm410425 is a bounded finite-transfer forward/gradient throughput profile,
+dependent on410407 success; it uses synthetic inputs only and cannot authorize
+sampling. Output: `/gpfs/kjhan/CF4/z0_density/r2_lf_transfer_cost_20261002_v1/result.json`.
 Old saved tracer coordinates require the mapping in the decision record to
 preserve physical alpha and are not directly reusable unchanged. Existing
 fixed-field sensitivities remain historical diagnostics, not invalidated
