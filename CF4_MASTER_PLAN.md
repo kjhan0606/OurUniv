@@ -437,6 +437,13 @@ One training-only nine-tracer fit plus fixed source/LOS/deposition controls,
 125000 native1.5 source cells,3 count spacing;90min Slurm/75min application,
 10GiB host/2CPU/typed GPU. No actual CF4 heldout outcome, PM evolution or
 R2 posterior/IC promotion; source K/Ks and native/PM limitations remain.
+Source c5f0085 Slurm410544 is RUNNING on H100/syn08 with those typed resources.
+All4 observation tests passed, and6050 unique selected galaxies populate all
+six bins. Train/test/buffer counts2656/2360/1034; all selected rows have>=300
+stellar particles, including156 true-faint-bin migrants. This removes the
+unresolved-tail concern for this selected proxy sample, not passband/model
+calibration. Initial count-target compilation is underway; fitting and
+prediction remain pending.
 
 The active fixed-field LF-only sensitivity line is closed: no Mstar scan,
 broad optimizer, chain or simulation follows from it. Before another fit, R2

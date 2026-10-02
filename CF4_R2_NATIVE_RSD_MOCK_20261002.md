@@ -90,3 +90,14 @@ One typed H200/H100/A100 Slurm mode after checking availability. Host estimate
 existing environments; request10GiB (>20% margin),2CPU,1GPU,90min Slurm.
 Output `/gpfs/kjhan/CF4/z0_density/r2_native_rsd_mock_fit_20261002_v1/`.
 Tests/driver/numerical results and actual memory are pending submission.
+
+Source c5f0085 submitted as410544 at2026-10-02 16:08:42 KST. It RUNS on
+H100/syn08 through Slurm, typed `gpu:H100:1`,2CPU/10GiB/90min. Four mock
+observation tests pass. Native source extraction/placement selects6050 unique
+galaxies: six observed populations614/1799/1862/54/812/909; training2656,
+test2360,buffer1034. Every selected galaxy has>=300 stellar particles.
+The156 selected true-faint-bin objects therefore have resolved stellar input;
+the earlier unresolved all-faint population does not describe these actually
+selected rows. It does not certify native luminosity/dust/baryonic accuracy.
+Initial target compilation/gradient is in progress; no fitted law or predictive
+result exists yet. Logs/artifacts use the fixed410544/v1 paths above.
