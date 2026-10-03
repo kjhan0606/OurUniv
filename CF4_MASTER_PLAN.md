@@ -7,7 +7,7 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 continuation — 2026-10-02
+## Current R2 continuation — 2026-10-03
 
 Latest bundled continuation (user requests grouping stages): shared-moment
 actual-state target implemented in `cf4_r2_moment_target.py`, active8tracer
@@ -327,14 +327,34 @@ Details and raw result:
 Driver decision: retain the hash-pinned 2026-07-07 VizieR J/ApJ/944/94 inputs
 as the canonical analysis snapshot. The mutable current EDD listing differs
 by four rows globally, but row-for-row EDD synchronization is not a gate for
-this frozen cohort; TLS verification is not bypassed. Next bounded bundle
-classifies 2M++ source bibcodes and raw individual `Vcmb` agreement for the
-441 verified Tully-member PGCs. It must not compare adjusted Tully `Vcmba` or
-claim a group covariance law. Plan/code/result:
-`CF4_R2_V6_TULLY_VELOCITY_SOURCES_20261003.md`,
-`scripts/cf4_r2_v6_tully_velocity_sources.py`. No posterior or IC is promoted.
-MW/M31 remain role-ambiguous and M33 unresolved on the same NEW field at
-<=0.3 cMpc/h; native truth identities label evaluation only. R2 remains NO-GO.
+this frozen cohort; TLS verification is not bypassed.
+
+The subsequent v6 source-reference/member-mean bundle is complete. Source
+`4403e47` and result
+`/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v6/result.json`
+join all441 selected 2M++ names to official 2MRS IDs;15/441 have the same
+redshift-reference bibcode. Among215 parent Tully Nests reached by828 secure
+v6 links,441 selected links represent31.93% of summed published `Nmb`; only60
+Nests are fully represented by this selected link set. Their multiplicities
+are42 singletons and18 pairs. Absolute CF4 group-to-2M++ member-mean residuals
+are median13/p90 72.2/max127 km/s for singletons and13.25/48.55/68 km/s for
+pairs. This small selected subset is descriptive, not a group-covariance
+calibration. The T10106 Tempel pair also overlaps its parent Tully Nest by
+only one of two PGCs, confirming that Tempel, CF4 `1PGC`, Tully `Nest`, and
+2M++ `GID` cannot be substituted as identical membership sets.
+
+Driver code review confirms the current moment target sums per-row raw-FP
+factors under the explicit single-mark association assumption. Separate
+shared-group kernels still require calibrated covariance and inclusion inputs
+and are not wired into that target. Q-GOAL: the completed source crosswalk
+resolves catalogue ownership but adds no new-field constraint. Q-LEAN: close
+the reference/velocity-difference subroute; further citation and residual
+sweeps are not justified. Next R2 priority is the existing shared-group
+likelihood/calibration branch using the frozen source graph and defensible
+covariance/inclusion inputs—not posterior sampling on the current partial
+target. No posterior or IC is promoted. MW/M31 remain role-ambiguous and M33
+unresolved on the same NEW field at <=0.3 cMpc/h; native truth identities
+label evaluation only. R2 remains NO-GO.
 Job410740 scores all1414 training links at order8, order4/8 on all39
 uncertified plus40 deterministic safe rows, and reports per-row
 numerator/denominator image fractions. It stops only after a full census if

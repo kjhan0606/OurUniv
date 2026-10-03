@@ -61,13 +61,91 @@ checked before writing a fresh, non-overwriting result directory.
 
 ## Result
 
-The first run, 411020, completed successfully in6s, but its summary incorrectly
-looked only for the Huchra et al. 2012 catalogue bibcode instead of the 2M++
-source-specific `20112MRS.*` reference codes. The observed velocities and
-member selection are retained, but that initial source classification is
-superseded and must not be interpreted as zero 2MRS-source overlap. It is
-preserved at `/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v1/result.json`.
-The corrected classifier distinguishes explicit 2MRS codes from all other
-or unresolved references and runs into a new output directory. R2 remains
-NO-GO; neither run estimates calibrated covariance or authorizes a
-posterior/IC.
+The initial classifier result from job411020 used the Huchra catalogue
+bibcode, not the `20112MRS.*` source codes stored in 2M++. Its zero-overlap
+interpretation is withdrawn; the preserved output is
+`/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v1/result.json`.
+Corrected job411025 found 3 explicit 2MRS source codes among 441 matched
+Tully-member rows (two `20112MRS.FLWO.0000H`, one `20112MRS.ZMA..0000H`). The
+other 438 references were correctly left unresolved at that point. Across all
+441, absolute CF4-individual versus 2M++-point raw CMB-frame `Vcmb` differences
+have median14, p90 64, maximum273 km/s, with 9 equal to stored precision. The
+three explicit-code rows have median16, p90 59.2, maximum70 km/s; this is not a
+measurement-error or covariance estimate.
+
+The official Huchra et al. table-3 ID/reference join then matched all441 2M++
+`Name` values exactly to a 2MRS `ID`. Fifteen rows have identical 2M++ `Ref` and
+2MRS `r_cz` bibcodes; 426 have different codes. Thirteen of the fifteen exact
+citation matches were outside the original explicit-`20112MRS.*` class. The
+same-reference subgroup's CF4–2M++ absolute `Vcmb` difference has median35,
+p90 111.8, maximum129 km/s (n=15); the different-reference subgroup has
+median13, p90 62.5, maximum273 km/s (n=426). Thus a shared bibcode is not an
+identical-measurement guarantee, and a different bibcode does not prove
+independence. These small selected-cohort descriptions do not estimate
+cross-covariance.
+
+The first parser attempt stopped on official row43534, where CDS omits
+trailing blank fixed-width redshift fields for a row with no `cz`. It wrote no
+result. The parser now right-pads those absent tail fields, still rejects a
+missing ID and duplicate IDs, and its 10 focused tests pass. The initial
+read-only metadata join is preserved at
+`/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v4/result.json`
+(source `ec24ed0`). The completed extension at source `4403e47` took1.213s
+using a bounded local metadata join; no GPU, heldout values, likelihood, field
+state, PM evolution or simulation was used. Its result SHA256 is
+`7293abe57c9609431961a4b89f0343eeb2eabda10dccf9108dc6feb5ffe8eff5` at
+`/gpfs/kjhan/CF4/z0_density/r2_v6_tully_velocity_sources_20261003_v6/result.json`.
+
+That extension also closes member-coverage bookkeeping. The828 selected
+secure links map to215 unique Tully parent Nests (26 links have no unique
+parent); those Nests have1,381 published table-4 members in total. The441
+selected links that occur in table4 represent31.93% of that summed `Nmb`,
+not the completeness of the full 2M++ catalogue. There are no `Nmb`/listed
+member-count mismatches; only60/215 Nests have every listed member represented
+by this selected link subset. Those60 consist of42 `Nmb=1` and18 `Nmb=2`
+Nests. The absolute CF4 group-minus-2M++ member-mean residual is:
+
+| Published Tully `Nmb` | Fully linked Nests | Median | p90 | Maximum |
+|---:|---:|---:|---:|---:|
+| 1 | 42 | 13 km/s | 72.2 km/s | 127 km/s |
+| 2 | 18 | 13.25 km/s | 48.55 km/s | 68 km/s |
+
+For the18 two-member Nests, the 2M++ member-velocity standard deviation has
+median91.92, p90358.93 and maximum508.41 km/s. The singleton rows have zero
+within-group scatter by construction. This small, selected, fully linked
+subset is descriptive only; it does not identify a covariance or selection
+law.
+
+One explicit namespace warning matters for the predeclared control: Tempel
+group `T10106` contains PGC54049 and PGC54054, while its CF4 parent
+`1PGC=53982` maps to Tully Nest100181. Only PGC54054 is shared between the
+Tempel pair and that Tully Nest's eight published members. Nest100181 is not
+among the60 fully linked Nests. Thus Tempel, CF4 `1PGC`, Tully `Nest`, and
+2M++ `GID` remain distinct membership namespaces even when a parent/control
+label agrees.
+
+Driver source audit of the current mechanics found the remaining science
+barrier directly in code: `MomentObservationTarget` sums the per-row
+`raw_field_logpdf` factors, and `cf4_r2_raw_live_mark.py` explicitly labels
+its single-mark association assumption. The separate shared-group kernels
+require caller-supplied calibrated covariance and group-inclusion inputs;
+they are not wired into that moment target. Therefore this source join does
+not close the multi-member CF4/2M++ observation law. Do not add a second
+redshift score or infer covariance from these residuals. The next R2 work is
+the existing shared-group likelihood/calibration branch, using the frozen
+source graph and a defensible covariance/inclusion input; no posterior or
+production field is authorized by these mechanics alone.
+
+Driver decision: close this catalog-reference subroute; do not grow a citation
+alias or velocity-difference ladder. Exact IDs establish that these441 objects
+occur in both catalogues, and15 shared citations identify publication overlap
+only. Neither the selected individual residuals nor the18 fully linked
+two-member group means establish identical spectra, measurement covariance,
+complete group selection, or a production group likelihood. Huchra `cz` is
+solar-system-barycentric and was not compared numerically with CMB-frame 2M++
+`Vcmb`. Q-GOAL: this is prerequisite source ownership, not a field constraint.
+Q-LEAN: the bounded join/coverage check is now closed; no more citation or
+residual sweep is warranted. R2 remains NO-GO for posterior/IC promotion.
+MW/M31 remain role-ambiguous and M33 unresolved; their observables must
+constrain the same NEW field at LG<=0.3 cMpc/h, with native truth identities
+evaluation-only.
