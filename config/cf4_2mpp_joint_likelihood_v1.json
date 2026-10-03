@@ -106,7 +106,21 @@
     }
   },
   "selection_model_design": {
-    "status": "blocked_pending_full_angular_completeness_map_and_calibration",
+    "status": "pinned_full_pixel_angular_maps_available; selection_calibration_pending",
+    "angular_selection_map_source": {
+      "repository": "/gpfs/kjhan/CF4/software/ares-6cf608ed",
+      "repository_commit": "6cf608ed8c70474c15c8ca76cce675742e291c71",
+      "map_11_5_path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz",
+      "map_11_5_sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace",
+      "map_12_5_path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz",
+      "map_12_5_sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9",
+      "healpix_nside": 512,
+      "ordering": "RING",
+      "coordinate_convention": "equatorial_ICRS_RA_DEC_as_verified_against_pinned_ARES_loader",
+      "empty_sky_pixels_available": true,
+      "technical_validation_result": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/result.json",
+      "technical_validation_status": "PASS_TECHNICAL_INPUT_GATE_NO_FIELD_INFERENCE"
+    },
     "apparent_magnitude_samples": [
       {
         "id": "K_bright",
@@ -144,7 +158,30 @@
       "sampled mean density for each tracer population"
     ],
     "current_raw_tables_contain_full_angular_completeness_at_empty_sky_positions": false,
-    "empty_sky_angular_completeness_missing_semantics": "likelihood_blocked"
+    "empty_sky_angular_completeness_missing_semantics": "not_missing_when_the_pinned_ARES_maps_are_loaded; the_2Mpp_raw_table_alone_is_insufficient",
+    "selection_map_catalogue_tail": {
+      "validation": "v4 technical gate compared map values with per-galaxy c11.5/c12.5 metadata for 69,160 rows",
+      "map_11_5_median_abs_difference": 0.0,
+      "map_11_5_p95_abs_difference": 0.003076927661895712,
+      "map_11_5_max_abs_difference": 0.029411792755126953,
+      "map_12_5_median_abs_difference": 0.0,
+      "map_12_5_p95_abs_difference": 0.0050000000000000044,
+      "map_12_5_max_abs_difference": 1.0,
+      "unresolved_pointwise_discrepancy_count": 442,
+      "zero_pointwise_support_example_recno": 67100,
+      "zero_pointwise_support_cell_integrated_exposure": 0.09919,
+      "nearest_pixel_substitution_or_smoothing_authorized": false
+    },
+    "common_N128_integral": {
+      "classification": "DIRECT_COMMON_COSMOLOGY_N128_SELECTION",
+      "cell_size_cMpc_h": 3.0,
+      "quadrature_order": 6,
+      "observed_cells": 29100,
+      "observed_zero_exposure_keys": 0,
+      "angular_quadrature_certified": false,
+      "survival_bias_FoG_calibrated": false,
+      "quantitative_joint_likelihood_ready": false
+    }
   },
   "bias_shot_and_model_discrepancy": {
     "galaxy_bias": {
@@ -183,7 +220,8 @@
     "fixed_Carrick_map_or_random_high_k_counts_as_frontier_extension": false
   },
   "blockers": [
-    "full angular selection/completeness map at empty-sky positions is absent from the current raw tables",
+    "pinned ARES angular maps are available and used at empty-sky voxels, but 442 pointwise map/catalogue discrepancies (including one zero-map point with positive cell-integrated exposure) remain unexplained; do not substitute neighbouring pixels or smooth without a source model",
+    "the common-cosmology N128 voxel-selection integral has no observed zero-exposure keys, but its angular quadrature has not been certified",
     "K-correction, evolution-correction, extinction, and luminosity-function contract is incomplete",
     "RSD and FoG/group-dispersion priors are incomplete",
     "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",

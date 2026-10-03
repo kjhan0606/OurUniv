@@ -3500,3 +3500,23 @@ definition for the same z=0 field, not a field result. Q-LEAN: one exact math
 control only. MW/M31 remain role-ambiguous and M33 unresolved; all three must
 constrain the same NEW evolved field at LG `<=0.3 cMpc/h`, native truth IDs
 evaluation-only. Details: `CF4_R2_SHARED_REDSHIFT_FACTOR_AUDIT_20261003.md`.
+
+R2 angular-map availability clarification 2026-10-03: the earlier blocker
+“full angular map absent” was stale. The two pinned ARES 2M++ NSIDE=512 RING
+maps are present at the committed ARES snapshot, cover empty-sky pixels, and
+the V4 technical input check passes its declared median/p95 comparison to
+69,160 catalogue rows. The common-cosmology N128 selection integral already
+uses them: 29,100 observed keys have positive cell-integrated exposure at
+3 cMpc/h. Neither check calibrates the joint likelihood: angular quadrature
+convergence is unverified, and 442 pointwise map/catalogue mark differences
+remain, including one point with zero literal map support but positive cell
+exposure. No nearest-pixel repair is authorized; distinguish point-process
+from coarsened-cell support. Config now records the exact map hashes and
+replaces the stale “map absent” blocker with these residual limits. R2 remains
+NO-GO pending selection/bias and group-covariance calibration plus the
+shared-latent count/mark conditional. Q-GOAL: availability blocker removed,
+not a z=0 field result. Q-LEAN: reuse the pinned maps and completed N128
+integral; no re-download or repeated full integration. MW/M31 roles remain
+ambiguous, M33 unresolved; their observables must constrain the same NEW
+evolved LG field at `<=0.3 cMpc/h`, native truth IDs evaluation-only. Details:
+`CF4_R2_ANGULAR_SELECTION_MAP_STATUS_20261003.md`.
