@@ -24,7 +24,7 @@ PRIOR = BASE / "r2_v6_redshift_overlap_20261003_v3/result.json"
 PRIOR_SHA = "47fd803bab67eb96094489a4c8d725314a43ac896e315a55bbcfbbf741d13da0"
 MEMBERSHIP = BASE / "r2_v6_tully_membership_20261003_v1/result.json"
 MEMBERSHIP_SHA = "10a53c2dd5d10487670bc898dbce0f73e496103dafd78859fe22b62508703594"
-OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v5"
+OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v6"
 TWOMRS_TABLE3 = ROOT / "data/2mrs_huchra2012_table3.dat.gz"
 TWOMRS_TABLE3_SHA = "14a40e14dea131afbc2ff525e42b39fdc4094cf9d06d9a43952257eff80f1790"
 EXPLICIT_2MRS_PREFIX = "20112MRS."
@@ -182,10 +182,12 @@ def summarize_tully_member_coverage(edges, selected, table3, table4):
         nmb_by_nest[nest] = nmb
         parent_by_pgc1[str(pgc1)].add(nest)
     member_nests_by_pgc = defaultdict(set)
+    member_pgcs_by_nest = defaultdict(set)
     for line in table4:
         nest, pgc = integer(line, 3, 9), integer(line, 10, 17)
         if nest is not None and pgc is not None:
             member_nests_by_pgc[pgc].add(nest)
+            member_pgcs_by_nest[nest].add(pgc)
 
     parent_nests = set()
     no_unique_parent = 0
@@ -196,26 +198,38 @@ def summarize_tully_member_coverage(edges, selected, table3, table4):
         else:
             no_unique_parent += 1
     linked_by_nest = Counter()
+    linked_pgcs_by_nest = defaultdict(set)
     for pgc, pgc1, _recno in selected:
         members = member_nests_by_pgc.get(pgc, set())
         parents = parent_by_pgc1.get(str(pgc1).strip(), set())
         if len(members) != 1 or len(parents) != 1 or members != parents:
             raise ValueError("selected member lacks a unique matching Tully parent Nest")
-        linked_by_nest[next(iter(members))] += 1
+        nest = next(iter(members))
+        linked_by_nest[nest] += 1
+        linked_pgcs_by_nest[nest].add(pgc)
     if not parent_nests.issuperset(linked_by_nest):
         raise ValueError("linked member Nest missing from parent-Nest cohort")
 
     fractions = []
     total_nmb = 0
-    all_members_linked = 0
+    full_nest_ids = []
+    nmb_mismatch_count = 0
     for nest in sorted(parent_nests):
         if nest not in nmb_by_nest:
             raise ValueError(f"missing Tully member count for Nest {nest}")
         nmb, linked = nmb_by_nest[nest], linked_by_nest[nest]
+        table4_members = member_pgcs_by_nest[nest]
+        if nmb <= 0:
+            raise ValueError(f"nonpositive Tully Nmb for Nest {nest}")
         if linked > nmb:
             raise ValueError(f"linked member count exceeds Tully Nmb for Nest {nest}")
+        table4_nmb_mismatch = len(table4_members) != nmb
+        nmb_mismatch_count += table4_nmb_mismatch
+        if linked != len(linked_pgcs_by_nest[nest]):
+            raise ValueError("selected Tully member PGC is duplicated")
+        if not table4_nmb_mismatch and linked_pgcs_by_nest[nest] == table4_members:
+            full_nest_ids.append(nest)
         total_nmb += nmb
-        all_members_linked += linked == nmb
         fractions.append(linked / nmb)
     bins = Counter()
     for fraction in fractions:
@@ -238,9 +252,76 @@ def summarize_tully_member_coverage(edges, selected, table3, table4):
         "secure_links_that_are_Tully_table4_members": linked_total,
         "aggregate_linked_fraction_of_Tully_Nmb": linked_total / total_nmb,
         "Nests_with_any_linked_Tully_members": sum(value > 0 for value in linked_by_nest.values()),
-        "Nests_with_all_Tully_members_linked": all_members_linked,
+        "Nests_with_table4_Nmb_mismatch": nmb_mismatch_count,
+        "Nests_with_all_Tully_members_linked": len(full_nest_ids),
         "per_Nest_linked_fraction": describe(fractions),
         "per_Nest_fraction_bins": dict(sorted(bins.items())),
+        "fully_linked_parent_Nest_ids": full_nest_ids,
+    }
+
+
+def summarize_complete_nest_group_velocity(complete_nests, selected, mpp_by_recno,
+                                           table3, table4, cf4_group_rows):
+    nmb_by_nest, parent_pgc1_by_nest = {}, {}
+    for line in table3:
+        nest, nmb, pgc1 = integer(line, 3, 9), integer(line, 10, 13), integer(line, 14, 21)
+        if nest is not None and nmb is not None and pgc1 is not None:
+            nmb_by_nest[nest] = nmb
+            parent_pgc1_by_nest[nest] = pgc1
+    nest_by_pgc = defaultdict(set)
+    for line in table4:
+        nest, pgc = integer(line, 3, 9), integer(line, 10, 17)
+        if nest is not None and pgc is not None:
+            nest_by_pgc[pgc].add(nest)
+    cf4_by_pgc1 = {}
+    for row in cf4_group_rows:
+        pgc1 = int(row["1PGC"])
+        if pgc1 in cf4_by_pgc1:
+            raise ValueError("CF4 group catalogue repeats selected 1PGC")
+        velocity = number(row["Vcmb"])
+        if velocity is None:
+            raise ValueError("CF4 group Vcmb is missing for a complete Nest")
+        cf4_by_pgc1[pgc1] = velocity
+
+    members_by_nest = defaultdict(list)
+    for pgc, pgc1, recno in selected:
+        nests = nest_by_pgc.get(pgc, set())
+        if len(nests) != 1:
+            raise ValueError("selected PGC does not have one Tully Nest")
+        nest = next(iter(nests))
+        if nest in complete_nests:
+            if parent_pgc1_by_nest[nest] != int(pgc1):
+                raise ValueError("complete Nest has inconsistent CF4 parent PGC")
+            members_by_nest[nest].append(number(mpp_by_recno[recno]["Vcmb"]))
+
+    rows = []
+    for nest in sorted(complete_nests):
+        values = members_by_nest[nest]
+        if len(values) != nmb_by_nest[nest] or any(value is None for value in values):
+            raise ValueError(f"complete Nest {nest} lacks finite linked member velocities")
+        pgc1 = parent_pgc1_by_nest[nest]
+        if pgc1 not in cf4_by_pgc1:
+            raise ValueError(f"CF4 group Vcmb missing for complete Nest {nest}")
+        mean = float(np.mean(values))
+        rows.append({
+            "Tully_Nest": nest, "CF4_1PGC": pgc1, "Nmb": nmb_by_nest[nest],
+            "CF4_group_Vcmb_km_s": cf4_by_pgc1[pgc1],
+            "mean_2mpp_member_Vcmb_km_s": mean,
+            "CF4_group_minus_2mpp_member_mean_km_s": cf4_by_pgc1[pgc1] - mean,
+            "2mpp_member_velocity_std_km_s": float(np.std(values, ddof=1)) if len(values) > 1 else 0.,
+        })
+    absolute = [abs(row["CF4_group_minus_2mpp_member_mean_km_s"]) for row in rows]
+    return {
+        "fully_linked_Tully_Nest_count": len(rows),
+        "absolute_CF4_group_minus_2mpp_member_mean_km_s": describe(absolute),
+        "group_member_velocity_std_km_s": describe(
+            [row["2mpp_member_velocity_std_km_s"] for row in rows]),
+        "per_Nest_rows": rows,
+        "semantics": (
+            "Compares the local CF4 group's CMB-frame Vcmb with the arithmetic mean of the "
+            "2M++ CMB-frame Vcmb values for every published Tully table4 member in a Nest. "
+            "These are source/aggregation diagnostics, not a covariance calibration."
+        ),
     }
 
 
@@ -263,7 +344,8 @@ def main():
             or sha256(FP) != FP_SHA or sha256(POINTS) != POINTS_SHA
             or sha256(TWOMRS_TABLE3) != TWOMRS_TABLE3_SHA):
         raise ValueError("frozen v6 input/result hash changed")
-    for name in ("cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv"):
+    for name in ("cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "cf4_groups.csv",
+                 "2mpp_catalog.csv"):
         if sha256(ROOT / "data" / name) != SOURCE_HASHES[name]:
             raise ValueError(f"frozen source changed: {name}")
     for name in ("tully2015_table3.dat.gz", "tully2015_table4.dat.gz"):
@@ -319,6 +401,15 @@ def main():
     mpp_by_recno = {int(row["recno"]): row for row in mpp_rows}
     if len(mpp_by_recno) != 441 or set(mpp_by_recno) != selected_recnos:
         raise ValueError("Tully-member 2M++ source rows are missing or duplicated")
+
+    complete_nests = set(member_coverage["fully_linked_parent_Nest_ids"])
+    parent_pgc1s = {integer(line, 14, 21) for line in table3
+                    if integer(line, 3, 9) in complete_nests}
+    cf4_group_rows = selected_rows(
+        ROOT / "data/cf4_groups.csv", ("1PGC", "Vcmb"),
+        lambda row: row["1PGC"].strip() and int(row["1PGC"]) in parent_pgc1s)
+    complete_group_velocity = summarize_complete_nest_group_velocity(
+        complete_nests, selected, mpp_by_recno, table3, table4, cf4_group_rows)
 
     selected_pgcs = {pgc for pgc, _one_pgc, _recno in selected}
     expected_cf4_group = {pgc: str(one_pgc).strip() for pgc, one_pgc, _recno in selected}
@@ -380,6 +471,7 @@ def main():
         "source_summary": summarize_source_rows(rows),
         "2mrs_main_catalog_source_join": summarize_2mrs_id_source_join(source_join_rows),
         "Tully_parent_Nest_member_coverage": member_coverage,
+        "complete_Tully_Nest_group_velocity_check": complete_group_velocity,
         "input_sha256": {
             "prior_redshift_overlap": PRIOR_SHA,
             "prior_tully_membership": MEMBERSHIP_SHA,
@@ -388,7 +480,8 @@ def main():
             "count_point_manifest": POINTS_SHA,
             "2mrs_huchra2012_table3.dat.gz": TWOMRS_TABLE3_SHA,
             **{name: SOURCE_HASHES[name] for name in (
-                "cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv")},
+                "cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "cf4_groups.csv",
+                "2mpp_catalog.csv")},
             **{name: TULLY_HASHES[name] for name in (
                 "tully2015_table3.dat.gz", "tully2015_table4.dat.gz")},
         },

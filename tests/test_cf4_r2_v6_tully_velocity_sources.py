@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from cf4_r2_v6_tully_velocity_sources import (
     parse_2mrs_table3, summarize_2mrs_id_source_join, summarize_source_rows,
-    summarize_tully_member_coverage,
+    summarize_complete_nest_group_velocity, summarize_tully_member_coverage,
 )
 
 
@@ -126,6 +126,25 @@ class TullyVelocitySourceTests(unittest.TestCase):
         self.assertEqual(result["aggregate_linked_fraction_of_Tully_Nmb"], 0.5)
         self.assertEqual(result["Nests_with_all_Tully_members_linked"], 1)
         self.assertEqual(result["per_Nest_fraction_bins"], {"(0,0.25]": 1, "1": 1})
+
+    def test_complete_nest_velocity_check_uses_every_linked_member(self):
+        group = bytearray(b" " * 21)
+        group[3:9], group[10:13], group[14:21] = b"    11", b"  2", b"    101"
+        members = []
+        for pgc in (201, 202):
+            row = bytearray(b" " * 17)
+            row[3:9], row[10:17] = b"    11", f"{pgc:7d}".encode()
+            members.append(bytes(row).decode())
+        result = summarize_complete_nest_group_velocity(
+            {11}, [(201, 101, 1), (202, 101, 2)],
+            {1: {"Vcmb": "10000"}, 2: {"Vcmb": "10200"}},
+            [bytes(group).decode()], members,
+            [{"1PGC": "101", "Vcmb": "10150"}],
+        )
+        self.assertEqual(result["fully_linked_Tully_Nest_count"], 1)
+        self.assertEqual(result["absolute_CF4_group_minus_2mpp_member_mean_km_s"]["median"], 50.)
+        self.assertAlmostEqual(result["per_Nest_rows"][0]["2mpp_member_velocity_std_km_s"],
+                               141.4213562373095)
 
 
 if __name__ == "__main__":
