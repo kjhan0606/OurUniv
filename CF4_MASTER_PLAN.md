@@ -3442,3 +3442,34 @@ provably bounded singleton support into one v6 training objective, with the
 preserve untouched heldout counts/marks, association and shared-covariance
 limits, and latent MW/M31/M33 same-field treatment. Details:
 `CF4_R2_SDSS_MOCK_DISPOSITION_20260928.md`. No N256, R3, or email.
+
+R2 full-member source-identity closure2026-10-03: typed-H100 Slurm411497
+and411502 completed in8s each (2GiB requested); the five focused source and
+geometry tests pass. The 43,038-row Tully Table5 catalog has42,568 mutual
+unique positional matches to Huchra 2MRS Table3 within3arcsec. Exact 2MASS-ID
+to-real-2M++Name links account for35,743 members:27,529 v6 training,4,374
+heldout,1,216 buffer,2,624 outside the v6 parent. A separate identity-only
+position pass found42 additional unique alias candidates among6,825 exact-name
+misses; none is promoted. Sixteen exact-name joins lack independent positional
+confirmation. The official archived Tully Tables4/5 disagree on five PGC/Nest
+associations; Table3 `Nmb` count discrepancies affect Nest100002/200006. Keep
+both published associations, the42 candidates and16 position flags; do not
+merge/correct identities by inference. A source-graph cross-tab reaches215
+Tully parent Nests from the frozen272-group/828-link training cohort; none of
+those has direct exact-name Tully members in both training and heldout roles,
+so this archive graph alone does not require replacing v6 for the current
+cohort. That does not estimate covariance, validate current EDD membership,
+or close the13 selected parent IDs absent from Table3. Result and limits:
+`CF4_R2_TULLY_FULL_MEMBER_2MRS_2MPP_OVERLAP_20261003.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_tully_full_member_2mpp_overlap_20261003_v2/result.json`.
+Driver Q-GOAL: necessary shared-object ownership for the same-field factor,
+not a z=0 field constraint. Q-LEAN: one complete identity graph plus a single
+alias check triggered by exact-name misses; no velocity/magnitude fit, PM,
+posterior or simulation. Next R2 action is to specify a defensible
+training-only shared-group factor with explicit independent unit, member
+sharing, selection and covariance; preserve heldout outcomes and source
+anomalies, then separately test untouched heldout prediction. MW/M31 stay
+role-ambiguous, M33 unresolved; all must ultimately constrain the same NEW
+field at LG `<=0.3 cMpc/h`, with native truth identities evaluation-only.
+R2 remains NO-GO. No external audit: this was a consecutive driver-led source
+review under the user’s duplicate/consecutive-review rule.
