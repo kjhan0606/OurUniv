@@ -137,6 +137,39 @@ def main():
         count_weighted_log_intensity_delta = float(np.dot(train_counts, log_exposure_ratio))
         count_weighted_abs_log_intensity_delta = float(np.dot(train_counts, np.abs(log_exposure_ratio)))
     largest = np.argsort(relative)[-10:][::-1]
+
+    def cell_average(index, node_order, subdivisions):
+        cell_nodes, cell_weights = np.polynomial.legendre.leggauss(node_order)
+        center = centers[:, index]
+        p = int(population[index])
+        value = 0.
+        for sx, sy, sz in product(range(subdivisions), repeat=3):
+            subcell = np.array([sx, sy, sz], dtype=np.float64)
+            for a, b, d in product(range(node_order), repeat=3):
+                unit = (subcell + (cell_nodes[[a, b, d]] + 1) / 2) / subdivisions - .5
+                xyz = center + dx * unit
+                radius = float(np.linalg.norm(xyz))
+                if edges[0] <= radius <= edges[-1]:
+                    pixel = hp.vec2pix(512, *(rotation @ xyz), nest=False)
+                    value += (cell_weights[a] * cell_weights[b] * cell_weights[d]
+                              / (8 * subdivisions**3)
+                              * maps[p // 3][pixel]
+                              * np.interp(radius, rtab, radial[p]))
+        return float(value)
+
+    selected_indices = sorted(set((int(np.argmax(relative)), int(np.argmax(absolute_difference)))))
+    layout_comparison = []
+    for i in selected_indices:
+        composite_4x2 = cell_average(i, node_order=4, subdivisions=2)
+        layout_comparison.append({
+            'key': int(keys[i]), 'population': int(population[i]),
+            'voxel_ijk': ijk[i].tolist(), 'training_count': int(train_counts[i]),
+            'saved_order6_exposure': float(exposure6[i]),
+            'single_voxel_order8_exposure': float(exposure8[i]),
+            'equal_node_budget_2x2x2_subcells_order4_exposure': composite_4x2,
+            'relative_difference_composite_vs_order8': float(
+                abs(composite_4x2 - exposure8[i]) / max(abs(exposure8[i]), 1e-30)),
+        })
     report = {
         'classification': 'TRAINING_ONLY_ORDER8_VS_SAVED_ORDER6_CELL_SELECTION_SENSITIVITY',
         'status': 'TRAINING_DIAGNOSTIC_ONLY_NOT_CALIBRATED_NOT_FIELD_INFERENCE',
@@ -162,6 +195,7 @@ def main():
         'training_count_weighted_log_intensity_delta_nats_order8_minus_order6': count_weighted_log_intensity_delta,
         'training_count_weighted_absolute_log_intensity_delta_nats': count_weighted_abs_log_intensity_delta,
         'count_weighted_delta_definition': 'sum over training cells n_cell*log(E_order8/E_order6); fixed-density log-intensity contribution only, not a full Poisson score',
+        'two_training_cell_equal_node_budget_layout_comparison': layout_comparison,
         'largest_training_key_changes': [
             {'key': int(keys[i]), 'population': int(population[i]), 'training_count': int(train_counts[i]),
              'voxel_ijk': ijk[i].tolist(),
