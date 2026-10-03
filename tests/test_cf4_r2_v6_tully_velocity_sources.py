@@ -77,11 +77,14 @@ class TullyVelocitySourceTests(unittest.TestCase):
     def test_2mrs_join_distinguishes_matching_publication_from_id_absence(self):
         summary = summarize_2mrs_id_source_join([
             {"2mpp_reference": "20112MRS.FLWO.0000H",
-             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True},
+             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True,
+             "abs_velocity_delta_km_s": 0.4},
             {"2mpp_reference": "1999ApJS..121..287H",
-             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True},
+             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True,
+             "abs_velocity_delta_km_s": 25.0},
             {"2mpp_reference": "2003A&A...412...57P",
-             "2mrs_reference": "", "2mrs_id_match": False},
+             "2mrs_reference": "", "2mrs_id_match": False,
+             "abs_velocity_delta_km_s": 60.0},
         ])
         self.assertEqual(summary["selected_tully_member_count"], 3)
         self.assertEqual(summary["2mrs_main_table_id_match_count"], 2)
@@ -91,6 +94,9 @@ class TullyVelocitySourceTests(unittest.TestCase):
             "matched_id_same_reference_code": 1,
             "not_in_2mrs_main_table": 1,
         })
+        delta_summary = summary["CF4_2mpp_abs_Vcmb_difference_km_s_by_source_status"]
+        self.assertEqual(delta_summary["matched_id_same_reference_code"]["median"], 0.4)
+        self.assertEqual(delta_summary["matched_id_different_reference_code"]["median"], 25.0)
 
 
 if __name__ == "__main__":

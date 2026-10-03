@@ -112,23 +112,30 @@ def parse_2mrs_table3(stream):
 def summarize_2mrs_id_source_join(rows):
     status_counts = Counter()
     source_pairs = Counter()
+    velocity_deltas = defaultdict(list)
     for row in rows:
         mpp_ref = row["2mpp_reference"] or "MISSING"
         mrs_ref = row["2mrs_reference"] or "MISSING"
         source_pairs[(mpp_ref, mrs_ref)] += 1
         if not row["2mrs_id_match"]:
-            status_counts["not_in_2mrs_main_table"] += 1
+            status = "not_in_2mrs_main_table"
         elif mpp_ref == "MISSING" or mrs_ref == "MISSING":
-            status_counts["matched_id_reference_missing"] += 1
+            status = "matched_id_reference_missing"
         elif mpp_ref == mrs_ref:
-            status_counts["matched_id_same_reference_code"] += 1
+            status = "matched_id_same_reference_code"
         else:
-            status_counts["matched_id_different_reference_code"] += 1
+            status = "matched_id_different_reference_code"
+        status_counts[status] += 1
+        if row.get("abs_velocity_delta_km_s") is not None:
+            velocity_deltas[status].append(row["abs_velocity_delta_km_s"])
     return {
         "selected_tully_member_count": len(rows),
         "2mrs_main_table_id_match_count": sum(row["2mrs_id_match"] for row in rows),
         "source_join_status_counts": dict(sorted(status_counts.items())),
         "same_reference_code_count": status_counts["matched_id_same_reference_code"],
+        "CF4_2mpp_abs_Vcmb_difference_km_s_by_source_status": {
+            status: describe(values) for status, values in sorted(velocity_deltas.items())
+        },
         "reference_code_pairs": [
             {"2mpp_Ref": left, "2mrs_r_cz": right, "count": count}
             for (left, right), count in sorted(source_pairs.items())
@@ -273,6 +280,7 @@ def main():
         "2mpp_reference": row["reference"],
         "2mrs_id_match": row["2mpp_name"] in twomrs_by_id,
         "2mrs_reference": twomrs_by_id.get(row["2mpp_name"], ""),
+        "abs_velocity_delta_km_s": row["abs_delta_km_s"],
     } for row in rows]
 
     report = {
