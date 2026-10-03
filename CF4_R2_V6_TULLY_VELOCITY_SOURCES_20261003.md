@@ -149,3 +149,17 @@ residual sweep is warranted. R2 remains NO-GO for posterior/IC promotion.
 MW/M31 remain role-ambiguous and M33 unresolved; their observables must
 constrain the same NEW field at LG<=0.3 cMpc/h, with native truth identities
 evaluation-only.
+
+## Follow-up correction: raw member HV is available in table5
+
+The official Tully-2015 table5 includes individual heliocentric `HV` and
+Galactic coordinates, unlike the member-only table4 schema. The ordinary
+CMB-frame member velocity can be reconstructed from those fields; the adjusted
+`Vcmba` in table4/table5 remains unsuitable for raw-redshift inversion. The
+targeted dipole-calibrated check found a serious redshift disagreement for
+PGC33946 and confirmed near-agreement of CF4 group `Vcmb` with reconstructed
+Tully raw member means for the60 complete selected Nests. This does not
+calibrate covariance or group inclusion, and it does not change the original
+441-row reference-bibcode results. Full method, outlier values, source limits,
+and the corrected next-step interpretation are in
+`CF4_R2_TULLY_RAW_HV_RECONCILIATION_20261003.md`.

@@ -9,6 +9,21 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-03
 
+Correction to the 2026-10-03 Tully velocity-source audit: Tully table4's
+`Vcmba` is adjusted, but table5 also publishes per-galaxy heliocentric `HV`
+and Galactic coordinates. A standard CMB-frame value can therefore be
+reconstructed without inverting `Vcmba`. The 2M++-calibrated dipole recovers
+its catalogued `Vcmb` to <1 km/s for the 67,320 eligible rows. Among the 441
+selected training members, one Table5 velocity (PGC33946) differs from the
+matched 2M++/CF4 redshift by about 5,599 km/s; source adjudication is
+unresolved. For the 60 fully represented Nests (all Nmb=1 or 2), CF4 group
+`Vcmb` differs from the mean reconstructed Tully raw member `Vcmb` by median
+5.33, p90 21.37, maximum 74 km/s. This validates only that selected
+aggregation convention; it is not a covariance or inclusion calibration.
+The previous claim that the archive has no raw member velocity is withdrawn.
+R2 remains NO-GO. Full method, row-level discrepancy and Q-GOAL/Q-LEAN review:
+`CF4_R2_TULLY_RAW_HV_RECONCILIATION_20261003.md`.
+
 Latest bundled continuation (user requests grouping stages): shared-moment
 actual-state target implemented in `cf4_r2_moment_target.py`, active8tracer
 +15population+3physical closure coordinates, no obsolete sampled global sigma
@@ -303,13 +318,17 @@ member-Nest relations are shared62/partial163/unassigned47; parent-Nest
 relations are shared253/distinct6/partial2/unassigned11. This is archive
 identity evidence, not physical membership or current-EDD source proof.
 
-The driver also checked the primary-source velocity semantics: Tully2015
-table4 contains adjusted `Vcmba`, not raw member `Vcmb`; the source ReadMe
-refers to the CF2 cosmological adjustment, whose Eq.15 modifies negative
-peculiar velocities using distance uncertainty. The archived table lacks the
-raw member value and the complete inputs for inversion, so do not compare or
-invert `Vcmba` as if it were raw redshift and do not infer covariance from
-that offset. The local CF4 files are pinned in `data/PROVENANCE.md` to a
+The driver checked the primary-source velocity semantics: Tully2015 table4
+contains adjusted `Vcmba`, not raw member `Vcmb`; its source ReadMe refers to
+the CF2 cosmological adjustment, whose Eq.15 modifies negative peculiar
+velocities using distance uncertainty. **Correction:** table5 also contains
+individual heliocentric `HV` and Galactic coordinates, so ordinary raw CMB
+velocities can be reconstructed; the former statement that the archive lacks
+raw member velocities was too broad. Do not invert adjusted `Vcmba` as if it
+were raw redshift, and do not infer covariance from the raw-velocity
+cross-check. See
+`CF4_R2_TULLY_RAW_HV_RECONCILIATION_20261003.md`. The local CF4 files are
+pinned in `data/PROVENANCE.md` to a
 2026-07-07 VizieR J/ApJ/944/94 snapshot (38,053 groups, 55,877 individual
 galaxies); the current official EDD description reports 38,057 All Groups
 entries and defines group `Vcmb` as the average of all Tully-2015 2MASS
