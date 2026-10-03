@@ -178,7 +178,23 @@
       "quadrature_order": 6,
       "observed_cells": 29100,
       "observed_zero_exposure_keys": 0,
+      "support_check_scope": "all observed population-cell keys, including the count archive's training and holdout arms; support preflight only, not a predictive score",
+      "global_order6_vs_order8_max_relative_effective_volume_difference": 0.0004261900026629088,
+      "global_order6_vs_order8_p95_relative_effective_volume_difference": 0.00022964820543440486,
       "angular_quadrature_certified": false,
+      "cellwise_selection_quadrature_status": "NO_GO_pending_map_resolving_integration; GL6_and_GL8_aggregate_volumes_are_stable_but_two_training_cell_controls_differ_by_multiple_percent_from_independent_references",
+      "training_only_cell_quadrature_result": "/gpfs/kjhan/CF4/z0_density/r2_selection_quadrature_20261003_v8/result.json",
+      "training_cells_compared": 22457,
+      "training_cell_relative_exposure_difference_p95_GL8_vs_GL6": 0.007124850852167833,
+      "training_cell_relative_exposure_difference_max_GL8_vs_GL6": 0.8933079838918367,
+      "training_count_weighted_log_intensity_delta_nats_GL8_minus_GL6": 2.965164651082888,
+      "independent_two_training_cell_controls": {
+        "method": "scrambled_Sobol_replicates_and_equal_area_HEALPix_pixel_center_ray_sums_at_NSIDE_1024_and_2048; radial_cell_intersections_are_exact_for_each_ray",
+        "selection_cell_keys": [3153974, 5070912],
+        "reference_result": "/gpfs/kjhan/CF4/z0_density/r2_selection_quadrature_20261003_v8/result.json",
+        "global_grid_accuracy_certified": false
+      },
+      "all_key_cellwise_metrics_from_order8_result_quarantined": true,
       "survival_bias_FoG_calibrated": false,
       "quantitative_joint_likelihood_ready": false
     }
@@ -221,7 +237,7 @@
   },
   "blockers": [
     "pinned ARES angular maps are available and used at empty-sky voxels, but 442 pointwise map/catalogue discrepancies (including one zero-map point with positive cell-integrated exposure) remain unexplained; do not substitute neighbouring pixels or smooth without a source model",
-    "the common-cosmology N128 voxel-selection integral has no observed zero-exposure keys, but its angular quadrature has not been certified",
+    "the N128 cellwise selection exposure is not numerically usable: order-six/order-eight global volumes agree while two training-cell references reveal multi-percent tensor-quadrature error; replace with a map-resolving cell integral before quantitative count-likelihood use",
     "K-correction, evolution-correction, extinction, and luminosity-function contract is incomplete",
     "RSD and FoG/group-dispersion priors are incomplete",
     "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",

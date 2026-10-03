@@ -3520,3 +3520,51 @@ integral; no re-download or repeated full integration. MW/M31 roles remain
 ambiguous, M33 unresolved; their observables must constrain the same NEW
 evolved LG field at `<=0.3 cMpc/h`, native truth IDs evaluation-only. Details:
 `CF4_R2_ANGULAR_SELECTION_MAP_STATUS_20261003.md`.
+
+R2 selection quadrature audit 2026-10-03: the saved order-six and bounded
+order-eight N128 full-grid integrals agree in aggregate effective volume
+(maximum relative delta `4.26e-4`), but training-only cell exposures do not.
+Across 22,457 training population-cell keys, p95/max relative exposure change
+is 0.7125%/89.33%; the fixed-density `sum(n log E)` contribution shifts
++2.965 nats (absolute cellwise shifts sum 48.86 nats), not a full Poisson score. On
+two preselected training cells, equal-area HEALPix ray references at NSIDE
+1024/2048 agree with independent scrambled Sobol references at sub-percent
+scale; native NSIDE 512 is 2.45% off Sobol on one cell. GL6, GL8 and equal-work
+split GL4 differ from these local references by about 5–53%. Therefore neither
+the global volume agreement nor GL8 certifies cellwise likelihood accuracy.
+Do not promote current 3 cMpc exposures. Full method and result:
+`CF4_R2_SELECTION_QUADRATURE_AUDIT_20261003.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_selection_quadrature_20261003_v8/result.json`.
+
+Integrity correction: the first order-eight local diagnostic used all 29,100
+population-cell keys, including both training and holdout locations; its
+all-key cellwise metrics are quarantined. A follow-up command loaded the
+archive's full `holdout_counts` array to print one selected cell value (key
+6645091, count 1). No fit, posterior score or heldout prediction consumed it,
+but this archive's holdout arm is no longer pristine and must not be described
+as untouched. Keep the output at
+`/gpfs/kjhan/CF4/z0_density/r2_selection_quadrature_20261003_v2/result.json`
+for provenance only; subsequent quadrature checks load training keys/counts
+only. Freeze a fresh independent holdout after the observation/integration
+method is fixed. The data-independent global effective-volume comparison
+remains valid. Job 411559 failed before calculation due a source-path typo;
+411561 completed the full-grid GL8 calculation; 411574/411578/411579/411588
+are training-only follow-ups. No posterior, fit, heldout score or simulation.
+
+Next R2 bundle: design and benchmark a map-aware cell exposure integrator
+using the pinned pixel values and ray/cell geometry; first quantify full-grid
+runtime/memory from bounded training-cell controls. A rough native-NSIDE512
+streaming ray estimate is 3.15 million rays times about 88 voxel intervals
+each over 5–180 cMpc/h (about 2.8e8 contributions, before six radial tracer
+factors); NSIDE 2048 requires 50.3 million rays. This is arithmetic, not a
+timed benchmark. No nearest-pixel repair, smoothing, or blind tensor-order
+ladder. Selection/bias calibration,
+multi-member covariance and the shared-latent count/mark conditional remain
+open, so R2 is NO-GO. Q-GOAL: numerical selection correctness is required for
+the same CF4-conditioned z=0 field, not a field result. Q-LEAN: two local
+independent references falsified cellwise stability; stop there and redesign
+the integrator without another full fit or simulation. MW/M31 remain
+role-ambiguous and M33 unresolved; all must later constrain the same NEW
+evolved LG field at `<=0.3 cMpc/h`, native truth IDs evaluation-only. This was
+a consecutive R2 review after the Astra factorization audit, so the driver
+performed the focused technical review under the user's auditor rule.
