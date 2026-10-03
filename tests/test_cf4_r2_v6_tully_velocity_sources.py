@@ -59,13 +59,19 @@ class TullyVelocitySourceTests(unittest.TestCase):
         table = parse_2mrs_table3(io.BytesIO(bytes(row) + b"\n"))
         self.assertEqual(table, {"12345678+1234567": "20112MRS.FLWO.0000H"})
 
-    def test_2mrs_fixed_width_join_rejects_duplicate_and_short_rows(self):
+    def test_2mrs_fixed_width_join_pads_omitted_blank_tail_fields(self):
+        row = bytearray(b" " * 172)
+        row[0:16] = b"12345678+1234567"
+        self.assertEqual(parse_2mrs_table3(io.BytesIO(bytes(row) + b"\n")),
+                         {"12345678+1234567": ""})
+
+    def test_2mrs_fixed_width_join_rejects_duplicate_and_too_short_id_rows(self):
         row = bytearray(b" " * 233)
         row[0:16] = b"12345678+1234567"
         data = bytes(row) + b"\n" + bytes(row) + b"\n"
         with self.assertRaisesRegex(ValueError, "duplicate 2MRS ID"):
             parse_2mrs_table3(io.BytesIO(data))
-        with self.assertRaisesRegex(ValueError, "short 2MRS table3 row"):
+        with self.assertRaisesRegex(ValueError, "short 2MRS table3 ID row"):
             parse_2mrs_table3(io.BytesIO(b"too short\n"))
 
     def test_2mrs_join_distinguishes_matching_publication_from_id_absence(self):

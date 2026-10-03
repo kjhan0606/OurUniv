@@ -94,8 +94,11 @@ def parse_2mrs_table3(stream):
     by_id = {}
     for line_number, raw in enumerate(stream, start=1):
         line = raw.rstrip(b"\r\n")
-        if len(line) < 204:
-            raise ValueError(f"short 2MRS table3 row {line_number}: {len(line)} bytes")
+        if len(line) < 16:
+            raise ValueError(f"short 2MRS table3 ID row {line_number}: {len(line)} bytes")
+        # CDS omits trailing blank fixed-width fields, including the redshift
+        # reference on rows without an adopted cz. Right-pad those fields.
+        line = line.ljust(204, b" ")
         object_id = line[0:16].decode("ascii").strip()
         reference = line[185:204].decode("ascii").strip()
         if not object_id:
