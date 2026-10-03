@@ -21,6 +21,7 @@ from cf4_twompp_joint_information_budget_pilot_v1 import (
     _cosmology_distance_table, schechter_fraction)
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
+TECHNICAL_INPUT = Path('/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/result.json')
 DATA = BASE / 'r2_common_catalogue_128_v1'
 PREVIOUS = BASE / 'r2_common_selection_128_v1'
 OUT = Path(os.environ['CF4_R2_OUT_DIR'])
@@ -47,7 +48,7 @@ def main():
                      Omega_m=c['Omega_m'], Omega_b=c['Omega_b'], Tcmb_K=c['Tcmb_K'])
     map_paths = [tracer['inputs'][name]['path'] for name in
                  ('completeness_11_5', 'completeness_12_5')]
-    technical = json.loads((BASE / 'kf_design/twompp_disjoint_tracer_v4/pilot/result.json').read_text())
+    technical = json.loads(TECHNICAL_INPUT.read_text())
     if technical.get('status') != 'PASS_TECHNICAL_INPUT_GATE_NO_FIELD_INFERENCE':
         raise ValueError('pinned map technical-input gate is not passing')
     expected_map_hashes = [technical['bound_inputs'][name]['sha256'] for name in
