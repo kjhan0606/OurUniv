@@ -23,6 +23,15 @@ aggregation convention; it is not a covariance or inclusion calibration.
 The previous claim that the archive has no raw member velocity is withdrawn.
 R2 remains NO-GO. Full method, row-level discrepancy and Q-GOAL/Q-LEAN review:
 `CF4_R2_TULLY_RAW_HV_RECONCILIATION_20261003.md`.
+Targeted official 2MRS Table12 (alternative to NED default) and Table13
+(additional 6dF/SDSS/NED redshifts) checks find no row for the extreme object's
+2MASS ID `11104662+2816428`; its pinned Table3 adopted entry cites SDSS DR8.
+This narrows but does not resolve the Tully-vs-2M++ measurement/association
+discrepancy. Close this redshift-source subroute here; do not start another
+catalogue residual sweep. Return to the actual R2 blocker: calibrated
+multi-member covariance and selected-group inclusion for the shared
+count/CF4 observation law. The Table12/13 hashes and explicit limitation are
+recorded in the reconciliation note.
 
 Latest bundled continuation (user requests grouping stages): shared-moment
 actual-state target implemented in `cf4_r2_moment_target.py`, active8tracer

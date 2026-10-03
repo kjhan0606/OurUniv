@@ -88,3 +88,27 @@ not wired into the target. No posterior or production field is promoted.
 MW/M31 remain role-ambiguous and M33 unresolved; all three must eventually
 constrain the same NEW field at LG resolution <=0.3 cMpc/h, with native truth
 identities restricted to calibration/evaluation.
+
+## Targeted 2MRS alternative-redshift check
+
+To test whether the PGC33946 discrepancy is explained by a documented 2MRS
+choice among competing redshifts, the official fixed-width `table12.dat` and
+`table13.dat` were streamed from the CDS over verified HTTPS and searched by
+the exact 2MASS ID `11104662+2816428`; neither table contains that ID. Their
+SHA256 digests at retrieval were respectively
+`49af19a5637d7c71f6303c56485f68d2ade122e5ec9dd36d05e3d33c383377b6` and
+`0f263e0a49d1e1a987985459ad9133d00ff3dd3db16a10ca9ab68ffaf39a1469`.
+The official ReadMe describes Table 12 as alternatives chosen over the NED
+default and Table 13 as redshifts from 6dF, SDSS, or NED for galaxies also
+observed by 2MRS.
+
+This rules out only the narrow explanation that the adopted 2MRS Table 3
+value was explicitly replaced by an entry in those published alternatives
+tables. It does not decide whether Tully Table 5's `HV=5160` is a bad
+measurement, a source/catalogue association problem, or a distinct spectrum.
+The pinned Table 3 record remains `cz=10768 km/s`, reference
+`2011SDSS8.C...0000:`; its solar-system-barycentric frame is not compared
+numerically with CMB values. Keep PGC33946 unresolved and do not reinterpret
+Tully's adjusted `Vcmba` as raw data. This closes the bounded alternative-table
+check; no additional redshift-residual sweep is warranted before returning to
+the unresolved shared-group covariance and inclusion law.
