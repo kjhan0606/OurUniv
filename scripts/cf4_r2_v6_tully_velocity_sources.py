@@ -24,7 +24,7 @@ PRIOR = BASE / "r2_v6_redshift_overlap_20261003_v3/result.json"
 PRIOR_SHA = "47fd803bab67eb96094489a4c8d725314a43ac896e315a55bbcfbbf741d13da0"
 MEMBERSHIP = BASE / "r2_v6_tully_membership_20261003_v1/result.json"
 MEMBERSHIP_SHA = "10a53c2dd5d10487670bc898dbce0f73e496103dafd78859fe22b62508703594"
-OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v4"
+OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v5"
 TWOMRS_TABLE3 = ROOT / "data/2mrs_huchra2012_table3.dat.gz"
 TWOMRS_TABLE3_SHA = "14a40e14dea131afbc2ff525e42b39fdc4094cf9d06d9a43952257eff80f1790"
 EXPLICIT_2MRS_PREFIX = "20112MRS."
@@ -170,6 +170,80 @@ def selected_tully_members(edges, table3, table4):
     return included, {"missing": missing, "mismatch": mismatch, "ambiguous": ambiguous}
 
 
+def summarize_tully_member_coverage(edges, selected, table3, table4):
+    nmb_by_nest = {}
+    parent_by_pgc1 = defaultdict(set)
+    for line in table3:
+        nest, nmb, pgc1 = integer(line, 3, 9), integer(line, 10, 13), integer(line, 14, 21)
+        if nest is None or nmb is None or pgc1 is None:
+            continue
+        if nest in nmb_by_nest:
+            raise ValueError("duplicate Tully Nest in group catalogue")
+        nmb_by_nest[nest] = nmb
+        parent_by_pgc1[str(pgc1)].add(nest)
+    member_nests_by_pgc = defaultdict(set)
+    for line in table4:
+        nest, pgc = integer(line, 3, 9), integer(line, 10, 17)
+        if nest is not None and pgc is not None:
+            member_nests_by_pgc[pgc].add(nest)
+
+    parent_nests = set()
+    no_unique_parent = 0
+    for _pgc, pgc1, _recno, _group in edges:
+        candidates = parent_by_pgc1.get(str(pgc1).strip(), set())
+        if len(candidates) == 1:
+            parent_nests.update(candidates)
+        else:
+            no_unique_parent += 1
+    linked_by_nest = Counter()
+    for pgc, pgc1, _recno in selected:
+        members = member_nests_by_pgc.get(pgc, set())
+        parents = parent_by_pgc1.get(str(pgc1).strip(), set())
+        if len(members) != 1 or len(parents) != 1 or members != parents:
+            raise ValueError("selected member lacks a unique matching Tully parent Nest")
+        linked_by_nest[next(iter(members))] += 1
+    if not parent_nests.issuperset(linked_by_nest):
+        raise ValueError("linked member Nest missing from parent-Nest cohort")
+
+    fractions = []
+    total_nmb = 0
+    all_members_linked = 0
+    for nest in sorted(parent_nests):
+        if nest not in nmb_by_nest:
+            raise ValueError(f"missing Tully member count for Nest {nest}")
+        nmb, linked = nmb_by_nest[nest], linked_by_nest[nest]
+        if linked > nmb:
+            raise ValueError(f"linked member count exceeds Tully Nmb for Nest {nest}")
+        total_nmb += nmb
+        all_members_linked += linked == nmb
+        fractions.append(linked / nmb)
+    bins = Counter()
+    for fraction in fractions:
+        if fraction == 0:
+            bins["zero"] += 1
+        elif fraction <= 0.25:
+            bins["(0,0.25]"] += 1
+        elif fraction <= 0.5:
+            bins["(0.25,0.5]"] += 1
+        elif fraction < 1:
+            bins["(0.5,1)"] += 1
+        else:
+            bins["1"] += 1
+    linked_total = sum(linked_by_nest.values())
+    return {
+        "secure_v6_edge_count": len(edges),
+        "edges_without_unique_parent_nest": no_unique_parent,
+        "unique_Tully_parent_Nest_count": len(parent_nests),
+        "sum_Tully_Nmb_over_parent_Nests": total_nmb,
+        "secure_links_that_are_Tully_table4_members": linked_total,
+        "aggregate_linked_fraction_of_Tully_Nmb": linked_total / total_nmb,
+        "Nests_with_any_linked_Tully_members": sum(value > 0 for value in linked_by_nest.values()),
+        "Nests_with_all_Tully_members_linked": all_members_linked,
+        "per_Nest_linked_fraction": describe(fractions),
+        "per_Nest_fraction_bins": dict(sorted(bins.items())),
+    }
+
+
 def main():
     if not os.environ.get("CF4_EXPECTED_COMMIT"):
         raise RuntimeError("pinned source commit is required")
@@ -234,6 +308,7 @@ def main():
     if (len(selected) != 441 or membership_status !=
             {"missing": 387, "mismatch": 0, "ambiguous": 0}):
         raise ValueError("Tully member cohort differs from committed crosswalk")
+    member_coverage = summarize_tully_member_coverage(edges, selected, table3, table4)
 
     recno_to_pgc = {recno: pgc for pgc, _one_pgc, recno in selected}
     if len(recno_to_pgc) != 441:
@@ -304,6 +379,7 @@ def main():
         ),
         "source_summary": summarize_source_rows(rows),
         "2mrs_main_catalog_source_join": summarize_2mrs_id_source_join(source_join_rows),
+        "Tully_parent_Nest_member_coverage": member_coverage,
         "input_sha256": {
             "prior_redshift_overlap": PRIOR_SHA,
             "prior_tully_membership": MEMBERSHIP_SHA,

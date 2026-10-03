@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from cf4_r2_v6_tully_velocity_sources import (
     parse_2mrs_table3, summarize_2mrs_id_source_join, summarize_source_rows,
+    summarize_tully_member_coverage,
 )
 
 
@@ -97,6 +98,34 @@ class TullyVelocitySourceTests(unittest.TestCase):
         delta_summary = summary["CF4_2mpp_abs_Vcmb_difference_km_s_by_source_status"]
         self.assertEqual(delta_summary["matched_id_same_reference_code"]["median"], 0.4)
         self.assertEqual(delta_summary["matched_id_different_reference_code"]["median"], 25.0)
+
+    def test_tully_member_coverage_uses_distinct_parent_nests_and_full_nmb(self):
+        def group_line(nest, nmb, pgc1):
+            line = bytearray(b" " * 21)
+            line[3:9] = f"{nest:6d}".encode()
+            line[10:13] = f"{nmb:3d}".encode()
+            line[14:21] = f"{pgc1:7d}".encode()
+            return bytes(line).decode()
+
+        def member_line(nest, pgc):
+            line = bytearray(b" " * 17)
+            line[3:9] = f"{nest:6d}".encode()
+            line[10:17] = f"{pgc:7d}".encode()
+            return bytes(line).decode()
+
+        groups = [group_line(11, 4, 101), group_line(22, 2, 201)]
+        members = [member_line(11, pgc) for pgc in (101, 102, 103, 104)]
+        members += [member_line(22, pgc) for pgc in (201, 202)]
+        edges = [(101, "101", 1, "a"), (102, "101", 2, "a"),
+                 (201, "201", 3, "b"), (202, "201", 4, "b")]
+        selected = [(101, "101", 1), (201, "201", 3), (202, "201", 4)]
+        result = summarize_tully_member_coverage(edges, selected, groups, members)
+        self.assertEqual(result["unique_Tully_parent_Nest_count"], 2)
+        self.assertEqual(result["sum_Tully_Nmb_over_parent_Nests"], 6)
+        self.assertEqual(result["secure_links_that_are_Tully_table4_members"], 3)
+        self.assertEqual(result["aggregate_linked_fraction_of_Tully_Nmb"], 0.5)
+        self.assertEqual(result["Nests_with_all_Tully_members_linked"], 1)
+        self.assertEqual(result["per_Nest_fraction_bins"], {"(0,0.25]": 1, "1": 1})
 
 
 if __name__ == "__main__":
