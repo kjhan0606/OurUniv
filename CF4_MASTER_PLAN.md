@@ -3454,12 +3454,15 @@ misses; none is promoted. Sixteen exact-name joins lack independent positional
 confirmation. The official archived Tully Tables4/5 disagree on five PGC/Nest
 associations; Table3 `Nmb` count discrepancies affect Nest100002/200006. Keep
 both published associations, the42 candidates and16 position flags; do not
-merge/correct identities by inference. A source-graph cross-tab reaches215
-Tully parent Nests from the frozen272-group/828-link training cohort; none of
-those has direct exact-name Tully members in both training and heldout roles,
-so this archive graph alone does not require replacing v6 for the current
-cohort. That does not estimate covariance, validate current EDD membership,
-or close the13 selected parent IDs absent from Table3. Result and limits:
+merge/correct identities by inference. A score-blind cross-tab reaches215
+Tully parent Nests from the frozen272-group/828-link training cohort. All828
+selected secure-edge points are v6 training-role points; every direct-name
+member mapping in those215 Nests is training-only; the two unpromoted
+position-only candidates there are also training-role candidates. Thus this
+bounded identity graph has no heldout/buffer-role 2M++ point in those
+selected parents and does not require replacing v6 for the current cohort.
+That does not estimate covariance, validate current EDD membership, or close
+the13 selected parent IDs absent from Table3. Result and limits:
 `CF4_R2_TULLY_FULL_MEMBER_2MRS_2MPP_OVERLAP_20261003.md` and
 `/gpfs/kjhan/CF4/z0_density/r2_tully_full_member_2mpp_overlap_20261003_v2/result.json`.
 Driver Q-GOAL: necessary shared-object ownership for the same-field factor,

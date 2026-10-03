@@ -89,12 +89,17 @@ Across all Table 5 Nests, seven have exact-name-linked 2M++ members in both
 training and heldout roles. A score-blind cross-tab of the frozen 272-group,
 828-link training cohort reached 228 distinct CF4 `1PGC` parents and 215
 nonzero Tully parent Nests; 13 distinct parent IDs have no Tully Table 3
-parent entry. **None of the 215 reached Nests is among the seven with both
-training and heldout members.** Therefore this archive’s known direct
-Tully-member graph does not require rebuilding the current frozen v6 split
-for train/heldout separation. This finding is limited to the archived Tully
-Table 3 parent mapping and the current v6 cohort; it does not certify other
-group definitions, future cohorts, or covariance.
+parent entry. All 828 selected secure-edge 2M++ points have v6 training
+roles. In each of the 215 reached Nests, direct-name-linked v6 roles are
+training-only; two position-only, unpromoted alias candidates also occur in
+reached Nests, and both are training-role candidates. Thus the known
+exact-name plus unique-position-candidate graph has **no heldout or buffer
+point in these selected parents**, even though seven other Tully Nests in the
+full catalog span training and heldout roles. Under this bounded identity
+contract, the archived Tully member graph does not require rebuilding the
+current frozen v6 split. This is not proof for the 13 unmapped parent IDs,
+larger-than-3-arcsec aliases, current EDD member revisions, other group
+definitions, future cohorts, or covariance.
 
 ## Driver review and next action
 
