@@ -51,6 +51,10 @@
     "redshift_factor_owner": "CF4_group_marks_shared_redshift",
     "secure_object_ids_unique": true,
     "independent_twompp_redshift_factor": false,
+    "identity_validation_proves_probabilistic_factorization": false,
+    "shared_group_latent_propagated_into_count_intensity": false,
+    "current_additive_kernel_scope": "development component only; not the configured real-catalog joint likelihood",
+    "required_shared_latent_conditional": "log p(mark | count, field) = logsumexp(log p(latent) + log L_count + log L_mark) - logsumexp(log p(latent) + log L_count)",
     "ambiguous_matches": "quarantine_or_explicit_marginalization; never silently promote"
   },
   "implementations": {
@@ -85,6 +89,7 @@
     "GH3 versus GH7/9 convergence",
     "finite log-domain likelihood and zero-support rejection",
     "secure object/group identity and duplicate-factor negative tests",
+    "two-member shared-latent mark-given-count control with normalization and no-information identity",
     "JAX value and gradient comparison on the same synthetic input",
     "validated object-level CF4--2M++ manifest with source SHA256 binding",
     "GH3 versus GH7/9 boundary-stress result recorded",

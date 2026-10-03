@@ -1,11 +1,13 @@
 """Pure in-memory six-tracer CF4/2M++ likelihood primitives.
 
 This module is deliberately independent of GPFS, Slurm, catalog paths, and
-publication.  It provides the numerical kernel needed by the KF-DESIGN
-contract: a positive selected count intensity with observer-centred spherical
-RSD, population-dependent FoG/redshift broadening, and a CF4 shared-redshift
-Gaussian factor.  Callers must provide already-calibrated selection exposure
-and PMWD source particles; no exposure or count normalization is performed.
+publication. It provides numerical components for KF-DESIGN: a positive
+selected count intensity with observer-centred spherical RSD,
+population-dependent FoG/redshift broadening, and a CF4 shared-redshift
+Gaussian factor. These components do not yet implement the configured joint
+observation law in which one shared latent also affects the 2M++ count factor.
+Callers must provide already-calibrated selection exposure and PMWD source
+particles; no exposure or count normalization is performed.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ import math
 from typing import Iterable
 
 import numpy as np
-from scipy.special import gammaln
+from scipy.special import gammaln, logsumexp
 
 
 POPULATIONS = 6
@@ -386,12 +388,14 @@ def validate_factor_ownership(
     *,
     independent_twompp_redshift_ids: Iterable[object] = (),
 ) -> dict[str, object]:
-    """Bind each secure object to exactly one redshift factor owner.
+    """Validate identity ownership, not probabilistic factorization.
 
     The count factor owns the 2M++ grid, while the CF4 group-mark factor owns
     every secure object's redshift datum through one shared group latent.  An
     independent 2M++ redshift term is forbidden here, rather than relying on a
-    caller to remember the no-double-counting rule.
+    caller to remember the object-identity rule. This bookkeeping check does
+    not prove that the count and mark factors condition on the same latent or
+    avoid probabilistic double counting.
     """
 
     objects = _identity_tuple("secure_object_ids", secure_object_ids)
@@ -411,6 +415,7 @@ def validate_factor_ownership(
         "redshift_factor_owner": "CF4_group_marks_shared_redshift",
         "secure_object_ids": objects,
         "independent_twompp_redshift_factor": False,
+        "probabilistic_dependence_resolved": False,
     }
 
 
@@ -492,7 +497,13 @@ def joint_log_likelihood(
     independent_twompp_redshift_ids: Iterable[object] = (),
     expected_group_count: int | None = None,
 ) -> float:
-    """Combine count and one shared-redshift factor without double counting."""
+    """Add the count and group-redshift component scores.
+
+    This is a development primitive, not the configured real-catalog joint
+    likelihood: it has no shared-latent input to the count intensity. Use it
+    only when the caller has separately established that this additive
+    factorization is valid for its observation law.
+    """
 
     return poisson_log_likelihood(counts, intensity) + shared_redshift_log_likelihood(
         observed_km_s,
@@ -504,3 +515,39 @@ def joint_log_likelihood(
         independent_twompp_redshift_ids=independent_twompp_redshift_ids,
         expected_group_count=expected_group_count,
     )
+
+
+def conditional_mark_log_likelihood_from_shared_latent(
+    log_prior_weights: Iterable[float],
+    count_log_likelihood: Iterable[float],
+    mark_log_likelihood: Iterable[float],
+) -> float:
+    """Evaluate ``log p(mark | count, field)`` over one shared latent.
+
+    Each 1-D input contains log weights or log likelihoods at the same
+    quadrature nodes. The result is
+
+    ``logsumexp(log_prior + log_count + log_mark) - logsumexp(log_prior + log_count)``.
+
+    The prior weights may be normalized or unnormalized. This is the
+    conditional-factor reference primitive needed when count-owned data and
+    group marks share a latent; it does not supply a count model, selection,
+    covariance calibration, or a production likelihood.
+    """
+
+    arrays = [np.asarray(value, dtype=np.float64) for value in (
+        log_prior_weights, count_log_likelihood, mark_log_likelihood
+    )]
+    if any(array.ndim != 1 or array.size == 0 for array in arrays):
+        raise LikelihoodInputError("shared-latent log terms must be non-empty one-dimensional arrays")
+    if not (arrays[0].shape == arrays[1].shape == arrays[2].shape):
+        raise LikelihoodInputError("shared-latent log terms must have one common shape")
+    if any(np.any(np.isnan(array)) or np.any(np.isposinf(array)) for array in arrays):
+        raise LikelihoodInputError("shared-latent log terms may be finite or -inf, not NaN or +inf")
+    log_prior, log_count, log_mark = arrays
+    denominator_terms = log_prior + log_count
+    denominator = float(logsumexp(denominator_terms))
+    if not math.isfinite(denominator):
+        raise LikelihoodInputError("count factor has zero support under the shared-latent prior")
+    numerator = float(logsumexp(denominator_terms + log_mark))
+    return numerator - denominator

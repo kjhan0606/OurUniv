@@ -26,6 +26,7 @@ from cf4_2mpp_joint_likelihood_local import (
     QUADRATURE_RELATIVE_L1_TOLERANCE,
     QUADRATURE_STRESS_CASE_ID,
     VELOCITY_CONVENTION,
+    conditional_mark_log_likelihood_from_shared_latent,
 )
 
 
@@ -288,12 +289,49 @@ def test_factor_ownership_rejects_independent_redshift_factor_and_duplicate_ids(
     ownership = validate_factor_ownership(["A", "B"], np.array([0, 0], dtype=np.int64))
     assert ownership["count_factor_owner"] == "2Mpp_grid_counts"
     assert ownership["redshift_factor_owner"] == "CF4_group_marks_shared_redshift"
+    assert ownership["probabilistic_dependence_resolved"] is False
     with pytest.raises(LikelihoodInputError, match="unique"):
         validate_factor_ownership(["A", "A"], np.array([0, 0], dtype=np.int64))
     with pytest.raises(LikelihoodInputError, match=r"independent 2M\+\+ redshift factor"):
         validate_factor_ownership(
             ["A", "B"], np.array([0, 0], dtype=np.int64),
             independent_twompp_redshift_ids=["Z"],
+        )
+
+
+def test_two_member_mark_factor_conditions_on_the_same_count_latent():
+    prior = np.log(np.array([0.25, 0.50, 0.25], dtype=np.float64))
+    count = np.log(np.array([0.10, 0.80, 0.20], dtype=np.float64))
+    member_a = np.log(np.array([0.75, 0.40, 0.05], dtype=np.float64))
+    member_b = np.log(np.array([0.50, 0.60, 0.10], dtype=np.float64))
+    marks = member_a + member_b
+
+    actual = conditional_mark_log_likelihood_from_shared_latent(prior, count, marks)
+    expected = np.log(np.sum(np.exp(prior + count + marks))) - np.log(
+        np.sum(np.exp(prior + count))
+    )
+    separately_marginalized = np.log(np.sum(np.exp(prior + marks)))
+
+    assert actual == pytest.approx(expected, rel=1e-14, abs=1e-14)
+    assert abs(actual - separately_marginalized) > 1e-2
+
+
+def test_shared_latent_conditional_mark_factor_has_no_information_identity():
+    prior = np.log(np.array([0.2, 0.3, 0.5], dtype=np.float64))
+    count = np.log(np.array([0.9, 0.1, 0.4], dtype=np.float64))
+    constant_mark_score = -2.75
+    actual = conditional_mark_log_likelihood_from_shared_latent(
+        prior, count, np.full(3, constant_mark_score, dtype=np.float64)
+    )
+    assert actual == pytest.approx(constant_mark_score, abs=1e-14)
+
+
+def test_shared_latent_conditional_mark_factor_rejects_bad_support_and_shapes():
+    with pytest.raises(LikelihoodInputError, match="common shape"):
+        conditional_mark_log_likelihood_from_shared_latent([0.0, -1.0], [0.0], [0.0, 0.0])
+    with pytest.raises(LikelihoodInputError, match="zero support"):
+        conditional_mark_log_likelihood_from_shared_latent(
+            [-np.inf, -np.inf], [0.0, 0.0], [0.0, 0.0]
         )
 
 

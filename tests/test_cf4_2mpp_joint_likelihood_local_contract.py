@@ -23,6 +23,12 @@ def test_local_contract_freezes_units_and_blocks_execution():
     assert value["selection_exposure"]["shape"] == "(6,N,N,N) with one common cubic spatial grid"
     assert value["selection_exposure"]["normalization"] == "raw exposure; never rescaled to observed population totals"
     assert value["factor_ownership"]["independent_twompp_redshift_factor"] is False
+    assert value["factor_ownership"]["identity_validation_proves_probabilistic_factorization"] is False
+    assert value["factor_ownership"]["shared_group_latent_propagated_into_count_intensity"] is False
+    assert value["factor_ownership"]["current_additive_kernel_scope"] == (
+        "development component only; not the configured real-catalog joint likelihood"
+    )
+    assert "logsumexp" in value["factor_ownership"]["required_shared_latent_conditional"]
     assert value["implementations"]["jax"]["value_and_gradient_must_match_numpy_oracle"] is True
     assert value["implementations"]["jax"]["entrypoint"] == "joint_log_likelihood_jax_checked"
     assert value["implementations"]["crossmatch_manifest"]["schema"] == "ouruniv-cf4-2mpp-secure-object-manifest-v1"
@@ -42,3 +48,4 @@ def test_local_contract_requires_high_order_quadrature_and_mock_calibration():
     assert value["redshift_space_model"]["preregistered_low_order"] == 3
     assert value["redshift_space_model"]["preregistered_high_orders"] == [7, 9]
     assert value["redshift_space_model"]["preregistered_relative_l1_tolerance"] == 0.005
+    assert "two-member shared-latent mark-given-count control with normalization and no-information identity" in value["required_gates_before_KF_EXPAND"]

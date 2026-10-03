@@ -83,7 +83,10 @@
     "CF4_individual_positions_or_counts_are_an_independent_density_factor": false,
     "shared_secure_object_rule": "one shared redshift datum or latent per securely mapped object, never two independent Vcmb likelihood terms",
     "catalog_overlap_requires_joint_latent_or_covariance": true,
-    "independent_Vcmb_double_counting_allowed": false
+    "independent_Vcmb_double_counting_allowed": false,
+    "current_reference_kernel_scope": "development components only; the additive Poisson-plus-group-mark primitive does not propagate the shared latent through the 2M++ count factor",
+    "current_reference_kernel_implements_configured_shared_latent_factorization": false,
+    "conditional_mark_identity_required": "log p(mark | count, field) = logsumexp(log p(latent) + log L_count + log L_mark) - logsumexp(log p(latent) + log L_count)"
   },
   "imputed_and_latent_policy": {
     "ZoA_fake_rows": {
@@ -185,6 +188,7 @@
     "RSD and FoG/group-dispersion priors are incomplete",
     "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",
     "CF4 group-member covariance and shared-redshift source-resolution contract is incomplete",
+    "the current additive reference kernel does not implement the shared latent in the 2M++ count intensity or a normalized mark-given-count conditional factor",
     "immutable declared k-bin manifest and SHA256 binding are absent"
   ],
   "stage_transition": {

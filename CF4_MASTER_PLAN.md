@@ -3476,3 +3476,27 @@ role-ambiguous, M33 unresolved; all must ultimately constrain the same NEW
 field at LG `<=0.3 cMpc/h`, with native truth identities evaluation-only.
 R2 remains NO-GO. No external audit: this was a consecutive driver-led source
 review under the user’s duplicate/consecutive-review rule.
+
+R2 shared-redshift factor audit 2026-10-03: Astra's bounded read-only review
+confirmed a material design/implementation gap, not an error in the Gaussian
+kernel itself. The contract places shared latent(s) in both the 2M++ count and
+CF4 group-mark factors, while the available NumPy/JAX additive entrypoints
+have no shared-latent input to the count intensity. Identity ownership alone
+does not establish the required probabilistic conditional or prove measured
+data double counting. The eligible secure graph contains 14,878 edges across
+10,393 CF4 groups, with no repeated 2M++ recno across groups; this supports
+group-local ownership only. Existing 9,754-group conditional scores favor
+Student-t4 over Gaussian on heldout groups, but singleton 90%/95% coverage is
+0.820/0.861 and this selected-subset residual does not calibrate shared
+covariance. The code/config now label the additive kernel development-only
+and include a small exact conditional mark-given-count logsumexp reference
+with two-member, direct-integration and no-information tests. No source
+likelihood, selection, covariance fit, field posterior, or simulation was
+added. Next R2 action: a source-aware training control where the same latent
+affects count-owned observations and member marks, using an explicit
+conditioning denominator and calibrated selection/covariance; do not replace
+missing inputs with trial values. R2 remains NO-GO. Q-GOAL: required statistical
+definition for the same z=0 field, not a field result. Q-LEAN: one exact math
+control only. MW/M31 remain role-ambiguous and M33 unresolved; all three must
+constrain the same NEW evolved field at LG `<=0.3 cMpc/h`, native truth IDs
+evaluation-only. Details: `CF4_R2_SHARED_REDSHIFT_FACTOR_AUDIT_20261003.md`.

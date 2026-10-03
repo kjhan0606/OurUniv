@@ -3,7 +3,9 @@
 The NumPy implementation is the transparent reference oracle.  This module
 contains only JAX-traceable array operations for use by a future HMC/SMC
 driver; it performs no I/O and deliberately leaves host-side schema checks to
-the caller.
+the caller. The current additive count-plus-mark entrypoint is a development
+primitive: it does not propagate the group shared-redshift latent into the
+2M++ count intensity and is not the configured real-catalog joint likelihood.
 """
 
 from __future__ import annotations
@@ -243,7 +245,12 @@ def joint_log_likelihood_jax(
     group_ids,
     shared_sigma_km_s,
 ):
-    """Differentiable sum of the count and single shared-redshift factors."""
+    """Differentiably add count and group-redshift component scores.
+
+    This is not a shared-latent joint observation law because ``intensity``
+    contains no group-latent dependence. Call only when the caller has
+    separately justified this additive factorization.
+    """
 
     return poisson_log_likelihood_jax(counts, intensity) + shared_redshift_log_likelihood_jax(
         observed_km_s,
@@ -270,14 +277,14 @@ def joint_log_likelihood_jax_checked(
     crossmatch_summary_path=None,
     independent_twompp_redshift_ids=(),
 ):
-    """Call the JAX kernel only after the host-side ownership contract passes.
+    """Call the JAX kernel after source-bound identity checks pass.
 
     JAX kernels intentionally contain only traceable array operations and cannot
-    safely enforce object identity or factor ownership inside ``jit``.  This
-    wrapper is the single public bridge for inference code: it validates the
-    count/redshift shapes and the no-double-counting rule with the NumPy oracle,
-    then converts inputs to JAX arrays and calls the differentiable kernel.  A
-    caller cannot satisfy this bridge with arbitrary unique labels: the labels,
+    safely enforce object identity or factor ownership inside ``jit``. This
+    wrapper validates source identity and array shape, but it does not establish
+    the probabilistic dependence or no-double-counting derivation between the
+    count and mark factors. A caller cannot satisfy this bridge with arbitrary
+    unique labels: the labels,
     2M++ IDs, and integer group indices must reproduce the source-bound
     canonical manifest exactly.
     """
