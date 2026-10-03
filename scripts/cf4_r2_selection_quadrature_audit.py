@@ -185,6 +185,55 @@ def main():
             for power, values in estimates.items()
         }
 
+    def healpix_ray_reference(index, angular_nside):
+        """Native-map pixel-area ray sum with exact radial cell intersections."""
+        cell = ijk[index]
+        low = -192. + cell * dx
+        high = low + dx
+        center = centers[:, index]
+        center_sky = rotation @ center
+        center_radius = float(np.linalg.norm(center_sky))
+        cap_radius = np.arcsin(min(1., np.sqrt(3.) * dx / (2 * center_radius))) + 1e-8
+        candidates = hp.query_disc(angular_nside, center_sky / center_radius,
+                                   cap_radius, inclusive=True, nest=False)
+        sky_dirs = np.asarray(hp.pix2vec(angular_nside, candidates, nest=False))
+        dirs = rotation.T @ sky_dirs
+        enter = np.full(len(candidates), -np.inf)
+        leave = np.full(len(candidates), np.inf)
+        intersects_parallel = np.ones(len(candidates), dtype=bool)
+        for axis in range(3):
+            component = dirs[axis]
+            nonzero = np.abs(component) > 1e-15
+            axis_enter = np.full(len(component), -np.inf)
+            axis_leave = np.full(len(component), np.inf)
+            t0 = np.zeros(len(component))
+            t1 = np.zeros(len(component))
+            t0[nonzero] = low[axis] / component[nonzero]
+            t1[nonzero] = high[axis] / component[nonzero]
+            axis_enter[nonzero] = np.minimum(t0[nonzero], t1[nonzero])
+            axis_leave[nonzero] = np.maximum(t0[nonzero], t1[nonzero])
+            enter = np.maximum(enter, axis_enter)
+            leave = np.minimum(leave, axis_leave)
+            intersects_parallel &= nonzero | ((low[axis] <= 0.) & (high[axis] >= 0.))
+        rlo = np.maximum(enter, edges[0])
+        rhi = np.minimum(leave, edges[-1])
+        valid = intersects_parallel & (rhi > rlo)
+        if not np.any(valid):
+            return {'candidate_pixels': int(len(candidates)),
+                    'intersecting_center_pixels': 0, 'selection_exposure': 0.}
+        population_id = int(population[index])
+        cumulative = np.concatenate(([0.], np.cumsum(
+            .5 * (rtab[1:]**2 * radial[population_id][1:]
+                  + rtab[:-1]**2 * radial[population_id][:-1]) * np.diff(rtab))))
+        pixel = hp.vec2pix(512, *sky_dirs[:, valid], nest=False)
+        radial_weight = np.interp(rhi[valid], rtab, cumulative) - np.interp(
+            rlo[valid], rtab, cumulative)
+        exposure = (hp.nside2pixarea(angular_nside)
+                    * np.sum(maps[population_id // 3][pixel] * radial_weight) / dx**3)
+        return {'candidate_pixels': int(len(candidates)),
+                'intersecting_center_pixels': int(np.count_nonzero(valid)),
+                'selection_exposure': float(exposure)}
+
     selected_indices = sorted(set((int(np.argmax(relative)), int(np.argmax(absolute_difference)))))
     layout_comparison = []
     for i in selected_indices:
@@ -198,6 +247,8 @@ def main():
             'relative_difference_composite_vs_order8': float(
                 abs(composite_4x2 - exposure8[i]) / max(abs(exposure8[i]), 1e-30)),
             'scrambled_sobol_cell_average_reference': sobol_reference(i),
+            'healpix_pixel_area_ray_references': {
+                str(nside): healpix_ray_reference(i, nside) for nside in (1024, 2048)},
         })
     report = {
         'classification': 'TRAINING_ONLY_ORDER8_VS_SAVED_ORDER6_CELL_SELECTION_SENSITIVITY',
