@@ -65,12 +65,16 @@ def main():
     rotation = SkyCoord(CartesianRepresentation(np.eye(3)),
                         frame='supergalactic').icrs.cartesian.xyz.value
 
-    # Deliberately load only training keys; do not touch all_keys, holdout_keys,
-    # train_counts, or holdout_counts in this evaluation-preserving rerun.
+    # Deliberately load only training keys/counts; do not touch all_keys,
+    # holdout_keys, or holdout_counts in this evaluation-preserving rerun.
     count_path = DATA / 'counts_3_sparse.npz'
     with np.load(count_path, allow_pickle=False) as data:
         keys = data['train_keys'].copy()
+        train_counts = data['train_counts'].copy()
+    if train_counts.shape != keys.shape or np.any(train_counts <= 0):
+        raise ValueError('training key/count arrays are not aligned positive counts')
     train_keys_digest = hashlib.sha256(keys.tobytes()).hexdigest()
+    train_counts_digest = hashlib.sha256(train_counts.tobytes()).hexdigest()
     n, dx, order = 128, 3., 8
     population = keys // n**3
     flat = keys % n**3
@@ -125,6 +129,13 @@ def main():
 
     relative = np.abs(exposure8 - exposure6) / np.maximum(np.abs(exposure6), 1e-30)
     absolute_difference = np.abs(exposure8 - exposure6)
+    if np.any(exposure6 <= 0) or np.any(exposure8 <= 0):
+        count_weighted_log_intensity_delta = None
+        count_weighted_abs_log_intensity_delta = None
+    else:
+        log_exposure_ratio = np.log(exposure8 / exposure6)
+        count_weighted_log_intensity_delta = float(np.dot(train_counts, log_exposure_ratio))
+        count_weighted_abs_log_intensity_delta = float(np.dot(train_counts, np.abs(log_exposure_ratio)))
     largest = np.argsort(relative)[-10:][::-1]
     report = {
         'classification': 'TRAINING_ONLY_ORDER8_VS_SAVED_ORDER6_CELL_SELECTION_SENSITIVITY',
@@ -138,7 +149,9 @@ def main():
         'training_keys_only': True,
         'heldout_keys_or_counts_read_by_this_run': False,
         'training_population_cell_keys': int(len(keys)),
+        'training_galaxy_count': int(np.sum(train_counts)),
         'training_keys_sha256': train_keys_digest,
+        'training_counts_sha256': train_counts_digest,
         'count_archive_path': str(count_path),
         'order6_zero_exposure_training_keys': int(np.count_nonzero(exposure6 <= 0)),
         'order8_zero_exposure_training_keys': int(np.count_nonzero(exposure8 <= 0)),
@@ -146,8 +159,12 @@ def main():
         'relative_exposure_difference_p95': float(np.percentile(relative, 95)),
         'absolute_exposure_difference_max': float(np.max(absolute_difference)),
         'absolute_exposure_difference_p95': float(np.percentile(absolute_difference, 95)),
+        'training_count_weighted_log_intensity_delta_nats_order8_minus_order6': count_weighted_log_intensity_delta,
+        'training_count_weighted_absolute_log_intensity_delta_nats': count_weighted_abs_log_intensity_delta,
+        'count_weighted_delta_definition': 'sum over training cells n_cell*log(E_order8/E_order6); fixed-density log-intensity contribution only, not a full Poisson score',
         'largest_training_key_changes': [
-            {'key': int(keys[i]), 'population': int(population[i]), 'voxel_ijk': ijk[i].tolist(),
+            {'key': int(keys[i]), 'population': int(population[i]), 'training_count': int(train_counts[i]),
+             'voxel_ijk': ijk[i].tolist(),
              'order6_exposure': float(exposure6[i]), 'order8_exposure': float(exposure8[i]),
              'relative_difference': float(relative[i]),
              'absolute_difference': float(absolute_difference[i])}
