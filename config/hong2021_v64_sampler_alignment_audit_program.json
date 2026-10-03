@@ -1,0 +1,129 @@
+{
+  "schema": "hong2021-v64-train-only-empirical-rank-sampler-alignment-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine without refitting whether the remaining V63 development failure is caused by training a Gauss-Hermite distribution expectation while deploying a finite frozen empirical-rank transport, and whether the sampler-aligned tail correction is locally compatible with the train-only sub-Mpc density-pair error.",
+  "parent_evidence": {
+    "v63_result_record": "config/hong2021_v63_result_record.json",
+    "v63_result_record_sha256": "61cb4406d09272309f11a39b95d7cfa3fb33f532ad02f43148e7d9a6ca33346b",
+    "required_status": "complete_development_failure_selected_sampler_alignment_audit",
+    "required_classification": "conditional_moment_objective_improves_all_extremes_but_is_not_development_sufficient",
+    "required_all_extremes_improve_both_references_every_domain": true,
+    "required_posthoc_tuning_used": false,
+    "required_historical_EAGLE_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_train_result_record": "config/hong2021_v63_train_result_record.json",
+    "v63_train_result_record_sha256": "c247de81ab54a5a2c5e4b3e89d8bd1711fd4aa42295f65af21c626f3ceb95b05",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "v63_train_gate_sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "fixed_train_batch": {
+    "query_object_index": 0,
+    "query_domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "query_signed_cube_isometry_index": 7,
+    "q99_9_backbone_boundaries": {
+      "TNG100": 0.4621520478129412,
+      "SIMBA": 0.411563094049693,
+      "Swift": 0.4358510056436045
+    },
+    "expected_selected_voxels": {
+      "TNG100": 705,
+      "SIMBA": 249,
+      "Swift": 202
+    }
+  },
+  "frozen_empirical_rank_ensemble": {
+    "members_per_query": 16,
+    "selection_seed": 164064,
+    "donor_domain_for_member": "DOMAIN_ORDER[(query_domain_index + member_index) mod 3]",
+    "donor_index_and_signed_cube_isometry": "draw sequentially with numpy default_rng(164064); donor index is uniform over the immutable donor-domain train objects and is advanced by one modulo the domain count if it equals query object zero in the same domain; isometry is uniform over the frozen 48 signed cube isometries",
+    "rank_construction": "apply the frozen V31 conditional_forward transform to donor target-minus-backbone conditioned on donor backbone, followed by the selected signed cube isometry",
+    "development_rank_or_selection_access": false
+  },
+  "sampler_aligned_tail_candidate": {
+    "parameters": "unchanged V63 step-12000 EMA query-local bounded-mixture parameters on the fixed train query",
+    "sampler": "same-voxel differentiable bounded-mixture inverse CDF evaluated at the 16 frozen train-only empirical conditional-rank fields",
+    "mask": "the identical physical-backbone-plus-target-mean q99.9 mask used by the V63 objective",
+    "predicted_moment": "mean of (exp(4.5 ln(10) y)-1)^2 across the selected voxels and 16 empirical-rank members",
+    "truth_moment": "exact target mean of (exp(4.5 ln(10) y)-1)^2 across the identical query mask",
+    "score": "source-balanced mean of 0.5 times squared ln(predicted moment divided by truth moment)",
+    "control": "the existing 64-point Gauss-Hermite V63 conditional moment and score on the same parameters, targets, backbones, and masks",
+    "member_stability_control": "compare the first 8 frozen members against all 16; this measures finite-rank stability rather than quadrature convergence"
+  },
+  "train_only_sub_mpc_compatibility_diagnostic": {
+    "anchor_seed": 164066,
+    "anchors_per_query": 4096,
+    "anchor_coordinates": "uniform without replacement from the interior coordinates [3,60]^3",
+    "offsets_cells": [
+      1,
+      2,
+      3
+    ],
+    "offset_direction": "cycle deterministically over positive and negative x, y, and z directions while remaining inside the cube",
+    "physical_separations_mpc_h": [
+      0.3125,
+      0.625,
+      0.9375
+    ],
+    "statistic": "for each separation, empirical-rank ensemble mean of delta(x) delta(x+r) compared with the exact train target pair mean",
+    "score": "source-and-separation-balanced mean of 0.5 times squared ln(predicted positive pair mean divided by truth positive pair mean)",
+    "gradient_compatibility": "cosine between the sampler-aligned tail-score output gradient and the sub-Mpc pair-score output gradient; positive cosine means a local tail descent also reduces the pair score",
+    "use_for_training_in_this_audit": false
+  },
+  "required_measurements": [
+    "domainwise Gauss-Hermite, empirical-rank-8, empirical-rank-16, and exact target q99.9 moments and ratios",
+    "domainwise empirical-rank versus Gauss-Hermite log-moment discrepancy",
+    "bounded-NLL, retained V63 score, sampler-aligned tail score, and sub-Mpc pair-score output-gradient L2 and maximum absolute values",
+    "tail-to-pair output-gradient cosine and dot product",
+    "rank multiset digests, donor mapping, selected counts, finite values, and inverse-CDF bounds",
+    "peak Ada allocation and all frozen artifact hashes and canonical decision digests"
+  ],
+  "selection_rules": {
+    "material_sampler_mismatch": "absolute empirical-rank-16 versus Gauss-Hermite log moment ratio is at least ln(1.1) in any domain",
+    "optimization_relevant_tail_gradient": "sampler-aligned tail output-gradient L2 divided by bounded-NLL output-gradient L2 is in [0.01,100]",
+    "finite_rank_stability": "empirical-rank first-8 versus all-16 moment relative difference is at most 0.5 in every domain",
+    "pair_conflict": "the sub-Mpc pair score is nonzero with an optimization-relevant finite gradient and tail-to-pair gradient cosine is negative",
+    "select_sampler_aligned_tail_model": "material sampler mismatch, optimization-relevant tail gradient, finite-rank stability, finite total gradients, memory pass, and no pair conflict",
+    "select_copula_or_joint_structure_audit_instead": "pair conflict holds or sampler mismatch is not material despite the sealed development morphology failure",
+    "no_candidate_selected": "numerical, gradient-scale, ancestry, memory, or firewall checks fail"
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v64_sampler_alignment_audit/audit.json",
+  "firewall": {
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "development_rank_or_selection_access": "forbidden",
+    "posthoc_coefficient_or_threshold_tuning": "forbidden",
+    "training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

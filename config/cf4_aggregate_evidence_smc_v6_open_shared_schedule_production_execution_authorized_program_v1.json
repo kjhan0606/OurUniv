@@ -1,0 +1,164 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-execution-authorized-program-v1",
+  "status": "frozen_authorized_wrapper_program_execution_disabled_until_separate_grant_pair_and_release_audits",
+  "date": "2026-08-20",
+  "purpose": "Freeze the sole canonical one-shot authorization wrapper while keeping every runtime action disabled until separately audited grant and paired external provenance objects exist.",
+  "lineage": {
+    "wrapper_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_wrapper_design_v1.json",
+      "commit": "12f38110a98417501da9da2810296dfb64029451",
+      "sha256": "3769ee888de4e01f267355bd1aff6f32e9dc43099bf459f0f03d40a3b55729d8"
+    },
+    "grant_release_manifest_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant_release_manifest_design_v1.json",
+      "commit": "3d0a2d2eed3dd9fbfc0cc88d4a705586c156021f",
+      "sha256": "ca9011f2135ed621ccd2f1bc9336aa924e6db1c82ed672bedff1b73270d48d9b"
+    },
+    "authorization_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorization_design_v1.json",
+      "commit": "e6ba2c3482855a6c8c16aa8068df83bbfb9c62e8",
+      "sha256": "eed1f831b629166eff68a51f87b4cb7fc796abf2a5e5e7a676451681ebc78cc1"
+    },
+    "implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_implementation_result_record.json",
+      "commit": "7d13151f6f6ed6a99b6219bd2dca923bf8a1b9c2",
+      "sha256": "57ccc0ac99ead2a3903e96e22f0b40182e2a6db3a3b3184a5257d8d8530ba867"
+    },
+    "implementation_commit": "7eb25554abec278a3710b99aed90e73c39f37b9b",
+    "future_wrapper_implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_authorized_wrapper_implementation_result_record_v1.json",
+      "schema": "ouruniv-cf4-v6-open-shared-schedule-production-authorized-wrapper-implementation-result-record-v1",
+      "status": "complete_pass_postcommit_authorized_wrapper_implementation",
+      "exact_keys": [
+        "schema",
+        "status",
+        "implementation_commit",
+        "implementation_parent_commit",
+        "wrapper_design_commit",
+        "implementation_files",
+        "independent_audits",
+        "authorization"
+      ],
+      "canonical_JSON": true,
+      "independent_audits_exact": {
+        "precommit": "COMMIT GO",
+        "postcommit": "LINEAGE GO"
+      },
+      "authorization_exact": {
+        "pair_creation_authorized": false,
+        "grant_creation_authorized": false,
+        "receipt_creation_authorized": false,
+        "cache_population_authorized": false,
+        "production_execution_authorized": false,
+        "retry_resume_retune_or_scale_up_authorized": false,
+        "conditional_bank_authorized": false,
+        "candidate_selection_authorized": false,
+        "PM_authorized": false,
+        "HOP_authorized": false,
+        "RAMSES_authorized": false,
+        "downstream_execution_authorized": false,
+        "automatic_follow_on_authorized": false
+      }
+    },
+    "protected_file_sha256": {
+      "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_program.json": "54ffb61a9053a6e7935a7355a6d5a948184c4ded8dc585cf85b45d209a9b2dbc",
+      "scripts/launch_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh": "4a84041de75554d7c8b41cd2d432ba8a5d534cd15acdd14e0d5bf03d92ace725",
+      "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh": "e0bfac8b662e8805cfcc99a07bf5a2e2124149a6968b8645f9141cdc8b28d0d7",
+      "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.sh": "702b561c5a6fee2d943507524047a5b198328453855834691ef51e727364b2fe",
+      "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py": "4c59d09252bb2f78fe1871211b9409e9a4b2b117d2a40f65cab7197d066fb564",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py": "5c980991133c3d490fc057bd345657ed38f7127c4960e2630988c2edb54b90be",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_runner.py": "f439f2e738a8a5ba93c7f3abe989ab7700e65a224d05da19b823f39cb8244974"
+    }
+  },
+  "canonical_paths": {
+    "future_grant": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant.json",
+    "future_external_release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_release.json",
+    "future_external_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_manifest.json",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_receipts",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_cache",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_run"
+  },
+  "fixed_science": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "beta": [0.0, 0.1531397846993059, 0.3181984675451238, 0.5129471527439684, 0.7369993853258423, 1.0],
+    "schedule_sha256": "c1b96d871e8c66d04e5028ed32773dc19656ad5b60149a047e025d75a69221b6",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "P_pool": "evidence_weighted",
+    "runtime_override": false
+  },
+  "resource_contract": {
+    "host_casefold_exact": "lageunha",
+    "backend": "local_CPU_one_shot",
+    "CUDA_VISIBLE_DEVICES": "",
+    "cpus_required": 8,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "MemAvailable_minimum_GiB": 80,
+    "free_disk_minimum_GiB": 40,
+    "timeout_command_exact": "/usr/bin/timeout --foreground --signal=TERM --kill-after=300s 12h",
+    "MALLOC_ARENA_MAX": "2",
+    "Slurm_submission": false,
+    "syn101_execution": false,
+    "process_table_polling": false
+  },
+  "grant_release_manifest_contract": {
+    "design_sha256": "ca9011f2135ed621ccd2f1bc9336aa924e6db1c82ed672bedff1b73270d48d9b",
+    "fixed_science_digest": "8c534cdc6df4421becc6d4559aa438202e7790a74e7e7eb4e232db05c38467ae",
+    "canonical_paths_digest": "dd5b7438c773a7780924ecb232ea6fb29f080781a160495614df6d137387a696",
+    "grant_mode": "0644",
+    "release_mode": "0444",
+    "manifest_mode": "0444",
+    "one_shot": true,
+    "reject_duplicate_or_unknown_JSON_keys": true,
+    "separate_precommit_and_postcommit_audits_required": true
+  },
+  "receipt_contract": {
+    "path_template": "<receipt_root>/<grant_id>/production",
+    "exclusive_atomic_mkdir": true,
+    "release_anchor_hardlink": true,
+    "snapshot_after_post_link_stat": true,
+    "snapshot_mode": "0444",
+    "terminal_marker_mode": "0444",
+    "revalidate_before_and_after_science_and_before_terminal_marker": true,
+    "reuse_retry_resume": false
+  },
+  "artifact_and_postcheck_contract": {
+    "science_entry": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution._execute_reserved_canonical_private",
+    "postcheck": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.validate_published_bundle",
+    "scientific_COMPLETE_statuses": [
+      "complete_pass_production_smc",
+      "complete_scientific_fail_production_smc"
+    ],
+    "exact_artifact_tree_no_extra_entry_or_symlink": true,
+    "invalid_provenance_execution_or_postcheck_routes_to_FAILED": true
+  },
+  "authorization": {
+    "wrapper_implementation_authorized": false,
+    "pair_creation_authorized": false,
+    "grant_creation_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "retry_resume_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "next": {
+    "authorized_now": "exact_seven_file_wrapper_implementation_and_fake_tests_only",
+    "pair_or_grant_creation_authorized": false,
+    "production_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

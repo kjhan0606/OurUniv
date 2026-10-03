@@ -1,0 +1,47 @@
+{
+  "schema": "ouruniv-explicit-lg-peak-likelihood-v3-inverse-mapped",
+  "frozen_date": "2026-08-02",
+  "supersedes": "config/p2_lg_peak_likelihood_v2_midk.json",
+  "supersedes_sha256": "f3e522e62de9bcef9bd3fdd7165c80d793d6582e739b6b50fde8e46ce985c1ea",
+  "activation_condition": "The eight v2 peaks were placed at the Lagrangian box centre and yielded zero P2 pairs; an independently computed parent displacement map showed that the box centre flows about 7.8 Mpc/h away from the z=0 observer.",
+  "information_status": "These constraints are an explicit additional MW/M31 morphological likelihood and are not attributed to CF4.",
+  "method": "The v2 Matheron likelihood and N64 long-mode freeze are unchanged, but the protohalo midpoint is placed at the parent-predicted Lagrangian preimage of the z=0 observer.",
+  "lagrangian_origin_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lagrangian_origin_v1/result.json",
+  "lagrangian_origin_result_sha256": "9152b9ed617cfa37621ca3aeae25e9bfdcc2e7d54bb4dbf8d74793af71facfb1",
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "parent_projection_mesh_size": 192,
+  "frozen_mode_mesh_size": 64,
+  "box_size_mpc_h": 384.0,
+  "proposal_seeds": [5101, 5102, 5103, 5104, 5105, 5106, 5107, 5108],
+  "geometry_seeds": [6201, 6202, 6203, 6204, 6205, 6206, 6207, 6208],
+  "likelihood_noise_seeds": [7301, 7302, 7303, 7304, 7305, 7306, 7307, 7308],
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_offset_mpc_h": [0.0, -6.0, 4.0],
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "selection_policy": {
+    "all_eight_proposals_receive_the_same_likelihood": true,
+    "orientation_is_drawn_isotropically_from_the_frozen_geometry_seed": true,
+    "lagrangian_midpoint_is_fixed_from_the_sha_pinned_pre_forward_map": true,
+    "n64_long_mode_coefficients_must_remain_unchanged": true,
+    "repeat_all_five_p1_gates_on_every_n192_projection": true,
+    "no_threshold_retuning_after_forward_results": true,
+    "use_the_existing_P2_FoF_gates_unchanged": true,
+    "definitive_acceptance_still_requires_RAMSSES_HOP_M200c_and_contamination": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v3_inverse",
+    "parent_projection_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v3_inverse",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v3_inverse",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v3_inverse"
+  }
+}

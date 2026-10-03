@@ -1,0 +1,59 @@
+{
+  "schema": "cf4-v3-bgc-n64-validation-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_validation_run": true,
+  "selection_source": "recon/linear_cr/v3_bgc_error_scale_tuning_v1/error_scale_selection.json",
+  "selected_error_scale": 0.9,
+  "reservation_source": "config/v3_bgc_error_scale_tuning_v1.json",
+  "common_model": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "holdout_fraction": 0.2,
+    "holdout_assignment": "SplitMix64 raw catalog index",
+    "split_seed": 20260823,
+    "sample_seeds": [121, 122, 123, 124, 125, 126, 127, 128],
+    "sigma_nl_km_s": 0.0,
+    "delta_h0_prior_km_s_mpc": 3.0
+  },
+  "control": {
+    "velocity_estimator": "wf15",
+    "error_scale": 0.9
+  },
+  "bgc": {
+    "velocity_estimator": "bgc",
+    "error_scale": 0.9,
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "redshift_neighbour_window": 801,
+    "holdout_excluded_from_reference_pool": true
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "each_model_abs_z_mean_max": 0.1,
+    "each_model_z_std_range": [0.9, 1.1],
+    "each_model_coverage_1sigma_range": [0.62, 0.75],
+    "each_model_coverage_2sigma_range": [0.92, 0.98],
+    "each_model_delta_log_score_min": 0.0,
+    "minimum_common_raw_holdout_rows": 3000,
+    "external_local_sheet_gate": {
+      "gaussian_radius_mpc_h": 5.0,
+      "bgc_posterior_mean_delta_min": -0.25,
+      "role": "Separately labelled observer-environment gate."
+    },
+    "policy": {
+      "N192_authorization": "All numerical, WF15 control, BGc calibration, common-holdout, and external Local-Sheet gates must pass.",
+      "P2_authorization": "A pass here authorizes only a fresh N192 BGc validation, not P2 directly."
+    }
+  },
+  "result": {
+    "status": "complete_passed",
+    "z_mean": 0.014117693383639777,
+    "z_std": 1.075193545636336,
+    "coverage_1sigma": 0.6861608268212755,
+    "coverage_2sigma": 0.9427779178220318,
+    "delta_log_score": 455.3907735760804,
+    "observer_delta_R5_posterior_mean": 0.7031213641166687,
+    "verdict": "AUTHORIZE_N192_BGC_VALIDATION"
+  }
+}

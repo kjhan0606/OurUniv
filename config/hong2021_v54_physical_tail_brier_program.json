@@ -1,0 +1,230 @@
+{
+  "schema": "hong2021-v54-physical-tail-brier-bounded-mixture-program-v1",
+  "status": "frozen_before_threshold_selection_model_implementation_training_or_evaluation",
+  "purpose": "Test the V53 common high-backbone diagnosis by retaining the full-information V50 bounded mixture and changing only its train score: add fixed train-only physical-density exceedance Brier terms to the unchanged proper bounded negative log likelihood, require train high-backbone physical-moment calibration before development sampling, and retain all independent-data firewalls.",
+  "parent_evidence": {
+    "v53_record": "config/hong2021_v53_result_record.json",
+    "v53_record_sha256": "74071f649f29de53a20e15f66c999986314d3a3cfd048e14204d935d4d3967fd",
+    "required_status": "complete_common_train_high_backbone_miscalibration_tail_score_model_selected",
+    "required_classification": "risk_choice_does_not_remove_common_train_high_backbone_physical_tail_miscalibration",
+    "required_next": "freeze_a_matched_V50_risk_model_with_a_train_only_multi_threshold_Brier_tail_score_added_to_the_unchanged_bounded_NLL",
+    "required_single_changed_factor_prefix": "add one predeclared train-only multi-threshold",
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v50_program": "config/hong2021_v50_bounded_logit_mixture_copula_program.json",
+    "v50_program_sha256": "f67e8f5a9eacf40eb138774632add896e922e84d944263bb245ff2a71344d85f",
+    "v50_record": "config/hong2021_v50_result_record.json",
+    "v50_record_sha256": "965ecdbccf384d43b58f027ff89f07f3bb68debe9334f4ec517cba0f612dcdce",
+    "v50_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "v50_checkpoint_sha256": "834488cf990e0334573d66ead742d6036f6737f551f406be10b16cdc54e466b4",
+    "v50_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json",
+    "v50_training_report_sha256": "0b1525e49904f8465e922de09d3a85f23d9c238c15e5a39433dd1e70ae688e55",
+    "v50_development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "v50_development_decision_sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "v50_development_decision_digest_sha256": "17dc814404609dbd517cc5a50354720cdf3011fc476849a005d72858bd210dc0",
+    "v52_record": "config/hong2021_v52_result_record.json",
+    "v52_record_sha256": "5a80c4b5bd83a47ef9bcc2776f75b455814a4f91ed111a0d5a61e4f02030d2ba",
+    "v52_development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/development_decision.json",
+    "v52_development_decision_sha256": "1c7bb6abdf2d66e6f4601e38ef5b714a7ef2f1e1579da23beae67423efbb6776",
+    "v52_development_decision_digest_sha256": "be66f2f698baa3848478f08497c5649a57aabf2fa8f0aa00c458286ee8011526",
+    "v53_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v53_v50_v52_domainwise_audit/audit.json",
+    "v53_audit_sha256": "9af8fa5d11109683f9665a4552063bc08605ff0c681bffc044cb12dd134b3392",
+    "v53_audit_decision_digest_sha256": "8f05d402f3d7253bb4b90740b231413412569840949b31d967d34dff96c063df",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "support_selection_decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce"
+  },
+  "single_changed_factor": {
+    "V50_objective": "equal-source mean exact bounded-logit five-component Gaussian-mixture negative log likelihood",
+    "V54_objective": "the identical V50 negative log likelihood plus 0.1 times the arithmetic mean of four fixed normalized physical-density exceedance Brier scores",
+    "all_input_channels_including_structure_risk_unchanged": true,
+    "network_and_support_unchanged": true,
+    "initialization_optimizer_schedule_augmentation_and_seed_unchanged": true,
+    "sampling_and_development_gates_unchanged": true
+  },
+  "train_only_threshold_selection": {
+    "source": "every native 64^3 physical target y in the immutable train split, independently in TNG100, SIMBA, and Swift",
+    "validation_or_development_access": false,
+    "physical_coordinate": "log10rho=4.5*y",
+    "quantile_probabilities": [
+      0.99,
+      0.999,
+      0.9999,
+      0.99999
+    ],
+    "per_domain_rule": "exact NumPy linear empirical quantile of every finite native train log10rho value",
+    "common_threshold_rule": "at each probability use the exact median of the three per-domain train quantiles",
+    "nominal_exceedance_probabilities": [
+      0.01,
+      0.001,
+      0.0001,
+      0.00001
+    ],
+    "normalized_Brier_weight": "one divided by q times (1-q) for each fixed quantile probability q",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "changed_after_selection": false
+  },
+  "proper_tail_score": {
+    "event": "observed physical log10rho strictly exceeds the fixed common train-only threshold",
+    "prediction": "P_model(log10rho exceeds threshold | all seven unchanged V50 condition fields), computed by the analytic bounded-mixture CDF at the voxelwise residual threshold",
+    "outside_support_rule": "probability is exactly one when the physical threshold maps at or below the lower residual support and exactly zero when it maps at or above the upper residual support; the observed event is then necessarily identical because every train target is strictly inside support",
+    "per_threshold_score": "(predicted exceedance probability - binary observed event)^2 divided by q times (1-q)",
+    "tail_score": "arithmetic mean over the four fixed thresholds and all batch voxels",
+    "coefficient": 0.1,
+    "composite": "mean bounded NLL + 0.1*tail_score",
+    "properness": "each fixed-threshold Brier score is proper for its exceedance event and the unchanged bounded NLL is strictly proper for the full conditional density; their positive fixed sum remains strictly proper",
+    "development_tuned_weight_or_threshold": false
+  },
+  "likelihood_and_network": {
+    "likelihood": "unchanged V50 five-component Gaussian mixture in latent x=logit((z-lower)/(upper-lower)) with exact Jacobian",
+    "open_standardized_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "architecture": "unchanged V50 seven-channel three-dimensional residual U-Net",
+    "parameters": 8490415,
+    "structure_risk_channel": "unchanged observed train-only cached V41 full extreme-structure block probability",
+    "density_or_residual_clipping": false,
+    "component_scale_cap": false
+  },
+  "training": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "source_balance_per_step": {
+      "TNG100": 1,
+      "SIMBA": 1,
+      "Swift": 1
+    },
+    "batch": 3,
+    "steps": 12000,
+    "checkpoint": 12000,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "minimum_learning_rate": 0.00002,
+    "schedule": "cosine over exactly 12000 optimizer steps",
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "EMA_decay": 0.999,
+    "mixed_precision": "unchanged CUDA autocast plus GradScaler; bounded NLL and analytic CDF score remain float32 or safer",
+    "augmentation": "the same uniformly selected 48 signed cube isometries applied jointly to all seven conditions, physical backbone, and target",
+    "seed": 144044,
+    "validation": "fixed diagnostic NLL, tail Brier score, and composite score at steps 4000, 8000, and 12000; never used for stopping, threshold selection, checkpoint selection, or hyperparameter change",
+    "checkpoint_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.pt",
+    "report_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.json"
+  },
+  "train_mechanism_gate": {
+    "timing": "after the fixed step-12000 checkpoint and before any V54 development sample",
+    "population": "the identical V53 seed-146046 train-only 4096-voxel probe per object for 432 TNG100, 202 SIMBA, and 409 Swift objects",
+    "primary": "64-point Gauss-Hermite quadrature of the V54 bounded mixture in the domainwise q99.9-and-above query-backbone stratum",
+    "control": "32-point Gauss-Hermite quadrature",
+    "pass": "V54 quadrature-over-truth mean delta squared is independently within [2/3,1.5] in the q99.9-and-above backbone stratum of TNG100, SIMBA, and Swift, with every aggregate 32-to-64 relative difference at most 0.005",
+    "comparison": "also report strict improvement relative to sealed V50 and V52 at every backbone stratum without using it as a substitute for the absolute pass",
+    "failure_action": "seal failure and do not create any V54 development sample"
+  },
+  "sampling_if_train_mechanism_passes": {
+    "candidate": "same-voxel monotone bounded-mixture CDF inversion of the unchanged paired V31 donor conditional-rank field using actual V54 query-local parameters",
+    "inverse": "unchanged 28-step latent Gaussian-mixture inverse at rank epsilon 1e-7 followed by the exact frozen sigmoid support transform",
+    "post_sample": "undo immutable V45 standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "spatial_rank_permutation": false,
+    "global_residual_scale": 1.0,
+    "object_amplitude_post_calibration": false,
+    "sample_clipping": false,
+    "posthoc_Fourier_Ak": false,
+    "ensemble_members": 16,
+    "seeds_donor_objects_donor_isometries_and_member_pairing": "identical to V50 and V52",
+    "control": "periodically roll all 15 V54 latent parameter fields by (16,8,4) native voxels while retaining the query, backbone, and donor rank"
+  },
+  "development_evaluation_if_train_mechanism_passes": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "primary_pass": "candidate passes field, Q3, and Q4 independently in every domain",
+    "sealed_references": "V50 full-risk and V52 no-risk decisions and artifact hashes only; neither is resampled",
+    "selection_role": "only the V54 query-local candidate can be selected"
+  },
+  "fixed_branches": [
+    {
+      "condition": "the train mechanism gate fails in any domain",
+      "classification": "proper_exceedance_tail_score_does_not_calibrate_train_high_backbone_physical_moments",
+      "next": "stop_before_development_sampling_and_audit_which_fixed_threshold_or_beyond_threshold_amplitudes_dominate_the_remaining_train_moment"
+    },
+    {
+      "condition": "the train mechanism gate passes and the development primary_pass holds",
+      "classification": "train_only_proper_tail_score_is_development_sufficient",
+      "next": "seal_V54_and_await_explicit_approval_before_independent_EAGLE_gate"
+    },
+    {
+      "condition": "the train mechanism gate passes, Q3 and Q4 pass every development domain, but any field check fails",
+      "classification": "proper_tail_marginal_is_calibrated_but_empirical_rank_copula_limits_morphology",
+      "next": "audit_only_conditional_rank_copula_dependence_without_changing_the_V54_likelihood_or_score"
+    },
+    {
+      "condition": "the train mechanism gate passes and V54 strictly improves absolute q99.999 error, maximum excess, and absolute log mean-delta-squared ratio over both sealed references in every domain but primary_pass is false",
+      "classification": "proper_tail_score_improves_all_extremes_but_is_not_development_sufficient",
+      "next": "seal_the_score_effect_and_audit_only_the_remaining_failed_field_or_absolute_extreme_threshold"
+    },
+    {
+      "condition": "the train mechanism gate passes but V50 or V52 equals or improves V54 in all three extreme comparisons in every domain",
+      "classification": "proper_tail_score_does_not_transfer_from_train_mechanism_to_development",
+      "next": "stop_tail_score_training_and_reassess_train_to_development_condition_shift"
+    },
+    {
+      "condition": "the train mechanism gate passes and the rolled parameter control equals or improves candidate Q3 and Q4 jointly in every domain",
+      "classification": "V54_query_local_tail_parameters_are_not_causal",
+      "next": "stop_local_neural_likelihoods_and_reassess_the_observable_information_ceiling"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "V54_proper_tail_score_result_is_mixed_or_not_a_common_domain_repair",
+      "next": "seal_train_and_development_evidence_before_selecting_any_further_model"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree on Lageunha",
+    "exact V53 result and audit, V50 and V52 records and decisions, immutable support, conditioning cache, and all canonical digests",
+    "threshold artifact is created once from only the complete immutable train targets with exact object and voxel counts and is never overwritten",
+    "all four common thresholds equal the median of the three exact per-domain quantiles and are strictly increasing and finite",
+    "analytic bounded exceedance probabilities implement exact outside-support constants, stay in [0,1], and have finite nonzero gradients on real interior train voxels",
+    "the composite score equals bounded NLL plus exactly 0.1 times the mean of the four q(1-q)-normalized Brier scores",
+    "same-seed V54 initial parameters and output biases exactly equal V50, all 8490415 parameters remain trainable, and only the objective graph differs",
+    "one real source-balanced GPU step is finite with peak allocated memory below 24 GiB",
+    "one real paired-donor sample remains strictly within support before DC projection, preserves ranks, and has residual DC below 1e-7",
+    "no validation selection, no development access before train mechanism pass, and no Astrid or historical EAGLE access"
+  ],
+  "output_roots": {
+    "threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_physical_tail_brier_sequence",
+    "train_mechanism": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_train_high_backbone_gate",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_e28_physical_tail_brier"
+  },
+  "firewall": {
+    "structure_risk_changed": false,
+    "support_changed": false,
+    "development_threshold_changed": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "development_access_before_train_mechanism_pass": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

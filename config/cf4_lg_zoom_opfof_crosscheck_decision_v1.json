@@ -1,0 +1,22 @@
+{
+  "decision": "OPFOF_CROSSCHECK_INCONCLUSIVE_INPUT_COMPLETENESS",
+  "stage": 8,
+  "jobs": {
+    "initial_memory_failure": 391029,
+    "nfile64_retry": 391038,
+    "summary": 391048
+  },
+  "settings": {
+    "nfile": 64,
+    "mpi_ranks": 8,
+    "opfof_nx": 512,
+    "finest_particle_only": true
+  },
+  "result": {
+    "halo_count": 449,
+    "max_mass_msun_h": 114732637212.56686,
+    "mass_ge_5e11": 0,
+    "local_r8_count": 185
+  },
+  "interpretation": "nfile=64 made OPFoF execution memory-safe, but the current finest-particle-only input omits coarse multi-mass particles and is incomplete for MW/M31 mass validation. Treat this as an implementation/input-contract result, not a scientific no-go. Multi-mass OPFoF support is deferred; validated multi-mass HOP remains the structure gate."
+}

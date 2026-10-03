@@ -1,0 +1,66 @@
+{
+  "schema": "hong2021-v69-train-only-pair-estimator-rank-convergence-result-record-v1",
+  "status": "complete_no_refit_pair_objective_closed_selected_joint_spatial_model_preflight",
+  "program": "config/hong2021_v69_pair_estimator_rank_convergence_program.json",
+  "program_sha256": "ce8d61cd4a82623b0c755c2379d33f71b08d7eea60289e833a9d54d88ac2e940",
+  "code_commit": "0c739e6188634ec5bbe644bd2f72b54f37537377",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v69_pair_estimator_rank_convergence/audit.json",
+    "sha256": "e48e045c1cff0f9e6e9d045dd64aca61c6c01735770e9dd53d9f430d41ad8bfb",
+    "decision_digest_sha256": "4ef1824b9a04290566bdeab6f9aaa60636c8eddfb7117aac9f3bab9003315756",
+    "classification": "rank64_population_pair_estimator_is_not_train_only_reproducible",
+    "next": "stop_pair_objective_design_and_use_non_pair_training_evidence_only",
+    "candidate_selected": false
+  },
+  "rank_convergence": {
+    "tolerance_ln_1_1": 0.09531017980432493,
+    "adjacent_convergence_pass": false,
+    "independent_stream_convergence_pass": false,
+    "rank64_estimator_selected": false,
+    "rank32_to_rank64_maximum_absolute_log_ratio_difference": {
+      "stream_A": 0.0769392418709805,
+      "stream_B": 0.21859037864731468
+    },
+    "rank64_stream_A_to_B_maximum_absolute_log_ratio_difference": 0.3055097740937179
+  },
+  "numerical_and_resource_integrity": {
+    "maximum_inverse_CDF_error": 8.344650268554688e-07,
+    "numerical_pass": true,
+    "peak_allocated_bytes": 1164710912,
+    "peak_allocated_bytes_limit": 30064771072,
+    "memory_pass": true,
+    "pytest_passed": 517,
+    "pytest_log_sha256": "0a913901274fb97b781455f807b6bb34805ae789668291cfba521e9fcdfc491f",
+    "audit_log_sha256": "e48e045c1cff0f9e6e9d045dd64aca61c6c01735770e9dd53d9f430d41ad8bfb",
+    "sequence_status": "complete_no_refit_train_only_pair_estimator_rank_convergence_audit",
+    "sequence_status_sha256": "48e5359e3edde3306986ca80c06367e241f8fb8629f98e56532a6150820b6705"
+  },
+  "scientific_conclusion": [
+    "The stream-A 32-to-64 change is below ten percent, but stream B fails the same frozen criterion. Convergence is not reproducible across donor streams.",
+    "The two independent rank64 population estimators differ by as much as 0.306 in natural-log pair ratio, more than three times the frozen tolerance. Increasing to 64 ranks does not define a stable pair objective.",
+    "No empirical-rank pair estimator or pair-loss model is selected. Increasing rank count further, choosing a favorable stream, or relaxing the tolerance after seeing this result would be post-hoc tuning.",
+    "The remaining scientifically defensible model class must learn query-aligned joint spatial structure through its train-only likelihood or score objective, rather than optimizing a noisy downstream pair statistic."
+  ],
+  "selected_next_step": {
+    "action": "freeze a train-only query-aligned joint spatial likelihood model preflight with no pair loss",
+    "required_constraints": [
+      "retain the sealed V63 bounded marginal and extreme calibration evidence",
+      "replace empirical donor-rank transport with a query-aligned multiscale stochastic residual field",
+      "use only train density fields and target-free CF4-compatible conditioning",
+      "predeclare spectral and phase-sensitive train-only mechanism gates before any development access",
+      "do not use 2PCF, validation, historical EAGLE, or independent EAGLE for fitting or model selection"
+    ]
+  },
+  "firewall": {
+    "gradient_computed": false,
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "posthoc_rank_seed_tolerance_or_metric_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

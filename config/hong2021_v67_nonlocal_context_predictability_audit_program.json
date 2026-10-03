@@ -1,0 +1,189 @@
+{
+  "schema": "hong2021-v67-train-only-target-free-nonlocal-context-predictability-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Test whether target-free global observable context predicts the sign and amplitude of the dominant object-specific V65 sub-Mpc pair correction across simulation domains before introducing a nonlocal conditioning head.",
+  "parent_evidence": {
+    "v66_result_record": "config/hong2021_v66_result_record.json",
+    "v66_result_record_sha256": "ee56d350e0bf1b7f20b0e5be88172cce75a23ac2eaad113cb06f842e96f2cef4",
+    "required_status": "complete_no_refit_audit_selected_train_only_nonlocal_context_predictability",
+    "required_classification": "final_output_layer_features_do_not_resolve_object_level_pair_gradient_conflict",
+    "required_candidate_selected": false,
+    "required_conditional_routing_supported": false,
+    "required_first_singular_direction_squared_norm_fraction_minimum": 0.8,
+    "required_training_or_refit_performed": false,
+    "required_new_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v66_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v66_conditional_gradient_routing_audit/audit.json",
+    "v66_audit_sha256": "44f6f9cf2050338c2125f0884d0db8e43ba33127ce2d63d8cde234aae092e748",
+    "v66_audit_decision_digest_sha256": "fcd74439c3945578a2f5c2de6eb3d8ad4dd46ead5de18f8163f53361cc59c1c7",
+    "v65_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+    "v65_audit_sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "v65_audit_decision_digest_sha256": "e80016232d9efa9495a9ab8e45fdc62a4a04805b64e15a97820a25932234a47d",
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153"
+  },
+  "immutable_train_queries": {
+    "objects_per_domain": 16,
+    "TNG100": [
+      32,
+      35,
+      79,
+      94,
+      98,
+      103,
+      122,
+      135,
+      149,
+      215,
+      303,
+      316,
+      323,
+      347,
+      399,
+      416
+    ],
+    "SIMBA": [
+      5,
+      15,
+      43,
+      50,
+      70,
+      100,
+      102,
+      107,
+      109,
+      127,
+      155,
+      164,
+      171,
+      186,
+      199,
+      201
+    ],
+    "Swift": [
+      12,
+      36,
+      38,
+      57,
+      69,
+      178,
+      198,
+      201,
+      218,
+      269,
+      283,
+      288,
+      292,
+      305,
+      339,
+      406
+    ]
+  },
+  "response": {
+    "source": "the sealed V65 source_balanced control for the corresponding immutable train query",
+    "definition": "arithmetic mean of the three signed natural-log predicted-pair-mean over truth-pair-mean ratios at 0.3125, 0.625, and 0.9375 Mpc/h",
+    "truth_use": "response only; never a predictor, standardizer, feature selector, ridge-hyperparameter selector, stopping signal, or density-model input"
+  },
+  "target_free_predictors": {
+    "components": 33,
+    "ordered_blocks": [
+      {
+        "name": "sealed_observable_context",
+        "components": 8,
+        "source": "train cache observable_context_features for the query object"
+      },
+      {
+        "name": "log_backbone_auto_power",
+        "components": 8,
+        "source": "mean-subtracted corrected backbone on the eight sealed V35 Fourier bands"
+      },
+      {
+        "name": "log_count_auto_power",
+        "components": 8,
+        "source": "mean-subtracted raw galaxy-count input on the eight sealed V35 Fourier bands"
+      },
+      {
+        "name": "log_radial_velocity_auto_power",
+        "components": 8,
+        "source": "mean-subtracted mean radial-velocity input on the eight sealed V35 Fourier bands"
+      },
+      {
+        "name": "sealed_object_amplitude",
+        "components": 1,
+        "source": "V45 train conditioning cache target-free object_amplitude for the query object"
+      }
+    ],
+    "simulation_identity": "forbidden",
+    "density_target_or_residual": "forbidden",
+    "feature_selection_after_response_access": "forbidden"
+  },
+  "fixed_probe": {
+    "learner": "sklearn.linear_model.Ridge",
+    "alpha": 10.0,
+    "fit_intercept": true,
+    "solver": "svd",
+    "feature_standardization": "within each training fold only; training mean and population standard deviation with values below 1e-12 replaced by one",
+    "cross_validation": "three leave-one-simulation-domain-out folds; train on 32 objects from two domains and predict all 16 objects in the held domain",
+    "constant_reference": "the mean response of the two training domains in the fold",
+    "probe_artifact_saved_or_reused": false,
+    "density_model_training_or_refit": false
+  },
+  "metrics": {
+    "per_held_domain": [
+      "Ridge and constant-reference RMSE",
+      "Ridge and constant-reference mean absolute error",
+      "Pearson predicted-versus-response correlation",
+      "zero-threshold response-sign accuracy"
+    ],
+    "pooled": [
+      "RMSE and relative RMSE improvement over the foldwise constant reference",
+      "Pearson predicted-versus-response correlation",
+      "zero-threshold response-sign accuracy"
+    ]
+  },
+  "permutation_control": {
+    "seed": 167067,
+    "replicates": 256,
+    "operation": "independently permute the 16 responses within each domain, then repeat the identical three leave-one-domain-out ridge calculation",
+    "statistics": [
+      "pooled Pearson correlation",
+      "pooled relative RMSE improvement over the foldwise constant reference"
+    ],
+    "one_sided_p_value": "(one plus the number of permutation statistics at least the observed statistic) divided by 257"
+  },
+  "selection_rules": {
+    "cross_domain_predictive": "in every held domain Ridge RMSE is strictly below its constant reference, Pearson correlation is strictly positive, and sign accuracy is at least 0.625; pooled Pearson is at least 0.5 and pooled sign accuracy is at least two thirds",
+    "permutation_significant": "both one-sided 256-replicate permutation p-values are at most 0.05",
+    "select_nonlocal_context_head": "cross-domain predictability, permutation significance, exact feature/query/response provenance, numerical integrity, and all firewalls pass",
+    "no_model_selected": "any required condition fails"
+  },
+  "authorized_if_selected": {
+    "future_architecture_scope": "a target-free 33-component global-context scalar head that modulates one nonlocal pair-correction direction",
+    "authorization_is_not_training": true,
+    "a_new_model_program_must_be_frozen_before_any_refit": true
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "cpu_threads": 16,
+    "gpu_required": false,
+    "density_model_training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v67_nonlocal_context_predictability_audit/audit.json",
+  "firewall": {
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "development_rank_or_selection_access": "forbidden",
+    "simulation_identity_predictor": "forbidden",
+    "truth_derived_predictor": "forbidden",
+    "posthoc_feature_alpha_threshold_or_metric_tuning": "forbidden",
+    "V63_or_density_model_training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

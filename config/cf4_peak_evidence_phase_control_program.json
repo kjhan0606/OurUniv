@@ -1,0 +1,91 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-phase-control-program-v1",
+  "status": "frozen_before_exact_N576_phase_cache_control",
+  "frozen_date": "2026-08-16",
+  "purpose": "Validate at N576/N192 that the exact 27-phase Q=I-R*R covariance cache is finite, positive-semidefinite, coarse-translation equivariant, memory-bounded, and capable of normalized peak-evidence evaluation for independent CF4 parents.",
+  "authorization": {
+    "architecture_design": "config/cf4_independent_parent_architecture_design.json",
+    "architecture_design_sha256": "b17e6ec0ec67cc7329614e98a989a447be5ec43edd1f6a370c481e19f9cd132b",
+    "required_status": "design_frozen_before_peak_evidence_implementation"
+  },
+  "implementation": {
+    "path": "src/cf4_peak_evidence_phase_control.py",
+    "sha256": "2e16f2a9b74be84e94c5693257a90d55c78a910710dc5b81b00b7f395ca990b2"
+  },
+  "phase_cache": {
+    "path": "src/cf4_peak_evidence_phase_cache.py",
+    "sha256": "5383427692d6a0318423828d5aa1e50c6ffd1008f421b14ab4505aa62b1b9cfa"
+  },
+  "projection_contract": {
+    "path": "src/cf4_projection_contract.py",
+    "sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f"
+  },
+  "peak_geometry_implementation": {
+    "path": "src/cf4_lg_peak_cr.py",
+    "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"
+  },
+  "Local_Group_model": {
+    "source_program": "config/p2_lg_z0_forward_importance_v8.json",
+    "source_program_sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+    "policy": "Use the unchanged peak filter, fourteen targets, likelihood sigma, midpoint defensive proposal, and geometry construction."
+  },
+  "information_firewall": {
+    "numerical_engineering_control_only": true,
+    "CF4_catalog_or_velocity_operator_read": false,
+    "two_reference_parents_used_for_finite_evidence_only": true,
+    "all_parent_weights_computed": false,
+    "candidate_field_generated": false,
+    "PM_or_halo_finder_run": false,
+    "threshold_retuning_after_result": false,
+    "parent_or_seed_selection_allowed": false,
+    "RAMSES_authorized": false
+  },
+  "mesh": {
+    "coarse_N": 192,
+    "fine_N": 576,
+    "refinement_ratio": 3,
+    "phase_count": 27,
+    "box_size_mpc_h": 384.0
+  },
+  "parent_controls": [
+    {
+      "parent_seed": 3193,
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3193.npz",
+      "sha256": "0dd7683aaad2e22681cf9b1b7cd44be20848e2056556f76d52177434c89798a2"
+    },
+    {
+      "parent_seed": 3429,
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+      "sha256": "5db9b43a00f71ff9bbf291e9979df57b26fa0bd6b3de7d5b3f9e87b51c9bc463"
+    }
+  ],
+  "geometry_controls": [
+    {"midpoint_seed": 8569, "axis_seed": 6369},
+    {"midpoint_seed": 8570, "axis_seed": 6370}
+  ],
+  "coarse_translation_control": {
+    "source_geometry_index": 0,
+    "fine_cell_shift": [3, 6, 9],
+    "reason": "Q must commute exactly with translations by integer N192 cells, i.e. multiples of three N576 cells."
+  },
+  "gates": {
+    "covariance_asymmetry_max": 1e-8,
+    "signal_minimum_eigenvalue_min": -1e-6,
+    "observation_condition_number_max": 100000000.0,
+    "coarse_translation_relative_error_max": 1e-10,
+    "all_normalized_log_evidence_and_terms_finite": true,
+    "phase_count_used_le_27": true,
+    "response_grids_held_simultaneously": 1,
+    "pass_requires_all": true
+  },
+  "decision": {
+    "pass": "Authorize freezing the all-256-parent evidence-only feasibility program. Candidate generation and PM/RAMSES remain forbidden.",
+    "fail": "Do not run the all-parent audit. Repair the exact phase-cache implementation without substituting the rejected stationary approximation."
+  },
+  "storage": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control",
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control/result.json",
+    "density_filter_rfft": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control/density_filter_rfft.npy",
+    "write_policy": "exclusive create; derived filter and scalar/matrix result only"
+  }
+}

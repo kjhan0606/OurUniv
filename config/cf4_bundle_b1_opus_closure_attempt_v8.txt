@@ -1,0 +1,12 @@
+VERDICT: NO-GO
+
+- Hashes match the record exactly: source `0ce2c27…` / 22365 B, test `676a5b5…` / 1734 B, result `59f6bd5…` / 8738 B — the audited artifacts are the ones that produced the result.
+- Seed firewall is clean: all 64 truth seeds distinct in [2026083000, 2026083064), auxiliary counts/marks/posterior streams each 64 distinct values in their declared dev windows; contaminated [2026083064, 2026083128) quarantined, validation [2026083320, 2026083576) sealed, `validation_opened=false` in all three files.
+- Grouped mark Fisher is exact, not approximate: `_single_group_mark_fisher` implements the Sherman-Morrison form of J^T(σ²I+τ²11^T)⁻¹J and `_mark_fisher` sums it per unique group (src/cf4_b1_integrated_joint_calibration_v3.py:247-265); the vector objective uses the matching grouped quadratic + logdet, and canonical-vs-vectorized agreement is ≤7.57e-10 over all 64 members.
+- The 17,007 exclusion probe passes but is weak as evidence: it re-counts unique non-unmatched `twompp_recno` from the CSV and intersects against a deliberately empty identity set (src:97-113), so `overlap_count=0` is tautological — it proves the synthetic count grid carries no identity, not that a real disjoint tracer is clean.
+- Optimizer convergence is unambiguous: 64/64 `fit_success`, 0 abnormal terminations, and the retry branch cannot launder a non-converged fit into a pass (`fit_success` is still `retry.success`-derived only when true).
+- Failure histogram is entirely coverage: coverage68 fails 50/64, coverage95 fails 49/64, with zero failures on response, correlation, residual power, held-out gain, convergence, or factor consistency; A/C over-cover (median coverage68 ≈0.81), D under-covers (median 0.52).
+- The strict gate requires 64/64 and returns 11/64 → `strict_low_k_gate_pass=false`; promotion is blocked, and both `scientific_disposition` blocks correctly mark the observational posterior NOT_CREATED and frontier promotion NOT_ALLOWED.
+- Root cause is the posterior width, not the mean model: draws come from `pinv(prior + count Fisher + mark Fisher)` at the MAP (src:337-339), an expected-information Laplace width with no model-discrepancy term, which is exactly the quantity mis-scaled in both directions across arms.
+
+NEXT: Recalibrate only the declared posterior-width/stress-arm variance model on the same 64 development seeds with the mean model and gate frozen, then re-audit before any validation opening or B2.

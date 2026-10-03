@@ -1,0 +1,89 @@
+{
+  "schema": "hong2021-v71-tail-preserving-copula-feasibility-audit-v1",
+  "status": "complete_code_only_no_candidate_or_followup_authorized",
+  "purpose": "Determine whether a statistically fresh train-only V71 gate exists and whether ensemble-copula coupling can preserve the V63 one-point marginal by construction, without implementing a candidate or opening development/EAGLE.",
+  "audit_base_commit": "c79ad2a77260a603aa5e4a3e291ce7c3e729b09e",
+  "bound_evidence": {
+    "v70_result_record": "config/hong2021_v70_result_record.json",
+    "v70_result_record_sha256": "469c1ff221c604d8b615026a4a9ee758125c5c862a9f6c37f3c6f174eb43f68b",
+    "v70_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v70_train_gate_program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "v70_train_gate_program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728",
+    "v70_development_program": "config/hong2021_v70_locked_development_program.json",
+    "v70_development_program_sha256": "5417fceb29b42108b3f75cc00f0c2c3d9a8f3cc1977b778dbb9386cce1caa7fd",
+    "v70_cache_record": "config/hong2021_v70_latent_cache_result_record.json",
+    "v70_cache_record_sha256": "3419206ce239546d7a2742ead01f20c9e6495c311dda0e4b82da6944a799ef76"
+  },
+  "train_partition_exhaustion": {
+    "TNG100": {
+      "total_objects": 432,
+      "used_by_V70_fit": 416,
+      "consumed_by_V70_train_gate": 16,
+      "untouched_objects_remaining": 0
+    },
+    "SIMBA": {
+      "total_objects": 202,
+      "used_by_V70_fit": 186,
+      "consumed_by_V70_train_gate": 16,
+      "untouched_objects_remaining": 0
+    },
+    "Swift": {
+      "total_objects": 409,
+      "used_by_V70_fit": 393,
+      "consumed_by_V70_train_gate": 16,
+      "untouched_objects_remaining": 0
+    },
+    "fit_and_holdout_partition_disjoint_and_complete": true,
+    "fresh_internal_train_only_gate_available": false
+  },
+  "invalid_followup_routes": {
+    "reuse_the_V70_sixteen_query_gate": "invalid for V71 selection because its TNG100 tail outcome informed the proposed marginal-preserving change",
+    "select_new_queries_from_V70_fit_objects": "invalid because their target fields contributed to V70 optimization",
+    "use_signed_isometries_as_new_objects": "invalid because augmentation does not create independent target realizations",
+    "open_V70_development_under_the_rejected_V70_program": "forbidden by the sealed V70 branch"
+  },
+  "ensemble_copula_coupling_property": {
+    "candidate_rank_source": "for each query, voxel, and fixed ensemble, rank the V70 spatial-score latent samples across members",
+    "marginal_value_source": "at the identical query and voxel, sort the paired independent standard-normal V63-control latent values across members",
+    "coupling": "assign the sorted marginal values according to the candidate member ranks",
+    "exact_finite_ensemble_invariant": "the coupled and independent-control latent multisets are identical separately at every query and voxel",
+    "one_point_consequence": "any statistic pooled over members at a fixed conditioning-defined voxel mask is exactly identical to the independent V63-control statistic before floating-point roundoff",
+    "joint_structure_consequence": "the empirical cross-voxel member-rank copula is inherited from the V70 spatial candidate",
+    "training_required": false,
+    "guarantees_field_or_phase_gate_pass": false,
+    "reason_not_yet_a_candidate": "The construction is mathematically feasible but has not been implemented, sampled, or evaluated, and no statistically valid automatic selection gate remains in the consumed train partition."
+  },
+  "statistically_valid_next_paths": {
+    "path_A": {
+      "description": "obtain genuinely new untouched simulation objects, freeze a V71 program and fresh train-only gate, then retain the current development and EAGLE seals",
+      "requires_new_external_data": true,
+      "preserves_train_only_screening": true
+    },
+    "path_B": {
+      "description": "with explicit approval, freeze V71 ECC and a new single-use development program before opening the still-unseen development selections; use the consumed V70 gate only as model-development evidence, never as V71 selection evidence",
+      "requires_new_external_data": false,
+      "preserves_independent_development_test": true,
+      "has_no_fresh_train_only_screen": true,
+      "EAGLE_remains_locked_until_development_pass": true
+    },
+    "recommended_given_current_assets": "path_B"
+  },
+  "authorization": {
+    "V71_program_frozen": false,
+    "V71_code_implemented": false,
+    "V71_sampling_or_evaluation_performed": false,
+    "development_access_authorized": false,
+    "independent_EAGLE_access_authorized": false,
+    "explicit_user_scope_decision_required": true
+  },
+  "firewall": {
+    "target_payload_read_by_this_audit": false,
+    "development_payload_or_metric_read": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "model_sampler_seed_member_metric_or_threshold_changed": false,
+    "independent_gate_locked": true
+  }
+}

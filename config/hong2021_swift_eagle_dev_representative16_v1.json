@@ -1,0 +1,270 @@
+{
+  "schema": "hong2021-observable-context-representatives-v1",
+  "selection_uses_density_truth": false,
+  "selection_uses_simulation_label": false,
+  "algorithm": "deterministic farthest-point selection in standardized observable context space; source index zero anchor; smallest-index tie break",
+  "source_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+  "source_data_schema": "hong2021-camels-raw-cic-input-v14",
+  "source_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/swift_eagle_validation.h5",
+  "feature_fit_checkpoint": null,
+  "feature_fit_caches": [
+    {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/tng_train.h5",
+      "domain": "TNG100",
+      "samples": 432
+    },
+    {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/simba_train.h5",
+      "domain": "CAMELS-SIMBA",
+      "samples": 202
+    },
+    {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/swift_eagle_train.h5",
+      "domain": "CAMELS-Swift-EAGLE",
+      "samples": 409
+    }
+  ],
+  "feature_fit": {
+    "feature_names": [
+      "log1p_occupied_cells",
+      "log1p_standardized_count_sum",
+      "occupied_standardized_count_mean",
+      "occupied_standardized_count_std",
+      "occupied_standardized_velocity_mean",
+      "occupied_standardized_velocity_std",
+      "deterministic_mean_cube_mean",
+      "deterministic_mean_cube_std"
+    ],
+    "mean": [
+      6.471270358680147,
+      6.093568623646732,
+      0.6879933877383952,
+      0.5576116721400312,
+      0.1781722699528091,
+      0.5744420937111028,
+      -0.17652210341001476,
+      0.08537109690457607
+    ],
+    "std": [
+      0.29254184430336,
+      0.35763381889515256,
+      0.06734760912773909,
+      0.28811698312321,
+      0.2372672811121582,
+      0.34185222133133697,
+      0.01385341110033174,
+      0.01269673729027526
+    ],
+    "sources": [
+      {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/tng_train.h5",
+        "domain": "TNG100",
+        "samples": 432
+      },
+      {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/simba_train.h5",
+        "domain": "CAMELS-SIMBA",
+        "samples": 202
+      },
+      {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit/swift_eagle_train.h5",
+        "domain": "CAMELS-Swift-EAGLE",
+        "samples": 409
+      }
+    ],
+    "weighting": "equal 0.3333333333333333 per development source",
+    "uses_density_truth": false
+  },
+  "feature_names": [
+    "log1p_occupied_cells",
+    "log1p_standardized_count_sum",
+    "occupied_standardized_count_mean",
+    "occupied_standardized_count_std",
+    "occupied_standardized_velocity_mean",
+    "occupied_standardized_velocity_std",
+    "deterministic_mean_cube_mean",
+    "deterministic_mean_cube_std"
+  ],
+  "samples": 148,
+  "representatives": 16,
+  "indices": [
+    0,
+    87,
+    80,
+    121,
+    61,
+    48,
+    76,
+    27,
+    88,
+    36,
+    101,
+    89,
+    106,
+    67,
+    29,
+    49
+  ],
+  "standardized_features": [
+    [
+      -0.5827690760429355,
+      -0.5774578938305768,
+      -0.40744621505439027,
+      -0.5561966754460694,
+      0.6052330666279399,
+      0.7742787304872474,
+      -0.35452499840360296,
+      -0.4629851859250309
+    ],
+    [
+      0.660209148519571,
+      0.409324354669351,
+      -0.5094043094989205,
+      -0.3971654032850309,
+      -3.4756625196124435,
+      5.921116562845024,
+      0.8390158171403822,
+      0.35002101096650773
+    ],
+    [
+      -2.126005792247107,
+      -2.080790214593261,
+      -1.2257253488038138,
+      -1.0466042385802272,
+      1.0181724821959222,
+      -0.6463447644911516,
+      -1.9029531180003207,
+      -1.758421910600768
+    ],
+    [
+      0.2630353461128548,
+      0.10251212610389708,
+      -0.44714068910395166,
+      -0.4942711827078156,
+      -2.470486757645617,
+      1.0589255442964125,
+      0.22459161231271946,
+      0.20584515638828663
+    ],
+    [
+      1.0277678565522717,
+      0.7142966138483716,
+      -0.4937295457279503,
+      -0.6264232962550504,
+      -0.009009043264972202,
+      -0.4507852618779085,
+      1.049599666411848,
+      0.7393053246601514
+    ],
+    [
+      0.4021850511937803,
+      0.13125964780019303,
+      -0.7402112455178526,
+      -0.746019969111051,
+      0.7246420549467774,
+      3.253233834422083,
+      0.390415220494918,
+      0.1397714513983457
+    ],
+    [
+      -1.5892324104654905,
+      -1.5406578680277179,
+      -0.8909787364938606,
+      -0.747554682727975,
+      -0.3546941637368873,
+      0.13426639932057088,
+      -1.2918526135779602,
+      -1.024241987633267
+    ],
+    [
+      0.050900056751820515,
+      -0.21685456024609015,
+      -0.9451761947856945,
+      -0.9334876630457496,
+      0.6419336649180903,
+      -0.8858100342251023,
+      0.2555837740531627,
+      -0.35313658044982726
+    ],
+    [
+      0.6514773492702122,
+      0.4064457358973876,
+      -0.4945800594190972,
+      -0.3425514446852329,
+      0.3084503092219884,
+      1.2957435376192274,
+      0.27859260103368605,
+      0.23524730374899452
+    ],
+    [
+      -0.9744302883691344,
+      -1.0346129543125762,
+      -0.8782148359176689,
+      -0.8928071497745561,
+      0.8493847994073767,
+      -0.8486545342622105,
+      -0.8649345906444958,
+      -0.9743695377372643
+    ],
+    [
+      0.27281522206882886,
+      0.10572140604095864,
+      -0.4638810288209581,
+      -0.42855271203473777,
+      -2.4427625051758053,
+      2.8282639350299945,
+      0.4073392017819805,
+      0.3791285793834959
+    ],
+    [
+      0.11797859595452088,
+      -0.03232429714292422,
+      -0.5039507555292565,
+      -0.22049532007553554,
+      -0.6716099382184081,
+      -0.339350495132013,
+      -0.06440037321910143,
+      0.08937145873261414
+    ],
+    [
+      0.7121337699284895,
+      0.5550632631863645,
+      -0.1434364989760761,
+      -0.41457261604621326,
+      -1.121620255859167,
+      0.5951918674194463,
+      0.5365300382155144,
+      0.5869029716516386
+    ],
+    [
+      -0.2427439787849539,
+      -0.28978001357287964,
+      -0.37296102673437154,
+      -0.5168653075348233,
+      1.3020752937115065,
+      2.212515776108781,
+      -0.05662678654301137,
+      -0.24018726752718364
+    ],
+    [
+      0.1686970326622026,
+      0.03096931643923178,
+      -0.42762666581977116,
+      -0.5201062354208825,
+      -0.7103313691132679,
+      2.8764756455248315,
+      0.23465306654935245,
+      0.06735784420133789
+    ],
+    [
+      -0.04956860894390144,
+      -0.2934759520795413,
+      -0.9269321893441734,
+      -0.9446632372107479,
+      -1.0531761214052466,
+      0.5890399966683367,
+      0.5568594678790127,
+      0.052145951854633346
+    ]
+  ]
+}

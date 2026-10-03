@@ -1,0 +1,41 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-sol-closure-audit-v3",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "gpt-5.6-sol",
+  "auditor_role": "backup_auditor",
+  "primary_auditor": "claude-opus-5",
+  "primary_audit_status": "NO_USABLE_VERDICT_NOT_LOGGED_IN",
+  "audited_state": "corrected integrated joint calibration after seed, spatial-index, covariance, exclusion-probe and optimizer repairs",
+  "verdict": "NO-GO",
+  "findings": {
+    "full_64_member_reproduction_matches_record": true,
+    "development_seed_range": [2026083000, 2026083064],
+    "contaminated_seed_quarantine": [2026083064, 2026083128],
+    "replacement_validation_sealed": [2026083320, 2026083576],
+    "optimizer_fit_success_count": 64,
+    "optimizer_abnormal_termination_count": 0,
+    "same_latent_field_drives_counts_and_cf4_marks": true,
+    "spatial_indexing_consistent": true,
+    "exact_grouped_likelihood_and_fisher_consistent": true,
+    "canonical_vectorized_joint_error_below_tolerance": true,
+    "object_level_exclusion_probe": "PASS; 17007 unique IDs, zero count-tracer overlap",
+    "residual_fatal_defect_within_eight_mode_scope": false,
+    "strict_gate_pass_count": 11,
+    "strict_gate_required_count": 64,
+    "strict_gate_pass": false
+  },
+  "limitations": [
+    "The exclusion probe is an interface check, not proof of unexecuted observational binning.",
+    "The latent field is an eight-mode synthetic technical proxy, not the frozen full LCDM covariance.",
+    "No observational z=0 posterior or 0.3 cMpc/h claim is made."
+  ],
+  "scientific_disposition": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "validation_opened": false,
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Diagnose coverage and stress-arm calibration using development seeds only; keep replacement validation sealed until the frozen 64/64 gate passes."
+}

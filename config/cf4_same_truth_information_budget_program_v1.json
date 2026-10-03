@@ -1,0 +1,217 @@
+{
+  "schema": "ouruniv-cf4-same-truth-information-budget-program-v1",
+  "date": "2026-09-01",
+  "status": "USER_APPROVED_FROZEN_SAME_TRUTH_INFORMATION_BUDGET_AUDIT",
+  "purpose": "Separate the failed exact arm-A information ceiling into nuisance marginalization, measurement-error scale, and the remaining radial-geometry plus finite-noise ceiling before changing the reconstruction route.",
+  "authorization": {
+    "authorization_basis": "User approved the recommended same_truth_information_budget_audit after the completed A/B/C/D same-truth ablation was NO-GO.",
+    "same_truth_information_budget_audit": true,
+    "Slurm_member_array_submission": true,
+    "Slurm_dependent_aggregation_submission": true,
+    "GPFS_declared_read_write": true,
+    "truth_array_generation_or_deserialization": false,
+    "likelihood_datum_consumed_by_inference": false,
+    "population_generator_retuning": false,
+    "untouched_256_mock_validation": false,
+    "resolution_increase": false,
+    "ML_training": false,
+    "frontier_promotion": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_retry": false,
+    "automatic_follow_on_after_aggregate": false,
+    "network_access": false
+  },
+  "design": {
+    "mock_count": 64,
+    "posterior_draw_count": 16,
+    "scenario_order": [
+      "marginalized_s1",
+      "known_s1",
+      "known_s0p3",
+      "known_s0p1"
+    ],
+    "known_nuisance_noise_standard_deviation_scales": {
+      "known_s1": 1.0,
+      "known_s0p3": 0.3,
+      "known_s0p1": 0.1
+    },
+    "known_nuisance_noise_variance_scales": {
+      "known_s1": 1.0,
+      "known_s0p3": 0.09,
+      "known_s0p1": 0.01
+    },
+    "new_truth_seed_count": 0,
+    "new_random_seed_count": 0,
+    "random_streams": "reuse completed per-mock preconditioner, adjoint, and 16 posterior-draw streams; discard the same four nuisance variates before drawing each known-nuisance epsilon so xi and epsilon remain paired with completed arm A",
+    "covariance_only": true,
+    "posterior_mean_or_datum_required": false,
+    "true_position_geometry": true,
+    "same_D_selected_rows_and_train_holdout_split": true,
+    "same_D_variance_before_finite_scale_factor": true,
+    "post_result_retuning_allowed": false
+  },
+  "scenarios": {
+    "marginalized_s1": {
+      "nuisance": "Gaussian prior marginalized",
+      "noise_standard_deviation_scale": 1.0,
+      "source": "immutable completed exact arm-A posterior draws",
+      "new_inference": false
+    },
+    "known_s1": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 1.0,
+      "source": "new covariance-only solve on exact arm-A geometry"
+    },
+    "known_s0p3": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 0.3,
+      "source": "new covariance-only solve on exact arm-A geometry"
+    },
+    "known_s0p1": {
+      "nuisance": "known and subtracted",
+      "noise_standard_deviation_scale": 0.1,
+      "source": "new covariance-only solve on exact arm-A geometry",
+      "interpretation_limit": "Finite tenfold standard-deviation reduction and hundredfold variance reduction; not a zero-noise radial-geometry theorem."
+    }
+  },
+  "estimand": {
+    "primary": "per-bin recovered posterior information fraction I=1-Tr(Ppost)/Tr(Pprior), prior-power weighted over canonical independent real Fourier modes and averaged equally over 64 population geometries",
+    "linear_Gaussian_identities": {
+      "expected_posterior_mean_response": "I",
+      "expected_residual_power_ratio": "1-I",
+      "expected_field_correlation": "sqrt(I)"
+    },
+    "posterior_trace_estimator": "sample covariance from exactly 16 paired Matheron draws per geometry, ddof=1, summed over mode complex variance and divided by summed mode prior variance",
+    "uncertainty": "equal-weight 64-geometry cluster bootstrap with 2000 fixed replicates",
+    "not_estimands": [
+      "truth-conditioned reconstruction score",
+      "observational CF4 density field",
+      "zero-noise geometry rank theorem",
+      "0.3 cMpc/h frontier"
+    ]
+  },
+  "information_gates": {
+    "mock_cluster_bootstrap_replicates": 2000,
+    "mock_cluster_bootstrap_seed": 2026800000,
+    "response_min_inclusive": 0.8,
+    "correlation_r_min_inclusive": 0.7,
+    "residual_power_ratio_max_inclusive": 0.5,
+    "robust_information_lower_min_inclusive": 0.8,
+    "strict_gate": "point response, correlation, and residual gates all pass and the 2.5 percent geometry-bootstrap information bound is at least 0.8",
+    "frontier_rule": "contiguous prefix from the lowest available N32 bin; delta and theta both must pass; unavailable theta bin 11 fails closed"
+  },
+  "preregistered_decision_tree": {
+    "unit": "joint delta-and-theta strict information pass in the lowest union bin",
+    "marginalized_s1_passes": "BASELINE_INFORMATION_SUFFICIENT_PRIOR_FIELD_FAILURE_REQUIRES_METRIC_AUDIT",
+    "known_s1_passes_marginalized_s1_fails": "NUISANCE_MARGINALIZATION_DOMINANT",
+    "known_s0p1_passes_known_s1_fails": "MEASUREMENT_ERROR_DOMINANT_IMPROVE_VELOCITY_LIKELIHOOD",
+    "known_s0p1_fails": "FINITE_LOW_NOISE_CEILING_INSUFFICIENT_ADD_INDEPENDENT_Z0_DENSITY_TRACERS",
+    "other": "MIXED_INFORMATION_BUDGET_NO_SINGLE_DOMINANT_COMPONENT"
+  },
+  "repository_bindings": {
+    "prior_ablation_program": {
+      "path": "config/cf4_same_truth_likelihood_ablation_program_v1.json",
+      "sha256": "a212c316bd69cba8ed94faaf6e7b25dc83fc10ea925b8a43253aac41a15e9d74"
+    },
+    "prior_ablation_result_record": {
+      "path": "config/cf4_same_truth_likelihood_ablation_v1_result.json",
+      "sha256": "c94abba8dc751fc804950ef5c4512710f9e97fbe9b20ba0fa252d91f61f9a969"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302"
+    },
+    "clean_catalog_marks": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37"
+    }
+  },
+  "source_bindings": {
+    "information_budget": {
+      "path": "src/cf4_same_truth_information_budget.py",
+      "sha256": "d694505367807bea83e0e7ed0686c2b1b89ac315546f04fdfbaaaa6b328db3cc"
+    },
+    "prior_ablation": {
+      "path": "src/cf4_same_truth_ablation.py",
+      "sha256": "d9c2c64cfa9315389e945fd09c3a0a684361456dedb01631b2765cab2f9f5312"
+    },
+    "population_calibration": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "corrected_population_aggregate": {
+      "path": "src/cf4_population_calibration_aggregate_v2.py",
+      "sha256": "371016743b9c0609c15a400f30560cc288ac694301f59f482e3fa0cb132a9969"
+    },
+    "fixed_field_kernels": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "linear_CR_and_BGc_design": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    }
+  },
+  "prior_ablation": {
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/members",
+    "member_implementation_commit": "c3dbdc8becdea89a732d118d250dd34aa4d277f3",
+    "aggregate_directory": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/aggregate",
+    "aggregate_result_sha256": "379e4c7d15dde242b315429aa17727282252c7feea3910fcdb12184cc10a38b2",
+    "aggregate_metrics_sha256": "649d7253d1e2d79222a864da76b9268de275366f5e85d3afee01e480a9f41d11"
+  },
+  "completed_D": {
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "aggregate_directory": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "aggregate_result_sha256": "9214a9d7000862832f8e428cef5121e205899f34a819b2d0b4b795cef46e691b",
+    "aggregate_metrics_sha256": "0c5603e7a2933541729b81953e7477933534c9bc52120fa767a0fea4675da5fd"
+  },
+  "validation_firewall": {
+    "truth_seed_start": 2026083064,
+    "truth_seed_stop_exclusive": 2026083320,
+    "truth_seed_count": 256,
+    "may_be_opened_or_executed_by_this_program": false
+  },
+  "resolution_semantics": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "global_metrics_only": true,
+    "target_cell_size_cMpc_h": 0.3,
+    "target_0p3_cMpc_h_reached": false,
+    "development_information_frontier_is_science_frontier": false
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "member_array": "0-63%8",
+    "member_cpus_per_task": 4,
+    "member_expected_peak_memory_MiB": 2500,
+    "member_requested_memory_MiB": 3072,
+    "member_time_limit": "00:30:00",
+    "aggregate_cpus_per_task": 4,
+    "aggregate_expected_peak_memory_MiB": 2200,
+    "aggregate_requested_memory_MiB": 3072,
+    "aggregate_time_limit": "00:30:00",
+    "memory_minimum_headroom_multiplier": 1.2,
+    "member_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v1/members",
+    "aggregate_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v1/aggregate",
+    "maximum_member_array_submissions": 1,
+    "maximum_aggregate_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  }
+}

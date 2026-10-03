@@ -1,0 +1,65 @@
+{
+  "schema": "hong2021-v47-physical-moment-existence-audit-result-record-v1",
+  "status": "complete_common_domain_logistic_second_moment_divergence",
+  "program": "config/hong2021_v47_physical_moment_existence_audit_program.json",
+  "program_sha256": "8672726b6403c3718995619c31ad83eba0815d231f15f346288d23f1c43ed9f2",
+  "audit_code_commit": "d95813d7c783a6eb7c144d441de0b8061ca9bc13",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v47_physical_moment_existence_audit/audit.json",
+    "sha256": "90f1ade2eb25500053ed5be28a72570fcd39e35ab42e0b873f1aa0cd158125c8",
+    "decision_digest_sha256": "8eb8270d376ada8bdb2ff468bbc595e9ecf36a66943cbd8de00238fc353e6d8c",
+    "classification": "logistic_components_make_the_physical_delta_squared_moment_divergent",
+    "next": "freeze_an_identifiable_train_only_Gaussian_mixture_likelihood_with_all_V45_data_sampling_and_gates_unchanged"
+  },
+  "analytic_limits": {
+    "target_std": 0.09877202271987233,
+    "finite_mean_density_scale_limit_standardized": 0.9770973825361591,
+    "finite_mean_delta_squared_scale_limit_standardized": 0.48854869126807954,
+    "definition": "A logistic component has M_z(t)=exp(mu*t)*pi*s*t/sin(pi*s*t), which exists only for abs(s*t)<1. For rho=10**(4.5*y), rho squared evaluates this MGF at t=9 ln(10) target_std."
+  },
+  "domain_results": {
+    "TNG100": {
+      "mean_first_moment_divergent_mixture_mass": 0.00009903157038277439,
+      "mean_second_moment_divergent_mixture_mass": 0.04369309237377609,
+      "fraction_voxels_second_moment_divergent_mass_above_0_01": 0.3487865306712963,
+      "fraction_voxels_second_moment_divergent_mass_above_0_05": 0.34873679832175924,
+      "component_five_fraction_above_second_moment_limit": 0.3487548828125,
+      "component_five_mean_weight_above_second_moment_limit": 0.04237915847437324,
+      "fraction_voxels_no_finite_second_moment_component": 0.00003729926215277778
+    },
+    "SIMBA": {
+      "mean_first_moment_divergent_mixture_mass": 0.00010554796788728529,
+      "mean_second_moment_divergent_mixture_mass": 0.05799537973716904,
+      "fraction_voxels_second_moment_divergent_mass_above_0_01": 0.4514401879641089,
+      "fraction_voxels_second_moment_divergent_mass_above_0_05": 0.45143051902846537,
+      "component_five_fraction_above_second_moment_limit": 0.4514111811571782,
+      "component_five_mean_weight_above_second_moment_limit": 0.05507218649077769,
+      "fraction_voxels_no_finite_second_moment_component": 0.00001571202042079208
+    },
+    "Swift": {
+      "mean_first_moment_divergent_mixture_mass": 0.00008761950210674338,
+      "mean_second_moment_divergent_mixture_mass": 0.04959974911956219,
+      "fraction_voxels_second_moment_divergent_mass_above_0_01": 0.39096345411827627,
+      "fraction_voxels_second_moment_divergent_mass_above_0_05": 0.3909527095430929,
+      "component_five_fraction_above_second_moment_limit": 0.3909407711262225,
+      "component_five_mean_weight_above_second_moment_limit": 0.04733022254231067,
+      "fraction_voxels_no_finite_second_moment_component": 0.0000441721424205379
+    }
+  },
+  "scientific_conclusion": [
+    "The common-domain Q4 failure is not a normalization artifact, dead-component artifact, or insufficient training. V45 assigns 4.4 to 5.8 percent mean probability mass to logistic components whose physical delta-squared moment does not exist.",
+    "A material divergent mass occurs in 35 to 45 percent of train voxels, overwhelmingly through the fifth upper component. This explains why PIT q0.001 and q99.99 can look calibrated while a much rarer tail dominates mean delta squared and generated maxima.",
+    "Clipping or capping the trained logistic scale would be posthoc and would destroy the proper frozen likelihood. The next controlled generator must instead use the same V45 information and gates with an identifiable Gaussian mixture, whose exponential moments exist for every finite location and scale."
+  ],
+  "firewall": {
+    "fit_or_optimizer_performed": false,
+    "new_sampling_performed": false,
+    "validation_accessed": false,
+    "development_arrays_accessed": false,
+    "threshold_tuned": false,
+    "scale_cap_or_clipping_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

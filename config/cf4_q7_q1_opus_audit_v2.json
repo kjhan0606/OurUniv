@@ -1,0 +1,27 @@
+{
+  "schema": "ouruniv-cf4-q7-q1-opus-audit-v2",
+  "date": "2026-09-04",
+  "auditor": "claude-opus-5",
+  "scope": "corrective Q7.1 interval certificate and fail-closed operator route",
+  "audited_commit": "5b18bf5",
+  "verdict": "CONDITIONAL-GO",
+  "q7_2_authorized": false,
+  "evidence": {
+    "tests": "30 Q1/Q6/Q7 tests pass",
+    "finite_enclosure": "caller-supplied finite hulls and allow_uncertified_finite_enclosure are rejected",
+    "interval_certificate": "internal directed-rounded Lipschitz enclosure with explicit sigma/displacement variation",
+    "seam_policy": "support crossing periodic 0/L is rejected for nonzero-variation groups",
+    "zero_scale": "exact unit TSC payload hash prevents subcell merging",
+    "summary_api": "175 by G nonnegative operator-norm matrix is shape-checked and propagated by matrix product"
+  },
+  "blocking_conditions": [
+    "Complete a randomized containment harness covering wrapped-union and seam-straddling configurations, including expected certificate failures.",
+    "Confirm that the 175 by G entries are the registered induced L1 operator norms (not merely nonnegative arrays) and use upward-rounded accumulation.",
+    "Treat caller-provided numeric basis SHA/registry id as attestation only until an external registry fixes units, coordinate convention and physical values; do not use it as a scientific gradient certificate."
+  ],
+  "audit_attempts": [
+    "claude-opus-5 full repository re-audit after 5b18bf5: timed out without output",
+    "claude-opus-5 independent design-summary audit: CONDITIONAL-GO"
+  ],
+  "policy": "Q7.2 remains prohibited until all blocking conditions are resolved and Opus 5 returns GO."
+}

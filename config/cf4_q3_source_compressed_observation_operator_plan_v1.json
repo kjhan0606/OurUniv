@@ -1,0 +1,274 @@
+{
+  "schema": "ouruniv-cf4-q3-source-compressed-observation-operator-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q3",
+  "owner": "driver",
+  "plan_status": "GO_DEVELOPMENT_IMPLEMENTATION_AUTHORIZED_HELDOUT_BLOCKED",
+  "prerequisite_bundle": "Q2.0",
+  "prerequisite_audit": {
+    "agy": "GO_Q2_0_NO_GO_Q2_1",
+    "opus5": "CONDITIONAL_PASS_Q2_0_NO_GO_Q2_1",
+    "q2_result": "config/cf4_q2_numeric_preflight_result_v1.json",
+    "implementation_authorized": true,
+    "authorized_scope": "Q3.0 baseline bookkeeping, Q3.1 mathematical candidate specification, and one development-only candidate evaluated on the 192 development mocks; held-out publication and Q2.1 promotion remain blocked.",
+    "note": "Q2.0 is closed as a read-only preflight. Naive direct sourcewise JAX is blocked. The Q1 baseline is now immutably committed and its 35-test closure reproduced."
+  },
+  "q3_2_preflight": {
+    "result": "config/cf4_q3_resolution_resource_preflight_result_v1.json",
+    "implementation_status": "COMPLETE_READ_ONLY_PROJECTION",
+    "candidate_implementation_authorized_after_result": true,
+    "deferred_0p3_status": "RESOURCE_PROJECTION_ONLY_NOT_OBSERVATIONAL_VALIDATION"
+  },
+  "q3_3_development_candidate": {
+    "result": "config/cf4_q3_development_candidate_result_v1.json",
+    "candidate": "exact_geometry_grouping",
+    "status": "DEVELOPMENT_ORACLE_EQUIVALENCE_ONLY_NOT_PROMOTED",
+    "heldout_evaluation": false,
+    "promotion_blocked": "Full PM compression ratio, information-loss and resource feasibility remain unmeasured."
+  },
+  "fable_audit": {
+    "status": "GO",
+    "last_verdict": "GO",
+    "summary": "The amended Q3 plan is scientifically aligned and has no remaining plan-level blocker. L=6 small fixtures and L384 held-out strata now have separate valid sampling rules. This is plan approval only; implementation, held-out release and Q2.1 remain blocked until the Q1 baseline is commit-bound and 35/35 closure is reproduced.",
+    "amendments_applied": true,
+    "required_amendments": [
+      "Limit Q3 release to exact or quantitatively bounded acceleration of the N192, 2 cMpc/h low-k operator; keep 12 cMpc/h as a diagnostic only.",
+      "Move <=0.3 cMpc/h to a separate high-resolution conditional forward-model/resource-projection bundle, excluded from Q3 pass criteria.",
+      "Require posterior-state-dependent source mass and latent-field/bias gradients to be exactly preserved by any sufficient statistic.",
+      "Freeze held-out seeds, sample counts, KL estimator and uncertainty, score-bias bound, posterior-mean shift bound, coverage level/tolerance and development/held-out split before implementation.",
+      "Seal the Q1 baseline with one commit/tree and 35/35 closure tests, and replace the 600 s/849 s gradient contradiction with one chunked end-to-end ceiling.",
+      "Replace the cellwise 49-million-component score/coverage contract with the preregistered 175-component scientific summary, spatial-stratum cellwise error quantiles, and fixed directional JVP/VJP of scalar log-likelihood/log-posterior.",
+      "Freeze exact observer-centered torus moment formulae, numeric strata thresholds, Fourier vectors/normalization/FD steps, and the KL normalizer estimator before candidate implementation.",
+      "Apply minimum-count=32 only to L384 held-out strata; evaluate L6 small fixtures with all cells, min-count=1, and exact per-cell/max gates without bootstrap median/p95."
+    ],
+    "approval_required_before_implementation": true,
+    "focus": "Assess whether this compressed-observation bundle is scientifically equivalent or information-bounded, feasible at the real PM source count, and directly aligned with the final CF4-to-z=0-posterior-to-IC-to-forward-validation goal."
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Replace the infeasible naive sourcewise evaluation path with a source-compressed or analytic sufficient-statistic observation representation, while preserving the Q1 cell-integrated torus operator or explicitly bounding every approximation before any JAX posterior implementation.",
+  "science_position": {
+    "why_this_bundle": "The Q2.0 preflight used the correct PM basis of 7,077,888 sources and rules out the direct sourcewise path under the declared sampling envelope. Compression is therefore a feasibility prerequisite, not a shortcut to a posterior or an IC.",
+    "not_a_science_claim": "No z=0 posterior, q-corrected IC, conditional high-k realization, PM/HOP/RAMSES result, or <=0.3 cMpc/h observational-information claim is made by Q3 itself. The 0.3 cMpc/h case is not a Q3 operator-grid test.",
+    "operator_change_rule": "Source compression is permitted only as an exact reparameterization of the frozen Q1 linear operator or as a separately labelled approximation that passes the quantitative information-loss gates below. It may not silently alter the likelihood, replace the PM source count with the secure-catalog count, or weaken the Q1 kernel for speed."
+  },
+  "scope": {
+    "design_only": true,
+    "implementation": true,
+    "development_candidate_only": true,
+    "heldout_evaluation": false,
+    "production_inference": false,
+    "z0_posterior": false,
+    "KF_EXPAND": false,
+    "IC_generation": false,
+    "conditional_high_k": false,
+    "PM_or_HOP": false,
+    "zoom": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false,
+    "science_resolution_claim": false
+  },
+  "inherited_contract": {
+    "oracle": "src/cf4_q1_cell_integrated_convolution.py",
+    "operator": "periodic_torus_expected_cell_response",
+    "source_basis": "7,077,888 PM particles from N_parent=192; secure CF4 objects=16,584 is not interchangeable",
+    "populations": 6,
+    "tail_cutoff_sigma": 8.0,
+    "candidate_value_scaled_l1": "<= 1e-12 + 5e-3*oracle_l1, total and per population",
+    "candidate_gradient_scaled_l1": "<= 1e-8 + 1e-5*gradient_reference_l1 once a differentiable candidate exists",
+    "topology_cases": [
+      "periodic_seam",
+      "TSC_knot_left",
+      "TSC_knot_right",
+      "half_box_minimum_image_surface_rejection",
+      "observer_coincidence_rejection",
+      "sigma_disp_over_box=2"
+    ]
+  },
+  "latent_state_mass_contract": {
+    "requirement": "Compression must preserve the observation operator for every posterior latent-field and bias-parameter state, not only for one fiducial PM mass assignment.",
+    "retained_quantities": [
+      "state-dependent source mass or an exactly reconstructible mass basis",
+      "derivatives of source mass with respect to latent-field and bias parameters",
+      "population assignment and exposure weights",
+      "all geometry and Q1 interval-polynomial coefficients needed by the torus response"
+    ],
+    "forbidden_shortcut": "Pre-summing sources because positions/LOS responses look similar while dropping state-dependent mass or gradient terms.",
+    "acceptance": "For each held-out posterior state, reconstructed value and latent-field/bias gradients agree with the uncompressed Q1 reference under the frozen gates; failure is NO-GO."
+  },
+  "baseline_integrity_gate": {
+    "status": "PASS_COMMIT_BOUND_35_TEST_CLOSURE",
+    "problem": "Resolved: the Q1 files and their test dependencies are bound to one immutable Git commit/tree and the 35-test closure was rerun from that working tree.",
+    "required_files": [
+      "src/cf4_q1_cell_integrated_convolution.py",
+      "src/cf4_2mpp_boundary_stress.py",
+      "tests/test_cf4_q1_cell_integrated_convolution.py",
+      "config/cf4_q1_cell_integrated_convolution_plan_v1.json",
+      "config/cf4_q1_cell_integrated_convolution_result_record_v1.json"
+    ],
+    "current_sha256_precommit": {
+      "src/cf4_q1_cell_integrated_convolution.py": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+      "src/cf4_2mpp_boundary_stress.py": "e606a939b2935941709e825a41d4876dd714bb8a1bb91469a05aeb55dec2135c",
+      "tests/test_cf4_q1_cell_integrated_convolution.py": "d61a8bb1760161070f3827541803eb3863be583de34eadb17b318828f420d3bc",
+      "config/cf4_q1_cell_integrated_convolution_plan_v1.json": "67c0975ceffa31adb6700fb5046e783668dce134f747dd81fba2ef576f228401",
+      "config/cf4_q1_cell_integrated_convolution_result_record_v1.json": "a44b951f08ee27548a892bd6c8bfb347843e9832c59a27fc4127f88d7f3892db"
+    },
+    "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "tree": "4444868df93572389602b518239e239591db134a",
+    "closure_tests": "35 passed, 0 skipped",
+    "acceptance": "Satisfied by commit 5d1500c and the 35/35 closure rerun. Any later source change requires a new baseline commit and a new closure before promotion."
+  },
+  "candidate_representations": [
+    {
+      "id": "exact_basis_grouping",
+      "description": "Group PM sources only when their complete Q1 response basis is identical at each posterior state; retain mass, population, exposure, LOS direction, dispersion, periodic image, interval-polynomial coefficients, and the latent-field/bias derivatives needed to reconstruct every target cell and gradient.",
+      "scientific_status": "Preferred if an exact sufficient statistic can be proven; otherwise reject rather than approximate silently."
+    },
+    {
+      "id": "adaptive_local_moment_compression",
+      "description": "Use bounded spatial/LOS bins with adaptive polynomial moments of the Q1 response and state-dependent mass/gradient moments, splitting bins until the frozen total/per-population oracle and held-out information gates pass on boundary topologies.",
+      "scientific_status": "Approximate candidate; requires explicit error and information-loss evidence."
+    },
+    {
+      "id": "deposit_then_convolve",
+      "description": "Deposit PM sources to an intermediate mesh and apply an analytic/cell-integrated LOS convolution as a speed candidate.",
+      "scientific_status": "Not assumed equivalent: deposition and anisotropic LOS convolution need not commute. It is admissible only after direct comparison with the Q1 oracle, including seams, knots, wide sigma and all populations."
+    }
+  ],
+  "information_loss_gate": {
+    "must_be_defined_before_implementation": true,
+    "contract_freeze_stage": "All summary definitions, weights, spatial strata, direction vectors, finite-difference steps, KL normalizer method and numeric thresholds are frozen before any candidate implementation. Candidate choice and hyperparameters are then frozen on development mocks before held-out evaluation.",
+    "development_heldout_split": {
+      "development_mock_count": 192,
+      "heldout_mock_count": 256,
+      "development_seed_namespace": "cf4-q3-development-20260904",
+      "heldout_seed_namespace": "cf4-q3-heldout-20260904",
+      "seed_derivation": "For namespace N and index i=0,...,n-1, seed_i = int.from_bytes(SHA256((N+':'+str(i)).encode('utf-8')).digest()[:8], 'big') & ((1<<63)-1). Enumerate indices in ascending order, reject duplicate seeds, and assert the two generated sets are disjoint before any candidate is evaluated.",
+      "candidate_selection_rule": "Select exactly one representation and all hyperparameters using only the 192 development mocks, then freeze its manifest. The 256 held-out mocks are accept/reject only; a failure is Q3 NO-GO and forbids switching candidates or retuning on that held-out set.",
+      "split_rule": "Disjoint source fields, latent states, LOS directions, dispersion draws and exposure patterns; no candidate tuning on held-out mocks."
+    },
+    "oracle_value": "For every frozen boundary/non-boundary fixture, all six populations, at least three sources per fixture, and the sigma_disp=2L multi-wrap fixture, candidate-versus-Q1 raw L1 must satisfy the inherited scaled formula; report raw absolute L1, oracle norm and relative value.",
+    "heldout_field": "On the 256 held-out mocks, median absolute log-likelihood perturbation <= 1e-3 nat and empirical 95th percentile <= 1e-2 nat.",
+    "reference_to_candidate_kl": {
+      "direction": "KL(p_reference || q_candidate); this is intentionally one-way and makes no unsupported symmetric-KL claim.",
+      "estimator": "For each held-out mock, draw the frozen reference-posterior samples with the deterministic held-out seed stream, evaluate normalized log p_reference and normalized log q_candidate under the same base measure, and average log p - log q. Report the mean, standard error and a nonparametric 95% bootstrap confidence interval over the 256 held-out mocks.",
+      "normalization_contract": "Both log densities must include the same prior/base-measure convention and an explicitly recorded normalizer estimate; an unnormalized likelihood ratio is not accepted as KL.",
+      "gate": "Point estimate <= 1e-2 nat and upper 95% confidence limit <= 1.5e-2 nat."
+    },
+    "posterior_score": {
+      "standardization": "For each low-dimensional summary component j, z_j=(S_j-reference_mean_j)/max(reference_sd_j,1e-12), where mean and SD are computed only on the 192 development mocks and then frozen.",
+      "scientific_summary": {
+        "definition": "For each of seven fields (six populations plus their total), S contains the exposure-weighted monopole, Cartesian dipole (3 components), trace-free quadrupole (5 components), and real/imaginary coefficients of exactly these eight periodic low-k modes in grid units: [(1,0,0),(0,1,0),(0,0,1),(1,1,0),(1,0,1),(0,1,1),(1,-1,0),(1,0,-1)].",
+        "dimension": 175,
+        "observer_centered_moment_formula": "For cell center x_c and observer x_obs, d_a=((x_c,a-x_obs,a+L/2) mod L)-L/2. A tie with |d_a|=L/2 within 1e-12 L is rejected, matching the Q1 half-box policy. Let u_a=d_a/(L/2), y[p,c] be the exposure-weighted Q1 intensity and M_p=sum_c y[p,c]>1e-12. Then D[p,a]=sum_c(y[p,c]u_a)/M_p and Q[p,ab]=sum_c(y[p,c](u_a*u_b-(u_x^2+u_y^2+u_z^2)*delta_ab/3))/M_p, retaining the five ordered trace-free components (xx-yy, yy-zz, xy, xz, yz). At d=0 the quadrupole contribution is exactly zero.",
+        "weighting": "Cell-center coordinates use the observer-centered minimum-image formula above; exposure weights are applied before moments/Fourier coefficients; the total field is the sum of the six population fields, not a separately tuned statistic. Cell volume is constant and cancels in the normalized moments.",
+        "multiple_comparison": "Report all 175 components and a simultaneous max-absolute standardized error; no component may be dropped after held-out inspection."
+      },
+      "score_definition": "The statistical score is the gradient of the scalar normalized log-likelihood (and, when defined, scalar log-posterior) with respect to latent-field and bias parameters, projected onto 16 fixed prior-metric-normalized real Fourier directions (cosine and sine for each listed mode), one constant latent-field direction, and six one-hot population log-bias directions. Evaluate directional JVP/VJP and population-wise gradient norms; this is not a summary Jacobian.",
+      "direction_protocol": "For grid index n and mode k_j, define raw v[j,cos](n)=cos(2*pi*k_j dot n/N) and v[j,sin](n)=sin(2*pi*k_j dot n/N), with j=0..7 in listed mode order. Add v[constant](n)=1 and v[bias,p] as the one-hot coordinate for population p=0..5. For each direction use the frozen total-matter prior precision C^{-1} for latent directions (and the frozen bias prior precision for bias directions), set u=v/sqrt(v^T C^{-1} v), and fix positive sign by the first nonzero component in lexicographic order. Zero-norm directions fail closed. The score set therefore has 23 directions. Use central double-precision finite differences with relative step 1e-5 and absolute step 1e-7, exactly as the inherited Q2 protocol. Freeze ordering, P_LCDM table, prior metrics, normalization and steps before candidate implementation.",
+      "gate": "Across the 256 held-out mocks, maximum population-wise mean absolute directional score bias across all 23 directions <= 1e-5 standardized units and posterior-mean shift <= 0.05 reference posterior SD for every one of the 175 listed summaries; confidence intervals must be reported."
+    },
+    "cellwise_error_gate": {
+      "strata": {
+        "cartesian_product": "Fixture kind × radial bin × observer-centered sign octant × population; no pooling across any factor.",
+        "L384_heldout": "For each L=384 cMpc/h held-out fixture, use exactly five bins in r/(L/2): [0,0.25), [0.25,0.5), [0.5,0.75), [0.75,1.0), [1.0,sqrt(3)]. Combine each with the eight sign octants.",
+        "small_fixtures": "For each frozen L=6 boundary/non-boundary fixture, use the same five dimensionless r/(L/2) bins and eight octants; do not apply the L384 absolute bins.",
+        "octant_rule": "For each minimum-image component d_a, sign bit is 1 if d_a>0 and 0 if d_a<=0; exact d_a=0 is assigned to bit 0. A tie with |d_a|=L/2 within 1e-12 L is rejected before stratification.",
+        "minimum_cell_count": {
+          "L384_heldout": 32,
+          "small_L6_fixtures": 1
+        },
+        "small_fixture_rule": "Retain every non-empty L=6 cell. For each non-empty small-fixture stratum, report exact per-cell finite errors and enforce max(e)<=2e-2 plus the overall frozen fixture L1 gate; do not use bootstrap median/p95 as a pass criterion because the strata contain only 1-29 cells.",
+        "large_fixture_rule": "For each L384 held-out stratum with at least 32 cells, enforce the median/p95/max bounds and bootstrap intervals below.",
+        "empty_rule": "A geometry-impossible stratum is marked structural-NA only by a precomputed, hashed grid registry generated from the fixture geometry before candidate implementation; a merely small sample is never structural-NA. An otherwise expected L384 stratum with count<32 fails closed."
+      },
+      "error_definition": "e[p,c]=abs(y_candidate[p,c]-y_Q1[p,c])/max(abs(y_Q1[p,c]),1e-12), evaluated on every held-out cell in each non-empty stratum.",
+      "numeric_bounds": "For every L384 population/fixture/stratum: median(e)<=5e-4, empirical 95th percentile(e)<=5e-3, and max(e)<=2e-2, with nonparametric 95% bootstrap intervals for median and p95. For L=6 small fixtures, use the exact per-cell/max rule above and no bootstrap interval.",
+      "pooling_rule": "A pooled total cannot hide a local failure. This gate is for the full Q1 output and is distinct from the 175-component posterior summaries."
+    },
+    "kl_normalizer_contract": {
+      "method": "For each mock, estimate log normalizers for reference and frozen candidate with the same normalized prior proposal using 4096 deterministic proposal draws from the held-out seed stream; logZ=logsumexp(log_likelihood+log_prior-log_proposal)-log(4096) in float64.",
+      "diagnostics": "Record effective sample size, relative standard error from 256 deterministic bootstrap resamples, and max log-weight. Require ESS>=256 and relative standard error<=0.02 for both normalizers; otherwise the KL result is invalid and the held-out gate is NO-GO.",
+      "freeze_point": "Proposal, draw count, float precision, log-sum-exp implementation, bootstrap resample count=256 and failure diagnostics are frozen before candidate implementation."
+    },
+    "coverage": "Nominal 95% posterior intervals for the 175 preregistered summary components, evaluated on all 256 held-out mocks, must have empirical coverage in [0.90, 0.99] with the predeclared Wilson interval reported; boundary, non-boundary, widest-sigma and exposure-weighted cases are stratified, not pooled to hide failure.",
+    "candidate_freeze": "Candidate representation, hyperparameters, compression tolerances, seed streams, normalizer method and summary weights are frozen after the 192 development set and before any held-out evaluation.",
+    "no_claim_without_gate": "Passing a value approximation alone does not authorize posterior sampling, high-k conditioning, IC construction, or a <=0.3 cMpc/h claim."
+  },
+  "resolution_and_resource_gate": {
+    "q3_release_resolution_ladder_cMpc_h": [12.0, 2.0],
+    "q3_release_operator_resolution_cMpc_h": 2.0,
+    "deferred_high_resolution_target_cMpc_h": 0.3,
+    "deferred_target_policy": "The <=0.3 cMpc/h case is a separate high-resolution conditional forward-model/resource-projection bundle. It is excluded from Q3 release gates; placing N192 sources on an N=1280 grid is sparse deposition/interpolation, not evidence of 0.3 cMpc/h observational information.",
+    "box_size_cMpc_h": 384.0,
+    "recompute_at_each_q3_resolution": [
+      "operator mesh N and cell spacing",
+      "K_max from the frozen displacement bound and T=8",
+      "static chunk shape and padded bytes",
+      "host/device memory",
+      "compile, value and gradient timings"
+    ],
+    "current_development_reference": {
+      "N_operator": 32,
+      "cell_spacing_cMpc_h": 12.0,
+      "K_max": 19,
+      "padded_array_MiB": 29.8232421875
+    },
+    "performance_target": "Demonstrate a full-field gradient-call target <=0.1 s only as a measured feasibility target; distinguish measurements from ceiling projections and do not weaken the mathematical operator to meet it.",
+    "gradient_resource_contract": {
+      "full_field_end_to_end_ceiling_seconds": 600.0,
+      "semantics": "The 600-second ceiling applies to the sum of all explicitly padded chunks, compilation amortization and device-to-host synchronization for one full-field gradient call; it is not a per-chunk or single-batch allowance.",
+      "chunking": "The implementation must report chunk_count=ceil(M_pm_source_particles_max/chunk_size) and the measured sum over all chunks. A chunk may not evade the full-field ceiling.",
+      "direct_path_consequence": "The prior 849.34656-second ceiling projection therefore remains a NO-GO for naive direct sourcewise evaluation.",
+      "acceptance": "This single end-to-end definition replaces the prior 600-second/849-second ambiguity before any candidate implementation."
+    },
+    "resolution_claim": "Q3 may claim only the validated 2.0 cMpc/h low-k operator acceleration. Any <=0.3 cMpc/h claim requires the separate conditional high-resolution forward-model bundle."
+  },
+  "work_packages": [
+    {
+      "id": "Q3.0",
+      "task": "Reconcile the Q1 baseline hashes, create the immutable commit, rerun the 35 closure tests, and replace the legacy resource fields with the single end-to-end chunked gradient contract.",
+      "acceptance": "One commit-bound manifest, all hashes consistent, 35/35 closure tests from that commit, and measured/projected timing labels plus one end-to-end gradient ceiling are unambiguous."
+    },
+    {
+      "id": "Q3.1",
+      "task": "Specify exact-basis, adaptive-moment and deposit-then-convolve representations, including their retained statistics, shape bounds, ownership rules and failure/overflow behavior.",
+      "acceptance": "A mathematical map and a falsifiable equivalence/information-loss test exist for every candidate; no implementation is promoted by prose alone."
+    },
+    {
+      "id": "Q3.2",
+      "task": "Run read-only design/preflight calculations at 12.0 and 2.0 cMpc/h using the full PM source basis, and derive K_max, chunk, padded bytes and resource envelopes. Record only a separate resource projection for the deferred 0.3 cMpc/h conditional forward-model bundle.",
+      "acceptance": "Both Q3 ladder points have units, formulas, static-shape bounds and explicit feasible/infeasible decisions; the 0.3 projection is clearly not an operator-resolution validation."
+    },
+    {
+      "id": "Q3.3",
+      "task": "Validate each candidate against the Q1 oracle and held-out likelihood-information gates, including all populations, periodic seams, TSC knots, observer rejection, exposure weighting and sigma_disp=2L.",
+      "acceptance": "Only candidates satisfying all frozen value, gradient (when applicable), posterior-information and held-out coverage gates remain eligible."
+    },
+    {
+      "id": "Q3.4",
+      "task": "Select a candidate only after the evidence gates and measured feasibility target are complete; otherwise retain the NO-GO and redesign the representation.",
+      "acceptance": "A documented GO/NO-GO decision states exactly what can enter Q2.1/JAX and what remains blocked; no posterior or IC execution is started."
+    }
+  ],
+  "release_gates": [
+    "Q1 baseline is commit-bound and reproducible.",
+    "No secure-object/PM-source count substitution occurs.",
+    "The compression map is mathematically specified and its operator-change exemption is explicit.",
+    "Candidate agreement with the Q1 oracle passes total, per-population, topology and multi-wrap gates.",
+    "Held-out likelihood-information and coverage gates pass with measured, not asserted, evidence.",
+    "Q3 release is restricted to the validated 2.0 cMpc/h low-k operator; <=0.3 cMpc/h remains a separate conditional forward-model/resource-projection bundle.",
+    "No Q2.1 JAX, posterior, KF-EXPAND, IC, PM/HOP/RAMSES or production execution is authorized by Q3 design alone."
+  ],
+  "audit_request": {
+    "auditor": "fable",
+    "focus": "Approve or reject this driver-written Q3 bundle plan. Evaluate direct alignment with the final project goal, scientific validity of source compression versus the frozen Q1 operator, quantitative information-loss gates, full PM source-count feasibility, and realizability at <=0.3 cMpc/h. Return GO, CONDITIONAL-GO or NO-GO.",
+    "approval_required_before_implementation": true
+  },
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}

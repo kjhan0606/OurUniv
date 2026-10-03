@@ -1,0 +1,89 @@
+{
+  "schema": "ouruniv-cf4-phasec-scan-generator-gate-v2-result-record-v1",
+  "date": "2026-09-01",
+  "status": "NO_GO_SIX_OF_EIGHT_STOP_BEFORE_SAMPLER_REPRODUCIBILITY_AUDIT_REQUIRED",
+  "lineage": {
+    "commit": "b4f33d2a1f408c07ba746a8765d78096a6028e5c",
+    "program": {
+      "path": "config/cf4_phasec_scan_generator_gate_v2.json",
+      "sha256": "07b1c0434b954a364f66d78ab6e6b8c63cfe5ba609909ad16b8b2fd897980cf7"
+    },
+    "implementation": {
+      "path": "src/cf4_phasec_scan_generator_gate_v2.py",
+      "sha256": "5552198373b2c1507d981c467de9b9a469e053a8af189e51aea20495bf3c8f4b"
+    },
+    "array_job_id": 329924,
+    "aggregate_job_id": 329931
+  },
+  "aggregate_artifact": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v2_aggregate",
+    "aggregate_sha256": "ba766c94ffe01f516c4ed5e23f80b4af4d1fa887ae963c8bfdc7e3a0f56e50af",
+    "manifest_sha256": "1a8e6e170e191b51a7648add541d786b22ab387cd840802daf434bb4032f8dfe",
+    "complete_sha256": "46893d37f4b94075209c339ef1f15e995afa70e86b0e9d49f3d1c5838cc18a23",
+    "independent_validation": "PASS"
+  },
+  "summary": {
+    "requested_seed_count": 8,
+    "valid_task_artifact_count": 8,
+    "passing_seed_count": 6,
+    "failing_seed_count": 2,
+    "failing_seeds": [2026083001, 2026083006],
+    "all_seed_gate_pass": false,
+    "sampler_mechanics_pilot_started": false,
+    "posterior_created": false
+  },
+  "task_result_sha256": {
+    "2026083000": "5027ab9d4a3d759081bfbde27b12d3f70392f4a013717fa6345e9cb2f22e1559",
+    "2026083001": "f641aa12e9f61249c6bae9b22bcc8073ebb2c66b9a6bb991a37dfc4a609bd501",
+    "2026083002": "26de08b4aa9174c9f69b315043923ac09e5ca415f929f3f5df6f79345beaa9ee",
+    "2026083003": "21a2ed1904ffad3acc9a52944ed87f234905dd1555ca28288737ec408457cc33",
+    "2026083004": "c1245039e0018812b3e751dc6105000c151eca06443cf5b1ecf4582e6bdffcb6",
+    "2026083005": "4acdea297fae603306fdbc5b73c96697ee7cb73d3669f38c3a8104a1078f2bc0",
+    "2026083006": "7460771fb1837df6ab1b703f266182d07d484ac687dc85f86fdaae054905fb0a",
+    "2026083007": "2762835c261847f9cce7546475d5b67f31c67df42493f63fe230b2e4e3a8239e"
+  },
+  "failure_localization": {
+    "seed_2026083001": {
+      "one_over_128": "LPT displacement and velocity are entirely nonfinite before nbody_init",
+      "one_over_256": "LPT displacement and velocity are entirely nonfinite before nbody_init"
+    },
+    "seed_2026083006": {
+      "one_over_128": "LPT displacement and velocity are entirely nonfinite before nbody_init",
+      "one_over_256": "LPT and nbody_init are finite, then velocity grows from 1.479e26 at step 1 to 1.772e154 at step 2 and becomes entirely nonfinite at step 3"
+    }
+  },
+  "cross_run_evidence": {
+    "nested_white_statistics_identical_for_seed_2026083001_between_monolithic_and_scan_runs": true,
+    "nested_white_statistics_identical_for_seed_2026083006_between_monolithic_and_scan_runs": true,
+    "seed_2026083001_monolithic_result": "pass",
+    "seed_2026083001_scan_result": "fail",
+    "seed_2026083002_monolithic_result": "fail",
+    "seed_2026083002_scan_result": "pass",
+    "seed_2026083006_monolithic_result": "pass",
+    "seed_2026083006_scan_result": "fail",
+    "seed_2026083007_monolithic_and_scan_results": "pass",
+    "node_observation": "Both failing scan tasks ran on syn06, but two passing scan tasks also ran on syn06; the prior artifacts do not bind physical GPU UUIDs."
+  },
+  "audit_revision": {
+    "superseded_inference_record": "config/cf4_phasec_pmwd_scan_diagnostic_v1_result_record.json",
+    "superseded_claim": "The two-seed diagnostic strongly isolated the failure to the monolithic outer-jit Python-loop path.",
+    "revised_interpretation": "The all-eight run falsifies that universal attribution. The same deterministic white-field statistics can pass or fail across runs, and failures can occur during LPT before any PM time step. GPU/device identity, same-device repeatability, and compiled execution reproducibility must be audited before selecting an integrator or releasing the sampler."
+  },
+  "decision": {
+    "scan_generator_gate_pass": false,
+    "run_sampler_mechanics_pilot": false,
+    "replace_or_drop_failing_seeds": false,
+    "relax_generator_thresholds": false,
+    "run_actual_observational_posterior": false,
+    "open_validation_or_Phase_D": false,
+    "next_allowed_work": "mock-only serial same-GPU repeatability diagnostic with physical GPU identity recorded"
+  },
+  "scope_firewall": {
+    "actual_observational_datum_used": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

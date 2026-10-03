@@ -1,0 +1,245 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_FROZEN_PHASE_C_EIGHT_MOCK_PILOT",
+  "authorization": {
+    "basis": "The user explicitly approved Phase C after the Phase-B technical pass on 2026-09-01.",
+    "Phase_C_eight_mock_pilot": true,
+    "Slurm_GPU_array": true,
+    "Slurm_CPU_aggregate": true,
+    "GPFS_read": true,
+    "GPFS_write_new_output_only": true,
+    "actual_observational_field_inference": false,
+    "actual_2Mpp_count_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_seed_access": false,
+    "Phase_D_or_later": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "purpose": "Run exactly eight balanced development mocks with a finer nonlinear PMWD truth, four HMC chains per mock, heldout prediction, posterior predictive diagnostics, nuisance-identifiability diagnostics, and global/frozen-ROI truth calibration. This is a development pilot, not validation, actual-data inference, or a resolution/frontier claim.",
+  "mock_assignments": [
+    {"index": 0, "seed": 2026083000, "arm": "A"},
+    {"index": 1, "seed": 2026083001, "arm": "A"},
+    {"index": 2, "seed": 2026083002, "arm": "B"},
+    {"index": 3, "seed": 2026083003, "arm": "B"},
+    {"index": 4, "seed": 2026083004, "arm": "C"},
+    {"index": 5, "seed": 2026083005, "arm": "C"},
+    {"index": 6, "seed": 2026083006, "arm": "D"},
+    {"index": 7, "seed": 2026083007, "arm": "D"}
+  ],
+  "grid": {
+    "box_size_cMpc_h": 384.0,
+    "inference_N": 32,
+    "inference_cell_size_cMpc_h": 12.0,
+    "truth_N": 64,
+    "truth_cell_size_cMpc_h": 6.0
+  },
+  "cosmology": {
+    "Om": 0.31,
+    "Ob": 0.05,
+    "h": 0.746,
+    "A_s_1e9": 1.63,
+    "ns": 0.96
+  },
+  "input_bindings": {
+    "Phase_A_datum": {
+      "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/datum.npz",
+      "sha256": "b170b51faefe3fc36f0650f303f26cb354c1eaf373d2f4ac98f2f1398202bf4a",
+      "read_contract": "read raw_selection_exposure only; counts_all, counts_train, and counts_holdout are forbidden"
+    },
+    "Phase_A_COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1/COMPLETE",
+      "sha256": "a40d668049937102cbb007f37e3c1c63249cc85ff0394611e57567e8f4910539"
+    },
+    "quadrature_arrays": {
+      "path": "/gpfs/kjhan/CF4/z0_density/selection_quadrature_diagnostic_v1/selection_orders.npz",
+      "sha256": "2b952bbde598da2ee1e50937807e2767daf7eaf8f88de849cea594940cc6da80"
+    },
+    "CF4_catalog": {
+      "path": "/home/kjhan/BACKUP/CF4/data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37",
+      "read_contract": "read the catalog to construct fixed geometry, uncertainty, BGc design, and holdout mask; discard the constructed observed vobs before inference and generate a mock velocity datum"
+    },
+    "ROI_design": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_kf_bin_manifest_design_v1.json",
+      "sha256": "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9"
+    },
+    "redesign_contract": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_density_likelihood_redesign_v1.json",
+      "sha256": "d10acce582c67215e0c495ad6c7025888d1d32381953c386c3cc84c0b2656fd1"
+    },
+    "Phase_B_result_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phaseb_smoke_v3_result_record.json",
+      "sha256": "fca7b71a252cf51e43fd82518f7e417d2dd9938bb1e884f8f5bd0850c82c7b9e"
+    }
+  },
+  "source_bindings": {
+    "Phase_C_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "cc368f5207c1a6aae59e8a636ce42ff5197c08f9ab45eeddc2ee4664d1db5996"
+    },
+    "fixed_field_kernels": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "CF4_linear_likelihood": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "PMWD_forward_factory": {
+      "path": "/home/kjhan/BACKUP/CF4/src/mock_pipeline.py",
+      "sha256": "74971ac119a69611854e0ed716bde23da3a50d34b555a556c5f06c092dd7b975"
+    }
+  },
+  "external_population_prior": {
+    "source": "Lavaux and Jasche 2016, MNRAS 455, 3169, Table 1 in arXiv:1509.05040",
+    "source_url": "https://arxiv.org/abs/1509.05040",
+    "published_cell_size_cMpc_h": 2.34375,
+    "published_mean_count_per_original_voxel": [0.0112, 0.086, 0.124, 0.0104, 0.086, 0.137],
+    "published_bias": [1.7, 1.2, 1.15, 1.74, 1.21, 1.0],
+    "observed_population_totals_used_to_center_prior": false
+  },
+  "truth_model": {
+    "initial_field": "N64 orthonormal white field with every N32 non-Nyquist signed Fourier mode inherited exactly from numpy PCG64 standard_normal(seed); independent high modes use SeedSequence([seed,high_k_white_tag])",
+    "dynamics": "PMWD second-order LPT plus particle-mesh evolution to a=1 in the frozen LCDM cosmology",
+    "density_floor": 0.02,
+    "six_population_mean": "published external mean density rescaled by volume and imposed on the generator expectation, never normalized to a realized or observed count total",
+    "coarse_truth": "conservative block sum of N64 mass and momentum to N32"
+  },
+  "stress": {
+    "A": "PMWD nonlinear density with positive six-population Poisson log intensity in real space",
+    "B": "A plus observer-centred coherent spherical RSD",
+    "C": "B plus population-dependent FoG and redshift-error broadening",
+    "D": "C plus gamma-Poisson overdispersion, order-4/perturbed selection, and a smooth log-intensity discrepancy",
+    "truth_FoG_km_s": [180.0, 220.0, 260.0, 200.0, 250.0, 300.0],
+    "truth_redshift_error_km_s": [35.0, 40.0, 50.0, 35.0, 40.0, 50.0],
+    "Gaussian_radial_quadrature_offsets_sigma": [-1.7320508075688772, 0.0, 1.7320508075688772],
+    "Gaussian_radial_quadrature_weights": [0.16666666666666666, 0.6666666666666666, 0.16666666666666666],
+    "D_negative_binomial_shape": 5.0,
+    "D_smooth_scale_cMpc_h": 24.0,
+    "D_discrepancy_log_amplitude": 0.2,
+    "D_radial_selection_amplitude": 0.12,
+    "D_angular_selection_amplitude": -0.1,
+    "technical_stress_semantics": "The fixed values span implementation stress; they are not claimed as final externally calibrated nuisance distributions."
+  },
+  "inference_model": {
+    "latent": "N32 whitened LCDM linear z=0 density/velocity prior",
+    "positive_intensity": "exp(alpha_p+exp(logbias_p)*(delta-mean(delta)))",
+    "RSD": "observer-centred coherent spherical velocity displacement plus a two-node symmetric population-FoG quadrature and conservative TSC",
+    "Gaussian_radial_quadrature_offsets_sigma": [-1.0, 1.0],
+    "Gaussian_radial_quadrature_weights": [0.5, 0.5],
+    "FoG_prior_median_km_s": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+    "fixed_redshift_error_km_s": [35.0, 40.0, 50.0, 35.0, 40.0, 50.0],
+    "FoG_log_sigma": 0.8,
+    "selection_basis": "two standardized fixed radial/dipolar angular log-response templates",
+    "selection_basis_log_amplitude": 0.1,
+    "alpha_log_sigma": 0.35,
+    "bias_log_sigma": 0.25,
+    "count_likelihood": "conditional Poisson in all arms so arm D tests deliberate overdispersion misspecification",
+    "velocity_likelihood": "fixed-geometry CF4 BGc Gaussian mean-radial-velocity/sigma factor with four standardized nuisance parameters",
+    "nuisance_dimension": 24
+  },
+  "heldout": {
+    "training_fraction": 0.8,
+    "holdout_fraction": 0.2,
+    "mock_rule": "independent Poisson thinning conditional on intensity; in arm D both thinnings share the same gamma intensity multiplier",
+    "selection_only_baseline": "six population rates estimated from training totals with fixed Gamma(0.5,0.5) regularization and raw order-6 exposure",
+    "Phase_C_delta_LPD_semantics": "diagnostic point estimate only; the block bootstrap and positive-lower-bound decision rule must be frozen before Phase D"
+  },
+  "sampler": {
+    "algorithm": "BlackJAX Euclidean HMC with diagonal window adaptation",
+    "chain_count": 4,
+    "warmup_steps": 192,
+    "posterior_draws_per_chain": 256,
+    "integration_steps": 4,
+    "initial_step_size": 0.00002,
+    "target_acceptance_rate": 0.8,
+    "chain_initial_jitter_std": 0.01,
+    "MAP_optimizer": "SciPy L-BFGS-B with exact JAX gradient",
+    "MAP_max_iterations": 64,
+    "MAP_max_line_search": 20,
+    "no_result_dependent_retuning_within_eight_mocks": true
+  },
+  "pilot_flags": {
+    "Rhat_max": 1.05,
+    "bulk_ESS_min": 100.0,
+    "tail_ESS_min": 100.0,
+    "divergence_fraction_max": 0.01,
+    "semantics": "sampler-usability flags only; failure is recorded per arm and cannot tune or promote Phase D after outcomes are seen"
+  },
+  "diagnostics": {
+    "posterior_predictive_draw_count": 64,
+    "stored_white_thinning": 8,
+    "ROI_subpoints_per_axis": 4,
+    "ROI_contract": "the already frozen Local Group, Virgo, Coma, Local Void, Bootes Void, and observer-environment raised-cosine windows; N32 partial-volume quadrature is reported as underresolved",
+    "k_edges_h_Mpc": [0.016362461737446838, 0.032724923474893676, 0.04908738521234052, 0.06544984694978735, 0.09817477042468103, 0.1308996938995747, 0.16362461737446837, 0.19634954084936207, 0.22907446432425574, 0.26180102000000005],
+    "count_histogram_edges": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 1e+30],
+    "radial_edges_cMpc_h": [0.0, 24.0, 48.0, 72.0, 96.0, 120.0, 144.0, 168.0, 192.0],
+    "two_point_separation_edges_cMpc_h": [0.0, 12.0, 24.0, 36.0, 48.0, 60.0, 72.0, 84.0, 96.0, 120.0, 144.0, 168.0, 192.0],
+    "posterior_predictive_spectrum": "population-separated Pearson-residual P0, fixed-z-axis P2, and isotropic 2PCF; the fixed-z P2 is a diagnostic only and is not substituted for the spherical-LOS likelihood",
+    "required_reports": [
+      "rank-normalized split Rhat, bulk/tail ESS, divergence fraction, energy",
+      "nuisance posterior covariance rank and correlations",
+      "heldout count LPD against the six-rate selection-only baseline and velocity heldout LPD",
+      "count histogram, zero fraction, radial counts, angular-template residuals, P0, P2, and 2PCF by population",
+      "density and velocity truth response, cross-correlation, residual power, posterior variance reduction, and 68/95 coverage globally and by frozen ROI",
+      "unpooled two-member summaries for every stress arm"
+    ]
+  },
+  "rng_tags": {
+    "high_k_white": 843927701,
+    "count_noise": 843927702,
+    "smooth_discrepancy": 843927703,
+    "velocity_nuisance": 843927704,
+    "velocity_noise": 843927705,
+    "chain_initialization": 843927706,
+    "posterior_predictive": 843927707
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_GPU_array_plus_CPU_aggregate",
+    "partitions": "a40,a100,h100,h200,a100_pcie",
+    "array": "0-7",
+    "cpus_per_GPU_task": 8,
+    "GPU_per_task": 1,
+    "expected_peak_host_memory_MiB_per_GPU_task": 8192,
+    "requested_host_memory_MiB_per_GPU_task": 10240,
+    "memory_headroom_multiplier": 1.25,
+    "GPU_task_time_limit": "12:00:00",
+    "aggregate_cpus": 1,
+    "aggregate_expected_peak_host_memory_MiB": 512,
+    "aggregate_requested_host_memory_MiB": 1024,
+    "aggregate_time_limit": "00:20:00",
+    "maximum_Slurm_submissions": 2,
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v1",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v1_aggregate",
+    "refuse_overwrite": true,
+    "plain_same_filesystem_directory_rename": true,
+    "renameat2_required": false,
+    "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+    "monitoring_loop_allowed": false,
+    "automatic_retry_or_replacement": false
+  },
+  "environment": {
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1",
+    "blackjax": "1.5",
+    "JAX_enable_x64": true,
+    "JAX_disable_preallocation": true,
+    "GPU_required_for_mock_tasks": true
+  },
+  "success_semantics": {
+    "eight_mock_development_pilot_only": true,
+    "actual_present_day_density_posterior_created": false,
+    "actual_present_day_velocity_posterior_created": false,
+    "observational_frontier_or_resolution_claim": false,
+    "target_0p3_cMpc_h_reached": false,
+    "validation_opened": false,
+    "Phase_D_requires_result_audit_and_new_user_approval": true,
+    "automatic_follow_on_beyond_Phase_C_aggregate": false
+  }
+}

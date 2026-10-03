@@ -1,0 +1,103 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-terminal-result-record-v1",
+  "status": "complete_fail_joint_statistical_physical_gate_v8_closed",
+  "completed_at": "2026-08-15T17:05:35+09:00",
+  "model": "Fresh 256-member defensive-mixture importance bank with the normalized z=0 halo-pair likelihood and unchanged parent-P1, hard-P2, and pair-recentered-P1 gates.",
+  "information_status": "MW/M31/M33 observables, the peak constraints, and the latent-midpoint proposal are explicit additional Local-Group information and are not attributed to CF4.",
+  "execution": {
+    "generation": {
+      "node": "syn101",
+      "gpu": "NVIDIA A100-SXM4-80GB index 7",
+      "repository_commit": "7202e6bb5051883fd6193a3f30f59f2562c1d3ab",
+      "result": "All 256 proposal fields and all 256 N192 projections completed with final manifests before the post-generation tripwire interruption."
+    },
+    "post_generation_resume": {
+      "node": "syn101",
+      "gpu": "NVIDIA A100-SXM4-80GB index 2",
+      "repository_commit": "bf823188c1bb29e1069c6ba49650b0244267f011",
+      "result": "Validated and reused the completed generation, then completed P1, N576 PM/FoF, z=0 scoring, pair-recentered P1, and the final gate."
+    },
+    "original_slurm_job": 301523,
+    "original_slurm_job_final_state": "cancelled_after_successful_manual_pipeline_completion",
+    "RAMSES_launched": false
+  },
+  "immutable_evidence": {
+    "v8_program": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "proposal_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v8_z0_importance/lg_peak_proposals_manifest.json",
+      "sha256": "393710e6970517a5b2e27927f625fd148714676c0a283767fe1d6f1d20656f00"
+    },
+    "parent_projection_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v8_z0_importance/parent_projection_manifest.json",
+      "sha256": "73b4c469ca38b971af44f3c460022e631fa1e792ca6860c59ae8d3a3da7ecdd8"
+    },
+    "conditioned_p1_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v8_z0_importance/p1_result.json",
+      "sha256": "5b55585971089e6323d2c9ac8432734c3f067b008a4faa1094333939a0a1f50a"
+    },
+    "derived_p2_config": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/p2_targets_frozen.json",
+      "sha256": "375245c357d7f9cafa551cd9f622d3f42438b890163222ea14b76f6eee34b504"
+    },
+    "p2_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/p2_screen_result.json",
+      "sha256": "6361740ca6bb2d7dbca88840bff2789ee37e21ebee42dbab214f760b85f23bd4"
+    },
+    "z0_importance_score": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/z0_importance_score.json",
+      "sha256": "f57d6921a566926fa5d63b1711a4b1b62013720f37f93efe52a4f4711db2f890"
+    },
+    "pair_recenter_input": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/z0_likelihood_pair_recenter_input.json",
+      "sha256": "712e35cd9d70cbcc7cd9221756f93ead9cd3c1c7c0204256e92de5a6bcbff510"
+    },
+    "recentered_p1_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/z0_likelihood_recentered_p1.json",
+      "sha256": "9fb76dc1b8d30809f3fa18bd5d74d89a7cdd98d9db319664f2903378519d3e47"
+    },
+    "final_gate": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance/z0_importance_gate.json",
+      "sha256": "f21cd643a35b9a385a10435f462fe9075aaf70978e2a08130a617f237e34f7b3"
+    }
+  },
+  "results": {
+    "generated_realizations": 256,
+    "parent_centered_P1_survivors": 240,
+    "N576_P2_forwards": 240,
+    "hard_P2_survivors": 13,
+    "finite_z0_likelihood_catalogs": 149,
+    "pair_recentered_P1_survivors": [5399, 5422, 5512],
+    "joint_hard_P2_and_recentered_P1_survivors": [5422],
+    "jointly_eligible_realizations": 1,
+    "effective_sample_size": 1.0,
+    "maximum_single_normalized_weight": 1.0,
+    "only_joint_survivor": {
+      "seed": 5422,
+      "member_masses_fof_msun_h": [3084155617280.0, 994066694144.0],
+      "mass_ratio": 3.1025640788979403,
+      "separation_mpc_h": 0.8581802749500161,
+      "midpoint_offset_mpc_h": 2.8807260573784386,
+      "total_radial_velocity_km_s": -14.755231862763154,
+      "tangential_velocity_km_s": 67.80334852730586,
+      "isolation_mpc_h": 8.462208707858544,
+      "normalized_importance_weight": 1.0
+    }
+  },
+  "checks": {
+    "minimum_eight_jointly_eligible_realizations": false,
+    "minimum_importance_ESS_eight": false,
+    "maximum_single_weight_0p25": false
+  },
+  "decision": {
+    "v8_passed": false,
+    "v8_closed": true,
+    "same_model_seed_extension_authorized": false,
+    "seed_5422_promotion_authorized": false,
+    "RAMSES_authorized": false,
+    "fresh_v9_phase_authorized": false,
+    "next": "Fable independently sets the scientific objective and priority and audits the V8 implementation and result interpretation before Codex implements any V9 design."
+  }
+}

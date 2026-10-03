@@ -1,0 +1,103 @@
+{
+  "schema": "hong2021-v24-tail-and-terminal-sampler-audit-attestation-v1",
+  "status": "complete_development_only_audit_before_v25_design_freeze",
+  "purpose": "Distinguish inverse-map saturation, terminal-sampler support overflow, and objective-induced conditional tail bias after the failed V24 base-48 experiment.",
+  "v24_parent": {
+    "registry": "config/hong2021_v24_development_program.json",
+    "registry_sha256": "b0c4503cd084feef0658bb78074d42aa87e8203fe63e3a43fcdf22195e2cc7d2",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/development_decision.json",
+    "decision_sha256": "eba4cee2f3136a90643216abac211c0ffa2e3e4d9f799c2904bec39c1034562b",
+    "decision_digest_sha256": "6907485273c67e85f4e688c2ffaa228e5f0e9b9437f174a12e0214ef1d226309",
+    "failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/automatic_failure_audit.json",
+    "failure_audit_sha256": "2fbcc9771c56d8802c6176b73653991792d41e4011ccf7cb5ed1579d303ee130",
+    "classification": "base48_capacity_increase_insufficient_at_convergence"
+  },
+  "physical_tail_audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/tail_mechanism_audit.json",
+    "sha256": "0c3e8fe8dee402b1aa88bdfe40ec89a1390e7f545ba550e0cd0ea699206dd851",
+    "audit_digest_sha256": "e4413e4c8b43173b23a8a858c6f3f832ed98f4f053588bdd5d7b179d32313480",
+    "classification": "multi_field_tail_overdispersion_without_dominant_forward_support_saturation",
+    "fields_above_domain_truth_global_plus_0p3_dex": {
+      "TNG100": 23,
+      "SIMBA": 12,
+      "Swift": 0
+    },
+    "generated_high_G21_support_fraction": {
+      "TNG100": 2.9802322387695312e-08,
+      "SIMBA": 1.6391277313232422e-07,
+      "Swift": 8.940696716308594e-08
+    },
+    "truth_high_G21_support_fraction": {
+      "TNG100": 9.5367431640625e-07,
+      "SIMBA": 3.0994415283203125e-06,
+      "Swift": 2.384185791015625e-07
+    },
+    "integrity": "All 48 truth fields exactly reproduce their frozen V21 latent cache; ensemble truth, conditional means, source indices, and physical log10rho=4.5*y conversion are exact."
+  },
+  "terminal_sampler_replay": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v24_e12_base48/terminal_sampler_audit.json",
+    "sha256": "fb51d6d40da47557a6dc0befe7f6c02ffbabecb51da8347a67a701b6e4677683",
+    "audit_digest_sha256": "f83175829893d09fd3252332543f067f7941e572522fb933032145ae9ac257bc",
+    "execution_host": "LagEunha",
+    "execution_gpu": "NVIDIA RTX 5000 Ada Generation",
+    "selected_fields": 208,
+    "failed_fields_replayed": 35,
+    "raw_byte_identity_fields": 0,
+    "maximum_absolute_replay_difference_in_y": 5.960464477539063e-08,
+    "float32_machine_epsilon": 1.1920928955078125e-07,
+    "numerically_identical_within_one_float32_epsilon_fields": 208,
+    "interpretation_of_raw_byte_check": "The original audit classified a zero-byte-identity result as a replay mismatch. Every selected field differs by at most exactly one-half float32 machine epsilon in y, so this is a roundoff-only replay and not an RNG, checkpoint, condition, or trajectory mismatch.",
+    "failed_fields_with_terminal_centered_z_at_or_above_5": 0,
+    "ordinary_fields_with_terminal_centered_z_at_or_above_5": 6,
+    "terminal_global_maximum_correlation_with_physical_maximum": {
+      "TNG100": 0.002688084716147654,
+      "SIMBA": 0.15720754908237763,
+      "Swift": 0.18940666941137746
+    },
+    "terminal_latent_at_physical_maximum_coordinate_correlation_with_physical_maximum": {
+      "TNG100": 0.22896198733497874,
+      "SIMBA": 0.5194837636293673,
+      "Swift": 0.08578130322848111
+    },
+    "finding": "Neither a G21 inverse clamp nor terminal z-support overflow is necessary for the physical high-density failures. TNG failures are especially coupled to high conditional-mean cells and predicted high-k band scales; SIMBA failures are concentrated in three object contexts and moderately coupled to the terminal latent at the eventual physical maximum."
+  },
+  "objective_alignment_audit": {
+    "source": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/mechanism_audit.json",
+    "source_sha256": "c39faea160b71e6693effdb2df56fbb0da7b8eb7332fc12ba0c7da0e8f523c3a",
+    "source_audit_digest_sha256": "de7f7ce52bcb10a72546acb93255ddf88044e3b65257a18d051bc801d573f700",
+    "derivation": "The unweighted-versus-tail-weighted gradient cosine is recovered algebraically from the stored norms of g_u, g_t, and 0.5*(g_u+g_t).",
+    "tail_to_unweighted_gradient_norm_ratio": [
+      2.1156741985366803,
+      1.9511175916374017,
+      1.6017009180499706
+    ],
+    "tail_vs_unweighted_gradient_cosine": [
+      -0.2975615131341385,
+      -0.3587284929375598,
+      -0.06290803639717749
+    ],
+    "frozen_tail_bin_weights": [
+      0.9845388531684875,
+      0.9014517664909363,
+      1.304729700088501,
+      2.248539924621582,
+      4.0030622482299805
+    ],
+    "highest_density_bin_equal_source_probability": 0.0013126449652418701,
+    "finding": "The target-density-dependent tail sub-objective supplies a 1.60-2.12 times larger, non-aligned gradient than the proper unweighted score objective on the audited batches. Because its voxel weights depend on the clean target, the 50:50 objective does not estimate the score of the original conditional data distribution; it preferentially fits a high-density-reweighted distribution while the sampler is evaluated against the unreweighted distribution."
+  },
+  "ruled_out": [
+    "single corrupted ensemble member",
+    "wrong source-index or physical-density unit conversion",
+    "G21 inverse overflow",
+    "terminal latent z-support overflow as a necessary cause",
+    "insufficient base-48 convergence",
+    "another capacity increase",
+    "more training steps",
+    "post-hoc clipping or A(k)",
+    "rectified-flow retry without a new mechanism, because the frozen V6 comparison already rejected flow at the grid-HOP abundance gate"
+  ],
+  "recommended_v25_single_change": "Keep the complete V24 base-48 representation, data, training horizon, initialization, sampler, seeds, and gates, but replace 0.5 unweighted plus 0.5 target-tail-weighted EDM with the statistically proper 1.0 unweighted EDM score objective.",
+  "Astrid_accessed": false,
+  "historical_EAGLE_accessed": false
+}

@@ -1,0 +1,145 @@
+# N256 larger-sampling advice and driver disposition
+
+R1 -> R2 actual present-state posterior (ONGOING) -> R3 same-field LG ->
+R4 precise evolution -> R5 phase-consistent zoom IC. R2 is NOT complete.
+
+Read-only Fable5 CLI completed normally, exit0, session80277. Request:
+`config/cf4_r2_n256_sampling_advice_20260929.md`. This file is a SUMMARY and
+driver disposition, not a verbatim transcript. Trigger: advice before a
+potentially large two-chain GPU allocation, not routine per-step auditing.
+No larger production allocation has been submitted.
+
+## Advice
+
+CONDITIONAL: proceed after408412 supplies actual N256 transition acceptance,
+fine-value cost and memory evidence. At review time those were pending.
+Q-GOAL positive: conditional1414 raw FP/K marks plus47121 counts, actual
+N256/1.5 history-linked posterior is a legitimate first R2 delivery, not LG,
+all-CF4 or external absolute-scale calibration. Q-LEAN: retain the current
+observed128 keys/exposure, abandon the unneeded compact-backend gate, no
+additional proxy/cohort ladder or repeated audits.
+
+Fable found no mathematical error in the inspected split-HMC/target wiring:
+deterministic reversible prior-rotation/likelihood-kick proposals, fine
+Hamiltonian Metropolis correction, accepted-state rejection cache, state-local
+support rebuilding and1/8 physical count-source rate normalization.
+
+For larger sampling: select longer trajectories from measured transport per
+force evaluation and Hamiltonian errors during discarded warmup, then freeze
+proposal settings. Consider a bounded2x24GPU-hour first allocation only after
+the pilot costs are known. Use independent random streams and genuinely
+different starts where feasible; report common ancestry. Track inherited
+low-band power, fundamental projections, all nuisance variables, count/raw
+scores and a few declared density summaries, including rejections. Measure
+ESS/MC error and drift; acceptance alone is insufficient. Same-grid finer
+quadrature and weak common-scale-prior sensitivity can use reweighting ONLY
+with adequate overlap/weight ESS. Freeze before one heldout assessment.
+
+Observed3-cMpc cells vs1.5-cMpc source field: defensible if reported honestly.
+Separate expected-count exposure, FP source-support occupancy and posterior
+vs prior band variance; none alone is a measured resolution/identifiability
+proof. Do not casually resplit or call all fine-grid structure observed.
+MW/M31 ambiguity and unresolved M33 persist; all later identification and
+observables act on the SAME NEW field, without truth-ID seeding. N256 particle
+mass2.90e11Msun/h is environment inference, not resolved LG halos.
+
+## Driver checks, corrections and decisions
+
+1. Adopt the finite longer-trajectory/two-chain/sensitivity/prediction sequence,
+   conditional on measured408412 outcomes. No new automatic external gate.
+2. Correct the claim that streaming moments and all necessary traces are
+   already implemented. `cf4_r2_n256_joint_pilot.py` saves a final accepted
+   field, checkpoint and short scalar trace; it does NOT accumulate posterior
+   moments or record every nuisance/mode. These must be implemented before
+   longer science sampling. Rejected states count as repeated samples.
+3. Correct a notation slip: c is inverse momentum mass. The implementation
+   draws Var(p_hat)=1/c, NOT c, with kinetic .5*c*|p_hat|^2. The code is right.
+4. Do NOT adopt the review's unproved 'almost surely measure-equivalent'
+   coarse/fine support assertion. Generic corrected_split_step can reject a
+   coarse +inf endpoint, but the CURRENT physical oracle raises on nonfinite
+   energy/support failures and stops the job; it does not silently proceed
+   on a newly restricted posterior. No general coarse/fine support equality
+   has been proved. Keep finite-support/numerical failures explicit.
+5. Two chains do permit split-Rhat with adequate trace length; they do not
+   certify exploration of all modes. Shared starts and short traces weaken
+   the evidence. The suggested O(10) effective draws per chain is exploratory
+   evidence, not a universal scientific UQ threshold; report actual MC error.
+6. Do not blindly redraw all24 nuisances and the entire universe from broad
+   priors for an expensive run. That can create a very poor data-supported
+   start or exceed the declared LOS/source workspace. Prefer a declared,
+   unselected alternative initialization with independently drawn small-scale
+   modes and different available low-band state, documenting shared ancestry.
+   A prior-conditioned band refresh may diversify starts; it is initialization
+   ONLY, never a fixed science low/high boundary. All modes remain live.
+7. Fine GL4 atN256 must respect the raw-component memory ceiling. Naively
+   packing the entire cohort could exceed40million components; use row-streamed
+   exact accumulation if needed, never drop components or call a smaller
+   quadrature the promised sensitivity. This is a required computation, not
+   already implemented or passed merely because it appears in a plan.
+8. The observed grid/completeness transfer is a declared limitation. Source
+   support occupancy is coverage, NOT information gain. Prior/posterior
+   variance comparison and predictive evidence must accompany any influence
+   map; no invented information-resolution claim from voxel size alone.
+
+After advice completed,408412's full PM+24-nuisance FD passed:
+AD321802.89445, FD321780.67501, relative6.90468e-5 (predeclared limit.002).
+This does not yet supply acceptance, stationarity, covariance or heldout
+prediction. The pilot continues; final larger-run lengths/settings remain
+conditional on its measured outcomes.
+
+## Measured N256 rejection and bounded response (pilot still running)
+
+The first two408412 proposals reject: step.1 gives fine Hamiltonian error
+19.6921; reduced step.0522046 gives12.8524. Reconstructing from saved endpoint
+energies separates coarse-integrator error from the change in fine-minus-
+coarse potential: first approximately-26.759+46.451=19.692, second
+-2.335+15.187=12.852. Thus after reducing step, surrogate-force mismatch
+dominates the remaining rejection; high-dimensional data/force geometry is
+not repaired merely by granting longer wall time. This is not evidence of
+a wrong fine Metropolis rule or failure of the checked directional derivative.
+Finish the remaining two predefined proposals, but do NOT launch the large
+two-chain allocation solely because the code runs.
+
+Prepared bounded response, same fine GL2 target and priors: evaluate ONE
+fine gradient at the accepted starting state q0 and form
+d=grad(Ufine)(q0)-grad(Ucoarse)(q0). Use the fixed surrogate potential
+Uproxy(q)=Ucoarse(q)+d dot(q-q0), its matching gradient and the unchanged
+fine-target Hamiltonian for acceptance. Freeze d/q0 for the whole run;
+refreshing the anchor each production trajectory is NOT this reversible
+fixed proposal. This changes only the proposal and is not a field/likelihood
+correction, power rescaling or posterior calibration.
+
+`cf4_r2_affine_force.py` implements only this fixed affine wrapper.408439
+passed2 analytic controls: same-anchor fine gradient and potential derivative,
+and global equality of force for equal-curvature Gaussian potentials (up to
+an irrelevant potential constant). These are mechanics checks, not evidence
+that an affine correction suffices for the nonlinear CF4 target. Integration
+with the actual pilot and measured transport/acceptance remain to be done
+AFTER408412 releases its pinned code. Use a bounded trial before any larger
+allocation; if the fixed correction is inadequate, use the evidence to
+choose a more accurate force rather than weakening the Metropolis target.
+
+Q-GOAL: make actual N256 posterior exploration viable, not merely draw a map.
+Q-LEAN: reuse the same target/sampler; one reference derivative and a fixed
+linear addition, no new survey/proxy/gate ladder. MW/M31/M33 same-field role
+ambiguity and all previously stated delivery limits remain unchanged.
+
+408412 terminal: COMPLETED59m45s, host16.16GiB,0/4 accepted. Final two errors
+4.313656/4.264864 at fixed step.0329685; accepted field/IC remain the initializer.
+This is failed transport, not failed execution and not R2 completion.
+Actual fine values~289s, coarse gradients~147s. Report408444 has3 actual/toy
+illustrated pages, all viewed (`r2_n256_pilot_report_v1/`). It distinguishes
+the genuine N256 initialization from a posterior and shows rejection error
+attribution; examples of moment accumulation and affine forces are explicitly
+toy checks, not claims of CF4 efficiency.
+
+408447 implements the planned repair after408445's sampler regressions:
+same accepted N256 state and GL2 target, ONE fine gradient checked against
+its value, then2 proposals at fixed step.0522045778,L2,seed2026092917 with no
+adaptation. Anchor and correction are saved and fixed throughout. Matching
+surrogate potential/gradient/caches are used; no per-trajectory refresh.
+Both derivative orders get their own compiled20% device-margin checks.
+The sampler now records the coarse/proxy Hamiltonian error and change in
+fine-minus-proxy energy separately, plus initial/proposed energies. All24
+nuisances are included in each trace row, even rejected states. This does
+NOT yet implement a long science chain or its moment accumulation.

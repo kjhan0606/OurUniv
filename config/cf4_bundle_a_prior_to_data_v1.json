@@ -1,0 +1,57 @@
+{
+  "bundle": "A-PRIOR-TO-ACTUAL-DATA",
+  "status": "USER_APPROVED_ACTIVE",
+  "authority": "CF4_MASTER_PLAN.md",
+  "purpose": "Close the bounded z=0 prior question and deliver an actual-data preliminary density/velocity diagnosis; not another open-ended toy-model series.",
+  "data": {
+    "Z6_plan": "config/cf4_z6_native_physics_plan_v1.json",
+    "Z9_plan": "config/cf4_z9_tracer_response_plan_v1.json",
+    "training_indices": [1, 2, 3, 4],
+    "evaluation_indices": [0, 5],
+    "tasks": [0, 1, 2, 3],
+    "cases": [
+      {"task": 0, "source": "Z9", "source_task": 1, "truth_index": 0, "fit": "quantile"},
+      {"task": 1, "source": "Z9", "source_task": 3, "truth_index": 0, "fit": "quantile"},
+      {"task": 2, "source": "Z6", "source_task": 2, "truth_index": 5, "fit": "baseline"},
+      {"task": 3, "source": "Z6", "source_task": 2, "truth_index": 5, "fit": "quantile"}
+    ],
+    "pairs": [
+      {"truth_index": 0, "baseline_source": "Z9", "baseline_task": 1, "candidate_task": 0},
+      {"truth_index": 0, "baseline_source": "Z9", "baseline_task": 3, "candidate_task": 1},
+      {"truth_index": 5, "baseline_source": "self", "baseline_task": 2, "candidate_task": 3}
+    ],
+    "contract": "Reuse exactly saved native-PM density/velocity and synthetic observations. New field prior is trained only on 1-4. Truths 0 and 5 are previously inspected development fields. Observation machinery is shared, not independent galaxy validation. No truth initializer, post-hoc field smoothing or LCDM IC power change."
+  },
+  "model": {
+    "knots": 65,
+    "normal_extent": 3.5,
+    "spectral_bins": 10,
+    "transform": "Training-only pooled centered-log-density quantiles; monotone C1 cubic map with linear tails. Fit density/velocity covariance after inverse-transforming training density coordinates. Sample white coordinates, not a post-hoc map correction.",
+    "unchanged": ["observation likelihood", "all source-case nuisance priors", "native physical origin", "noise and holdout data", "LCDM cosmology", "HMC settings"],
+    "limits": "A one-point transform plus Gaussian copula cannot certify nonlinear morphology, dynamics, scale transfer or IC realizability. Fixed finite-training covariance uncertainty is not marginalized."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero plus .5 standardized jitter", "inverse_mass": "identity"},
+  "heldout_retained_draw_stride": 8,
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "comparison_rule": "All six fits including reused controls must pass unchanged mechanics gates. Within EACH truth field, average the paired metrics over available gamma cases. Require support density RMSE reduction >=2%, correlation gain >=0.01, nonnegative heldout count LPPD gain, and no worsening >0.02 in absolute 68/95 coverage error. Every individual pair must avoid >2% density or velocity-component RMSE degradation. These are frozen engineering adequacy thresholds, not significance or calibration claims.",
+    "RMSE_ratio_max": 0.98,
+    "correlation_gain_min": 0.01,
+    "maximum_pair_RMSE_ratio": 1.02,
+    "coverage_error_increase_max": 0.02,
+    "interpretation": "Report velocity predictions, all density/velocity metrics and curvature intervals, not only histogram shape. Count LPPD comparisons are always paired on identical data. A failure ends this prior-repair comparison; no automatic retuning, new prior family or simulation. Driver chooses a model only for the next explicitly labelled actual-data diagnostic, or reports a model block.",
+    "next": "After driver review, at most one actual-data four-chain fit within Bundle A; actual input semantics and model choice must first be recorded. No automatic submission by the comparison script. Bundle B requires user approval."
+  },
+  "resources": {
+    "preflight": {"CPUs": 2, "estimated_MiB": 3000, "requested_MiB": 3600, "time_limit": "00:15:00"},
+    "posterior": {"CPUs": 4, "GPUs": 1, "estimated_MiB": 6144, "requested_MiB": 7373, "time_limit": "02:00:00", "maximum_concurrent_tasks": 2, "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregate": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "output_budget_GiB": 5,
+    "new_PM_simulations": 0,
+    "maximum_new_mock_fits": 4,
+    "maximum_actual_data_fits_after_review": 1
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/bundle_a_prior_to_data_v1",
+  "actual_data_fit_started": false,
+  "next_bundle_requires_user_approval": true
+}

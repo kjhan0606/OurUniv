@@ -1,0 +1,14 @@
+{
+  "training_cubes": 12,
+  "heldout_origins_1p5_cells": [[33, 0, 0], [33, 17, 17]],
+  "data_seed": 66329,
+  "training_seed": 80213,
+  "sample_seed": 99803,
+  "steps": 6000,
+  "learning_rate": 0.0002,
+  "draws_per_case": 4,
+  "training_deadline_seconds": 10800,
+  "gpu_peak_limit_GiB": 20,
+  "development_gate": "Every draw: fine-half power bands, top1pct mass, hot6-neighbor connectivity, bulk residual RMS, directional physical sigma RMS and parent-boundary gradient ratio each within factor2 of native. Seven-moment parent conservation<=1e-8. Not calibrated coverage.",
+  "scope": "One native multiscale q_E/q_F development fit, no q_S, CF4/LG posterior, global384 grid, new simulation or automatic extension."
+}

@@ -1,0 +1,31 @@
+{
+  "bundle": "Z10-EXACT-RADIAL-REPAIR",
+  "status": "PASS_CONDITIONAL_DIAGNOSTIC_NO_PRODUCTION_PROMOTION",
+  "job": 333743,
+  "implementation_commit": "f22ee41",
+  "completed_KST": "2026-09-07 15:43:53",
+  "elapsed": "00:01:10",
+  "measured_batch_MaxRSS_KiB": 1157672,
+  "result": "/gpfs/kjhan/CF4/z0_density/z10_fixed_truth_exact_radial_v1/comparison.json",
+  "verification": {
+    "saved_mock_identity": "PASS",
+    "original_likelihood_factorization_and_exact_block": "PASS",
+    "heldout_exclusion": "PASS",
+    "independent_Gaussian_draw_moments": "PASS",
+    "retained_21_coordinates_and_curvature_intervals_unchanged": true,
+    "direct_original_full_log_posterior_checks": "PASS",
+    "new_HMC_or_GPU_run": false,
+    "original_Z10_NO_GO_records_preserved": true
+  },
+  "cases": [
+    {"true_curvature": 0.0, "curvature_quantiles025_50_975": [-0.03325729186961171, 0.01300716629715122, 0.05823120430540927], "max_Rhat": 1.0239600201315626, "min_bulk_ESS": 134.1795179655825, "min_tail_ESS": 426.086628180412, "true_value_in_95_interval": true},
+    {"true_curvature": 0.2, "curvature_quantiles025_50_975": [0.14418315971305123, 0.18562991546101054, 0.2292070225000958], "max_Rhat": 1.0133683268163962, "min_bulk_ESS": 428.4699046516444, "min_tail_ESS": 1490.2657463635915, "true_value_in_95_interval": true}
+  ],
+  "driver_assessment": {
+    "conclusion": "Both fixed-field conditional posteriors now pass unchanged convergence gates and include the true curvature. Z9's displaced curvature occurs when jointly inferring the fields under its approximate z=0 prior; the conditional observation fit on these two mocks does not reproduce that displacement.",
+    "not_established": "This does not isolate the field prior alone, validate an independent galaxy-formation/selection model, prove calibration from two intervals, or establish real CF4 density recovery. The observation generator and fitted link share code. No LG-resolution or IC milestone was achieved.",
+    "next_focus": "Field-prior/observation coupling and physical density statistics; do not add further tracer flexibility based on Z8's withdrawn interpretation. Specify a bounded prior-compatible versus PM-truth comparison before further fits.",
+    "next_bundle_started": false,
+    "next_bundle_requires_user_approval": true
+  }
+}

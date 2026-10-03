@@ -1,0 +1,209 @@
+{
+  "schema": "ouruniv-cf4-same-truth-likelihood-ablation-program-v1",
+  "date": "2026-08-31",
+  "status": "USER_APPROVED_FROZEN_SAME_TRUTH_64_MOCK_ABLATION",
+  "purpose": "Locate low-k information loss in the completed population-selection plus BGc chain before any resolution increase, model training, validation opening, or frontier promotion.",
+  "authorization": {
+    "authorization_basis": "User approved the recommended same-truth nested-likelihood ablation after the completed 64-mock population calibration was NO-GO.",
+    "same_truth_64_mock_ablation": true,
+    "Slurm_member_array_submission": true,
+    "Slurm_dependent_aggregation_submission": true,
+    "GPFS_declared_read_write": true,
+    "new_truth_generation": false,
+    "population_generator_retuning": false,
+    "untouched_256_mock_validation": false,
+    "frontier_promotion": false,
+    "observational_CF4_inference": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_retry": false,
+    "automatic_follow_on_after_aggregate": false,
+    "network_access": false
+  },
+  "development": {
+    "mock_count": 64,
+    "posterior_draw_count": 16,
+    "truth_source": "immutable_completed_D_member_artifacts",
+    "truth_seed_range_reused_inclusive": [2026083000, 2026083063],
+    "new_truth_seed_count": 0,
+    "ablation_noise_seed_start": 2026900000,
+    "ablation_noise_seed_stop_exclusive": 2026900064,
+    "ablation_noise_semantics": "one new nontruth standard-normal stream per completed mock, shared by exact-Gaussian arms A and C",
+    "posterior_preconditioner_adjoint_and_draw_seeds": "reuse the completed D per-mock seed schedule for paired Monte Carlo",
+    "post_result_retuning_allowed": false
+  },
+  "shared_pairing_contract": {
+    "same_completed_truth_white_field": true,
+    "same_truth_nuisance_q": true,
+    "same_generated_population_catalog": true,
+    "same_D_selected_raw_rows": true,
+    "same_D_train_holdout_split": true,
+    "same_realized_population_selection": true,
+    "population_selection_removed_or_independently_tested": false,
+    "interpretation_limit": "This ablation diagnoses likelihood, distance-position, and BGc-datum losses conditional on one realised population selection. A separate newly approved fixed or Poisson population ablation would be required to remove selection."
+  },
+  "arms": {
+    "a": {
+      "name": "ideal_true_position_exact_linear_Gaussian",
+      "positions": "stored true comoving positions of the exact D-selected rows",
+      "datum": "exact frozen forward operator at stored truth white plus B times stored truth nuisance plus square-root D variance times paired standard-normal noise",
+      "variance": "completed D BGc variance on the same rows",
+      "truth_forward_gate": "exact forward radial signal must match stored CIC truth radial velocity with relative error at most 5e-8"
+    },
+    "b": {
+      "name": "observed_distance_direct_lognormal_moment_approximation_no_BGc",
+      "positions": "d_c times h along stored direction, where d_c=d_obs exp(-sigma_ln^2/2)",
+      "datum": "mock_cz minus H0 times d_c",
+      "variance": "[0.9 H0 d_c sqrt(expm1(sigma_ln^2))]^2",
+      "likelihood_limit": "Gaussian moment approximation to lognormal distance noise, not an exact lognormal likelihood"
+    },
+    "c": {
+      "name": "fixed_D_BGc_geometry_and_error_design_exact_linear_Gaussian",
+      "positions": "exact reconstructed D BGc positions",
+      "datum": "exact frozen forward operator at stored truth white plus reconstructed D B times stored truth nuisance plus square-root D variance times the same arm-A standard-normal noise",
+      "variance": "exact reconstructed D BGc variance",
+      "actual_D_BGc_transformed_vobs_used": false
+    },
+    "d": {
+      "name": "completed_population_selection_plus_actual_BGc_chain",
+      "execution": "read_only_completed_artifact",
+      "rerun": false
+    }
+  },
+  "preregistered_diagnostic_tree": {
+    "unit": "joint density-and-theta strict pass in the lowest available union bin",
+    "A_fails": "IDEAL_TRUE_POSITION_BASELINE_INSUFFICIENT",
+    "A_passes_B_fails_C_passes_D_fails": "MULTIPLE_DIRECT_DISTANCE_AND_BGC_DATUM_LOSSES",
+    "A_B_C_pass_D_fails": "BGC_DATUM_OR_GENERATIVE_LIKELIHOOD_MISMATCH",
+    "A_B_D_pass_C_fails": "FIXED_BGC_GEOMETRY_OR_ERROR_DESIGN_INSUFFICIENT",
+    "A_C_D_pass_B_fails": "DIRECT_LOGNORMAL_DISTANCE_APPROXIMATION_LOSS",
+    "all_arms_pass_generator_fails": "POPULATION_GENERATOR_FIDELITY_REMAINS_FAILED",
+    "all_arms_and_generator_pass": "NO_LOWEST_BIN_LOSS_DETECTED",
+    "other": "MIXED_NON_NESTED_PATTERN_NO_SINGLE_CAUSE",
+    "causal_limit": "B and C are not a one-factor nested pair; mixed patterns cannot identify a unique cause."
+  },
+  "repository_bindings": {
+    "completed_population_program": {
+      "path": "config/cf4_bgc_population_calibration_program_v1.json",
+      "sha256": "38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0"
+    },
+    "completed_population_result_record": {
+      "path": "config/cf4_bgc_population_calibration_v1_result.json",
+      "sha256": "a4839114e70c26abfd7cabd61457b5758a13895a811443e5082124a38e77cbea"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302"
+    },
+    "clean_catalog_marks": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37"
+    }
+  },
+  "source_bindings": {
+    "same_truth_ablation": {
+      "path": "src/cf4_same_truth_ablation.py",
+      "sha256": "d9c2c64cfa9315389e945fd09c3a0a684361456dedb01631b2765cab2f9f5312"
+    },
+    "completed_population_member_and_metrics": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "corrected_completed_D_aggregate": {
+      "path": "src/cf4_population_calibration_aggregate_v2.py",
+      "sha256": "371016743b9c0609c15a400f30560cc288ac694301f59f482e3fa0cb132a9969"
+    },
+    "fixed_field_kernels": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "linear_CR_and_BGc_design": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    }
+  },
+  "completed_D": {
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "member_implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d",
+    "aggregate_directory": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "aggregate_result_sha256": "9214a9d7000862832f8e428cef5121e205899f34a819b2d0b4b795cef46e691b",
+    "aggregate_metrics_sha256": "0c5603e7a2933541729b81953e7477933534c9bc52120fa767a0fea4675da5fd",
+    "aggregate_manifest_sha256": "e9b9670fef3df8fce9cf239a558e9ec45a6e63d05547c5de04cd75579a566141",
+    "aggregate_complete_sha256": "10232f2a329c7f6dbd822300983a6ab3245d645c74502c11f201e99d40b87548"
+  },
+  "aggregate_gates": {
+    "mock_cluster_bootstrap_replicates": 2000,
+    "mock_cluster_bootstrap_seed": 2026800000,
+    "response_min_inclusive": 0.8,
+    "response_max_inclusive": 1.2,
+    "correlation_r_min_inclusive": 0.7,
+    "residual_power_ratio_max_inclusive": 0.5,
+    "phase_null": "one-sided independent random sign per canonical mock-mode cross contribution",
+    "phase_null_replicates": 256,
+    "phase_null_seed_delta": 2026800001,
+    "phase_null_seed_theta": 2026800002,
+    "phase_null_p_max_inclusive": 0.01,
+    "variance_statistic": "median per mock and bin of posterior sample variance ddof=1 divided by prior variance; cluster-bootstrap median over mocks",
+    "variance_bootstrap_upper_max_exclusive": 0.8,
+    "coverage_interval": "analytic posterior mean plus or minus Student-t_15 multiplier times component sample standard deviation from 16 draws",
+    "coverage68_nominal": 0.6826894921370859,
+    "coverage68_abs_error_max": 0.05,
+    "coverage95_nominal": 0.9544997361036416,
+    "coverage95_abs_error_max": 0.025,
+    "coverage_bootstrap_requirement": "two-sided_95_percent_mock_cluster_bootstrap_interval_contains_nominal",
+    "complex_mode_components": "real_and_imaginary_for_nonself_conjugate_modes; real_only_for_self_conjugate_modes",
+    "heldout_statistic": "mean per-heldout-row log predictive density improvement over paired prior predictive, evaluated cumulatively from the lowest bin",
+    "heldout_per_row_improvement_lower_min_exclusive": 0.0,
+    "strict_gate_combination": "response_and_correlation_and_residual_and_phase_and_variance_and_coverage68_and_coverage95_and_heldout",
+    "frontier_rule": "contiguous prefix from the lowest available N32 bin; delta and theta both must pass"
+  },
+  "validation_firewall": {
+    "truth_seed_start": 2026083064,
+    "truth_seed_stop_exclusive": 2026083320,
+    "truth_seed_count": 256,
+    "may_be_opened_or_executed_by_this_program": false,
+    "development_results_may_promote_frontier_without_validation": false
+  },
+  "resolution_semantics": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "global_metrics_only": true,
+    "target_cell_size_cMpc_h": 0.3,
+    "target_0p3_cMpc_h_reached": false,
+    "development_frontier_is_science_frontier": false
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "member_array": "0-63%8",
+    "member_cpus_per_task": 4,
+    "member_expected_peak_memory_MiB": 2100,
+    "member_requested_memory_MiB": 2560,
+    "member_time_limit": "00:30:00",
+    "aggregate_cpus_per_task": 4,
+    "aggregate_expected_peak_memory_MiB": 3000,
+    "aggregate_requested_memory_MiB": 4096,
+    "aggregate_time_limit": "00:30:00",
+    "memory_minimum_headroom_multiplier": 1.2,
+    "member_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/members",
+    "aggregate_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_ablation_v1/aggregate",
+    "maximum_member_array_submissions": 1,
+    "maximum_aggregate_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  }
+}

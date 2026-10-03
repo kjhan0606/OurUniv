@@ -1,0 +1,57 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-zoom-l19-early-a010-decision-v2",
+  "date": "2026-09-23",
+  "job": 1108481,
+  "stage": "8/8 bounded early-nonlinear refinement gate",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "source_checkpoint": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_v1/job_1108467/output_00001",
+  "run": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_a010_v2/job_1108481",
+  "effective_namelist": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_a010_v2/job_1108481/ramses.nml",
+  "checks": {
+    "completed": true,
+    "slurm_state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 282,
+    "max_rss_gib": 48.89,
+    "requested_memory_gib": 96,
+    "restart_scale_factor": 0.05,
+    "final_scale_factor": 0.1,
+    "initial_main_step": 9,
+    "final_main_step": 19,
+    "configured_runtime_levelmax": 19,
+    "maximum_refined_level_seen": 17,
+    "maximum_grid_count_by_level": {
+      "9": 16777216,
+      "10": 25899,
+      "11": 108800,
+      "12": 505767,
+      "13": 51841,
+      "14": 10194,
+      "15": 2811,
+      "16": 433,
+      "17": 27
+    },
+    "fine_multigrid_nonconvergence_count": 0,
+    "maximum_reported_fine_residual": 9.706e-05,
+    "epsilon": 0.0001,
+    "boundary_warning_count": 0,
+    "new_full_snapshots": 1,
+    "new_snapshot_bytes": 20309509775
+  },
+  "hashes": {
+    "effective_namelist_sha256": "789e12bf2f57332239300617eaf576bbd6b2456366a91394147d4f40505fed48",
+    "final_info_sha256": "046babcc8bc05bff926126b340971f5ecc1d28db85f8791fd5e0ca11b39fd9de",
+    "result_sha256": "980831d829aeb51ce5f4bd9944cceb3514d082aabffe490a464b20c3ed136699"
+  },
+  "decision": "TRACE_ONLY_ZOOM_L19_EARLY_NONLINEAR_PASS",
+  "interpretation": "The exact seed40349 conditional L9-L12 hierarchy can be restarted and evolved through the onset of nonlinear AMR refinement with an L19 ceiling, converged fine solves, bounded memory, and one intentional output. This is an operational early-evolution pass only.",
+  "limitations": [
+    "The run stops at a=0.10 and supplies no z=0 density field or halo catalogue.",
+    "MW/M31/M33 were not identified; M33 remains unresolved and the parent remains trace-only.",
+    "No contamination, environment-drift, or z=0 LG-structure gate has been evaluated.",
+    "Only one random conditional high-k phase realization was evolved."
+  ],
+  "next": "Prepare a separate full-z0 resource/output and science-gate review. Do not launch or label a production zoom solely from this pass."
+}

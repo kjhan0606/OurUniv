@@ -1,0 +1,23 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-mock-validation-decision-v1",
+  "date": "2026-09-20",
+  "job": "388281",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_mock_validation_v1/result.json",
+  "decision": "PASS_ESTIMATOR_MECHANICS_PRODUCTION_NO_GO",
+  "gates": {
+    "bias_error_lt_0.25": true,
+    "radial_nuisance_error_lt_0.35": true,
+    "NB_k_relative_error_lt_1": true
+  },
+  "median_absolute_error": {"bias": 0.0156347, "radial_nuisance": 0.0148682, "nb_k": 0.00359055},
+  "meaning": "The NB joint estimator recovers known injected parameters from an independent seeded mock; this validates implementation mechanics only.",
+  "not_established": [
+    "physical RSD/FoG kernel validity",
+    "external survey survival calibration",
+    "Carrick field truth status",
+    "production density posterior or IC readiness"
+  ],
+  "next_required": "Run the same calibration against an independent external tracer/mock with redshift-space velocities and a held-out mask realization.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

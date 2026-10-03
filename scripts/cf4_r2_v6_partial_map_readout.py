@@ -1,0 +1,81 @@
+"""Read-only terminal fit summary/illustration; never touch heldout data."""
+import json
+import os
+from pathlib import Path
+
+import numpy as np
+
+BASE = Path(os.environ.get('CF4_R2_OUT_DIR', '/gpfs/kjhan/CF4/z0_density/r2_v6_partial_map_v1'))
+
+
+def main():
+    if not os.environ.get('SLURM_JOB_ID'):
+        raise RuntimeError('Slurm required')
+    report = json.loads((BASE/'result.json').read_text())
+    output = BASE/'readout'
+    output.mkdir(exist_ok=False)
+    summary = {k: report.get(k) for k in ('status','error','iterations','evaluations',
+        'optimizer_success','optimizer_message','initial_objective','final_objective',
+        'final_gradient_inf','initial_adjoint','host_peak_GiB','elapsed_seconds',
+        'proposals','sampler_message')}
+    sampling='sampler' in report
+    summary['state_kind']='HMC feasibility endpoint, NOT posterior ensemble' if sampling else 'MAP attempt'
+    summary.update(R2_complete=False,posterior_uncertainty=False,heldout_scored=False,
+                   map_available=(BASE/'final_state.npz').is_file())
+    if summary['status']=='STARTED' and not summary['map_available']:
+        summary['source_run_status']='STARTED'
+        summary['status']='INCOMPLETE_RUN_NO_FINAL_STATE'
+        # This readout does not know whether Slurm cancelled, failed or timed out.
+        # Never infer a terminal scientific verdict from a stale startup marker.
+    if summary['map_available']:
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        fig,axes=plt.subplots(2,2,figsize=(11,9),constrained_layout=True)
+        for col,name in enumerate(('initial','final')):
+            with np.load(BASE/f'{name}_state.npz',allow_pickle=False) as f:
+                rho=f['rho']
+                v=f['velocity_km_s'][2]
+                slab=slice(62,67)
+                density=rho[:,:,slab].mean(axis=2)
+                den=rho[:,:,slab].sum(axis=2)
+                bulk=np.divide((rho*v)[:,:,slab].sum(axis=2),den,
+                               out=np.zeros_like(den),where=den>0)
+                summary[name]=dict(mean_density=float(rho.mean()),
+                    density_min=float(rho.min()),density_max=float(rho.max()),
+                    white_IC_mean_square=float(np.mean(f['white_ic']**2)),
+                    white_tracer=f['tracer'].tolist())
+                if 'physical_velocity_variance_km2_s2' in f:
+                    variance=f['physical_velocity_variance_km2_s2']
+                    summary[name]['mass_weighted_physical_dispersion_km_s']=np.sqrt(
+                        (variance*rho[None]).sum(axis=(1,2,3))/rho.sum()).tolist()
+                    summary[name]['dispersion_definition']='sqrt(mass-weighted native-node velocity variance); NOT posterior uncertainty or tracer sigma_los'
+            # Log floor is for display only; saved physical fields unchanged.
+            im=axes[0,col].imshow(np.log10(np.maximum(density,1e-5)).T,origin='lower',
+                extent=(-192,192,-192,192),vmin=-1,vmax=1,cmap='magma')
+            fig.colorbar(im,ax=axes[0,col],label='log10(rho / mean rho)')
+            im=axes[1,col].imshow(bulk.T,origin='lower',extent=(-192,192,-192,192),
+                vmin=-500,vmax=500,cmap='RdBu_r')
+            fig.colorbar(im,ax=axes[1,col],label='mass-weighted v_SGZ (km/s)')
+            start_label=('Accepted restart' if report.get('restart') else
+                ('Unconditioned start' if report.get('IC_start_scale',1.)==1. else
+                 'Optimizer start (NOT a prior draw)'))
+            end_label=('Training-only HMC feasibility endpoint' if sampling
+                       else 'Training-only partial MAP iterate')
+            axes[0,col].set_title(start_label if col==0 else end_label)
+            for ax in axes[:,col]:
+                ax.set_xlabel('SGX (cMpc/h)'); ax.set_ylabel('SGY (cMpc/h)')
+                ax.plot(0,0,'+',color='lime',markersize=6)
+        fig.suptitle('N128 / 384: 3 cMpc/h cells, central 15 cMpc/h slab\n'
+                     'NOT a calibrated posterior; MW/M31/M33 not identified')
+        fig.savefig(output/'field_comparison.png',dpi=150)
+        plt.close(fig)
+    if report.get('trace'):
+        summary['accepted_steps']=len(report['trace'])
+        summary['last_accepted']=report['trace'][-1]
+    (output/'summary.json').write_text(json.dumps(summary,indent=2,allow_nan=False)+'\n')
+    print(json.dumps(summary,allow_nan=False),flush=True)
+
+
+if __name__=='__main__':
+    main()

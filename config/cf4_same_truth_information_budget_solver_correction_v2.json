@@ -1,0 +1,85 @@
+{
+  "schema": "ouruniv-cf4-same-truth-information-budget-solver-correction-v2",
+  "date": "2026-09-01",
+  "status": "ASSISTANT_NUMERICAL_SOLVER_ERROR_V2_CORRECTION_AUTHORIZED",
+  "authorization_basis": "Standing user instruction permits correction of an assistant-caused immediate implementation failure without a new approval; the user already approved the information-budget audit.",
+  "failed_v1_execution": {
+    "member_array_job_id": 329405,
+    "aggregate_job_id": 329406,
+    "member_tasks_failed": [0, 1, 2, 3, 4, 5, 6, 7],
+    "member_tasks_cancelled_after_failure_detection": [8, 9, 10, 11],
+    "member_tasks_never_started_and_cancelled": "12-63",
+    "aggregate_state": "CANCELLED_BEFORE_EXECUTION",
+    "published_member_artifact_count": 0,
+    "published_aggregate_artifact": false,
+    "common_error": "known_s0p3 covariance numerical gate failed",
+    "failure_layer": "normalized_data_space_CG_exhausted_500_iterations_at_finite_low_noise",
+    "scientific_result_produced": false
+  },
+  "root_cause_and_correction": {
+    "v1_system": "I plus A_normalized A_normalized_transpose",
+    "v1_CG_max_iterations": 500,
+    "v1_preconditioner_probe_count": 4,
+    "v2_equivalent_system": "A A_transpose plus N",
+    "v2_noise_scale_continuation_order": [1.0, 0.3, 0.1],
+    "v2_warm_start_previous_noise_scale": true,
+    "v2_CG_max_iterations": 4000,
+    "v2_preconditioner_probe_count": 16,
+    "CG_tolerance_unchanged": 3e-05,
+    "sample_residual_gate_unchanged": 0.0001,
+    "geometry_changed": false,
+    "scenario_or_noise_scale_changed": false,
+    "truth_or_datum_changed": false,
+    "random_seed_or_posterior_draw_changed": false,
+    "estimand_threshold_or_decision_tree_changed": false
+  },
+  "authorization": {
+    "single_member_zero_index_technical_pilot": true,
+    "production_64_member_array_after_pilot_pass": true,
+    "dependent_aggregate_after_production_success": true,
+    "reuse_exact_prior_ablation_and_D_artifacts": true,
+    "truth_array_generation_or_deserialization": false,
+    "likelihood_datum_consumed_by_inference": false,
+    "untouched_256_mock_validation": false,
+    "resolution_increase": false,
+    "ML_training": false,
+    "frontier_promotion": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_retry_after_v2_failure": false
+  },
+  "bindings": {
+    "failed_v1_program": {
+      "path": "config/cf4_same_truth_information_budget_program_v1.json",
+      "sha256": "862bf6c125c228b6e9be9e8b4178c976d15eb4bb015cd506d7a066c8c0e9682a"
+    },
+    "failed_v1_source": {
+      "path": "src/cf4_same_truth_information_budget.py",
+      "sha256": "d694505367807bea83e0e7ed0686c2b1b89ac315546f04fdfbaaaa6b328db3cc"
+    },
+    "failed_v1_member_runner": {
+      "path": "scripts/run_cf4_same_truth_information_members_v1.sbatch",
+      "sha256": "ccccf465fa7f80ebb69826e19fc9d2a34ad4afbdd06a6ecd565162cc50a2b964"
+    },
+    "failed_v1_aggregate_runner": {
+      "path": "scripts/run_cf4_same_truth_information_aggregate_v1.sbatch",
+      "sha256": "7889790a3164bcb92edefc7600ff2c3e8f978ecf3f4ba5940b1a3d796eb9dded"
+    },
+    "v2_corrected_source": {
+      "path": "src/cf4_same_truth_information_budget_v2.py",
+      "sha256": "ed0ab98780a7c2761ace06a63b5cb5eafa5411f7a6699e39e4f4187ad3ad3bbf"
+    }
+  },
+  "execution": {
+    "failed_output_root_preserved": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v1",
+    "v2_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2",
+    "technical_pilot_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/pilot/member-00",
+    "production_member_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/members",
+    "production_aggregate_output": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/aggregate",
+    "member_requested_memory_MiB": 3072,
+    "aggregate_requested_memory_MiB": 3072,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "ouruniv-cf4-local-volume-halo-gate-correction-v1",
+  "date": "2026-09-22",
+  "status": "science_gate_corrected_before_new_candidate_promotion",
+  "finding": "The v12 rule excluding every halo at or above 5e12 Msun/h within 8 Mpc/h of either the observer or LG midpoint is not a valid hard Local-Group isolation criterion. It is substantially stronger than the standard pair-isolation criterion and can exclude the observed Local Volume itself.",
+  "project_evidence": {
+    "strict_search_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_environment_v3/result.json",
+    "strict_search_result_sha256": "183719219dfa039ef6cc84a44e12e469f06a66f4fce8e1dae5a6464e9feb33d2",
+    "strict_pass_count": 0,
+    "pair_only_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_pair_diagnostic_v3/result.json",
+    "pair_only_result_sha256": "8445d2f370363f2b8c88ccce71860b9f321df2e6b208120d0010187ed828892c",
+    "pair_pass_count": 17,
+    "parent_persistence_result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_b3292_local_halo_persistence_v1.json",
+    "parent_persistence_result_sha256": "b4cc0fca1baecea77799c8155d3208a265da5600725ed182384863a57b338e21",
+    "parent_highk_realizations_with_at_least_one_v12_offender": 32,
+    "parent_highk_realization_count": 32,
+    "interpretation": "The v12 zero yield is caused by stable parent-environment groups, not by the LG peak conditioning. Erasing these groups with high-k anti-peaks would alter the CF4 parent to satisfy an unsupported gate."
+  },
+  "observational_basis": {
+    "standard_LG_pair_isolation": "No third halo at least as massive as the smaller pair member within 2.5 Mpc/h of the pair centre.",
+    "standard_LG_reference": "Carlesi et al. 2016, MNRAS 458, 900, doi:10.1093/mnras/stw357",
+    "nearby_group_counterexample": "The observed Centaurus A group is approximately 3.8 Mpc from the Local Group and published group-mass estimates are approximately 9e12 to 1.4e13 Msun. For h=0.746, 9e12 Msun is approximately 6.7e12 Msun/h, already above the v12 threshold.",
+    "nearby_group_references": [
+      "van den Bergh 2000, AJ 119, 609, arXiv:astro-ph/9910146",
+      "Wang et al. 2020, MNRAS 498, 2766, doi:10.1093/mnras/staa2508"
+    ]
+  },
+  "corrected_policy": {
+    "screen_config": "config/p2_lg_targets_v11_parent_b3292_beta025_l9.json",
+    "pair_midpoint_isolation_mass_threshold_msun_h": 5000000000000.0,
+    "pair_midpoint_isolation_radius_mpc_h": 3.0,
+    "definitive_third_halo_rule": "No third halo more massive than the smaller pair member within 2.5 Mpc/h of the pair midpoint.",
+    "retain_P1_observer_density_gate": true,
+    "retain_P1_excess_mass_bounds": true,
+    "retain_v12_outputs_as_diagnostic": true,
+    "v12_candidate_rejection_authority": false,
+    "anti_peak_conditioning_on_v12_offenders": false
+  },
+  "selection": {
+    "source": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_pair_diagnostic_v3/result.json",
+    "rule": "Minimum preregistered LG ranking score among the 17 v11 pair-screen passes; index breaks exact ties.",
+    "selected_index": 173,
+    "selected_field_seed": 40274,
+    "selected_ranking_score": 0.9005385112166512,
+    "next": "Exactly reproduce seed 40274, then run the unchanged GRAFIC to RAMSES to GalaxyFinder/HOP validation chain. Sub-grid pair separation and M33 remain zoom-resolution gates."
+  }
+}

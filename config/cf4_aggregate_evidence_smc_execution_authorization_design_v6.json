@@ -1,0 +1,69 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-design-v6",
+  "status": "frozen_design_only_execution_unauthorized",
+  "purpose": "Define the v6-only fail-closed one-shot authorization boundary around the frozen shared-annealing design. This change adds no grant, external release, manifest, receipt, data, state, pilot, cache, production execution, or downstream action.",
+  "v5_tainted_and_reuse_forbidden": true,
+  "hard_pins": {
+    "shared_annealing_design": {
+      "path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_design.json",
+      "sha256": "5d17ad724e780b4c5f5d0f2de1b497a9207719f338627ca92441e4acbf7adb18"
+    },
+    "shared_annealing_source": {
+      "path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py",
+      "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060"
+    },
+    "base_production_program": {
+      "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+      "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5",
+      "source_commit": "6630b6b04ab02e513d47f1667617384894eb349f",
+      "capability_commit": "22587e47232782feb4c08768d8f64d853d76e62b"
+    }
+  },
+  "fixed_science": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "target_CESS_fraction": 0.8,
+    "resampling_ESS_fraction": 0.5,
+    "MH_sweeps_per_stage": 4,
+    "maximum_temperature_stages": 256,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true
+  },
+  "v6_only_paths": {
+    "grant": "config/cf4_aggregate_evidence_smc_execution_grant_v6.json",
+    "release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_release.json",
+    "manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_manifest.json",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_receipts",
+    "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_disposable_pilot",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_run"
+  },
+  "future_shared_pilot_and_production_contract": {
+    "pilot_master_seed": 2026082301,
+    "pilot_N": 2048,
+    "pilot_all_256_parents": true,
+    "pilot_cache_posterior_and_scientific_result_reuse": false,
+    "pilot_close_and_dispose_before_production": true,
+    "all_four_masters_including_pilot_seed_rerun_under_immutable_schedule": true,
+    "stage_parity_mismatch_is_architecture_failure": true,
+    "unreachable_without_future_grant_release_and_manifest": true
+  },
+  "completion_contract": {
+    "scientific_complete_statuses": ["complete_pass_production_smc", "complete_scientific_fail_production_smc"],
+    "manifest_must_be_read_only_before_COMPLETE": true,
+    "invalid_or_missing_postcheck_routes_to_FAILED": true
+  },
+  "authorization": {
+    "v6_design_and_implementation_authorized": true,
+    "grant_creation_authorized": false,
+    "external_release_or_manifest_creation_authorized": false,
+    "pilot_execution_authorized": false,
+    "production_execution_authorized": false,
+    "cache_population_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  }
+}

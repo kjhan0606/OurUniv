@@ -1,0 +1,90 @@
+{
+  "schema": "hong2021-v43-tail-threshold-target-compatibility-result-record-v1",
+  "status": "complete_diagnostic_only_transport_body_backbone_incompatibility",
+  "program": "config/hong2021_v43_tail_threshold_target_audit_program.json",
+  "program_sha256": "bd3e300cbf1206051366c2731ede4f658d25aa893f8c250543cb83f728de97a1",
+  "audit_code_commit": "0978066111a70ba93dd1b0ee45923bae529e37d0",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v43_tail_threshold_target_audit/audit.json",
+    "sha256": "4f026893c343eef014802de8a823bc67b6961259fbd0b2bb974985a17f96826e",
+    "decision_digest_sha256": "627dc1916667422929555de74ff45a14ce4cbbb403103da284733112f5071b3e",
+    "classification": "object_target_is_supported_but_transported_body_and_backbone_are_incompatible",
+    "next": "retire_block_and_native_rank_transport_and_fit_a_train_only_local_conditional_residual_likelihood"
+  },
+  "object_target": {
+    "all_domains_pass": true,
+    "TNG100": {
+      "mean_bias_dex": -0.061860258559786,
+      "MAE_dex": 0.1259587477993251,
+      "RMSE_dex": 0.1612749397126601,
+      "Spearman": 0.9588235294117649
+    },
+    "SIMBA": {
+      "mean_bias_dex": 0.015115510401452856,
+      "MAE_dex": 0.16275176875691383,
+      "RMSE_dex": 0.23614754553298187,
+      "Spearman": 0.7323529411764707
+    },
+    "Swift": {
+      "mean_bias_dex": -0.04865490900303582,
+      "MAE_dex": 0.1391224098938449,
+      "RMSE_dex": 0.15708490395035316,
+      "Spearman": 0.9551143130267846
+    }
+  },
+  "target_bracket_fraction": {
+    "order": ["q0.9", "q0.95", "q0.975", "q0.99", "q0.995", "q0.999"],
+    "required_each_domain": 0.9,
+    "TNG100": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "SIMBA": [0.0625, 0.046875, 0.0, 0.0, 0.0, 0.0],
+    "Swift": [0.32421875, 0.12890625, 0.04296875, 0.0, 0.0, 0.0]
+  },
+  "median_zero_excess_minus_target_dex": {
+    "order": ["q0.9", "q0.95", "q0.975", "q0.99", "q0.995", "q0.999"],
+    "TNG100": [0.5927, 0.8112, 1.0362, 1.3303, 1.5639, 2.2241],
+    "SIMBA": [0.5199, 0.7695, 1.0228, 1.3793, 1.6373, 2.3103],
+    "Swift": [0.1577, 0.3989, 0.6433, 0.9714, 1.2273, 1.8695]
+  },
+  "q99_9_location_support": {
+    "mean_generated_top26_voxel_recall": {
+      "TNG100": 0.9056,
+      "SIMBA": 0.9064,
+      "Swift": 0.9271
+    },
+    "mean_generated_top3_voxel_recall": {
+      "TNG100": 1.0,
+      "SIMBA": 0.9974,
+      "Swift": 1.0
+    },
+    "interpretation": "The frozen conditional residual-tail masks locate generated extremes well; failure is not missing tail locations. Even zeroing a much broader positive residual excess leaves an overpowered centered body after transported ranks are coupled to the query backbone."
+  },
+  "integrity": {
+    "maximum_q99_9_candidate_reconstruction_error_dex": {
+      "TNG100": 4.6264111119853624e-7,
+      "SIMBA": 3.244785764522362e-7,
+      "Swift": 3.107918793432418e-7
+    },
+    "maximum_uncalibrated_residual_DC": {
+      "TNG100": 1.926946532893048e-9,
+      "SIMBA": 1.834834697372889e-9,
+      "Swift": 1.94218799289686e-9
+    }
+  },
+  "scientific_conclusion": [
+    "The V41 object-amplitude predictor is supported on the frozen held-out objects in every domain under the predeclared bias, RMSE, and rank-correlation thresholds. Refitting that target is not justified.",
+    "The q99.9 conditional residual tail correctly contains essentially every top-three generated-density voxel and about 91 to 93 percent of the top 26. The V42 failure is therefore not caused by failing to locate the generated extremes.",
+    "No domain reaches the required 90 percent target bracket fraction even when the positive excess above the train-only conditional q90 threshold is set identically to zero. The q90 zero-excess endpoint remains above the predicted target by a median 0.59, 0.52, and 0.16 dex in TNG100, SIMBA, and Swift.",
+    "Coarse and native donor-rank transport must be retired. It couples a donor residual body to the query backbone in a way that cannot be repaired by a positive monotone tail scale while preserving the stochastic body.",
+    "The next generator may not perform spatial donor-rank rearrangement. It must learn a train-only local conditional residual likelihood directly at the query location, retain an explicit stochastic innovation, and be judged against the unchanged V6 field and Q3/Q4 gates."
+  ],
+  "firewall": {
+    "fit_or_sampling_performed": false,
+    "validation_truth_role": "diagnostic_metrics_only_after_v42_was_frozen",
+    "new_field_generated": false,
+    "threshold_or_branch_tuned_after_audit": false,
+    "donor_reselection": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

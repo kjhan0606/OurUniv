@@ -1,0 +1,15 @@
+{
+  "schema": "ouruniv-cf4-parent-b3292-beta025-p1-bridge-v1",
+  "status": "complete",
+  "purpose": "Expose the recovered and independently validated parent to the existing read-only P2 screen interface.",
+  "source_result_record": "config/cf4_parent_recovery_b3292_beta025_result_v1.json",
+  "passing_seeds": [3292],
+  "members": [
+    {
+      "seed": 3292,
+      "input": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+      "pass": true
+    }
+  ],
+  "scope": "Interface metadata only; the underlying P1, likelihood, N256, and N512 evidence is recorded in the source result record."
+}

@@ -1,0 +1,19 @@
+{
+  "bundle": "Z7-DATA-SOURCE-STRUCTURE-RECOVERY",
+  "status": "CLOSED_DRIVER_REVIEWED",
+  "jobs": {"array": 333077, "aggregate": 333078, "all_tasks_completed": true},
+  "mechanics": {"all_tasks_passed": true, "divergences": 0, "max_Rhat": 1.0236662183332736, "minimum_bulk_ESS": 570.6677540804226, "minimum_tail_ESS": 1070.818798211386},
+  "observed_support_density_correlation": {
+    "truth0": {"joint": 0.5654339906321644, "velocity_only": 0.2649882950012923, "counts_only": 0.564483824185906},
+    "truth5": {"joint": 0.5787044359073052, "velocity_only": 0.21704558270364316, "counts_only": 0.568981045277158}
+  },
+  "interpretation": {
+    "primary": "In this current physical tracer model, density reconstruction is carried almost entirely by the galaxy-count channel; velocity-only leaves density weakly correlated. The joint density correlation is nearly the counts-only result.",
+    "velocity": "Velocity observations are still informative for velocity prediction; heldout velocity gains were 324 (velocity-only truth0), 267 (counts-only truth0), 168 (velocity-only truth5), and 105 (counts-only truth5).",
+    "coverage": "All nominal 68-percent physical-density coverages are about 69-70 percent for Z7, consistent with the declared development gate. This is not an observational calibration certificate.",
+    "spectral": "Shell correlations and log-density variance contractions vary by channel and k; no hard low/high boundary or post-hoc power correction is selected.",
+    "science_consequence": "Do not expect CF4 peculiar velocities alone to create a detailed z=0 density map under this likelihood. Counts/source selection and the tracer model are the present limiting information path."
+  },
+  "limits": ["N32=12 cMpc/h development grid", "synthetic saved Z6 data only", "shared coarse observation generator", "four chains per case and two truth cases", "no actual CF4 data, IC, PM forward run, or LG 0.3 cMpc/h claim"],
+  "next_recommendation": {"purpose": "Use the source result to design a count/tracer likelihood audit: verify CF4 count provenance/selection and bias identifiability before attempting higher resolution or IC construction.", "mandatory": ["retain velocity as a velocity constraint, not silently convert it to density information", "audit count exposure and tracer bias using allowed source contracts", "test count-model recovery on heldout synthetic populations without tuning power"], "deferred": ["actual CF4 posterior", "resolution increase", "IC/zoom", "high-k completion", "GPFS-specific tests"], "user_approval_required": true, "started": false}
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "ouruniv-cf4-low-highk-cosmology-binding-v1",
+  "source": "config/cf4_phasec_pmwd_scan_diagnostic_v1.json",
+  "Omega_m": 0.31,
+  "Omega_b": 0.05,
+  "h": 0.746,
+  "A_s_1e9": 1.63,
+  "n_s": 0.96,
+  "role": "development high-k shape binding only",
+  "not_bound": ["sigma8 normalization", "growth factor convention", "transfer-table absolute normalization"],
+  "production_ic_authorized": false
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "hong2021-v50-train-only-bounded-support-selection-result-record-v1",
+  "status": "complete_support_selected_before_model_implementation",
+  "program": "config/hong2021_v50_support_selection_program.json",
+  "program_sha256": "38cd50239958004935e6a028db4619b7b5a976c6e7afa3286bb959be5da6389e",
+  "selection_code_commit": "f0f260ef90883f77687e8cbd08e02be5c6bde376",
+  "selection": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce"
+  },
+  "population": {
+    "TNG100_train_objects": 432,
+    "SIMBA_train_objects": 202,
+    "Swift_train_objects": 409,
+    "total_native_voxels": 273416192
+  },
+  "normalization": {
+    "target_mean": -5.087155205187507e-11,
+    "target_std": 0.09877202271987233
+  },
+  "observed_extrema": {
+    "TNG100": [
+      -11.68229225414806,
+      8.382995311126093
+    ],
+    "SIMBA": [
+      -7.644250484675549,
+      8.75017249900888
+    ],
+    "Swift": [
+      -12.695331409918287,
+      9.165971027770349
+    ],
+    "global": [
+      -12.695331409918287,
+      9.165971027770349
+    ]
+  },
+  "support": {
+    "range": 21.861302437688636,
+    "symmetric_margin": 1.0930651218844318,
+    "lower": -13.78839653180272,
+    "upper": 10.259036149654781,
+    "open_interval": true,
+    "all_train_values_strictly_interior": true
+  },
+  "firewall": {
+    "model_implementation_performed": false,
+    "fit_or_optimizer_performed": false,
+    "validation_accessed": false,
+    "development_arrays_accessed": false,
+    "support_adjusted_after_scan": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

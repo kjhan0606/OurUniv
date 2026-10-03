@@ -1,0 +1,244 @@
+{
+  "schema": "hong2021-v51-train-only-bounded-support-calibration-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine whether V50's common-domain extreme-density failure is caused by bounded-mixture probability in train-unoccupied support margins, conditional amplification by the frozen structure-risk channel, bounded PIT overdispersion, or a voxel log-score information ceiling, without changing support, thresholds, model parameters, or any sampled development artifact.",
+  "parent_evidence": {
+    "v50_record": "config/hong2021_v50_result_record.json",
+    "v50_record_sha256": "965ecdbccf384d43b58f027ff89f07f3bb68debe9334f4ec517cba0f612dcdce",
+    "required_status": "complete_development_failure_train_only_bounded_support_audit_required",
+    "required_classification": "bounded_marginal_support_preserves_the_field_body_but_is_not_sufficient_for_extreme_calibration",
+    "required_next": "audit_train_only_support_boundary_occupancy_and_bounded_PIT_without_threshold_or_support_changes",
+    "required_development_pass": false,
+    "required_high_k_power_and_residual_RMS_all_domains": true,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v50_program": "config/hong2021_v50_bounded_logit_mixture_copula_program.json",
+    "v50_program_sha256": "f67e8f5a9eacf40eb138774632add896e922e84d944263bb245ff2a71344d85f",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "support_selection_decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "834488cf990e0334573d66ead742d6036f6737f551f406be10b16cdc54e466b4",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json",
+    "training_report_sha256": "0b1525e49904f8465e922de09d3a85f23d9c238c15e5a39433dd1e70ae688e55",
+    "training_report_decision_digest_sha256": "ebc54fb8ac1f11b53f497567ced3f2ddf701f15daa000415467fc7c2f0430aed",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_bounded_logit_mixture_sequence/preflight.json",
+    "preflight_sha256": "934570caa2a4cb259710557a3ab865904aea4e26a1935136f7b3aaf2aefdbb14",
+    "development_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "development_decision_sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "development_decision_digest_sha256": "17dc814404609dbd517cc5a50354720cdf3011fc476849a005d72858bd210dc0"
+  },
+  "audit_population": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "split": "train only",
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "native_voxels": {
+      "TNG100": 113246208,
+      "SIMBA": 52953088,
+      "Swift": 107216896
+    },
+    "total_native_voxels": 273416192,
+    "model": "unchanged V50 EMA checkpoint in evaluation mode",
+    "augmentation": false,
+    "validation_inputs_opened": false,
+    "validation_truth_opened": false,
+    "development_arrays_opened": false
+  },
+  "fixed_support": {
+    "open_standardized_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "global_train_minimum": -12.695331409918287,
+    "global_train_maximum": 9.165971027770349,
+    "support_changed_during_or_after_audit": false
+  },
+  "exact_native_voxel_diagnostics": {
+    "scope": "every 64^3 native train voxel in every frozen train object",
+    "support_coordinate": "s=(z-lower)/(upper-lower)",
+    "support_boundary_layer_fractions": [
+      0.05,
+      0.01,
+      0.001,
+      0.0001
+    ],
+    "PIT_tail_probabilities": [
+      0.01,
+      0.001,
+      0.0001,
+      0.00001,
+      0.000001
+    ],
+    "upper_target_subsets": [
+      0.99,
+      0.999
+    ],
+    "metrics": [
+      "truth counts and fractions in each fixed lower and upper support boundary layer",
+      "mean model probability mass in each fixed lower and upper support boundary layer",
+      "truth counts and mean model probability below the frozen global and per-domain train minima and above the frozen global and per-domain train maxima",
+      "mean exact bounded-mixture NLL and upper q99 and q99.9 mean NLL",
+      "bounded PIT lower and upper observed-over-expected ratios through probability 1e-6",
+      "mean mixture weights and posterior truth responsibilities by component",
+      "upper q99 and q99.9 posterior truth responsibilities",
+      "global effective posterior-responsibility component count"
+    ],
+    "probability_evaluation": "analytic latent Gaussian-mixture CDF after the exact frozen bounded-logit transform; no sampling, clipping, or extrapolation"
+  },
+  "fixed_probe_posterior_predictive": {
+    "probe_indices": "reuse V46 seed 146046 and exactly 4096 native voxels without replacement per train object",
+    "probe_voxels": {
+      "TNG100": 1769472,
+      "SIMBA": 827392,
+      "Swift": 1675264
+    },
+    "members_per_probed_voxel": 16,
+    "uniform_seeds": "151051 plus member, 10000000 times domain index, and 10000 times object index",
+    "inverse": "unchanged V50 28-step latent Gaussian-mixture inverse followed by the exact bounded transform, with rank epsilon 1e-7",
+    "quantiles": [
+      0.99,
+      0.999,
+      0.9999,
+      0.99999
+    ],
+    "comparisons": [
+      "standardized residual posterior-predictive versus probed train truth",
+      "log10rho posterior-predictive versus probed train truth",
+      "sampled mean delta squared versus probed train truth"
+    ],
+    "new_development_sample": false
+  },
+  "fixed_bounded_moment_quadrature": {
+    "probe": "the same fixed 4096 native train voxels per object",
+    "primary_rule": "64-point Gauss-Hermite quadrature independently for every predicted latent Gaussian component in float64",
+    "convergence_control": "repeat aggregate moments with 32-point Gauss-Hermite quadrature",
+    "physical_definition": "y=backbone+target_mean+target_std*z, rho=10**(4.5*y), delta=rho-1",
+    "metrics": [
+      "analytic bounded E[rho], E[rho^2], and E[(rho-1)^2] averaged over probed train conditions",
+      "per-component fractions of E[rho^2] and E[(rho-1)^2]",
+      "fractions of E[rho^2] and E[(rho-1)^2] contributed above the frozen global and per-domain train residual maxima",
+      "fractions of E[rho^2] and E[(rho-1)^2] contributed by each fixed upper support boundary layer",
+      "analytic versus empirical probed mean delta squared"
+    ],
+    "forbidden": [
+      "Monte Carlo replacement of quadrature",
+      "density clipping",
+      "residual clipping",
+      "component scale cap",
+      "support adjustment"
+    ]
+  },
+  "fixed_conditional_strata": {
+    "variables": [
+      "query backbone physical y before standardized residual",
+      "standardized V41 full extreme-structure block-risk input channel"
+    ],
+    "boundaries": "train-only fixed-probe quantiles q90, q99, and q99.9 computed independently within each domain",
+    "strata": [
+      "below q90",
+      "q90 to q99",
+      "q99 to q99.9",
+      "q99.9 and above"
+    ],
+    "metrics": [
+      "empirical probed mean delta squared",
+      "64-point quadrature mean delta squared",
+      "quadrature over empirical mean delta squared",
+      "model probability above the frozen global train residual maximum",
+      "upper support one-percent boundary-layer probability"
+    ]
+  },
+  "fixed_thresholds": {
+    "minimum_domains_for_common_mechanism": 2,
+    "minimum_expected_model_voxels_beyond_global_train_maximum": 10.0,
+    "dominant_rho_squared_fraction_beyond_global_train_maximum": 0.5,
+    "PIT_tail_used_for_classification": 0.00001,
+    "PIT_tail_observed_over_expected_lower": 0.5,
+    "PIT_tail_observed_over_expected_upper": 2.0,
+    "posterior_predictive_absolute_q99_999_log10rho_max_dex": 0.1,
+    "physical_mean_delta_squared_ratio_min": 0.6666666666666666,
+    "physical_mean_delta_squared_ratio_max": 1.5,
+    "risk_top_stratum_physical_moment_ratio_max": 1.5,
+    "minimum_effective_responsibility_components": 3.0,
+    "minimum_supported_component_mean_weight": 0.02,
+    "minimum_responsibility_to_weight_ratio": 0.5,
+    "quadrature_32_to_64_relative_difference_max": 0.005,
+    "inverse_CDF_maximum_error": 0.000002
+  },
+  "fixed_branches": [
+    {
+      "condition": "at least two domains predict at least 10 native train voxels above the frozen global train residual maximum and assign at least 0.5 of quadrature rho squared to residuals above that maximum",
+      "classification": "train_unoccupied_fixed_support_margin_dominates_the_bounded_physical_tail",
+      "next": "freeze_a_train_only_bounded_rational_quadratic_spline_likelihood_on_the_same_support_with_endpoint_mass_gates_before_fit"
+    },
+    {
+      "condition": "the q99.9-and-above structure-risk stratum has quadrature over empirical mean delta squared above 1.5 in at least two domains and the already sealed structure-risk ablation reduces development mean delta squared ratio relative to the candidate in every domain",
+      "classification": "structure_risk_conditioning_amplifies_the_bounded_extreme_tail",
+      "next": "freeze_a_matched_train_only_no-risk-channel_model_ablation_with_all_other_V50_information_support_and_gates_unchanged"
+    },
+    {
+      "condition": "at least two domains have upper PIT observed-over-expected below 0.5 at probability 1e-5 while posterior-predictive q99.999 or quadrature mean delta squared fails its frozen band in every domain",
+      "classification": "bounded_logit_mixture_is_overdispersed_in_the_train_upper_tail",
+      "next": "freeze_a_train_only_bounded_rational_quadratic_spline_likelihood_on_the_same_support_and_gates"
+    },
+    {
+      "condition": "any domain has global effective posterior-responsibility component count below 3.0 or a component with mean weight at least 0.02 and responsibility-to-weight ratio below 0.5",
+      "classification": "V50_bounded_latent_mixture_has_effective_component_failure",
+      "next": "stop_finite_mixtures_and_freeze_a_single_train_only_bounded_monotone_spline_likelihood_on_the_same_support"
+    },
+    {
+      "condition": "all domains pass lower and upper PIT at probability 1e-5 and posterior-predictive q99.999, but any domain has quadrature mean delta squared outside [2/3,1.5] times empirical truth",
+      "classification": "bounded_voxel_log_score_calibrates_train_ranks_but_not_the_physical_second_moment",
+      "next": "freeze_a_train_only_strictly_proper_physical_tail_scoring_comparison_before_changing_the_generator"
+    },
+    {
+      "condition": "every domain passes lower and upper PIT at probability 1e-5, posterior-predictive q99.999, and quadrature mean delta squared ratio in [2/3,1.5]",
+      "classification": "train_bounded_marginal_is_calibrated_but_empirical_rank_copula_or_query_shift_breaks_development_extremes",
+      "next": "audit_only_train_empirical_rank_tail_dependence_and_train_to_development_condition_shift_without_changing_the_bounded_likelihood"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "bounded_support_extreme_failure_is_mixed_or_not_identified",
+      "next": "seal_boundary_PIT_component_risk_strata_and_bounded_moment_evidence_before_selecting_one_new_model"
+    }
+  ],
+  "hard_checks": [
+    "clean committed worktree and exact V50 result record, program, support, checkpoint, report, cache, preflight, and development-decision hashes and canonical digests",
+    "full pytest before execution",
+    "Lageunha Ada GPU and exact V50 parameter count",
+    "all train object, native voxel, and fixed probe counts exactly match this program",
+    "the support remains exactly [-13.78839653180272,10.259036149654781] and every observed train target remains strictly interior",
+    "all model parameters, bounded NLL, PIT, responsibilities, analytic probabilities, quadrature moments, and sampled values are finite",
+    "mixture weights and posterior responsibilities sum to one within 1e-5",
+    "aggregate 32-point versus 64-point quadrature relative differences remain below 0.005",
+    "maximum posterior-predictive inverse-CDF error below 2e-6",
+    "the one recorded step-8400 recoverable AMP overflow and non-standard Infinity token are acknowledged without modifying the sealed report",
+    "no validation data, development arrays, Astrid, or historical EAGLE access"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v51_bounded_support_calibration_audit/audit.json",
+  "firewall": {
+    "training_or_refit": false,
+    "new_development_sampling": false,
+    "support_change": false,
+    "development_threshold_change": false,
+    "posthoc_scale_or_clipping": false,
+    "posthoc_DC_or_Ak": false,
+    "donor_change": false,
+    "validation_access": "forbidden",
+    "development_array_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v8-decision-v1",
+  "date": "2026-09-20",
+  "job": "388385",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v8/result.json",
+  "decision": "EXTERNAL_BIAS_PRIOR_INJECTED_HOLDOUT_PASS",
+  "separation": "Carrick density remains a covariate only; tracer bias is constrained by CAMELS DM-truth prior.",
+  "gates": {"all_six_holdout_log_scores_positive": true, "bias_prior_injected": true, "survival_nuisance_retained": true},
+  "log_score_improvement": [31.3095,6.3123,3.4199,221.7268,73.1852,18.0095],
+  "interpretation": "External DM-truth bias priors remove the previous Carrick/tracer bias degeneracy in the untouched holdout. This is a calibrated development posterior, not yet a final IC.",
+  "next_gate": "Freeze this calibrated tracer posterior and run the z=0 density posterior production-readiness audit before IC generation.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development complete; stage 3 promotion audit next"
+}

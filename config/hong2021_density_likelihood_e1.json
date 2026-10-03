@@ -1,0 +1,52 @@
+{
+  "schema": "hong2021-density-likelihood-cross-code-e1-v1",
+  "status": "complete_passed_advance_to_e2",
+  "purpose": "Falsify transfer of the frozen deterministic density likelihood before any CF4-to-IC use",
+  "locked_test_policy": "SIMBA CV 0-15 is excluded from estimator construction, threshold selection, and diagnostics",
+  "field": "log10(rho/rho_bar)/4.5, identical to the deterministic model target",
+  "sources": {
+    "tng_validation": {
+      "data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+      "mean": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_validation_laplacian_sigma2.h5",
+      "samples": 93,
+      "grouping": "sample; observer-resampling uncertainty only because all samples share one simulation box"
+    },
+    "simba_development": {
+      "realizations": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+      "samples": 266,
+      "grouping": "mean spectra within each realization, then equal weight across 11 independent realizations"
+    }
+  },
+  "estimator": {
+    "transfer": "T_eff(k)=Re[P_mean,truth(k)]/P_truth,truth(k)",
+    "noise": "P_n(k)=P_mean,mean(k)-T_eff(k)^2 P_truth,truth(k)",
+    "spatial_mean": "subtract separately under each analysis window",
+    "edge_window": "separable Tukey window, alpha=0.25",
+    "radial_regions_mpc_h": {
+      "global": [0.0, null],
+      "inner": [0.0, 5.0],
+      "middle": [5.0, 10.0],
+      "outer": [10.0, null]
+    },
+    "k_edges_h_mpc": [0.3, 0.6, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 10.1],
+    "bootstrap_resamples": 5000,
+    "bootstrap_seed": 482021
+  },
+  "frozen_gate": {
+    "region": "global",
+    "primary_k_bands_h_mpc": [[0.6, 1.0], [1.0, 1.5], [1.5, 2.0]],
+    "maximum_abs_transfer_ratio_minus_one": 0.3,
+    "maximum_simba_over_tng_absolute_noise_power": 2.0,
+    "nonpositive_noise_power_fails": true,
+    "radial_regions_are_diagnostic_only": true,
+    "interpretation": "Failure rejects the frozen-v4 density likelihood for IC inference; it does not tune a generator or unlock SIMBA CV 0-15"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/hong2021_density_likelihood_e1",
+  "result": {
+    "pass": true,
+    "global_primary_bands_h_mpc": [[0.6, 1.0], [1.0, 1.5], [1.5, 2.0]],
+    "transfer_ratio_simba_over_tng": [0.9882391024019118, 0.9201015857491046, 0.9160805830298533],
+    "absolute_noise_power_ratio_simba_over_tng": [0.8329982231558364, 0.8170617471019328, 0.8068748255005308],
+    "decision": "Advance the frozen deterministic mean to TNG mock likelihood self-consistency E2; do not restore high-k stochastic generation"
+  }
+}

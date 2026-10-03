@@ -1,0 +1,15 @@
+{
+  "schema": "cf4-p2-lg-targets-v9-bgc-n576-parent3429",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "extends": "config/p2_lg_targets_v8_bgc_n576_parent3096.json",
+  "extends_sha256": "4a0d6186cab657457689e1c43a24bdba7b0f7ffbe64caca369c2075f8d6eeeec",
+  "change_from_v8": "Apply the identical preregistered 32-seed N576 P2 ensemble and unchanged physical gates to seed 3429, the sole five-gate survivor of the final blind 256-parent extension. Only the P1 survivor, its result path, and output directory change.",
+  "parent_seeds": [3429],
+  "input": {
+    "p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3/p1_result.json"
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p2_n576_parent3429_v1"
+  }
+}

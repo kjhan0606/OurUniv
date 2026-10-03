@@ -1,0 +1,117 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-twompp-datum-v3-result-record",
+  "date": "2026-09-01",
+  "status": "PASS_PHASE_A_ACTUAL_COUNT_DATUM_PUBLISHED_STOP_BEFORE_PHASE_B",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "7c1c2419daa32a87d7f2411bcb8fcd48ea784eb2",
+    "remote_commit_at_submission": "7c1c2419daa32a87d7f2411bcb8fcd48ea784eb2",
+    "program": {
+      "path": "config/cf4_datum_bearing_z0_twompp_datum_publisher_program_v3.json",
+      "bytes": 5059,
+      "sha256": "10597caaf7f28d37575bc00bee271bf3230d51f4a3bbdd0881c3f7a419114f44"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_twompp_datum_publisher_v3.py",
+      "bytes": 15360,
+      "sha256": "6112d5a67b518cff4f0f14d3a130f4b19eeaa3f63373f627f8e6381da5c79f74"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_datum_bearing_z0_twompp_datum_publisher_v3.sbatch",
+      "bytes": 3200,
+      "sha256": "29306de1f31d8ca7da1dfe2c241dbe33176be7ae4321d257a726e2b2aad3ec09"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329833,
+    "cluster": "syntax",
+    "node": "syn04",
+    "partition": "a10",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 5,
+    "requested_cpus": 1,
+    "requested_memory_MiB": 512,
+    "expected_peak_memory_MiB": 384,
+    "reported_batch_MaxRSS_KiB": 3512,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "published_artifacts": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1",
+    "datum.npz": {
+      "bytes": 197818,
+      "sha256": "b170b51faefe3fc36f0650f303f26cb354c1eaf373d2f4ac98f2f1398202bf4a"
+    },
+    "row_manifest.csv": {
+      "bytes": 1429117,
+      "sha256": "49bf6d5c76d318e5e17003156152ad12ea05426eddc98656318f538c98381644"
+    },
+    "result.json": {
+      "bytes": 2888,
+      "sha256": "3056a8574094ebf7e9ef035ed8aa27bf33e2ab66e05b92ea37963c4816125e2c"
+    },
+    "manifest.json": {
+      "bytes": 581,
+      "sha256": "25cffd395ebe377efcc8f7cd9c0ffebd02223efc0ee56afe4a324b749de21722"
+    },
+    "COMPLETE": {
+      "bytes": 487,
+      "sha256": "a40d668049937102cbb007f37e3c1c63249cc85ff0394611e57567e8f4910539"
+    }
+  },
+  "gate_result": {
+    "passed_gate_count": 12,
+    "total_gate_count": 12,
+    "failed_gates": [],
+    "retained_total": 36635,
+    "unique_recno_total": 36635,
+    "population_all": [9617, 3463, 527, 15671, 6197, 1160],
+    "population_train": [7640, 2730, 431, 12614, 4906, 936],
+    "population_holdout": [1977, 733, 96, 3057, 1291, 224],
+    "train_row_count": 29257,
+    "holdout_row_count": 7378,
+    "counts_all_equals_train_plus_holdout": true,
+    "row_manifest_reconstructs_all_count_arrays": true,
+    "count_dtype": "int64",
+    "count_shape": [6, 32, 32, 32],
+    "positive_count_nonpositive_exposure_count": 0
+  },
+  "selection": {
+    "semantics": "raw angular-times-radial exposure not normalized to observed population totals",
+    "quadrature_order_per_axis": 6,
+    "subpoints_per_voxel": 216,
+    "epsilon_floor_used": false,
+    "occupied_voxel_override_used": false,
+    "order4_to_order6_relative_L1_by_population": [
+      0.008797784889396029,
+      0.013837865870432219,
+      0.019658297860330905,
+      0.01460066041390447,
+      0.019909977490119572,
+      0.03222499260137641
+    ],
+    "order4_to_order6_relative_support_change_by_population": [
+      -0.0001836251345150887,
+      0.0008064028743693877,
+      0.0015193243424899622,
+      0.00017783906102744693,
+      0.000784974975595839,
+      -0.0013592766256028028
+    ],
+    "final_selection_convergence_claim": false,
+    "Phase_B_required_control": "carry selection-discretization uncertainty or complete a higher-order/operator study before actual inference"
+  },
+  "scientific_disposition": {
+    "actual_2Mpp_integer_count_datum": "CREATED_AND_PUBLISHED",
+    "present_density_posterior": "NOT_CREATED",
+    "present_velocity_posterior": "NOT_CREATED_IN_THIS_PHASE",
+    "IC_posterior": "NOT_CREATED",
+    "observational_resolution_claim": "NOT_ALLOWED",
+    "numerical_0p3_cMpc_h_claim": "NOT_ALLOWED",
+    "technical_N32_cell_size_cMpc_h": 12.0,
+    "Phase_A": "PASS",
+    "Phase_B": "NOT_AUTHORIZED_BY_THIS_RESULT"
+  },
+  "next_recommended": "design the one-development-mock Phase-B differentiable positive Poisson plus spherical-RSD smoke with monopole gauge, alpha priors, boundary policy, gradient/mass-conservation tolerances, and selection-discretization control; obtain separate approval before implementation or Slurm"
+}

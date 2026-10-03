@@ -1,0 +1,158 @@
+{
+  "schema": "hong2021-v84c0-unique-cell-tail-shape-audit-program-v1",
+  "status": "frozen_before_inner_development_payload_audit",
+  "purpose": "Correct the V84B1 pooled-voxel pseudoreplication before any V84C training: count each global physical target cell once in total, estimate tail curvature with equal realization/spatial-block weighting, and prospectively sequester a cell-disjoint outer development set.",
+  "training_or_refit": false,
+  "statistically_independent": false,
+  "amendment": {
+    "revision": 1,
+    "reason": "Correct the CAMELS provenance object count, which initialized at the domain inner count and then added each realization count a second time. Voxel occurrences, unique-cell weights, tail statistics, and the scientific decision were unaffected.",
+    "superseded_program_sha256": "8ffd8ec74ee0494c195c114069cc1eabccbce50f7d83091f2c3477f372a43489",
+    "superseded_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0_unique_cell_tail_audit/report.json",
+    "superseded_report_sha256": "be56a9457a2ad85ca950bd27d1c6982454c6210229827b4f4746e63a9227ff68",
+    "superseded_status_sha256": "7f467318ca3624517043c7db1a2b1f11cf075470c054aa6cc9502eec09ed25f1",
+    "outer_development_payload_accessed": false,
+    "training_or_refit_performed": false
+  },
+  "evidence": {
+    "v84a1_result": {
+      "path": "config/hong2021_v84a1_result_record.json",
+      "sha256": "f960617c99fd974b8063e246c847d455be7796d4d37006eced7016d2c3b69c35"
+    },
+    "v84b1_program": {
+      "path": "config/hong2021_v84b_group_spliced_tail_program.json",
+      "sha256": "f07ca34f9e5ab57c2625aba138dba8056193d049bae591abadcb820197896175"
+    },
+    "v84b1_result": {
+      "path": "config/hong2021_v84b1_result_record.json",
+      "sha256": "10037a398e54cf773a5866c293e88c076477215b806edbd67d465c36ac7a1cc6"
+    }
+  },
+  "audit_scope": {
+    "allowed_payload": "only the prospectively selected inner subset of the immutable V35 train target and train cache payloads",
+    "physical_cell_weight": "for each simulation realization, every global target cell has total weight one across overlapping observer-cube occurrences",
+    "conditional_context_handling": "if one physical cell appears under multiple observer conditions, retain all residual contexts with inverse occurrence multiplicity so their total cell weight is one",
+    "CAMELS_uncertainty_unit": "one realization with equal unit weight",
+    "TNG100_uncertainty_unit": "one nonoverlapping 60^3-cell global spatial block with equal unit weight after frozen coverage requirements",
+    "tail_shape_null": "a single exponential excess has the same scale from tail survival 1 to 0.2 as from 0.2 to 0.02",
+    "sampling_or_resampling": false,
+    "model_inference": false
+  },
+  "prospective_outer_development": {
+    "qualification": "sequestered from V84C0 onward but not statistically independent because all source train simulations informed earlier model generations",
+    "TNG100": {
+      "selection": "within the former V84B fit indices, seed 840384 global-grid anchor and 32 nearest cube centers; remove from inner every observer cube sharing even one target cell with the outer union",
+      "anchor_cell": [10, 89, 94],
+      "inner_objects": 139,
+      "outer_objects": 32,
+      "cell_overlap_embargo_objects": 190,
+      "inner_unique_target_cells": 5557037,
+      "outer_unique_target_cells": 875601,
+      "inner_outer_target_cell_intersection": 0
+    },
+    "SIMBA": {
+      "selection_seed": 840484,
+      "inner_realizations": [16, 17, 18, 23],
+      "outer_realizations": [19, 22],
+      "inner_objects": 100,
+      "outer_objects": 46
+    },
+    "Swift": {
+      "selection_seed": 840485,
+      "inner_realizations": [1, 2, 3, 5, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19],
+      "outer_realizations": [0, 4, 16],
+      "inner_objects": 287,
+      "outer_objects": 61
+    }
+  },
+  "partition": {
+    "sha256": "eaa8145973347b9bace3dcfb308181b661339600a1849ed47a435f61706649a5",
+    "counts": {
+      "TNG100": {"inner": 139, "outer": 32, "embargo": 190},
+      "SIMBA": {"inner": 100, "outer": 46, "embargo": 0},
+      "Swift": {"inner": 287, "outer": 61, "embargo": 0}
+    }
+  },
+  "fixed_numerics": {
+    "TNG_outer_seed": 840384,
+    "TNG_outer_objects": 32,
+    "CAMELS_outer_seeds": {"SIMBA": 840484, "Swift": 840485},
+    "CAMELS_outer_group_counts": {"SIMBA": 2, "Swift": 3},
+    "TNG_block_cells": 60,
+    "minimum_TNG_block_unique_cell_weight": 50000.0,
+    "minimum_TNG_block_tail_weight": 100.0,
+    "lower_threshold": -2.35,
+    "upper_threshold": 3.1,
+    "near_survival_fraction": 0.2,
+    "far_survival_fraction": 0.02,
+    "curvature_ratio_deviation": 0.15,
+    "minimum_sign_consistency": 0.7,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 840584
+  },
+  "go_no_go": {
+    "domain_decreasing_far_slope_evidence": "median far/near scale below 0.85, at least 70 percent of equal-weight units below one, and equal-unit bootstrap mean 90 percent upper endpoint below one",
+    "domain_increasing_far_slope_evidence": "median far/near scale above 1.15, at least 70 percent of equal-weight units above one, and equal-unit bootstrap mean 90 percent lower endpoint above one",
+    "upper_two_slope_V84C_go": "decreasing evidence in at least two domains and median ratio below 1.05 in the third",
+    "lower_tail_change_go": "the same increasing or decreasing evidence direction in all three domains",
+    "if_go": "compare exactly one finite-physical-moment upper two-slope tempered exponential candidate against the unchanged V84B exponential control under nested group/block CV",
+    "if_no_go": "stop marginal tail expansion and return resources to CF4 low-k constraints plus LCDM high-k sampling and forward halo/void selection"
+  },
+  "gate_redesign_frozen_before_audit": {
+    "primary": "equal-group/block weighted NLL and 1e-3 tail calibration with group/block uncertainty",
+    "secondary": "1e-4 point estimate and group/block uncertainty interval",
+    "1e_4_hard_interval": false,
+    "pooled_voxel_only_pass": false,
+    "TNG_outer_zero_target_cell_overlap": true,
+    "multiple_tail_conditions_must_report_joint_multiplicity": true
+  },
+  "frozen_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "training_domains": {
+      "TNG100": {
+        "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+        "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+        "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"
+      },
+      "SIMBA": {
+        "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+        "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+        "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"
+      },
+      "Swift": {
+        "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+        "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+        "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"
+      }
+    }
+  },
+  "implementation": {
+    "audit": {
+      "path": "src/hong2021_v84c0_unique_cell_tail_audit.py",
+      "sha256": "425a5c41935888344d4721d18a150798922666fd0a66f6f99017fee37e57f1f1"
+    }
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84c0r_unique_cell_tail_audit/report.json",
+  "authorization": {
+    "user_approved_Fable_recommended_read_only_audit": true,
+    "V84C_training_authorized": false,
+    "outer_development_evaluation_authorized": false,
+    "independent_validation_authorized": false
+  },
+  "firewall": {
+    "outer_development_payload_access": "forbidden",
+    "V84B_burned_holdout_payload_access": "forbidden",
+    "validation_payload_access": "forbidden",
+    "consumed_development_payload_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true,
+    "automatic_V84C_training": "forbidden_until_V84C0_result_is_recorded_and_reviewed"
+  }
+}

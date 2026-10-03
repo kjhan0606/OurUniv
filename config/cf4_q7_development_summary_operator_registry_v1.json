@@ -1,0 +1,12 @@
+{
+  "schema": "ouruniv-cf4-q7-summary-operator-registry-v1",
+  "date": "2026-09-04",
+  "status": "REGISTERED_DEVELOPMENT",
+  "registry_id": "q7-development-summary-v1",
+  "matrix_shape": [175, 2],
+  "matrix_sha256": "137d44cf0bf4287b3ea2b7e9c0c50954e0e7ee1bb560be0256e29bd59effe465",
+  "norm_definition": "max_column_absolute_sum_induced_l1_norm",
+  "units": "dimensionless development summary map norm",
+  "coordinate_convention": "rows are frozen scientific-summary maps; columns are topology bins",
+  "science_use": "development regression only; replace with independently derived physical summary maps before Q7.2"
+}

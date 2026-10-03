@@ -1,0 +1,135 @@
+{
+  "schema": "ouruniv-cf4-b1-pooled-coverage-guard-result-v1",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "implementation_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_pooled_coverage_guard_v1.py",
+    "bytes": 5265,
+    "sha256": "3d45ad7c4a2d8e8f9c24aa2265316c007ce30544382873f43a64dd91be904dee"
+  },
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
+  "input": {
+    "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+    "bytes": 91180,
+    "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"
+  },
+  "bootstrap": {
+    "unit": "independent truth seed",
+    "replicates": 10000,
+    "rng": "PCG64(20260905)",
+    "percentile": 97.5
+  },
+  "guard_definition": {
+    "statistic": "per-seed mean of eight mode coverage indicators",
+    "tolerances": {
+      "coverage68": 0.05,
+      "coverage95": 0.02
+    },
+    "pass_rule": "one-sided bootstrap upper percentile <= target + tolerance",
+    "strict_promotion_gate_changed": false
+  },
+  "levels": {
+    "coverage68": {
+      "target": 0.6826894921370859,
+      "tolerance": 0.05,
+      "upper_limit": 0.7326894921370859,
+      "member_count": 64,
+      "mode_count": 8,
+      "pooled_count": 381,
+      "pooled_total": 512,
+      "mean": 0.744140625,
+      "bootstrap_upper_97_5": 0.787109375,
+      "pass": false
+    },
+    "coverage95": {
+      "target": 0.9544997361036416,
+      "tolerance": 0.02,
+      "upper_limit": 0.9744997361036416,
+      "member_count": 64,
+      "mode_count": 8,
+      "pooled_count": 496,
+      "pooled_total": 512,
+      "mean": 0.96875,
+      "bootstrap_upper_97_5": 0.982421875,
+      "pass": false
+    }
+  },
+  "by_arm": {
+    "A": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.8125,
+        "bootstrap_upper_97_5": 0.8828125,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9921875,
+        "bootstrap_upper_97_5": 1.0,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    },
+    "B": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.65625,
+        "bootstrap_upper_97_5": 0.75,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9375,
+        "bootstrap_upper_97_5": 0.9765625,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    },
+    "C": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.6875,
+        "bootstrap_upper_97_5": 0.7734375,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.953125,
+        "bootstrap_upper_97_5": 0.984375,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    },
+    "D": {
+      "coverage68": {
+        "member_count": 16,
+        "mean": 0.8203125,
+        "bootstrap_upper_97_5": 0.875,
+        "upper_limit": 0.7326894921370859,
+        "pass": false
+      },
+      "coverage95": {
+        "member_count": 16,
+        "mean": 0.9921875,
+        "bootstrap_upper_97_5": 1.0,
+        "upper_limit": 0.9744997361036416,
+        "pass": false
+      }
+    }
+  },
+  "scientific_boundary": {
+    "validation_opened": false,
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "primary_reference_arm": "B",
+  "primary_reference_pass": false,
+  "overall_pass": false
+}

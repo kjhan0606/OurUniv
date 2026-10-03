@@ -1,0 +1,19 @@
+{
+  "schema": "ouruniv-cf4-camels-rsd-prior-injection-contract-v1",
+  "date": "2026-09-20",
+  "source_artifact": "/gpfs/kjhan/CF4/kf_design/camels_rsd_prior_v2/result.json",
+  "source_job": "388328",
+  "population_mapping": "six equal-number stellar-mass bins in CAMELS; mapped by ordered population only and therefore treated as a prior, not a measured CF4 bias law",
+  "fog_sigma_cMpc_h_prior": [
+    {"population": 0, "mean": 1.8228941612, "sd": 0.4385096330, "robust_mean": 1.2643987326},
+    {"population": 1, "mean": 1.7241014215, "sd": 0.3611173412, "robust_mean": 1.2269806941},
+    {"population": 2, "mean": 1.7535848087, "sd": 0.4775807410, "robust_mean": 1.2312641453},
+    {"population": 3, "mean": 1.7006782882, "sd": 0.3475174449, "robust_mean": 1.2197043259},
+    {"population": 4, "mean": 1.7397965560, "sd": 0.5091187228, "robust_mean": 1.2175011771},
+    {"population": 5, "mean": 1.6820999406, "sd": 0.4799903398, "robust_mean": 1.1470045869}
+  ],
+  "injection_rule": "Use Gaussian/lognormal prior on physical radial FoG kernel width; do not identify it with NB count-dispersion k.",
+  "survival_status": "ARES angular survival is still CF4-specific; CAMELS external prior does not calibrate survival.",
+  "production_gate": "NO-GO until the prior is propagated through CF4 likelihood and an untouched CF4-disjoint holdout passes, with survival nuisance retained.",
+  "stage": "4/8 development"
+}

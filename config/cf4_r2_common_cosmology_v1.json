@@ -1,0 +1,24 @@
+{
+  "status": "R2_CATALOGUE_REBASE_ONLY_NOT_QUANTITATIVE_LIKELIHOOD",
+  "common_cosmology": {
+    "h": 0.746,
+    "H0_km_s_Mpc": 74.6,
+    "Omega_m": 0.31,
+    "Omega_b": 0.05,
+    "Tcmb_K": 2.7255,
+    "A_s_1e9": 1.63,
+    "ns": 0.96
+  },
+  "box_cMpc_h": 384.0,
+  "N": 128,
+  "published_prior": {
+    "source": "Lavaux & Jasche (2016), Table 1, arXiv:1509.05040; reorder identifiers 3,4,5,0,1,2 to local bright-first population order",
+    "url": "https://arxiv.org/pdf/1509.05040",
+    "original_cell_cMpc_h": 2.34375,
+    "original_mean_count_per_cell_bright_first": [0.0112, 0.086, 0.124, 0.0104, 0.086, 0.137],
+    "linear_regime_bias_bright_first": [1.70, 1.20, 1.15, 1.74, 1.21, 1.00],
+    "rate_prior_status": "external reference scale, not recalibrated after CF4 crossmatch exclusion or at N128"
+  },
+  "selection_status": "must recompute integrated six-population shell exposure at common cosmology before any quantitative count likelihood",
+  "inference_status": "no actual-data posterior, no N256 or LG delivery"
+}

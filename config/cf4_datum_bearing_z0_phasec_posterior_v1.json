@@ -1,0 +1,80 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-posterior-v1",
+  "date": "2026-09-05",
+  "status": "AUTHORIZED_DEVELOPMENT_ONLY_POSTERIOR_MATERIALIZATION",
+  "purpose": "Materialize compact N32 z=0 density/velocity posterior summaries from the already repaired development-mock HMC mechanics, without consuming the actual CF4 or 2M++ likelihood datum.",
+  "authorization": {
+    "basis": "User approval of the Z0-DENSITY-LIKELIHOOD-REPAIR bundle on 2026-09-05.",
+    "development_posterior_materialization": true,
+    "Slurm_GPU_array": true,
+    "GPFS_read_bound_inputs": true,
+    "GPFS_write_new_outputs": true,
+    "actual_observational_field_inference": false,
+    "actual_2Mpp_count_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_seed_access": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "source_program": {
+    "path": "config/cf4_phasec_sampler_mechanics_pilot_v6.json",
+    "sha256": "19962db42b8476166080309bf8277aade52b86753d66ee967f3d3e8a5c949e7a"
+  },
+  "implementation": {
+    "path": "src/cf4_datum_bearing_z0_phasec_posterior_v1.py"
+  },
+  "generator_gate_aggregate": {
+    "path": "/gpfs/kjhan/CF4/z0_density/phasec_scan_generator_gate_v3_aggregate/aggregate.json",
+    "sha256": "5278680d570c89c6d6f16b7f71ce507922941fd18d8a76c80cb93c4bc4d2e2b3",
+    "required_status": "PASS_ALL_EIGHT_SCAN_GENERATOR_GATE"
+  },
+  "sampler_v5_aggregate": {
+    "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v5_aggregate/aggregate.json",
+    "sha256": "43595ed01491c6ce7a1c62de26fe42dfc8718ce6cac9fcc31c1cdb2e4e739446",
+    "required_status": "PASS_BOTH_SAMPLER_MECHANICS_V5_TASKS"
+  },
+  "sampler_v6_aggregate": {
+    "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v6_aggregate/aggregate.json",
+    "sha256": "07cac724c1d0aaff2dcda1c0f32b25e03a155801075f4a977509dfdae96073bb",
+    "required_status": "PASS_ALL_SAMPLER_MECHANICS_V6_TASKS"
+  },
+  "assignments": [
+    {"task_index": 0, "mock_index": 0, "seed": 2026083000, "arm": "A"},
+    {"task_index": 1, "mock_index": 1, "seed": 2026083001, "arm": "A"},
+    {"task_index": 2, "mock_index": 2, "seed": 2026083002, "arm": "B"},
+    {"task_index": 3, "mock_index": 3, "seed": 2026083003, "arm": "B"},
+    {"task_index": 4, "mock_index": 4, "seed": 2026083004, "arm": "C"},
+    {"task_index": 5, "mock_index": 5, "seed": 2026083005, "arm": "C"},
+    {"task_index": 6, "mock_index": 6, "seed": 2026083006, "arm": "D"},
+    {"task_index": 7, "mock_index": 7, "seed": 2026083007, "arm": "D"}
+  ],
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_GPU_only",
+    "partition": "a40",
+    "exclude": "syn06",
+    "array": "0-7",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1",
+    "device_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_devices",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1_aggregate",
+    "cpus_per_task": 8,
+    "expected_peak_host_memory_MiB_per_task": 8192,
+    "requested_host_memory_MiB_per_task": 10240,
+    "aggregate_requested_memory_MiB": 1024,
+    "time_limit": "03:00:00",
+    "maximum_submissions": 1,
+    "refuse_overwrite": true,
+    "automatic_follow_on": false
+  },
+  "science_firewall": {
+    "grid_inference_N": 32,
+    "cell_size_cMpc_h": 12.0,
+    "full_field_summary_stored": true,
+    "actual_z0_posterior": false,
+    "parent_posterior_promotion": false,
+    "observational_frontier_or_resolution_claim": false,
+    "target_0p3_cMpc_h": false,
+    "validation_opened": false,
+    "IC_PM_HOP_RAMSES": false
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "schema": "ouruniv-cf4-independent-parent-architecture-design-v1",
+  "status": "design_frozen_before_peak_evidence_implementation",
+  "frozen_date": "2026-08-16",
+  "scientific_objective": "Construct a statistically valid CF4 constrained-realization ensemble that can incorporate explicit Local-Group information and supply independent high-k zoom degrees of freedom without collapsing the CF4 posterior to variants of one parent.",
+  "authorizations": {
+    "projection_contract_result": {
+      "path": "config/cf4_projection_contract_control_result_record.json",
+      "sha256": "843c48d30fbf1319ef7efd084f6f7b883a8b00737a00b4e3b5c4afed87fb23ed",
+      "required_status": "complete_pass_future_projection_contract"
+    },
+    "failed_single_parent_audit": {
+      "path": "config/cf4_lg_v8_mode_release_audit_result_record.json",
+      "sha256": "348679dccea1a0145fb0108c78adbd5f8fb0a401dbfa8f1fba529e4370107ade",
+      "required_status": "complete_fail_current_N64_freeze_architecture_V9_no_go"
+    },
+    "reference_calibration_result": {
+      "path": "config/cf4_lg_v8_mode_release_reference_result_record.json",
+      "sha256": "35a823bd3cbf8e85ca08666450bfecef401a1f90baf6e4c5e015c92022ec09e6",
+      "required_status": "complete_pass_authorize_opening_v8_projection_metrics_only"
+    }
+  },
+  "sealed_CF4_parent_bank": {
+    "manifest": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/manifest_v3_bgc_parent_extension_v3.json",
+    "manifest_sha256": "dcf5d24104b178a74371455497f4228eb03188189937915672219f10d4c11687",
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "mesh_N": 192,
+    "box_size_mpc_h": 384.0,
+    "posterior": "All-data leakage-free BGc linear-Gaussian CF4 constrained-realization bank validated as two-chain homogeneous by the sealed reference audit.",
+    "parent_proposal": "Exactly uniform and stratified over all 256 parents; no parent subset, survivor subset, or result-dependent replication is allowed in the feasibility audit."
+  },
+  "hierarchical_target": {
+    "state": [
+      "CF4_parent_index_j",
+      "protohalo_midpoint_q",
+      "isotropic_pair_axis_a",
+      "N576_null_space_white_state_z",
+      "peak_mock_noise",
+      "z0_pair_identity"
+    ],
+    "parent": "j is uniform over the sealed empirical CF4 posterior bank.",
+    "fine_prior": "x=z+R*(y_j-Rz), hence R x=y_j exactly and z supplies the independent ker(R) Gaussian degrees of freedom.",
+    "midpoint_target": "Use the unchanged V8 diagonal-normal midpoint prior p(q).",
+    "midpoint_proposal": "Use the unchanged V8 equal-weight defensive mixture g(q); retain exact normalized log p(q)-log g(q).",
+    "axis": "Isotropic unit-vector prior and identical isotropic proposal, so its density ratio cancels.",
+    "peak_information": "The unchanged fourteen Gaussian-smoothed linear-density observations from V8 are explicit Local-Group information, not information attributed to CF4.",
+    "peak_conditioning_subspace": "Condition only in ker(R), using Q=I-R*R. Every conditioned N576 field must still restrict to its original N192 parent.",
+    "peak_conditional_draw": "For A(q,a) and target t, draw x from p(x|y_j,q,a,t) by Matheron correction with covariance Q and the unchanged V8 likelihood sigma.",
+    "peak_marginal_evidence": "Z_peak(j,q,a)=Normal[t; A R* y_j, A Q A* + Sigma]. The determinant and quadratic terms must both be included with normalized Gaussian constants.",
+    "pre_z0_log_weight": "log Z_peak(j,q,a) + log p(q) - log g(q). The uniform parent proposal and isotropic-axis proposal cancel their target densities.",
+    "post_z0_log_weight": "pre_z0_log_weight plus the unchanged normalized V8 log-mean-exp z=0 pair likelihood. Peak evidence may not be dropped after drawing from the peak-conditional proposal."
+  },
+  "unchanged_Local_Group_model": {
+    "source_program": "config/p2_lg_z0_forward_importance_v8.json",
+    "source_program_sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+    "peak_radius_mpc_h": 1.5,
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "peak_likelihood_sigma_delta": 0.25,
+    "constraint_count": 14,
+    "midpoint_prior_mean_mpc_h": [0.0, -6.0, 4.0],
+    "midpoint_prior_sigma_mpc_h": [3.0, 3.0, 3.0],
+    "midpoint_defensive_proposal_unchanged": true,
+    "z0_likelihood_unchanged": true,
+    "P1_P2_thresholds_unchanged": true
+  },
+  "stage_0_exact_operator_engineering": {
+    "purpose": "Implement Q, the normalized peak evidence, and the Matheron conditional without opening an all-parent result.",
+    "required_controls": [
+      "Small dense-Gaussian comparison of Q=I-R*R, AQA*, log Z_peak, and conditional mean/covariance.",
+      "Adjoint identity and positive-semidefinite covariance checks.",
+      "Conditioned-field R x=y round-trip check including output-Nyquist modes.",
+      "Identical result from direct and cached translated-kernel paths.",
+      "Explicit FFT worker limit; workers=-1, process-table polling, and hidden unbounded thread pools are forbidden."
+    ],
+    "authorization_on_pass": "Freeze the all-parent evidence-only feasibility program; do not generate candidates."
+  },
+  "stage_1_all_parent_evidence_feasibility": {
+    "purpose": "Determine at low cost whether the unchanged Local-Group peak information leaves enough independent CF4-parent support before any N576 candidate bank or PM forward.",
+    "parent_policy": "Use every one of the 256 parents exactly once per common integration draw.",
+    "integration": {
+      "common_random_numbers": true,
+      "midpoint_axis_draws_per_parent": 64,
+      "midpoint_seed_range_inclusive": [2026081701, 2026081764],
+      "axis_seed_range_inclusive": [2026081801, 2026081864],
+      "reuse_same_64_draws_for_every_parent": true,
+      "fine_null_space_field_drawn": false,
+      "PM_or_halo_finder_run": false,
+      "parent_marginal_evidence": "log mean exp over the 64 normalized log Z_peak+log p-log g values."
+    },
+    "gates": {
+      "lineage": "All 256 parent files and the manifest must rehash exactly; seeds 3193--3448 must appear once per integration draw.",
+      "finite_normalized_evidence": "All 16384 log-evidence rows and their Gaussian log determinants must be finite.",
+      "half_bank_stability": "The first and second 32-draw halves must have parent-weight L1 distance <=0.20 and parent ESS relative difference <=0.20.",
+      "parent_effective_sample_size_min": 32.0,
+      "maximum_single_parent_weight_max": 0.10,
+      "weighted_CF4_reference_Q99_mass_max": 0.05,
+      "weighted_CF4_deviance_Q90_le_reference_Q99p5": true,
+      "pass_requires_all": true
+    },
+    "failure_actions": {
+      "Monte_Carlo_instability_only": "Freeze a new independent integration bank with more draws; do not change physical targets or inspect candidate fields.",
+      "parent_support_or_CF4_compatibility": "Stop the architecture. Do not tune the peak target or sigma after seeing the result; report tension between the unchanged LG model and the CF4 posterior family."
+    },
+    "authorization_on_pass": "Authorize a separately frozen small conditional-field bank with exact parent-stratified weights and round-trip audit; PM remains unauthorized."
+  },
+  "later_stage_requirements_not_yet_authorized": {
+    "conditional_field_bank": "At least one prospectively seeded N576 conditional draw per parent, with normalized peak-evidence and midpoint importance weights retained.",
+    "pre_PM_gate": "Every field restricts to its assigned parent at the projection-contract tolerance; unweighted parent counts remain exactly stratified; weighted parent ESS remains above the frozen threshold.",
+    "PM_allocation": "Any unequal replication or screening probability must be prospectively specified and included in the importance denominator.",
+    "z0_gate": "Retain the existing minimum eight jointly eligible realizations, ESS >=8, and maximum normalized weight <=0.25, now using the complete parent+midpoint+peak-evidence+z0 weight.",
+    "large_scale_structures": "Virgo, Coma, Local Void, Bootes Void, and other CF4-supported structures require separately preregistered z=0 observables and may not be silently used to choose a parent.",
+    "zoom": "Zoom masks, RAMSES levelmin/levelmax, HOP acceptance, and contamination checks remain downstream and unauthorized."
+  },
+  "information_firewall": {
+    "design_only": true,
+    "all_256_parents_required": true,
+    "single_parent_or_survivor_subset_forbidden": true,
+    "no_candidate_field_opened": true,
+    "no_result_dependent_threshold": true,
+    "candidate_generation_authorized": false,
+    "PM_authorized": false,
+    "seed_selection_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "next": "Implement and independently unit-test the exact Q-space peak-evidence engine under stage 0; stop before the all-parent evidence run is frozen."
+}

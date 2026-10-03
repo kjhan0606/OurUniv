@@ -1,0 +1,79 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-joint-support-autopsy-program-v1",
+  "status": "frozen_before_detailed_v8_pairwise_attribution",
+  "frozen_date": "2026-08-15",
+  "implementation": {
+    "path": "src/cf4_lg_v8_joint_support_autopsy.py",
+    "sha256": "9c1f3b3625b625c0a8f2bfccc3673b3480232abf93418e5b0ab0849a18842031"
+  },
+  "purpose": "Explain the V8 support and weight collapse using consumed artifacts only, without selecting a seed, changing a threshold, opening a phase, or fitting a new proposal.",
+  "parent_terminal_record": {
+    "path": "config/cf4_lg_v8_result_record.json",
+    "sha256": "a726e656e165ae48524292af02955b938dd616c03c5c24536c18cb59a6551786",
+    "required_status": "complete_fail_joint_statistical_physical_gate_v8_closed"
+  },
+  "fable_independent_audit": {
+    "path": "config/cf4_lg_v8_fable_independent_audit.json",
+    "sha256": "412caf31db42b25fe0774bf2c2d9d8833460970271ea5f0e3fe42e1f53f4a742",
+    "required_status": "complete_independent_audit_v8_closed_autopsies_required"
+  },
+  "information_firewall": {
+    "already_consumed_terminal_summary": {
+      "generated": 256,
+      "parent_P1": 240,
+      "finite_soft_likelihood": 149,
+      "hard_P2_realizations": 13,
+      "recentered_P1_realizations": 3,
+      "joint_realizations": 1,
+      "joint_seed": 5422,
+      "final_ESS": 1.0
+    },
+    "detailed_pairwise_attribution_opened_at_freeze": false,
+    "new_seed_or_forward_accessed": false,
+    "threshold_change_authorized": false,
+    "candidate_promotion_authorized": false,
+    "proposal_fit_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "required_diagnostics": {
+    "complete_256_row_funnel": true,
+    "explicit_zero_weight_for_parent_P1_failures": true,
+    "same_halo_pair_identity_at_every_pair_gate": true,
+    "hard_P2_pair_count_and_recentered_P1_pair_count": true,
+    "five_recentered_P1_gate_failure_counts_and_margins": true,
+    "massive_halo_veto_attribution": true,
+    "recentered_P1_survivor_hard_P2_failure_margins": true,
+    "stagewise_soft_hard_recentered_joint_importance_ESS": true,
+    "importance_likelihood_and_support_zeroing_decomposition": true,
+    "uniform_pair_mixture_vs_best_pair_sensitivity": true,
+    "latent_q_axis_and_evolved_midpoint_associations": true,
+    "full_proposal_projection_catalog_hash_revalidation": true,
+    "exact_seed_set_5269_through_5524": true
+  },
+  "weight_definitions": {
+    "soft": "For each of all 256 seeds, logmeanexp over loose z0 pairs plus log p(q)-log g(q); parent-P1 failures and no-pair rows have zero weight.",
+    "hard_P2": "For each seed, logmeanexp over loose pairs whose halo-index identity passes hard P2, plus the same importance correction.",
+    "recentered_P1": "For each seed, logmeanexp over loose pairs whose identical halo-index pair passes all five recentered P1 gates and the massive-halo veto.",
+    "joint": "For each seed, logmeanexp over pairs in the hard-P2 and recentered-P1 identity intersection, plus the same importance correction.",
+    "best_pair_sensitivity": "Repeat the soft calculation with max pair log likelihood instead of the uniform finite-pair logmeanexp; diagnostic only."
+  },
+  "lineage_policy": {
+    "rehash_every_N576_proposal_field": true,
+    "rehash_every_N192_projection_field": true,
+    "rehash_every_P2_halo_catalog": true,
+    "verify_manifest_program_hash": true,
+    "verify_projection_manifest_source_hash": true,
+    "verify_P1_manifest_hash": true,
+    "verify_P2_manifest_and_P1_hashes": true,
+    "verify_likelihood_catalog_hashes": true,
+    "failure_action": "Stop before CF4 mode-release audit and report an integrity failure."
+  },
+  "decision": {
+    "authorize_CF4_mode_release_audit_only_if": "All lineage checks pass and the frozen terminal funnel is exactly reproduced.",
+    "fresh_v9_authorized": false,
+    "RAMSES_authorized": false,
+    "same_model_seed_extension_authorized": false,
+    "next_on_pass": "Freeze a separate N64-N192 CF4 mode-release audit before calculating any detailed CF4 likelihood diagnostics.",
+    "next_on_failure": "Stop and repair provenance only; do not reinterpret the science result."
+  }
+}

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=cf4_R2_raw_mark
+#SBATCH --partition=h100
+#SBATCH --gres=gpu:H100:1
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=00:05:00
+#SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%j.out
+#SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%j.err
+set -euo pipefail
+module purge
+cd /home/kjhan/BACKUP/CF4
+: "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}"
+git diff --quiet "$CF4_EXPECTED_COMMIT" -- src/cf4_r2_raw_selected_fp.py tests/test_cf4_r2_raw_selected_fp.py scripts/cf4_r2_raw_selected_component_check.py scripts/run_cf4_r2_raw_selected_component.sbatch
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export PYTHONPATH="$PWD/src:$PWD/tests${PYTHONPATH:+:$PYTHONPATH}"
+/home/kjhan/miniconda3/envs/circle/bin/python3.11 tests/test_cf4_r2_raw_selected_fp.py
+exec /home/kjhan/miniconda3/envs/circle/bin/python3.11 scripts/cf4_r2_raw_selected_component_check.py

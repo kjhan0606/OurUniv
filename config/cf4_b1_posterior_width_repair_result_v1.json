@@ -1,0 +1,42 @@
+{
+  "schema": "ouruniv-cf4-b1-posterior-width-repair-result-v1",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_TECHNICAL_GATE_FAIL",
+  "predecessor": "config/cf4_b1_calibration_diagnosis_result_v1.json",
+  "repair": {
+    "mean_model_changed": false,
+    "low_k_parameterization_changed": false,
+    "arm_width_scale": {"A": 0.97, "B": 1.0, "C": 0.97, "D": 1.0},
+    "D_overdispersion_phi": 0.35,
+    "purpose": "calibrate posterior draw width and account for Gamma-Poisson stress variance"
+  },
+  "comparison": {
+    "strict_gate_required_count": 64,
+    "strict_gate_pass_count_before": 11,
+    "strict_gate_pass_count_after": 11,
+    "before_median_coverage68": {"A": 0.8050384521484375, "B": 0.63177490234375, "C": 0.8061676025390625, "D": 0.522064208984375},
+    "after_median_coverage68": {"A": 0.7914886474609375, "B": 0.63177490234375, "C": 0.7935028076171875, "D": 0.5438232421875},
+    "before_median_coverage95": {"A": 0.99737548828125, "B": 0.9678802490234375, "C": 0.99322509765625, "D": 0.823577880859375},
+    "after_median_coverage95": {"A": 0.9957122802734375, "B": 0.9678802490234375, "C": 0.9912261962890625, "D": 0.8632354736328125},
+    "fit_success_count": 64,
+    "fit_abnormal_termination_count": 0,
+    "all_members_finite_joint": true,
+    "all_arms_have_heldout_gain": true
+  },
+  "seed_firewall": {
+    "development": [2026083000, 2026083064],
+    "contaminated_quarantine": [2026083064, 2026083128],
+    "replacement_validation_sealed": [2026083320, 2026083576],
+    "validation_opened": false
+  },
+  "interpretation": "The physical D-arm overdispersion correction improves D coverage but does not close the frozen 64/64 gate. A/C exhibit over-coverage while D remains under-covered, indicating non-Gaussian or arm-dependent posterior-width misspecification rather than a low-k mean-model failure.",
+  "scientific_disposition": {
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "validation_opened": false,
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Use development seeds only to calibrate a declared non-Gaussian/arm-dependent posterior width and stress variance; preserve the mean model and frozen gate, then rerun the same 64 seeds."
+}
