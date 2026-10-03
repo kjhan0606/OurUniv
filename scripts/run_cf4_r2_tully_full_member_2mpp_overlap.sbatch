@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=cf4_R2_tully_xwalk
+#SBATCH --job-name=cf4_R2_tully_xwalk_v2
 #SBATCH --partition=h100
 #SBATCH --gres=gpu:H100:1
 #SBATCH --nodes=1

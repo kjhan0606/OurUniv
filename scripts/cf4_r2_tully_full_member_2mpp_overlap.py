@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
 SPLIT = BASE / "r2_sky_closed_split_v6/split.npz"
 POINTS = BASE / "r2_point_mark_manifest_v1/points.npz"
-OUT = BASE / "r2_tully_full_member_2mpp_overlap_20261003_v1"
+OUT = BASE / "r2_tully_full_member_2mpp_overlap_20261003_v2"
 MAX_SEPARATION_ARCSEC = 3.0
 
 INPUT_HASHES = {
@@ -187,6 +187,8 @@ def _read_huchra_table3():
         for line in stream:
             records.append({
                 "ID": line[0:16].strip(),
+                "RAdeg": parse_float(line[17:26], "2MRS table3 RAdeg"),
+                "DEdeg": parse_float(line[27:36], "2MRS table3 DEdeg"),
                 "GLON": parse_float(line[37:46], "2MRS table3 GLON"),
                 "GLAT": parse_float(line[47:56], "2MRS table3 GLAT"),
             })
@@ -198,36 +200,69 @@ def _read_huchra_table3():
     return records
 
 
-def _read_2mpp_names():
-    rows = []
+def _read_2mpp_catalog():
+    name_to_recno = {}
+    real_positions = []
+    all_recnos = set()
+    zoa_fake_rows = 0
     with (ROOT / "data/2mpp_catalog.csv").open(newline="", encoding="utf-8") as stream:
-        reader = csv.DictReader(stream)
-        if not {"recno", "Name"}.issubset(reader.fieldnames or ()):
-            raise ValueError("2M++ catalogue lacks recno/Name")
+        reader = csv.reader(stream)
+        header = next(reader, None)
+        required = {"recno", "Name", "Ref", "_RA", "_DE"}
+        if header is None or not required.issubset(header):
+            raise ValueError("2M++ catalogue lacks recno/Name/Ref/_RA/_DE")
+        column = {name: header.index(name) for name in required}
+        row_count = 0
         for row in reader:
-            rows.append((parse_int(row["recno"], "2M++ recno"), row["Name"].strip()))
-    if len(rows) != TWOMPP_ROWS:
+            row_count += 1
+            recno = parse_int(row[column["recno"]], "2M++ recno")
+            name = row[column["Name"]].strip()
+            if recno in all_recnos or not name:
+                raise ValueError("2M++ recno or Name is missing/duplicated")
+            all_recnos.add(recno)
+            if row[column["Ref"]].strip().lower() == "zoa":
+                zoa_fake_rows += 1
+                continue
+            if name in name_to_recno:
+                raise ValueError("duplicate real-galaxy 2M++ Name")
+            name_to_recno[name] = recno
+            real_positions.append((
+                recno,
+                parse_float(row[column["_RA"]], "2M++ _RA"),
+                parse_float(row[column["_DE"]], "2M++ _DE"),
+            ))
+    if row_count != TWOMPP_ROWS:
         raise ValueError("2M++ row count changed")
-    recnos = [row[0] for row in rows]
-    names = [row[1] for row in rows]
-    if len(set(recnos)) != len(recnos) or not all(names) or len(set(names)) != len(names):
-        raise ValueError("2M++ recno or Name is missing/duplicated")
-    return {name: recno for recno, name in rows}
+    if len(real_positions) != 69160 or zoa_fake_rows != 3813:
+        raise ValueError("2M++ real/ZoA row counts differ from the pinned ReadMe")
+    return name_to_recno, real_positions, {
+        "total_rows": row_count, "real_galaxy_rows": len(real_positions),
+        "zoa_fake_rows": zoa_fake_rows,
+    }
 
 
-def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_name, point_role):
+def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_name,
+                      twompp_positions, twompp_catalog_counts, point_role):
     crosswalk = crossmatch_coordinates(
         [row["GLON"] for row in members], [row["GLAT"] for row in members],
         [row["GLON"] for row in huchra], [row["GLAT"] for row in huchra])
+    huchra_to_2mpp = crossmatch_coordinates(
+        [row["RAdeg"] for row in huchra], [row["DEdeg"] for row in huchra],
+        [row[1] for row in twompp_positions], [row[2] for row in twompp_positions])
     huchra_to_id = [row["ID"] for row in huchra]
     member_match = {source_i: (target_i, separation)
                     for source_i, target_i, separation in crosswalk["matches"]}
+    huchra_position_match = {source_i: (target_i, separation)
+                             for source_i, target_i, separation in huchra_to_2mpp["matches"]}
 
     per_nest = defaultdict(Counter)
     mapping_rows = []
     match_separations = []
     status_counts = Counter()
     matched_recno_to_pgc = {}
+    exact_name_position_relation_counts = Counter()
+    position_only_candidate_counts = Counter()
+    position_only_candidate_roles = Counter()
     table5_by_pgc = {row["PGC"]: row for row in members}
     table4_counts = Counter(table4_by_pgc.values())
     table5_counts = Counter(row["Nest"] for row in members)
@@ -255,6 +290,10 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
         separation = None
         recno = None
         role_name = ""
+        positional_recno = None
+        positional_separation = None
+        positional_role_name = ""
+        name_position_relation = "not_evaluated_no_2mrs_match"
         table4_nest = table4_by_pgc.get(member["PGC"])
         table3 = nest_summary.get(nest, {})
         if table4_nest is None:
@@ -276,11 +315,38 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
             h_index, separation = matched
             huchra_id = huchra_to_id[h_index]
             match_separations.append(separation)
+            position_candidate_count = int(
+                huchra_to_2mpp["source_candidate_count"][h_index])
+            positional = huchra_position_match.get(h_index)
+            if positional is not None:
+                position_index, positional_separation = positional
+                positional_recno = int(twompp_positions[position_index][0])
+                positional_role = point_role.get(positional_recno)
+                positional_role_name = (
+                    {0: "training", 1: "heldout", 2: "buffer"}[positional_role]
+                    if positional_role is not None else "outside_v6_parent")
             if huchra_id not in twompp_by_name:
                 status = "2mrs_match_not_in_local_2mpp"
                 group["2mrs_match_not_in_local_2mpp"] += 1
+                if positional is not None:
+                    name_position_relation = "position_only_candidate_not_promoted"
+                    position_only_candidate_counts["unique_position_only_candidate"] += 1
+                    position_only_candidate_roles[positional_role_name] += 1
+                elif position_candidate_count > 1:
+                    name_position_relation = "multiple_position_candidates_not_promoted"
+                    position_only_candidate_counts["multiple_position_candidates"] += 1
+                else:
+                    name_position_relation = "no_position_candidate"
+                    position_only_candidate_counts["no_position_candidate"] += 1
             else:
                 recno = int(twompp_by_name[huchra_id])
+                if positional_recno == recno:
+                    name_position_relation = "exact_name_and_position_agree"
+                elif positional_recno is None:
+                    name_position_relation = "exact_name_without_unique_position_match"
+                else:
+                    name_position_relation = "exact_name_position_conflict"
+                exact_name_position_relation_counts[name_position_relation] += 1
                 if recno in matched_recno_to_pgc:
                     raise ValueError("two Tully members map to one 2M++ recno")
                 matched_recno_to_pgc[recno] = member["PGC"]
@@ -305,6 +371,10 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
             "Tully_Table4_Table5_association_status": association_status,
             "Huchra_2MASS_ID": huchra_id, "separation_arcsec": separation,
             "2mpp_recno": recno, "v6_point_role": role_name,
+            "2mpp_position_candidate_recno_not_identity": positional_recno,
+            "2mpp_position_candidate_separation_arcsec": positional_separation,
+            "2mpp_position_candidate_v6_role": positional_role_name,
+            "2mpp_Name_position_relation": name_position_relation,
             "identity_status": status,
         })
 
@@ -337,7 +407,11 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
     target_candidate_counts = Counter(map(int, crosswalk["target_candidate_count"]))
     summary = {
         "Tully_member_rows": len(members), "Tully_Nests": len(nest_summary),
-        "Huchra_2MRS_rows": len(huchra), "local_2Mpp_rows": len(twompp_by_name),
+        "Huchra_2MRS_rows": len(huchra),
+        "local_2Mpp_total_rows": twompp_catalog_counts["total_rows"],
+        "local_2Mpp_real_galaxy_rows": twompp_catalog_counts["real_galaxy_rows"],
+        "local_2Mpp_ZoA_fake_rows_excluded_from_identity_matching":
+            twompp_catalog_counts["zoa_fake_rows"],
         "mutual_unique_position_matches_within_3arcsec": len(member_match),
         "no_Huchra_candidate_within_3arcsec": candidate_counts[0],
         "multiple_Huchra_candidates_within_3arcsec": sum(v for k, v in candidate_counts.items() if k > 1),
@@ -351,6 +425,16 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
             "maximum": float(np.max(match_separations)) if match_separations else None,
         },
         "member_identity_status_counts": dict(sorted(status_counts.items())),
+        "exact_Name_position_relation_counts": dict(sorted(exact_name_position_relation_counts.items())),
+        "name_unmatched_Huchra_rows_position_only_candidates_not_promoted":
+            dict(sorted(position_only_candidate_counts.items())),
+        "position_only_candidate_v6_role_counts_not_promoted":
+            dict(sorted(position_only_candidate_roles.items())),
+        "Huchra_to_2Mpp_mutual_unique_position_matches_within_3arcsec": len(huchra_position_match),
+        "Huchra_to_2Mpp_no_position_candidate_within_3arcsec": int(
+            np.count_nonzero(huchra_to_2mpp["source_candidate_count"] == 0)),
+        "Huchra_to_2Mpp_multiple_position_candidates_within_3arcsec": int(
+            np.count_nonzero(huchra_to_2mpp["source_candidate_count"] > 1)),
         "Tully_Nests_all_table5_rows_in_local_2mpp": complete,
         "Tully_Nests_partly_in_local_2mpp": partial,
         "Tully_Nests_with_no_local_2mpp_matches": none,
@@ -365,7 +449,7 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
             table4_counts[nest] != int(group["Nmb"]) for nest, group in nest_summary.items()),
         "Tully_Table3_Nmb_mismatch_nests_vs_Table5_rows": sum(
             table5_counts[nest] != int(group["Nmb"]) for nest, group in nest_summary.items()),
-        "Tully_member_rows_in_local_2mpp": sum(
+        "Tully_member_rows_in_local_2mpp_by_exact_Name": sum(
             counts["matched_local_2mpp_total"] for counts in per_nest.values()),
         "Tully_member_rows_in_v6_training": sum(
             counts["2mpp_member_training"] for counts in per_nest.values()),
@@ -375,9 +459,9 @@ def summarize_overlap(members, nest_summary, table4_by_pgc, huchra, twompp_by_na
             counts["2mpp_member_buffer"] for counts in per_nest.values()),
         "Tully_member_rows_in_local_2mpp_but_outside_v6_parent": sum(
             counts["2mpp_member_outside_v6_parent"] for counts in per_nest.values()),
-        "heldout_redshift_values_or_mark_scores_read": False,
-        "CF4_observed_group_or_FP_values_read": False,
-        "velocities_or_magnitudes_read": False,
+        "heldout_redshift_values_or_mark_scores_used": False,
+        "CF4_observed_group_or_FP_values_used": False,
+        "velocities_or_magnitudes_used": False,
         "field_state_or_likelihood_read": False,
     }
     return summary, nest_rows, mapping_rows, association_disagreements
@@ -396,7 +480,7 @@ def run_regressions():
 
     vectors = unit_vectors([0.0, 360.0], [-90.0, -90.0])
     assert np.allclose(vectors[0], vectors[1], atol=1e-14)
-    return {"tests": 3, "status": "PASS"}
+    return {"tests": 3, "status": "PASS", "scope": "synthetic coordinate-geometry regressions"}
 
 
 def main():
@@ -421,7 +505,7 @@ def main():
 
     members, nest_summary, table4_by_pgc = _read_tully_tables()
     huchra = _read_huchra_table3()
-    twompp_by_name = _read_2mpp_names()
+    twompp_by_name, twompp_positions, twompp_catalog_counts = _read_2mpp_catalog()
     with np.load(SPLIT, allow_pickle=False) as split, np.load(POINTS, allow_pickle=False) as points:
         split_recno = split["point_recno"].astype(np.int64)
         point_role = split["point_role"].astype(np.int8)
@@ -434,7 +518,8 @@ def main():
         role_by_recno = {int(recno): int(role) for recno, role in zip(split_recno, point_role)}
 
     summary, nest_rows, mapping_rows, association_disagreements = summarize_overlap(
-        members, nest_summary, table4_by_pgc, huchra, twompp_by_name, role_by_recno)
+        members, nest_summary, table4_by_pgc, huchra, twompp_by_name,
+        twompp_positions, twompp_catalog_counts, role_by_recno)
     OUT.mkdir(parents=True, exist_ok=False)
     mapping_path = OUT / "tully_member_2mpp_identity.csv"
     with mapping_path.open("w", newline="", encoding="utf-8") as stream:
@@ -444,9 +529,10 @@ def main():
     result = {
         "status": "TULLY_FULL_MEMBER_2MPP_IDENTITY_CROSSWALK_NOT_COVARIANCE_CALIBRATION",
         "job_id": os.environ["SLURM_JOB_ID"], "source_commit": actual,
-        "method": ("mutual unique-neighbour angular match between Tully Table5 GLON/GLAT and "
-                   "Huchra 2MRS Table3 GLON/GLAT within 3 arcsec; exact 2MASS ID-to-2M++ Name join; "
-                   "published Table4 and Table5 group associations retained separately"),
+        "method": ("mutual unique-neighbour angular match between Tully Table5 and Huchra 2MRS "
+                   "within 3 arcsec, followed by exact 2MASS ID-to-real-2M++ Name join; a separate "
+                   "3 arcsec Huchra-to-2M++ position crossmatch records alias candidates but never "
+                   "promotes them to identity; published Tully Table4/Table5 associations remain separate"),
         "tests": test_result, "summary": summary, "nest_rows": nest_rows,
         "Tully_Table4_Table5_association_disagreements": association_disagreements,
         "mapping_path": str(mapping_path), "mapping_sha256": sha256(mapping_path),
