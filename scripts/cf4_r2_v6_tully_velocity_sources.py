@@ -1,5 +1,6 @@
 """Classify raw 2M++ redshift sources for secure CF4 links in Tully Nests."""
 
+import gzip
 import hashlib
 import json
 import os
@@ -23,7 +24,9 @@ PRIOR = BASE / "r2_v6_redshift_overlap_20261003_v3/result.json"
 PRIOR_SHA = "47fd803bab67eb96094489a4c8d725314a43ac896e315a55bbcfbbf741d13da0"
 MEMBERSHIP = BASE / "r2_v6_tully_membership_20261003_v1/result.json"
 MEMBERSHIP_SHA = "10a53c2dd5d10487670bc898dbce0f73e496103dafd78859fe22b62508703594"
-OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v2"
+OUT = BASE / "r2_v6_tully_velocity_sources_20261003_v3"
+TWOMRS_TABLE3 = ROOT / "data/2mrs_huchra2012_table3.dat.gz"
+TWOMRS_TABLE3_SHA = "14a40e14dea131afbc2ff525e42b39fdc4094cf9d06d9a43952257eff80f1790"
 EXPLICIT_2MRS_PREFIX = "20112MRS."
 
 
@@ -86,6 +89,50 @@ def summarize_source_rows(rows):
     }
 
 
+def parse_2mrs_table3(stream):
+    """Read the official Huchra+2012 fixed-width ID and adopted-cz reference."""
+    by_id = {}
+    for line_number, raw in enumerate(stream, start=1):
+        line = raw.rstrip(b"\r\n")
+        if len(line) < 204:
+            raise ValueError(f"short 2MRS table3 row {line_number}: {len(line)} bytes")
+        object_id = line[0:16].decode("ascii").strip()
+        reference = line[185:204].decode("ascii").strip()
+        if not object_id:
+            raise ValueError(f"missing 2MRS ID on row {line_number}")
+        if object_id in by_id:
+            raise ValueError(f"duplicate 2MRS ID {object_id}")
+        by_id[object_id] = reference
+    return by_id
+
+
+def summarize_2mrs_id_source_join(rows):
+    status_counts = Counter()
+    source_pairs = Counter()
+    for row in rows:
+        mpp_ref = row["2mpp_reference"] or "MISSING"
+        mrs_ref = row["2mrs_reference"] or "MISSING"
+        source_pairs[(mpp_ref, mrs_ref)] += 1
+        if not row["2mrs_id_match"]:
+            status_counts["not_in_2mrs_main_table"] += 1
+        elif mpp_ref == "MISSING" or mrs_ref == "MISSING":
+            status_counts["matched_id_reference_missing"] += 1
+        elif mpp_ref == mrs_ref:
+            status_counts["matched_id_same_reference_code"] += 1
+        else:
+            status_counts["matched_id_different_reference_code"] += 1
+    return {
+        "selected_tully_member_count": len(rows),
+        "2mrs_main_table_id_match_count": sum(row["2mrs_id_match"] for row in rows),
+        "source_join_status_counts": dict(sorted(status_counts.items())),
+        "same_reference_code_count": status_counts["matched_id_same_reference_code"],
+        "reference_code_pairs": [
+            {"2mpp_Ref": left, "2mrs_r_cz": right, "count": count}
+            for (left, right), count in sorted(source_pairs.items())
+        ],
+    }
+
+
 def selected_tully_members(edges, table3, table4):
     parent_by_pgc1 = defaultdict(set)
     for line in table3:
@@ -114,8 +161,8 @@ def selected_tully_members(edges, table3, table4):
 
 
 def main():
-    if not os.environ.get("SLURM_JOB_ID") or not os.environ.get("CF4_EXPECTED_COMMIT"):
-        raise RuntimeError("Slurm job and pinned source commit are required")
+    if not os.environ.get("CF4_EXPECTED_COMMIT"):
+        raise RuntimeError("pinned source commit is required")
     expected = subprocess.check_output(
         ["git", "rev-parse", "--verify", f"{os.environ['CF4_EXPECTED_COMMIT']}^{{commit}}"],
         cwd=ROOT, text=True).strip()
@@ -129,7 +176,8 @@ def main():
 
     if (sha256(PRIOR) != PRIOR_SHA or sha256(MEMBERSHIP) != MEMBERSHIP_SHA
             or sha256(IDENTITY_CENSUS) != IDENTITY_CENSUS_SHA
-            or sha256(FP) != FP_SHA or sha256(POINTS) != POINTS_SHA):
+            or sha256(FP) != FP_SHA or sha256(POINTS) != POINTS_SHA
+            or sha256(TWOMRS_TABLE3) != TWOMRS_TABLE3_SHA):
         raise ValueError("frozen v6 input/result hash changed")
     for name in ("cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv"):
         if sha256(ROOT / "data" / name) != SOURCE_HASHES[name]:
@@ -181,7 +229,7 @@ def main():
     if len(recno_to_pgc) != 441:
         raise ValueError("one 2M++ row maps to multiple selected PGCs")
     selected_recnos = set(recno_to_pgc)
-    mpp_rows = selected_rows(ROOT / "data/2mpp_catalog.csv", ("recno", "Vcmb", "Ref"),
+    mpp_rows = selected_rows(ROOT / "data/2mpp_catalog.csv", ("recno", "Name", "Vcmb", "Ref"),
                              lambda row: int(row["recno"]) in selected_recnos)
     mpp_by_recno = {int(row["recno"]): row for row in mpp_rows}
     if len(mpp_by_recno) != 441 or set(mpp_by_recno) != selected_recnos:
@@ -207,12 +255,28 @@ def main():
         cf4_v, mpp_v = by_pgc[pgc][0], number(point["Vcmb"])
         if mpp_v is None:
             raise ValueError("selected 2M++ raw Vcmb is nonfinite")
-        rows.append({"reference": point["Ref"].strip(),
+        rows.append({"pgc": pgc, "2mpp_name": point["Name"].strip(),
+                     "reference": point["Ref"].strip(),
                      "abs_delta_km_s": abs(cf4_v - mpp_v)})
+
+    if len({row["2mpp_name"] for row in rows}) != len(rows):
+        raise ValueError("selected Tully members have duplicate 2M++ names")
+    with gzip.open(TWOMRS_TABLE3, "rb") as stream:
+        twomrs_by_id = parse_2mrs_table3(stream)
+    if len(twomrs_by_id) != 44599:
+        raise ValueError("official 2MRS main-table row count changed")
+    source_join_rows = [{
+        "pgc": row["pgc"], "2mpp_name": row["2mpp_name"],
+        "2mpp_reference": row["reference"],
+        "2mrs_id_match": row["2mpp_name"] in twomrs_by_id,
+        "2mrs_reference": twomrs_by_id.get(row["2mpp_name"], ""),
+    } for row in rows]
 
     report = {
         "status": "V6_TULLY_MEMBER_RAW_VELOCITY_SOURCE_CROSSWALK_NOT_COVARIANCE",
-        "job_id": os.environ["SLURM_JOB_ID"], "source_commit": actual,
+        "job_id": os.environ.get("SLURM_JOB_ID"), "source_commit": actual,
+        "execution_mode": ("slurm" if os.environ.get("SLURM_JOB_ID")
+                           else "bounded_local_metadata_join"),
         "v6_group_count": 272, "secure_member_pair_count": 828,
         "Tully_member_link_count": len(selected),
         "Tully_member_absent_from_archived_table4_count": membership_status["missing"],
@@ -228,12 +292,14 @@ def main():
             "does not use group Vcmb or Tully adjusted Vcmba."
         ),
         "source_summary": summarize_source_rows(rows),
+        "2mrs_main_catalog_source_join": summarize_2mrs_id_source_join(source_join_rows),
         "input_sha256": {
             "prior_redshift_overlap": PRIOR_SHA,
             "prior_tully_membership": MEMBERSHIP_SHA,
             "identity_census": IDENTITY_CENSUS_SHA,
             "fp_observations": FP_SHA,
             "count_point_manifest": POINTS_SHA,
+            "2mrs_huchra2012_table3.dat.gz": TWOMRS_TABLE3_SHA,
             **{name: SOURCE_HASHES[name] for name in (
                 "cf4_2mpp_crossmatch_v1.csv", "cf4_galaxies.csv", "2mpp_catalog.csv")},
             **{name: TULLY_HASHES[name] for name in (
@@ -243,9 +309,10 @@ def main():
         "heldout_values_read": False, "likelihood_or_field_read": False,
         "PM_evolutions": 0, "posterior_promoted": False, "R2_complete": False,
         "limitation": (
-            "2M++ Ref plus close raw CF4/2M++ Vcmb values identify a source-overlap proxy, "
-            "not proof of identical spectrum/measurement and not a group-mean covariance law. "
-            "No adjusted Tully Vcmba is compared."
+            "An exact 2MASS ID and matching 2M++ Ref/2MRS r_cz bibcode identify the same "
+            "catalogued object and cited publication, not proof of an identical spectrum or "
+            "measurement. The 2MRS cz and 2M++ Vcmb frames are not numerically compared here; "
+            "no group-mean covariance law is inferred and no adjusted Tully Vcmba is compared."
         ),
         "elapsed_seconds": time.monotonic() - started,
     }

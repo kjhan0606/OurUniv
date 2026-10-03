@@ -1,9 +1,12 @@
+import io
 import unittest
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from cf4_r2_v6_tully_velocity_sources import summarize_source_rows
+from cf4_r2_v6_tully_velocity_sources import (
+    parse_2mrs_table3, summarize_2mrs_id_source_join, summarize_source_rows,
+)
 
 
 class TullyVelocitySourceTests(unittest.TestCase):
@@ -48,6 +51,40 @@ class TullyVelocitySourceTests(unittest.TestCase):
         self.assertEqual(summary["reference_counts"], {})
         self.assertEqual(summary["absolute_CF4_individual_minus_2mpp_point_Vcmb_km_s"],
                          {"n": 0, "median": None, "p90": None, "maximum": None})
+
+    def test_2mrs_fixed_width_join_uses_id_and_r_cz_columns(self):
+        row = bytearray(b" " * 233)
+        row[0:16] = b"12345678+1234567"
+        row[185:204] = b"20112MRS.FLWO.0000H"
+        table = parse_2mrs_table3(io.BytesIO(bytes(row) + b"\n"))
+        self.assertEqual(table, {"12345678+1234567": "20112MRS.FLWO.0000H"})
+
+    def test_2mrs_fixed_width_join_rejects_duplicate_and_short_rows(self):
+        row = bytearray(b" " * 233)
+        row[0:16] = b"12345678+1234567"
+        data = bytes(row) + b"\n" + bytes(row) + b"\n"
+        with self.assertRaisesRegex(ValueError, "duplicate 2MRS ID"):
+            parse_2mrs_table3(io.BytesIO(data))
+        with self.assertRaisesRegex(ValueError, "short 2MRS table3 row"):
+            parse_2mrs_table3(io.BytesIO(b"too short\n"))
+
+    def test_2mrs_join_distinguishes_matching_publication_from_id_absence(self):
+        summary = summarize_2mrs_id_source_join([
+            {"2mpp_reference": "20112MRS.FLWO.0000H",
+             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True},
+            {"2mpp_reference": "1999ApJS..121..287H",
+             "2mrs_reference": "20112MRS.FLWO.0000H", "2mrs_id_match": True},
+            {"2mpp_reference": "2003A&A...412...57P",
+             "2mrs_reference": "", "2mrs_id_match": False},
+        ])
+        self.assertEqual(summary["selected_tully_member_count"], 3)
+        self.assertEqual(summary["2mrs_main_table_id_match_count"], 2)
+        self.assertEqual(summary["same_reference_code_count"], 1)
+        self.assertEqual(summary["source_join_status_counts"], {
+            "matched_id_different_reference_code": 1,
+            "matched_id_same_reference_code": 1,
+            "not_in_2mrs_main_table": 1,
+        })
 
 
 if __name__ == "__main__":

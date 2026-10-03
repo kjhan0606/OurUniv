@@ -36,23 +36,28 @@ The selected cohort is fixed at 272 training groups/828 secure PGC links,
 then restricted to the 441 PGCs whose table-4 Nest matches the Tully parent
 Nest reached through CF4 `1PGC`. Compare only the ordinary CMB-frame CF4
 individual `Vcmb` and 2M++ point `Vcmb`; group values and Tully adjusted
-`Vcmba` are excluded. The 2M++ `Ref` is the contributing source bibcode.
-Only explicit `20112MRS.*` codes are labeled as 2MRS; other cited literature
-references remain unresolved because a source paper may also have contributed
-to the 2MRS compilation. Even a matching source label and close velocities
-would not prove identical spectra, individual measurement-error covariance,
-or a group-mean covariance law.
+`Vcmba` are excluded. Separately, exact-join each selected 2M++ `Name` to the
+official Huchra et al. 2MRS table-3 `ID`, then compare its 2M++ `Ref` with the
+2MRS `r_cz` adopted-redshift reference. A same ID and bibcode establishes
+catalogued object/publication overlap, not that the same spectrum or exact
+measurement was used. A different bibcode also cannot rule out indirect
+reuse through a compilation. Huchra table-3 `cz` is solar-system-barycentric,
+whereas 2M++ `Vcmb` is CMB-frame; do not compare those numbers without an
+explicit frame conversion.
 
 Sources: [EDD CF4 individual distances](https://edd.ifa.hawaii.edu/describe_columns.php?table=kallcf4),
 [EDD CF4 All Groups](https://edd.ifa.hawaii.edu/describe_columns.php?table=kcf4allgroup),
 [2M++ CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/MNRAS/416/2840?format=html),
-and [Tully-2015 CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/AJ/149/171?format=html).
+the [Tully-2015 CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/AJ/149/171?format=html),
+and [Huchra et al. (2012) 2MRS CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJS/199/26?format=html&tex=true).
 
-One typed-H100 Slurm job runs four focused tests and the pinned source join:
-one CPU, 2 GiB memory (more than 20% above the <1-GiB estimate), 10-minute
-limit. H200/H100/A100 are checked; H100 is selected with the required typed
-GRES. The source snapshot and upstream cohort/result hashes are checked before
-writing a fresh, non-overwriting result directory.
+The Huchra table is a 3.37-MB compressed, 44,599-row fixed-width catalog. Its
+ignored local copy is hash-pinned in `data/PROVENANCE.md`. The focused parser
+tests and one selected-cohort join are bounded metadata work; no GPU,
+simulation, field, likelihood, or heldout values are needed. The runner can
+also be executed as a typed-H100 Slurm job if this check later grows beyond
+that bounded scope. The source snapshot and upstream cohort/result hashes are
+checked before writing a fresh, non-overwriting result directory.
 
 ## Result
 

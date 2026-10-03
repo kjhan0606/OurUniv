@@ -139,3 +139,24 @@ The de-duplicated factorization, shared-redshift treatment, and remaining
 likelihood blockers are authoritative in
 `config/cf4_2mpp_joint_likelihood_v1.json`; the crossmatch does not authorize
 joint-likelihood, KF-EXPAND, all-D mock, or production execution.
+
+## 2MRS source-reference crosswalk
+
+For the 2026-10-03 R2 source-overlap check, the official Huchra et al. (2012)
+CDS/VizieR catalog **J/ApJS/199/26**, `table3.dat`, was downloaded from
+`https://cdsarc.cds.unistra.fr/ftp/cats/J/ApJS/199/26/table3.dat.gz` over
+verified HTTPS. Its compressed SHA256 is
+`14a40e14dea131afbc2ff525e42b39fdc4094cf9d06d9a43952257eff80f1790`.
+The local copy is `data/2mrs_huchra2012_table3.dat.gz` (ignored by Git).
+Direct retrieval of this exact CDS file returned HTTP 200 with normal TLS
+verification on 2026-10-03; the earlier note about CDS access records the
+separate CF4 retrieval attempt and should not be generalized to this file.
+
+The official ReadMe defines `table3.ID` as the 2MASS XSC/LGA identifier,
+`table3.cz` as corrected to the solar-system barycenter, and `table3.r_cz` as
+the bibliographic reference for that adopted redshift. The R2 check joins
+selected 2M++ `Name` to `ID` and compares `Ref` with `r_cz`; it does not
+compare `cz` numerically with CMB-frame 2M++ `Vcmb`. An exact ID/reference
+match establishes catalogued object/publication overlap, not identity of the
+underlying spectrum, measurement, or error covariance. The source semantics
+are documented in the [official CDS ReadMe](https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJS/199/26?format=html&tex=true).
