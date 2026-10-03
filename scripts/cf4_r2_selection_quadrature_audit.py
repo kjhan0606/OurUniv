@@ -12,6 +12,7 @@ import h5py
 import healpy as hp
 import numpy as np
 from astropy.coordinates import CartesianRepresentation, SkyCoord
+from scipy.stats import qmc
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -157,6 +158,33 @@ def main():
                               * np.interp(radius, rtab, radial[p]))
         return float(value)
 
+    def sobol_reference(index, replicates=8, coarse_power=16, fine_power=18):
+        center = centers[:, index]
+        p = int(population[index])
+        estimates = {coarse_power: [], fine_power: []}
+        for replicate in range(replicates):
+            seed = int((20261003 + int(keys[index]) * 17 + replicate * 104729) % (2**32))
+            points = qmc.Sobol(d=3, scramble=True, seed=seed).random_base2(m=fine_power)
+            xyz = center[:, None] + dx * (points.T - .5)
+            radius = np.linalg.norm(xyz, axis=0)
+            values = np.zeros(len(radius), dtype=np.float64)
+            active = (radius >= edges[0]) & (radius <= edges[-1])
+            if np.any(active):
+                selected = np.flatnonzero(active)
+                pixels = hp.vec2pix(512, *(rotation @ xyz[:, selected]), nest=False)
+                values[selected] = maps[p // 3][pixels] * np.interp(
+                    radius[selected], rtab, radial[p])
+            estimates[coarse_power].append(float(np.mean(values[:2**coarse_power])))
+            estimates[fine_power].append(float(np.mean(values)))
+        return {
+            str(power): {
+                'replicate_mean': float(np.mean(values)),
+                'replicate_standard_error': float(np.std(values, ddof=1) / np.sqrt(replicates)),
+                'replicate_estimates': values,
+            }
+            for power, values in estimates.items()
+        }
+
     selected_indices = sorted(set((int(np.argmax(relative)), int(np.argmax(absolute_difference)))))
     layout_comparison = []
     for i in selected_indices:
@@ -169,6 +197,7 @@ def main():
             'equal_node_budget_2x2x2_subcells_order4_exposure': composite_4x2,
             'relative_difference_composite_vs_order8': float(
                 abs(composite_4x2 - exposure8[i]) / max(abs(exposure8[i]), 1e-30)),
+            'scrambled_sobol_cell_average_reference': sobol_reference(i),
         })
     report = {
         'classification': 'TRAINING_ONLY_ORDER8_VS_SAVED_ORDER6_CELL_SELECTION_SENSITIVITY',
