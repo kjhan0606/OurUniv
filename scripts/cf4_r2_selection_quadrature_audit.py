@@ -248,7 +248,7 @@ def main():
                 abs(composite_4x2 - exposure8[i]) / max(abs(exposure8[i]), 1e-30)),
             'scrambled_sobol_cell_average_reference': sobol_reference(i),
             'healpix_pixel_area_ray_references': {
-                str(nside): healpix_ray_reference(i, nside) for nside in (1024, 2048)},
+                str(nside): healpix_ray_reference(i, nside) for nside in (512, 1024, 2048)},
         })
     report = {
         'classification': 'TRAINING_ONLY_ORDER8_VS_SAVED_ORDER6_CELL_SELECTION_SENSITIVITY',
