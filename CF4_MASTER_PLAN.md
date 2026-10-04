@@ -54,26 +54,47 @@ cell-converged likelihood operator. Full result and limits:
 `/gpfs/kjhan/CF4/z0_density/r2_ray_selection_n128_nside1024_2048_20261004_v1/result.json`.
 
 Fable5 completed the important-discrepancy review with CONDITIONAL PASS. The
-driver adopts its bounded next bundle and adds a data-free interior-geometry
-closure check. First recompute and close the full active-cell NSIDE1024
-operator, save and hash it, and verify that hash before opening any catalogue
-counts. Then read only frozen `train_keys`/`train_counts` and compare old
-order-six, NSIDE1024 and NSIDE2048 shell-summed exposures. Report occupied
-zero-support transitions and count-weighted exposure-only log changes; never
-floor/smooth zero exposure or call a full delta finite when support differs.
-For every new zero-support training row, classify exact radial-domain
-exclusion versus positive-volume cells missed by finite rays versus ray-hit
-cells with zero population exposure, and save the cell/radial-edge evidence.
-Keep the NSIDE1024-to-2048 threshold result explicitly a pairwise proxy, not a
-direct NSIDE2048 error bound. No fit, posterior, heldout/all-key read,
-simulation or N256/LG escalation. Q-GOAL: a selection-denominator diagnostic
-for the same CF4-conditioned R2 field, not a field result. Q-LEAN: one
-data-free full-grid lower-resolution artifact plus one sparse training-only
-pass; refine a whole geometry-defined class only if the frozen gate fails.
-R2 remains NO-GO. MW/M31 roles remain ambiguous and M33 unresolved; all
-observables must ultimately constrain those same roles on the same NEW evolved
-LG field at `<=0.3 cMpc/h`, with native truth IDs reserved for
+driver ran one data-free all-grid NSIDE1024 pass, froze its SHA256, then read
+only22,457 training keys/24,993 counts in a separate verified-checkpoint
+resume. Job412142 completed128/128 slabs and all12 tests, but a result-writer
+KeyError occurred after the frozen artifact was saved; job412202 verified the
+checkpoint and completed the sparse phase without repeating the integral.
+The combined result is in
+`CF4_R2_RAY_SELECTION_RESULT_20261004.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_ray_selection_n128_nside1024_trainingimpact_20261004_v1/`.
+
+No occupied training key has zero exposure at old order-six, NSIDE1024 or
+NSIDE2048, and no old-zero/new-positive support transition occurs in training.
+All six frozen NSIDE1024-to-2048 pairwise proxy gates pass: the largest
+absolute count-weighted log-exposure change is0.106 nat, p95 count-weighted
+absolute log ratio is at most0.00102, and no training cell crosses either
+shot-noise threshold. NSIDE2048 interior pure-geometry error has10/870,528
+all-grid cells above1%, but no training cell above1% (training maximum0.613%).
+Retain NSIDE2048 as the current numerical exposure candidate on frozen N128
+training support; do not launch default NSIDE4096. This is not absolute
+convergence or likelihood readiness: the comparison does not measure
+exposure weighting by a nonuniform inferred density in the expected-count
+term. Selection/survival/bias calibration and shared group/count/mark
+ownership remain R2 blockers; no field, posterior, heldout score, simulation
+or N256/LG escalation was performed. Q-GOAL: required numerical denominator
+work for the same CF4-conditioned z=0 inference, but no field result. Q-LEAN:
+all-grid lower-resolution closure plus one sparse training-only check, then
+return to the observation-law bottlenecks. MW/M31 roles remain ambiguous and
+M33 unresolved; their observables must constrain those same roles on the same
+NEW evolved LG field at `<=0.3 cMpc/h`, with native truth IDs reserved for
 calibration/evaluation.
+
+Next science bundle returns to the overlap-aware CF4/2M++ observation law.
+The disjoint scalar survival model is closed after the cause audit showed
+3,120/3,183 failures (98.0%) among CF4-crossmatched 2M++ galaxies. Use source
+ownership to specify one datum factor without duplicating the shared redshift,
+preserve secure/ambiguous match classes, and keep CF4 grouped distance marks
+distinct from 2M++ count ownership. The current selected mock lacks recovered
+Tempel groups and a preselection parent, so it cannot calibrate inclusion;
+state that limit instead of imputing it. Begin with a bounded source-join and
+saved-field mechanics control, not a new gravity evolution or posterior. Any
+field-weighted exposure comparison must include the nonuniform expected-count
+term before calling the numerical operator likelihood-ready.
 
 ## Current R2 continuation — 2026-10-03
 
