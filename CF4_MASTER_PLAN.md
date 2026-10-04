@@ -7,6 +7,47 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 continuation — 2026-10-06
+
+A source-applicability check identified Hollinger & Hudson (2024)'s
+physically based 2M++-like MDPL2 mocks: z=0 MDPL2 with SAG/SAGE galaxies,
+K-band luminosities abundance-matched to the 2M++ LF, flux/depth and ZoA
+conditions, and incompleteness weights. Their 15 non-overlapping
+200 h^-1 Mpc mock volumes test a 4 h^-1 Mpc-smoothed velocity-versus-density
+reconstruction; its reported `fσ8` estimate is high by a factor `1.04 ± 0.01`
+for that analysis, not a transferable coefficient for our Poisson field
+likelihood. Underlying MDPL2 halo and SAG/SAGE tables are publicly queryable
+from COSMOSIM, whose full data
+access requires registration/API token. The alternate MultiDark-Galaxies
+public release is documented, but the syntax HTTP request returned403; no
+source catalogue was downloaded or account registered.
+
+Driver disposition: conditional candidate for **2M++ count/tracer-bias
+validation only**. It does not provide CF4 distance-indicator parent/survival
+samples, recovered CF4/Tempel associations, shared group/member covariance,
+the active v6/N256 observation-operator result, or demonstrated
+N256-resolution matter truth. No published bias correction is adopted. First
+check authorized source access, required columns and whether suitable matter
+truth is available; only then consider one selection-matched mock with the
+nonuniform expected-count term. Stop before large retrieval if the truth
+field or required selection variables are absent. No sampler, heldout score,
+field fit or gravity run follows from this source audit alone. Full decision:
+`CF4_R2_2MPP_MOCK_APPLICABILITY_20261006.md`.
+
+Q-GOAL: this may validate one count/tracer component of the same z=0
+inference; it creates no map and does not achieve the N256/1.5 cMpc/h
+environment target. MW/M31 roles remain ambiguous and M33 unresolved; their
+observables must eventually constrain those same roles on the same NEW
+evolved LG field at `<=0.3 cMpc/h`, with native truth IDs reserved for
+calibration/evaluation. Q-LEAN: a source/access/truth eligibility check
+precedes any calculation; no repeat SDSS-PV mock ensemble or sampler tuning.
+R2 remains NO-GO.
+
+User direction 2026-10-06: after each coherent bundle, continue without
+waiting for routine turn-by-turn approval. This remains within the approved
+science/resource scope and does not grant authority for new account
+registration or other external access that requires user credentials.
+
 ## Current R2 continuation — 2026-10-05
 
 The official SDSS-PV mock candidate passed a bounded, score-blind eligibility
