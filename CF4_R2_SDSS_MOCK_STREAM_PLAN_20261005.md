@@ -71,3 +71,53 @@ unresolved; the future constraints still belong on the same NEW evolved field.
 
 Primary sources: [Howlett et al. 2022](https://arxiv.org/abs/2201.03112),
 [official SDSS-PV mock release, version1.1.0](https://zenodo.org/records/6824749).
+
+## Corrected full-ensemble result and active-cohort support — job 412614
+
+The table above is one schema fixture, not an ensemble estimate. The corrected
+no-redownload rerun completed on the previously staged archive: Slurm
+412614 `COMPLETED/0:0` in22:32, batch MaxRSS79,336KiB under2GiB requested.
+It parsed2,048 catalogues across256 simulation boxes (eight observers per
+box); streamed byte count10,643,218,721 and MD5
+`9ba3e8876f6f08a2af00d30cbf1c6cd9` match the release. The output is
+`/gpfs/kjhan/CF4/z0_density/r2_sdss_mock_stream_law_412614_20261005/result.json`
+and pins source commit `e764a967ab4e49999db12213620ae740a5b841ec`. Its
+job-private10.6GB tar and temporary directory were removed after success.
+The earlier412581 job remains preserved as a failed attempt: its data pass
+completed, but a final progress-print bug caused nonzero exit after JSON
+write; its retained archive was reused here, not downloaded again.
+
+| Selected mock-host richness | Galaxies | Host groups | Mean standardized residual | SD | 68% coverage | 95% coverage | Group-mean variance ratio after within-bin centering | 256-box q05 / q50 / q95 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 25,374,667 | 25,374,667 | -0.1771 | 0.9612 | 0.6937 | 0.9551 | 0.9267 | 0.919 / 0.926 / 0.934 |
+| 2–4 | 16,498,129 | 5,576,661 | +0.0286 | 0.9915 | 0.6867 | 0.9519 | 0.9816 | 0.966 / 0.981 / 0.999 |
+| 5–9 | 21,943,938 | 3,512,807 | +0.0983 | 1.0083 | 0.6765 | 0.9470 | 1.0456 | 1.024 / 1.046 / 1.066 |
+| 10+ | 4,320,876 | 378,266 | +0.2251 | 1.0431 | 0.6514 | 0.9338 | 1.1576 | 1.093 / 1.155 / 1.224 |
+
+The active linked training cohort was reconciled against its existing frozen
+1,414-row association ledger; its row-file SHA256 matches the saved result.
+Tempel17 `NgroupT17` counts at the same numeric cuts are429,670,267,48
+(30.34%,47.38%,18.88%,3.39%); quantiles are `[1,1,3,4,33]`. This establishes
+numerical support overlap only. Mock selected-host richness is not Tempel17
+richness, and there is no mapping between their membership/selection rules.
+The first-catalogue group-mean ratios centered only on a catalogue-wide mean
+remain invalid and are superseded by this within-richness-centered ensemble
+calculation.
+
+**Disposition:** the ensemble shows richness-conditional residual-mean shifts
+and a modest richness trend in group-mean scatter relative to independent
+reported errors. These statistics are not a covariance matrix and are not
+transferred to Tempel groups; neither a likelihood correction nor covariance
+inflation is adopted. The exact same-source PGC overlap does not calibrate
+Tempel group inclusion, redshift-success,2M++ counts or the heterogeneous
+CF4 selection law. No heldout values, field state, fit, posterior, native LG
+truth identity or gravity evolution was accessed. R2 remains NO-GO.
+
+Q-GOAL: this supplies a bounded SDSS-PV FP measurement/selected-host residual
+component for the same field, not the z=0 density/velocity result. MW/M31
+remain role-ambiguous and M33 unresolved; their observables must eventually
+constrain those same roles on the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with truth identities limited to calibration/evaluation.
+Q-LEAN: one full pass, one exact existing-cohort support check, and removal of
+the temporary archive are sufficient. Do not repeat the archive pass, run a
+Tempel group finder, or fit a correction from unmatched richness bins.

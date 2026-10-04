@@ -22,22 +22,41 @@ galaxy ID, although it repeats across member rows; therefore the ensemble
 runner uses the validated composite key and rechecks the ID relation for every
 catalogue rather than trusting the label alone.
 
-The first observer catalogue has33,881 rows. Its standardized
-`logdist-logdist_true` residual mean shifts from-0.170 for selected host
-singletons to+0.228 for groups with10+ selected members. An initial
-group-mean variance ratio centered only by the catalogue-wide mean was
-confounded by that richness trend; it is invalid as a covariance estimate and
-must not be used. The corrected calculation centers group means within each
-richness bin before comparing their scatter to independent reported errors.
-The complete 2,048-catalogue pass finished file parsing and checksum, but its
-Slurm step exited nonzero after writing JSON because a diagnostic `print`
-argument was accidentally sent to `json.dumps`. The archive is retained in its
-job-private temporary directory for a corrected, no-redownload pass. No
-likelihood correction or covariance inflation is adopted.
+The 33,881-row observer catalogue was a schema fixture; its per-richness
+residual trend is not an ensemble estimate. The corrected full-ensemble
+rerun, CPU-only Slurm job412614, completed2,048/2,048 catalogues across256
+simulation boxes (eight observers each) in22:32, exit0, MaxRSS79,336KiB
+under2GiB requested. The streamed archive matched10,643,218,721 bytes and MD5
+`9ba3e8876f6f08a2af00d30cbf1c6cd9`; its temporary10.6GB copy was removed on
+success. Job412581 is preserved as a failed first attempt: it parsed all
+files and wrote a preliminary artifact, then exited nonzero on a progress-
+print bug. The corrected result records source commit `e764a96`.
 
-This component is Q-GOAL aligned: it can constrain SDSS-FP measurement and
-within-host error/covariance behavior for the same CF4-conditioned field; it
-does not make the z=0 density map or close R2. Q-LEAN: one exact linked
+Across the ensemble, standardized `logdist-logdist_true` residual means for
+selected mock-host richness1,2–4,5–9,10+ are−0.1771,+0.0286,+0.0983,+0.2251;
+their standardized SDs are0.9612,0.9915,1.0083,1.0431. After subtracting
+each catalogue's mean separately inside each richness bin, group-mean
+variance ratios against summed independent reported-error variances are
+0.9267,0.9816,1.0456,1.1576. The corresponding256-box q05/q50/q95 ranges are
+0.919/0.926/0.934,0.966/0.981/0.999,1.024/1.046/1.066,1.093/1.155/1.224.
+These are selected mock-host residual diagnostics, not a covariance matrix
+or a transferable CF4 correction.
+
+The exact active1,414-row linked cohort has Tempel17 richness-bin counts
+429/670/267/48 (30.34%/47.38%/18.88%/3.39% at the same numeric cut points);
+the frozen association-row hash was rechecked. Numerical bin overlap is
+support context only: mock selected-host richness is not Tempel17
+`NgroupT17`, and the group-finding/selection processes are not mapped. No
+richness correction, covariance inflation, or absolute group-inclusion law
+is adopted. Redshift-success,2M++ counts, heterogeneous CF4 selection, shared
+member covariance and full group incidence remain uncalibrated. R2 remains
+NO-GO; no field/posterior or heldout outcome was read. Full details:
+`CF4_R2_SDSS_MOCK_STREAM_PLAN_20261005.md`.
+
+This component is Q-GOAL aligned: it supplies SDSS-PV FP residual and
+selected-host group-mean diagnostics relevant to the same CF4-conditioned
+field; it does not calibrate a transferable CF4 covariance, make the z=0
+density map, or close R2. Q-LEAN: one exact linked
 training cohort, one mock-schema check, and the full ensemble only—no new
 catalogue census, Tempel group-finder implementation, heldout score, field
 fit, or gravity run. The mocks omit redshift-success effects and do not model
@@ -341,7 +360,8 @@ next source commit. Job412529 failed its preflight on an abbreviated commit
 hash and wrote no output; job412531 was cancelled while pending after a hash
 transcription error. Neither reached calculation; only412532 produced a result.
 
-**Next:** stop sampler tuning on the partial likelihood and return to the
+**Prospective next step as of 2026-10-04 (completed and superseded by the
+2026-10-05 result above):** stop sampler tuning on the partial likelihood and return to the
 actual R2 blocker: a defensible shared-group count/CF4-mark observation law
 with calibrated group inclusion and multi-member covariance. Reuse the frozen
 v6 source graph and the existing Tully/CF4 identity results; do not repeat
@@ -391,12 +411,13 @@ without deriving and implementing a new observation operator and obtaining
 the needed calibration. Do not substitute a toy covariance or reinterpret
 T10106 catalogue agreement as physical group membership.
 
-Selection/survival/bias and shared multi-member covariance remain
-unidentified in the selected mock; the conditional estimand explicitly does
-not claim them. There is no recovered Tempel parent/preselection sample from
-which to estimate group inclusion, survival, bias or FoG, so do not impute
-them. No further ray exposure, source census, gravity evolution, posterior
-fit or held-out scoring is licensed by the conditional cohort reconciliation.
+As of the 2026-10-04 cohort reconciliation, selection/survival/bias and
+shared multi-member covariance remained unidentified; the subsequent
+2026-10-05 ensemble narrows only the selected-host FP residual component and
+does not change that conclusion. There is no recovered Tempel
+parent/preselection sample from which to estimate group inclusion, survival,
+bias or FoG, so do not impute them. Any later field-weighted exposure test
+must include the nonuniform expected-count term. R2 remains NO-GO.
 Any later field-weighted exposure test must include the nonuniform expected-
 count term. R2 is still NO-GO; no z=0 posterior or map has been produced.
 MW/M31 remain role-ambiguous and M33 unresolved, and all their observables
