@@ -11,6 +11,7 @@ import multiprocessing as mp
 import os
 from pathlib import Path
 import sys
+import subprocess
 import time
 
 import h5py
@@ -295,6 +296,56 @@ def _read_training_scalar_by_flat_key(path: Path, keys: np.ndarray,
     return result
 
 
+def _read_training_geometry_sum(path: Path, keys: np.ndarray):
+    flat = np.asarray(keys, dtype=np.int64) % N ** 3
+    ijk = np.asarray(np.unravel_index(flat, (N, N, N))).T
+    result = np.zeros(len(keys), dtype=np.float64)
+    with h5py.File(path, "r") as handle:
+        dataset = handle["geometry_shells"]
+        if dataset.shape != (6, N, N, N):
+            raise ValueError(f"unexpected geometry dataset shape in {path}")
+        for ix in np.unique(ijk[:, 0]):
+            rows = np.flatnonzero(ijk[:, 0] == ix)
+            slab = np.asarray(dataset[:, int(ix), :, :], dtype=np.float64)
+            shell_summed = slab.sum(axis=0, dtype=np.float64)
+            result[rows] = shell_summed[ijk[rows, 1], ijk[rows, 2]]
+    return result
+
+
+def _summarize_training_interior_geometry(keys, counts, rmin, rmax,
+                                          geometry1024, geometry2048):
+    keys = np.asarray(keys, dtype=np.int64)
+    counts = np.asarray(counts, dtype=np.int64)
+    flat = keys % N ** 3
+    _, first_rows, inverse = np.unique(flat, return_index=True, return_inverse=True)
+    interior = (rmin[first_rows] >= ray.R_INNER) & (rmax[first_rows] <= ray.R_OUTER)
+    unique_counts = np.zeros(len(first_rows), dtype=np.int64)
+    np.add.at(unique_counts, inverse, counts)
+    result = {"unique_training_cells": int(len(first_rows)),
+              "fully_interior_unique_training_cells": int(np.count_nonzero(interior)),
+              "fully_interior_training_galaxies": int(unique_counts[interior].sum())}
+    for name, values in (("nside1024", geometry1024), ("nside2048", geometry2048)):
+        unique_values = np.asarray(values, dtype=np.float64)[first_rows]
+        deviation = np.abs(unique_values[interior] - 1.)
+        weights = unique_counts[interior]
+        result[name] = {
+            "target_pure_geometry_exposure": 1.0,
+            "absolute_deviation_unique_cell_p50_p95_p99_max": (
+                np.quantile(deviation, [0.5, 0.95, 0.99, 1.0]).tolist()
+                if len(deviation) else [None] * 4),
+            "unique_cells_abs_deviation_gt_1e-3": int(np.count_nonzero(deviation > 1e-3)),
+            "unique_cells_abs_deviation_gt_1e-2": int(np.count_nonzero(deviation > 1e-2)),
+            "training_galaxies_in_cells_abs_deviation_gt_1e-3": int(
+                weights[deviation > 1e-3].sum()),
+            "training_galaxies_in_cells_abs_deviation_gt_1e-2": int(
+                weights[deviation > 1e-2].sum()),
+            "count_weighted_abs_deviation_p50_p95_p99_max": (
+                [_weighted_quantile(deviation, weights, q)
+                 for q in (0.5, 0.95, 0.99, 1.0)] if len(deviation) else [None] * 4),
+        }
+    return result
+
+
 def _training_impact(data_free: dict, output_dir: Path, expected_commit: str):
     count_path = DATA / "counts_3_sparse.npz"
     # Deliberately access exactly these two arrays; do not touch all_keys or any
@@ -313,6 +364,9 @@ def _training_impact(data_free: dict, output_dir: Path, expected_commit: str):
     old_exposure = _read_training_exposure_by_key(
         OLD_SELECTION, keys, "selection_shells")
     _, ijk, rmin, rmax, crossed_edges, active = _training_cell_geometry(keys)
+    geometry1024 = _read_training_geometry_sum(
+        output_dir / "selection_nside1024.h5", keys)
+    geometry2048 = _read_training_geometry_sum(RAY2048_H5, keys)
     hits1024 = _read_training_scalar_by_flat_key(
         output_dir / "selection_nside1024.h5", keys, "ray_hit_count_nside1024")
     hits2048 = _read_training_scalar_by_flat_key(
@@ -367,11 +421,14 @@ def _training_impact(data_free: dict, output_dir: Path, expected_commit: str):
         },
         "nside2048_artifact": {
             "path": str(RAY2048_H5),
-            "sha256": data_free["nside2048_input_sha256"],
+            "sha256": data_free["source_nside2048_sha256"],
         },
         "nside2048_zero_ray_training_keys": int(np.count_nonzero(zero_ray_rows)),
         "nside2048_zero_ray_training_galaxies": int(counts[zero_ray_rows].sum()),
         "zero_exposure_training_rows": zero_exposure_training_rows,
+        "training_interior_geometry_quadrature":
+            _summarize_training_interior_geometry(
+                keys, counts, rmin, rmax, geometry1024, geometry2048),
         "per_population": per_population,
         "all_population_resolution_gate_pass": bool(gate_pass),
         "decision_rule": {
@@ -409,6 +466,71 @@ def _training_impact(data_free: dict, output_dir: Path, expected_commit: str):
     return result
 
 
+def _load_verified_data_free_checkpoint(output_dir: Path, expected_commit: str):
+    frozen_path = output_dir / "data_free_result.json"
+    h5_path = output_dir / "selection_nside1024.h5"
+    impact_path = output_dir / "training_impact.json"
+    if not frozen_path.is_file() or not h5_path.is_file():
+        raise FileExistsError(
+            f"existing output directory lacks a complete data-free checkpoint: {output_dir}")
+    if impact_path.exists():
+        raise FileExistsError(f"training impact already exists; refusing overwrite: {impact_path}")
+    data_free = json.loads(frozen_path.read_text())
+    if (data_free.get("classification") != "DATA_FREE_FULL_GRID_NSIDE1024_SELECTION_OPERATOR"
+            or data_free.get("status") != "COMPLETE_NUMERICAL_SELECTION_ARTIFACT_NOT_LIKELIHOOD_READY"
+            or data_free.get("training_counts_opened") is not False
+            or data_free.get("heldout_or_all_key_arrays_opened") is not False):
+        raise ValueError("saved data-free checkpoint metadata is not complete and data-independent")
+    source_commit = data_free.get("source_commit")
+    if not source_commit or subprocess.run(
+            ["git", "-C", str(ROOT), "merge-base", "--is-ancestor",
+             source_commit, expected_commit], check=False).returncode != 0:
+        raise ValueError("saved data-free checkpoint is not from this source history")
+    if Path(data_free.get("path", "")).resolve() != h5_path.resolve():
+        raise ValueError("saved data-free checkpoint path differs from the requested output")
+    if sha256_file(h5_path) != data_free.get("sha256"):
+        raise ValueError("saved data-free checkpoint digest mismatch")
+    if sha256_file(RAY2048_H5) != data_free.get("source_nside2048_sha256"):
+        raise ValueError("the frozen NSIDE2048 source changed since the data-free pass")
+
+    physics = ray.load_physics_inputs()
+    previous_contract = ray._validate_previous_exposure()
+    if previous_contract != data_free.get("previous_order6_contract"):
+        raise ValueError("the previous order-six input contract changed")
+    with h5py.File(h5_path, "r") as handle:
+        status = handle.attrs.get("status", "")
+        source = handle.attrs.get("source_commit", "")
+        map_hashes = handle.attrs.get("map_hashes_json", "[]")
+        if isinstance(status, bytes):
+            status = status.decode("utf-8")
+        if isinstance(source, bytes):
+            source = source.decode("utf-8")
+        if isinstance(map_hashes, bytes):
+            map_hashes = map_hashes.decode("utf-8")
+        if status != data_free["status"] or source != source_commit:
+            raise ValueError("saved data-free HDF5 status/source commit differs")
+        if json.loads(map_hashes) != physics["map_hashes"]:
+            raise ValueError("pinned completeness maps changed since the data-free pass")
+        if handle["selection_shells"].shape != (6, 6, N, N, N):
+            raise ValueError("saved data-free selection cube has an unexpected shape")
+        closure = json.loads(handle.attrs["closure_json"])
+        if (closure["population_shell_max_relative_error"] > 1e-10
+                or closure["pure_geometry_shell_max_relative_error"] > 1e-10):
+            raise ValueError("saved data-free closure is outside the frozen tolerance")
+
+    nside2048_result = json.loads(RAY2048_RESULT.read_text())
+    if (nside2048_result.get("status") != data_free["status"]
+            or nside2048_result.get("source_commit") != data_free.get("source_nside2048_commit")):
+        raise ValueError("NSIDE2048 source result metadata changed")
+    with h5py.File(RAY2048_H5, "r") as handle:
+        status = handle.attrs.get("status", "")
+        if isinstance(status, bytes):
+            status = status.decode("utf-8")
+        if status != data_free["status"]:
+            raise ValueError("NSIDE2048 source HDF5 is no longer complete")
+    return data_free
+
+
 def main():
     if not os.environ.get("SLURM_JOB_ID"):
         raise RuntimeError("full NSIDE1024 operator must run under Slurm")
@@ -423,7 +545,22 @@ def main():
         raise RuntimeError(f"source commit mismatch: {expected_commit} != {actual_commit}")
     output_dir = Path(out_value)
     if output_dir.exists():
-        raise FileExistsError(output_dir)
+        if os.environ.get("CF4_R2_RESUME_DATA_FREE") != "1":
+            raise FileExistsError(output_dir)
+        data_free = _load_verified_data_free_checkpoint(output_dir, expected_commit)
+        result = _training_impact(data_free, output_dir, expected_commit)
+        print(json.dumps({
+            "status": "TRAINING_IMPACT_WRITTEN_FROM_VERIFIED_DATA_FREE_CHECKPOINT",
+            "job_id": os.environ["SLURM_JOB_ID"],
+            "data_free_parent_job_id": data_free["parent_job_id"],
+            "training_galaxies": result["train_galaxy_count"],
+            "pairwise_proxy_gate_pass": result[
+                "nside1024_nside2048_pairwise_proxy_gate_pass"],
+            "result": str(output_dir / "training_impact.json"),
+        }, indent=2), flush=True)
+        return
+    if os.environ.get("CF4_R2_RESUME_DATA_FREE") == "1":
+        raise FileNotFoundError(f"resume requested but no checkpoint exists: {output_dir}")
 
     started = time.monotonic()
     physics = ray.load_physics_inputs()

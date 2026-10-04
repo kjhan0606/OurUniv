@@ -56,3 +56,22 @@ def test_zero_exposure_classification_distinguishes_domain_and_ray_miss():
     assert MODULE._classify_zero_exposure(6., 8., 2) == (
         "rays_intersect_domain_but_population_exposure_is_zero")
     assert ray.R_INNER == 5.
+
+
+def test_training_geometry_summary_aggregates_population_rows_by_cell():
+    n = MODULE.N
+    keys = np.array([0, 1, n ** 3], dtype=np.int64)
+    counts = np.array([2, 4, 3], dtype=np.int64)
+    rmin = np.array([6., 6., 6.])
+    rmax = np.array([7., 7., 7.])
+    geometry1024 = np.array([1., .999, 1.])
+    geometry2048 = np.array([.98, .999, .98])
+
+    result = MODULE._summarize_training_interior_geometry(
+        keys, counts, rmin, rmax, geometry1024, geometry2048)
+
+    assert result["unique_training_cells"] == 2
+    assert result["fully_interior_training_galaxies"] == 9
+    assert result["nside2048"]["unique_cells_abs_deviation_gt_1e-2"] == 1
+    assert result["nside2048"][
+        "training_galaxies_in_cells_abs_deviation_gt_1e-2"] == 5
