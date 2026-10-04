@@ -144,10 +144,11 @@ def main():
     expected_population = np.asarray([point['population'][option[2]] for option in chosen])
     if not np.array_equal(active_population, expected_population):
         raise ValueError('active mixture population IDs do not align with selected training links')
+    selected_pgcs = np.asarray([fp_pgcs[option[3]] for option in chosen], dtype=np.int64)
 
     group_rows, edge_rows, ledger_result = read_verified_group_ledger()
     ledger_files = {name: LEDGER/name for name in ('group_factors.csv', 'crossmatch_edges.csv')}
-    rows = reconcile_selected_rows(chosen, fp_pgcs, active_pgcs, group_rows, edge_rows)
+    rows = reconcile_selected_rows(chosen, selected_pgcs, active_pgcs, group_rows, edge_rows)
     category_counts = Counter(row['ledger_category'] for row in rows)
     edge_status_counts = Counter(status for row in rows
                                  for status in row['associated_edge_statuses'].split(';') if status)

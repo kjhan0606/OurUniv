@@ -11,7 +11,7 @@ class V6Active1414AssociationReconciliationTests(unittest.TestCase):
             ('G1', 0, 12, 3, 0),
             ('G2', 1, 13, 4, 1),
         ]
-        self.fp_pgcs = [501, 502, 503]
+        self.fp_pgcs = [501, 502]
         self.active_pgcs = [501, 502]
         self.groups = [
             dict(source_group_label='G1', FP_row_count='1', anchor_row_count='0',
@@ -44,7 +44,7 @@ class V6Active1414AssociationReconciliationTests(unittest.TestCase):
 
     def test_missing_group_in_ledger_fails_closed(self):
         with self.assertRaisesRegex(ValueError, 'absent from ownership ledger'):
-            reconcile_selected_rows([('G3', 2, 14, 5, 2)], self.fp_pgcs,
+            reconcile_selected_rows([('G3', 2, 14, 5, 2)], [501],
                                     [501], self.groups, self.edges)
 
 

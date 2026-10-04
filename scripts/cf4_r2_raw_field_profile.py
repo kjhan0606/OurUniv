@@ -35,14 +35,15 @@ def load_inputs():
         options=select_training_single_mark_links(options,f['membership_state'].astype(str),include_grouped=True)
         chosen=[o for p in range(6) for o in options if point['population'][o[2]]==p]
         fp_pgcs=f['PGC'].astype(np.int64,copy=True)
-        np.testing.assert_array_equal(mix['PGC'],[fp_pgcs[o[3]] for o in chosen])
+        selected_pgcs=np.asarray([fp_pgcs[o[3]] for o in chosen],dtype=np.int64)
+        np.testing.assert_array_equal(mix['PGC'],selected_pgcs)
     group_rows,edge_rows,ledger_result=read_verified_group_ledger()
-    ownership=reconcile_selected_rows(chosen,fp_pgcs,mix['PGC'],group_rows,edge_rows)
+    ownership=reconcile_selected_rows(chosen,selected_pgcs,mix['PGC'],group_rows,edge_rows)
     clean_indices=np.asarray(clean_conditional_row_indices(ownership),dtype=np.int64)
     if not len(clean_indices):
         raise ValueError('association ledger leaves no admissible conditional FP rows')
     excluded_indices=np.setdiff1d(np.arange(len(ownership)),clean_indices,assume_unique=True)
-    linked_radii=linked_point_conditioning_radii(chosen,point,fp_pgcs,mix['PGC'])
+    linked_radii=linked_point_conditioning_radii(chosen,point,selected_pgcs,mix['PGC'])
     prefilter_rows=len(mix['PGC'])
     mix={key:value[clean_indices] for key,value in mix.items()}
     chosen=[chosen[i] for i in clean_indices]
