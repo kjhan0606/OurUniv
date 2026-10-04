@@ -54,6 +54,7 @@ def main():
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
         fine_target='N256 GL2 target conditioned on aligned secure linked-point radii; exact fine Hamiltonian within this run',
         historical_force_pair_comparable=False,
+        target_decomposition='prior energy - training-count log score - conditional raw-mark log score',
         matched_settings=dict(step_size=STEP,
                              integration_steps=exact_chain_integrations if exact_chain_steps else STEPS,
                              inverse_laplacian_metric_fundamental_mass=fundamental_mass,
@@ -146,6 +147,7 @@ def main():
             return state['rho'], jnp.moveaxis(state['mean_velocity_km_s'], -1, 0)
 
         memory_checked = False
+        exact_target_components = {}
         def oracle(q, order, gradient):
             nonlocal memory_checked
             check_budget()
@@ -179,12 +181,24 @@ def main():
                 (score, parts) = obs.value(rho, velocity, tracer, population,
                     packs, source, observation, order)
                 derivative = None
-            energy = .5*float(q@q) - float(score)
+            prior_energy = .5*float(q@q)
+            score_parts = np.asarray(parts, dtype=np.float64)
+            if (score_parts.shape != (2,) or not np.isfinite(score_parts).all()
+                    or not np.isclose(float(score), score_parts.sum(), rtol=0., atol=1e-7)):
+                raise FloatingPointError('R2 count/raw target components do not sum to the joint score')
+            energy = prior_energy - float(score)
             if not np.isfinite(energy) or (derivative is not None and not np.isfinite(derivative).all()):
                 raise FloatingPointError('nonfinite R2 target value or gradient')
             row = dict(order=order, gradient=gradient, seconds=time.monotonic()-tic,
-                       target_energy=energy, **info)
+                       target_energy=energy, prior_energy=prior_energy,
+                       count_log_score=float(score_parts[0]),
+                       raw_mark_log_score=float(score_parts[1]), **info)
             report['evaluations'].append(row)
+            if order == 2:
+                exact_target_components.clear()
+                exact_target_components.update(prior_energy=prior_energy,
+                    count_log_score=float(score_parts[0]),
+                    raw_mark_log_score=float(score_parts[1]))
             save()
             return energy, derivative
 
@@ -289,17 +303,22 @@ def main():
             for index in range(exact_chain_steps):
                 check_budget()
                 previous_q = q.copy()
+                previous_exact_components = dict(exact_target_components)
                 tic = time.monotonic()
                 q, fine_energy, gradient, info = split_hmc_step(
                     lambda x: oracle(x, 2, True), metric, q, fine_energy, gradient,
                     rng, step=STEP, steps=exact_chain_integrations,
                     endpoint_value=lambda x: oracle(x, 2, False)[0])
+                if not info['accepted']:
+                    exact_target_components.clear()
+                    exact_target_components.update(previous_exact_components)
                 displacement = q-previous_q
                 spectrum = np.fft.fftn(q[:NIC].reshape((N,)*3), norm='ortho')
                 row = dict(transition=index+1, integration_steps=exact_chain_integrations,
                     step_size=STEP, accepted=bool(info['accepted']),
                     energy_error=json_number(info['energy_error']),
                     exact_target_energy=json_number(fine_energy),
+                    **exact_target_components,
                     acceptance_probability=math.exp(info['log_acceptance'])
                         if math.isfinite(info['log_acceptance']) else 0.,
                     force_evaluations=info['force_evaluations'],

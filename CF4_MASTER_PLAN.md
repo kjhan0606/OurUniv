@@ -224,14 +224,32 @@ fixed settings the exact target made moves, unlike GL1, but its cost is about
 `CF4_R2_N256_LINKED_POINT_EXACT_GL2_20261004.md` and
 `/gpfs/kjhan/CF4/z0_density/r2_n256_linked_point_exact_gl2_cont_20261004/result.json`.
 
+Typed-H100 job412389 continued that same checkpoint/RNG stream for16 more
+exact-GL2 transitions (one integration step, step0.08, inverse-Laplacian
+metric mass6000). It completed in1:54:32, MaxRSS13,798,156KiB under48GiB;
+the conservative device peak estimate remained30.91GiB/69.81GiB. All16 were
+accepted, with mean ΔH=-0.792 and mean transition time399s. Across all24
+transitions, acceptance was24/24, mean ΔH=-1.187 (range-2.589 to-0.162),
+mean jump RMS0.06608, and IC-white mean-square moved from0.962720 to0.964453.
+The exact target energy rose by about8,306 nat over this 16-step segment,
+though it was not monotonic at every state. This extended drift is not a
+stationarity pass and the high observed acceptance is not a calibrated rate.
+The previous result artifact predates target-term tracing, so it cannot say
+whether prior energy, training-count score or conditional raw-mark score
+dominates the drift. The driver has added fail-closed component checks and
+per-evaluation/per-transition component tracing; the next bounded segment
+will determine whether that diagnostic is numerically trustworthy and which
+target term moves. See the updated exact-GL2 result note below.
+
 **Next:** run16 more one-integration-step transitions on this same chain from
-its latest accepted checkpoint, restoring RNG state and keeping target,
-metric and step fixed. Record exact target energy at each state to test
-whether the downhill Hamiltonian/white-power drift relaxes toward a plateau.
-This is a bounded warm-up diagnostic, not posterior production. Do not start a
-long retained chain unless this larger trace supports equilibrium and
-stationary behavior; if it does not, redesign the N256 force/trajectory
-strategy rather than extending blindly. R2 remains NO-GO:
+the job412389 checkpoint, restoring RNG state and keeping target, metric and
+step fixed. Record prior energy, training-count log score and conditional
+raw-mark log score separately, with a fail-closed sum-to-joint check, so the
+observed target-energy drift can be attributed. This is a bounded warm-up
+diagnostic, not posterior production. Do not start a long retained chain
+unless the longer trace supports equilibrium and stationary behavior; if it
+does not, redesign the N256 force/trajectory strategy rather than extending
+blindly. R2 remains NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -241,8 +259,9 @@ but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
 Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
 for a z=0 field posterior but this bounded trace cannot produce that field.
-Q-LEAN: sixteen fixed-setting continuation transitions only; no GL1 ladder,
-independent long chain, new simulation or heldout access. MW/M31 remain
+Q-LEAN: sixteen fixed-setting continuation transitions with score-term
+tracing only; no GL1 ladder, independent long chain, new simulation or
+heldout access. MW/M31 remain
 role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
