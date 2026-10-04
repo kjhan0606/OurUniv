@@ -68,9 +68,10 @@ def self_test():
         raise AssertionError("near-observer control must partially intersect inner shell")
     low_outer = np.array([180., 0., 0.])
     high_outer = low_outer + DX
-    if interval_distance_bounds(low_outer, high_outer)[0] != R_OUTER:
+    tangent_min, tangent_max = interval_distance_bounds(low_outer, high_outer)
+    if tangent_min != R_OUTER or tangent_max <= R_INNER:
         raise AssertionError("outer-shell tangency control changed")
-    if not (interval_distance_bounds(low_outer, high_outer)[0] < R_OUTER):
+    if (tangent_max > R_INNER) and (tangent_min < R_OUTER):
         raise AssertionError("outer-shell strict-intersection convention changed")
     # The cap contains every nonzero box-corner direction; convexity then bounds
     # every ray through the box. This fixture checks all eight corner directions.

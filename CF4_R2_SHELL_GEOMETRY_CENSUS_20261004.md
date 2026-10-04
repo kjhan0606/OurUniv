@@ -1,6 +1,12 @@
 # R2 exact shell-geometry census — 2026-10-04
 
-Status: planned, awaiting the bounded Slurm run. This resolves the specific
+Status: first Slurm attempt 412025 failed in 7 seconds before the census. Its
+four pytest checks passed, but the script's own outer-shell tangency self-test
+contained an inverted condition: it expected `r_min < 180` for a voxel tangent
+at `r_min=180`, contrary to the strict `r < 180` support rule. The self-test
+and matching regression assertion are corrected; rerun under Slurm. The earlier
+malformed submissions were canceled before allocation and did no calculation.
+No census output exists. This resolves the specific
 gap in `CF4_R2_RAY_COST_PROFILE_20261004.md`: its training-key sample had no
 voxel center below 13.66 cMpc/h, leaving observer-near and partial-shell cells
 unprofiled. It does not run the full selection integral.

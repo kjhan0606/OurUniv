@@ -24,9 +24,10 @@ def test_origin_corner_voxel_is_partial_inner_shell_and_has_large_cap():
 def test_shell_boundary_tangency_is_not_positive_volume_support():
     low = np.array([MODULE.R_OUTER, 0., 0.])
     high = low + MODULE.DX
-    rmin, _ = MODULE.interval_distance_bounds(low, high)
+    rmin, rmax = MODULE.interval_distance_bounds(low, high)
     assert rmin == MODULE.R_OUTER
-    assert not (rmin < MODULE.R_OUTER)
+    assert rmax > MODULE.R_INNER
+    assert not ((rmax > MODULE.R_INNER) and (rmin < MODULE.R_OUTER))
 
 
 def test_max_cap_control_corner_directions_are_contained():

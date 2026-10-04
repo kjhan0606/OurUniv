@@ -9,6 +9,14 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-04
 
+The follow-up exact shell-cell census attempt412025 failed before doing census
+work: four pytest checks passed, then a contradictory inverted assertion in
+the script's own outer-shell tangency self-test failed. The strict `<180`
+shell convention excludes a cell tangent at180, as intended by the census.
+Corrected the test-only condition and regression assertion; rerun the focused
+suite and resubmit one typed Slurm job. No result file exists. Details are in
+`CF4_R2_SHELL_GEOMETRY_CENSUS_20261004.md`.
+
 The bounded map-aware ray/cell cost profile Slurm412001 COMPLETED/exit0 on
 typed H100 (11s wall, script-measured4.12s, process peak RSS0.256GiB). It read
 only frozen `train_keys`, not counts/holdout/all-key arrays, and profiled18
