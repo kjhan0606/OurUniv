@@ -1,7 +1,22 @@
-# R2 map-aware ray exposure — result, 2026-10-04
+# R2 map-aware ray exposure — historical predecessor-catalogue diagnostic, 2026-10-04
 
-Status: **training-location resolution gate passed for a pairwise NSIDE
-proxy; not an absolutely converged likelihood operator; R2 remains NO-GO.**
+Status: **not applicable to the active inclusive v6 target; no current-target
+resolution gate is passed by this experiment. R2 remains NO-GO.**
+
+## Applicability correction (driver disposition after Fable5 review)
+
+The original training-impact interpretation was too broad. The training script
+read `r2_common_catalogue_128_v1/counts_3_sparse.npz`: an older disjoint
+catalogue with24,993 training counts and8,375 held-out counts. The active
+target is the inclusive `r2_sky_closed_split_v6` split with47,121 training
+counts and uses the shell-CDF/TSC source-to-key count kernel. The map-aware ray
+exposure operator evaluated here is not connected to that active count target.
+Consequently, every NSIDE1024-to-2048 statistic below is a valid diagnostic
+only for the old disjoint support; it is not evidence for v6, likelihood
+readiness, or an active-target NSIDE choice. No v6 ray rerun or NSIDE4096
+escalation should follow from this artifact. The frozen files and job logs are
+preserved, and the earlier promotion language below is superseded by this
+correction.
 The full-grid result is
 `/gpfs/kjhan/CF4/z0_density/r2_ray_selection_n128_nside1024_2048_20261004_v1/result.json`.
 The training-only result and frozen NSIDE1024 checkpoint are
@@ -56,7 +71,7 @@ operator. It adds no observational resolution, does not calibrate survival,
 galaxy bias, group inclusion or covariance, and creates no count likelihood,
 posterior, z=0 density/velocity field, or IC. R2 stays NO-GO.
 
-## Training-only resolution result
+## Historical training-only resolution result (old disjoint catalogue only)
 
 Typed-H100 Slurm412142 completed all128 NSIDE1024 x-slabs and wrote a closed,
 hashed, data-free operator (1,819,724,558 candidate rays; population closure
@@ -83,12 +98,13 @@ exceeds1%, and63 galaxies occupy cells above0.1%. NSIDE1024 has four training
 galaxies in cells above1%. The high-all-grid tail therefore remains recorded,
 but is not occupied by the frozen training sample at the >1% level.
 
-Decision: retain NSIDE2048 as the **current numerical exposure candidate**
-for the frozen N128 training support; the support-weighted rule does not
-trigger NSIDE4096. Do not call the operator absolutely converged or
-likelihood-ready: 1024-to-2048 is only a pairwise proxy, and this calculation
-does not measure how exposure errors weight the nonuniform expected-count
-term of an inferred density field. No such density field was supplied here.
+Pre-audit decision (now withdrawn for the active target): retain NSIDE2048 as
+the numerical exposure candidate for the old frozen N128 disjoint training
+support. This has no v6 implication. Even on that old support, do not call the
+operator absolutely converged or likelihood-ready: 1024-to-2048 is only a
+pairwise proxy, and this calculation does not measure how exposure errors
+weight the nonuniform expected-count term of an inferred density field. No
+such density field was supplied here.
 Selection/survival/bias calibration and the shared multi-member count/mark
 law remain the active R2 blockers.
 

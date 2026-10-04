@@ -9,6 +9,17 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-04
 
+**Applicability correction from the 2026-10-04 Fable review:** the ray
+training-impact result below is on the predecessor disjoint catalogue
+(`r2_common_catalogue_128_v1`, 24,993 train / 8,375 held-out), not the active
+inclusive v6 target (47,121 training counts). The ray operator is not wired
+into the v6 shell-CDF/TSC source-to-key count kernel. Its resolution metrics
+are historical diagnostics only: they do not establish a v6 gate, likelihood
+readiness, or an NSIDE choice for the active target. Do not rerun this ray
+operator on v6 keys or escalate its NSIDE absent a newly derived target
+connection. See `CF4_R2_RAY_SELECTION_RESULT_20261004.md` and the driver
+disposition `CF4_R2_NEXT_BUNDLE_FABLE_DISPOSITION_20261004.md`.
+
 Exact shell-cell census Slurm412034 completed/exit0 in25s (18.51s measured,
 process peak0.205GiB, four focused tests passed). Its full2×2×2 cross-tab is
 now saved by the completed exposure job: of938,128 active N128 cells in
@@ -70,8 +81,9 @@ absolute count-weighted log-exposure change is0.106 nat, p95 count-weighted
 absolute log ratio is at most0.00102, and no training cell crosses either
 shot-noise threshold. NSIDE2048 interior pure-geometry error has10/870,528
 all-grid cells above1%, but no training cell above1% (training maximum0.613%).
-Retain NSIDE2048 as the current numerical exposure candidate on frozen N128
-training support; do not launch default NSIDE4096. This is not absolute
+The pre-audit decision to retain NSIDE2048 applied only to that predecessor
+disjoint training support and is withdrawn for the current inclusive v6
+target; do not launch default NSIDE4096. This is not absolute
 convergence or likelihood readiness: the comparison does not measure
 exposure weighting by a nonuniform inferred density in the expected-count
 term. Selection/survival/bias calibration and shared group/count/mark

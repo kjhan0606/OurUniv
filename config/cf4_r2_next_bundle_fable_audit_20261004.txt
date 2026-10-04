@@ -1,0 +1,62 @@
+Read-only science-plan audit. Do not edit files, execute code, submit jobs,
+read heldout values, or launch simulations.
+
+Project goal: infer the present-day (z=0) density/velocity field jointly from
+Cosmicflows-4 and galaxy observations through a latent LCDM IC and forward
+evolution; then constrain MW, M31 and M33 as ambiguous latent roles in the
+same newly evolved Local Group field at <=0.3 cMpc/h. MW/M31 role ambiguity
+must remain explicit, M33 must not be omitted, and native truth identities
+may be used only for calibration/evaluation, never to seed/select generated
+field candidates. The present R2 global target is N256 / 1.5 cMpc/h; the
+completed N128 / 3 cMpc/h diagnostics below do not satisfy it.
+
+Current selection result: read
+CF4_R2_RAY_SELECTION_RESULT_20261004.md,
+CF4_MASTER_PLAN.md, and the latest frozen result at
+/gpfs/kjhan/CF4/z0_density/r2_ray_selection_n128_nside1024_trainingimpact_20261004_v1/training_impact.json.
+All 22,457 frozen training population-cell keys / 24,993 counts have positive
+exposure at order-six, NSIDE1024 and NSIDE2048. The six predeclared
+NSIDE1024-to-2048 training-support proxy gates pass; maximum absolute
+count-weighted exposure log shift is 0.106 nat, largest weighted p95 absolute
+log ratio is 0.00102, and no training cell breaches the shot-noise thresholds.
+NSIDE2048 interior pure-geometry quadrature has 10/870,528 all-grid cells
+above 1% error, but no training cell above 1% (maximum 0.613%). This is only
+a pairwise exposure proxy: no nonuniform-field expected-count term, calibrated
+likelihood, density field, posterior, or LG identification was evaluated.
+Therefore retain NSIDE2048 as a numerical exposure candidate on this frozen
+training support, not as an absolutely converged / likelihood-ready operator.
+
+Important unresolved observation-law evidence: read
+CF4_R2_SURVIVAL_CAUSE_20260926.md,
+CF4_R2_GROUP_SELECTION_AND_CONDITIONAL_BUNDLE_20260926.md,
+CF4_R2_LATENT_GROUP_MARKS_20260926.md,
+CF4_R2_SHARED_REDSHIFT_FACTOR_AUDIT_20261003.md, and relevant sections of
+CF4_MASTER_PLAN.md. The old disjoint scalar survival model is not promotable:
+3,120/3,183 failed survival marks were CF4-crossmatched 2M++ galaxies.
+The selected mock has neither recovered Tempel group IDs nor a preselection
+parent; it cannot calibrate selected-group inclusion. The source-supported
+path is an overlap-aware joint observation factor with one-time ownership of
+each redshift/count datum and group distance marks, secure/ambiguous match
+classes, shared member/group uncertainty, and an honest conditional target
+if the missing inclusion denominator cannot be identified. A previous
+holdout archive arm was touched and must not be described as pristine.
+
+Audit the next bounded bundle plan, not the full project in general. Assess:
+1. Q-GOAL: Does the proposed next step materially advance an actual CF4-
+conditioned z=0 field, rather than only polishing diagnostics?
+2. Q-LEAN: Is it the smallest necessary source/code/one-state check, avoiding
+another exposure-resolution sweep, unsupported calibration, redundant PM
+evolution, premature posterior sampling, or excessive gates?
+3. Is the next best bundle an overlap-aware source ownership/joint-datum
+contract and bounded mechanics control, or should a different existing R2
+blocker go first? Name concrete existing inputs/code and one decisive output.
+4. State what cannot be identified without a true preselection/recovered-group
+parent sample, and how to avoid falsely claiming selection/bias/FoG calibration.
+5. Require the eventual MW/M31 ambiguous roles and unresolved M33 observables
+to constrain the same NEW evolved LG field at <=0.3 cMpc/h; no native truth
+labels as candidate seeds.
+
+Return PASS, CONDITIONAL PASS, REJECT, or NO VERDICT; evidence; necessary
+amendments; and explicit Q-GOAL/Q-LEAN findings. Advice is not automatic
+authority. The driver will independently verify cited code/data and record
+which advice is adopted or rejected.
