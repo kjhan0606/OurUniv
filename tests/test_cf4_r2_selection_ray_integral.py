@@ -54,6 +54,18 @@ def test_chunk_sizes_and_one_piece_agree_for_max_cap_geometry():
     assert results[0]["shell_hit_rays"] > 0
 
 
+def test_shell_split_integral_matches_independent_unsplit_ray_exposure():
+    physics = mock_physics()
+    ijk = np.array([65, 64, 64], dtype=np.int64)
+    flat = int(np.ravel_multi_index(tuple(ijk), (MODULE.N,) * 3))
+    old = MODULE.ray_geometry(flat, 64, physics["rotation"], 1_000_000)
+    assert not old["skipped"]
+    expected = MODULE.legacy_exposure_from_ray_geometry(old, 64, physics)
+    current = MODULE.integrate_cell(ijk, 64, physics, 127)
+    np.testing.assert_allclose(current["exposure"].sum(axis=1), expected,
+                               rtol=1e-12, atol=1e-14)
+
+
 def test_outer_shell_tangent_has_no_positive_length_shell_rays():
     physics = mock_physics()
     low = np.array([MODULE.R_OUTER, 0., 0.])

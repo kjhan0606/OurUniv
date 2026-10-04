@@ -386,6 +386,25 @@ def integrate_cell(ijk, nside: int, physics: dict, chunk_size: int):
     return result
 
 
+def legacy_exposure_from_ray_geometry(geometry: dict, nside: int, physics: dict):
+    """Reconstruct the old unsplit six-channel ray integral from saved rays."""
+    if geometry.get("skipped"):
+        raise ValueError("cannot reconstruct exposure from a skipped geometry")
+    native = np.asarray(geometry["native_pixels"], dtype=np.int64)
+    rlo = np.asarray(geometry["rlo"], dtype=np.float64)
+    rhi = np.asarray(geometry["rhi"], dtype=np.float64)
+    if native.shape != rlo.shape or native.shape != rhi.shape:
+        raise ValueError("legacy ray geometry arrays have inconsistent lengths")
+    result = np.zeros(6, dtype=np.float64)
+    for population in range(6):
+        radial_mass = (np.interp(rhi, physics["rtab"], physics["cumulative"][population])
+                       - np.interp(rlo, physics["rtab"], physics["cumulative"][population]))
+        completeness = physics["maps"][population // 3][native]
+        result[population] = (hp.nside2pixarea(nside)
+                              * np.dot(completeness, radial_mass) / DX ** 3)
+    return result
+
+
 def _relative_difference(a: np.ndarray, b: np.ndarray):
     a = np.asarray(a, dtype=np.float64)
     b = np.asarray(b, dtype=np.float64)
@@ -450,11 +469,12 @@ def run_preflight(geometry: dict, physics: dict):
                 raise AssertionError(
                     f"fixed reference key={key} exceeds old unchunked control cap at {nside}")
             candidate_count = int(old["candidate_pixels"])
+            old_exposure = legacy_exposure_from_ray_geometry(old, nside, physics)
             current_values = [integrate_cell(ijk, nside, physics, chunk_size)
                               for chunk_size in CHUNK_SIZES]
             for chunk_size, current in zip(CHUNK_SIZES, current_values):
                 _assert_same(current["exposure"].sum(axis=1),
-                             np.asarray(old["exposures_by_population"]),
+                             old_exposure,
                              f"fixed reference key={key} nside={nside} chunk={chunk_size}")
             for chunk_size, current in zip(CHUNK_SIZES, current_values):
                 if abs(current["exposure"][population].sum()
