@@ -1,8 +1,11 @@
 import io
 import hashlib
+import json
+import sys
 import tarfile
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest import mock
 
@@ -28,13 +31,16 @@ class SDSSMockStreamSummaryTests(unittest.TestCase):
         content = HEADER
         content += row(100, 1, 0.10, 0.00, 0.10, 14.0, 0.02, 100, 200, 300)
         content += row(100, 0, -0.10, 0.00, 0.10, 14.0, 0.02, 100, 200, 300)
-        content += row(200, 0, 0.20, 0.00, 0.20, 13.0, 0.04, 400, 500, 600, 12.0)
+        content += row(200, 1, 0.20, 0.00, 0.10, 13.0, 0.04, 400, 500, 600)
+        content += row(200, 0, 0.20, 0.00, 0.10, 13.0, 0.04, 400, 500, 600, 12.0)
+        content += row(300, 0, 0.20, 0.00, 0.20, 12.0, 0.06, 700, 800, 900, 11.0)
         got = summarize_catalog("mocks/MOCK_HAMHOD_SDSS_v5_R19051.0_err_corr", io.BytesIO(content.encode()))
-        self.assertEqual(got["galaxies"], 3)
-        self.assertEqual(got["host_groups"], 2)
+        self.assertEqual(got["galaxies"], 5)
+        self.assertEqual(got["host_groups"], 3)
         self.assertEqual(got["groups_without_selected_central"], 1)
-        self.assertEqual(got["bins"]["2-4"]["groups"], 1)
-        self.assertAlmostEqual(got["bins"]["2-4"]["standardized_residual_sd"], 1.0)
+        self.assertEqual(got["bins"]["2-4"]["groups"], 2)
+        self.assertAlmostEqual(got["bins"]["2-4"]["group_mean_residual_mean"], 0.1)
+        self.assertAlmostEqual(got["bins"]["2-4"]["group_mean_variance_ratio_after_richness_mean_removal"], 2.0)
 
     def test_repeated_id_cannot_cross_host_keys(self):
         content = HEADER
@@ -69,6 +75,20 @@ class SDSSMockStreamSummaryTests(unittest.TestCase):
         self.assertEqual(got["independent_simulation_boxes"], 256)
         self.assertEqual(got["archive_md5"], digest)
         self.assertEqual(got["richness_bins"]["1"]["galaxies"], 2048)
+
+    def test_cli_prints_after_writing_summary(self):
+        result = dict(classification="test", mock_catalogues=2048,
+                      independent_simulation_boxes=256, archive_md5="abc",
+                      slurm_job_id=None, source_commit=None)
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory) / "result"
+            argv = ["cf4_r2_sdss_mock_stream_summary.py", "--archive", "unused.tar.gz",
+                    "--output-dir", str(out)]
+            with mock.patch.object(summary, "summarize_archive", return_value=result), \
+                    mock.patch.object(sys, "argv", argv), redirect_stdout(io.StringIO()) as captured:
+                summary.main()
+            self.assertEqual(json.loads((out / "result.json").read_text()), result)
+            self.assertEqual(json.loads(captured.getvalue())["archive_md5"], "abc")
 
 
 if __name__ == "__main__":

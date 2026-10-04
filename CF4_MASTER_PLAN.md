@@ -24,15 +24,16 @@ catalogue rather than trusting the label alone.
 
 The first observer catalogue has33,881 rows. Its standardized
 `logdist-logdist_true` residual mean shifts from-0.170 for selected host
-singletons to+0.228 for groups with10+ selected members; the corresponding
-group-mean variance ratio against independent reported errors is0.93,1.00,
-1.09,1.64 for richness bins1,2–4,5–9,10+. This is one observer in one box,
-not a calibration estimate, but it is a concrete reason to evaluate the full
-ensemble. The next CPU-only Slurm bundle will checksum and stream/process all
-2,048 catalogues, summarize by selected-host richness and by256 independent
-simulation boxes, and retain only a compact JSON result. Its temporary 10.6GB
-archive is deleted only after checksum and analysis both pass. No likelihood
-correction or covariance inflation is adopted from this diagnostic.
+singletons to+0.228 for groups with10+ selected members. An initial
+group-mean variance ratio centered only by the catalogue-wide mean was
+confounded by that richness trend; it is invalid as a covariance estimate and
+must not be used. The corrected calculation centers group means within each
+richness bin before comparing their scatter to independent reported errors.
+The complete 2,048-catalogue pass finished file parsing and checksum, but its
+Slurm step exited nonzero after writing JSON because a diagnostic `print`
+argument was accidentally sent to `json.dumps`. The archive is retained in its
+job-private temporary directory for a corrected, no-redownload pass. No
+likelihood correction or covariance inflation is adopted.
 
 This component is Q-GOAL aligned: it can constrain SDSS-FP measurement and
 within-host error/covariance behavior for the same CF4-conditioned field; it

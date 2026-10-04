@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import math
+import os
 import re
 import tarfile
 from pathlib import Path
@@ -79,7 +80,7 @@ def _new_bin():
     return dict(
         galaxies=0, groups=0, z_sum=0.0, z2_sum=0.0,
         cover68=0, cover95=0, alpha_sum=0.0,
-        group_centered_sq=0.0, expected_group_var=0.0,
+        group_records=[],
     )
 
 
@@ -87,8 +88,29 @@ def _finish_bin(value):
     n = value["galaxies"]
     ng = value["groups"]
     if n == 0:
-        return {"galaxies": 0, "groups": 0}
+        return {
+            "galaxies": 0, "groups": 0,
+            "_group_mean_variance_num": 0.0,
+            "_expected_group_var": 0.0,
+            "_z_sum": 0.0, "_z2_sum": 0.0,
+            "_cover68": 0, "_cover95": 0, "_alpha_sum": 0.0,
+        }
     mean = value["z_sum"] / n
+    group_mean_resid = (
+        sum(v[0] for v in value["group_records"]) / ng if ng else None
+    )
+    group_mean_variance = (
+        sum((v[0] - group_mean_resid) ** 2 for v in value["group_records"]) / ng
+        if ng else None
+    )
+    expected_variance = sum(v[1] for v in value["group_records"])
+    centered_variance_numerator = sum(
+        (v[0] - group_mean_resid) ** 2 for v in value["group_records"]
+    ) if ng else 0.0
+    group_mean_variance_ratio = (
+        centered_variance_numerator / expected_variance
+        if expected_variance > 0 else None
+    )
     return {
         "galaxies": n,
         "groups": ng,
@@ -97,12 +119,13 @@ def _finish_bin(value):
         "coverage_abs_z_le_1": value["cover68"] / n,
         "coverage_abs_z_le_1_96": value["cover95"] / n,
         "mean_skew_alpha": value["alpha_sum"] / n,
-        # Ratio near one is the independent reported-error reference. This is
-        # a descriptive group-mean diagnostic, not an adopted inflation factor.
-        "group_mean_variance_ratio_vs_independent": (
-            value["group_centered_sq"] / value["expected_group_var"]
-            if value["expected_group_var"] > 0 else None
-        ),
+        "group_mean_residual_mean": group_mean_resid,
+        "group_mean_residual_sd_after_richness_mean_removal": math.sqrt(max(0.0, group_mean_variance)) if group_mean_variance is not None else None,
+        # Center within richness bin first. Otherwise a conditional mean bias
+        # is incorrectly counted as residual group-level scatter.
+        "group_mean_variance_ratio_after_richness_mean_removal": group_mean_variance_ratio,
+        "_group_mean_variance_num": centered_variance_numerator,
+        "_expected_group_var": expected_variance,
     }
 
 
@@ -188,8 +211,7 @@ def summarize_catalog(name, member_file):
             no_central_groups += 1
         group_mean = sum(v[0] for v in members) / n
         expected_var = sum(v[1] * v[1] for v in members) / (n * n)
-        b["group_centered_sq"] += (group_mean - global_mean) ** 2
-        b["expected_group_var"] += expected_var
+        b["group_records"].append((group_mean, expected_var))
         for residual, sigma, alpha in members:
             z = residual / sigma
             b["galaxies"] += 1
@@ -210,8 +232,6 @@ def summarize_catalog(name, member_file):
         "central_galaxies": central_rows,
         "catalogue_mean_logdist_minus_truth": global_mean,
         "bins": {k: _finish_bin(v) | {
-            "_group_centered_sq": v["group_centered_sq"],
-            "_expected_group_var": v["expected_group_var"],
             "_z_sum": v["z_sum"], "_z2_sum": v["z2_sum"],
             "_cover68": v["cover68"], "_cover95": v["cover95"],
             "_alpha_sum": v["alpha_sum"],
@@ -273,12 +293,12 @@ def summarize_archive(archive_path):
         galaxies = sum(x["galaxies"] for x in items)
         zsum = sum(x["_z_sum"] for x in items)
         z2sum = sum(x["_z2_sum"] for x in items)
-        num = sum(x["_group_centered_sq"] for x in items)
+        num = sum(x["_group_mean_variance_num"] for x in items)
         den = sum(x["_expected_group_var"] for x in items)
         box_ratio = []
         for sample in by_simulation.values():
             bitems = [c["bins"][label] for c in sample]
-            bnum = sum(x["_group_centered_sq"] for x in bitems)
+            bnum = sum(x["_group_mean_variance_num"] for x in bitems)
             bden = sum(x["_expected_group_var"] for x in bitems)
             if bden > 0:
                 box_ratio.append(bnum / bden)
@@ -291,7 +311,7 @@ def summarize_archive(archive_path):
             "coverage_abs_z_le_1": sum(x["_cover68"] for x in items) / galaxies if galaxies else None,
             "coverage_abs_z_le_1_96": sum(x["_cover95"] for x in items) / galaxies if galaxies else None,
             "mean_skew_alpha": sum(x["_alpha_sum"] for x in items) / galaxies if galaxies else None,
-            "group_mean_variance_ratio_vs_independent": num / den if den else None,
+            "group_mean_variance_ratio_after_richness_mean_removal": num / den if den else None,
             "box_level_group_mean_variance_ratio_q05_q50_q95": _quantiles(box_ratio),
         }
     box_offsets = [
@@ -299,7 +319,7 @@ def summarize_archive(archive_path):
         for sample in by_simulation.values()
     ]
     return {
-        "classification": "SDSS_PV_MOCK_FP_ERROR_AND_HOST_GROUP_COVARIANCE_DIAGNOSTIC_NOT_FULL_CF4_LIKELIHOOD",
+        "classification": "SDSS_PV_MOCK_FP_ERROR_AND_HOST_GROUP_RESIDUAL_DIAGNOSTIC_NOT_FULL_CF4_LIKELIHOOD",
         "source": ARCHIVE_URL,
         "source_version": "Zenodo 1.1.0, record 6824749",
         "archive_bytes": digest_reader.bytes_read,
@@ -328,7 +348,7 @@ def summarize_archive(archive_path):
             "This calibrates only the SDSS-PV FP mark/error and host-group covariance component.",
             "The mock selection omits redshift-success effects and does not model the 2M++ count catalogue or the heterogeneous full CF4 observation law.",
             "Mock host richness is not Tempel17 Ngroup; no Tempel group finder is run here, so absolute group inclusion remains uncalibrated.",
-            "No likelihood parameter, selection correction, FoG number, or covariance inflation is adopted from this diagnostic.",
+            "Richness-conditional mean offsets are reported separately from within-bin group-mean scatter; neither becomes an adopted likelihood correction or covariance inflation.",
             "No heldout outcome, candidate field, MW/M31/M33 identity, density fit, or gravity evolution is used.",
         ],
     }
@@ -340,10 +360,12 @@ def main():
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
     result = summarize_archive(args.archive)
+    result["slurm_job_id"] = os.environ.get("SLURM_JOB_ID")
+    result["source_commit"] = os.environ.get("CF4_SOURCE_COMMIT")
     args.output_dir.mkdir(parents=True, exist_ok=False)
     out = args.output_dir / "result.json"
     out.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
-    print(json.dumps({k: result[k] for k in ("classification", "mock_catalogues", "independent_simulation_boxes", "archive_md5")}, flush=True))
+    print(json.dumps({k: result[k] for k in ("classification", "mock_catalogues", "independent_simulation_boxes", "archive_md5")}), flush=True)
 
 
 if __name__ == "__main__":

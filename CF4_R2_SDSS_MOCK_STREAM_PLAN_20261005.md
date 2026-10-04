@@ -20,19 +20,20 @@ key and checks the ID/key relation independently in every catalogue.
 For `e=logdist-logdist_true` and the reported standard deviation `logdist_err`,
 the single-catalogue approximate-Gaussian diagnostic is:
 
-| Selected host richness | Galaxies | Groups | Mean `e/err` | SD `e/err` | 68% coverage | 95% coverage | Group-mean variance ratio* |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 12,627 | 12,627 | -0.1705 | 0.9518 | 0.7018 | 0.9572 | 0.9330 |
-| 2–4 | 7,947 | 2,690 | 0.0292 | 0.9951 | 0.6806 | 0.9527 | 0.9982 |
-| 5–9 | 10,872 | 1,738 | 0.0860 | 0.9918 | 0.6862 | 0.9512 | 1.0895 |
-| 10+ | 2,435 | 211 | 0.2276 | 1.0450 | 0.6534 | 0.9331 | 1.6419 |
+| Selected host richness | Galaxies | Groups | Mean `e/err` | SD `e/err` | 68% coverage | 95% coverage |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 12,627 | 12,627 | -0.1705 | 0.9518 | 0.7018 | 0.9572 |
+| 2–4 | 7,947 | 2,690 | 0.0292 | 0.9951 | 0.6806 | 0.9527 |
+| 5–9 | 10,872 | 1,738 | 0.0860 | 0.9918 | 0.6862 | 0.9512 |
+| 10+ | 2,435 | 211 | 0.2276 | 1.0450 | 0.6534 | 0.9331 |
 
-`*` Variance of group-mean residuals after subtracting the catalogue-wide
-mean, divided by the variance expected from independent reported member
-errors. It is a descriptive one-catalogue statistic, not an adopted
-inflation/correction. The skew-normal `logdist_alpha` is reported and retained
-in the ensemble summary; this preliminary standardized-residual view does not
-fit a Gaussian replacement.
+The first-pass group-mean variance ratios were centered only by the
+catalogue-wide residual mean, so they mixed richness-dependent mean bias with
+random group scatter. Those ratios are invalid as covariance estimates and
+are intentionally excluded here. The corrected ensemble calculation first
+removes each catalogue's mean separately within each richness bin. The
+skew-normal `logdist_alpha` remains reported; the preliminary standardized
+view does not fit a Gaussian replacement.
 
 ## Bundle decision and execution
 
@@ -44,7 +45,12 @@ omits redshift-success effects. The 2,048-catalogue ensemble is therefore a
 bounded calibration diagnostic only, not a route to posterior promotion.
 
 The driver implements `scripts/cf4_r2_sdss_mock_stream_summary.py` and its
-focused tests. The CPU-only Slurm script
+focused tests. A complete first pass parsed 2,048 catalogue files and wrote
+the expected archive MD5, but Slurm job412581 was marked failed after the
+summary was written because the final progress print passed `flush` to the
+JSON encoder. This is an output-only error; a regression test now covers it.
+The group-mean dispersion was also corrected to remove richness-bin means
+before estimating residual scatter. The CPU-only Slurm script
 `scripts/run_cf4_r2_sdss_mock_stream_summary.sbatch` downloads the official
 10.6GB archive into a job-private temporary directory alongside the already
 verified source under `/gpfs/kjhan/CF4/external/sdss_pv_6824749`, validates
