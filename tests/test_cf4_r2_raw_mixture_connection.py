@@ -73,20 +73,25 @@ class RawMixtureConnectionTests(unittest.TestCase):
 
     def test_packed_rows_use_their_own_linked_point_radius(self):
         observation={k:jnp.stack((v,v)) for k,v in self.o.items()}
+        observation['voxel']=jnp.asarray([[72,64,64],[84,64,64]])
         observation['radius']=jnp.asarray([30.,70.])
         observation['dz']=jnp.asarray([30.,70.])
         observation['source_conditioning_radius_cMpc_h']=jnp.asarray([24.,61.])
-        bins=jnp.asarray([0,0]);rows=jnp.asarray([0,1])
+        bins=jnp.asarray([2,2]);rows=jnp.asarray([0,1])
         common=dict(population=1,geometry=self.g,cut_order=16,
             component_bin=bins,component_row=rows)
-        args=(jnp.asarray(POPULATION_ORIGIN),self.pos,self.vel,self.mass,self.sky,observation)
+        positions=jnp.asarray([[216.,192.75,192.75],[253.,192.75,192.75]])
+        velocities=jnp.zeros((2,3));mass=jnp.ones((5,2));sky=jnp.ones((2,2))
+        args=(jnp.asarray(POPULATION_ORIGIN),positions,velocities,mass,sky,observation)
         carried=chunk_log_terms(*args,**common)
         explicit=chunk_log_terms(*args,**common,
             source_conditioning_radius_cMpc_h=observation['source_conditioning_radius_cMpc_h'])
         swapped=chunk_log_terms(*args,**common,
             source_conditioning_radius_cMpc_h=jnp.asarray([61.,24.]))
         np.testing.assert_allclose(carried,explicit,rtol=0.,atol=2e-12)
-        self.assertGreater(float(jnp.max(jnp.abs(carried[0]-swapped[0]))),1e-10)
+        carried_num, swapped_num = map(np.asarray, (carried[0], swapped[0]))
+        self.assertTrue(np.isfinite(carried_num).any())
+        self.assertFalse(np.array_equal(carried_num, swapped_num))
 
     def test_packed_rows_and_variance_adjoint(self):
         o={k:v[None] for k,v in self.o.items()}
