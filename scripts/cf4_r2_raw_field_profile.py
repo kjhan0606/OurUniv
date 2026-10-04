@@ -88,6 +88,9 @@ def main():
             pre_reconciliation_conditional_FP_rows=int(mix['pre_reconciliation_rows']),
             excluded_unresolved_FP_rows=len(mix['excluded_unresolved_PGCs']),
             source_conditioning_rule=mix['source_conditioning_rule'],
+            source_conditioning_radius_range_cMpc_h=[
+                float(np.min(np.asarray(o['source_conditioning_radius_cMpc_h']))),
+                float(np.max(np.asarray(o['source_conditioning_radius_cMpc_h'])))],
             association_ledger_source_commit=mix['association_ledger_source_commit'],
             same_state_reference='old v1 CF4-radius readout is not applicable to this linked-point conditional target')
         save()
