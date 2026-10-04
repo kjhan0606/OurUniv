@@ -9,13 +9,19 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-04
 
-The follow-up exact shell-cell census attempt412025 failed before doing census
-work: four pytest checks passed, then a contradictory inverted assertion in
-the script's own outer-shell tangency self-test failed. The strict `<180`
-shell convention excludes a cell tangent at180, as intended by the census.
-Corrected the test-only condition and regression assertion; rerun the focused
-suite and resubmit one typed Slurm job. No result file exists. Details are in
-`CF4_R2_SHELL_GEOMETRY_CENSUS_20261004.md`.
+Exact shell-cell census Slurm412034 completed/exit0 in25s (18.51s measured,
+process peak0.205GiB, four focused tests passed). Of 938,128 active 128^3
+voxels in5<r<180cMpc/h,56 partially intersect the inner boundary and67,544
+the outer boundary. The eight maximum-cap cells each have10.64M inclusive
+NSIDE2048 query-disc candidates. Separately,56 active cells exceed the
+profiler's1.5M cap estimate (the cross-tab with inner-boundary status was not
+saved). Reusing that profiler unchanged would skip valid exposures, so no full
+integral should launch until a chunked no-skip path is validated on those
+cases. Full result and the failed first attempts are in
+`CF4_R2_SHELL_GEOMETRY_CENSUS_20261004.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_ray_geometry_census_20261004_v1/result.json`.
+The cap-area sum is6.901e9 candidate pixels (not an exact total); the former
+2.46–2.86h full-grid projection is still unverified. R2 remains NO-GO.
 
 The bounded map-aware ray/cell cost profile Slurm412001 COMPLETED/exit0 on
 typed H100 (11s wall, script-measured4.12s, process peak RSS0.256GiB). It read
@@ -39,10 +45,25 @@ resource guarantee. Full method and disposition:
 `CF4_R2_RAY_COST_PROFILE_20261004.md` and
 `/gpfs/kjhan/CF4/z0_density/r2_ray_cost_profile_20261004_v1/result.json`.
 
-Driver decision: the small controls support the ray geometry but do not yet
-justify the all-grid job. Next resolve observer-near/partial-shell voxel
-handling and exact active-cell census, then re-evaluate one NSIDE2048 full
-selection precompute; do not use the result as a calibrated count likelihood.
+Driver decision: proceed with one substantive R2 bundle: implement bounded
+chunked ray integration without dropping any active cell, compare to the
+existing exact reference on feasible cells, and run a fixed max-cap/inner-shell
+stress test. Then reconsider the one full NSIDE2048 exposure precompute; any
+cube remains a numerical selection artifact, not a calibrated count likelihood.
+
+Fable5 reviewed the prospective full precompute read-only and returned
+CONDITIONAL PASS. Driver adopts a single fail-closed Slurm bundle with chunk
+checks, NSIDE1024/2048 full-grid exposure, and exact geometry/selection closure;
+no separate validation job or adaptive NSIDE4096 follow-up. This N128/3
+count-grid operator is not the N256/1.5 global z=0 field. The 56 inner-boundary
+cells and 56 over-cap estimates have equal totals but no saved cross-tab, so
+the next program must compute it rather than assume the sets coincide.
+Geometrically active zero-ray cells are reported; occupied training cells
+with zero exposure remain a later support failure. Audit and scope:
+`CF4_R2_EXPOSURE_PRECOMPUTE_PLAN_20261004.md`. No posterior or LG result;
+MW/M31 roles remain ambiguous, M33 unresolved, and all three must later
+constrain the same NEW evolved LG field at<=0.3cMpc/h, with native truths
+calibration/evaluation-only.
 Q-GOAL: needed selection mechanics for the same CF4-conditioned z=0 field,
 not a field result. Q-LEAN: one bounded training-only resource profile, no
 posterior, heldout score, fit, or simulation. R2 remains NO-GO; MW/M31 roles
