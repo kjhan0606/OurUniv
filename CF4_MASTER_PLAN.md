@@ -34,6 +34,28 @@ field or required selection variables are absent. No sampler, heldout score,
 field fit or gravity run follows from this source audit alone. Full decision:
 `CF4_R2_2MPP_MOCK_APPLICABILITY_20261006.md`.
 
+COSMOSIM access follow-up (2026-10-05 KST) corrected the open truth-source check.
+TAP is SQL/ADQL for the halo and SAM tables; the MDPL2 z=0 raw particle
+snapshot is a separate GADGET-1 file download, not a SQL result. Its public
+DataLink manifest has 1,920 shards totalling 1,716.2 decimal GB; its README
+states 1.7 Tb. The existing COSMOSIM login supplied by the user was used only
+to read that 912-byte README. No API token was requested or retrieved, and no
+particle or galaxy catalogue data were downloaded. No bounded spatial cutout
+or shard-to-volume mapping is documented. The raw-file directory is
+`snapdir_130`, while the catalogue redshift table calls z=0 `snapnum=125`;
+their equivalence is unverified. Inspected SAG/SAGE/Galacticus metadata shows
+SDSS magnitudes/luminosities, not the apparent-K assignment required by the
+2M++ selection. Therefore matter truth exists in principle, but MDPL2 remains
+closed as the current R2 mock source: a full download violates the project's
+disk-saving constraint, and a bounded extraction plus the K-selection and
+snapshot mapping are unestablished. The focused Fable addendum agreed with
+closing this candidate. Its concern that credentialed README access lacked
+authority is not adopted: the user supplied the COSMOSIM account information
+for this homepage before the read. This limited access does not authorize a
+terabyte-scale download. Resume the already-planned R2 work; this source
+decision does not promote a field or relax the R2 NO-GO. Details:
+`CF4_R2_COSMOSIM_MDPL2_ACCESS_20261005.md`.
+
 An independent 2MRS-only reconstruction by Nusser (2026, arXiv:2606.08593)
 was also checked as a methodological comparator. It uses an unbinned 2MRS
 Poisson point-process likelihood and CF4 only as an external velocity test;
@@ -60,8 +82,11 @@ R2 remains NO-GO.
 
 User direction 2026-10-06: after each coherent bundle, continue without
 waiting for routine turn-by-turn approval. This remains within the approved
-science/resource scope and does not grant authority for new account
-registration or other external access that requires user credentials.
+science/resource scope. For COSMOSIM, the user supplied existing homepage
+credentials in this session (2026-10-05 KST); this permits only the limited
+metadata/README access recorded above, not a bulk snapshot download or
+creation/retrieval of a new API token. Do not infer authority for account
+registration or unrelated credentialed services.
 
 ## Current R2 continuation — 2026-10-05
 
