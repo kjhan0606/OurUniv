@@ -167,14 +167,14 @@ post-hoc cut on current scores. The47,121 training count factors are not
 changed. Current fixed-state profile is a separate new v2 result and must not
 compare against the old v1 CF4-radius readout.
 
-Fable's proposed saved-state citations408412/409024 were not valid for this
-mechanics check:408412 accepted0/4 proposals and409024 was a re-anchored
-proposal diagnostic. The driver instead uses the already saved N128 terminal
-state from job408337 (accepted proposal7, nonstationary) only for a fixed-
-state target/gradient profile. No extra PM evolution is needed or authorized
-by this correction. The proposed option to admit one chosen member from
-multi-member groups is not adopted; the actual count term aggregates the
-source set, so picking one would require an explicit joint ownership model.
+Fable's proposed saved-state citations 408412/409024 were not valid for this
+mechanics check: 408412 accepted 0/4 proposals and 409024 was a re-anchored
+proposal diagnostic. The driver instead used the saved N128 terminal state
+from job 408337 (accepted proposal 7, nonstationary) only for a fixed-state
+target/gradient profile. No extra PM evolution was needed to produce that
+state. The proposed option to admit one chosen member from multi-member
+groups is not adopted; the actual count term aggregates the source set, so
+picking one would require an explicit joint ownership model.
 
 ### Driver's current bundle checks
 
@@ -185,9 +185,25 @@ source set, so picking one would require an explicit joint ownership model.
   observables must constrain those same roles on the same NEW evolved LG
   field at `<=0.3 cMpc/h`, with truth IDs used only for calibration/evaluation.
 - **Q-LEAN:** one exact 1,414-row ownership join, four small regression suites
-  and one corrected fixed-state profile. No repeated ray sweep, source
-  census, PM evolution, held-out score, posterior fit, or sampler escalation.
-- Next: run the new fixed-state v2 profile on the saved nonstationary N128
-  field. It must report the actual clean row count and linked-point radius
-  rule; verify fresh support, quadrature contrast, finite target and full
-  density/velocity/nuisance AD-vs-FD. Passing it does not make R2 GO.
+  and one corrected fixed-state profile; no new ray sweep, census or PM run
+  for mechanics. No held-out score or posterior promotion.
+- Fixed-state profile job 412315 completed/exit 0 on H100 in 10:02. It used
+  all 1,414 rows, point radii 22.301–179.868 cMpc/h, and fresh support of
+  19,348,137 components. Fast/legacy maximum raw-row difference was
+  3.84e-6; full directional AD-vs-FD relative error was 3.98e-6. Device
+  temporary memory was 3.11/3.87 GiB; host MaxRSS was 4,271,420 KiB under
+  the10GiB request. The score is a finite fixed-state diagnostic, not a field
+  posterior or z=0 delivery. Its historical v1 reference was not reused.
+- Next bundle: one eight-proposal PM joint-target pilot at the same N128
+  saved IC, with all47,121 count factors and1,414 linked-point FP factors.
+  PM is evaluated only as the forward map inside that inference target, not
+  as a standalone gravity simulation. Prior same-run measured MaxRSS was
+  7.92GiB against24GiB; lower request10GiB leaves >20% observed headroom.
+  Driver-led audit (rather than consecutive Fable review) confirms Q-GOAL:
+  this is the minimum dynamic test that count and linked-point marks act on
+  one field, but it is not the delivered N256/1.5 map. Q-LEAN: one existing
+  bounded eight-proposal pilot, no separate PM comparison, ray sweep or
+  sampler grid. It must stop on restart, finiteness, exact primal, AD/FD or
+  memory failure; short transitions cannot establish stationarity. MW/M31
+  stay role-ambiguous and M33 unresolved; their observables must later
+  constrain the same NEW evolved LG field at `<=0.3 cMpc/h`.

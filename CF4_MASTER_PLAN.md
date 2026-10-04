@@ -142,21 +142,37 @@ re-anchored-proposal diagnostic. The saved N128 state is for target wiring and
 gradient checks only, not a posterior estimate. Do not run PM again to create
 it.
 
-**Next:** run the bounded same-state raw-target profile with the corrected
-point-radius vector, association-clean v6 rows, fresh support, quadrature
-contrast and full-field/nuisance AD-vs-FD check. It must not compare against
-the historical v1 CF4-radius readout. No optimization, sampler, held-out
-score, new gravity evolution, N256/LG escalation or map promotion. If this
-profile passes, continue to an actual saved-state count+conditional-mark
-joint target diagnostic; R2 remains NO-GO until calibration, stationarity,
-held-out prediction and a delivered uncertainty map exist. Q-GOAL: this
-repairs the observation-to-same-field conditioning needed by the
-CF4-constrained z=0 goal, but is not itself a z=0 result. Q-LEAN: one exact
-cohort join and one corrected fixed-state profile; no additional census or
-sampler gate. MW/M31 remain role-ambiguous and M33 unresolved; their
-observables must later constrain those same roles on the same NEW evolved LG
-field at `<=0.3 cMpc/h`, with native identities limited to calibration and
-evaluation.
+Typed-H100 Slurm job412315 completed the corrected fixed-state profile in
+10:02, MaxRSS4,271,420KiB against10GiB requested (Python peak4.39GiB). All
+1,414 linked-point rows were scored; linked radii span22.301–179.868cMpc/h.
+Fresh support retained19,348,137 components. The raw profile's legacy/fast
+quadrature maximum rowwise difference was3.84e-6; the full native
+density/velocity/tracer/population directional AD-vs-FD relative error was
+3.98e-6, below2e-5. Device temporary peaks were3.11/3.87GiB. The score was
+finite (5973.994 at the declared state/rules). The historical v1
+CF4-radius/all-row readout was deliberately not used as a reference. This
+tests only the corrected N128/3 conditional observation operator on the
+saved nonstationary job408337 state; no count term, posterior, held-out score,
+or map was produced. Result:
+`/gpfs/kjhan/CF4/z0_density/r2_raw_field_profile_v2_linked_point_radius/result.json`.
+
+**Next:** run one bounded eight-proposal count+conditional-mark joint target
+pilot from that same saved IC, retaining all47,121 v6 count factors and the
+1,414 admitted FP rows. It will perform PM forward evaluations as part of the
+actual joint likelihood, not as a separate simulation; there will be no
+held-out scores or stationarity/posterior claim. The closest predecessor
+used1:43:40 and7.92GiB MaxRSS; request10GiB (>20% margin) and cap wall at2h.
+If restart-field identity, finite target, exact-primal, joint AD/FD, memory
+guard or transition safety fails, stop this pilot and diagnose that specific
+gate rather than extending steps. R2 remains NO-GO until calibration,
+stationarity, held-out prediction and a delivered uncertainty map exist.
+Q-GOAL: the pilot is the first dynamic test of whether the same CF4 count and
+linked-point mark factors can constrain one evolving field, but cannot
+complete the z=0 map. Q-LEAN: one existing eight-proposal pilot, no extra
+gravity run, ray/census work, or sampler sweep. MW/M31 remain role-ambiguous
+and M33 unresolved; their observables must later constrain those same roles
+on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native identities
+limited to calibration and evaluation.
 
 The bounded T10106 shared-latent mechanics attempt is **technical NO-GO**, not
 a failed science fit: `predict_source_volume_intensity` and
