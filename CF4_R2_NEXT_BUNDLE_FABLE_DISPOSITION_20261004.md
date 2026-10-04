@@ -81,3 +81,45 @@ Fable's review is advisory. Its useful applicability finding was adopted
 because the split counts and active source code independently confirm it; any
 future shared-latent factor must likewise be supported by explicit kernel and
 measure checks before adoption.
+
+## Execution outcome — A2 and actual-kernel A3/A4
+
+The source-only ledger completed as typed-H100 job412227 (4 seconds,
+MaxRSS3,520KiB; three focused tests passed) at
+`/gpfs/kjhan/CF4/z0_density/r2_v6_factor_ownership_ledger_20261004_v2/`.
+It exactly reconstructs the47,121 v6 training count total using37,951 unique
+count-cell factors; every key has one count owner. It records6,028 training
+CF4 groups and8,901 FP rows, each with one group owner. Crossmatch classes are
+2,682 secure,6,181 unmatched,30 extended-review candidates and8 coordinate/
+redshift conflicts. Twenty-one secure links reference point recnos absent
+from the point manifest;2,661 are direct secure training links. Count-cell
+classes are35,535 with no secure linked CF4 group,2,287 with one, and129 with
+multiple. Group classes are3,871 unanchored selected-group conditionals,21
+anchor-marked/no-direct-count groups,31 ambiguous-only groups,27 secure-plus-
+unresolved groups,1,820 clean one-point groups and258 clean multi-member
+candidates. There is no cross-group secure-recno collision.
+The earlier v1 ledger is retained; its overbroad ambiguity label was corrected
+in v2 and must not be used for interpretation.
+
+The proposed real T10106 control is a **technical NO-GO** with existing
+interfaces. `predict_source_volume_intensity` accepts source positions,
+velocities, rates and angular completeness, but no group IDs/shared latent;
+`count_field_loglike` only scores sparse counts against that global intensity.
+The raw-FP `source_conditioning_radius_cMpc_h` argument is a supplied per-row
+conditioning value, not a shared inferred latent with a probability measure.
+`conditional_group_mark_logpdf` requires a calibrated covariance on group
+velocity, group distance modulus and member velocities; no such calibrated
+T10106 covariance is available. The generic shared-latent log-sum-exp helper
+and its synthetic tests do not couple these real kernels. Accordingly, no
+T10106 joint score, one-member reduction, or AD/FD check was claimed. The
+failure mode is missing model/input contract, not an optimizer or numerical
+failure. A3/A4 remain open until a common latent is derived and both real
+kernels consume it.
+
+R2 remains NO-GO. The next advisory should choose between recovering a
+preselection/recovered-group parent and its selection process, or explicitly
+restricting the estimand to a conditional target that does not claim
+unidentified group inclusion. Do not run another catalogue census, ray
+resolution sweep, PM evolution, field fit or posterior while that choice is
+being assessed. Q-GOAL and Q-LEAN, plus same-field ambiguous MW/M31 and
+unresolved M33 handling, remain mandatory for the next plan.

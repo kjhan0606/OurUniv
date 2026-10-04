@@ -96,17 +96,48 @@ M33 unresolved; their observables must constrain those same roles on the same
 NEW evolved LG field at `<=0.3 cMpc/h`, with native truth IDs reserved for
 calibration/evaluation.
 
-Next science bundle returns to the overlap-aware CF4/2M++ observation law.
-The disjoint scalar survival model is closed after the cause audit showed
-3,120/3,183 failures (98.0%) among CF4-crossmatched 2M++ galaxies. Use source
-ownership to specify one datum factor without duplicating the shared redshift,
-preserve secure/ambiguous match classes, and keep CF4 grouped distance marks
-distinct from 2M++ count ownership. The current selected mock lacks recovered
-Tempel groups and a preselection parent, so it cannot calibrate inclusion;
-state that limit instead of imputing it. Begin with a bounded source-join and
-saved-field mechanics control, not a new gravity evolution or posterior. Any
-field-weighted exposure comparison must include the nonuniform expected-count
-term before calling the numerical operator likelihood-ready.
+The source-only ownership ledger completed on typed-H100 Slurm job412227
+(4s, MaxRSS3,520KiB under4GiB). It exactly reconstructs47,121 training
+galaxies across37,951 count-cell factors and assigns each once;6,028 CF4
+groups own8,901 FP mark rows once. The 8,901 training crossmatch rows split
+into2,682 `secure_joint_mark`,6,181 `unmatched`,30 review candidates and8
+coordinate/redshift conflicts. Of the secure rows,2,661 link to a training
+point-manifest recno and21 refer to recnos absent from that manifest. The
+group ledger identifies3,871 groups with no direct secure count link and no
+unresolved association,21 with separate anchor rows but no direct count link,
+31 ambiguous-only groups,27 groups with a secure link plus unresolved edges,
+1,820 unambiguous one-point groups, and258 unambiguous multi-point candidates.
+No recno is securely assigned across multiple training groups. V1's first
+classification incorrectly treated ordinary `unmatched` edges as ambiguous;
+that output is preserved but superseded by corrected V2. Result and hashes:
+`/gpfs/kjhan/CF4/z0_density/r2_v6_factor_ownership_ledger_20261004_v2/result.json`.
+
+The bounded T10106 shared-latent mechanics attempt is **technical NO-GO**, not
+a failed science fit: `predict_source_volume_intensity` and
+`count_field_loglike` accept no source-group IDs or group-latent realization;
+the active count term is a global expected-intensity over the source set.
+`raw_field_logpdf`'s `source_conditioning_radius_cMpc_h` is a per-row
+conditioning input, not an inferred shared group latent. The existing
+`conditional_group_mark_logpdf` requires a calibrated joint covariance for
+group Vcmb, group distance modulus and member velocities, which is absent; the
+generic log-sum-exp primitive has no connection to either actual kernel.
+Therefore no actual shared-latent count-plus-two-mark score can be calculated
+without deriving and implementing a new observation operator and obtaining
+the needed calibration. Do not substitute a toy covariance or reinterpret
+T10106 catalogue agreement as physical group membership.
+
+Next R2 step: use Fable5 advisory to choose the smallest defensible route from
+this exact interface/data gap toward a calibrated observation law: identify
+recoverable preselection/group-parent data and selection process, or define a
+strict conditional estimand that excludes unidentified factors. The existing
+selected mock lacks recovered Tempel groups and a preselection parent, so it
+cannot calibrate group inclusion, survival, bias or FoG; do not impute them.
+No further ray exposure, source census, gravity evolution, posterior fit or
+held-out scoring. Any eventual field-weighted exposure test must include the
+nonuniform expected-count term. R2 is still NO-GO; no z=0 posterior or map has
+been produced. MW/M31 remain role-ambiguous and M33 unresolved, and all their
+observables must constrain those same roles on the same NEW evolved LG field
+at `<=0.3 cMpc/h`.
 
 ## Current R2 continuation — 2026-10-03
 
