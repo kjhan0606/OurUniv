@@ -181,17 +181,34 @@ Current N256 resolution wiring now fails closed unless the per-row linked
 2M++ radii are present, aligned and positive, passes them explicitly to the
 raw-mark factor, and records their range/ownership-ledger provenance.
 
-**Next:** one corrected-target N256/384=1.5 bounded four-proposal pilot from
-the preserved N256 dynamics initializer, keeping all47,121 training counts
-on the frozen observed N128 grid and all1,414 reconciled linked-point FP/K
-rows. Use the existing PM forward target (force GL1, fine GL2), record the
-linked-radius vector/range and exact source revision, perform the restart,
-primal, joint AD/FD, GPU-memory and transition checks, and do not read/score
-heldout outcomes. This is a target-correction revalidation, not a second
-gravity simulation or a posterior. Do not reuse or promote old N256 chain
-draws under the changed mark conditioning. If the target or memory check
-fails, stop and fix that specific defect; otherwise plan the next useful
-corrected-target chain without a turn-level approval wait. R2 remains NO-GO:
+Typed-H100 job412356 completed the corrected N256/384=1.5 target-revalidation
+pilot in25:02 (four proposals, MaxRSS15,436,184KiB under48GiB). All1,414
+secure-linked FP rows used per-row 2M++ radii spanning22.301–179.868cMpc/h;
+the source-conditioning and association-ledger provenance were recorded.
+Same-state restart and GL1 primal checks passed; joint PM/raw/count
+directional AD-vs-FD error was6.79e-5 (limit2e-3), and estimated peak device
+memory was28.50GiB (H100 limit69.81GiB). However all four GL1-force/GL2-target
+proposals rejected: `ΔH=19.662,12.830,4.308,4.256` at step sizes
+`0.100,0.0522,0.0330,0.0330`. The fourth repeated the already reduced step;
+the terminal energy error did not continue improving. The corrected
+fine-minus-coarse offset `-481.075` differs only about0.12 nat from the old
+radius pilot's `-481.197`, while their first proposal errors are likewise
+about19.66/19.69. This is evidence against the GL1 force approximation at
+these tested states, not evidence that the corrected likelihood or N256 target
+is invalid. No proposal was accepted, so the saved pilot checkpoint is the
+original initializer, not a new posterior draw. No heldout outcomes were
+read. Full result:
+`/gpfs/kjhan/CF4/z0_density/r2_n256_joint_pilot_v2_linked_point_radius/result.json`.
+
+The next bounded discrimination is one state-independent exact-GL2 HMC
+transition (one integration step, fixed step0.08) from that corrected-target
+checkpoint. Typed-H100 Slurm job412367 is submitted with48GiB host memory and
+is waiting for priority; no manual node execution. This tests whether the
+corrected N256 target admits a usable local transition under an exact force.
+It is not a chain, stationarity test, uncertainty estimate or map. Do not
+blindly extend it: if the one-step exact transition is infeasible at measured
+cost or numerically poor, stop R2-scale sampling and redesign the N256 force
+evaluation/trajectory strategy based on that direct result. R2 remains NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -199,11 +216,11 @@ surveys, so published selection corrections do not by themselves provide a
 single calibrated selection law; the raw target models its explicit FP cuts
 but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/abs/2209.11238),
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
-Q-GOAL: this restores the corrected likelihood at the approved1.5-cMpc/h
-environment grid but cannot alone complete the z=0 map. Q-LEAN: one bounded
-revalidation of the existing N256 target, no exposure sweep, census, new
-mock or sampler ladder. MW/M31 remain role-ambiguous and M33 unresolved; all
-must later constrain those same roles in the same NEW evolved LG field at
+Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
+for a z=0 field posterior but neither transition produces that field. Q-LEAN:
+one exact-force transition, no GL1 step-size ladder, chain extension, new
+simulation or heldout access. MW/M31 remain role-ambiguous and M33 unresolved;
+all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
 
 The bounded T10106 shared-latent mechanics attempt is **technical NO-GO**, not
