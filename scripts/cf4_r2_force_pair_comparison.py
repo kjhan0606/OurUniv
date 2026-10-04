@@ -42,13 +42,20 @@ def main():
     exact_one_step = os.environ.get('CF4_R2_EXACT_ONE_STEP') == '1'
     exact_chain_steps = int(os.environ.get('CF4_R2_EXACT_CHAIN_STEPS', '0'))
     exact_chain_integrations = int(os.environ.get('CF4_R2_CHAIN_INTEGRATION_STEPS', '1'))
+    trajectory_length_text = os.environ.get('CF4_R2_TRAJECTORY_LENGTHS')
+    trajectory_lengths = (() if trajectory_length_text is None else
+        tuple(int(part.strip()) for part in trajectory_length_text.split(',')))
     fundamental_mass = float(os.environ.get('CF4_R2_FUNDAMENTAL_MASS', '6000'))
-    if exact_chain_steps < 0 or sum((reanchor_only, exact_one_step, exact_chain_steps > 0)) > 1:
+    if (exact_chain_steps < 0 or sum((reanchor_only, exact_one_step,
+            exact_chain_steps > 0, bool(trajectory_lengths))) > 1):
         raise ValueError('select one valid force-pair or exact-chain mode')
+    if trajectory_length_text is not None and trajectory_lengths != (1, 2, 4):
+        raise ValueError('trajectory diagnostic requires the declared 1,2,4 step sweep')
     if (exact_chain_steps and exact_chain_integrations < 1) or not math.isfinite(fundamental_mass) or fundamental_mass < 1:
         raise ValueError('invalid exact-chain length or positive fundamental mass')
     application_budget = (4*3600 if (reanchor_only or exact_one_step) else
-                          3.5*3600 if exact_chain_steps else APPLICATION_BUDGET)
+                          3.5*3600 if (exact_chain_steps or trajectory_lengths) else
+                          APPLICATION_BUDGET)
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
@@ -88,6 +95,19 @@ def main():
             MW_M31='remain role-ambiguous; this bundle does not identify either component',
             M33='unresolved; later observables must constrain this same NEW field; native truth identities are evaluation-only',
             transition_probability_valid_for_chain=True)
+    if trajectory_lengths:
+        report.update(
+            force_comparison='same-state exact GL2 trajectory-length diagnostic',
+            trajectory_length_diagnostic=dict(
+                requested_integration_steps=list(trajectory_lengths),
+                step_size=STEP, warmup=0, retained_samples=0,
+                common_momentum=True, metric_fundamental_mass=fundamental_mass),
+            posterior_claim=False, stationarity_claimed=False, heldout_scored=False,
+            Q_GOAL='diagnose target-preserving N256 sampler movement for the actual R2 z=0 field posterior; no density-map or LG-identification claim',
+            Q_LEAN='three exact GL2 paths from one state/common momentum; no chain extension, new likelihood, gravity run or heldout access',
+            MW_M31='remain role-ambiguous; this bundle does not identify either component',
+            M33='unresolved; later observables must constrain this same NEW evolved field; truth identities are evaluation-only',
+            transition_probability_valid_for_chain=False)
 
     def save():
         report['seconds'] = time.monotonic() - started
@@ -250,6 +270,86 @@ def main():
                 elapsed_seconds=time.monotonic()-tic)
             report['trials'].append(row)
             save()
+
+        if trajectory_lengths:
+            chain_label = os.environ.get('CF4_R2_CHAIN_LABEL', '').lower()
+            if chain_label not in ('a', 'b'):
+                raise ValueError('CF4_R2_CHAIN_LABEL must be a or b')
+            checkpoint_path = Path(os.environ['CF4_R2_INITIAL_CHECKPOINT'])
+            probe_seed = int(os.environ.get('CF4_R2_PROBE_SEED', '2026100501'))
+            with np.load(checkpoint_path, allow_pickle=False) as f:
+                q = f['canonical'].astype(np.float64)
+                saved_energy = float(f['fine_energy'])
+                local_completed = int(f['completed_transitions']) if 'completed_transitions' in f else None
+            if q.shape != (NIC+24,):
+                raise ValueError(f'{chain_label}: invalid canonical trajectory checkpoint')
+
+            setup_started = time.monotonic()
+            fine_energy, gradient = oracle(q, 2, True)
+            if abs(fine_energy-saved_energy) > 1e-7:
+                raise AssertionError(f'{chain_label}: checkpoint differs from the exact GL2 target')
+            probe_rng = np.random.default_rng(probe_seed)
+            p = metric.momentum(probe_rng)
+            q_start = q.copy()
+            p_start = p.copy()
+            initial_h = fine_energy + metric.kinetic(p)
+            initial_components = dict(exact_target_components)
+            diagnostic = dict(
+                chain_label=chain_label.upper(), initial_checkpoint=str(checkpoint_path),
+                checkpoint_local_completed_transitions=local_completed,
+                checkpoint_global_transition=(int(os.environ['CF4_R2_CHAIN_GLOBAL_TRANSITION'])
+                    if os.environ.get('CF4_R2_CHAIN_GLOBAL_TRANSITION') else None),
+                checkpoint_energy_abs_error=abs(fine_energy-saved_energy),
+                common_momentum_seed=probe_seed,
+                starting_target_energy=fine_energy,
+                starting_components=initial_components,
+                initial_gradient_seconds=time.monotonic()-setup_started,
+                trials=[])
+            report['trajectory_length_diagnostic'].update(diagnostic)
+            save()
+
+            for steps in trajectory_lengths:
+                check_budget()
+                tic = time.monotonic()
+                q_trial, p_trial, path_energy, _ = split_trajectory(
+                    lambda x: oracle(x, 2, True), metric, q_start, p_start,
+                    STEP, steps, initial_evaluation=(fine_energy, gradient))
+                endpoint_energy = float(path_energy)
+                endpoint_components = dict(exact_target_components)
+                delta_h = endpoint_energy + metric.kinetic(p_trial) - initial_h
+                if not math.isfinite(delta_h):
+                    raise FloatingPointError('nonfinite exact-GL2 trajectory Hamiltonian error')
+                probability = math.exp(min(0., -delta_h))
+                displacement = q_trial-q_start
+                ic_displacement = displacement[:NIC]
+                row = dict(
+                    integration_steps=steps, endpoint_target_energy=endpoint_energy,
+                    endpoint_components=endpoint_components,
+                    energy_error=float(delta_h), acceptance_probability=probability,
+                    canonical_jump_rms=float(np.sqrt(np.mean(displacement**2))),
+                    ic_white_jump_rms=float(np.sqrt(np.mean(ic_displacement**2))),
+                    nuisance_white_jump_rms=float(np.sqrt(np.mean(displacement[NIC:]**2))),
+                    elapsed_seconds=time.monotonic()-tic)
+                diagnostic['trials'].append(row)
+                # These paths are deterministic probes, not MH transitions. Restore
+                # the initial decomposition for the next same-state trajectory.
+                exact_target_components.clear()
+                exact_target_components.update(initial_components)
+                save()
+
+            if not np.array_equal(q, q_start) or not np.array_equal(p, p_start):
+                raise AssertionError('trajectory diagnostic mutated its shared initial state')
+            report['status'] = 'EXACT_GL2_TRAJECTORY_LENGTH_DIAGNOSTIC_COMPLETE_NOT_SAMPLES'
+            report['conclusion_scope'] = (
+                'three deterministic same-state/common-momentum exact-target paths; '
+                'not MH transitions, retained samples, stationarity, or posterior evidence')
+            report['same_field_LG_constraint'] = (
+                'MW/M31 remain role-ambiguous and M33 unresolved; later observables must '
+                'constrain these same roles on the same NEW evolved field; truth IDs are evaluation-only')
+            report['source_head'] = subprocess.check_output(
+                ['git', 'rev-parse', 'HEAD'], cwd=Path(__file__).resolve().parents[1], text=True).strip()
+            save()
+            return
 
         if exact_chain_steps:
             chain_label = os.environ.get('CF4_R2_CHAIN_LABEL', '').lower()

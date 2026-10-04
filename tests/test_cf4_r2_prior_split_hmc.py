@@ -160,6 +160,24 @@ class PriorSplitTests(unittest.TestCase):
         jac=np.column_stack([(run(start+eps*d)-run(start-eps*d))/(2*eps) for d in np.eye(20)])
         self.assertAlmostEqual(float(np.linalg.det(jac)),1.,places=8)
 
+    def test_trajectory_length_paths_share_unmutated_state_and_momentum(self):
+        q_start=self.q.copy(); p_start=self.p.copy()
+        initial=self.oracle(q_start)
+        initial_h=initial[0]+self.metric.kinetic(p_start)
+        endpoints={}
+        for steps in (1,2,4):
+            q_end,p_end,value,gradient=split_trajectory(
+                self.oracle,self.metric,q_start,p_start,.08,steps,
+                initial_evaluation=initial)
+            self.assertTrue(np.isfinite(value))
+            self.assertTrue(np.isfinite(gradient).all())
+            delta_h=value+self.metric.kinetic(p_end)-initial_h
+            self.assertTrue(np.isfinite(delta_h))
+            endpoints[steps]=q_end
+        np.testing.assert_array_equal(self.q,q_start)
+        np.testing.assert_array_equal(self.p,p_start)
+        self.assertGreater(float(np.linalg.norm(endpoints[4]-endpoints[1])),0.)
+
     def test_gaussian_target_mean_covariance_with_metropolis(self):
         q=self.q.copy(); value,gradient=self.oracle(q)
         samples=[]; accepted=0

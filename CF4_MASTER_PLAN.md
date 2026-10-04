@@ -257,14 +257,30 @@ tolerance or alter the target. The failed proposal is replayable: momentum is
 drawn before the check, but the MH uniform draw is after it, and failed state
 does not overwrite the accepted checkpoint RNG.
 
-**Next:** resume only the three uncompleted transitions from job412443's
-transition13 accepted checkpoint, restoring its RNG. Use the exact GL2
-value-and-gradient primal directly as the endpoint Hamiltonian target; do not
-perform a redundant second compilation or relax the independent-path check.
-Keep target, metric and step fixed. This closes the bounded16-step diagnostic,
-not posterior production. Do not start a long retained chain unless the
-extended trace supports equilibrium and stationarity; otherwise redesign the
-N256 force/trajectory strategy rather than extending blindly. R2 remains
+The failed proposal was deterministically replayed from the accepted
+transition13 checkpoint by typed-H100 job412509, which completed the three
+remaining transitions in24:02 (MaxRSS10,654,056KiB under48GiB). All3 were
+accepted and exact endpoint values now come from the same GL2
+value-and-gradient primal. Across the intended16-step segment (13 transitions
+in412443 plus3 in412509), all16 were accepted, mean ΔH=-0.302901 (range
+-0.707945 to+0.069113), and mean proposal time377s. From transition24 to40,
+prior energy rose8,474.895 nat, count log-score improved754.362 nat, and
+raw-mark log-score improved0.630 nat, for a net target-energy increase of
+7,719.903 nat. IC-white mean-square moved0.964453->0.965463. The score
+decomposition therefore attributes this continued target-energy rise mainly
+to prior energy, partly offset by the count likelihood; raw-mark movement is
+small on this path. Forty steps do not establish stationarity, mixing,
+effective sample size or posterior uncertainty. Full trace is in the linked
+exact-GL2 report and the two Slurm result directories.
+
+**Next:** do not blindly extend the same one-step chain. Run a same-state,
+common-momentum exact-GL2 trajectory-length diagnostic at fixed target and
+metric (1,2,4 integration steps, step0.08). Record ΔH, endpoint prior/count/
+raw components, acceptance probability and canonical jump RMS; this compares
+mixing distance against integration error without retaining samples. Keep the
+existing exact value-and-gradient primal for both force and Hamiltonian.
+Proceed to longer warm-up only if this bounded comparison supports a better
+trajectory setting and the ensuing trace can test for a plateau. R2 remains
 NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
@@ -275,9 +291,8 @@ but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
 Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
 for a z=0 field posterior but this bounded trace cannot produce that field.
-Q-LEAN: finish the fixed-setting16-transition diagnostic, avoiding only a
-redundant endpoint target recomputation; no GL1 ladder, independent long
-chain, new simulation or heldout access. MW/M31 remain
+Q-LEAN: one common-momentum trajectory-length comparison only; no new
+likelihood, survey census, simulation, heldout access or long chain. MW/M31 remain
 role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.

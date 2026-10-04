@@ -120,22 +120,60 @@ proposal and then continues the stream consistently. Resume only the three
 remaining transitions, with no changed target, metric or step. Do not count
 the aborted candidate as a chain transition.
 
+Typed-H100 job412509 did that exact replay and completed transitions14–16
+(the last three of the requested segment) in24:02; MaxRSS was10,654,056KiB
+under48GiB. The first replayed candidate exactly matches the saved failed
+candidate's value-only primal, and all3 transitions were accepted. This
+confirms checkpoint/RNG continuity and removes the duplicate value-only
+compilation from the exact-GL2 endpoint; the independent primal guard remains
+for cases where force and target are genuinely different.
+
+| Segment transition | ΔH | Prior energy | Count log score | Raw-mark log score | IC-white mean-square |
+|---:|---:|---:|---:|---:|---:|
+| 1 | -0.364885 | 8,090,797.9 | -144,078.037 | 5,979.788 | 0.96449719 |
+| 2 | -0.609558 | 8,090,965.1 | -144,000.541 | 5,979.985 | 0.96451712 |
+| 3 | -0.707945 | 8,092,221.6 | -143,925.738 | 5,979.931 | 0.96466691 |
+| 4 | -0.124709 | 8,092,586.7 | -143,866.225 | 5,980.159 | 0.96471043 |
+| 5 | -0.220051 | 8,092,922.1 | -143,830.205 | 5,980.640 | 0.96475041 |
+| 6 | -0.481058 | 8,093,516.8 | -143,777.941 | 5,980.440 | 0.96482130 |
+| 7 | -0.433041 | 8,093,860.8 | -143,734.807 | 5,980.567 | 0.96486232 |
+| 8 | -0.173460 | 8,094,236.5 | -143,700.877 | 5,980.734 | 0.96490711 |
+| 9 | -0.333515 | 8,095,014.3 | -143,648.528 | 5,981.182 | 0.96499982 |
+| 10 | -0.302627 | 8,095,907.5 | -143,608.004 | 5,981.064 | 0.96510630 |
+| 11 | -0.393075 | 8,096,192.9 | -143,561.187 | 5,980.822 | 0.96514033 |
+| 12 | -0.037444 | 8,096,601.1 | -143,517.481 | 5,980.735 | 0.96518899 |
+| 13 | -0.471706 | 8,096,981.9 | -143,473.936 | 5,980.106 | 0.96523439 |
+| 14 | +0.069113 | 8,097,184.7 | -143,443.334 | 5,979.652 | 0.96525856 |
+| 15 | -0.085214 | 8,097,848.0 | -143,420.045 | 5,979.953 | 0.96533763 |
+| 16 | -0.177238 | 8,098,899.2 | -143,379.656 | 5,980.021 | 0.96546294 |
+
+Across all16, mean ΔH was-0.302901 (range-0.707945 to+0.069113), mean
+proposal time376.7s, and all16 proposals were accepted. Relative to the
+transition24 starting state, the target energy rose7,719.903 nat. Its
+components changed by +8,474.895 prior energy, +754.362 count log-score and
++0.630 raw-mark log-score; because target energy is prior minus both scores,
+the count and raw terms partially offset the prior rise. White mean-square
+rose0.964453->0.965463. This continues the drift seen earlier in the chain,
+not a stationarity or posterior pass.
+
 ## Interpretation and next action
 
 The result establishes that the corrected conditional target has a finite
-exact-GL2 gradient and can make accepted local transitions at this checkpoint
-at a measured cost of about6.7 minutes each. The repeated negative ΔH and
-evolving white power/target energy are consistent with continued movement
-away from the initializer;24 transitions cannot establish equilibrium,
-mixing, effective sample size or uncertainty. In particular, “24/24 accepted”
-must not be quoted as a calibrated acceptance rate.
+exact-GL2 gradient and can make local transitions at this checkpoint. The
+original independent value-only endpoint added about96s per move; after
+removing that redundant compilation, the replayed exact-force proposals cost
+about4.9 minutes each. Across40 transitions the white power and target
+energy continue to evolve, so this trace does not establish equilibrium,
+mixing, effective sample size or uncertainty. In particular, “40/40
+accepted” must not be quoted as a calibrated acceptance rate.
 
-Resume the accepted transition13 checkpoint for the three uncompleted moves
-of this bounded16-step diagnostic, keeping target, metric and step fixed.
-Use the exact-GL2 value returned with its gradient for the Hamiltonian, and
-retain the fail-closed value/gradient guard for different force/target paths.
-No GL1 force, parameter ladder, new gravity run or held-out access is part of
-this warm-up continuation.
+Do not blindly lengthen this same one-step chain. Compare exact-GL2 trajectory
+lengths of1,2,4 integration steps from the same accepted state and common
+momentum at fixed step0.08 and metric. Record Hamiltonian error, acceptance
+probability, endpoint score components and canonical jump RMS; use no
+retained samples. This bounded sampler diagnostic can show whether longer
+trajectories trade useful movement against integration error. Any subsequent
+warm-up must still test whether the target/component drift plateaus.
 
 **Q-GOAL:** exact-target dynamics are necessary for the current N256/1.5 z=0
 posterior route but are not the density map or zoom IC. MW/M31 remain
@@ -143,9 +181,8 @@ role-ambiguous and M33 unresolved; their observables must eventually constrain
 the same NEW evolved LG field at `<=0.3 cMpc/h`. Native truth identities remain
 calibration/evaluation-only.
 
-**Q-LEAN:** finish the fixed-setting segment with target-term decomposition;
-avoid only a redundant second compilation of the same exact-GL2 target. No
-new likelihood factor, survey census, simulation, held-out score or sampler
-ladder. R2 remains NO-GO: calibrated source/group selection,
+**Q-LEAN:** one same-state 1/2/4 trajectory-length comparison only. No new
+likelihood factor, survey census, simulation, held-out score or long chain.
+R2 remains NO-GO: calibrated source/group selection,
 shared-member covariance, stationarity, uncertainty, held-out prediction and
 the z=0 map remain unresolved.
