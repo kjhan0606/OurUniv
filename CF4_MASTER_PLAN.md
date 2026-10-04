@@ -10,67 +10,70 @@ Direct subsequent user instructions take precedence over this file.
 ## Current R2 continuation — 2026-10-04
 
 Exact shell-cell census Slurm412034 completed/exit0 in25s (18.51s measured,
-process peak0.205GiB, four focused tests passed). Of 938,128 active 128^3
-voxels in5<r<180cMpc/h,56 partially intersect the inner boundary and67,544
-the outer boundary. The eight maximum-cap cells each have10.64M inclusive
-NSIDE2048 query-disc candidates. Separately,56 active cells exceed the
-profiler's1.5M cap estimate (the cross-tab with inner-boundary status was not
-saved). Reusing that profiler unchanged would skip valid exposures, so no full
-integral should launch until a chunked no-skip path is validated on those
-cases. Full result and the failed first attempts are in
+process peak0.205GiB, four focused tests passed). Its full2×2×2 cross-tab is
+now saved by the completed exposure job: of938,128 active N128 cells in
+`5<r<180 cMpc/h`,870,528 are fully interior,67,544 are outer-boundary
+partial, and all56 inner-boundary partial cells are exactly the56 above the
+old1.5M cap estimate. The eight maximum-cap cells each have10.64M inclusive
+NSIDE2048 query-disc candidates. Census and first-attempt records:
 `CF4_R2_SHELL_GEOMETRY_CENSUS_20261004.md` and
 `/gpfs/kjhan/CF4/z0_density/r2_ray_geometry_census_20261004_v1/result.json`.
-The cap-area sum is6.901e9 candidate pixels (not an exact total); the former
-2.46–2.86h full-grid projection is still unverified. R2 remains NO-GO.
 
 The bounded map-aware ray/cell cost profile Slurm412001 COMPLETED/exit0 on
 typed H100 (11s wall, script-measured4.12s, process peak RSS0.256GiB). It read
 only frozen `train_keys`, not counts/holdout/all-key arrays, and profiled18
 training-key voxel locations at NSIDE512/1024/2048. Four geometry tests pass;
-two preselected difficult-cell ray values reproduce the prior references
-within4.9e-8 absolute. Across53 positive paired sample channels, NSIDE1024→2048
-relative change is p95/max0.576%/0.637%; this is small-sample resolution
-sensitivity, not accuracy certification. NSIDE2048 refines angular integration
-of the pinned NSIDE512 maps and adds no observed detail.
-
-Sample-weighted volume-equivalent full-support projection is approximately
-2.46h by median-bin timings or2.86h by means at NSIDE2048; the run's process
-RSS says0.256GiB, while Slurm MaxRSS3.5MiB is inconsistent and not trusted.
-Estimated work is7.31e9 candidate pixels/4.56e9 intervals. These figures are
-rough: only2–3 training geometries/bin were timed, exact active boundary-cell
-counts were not computed, and the sample has no observer-centered voxel below
-13.66cMpc/h. Inner empty cells and any larger candidate sets are therefore
-unprofiled despite the bin-level extrapolation. Do not treat this as a full-grid
-resource guarantee. Full method and disposition:
+two difficult-cell ray values reproduce prior references within4.9e-8
+absolute. Across53 positive paired sample channels, NSIDE1024→2048 p95/max
+change was0.576%/0.637%, but the small sample omitted inner observer cells.
+The rough full-grid cost projection was2.46–2.86h and is superseded by the
+actual run below. Full method:
 `CF4_R2_RAY_COST_PROFILE_20261004.md` and
 `/gpfs/kjhan/CF4/z0_density/r2_ray_cost_profile_20261004_v1/result.json`.
-
-Driver decision: proceed with one substantive R2 bundle: implement bounded
-chunked ray integration without dropping any active cell, compare to the
-existing exact reference on feasible cells, and run a fixed max-cap/inner-shell
-stress test. Then reconsider the one full NSIDE2048 exposure precompute; any
-cube remains a numerical selection artifact, not a calibrated count likelihood.
 
 Fable5 reviewed the prospective full precompute read-only and returned
 CONDITIONAL PASS. Driver adopts a single fail-closed Slurm bundle with chunk
 checks, NSIDE1024/2048 full-grid exposure, and exact geometry/selection closure;
 no separate validation job or adaptive NSIDE4096 follow-up. This N128/3
 count-grid operator is not the N256/1.5 global z=0 field. The 56 inner-boundary
-cells and 56 over-cap estimates have equal totals but no saved cross-tab, so
-the next program must compute it rather than assume the sets coincide.
-Geometrically active zero-ray cells are reported; occupied training cells
-with zero exposure remain a later support failure. Audit and scope:
-`CF4_R2_EXPOSURE_PRECOMPUTE_PLAN_20261004.md`. No posterior or LG result;
-MW/M31 roles remain ambiguous, M33 unresolved, and all three must later
-constrain the same NEW evolved LG field at<=0.3cMpc/h, with native truths
-calibration/evaluation-only.
-Q-GOAL: needed selection mechanics for the same CF4-conditioned z=0 field,
-not a field result. Q-LEAN: one bounded training-only resource profile, no
-posterior, heldout score, fit, or simulation. R2 remains NO-GO; MW/M31 roles
-remain ambiguous and M33 unresolved. Their observables must later constrain
-those same roles on the NEW evolved field at LG<=0.3cMpc/h, native truth IDs
-calibration/evaluation-only. This technical follow-up is driver-reviewed as a
-consecutive audit after the prior Astra review.
+cells and56 over-cap estimates have equal totals and are exactly the same set.
+The chosen typed-H100 job412060 completed the no-skip N128/384 exposure at
+NSIDE1024 and2048 in1:34:51 (16 CPUs,8GiB requested, Slurm MaxRSS3,961,908KiB).
+All nine focused tests and six fixed reference checks passed. Actual inclusive
+candidate totals were1,819,724,558 (NSIDE1024) and7,088,692,124 (2048),
+versus6,901,444,420 cap-area estimate. Population-shell closure errors were
+2.01e-15 and5.26e-15; pure-geometry closure errors stayed below8e-16.
+However, all-grid cellwise resolution changes are material in sparse bins:
+the maximum binned p95 for NSIDE1024→2048 is33.2% (p99 62.3%, maximum89.1%);
+NSIDE1024/2048 have160/eight zero-ray active cells. Compared with old order
+six,25,773 population-shell-cell entries change old-zero to new-positive and
+none reverse, but these are unweighted all-grid counts. No keys/counts, fit,
+field, or holdout were read. Thus NSIDE2048 is not yet a certified
+cell-converged likelihood operator. Full result and limits:
+`CF4_R2_RAY_SELECTION_RESULT_20261004.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_ray_selection_n128_nside1024_2048_20261004_v1/result.json`.
+
+Fable5 completed the important-discrepancy review with CONDITIONAL PASS. The
+driver adopts its bounded next bundle and adds a data-free interior-geometry
+closure check. First recompute and close the full active-cell NSIDE1024
+operator, save and hash it, and verify that hash before opening any catalogue
+counts. Then read only frozen `train_keys`/`train_counts` and compare old
+order-six, NSIDE1024 and NSIDE2048 shell-summed exposures. Report occupied
+zero-support transitions and count-weighted exposure-only log changes; never
+floor/smooth zero exposure or call a full delta finite when support differs.
+For every new zero-support training row, classify exact radial-domain
+exclusion versus positive-volume cells missed by finite rays versus ray-hit
+cells with zero population exposure, and save the cell/radial-edge evidence.
+Keep the NSIDE1024-to-2048 threshold result explicitly a pairwise proxy, not a
+direct NSIDE2048 error bound. No fit, posterior, heldout/all-key read,
+simulation or N256/LG escalation. Q-GOAL: a selection-denominator diagnostic
+for the same CF4-conditioned R2 field, not a field result. Q-LEAN: one
+data-free full-grid lower-resolution artifact plus one sparse training-only
+pass; refine a whole geometry-defined class only if the frozen gate fails.
+R2 remains NO-GO. MW/M31 roles remain ambiguous and M33 unresolved; all
+observables must ultimately constrain those same roles on the same NEW evolved
+LG field at `<=0.3 cMpc/h`, with native truth IDs reserved for
+calibration/evaluation.
 
 ## Current R2 continuation — 2026-10-03
 
