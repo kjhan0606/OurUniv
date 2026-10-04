@@ -299,6 +299,7 @@ def main():
                 row = dict(transition=index+1, integration_steps=exact_chain_integrations,
                     step_size=STEP, accepted=bool(info['accepted']),
                     energy_error=json_number(info['energy_error']),
+                    exact_target_energy=json_number(fine_energy),
                     acceptance_probability=math.exp(info['log_acceptance'])
                         if math.isfinite(info['log_acceptance']) else 0.,
                     force_evaluations=info['force_evaluations'],

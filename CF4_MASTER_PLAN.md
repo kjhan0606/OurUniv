@@ -212,14 +212,26 @@ computable accepted transition at that state, not acceptable acceptance rate,
 stationarity, mixing or posterior uncertainty. It is explicitly
 `ONE_EXACT_GL2_CHAIN_COMPLETE_NOT_POSTERIOR`.
 
-**Next:** continue this exact corrected-target chain for seven more
-one-integration-step transitions, restoring the checkpoint's saved RNG state
-and holding metric/step/target fixed. The bounded eight-transition trace will
-measure local acceptance and cost without implying convergence. Reuse the
-already validated runner with a variable transition count; do not reset its
-RNG between checkpointed segments. If this cost or acceptance behavior fails,
-stop before a production-length run and redesign the N256 force/trajectory
-strategy. R2 remains NO-GO:
+The exact-GL2 continuation job412371 completed/exit0 in55:50; combined with
+412367 this is one RNG-contiguous eight-transition trace. All8/8 accepted
+(mean ΔH=-1.978, range-2.589 to-1.208), with mean IC-white jump RMS0.06608
+and mean transition time406s. White mean-square rose monotonically from the
+initializer's0.962720 to0.963292. Negative ΔH throughout and continued drift
+are more consistent with an unequilibrated start than with stationarity; this
+short trace is not an acceptance-rate or convergence estimate. At the same
+fixed settings the exact target made moves, unlike GL1, but its cost is about
+6.8min per one-step transition. Complete per-transition evidence is in
+`CF4_R2_N256_LINKED_POINT_EXACT_GL2_20261004.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_n256_linked_point_exact_gl2_cont_20261004/result.json`.
+
+**Next:** run16 more one-integration-step transitions on this same chain from
+its latest accepted checkpoint, restoring RNG state and keeping target,
+metric and step fixed. Record exact target energy at each state to test
+whether the downhill Hamiltonian/white-power drift relaxes toward a plateau.
+This is a bounded warm-up diagnostic, not posterior production. Do not start a
+long retained chain unless this larger trace supports equilibrium and
+stationary behavior; if it does not, redesign the N256 force/trajectory
+strategy rather than extending blindly. R2 remains NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -229,8 +241,9 @@ but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
 Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
 for a z=0 field posterior but this bounded trace cannot produce that field.
-Q-LEAN: seven continuation transitions only; no GL1 ladder, independent long
-chain, new simulation or heldout access. MW/M31 remain role-ambiguous and M33 unresolved;
+Q-LEAN: sixteen fixed-setting continuation transitions only; no GL1 ladder,
+independent long chain, new simulation or heldout access. MW/M31 remain
+role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
 
