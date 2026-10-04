@@ -5,6 +5,7 @@ import numpy as np
 from cf4_r2_raw_volume_target import (
     FreshRawSupport,tracer_geometry,tracer_masses,volume_rule,
 )
+from cf4_r2_resolution_target import linked_point_conditioning_radius
 
 
 class RawVolumeTargetTests(unittest.TestCase):
@@ -43,6 +44,19 @@ class RawVolumeTargetTests(unittest.TestCase):
         support=FreshRawSupport(np.array([[292.,192.,192.]]),np.ones((2,1)),[0],
             observation,geometry,source_spacing=3.,volume_order=2,block=64)
         np.testing.assert_array_equal(support.source_conditioning_radius,[50.])
+
+    def test_resolution_target_requires_aligned_linked_point_radii(self):
+        observation=dict(radius=np.array([100.,120.]),
+            source_conditioning_radius_cMpc_h=np.array([50.,60.]))
+        np.testing.assert_array_equal(linked_point_conditioning_radius(observation),[50.,60.])
+        with self.assertRaisesRegex(ValueError,'are required'):
+            linked_point_conditioning_radius(dict(radius=np.array([100.])))
+        with self.assertRaisesRegex(ValueError,'align and be positive'):
+            linked_point_conditioning_radius(dict(radius=np.array([100.,120.]),
+                source_conditioning_radius_cMpc_h=np.array([50.])))
+        with self.assertRaisesRegex(ValueError,'align and be positive'):
+            linked_point_conditioning_radius(dict(radius=np.array([100.]),
+                source_conditioning_radius_cMpc_h=np.array([0.])))
 
     def test_active_lf_coordinate_crosses_minus_one_with_finite_selected_rate(self):
         tracer=jnp.zeros(9).at[7].set(-1.)

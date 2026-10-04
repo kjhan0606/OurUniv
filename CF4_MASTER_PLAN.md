@@ -156,23 +156,55 @@ saved nonstationary job408337 state; no count term, posterior, held-out score,
 or map was produced. Result:
 `/gpfs/kjhan/CF4/z0_density/r2_raw_field_profile_v2_linked_point_radius/result.json`.
 
-**Next:** run one bounded eight-proposal count+conditional-mark joint target
-pilot from that same saved IC, retaining all47,121 v6 count factors and the
-1,414 admitted FP rows. It will perform PM forward evaluations as part of the
-actual joint likelihood, not as a separate simulation; there will be no
-held-out scores or stationarity/posterior claim. The closest predecessor
-used1:43:40 and7.92GiB MaxRSS; request10GiB (>20% margin) and cap wall at2h.
-If restart-field identity, finite target, exact-primal, joint AD/FD, memory
-guard or transition safety fails, stop this pilot and diagnose that specific
-gate rather than extending steps. R2 remains NO-GO until calibration,
-stationarity, held-out prediction and a delivered uncertainty map exist.
-Q-GOAL: the pilot is the first dynamic test of whether the same CF4 count and
-linked-point mark factors can constrain one evolving field, but cannot
-complete the z=0 map. Q-LEAN: one existing eight-proposal pilot, no extra
-gravity run, ray/census work, or sampler sweep. MW/M31 remain role-ambiguous
-and M33 unresolved; their observables must later constrain those same roles
-on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native identities
-limited to calibration and evaluation.
+Typed-H100 Slurm job412327 completed the corrected N128/3 joint target in
+32:23 (8 proposals, 7 accepted; 3/4 after warmup), MaxRSS7,070,068KiB under
+10GiB, device estimate18.36GiB under69.81GiB. Restart identity passed
+(rho1.28e-13, velocity6.16e-11 maximum absolute differences), same-state
+primal matched, and joint PM/raw/count directional AD-vs-FD error was
+1.33e-3 under the predeclared2e-3 limit. Maximum absolute Hamiltonian error
+was1.075. The accepted-state white mean-square moved0.6493->0.6981. This is
+bounded transition evidence only: four post-warmup proposals do not establish
+stationarity, mixing, posterior uncertainty or a map. Heldout scores remain
+false; status is `RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR`. Exact trace and
+limits are in
+`/gpfs/kjhan/CF4/z0_density/r2_raw_joint_pilot_v2_linked_point_radius/result.json`.
+
+**Target-applicability correction discovered during continuation:** the
+existing N256 pilot (source `e36daa8`) and 48-proposal chains A/B (source
+`4af620d`) predate the linked-point-radius fix. Their active `load_inputs`
+omitted `source_conditioning_radius_cMpc_h`, so the raw factor fell back to
+the CF4 group radius. They are retained as historical results for that older
+target, not samples from the corrected v2 likelihood. The two long-chain
+traces also have low-band white-power drift about0.70->0.97 and late runs of
+rejections; neither is posterior evidence even for the corrected target.
+Current N256 resolution wiring now fails closed unless the per-row linked
+2M++ radii are present, aligned and positive, passes them explicitly to the
+raw-mark factor, and records their range/ownership-ledger provenance.
+
+**Next:** one corrected-target N256/384=1.5 bounded four-proposal pilot from
+the preserved N256 dynamics initializer, keeping all47,121 training counts
+on the frozen observed N128 grid and all1,414 reconciled linked-point FP/K
+rows. Use the existing PM forward target (force GL1, fine GL2), record the
+linked-radius vector/range and exact source revision, perform the restart,
+primal, joint AD/FD, GPU-memory and transition checks, and do not read/score
+heldout outcomes. This is a target-correction revalidation, not a second
+gravity simulation or a posterior. Do not reuse or promote old N256 chain
+draws under the changed mark conditioning. If the target or memory check
+fails, stop and fix that specific defect; otherwise plan the next useful
+corrected-target chain without a turn-level approval wait. R2 remains NO-GO:
+selection/incidence is conditional and not absolutely calibrated, N256
+stationarity/uncertainty is absent, heldout prediction is absent, and no map
+has been delivered. The CF4 compilation spans multiple distance-indicator
+surveys, so published selection corrections do not by themselves provide a
+single calibrated selection law; the raw target models its explicit FP cuts
+but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/abs/2209.11238),
+[Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
+Q-GOAL: this restores the corrected likelihood at the approved1.5-cMpc/h
+environment grid but cannot alone complete the z=0 map. Q-LEAN: one bounded
+revalidation of the existing N256 target, no exposure sweep, census, new
+mock or sampler ladder. MW/M31 remain role-ambiguous and M33 unresolved; all
+must later constrain those same roles in the same NEW evolved LG field at
+`<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
 
 The bounded T10106 shared-latent mechanics attempt is **technical NO-GO**, not
 a failed science fit: `predict_source_volume_intensity` and

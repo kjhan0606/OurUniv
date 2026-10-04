@@ -12,7 +12,8 @@ from cf4_r1_particle_forward import make_dynamics,particle_grid
 from cf4_lg_highk_conditional_field import restrict_spectrum_preserve_dtype
 from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_raw_field_profile import load_inputs
-from cf4_r2_resolution_target import source_geometry_at_resolution,ResolutionObservationTarget
+from cf4_r2_resolution_target import (source_geometry_at_resolution,
+    ResolutionObservationTarget,linked_point_conditioning_radius)
 from cf4_r2_prior_split_hmc import FixedSplitMetric,inverse_laplacian_metric_symbol,PilotBudgetStop
 from cf4_r2_corrected_split_hmc import corrected_split_step
 from cf4_r2_affine_force import AffineCorrectedForce
@@ -52,6 +53,17 @@ def main():
         if json.loads((BASE/'r2_n256_source_profile_v3/result.json').read_text())['status']!='N256_SOURCE_WORKSPACE_PROFILE_NOT_N256_FIELD':
             raise ValueError('completed large-source count resource profile required')
         _,_,_,_,source,mix,o,g=load_inputs()
+        linked_radii=linked_point_conditioning_radius(o)
+        if len(mix['PGC'])!=1414 or len(linked_radii)!=1414:
+            raise ValueError('the corrected N256 target requires the frozen 1,414-row linked cohort')
+        if mix.get('pre_reconciliation_rows')!=1414 or len(mix.get('excluded_unresolved_PGCs',()))!=0:
+            raise ValueError('the corrected N256 target requires the reconciled active cohort')
+        report.update(conditional_FP_rows=len(mix['PGC']),
+            source_conditioning_rule=mix['source_conditioning_rule'],
+            source_conditioning_radius_range_cMpc_h=[float(linked_radii.min()),float(linked_radii.max())],
+            association_ledger_source_commit=mix['association_ledger_source_commit'],
+            observation_target_revision='linked 2M++ point radius per FP row; old N256 pilot/chains used CF4 group radius')
+        save()
         source=source_geometry_at_resolution(source,N)
         with np.load(BASE/'r2_sky_closed_split_v6/split.npz',allow_pickle=False) as f:
             keys,counts=map(jnp.asarray,(f['train_keys'],f['train_counts']))

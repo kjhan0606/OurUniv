@@ -13,6 +13,18 @@ from cf4_r2_chunked_volume_count import predict_chunked_volume_intensity
 from cf4_r2_marked_tracer_jax import sparse_marked_poisson_log_likelihood
 
 
+def linked_point_conditioning_radius(observation):
+    """Validate the per-row 2M++ radius used by the conditional raw-mark law."""
+    if 'source_conditioning_radius_cMpc_h' not in observation:
+        raise ValueError('linked-point source-conditioning radii are required')
+    radius = np.asarray(observation['source_conditioning_radius_cMpc_h'], dtype=np.float64)
+    observed_radius = np.asarray(observation['radius'], dtype=np.float64)
+    if (radius.shape != observed_radius.shape or radius.ndim != 1
+            or not np.isfinite(radius).all() or np.any(radius <= 0.)):
+        raise ValueError('linked-point source-conditioning radii must align and be positive')
+    return radius
+
+
 def source_geometry_at_resolution(source,n,box=384.):
     """Refine the declared piecewise-constant angular selection, not data.
 
@@ -51,6 +63,7 @@ class ResolutionObservationTarget:
             raise ValueError('declared force/fine rules and positive batch required')
         if source['positions'].shape!=(n**3,3) or source['angular'].shape!=(2,n**3):
             raise ValueError('aligned source geometry required')
+        linked_point_conditioning_radius(observation)
         self.n=n;self.box=float(geometry['box_size_cMpc_h']);self.spacing=self.box/n
         self.source=source;self.observation=observation
         self.rate_volume_factor=(self.spacing/3.)**3
@@ -70,7 +83,8 @@ class ResolutionObservationTarget:
             # and denominator of each CONDITIONAL raw mark, not in counts.
             raw=raw_field_logpdf(density,cv,t,p,packs,source,o,geometry,
                 source_spacing=self.spacing,volume_order=order,cut_order=256,
-                cut_integration_axis=1,cut_marginal_tolerance=1e-12).sum()
+                cut_integration_axis=1,cut_marginal_tolerance=1e-12,
+                source_conditioning_radius_cMpc_h=o['source_conditioning_radius_cMpc_h']).sum()
             return count+raw,jnp.array([count,raw])
         self.value=jax.jit(data,static_argnums=7)
         self.derivative=jax.jit(jax.value_and_grad(data,argnums=(0,1,2,3),has_aux=True),static_argnums=7)

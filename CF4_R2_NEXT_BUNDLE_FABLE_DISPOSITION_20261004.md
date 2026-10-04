@@ -207,3 +207,56 @@ picking one would require an explicit joint ownership model.
   memory failure; short transitions cannot establish stationarity. MW/M31
   stay role-ambiguous and M33 unresolved; their observables must later
   constrain the same NEW evolved LG field at `<=0.3 cMpc/h`.
+
+## Joint-pilot outcome and corrected N256 handoff
+
+Typed-H100 Slurm job412327 completed the corrected N128/3 joint target in
+32:23. It made8 proposals,7 accepted overall and3/4 after warmup; maximum
+absolute Hamiltonian error was1.075. Restart field identity and the exact
+same-state primal passed. The joint PM/raw/count directional AD-vs-FD relative
+error was1.33e-3 against the predeclared2e-3 gate. Slurm MaxRSS was7,070,068KiB
+under10GiB; the estimated GPU peak18.36GiB was within its69.81GiB device
+limit. White mean-square changed0.6493->0.6981. This short trace establishes
+that the corrected joint target can execute bounded transitions, not
+stationarity, mixing, posterior UQ, heldout performance or a z=0 map. The
+machine-readable record is
+`/gpfs/kjhan/CF4/z0_density/r2_raw_joint_pilot_v2_linked_point_radius/result.json`.
+
+During continuation, driver source comparison found that the earlier N256
+pilot (`e36daa8`) and its48-proposal chains A/B (`4af620d`) did not attach
+`source_conditioning_radius_cMpc_h` in their `load_inputs`; `raw_field_logpdf`
+therefore fell back to the CF4 group radius. Those outputs are preserved for
+their historical target but are not samples under the corrected linked-point
+target. Their low-band white-power traces also drifted roughly0.70->0.97 and
+their last accepted proposals were iterations39/48 and43/48, respectively.
+The corrected N256 target now requires a finite positive radius vector aligned
+to every mark, passes it explicitly into the raw factor, and records the
+radius range and association-ledger provenance. A focused regression suite
+passes5/5.
+
+The CF4 paper describes55,877 galaxy distances from eight methods and notes
+large potential systematic uncertainty; a 2026 analysis further shows that
+selection/distance-prior choices matter for CF4 and that a principled model
+needs the detailed heterogeneous survey selection. This is supporting
+context, not a claim that the present raw FP factor is disproven: the active
+target explicitly models its known magnitude and velocity-dispersion cuts,
+but remains conditional on its selected source/type/link graph and does not
+calibrate every inclusion process ([Tully et al. 2023](https://arxiv.org/abs/2209.11238),
+[Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
+
+**Next bounded bundle:** revalidate the corrected target on the approved
+N256/384=1.5 source field using the preserved N256 dynamics initializer, all
+47,121 training count factors on the frozen observed N128 keys, and the
+1,414 reconciled linked-point FP/K rows. Use the existing force-GL1/fine-GL2
+four-proposal pilot; do not read heldout outcomes or reuse old N256 chain
+draws as posterior samples. Record the linked-radius range, exact source
+commit, target/primal/gradient checks, device and host memory, and all
+transitions. Q-GOAL: this repairs target identity at the actual global
+1.5-cMpc/h grid but is not a map or LG delivery. Q-LEAN: one corrected-target
+revalidation, no duplicated exposure/census, new simulation, or sampler
+ladder. If it passes, proceed to a corrected-target sampling plan without
+waiting for a routine turn approval. R2 remains NO-GO pending credible
+stationarity/UQ, a frozen untouched predictive assessment, and a delivered
+conditional z=0 map; selection/inclusion limits must remain explicit. MW/M31
+remain ambiguous and M33 unresolved; their observables must constrain the
+same NEW evolved LG field at `<=0.3 cMpc/h`, truth IDs evaluation-only.
