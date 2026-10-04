@@ -112,6 +112,52 @@ classification incorrectly treated ordinary `unmatched` edges as ambiguous;
 that output is preserved but superseded by corrected V2. Result and hashes:
 `/gpfs/kjhan/CF4/z0_density/r2_v6_factor_ownership_ledger_20261004_v2/result.json`.
 
+Fable5's next-plan audit returned **CONDITIONAL PASS** for a narrowly
+conditional Route2 estimand. The driver adopts the estimand restriction and
+the requested active-cohort reconciliation, but rejects Fable's statement
+that the active target already conditions on the linked 2M++ point radius.
+The active `raw_field_logpdf` callers omitted
+`source_conditioning_radius_cMpc_h`; its low-level default therefore used the
+CF4 group `observed_radius`. Typed-H100 Slurm job412308 reconciled the exact
+active v6 cohort without reading mark values or held-out data: all1,414 rows
+match the current ordered cohort, all1,414 are `one_linked_count_point`, all
+associated edges are `secure_training_count_link`, and zero have unresolved
+edges. Thus this frozen cohort loses no rows, although the active loader now
+fails closed by excluding unresolved associations if a later cohort changes.
+The corrected path aligns each FP row with its selected 2M++ point radius and
+passes that vector through fresh support and the raw-mark target; the count
+factor remains the47,121 v6 training-count factor set. Fifteen focused tests
+passed. Jobs412296/412307 failed in pre-data regression tests and wrote no
+reconciliation output; they are preserved. Job412308 used8GiB and peaked at
+4,249,636KiB. The exact source-only result is
+`/gpfs/kjhan/CF4/z0_density/r2_v6_active1414_association_reconciliation_20261004_v1/result.json`.
+
+The old raw-profile v1 readout is not a same-target reference: it used CF4
+group radii and the un-reconciled1414-row cohort. Preserve it as historical;
+the fixed-state corrected-target profile must write a new v2 output. Its
+mechanics state is the saved N128 terminal state from job408337 (accepted
+proposal7 of8, explicitly nonstationary), not Fable's cited jobs408412 or
+409024. 408412 accepted0/4 proposals;409024 was a separate invalid
+re-anchored-proposal diagnostic. The saved N128 state is for target wiring and
+gradient checks only, not a posterior estimate. Do not run PM again to create
+it.
+
+**Next:** run the bounded same-state raw-target profile with the corrected
+point-radius vector, association-clean v6 rows, fresh support, quadrature
+contrast and full-field/nuisance AD-vs-FD check. It must not compare against
+the historical v1 CF4-radius readout. No optimization, sampler, held-out
+score, new gravity evolution, N256/LG escalation or map promotion. If this
+profile passes, continue to an actual saved-state count+conditional-mark
+joint target diagnostic; R2 remains NO-GO until calibration, stationarity,
+held-out prediction and a delivered uncertainty map exist. Q-GOAL: this
+repairs the observation-to-same-field conditioning needed by the
+CF4-constrained z=0 goal, but is not itself a z=0 result. Q-LEAN: one exact
+cohort join and one corrected fixed-state profile; no additional census or
+sampler gate. MW/M31 remain role-ambiguous and M33 unresolved; their
+observables must later constrain those same roles on the same NEW evolved LG
+field at `<=0.3 cMpc/h`, with native identities limited to calibration and
+evaluation.
+
 The bounded T10106 shared-latent mechanics attempt is **technical NO-GO**, not
 a failed science fit: `predict_source_volume_intensity` and
 `count_field_loglike` accept no source-group IDs or group-latent realization;
@@ -126,18 +172,17 @@ without deriving and implementing a new observation operator and obtaining
 the needed calibration. Do not substitute a toy covariance or reinterpret
 T10106 catalogue agreement as physical group membership.
 
-Next R2 step: use Fable5 advisory to choose the smallest defensible route from
-this exact interface/data gap toward a calibrated observation law: identify
-recoverable preselection/group-parent data and selection process, or define a
-strict conditional estimand that excludes unidentified factors. The existing
-selected mock lacks recovered Tempel groups and a preselection parent, so it
-cannot calibrate group inclusion, survival, bias or FoG; do not impute them.
-No further ray exposure, source census, gravity evolution, posterior fit or
-held-out scoring. Any eventual field-weighted exposure test must include the
-nonuniform expected-count term. R2 is still NO-GO; no z=0 posterior or map has
-been produced. MW/M31 remain role-ambiguous and M33 unresolved, and all their
-observables must constrain those same roles on the same NEW evolved LG field
-at `<=0.3 cMpc/h`.
+Selection/survival/bias and shared multi-member covariance remain
+unidentified in the selected mock; the conditional estimand explicitly does
+not claim them. There is no recovered Tempel parent/preselection sample from
+which to estimate group inclusion, survival, bias or FoG, so do not impute
+them. No further ray exposure, source census, gravity evolution, posterior
+fit or held-out scoring is licensed by the conditional cohort reconciliation.
+Any later field-weighted exposure test must include the nonuniform expected-
+count term. R2 is still NO-GO; no z=0 posterior or map has been produced.
+MW/M31 remain role-ambiguous and M33 unresolved, and all their observables
+must constrain those same roles on the same NEW evolved LG field at
+`<=0.3 cMpc/h`.
 
 ## Current R2 continuation — 2026-10-03
 

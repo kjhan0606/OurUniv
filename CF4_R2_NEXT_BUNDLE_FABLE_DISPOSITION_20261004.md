@@ -123,3 +123,71 @@ unidentified group inclusion. Do not run another catalogue census, ray
 resolution sweep, PM evolution, field fit or posterior while that choice is
 being assessed. Q-GOAL and Q-LEAN, plus same-field ambiguous MW/M31 and
 unresolved M33 handling, remain mandatory for the next plan.
+
+## Follow-up plan audit and driver adjudication — 2026-10-04
+
+Fable5's read-only plan audit returned **CONDITIONAL PASS** for a narrow
+conditional estimand using the active v6 count factors and admitted FP rows.
+The driver adopts the narrow scope, the exact-cohort reconciliation, and the
+recommendation not to invent group inclusion, shared-member covariance or
+FoG calibration. The driver does **not** adopt the audit's claim that the
+active target already conditions on each linked count point: source inspection
+and the active call path showed the opposite.
+
+`src/cf4_r2_raw_volume_target.py::raw_field_logpdf` forwards the optional
+`source_conditioning_radius_cMpc_h`, but both active callers in
+`scripts/cf4_r2_raw_field_profile.py` and
+`scripts/cf4_r2_raw_joint_pilot.py` omitted it. The low-level default in
+`src/cf4_r2_raw_live_mark.py::chunk_log_terms` then used
+`observation['radius']`, which is the CF4 group radius. The v6 loader did
+compute the linked 2M++ point radius, but previously used it only for the
+observed voxel/selection. This is a substantive target-definition gap, not a
+wording difference. The conditional Route2 target is therefore not yet
+validated until the new fixed-state profile succeeds.
+
+Typed-H100 Slurm job412308 performed the promised source-only join. It
+reconstructed the active cohort in exact PGC order (1,414/1,414) and found
+1,414 `one_linked_count_point` rows, 1,414 secure direct-edge statuses and
+zero unresolved associations in this cohort. No raw mark values, held-out
+values, field, score, fit or PM evolution was read. Fifteen focused tests
+passed; MaxRSS was4,249,636KiB against8GiB requested. The full row-level
+reconciliation and hashes are in
+`/gpfs/kjhan/CF4/z0_density/r2_v6_active1414_association_reconciliation_20261004_v1/`.
+The previous failed attempts412296 and412307 stopped in tests before the
+data join; their logs and failure artifacts are preserved. The first exposed
+an incorrect selected-PGC test fixture; the second exposed an overmodified
+legacy support-test fixture. Both were corrected before412308.
+
+The implementation now computes a PGC-order-checked vector of individual
+2M++ point radii, fails closed on unresolved group associations, and carries
+that vector through `FreshRawSupport` and `raw_field_logpdf` into the source
+selection kernel. The frozen v6 cohort remains all1,414 rows because none is
+unresolved; the exclusion is a future-proof conditional-scope rule, not a
+post-hoc cut on current scores. The47,121 training count factors are not
+changed. Current fixed-state profile is a separate new v2 result and must not
+compare against the old v1 CF4-radius readout.
+
+Fable's proposed saved-state citations408412/409024 were not valid for this
+mechanics check:408412 accepted0/4 proposals and409024 was a re-anchored
+proposal diagnostic. The driver instead uses the already saved N128 terminal
+state from job408337 (accepted proposal7, nonstationary) only for a fixed-
+state target/gradient profile. No extra PM evolution is needed or authorized
+by this correction. The proposed option to admit one chosen member from
+multi-member groups is not adopted; the actual count term aggregates the
+source set, so picking one would require an explicit joint ownership model.
+
+### Driver's current bundle checks
+
+- **Q-GOAL:** exact linkage radius conditioning is necessary for the active
+  CF4-conditioned same-field z=0 observation law. This is a mechanics repair,
+  not a delivered map or evidence that the conditional model captures all
+  CF4 galaxies. MW/M31 remain role-ambiguous and M33 unresolved; later
+  observables must constrain those same roles on the same NEW evolved LG
+  field at `<=0.3 cMpc/h`, with truth IDs used only for calibration/evaluation.
+- **Q-LEAN:** one exact 1,414-row ownership join, four small regression suites
+  and one corrected fixed-state profile. No repeated ray sweep, source
+  census, PM evolution, held-out score, posterior fit, or sampler escalation.
+- Next: run the new fixed-state v2 profile on the saved nonstationary N128
+  field. It must report the actual clean row count and linked-point radius
+  rule; verify fresh support, quadrature contrast, finite target and full
+  density/velocity/nuisance AD-vs-FD. Passing it does not make R2 GO.
