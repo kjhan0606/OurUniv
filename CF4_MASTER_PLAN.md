@@ -7,6 +7,45 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 continuation — 2026-10-05
+
+The official SDSS-PV mock candidate passed a bounded, score-blind eligibility
+check. All1,414 active linked training PGCs are present in the same official
+SDSS-PV public catalogue used to supply their FP observables. An 8MiB ranged
+read was sufficient to inspect one mock catalogue's complete member table:
+the `r/s/i` FP measurements and uncertainties, truth/recovered log-distance,
+group-centre redshift/velocity, and central/satellite flag are present. A
+composite host key `(parenthalomass,z_obs_cen,vxcen,vycen,vzcen)` identifies
+17,266 host groups in that catalogue with no collision and is in one-to-one
+agreement with its repeated `ID` values. The release PDF calls `ID` a mock
+galaxy ID, although it repeats across member rows; therefore the ensemble
+runner uses the validated composite key and rechecks the ID relation for every
+catalogue rather than trusting the label alone.
+
+The first observer catalogue has33,881 rows. Its standardized
+`logdist-logdist_true` residual mean shifts from-0.170 for selected host
+singletons to+0.228 for groups with10+ selected members; the corresponding
+group-mean variance ratio against independent reported errors is0.93,1.00,
+1.09,1.64 for richness bins1,2–4,5–9,10+. This is one observer in one box,
+not a calibration estimate, but it is a concrete reason to evaluate the full
+ensemble. The next CPU-only Slurm bundle will checksum and stream/process all
+2,048 catalogues, summarize by selected-host richness and by256 independent
+simulation boxes, and retain only a compact JSON result. Its temporary 10.6GB
+archive is deleted only after checksum and analysis both pass. No likelihood
+correction or covariance inflation is adopted from this diagnostic.
+
+This component is Q-GOAL aligned: it can constrain SDSS-FP measurement and
+within-host error/covariance behavior for the same CF4-conditioned field; it
+does not make the z=0 density map or close R2. Q-LEAN: one exact linked
+training cohort, one mock-schema check, and the full ensemble only—no new
+catalogue census, Tempel group-finder implementation, heldout score, field
+fit, or gravity run. The mocks omit redshift-success effects and do not model
+2M++ counts or the full heterogeneous CF4 selection law; selected host
+richness is not Tempel17 `NgroupT17`, so group inclusion remains uncalibrated.
+MW/M31 roles remain ambiguous and M33 unresolved; eventual observables must
+constrain those roles on the same NEW evolved field, with truth identities
+used only for calibration/evaluation.
+
 ## Current R2 continuation — 2026-10-04
 
 **Applicability correction from the 2026-10-04 Fable review:** the ray
