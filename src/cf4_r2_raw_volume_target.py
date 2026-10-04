@@ -58,6 +58,9 @@ def raw_field_logpdf(density,velocity,tracer,population_white,packs,source,obser
     point's redshift kernel from the CF4 row's mark redshift. Gradients pass
     through every cell's mass/velocity and all24 nuisances.
     """
+    if source_conditioning_radius_cMpc_h is None:
+        source_conditioning_radius_cMpc_h = observation.get(
+            'source_conditioning_radius_cMpc_h')
     offsets,weights=map(jnp.asarray,volume_rule(source_spacing,volume_order))
     masses=tracer_masses(density,tracer);g=tracer_geometry(tracer,geometry)
     parameters=jnp.asarray(POPULATION_ORIGIN)+jnp.asarray(POPULATION_SCALE)*population_white
@@ -117,9 +120,11 @@ class FreshRawSupport:
                  source_conditioning_radius_cMpc_h=None):
         self.positions=np.asarray(positions);self.angular=np.asarray(angular)
         self.population=np.asarray(population,dtype=int);self.o=observation;self.g=geometry
-        self.source_conditioning_radius=(np.asarray(observation['radius'],dtype=np.float64)
-            if source_conditioning_radius_cMpc_h is None else
-            np.asarray(source_conditioning_radius_cMpc_h,dtype=np.float64))
+        if source_conditioning_radius_cMpc_h is None:
+            source_conditioning_radius_cMpc_h = observation.get(
+                'source_conditioning_radius_cMpc_h', observation['radius'])
+        self.source_conditioning_radius=np.asarray(
+            source_conditioning_radius_cMpc_h,dtype=np.float64)
         if (self.source_conditioning_radius.shape!=(len(self.population),)
                 or not np.isfinite(self.source_conditioning_radius).all()
                 or np.any(self.source_conditioning_radius<=0)):

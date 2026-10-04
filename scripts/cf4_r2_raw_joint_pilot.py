@@ -34,14 +34,14 @@ def main():
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,heldout_scored=False,N=N,box_cMpc_h=BOX,dx_cMpc_h=3.,trace=[],evaluations=[],
         force_volume_order=2,fine_volume_order=4,cut_rule='axis1 order256, certified marginal tolerance1e-12',
-        target='same-field counts and conditional1414 rawFP/K marks; LCDM and24 proper nuisance priors once',
+        target='same-field counts and association-clean conditional linked-point rawFP/K marks; LCDM and24 proper nuisance priors once',
         limitations='development transitions only; no stationarity/UQ; conditional graph/type selection; MW/M31 ambiguous,M33 unresolved')
     def save():
         report.update(seconds=time.monotonic()-started,host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
     save()
     try:
-        required={'r2_raw_field_profile_v1':'NATIVE_RAW_TARGET_CHECKED_NOT_POSTERIOR',
+        required={'r2_raw_field_profile_v2_linked_point_radius':'NATIVE_RAW_TARGET_CHECKED_NOT_POSTERIOR',
                   'r2_volume_count_profile_v1':'FULL_COUNT_VOLUME_PROFILE_NOT_POSTERIOR'}
         for name,status in required.items():
             if json.loads((BASE/name/'result.json').read_text())['status']!=status:raise ValueError('native observation checks required')
@@ -65,7 +65,8 @@ def main():
             count=count_field_loglike(density,cv,t,source,g,keys,counts,exposure,
                 source_spacing=3.,volume_order=order)
             raw=raw_field_logpdf(density,cv,t,p,packs,source,o,g,source_spacing=3.,volume_order=order,
-                cut_order=256,cut_integration_axis=1,cut_marginal_tolerance=1e-12).sum()
+                cut_order=256,cut_integration_axis=1,cut_marginal_tolerance=1e-12,
+                source_conditioning_radius_cMpc_h=o['source_conditioning_radius_cMpc_h']).sum()
             return count+raw,jnp.array([count,raw])
         value=jax.jit(data,static_argnums=7)
         derivative=jax.jit(jax.value_and_grad(data,argnums=(0,1,2,3),has_aux=True),static_argnums=7)

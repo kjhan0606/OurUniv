@@ -59,6 +59,21 @@ def select_training_single_mark_links(options, membership, *, include_grouped=Fa
     return chosen
 
 
+def linked_point_conditioning_radii(chosen, point, fp_pgcs, active_pgcs):
+    """Align each active FP row to its securely linked count-point radius."""
+    if len(chosen) != len(fp_pgcs) or len(chosen) != len(active_pgcs):
+        raise ValueError('selected links, FP rows and active IDs differ in length')
+    radii = []
+    for option, fp_pgc, active_pgc in zip(chosen, fp_pgcs, active_pgcs):
+        if int(fp_pgc) != int(active_pgc):
+            raise ValueError(f'active FP order/identity mismatch at {option[0]}')
+        radius = float(point['radius_cMpc_h'][option[2]])
+        if not math.isfinite(radius) or radius <= 0.:
+            raise ValueError(f'invalid linked-point conditioning radius at {option[0]}')
+        radii.append(radius)
+    return np.asarray(radii, dtype=np.float64)
+
+
 def load_train_singletons(split_path=SPLIT, *, include_fp_parameters=True):
     with np.load(split_path, allow_pickle=False) as f:
         recno = f['point_recno'].copy()

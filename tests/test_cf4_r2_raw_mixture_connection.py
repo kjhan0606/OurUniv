@@ -58,6 +58,36 @@ class RawMixtureConnectionTests(unittest.TestCase):
             for a,b in zip(default,shifted))
         self.assertGreater(difference,1e-10)
 
+    def test_observation_radius_vector_is_used_when_explicit_argument_is_omitted(self):
+        args=(jnp.asarray(POPULATION_ORIGIN),self.pos,self.vel,self.mass,self.sky,self.o)
+        common=dict(population=1,geometry=self.g,cut_order=16,
+            source_velocity_variances_km2_s2=self.var,velocity_closure=self.closure)
+        explicit=chunk_log_terms(*args,**common,
+            source_conditioning_radius_cMpc_h=jnp.asarray([42.]))
+        observation=dict(self.o,source_conditioning_radius_cMpc_h=jnp.asarray([42.]))
+        carried=chunk_log_terms(*args[:5],observation,**common)
+        legacy=chunk_log_terms(*args,**common)
+        np.testing.assert_allclose(carried,explicit,rtol=0.,atol=2e-12)
+        self.assertGreater(max(float(jnp.max(jnp.abs(a-b)))
+            for a,b in zip(carried,legacy)),1e-10)
+
+    def test_packed_rows_use_their_own_linked_point_radius(self):
+        observation={k:jnp.stack((v,v)) for k,v in self.o.items()}
+        observation['radius']=jnp.asarray([30.,70.])
+        observation['dz']=jnp.asarray([30.,70.])
+        observation['source_conditioning_radius_cMpc_h']=jnp.asarray([24.,61.])
+        bins=jnp.asarray([0,0]);rows=jnp.asarray([0,1])
+        common=dict(population=1,geometry=self.g,cut_order=16,
+            component_bin=bins,component_row=rows)
+        args=(jnp.asarray(POPULATION_ORIGIN),self.pos,self.vel,self.mass,self.sky,observation)
+        carried=chunk_log_terms(*args,**common)
+        explicit=chunk_log_terms(*args,**common,
+            source_conditioning_radius_cMpc_h=observation['source_conditioning_radius_cMpc_h'])
+        swapped=chunk_log_terms(*args,**common,
+            source_conditioning_radius_cMpc_h=jnp.asarray([61.,24.]))
+        np.testing.assert_allclose(carried,explicit,rtol=0.,atol=2e-12)
+        self.assertGreater(float(jnp.max(jnp.abs(carried[0]-swapped[0]))),1e-10)
+
     def test_packed_rows_and_variance_adjoint(self):
         o={k:v[None] for k,v in self.o.items()}
         def score(logscale):

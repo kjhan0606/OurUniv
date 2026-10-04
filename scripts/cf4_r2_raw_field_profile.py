@@ -7,7 +7,11 @@ import time
 import jax
 import jax.numpy as jnp
 import numpy as np
-from cf4_r2_linked_fp_sparse_train import load_train_singletons,select_training_single_mark_links,FP,SOURCE
+from cf4_r2_linked_fp_sparse_train import (load_train_singletons,
+    select_training_single_mark_links,linked_point_conditioning_radii,FP,SOURCE)
+from cf4_r2_v6_active1414_association_reconciliation import (
+    clean_conditional_row_indices,reconcile_selected_rows,
+    read_verified_group_ledger)
 from cf4_r2_native_to_count_cells import native_mass_momentum_to_count_cells
 from cf4_r2_raw_live_mark import POPULATION_ORIGIN,POPULATION_SCALE
 from cf4_r2_raw_volume_target import FreshRawSupport,raw_field_logpdf
@@ -25,22 +29,40 @@ def load_inputs():
         np.testing.assert_array_equal(f['PGC'],mix['PGC'])
         pop=jnp.asarray((f['parameters']-POPULATION_ORIGIN)/POPULATION_SCALE)
         centre=float(f['richness_center'])
+    options,point,_=load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz',
+        include_fp_parameters=False)
+    with np.load(FP,allow_pickle=False) as f:
+        options=select_training_single_mark_links(options,f['membership_state'].astype(str),include_grouped=True)
+        chosen=[o for p in range(6) for o in options if point['population'][o[2]]==p]
+        fp_pgcs=f['PGC'].astype(np.int64,copy=True)
+        np.testing.assert_array_equal(mix['PGC'],[fp_pgcs[o[3]] for o in chosen])
+    group_rows,edge_rows,ledger_result=read_verified_group_ledger()
+    ownership=reconcile_selected_rows(chosen,fp_pgcs,mix['PGC'],group_rows,edge_rows)
+    clean_indices=np.asarray(clean_conditional_row_indices(ownership),dtype=np.int64)
+    if not len(clean_indices):
+        raise ValueError('association ledger leaves no admissible conditional FP rows')
+    excluded_indices=np.setdiff1d(np.arange(len(ownership)),clean_indices,assume_unique=True)
+    linked_radii=linked_point_conditioning_radii(chosen,point,fp_pgcs,mix['PGC'])
+    prefilter_rows=len(mix['PGC'])
+    mix={key:value[clean_indices] for key,value in mix.items()}
+    chosen=[chosen[i] for i in clean_indices]
+    linked_radii=linked_radii[clean_indices]
+    mix['pre_reconciliation_rows']=prefilter_rows
+    mix['excluded_unresolved_PGCs']=np.asarray([ownership[i]['fp_pgc'] for i in excluded_indices],dtype=np.int64)
+    mix['source_conditioning_rule']='secure linked 2M++ point redshift; ambiguous/unresolved groups excluded from FP factor'
+    mix['association_ledger_source_commit']=ledger_result['source_commit']
     with np.load(BASE/'r2_raw_selected_component_v1/training_cut_geometry.npz',allow_pickle=False) as f:
         index={int(p):i for i,p in enumerate(f['PGC'])};ids=[index[int(p)] for p in mix['PGC']]
         optical={k:f[k][ids] for k in ('x','optical_error_covariance','cut_lower','cut_upper')}
     with np.load(BASE/'r2_raw_fp_inputs_v1/training_photometry.npz',allow_pickle=False) as f:
         index={int(p):i for i,p in enumerate(f['selected_PGC'])};ids=[index[int(p)] for p in mix['PGC']]
         richness=np.log1p(f['selected_photometry'][ids,list(f['columns']).index('NgroupT17')])-centre
-    options,point,_=load_train_singletons(BASE/'r2_sky_closed_split_v6/split.npz')
-    with np.load(FP,allow_pickle=False) as f:
-        options=select_training_single_mark_links(options,f['membership_state'].astype(str),include_grouped=True)
-        chosen=[o for p in range(6) for o in options if point['population'][o[2]]==p]
-        np.testing.assert_array_equal(mix['PGC'],[f['PGC'][o[3]] for o in chosen])
     voxels=np.array([np.unravel_index(point['flat_cell'][o[2]],(N,)*3) for o in chosen])
     observation={k:jnp.asarray(v) for k,v in dict(voxel=voxels,radius=mix['observed_radius'],
         dz=mix['dz_row'],ksmag=mix['observed_ksmag'],x=optical['x'],
         error_covariance=optical['optical_error_covariance'],richness=richness,
-        cut_lower=optical['cut_lower'],cut_upper=optical['cut_upper']).items()}
+        cut_lower=optical['cut_lower'],cut_upper=optical['cut_upper'],
+        source_conditioning_radius_cMpc_h=linked_radii).items()}
     geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=BOX,hubble_km_s_Mpc=74.6,
         little_h=.746,radius_table_cMpc_h=jnp.asarray(source['radial_table']),
         modulus_table_h=jnp.asarray(source['modulus_table']),redshift_table=jnp.asarray(source['redshift_table']),grid_size=N)
@@ -52,7 +74,7 @@ def main():
     out=Path(os.environ['CF4_R2_OUT_DIR']);out.mkdir(exist_ok=False);started=time.monotonic()
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         R2_complete=False,PM_evolutions=0,heldout_scored=False,optimizer_steps=0,
-        limits='N128/3 development; conditional1414 cohort, no incidence/absolute-scale calibration; MW/M31 ambiguous,M33 unresolved')
+        limits='N128/3 development; unresolved associations excluded from conditional FP factor; no incidence/absolute-scale calibration; MW/M31 ambiguous,M33 unresolved')
     def save():
         report.update(seconds=time.monotonic()-started,host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
@@ -61,6 +83,13 @@ def main():
         benchmark=json.loads((BASE/'r2_cut_benchmark_v1/result.json').read_text())
         if benchmark['status']!='CUT_SHORTCUT_CHECKED_NOT_POSTERIOR':raise ValueError('actual cut comparison must finish first')
         rho,velocity,tracer,pop,source,mix,o,g=load_inputs()
+        report.update(conditional_FP_rows=len(mix['PGC']),
+            pre_reconciliation_conditional_FP_rows=int(mix['pre_reconciliation_rows']),
+            excluded_unresolved_FP_rows=len(mix['excluded_unresolved_PGCs']),
+            source_conditioning_rule=mix['source_conditioning_rule'],
+            association_ledger_source_commit=mix['association_ledger_source_commit'],
+            same_state_reference='old v1 CF4-radius readout is not applicable to this linked-point conditional target')
+        save()
         builder=FreshRawSupport(source['positions'],source['angular'],mix['population'],o,g,source_spacing=3.)
         source={k:jnp.asarray(v) for k,v in source.items()}
         centred=jax.jit(native_mass_momentum_to_count_cells,static_argnums=2)
@@ -73,7 +102,8 @@ def main():
             density,cv=native_mass_momentum_to_count_cells(r,v,BOX)
             values=raw_field_logpdf(density,jnp.moveaxis(cv,0,-1).reshape(-1,3),t,p,pack,source,o,g,
                 source_spacing=3.,cut_order=256 if fast else 64,cut_integration_axis=1 if fast else 0,
-                cut_marginal_tolerance=1e-12 if fast else 0.)
+                cut_marginal_tolerance=1e-12 if fast else 0.,
+                source_conditioning_radius_cMpc_h=o['source_conditioning_radius_cMpc_h'])
             return values.sum()-.5*(jnp.vdot(t,t)+jnp.vdot(p,p)),values
         derivative=jax.jit(jax.value_and_grad(target,argnums=(0,1,2,3),has_aux=True),static_argnums=7)
         values_only=jax.jit(target,static_argnums=7)
@@ -90,14 +120,7 @@ def main():
             report[label]=dict(value=value,raw_logpdf_sum=float(values.sum()),
                 value_gradient_seconds=time.monotonic()-tic,device_temporary_GiB=memory)
             if not fast:
-                with np.load(BASE/'r2_raw_live_cohort_v1/whole_cohort_readout.npz',allow_pickle=False) as f:
-                    np.testing.assert_array_equal(f['PGC'],mix['PGC'])
-                    value_error=float(np.max(np.abs(values-f['raw_logpdf'])))
-                    gradient_error=float(np.max(np.abs(np.r_[grad[2],grad[3]]-f['gradient'][:24])))
-                    velocity_error=float(abs(np.sum(grad[1]*np.asarray(velocity))-f['gradient'][24]))
-                report['reference']=dict(value_max_abs=value_error,nuisance_gradient_max_abs=gradient_error,
-                    velocity_direction_abs=velocity_error);save()
-                if max(value_error,gradient_error,velocity_error)>1e-7:raise AssertionError('fresh native target disagrees with checked same-state readout')
+                report['legacy_same_state_reference']='not compared: historical v1 used CF4 group radius and all1414 rows'
             save();print(json.dumps(report[label]),flush=True)
             del compiled
         report['legacy_fast_raw_max_abs']=float(np.max(np.abs(readouts['fast']-readouts['legacy'])))

@@ -52,6 +52,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
         raise ValueError('mixture raw marks require same-field physical variances')
     variance=jnp.zeros_like(velocities) if source_velocity_variances_km2_s2 is None else source_velocity_variances_km2_s2
     if component_row is None:
+        if source_conditioning_radius_cMpc_h is None:
+            source_conditioning_radius_cMpc_h = o.get('source_conditioning_radius_cMpc_h')
         source_radius = (o['radius'] if source_conditioning_radius_cMpc_h is None
                          else jnp.asarray(source_conditioning_radius_cMpc_h))
         mass=(response(positions,velocities,intrinsic,angular,o['voxel'],source_radius,variance)
@@ -61,6 +63,8 @@ def chunk_log_terms(parameters,positions,velocities,intrinsic,angular,observatio
     else:
         if component_bin is None:raise ValueError('multirow stream requires packed bin IDs')
         geometric={k:o[k][component_row] for k in ('voxel','radius','dz','ksmag')}
+        if source_conditioning_radius_cMpc_h is None:
+            source_conditioning_radius_cMpc_h = o.get('source_conditioning_radius_cMpc_h')
         source_radius=(o['radius'] if source_conditioning_radius_cMpc_h is None
                        else jnp.asarray(source_conditioning_radius_cMpc_h))
         if source_radius.ndim==0:

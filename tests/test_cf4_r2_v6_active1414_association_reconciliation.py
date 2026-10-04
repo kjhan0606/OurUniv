@@ -1,6 +1,8 @@
 import unittest
 
-from cf4_r2_v6_active1414_association_reconciliation import reconcile_selected_rows
+from cf4_r2_v6_active1414_association_reconciliation import (
+    clean_conditional_row_indices, reconcile_selected_rows,
+)
 
 
 class V6Active1414AssociationReconciliationTests(unittest.TestCase):
@@ -33,6 +35,7 @@ class V6Active1414AssociationReconciliationTests(unittest.TestCase):
                          [False, True])
         self.assertEqual(rows[1]['associated_edge_statuses'],
                          'extended_review_candidate;secure_training_count_link')
+        self.assertEqual(clean_conditional_row_indices(rows), [0])
 
     def test_active_order_mismatch_fails_closed(self):
         with self.assertRaisesRegex(ValueError, 'order/identity mismatch'):

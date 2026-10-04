@@ -76,11 +76,39 @@ def reconcile_selected_rows(chosen, fp_pgcs, active_pgcs, group_rows, edge_rows)
             ambiguous_edge_count=ambiguous_count,
             association_collision=collision,
             associated_edge_statuses=';'.join(sorted({str(e['status']) for e in matching_edges})),
-            unresolved_for_conditional_use=bool(ambiguous_count or collision),
+            unresolved_for_conditional_use=bool(
+                ledger['category'] != 'one_linked_count_point' or ambiguous_count or collision),
         ))
     if seen_pgcs != set(map(int, active_pgcs)):
         raise ValueError('active conditional FP IDs are not unique and exactly represented')
     return rows
+
+
+def clean_conditional_row_indices(rows):
+    """Keep only one-link groups with no unresolved association edge."""
+    return [index for index, row in enumerate(rows)
+            if row['ledger_category'] == 'one_linked_count_point'
+            and not row['unresolved_for_conditional_use']]
+
+
+def read_verified_group_ledger():
+    with (LEDGER/'result.json').open(encoding='utf-8') as stream:
+        result = json.load(stream)
+    if (result.get('status') != 'V6_TRAINING_FACTOR_OWNERSHIP_LEDGER_NOT_JOINT_LIKELIHOOD'
+            or result.get('training_count_total') != 47121):
+        raise ValueError('ownership ledger is not the verified active v6 result')
+    expected_sources = {str(path): digest for path, digest in EXPECTED_HASHES.items()}
+    if result.get('source_sha256') != expected_sources:
+        raise ValueError('ownership ledger does not certify the frozen v6 source hashes')
+    files = {name: LEDGER/name for name in ('group_factors.csv', 'crossmatch_edges.csv')}
+    for name, path in files.items():
+        if sha256(path) != result['outputs'][name]:
+            raise ValueError(f'ownership ledger output hash mismatch: {name}')
+    with files['group_factors.csv'].open(newline='', encoding='utf-8') as stream:
+        groups = list(csv.DictReader(stream))
+    with files['crossmatch_edges.csv'].open(newline='', encoding='utf-8') as stream:
+        edges = list(csv.DictReader(stream))
+    return groups, edges, result
 
 
 def main():
@@ -100,17 +128,6 @@ def main():
     source_hashes = {path: sha256(path) for path in EXPECTED_HASHES}
     if source_hashes != EXPECTED_HASHES:
         raise ValueError('frozen v6 source hashes changed since ownership ledger')
-    with (LEDGER/'result.json').open(encoding='utf-8') as stream:
-        ledger_result = json.load(stream)
-    if (ledger_result.get('status') != 'V6_TRAINING_FACTOR_OWNERSHIP_LEDGER_NOT_JOINT_LIKELIHOOD'
-            or ledger_result.get('training_count_total') != 47121):
-        raise ValueError('ownership ledger is not the verified active v6 result')
-    ledger_files = {name: LEDGER/name for name in
-                    ('group_factors.csv', 'crossmatch_edges.csv')}
-    for name, path in ledger_files.items():
-        if sha256(path) != ledger_result['outputs'][name]:
-            raise ValueError(f'ownership ledger output hash mismatch: {name}')
-
     options, point, _ = load_train_singletons(SPLIT, include_fp_parameters=False)
     with np.load(FP, allow_pickle=False) as fp:
         fp_pgcs = fp['PGC'].astype(np.int64, copy=True)
@@ -128,10 +145,8 @@ def main():
     if not np.array_equal(active_population, expected_population):
         raise ValueError('active mixture population IDs do not align with selected training links')
 
-    with ledger_files['group_factors.csv'].open(newline='', encoding='utf-8') as stream:
-        group_rows = list(csv.DictReader(stream))
-    with ledger_files['crossmatch_edges.csv'].open(newline='', encoding='utf-8') as stream:
-        edge_rows = list(csv.DictReader(stream))
+    group_rows, edge_rows, ledger_result = read_verified_group_ledger()
+    ledger_files = {name: LEDGER/name for name in ('group_factors.csv', 'crossmatch_edges.csv')}
     rows = reconcile_selected_rows(chosen, fp_pgcs, active_pgcs, group_rows, edge_rows)
     category_counts = Counter(row['ledger_category'] for row in rows)
     edge_status_counts = Counter(status for row in rows
@@ -156,7 +171,7 @@ def main():
         associated_edge_statuses=dict(sorted(edge_status_counts.items())),
         unresolved_association_rows=len(unresolved),
         unresolved_association_PGCs=[row['fp_pgc'] for row in unresolved],
-        clean_conditional_rows=len(rows)-len(unresolved),
+        clean_conditional_rows=len(clean_conditional_row_indices(rows)),
         source_conditioning_radius_wired_in_active_target=False,
         heldout_values_read=False, raw_mark_values_read=False,
         field_or_likelihood_read=False, PM_evolutions=0, posterior_or_fit=False,
