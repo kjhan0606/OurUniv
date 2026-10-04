@@ -152,7 +152,11 @@ def make_ledger(train_keys, train_counts, points, fp_groups, crossmatch_rows):
         recnos = sorted(group_recno.get(label, ()))
         collision = any(recno in conflicting_recnos for recno in recnos)
         anchor_count = int(group['anchor_count'])
-        if collision or group_ambiguous_edges[label]:
+        if collision:
+            category = 'association_conflict_unresolved'
+        elif not recnos and group_ambiguous_edges[label]:
+            category = 'ambiguous_association_unresolved'
+        elif group_ambiguous_edges[label]:
             category = 'association_conflict_unresolved'
         elif not recnos and anchor_count == 0:
             category = 'unanchored_selected_group_conditional'
