@@ -46,7 +46,8 @@ bounded calibration diagnostic only, not a route to posterior promotion.
 The driver implements `scripts/cf4_r2_sdss_mock_stream_summary.py` and its
 focused tests. The CPU-only Slurm script
 `scripts/run_cf4_r2_sdss_mock_stream_summary.sbatch` downloads the official
-10.6GB archive into a job-private temporary `/scratch` directory, validates
+10.6GB archive into a job-private temporary directory alongside the already
+verified source under `/gpfs/kjhan/CF4/external/sdss_pv_6824749`, validates
 the published byte count and MD5 while streaming the tar, verifies all
 2,048 files /256 simulation boxes /8 observers per box and group-key
 invariants, and writes only `result.json` under the CF4 z0-density results.
