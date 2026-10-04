@@ -53,3 +53,9 @@ H200/H100/A100 Slurm modes. The node GRES types are `gpu:H200:1` on `h200`,
 literal `H200` type. A single typed GRES request cannot represent all three
 types, so check the three modes and submit one compatible job, recording the
 chosen mode. Do not use manual node execution.
+
+User update2026-10-05: when a GPU job is ready to submit, check H200 first;
+if the H200 resource is idle, prefer the `h200` partition with its typed GRES
+(for one GPU: `--gres=gpu:H200:1`). If H200 is occupied, check the permitted
+H100/A100 modes and submit one compatible job. Record the selected partition
+and typed GRES; never run manually on a node.

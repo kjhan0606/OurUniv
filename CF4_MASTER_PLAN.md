@@ -34,6 +34,21 @@ field or required selection variables are absent. No sampler, heldout score,
 field fit or gravity run follows from this source audit alone. Full decision:
 `CF4_R2_2MPP_MOCK_APPLICABILITY_20261006.md`.
 
+An independent 2MRS-only reconstruction by Nusser (2026, arXiv:2606.08593)
+was also checked as a methodological comparator. It uses an unbinned 2MRS
+Poisson point-process likelihood and CF4 only as an external velocity test;
+the author leaves direct CF4 conditioning to future work because distance
+errors and inhomogeneous Malmquist bias need explicit treatment. Its inferred
+grid is 128^3 in a 300 h^-1 Mpc box (2.34 cMpc/h), and its 256^3 IC refinement
+adds prior small-scale modes constrained only to preserve the coarse field.
+It therefore does not meet the active 1.5 cMpc/h or LG `<=0.3 cMpc/h` target.
+The reported 2–3x nearby density excess is a warning about equal-weight
+galaxy-to-matter bias, not a transferable correction. Reuse only its
+real-space selection-evaluation and untouched-CF4 predictive-validation
+ideas after an OurUniv posterior exists. Do not import its MAP/IC or add a
+second, overlapping 2MRS/2M++ likelihood. Full disposition:
+`CF4_R2_NUSSER_2MRS_CF4_RECON_APPLICABILITY_20261005.md`.
+
 Q-GOAL: this may validate one count/tracer component of the same z=0
 inference; it creates no map and does not achieve the N256/1.5 cMpc/h
 environment target. MW/M31 roles remain ambiguous and M33 unresolved; their
