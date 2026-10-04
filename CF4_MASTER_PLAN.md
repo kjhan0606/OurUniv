@@ -200,15 +200,26 @@ original initializer, not a new posterior draw. No heldout outcomes were
 read. Full result:
 `/gpfs/kjhan/CF4/z0_density/r2_n256_joint_pilot_v2_linked_point_radius/result.json`.
 
-The next bounded discrimination is one state-independent exact-GL2 HMC
-transition (one integration step, fixed step0.08) from that corrected-target
-checkpoint. Typed-H100 Slurm job412367 is submitted with48GiB host memory and
-is waiting for priority; no manual node execution. This tests whether the
-corrected N256 target admits a usable local transition under an exact force.
-It is not a chain, stationarity test, uncertainty estimate or map. Do not
-blindly extend it: if the one-step exact transition is infeasible at measured
-cost or numerically poor, stop R2-scale sampling and redesign the N256 force
-evaluation/trajectory strategy based on that direct result. R2 remains NO-GO:
+Typed-H100 Slurm job412367 completed the corrected-target exact-GL2 transition
+in16:32 (MaxRSS9,334,624KiB under48GiB). The checkpoint saved by412356 was
+re-evaluated against the linked-radius target;1,414 rows and the
+association ledger commit matched. The exact initial gradient took508s; the
+one-step endpoint gradient took286s and independent fine endpoint value155s.
+Estimated device peak was30.91GiB against69.81GiB, exceeding the required
+20% headroom. The sole fixed-step0.08 exact-GL2 transition accepted with
+`ΔH=-2.370`, probability1, and IC-white jump RMS0.0661. This shows a
+computable accepted transition at that state, not acceptable acceptance rate,
+stationarity, mixing or posterior uncertainty. It is explicitly
+`ONE_EXACT_GL2_CHAIN_COMPLETE_NOT_POSTERIOR`.
+
+**Next:** continue this exact corrected-target chain for seven more
+one-integration-step transitions, restoring the checkpoint's saved RNG state
+and holding metric/step/target fixed. The bounded eight-transition trace will
+measure local acceptance and cost without implying convergence. Reuse the
+already validated runner with a variable transition count; do not reset its
+RNG between checkpointed segments. If this cost or acceptance behavior fails,
+stop before a production-length run and redesign the N256 force/trajectory
+strategy. R2 remains NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -217,9 +228,9 @@ single calibrated selection law; the raw target models its explicit FP cuts
 but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/abs/2209.11238),
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
 Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
-for a z=0 field posterior but neither transition produces that field. Q-LEAN:
-one exact-force transition, no GL1 step-size ladder, chain extension, new
-simulation or heldout access. MW/M31 remain role-ambiguous and M33 unresolved;
+for a z=0 field posterior but this bounded trace cannot produce that field.
+Q-LEAN: seven continuation transitions only; no GL1 ladder, independent long
+chain, new simulation or heldout access. MW/M31 remain role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
 
