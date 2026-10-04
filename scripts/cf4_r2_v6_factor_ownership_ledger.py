@@ -94,7 +94,11 @@ def make_ledger(train_keys, train_counts, points, fp_groups, crossmatch_rows):
         status = 'ambiguous_association'
         if len(labels) != 1:
             status = 'CF4_group_assignment_collision'
-        elif match_class == 'secure_joint_mark' and recno is not None:
+        elif match_class == 'unmatched':
+            status = 'unmatched_no_direct_count_link'
+        elif match_class == 'secure_joint_mark' and recno is None:
+            status = 'secure_edge_missing_recno'
+        elif match_class == 'secure_joint_mark':
             point = point_by_recno.get(recno)
             if point is None:
                 status = 'secure_edge_recno_not_in_point_manifest'
@@ -105,7 +109,7 @@ def make_ledger(train_keys, train_counts, points, fp_groups, crossmatch_rows):
                 group_recno[labels[0]].add(recno)
         if len(labels) == 1:
             group_edge_classes[labels[0]][match_class] += 1
-            if status != 'secure_training_count_link':
+            if status not in ('secure_training_count_link', 'unmatched_no_direct_count_link'):
                 group_ambiguous_edges[labels[0]] += 1
         elif len(labels) > 1:
             for candidate_label in labels:
@@ -148,10 +152,8 @@ def make_ledger(train_keys, train_counts, points, fp_groups, crossmatch_rows):
         recnos = sorted(group_recno.get(label, ()))
         collision = any(recno in conflicting_recnos for recno in recnos)
         anchor_count = int(group['anchor_count'])
-        if collision:
+        if collision or group_ambiguous_edges[label]:
             category = 'association_conflict_unresolved'
-        elif not recnos and group_ambiguous_edges[label]:
-            category = 'ambiguous_association_unresolved'
         elif not recnos and anchor_count == 0:
             category = 'unanchored_selected_group_conditional'
         elif not recnos:
@@ -200,7 +202,7 @@ def main():
     if actual != expected:
         raise RuntimeError('submitted source revision mismatch')
     out = Path(os.environ['CF4_R2_OUT_DIR'])
-    if out != BASE/'r2_v6_factor_ownership_ledger_20261004_v1' or out.exists():
+    if out != BASE/'r2_v6_factor_ownership_ledger_20261004_v2' or out.exists():
         raise FileExistsError('unexpected or previously used output path')
     started = time.monotonic()
     hashes = {path: sha256(path) for path in EXPECTED_HASHES}
@@ -288,6 +290,7 @@ def main():
         training_CF4_groups=len(group_rows), training_FP_mark_rows=len(fp_rows),
         group_factor_classes=dict(category_counts),
         crossmatch_training_edges=len(edge_rows),
+        crossmatch_match_class_counts=dict(Counter(row['match_class'] for row in edge_rows)),
         crossmatch_status_counts=dict(Counter(row['status'] for row in edge_rows)),
         recno_group_conflict_count=len(conflicts),
         unique_count_factor_owners=len({row['count_key'] for row in count_rows}),

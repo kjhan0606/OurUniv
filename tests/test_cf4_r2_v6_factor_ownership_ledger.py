@@ -20,6 +20,7 @@ class V6FactorOwnershipLedgerTests(unittest.TestCase):
         self.edges = [
             dict(PGC='501', match_class='secure_joint_mark', twompp_recno='101'),
             dict(PGC='502', match_class='secure_joint_mark', twompp_recno='102'),
+            dict(PGC='504', match_class='unmatched', twompp_recno=''),
             dict(PGC='503', match_class='extended_review_candidate', twompp_recno=''),
         ]
 
@@ -37,7 +38,9 @@ class V6FactorOwnershipLedgerTests(unittest.TestCase):
         self.assertEqual(by_group['G3']['category'], 'ambiguous_association_unresolved')
         self.assertEqual(len({row['source_group_label'] for row in groups}), 3)
         self.assertEqual(len({row['fp_row_index'] for row in marks}), 4)
-        self.assertEqual(len(edges), 3)
+        self.assertEqual(len(edges), 4)
+        unmatched = next(row for row in edges if row['match_class'] == 'unmatched')
+        self.assertEqual(unmatched['status'], 'unmatched_no_direct_count_link')
         self.assertEqual(conflicts, set())
 
     def test_shared_recno_group_collision_is_not_silently_owned_twice(self):
