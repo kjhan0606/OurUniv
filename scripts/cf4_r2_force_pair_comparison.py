@@ -18,7 +18,8 @@ from cf4_r2_prior_split_hmc import (
     split_trajectory,
 )
 from cf4_r2_raw_field_profile import load_inputs
-from cf4_r2_resolution_target import source_geometry_at_resolution, ResolutionObservationTarget
+from cf4_r2_resolution_target import (source_geometry_at_resolution,
+    ResolutionObservationTarget, linked_point_conditioning_radius)
 
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
@@ -51,7 +52,8 @@ def main():
     report = dict(
         status='STARTED', job_id=os.environ['SLURM_JOB_ID'], N=N, box_cMpc_h=BOX,
         dx_cMpc_h=BOX/N, force_comparison='GL2 exact force vs frozen GL1 affine force',
-        fine_target='unchanged N256 GL2 target; same Gaussian prior and exact fine Hamiltonian',
+        fine_target='N256 GL2 target conditioned on aligned secure linked-point radii; exact fine Hamiltonian within this run',
+        historical_force_pair_comparable=False,
         matched_settings=dict(step_size=STEP,
                              integration_steps=exact_chain_integrations if exact_chain_steps else STEPS,
                              inverse_laplacian_metric_fundamental_mass=fundamental_mass,
@@ -112,6 +114,19 @@ def main():
                 raise ValueError(f'{label}: expected terminal state from the completed R2 chain')
 
         _, _, _, _, source, mix, observation, growth = load_inputs()
+        linked_radii = linked_point_conditioning_radius(observation)
+        conditioning_rule = mix.get('source_conditioning_rule', '')
+        ledger_commit = mix.get('association_ledger_source_commit', '')
+        if (len(linked_radii) != len(mix.get('PGC', ()))
+                or not conditioning_rule.startswith('secure linked 2M++ point redshift')
+                or not ledger_commit):
+            raise ValueError('exact-force target lacks aligned linked-point radius/ledger provenance')
+        report.update(conditional_FP_rows=len(linked_radii),
+            source_conditioning_rule=conditioning_rule,
+            source_conditioning_radius_range_cMpc_h=[
+                float(linked_radii.min()), float(linked_radii.max())],
+            association_ledger_source_commit=ledger_commit)
+        save()
         source = source_geometry_at_resolution(source, N)
         with np.load(BASE/'r2_sky_closed_split_v6/split.npz', allow_pickle=False) as f:
             keys, counts = map(jnp.asarray, (f['train_keys'], f['train_counts']))
