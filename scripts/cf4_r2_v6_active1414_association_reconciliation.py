@@ -173,7 +173,8 @@ def main():
         unresolved_association_rows=len(unresolved),
         unresolved_association_PGCs=[row['fp_pgc'] for row in unresolved],
         clean_conditional_rows=len(clean_conditional_row_indices(rows)),
-        source_conditioning_radius_wired_in_active_target=False,
+        source_conditioning_radius_wiring=(
+            'linked 2M++ point radius carried into active target; fixed-state profile pending'),
         heldout_values_read=False, raw_mark_values_read=False,
         field_or_likelihood_read=False, PM_evolutions=0, posterior_or_fit=False,
         R2_complete=False,
