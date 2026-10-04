@@ -24,6 +24,15 @@ detail.
 
 ## One-job implementation and checks
 
+Implementation is staged in `scripts/cf4_r2_selection_ray_integral.py`,
+with focused regressions in `tests/test_cf4_r2_selection_ray_integral.py` and
+the typed-H100 runner in `scripts/run_cf4_r2_selection_ray_integral.sbatch`.
+The source census records the complete 2×2×2 cross-tab of inner-boundary,
+outer-boundary, and cap-limit status; it does not infer overlap from equal
+marginal totals. The driver source review also confirms that the old HDF5
+exposure is used only for the post-integration comparison, while the new
+exposure values are calculated from pinned maps and the frozen cosmology.
+
 1. Enumerate all N128 cells whose volume intersects `5 < r < 180 cMpc/h`.
    Compute and record the exact joint table of inner/outer shell status and
    cap-area candidate-limit status; do not assume the equal census totals
