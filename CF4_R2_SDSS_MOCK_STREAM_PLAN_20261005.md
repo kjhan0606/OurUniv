@@ -37,12 +37,14 @@ view does not fit a Gaussian replacement.
 
 ## Bundle decision and execution
 
-The alignment is adequate for the narrower purpose of testing SDSS-PV FP
-error and within-host covariance. It does **not** calibrate absolute group
+The alignment is adequate for diagnosing SDSS-PV FP residuals and
+selected-host group-mean scatter. It does **not** isolate shared within-host
+covariance from marginal error-scale behavior, calibrate absolute group
 inclusion, Tempel17 richness, the 2M++ count likelihood, or the full
 multi-survey CF4 observation law. The published mock-selection model also
 omits redshift-success effects. The 2,048-catalogue ensemble is therefore a
-bounded calibration diagnostic only, not a route to posterior promotion.
+bounded diagnostic only, not a transferable calibration or route to
+posterior promotion.
 
 The driver implements `scripts/cf4_r2_sdss_mock_stream_summary.py` and its
 focused tests. A complete first pass parsed 2,048 catalogue files and wrote
@@ -87,7 +89,7 @@ The earlier412581 job remains preserved as a failed attempt: its data pass
 completed, but a final progress-print bug caused nonzero exit after JSON
 write; its retained archive was reused here, not downloaded again.
 
-| Selected mock-host richness | Galaxies | Host groups | Mean standardized residual | SD | 68% coverage | 95% coverage | Group-mean variance ratio after within-bin centering | 256-box q05 / q50 / q95 |
+| Selected mock-host richness | Galaxies | Host groups | Mean standardized residual | SD | 68% coverage | 95% coverage | Group-mean variance / independent-error variance after within-bin centering | 256-box q05 / q50 / q95 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 25,374,667 | 25,374,667 | -0.1771 | 0.9612 | 0.6937 | 0.9551 | 0.9267 | 0.919 / 0.926 / 0.934 |
 | 2–4 | 16,498,129 | 5,576,661 | +0.0286 | 0.9915 | 0.6867 | 0.9519 | 0.9816 | 0.966 / 0.981 / 0.999 |
@@ -105,13 +107,39 @@ remain invalid and are superseded by this within-richness-centered ensemble
 calculation.
 
 **Disposition:** the ensemble shows richness-conditional residual-mean shifts
-and a modest richness trend in group-mean scatter relative to independent
-reported errors. These statistics are not a covariance matrix and are not
-transferred to Tempel groups; neither a likelihood correction nor covariance
-inflation is adopted. The exact same-source PGC overlap does not calibrate
-Tempel group inclusion, redshift-success,2M++ counts or the heterogeneous
-CF4 selection law. No heldout values, field state, fit, posterior, native LG
-truth identity or gravity evolution was accessed. R2 remains NO-GO.
+and changing marginal standardized residual SDs. The group-mean variance
+ratios must be read alongside those per-galaxy variances: the singleton ratio
+0.9267 is already approximately the singleton marginal variance
+`0.9612^2=0.9240`, so the ratio is not itself a shared-error statistic.
+Ratios divided by pooled per-row residual variance are approximately1.003,
+0.999,1.029,1.064 across the four bins. This is only a rough comparison:
+its galaxy weighting differs from the group-level
+`sum(sigma_i^2/n_i^2)` denominator. Do not turn it into an exchangeable-
+correlation estimate or covariance matrix.
+
+Howlett et al. define catalogue `sigma_eta` as the standard deviation of the
+skew-normal posterior; its scale parameter is `omega`, related by their
+Eq.20. Thus interpreting `logdist_err` as a standard deviation is consistent
+with the source, and the local moment-to-location/scale conversion follows
+that parameterization. See [Howlett et al. 2022, §5 and Eq.20](https://academic.oup.com/mnras/article/515/1/953/6611706).
+
+The exact active 1,414-row cohort was also joined to the published
+`IDgroupT17` field. The frozen association-row SHA256 and source SDSS-PV MD5
+were both verified. Treating `IDgroupT17=0` rows as separate singleton
+parents, all1,414 cohort marks belong to1,414 distinct Tempel parent groups
+or singletons: zero Tempel groups contain two selected active marks.
+Therefore within-Tempel shared mark covariance is absent from this
+particular conditional 1,414-mark factor set; this says nothing about group
+inclusion, global FP zero-point covariance, or multi-member CF4 groups
+outside it.
+
+The official paper defines its group-richness trend using all Tempel members,
+not only members selected into the SDSS-PV mock. The runner instead bins
+selected mock rows by a host key. Numerical bins are not a membership
+mapping. A richness/redshift/selection confound was not tested in this
+bundle; no fitted correction is adopted. No heldout values, field state, fit,
+posterior, native LG truth identity or gravity evolution was accessed.
+R2 remains NO-GO.
 
 Q-GOAL: this supplies a bounded SDSS-PV FP measurement/selected-host residual
 component for the same field, not the z=0 density/velocity result. MW/M31

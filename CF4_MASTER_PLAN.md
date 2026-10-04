@@ -43,25 +43,46 @@ These are selected mock-host residual diagnostics, not a covariance matrix
 or a transferable CF4 correction.
 
 The exact active1,414-row linked cohort has Tempel17 richness-bin counts
-429/670/267/48 (30.34%/47.38%/18.88%/3.39% at the same numeric cut points);
-the frozen association-row hash was rechecked. Numerical bin overlap is
-support context only: mock selected-host richness is not Tempel17
-`NgroupT17`, and the group-finding/selection processes are not mapped. No
-richness correction, covariance inflation, or absolute group-inclusion law
-is adopted. Redshift-success,2M++ counts, heterogeneous CF4 selection, shared
-member covariance and full group incidence remain uncalibrated. R2 remains
-NO-GO; no field/posterior or heldout outcome was read. Full details:
-`CF4_R2_SDSS_MOCK_STREAM_PLAN_20261005.md`.
+429/670/267/48 (30.34%/47.38%/18.88%/3.39% at the same numeric cut points).
+A SHA-verified join to `IDgroupT17`, treating every zero-ID row as its own
+singleton, found1,414 distinct Tempel parents/singletons and zero pairs of
+active marks sharing a Tempel group. Thus within-Tempel multi-mark covariance
+is absent from this particular conditional cohort, although global FP
+zero-point uncertainty and group inclusion remain open. Numerical richness
+bin overlap is only support context: mock selected-host richness is not
+Tempel17 `NgroupT17`, and their membership/selection processes are not mapped.
 
-This component is Q-GOAL aligned: it supplies SDSS-PV FP residual and
-selected-host group-mean diagnostics relevant to the same CF4-conditioned
-field; it does not calibrate a transferable CF4 covariance, make the z=0
-density map, or close R2. Q-LEAN: one exact linked
-training cohort, one mock-schema check, and the full ensemble only—no new
-catalogue census, Tempel group-finder implementation, heldout score, field
-fit, or gravity run. The mocks omit redshift-success effects and do not model
-2M++ counts or the full heterogeneous CF4 selection law; selected host
-richness is not Tempel17 `NgroupT17`, so group inclusion remains uncalibrated.
+Fable5's read-only ensemble audit returned **CONDITIONAL PASS**. The driver
+verified Howlett et al. §5/Eq.20 defines `sigma_eta` as the skew-normal
+standard deviation (distinct from scale `omega`), so the `logdist_err`
+interpretation and current moment conversion are supported
+([primary article](https://academic.oup.com/mnras/article/515/1/953/6611706)).
+The singleton group-mean ratio0.9267 is already approximately the per-row
+residual variance0.9612²=0.9240; richer-bin ratios likewise include marginal
+error-scale behavior. The audit's rough exchangeable-correlation estimate is
+not adopted: aggregate per-galaxy and group-error weights differ, and the
+active cohort has no shared Tempel parent pairs. The script's output wording
+was corrected from “calibrates” to “diagnoses”; the historical Slurm JSON
+remains unchanged. A possible redshift/selection confound was not tested and
+does not license a fitted richness correction.
+
+The driver then audited the active count path: `count_field_loglike` forms
+the field-dependent source intensity and applies the v6 training exposure
+mask in the sparse Poisson factor; its expected-rate sum includes empty
+exposed population-cells and excludes heldout/buffered keys. This confirms
+expected-count wiring, not calibrated selection, density bias,
+redshift-success or group inclusion. No mock correction, covariance
+inflation, archive rerun, heldout score, posterior or field is adopted.
+R2 remains NO-GO. Full evidence and audit disposition:
+`CF4_R2_SDSS_MOCK_STREAM_PLAN_20261005.md` and
+`CF4_R2_SDSS_MOCK_FABLE_DISPOSITION_20261005.md`.
+
+This component is Q-GOAL aligned only as a narrow FP diagnostic for the same
+CF4-conditioned field; it does not make the z=0 density map or close R2.
+Q-LEAN: one cohort join, one full ensemble and a source-level expected-count
+audit—no mock rerun, Tempel finder, heldout score, fit or gravity run. The
+mocks omit redshift-success effects and do not model 2M++ counts or the full
+heterogeneous CF4 selection law; group inclusion remains uncalibrated.
 MW/M31 roles remain ambiguous and M33 unresolved; eventual observables must
 constrain those roles on the same NEW evolved field, with truth identities
 used only for calibration/evaluation.

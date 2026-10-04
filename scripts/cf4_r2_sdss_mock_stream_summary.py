@@ -345,7 +345,7 @@ def summarize_archive(archive_path):
         "groups_without_selected_central": sum(x["groups_without_selected_central"] for x in catalogues),
         "groups_total": sum(x["host_groups"] for x in catalogues),
         "limits": [
-            "This calibrates only the SDSS-PV FP mark/error and host-group covariance component.",
+            "This diagnoses SDSS-PV FP mark errors and selected-host group residuals; it does not calibrate transferable CF4 covariance.",
             "The mock selection omits redshift-success effects and does not model the 2M++ count catalogue or the heterogeneous full CF4 observation law.",
             "Mock host richness is not Tempel17 Ngroup; no Tempel group finder is run here, so absolute group inclusion remains uncalibrated.",
             "Richness-conditional mean offsets are reported separately from within-bin group-mean scatter; neither becomes an adopted likelihood correction or covariance inflation.",
