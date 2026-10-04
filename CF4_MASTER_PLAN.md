@@ -56,6 +56,18 @@ terabyte-scale download. Resume the already-planned R2 work; this source
 decision does not promote a field or relax the R2 NO-GO. Details:
 `CF4_R2_COSMOSIM_MDPL2_ACCESS_20261005.md`.
 
+A lower-cost alternative, SMDPL's queryable `dens512_z0` table, was checked
+from official metadata only. Its 400 Mpc/h, 512^3 z=0 field has 0.78125
+Mpc/h cells, but the target 384-Mpc/h cube would cover 88.5% of its volume;
+the metadata lists 134,217,856 rows, 128 more than 512^3. SMDPL has no listed
+SAM/K-band galaxy catalogue and only one realization, so its density field
+alone cannot calibrate the 2M++ tracer law or uncertainty coverage. Fable5
+returned REJECT for extraction/mock; the driver adopts no SQL data retrieval.
+The proposed in-house substitute is also insufficient at the active scale:
+the verified existing native PM comparison is N32/12 cMpc/h, not independent
+N256/1.5 matter truth. This alternative audit and limits are recorded in
+`CF4_R2_COSMOSIM_MDPL2_ACCESS_20261005.md`.
+
 An independent 2MRS-only reconstruction by Nusser (2026, arXiv:2606.08593)
 was also checked as a methodological comparator. It uses an unbinned 2MRS
 Poisson point-process likelihood and CF4 only as an external velocity test;

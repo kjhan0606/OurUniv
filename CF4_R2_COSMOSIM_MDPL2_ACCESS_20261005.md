@@ -69,10 +69,40 @@ sampler/gravity run. The 3-row query was only a connectivity check. Resume the
 already-planned R2 observation/exposure work without another external mock
 search unless new, bounded matter-truth and K-selection evidence appears.
 
+## Lower-cost SMDPL alternative
+
+Official COSMOSIM metadata also lists `smdpl.dens512_z0`, a z=0 matter-density
+table on a 512^3 grid in the 400 Mpc/h SMDPL box, with Planck cosmology and
+9.63e7 Msun/h particle mass. The cell width is 0.78125 Mpc/h, but a 384 Mpc/h
+target cube would occupy about 88.5% of the box, so a nominal regional query
+would still return most of the table. The metadata reports 134,217,856 rows,
+which is 128 greater than 512^3; this discrepancy is unexplained. The published
+SMDPL table list contains density and halo catalogues but no SAG/SAGE/Galacticus
+galaxy table or K-band assignment. One box also cannot provide an independent
+ensemble for a 200 Mpc/h-radius 2M++ mock.
+
+Fable5 returned **REJECT** for an SMDPL extraction/mock. Its central concern is
+sound: Rockstar halos plus an invented abundance-matching/scatter prescription
+would test only that chosen tracer law, not empirically calibrate 2M++ bias.
+The driver independently rejects the multi-GB extraction. It does not adopt
+Fable's in-house substitute as a 1.5 cMpc/h solution: the existing verified
+native PM fields are N32/12 cMpc/h products, and the active N256 posterior
+states are inference outputs, not independent matter truth. The coarse fields
+cannot establish target-scale coverage or tracer calibration. No SQL query of
+the density table was submitted and no rows were downloaded.
+
+Reopen only after a predeclared tracer assignment tied to a documented K-band
+luminosity function, a clean grid-coverage/row-count explanation, and a test
+design that addresses the single-volume limitation. Until then the SMDPL grid
+does not change the R2 NO-GO or the missing CF4 survival/group-inclusion and
+shared-covariance limits.
+
 ## Sources
 
 - [COSMOSIM MDPL2 metadata/table list](https://www.cosmosim.org/metadata/mdpl2/)
 - [COSMOSIM files and particle snapshot listings](https://www.cosmosim.org/cms/files/)
 - [COSMOSIM MDPL2 z=0 DataLink manifest](https://www.cosmosim.org/datalink/MDPL2_snapdir_130/)
+- [COSMOSIM SMDPL simulation metadata](https://www.cosmosim.org/metadata/smdpl/)
+- [COSMOSIM SMDPL 512^3 z=0 density-table metadata](https://www.cosmosim.org/metadata/smdpl/dens512_z0/)
 - [COSMOSIM TAP tutorial and async-query guidance](https://www.cosmosim.org/cms/tech-docs/access-via-tap/)
 - Fable5 read-only addendum audit, 2026-10-05, captured in the session; no credentials were included.
