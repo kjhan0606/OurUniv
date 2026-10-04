@@ -15,7 +15,7 @@ module purge
 cd /home/kjhan/BACKUP/CF4
 export PYTHONPATH=/home/kjhan/BACKUP/CF4/src:/home/kjhan/BACKUP/CF4
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
-workdir=$(mktemp -d "/scratch/cf4_kjhan_sdss_mocks_${SLURM_JOB_ID}.XXXXXX")
+workdir=$(mktemp -d "/scratch/kjhan/cf4_sdss_mocks_${SLURM_JOB_ID}.XXXXXX")
 chmod 700 "$workdir"
 archive="$workdir/mocks.tar.gz"
 success=0
