@@ -59,7 +59,7 @@ def select_training_single_mark_links(options, membership, *, include_grouped=Fa
     return chosen
 
 
-def load_train_singletons(split_path=SPLIT):
+def load_train_singletons(split_path=SPLIT, *, include_fp_parameters=True):
     with np.load(split_path, allow_pickle=False) as f:
         recno = f['point_recno'].copy()
         labels = f['fp_source_group'].copy()
@@ -104,9 +104,13 @@ def load_train_singletons(split_path=SPLIT):
     if not options or len({item[1] for item in options}) != len(options):
         raise ValueError('frozen train-only singleton graph is empty or duplicated')
     train_rows = np.asarray([item[3] for item in options], dtype=np.int64)
-    with np.load(GROUP, allow_pickle=False) as f:
-        fp = {k: f[k][train_rows].copy() for k in
-              ('dz_row', 'eta_mean', 'eta_std', 'eta_alpha')}
+    if include_fp_parameters:
+        with np.load(GROUP, allow_pickle=False) as f:
+            fp = {k: f[k][train_rows].copy() for k in
+                  ('dz_row', 'eta_mean', 'eta_std', 'eta_alpha')}
+    else:
+        # Cohort/ownership audits need structural IDs, never mark values.
+        fp = {}
     options = [(*item, train_index) for train_index, item in enumerate(options)]
     return options, point, fp
 
