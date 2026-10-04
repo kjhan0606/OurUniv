@@ -167,13 +167,44 @@ energy continue to evolve, so this trace does not establish equilibrium,
 mixing, effective sample size or uncertainty. In particular, “40/40
 accepted” must not be quoted as a calibrated acceptance rate.
 
-Do not blindly lengthen this same one-step chain. Compare exact-GL2 trajectory
-lengths of1,2,4 integration steps from the same accepted state and common
-momentum at fixed step0.08 and metric. Record Hamiltonian error, acceptance
-probability, endpoint score components and canonical jump RMS; use no
-retained samples. This bounded sampler diagnostic can show whether longer
-trajectories trade useful movement against integration error. Any subsequent
-warm-up must still test whether the target/component drift plateaus.
+Typed-H100 job412532 completed the planned same-state path comparison in
+43:24 (MaxRSS13,315,880KiB under48GiB); all10 focused HMC tests passed. It
+re-evaluated the transition40 checkpoint at exactly the saved energy and used
+one seeded common momentum, step0.08 and metric mass6000. The paths did not
+modify q, p, the accepted-chain RNG/checkpoint, or any heldout outcome.
+The complete machine-readable result is
+[`result.json`](/gpfs/kjhan/CF4/z0_density/r2_n256_gl2_trajectory_length_124_20261005/result.json).
+
+| Integration steps | ΔH | Clipped acceptance probability | IC-white jump RMS | Elapsed seconds |
+|---:|---:|---:|---:|---:|
+| 1 | -0.039157 | 1.000 | 0.066083 | 298.9 |
+| 2 | -0.379040 | 1.000 | 0.132088 | 578.6 |
+| 4 | -2.673129 | 1.000 | 0.263556 | 1175.7 |
+
+Movement per second is approximately2.21e-4,2.28e-4,2.24e-4 white-coordinate
+RMS, respectively: longer paths produced proportionally more displacement at
+proportionally more cost in this single momentum. Meanwhile the magnitude of
+ΔH rose, and the prior component increased by689.698,2,524.917,9,548.832nat;
+count log-score improved29.001,146.714,607.984nat, while raw-mark score
+changed only-1.501,-2.065,-0.474nat. The negative ΔH values make all three
+clipped probabilities1, but do not estimate a chain acceptance rate. This is
+not evidence of stationarity or posterior movement efficiency. It does not
+justify four-step transitions or more warm-up on the present partial target.
+
+The generated JSON's generic `matched_settings.integration_steps` was
+incorrectly left at the old default8 although its explicit path list and all
+three rows correctly report1,2,4. Preserve that raw artifact; the report
+writer is corrected for future runs, and this note is the authoritative
+interpretation of job412532.
+
+Next return to the unresolved R2 observation-law blocker: a defensible
+shared-group count/CF4-mark factor with calibrated group inclusion and
+multi-member covariance. Reuse the frozen v6 source graph and existing
+Tully/CF4 identity work; do not repeat catalogue censuses, invent covariance,
+run gravity, fit, score heldout data, or extend this chain. First establish
+whether already available independent sources can identify the missing terms;
+otherwise specify the exact public calibration input or physically validated
+mock needed before further code or sampling.
 
 **Q-GOAL:** exact-target dynamics are necessary for the current N256/1.5 z=0
 posterior route but are not the density map or zoom IC. MW/M31 remain
@@ -181,8 +212,8 @@ role-ambiguous and M33 unresolved; their observables must eventually constrain
 the same NEW evolved LG field at `<=0.3 cMpc/h`. Native truth identities remain
 calibration/evaluation-only.
 
-**Q-LEAN:** one same-state 1/2/4 trajectory-length comparison only. No new
-likelihood factor, survey census, simulation, held-out score or long chain.
-R2 remains NO-GO: calibrated source/group selection,
+**Q-LEAN:** the one-state/one-momentum 1/2/4 comparison was bounded and left
+the chain untouched. No new likelihood factor, survey census, simulation,
+held-out score or long chain. R2 remains NO-GO: calibrated source/group selection,
 shared-member covariance, stationarity, uncertainty, held-out prediction and
 the z=0 map remain unresolved.

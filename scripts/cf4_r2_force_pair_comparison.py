@@ -63,7 +63,8 @@ def main():
         historical_force_pair_comparable=False,
         target_decomposition='prior energy - training-count log score - conditional raw-mark log score',
         matched_settings=dict(step_size=STEP,
-                             integration_steps=exact_chain_integrations if exact_chain_steps else STEPS,
+                             integration_steps=(list(trajectory_lengths) if trajectory_lengths else
+                                 exact_chain_integrations if exact_chain_steps else STEPS),
                              inverse_laplacian_metric_fundamental_mass=fundamental_mass,
                              nuisance_inverse_mass_diagonal=1e-5),
         matched_momenta=True, heldout_scored=False, posterior_claim=False,

@@ -273,15 +273,54 @@ small on this path. Forty steps do not establish stationarity, mixing,
 effective sample size or posterior uncertainty. Full trace is in the linked
 exact-GL2 report and the two Slurm result directories.
 
-**Next:** do not blindly extend the same one-step chain. Run a same-state,
-common-momentum exact-GL2 trajectory-length diagnostic at fixed target and
-metric (1,2,4 integration steps, step0.08). Record ΔH, endpoint prior/count/
-raw components, acceptance probability and canonical jump RMS; this compares
-mixing distance against integration error without retaining samples. Keep the
-existing exact value-and-gradient primal for both force and Hamiltonian.
-Proceed to longer warm-up only if this bounded comparison supports a better
-trajectory setting and the ensuing trace can test for a plateau. R2 remains
-NO-GO:
+The same-state exact-GL2 path-length comparison completed in typed-H100 job
+412532 (43:24 wall, MaxRSS13,315,880KiB under48GiB). Ten focused tests passed;
+the checkpoint energy reproduced exactly, estimated device peak was30.92GiB
+against69.81GiB, and no chain RNG/checkpoint or heldout outcome was touched.
+With one fixed common momentum, step0.08 and inverse-Laplacian mass6000:
+
+| Integrations | ΔH | MH acceptance probability | IC-white jump RMS | Path seconds |
+|---:|---:|---:|---:|---:|
+| 1 | -0.03916 | 1.000 | 0.066083 | 298.9 |
+| 2 | -0.37904 | 1.000 | 0.132088 | 578.6 |
+| 4 | -2.67313 | 1.000 | 0.263556 | 1175.7 |
+
+Jump per second is nearly unchanged across these three paths. The longer paths
+therefore show no measured cost-adjusted movement gain in this one-momentum
+comparison, while |ΔH| increases. All three happen to have negative ΔH, so
+their clipped acceptance probabilities are not an acceptance-rate estimate.
+The prior energy rises by689.698/2,524.917/9,548.832nat across the three
+endpoints; the count log score improves by29.001/146.714/607.984nat and the
+raw-mark score changes only -1.501/-2.065/-0.474nat. This remains a single
+deterministic geometry probe, not stationarity, mixing, or posterior evidence.
+The result does **not** justify changing the chain to four integrations or
+extending warm-up on this partial target. The output's generic
+`matched_settings.integration_steps=8` field was a stale default; the explicit
+diagnostic settings and rows are1/2/4. The report writer is corrected in the
+next source commit. Job412529 failed its preflight on an abbreviated commit
+hash and wrote no output; job412531 was cancelled while pending after a hash
+transcription error. Neither reached calculation; only412532 produced a result.
+
+**Next:** stop sampler tuning on the partial likelihood and return to the
+actual R2 blocker: a defensible shared-group count/CF4-mark observation law
+with calibrated group inclusion and multi-member covariance. Reuse the frozen
+v6 source graph and the existing Tully/CF4 identity results; do not repeat
+catalogue censuses, invent covariance, run gravity, fit, or score heldout data.
+First establish whether the already available independent sources can identify
+the missing inclusion and covariance terms. One new, narrowly relevant public
+candidate is the SDSS-PV 2,048-mock release: its authors describe selection,
+measurement-error and cosmic-variance coverage, and explicitly find
+group-richness-dependent FP effects; the full mock archive is10.6GB
+([paper](https://arxiv.org/abs/2201.03112),
+[official release](https://zenodo.org/records/6824749)). Its documented mock
+selection omits redshift-success effects, and it is an SDSS FP mock—not a
+2M++ count catalogue or a full heterogeneous CF4/2M++ joint observation law.
+Therefore first check only whether its documented fields and mock groups can
+calibrate the active linked FP cohort and shared member uncertainty. Inspect
+the schema/selection contract and score-blind training-cohort overlap before
+any large download; if those do not align, close the candidate without
+streaming the archive. Do not use these mocks to transfer a central/satellite
+100km/s FoG number. R2 remains NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -289,10 +328,11 @@ surveys, so published selection corrections do not by themselves provide a
 single calibrated selection law; the raw target models its explicit FP cuts
 but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/abs/2209.11238),
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
-Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
-for a z=0 field posterior but this bounded trace cannot produce that field.
-Q-LEAN: one common-momentum trajectory-length comparison only; no new
-likelihood, survey census, simulation, heldout access or long chain. MW/M31 remain
+Q-GOAL: diagnosing exact-target movement was useful, but the next action must
+resolve observation-law calibration for the same z=0 field before posterior
+sampling; this comparison produces no map. Q-LEAN: the path comparison was
+one state/one momentum and no retained sample; do not expand it into a long
+trajectory ladder. MW/M31 remain
 role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.
