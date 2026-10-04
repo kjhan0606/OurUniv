@@ -7,6 +7,42 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 continuation — 2026-10-04
+
+The bounded map-aware ray/cell cost profile Slurm412001 COMPLETED/exit0 on
+typed H100 (11s wall, script-measured4.12s, process peak RSS0.256GiB). It read
+only frozen `train_keys`, not counts/holdout/all-key arrays, and profiled18
+training-key voxel locations at NSIDE512/1024/2048. Four geometry tests pass;
+two preselected difficult-cell ray values reproduce the prior references
+within4.9e-8 absolute. Across53 positive paired sample channels, NSIDE1024→2048
+relative change is p95/max0.576%/0.637%; this is small-sample resolution
+sensitivity, not accuracy certification. NSIDE2048 refines angular integration
+of the pinned NSIDE512 maps and adds no observed detail.
+
+Sample-weighted volume-equivalent full-support projection is approximately
+2.46h by median-bin timings or2.86h by means at NSIDE2048; the run's process
+RSS says0.256GiB, while Slurm MaxRSS3.5MiB is inconsistent and not trusted.
+Estimated work is7.31e9 candidate pixels/4.56e9 intervals. These figures are
+rough: only2–3 training geometries/bin were timed, exact active boundary-cell
+counts were not computed, and the sample has no observer-centered voxel below
+13.66cMpc/h. Inner empty cells and any larger candidate sets are therefore
+unprofiled despite the bin-level extrapolation. Do not treat this as a full-grid
+resource guarantee. Full method and disposition:
+`CF4_R2_RAY_COST_PROFILE_20261004.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_ray_cost_profile_20261004_v1/result.json`.
+
+Driver decision: the small controls support the ray geometry but do not yet
+justify the all-grid job. Next resolve observer-near/partial-shell voxel
+handling and exact active-cell census, then re-evaluate one NSIDE2048 full
+selection precompute; do not use the result as a calibrated count likelihood.
+Q-GOAL: needed selection mechanics for the same CF4-conditioned z=0 field,
+not a field result. Q-LEAN: one bounded training-only resource profile, no
+posterior, heldout score, fit, or simulation. R2 remains NO-GO; MW/M31 roles
+remain ambiguous and M33 unresolved. Their observables must later constrain
+those same roles on the NEW evolved field at LG<=0.3cMpc/h, native truth IDs
+calibration/evaluation-only. This technical follow-up is driver-reviewed as a
+consecutive audit after the prior Astra review.
+
 ## Current R2 continuation — 2026-10-03
 
 Correction to the 2026-10-03 Tully velocity-source audit: Tully table4's
