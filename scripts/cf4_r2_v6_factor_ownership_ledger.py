@@ -78,8 +78,9 @@ def make_ledger(train_keys, train_counts, points, fp_groups, crossmatch_rows):
     group_ambiguous_edges = Counter()
     group_edge_classes = defaultdict(Counter)
     pgc_groups = defaultdict(set)
-    for pgc, group in fp_groups.items():
-        pgc_groups[int(pgc)].add(str(group['label']))
+    for group in fp_groups.values():
+        for _, pgc in group['fp_rows']:
+            pgc_groups[int(pgc)].add(str(group['label']))
 
     edge_rows = []
     for raw in crossmatch_rows:
