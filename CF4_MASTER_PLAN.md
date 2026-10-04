@@ -241,15 +241,31 @@ per-evaluation/per-transition component tracing; the next bounded segment
 will determine whether that diagnostic is numerically trustworthy and which
 target term moves. See the updated exact-GL2 result note below.
 
-**Next:** run16 more one-integration-step transitions on this same chain from
-the job412389 checkpoint, restoring RNG state and keeping target, metric and
-step fixed. Record prior energy, training-count log score and conditional
-raw-mark log score separately, with a fail-closed sum-to-joint check, so the
-observed target-energy drift can be attributed. This is a bounded warm-up
-diagnostic, not posterior production. Do not start a long retained chain
-unless the longer trace supports equilibrium and stationary behavior; if it
-does not, redesign the N256 force/trajectory strategy rather than extending
-blindly. R2 remains NO-GO:
+Typed-H100 job412443 was requested for16 additional fixed-setting steps with
+score decomposition. It completed13/16 accepted transitions then failed at
+the next proposal after1:41:26 (MaxRSS13,417,552KiB under48GiB). The failed
+candidate's gradient and separately compiled value-only target differed by
+0.005473 nat, entirely in the count score; prior and raw-mark values matched.
+The strict1e-7 cross-compile comparison stopped before MH acceptance and the
+accepted checkpoint/RNG remain at transition13. This is not evidence of a
+bad likelihood or proposal rejection. Since exact-chain force and target are
+already the same GL2 value-and-gradient function, the extra separately
+compiled endpoint value was redundant; the driver removes that duplicate
+re-evaluation for this exact-GL2 chain, retaining the strict independent
+primal check for genuinely distinct force/target paths. It does not loosen a
+tolerance or alter the target. The failed proposal is replayable: momentum is
+drawn before the check, but the MH uniform draw is after it, and failed state
+does not overwrite the accepted checkpoint RNG.
+
+**Next:** resume only the three uncompleted transitions from job412443's
+transition13 accepted checkpoint, restoring its RNG. Use the exact GL2
+value-and-gradient primal directly as the endpoint Hamiltonian target; do not
+perform a redundant second compilation or relax the independent-path check.
+Keep target, metric and step fixed. This closes the bounded16-step diagnostic,
+not posterior production. Do not start a long retained chain unless the
+extended trace supports equilibrium and stationarity; otherwise redesign the
+N256 force/trajectory strategy rather than extending blindly. R2 remains
+NO-GO:
 selection/incidence is conditional and not absolutely calibrated, N256
 stationarity/uncertainty is absent, heldout prediction is absent, and no map
 has been delivered. The CF4 compilation spans multiple distance-indicator
@@ -259,9 +275,9 @@ but not every source-type/group/link inclusion process ([CF4](https://arxiv.org/
 [Desmond & Stiskalek 2026](https://academic.oup.com/mnras/article/550/2/stag1144/8709283)).
 Q-GOAL: sampler mechanics at the actual corrected N256 target are necessary
 for a z=0 field posterior but this bounded trace cannot produce that field.
-Q-LEAN: sixteen fixed-setting continuation transitions with score-term
-tracing only; no GL1 ladder, independent long chain, new simulation or
-heldout access. MW/M31 remain
+Q-LEAN: finish the fixed-setting16-transition diagnostic, avoiding only a
+redundant endpoint target recomputation; no GL1 ladder, independent long
+chain, new simulation or heldout access. MW/M31 remain
 role-ambiguous and M33 unresolved;
 all must later constrain those same roles in the same NEW evolved LG field at
 `<=0.3 cMpc/h`; truth identities remain calibration/evaluation-only.

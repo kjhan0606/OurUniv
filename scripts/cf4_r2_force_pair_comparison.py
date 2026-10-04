@@ -293,6 +293,9 @@ def main():
                 initial_source=str(initial_checkpoint),
                 rng_seed=rng_seed,
                 rng_state_restored=saved_rng_state is not None and explicit_seed is None,
+                endpoint_target_value_source=(
+                    'exact GL2 value returned by the endpoint value-and-gradient call; '
+                    'no redundant separately compiled value-only reevaluation'),
                 initial_exact_gradient_seconds=time.monotonic()-setup_started,
                 initial_fine_energy=fine_energy, completed_transitions=0, trace=[])
             report['chain'] = chain_result
@@ -307,8 +310,7 @@ def main():
                 tic = time.monotonic()
                 q, fine_energy, gradient, info = split_hmc_step(
                     lambda x: oracle(x, 2, True), metric, q, fine_energy, gradient,
-                    rng, step=STEP, steps=exact_chain_integrations,
-                    endpoint_value=lambda x: oracle(x, 2, False)[0])
+                    rng, step=STEP, steps=exact_chain_integrations)
                 if not info['accepted']:
                     exact_target_components.clear()
                     exact_target_components.update(previous_exact_components)

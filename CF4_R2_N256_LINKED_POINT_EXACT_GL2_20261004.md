@@ -80,6 +80,46 @@ conditional raw-mark log score, checking that the latter two sum to the joint
 observation score before computing the Hamiltonian target. This is diagnostic
 instrumentation only; it does not change the target.
 
+## Component-traced continuation and fail-closed stop
+
+Typed-H100 job412443 restored the job412389 checkpoint/RNG and completed13 of
+16 requested one-step exact-GL2 transitions before a numerical consistency
+guard stopped the run. It exited FAILED after1:41:26; MaxRSS was13,417,552KiB
+under the48GiB request. All13 completed proposals were accepted. Their mean
+ΔH was-0.357929 (range-0.707945 to-0.037444); exact target energy rose from
+8,228,578.904 to8,234,475.760 nat, while IC-white mean-square moved from
+0.964453 to0.965234. This is still one drifting warm-up chain, not a posterior
+or stationarity result.
+
+For these13 accepted states, prior energy rose by6,557.653 nat, the count
+log-score improved by660.082 nat (therefore lowering negative log target by
+that amount), and the conditional raw-mark log-score improved by0.715 nat.
+Thus the net target-energy increase was5,896.856 nat and was dominated by the
+prior-energy rise, partially offset by the count term. The raw-mark
+contribution was small along this path. This is component attribution for
+these accepted warm-up moves only, not a scientific decomposition of
+posterior information or a convergence diagnosis.
+
+The next proposal was not accepted or rejected: it stopped before the MH
+uniform draw. At the same candidate, the value-and-gradient call gave target
+energy8,234,648.382990 nat and the separate value-only compilation gave
+8,234,648.377517 nat, a0.005473 nat difference entirely in the training-count
+score; prior and raw-mark terms were identical. The1e-7 guard correctly
+prevented silently treating numerically distinct compiled primals as
+identical. Inspection showed that this was the exact-GL2 chain, where force
+and target already use the same value-and-gradient function; recomputing that
+same scalar via a separately compiled value-only path was redundant. The
+driver now uses the endpoint value returned with the exact GL2 gradient for
+the MH Hamiltonian, without loosening the independent-path guard used when
+force and target are genuinely distinct.
+
+The accepted checkpoint/RNG remains at transition13. Because the failed
+proposal consumed its momentum before the primal guard but the MH uniform is
+drawn only afterward, restoring that accepted RNG state replays the same
+proposal and then continues the stream consistently. Resume only the three
+remaining transitions, with no changed target, metric or step. Do not count
+the aborted candidate as a chain transition.
+
 ## Interpretation and next action
 
 The result establishes that the corrected conditional target has a finite
@@ -90,12 +130,12 @@ away from the initializer;24 transitions cannot establish equilibrium,
 mixing, effective sample size or uncertainty. In particular, “24/24 accepted”
 must not be quoted as a calibrated acceptance rate.
 
-Continue the same checkpointed chain for16 additional one-step transitions at
-the unchanged target, metric and step. Record prior energy and both log-score
-components separately to diagnose which term drives the energy change. This is
-still a bounded warm-up/mechanics continuation, not posterior production. No
-GL1 force, parameter ladder, new gravity run or held-out access is part of this
-diagnostic.
+Resume the accepted transition13 checkpoint for the three uncompleted moves
+of this bounded16-step diagnostic, keeping target, metric and step fixed.
+Use the exact-GL2 value returned with its gradient for the Hamiltonian, and
+retain the fail-closed value/gradient guard for different force/target paths.
+No GL1 force, parameter ladder, new gravity run or held-out access is part of
+this warm-up continuation.
 
 **Q-GOAL:** exact-target dynamics are necessary for the current N256/1.5 z=0
 posterior route but are not the density map or zoom IC. MW/M31 remain
@@ -103,7 +143,8 @@ role-ambiguous and M33 unresolved; their observables must eventually constrain
 the same NEW evolved LG field at `<=0.3 cMpc/h`. Native truth identities remain
 calibration/evaluation-only.
 
-**Q-LEAN:** exact-force continuation with target-term decomposition only; no
+**Q-LEAN:** finish the fixed-setting segment with target-term decomposition;
+avoid only a redundant second compilation of the same exact-GL2 target. No
 new likelihood factor, survey census, simulation, held-out score or sampler
 ladder. R2 remains NO-GO: calibrated source/group selection,
 shared-member covariance, stationarity, uncertainty, held-out prediction and
