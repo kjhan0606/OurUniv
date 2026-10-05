@@ -146,13 +146,25 @@ The four boundary and four smooth controls also clustered near18 cMpc/h, so
 the corrected selector stratifies both categories across four radial bands.
 The driver corrected the index contract, added bounds/geometry validation and
 an index-coded synthetic-field regression (six focused tests pass). One
-corrected replay uses fresh output `r2_active_v6_pixel_angular_local_20261005_v2`;
-it remains a local fixed-state GL2-node angular comparison, not a posterior,
-map delivery or likelihood calibration. No heldout outcomes, PM replay,
+corrected A100 Slurm replay413638 completed in1:02 (MaxRSS1.84GiB, all six
+tests pass) in fresh output `r2_active_v6_pixel_angular_local_20261005_v2`.
+Across its twelve geometry-selected source-cell patches, changing from the
+parent-cell angular average to per-GL2-node native NSIDE512 map lookup changed
+the six-population training expected-count subtotals by
+`[+1.40%,+3.13%,+0.40%,+6.62%,+12.0%,-1.66%]`. These are selected-patch
+subtotals, not full-field, likelihood or posterior changes. The largest
+single contribution is the smooth-interior control at120.1 cMpc/h in
+population4 (`+0.00448` expected counts); the largest map-boundary contribution
+is population1 at60.6 cMpc/h (`+0.000652`). This points to both parent-to-child
+angular-average mismatch and within-cell angular variation, without measuring
+their global impact; do not silently alter production.
+Nearest-geometric-key samples are not support-aware and are excluded from
+key-level interpretation; a follow-up must use actual positive RSD/TSC/LOS
+support and report no-support populations. No heldout outcomes, PM replay,
 optimization, high-NSIDE ladder or production IC. MW/M31 remain ambiguous,
 M33 unresolved, and their observables must constrain the same NEW evolved LG
 field at `<=0.3 cMpc/h`, with truth identities reserved for evaluation. R2
-remains NO-GO. Full correction and rerun plan:
+remains NO-GO. Full correction, result and limits:
 `CF4_R2_ACTIVE_V6_ANGULAR_LOCAL_20261005.md`.
 
 ## Current R2 continuation — 2026-10-05

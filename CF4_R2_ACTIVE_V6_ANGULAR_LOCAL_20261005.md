@@ -95,13 +95,42 @@ against its declared N256 cell before any field gather, and adds an
 index-coded synthetic-field regression. Local syntax checks and six focused
 tests pass.
 
-One corrected replay is submitted separately to the fresh output directory
-`/gpfs/kjhan/CF4/z0_density/r2_active_v6_pixel_angular_local_20261005_v2/`.
+The corrected replay, Slurm job413638, ran on `syn101` A100 with 4 CPUs and
+32GiB requested memory. It completed in1:02, exit0, with MaxRSS1,880,360KiB;
+all six focused tests passed in the allocation. The twelve controls now span
+the intended radial strata, and the first control's saved N256 flat ID is
+8,289,419, consistent with `[126,124,139]`.
+
+For these twelve selected source-cell patches only, the cell-constant versus
+per-GL2-node NSIDE512 map-weighted training expected-count subtotal changed
+by `[+0.000167,+0.000643,+0.0000339,+0.000550,+0.003523,-0.000271]` for the
+six tracer populations. Relative to each selected-patch subtotal, these are
+`[+1.40%,+3.13%,+0.40%,+6.62%,+12.0%,-1.66%]`. These are local contributions
+from geometry-selected cells—not whole-field changes, a likelihood delta,
+posterior movement or a global error bound. The largest single positive
+contribution is from `smooth_interior_95_135` at about120.1 cMpc/h, population
+4 (`+0.00448` expected counts); the largest map-boundary contribution is
+population1 at about60.6 cMpc/h (`+0.000652`). Thus the discrepancy is not
+explained solely by within-child pixel-boundary variation: replication of a
+3-cMpc/h parent angular average onto its 1.5-cMpc/h children can also matter.
+These sparse controls justify a bounded local reference before any
+production-operator change, but do not quantify a whole-field effect.
+
+The saved nearest-*geometric* occupied-key samples are not a support-aware
+key comparison: several are many cMpc/h from the displaced source and have
+zero kernel intensity. Their values are retained in the artifact but are not
+used as evidence about local key-level effects. A follow-up key diagnostic,
+if needed, must select from actual positive support of the same RSD/TSC/LOS
+operator and explicitly report populations with no supported training key.
+The expected-count subtotal above uses the full training exposure window,
+includes empty exposed cells, and does not load observed counts or heldout
+values.
+
 This remains a bounded GL2-node angular-map comparison on the saved incomplete
 conditional diagnostic state—not a converged posterior, calibrated
-likelihood, delivered density map or R2 completion. No heldout values, PM
-replay, optimization extension, NSIDE escalation or production IC are in
-scope. MW/M31 roles remain ambiguous and M33 unresolved; their observables
-must ultimately constrain the same NEW evolved field at LG `<=0.3 cMpc/h`,
-with native truth identities used only for calibration/evaluation. R2 remains
-NO-GO.
+likelihood, delivered density map or R2 completion. No PM replay, optimization
+extension, NSIDE escalation or production IC was run. MW/M31 roles remain
+ambiguous and M33 unresolved; their observables must ultimately constrain
+the same NEW evolved field at LG `<=0.3 cMpc/h`, with native truth identities
+used only for calibration/evaluation. R2 remains NO-GO. Result:
+`/gpfs/kjhan/CF4/z0_density/r2_active_v6_pixel_angular_local_20261005_v2/result.json`.
