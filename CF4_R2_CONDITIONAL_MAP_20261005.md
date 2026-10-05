@@ -47,9 +47,14 @@ cMpc/h structure.
 
 ## Execution and resource bounds
 
-One typed-H100 Slurm allocation, selected after one resource check found H200
-occupied and no idle permitted H200/H100/A100 GPU. The directly measured
-exact-GL2 N256 peak is 30.91 GiB on a 69.81-GiB device. The preceding joint
+The first attempt used one typed-H100 Slurm allocation based on the resource
+snapshot at that time. For the retry, the updated typed-GRES allocation showed
+5 of 8 H200 devices free (syn104), versus 2 of 5 H100 and 1 of 8 A100. The
+retry therefore uses `--partition=h200 --gres=gpu:H200:1`, and the executable
+checks that it actually received H200 plus sufficient device-memory headroom.
+The directly measured exact-GL2 N256 peak is 30.91 GiB on a 69.81-GiB device
+from the earlier H100 profile; the runtime guard checks the selected H200's
+actual reported device limit before evaluating the target. The preceding joint
 pilot host peak was 15.26 GiB; three L-BFGS correction pairs add approximately
 0.75 GiB for the 16,777,240-dimensional double vector, so the 48-GiB host
 request retains more than 20% headroom. The job may queue normally.
@@ -103,6 +108,11 @@ checks that the old ceiling rejects rather than truncates, and that the larger
 ceiling preserves the full rounded width. This is a mechanical recovery, not
 a relaxation of a science criterion. Retry output is isolated at
 `/gpfs/kjhan/CF4/z0_density/r2_conditional_map_20261005_v2/`.
+
+The failed job used H100 because that was the earlier resource snapshot. The
+retry switches to H200 after a fresh typed-GRES check found five unallocated
+H200 devices; host-memory request, runtime/evaluation caps, and all science
+inputs stay fixed.
 
 Status at submission: pending. Final interpretation and artifacts are added
 below after the single allocation terminates.

@@ -4143,7 +4143,8 @@ raises only the fail-closed ceiling to 131,072 cells for this single
 diagnostic. No source support is clipped; the candidate geometry, likelihood,
 quadrature, priors, eight-evaluation cap, and selection limitations are
 unchanged. Generic callers retain the old default. See
-`CF4_R2_CONDITIONAL_MAP_20261005.md`. The isolated v2 H100 retry is the same
+`CF4_R2_CONDITIONAL_MAP_20261005.md`. A fresh typed-GRES snapshot showed five
+free H200 devices, so the isolated v2 retry uses `gpu:H200:1`; it is the same
 conditional MAP diagnostic, not a posterior or production IC. R2 remains
 NO-GO. Q-GOAL: one actual-data conditional z=0 field probe only; it does not
 resolve the <=0.3 cMpc/h LG objective. MW/M31 remain role-ambiguous and M33

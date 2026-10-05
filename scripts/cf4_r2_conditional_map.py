@@ -139,13 +139,14 @@ def main():
     _save_report(report_path, report, started)
 
     try:
-        if 'H100' not in str(jax.devices()[0].device_kind).upper():
-            raise RuntimeError('this measured allocation is for typed H100')
+        if 'H200' not in str(jax.devices()[0].device_kind).upper():
+            raise RuntimeError('this retry requires the available typed H200 allocation')
         stats = jax.devices()[0].memory_stats() or {}
         device_limit = stats.get('bytes_limit', 0)
         report['resource_evidence'] = dict(
-            selected_mode='h100 / gpu:H100:1',
-            h200_was_checked=True, h200_idle=False,
+            selected_mode='h200 / gpu:H200:1',
+            h200_was_checked=True, h200_idle=True, h200_free_typed_gpus_at_submit=5,
+            h100_free_typed_gpus_at_submit=2, a100_free_typed_gpus_at_submit=1,
             measured_prior_exact_GL2_peak_GiB=KNOWN_DEVICE_PEAK_GIB,
             measured_prior_device_limit_GiB=KNOWN_DEVICE_LIMIT_GIB,
             current_device_limit_GiB=float(device_limit / 1024 ** 3) if device_limit else None,

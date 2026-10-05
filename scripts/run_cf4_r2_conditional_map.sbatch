@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=cf4_R2_condmap
-#SBATCH --partition=h100
-#SBATCH --gres=gpu:H100:1
+#SBATCH --partition=h200
+#SBATCH --gres=gpu:H200:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
