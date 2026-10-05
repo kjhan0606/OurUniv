@@ -100,6 +100,21 @@ metadata/README access recorded above, not a bulk snapshot download or
 creation/retrieval of a new API token. Do not infer authority for account
 registration or unrelated credentialed services.
 
+R2 selected-mark denominator audit (2026-10-05): the existing CF4/Tempel/2M++
+catalogues do not identify a complete CF4 group-inclusion denominator. The
+Howlett `f_n` correction is per selected SDSS-PV galaxy and is already part of
+its published distance PDF; it is not a group-inclusion or redshift-success
+law. The active v6 1,414-row linked training cohort has one secure count-point
+link and one distinct Tempel parent per FP mark, so it supports a narrower
+conditional-mark estimand when conditioned on the observed point/mark
+presence, but not the full CF4 survey likelihood. The raw target already
+normalizes marks against the same count-point source kernel and must not add a
+second `f_n` or count occurrence. R2 remains NO-GO for a full calibrated
+posterior. Next field-inference work would be a labeled conditional diagnostic
+using v6 training counts and linked marks, with untouched holdout reserved;
+that material estimand choice is not launched by this audit. See
+`CF4_R2_SELECTED_MARK_DENOMINATOR_AUDIT_20261005.md`.
+
 ## Current R2 continuation — 2026-10-05
 
 The official SDSS-PV mock candidate passed a bounded, score-blind eligibility
