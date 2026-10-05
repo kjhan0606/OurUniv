@@ -160,8 +160,15 @@ angular-average mismatch and within-cell angular variation, without measuring
 their global impact; do not silently alter production.
 Nearest-geometric-key samples are not support-aware and are excluded from
 key-level interpretation; a follow-up must use actual positive RSD/TSC/LOS
-support and report no-support populations. No heldout outcomes, PM replay,
-optimization, high-NSIDE ladder or production IC. MW/M31 remain ambiguous,
+support and report no-support populations. Next is one bounded three-arm
+local count-operator reference on the same fixed state/geometry controls:
+active GL2/cell-constant, refined source-cell integration with the parent map
+constant, and the same refinement with native NSIDE512 pixels. Use exact
+ray-box intersections and unrenormalized physical volume weights; perform one
+angular-subdivision and one radial-order check on operator outputs. Stop as
+inconclusive if this local reference does not converge; no full-grid ladder,
+heldout values, FP ratio, posterior or production change. No heldout outcomes,
+PM replay, optimization, high-NSIDE ladder or production IC. MW/M31 remain ambiguous,
 M33 unresolved, and their observables must constrain the same NEW evolved LG
 field at `<=0.3 cMpc/h`, with truth identities reserved for evaluation. R2
 remains NO-GO. Full correction, result and limits:

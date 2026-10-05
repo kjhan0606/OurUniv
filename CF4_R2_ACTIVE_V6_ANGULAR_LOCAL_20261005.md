@@ -120,11 +120,34 @@ The saved nearest-*geometric* occupied-key samples are not a support-aware
 key comparison: several are many cMpc/h from the displaced source and have
 zero kernel intensity. Their values are retained in the artifact but are not
 used as evidence about local key-level effects. A follow-up key diagnostic,
-if needed, must select from actual positive support of the same RSD/TSC/LOS
-operator and explicitly report populations with no supported training key.
+must select from actual positive support of the same RSD/TSC/LOS operator and
+explicitly report populations with no supported training key.
 The expected-count subtotal above uses the full training exposure window,
 includes empty exposed cells, and does not load observed counts or heldout
 values.
+
+## Next bounded reference
+
+Before any production angular-operator change, the driver will use the same
+fixed state and geometry-only controls for one three-arm local comparison:
+(1) active GL2/cell-constant map, (2) locally refined source-cell integration
+with the parent-cell map held constant, and (3) the same refined integration
+using pinned native-NSIDE512 pixel values. Reuse the existing ray-box
+intersection routine; use physical `dΩ r²dr / Vcell` weights without
+renormalizing away closure error, and do not clip source integration at the
+observed 5/180 cMpc/h cuts. Include one predeclared angular-subdivision check
+and one radial-order check on actual operator outputs. For sparse key reports,
+choose only keys with positive support from the same displaced RSD/TSC/LOS
+kernel; say “no supported training key” when none exists. Report absolute and
+relative differences, especially where the reference signal is small.
+
+This remains a 12-cell fixed-state count-operator diagnostic: no all-grid
+precompute, full likelihood, heldout values, FP-ratio update, PM replay,
+optimization or new simulation. If the bounded reference does not converge,
+call the local comparison inconclusive; do not escalate to a resolution
+ladder. Even a stable result supports only this local count term, not a
+calibrated z=0 posterior or R2 completion. Q-GOAL/Q-LEAN and the unresolved
+MW/M31/M33 same-new-field requirements remain unchanged.
 
 This remains a bounded GL2-node angular-map comparison on the saved incomplete
 conditional diagnostic state—not a converged posterior, calibrated
