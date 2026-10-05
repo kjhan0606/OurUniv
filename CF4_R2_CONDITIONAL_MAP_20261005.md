@@ -134,8 +134,10 @@ field value was changed.
 ## Conditional MAP attempt result — job 413612
 
 The H200 job completed normally in 1:23:15 with 6 exact value/gradient
-evaluations in 4 optimizer iterations. The best objective was `8219182.53`,
-down `29860.86` (`0.362%`) from the initializer. The best decomposition was
+evaluations in 4 optimizer iterations. Evaluation 6 is the best objective,
+`8214941.8818`, down `29860.8550` (`0.362%`) from the initializer. The prior
+sentence's originally transcribed `8219182.53` was evaluation 5, not the best;
+the result JSON is authoritative. The best decomposition was
 IC prior NLL `8072142.03`, nuisance prior NLL `1.21`, count log likelihood
 `-144588.28`, and conditional FP log likelihood `+1789.64`. The RMS density
 change from the initializer was `1.411`; componentwise velocity changes were
