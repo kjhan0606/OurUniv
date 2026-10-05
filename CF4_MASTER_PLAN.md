@@ -115,6 +115,26 @@ using v6 training counts and linked marks, with untouched holdout reserved;
 that material estimand choice is not launched by this audit. See
 `CF4_R2_SELECTED_MARK_DENOMINATOR_AUDIT_20261005.md`.
 
+User approved a conditional field diagnostic after that audit.
+`CF4_R2_CONDITIONAL_MAP_20261005.md` records the exact estimand, advisory
+review and implementation disposition. Fable's CLI returned a usage-limit
+message, so the prescribed Astra backup review returned CONDITIONAL GO. The
+driver adopts its constraints: one exact matched-GL2 N256 conditional MAP
+attempt, eight objective-and-gradient evaluations maximum including rejected
+line-search trials, 100-minute application/120-minute Slurm cap, incremental
+best-state checkpointing, and separate IC-prior/nuisance/count/FP terms.
+The old N256 initializer's IC coordinates are reused, but all 24 nuisance
+coordinates start at the current prior origin rather than being interpreted
+as physical continuation from the older parameterization. PMWD evolution is
+evaluated as part of each latent-IC objective; no standalone RAMSES run.
+Physical diagonal velocity dispersion is output-only, not part of the active
+likelihood. H200 was occupied; the compatible measured H100 mode is selected
+and may queue. This remains a conditional optimization diagnostic, not a
+stationary posterior, calibrated full CF4 likelihood, heldout prediction,
+production IC or LG result. MW/M31 remain ambiguous and M33 unresolved; their
+observables must later constrain those roles on the same NEW evolved field at
+LG `<=0.3 cMpc/h`, native truth IDs evaluation-only. R2 remains NO-GO.
+
 ## Current R2 continuation — 2026-10-05
 
 The official SDSS-PV mock candidate passed a bounded, score-blind eligibility
