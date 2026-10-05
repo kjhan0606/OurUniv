@@ -93,6 +93,11 @@ def _save_report(path, report, started):
     path.write_text(json.dumps(report, indent=2, allow_nan=False) + '\n')
 
 
+def _resource_snapshot_count(name):
+    value = os.environ.get(name)
+    return None if value is None else int(value)
+
+
 def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU allocation required')
@@ -144,10 +149,14 @@ def main():
             raise RuntimeError('this retry requires the available typed H200 allocation')
         stats = jax.devices()[0].memory_stats() or {}
         device_limit = stats.get('bytes_limit', 0)
+        h200_free = _resource_snapshot_count('CF4_H200_FREE_TYPED_GPUS')
         report['resource_evidence'] = dict(
             selected_mode='h200 / gpu:H200:1',
-            h200_was_checked=True, h200_idle=True, h200_free_typed_gpus_at_submit=5,
-            h100_free_typed_gpus_at_submit=2, a100_free_typed_gpus_at_submit=1,
+            h200_was_checked=h200_free is not None,
+            h200_idle=None if h200_free is None else h200_free > 0,
+            h200_free_typed_gpus_at_submit=h200_free,
+            h100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_H100_FREE_TYPED_GPUS'),
+            a100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_A100_FREE_TYPED_GPUS'),
             measured_prior_exact_GL2_peak_GiB=KNOWN_DEVICE_PEAK_GIB,
             measured_prior_device_limit_GiB=KNOWN_DEVICE_LIMIT_GIB,
             current_device_limit_GiB=float(device_limit / 1024 ** 3) if device_limit else None,

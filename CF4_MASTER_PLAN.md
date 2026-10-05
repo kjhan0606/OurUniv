@@ -4148,8 +4148,14 @@ the submitted SHA and a persistence-callback arity bug; 413598 completed one
 exact initializer evaluation, then lost its in-memory score on callback
 failure without moving the optimizer or accessing heldout values. Both are
 recorded as non-results. The callback fix is covered by a unit test. A fresh
-typed-GRES snapshot showed five free H200 devices, so retry v3 uses
-`gpu:H200:1`; it is the same conditional MAP diagnostic, not a posterior or production IC. R2 remains
+typed-GRES snapshot before retry v3 showed one of eight H200 devices
+allocated (seven unallocated), so it used `gpu:H200:1`; H100/A100 were not
+rechecked at that submission. Job 413612 completed six exact evaluations but
+hit its four-iteration ceiling with gradient infinity norm 13524.69, so the
+best field is an incomplete diagnostic, not a converged MAP/posterior or
+production IC. Objective decreased 0.362%; R2 remains NO-GO. See
+`CF4_R2_CONDITIONAL_MAP_20261005.md`. No automatic follow-on fit was launched.
+R2 remains
 NO-GO. Q-GOAL: one actual-data conditional z=0 field probe only; it does not
 resolve the <=0.3 cMpc/h LG objective. MW/M31 remain role-ambiguous and M33
 unresolved; their observables must constrain those same roles on the same NEW

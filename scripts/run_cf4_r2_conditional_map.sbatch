@@ -11,7 +11,10 @@
 #SBATCH --output=/gpfs/kjhan/CF4/logs/%x_%j.out
 #SBATCH --error=/gpfs/kjhan/CF4/logs/%x_%j.err
 set -euo pipefail
-: "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}"
+: "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}" \
+  "${CF4_H200_FREE_TYPED_GPUS:?provide the pre-submit typed-GRES snapshot}"
+[[ "$CF4_H200_FREE_TYPED_GPUS" =~ ^[0-9]+$ ]]
+(( CF4_H200_FREE_TYPED_GPUS > 0 ))
 module purge
 cd /home/kjhan/BACKUP/CF4
 test "$(git rev-parse HEAD)" = "$CF4_EXPECTED_COMMIT"

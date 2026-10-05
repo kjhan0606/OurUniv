@@ -48,10 +48,12 @@ cMpc/h structure.
 ## Execution and resource bounds
 
 The first attempt used one typed-H100 Slurm allocation based on the resource
-snapshot at that time. For the retry, the updated typed-GRES allocation showed
-5 of 8 H200 devices free (syn104), versus 2 of 5 H100 and 1 of 8 A100. The
-retry therefore uses `--partition=h200 --gres=gpu:H200:1`, and the executable
-checks that it actually received H200 plus sufficient device-memory headroom.
+snapshot at that time. The v2 retry preflight showed 5 of 8 H200 devices free
+on syn104. Before v3 submission, a fresh `scontrol show node syn104` showed
+only 1 of 8 H200 devices allocated, so 7 were unallocated; H100/A100 counts
+were not rechecked for that submission. The retry therefore uses
+`--partition=h200 --gres=gpu:H200:1`, and the executable checks that it
+actually received H200 plus sufficient device-memory headroom.
 The directly measured exact-GL2 N256 peak is 30.91 GiB on a 69.81-GiB device
 from the earlier H100 profile; the runtime guard checks the selected H200's
 actual reported device limit before evaluating the target. The preceding joint
@@ -123,7 +125,32 @@ values remained unloaded. The callback signature is now tested, and the outer
 failure handler also records completed evaluation rows and best objective if
 a later error occurs. H200 reports a 104.85-GiB device limit, passing the
 existing runtime memory-headroom guard. Retry v3 keeps all scientific inputs
-and bounds fixed; only persistence/error reporting is repaired.
+and bounds fixed; only persistence/error reporting is repaired. The v3 JSON
+initially carried stale H100/A100 free-GPU counts and the v2 H200 count; this
+administrative metadata was corrected to the recorded v3 pre-submit snapshot
+(7 H200 free, other-mode counts unavailable) after completion. No score or
+field value was changed.
 
-Status at retry-v3 submission: pending. Final interpretation and artifacts
-are added below after this bounded allocation terminates.
+## Conditional MAP attempt result — job 413612
+
+The H200 job completed normally in 1:23:15 with 6 exact value/gradient
+evaluations in 4 optimizer iterations. The best objective was `8219182.53`,
+down `29860.86` (`0.362%`) from the initializer. The best decomposition was
+IC prior NLL `8072142.03`, nuisance prior NLL `1.21`, count log likelihood
+`-144588.28`, and conditional FP log likelihood `+1789.64`. The RMS density
+change from the initializer was `1.411`; componentwise velocity changes were
+`[51.70, 40.46, 54.28] km/s`. The best gradient infinity norm was
+`13524.69`, versus the required `1e-4`, and the solver stopped at the
+four-iteration cap. The code therefore reports
+`CONDITIONAL_MAP_ATTEMPT_INCOMPLETE`, not a converged MAP.
+
+This demonstrates that a finite optimizer path can evaluate the declared
+training objective and lower it modestly; it does **not** establish a stable
+or calibrated z=0 density/velocity posterior. The incomplete best field is
+retained only as a diagnostic artifact, not promoted as an IC, seed, posterior
+sample or production map. Heldout values remain unloaded. Selection and
+mark-availability calibration, cell-exposure quadrature stability, MW/M31
+role ambiguity and M33 non-identification remain open. R2 stays NO-GO.
+
+Status: job 413612 completed; interpretation and limitations are recorded
+above. No automatic follow-on fit was launched.
