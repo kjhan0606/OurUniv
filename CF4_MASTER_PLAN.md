@@ -135,6 +135,26 @@ production IC or LG result. MW/M31 remain ambiguous and M33 unresolved; their
 observables must later constrain those roles on the same NEW evolved field at
 LG `<=0.3 cMpc/h`, native truth IDs evaluation-only. R2 remains NO-GO.
 
+Correction to the active-v6 angular local operator diagnostic (2026-10-05):
+Slurm413637 exited successfully, but its field-dependent expected-count and
+nearest-key intensity deltas are invalid and withdrawn. The control selector
+stored candidate-array ranks while the GPU consumer treated them as flattened
+N256 grid IDs; source `[126,124,139]`, for example, requires flat ID8,289,419,
+not candidate rank282. Preserve the v1 artifact unchanged for provenance;
+only its geometry/control positions and angular contrasts remain descriptive.
+The four boundary and four smooth controls also clustered near18 cMpc/h, so
+the corrected selector stratifies both categories across four radial bands.
+The driver corrected the index contract, added bounds/geometry validation and
+an index-coded synthetic-field regression (six focused tests pass). One
+corrected replay uses fresh output `r2_active_v6_pixel_angular_local_20261005_v2`;
+it remains a local fixed-state GL2-node angular comparison, not a posterior,
+map delivery or likelihood calibration. No heldout outcomes, PM replay,
+optimization, high-NSIDE ladder or production IC. MW/M31 remain ambiguous,
+M33 unresolved, and their observables must constrain the same NEW evolved LG
+field at `<=0.3 cMpc/h`, with truth identities reserved for evaluation. R2
+remains NO-GO. Full correction and rerun plan:
+`CF4_R2_ACTIVE_V6_ANGULAR_LOCAL_20261005.md`.
+
 ## Current R2 continuation — 2026-10-05
 
 The official SDSS-PV mock candidate passed a bounded, score-blind eligibility

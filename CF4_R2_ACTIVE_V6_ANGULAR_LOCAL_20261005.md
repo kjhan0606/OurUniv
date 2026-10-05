@@ -39,6 +39,11 @@ global resolution ladder or automatic follow-up.
 
 The Slurm job freezes 12 N256 source cells from map-boundary, radial-boundary
 and smooth-interior geometry before loading training keys or field values.
+For the corrected replay, map-boundary and smooth-interior controls are each
+stratified across four radial intervals (18–55, 55–95, 95–135, 135–168
+cMpc/h), in addition to the four radial-boundary controls. Candidate-list
+ranks are recorded separately from the C-order flattened N256 grid IDs used
+to gather the field.
 For each cell it compares the existing parent-cell angular average against a
 reference that looks up the same pinned NSIDE512 RING map at each of that
 cell's eight GL2 volume nodes. Density, mean velocity, full-box-normalized
@@ -68,5 +73,35 @@ identities remain calibration/evaluation-only. R2 remains NO-GO.
 
 ## Execution result
 
-Pending Slurm execution. The output directory is
-`/gpfs/kjhan/CF4/z0_density/r2_active_v6_pixel_angular_local_20261005_v1/`.
+The first replay, Slurm job413637, completed successfully as a process in
+1:17 (MaxRSS 2,013,924 KiB), but its **field-dependent measurements are
+invalid and withdrawn**. The control selector returned candidate-list ranks;
+the GPU runner mistakenly used those small ranks as flattened indices into
+the full N256 density, velocity and tracer-rate arrays. For example, source
+cell `[126,124,139]` has flattened index8,289,419, not candidate rank282.
+Thus the saved source positions and angular geometry are valid, but their
+field-weighted expected-count and nearest-key intensity values came from
+unrelated cells. Do not interpret those deltas as same-field evidence. The
+original artifact at
+`/gpfs/kjhan/CF4/z0_density/r2_active_v6_pixel_angular_local_20261005_v1/`
+is preserved unchanged for provenance.
+
+The v1 geometry-only map contrasts remain descriptive. Its four
+maximum-contrast and four smooth controls clustered near18 cMpc/h because the
+selection rule did not stratify radius; this is a control-design limitation,
+not a physical-field conclusion. The corrected code makes the distinction
+explicit (`candidate_indices` versus `flat_ids`), checks each flattened ID
+against its declared N256 cell before any field gather, and adds an
+index-coded synthetic-field regression. Local syntax checks and six focused
+tests pass.
+
+One corrected replay is submitted separately to the fresh output directory
+`/gpfs/kjhan/CF4/z0_density/r2_active_v6_pixel_angular_local_20261005_v2/`.
+This remains a bounded GL2-node angular-map comparison on the saved incomplete
+conditional diagnostic state—not a converged posterior, calibrated
+likelihood, delivered density map or R2 completion. No heldout values, PM
+replay, optimization extension, NSIDE escalation or production IC are in
+scope. MW/M31 roles remain ambiguous and M33 unresolved; their observables
+must ultimately constrain the same NEW evolved field at LG `<=0.3 cMpc/h`,
+with native truth identities used only for calibration/evaluation. R2 remains
+NO-GO.

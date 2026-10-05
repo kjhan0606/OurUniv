@@ -24,6 +24,16 @@ def source_volume_rule(order=2):
     return offsets, weights
 
 
+def flatten_cell_indices(ijk, n=N):
+    """Return C-order flattened grid-cell indices for integer ``(i,j,k)``."""
+    ijk = np.asarray(ijk)
+    if ijk.ndim != 2 or ijk.shape[1] != 3 or not np.issubdtype(ijk.dtype, np.integer):
+        raise ValueError("integer cell indices with shape (n,3) required")
+    if np.any((ijk < 0) | (ijk >= n)):
+        raise ValueError("cell index outside the grid")
+    return (ijk[:, 0].astype(np.int64) * n + ijk[:, 1]) * n + ijk[:, 2]
+
+
 def pixel_completeness(points, maps, rotation, *, observer=OBSERVER, nside=512):
     """Evaluate the pinned RING maps at fixed physical source sightlines."""
     points = np.asarray(points, dtype=np.float64)
@@ -53,7 +63,7 @@ def _fibonacci_directions(count=1536):
 
 
 def choose_controls(maps, rotation, coarse_angular):
-    """Freeze 12 score-blind cells: 4 map boundaries, 4 radial, 4 smooth."""
+    """Freeze 12 score-blind, radially stratified cells."""
     offsets, _ = source_volume_rule()
     radii = np.asarray([6., 18., 30., 45., 60., 90., 120., 150., 168., 178.])
     points = (OBSERVER[None, None, :] + radii[:, None, None]
@@ -92,27 +102,34 @@ def choose_controls(maps, rotation, coarse_angular):
                 return
         raise RuntimeError(f"not enough distinct geometry controls for {category}")
 
+    strata = ((18., 55.), (55., 95.), (95., 135.), (135., 168.))
     boundary_order = np.argsort(-contrast, kind="stable")
-    append_best(boundary_order, "map_boundary", 4,
-                lambda i: 18. <= centre_radius[i] <= 168.
-                and float(np.max(mean_direct[i])) > 0.)
+    for low, high in strata:
+        append_best(
+            boundary_order, f"map_boundary_{low:g}_{high:g}", 1,
+            lambda i, lo=low, hi=high: lo <= centre_radius[i] < hi
+            and float(np.max(mean_direct[i])) > 0.)
     for target in (6., 30., 90., 178.):
         radial_order = np.argsort(np.abs(centre_radius - target), kind="stable")
         append_best(radial_order, f"radial_{target:g}", 1)
     smooth_order = np.argsort(contrast, kind="stable")
-    append_best(smooth_order, "smooth_interior", 4,
-                lambda i: 18. <= centre_radius[i] <= 168.
-                and float(np.min(mean_direct[i])) > 0.)
+    for low, high in strata:
+        append_best(
+            smooth_order, f"smooth_interior_{low:g}_{high:g}", 1,
+            lambda i, lo=low, hi=high: lo <= centre_radius[i] < hi
+            and float(np.min(mean_direct[i])) > 0.)
 
-    ids = np.asarray([idx for idx, _ in chosen], dtype=np.int64)
+    candidate_indices = np.asarray([idx for idx, _ in chosen], dtype=np.int64)
+    selected_ijk = ijk[candidate_indices]
     return dict(
-        ids=ids,
-        ijk=ijk[ids],
-        positions=centres[ids],
-        radius=centre_radius[ids],
+        candidate_indices=candidate_indices,
+        flat_ids=flatten_cell_indices(selected_ijk),
+        ijk=selected_ijk,
+        positions=centres[candidate_indices],
+        radius=centre_radius[candidate_indices],
         labels=[label for _, label in chosen],
-        parent_angular=base_angular[ids],
-        direct_angular=direct[ids],
-        direct_contrast=contrast[ids],
+        parent_angular=base_angular[candidate_indices],
+        direct_angular=direct[candidate_indices],
+        direct_contrast=contrast[candidate_indices],
         quadrature_offsets=offsets,
     )

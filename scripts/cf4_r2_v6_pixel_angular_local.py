@@ -125,11 +125,29 @@ def main():
         control_selection = json.loads((out / "control_selection.json").read_text())
         with np.load(out / "controls.npz", allow_pickle=False) as f:
             controls = {key: f[key].copy() for key in f.files}
+        candidate_indices = controls["candidate_indices"]
+        flat_ids = controls["flat_ids"]
+        ijk = controls["ijk"]
+        if (candidate_indices.ndim != 1 or flat_ids.shape != candidate_indices.shape
+                or ijk.shape != (len(flat_ids), 3)
+                or not np.issubdtype(candidate_indices.dtype, np.integer)
+                or not np.issubdtype(flat_ids.dtype, np.integer)
+                or not np.issubdtype(ijk.dtype, np.integer)):
+            raise ValueError("frozen control index arrays have invalid shape or dtype")
+        expected_flat_ids = (ijk[:, 0].astype(np.int64) * N + ijk[:, 1]) * N + ijk[:, 2]
+        if (np.any((ijk < 0) | (ijk >= N))
+                or np.any((flat_ids < 0) | (flat_ids >= N**3))
+                or not np.array_equal(flat_ids, expected_flat_ids)):
+            raise ValueError("frozen N256 flattened IDs do not map to their declared cells")
+        if (not np.array_equal(control_selection["candidate_indices"], candidate_indices.tolist())
+                or not np.array_equal(control_selection["source_flat_ids_N256"], flat_ids.tolist())
+                or not np.array_equal(control_selection["source_ijk_N256"], ijk.tolist())):
+            raise ValueError("control NPZ arrays disagree with the score-blind selection record")
         with np.load(SOURCE_PATH, allow_pickle=False) as f:
             coarse_source = {key: f[key].copy() for key in f.files}
         if coarse_source["positions"].shape != (128**3, 3):
             raise ValueError("the pinned N128 source geometry changed")
-        parent = controls["ijk"] // 2
+        parent = ijk // 2
         parent_flat = (parent[:, 0] * 128 + parent[:, 1]) * 128 + parent[:, 2]
         expected_parent_angular = coarse_source["angular"][:, parent_flat].T
         if not np.array_equal(controls["parent_angular"], expected_parent_angular):
@@ -146,9 +164,11 @@ def main():
 
         report["control_selection"] = {
             "rule": control_selection["selection_rule"],
-            "count": int(len(controls["ids"])),
+            "count": int(len(flat_ids)),
             "labels": control_selection["labels"],
-            "source_ijk_N256": controls["ijk"].tolist(),
+            "candidate_indices_not_grid_indices": candidate_indices.tolist(),
+            "source_flat_ids_N256": flat_ids.tolist(),
+            "source_ijk_N256": ijk.tolist(),
             "source_radius_cMpc_h": controls["radius"].tolist(),
             "angular_map_within_cell_range_max": controls["direct_contrast"].tolist(),
             "pinned_map_hashes": control_selection["angular_maps"]["sha256"],
@@ -181,7 +201,7 @@ def main():
         current_angles = controls["parent_angular"]
         direct_angles = controls["direct_angular"]
         source_velocity = jnp.moveaxis(count_velocity, 0, -1).reshape(-1, 3)
-        velocity_controls = source_velocity[controls["ids"]]
+        velocity_controls = source_velocity[flat_ids]
         target_keys, target_key_distances, shifted = nearest_training_keys(
             train_keys, controls["positions"],
             np.asarray(velocity_controls))
@@ -192,7 +212,7 @@ def main():
         weights_jax = jnp.asarray(volume_weights)
         source_rates = rates.reshape(5, -1)
         source_positions = jnp.asarray(controls["positions"])
-        rates_controls = source_rates[:, controls["ids"]] * SOURCE_VOLUME_FACTOR
+        rates_controls = source_rates[:, flat_ids] * SOURCE_VOLUME_FACTOR
 
         def patch_measure(position, velocity, intrinsic, coarse_angle, node_angle,
                           key_vector):
@@ -225,7 +245,7 @@ def main():
 
         measure = jax.jit(patch_measure)
         controls_out = []
-        for i, cell_id in enumerate(controls["ids"]):
+        for i, cell_id in enumerate(flat_ids):
             coarse_angle = jnp.asarray(current_angles[i, :, None])
             node_angle = jnp.asarray(direct_angles[i].transpose(1, 0)[:, :, None])
             constant, pixel = measure(
@@ -236,6 +256,7 @@ def main():
                 lambda pair: tuple(np.asarray(x) for x in pair), (constant, pixel))
             controls_out.append(dict(
                 label=control_selection["labels"][i],
+                source_flat_id_N256=int(cell_id),
                 source_ijk_N256=controls["ijk"][i].tolist(),
                 source_radius_cMpc_h=float(controls["radius"][i]),
                 coherent_rsd_center_cMpc_h=shifted[i].tolist(),

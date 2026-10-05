@@ -11,7 +11,10 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from cf4_r2_selection_ray_integral import load_physics_inputs  # noqa: E402
-from cf4_r2_v6_pixel_angular_geometry import choose_controls  # noqa: E402
+from cf4_r2_v6_pixel_angular_geometry import (  # noqa: E402
+    choose_controls,
+    flatten_cell_indices,
+)
 
 BASE = Path("/gpfs/kjhan/CF4/z0_density")
 SOURCE_PATH = BASE / "r2_marked_source_geometry_v1/geometry.npz"
@@ -26,9 +29,13 @@ def main():
     with np.load(SOURCE_PATH, allow_pickle=False) as source:
         controls = choose_controls(physics["maps"], physics["rotation"],
                                    source["angular"])
+    if not np.array_equal(controls["flat_ids"],
+                          flatten_cell_indices(controls["ijk"], n=256)):
+        raise ValueError("control flattened IDs do not match their N256 cells")
     np.savez_compressed(
         out / "controls.npz",
-        ids=controls["ids"], ijk=controls["ijk"],
+        candidate_indices=controls["candidate_indices"],
+        flat_ids=controls["flat_ids"], ijk=controls["ijk"],
         positions=controls["positions"], radius=controls["radius"],
         parent_angular=controls["parent_angular"],
         direct_angular=controls["direct_angular"],
@@ -37,9 +44,11 @@ def main():
     )
     result = dict(
         status="FROZEN_SCORE_BLIND_GEOMETRY_CONTROLS",
-        selection_rule="12 deterministic N256 cells selected from Fibonacci sky candidates before reading field values, training keys/counts, or heldout outcomes: 4 highest map-boundary contrasts, 4 nearest radial boundaries, 4 smooth nonzero-map interiors",
-        control_count=len(controls["ids"]),
+        selection_rule="12 deterministic N256 cells selected from Fibonacci sky candidates before reading field values, training keys/counts, or heldout outcomes: one maximum-contrast boundary and one minimum-contrast nonzero-map interior in each of four radial strata (18-55, 55-95, 95-135, 135-168 cMpc/h), plus four nearest radial-boundary controls",
+        control_count=len(controls["flat_ids"]),
         labels=controls["labels"],
+        candidate_indices=controls["candidate_indices"].tolist(),
+        source_flat_ids_N256=controls["flat_ids"].tolist(),
         source_ijk_N256=controls["ijk"].tolist(),
         source_radius_cMpc_h=controls["radius"].tolist(),
         within_cell_map_range_max=controls["direct_contrast"].tolist(),
