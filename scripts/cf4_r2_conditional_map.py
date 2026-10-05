@@ -137,6 +137,7 @@ def main():
         evaluations=[],
     )
     _save_report(report_path, report, started)
+    objective = None
 
     try:
         if 'H200' not in str(jax.devices()[0].device_kind).upper():
@@ -263,8 +264,9 @@ def main():
             )
             return prior_ic + prior_tracer + prior_population - float(score), gradient, detail
 
-        def persist_report(row, best):
+        def persist_report(_x, row, best):
             report['evaluations'] = objective.records.copy()
+            report['exact_target_evaluations'] = len(objective.records)
             if best is not None:
                 report['best_evaluation'] = best['detail']['evaluation']
                 report['best_objective'] = best['objective']
@@ -347,6 +349,12 @@ def main():
         _save_report(report_path, report, started)
         print(json.dumps(report, allow_nan=False), flush=True)
     except Exception as error:
+        if objective is not None:
+            report['evaluations'] = objective.records.copy()
+            report['exact_target_evaluations'] = len(objective.records)
+            if objective.best is not None:
+                report['best_evaluation'] = objective.best['detail']['evaluation']
+                report['best_objective'] = objective.best['objective']
         report.update(status='FAILED_CONDITIONAL_MAP_DIAGNOSTIC', error=repr(error))
         _save_report(report_path, report, started)
         raise

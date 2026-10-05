@@ -4143,9 +4143,13 @@ raises only the fail-closed ceiling to 131,072 cells for this single
 diagnostic. No source support is clipped; the candidate geometry, likelihood,
 quadrature, priors, eight-evaluation cap, and selection limitations are
 unchanged. Generic callers retain the old default. See
-`CF4_R2_CONDITIONAL_MAP_20261005.md`. A fresh typed-GRES snapshot showed five
-free H200 devices, so the isolated v2 retry uses `gpu:H200:1`; it is the same
-conditional MAP diagnostic, not a posterior or production IC. R2 remains
+`CF4_R2_CONDITIONAL_MAP_20261005.md`. Attempts 413597/413598 exposed a typo in
+the submitted SHA and a persistence-callback arity bug; 413598 completed one
+exact initializer evaluation, then lost its in-memory score on callback
+failure without moving the optimizer or accessing heldout values. Both are
+recorded as non-results. The callback fix is covered by a unit test. A fresh
+typed-GRES snapshot showed five free H200 devices, so retry v3 uses
+`gpu:H200:1`; it is the same conditional MAP diagnostic, not a posterior or production IC. R2 remains
 NO-GO. Q-GOAL: one actual-data conditional z=0 field probe only; it does not
 resolve the <=0.3 cMpc/h LG objective. MW/M31 remain role-ambiguous and M33
 unresolved; their observables must constrain those same roles on the same NEW

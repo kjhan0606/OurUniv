@@ -107,12 +107,23 @@ filtering. Generic callers retain the prior 32,768-cell default. A unit test
 checks that the old ceiling rejects rather than truncates, and that the larger
 ceiling preserves the full rounded width. This is a mechanical recovery, not
 a relaxation of a science criterion. Retry output is isolated at
-`/gpfs/kjhan/CF4/z0_density/r2_conditional_map_20261005_v2/`.
+`/gpfs/kjhan/CF4/z0_density/r2_conditional_map_20261005_v3/`.
 
-The failed job used H100 because that was the earlier resource snapshot. The
-retry switches to H200 after a fresh typed-GRES check found five unallocated
-H200 devices; host-memory request, runtime/evaluation caps, and all science
-inputs stay fixed.
+Execution recovery history: job `413597` exited in 12 seconds at the source
+commit preflight because the submitted expected-SHA string was mistyped; it
+never initialized the output directory or evaluated data. Job `413598` used
+the correct commit and H200, passed the frozen-cohort checks, and completed
+one exact target value/gradient evaluation at the initializer. It then failed
+because the persistence callback accepted two arguments while the objective
+passed three. The just-computed objective, gradient and decomposition were
+not persisted, the optimizer did not move from the initializer, and no field
+result is recoverable from that process. Its machine report records the
+callback exception but not the in-memory evaluation. Heldout measurement
+values remained unloaded. The callback signature is now tested, and the outer
+failure handler also records completed evaluation rows and best objective if
+a later error occurs. H200 reports a 104.85-GiB device limit, passing the
+existing runtime memory-headroom guard. Retry v3 keeps all scientific inputs
+and bounds fixed; only persistence/error reporting is repaired.
 
-Status at submission: pending. Final interpretation and artifacts are added
-below after the single allocation terminates.
+Status at retry-v3 submission: pending. Final interpretation and artifacts
+are added below after this bounded allocation terminates.
