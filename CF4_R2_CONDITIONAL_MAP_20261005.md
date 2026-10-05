@@ -83,5 +83,26 @@ score, sampler tuning, or extra simulation is included. Report count, FP, IC
 prior and nuisance-prior changes separately: a lower total objective driven
 by prior shrinkage is not automatically improved reconstruction.
 
+## First allocation failure and bounded recovery
+
+The first typed-H100 allocation, job `413590`, stopped before any objective or
+heldout measurement value was evaluated. The state-local support builder
+required a padded source-cell width above its inherited 32,768-cell workspace
+ceiling. Slurm did not OOM: batch MaxRSS was 5.61 GiB and the process-recorded
+host peak was 10.44 GiB of the requested 48 GiB. No likelihood evaluation was
+completed and no science result was produced.
+
+Recovery raises only this fail-closed workspace ceiling to 131,072 cells for
+this diagnostic. The candidate list, exact geometric filter, positive
+source/bin retention, eight-sigma rule, 40-million raw-component ceiling,
+likelihood, quadrature and priors are unchanged; excess support still raises
+an error and is never clipped. The chosen cap permits at most 1,048,576
+quadrature subnodes in one order-2 source row before positive-component
+filtering. Generic callers retain the prior 32,768-cell default. A unit test
+checks that the old ceiling rejects rather than truncates, and that the larger
+ceiling preserves the full rounded width. This is a mechanical recovery, not
+a relaxation of a science criterion. Retry output is isolated at
+`/gpfs/kjhan/CF4/z0_density/r2_conditional_map_20261005_v2/`.
+
 Status at submission: pending. Final interpretation and artifacts are added
 below after the single allocation terminates.

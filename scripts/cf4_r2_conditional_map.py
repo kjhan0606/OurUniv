@@ -27,6 +27,7 @@ N_IC = N ** 3
 MAX_EVALUATIONS = 8  # Includes initialization and rejected line-search trials.
 MAX_ITERATIONS = 4
 MAX_LINE_SEARCH = 2
+MAX_SUPPORT_CELLS = 131072  # Workspace ceiling only; support is never truncated.
 APP_SECONDS = 6000
 KNOWN_DEVICE_PEAK_GIB = 30.909375801682472
 KNOWN_DEVICE_LIMIT_GIB = 69.81413269042969
@@ -207,7 +208,7 @@ def main():
         source = source_geometry_at_resolution(source, N)
         obs = ResolutionObservationTarget(
             N, source, mix, observation, geometry, train_keys, train_counts, jnp.asarray(exposure),
-            force_order=1, fine_order=2)
+            force_order=1, fine_order=2, max_support_cells=MAX_SUPPORT_CELLS)
         settings = {k: parent_result['settings'][k]
                     for k in ('cosmology', 'a_start', 'a_stop', 'a_nbody_maxstep')}
         settings.update(n=N, box_cMpc_h=BOX)

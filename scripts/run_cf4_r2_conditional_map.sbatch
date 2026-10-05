@@ -16,6 +16,8 @@ module purge
 cd /home/kjhan/BACKUP/CF4
 test "$(git rev-parse HEAD)" = "$CF4_EXPECTED_COMMIT"
 git diff --quiet "$CF4_EXPECTED_COMMIT" -- \
+  src/cf4_r2_raw_volume_target.py \
+  src/cf4_r2_resolution_target.py \
   scripts/cf4_r2_conditional_map.py \
   scripts/run_cf4_r2_conditional_map.sbatch \
   tests/test_cf4_r2_conditional_map_budget.py \

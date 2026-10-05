@@ -4,9 +4,17 @@ import unittest
 import numpy as np
 
 from cf4_r2_conditional_map import BudgetedObjective, EvaluationBudgetStop
+from cf4_r2_raw_volume_target import checked_padded_support_width
 
 
 class ConditionalMapBudgetTest(unittest.TestCase):
+    def test_support_workspace_ceiling_raises_without_truncating(self):
+        self.assertEqual(checked_padded_support_width([32768]), 32768)
+        with self.assertRaisesRegex(MemoryError, 'candidate support was not truncated'):
+            checked_padded_support_width([32769])
+        self.assertEqual(
+            checked_padded_support_width([32769], max_cells=65536), 32832)
+
     def test_duplicate_request_is_cached_and_budget_counts_trials(self):
         calls = []
 

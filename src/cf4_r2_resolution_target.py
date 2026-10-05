@@ -56,7 +56,7 @@ class ResolutionObservationTarget:
     requirement. Coarse forces never define the Metropolis target.
     """
     def __init__(self,n,source,mix,observation,geometry,keys,counts,exposure,*,
-                 force_order,fine_order,source_chunk=2097152):
+                 force_order,fine_order,source_chunk=2097152,max_support_cells=32768):
         if n not in (128,256) or geometry['grid_size']!=128:
             raise ValueError('native128/256 fields and frozen observed128 grid required')
         if not 1<=force_order<fine_order or source_chunk<1:
@@ -68,7 +68,8 @@ class ResolutionObservationTarget:
         self.source=source;self.observation=observation
         self.rate_volume_factor=(self.spacing/3.)**3
         self.builders={order:FreshRawSupport(np.asarray(source['positions']),np.asarray(source['angular']),
-            mix['population'],observation,geometry,source_spacing=self.spacing,volume_order=order)
+            mix['population'],observation,geometry,source_spacing=self.spacing,volume_order=order,
+            max_support_cells=max_support_cells)
             for order in (force_order,fine_order)}
         self.centred=jax.jit(native_mass_momentum_to_count_cells,static_argnums=2)
         def data(r,v,t,p,packs,source,o,order):

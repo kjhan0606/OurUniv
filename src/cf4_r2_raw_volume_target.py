@@ -33,6 +33,22 @@ def volume_rule(spacing,order):
     return t[nodes]*spacing/2,np.prod(w[nodes]/2,axis=1)
 
 
+def checked_padded_support_width(candidate_lengths, *, alignment=64, max_cells=32768):
+    """Return padded source-cell width, raising instead of truncating support."""
+    if alignment < 1 or max_cells < 1:
+        raise ValueError('positive source-support alignment and ceiling required')
+    lengths = tuple(int(length) for length in candidate_lengths)
+    if any(length < 0 for length in lengths):
+        raise ValueError('nonnegative source-support candidate lengths required')
+    largest = max(lengths, default=0)
+    width = ((largest + alignment - 1) // alignment) * alignment
+    if width > max_cells:
+        raise MemoryError(
+            f'support requires {width} padded source cells; ceiling={max_cells}; '
+            'candidate support was not truncated')
+    return width
+
+
 def tracer_geometry(tracer,geometry):
     return dict(geometry,mstar=-23.28+.2*tracer[8],
         alpha=-1+.5*tracer[7],sigma_los_km_s=100*jnp.exp(.5*tracer[6]),
@@ -117,6 +133,7 @@ class FreshRawSupport:
     """
     def __init__(self,positions,angular,population,observation,geometry,*,source_spacing,
                  volume_order=4,block=4096,max_components=40_000_000,
+                 max_support_cells=32768,
                  source_conditioning_radius_cMpc_h=None):
         self.positions=np.asarray(positions);self.angular=np.asarray(angular)
         self.population=np.asarray(population,dtype=int);self.o=observation;self.g=geometry
@@ -131,7 +148,10 @@ class FreshRawSupport:
             raise ValueError('one finite positive source-conditioning radius per observation required')
         self.box=float(geometry['box_size_cMpc_h']);self.spacing=source_spacing
         self.offsets,_=volume_rule(source_spacing,volume_order);self.block=block
-        self.max_components=max_components;self.tree=cKDTree(self.positions%self.box,boxsize=self.box)
+        if int(max_support_cells) < 1:
+            raise ValueError('positive source-cell workspace ceiling required')
+        self.max_components=max_components;self.max_support_cells=int(max_support_cells)
+        self.tree=cKDTree(self.positions%self.box,boxsize=self.box)
         self.nsub=len(self.offsets)
         def weight(vel,tr,pos,sky,voxel,radius,pop):
             return predict_source_marked_radial_key_density(pos,vel,jnp.ones((5,len(pos))),sky,
@@ -175,8 +195,8 @@ class FreshRawSupport:
             delta=(self.positions[ids]-centres[row]+self.box/2)%self.box-self.box/2
             local_sigma=sigma if np.ndim(sigma)==0 else sigma[ids]
             candidates[row]=ids[np.linalg.norm(delta,axis=1)<=conversion*(speed[ids]+8*local_sigma)+spatial]
-        width=((max(map(len,candidates))+63)//64)*64
-        if width>32768:raise MemoryError('support exceeds bounded source-cell workspace')
+        width=checked_padded_support_width(
+            map(len,candidates), max_cells=self.max_support_cells)
         batches=[{k:[] for k in ('ids','node','bin','row')} for _ in range(6)];total=0
         for row,ids in enumerate(candidates):
             if not len(ids):raise ValueError(f'empty candidate support at row{row}')

@@ -4134,3 +4134,20 @@ role-ambiguous and M33 unresolved; all must later constrain the same NEW
 evolved LG field at `<=0.3 cMpc/h`, native truth IDs evaluation-only. This was
 a consecutive R2 review after the Astra factorization audit, so the driver
 performed the focused technical review under the user's auditor rule.
+
+R2 conditional v6 field diagnostic, 2026-10-05: first typed-H100 attempt
+413590 failed before its first objective evaluation because the exact
+state-local source support exceeded an inherited 32,768-cell workspace
+ceiling; it was not an OOM and scored no heldout values. The approved recovery
+raises only the fail-closed ceiling to 131,072 cells for this single
+diagnostic. No source support is clipped; the candidate geometry, likelihood,
+quadrature, priors, eight-evaluation cap, and selection limitations are
+unchanged. Generic callers retain the old default. See
+`CF4_R2_CONDITIONAL_MAP_20261005.md`. The isolated v2 H100 retry is the same
+conditional MAP diagnostic, not a posterior or production IC. R2 remains
+NO-GO. Q-GOAL: one actual-data conditional z=0 field probe only; it does not
+resolve the <=0.3 cMpc/h LG objective. MW/M31 remain role-ambiguous and M33
+unresolved; their observables must constrain those same roles on the same NEW
+evolved field, native truth identities evaluation-only. Q-LEAN: fix only the
+pre-score workspace stop; no repeated gravity-only simulation, sampler
+extension, heldout score, or new calibration claim.
