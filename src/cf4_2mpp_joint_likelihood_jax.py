@@ -138,6 +138,64 @@ def tsc_deposit_jax(positions, masses, grid_size, box_size_cMpc_h):
     return result
 
 
+def tsc_exposure_weight_jax(positions, exposure_mask, grid_size, box_size_cMpc_h):
+    """Per-source TSC weight landing in an observed exposure mask.
+
+    This is the scalar transpose of :func:`tsc_deposit_jax`: it avoids
+    allocating a full grid when a caller only needs the exposure-weighted
+    integral. ``exposure_mask`` is one grid-sized array for a single
+    population; summing ``masses * returned_weight`` must equal
+    ``sum(tsc_deposit_jax(...) * exposure_mask)``.
+    """
+    exposure_mask = jnp.asarray(exposure_mask)
+    if exposure_mask.shape != (grid_size, grid_size, grid_size):
+        raise ValueError("one grid-sized exposure mask is required")
+    return tsc_exposure_weights_jax(
+        positions, exposure_mask[None, ...], grid_size, box_size_cMpc_h)[0]
+
+
+def tsc_exposure_weights_jax(positions, exposure_masks, grid_size, box_size_cMpc_h):
+    """Six-population form of :func:`tsc_exposure_weight_jax`.
+
+    Computes the common TSC stencil once and returns a ``(6, nsource)`` array
+    of per-population exposure weights.
+    """
+    _require_jax()
+    positions = jnp.asarray(positions)
+    exposure_masks = jnp.asarray(exposure_masks)
+    if (positions.ndim != 2 or positions.shape[1] != 3
+            or exposure_masks.ndim != 4
+            or exposure_masks.shape[1:] != (grid_size, grid_size, grid_size)
+            or grid_size < 3 or box_size_cMpc_h <= 0):
+        raise ValueError("invalid TSC exposure geometry")
+    spacing = box_size_cMpc_h / grid_size
+    cell = (positions % box_size_cMpc_h) / spacing - 0.5
+    nearest = jnp.floor(cell + 0.5).astype(jnp.int32)
+    offset = cell - nearest
+
+    def weights(component):
+        return (
+            0.5 * (0.5 - component) ** 2,
+            0.75 - component**2,
+            0.5 * (0.5 + component) ** 2,
+        )
+
+    wx, wy, wz = (weights(offset[:, axis]) for axis in range(3))
+    result = jnp.zeros((exposure_masks.shape[0], positions.shape[0]),
+                       dtype=positions.dtype)
+    for ix, dx in enumerate((-1, 0, 1)):
+        for iy, dy in enumerate((-1, 0, 1)):
+            for iz, dz in enumerate((-1, 0, 1)):
+                stencil = wx[ix] * wy[iy] * wz[iz]
+                selected = exposure_masks[:,
+                    (nearest[:, 0] + dx) % grid_size,
+                    (nearest[:, 1] + dy) % grid_size,
+                    (nearest[:, 2] + dz) % grid_size,
+                ]
+                result = result + stencil[None, :] * selected
+    return result
+
+
 def predict_selected_intensity_jax(
     source_positions,
     source_velocities_km_s,

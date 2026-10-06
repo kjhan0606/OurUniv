@@ -14,6 +14,7 @@ from cf4_r2_marked_tracer_jax import (
 )
 from cf4_r2_shell_cdf_count import (shell_cdf_nodes,predict_shell_cdf_intensity,
     cell_averaged_tsc_weight,predict_source_volume_intensity,ngp_deposit_jax)
+from cf4_2mpp_joint_likelihood_jax import tsc_exposure_weight_jax
 
 
 class ShellCDFTests(unittest.TestCase):
@@ -90,6 +91,39 @@ class ShellCDFTests(unittest.TestCase):
         scalar=jax.jit(jax.value_and_grad(lambda v:read(v,True)))(0.)
         np.testing.assert_allclose(scalar,full,rtol=1e-11,atol=1e-12)
         self.assertGreater(float(scalar[0]),0.)
+
+    def test_exposure_total_matches_full_TSC_grid_and_derivative(self):
+        radius=jnp.linspace(.001,400.,4001)
+        geometry=dict(observer=jnp.full(3,192.),box_size_cMpc_h=384.,
+            hubble_km_s_Mpc=74.6,little_h=.746,radius_table_cMpc_h=radius,
+            modulus_table_h=5*jnp.log10(radius)+25.,redshift_table=radius/3000.,
+            grid_size=16,sigma_los_km_s=100.,order=4,segments=8)
+        flat=jnp.arange(16**3).reshape((16,16,16))
+        mask=jnp.broadcast_to(((flat*17+3)%11)<5,(6,16,16,16))
+        position=jnp.array([[280.3,192.,192.],[315.1,191.7,192.2]])
+        intrinsic=jnp.asarray([[.7,1.1],[1.2,.8],[.9,1.4],[.6,.5],[1.3,.7]])
+        angular=jnp.asarray([[.6,.9],[.8,.7]])
+
+        def score(v,compact):
+            velocity=jnp.asarray([[v,0.,0.],[0.,-v/3.,0.]])
+            if compact:
+                deposited=predict_shell_cdf_intensity(
+                    position,velocity,intrinsic,angular,**geometry,
+                    deposition='exposure_total',exposure_masks=mask)
+                return deposited
+            deposited=predict_shell_cdf_intensity(
+                position,velocity,intrinsic,angular,**geometry)
+            return jnp.sum(deposited*mask,axis=(1,2,3))
+
+        full=jax.jit(jax.value_and_grad(lambda v:jnp.sum(score(v,False))))(35.)
+        compact=jax.jit(jax.value_and_grad(lambda v:jnp.sum(score(v,True))))(35.)
+        np.testing.assert_allclose(compact[0],full[0],rtol=2e-11,atol=2e-12)
+        np.testing.assert_allclose(compact[1],full[1],rtol=3e-10,atol=3e-11)
+
+        per_source=tsc_exposure_weight_jax(
+            position,mask[0],geometry['grid_size'],geometry['box_size_cMpc_h'])
+        self.assertTrue(np.all(np.asarray(per_source)>=0.))
+        self.assertTrue(np.all(np.asarray(per_source)<=1.+1e-14))
 
     def test_inactive_clamped_sources_do_not_change_shell_cdf_gradient(self):
         radius=jnp.array([1.,192.])

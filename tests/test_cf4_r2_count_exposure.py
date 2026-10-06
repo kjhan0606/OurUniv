@@ -2,10 +2,29 @@ import unittest
 
 import numpy as np
 
-from cf4_r2_count_exposure import build_population_exposure_masks
+from cf4_r2_count_exposure import (
+    build_population_exposure_masks,
+    reshape_population_exposure_masks,
+)
 
 
 class PopulationExposureMaskTests(unittest.TestCase):
+    def test_flat_masks_restore_population_major_grid_axes(self):
+        train, heldout = build_population_exposure_masks(
+            2, np.array([3], dtype=np.int32), population_count=2)
+        train_grid = reshape_population_exposure_masks(
+            train, 2, population_count=2)
+        heldout_grid = reshape_population_exposure_masks(
+            heldout, 2, population_count=2)
+        self.assertEqual(train_grid.shape, (2, 2, 2, 2))
+        self.assertEqual(heldout_grid.shape, (2, 2, 2, 2))
+        self.assertTrue(np.array_equal(train_grid.reshape(-1), train))
+        self.assertTrue(np.array_equal(heldout_grid.reshape(-1), heldout))
+
+    def test_rejects_flat_masks_with_wrong_population_geometry(self):
+        with self.assertRaisesRegex(ValueError, 'population/grid geometry'):
+            reshape_population_exposure_masks(np.ones(8), 2, population_count=2)
+
     def test_graph_buffer_exclusions_are_population_specific_and_disjoint(self):
         # N=2 gives eight voxels per population. The two heldout voxels are
         # replicated across populations, then role-specific buffer keys are

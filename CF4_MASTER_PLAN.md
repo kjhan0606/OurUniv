@@ -100,6 +100,29 @@ metadata/README access recorded above, not a bulk snapshot download or
 creation/retrieval of a new API token. Do not infer authority for account
 registration or unrelated credentialed services.
 
+Active-v6 local ray-volume reference (2026-10-06): typed-H200 job414452
+completed in12:56 (MaxRSS3,343,148KiB); all7 geometry,5 exposure-mask and
+15 shell-CDF tests passed. It compared active GL2/cell-constant completeness,
+ray-refined parent-map completeness and ray-refined native NSIDE512 maps on
+12 frozen geometry controls, using unrenormalized `dOmega r^2 dr/Vcell`.
+Across selected-patch expected-intensity subtotals, refined parent versus
+active GL2 differs by at most0.21%; native-map versus parent-map differences
+range from-0.77% to+11.42%, but these are not full-field likelihood changes.
+Only population1 had a positive supported v6 training key in the reference
+source cell; its native-map intensity is56.1% above refined-parent. Radial
+order2→4 changes were≤1.7e-9 relative and the one NSIDE512→1024 reference
+changed by≤0.44%, with volume closure improving-0.259%→-0.0405%. Across all
+12 NSIDE512 controls, unrenormalized volume closure spans-0.960% to+1.334%;
+only one cell received angular refinement. Driver disposition: a local angular
+map sensitivity is established, but the ray reference is not certified
+across all controls or populations. Do not change production, run a field fit,
+read heldout outcomes, or promote a map. No full-grid/high-NSIDE ladder. R2
+remains NO-GO; resume the calibrated observation/count-law blocker. MW/M31
+roles remain ambiguous and M33 unresolved; all eventual observables must
+constrain those same roles on the same NEW evolved LG field at `<=0.3 cMpc/h`,
+with truth identities used only for calibration/evaluation. Full results and
+limits: `CF4_R2_ACTIVE_V6_RAY_VOLUME_REFERENCE_20261006.md`.
+
 R2 selected-mark denominator audit (2026-10-05): the existing CF4/Tempel/2M++
 catalogues do not identify a complete CF4 group-inclusion denominator. The
 Howlett `f_n` correction is per selected SDSS-PV galaxy and is already part of

@@ -70,3 +70,14 @@ def build_population_exposure_masks(
     if np.any(train_mask & heldout_mask):
         raise AssertionError('train and heldout exposure masks overlap')
     return train_mask.reshape(-1), heldout_mask.reshape(-1)
+
+
+def reshape_population_exposure_masks(flat_masks, grid_size, *, population_count=6):
+    """Restore population-major flat keys to ``(population, x, y, z)`` masks."""
+    n = int(grid_size)
+    populations = int(population_count)
+    masks = np.asarray(flat_masks, dtype=bool)
+    expected = populations * n**3
+    if n < 1 or populations < 1 or masks.shape != (expected,):
+        raise ValueError('flat exposure masks do not match population/grid geometry')
+    return masks.reshape(populations, n, n, n)

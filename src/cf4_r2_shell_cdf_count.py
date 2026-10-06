@@ -14,7 +14,11 @@ import jax.numpy as jnp
 from jax.scipy.special import ndtr, ndtri
 import numpy as np
 
-from cf4_2mpp_joint_likelihood_jax import observer_centred_spherical_rsd_jax, tsc_deposit_jax
+from cf4_2mpp_joint_likelihood_jax import (
+    observer_centred_spherical_rsd_jax,
+    tsc_deposit_jax,
+    tsc_exposure_weights_jax,
+)
 from cf4_r2_marked_tracer_jax import source_mark_transfer, tsc_weight_at_voxel
 from cf4_r2_velocity_closure import conditional_los_sigma
 
@@ -149,7 +153,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     finite_reference_interval=None,
     target_population=None,target_voxel=None,source_cell_average=False,
     force_all_images=False,deposition='tsc',
-    source_velocity_variances_km2_s2=None,dispersion_scale=1.):
+    source_velocity_variances_km2_s2=None,dispersion_scale=1.,
+    exposure_masks=None):
     """Same source-selected K/count integrand with TSC or diagnostic NGP deposit.
 
     Caller owns current-width support checks and calibration. This does not
@@ -167,12 +172,20 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
     scalar = target_population is not None
     if scalar != (target_voxel is not None):
         raise ValueError('population and voxel must be supplied together')
-    if deposition not in ('tsc','ngp','voxel_cdf','voxel_cdf_grid'):
+    if deposition not in ('tsc','ngp','voxel_cdf','voxel_cdf_grid','exposure_total'):
         raise ValueError('unknown count deposition/integration rule')
     if deposition=='voxel_cdf' and not scalar:
         raise ValueError('voxel_cdf currently requires a scalar target voxel')
     if deposition=='voxel_cdf_grid' and scalar:
         raise ValueError('voxel_cdf_grid requires the full count grid')
+    if deposition=='exposure_total':
+        if scalar or exposure_masks is None:
+            raise ValueError('exposure_total requires six exposure masks and no scalar target')
+        exposure_masks=jnp.asarray(exposure_masks)
+        if exposure_masks.shape!=(6,grid_size,grid_size,grid_size):
+            raise ValueError('six population-aligned exposure masks are required')
+    elif exposure_masks is not None:
+        raise ValueError('exposure masks are only valid with deposition=exposure_total')
     if source_cell_average and (not scalar or deposition!='tsc'):
         raise ValueError('approximate cell-averaged kernel is a scalar diagnostic only')
     if scalar and (not isinstance(target_population,int) or not 0<=target_population<6
@@ -223,6 +236,14 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
             else:
                 kernel=cell_averaged_tsc_weight if source_cell_average else tsc_weight_at_voxel
                 contribution=jnp.sum(mass*kernel(observed,target_voxel,grid_size,box_size_cMpc_h))
+        elif deposition=='exposure_total':
+            selected_mass=jnp.stack([
+                weight*angular[p//3]*jnp.sum(transfer[p]*intrinsic,axis=0)
+                for p in range(6)
+            ])
+            exposure_weight=tsc_exposure_weights_jax(
+                observed,exposure_masks,grid_size,box_size_cMpc_h)
+            contribution=jnp.sum(selected_mass*exposure_weight,axis=1)
         else:
             deposit=tsc_deposit_jax if deposition=='tsc' else ngp_deposit_jax
             contribution=jnp.stack([deposit(observed,
@@ -297,7 +318,8 @@ def predict_shell_cdf_intensity(source_positions,source_velocities_km_s,
                   | force_all_images)
         return jax.lax.cond(possible,lambda t:integrate_image(t,center)[0],lambda t:t,total),None
     dtype=jnp.result_type(pos,source_velocities_km_s,intrinsic,angular,observer,sigma)
-    shape=() if scalar else (6,grid_size,grid_size,grid_size)
+    shape=(() if scalar else (6,)) if deposition=='exposure_total' else (
+        () if scalar else (6,grid_size,grid_size,grid_size))
     return jax.lax.scan(add_image,jnp.zeros(shape,dtype=dtype),images)[0]
 
 
