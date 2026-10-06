@@ -9,23 +9,18 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-06
 
-Conditional optimizer diagnostic, job 414485, completed on `h200` with
-`--gres=gpu:H200:1` in 59:35. The initializer and the saved best state
-reproduced the recorded conditional terms. The best gradient infinity norm
-13,524.69 is tracer coordinate 0, the global count-rate amplitude
-(`log rate` shifts by `2*tracer[0]`), not an IC mode. The IC block RMS is
-2.005. Population coordinate 9 holds the conditional-FP infinity norm 700.
-Count and FP score gradients rebuild the joint gradient to relative L2
-`5.7e-16`. The directional finite difference did not run: 668 seconds
-remained, below its 720-second threshold. Status
-`CONDITIONAL_OPTIMIZER_DIAGNOSTIC_INCOMPLETE_BUDGET`. No warm start is
-authorized. The next routine step is that one finite difference; if it
-passes, same-objective nuisance scaling or block order precedes any
-16,777,216-coordinate fit. A later 18-evaluation warm start is a large
-calculation and needs an Astra audit before submission. During R2, warranted
-external audits go to Astra, and closing R2 needs a separate Astra exit
-audit whose approval is included in the notification email. R2 remains
-NO-GO. R3 has not started. Detail:
+Conditional gradient check. Job 414485 reproduced both saved states and
+showed that the infinity norm 13,524.69 is tracer coordinate 0, the count
+amplitude, while the IC block RMS is 2.005. Job 414657 then passed the
+directional finite difference on `h200` / `gpu:H200:1` in 21:32: relative
+error `4.37e-4` against the `1e-2` gate. Status
+`CONDITIONAL_OPTIMIZER_FD_PASSED`. The next routine step holds that IC fixed
+and optimizes only the 24 nuisance coordinates of the same objective, in
+positive scaled optimizer coordinates. It is not a joint warm start. An
+18-evaluation IC fit remains a large calculation and needs an Astra audit
+before submission. During R2, warranted external audits go to Astra, and
+closing R2 needs a separate Astra exit audit whose approval is included in
+the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
 
 A source-applicability check identified Hollinger & Hudson (2024)'s

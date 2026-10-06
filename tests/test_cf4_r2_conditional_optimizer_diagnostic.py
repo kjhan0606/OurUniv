@@ -5,7 +5,8 @@ import numpy as np
 from cf4_r2_conditional_map import assemble_conditional_objective, conditional_target_terms
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
-    finite_difference_status, gradient_agreement, reproduction_failures,
+    finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
+    reproduction_failures, scaled_nuisance,
 )
 
 
@@ -111,6 +112,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(finite_difference_status(
             reproduction_passed=True, finite_difference='passed'),
             'CONDITIONAL_OPTIMIZER_FD_PASSED')
+
+    def test_nuisance_scale_preserves_the_saved_point_at_zero_step(self):
+        gradient = np.array([13524., -2., 0.1] + [0.] * 21)
+        scale = nuisance_scale(gradient)
+        self.assertAlmostEqual(scale[0], 1. / 13524.)
+        self.assertAlmostEqual(scale[2], 1.)
+        origin = np.linspace(-1., 1., 24)
+        np.testing.assert_allclose(scaled_nuisance(origin, scale, np.zeros(24)), origin)
+        self.assertEqual(nuisance_block_status(1000., 100., -10., -9.),
+                         'CONDITIONAL_NUISANCE_BLOCK_AMPLITUDE_REDUCED')
+        self.assertEqual(nuisance_block_status(1000., 100., -10., -11.),
+                         'CONDITIONAL_NUISANCE_BLOCK_NOT_REDUCED')
+        self.assertEqual(nuisance_block_status(1000., 200., -10., -9.),
+                         'CONDITIONAL_NUISANCE_BLOCK_NOT_REDUCED')
 
 
 if __name__ == '__main__':

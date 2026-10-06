@@ -13,7 +13,7 @@ import numpy as np
 from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_conditional_map import (
     BOX, KNOWN_DEVICE_PEAK_GIB, MAX_SUPPORT_CELLS, N, N_IC, TERM_KEYS,
-    assemble_conditional_objective, conditional_target_terms,
+    assemble_conditional_objective, conditional_target_gradient, conditional_target_terms,
 )
 from cf4_r2_count_exposure import build_population_exposure_masks
 from cf4_r2_raw_field_profile import load_inputs
@@ -153,6 +153,36 @@ def _stage_allowed(started, need_seconds, budget_seconds=APP_SECONDS):
     return budget_seconds - (time.monotonic() - started) >= need_seconds
 
 
+def nuisance_scale(gradient, floor=1.):
+    """Positive coordinate scales. The objective stays in the original parameters."""
+    gradient = np.asarray(gradient, dtype=np.float64).reshape(-1)
+    if gradient.shape != (24,) or not np.isfinite(gradient).all():
+        raise ValueError('nuisance scale requires the finite 24-parameter gradient')
+    if not np.isfinite(floor) or floor <= 0.:
+        raise ValueError('nuisance scale floor must be positive')
+    return 1. / np.maximum(np.abs(gradient), float(floor))
+
+
+def scaled_nuisance(origin, scale, z):
+    origin = np.asarray(origin, dtype=np.float64).reshape(-1)
+    scale = np.asarray(scale, dtype=np.float64).reshape(-1)
+    z = np.asarray(z, dtype=np.float64).reshape(-1)
+    if origin.shape != (24,) or scale.shape != (24,) or z.shape != (24,):
+        raise ValueError('scaled nuisance step requires three 24-vectors')
+    if np.any(scale <= 0.) or not np.isfinite(scale).all():
+        raise ValueError('nuisance scales must be finite and positive')
+    return origin + scale * z
+
+
+def nuisance_block_status(initial_abs_tracer0, final_abs_tracer0, count_initial, count_final):
+    """A 10x smaller amplitude gradient with a count term that does not worsen."""
+    reduced = float(final_abs_tracer0) <= float(initial_abs_tracer0) / 10.
+    count_not_worse = float(count_final) >= float(count_initial) - 1e-6
+    if reduced and count_not_worse:
+        return 'CONDITIONAL_NUISANCE_BLOCK_AMPLITUDE_REDUCED'
+    return 'CONDITIONAL_NUISANCE_BLOCK_NOT_REDUCED'
+
+
 def finite_difference_status(*, reproduction_passed, finite_difference):
     """Status for the best-state finite-difference completion. It does not authorize a fit."""
     if not reproduction_passed:
@@ -180,10 +210,13 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     (out / 'OWNER.txt').write_text(
         'project: CF4\nrepo: /home/kjhan/BACKUP/CF4\n'
-        'purpose: conditional-target reproduction and gradient attribution\n'
+        'purpose: conditional-target gradient check; IC is not refit in nuisance-block mode\n'
         'DO_NOT_CANCEL\n')
     fd_only = os.environ.get('CF4_R2_FD_ONLY') == '1'
-    budget_seconds = 40 * 60 if fd_only else APP_SECONDS
+    nuisance_block = os.environ.get('CF4_R2_NUISANCE_BLOCK') == '1'
+    if fd_only and nuisance_block:
+        raise RuntimeError('finite-difference and nuisance-block modes are separate jobs')
+    budget_seconds = 40 * 60 if fd_only or nuisance_block else APP_SECONDS
     started = time.monotonic()
     report_path = out / 'result.json'
     report = dict(
@@ -199,6 +232,8 @@ def main():
                    component_max_abs_factor=COMPONENT_MAX_ABS_FACTOR),
         application_seconds=budget_seconds,
         finite_difference_only=fd_only,
+        nuisance_block_only=nuisance_block,
+        ic_coordinates_fixed=nuisance_block,
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -289,6 +324,88 @@ def main():
 
         source_jax = {key: jnp.asarray(value) for key, value in source.items()}
         obs_jax = {key: jnp.asarray(value) for key, value in observation.items()}
+        if nuisance_block:
+            from scipy.optimize import minimize
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            report['fixed_ic_evolution_seconds'] = time.monotonic() - started
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+            records = []
+
+            def nuisance_value_gradient(nuisance):
+                nuisance = np.asarray(nuisance, dtype=np.float64)
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                tracer = jnp.asarray(nuisance[:9])
+                population = jnp.asarray(nuisance[9:])
+                tic = time.monotonic()
+                packs, support_info = obs.support(rho, velocity, tracer, 2)
+                (score, components), grads = obs.derivative(
+                    rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('nuisance block produced a nonfinite target')
+                records.append(dict(
+                    objective=value,
+                    seconds=time.monotonic() - tic,
+                    terms={key: detail[key] for key in TERM_KEYS},
+                    tracer0=float(nuisance[0]),
+                    population9=float(nuisance[9]),
+                    tracer0_gradient=float(gradient[0]),
+                    population9_gradient=float(gradient[9]),
+                    gradient_rms=float(np.sqrt(np.mean(gradient * gradient))),
+                    gradient_inf=float(np.max(np.abs(gradient))),
+                ))
+                return value, gradient, detail
+
+            value0, gradient0, _ = nuisance_value_gradient(origin)
+            report['initial_nuisance_evaluation'] = records[-1]
+            if records[-1]['seconds'] > 480.:
+                report['status'] = 'CONDITIONAL_NUISANCE_BLOCK_TIMING_STOP'
+                report['longer_warm_start_authorized'] = False
+                _save(report_path, report, started)
+                print(json.dumps(dict(status=report['status'],
+                                      longer_warm_start_authorized=False), allow_nan=False), flush=True)
+                return
+            scale = nuisance_scale(gradient0)
+            report['nuisance_scale'] = scale.tolist()
+            cache = dict(x=origin.copy(), value=value0, gradient=gradient0.copy())
+
+            def scaled_objective(z):
+                if budget_seconds - (time.monotonic() - started) < 60.:
+                    raise TimeoutError('nuisance-block budget cannot hold another evaluation')
+                nuisance = scaled_nuisance(origin, scale, z)
+                if np.array_equal(nuisance, cache['x']):
+                    return cache['value'], scale * cache['gradient']
+                value, gradient, _ = nuisance_value_gradient(nuisance)
+                cache.update(x=nuisance.copy(), value=value, gradient=gradient.copy())
+                return value, scale * gradient
+
+            try:
+                solver = minimize(
+                    scaled_objective, np.zeros(24), method='L-BFGS-B', jac=True,
+                    options=dict(maxiter=6, maxfun=10, maxls=5, ftol=1e-12, gtol=1e-8))
+                report['optimizer'] = dict(
+                    success=bool(solver.success), message=str(solver.message),
+                    iterations=int(solver.nit), evaluations=int(solver.nfev))
+            except TimeoutError as error:
+                report['budget_stop'] = repr(error)
+            final = records[-1]
+            report['evaluations'] = records
+            report['ic_max_abs_change'] = 0.
+            report['status'] = nuisance_block_status(
+                abs(records[0]['tracer0_gradient']), abs(final['tracer0_gradient']),
+                records[0]['terms']['count_log_likelihood'],
+                final['terms']['count_log_likelihood'])
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
 
         def evaluate_full(q):
             white = jnp.asarray(q[:N_IC])
