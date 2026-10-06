@@ -308,13 +308,14 @@ def main():
     full_gradient = os.environ.get('CF4_R2_FULL_GRADIENT') == '1'
     full_gradient2 = os.environ.get('CF4_R2_FULL_GRADIENT2') == '1'
     tracer2_line = os.environ.get('CF4_R2_TRACER2_LINE') == '1'
+    tracer0_revisit = os.environ.get('CF4_R2_TRACER0_REVISIT') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
             pop9_newton, pop9_secant_mode, pop9_secant2, full_gradient, full_gradient2,
-            tracer2_line)) > 1:
+            tracer2_line, tracer0_revisit)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
     if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
             or pop9_secant_mode or pop9_secant2 or full_gradient or full_gradient2
-            or tracer2_line):
+            or tracer2_line or tracer0_revisit):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -345,10 +346,11 @@ def main():
         full_gradient_only=full_gradient,
         full_gradient2_only=full_gradient2,
         tracer2_line_only=tracer2_line,
+        tracer0_revisit_only=tracer0_revisit,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
                               or pop9_line or pop9_newton or pop9_secant_mode
                               or pop9_secant2 or full_gradient or full_gradient2
-                              or tracer2_line),
+                              or tracer2_line or tracer0_revisit),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -689,6 +691,121 @@ def main():
                                     mid_row['step'] = 'midpoint'
                                     records.append(mid_row)
                         report['status'] = score_against_line_start(records)
+            report['evaluations'] = records
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
+        if tracer0_revisit:
+            recorded = json.loads(
+                (BASE / 'r2_conditional_full_gradient2_20261007/result.json').read_text())
+            if recorded.get('status') != 'CONDITIONAL_FULL_GRADIENT_RECORDED':
+                raise ValueError('tracer-0 revisit requires the second full gradient')
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+            origin[0] = float(recorded['tracer0'])
+            origin[2] = float(recorded['tracer2'])
+            origin[18] = float(recorded['population_coordinate_9'])
+            report['full_gradient2_job_id'] = recorded.get('job_id')
+            report['Q_LEAN'] = (
+                'verify the moved tracer-2 point, then move only tracer 0; '
+                'no IC update, sampler, or heldout')
+
+            def shapes_of(packs):
+                return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
+                             for pack in packs)
+
+            packs, _ = obs.support(rho, velocity, jnp.asarray(origin[:9]), 2)
+            base_shapes = shapes_of(packs)
+            compiled = obs.derivative.lower(
+                rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]), packs,
+                source_jax, obs_jax, 2).compile()
+
+            def evaluate_at(nuisance):
+                built, support_info = obs.support(rho, velocity, jnp.asarray(nuisance[:9]), 2)
+                if shapes_of(built) != base_shapes:
+                    return None
+                (score, components), grads = compiled(
+                    rho, velocity, jnp.asarray(nuisance[:9]), jnp.asarray(nuisance[9:]),
+                    built, source_jax, obs_jax)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('tracer-0 revisit produced a nonfinite target')
+                return dict(
+                    objective=value, tracer0=float(nuisance[0]), tracer2=float(nuisance[2]),
+                    population_coordinate_9=float(nuisance[18]),
+                    tracer0_gradient=float(gradient[0]), tracer2_gradient=float(gradient[2]),
+                    population_coordinate_9_gradient=float(gradient[18]),
+                    terms={key: detail[key] for key in TERM_KEYS})
+
+            def matched(row):
+                objective_ok = abs(row['objective'] - float(recorded['objective'])) / max(
+                    abs(float(recorded['objective'])), 1.) <= 1e-8
+                limits = (
+                    (row['tracer0_gradient'], recorded['tracer0_gradient']),
+                    (row['tracer2_gradient'], recorded['tracer2_gradient']),
+                    (row['population_coordinate_9_gradient'],
+                     recorded['population_coordinate_9_gradient']),
+                )
+                return objective_ok and all(
+                    abs(float(got) - float(expected)) <= 1e-4 * max(abs(float(expected)), 1.)
+                    for got, expected in limits)
+
+            baseline = evaluate_at(origin)
+            records = []
+            if baseline is None or not matched(baseline):
+                report['baseline'] = baseline
+                report['status'] = 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+            else:
+                records.append(baseline)
+                accepted = origin.copy()
+                accepted_objective = baseline['objective']
+                accepted_gradient = baseline['tracer0_gradient']
+                step = -0.1 if accepted_gradient > 0. else 0.1
+                midpoint_used = False
+                initial_abs = abs(accepted_gradient)
+                for _ in range(3):
+                    if budget_seconds - (time.monotonic() - started) < 60.:
+                        report['budget_stop'] = True
+                        break
+                    proposal = accepted.copy()
+                    proposal[0] = accepted[0] + step
+                    row = evaluate_at(proposal)
+                    if row is None:
+                        report['support_shape_changed'] = True
+                        break
+                    row['step'] = step
+                    records.append(row)
+                    improved = row['objective'] < accepted_objective
+                    sign_flipped = row['tracer0_gradient'] * accepted_gradient < 0.
+                    reduced = abs(row['tracer0_gradient']) <= initial_abs / 10.
+                    action = coordinate_line_action(improved, sign_flipped, reduced, midpoint_used)
+                    if improved:
+                        accepted = proposal
+                        accepted_objective = row['objective']
+                        accepted_gradient = row['tracer0_gradient']
+                    if action == 'continue':
+                        step = -0.1 if accepted_gradient > 0. else 0.1
+                        midpoint_used = False
+                    elif action == 'midpoint':
+                        step = 0.5 * step
+                        midpoint_used = True
+                    else:
+                        break
+                best = min(records, key=lambda row: row['objective'])
+                report['status'] = tracer0_line_status(
+                    baseline['objective'], best['objective'], initial_abs,
+                    abs(best['tracer0_gradient']),
+                    baseline['terms']['count_log_likelihood'],
+                    best['terms']['count_log_likelihood'])
             report['evaluations'] = records
             report['longer_warm_start_authorized'] = False
             report['joint_map'] = False

@@ -36,10 +36,13 @@ The objective fell by 1,301.982, almost all in the count term, and the
 tracer-2 derivative fell from +7246.381 to +1578.418. Status
 `CONDITIONAL_TRACER2_LINE_IMPROVED`. The sign did not change, so the tenfold
 gate was missed. The tracer-0 derivative moved from -410.477 to -5855.131.
-The coordinate is not continued. The next measurement is one full gradient
-at that improved point, including the IC pullback and all 24 nuisance
-components. It does not authorize an IC update or a joint warm start.
-Astra's mid-course verdict B remains satisfied and does not close R2. During R2, warranted external audits go to Astra, and
+The coordinate is not continued. Job 415090 recorded the full gradient
+there. The IC block has rms 1.868 and infinity norm 12.631. The joint
+infinity norm is tracer 0 at -5855.131. The large population derivatives
+did not move. The next routine step moves only tracer 0, by +0.1, and
+holds tracer 2 and population 9. It records the tracer-2 derivative at
+each trial and does not authorize an IC update. Astra's mid-course verdict
+B remains satisfied and does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
