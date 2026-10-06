@@ -31,6 +31,59 @@ MAX_SUPPORT_CELLS = 131072  # Workspace ceiling only; support is never truncated
 APP_SECONDS = 6000
 KNOWN_DEVICE_PEAK_GIB = 30.909375801682472
 KNOWN_DEVICE_LIMIT_GIB = 69.81413269042969
+TERM_KEYS = (
+    'IC_prior_NLL', 'tracer_nuisance_prior_NLL', 'population_nuisance_prior_NLL',
+    'count_log_likelihood', 'conditional_FP_log_likelihood',
+)
+
+
+def conditional_target_terms(q, score, components, support_info, n_ic=N_IC):
+    """Prior minus the declared count and conditional-FP scores. No new terms."""
+    q = np.asarray(q, dtype=np.float64).reshape(-1)
+    components = np.asarray(components, dtype=np.float64).reshape(-1)
+    if q.shape != (n_ic + 24,) or components.shape != (2,):
+        raise ValueError('canonical coordinates and two likelihood components required')
+    count_score, fp_score = map(float, components)
+    prior_ic = 0.5 * float(np.dot(q[:n_ic], q[:n_ic]))
+    prior_tracer = 0.5 * float(np.dot(q[n_ic:n_ic + 9], q[n_ic:n_ic + 9]))
+    prior_population = 0.5 * float(np.dot(q[n_ic + 9:], q[n_ic + 9:]))
+    detail = dict(
+        IC_prior_NLL=prior_ic,
+        tracer_nuisance_prior_NLL=prior_tracer,
+        population_nuisance_prior_NLL=prior_population,
+        count_log_likelihood=count_score,
+        conditional_FP_log_likelihood=fp_score,
+        nuisance_prior_NLL=prior_tracer + prior_population,
+        total_negative_log_target=prior_ic + prior_tracer + prior_population - count_score - fp_score,
+        support=json.dumps(support_info, sort_keys=True, default=lambda item: np.asarray(item).tolist()),
+    )
+    return prior_ic + prior_tracer + prior_population - float(score), detail
+
+
+def conditional_target_gradient(q, ic_score_gradient, tracer_score_gradient,
+                                population_score_gradient, n_ic=N_IC):
+    """NLL gradient is the standard-normal coordinate minus the score gradient."""
+    q = np.asarray(q, dtype=np.float64).reshape(-1)
+    ic_score_gradient = np.asarray(ic_score_gradient, dtype=np.float64).reshape(-1)
+    tracer_score_gradient = np.asarray(tracer_score_gradient, dtype=np.float64).reshape(-1)
+    population_score_gradient = np.asarray(population_score_gradient, dtype=np.float64).reshape(-1)
+    if (q.shape != (n_ic + 24,) or ic_score_gradient.shape != (n_ic,)
+            or tracer_score_gradient.shape != (9,) or population_score_gradient.shape != (15,)):
+        raise ValueError('score-gradient blocks do not match the canonical coordinates')
+    gradient = np.empty_like(q)
+    gradient[:n_ic] = q[:n_ic] - ic_score_gradient
+    gradient[n_ic:n_ic + 9] = q[n_ic:n_ic + 9] - tracer_score_gradient
+    gradient[n_ic + 9:] = q[n_ic + 9:] - population_score_gradient
+    return gradient
+
+
+def assemble_conditional_objective(q, score, components, ic_score_gradient,
+                                   tracer_score_gradient, population_score_gradient,
+                                   support_info, n_ic=N_IC):
+    value, detail = conditional_target_terms(q, score, components, support_info, n_ic)
+    gradient = conditional_target_gradient(
+        q, ic_score_gradient, tracer_score_gradient, population_score_gradient, n_ic)
+    return value, gradient, detail
 
 
 class EvaluationBudgetStop(RuntimeError):
@@ -253,25 +306,8 @@ def main():
             (score, components), grads = obs.derivative(
                 rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
             ic_gradient, = pullback((grads[0], grads[1]))
-            gradient = np.empty_like(q)
-            gradient[:N_IC] = q[:N_IC] - np.asarray(ic_gradient)
-            gradient[N_IC:N_IC + 9] = q[N_IC:N_IC + 9] - np.asarray(grads[2])
-            gradient[N_IC + 9:] = q[N_IC + 9:] - np.asarray(grads[3])
-            prior_ic = 0.5 * float(np.dot(q[:N_IC], q[:N_IC]))
-            prior_tracer = 0.5 * float(np.dot(q[N_IC:N_IC + 9], q[N_IC:N_IC + 9]))
-            prior_population = 0.5 * float(np.dot(q[N_IC + 9:], q[N_IC + 9:]))
-            count_score, fp_score = map(float, np.asarray(components))
-            detail = dict(
-                IC_prior_NLL=prior_ic,
-                tracer_nuisance_prior_NLL=prior_tracer,
-                population_nuisance_prior_NLL=prior_population,
-                count_log_likelihood=count_score,
-                conditional_FP_log_likelihood=fp_score,
-                nuisance_prior_NLL=prior_tracer + prior_population,
-                total_negative_log_target=prior_ic + prior_tracer + prior_population - count_score - fp_score,
-                support=json.dumps(support_info, sort_keys=True, default=lambda x: np.asarray(x).tolist()),
-            )
-            return prior_ic + prior_tracer + prior_population - float(score), gradient, detail
+            return assemble_conditional_objective(
+                q, score, components, ic_gradient, grads[2], grads[3], support_info)
 
         def persist_report(_x, row, best):
             report['evaluations'] = objective.records.copy()

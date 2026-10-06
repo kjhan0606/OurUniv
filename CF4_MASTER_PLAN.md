@@ -9,6 +9,18 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-06
 
+Conditional optimizer diagnostic, before any longer N256 fit. Job 413612
+stopped at its four-iteration cap while the same conditional objective was
+still decreasing; the absolute gradient infinity-norm gate of `1e-4` was not
+the cause. One typed-H200 diagnostic replays the initializer and the saved
+best state, attributes the best-state gradient by IC, tracer, and population
+blocks and by count versus conditional FP, and checks one directional finite
+difference. It does not call the optimizer, add a likelihood term, read
+heldout measurements, or authorize a warm start. R2 remains NO-GO. R3 does
+not start until R2 reaches a recorded completion or in-scope impasse and the
+notification to the user has been sent. Design and gates:
+`CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
+
 A source-applicability check identified Hollinger & Hudson (2024)'s
 physically based 2M++-like MDPL2 mocks: z=0 MDPL2 with SAG/SAGE galaxies,
 K-band luminosities abundance-matched to the 2M++ LF, flux/depth and ZoA
