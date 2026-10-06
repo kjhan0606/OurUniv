@@ -34,6 +34,24 @@ code/results) and decides which recommendations to adopt, amend or reject,
 recording concrete reasons. A substantive disagreement is not an invocation
 failure.
 
+User update2026-10-06: during R2, Astra performs every warranted external
+audit, including mid-course reviews and the exit review. This supersedes the
+Fable-primary route for R2 only. The trigger is unchanged: an important
+discovery, a goal revision, or a large calculation. Routine plans, code
+checks, diagnostics and evaluations stay with the driver. Ask Q-GOAL and
+Q-LEAN, including MW/M31 role ambiguity, unresolved M33, and the same NEW
+evolved field. A mid-course audit is advice: check its evidence, adopt the
+supported part, record any amendment, and continue R2. It does not close R2
+or send the exit email. Closing R2 still requires a separate Astra exit audit.
+Send the R2-exit email to kjhan0606@gmail.com only after Astra explicitly
+approves the exit and the driver has checked that the cited evidence matches
+the repository. Put Astra's verdict, findings, and the driver disposition in
+the email body. Do not start R3 in that turn, and do not start it before the
+user replies. If Astra withholds exit approval, adopt that advice and continue
+R2; do not send the exit email and do not enter R3. An unusable Astra response
+is neither approval nor a substantive rejection: retry Astra, and do not
+substitute another model. Detail: `CF4_R2_EXIT_AUDIT_GATE_20261006.md`.
+
 User update2026-09-12 after population-location comparison347085: autonomous
 continuation is approved within the CF4/LG goal. Do not stop at each new bundle
 to request repetitive approval. Driver may plan, implement, submit via Slurm,

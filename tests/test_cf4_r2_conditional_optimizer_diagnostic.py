@@ -4,8 +4,8 @@ import numpy as np
 
 from cf4_r2_conditional_map import assemble_conditional_objective, conditional_target_terms
 from cf4_r2_conditional_optimizer_diagnostic import (
-    block_gradient_summary, diagnostic_status, finite_difference_agreement, gradient_agreement,
-    reproduction_failures,
+    block_gradient_summary, diagnostic_status, finite_difference_agreement,
+    finite_difference_status, gradient_agreement, reproduction_failures,
 )
 
 
@@ -97,6 +97,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(diagnostic_status(
             reproduction_passed=True, component_split='passed', finite_difference='passed',
             budget_stopped_early=False), 'CONDITIONAL_OPTIMIZER_DIAGNOSTIC_COMPLETE')
+
+    def test_finite_difference_completion_does_not_invent_a_pass(self):
+        self.assertEqual(finite_difference_status(
+            reproduction_passed=False, finite_difference='passed'),
+            'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED')
+        self.assertEqual(finite_difference_status(
+            reproduction_passed=True, finite_difference='failed'),
+            'CONDITIONAL_OPTIMIZER_FD_FAILED')
+        self.assertEqual(finite_difference_status(
+            reproduction_passed=True, finite_difference=None),
+            'CONDITIONAL_OPTIMIZER_DIAGNOSTIC_INCOMPLETE_BUDGET')
+        self.assertEqual(finite_difference_status(
+            reproduction_passed=True, finite_difference='passed'),
+            'CONDITIONAL_OPTIMIZER_FD_PASSED')
 
 
 if __name__ == '__main__':

@@ -149,8 +149,19 @@ def _snapshot_count(name):
     return None if value is None else int(value)
 
 
-def _stage_allowed(started, need_seconds):
-    return APP_SECONDS - (time.monotonic() - started) >= need_seconds
+def _stage_allowed(started, need_seconds, budget_seconds=APP_SECONDS):
+    return budget_seconds - (time.monotonic() - started) >= need_seconds
+
+
+def finite_difference_status(*, reproduction_passed, finite_difference):
+    """Status for the best-state finite-difference completion. It does not authorize a fit."""
+    if not reproduction_passed:
+        return 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+    if finite_difference == 'passed':
+        return 'CONDITIONAL_OPTIMIZER_FD_PASSED'
+    if finite_difference == 'failed':
+        return 'CONDITIONAL_OPTIMIZER_FD_FAILED'
+    return 'CONDITIONAL_OPTIMIZER_DIAGNOSTIC_INCOMPLETE_BUDGET'
 
 
 def main():
@@ -171,6 +182,8 @@ def main():
         'project: CF4\nrepo: /home/kjhan/BACKUP/CF4\n'
         'purpose: conditional-target reproduction and gradient attribution\n'
         'DO_NOT_CANCEL\n')
+    fd_only = os.environ.get('CF4_R2_FD_ONLY') == '1'
+    budget_seconds = 40 * 60 if fd_only else APP_SECONDS
     started = time.monotonic()
     report_path = out / 'result.json'
     report = dict(
@@ -184,7 +197,8 @@ def main():
                    finite_difference_eps=FD_EPS, finite_difference_relative_limit=FD_RELATIVE_LIMIT,
                    component_relative_l2_limit=COMPONENT_RELATIVE_L2_LIMIT,
                    component_max_abs_factor=COMPONENT_MAX_ABS_FACTOR),
-        application_seconds=APP_SECONDS,
+        application_seconds=budget_seconds,
+        finite_difference_only=fd_only,
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -308,27 +322,58 @@ def main():
                         terms={key: state['detail'][key] for key in TERM_KEYS},
                         failures=failures, passed=not failures)
 
-        if not _stage_allowed(started, ADJOINT_STAGE_SECONDS):
-            raise TimeoutError('application budget cannot hold the first replay')
-        initial = evaluate_full(q0)
-        report['initializer'] = compare('initializer', initial, saved_initial)
-        _save(report_path, report, started)
-        del initial
-        if not _stage_allowed(started, ADJOINT_STAGE_SECONDS):
+        if fd_only:
+            report['initializer'] = dict(
+                skipped=True,
+                reason='job 414485 already reproduced the initializer inside the declared gate')
+        else:
+            if not _stage_allowed(started, ADJOINT_STAGE_SECONDS, budget_seconds):
+                raise TimeoutError('application budget cannot hold the first replay')
+            initial = evaluate_full(q0)
+            report['initializer'] = compare('initializer', initial, saved_initial)
+            _save(report_path, report, started)
+            del initial
+        if not _stage_allowed(started, ADJOINT_STAGE_SECONDS, budget_seconds):
             raise TimeoutError('application budget cannot hold the best-state replay')
         best = evaluate_full(q_best)
         report['best_state'] = compare('best', best, saved_best)
-        reproduction_passed = report['initializer']['passed'] and report['best_state']['passed']
+        reproduction_passed = report['best_state']['passed'] and (
+            fd_only or report['initializer']['passed'])
         report['reproduction_passed'] = reproduction_passed
         _save(report_path, report, started)
 
         component_split = None
         finite_difference = None
         budget_stopped_early = False
+        if reproduction_passed and fd_only:
+            report['best_joint_gradient'] = block_gradient_summary(best['gradient'])
+            finite_difference = None
+            if _stage_allowed(started, VALUE_STAGE_SECONDS, budget_seconds):
+                gradient = best['gradient']
+                norm = float(np.linalg.norm(gradient))
+                if not np.isfinite(norm) or norm == 0.0:
+                    raise FloatingPointError('best-state gradient has no finite direction')
+                direction = gradient / norm
+                best.pop('pullback', None)
+                best.pop('packs', None)
+                best.pop('rho', None)
+                best.pop('velocity', None)
+                stepped_value, _ = evaluate_value(q_best + FD_EPS * direction)
+                agreement = finite_difference_agreement(
+                    best['value'], stepped_value, float(np.dot(gradient, direction)), FD_EPS)
+                report['finite_difference'] = agreement
+                finite_difference = 'passed' if agreement['passed'] else 'failed'
+            report['status'] = finite_difference_status(
+                reproduction_passed=True, finite_difference=finite_difference)
+            report['longer_warm_start_authorized'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], reproduction_passed=True,
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
         if reproduction_passed:
             report['best_joint_gradient'] = block_gradient_summary(best['gradient'])
             _save(report_path, report, started)
-            if not _stage_allowed(started, ADJOINT_STAGE_SECONDS):
+            if not _stage_allowed(started, ADJOINT_STAGE_SECONDS, budget_seconds):
                 budget_stopped_early = True
             else:
                 component_gradients = {}

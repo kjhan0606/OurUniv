@@ -39,3 +39,15 @@ MW/M31 roles remain ambiguous and M33 unresolved. Their observables still have t
 ## CPU checks
 
 `tests/test_cf4_r2_conditional_optimizer_diagnostic.py` checks the prior-minus-score algebra, the reproduction gate, block ownership, the finite-difference limit, component-sum agreement, and the status labels. The N256 replay itself is the Slurm job.
+
+## Result — job 414485
+
+The job completed on `h200` / `gpu:H200:1` at syn104 in 59:35, exit 0. Application time was 3,532 seconds. Host peak was 13.0 GiB of the requested 48 GiB. The device limit was 104.85 GiB. Both saved states reproduced the recorded terms with empty failure lists, inside the `1e-3` absolute and `1e-8` relative gates. No heldout values were loaded. The optimizer was not called. `longer_warm_start_authorized` is false. Status: `CONDITIONAL_OPTIMIZER_DIAGNOSTIC_INCOMPLETE_BUDGET`. R2 remains NO-GO.
+
+The best-state joint gradient is not an IC-field spike. Its infinity norm, 13,524.69, is tracer coordinate 0. That coordinate enters the count rate as `log_reference_rate_per_cell = log(sum of reference LF fractions) + 2*tracer[0]`. The count score gradient carries it: tracer infinity norm 13,524.39, while the count gradient on all 15 population coordinates is 0. The IC block at the same state has RMS 2.005 and infinity norm 14.95. The population block has RMS 399.2 and infinity norm 700.00 at population coordinate 9, which is `p[0]` in the FP unpacking, the log of the first intrinsic-covariance Cholesky diagonal. The conditional-FP score gradient owns that coordinate; its IC RMS is 0.00363. Adding the two score gradients and subtracting them from the parameters rebuilds the joint gradient to relative L2 `5.7e-16`.
+
+The finite difference did not run. After the two replays and two component adjoints, 668 seconds remained, short of the 720-second value-stage threshold. That is a budget stop, not a failed derivative check and not evidence that the 13,524 gradient is an IC mode.
+
+## Next, still not a warm start
+
+The infinity norm is one count-amplitude coordinate, so the planned IC warm start is not the next fit. The missing check is the one directional finite difference at the saved best state. It is a routine completion of this diagnostic: one exact gradient and one stepped value, application budget 40 minutes, Slurm 45 minutes, no component adjoints and no optimizer. At the submission check, syn104 had all 8 H200 devices allocated, both H100 nodes had all 5 devices allocated, and neither A100 node had a free device. The queued job still uses `h200` / `gpu:H200:1`, the device on which job 414485 measured this target. If it misses the relative `1e-2` gate, no rescaling and no longer fit follow. If it passes, the next change is a same-objective nuisance scaling or block order whose stationary point is unchanged. That short test comes before any 16,777,216-coordinate warm start. A warm start of 18 evaluations remains a large calculation and needs an Astra audit before submission. This finite-difference completion does not.
