@@ -285,10 +285,12 @@ def main():
     pop9_line = os.environ.get('CF4_R2_POP9_LINE') == '1'
     pop9_newton = os.environ.get('CF4_R2_POP9_NEWTON') == '1'
     pop9_secant_mode = os.environ.get('CF4_R2_POP9_SECANT') == '1'
+    pop9_secant2 = os.environ.get('CF4_R2_POP9_SECANT2') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
-            pop9_newton, pop9_secant_mode)) > 1:
+            pop9_newton, pop9_secant_mode, pop9_secant2)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
-    if tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton or pop9_secant_mode:
+    if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
+            or pop9_secant_mode or pop9_secant2):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -315,8 +317,10 @@ def main():
         pop9_line_only=pop9_line,
         pop9_newton_only=pop9_newton,
         pop9_secant_only=pop9_secant_mode,
+        pop9_secant2_only=pop9_secant2,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
-                              or pop9_line or pop9_newton or pop9_secant_mode),
+                              or pop9_line or pop9_newton or pop9_secant_mode
+                              or pop9_secant2),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -407,22 +411,43 @@ def main():
 
         source_jax = {key: jnp.asarray(value) for key, value in source.items()}
         obs_jax = {key: jnp.asarray(value) for key, value in observation.items()}
-        if pop9_secant_mode:
-            newton = json.loads(
-                (BASE / 'r2_conditional_pop9_newton_20261007/result.json').read_text())
-            if newton.get('status') != 'CONDITIONAL_POP9_LINE_IMPROVED':
-                raise ValueError('population-9 secant requires the improved Newton step')
-            rows = newton.get('evaluations') or []
-            if (len(rows) != 2 or rows[0].get('step') != 'verify'
-                    or rows[1].get('step') != 'newton'):
-                raise ValueError('population-9 secant requires the Newton sign bracket')
-            positive, negative = rows[0], rows[1]
+        if pop9_secant_mode or pop9_secant2:
+            if pop9_secant_mode:
+                parent_path = BASE / 'r2_conditional_pop9_newton_20261007/result.json'
+                required_steps = ('verify', 'newton')
+                parent_error = 'population-9 secant requires the improved Newton step'
+                bracket_error = 'population-9 secant requires the Newton sign bracket'
+                report_job_key = 'population9_newton_job_id'
+                q_lean = (
+                    'verify the population-9 Newton point, then one secant inside its sign bracket; '
+                    'no sampler, heldout, or IC update')
+            else:
+                parent_path = BASE / 'r2_conditional_pop9_secant_20261007/result.json'
+                required_steps = ('verify', 'secant')
+                parent_error = 'population-9 second secant requires the improved first secant'
+                bracket_error = 'population-9 second secant requires the tightened sign bracket'
+                report_job_key = 'population9_secant_job_id'
+                q_lean = (
+                    'verify the population-9 secant point, then one secant inside the tightened bracket; '
+                    'no sampler, heldout, or IC update')
+            parent = json.loads(parent_path.read_text())
+            if parent.get('status') != 'CONDITIONAL_POP9_LINE_IMPROVED':
+                raise ValueError(parent_error)
+            rows = parent.get('evaluations') or []
+            if (len(rows) != 2 or rows[0].get('step') != required_steps[0]
+                    or rows[1].get('step') != required_steps[1]):
+                raise ValueError(bracket_error)
+            if pop9_secant_mode:
+                positive, negative = rows[0], rows[1]
+            else:
+                negative, positive = rows[0], rows[1]
+            anchor = negative if pop9_secant_mode else positive
             if not (float(positive['population_coordinate_9_gradient']) > 0.
                     and float(negative['population_coordinate_9_gradient']) < 0.):
                 raise ValueError('population-9 secant requires opposite derivative signs')
-            tracer0 = float(negative['tracer0'])
-            if float(positive['tracer0']) != tracer0:
-                raise ValueError('population-9 Newton bracket changed tracer 0')
+            tracer0 = float(anchor['tracer0'])
+            if float(positive['tracer0']) != tracer0 or float(negative['tracer0']) != tracer0:
+                raise ValueError('population-9 bracket changed tracer 0')
             line = json.loads(
                 (BASE / 'r2_conditional_pop9_line_20261007_v2/result.json').read_text())
             gate_rows = line.get('evaluations') or []
@@ -433,17 +458,15 @@ def main():
             theta = tracer0_secant(
                 positive['population_coordinate_9'], positive['population_coordinate_9_gradient'],
                 negative['population_coordinate_9'], negative['population_coordinate_9_gradient'])
-            report['population9_newton_job_id'] = newton.get('job_id')
+            report[report_job_key] = parent.get('job_id')
             report['secant_population_coordinate_9'] = theta
-            report['Q_LEAN'] = (
-                'verify the population-9 Newton point, then one secant inside its sign bracket; '
-                'no sampler, heldout, or IC update')
+            report['Q_LEAN'] = q_lean
             white = jnp.asarray(q_best[:N_IC])
             rho, velocity = field(white)
             jax.block_until_ready((rho, velocity))
             origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
             origin[0] = tracer0
-            origin[18] = float(negative['population_coordinate_9'])
+            origin[18] = float(anchor['population_coordinate_9'])
 
             def shapes_of(packs):
                 return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
@@ -478,16 +501,16 @@ def main():
 
             baseline = evaluate_at(origin)
             gradient_limit = 1e-4 * max(
-                abs(float(negative['population_coordinate_9_gradient'])), 1.)
-            tracer_limit = 1e-4 * max(abs(float(negative['tracer0_gradient'])), 1.)
+                abs(float(anchor['population_coordinate_9_gradient'])), 1.)
+            tracer_limit = 1e-4 * max(abs(float(anchor['tracer0_gradient'])), 1.)
             objective_ok = baseline is not None and abs(
-                baseline['objective'] - float(negative['objective'])) / max(
-                    abs(float(negative['objective'])), 1.) <= 1e-8
+                baseline['objective'] - float(anchor['objective'])) / max(
+                    abs(float(anchor['objective'])), 1.) <= 1e-8
             gradient_ok = baseline is not None and abs(
                 baseline['population_coordinate_9_gradient']
-                - float(negative['population_coordinate_9_gradient'])) <= gradient_limit
+                - float(anchor['population_coordinate_9_gradient'])) <= gradient_limit
             tracer_ok = baseline is not None and abs(
-                baseline['tracer0_gradient'] - float(negative['tracer0_gradient'])) <= tracer_limit
+                baseline['tracer0_gradient'] - float(anchor['tracer0_gradient'])) <= tracer_limit
             records = []
 
             def score_against_line_start(candidates):

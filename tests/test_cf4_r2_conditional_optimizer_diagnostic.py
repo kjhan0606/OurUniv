@@ -179,6 +179,13 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertGreater(theta, negative)
         self.assertGreater(theta, 0.5 * (positive + negative))
 
+    def test_second_population_secant_stays_closer_to_the_smaller_derivative(self):
+        positive, negative = -0.5340042606603805, -0.8346018455909067
+        theta = tracer0_secant(positive, 179.299297990836, negative, -742.5802154827693)
+        self.assertLess(theta, positive)
+        self.assertGreater(theta, negative)
+        self.assertGreater(theta, 0.5 * (positive + negative))
+
 
 if __name__ == '__main__':
     unittest.main()
