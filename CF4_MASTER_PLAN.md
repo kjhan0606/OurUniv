@@ -9,21 +9,19 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-06
 
-Conditional gradient check. The directional finite difference passed with
-relative error `4.37e-4`, and the infinity norm 13,524.69 is tracer
-coordinate 0. Job 414887 then moved only that coordinate on the fixed best
-IC. A step from 0.299378 to 0.199378 lowered the objective by 343.192, almost
-entirely in the count term, and flipped the derivative from +13,524.69 to
--6,010.14. The next step and the half step were worse. Status
-`CONDITIONAL_TRACER0_LINE_IMPROVED`. The derivative is not yet small, and
-the sign change lies between those two values. The half step went below
-0.199378, outside that bracket. Population coordinate 9 stayed at derivative
-699.997. The next routine step verifies the improved point and takes one
-secant step inside the bracket. It does not authorize a joint warm start.
-An 18-evaluation IC fit remains a large calculation and needs an Astra audit
-before submission. During R2, warranted external audits go to Astra, and
-closing R2 needs a separate Astra exit audit whose approval is included in
-the notification email. R2 remains NO-GO. R3 has not started. Detail:
+Conditional gradient check. Job 414921 verified the improved tracer-0 point
+and took one secant step to tracer 0 = 0.230145 on the fixed best IC. The
+objective is 442.844 below the original saved best, almost entirely in the
+count term. The tracer-0 derivative fell from 13,524.69 to -410.477, inside
+the tenfold gate. Status `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. The
+derivative is still negative, and population coordinate 9 remains at 699.997.
+The next routine step holds tracer 0 at 0.230145 and moves only that FP
+covariance coordinate, stopping if its derivative changes sign. It does not
+authorize a joint warm start. An 18-evaluation IC fit remains a large
+calculation and needs an Astra audit before submission. During R2, warranted
+external audits go to Astra, and closing R2 needs a separate Astra exit
+audit whose approval is included in the notification email. R2 remains
+NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
 
 A source-applicability check identified Hollinger & Hudson (2024)'s

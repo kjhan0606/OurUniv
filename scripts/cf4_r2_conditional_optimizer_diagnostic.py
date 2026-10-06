@@ -174,6 +174,30 @@ def scaled_nuisance(origin, scale, z):
     return origin + scale * z
 
 
+def pop9_line_status(initial_objective, best_objective, initial_abs_gradient,
+                     best_abs_gradient, fp_initial, fp_best):
+    """Tenfold drop in the FP-covariance coordinate, without a worse FP term."""
+    improved = float(best_objective) < float(initial_objective)
+    reduced = (float(best_abs_gradient) <= float(initial_abs_gradient) / 10.
+               and float(fp_best) >= float(fp_initial) - 1e-6)
+    if improved and reduced:
+        return 'CONDITIONAL_POP9_LINE_REDUCED'
+    if improved:
+        return 'CONDITIONAL_POP9_LINE_IMPROVED'
+    return 'CONDITIONAL_POP9_LINE_NO_IMPROVEMENT'
+
+
+def coordinate_line_action(improved, sign_flipped, reduced, midpoint_used):
+    """Stop on a sign change. A failed step gets one midpoint retry, not another outward step."""
+    if reduced or sign_flipped:
+        return 'stop'
+    if improved:
+        return 'continue'
+    if midpoint_used:
+        return 'stop'
+    return 'midpoint'
+
+
 def tracer0_secant(theta_pos, gradient_pos, theta_neg, gradient_neg):
     """One secant step inside a sign bracket. It does not change the objective."""
     theta_pos, theta_neg = float(theta_pos), float(theta_neg)
@@ -244,9 +268,10 @@ def main():
     nuisance_block = os.environ.get('CF4_R2_NUISANCE_BLOCK') == '1'
     tracer0_line = os.environ.get('CF4_R2_TRACER0_LINE') == '1'
     tracer0_secant_mode = os.environ.get('CF4_R2_TRACER0_SECANT') == '1'
-    if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode)) > 1:
+    pop9_line = os.environ.get('CF4_R2_POP9_LINE') == '1'
+    if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
-    if tracer0_line or tracer0_secant_mode:
+    if tracer0_line or tracer0_secant_mode or pop9_line:
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -270,7 +295,8 @@ def main():
         nuisance_block_only=nuisance_block,
         tracer0_line_only=tracer0_line,
         tracer0_secant_only=tracer0_secant_mode,
-        ic_coordinates_fixed=nuisance_block or tracer0_line or tracer0_secant_mode,
+        pop9_line_only=pop9_line,
+        ic_coordinates_fixed=nuisance_block or tracer0_line or tracer0_secant_mode or pop9_line,
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -361,6 +387,114 @@ def main():
 
         source_jax = {key: jnp.asarray(value) for key, value in source.items()}
         obs_jax = {key: jnp.asarray(value) for key, value in observation.items()}
+        if pop9_line:
+            secant_result = json.loads(
+                (BASE / 'r2_conditional_tracer0_secant_20261007/result.json').read_text())
+            if secant_result.get('status') != 'CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED':
+                raise ValueError('population-9 line requires the reduced tracer-0 secant')
+            saved = secant_result['evaluations'][1]
+            if saved.get('step') != 'secant':
+                raise ValueError('population-9 line requires the secant evaluation')
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+            origin[0] = float(saved['tracer0'])
+
+            def shapes_of(packs):
+                return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
+                             for pack in packs)
+
+            packs, _ = obs.support(rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]))
+            base_shapes = shapes_of(packs)
+            compiled = obs.derivative.lower(
+                rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]), packs,
+                source_jax, obs_jax, 2).compile()
+
+            def evaluate_at(nuisance):
+                built, support_info = obs.support(
+                    rho, velocity, jnp.asarray(nuisance[:9]), jnp.asarray(nuisance[9:]))
+                if shapes_of(built) != base_shapes:
+                    return None
+                (score, components), grads = compiled(
+                    rho, velocity, jnp.asarray(nuisance[:9]), jnp.asarray(nuisance[9:]),
+                    built, source_jax, obs_jax)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('population-9 line produced a nonfinite target')
+                return dict(
+                    objective=value, tracer0=float(nuisance[0]),
+                    population_coordinate_9=float(nuisance[18]),
+                    tracer0_gradient=float(gradient[0]),
+                    population_coordinate_9_gradient=float(gradient[18]),
+                    terms={key: detail[key] for key in TERM_KEYS})
+
+            baseline = evaluate_at(origin)
+            gradient_limit = 1e-4 * max(abs(float(saved['population_coordinate_9_gradient'])), 1.)
+            tracer_limit = 1e-4 * max(abs(float(saved['tracer0_gradient'])), 1.)
+            objective_ok = baseline is not None and abs(
+                baseline['objective'] - float(saved['objective'])) / max(abs(float(saved['objective'])), 1.) <= 1e-8
+            gradient_ok = baseline is not None and abs(
+                baseline['population_coordinate_9_gradient'] - float(saved['population_coordinate_9_gradient'])) <= gradient_limit
+            tracer_ok = baseline is not None and abs(
+                baseline['tracer0_gradient'] - float(saved['tracer0_gradient'])) <= tracer_limit
+            records = []
+            if not (objective_ok and gradient_ok and tracer_ok):
+                report['baseline'] = baseline
+                report['status'] = 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+            else:
+                records.append(baseline)
+                accepted = origin.copy()
+                accepted_objective = baseline['objective']
+                accepted_gradient = baseline['population_coordinate_9_gradient']
+                step = -0.1 if accepted_gradient > 0. else 0.1
+                midpoint_used = False
+                initial_abs = abs(accepted_gradient)
+                for _ in range(3):
+                    if budget_seconds - (time.monotonic() - started) < 60.:
+                        report['budget_stop'] = True
+                        break
+                    proposal = accepted.copy()
+                    proposal[18] = accepted[18] + step
+                    row = evaluate_at(proposal)
+                    if row is None:
+                        report['support_shape_changed'] = True
+                        break
+                    row['step'] = step
+                    records.append(row)
+                    improved = row['objective'] < accepted_objective
+                    sign_flipped = row['population_coordinate_9_gradient'] * accepted_gradient < 0.
+                    reduced = abs(row['population_coordinate_9_gradient']) <= initial_abs / 10.
+                    action = coordinate_line_action(improved, sign_flipped, reduced, midpoint_used)
+                    if improved:
+                        accepted = proposal
+                        accepted_objective = row['objective']
+                        accepted_gradient = row['population_coordinate_9_gradient']
+                    if action == 'continue':
+                        step = -0.1 if accepted_gradient > 0. else 0.1
+                        midpoint_used = False
+                    elif action == 'midpoint':
+                        step = 0.5 * step
+                        midpoint_used = True
+                    else:
+                        break
+                best = min(records, key=lambda row: row['objective'])
+                report['status'] = pop9_line_status(
+                    baseline['objective'], best['objective'], initial_abs,
+                    abs(best['population_coordinate_9_gradient']),
+                    baseline['terms']['conditional_FP_log_likelihood'],
+                    best['terms']['conditional_FP_log_likelihood'])
+            report['evaluations'] = records
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
         if tracer0_secant_mode:
             line = json.loads((BASE / 'r2_conditional_tracer0_line_20261007/result.json').read_text())
             if line.get('status') != 'CONDITIONAL_TRACER0_LINE_IMPROVED':

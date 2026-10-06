@@ -66,9 +66,13 @@ Tracer 0 moved from 0.299378 to 0.199378. The objective fell by 343.192, of whic
 
 The absolute derivative fell from 13,525 to 6,010, which is not a tenfold reduction. The same objective therefore has a one-coordinate root inside that interval, and the accepted point is an improvement rather than a stationary point.
 
-## Next: one secant step inside the bracket
+## Secant — job 414921
 
-Verify the accepted point, then evaluate one secant step strictly between tracer 0 = 0.199378 and 0.299378. The IC and the other 23 nuisance coordinates stay fixed. No further step is added in that job. The same tenfold derivative drop and count gate decide whether the amplitude is reduced. This is still not a joint warm start. Application budget 70 minutes, Slurm 70 minutes.
+The secant ran on `h200` / `gpu:H200:1` at syn104 in 31:27, exit 0. It reproduced the accepted line point, tracer 0 = 0.199378 and derivative -6,010.139, then evaluated tracer 0 = 0.230145. The objective there is 8,214,499.038, which is 442.844 below the original saved best and 99.653 below the accepted line point. The count term contributed 442.826 of the drop from the saved best, and the tracer prior 0.018. The IC prior and conditional FP did not change. The tracer-0 derivative is -410.477, 33 times smaller than 13,524.69 and inside the tenfold gate. Status: `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. The derivative is still negative, so the root lies slightly above 0.230145. A linear estimate puts the remaining move near 0.002 and the remaining objective near half a nat. That extrapolation is not a measurement, and another tracer-0 evaluation is not the next job. Population coordinate 9 remains at derivative 699.997. `longer_warm_start_authorized` remains false. This is not a joint stationary point.
+
+## Next: population coordinate 9
+
+Hold the IC fixed and hold tracer 0 at 0.230145. Verify that secant point, then move only population coordinate 9, the log of the first intrinsic-FP covariance diagonal. Its derivative is positive, so the first step is -0.1. A sign change stops the search. A worse objective gets one midpoint between the accepted point and the failed point, then stops. At most three trials follow the verification. A tenfold drop with a conditional-FP term that does not worsen is `CONDITIONAL_POP9_LINE_REDUCED`. This is not a joint warm start. Application budget 70 minutes, Slurm 80 minutes. H200 was fully allocated at submission, both H100 nodes were fully allocated, and syn102 had free A100 devices, so this job uses `a100` / `gpu:A100:1`. The existing device-peak guard still requires 20 percent headroom.
 
 ## Line search executed by job 414887
 

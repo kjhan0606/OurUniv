@@ -6,7 +6,8 @@ from cf4_r2_conditional_map import assemble_conditional_objective, conditional_t
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
-    reproduction_failures, scaled_nuisance, tracer0_line_status, tracer0_secant,
+    coordinate_line_action, pop9_line_status, reproduction_failures, scaled_nuisance,
+    tracer0_line_status, tracer0_secant,
 )
 
 
@@ -144,6 +145,21 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, 0.2993783248581184)
         with self.assertRaisesRegex(ValueError, 'opposite derivative'):
             tracer0_secant(0.3, 1., 0.2, 1.)
+
+    def test_a_sign_change_stops_before_another_outward_step(self):
+        self.assertEqual(coordinate_line_action(True, True, False, False), 'stop')
+        self.assertEqual(coordinate_line_action(True, False, False, False), 'continue')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        self.assertEqual(coordinate_line_action(False, False, False, True), 'stop')
+        self.assertEqual(coordinate_line_action(True, False, True, False), 'stop')
+
+    def test_population_coordinate_gate_uses_the_fp_term(self):
+        self.assertEqual(pop9_line_status(10., 9., 700., 50., 1., 1.1),
+                         'CONDITIONAL_POP9_LINE_REDUCED')
+        self.assertEqual(pop9_line_status(10., 9., 700., 200., 1., 1.1),
+                         'CONDITIONAL_POP9_LINE_IMPROVED')
+        self.assertEqual(pop9_line_status(10., 9., 700., 50., 1., 0.),
+                         'CONDITIONAL_POP9_LINE_IMPROVED')
 
 
 if __name__ == '__main__':
