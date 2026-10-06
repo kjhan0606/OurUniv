@@ -405,15 +405,14 @@ def main():
                 return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
                              for pack in packs)
 
-            packs, _ = obs.support(rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]))
+            packs, _ = obs.support(rho, velocity, jnp.asarray(origin[:9]), 2)
             base_shapes = shapes_of(packs)
             compiled = obs.derivative.lower(
                 rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]), packs,
                 source_jax, obs_jax, 2).compile()
 
             def evaluate_at(nuisance):
-                built, support_info = obs.support(
-                    rho, velocity, jnp.asarray(nuisance[:9]), jnp.asarray(nuisance[9:]))
+                built, support_info = obs.support(rho, velocity, jnp.asarray(nuisance[:9]), 2)
                 if shapes_of(built) != base_shapes:
                     return None
                 (score, components), grads = compiled(

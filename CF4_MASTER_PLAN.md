@@ -15,8 +15,11 @@ objective is 442.844 below the original saved best, almost entirely in the
 count term. The tracer-0 derivative fell from 13,524.69 to -410.477, inside
 the tenfold gate. Status `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. The
 derivative is still negative, and population coordinate 9 remains at 699.997.
-The next routine step holds tracer 0 at 0.230145 and moves only that FP
-covariance coordinate, stopping if its derivative changes sign. It does not
+Job 414929 was submitted for that FP coordinate and failed in 46 seconds
+on syn102 before any evaluation: `support` received the population array
+as its order. The retry uses integer order 2. The routine step still holds
+tracer 0 at 0.230145 and moves only population coordinate 9, stopping if
+its derivative changes sign. It does not
 authorize a joint warm start. An 18-evaluation IC fit remains a large
 calculation and needs an Astra audit before submission. During R2, warranted
 external audits go to Astra, and closing R2 needs a separate Astra exit
