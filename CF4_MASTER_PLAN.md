@@ -28,11 +28,13 @@ The tightened bracket is (-0.834602, -0.534004), and 179.299 is still above
 the gate of 70. Job 414980 verified that point and evaluated -0.592468. The objective fell
 by another 6.681. The derivative is +46.114, inside the tenfold gate of 70.
 Status `CONDITIONAL_POP9_LINE_REDUCED`. The sign did not change. The
-predeclared population-9 search stops, and no third secant is queued. Astra's
-mid-course verdict is B: remeasure one full gradient at this point, including
-the IC pullback and all 24 nuisance components, and do not start an
-18-evaluation IC update. The driver adopts that verdict. The audit does not
-close R2. During R2, warranted external audits go to Astra, and
+predeclared population-9 search stops, and no third secant is queued. Job 415065 recorded that gradient on `h200` / `gpu:H200:1`. The IC block
+has rms 1.936 and infinity norm 14.104. The joint infinity norm is tracer
+coordinate 2 at +7246.381. An 18-evaluation IC update is not the next step.
+The routine step moves only tracer 2, the true-K bias at 1.201751, by -0.1,
+and holds the IC and the reduced tracer-0 and population-9 coordinates. It
+does not authorize a joint warm start. Astra's mid-course verdict B is
+satisfied by the recorded gradient and does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.

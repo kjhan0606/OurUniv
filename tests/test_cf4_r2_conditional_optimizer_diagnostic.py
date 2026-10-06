@@ -7,6 +7,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
+    tracer2_line_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -186,6 +187,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertGreater(theta, negative)
         self.assertGreater(theta, 0.5 * (positive + negative))
+
+    def test_tracer2_gate_uses_the_combined_likelihood(self):
+        self.assertEqual(tracer2_line_status(10., 9., 7000., 500., 3., 3.1),
+                         'CONDITIONAL_TRACER2_LINE_REDUCED')
+        self.assertEqual(tracer2_line_status(10., 9., 7000., 2000., 3., 3.1),
+                         'CONDITIONAL_TRACER2_LINE_IMPROVED')
+        self.assertEqual(tracer2_line_status(10., 9., 7000., 500., 3., 2.),
+                         'CONDITIONAL_TRACER2_LINE_IMPROVED')
+        self.assertEqual(tracer2_line_status(10., 10., 7000., 500., 3., 4.),
+                         'CONDITIONAL_TRACER2_LINE_NO_IMPROVEMENT')
 
     def test_full_gradient_record_requires_the_reduced_point(self):
         self.assertEqual(full_gradient_record_status(True, True, True),
