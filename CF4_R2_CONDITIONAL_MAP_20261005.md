@@ -156,3 +156,20 @@ role ambiguity and M33 non-identification remain open. R2 stays NO-GO.
 
 Status: job 413612 completed; interpretation and limitations are recorded
 above. No automatic follow-on fit was launched.
+
+## Driver-only stop attribution — 2026-10-06
+
+The saved runner and `result.json` were inspected without recomputation or
+heldout access. The runner fixes `maxiter=4` and `maxfun=8`; SciPy ended with
+`TOTAL NO. OF ITERATIONS REACHED LIMIT` at four iterations after six finite
+exact objective/gradient evaluations. The best objective improved by
+29,860.855 (0.362%), but the best gradient infinity norm remained 13,524.69
+against the declared `1e-4` condition. There is no execution exception,
+nonfinite objective, or missing best-state record in the final artifact.
+
+Disposition: the immediate stop is explained by the intentionally bounded
+iteration count, not an identified software failure. This does not certify
+the target, optimizer, or convergence under a longer run. Do not repeat the
+same cap. A continuation would be a new, materially larger optimization
+design requiring a defensible convergence rule and cost estimate; no
+continuation, heldout read, or production promotion follows from this audit.

@@ -4224,3 +4224,32 @@ unresolved; their observables must constrain those same roles on the same NEW
 evolved field, native truth identities evaluation-only. Q-LEAN: fix only the
 pre-score workspace stop; no repeated gravity-only simulation, sampler
 extension, heldout score, or new calibration claim.
+
+CF4TF mock source follow-up 2026-10-06: Qin et al. (2021) document 2,000
+selected CF4TF mocks from 250 L-PICOLA boxes, but the catalogues are available
+only on reasonable request, with no linked public data bundle. Their mock
+algorithm uses relative CF4TF/2M++ angular completeness and explicitly
+downsamples to the observed CF4TF redshift distribution; it assumes the
+published Malmquist correction is adequate. The mocks therefore cannot
+identify absolute group inclusion/redshift-success or calibrate our full
+CF4/Tempel/count ownership law. The later combined-CF4 mock paper also lists
+CF4TF/6dFGSv data as request-only; its public SDSS-PV set has already been
+processed here. In accordance with the no-email instruction, no author was
+contacted and no data were requested or downloaded. Close this public-source
+branch; details and evidence are in
+`CF4_R2_CF4TF_MOCK_APPLICABILITY_20261006.md`. A driver-only read-only
+inspection of the saved conditional-MAP runner/result finds no execution
+exception. The configured `maxiter=4`
+was reached after six finite evaluations, while the best gradient infinity
+norm remains 13,524.69 versus the `1e-4` criterion. Thus the attempt is
+budget-stopped, not a converged map; it does not show that a larger run will
+converge. Do not replay the same tiny budget. Before another N256 target run,
+design a scalable optimizer and predeclare practical stopping/resource
+criteria; keep the target explicitly conditional and R2 NO-GO because group
+inclusion/mark availability remain uncalibrated. No heldout read, posterior
+promotion or simulation. MW/M31 remain ambiguous and M33 unresolved; their
+observables still must constrain the same NEW field at LG `<=0.3 cMpc/h`, with
+native truth identities calibration/evaluation only. Q-GOAL: potentially one
+selected TF-mark diagnostic, not a field result or LG constraint. Q-LEAN: one
+source-method check plus read-only stop attribution; no repeated fit,
+repository census, contact or mock-generation ladder.
