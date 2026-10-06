@@ -110,7 +110,17 @@ The second secant ran on `h200` / `gpu:H200:1` at syn104 in 30:46, exit 0. Appli
 
 The verification reproduced job 414961. At -0.592468 the objective is 8,214,289.311950613, which is 6.681 below the first secant and 209.726 below the population-9 line start. The conditional-FP log likelihood rose from 1,992.817 to 1,999.531. The population prior rose from 0.193 to 0.226. The IC prior, tracer prior, count term, and tracer-0 derivative -410.477 stayed unchanged. The population-9 derivative is +46.114. That is below the tenfold gate of 70.000, and the conditional-FP log likelihood remains above its line-start value of 1,789.637. The sign did not change. A linear estimate from the last two positive derivatives puts the remaining move near 0.02 and the remaining objective near half a nat. That estimate is not a measurement. The predeclared search stops. No third secant is queued.
 
-The IC pullback has not been recomputed at this nuisance point. The last IC-block summary, rms 2.005 and infinity norm 14.95, belongs to the original saved best. The other 22 nuisance gradients were not remeasured here. An 18-evaluation IC update is still a large calculation. It is not submitted. The next action is a mid-course Astra audit of that choice. It is not an R2 exit audit.
+The IC pullback has not been recomputed at this nuisance point. The last IC-block summary, rms 2.005 and infinity norm 14.95, belongs to the original saved best. An 18-evaluation IC update is still a large calculation. It is not submitted. The next action is a mid-course Astra audit of that choice. It is not an R2 exit audit.
+
+## Astra disposition — 2026-10-07
+
+Astra returned verdict B in `config/cf4_r2_pop9_reduced_astra_20261007.md`. The driver adopts B. One full gradient is measured at the reduced point, with the IC pullback and all 24 nuisance components saved. The 18-evaluation IC update is not submitted. Option A is not supported: the coordinate gates do not show that the IC block at this nuisance point is the useful direction. Option C is not supported: the missing IC pullback is one evaluation, and the saved line results do not contain it. This audit does not close R2.
+
+Two corrections are adopted. The population-9 line code builds all 24 nuisance derivatives and stores tracer 0 and population 9 only. It also passes a zero IC score gradient, so those jobs did not compute the IC pullback. The coordinate itself is the shifted log Cholesky entry `log(L00) = log(0.3) + population_white[9]`, with scale 1. The covariance diagonal is `L00` squared. Earlier wording that called it the log covariance diagonal was imprecise. The measured coordinate and its derivative are unchanged. Slurm accounting confirms job 414980 completed on syn104 in 30:46 with exit 0. Astra could not open the accounting socket.
+
+## Next: one full gradient
+
+Hold the IC and the reduced nuisance point: tracer 0 = 0.23014459265495463 and population coordinate 9 = -0.592468447322586. Require job 414980 to be `CONDITIONAL_POP9_LINE_REDUCED`. Evaluate the same objective once, using the field pullback rather than a zero IC score gradient. The objective must match to relative `1e-8`, and the tracer-0 and population-9 derivatives must match to `1e-4` times their recorded absolute values. Save the block summary and the 24 nuisance derivatives in the result, and the full gradient array beside it. Do not step, do not call the optimizer, and do not read held-out values. `longer_warm_start_authorized` stays false. Application budget 70 minutes, Slurm 80 minutes. Select one idle H200 if one is free; otherwise one compatible H100 or A100. This measurement does not authorize an IC update.
 
 ## Line search executed by job 414887
 

@@ -6,7 +6,8 @@ from cf4_r2_conditional_map import assemble_conditional_objective, conditional_t
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
-    coordinate_line_action, pop9_line_status, pop9_newton_step, reproduction_failures,
+    coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
+    reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
 )
@@ -185,6 +186,12 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertGreater(theta, negative)
         self.assertGreater(theta, 0.5 * (positive + negative))
+
+    def test_full_gradient_record_requires_the_reduced_point(self):
+        self.assertEqual(full_gradient_record_status(True, True, True),
+                         'CONDITIONAL_FULL_GRADIENT_RECORDED')
+        self.assertEqual(full_gradient_record_status(True, False, True),
+                         'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED')
 
 
 if __name__ == '__main__':
