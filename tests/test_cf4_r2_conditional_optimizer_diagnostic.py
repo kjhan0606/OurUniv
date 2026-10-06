@@ -172,6 +172,13 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'cap'):
             pop9_newton_step(0.0, 2.0, -0.1, 1.0, max_abs=0.0)
 
+    def test_population_secant_stays_inside_the_newton_bracket(self):
+        positive, negative = -0.32125573632738025, -0.8346018455909067
+        theta = tracer0_secant(positive, 525.5625891982911, negative, -742.5802154827692)
+        self.assertLess(theta, positive)
+        self.assertGreater(theta, negative)
+        self.assertGreater(theta, 0.5 * (positive + negative))
+
 
 if __name__ == '__main__':
     unittest.main()
