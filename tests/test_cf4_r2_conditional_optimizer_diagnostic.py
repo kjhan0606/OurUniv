@@ -6,7 +6,7 @@ from cf4_r2_conditional_map import assemble_conditional_objective, conditional_t
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
-    reproduction_failures, scaled_nuisance,
+    reproduction_failures, scaled_nuisance, tracer0_line_status,
 )
 
 
@@ -126,6 +126,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_NUISANCE_BLOCK_NOT_REDUCED')
         self.assertEqual(nuisance_block_status(1000., 200., -10., -9.),
                          'CONDITIONAL_NUISANCE_BLOCK_NOT_REDUCED')
+
+    def test_tracer0_line_requires_both_improvement_and_a_tenfold_drop(self):
+        self.assertEqual(tracer0_line_status(10., 9., 1000., 50., -10., -9.),
+                         'CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED')
+        self.assertEqual(tracer0_line_status(10., 9., 1000., 500., -10., -9.),
+                         'CONDITIONAL_TRACER0_LINE_IMPROVED')
+        self.assertEqual(tracer0_line_status(10., 10., 1000., 50., -10., -9.),
+                         'CONDITIONAL_TRACER0_LINE_NO_IMPROVEMENT')
+        self.assertEqual(tracer0_line_status(10., 9., 1000., 50., -10., -11.),
+                         'CONDITIONAL_TRACER0_LINE_IMPROVED')
 
 
 if __name__ == '__main__':

@@ -174,6 +174,19 @@ def scaled_nuisance(origin, scale, z):
     return origin + scale * z
 
 
+def tracer0_line_status(initial_objective, best_objective, initial_abs_gradient,
+                        best_abs_gradient, count_initial, count_best):
+    """Classify a fixed-IC line search along the count-amplitude coordinate."""
+    improved = float(best_objective) < float(initial_objective)
+    reduced = (float(best_abs_gradient) <= float(initial_abs_gradient) / 10.
+               and float(count_best) >= float(count_initial) - 1e-6)
+    if improved and reduced:
+        return 'CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED'
+    if improved:
+        return 'CONDITIONAL_TRACER0_LINE_IMPROVED'
+    return 'CONDITIONAL_TRACER0_LINE_NO_IMPROVEMENT'
+
+
 def nuisance_block_status(initial_abs_tracer0, final_abs_tracer0, count_initial, count_final):
     """A 10x smaller amplitude gradient with a count term that does not worsen."""
     reduced = float(final_abs_tracer0) <= float(initial_abs_tracer0) / 10.
@@ -214,9 +227,15 @@ def main():
         'DO_NOT_CANCEL\n')
     fd_only = os.environ.get('CF4_R2_FD_ONLY') == '1'
     nuisance_block = os.environ.get('CF4_R2_NUISANCE_BLOCK') == '1'
-    if fd_only and nuisance_block:
-        raise RuntimeError('finite-difference and nuisance-block modes are separate jobs')
-    budget_seconds = 40 * 60 if fd_only or nuisance_block else APP_SECONDS
+    tracer0_line = os.environ.get('CF4_R2_TRACER0_LINE') == '1'
+    if sum((fd_only, nuisance_block, tracer0_line)) > 1:
+        raise RuntimeError('conditional diagnostic modes are separate jobs')
+    if tracer0_line:
+        budget_seconds = 70 * 60
+    elif fd_only or nuisance_block:
+        budget_seconds = 40 * 60
+    else:
+        budget_seconds = APP_SECONDS
     started = time.monotonic()
     report_path = out / 'result.json'
     report = dict(
@@ -233,7 +252,8 @@ def main():
         application_seconds=budget_seconds,
         finite_difference_only=fd_only,
         nuisance_block_only=nuisance_block,
-        ic_coordinates_fixed=nuisance_block,
+        tracer0_line_only=tracer0_line,
+        ic_coordinates_fixed=nuisance_block or tracer0_line,
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -324,6 +344,101 @@ def main():
 
         source_jax = {key: jnp.asarray(value) for key, value in source.items()}
         obs_jax = {key: jnp.asarray(value) for key, value in observation.items()}
+        if tracer0_line:
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            report['fixed_ic_evolution_seconds'] = time.monotonic() - started
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+
+            def shapes_of(packs):
+                return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
+                             for pack in packs)
+
+            def evaluate_at(nuisance, compiled, base_shapes):
+                tic = time.monotonic()
+                tracer = jnp.asarray(nuisance[:9])
+                population = jnp.asarray(nuisance[9:])
+                packs, support_info = obs.support(rho, velocity, tracer, 2)
+                shapes = shapes_of(packs)
+                if shapes != base_shapes:
+                    return None, shapes, time.monotonic() - tic
+                (score, components), grads = compiled(
+                    rho, velocity, tracer, population, packs, source_jax, obs_jax)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('tracer0 line search produced a nonfinite target')
+                return dict(
+                    objective=value, execute_seconds=time.monotonic() - tic,
+                    terms={key: detail[key] for key in TERM_KEYS},
+                    tracer0=float(nuisance[0]),
+                    population_coordinate_9=float(nuisance[18]),
+                    tracer0_gradient=float(gradient[0]),
+                    population_coordinate_9_gradient=float(gradient[18]),
+                ), shapes, time.monotonic() - tic
+
+            tracer = jnp.asarray(origin[:9])
+            population = jnp.asarray(origin[9:])
+            support_tic = time.monotonic()
+            packs, _ = obs.support(rho, velocity, tracer, 2)
+            report['baseline_support_seconds'] = time.monotonic() - support_tic
+            base_shapes = shapes_of(packs)
+            compile_tic = time.monotonic()
+            compiled = obs.derivative.lower(
+                rho, velocity, tracer, population, packs, source_jax, obs_jax, 2).compile()
+            report['derivative_compile_seconds'] = time.monotonic() - compile_tic
+            baseline, _, _ = evaluate_at(origin, compiled, base_shapes)
+            if baseline is None:
+                raise RuntimeError('baseline support changed before its own derivative')
+            failures = reproduction_failures(saved_best, baseline['terms'] | {
+                'total_negative_log_target': baseline['objective']})
+            report['baseline'] = baseline
+            report['baseline_reproduction_failures'] = failures
+            records = [baseline]
+            if failures:
+                report['status'] = 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+            else:
+                accepted = origin.copy()
+                accepted_objective = baseline['objective']
+                step = -0.1
+                for _ in range(3):
+                    if budget_seconds - (time.monotonic() - started) < 60.:
+                        report['budget_stop'] = True
+                        break
+                    proposal = accepted.copy()
+                    proposal[0] = accepted[0] + step
+                    row, shapes, _ = evaluate_at(proposal, compiled, base_shapes)
+                    if row is None:
+                        report['support_shape_changed'] = True
+                        break
+                    row['step'] = step
+                    records.append(row)
+                    if row['objective'] < accepted_objective:
+                        accepted = proposal
+                        accepted_objective = row['objective']
+                        step = -0.1
+                        if abs(row['tracer0_gradient']) <= abs(baseline['tracer0_gradient']) / 10.:
+                            break
+                    elif step == -0.1:
+                        step = -0.05
+                    else:
+                        break
+                best = min(records, key=lambda row: row['objective'])
+                report['status'] = tracer0_line_status(
+                    baseline['objective'], best['objective'], abs(baseline['tracer0_gradient']),
+                    abs(best['tracer0_gradient']), baseline['terms']['count_log_likelihood'],
+                    best['terms']['count_log_likelihood'])
+            report['evaluations'] = records
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
         if nuisance_block:
             from scipy.optimize import minimize
             white = jnp.asarray(q_best[:N_IC])
