@@ -9,22 +9,22 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-06
 
-Conditional gradient check. Job 414921 verified the improved tracer-0 point
-and took one secant step to tracer 0 = 0.230145 on the fixed best IC. The
-objective is 442.844 below the original saved best, almost entirely in the
-count term. The tracer-0 derivative fell from 13,524.69 to -410.477, inside
-the tenfold gate. Status `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. The
-derivative is still negative, and population coordinate 9 remains at 699.997.
-Job 414929 was submitted for that FP coordinate and failed in 46 seconds
-on syn102 before any evaluation: `support` received the population array
-as its order. The retry uses integer order 2. The routine step still holds
-tracer 0 at 0.230145 and moves only population coordinate 9, stopping if
-its derivative changes sign. It does not
-authorize a joint warm start. An 18-evaluation IC fit remains a large
-calculation and needs an Astra audit before submission. During R2, warranted
-external audits go to Astra, and closing R2 needs a separate Astra exit
-audit whose approval is included in the notification email. R2 remains
-NO-GO. R3 has not started. Detail:
+Conditional gradient check. Job 414921 reduced the tracer-0 derivative from
+13,524.69 to -410.477 at tracer 0 = 0.230145. Job 414929 failed before any
+population-9 evaluation because `support` received a population array as its
+order. Job 414930, the integer-order retry on `a100` / `gpu:A100:1`,
+reproduced that secant point and took two steps of -0.1 in population
+coordinate 9, to -0.321256. The objective fell by 124.579, all in the
+conditional-FP term. The derivative fell from 699.997 to 525.563 and did not
+change sign. Status `CONDITIONAL_POP9_LINE_IMPROVED`, stopped by the
+70-minute application budget. The next routine step is one damped Newton
+step from the last two evaluations, capped at absolute size 1, with one
+midpoint only if that step is not an improvement. It holds the IC fixed and
+holds tracer 0 at 0.230145. It does not authorize a joint warm start. An
+18-evaluation IC fit remains a large calculation and needs an Astra audit
+before submission. During R2, warranted external audits go to Astra, and
+closing R2 needs a separate Astra exit audit whose approval is included in
+the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
 
 A source-applicability check identified Hollinger & Hudson (2024)'s

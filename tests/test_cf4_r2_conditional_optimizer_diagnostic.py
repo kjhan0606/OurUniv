@@ -6,7 +6,8 @@ from cf4_r2_conditional_map import assemble_conditional_objective, conditional_t
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
-    coordinate_line_action, pop9_line_status, reproduction_failures, scaled_nuisance,
+    coordinate_line_action, pop9_line_status, pop9_newton_step, reproduction_failures,
+    scaled_nuisance,
     tracer0_line_status, tracer0_secant,
 )
 
@@ -160,6 +161,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP9_LINE_IMPROVED')
         self.assertEqual(pop9_line_status(10., 9., 700., 50., 1., 0.),
                          'CONDITIONAL_POP9_LINE_IMPROVED')
+
+    def test_population_newton_step_is_capped_and_stays_downslope(self):
+        theta = pop9_newton_step(-0.2212557363, 627.94236, -0.3212557363, 525.56259)
+        self.assertLess(theta, -0.3212557363)
+        self.assertGreater(theta, -1.3212557363)
+        self.assertAlmostEqual(pop9_newton_step(0.0, 21.0, -0.1, 20.0), -1.1)
+        with self.assertRaisesRegex(ValueError, 'does not fall'):
+            pop9_newton_step(-0.2, 100., -0.3, 150.)
+        with self.assertRaisesRegex(ValueError, 'cap'):
+            pop9_newton_step(0.0, 2.0, -0.1, 1.0, max_abs=0.0)
 
 
 if __name__ == '__main__':
