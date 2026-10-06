@@ -9,21 +9,22 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 continuation — 2026-10-06
 
-Conditional gradient check. Jobs 414485 and 414657 reproduced the saved
-conditional target and passed one directional finite difference, relative
-error `4.37e-4`. The infinity norm 13,524.69 is tracer coordinate 0. Job
-414744 held that IC fixed and timed one nuisance derivative: the field took
-43 seconds and the derivative took 934 seconds, so the predeclared
-480-second gate stopped the 24-parameter loop. Status
-`CONDITIONAL_NUISANCE_BLOCK_TIMING_STOP`. Its `population9` field is
-population coordinate 0, not 9. The next routine step moves only tracer 0,
-by at most three predeclared steps of -0.1 or one half step, with the IC
-and the other nuisance coordinates fixed. It does not authorize a joint
-warm start. An 18-evaluation IC fit remains a large calculation and needs
-an Astra audit before submission. During R2, warranted external audits go
-to Astra, and closing R2 needs a separate Astra exit audit whose approval
-is included in the notification email. R2 remains NO-GO. R3 has not started.
-Detail: `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
+Conditional gradient check. The directional finite difference passed with
+relative error `4.37e-4`, and the infinity norm 13,524.69 is tracer
+coordinate 0. Job 414887 then moved only that coordinate on the fixed best
+IC. A step from 0.299378 to 0.199378 lowered the objective by 343.192, almost
+entirely in the count term, and flipped the derivative from +13,524.69 to
+-6,010.14. The next step and the half step were worse. Status
+`CONDITIONAL_TRACER0_LINE_IMPROVED`. The derivative is not yet small, and
+the sign change lies between those two values. The half step went below
+0.199378, outside that bracket. Population coordinate 9 stayed at derivative
+699.997. The next routine step verifies the improved point and takes one
+secant step inside the bracket. It does not authorize a joint warm start.
+An 18-evaluation IC fit remains a large calculation and needs an Astra audit
+before submission. During R2, warranted external audits go to Astra, and
+closing R2 needs a separate Astra exit audit whose approval is included in
+the notification email. R2 remains NO-GO. R3 has not started. Detail:
+`CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
 
 A source-applicability check identified Hollinger & Hudson (2024)'s
 physically based 2M++-like MDPL2 mocks: z=0 MDPL2 with SAG/SAGE galaxies,

@@ -174,6 +174,21 @@ def scaled_nuisance(origin, scale, z):
     return origin + scale * z
 
 
+def tracer0_secant(theta_pos, gradient_pos, theta_neg, gradient_neg):
+    """One secant step inside a sign bracket. It does not change the objective."""
+    theta_pos, theta_neg = float(theta_pos), float(theta_neg)
+    gradient_pos, gradient_neg = float(gradient_pos), float(gradient_neg)
+    if not (gradient_pos > 0. and gradient_neg < 0.):
+        raise ValueError('secant requires opposite derivative signs')
+    if theta_pos == theta_neg:
+        raise ValueError('secant endpoints must differ')
+    theta = theta_pos - gradient_pos * (theta_neg - theta_pos) / (gradient_neg - gradient_pos)
+    low, high = sorted((theta_pos, theta_neg))
+    if not low < theta < high:
+        raise ValueError('secant left the sign bracket')
+    return theta
+
+
 def tracer0_line_status(initial_objective, best_objective, initial_abs_gradient,
                         best_abs_gradient, count_initial, count_best):
     """Classify a fixed-IC line search along the count-amplitude coordinate."""
@@ -228,9 +243,10 @@ def main():
     fd_only = os.environ.get('CF4_R2_FD_ONLY') == '1'
     nuisance_block = os.environ.get('CF4_R2_NUISANCE_BLOCK') == '1'
     tracer0_line = os.environ.get('CF4_R2_TRACER0_LINE') == '1'
-    if sum((fd_only, nuisance_block, tracer0_line)) > 1:
+    tracer0_secant_mode = os.environ.get('CF4_R2_TRACER0_SECANT') == '1'
+    if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
-    if tracer0_line:
+    if tracer0_line or tracer0_secant_mode:
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -253,7 +269,8 @@ def main():
         finite_difference_only=fd_only,
         nuisance_block_only=nuisance_block,
         tracer0_line_only=tracer0_line,
-        ic_coordinates_fixed=nuisance_block or tracer0_line,
+        tracer0_secant_only=tracer0_secant_mode,
+        ic_coordinates_fixed=nuisance_block or tracer0_line or tracer0_secant_mode,
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -344,6 +361,90 @@ def main():
 
         source_jax = {key: jnp.asarray(value) for key, value in source.items()}
         obs_jax = {key: jnp.asarray(value) for key, value in observation.items()}
+        if tracer0_secant_mode:
+            line = json.loads((BASE / 'r2_conditional_tracer0_line_20261007/result.json').read_text())
+            if line.get('status') != 'CONDITIONAL_TRACER0_LINE_IMPROVED':
+                raise ValueError('tracer0 secant requires the recorded improved line search')
+            positive, negative = line['evaluations'][0], line['evaluations'][1]
+            theta_star = tracer0_secant(
+                positive['tracer0'], positive['tracer0_gradient'],
+                negative['tracer0'], negative['tracer0_gradient'])
+            report['secant_tracer0'] = theta_star
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+
+            def shapes_of(packs):
+                return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
+                             for pack in packs)
+
+            tracer = jnp.asarray(origin[:9])
+            population = jnp.asarray(origin[9:])
+            packs, _ = obs.support(rho, velocity, tracer, 2)
+            base_shapes = shapes_of(packs)
+            compiled = obs.derivative.lower(
+                rho, velocity, tracer, population, packs, source_jax, obs_jax, 2).compile()
+
+            def evaluate_at(nuisance):
+                tracer_i = jnp.asarray(nuisance[:9])
+                population_i = jnp.asarray(nuisance[9:])
+                built, support_info = obs.support(rho, velocity, tracer_i, 2)
+                if shapes_of(built) != base_shapes:
+                    return None
+                (score, components), grads = compiled(
+                    rho, velocity, tracer_i, population_i, built, source_jax, obs_jax)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('tracer0 secant produced a nonfinite target')
+                return dict(
+                    objective=value, tracer0=float(nuisance[0]),
+                    tracer0_gradient=float(gradient[0]),
+                    population_coordinate_9_gradient=float(gradient[18]),
+                    terms={key: detail[key] for key in TERM_KEYS})
+
+            def matched(row, saved_row):
+                objective_error = abs(row['objective'] - float(saved_row['objective']))
+                gradient_error = abs(row['tracer0_gradient'] - float(saved_row['tracer0_gradient']))
+                gradient_limit = 1e-4 * max(abs(float(saved_row['tracer0_gradient'])), 1.)
+                relative_objective = objective_error / max(abs(float(saved_row['objective'])), 1.)
+                return relative_objective <= 1e-8 and gradient_error <= gradient_limit
+
+            records = []
+            verify = origin.copy()
+            verify[0] = float(negative['tracer0'])
+            verified = evaluate_at(verify)
+            if verified is None or not matched(verified, negative):
+                report['verification'] = verified
+                report['status'] = 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+            else:
+                records.append(verified)
+                proposal = origin.copy()
+                proposal[0] = theta_star
+                secant_row = evaluate_at(proposal)
+                if secant_row is None:
+                    report['support_shape_changed'] = True
+                    report['status'] = 'CONDITIONAL_TRACER0_LINE_IMPROVED'
+                else:
+                    secant_row['step'] = 'secant'
+                    records.append(secant_row)
+                    best = min(records, key=lambda row: row['objective'])
+                    report['status'] = tracer0_line_status(
+                        float(positive['objective']), best['objective'],
+                        abs(float(positive['tracer0_gradient'])), abs(best['tracer0_gradient']),
+                        float(positive['terms']['count_log_likelihood']),
+                        best['terms']['count_log_likelihood'])
+            report['evaluations'] = records
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
         if tracer0_line:
             white = jnp.asarray(q_best[:N_IC])
             rho, velocity = field(white)

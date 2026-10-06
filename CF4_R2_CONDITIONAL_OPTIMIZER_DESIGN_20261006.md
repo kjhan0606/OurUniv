@@ -58,6 +58,18 @@ The fixed-IC probe ran on `h200` / `gpu:H200:1` at syn104 in 16:59, exit 0. The 
 
 A 10-evaluation nuisance optimization at this cost would be several hours. The 480-second gate is not raised after the fact. The scaled step `1/|g|` would also move tracer 0 by only about `7e-5` per unit optimizer step, which is not a useful amplitude trial when each evaluation costs a quarter hour.
 
-## Next: three steps in tracer 0
+## Tracer-0 line — job 414887
 
-The same objective is kept. The saved IC and the other 23 nuisance coordinates stay fixed. Tracer 0, whose negative-log-likelihood derivative is positive, is moved by a predeclared -0.1. If that point is worse, one half step of -0.05 is tried and the search stops. If it is better, another -0.1 is taken from the accepted point. At most three trials follow the baseline. The derivative is compiled once; a support-shape change stops the search. The baseline must reproduce evaluation 6. A tenfold drop in the absolute tracer-0 gradient with a count term that does not worsen is `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. An improved objective without that drop is `CONDITIONAL_TRACER0_LINE_IMPROVED`. Otherwise the line did not improve the objective. None of these authorizes a joint warm start. Application budget 70 minutes, Slurm 80 minutes. This remains a routine one-coordinate check, not the 18-evaluation IC fit that needs an Astra audit.
+The line search ran on `h200` / `gpu:H200:1` at syn104 in 58:09, exit 0. Four evaluations, host peak 12.8 GiB. Derivative compilation took 119 seconds and each later evaluation took about 798 seconds, so the earlier 934-second probe was mostly execution. Support shape did not change. The baseline reproduced evaluation 6. Status: `CONDITIONAL_TRACER0_LINE_IMPROVED`. `longer_warm_start_authorized` remains false.
+
+Tracer 0 moved from 0.299378 to 0.199378. The objective fell by 343.192, of which the count term contributed 343.167 and the tracer prior 0.025. The IC prior and conditional FP were unchanged. The tracer-0 derivative changed from +13,524.69 to -6,010.14. A further step to 0.099378 raised the objective by 1,084 above the baseline, and the half step to 0.149378 also stayed above the accepted point. That half step continued below 0.199378; the sign change lies between 0.199378 and 0.299378, so the half step did not enter the bracket. Population coordinate 9 kept its derivative at 699.997 because that coordinate was not moved.
+
+The absolute derivative fell from 13,525 to 6,010, which is not a tenfold reduction. The same objective therefore has a one-coordinate root inside that interval, and the accepted point is an improvement rather than a stationary point.
+
+## Next: one secant step inside the bracket
+
+Verify the accepted point, then evaluate one secant step strictly between tracer 0 = 0.199378 and 0.299378. The IC and the other 23 nuisance coordinates stay fixed. No further step is added in that job. The same tenfold derivative drop and count gate decide whether the amplitude is reduced. This is still not a joint warm start. Application budget 70 minutes, Slurm 70 minutes.
+
+## Line search executed by job 414887
+
+The same objective was kept. The saved IC and the other 23 nuisance coordinates stay fixed. Tracer 0, whose negative-log-likelihood derivative is positive, is moved by a predeclared -0.1. If that point is worse, one half step of -0.05 is tried and the search stops. If it is better, another -0.1 is taken from the accepted point. At most three trials follow the baseline. The derivative is compiled once; a support-shape change stops the search. The baseline must reproduce evaluation 6. A tenfold drop in the absolute tracer-0 gradient with a count term that does not worsen is `CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. An improved objective without that drop is `CONDITIONAL_TRACER0_LINE_IMPROVED`. Otherwise the line did not improve the objective. None of these authorizes a joint warm start. Application budget 70 minutes, Slurm 80 minutes. This remains a routine one-coordinate check, not the 18-evaluation IC fit that needs an Astra audit.

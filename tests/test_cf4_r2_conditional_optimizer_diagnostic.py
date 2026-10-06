@@ -6,7 +6,7 @@ from cf4_r2_conditional_map import assemble_conditional_objective, conditional_t
 from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
-    reproduction_failures, scaled_nuisance, tracer0_line_status,
+    reproduction_failures, scaled_nuisance, tracer0_line_status, tracer0_secant,
 )
 
 
@@ -136,6 +136,14 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_TRACER0_LINE_NO_IMPROVEMENT')
         self.assertEqual(tracer0_line_status(10., 9., 1000., 50., -10., -11.),
                          'CONDITIONAL_TRACER0_LINE_IMPROVED')
+
+    def test_secant_stays_inside_the_sign_bracket(self):
+        theta = tracer0_secant(0.2993783248581184, 13524.69411623714,
+                               0.1993783248581184, -6010.1391)
+        self.assertGreater(theta, 0.1993783248581184)
+        self.assertLess(theta, 0.2993783248581184)
+        with self.assertRaisesRegex(ValueError, 'opposite derivative'):
+            tracer0_secant(0.3, 1., 0.2, 1.)
 
 
 if __name__ == '__main__':
