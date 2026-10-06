@@ -31,10 +31,15 @@ Status `CONDITIONAL_POP9_LINE_REDUCED`. The sign did not change. The
 predeclared population-9 search stops, and no third secant is queued. Job 415065 recorded that gradient on `h200` / `gpu:H200:1`. The IC block
 has rms 1.936 and infinity norm 14.104. The joint infinity norm is tracer
 coordinate 2 at +7246.381. An 18-evaluation IC update is not the next step.
-The routine step moves only tracer 2, the true-K bias at 1.201751, by -0.1,
-and holds the IC and the reduced tracer-0 and population-9 coordinates. It
-does not authorize a joint warm start. Astra's mid-course verdict B is
-satisfied by the recorded gradient and does not close R2. During R2, warranted external audits go to Astra, and
+Job 415072 moved tracer 2 from 1.201751 to 0.901751 in three steps of -0.1.
+The objective fell by 1,301.982, almost all in the count term, and the
+tracer-2 derivative fell from +7246.381 to +1578.418. Status
+`CONDITIONAL_TRACER2_LINE_IMPROVED`. The sign did not change, so the tenfold
+gate was missed. The tracer-0 derivative moved from -410.477 to -5855.131.
+The coordinate is not continued. The next measurement is one full gradient
+at that improved point, including the IC pullback and all 24 nuisance
+components. It does not authorize an IC update or a joint warm start.
+Astra's mid-course verdict B remains satisfied and does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.

@@ -203,6 +203,8 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_FULL_GRADIENT_RECORDED')
         self.assertEqual(full_gradient_record_status(True, False, True),
                          'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED')
+        self.assertEqual(full_gradient_record_status(True, True, True, False),
+                         'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED')
 
 
 if __name__ == '__main__':
