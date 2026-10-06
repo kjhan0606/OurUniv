@@ -25,11 +25,14 @@ sign bracket is (-0.834602, -0.321256). The tenfold gate was not met. Job 414961
 evaluated the secant at -0.534004. The objective fell by 69.076 and the
 derivative there is +179.299. Status `CONDITIONAL_POP9_LINE_IMPROVED`.
 The tightened bracket is (-0.834602, -0.534004), and 179.299 is still above
-the gate of 70. The next routine step is one secant inside that bracket, at
--0.592468, with the IC fixed and tracer 0 held at 0.230145. If that step
-also misses the tenfold gate, this coordinate stops. It does not authorize
-a joint warm start. An 18-evaluation IC fit remains a large calculation and
-needs an Astra audit before submission. During R2, warranted external audits go to Astra, and
+the gate of 70. Job 414980 verified that point and evaluated -0.592468. The objective fell
+by another 6.681. The derivative is +46.114, inside the tenfold gate of 70.
+Status `CONDITIONAL_POP9_LINE_REDUCED`. The sign did not change. The
+predeclared population-9 search stops, and no third secant is queued. The
+IC block has not been recomputed at this nuisance point. An 18-evaluation
+IC fit stays unauthorized until a mid-course Astra audit returns and the
+driver adopts a supported next measurement. That audit is not an R2 exit
+audit. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.
