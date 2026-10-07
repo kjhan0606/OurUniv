@@ -9,7 +9,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
     tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
-    pop12_line_status,
+    pop12_line_status, pop14_line_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -260,6 +260,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertGreater(theta, negative)
         self.assertLess(theta, positive)
         self.assertLess(abs(theta - negative), abs(theta - positive))
+
+    def test_population14_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop14_line_status(10., 9., 1058., 100., 3., 3.1),
+                         'CONDITIONAL_POP14_LINE_REDUCED')
+        self.assertEqual(pop14_line_status(10., 9., 1058., 110., 3., 3.1),
+                         'CONDITIONAL_POP14_LINE_IMPROVED')
+        self.assertEqual(pop14_line_status(10., 9., 1058., 100., 3., 2.),
+                         'CONDITIONAL_POP14_LINE_IMPROVED')
+        self.assertEqual(pop14_line_status(10., 10., 1058., 100., 3., 4.),
+                         'CONDITIONAL_POP14_LINE_NO_IMPROVEMENT')
 
     def test_population12_gate_uses_count_plus_fp(self):
         self.assertEqual(pop12_line_status(10., 9., 828., 80., 3., 3.1),
