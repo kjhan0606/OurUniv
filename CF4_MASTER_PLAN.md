@@ -79,9 +79,13 @@ the objective by 135.116 and flipped the derivative from +1111.658 to
 -3774.876. Status `CONDITIONAL_POP0_LINE_NO_IMPROVEMENT`. The accepted
 point is unchanged. The same step moved the population-3 derivative from
 +0.779 to +988.820. The two cross derivatives agree to 1.7 percent, so the
-next measurement is one capped joint step, about -0.031 in population 0
-and -0.040 in population 3. It does not authorize an IC update. Astra's
-mid-course verdict
+Job 415240 evaluated that step on `h200` / `gpu:H200:1`. Population 0
+is -0.047657 and its derivative is -11.956, inside the tenfold gate.
+Population 3 is -0.446260 and its derivative is -0.280. The objective
+fell by 16.898. Status `CONDITIONAL_POP_PAIR_REDUCED`. The pair stops.
+The next measurement is one full gradient at this point, including the
+IC pullback and all 24 nuisance components. It does not authorize an IC
+update. Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
