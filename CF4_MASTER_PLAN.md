@@ -43,8 +43,12 @@ did not move. Job 415094 verified that point and stepped tracer 0 by +0.1. The o
 rose by 360.351 and the derivative changed from -5855.131 to +13714.015.
 Status `CONDITIONAL_TRACER0_LINE_NO_IMPROVEMENT`. The sign change stopped
 the search. The bracket is (0.230145, 0.330145), and the accepted point
-remains 0.230145. The next routine step is one secant inside it, at
-0.260065, with tracer 2 and population 9 held. It does not authorize an
+remains 0.230145. Job 415106 evaluated that secant. The objective fell by 94.459 and the
+tracer-0 derivative is -404.551, inside the tenfold gate. Status
+`CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED`. The sign is still negative,
+and the coordinate stops. The tracer-2 derivative rose to +2141.346. The
+next measurement is one full gradient at tracer 0 = 0.260065, including
+the IC pullback and all 24 nuisance components. It does not authorize an
 IC update. Astra's mid-course verdict B remains satisfied and does not
 close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in

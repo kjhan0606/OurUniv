@@ -307,16 +307,18 @@ def main():
     pop9_secant2 = os.environ.get('CF4_R2_POP9_SECANT2') == '1'
     full_gradient = os.environ.get('CF4_R2_FULL_GRADIENT') == '1'
     full_gradient2 = os.environ.get('CF4_R2_FULL_GRADIENT2') == '1'
+    full_gradient3 = os.environ.get('CF4_R2_FULL_GRADIENT3') == '1'
     tracer2_line = os.environ.get('CF4_R2_TRACER2_LINE') == '1'
     tracer0_revisit = os.environ.get('CF4_R2_TRACER0_REVISIT') == '1'
     tracer0_revisit_secant = os.environ.get('CF4_R2_TRACER0_REVISIT_SECANT') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
             pop9_newton, pop9_secant_mode, pop9_secant2, full_gradient, full_gradient2,
-            tracer2_line, tracer0_revisit, tracer0_revisit_secant)) > 1:
+            tracer2_line, tracer0_revisit, tracer0_revisit_secant, full_gradient3)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
     if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
             or pop9_secant_mode or pop9_secant2 or full_gradient or full_gradient2
-            or tracer2_line or tracer0_revisit or tracer0_revisit_secant):
+            or tracer2_line or tracer0_revisit or tracer0_revisit_secant
+            or full_gradient3):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -346,13 +348,15 @@ def main():
         pop9_secant2_only=pop9_secant2,
         full_gradient_only=full_gradient,
         full_gradient2_only=full_gradient2,
+        full_gradient3_only=full_gradient3,
         tracer2_line_only=tracer2_line,
         tracer0_revisit_only=tracer0_revisit,
         tracer0_revisit_secant_only=tracer0_revisit_secant,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
                               or pop9_line or pop9_newton or pop9_secant_mode
                               or pop9_secant2 or full_gradient or full_gradient2
-                              or tracer2_line or tracer0_revisit or tracer0_revisit_secant),
+                              or tracer2_line or tracer0_revisit or tracer0_revisit_secant
+                              or full_gradient3),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -1503,6 +1507,60 @@ def main():
             report['Q_LEAN'] = (
                 'one full gradient at the improved tracer-2 point, including the IC pullback '
                 'and all 24 nuisance components; no further tracer-2 step, IC update, or heldout')
+            state = evaluate_full(q)
+            nuisance = np.asarray(state['gradient'][N_IC:], dtype=np.float64)
+            objective_ok = abs(float(state['value']) - float(saved['objective'])) / max(
+                abs(float(saved['objective'])), 1.) <= 1e-8
+            tracer_limit = 1e-4 * max(abs(float(saved['tracer0_gradient'])), 1.)
+            tracer2_limit = 1e-4 * max(abs(float(saved['tracer2_gradient'])), 1.)
+            population_limit = 1e-4 * max(
+                abs(float(saved['population_coordinate_9_gradient'])), 1.)
+            tracer_ok = abs(float(nuisance[0]) - float(saved['tracer0_gradient'])) <= tracer_limit
+            tracer2_ok = abs(float(nuisance[2]) - float(saved['tracer2_gradient'])) <= tracer2_limit
+            population_ok = abs(
+                float(nuisance[18]) - float(saved['population_coordinate_9_gradient'])) <= population_limit
+            report['objective'] = float(state['value'])
+            report['tracer0'] = float(q[N_IC])
+            report['tracer2'] = float(q[N_IC + 2])
+            report['population_coordinate_9'] = float(q[N_IC + 18])
+            report['tracer0_gradient'] = float(nuisance[0])
+            report['tracer2_gradient'] = float(nuisance[2])
+            report['population_coordinate_9_gradient'] = float(nuisance[18])
+            report['terms'] = {key: state['detail'][key] for key in TERM_KEYS}
+            report['nuisance_gradient'] = nuisance.tolist()
+            if objective_ok and tracer_ok and tracer2_ok and population_ok:
+                report['joint_gradient'] = block_gradient_summary(state['gradient'])
+                np.savez(out / 'gradient.npz',
+                         gradient=np.asarray(state['gradient'], dtype=np.float64),
+                         q=np.asarray(q, dtype=np.float64))
+            report['status'] = full_gradient_record_status(
+                objective_ok, tracer_ok, population_ok, tracer2_ok)
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'],
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
+
+        if full_gradient3:
+            secant = json.loads(
+                (BASE / 'r2_conditional_tracer0_revisit_secant_20261007/result.json').read_text())
+            if secant.get('status') != 'CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED':
+                raise ValueError('third full gradient requires the reduced tracer-0 secant')
+            rows = secant.get('evaluations') or []
+            if len(rows) != 2 or rows[1].get('step') != 'secant':
+                raise ValueError('third full gradient requires the secant evaluation')
+            saved = rows[1]
+            if float(saved['objective']) >= float(rows[0]['objective']):
+                raise ValueError('tracer-0 secant did not improve on its verified point')
+            q = np.array(q_best, dtype=np.float64, copy=True)
+            q[N_IC] = float(saved['tracer0'])
+            q[N_IC + 2] = float(saved['tracer2'])
+            q[N_IC + 18] = float(saved['population_coordinate_9'])
+            report['tracer0_revisit_secant_job_id'] = secant.get('job_id')
+            report['Q_LEAN'] = (
+                'one full gradient at the reduced tracer-0 secant, including the IC pullback '
+                'and all 24 nuisance components; no further tracer step, IC update, or heldout')
             state = evaluate_full(q)
             nuisance = np.asarray(state['gradient'][N_IC:], dtype=np.float64)
             objective_ok = abs(float(state['value']) - float(saved['objective'])) / max(
