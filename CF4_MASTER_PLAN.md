@@ -39,10 +39,14 @@ gate was missed. The tracer-0 derivative moved from -410.477 to -5855.131.
 The coordinate is not continued. Job 415090 recorded the full gradient
 there. The IC block has rms 1.868 and infinity norm 12.631. The joint
 infinity norm is tracer 0 at -5855.131. The large population derivatives
-did not move. The next routine step moves only tracer 0, by +0.1, and
-holds tracer 2 and population 9. It records the tracer-2 derivative at
-each trial and does not authorize an IC update. Astra's mid-course verdict
-B remains satisfied and does not close R2. During R2, warranted external audits go to Astra, and
+did not move. Job 415094 verified that point and stepped tracer 0 by +0.1. The objective
+rose by 360.351 and the derivative changed from -5855.131 to +13714.015.
+Status `CONDITIONAL_TRACER0_LINE_NO_IMPROVEMENT`. The sign change stopped
+the search. The bracket is (0.230145, 0.330145), and the accepted point
+remains 0.230145. The next routine step is one secant inside it, at
+0.260065, with tracer 2 and population 9 held. It does not authorize an
+IC update. Astra's mid-course verdict B remains satisfied and does not
+close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`.

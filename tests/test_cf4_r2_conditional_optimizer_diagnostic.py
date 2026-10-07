@@ -188,6 +188,13 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertGreater(theta, negative)
         self.assertGreater(theta, 0.5 * (positive + negative))
 
+    def test_tracer0_revisit_secant_stays_closer_to_the_smaller_derivative(self):
+        negative, positive = 0.23014459265495463, 0.33014459265495466
+        theta = tracer0_secant(positive, 13714.015001370202, negative, -5855.130693568598)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(theta, 0.5 * (negative + positive))
+
     def test_tracer2_gate_uses_the_combined_likelihood(self):
         self.assertEqual(tracer2_line_status(10., 9., 7000., 500., 3., 3.1),
                          'CONDITIONAL_TRACER2_LINE_REDUCED')
