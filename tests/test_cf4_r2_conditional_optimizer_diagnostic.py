@@ -7,7 +7,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
-    tracer2_line_status,
+    tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -194,6 +194,37 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertGreater(theta, negative)
         self.assertLess(theta, positive)
         self.assertLess(theta, 0.5 * (negative + positive))
+
+    def test_tracer_pair_newton_uses_the_recorded_columns(self):
+        current = (0.26006480881995014, -404.55082315761325, 2141.346117378757)
+        earlier = (0.23014459265495463, -5855.130693568599, 1578.4178189668382)
+        column = (0.9017512357648408, -5855.1306935686, 1578.4178189668382)
+        column_prev = (1.0017512357648408, -4016.864850526628, 3363.161778842157)
+        arguments = (
+            current[0], current[1], earlier[0], earlier[1], current[2], earlier[2],
+            column[0], column[1], column[2], column_prev[0], column_prev[1], column_prev[2])
+        tracer0, tracer2 = tracer_pair_newton_step(*arguments)
+        self.assertGreater(tracer0, 0.260065)
+        self.assertLess(tracer0, 0.280065)
+        self.assertGreater(tracer2, 0.751751)
+        self.assertLess(tracer2, 0.901751)
+        capped0, capped2 = tracer_pair_newton_step(*arguments, max_abs=0.01)
+        self.assertAlmostEqual(abs(capped2 - column[0]), 0.01)
+        self.assertLess(abs(capped0 - current[0]), 0.01)
+        with self.assertRaisesRegex(ValueError, 'do not agree'):
+            tracer_pair_newton_step(
+                1., -1., 0., -2., 1., 0.,
+                1., 0., 1., 0., 10., 0.)
+
+    def test_tracer_pair_status_requires_both_gradients(self):
+        self.assertEqual(tracer_pair_status(10., 9., 100., 5., 200., 10., 3., 3.),
+                         'CONDITIONAL_TRACER_PAIR_REDUCED')
+        self.assertEqual(tracer_pair_status(10., 9., 100., 50., 200., 10., 3., 3.),
+                         'CONDITIONAL_TRACER_PAIR_IMPROVED')
+        self.assertEqual(tracer_pair_status(10., 9., 100., 5., 200., 10., 3., 2.),
+                         'CONDITIONAL_TRACER_PAIR_IMPROVED')
+        self.assertEqual(tracer_pair_status(10., 10., 100., 5., 200., 10., 3., 4.),
+                         'CONDITIONAL_TRACER_PAIR_NO_IMPROVEMENT')
 
     def test_tracer2_gate_uses_the_combined_likelihood(self):
         self.assertEqual(tracer2_line_status(10., 9., 7000., 500., 3., 3.1),

@@ -194,6 +194,51 @@ def pop9_newton_step(p_prev, gradient_prev, p_last, gradient_last, max_abs=1.):
     return float(p_last) + delta
 
 
+def tracer_pair_newton_step(t0, g0, t0_prev, g0_prev, g2, g2_prev,
+                           t2, g0_at_t2, g2_at_t2, t2_prev, g0_at_t2_prev, g2_at_t2_prev,
+                           max_abs=0.2, cross_limit=0.1):
+    """One capped Newton step in tracer 0 and tracer 2."""
+    dt0 = float(t0) - float(t0_prev)
+    dt2 = float(t2) - float(t2_prev)
+    if dt0 == 0. or dt2 == 0.:
+        raise ValueError('tracer-pair slopes need two distinct points')
+    if not np.isfinite(max_abs) or max_abs <= 0.:
+        raise ValueError('tracer-pair step cap must be positive')
+    h00 = (float(g0) - float(g0_prev)) / dt0
+    h20 = (float(g2) - float(g2_prev)) / dt0
+    h02 = (float(g0_at_t2) - float(g0_at_t2_prev)) / dt2
+    h22 = (float(g2_at_t2) - float(g2_at_t2_prev)) / dt2
+    det = h00 * h22 - h02 * h20
+    if h00 <= 0. or det <= 0.:
+        raise ValueError('tracer-pair curvature is not positive definite')
+    scale = max(abs(h02), abs(h20), 1.)
+    if abs(h02 - h20) / scale > float(cross_limit):
+        raise ValueError('tracer-pair cross derivatives do not agree')
+    d0 = (-float(g0) * h22 + h02 * float(g2)) / det
+    d2 = (-h00 * float(g2) + h20 * float(g0)) / det
+    peak = max(abs(d0), abs(d2))
+    if peak > float(max_abs):
+        d0 *= float(max_abs) / peak
+        d2 *= float(max_abs) / peak
+    if float(g0) * d0 + float(g2) * d2 >= 0.:
+        raise ValueError('tracer-pair step is not downhill')
+    return float(t0) + d0, float(t2) + d2
+
+
+def tracer_pair_status(initial_objective, best_objective, g0_initial, g0_best,
+                       g2_initial, g2_best, likelihood_initial, likelihood_best):
+    """Tenfold drop in both coupled tracers, without a worse combined likelihood."""
+    improved = float(best_objective) < float(initial_objective)
+    reduced = (abs(float(g0_best)) <= abs(float(g0_initial)) / 10.
+               and abs(float(g2_best)) <= abs(float(g2_initial)) / 10.
+               and float(likelihood_best) >= float(likelihood_initial) - 1e-6)
+    if improved and reduced:
+        return 'CONDITIONAL_TRACER_PAIR_REDUCED'
+    if improved:
+        return 'CONDITIONAL_TRACER_PAIR_IMPROVED'
+    return 'CONDITIONAL_TRACER_PAIR_NO_IMPROVEMENT'
+
+
 def tracer2_line_status(initial_objective, best_objective, initial_abs_gradient,
                         best_abs_gradient, likelihood_initial, likelihood_best):
     """Tenfold drop in true-K bias 1, without a worse combined likelihood."""
@@ -311,14 +356,16 @@ def main():
     tracer2_line = os.environ.get('CF4_R2_TRACER2_LINE') == '1'
     tracer0_revisit = os.environ.get('CF4_R2_TRACER0_REVISIT') == '1'
     tracer0_revisit_secant = os.environ.get('CF4_R2_TRACER0_REVISIT_SECANT') == '1'
+    tracer_pair = os.environ.get('CF4_R2_TRACER_PAIR') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
             pop9_newton, pop9_secant_mode, pop9_secant2, full_gradient, full_gradient2,
-            tracer2_line, tracer0_revisit, tracer0_revisit_secant, full_gradient3)) > 1:
+            tracer2_line, tracer0_revisit, tracer0_revisit_secant, full_gradient3,
+            tracer_pair)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
     if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
             or pop9_secant_mode or pop9_secant2 or full_gradient or full_gradient2
             or tracer2_line or tracer0_revisit or tracer0_revisit_secant
-            or full_gradient3):
+            or full_gradient3 or tracer_pair):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -352,11 +399,12 @@ def main():
         tracer2_line_only=tracer2_line,
         tracer0_revisit_only=tracer0_revisit,
         tracer0_revisit_secant_only=tracer0_revisit_secant,
+        tracer_pair_only=tracer_pair,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
                               or pop9_line or pop9_newton or pop9_secant_mode
                               or pop9_secant2 or full_gradient or full_gradient2
                               or tracer2_line or tracer0_revisit or tracer0_revisit_secant
-                              or full_gradient3),
+                              or full_gradient3 or tracer_pair),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -1593,6 +1641,177 @@ def main():
             report['joint_map'] = False
             _save(report_path, report, started)
             print(json.dumps(dict(status=report['status'],
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
+
+        if tracer_pair:
+            recorded = json.loads(
+                (BASE / 'r2_conditional_full_gradient3_20261007/result.json').read_text())
+            if recorded.get('status') != 'CONDITIONAL_FULL_GRADIENT_RECORDED':
+                raise ValueError('tracer pair requires the third full gradient')
+            secant = json.loads(
+                (BASE / 'r2_conditional_tracer0_revisit_secant_20261007/result.json').read_text())
+            if secant.get('status') != 'CONDITIONAL_TRACER0_LINE_AMPLITUDE_REDUCED':
+                raise ValueError('tracer pair requires the reduced tracer-0 secant')
+            secant_rows = secant.get('evaluations') or []
+            if len(secant_rows) != 2 or secant_rows[1].get('step') != 'secant':
+                raise ValueError('tracer pair requires the tracer-0 secant column')
+            earlier, current = secant_rows[0], secant_rows[1]
+            line = json.loads(
+                (BASE / 'r2_conditional_tracer2_line_20261007/result.json').read_text())
+            if line.get('status') != 'CONDITIONAL_TRACER2_LINE_IMPROVED':
+                raise ValueError('tracer pair requires the improved tracer-2 line')
+            line_rows = line.get('evaluations') or []
+            if len(line_rows) < 2:
+                raise ValueError('tracer pair requires two tracer-2 evaluations')
+            column_prev, column = line_rows[-2], line_rows[-1]
+            same_tracer2 = (
+                float(earlier['tracer2']) == float(current['tracer2'])
+                == float(column['tracer2']) == float(recorded['tracer2']))
+            same_column_tracer0 = (
+                float(column_prev['tracer0']) == float(column['tracer0'])
+                == float(earlier['tracer0']))
+            same_population = (
+                float(recorded['population_coordinate_9'])
+                == float(current['population_coordinate_9'])
+                == float(earlier['population_coordinate_9']))
+            if not (same_tracer2 and same_column_tracer0 and same_population):
+                raise ValueError('tracer-pair columns do not share the recorded coordinates')
+            if float(recorded['tracer0']) != float(current['tracer0']):
+                raise ValueError('full gradient is not at the tracer-0 secant')
+
+            def archived(got, expected):
+                return abs(float(got) - float(expected)) <= 1e-4 * max(abs(float(expected)), 1.)
+
+            def objective_matches(got, expected):
+                return abs(float(got) - float(expected)) / max(abs(float(expected)), 1.) <= 1e-8
+
+            current_matches = (
+                objective_matches(recorded['objective'], current['objective'])
+                and archived(recorded['tracer0_gradient'], current['tracer0_gradient'])
+                and archived(recorded['tracer2_gradient'], current['tracer2_gradient'])
+                and archived(recorded['population_coordinate_9_gradient'],
+                             current['population_coordinate_9_gradient']))
+            column_matches = (
+                objective_matches(column['objective'], earlier['objective'])
+                and archived(column['tracer0_gradient'], earlier['tracer0_gradient'])
+                and archived(column['tracer2_gradient'], earlier['tracer2_gradient']))
+            if not (current_matches and column_matches):
+                raise ValueError('tracer-pair archives disagree at the shared points')
+            proposed0, proposed2 = tracer_pair_newton_step(
+                current['tracer0'], current['tracer0_gradient'],
+                earlier['tracer0'], earlier['tracer0_gradient'],
+                current['tracer2_gradient'], earlier['tracer2_gradient'],
+                column['tracer2'], column['tracer0_gradient'], column['tracer2_gradient'],
+                column_prev['tracer2'], column_prev['tracer0_gradient'],
+                column_prev['tracer2_gradient'])
+            report['full_gradient3_job_id'] = recorded.get('job_id')
+            report['tracer0_revisit_secant_job_id'] = secant.get('job_id')
+            report['tracer2_line_job_id'] = line.get('job_id')
+            report['proposed_tracer0'] = proposed0
+            report['proposed_tracer2'] = proposed2
+            report['Q_LEAN'] = (
+                'one capped Newton step in tracer 0 and tracer 2 from the recorded columns; '
+                'one midpoint if that objective is worse; no second Newton, IC update, or heldout')
+            white = jnp.asarray(q_best[:N_IC])
+            rho, velocity = field(white)
+            jax.block_until_ready((rho, velocity))
+            origin = np.asarray(q_best[N_IC:], dtype=np.float64).copy()
+            origin[0] = float(recorded['tracer0'])
+            origin[2] = float(recorded['tracer2'])
+            origin[18] = float(recorded['population_coordinate_9'])
+
+            def shapes_of(packs):
+                return tuple(tuple((key, tuple(np.shape(value))) for key, value in pack.items())
+                             for pack in packs)
+
+            packs, _ = obs.support(rho, velocity, jnp.asarray(origin[:9]), 2)
+            base_shapes = shapes_of(packs)
+            compiled = obs.derivative.lower(
+                rho, velocity, jnp.asarray(origin[:9]), jnp.asarray(origin[9:]), packs,
+                source_jax, obs_jax, 2).compile()
+
+            def evaluate_at(nuisance):
+                built, support_info = obs.support(rho, velocity, jnp.asarray(nuisance[:9]), 2)
+                if shapes_of(built) != base_shapes:
+                    return None
+                (score, components), grads = compiled(
+                    rho, velocity, jnp.asarray(nuisance[:9]), jnp.asarray(nuisance[9:]),
+                    built, source_jax, obs_jax)
+                jax.block_until_ready((score, components, grads[2], grads[3]))
+                q = np.concatenate((q_best[:N_IC], nuisance))
+                value, detail = conditional_target_terms(q, score, components, support_info)
+                gradient = conditional_target_gradient(
+                    q, np.zeros(N_IC), grads[2], grads[3])[N_IC:]
+                if not np.isfinite(value) or not np.isfinite(gradient).all():
+                    raise FloatingPointError('tracer pair produced a nonfinite target')
+                return dict(
+                    objective=value, tracer0=float(nuisance[0]), tracer2=float(nuisance[2]),
+                    population_coordinate_9=float(nuisance[18]),
+                    tracer0_gradient=float(gradient[0]), tracer2_gradient=float(gradient[2]),
+                    population_coordinate_9_gradient=float(gradient[18]),
+                    terms={key: detail[key] for key in TERM_KEYS})
+
+            baseline = evaluate_at(origin)
+            objective_ok = baseline is not None and objective_matches(
+                baseline['objective'], recorded['objective'])
+            gradient_ok = baseline is not None and all(
+                archived(baseline[name], recorded[name]) for name in (
+                    'tracer0_gradient', 'tracer2_gradient',
+                    'population_coordinate_9_gradient'))
+            records = []
+            if not (objective_ok and gradient_ok):
+                report['baseline'] = baseline
+                report['status'] = 'CONDITIONAL_OPTIMIZER_REPRODUCTION_FAILED'
+            else:
+                baseline['step'] = 'verify'
+                records.append(baseline)
+                initial_likelihood = (baseline['terms']['count_log_likelihood']
+                                      + baseline['terms']['conditional_FP_log_likelihood'])
+
+                def pair_status(rows):
+                    best = min(rows, key=lambda item: item['objective'])
+                    likelihood = (best['terms']['count_log_likelihood']
+                                  + best['terms']['conditional_FP_log_likelihood'])
+                    return tracer_pair_status(
+                        baseline['objective'], best['objective'],
+                        baseline['tracer0_gradient'], best['tracer0_gradient'],
+                        baseline['tracer2_gradient'], best['tracer2_gradient'],
+                        initial_likelihood, likelihood)
+
+                if budget_seconds - (time.monotonic() - started) < 60.:
+                    report['budget_stop'] = True
+                    report['status'] = pair_status(records)
+                else:
+                    proposal = origin.copy()
+                    proposal[0] = proposed0
+                    proposal[2] = proposed2
+                    row = evaluate_at(proposal)
+                    if row is None:
+                        report['support_shape_changed'] = True
+                        report['status'] = pair_status(records)
+                    else:
+                        row['step'] = 'newton'
+                        records.append(row)
+                        if row['objective'] > baseline['objective']:
+                            if budget_seconds - (time.monotonic() - started) < 60.:
+                                report['budget_stop'] = True
+                            else:
+                                midpoint = origin.copy()
+                                midpoint[0] = 0.5 * (origin[0] + proposed0)
+                                midpoint[2] = 0.5 * (origin[2] + proposed2)
+                                mid_row = evaluate_at(midpoint)
+                                if mid_row is None:
+                                    report['support_shape_changed'] = True
+                                else:
+                                    mid_row['step'] = 'midpoint'
+                                    records.append(mid_row)
+                        report['status'] = pair_status(records)
+            report['evaluations'] = records
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'], evaluations=len(records),
                                   longer_warm_start_authorized=False), allow_nan=False), flush=True)
             return
 
