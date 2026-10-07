@@ -89,8 +89,13 @@ mean entry `b[0, 2]`. Population 12 is +817.190. Job 415372 ran that line on `h2
 the objective by 17.766 and flipped the derivative from -830.976 to
 +1189.845. Status `CONDITIONAL_POP2_LINE_NO_IMPROVEMENT`. The accepted
 point is unchanged. The same step moved the population-0 derivative from
--11.956 to +217.373. The next measurement is one secant at 0.014827.
-It does not authorize an IC update. Astra's mid-course verdict
+-11.956 to +217.373. Job 415402 evaluated that secant on `h200` / `gpu:H200:1`. Population
+coordinate 2 is 0.014827 and its derivative is -2.598, inside the tenfold
+gate. The objective fell by 17.152. Status `CONDITIONAL_POP2_LINE_REDUCED`.
+The coordinate stops. Population 12's derivative is +828.423. The next
+measurement is one full gradient at this point, including the IC pullback
+and all 24 nuisance components. It does not authorize an IC update.
+Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
