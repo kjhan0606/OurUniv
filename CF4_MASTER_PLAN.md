@@ -74,9 +74,14 @@ derivative is +599.885. Job 415215 recorded that gradient on `h200` / `gpu:H200:
 has rms 1.884 and infinity norm 12.752. The joint infinity norm is
 population coordinate 0 at +1111.658, the white coordinate of FP mean
 entry `b[0, 0]`. The population-3 move changed that derivative by
-+2464.543 and reversed its sign. The next measurement is one line in that
-white coordinate, first step -0.1, gated by the count plus conditional-FP
-likelihood. It does not authorize an IC update. Astra's mid-course verdict
++2464.543 and reversed its sign. Job 415224 ran that line on `h200` / `gpu:H200:1`. The step -0.1 raised
+the objective by 135.116 and flipped the derivative from +1111.658 to
+-3774.876. Status `CONDITIONAL_POP0_LINE_NO_IMPROVEMENT`. The accepted
+point is unchanged. The same step moved the population-3 derivative from
++0.779 to +988.820. The two cross derivatives agree to 1.7 percent, so the
+next measurement is one capped joint step, about -0.031 in population 0
+and -0.040 in population 3. It does not authorize an IC update. Astra's
+mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
