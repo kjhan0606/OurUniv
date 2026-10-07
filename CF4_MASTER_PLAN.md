@@ -51,10 +51,15 @@ and the coordinate stops. The tracer-2 derivative rose to +2141.346. Job
 The IC block has rms 1.895 and infinity norm 12.766. The joint infinity
 norm is tracer 2 at +2141.346. Population derivatives changed by at most
 6.82e-13. The recorded tracer-0 and tracer-2 columns are positive definite
-and their cross derivatives agree to 2.3 percent, so the next measurement
-is one capped joint Newton step, about +0.016 in tracer 0 and -0.137 in
-tracer 2, with one midpoint only if that objective is worse. It does not
-authorize an IC update. Astra's mid-course verdict B remains satisfied and
+and their cross derivatives agree to 2.3 percent. Job 415116 evaluated
+the capped joint step on `h200` / `gpu:H200:1`: tracer 0 = 0.276098 and
+tracer 2 = 0.764869. The objective fell by 163.015. Status
+`CONDITIONAL_TRACER_PAIR_IMPROVED`. The tracer-0 derivative is -29.729,
+inside its tenfold gate, and the tracer-2 derivative is +237.643, above
+its gate of 214.135. No second joint step is formed from that pair. The
+next measurement is one full gradient at this point, including the IC
+pullback and all 24 nuisance components. It does not authorize an IC
+update. Astra's mid-course verdict B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
