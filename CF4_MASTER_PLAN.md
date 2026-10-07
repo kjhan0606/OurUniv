@@ -85,10 +85,12 @@ The objective fell by 16.898. Status `CONDITIONAL_POP_PAIR_REDUCED`.
 Job 415350 recorded the full gradient there on `h200` / `gpu:H200:1`.
 The IC block has rms 1.884 and infinity norm 12.752. The joint infinity
 norm is population coordinate 2 at -830.976, the white coordinate of FP
-mean entry `b[0, 2]`. Population 12 is +817.190. The next measurement is
-one line in that white coordinate, first step +0.1, gated by the count
-plus conditional-FP likelihood. It does not authorize an IC update.
-Astra's mid-course verdict
+mean entry `b[0, 2]`. Population 12 is +817.190. Job 415372 ran that line on `h200` / `gpu:H200:1`. The step +0.1 raised
+the objective by 17.766 and flipped the derivative from -830.976 to
++1189.845. Status `CONDITIONAL_POP2_LINE_NO_IMPROVEMENT`. The accepted
+point is unchanged. The same step moved the population-0 derivative from
+-11.956 to +217.373. The next measurement is one secant at 0.014827.
+It does not authorize an IC update. Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
