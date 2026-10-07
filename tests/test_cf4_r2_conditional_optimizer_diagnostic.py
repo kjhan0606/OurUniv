@@ -9,7 +9,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
     tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
-    pop12_line_status, pop14_line_status, pop12_revisit_status, pop14_revisit_status,
+    pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status,
     pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status,
@@ -322,6 +322,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertLess(abs(theta - negative), abs(theta - positive))
         self.assertAlmostEqual(theta, -0.03689363492481951)
+
+    def test_population6_line_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop6_line_status(10., 9., 1419., 141., 3., 3.1),
+                         'CONDITIONAL_POP6_LINE_REDUCED')
+        self.assertEqual(pop6_line_status(10., 9., 1419., 142., 3., 3.1),
+                         'CONDITIONAL_POP6_LINE_IMPROVED')
+        self.assertEqual(pop6_line_status(10., 9., 1419., 141., 3., 2.),
+                         'CONDITIONAL_POP6_LINE_IMPROVED')
+        self.assertEqual(pop6_line_status(10., 10., 1419., 141., 3., 4.),
+                         'CONDITIONAL_POP6_LINE_NO_IMPROVEMENT')
 
     def test_population0_revisit2_secant_stays_inside_the_sign_bracket(self):
         negative, positive = -0.043790935948505985, 0.05620906405149402
