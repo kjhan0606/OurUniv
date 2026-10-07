@@ -92,7 +92,7 @@ point is unchanged. The same step moved the population-0 derivative from
 -11.956 to +217.373. Job 415402 evaluated that secant on `h200` / `gpu:H200:1`. Population
 coordinate 2 is 0.014827 and its derivative is -2.598, inside the tenfold
 gate. The objective fell by 17.152. Status `CONDITIONAL_POP2_LINE_REDUCED`.
-The coordinate stops. Population 12's derivative is +828.423. Job 415483 recorded the full gradient at this point on `h200` / `gpu:H200:1`. The IC block has rms 1.883 and infinity norm 12.751. The joint infinity norm is population coordinate 12 at +828.423, the white coordinate of log-Cholesky entry `L20`. Tracer derivatives changed by at most 0.237 from job 415350. The next measurement is one line in that coordinate. It does not authorize an IC update.
+The coordinate stops. Population 12's derivative is +828.423. Job 415483 recorded the full gradient at this point on `h200` / `gpu:H200:1`. The IC block has rms 1.883 and infinity norm 12.751. The joint infinity norm is population coordinate 12 at +828.423, the white coordinate of log-Cholesky entry `L20`. Tracer derivatives changed by at most 0.237 from job 415350. Job 415513 ran that line on `h200` / `gpu:H200:1`. Three steps of -0.1 lowered the objective by 205.038 and left the derivative at +536.918. The sign did not change. Status `CONDITIONAL_POP12_LINE_IMPROVED`. The coordinate is not continued. Population 14's stored derivative rose to +1058.091. The next measurement is one full gradient at this point, including the IC pullback and all 24 nuisance components. It does not authorize an IC update.
 Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
