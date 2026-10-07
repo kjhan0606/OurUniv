@@ -11,6 +11,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop12_revisit_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
+    pop14_revisit4_status,
     pop0_revisit_status, pop0_revisit2_status,
     pop3_revisit_status,
     reproduction_failures,
@@ -273,6 +274,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP0_REVISIT_IMPROVED')
         self.assertEqual(pop0_revisit_status(10., 10., 1732., 173., 3., 4.),
                          'CONDITIONAL_POP0_REVISIT_NO_IMPROVEMENT')
+
+    def test_population14_revisit4_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop14_revisit4_status(10., 9., 1096., 109., 3., 3.1),
+                         'CONDITIONAL_POP14_REVISIT4_REDUCED')
+        self.assertEqual(pop14_revisit4_status(10., 9., 1096., 110., 3., 3.1),
+                         'CONDITIONAL_POP14_REVISIT4_IMPROVED')
+        self.assertEqual(pop14_revisit4_status(10., 9., 1096., 109., 3., 2.),
+                         'CONDITIONAL_POP14_REVISIT4_IMPROVED')
+        self.assertEqual(pop14_revisit4_status(10., 10., 1096., 109., 3., 4.),
+                         'CONDITIONAL_POP14_REVISIT4_NO_IMPROVEMENT')
 
     def test_population14_revisit3_gate_uses_count_plus_fp(self):
         self.assertEqual(pop14_revisit3_status(10., 9., 1239., 123., 3., 3.1),
