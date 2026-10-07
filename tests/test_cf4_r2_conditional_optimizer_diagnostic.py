@@ -13,7 +13,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status,
     pop0_revisit_status, pop0_revisit2_status,
-    pop3_revisit_status,
+    pop3_revisit_status, pop3_revisit2_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -312,6 +312,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertLess(abs(theta - negative), abs(theta - positive))
         self.assertAlmostEqual(theta, -0.03918101393817476)
+
+    def test_population3_revisit2_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop3_revisit2_status(10., 9., 1863., 186., 3., 3.1),
+                         'CONDITIONAL_POP3_REVISIT2_REDUCED')
+        self.assertEqual(pop3_revisit2_status(10., 9., 1863., 187., 3., 3.1),
+                         'CONDITIONAL_POP3_REVISIT2_IMPROVED')
+        self.assertEqual(pop3_revisit2_status(10., 9., 1863., 186., 3., 2.),
+                         'CONDITIONAL_POP3_REVISIT2_IMPROVED')
+        self.assertEqual(pop3_revisit2_status(10., 10., 1863., 186., 3., 4.),
+                         'CONDITIONAL_POP3_REVISIT2_NO_IMPROVEMENT')
 
     def test_population3_revisit_gate_uses_count_plus_fp(self):
         self.assertEqual(pop3_revisit_status(10., 9., 1580., 158., 3., 3.1),
