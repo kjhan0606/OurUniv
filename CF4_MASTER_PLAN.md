@@ -66,8 +66,13 @@ all in the conditional-FP term, and the derivative changed from +1913.025
 to -356.216. Status `CONDITIONAL_POP3_LINE_IMPROVED`. The sign bracket is
 (-0.452068, -0.352068). Population 9's derivative rose from +45.738 to
 +587.960, while tracer 0 and tracer 2 stayed near -29.729 and +237.98.
-The next measurement is one secant at -0.405786. It does not authorize an
-IC update. Astra's mid-course verdict
+Job 415190 evaluated that secant on `h200` / `gpu:H200:1`. Population
+coordinate 3 is -0.405786 and its derivative is +0.779, inside the tenfold
+gate. The objective fell by another 8.222. Status
+`CONDITIONAL_POP3_LINE_REDUCED`. The coordinate stops. Population 9's
+derivative is +599.885. The next measurement is one full gradient at this
+point, including the IC pullback and all 24 nuisance components. It does
+not authorize an IC update. Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
