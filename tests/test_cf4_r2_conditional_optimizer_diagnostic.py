@@ -8,6 +8,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
     tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
+    pop3_line_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -225,6 +226,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_TRACER_PAIR_IMPROVED')
         self.assertEqual(tracer_pair_status(10., 10., 100., 5., 200., 10., 3., 4.),
                          'CONDITIONAL_TRACER_PAIR_NO_IMPROVEMENT')
+
+    def test_population3_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop3_line_status(10., 9., 1900., 100., 3., 3.1),
+                         'CONDITIONAL_POP3_LINE_REDUCED')
+        self.assertEqual(pop3_line_status(10., 9., 1900., 200., 3., 3.1),
+                         'CONDITIONAL_POP3_LINE_IMPROVED')
+        self.assertEqual(pop3_line_status(10., 9., 1900., 100., 3., 2.),
+                         'CONDITIONAL_POP3_LINE_IMPROVED')
+        self.assertEqual(pop3_line_status(10., 10., 1900., 100., 3., 4.),
+                         'CONDITIONAL_POP3_LINE_NO_IMPROVEMENT')
 
     def test_tracer2_gate_uses_the_combined_likelihood(self):
         self.assertEqual(tracer2_line_status(10., 9., 7000., 500., 3., 3.1),

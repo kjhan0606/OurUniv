@@ -56,10 +56,14 @@ the capped joint step on `h200` / `gpu:H200:1`: tracer 0 = 0.276098 and
 tracer 2 = 0.764869. The objective fell by 163.015. Status
 `CONDITIONAL_TRACER_PAIR_IMPROVED`. The tracer-0 derivative is -29.729,
 inside its tenfold gate, and the tracer-2 derivative is +237.643, above
-its gate of 214.135. No second joint step is formed from that pair. The
-next measurement is one full gradient at this point, including the IC
-pullback and all 24 nuisance components. It does not authorize an IC
-update. Astra's mid-course verdict B remains satisfied and
+its gate of 214.135. No second joint step is formed from that pair. Job 415162 recorded the
+full gradient there on `h200` / `gpu:H200:1`. The IC block has rms 1.883
+and infinity norm 12.742. The joint infinity norm is population coordinate
+3 at +1913.025, the white coordinate of FP mean entry `b[1, 0]`. It moved
+by 0.414 from job 415110. The next measurement is one line in that white
+coordinate, first step -0.1, gated by the count plus conditional-FP
+likelihood. It does not authorize an IC update. Astra's mid-course verdict
+B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in
 the notification email. R2 remains NO-GO. R3 has not started. Detail:
