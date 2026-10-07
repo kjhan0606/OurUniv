@@ -10,7 +10,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop12_revisit_status, pop14_revisit_status,
-    pop9_revisit_status, pop14_revisit2_status, pop0_revisit_status,
+    pop9_revisit_status, pop14_revisit2_status, pop0_revisit_status, pop3_revisit_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -271,6 +271,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP0_REVISIT_IMPROVED')
         self.assertEqual(pop0_revisit_status(10., 10., 1732., 173., 3., 4.),
                          'CONDITIONAL_POP0_REVISIT_NO_IMPROVEMENT')
+
+    def test_population3_revisit_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop3_revisit_status(10., 9., 1580., 158., 3., 3.1),
+                         'CONDITIONAL_POP3_REVISIT_REDUCED')
+        self.assertEqual(pop3_revisit_status(10., 9., 1580., 159., 3., 3.1),
+                         'CONDITIONAL_POP3_REVISIT_IMPROVED')
+        self.assertEqual(pop3_revisit_status(10., 9., 1580., 158., 3., 2.),
+                         'CONDITIONAL_POP3_REVISIT_IMPROVED')
+        self.assertEqual(pop3_revisit_status(10., 10., 1580., 158., 3., 4.),
+                         'CONDITIONAL_POP3_REVISIT_NO_IMPROVEMENT')
 
     def test_population0_revisit_secant_stays_inside_the_sign_bracket(self):
         negative, positive = -0.04765670069317916, 0.05234329930682084
