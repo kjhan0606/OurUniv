@@ -78,14 +78,17 @@ entry `b[0, 0]`. The population-3 move changed that derivative by
 the objective by 135.116 and flipped the derivative from +1111.658 to
 -3774.876. Status `CONDITIONAL_POP0_LINE_NO_IMPROVEMENT`. The accepted
 point is unchanged. The same step moved the population-3 derivative from
-+0.779 to +988.820. The two cross derivatives agree to 1.7 percent, so the
-Job 415240 evaluated that step on `h200` / `gpu:H200:1`. Population 0
-is -0.047657 and its derivative is -11.956, inside the tenfold gate.
-Population 3 is -0.446260 and its derivative is -0.280. The objective
-fell by 16.898. Status `CONDITIONAL_POP_PAIR_REDUCED`. The pair stops.
-The next measurement is one full gradient at this point, including the
-IC pullback and all 24 nuisance components. It does not authorize an IC
-update. Astra's mid-course verdict
++0.779 to +988.820. The two cross derivatives agree to 1.7 percent. Job 415240 evaluated
+that joint step on `h200` / `gpu:H200:1`. Population 0 is -0.047657 with
+derivative -11.956, and population 3 is -0.446260 with derivative -0.280.
+The objective fell by 16.898. Status `CONDITIONAL_POP_PAIR_REDUCED`.
+Job 415350 recorded the full gradient there on `h200` / `gpu:H200:1`.
+The IC block has rms 1.884 and infinity norm 12.752. The joint infinity
+norm is population coordinate 2 at -830.976, the white coordinate of FP
+mean entry `b[0, 2]`. Population 12 is +817.190. The next measurement is
+one line in that white coordinate, first step +0.1, gated by the count
+plus conditional-FP likelihood. It does not authorize an IC update.
+Astra's mid-course verdict
 B remains satisfied and
 does not close R2. During R2, warranted external audits go to Astra, and
 closing R2 needs a separate Astra exit audit whose approval is included in

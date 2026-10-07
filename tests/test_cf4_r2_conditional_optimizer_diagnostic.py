@@ -8,7 +8,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
     tracer2_line_status, tracer_pair_newton_step, tracer_pair_status,
-    pop3_line_status, pop0_line_status, pop_pair_status,
+    pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_secant,
@@ -252,6 +252,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP_PAIR_IMPROVED')
         self.assertEqual(pop_pair_status(10., 10., 1100., 100., 50., 191., 3., 4.),
                          'CONDITIONAL_POP_PAIR_NO_IMPROVEMENT')
+
+    def test_population2_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop2_line_status(10., 9., 830., 80., 3., 3.1),
+                         'CONDITIONAL_POP2_LINE_REDUCED')
+        self.assertEqual(pop2_line_status(10., 9., 830., 90., 3., 3.1),
+                         'CONDITIONAL_POP2_LINE_IMPROVED')
+        self.assertEqual(pop2_line_status(10., 9., 830., 80., 3., 2.),
+                         'CONDITIONAL_POP2_LINE_IMPROVED')
+        self.assertEqual(pop2_line_status(10., 10., 830., 80., 3., 4.),
+                         'CONDITIONAL_POP2_LINE_NO_IMPROVEMENT')
 
     def test_population0_gate_uses_count_plus_fp(self):
         self.assertEqual(pop0_line_status(10., 9., 1100., 100., 3., 3.1),
