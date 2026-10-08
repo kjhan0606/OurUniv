@@ -14,7 +14,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop11_revisit2_status, pop11_revisit3_status, pop11_revisit4_status, pop13_line_status, pop10_line_status, pop1_line_status, pop4_line_status, pop4_revisit_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status, pop14_revisit5_status, pop14_revisit6_status,
-    pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status, pop0_revisit5_status, pop0_revisit6_status, pop0_revisit7_status,
+    pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status, pop0_revisit5_status, pop0_revisit6_status, pop0_revisit7_status, pop0_revisit8_status,
     pop3_revisit_status, pop3_revisit2_status, pop3_revisit3_status, pop3_revisit4_status,
     reproduction_failures,
     scaled_nuisance,
@@ -749,6 +749,21 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                                 542.8941177183742, 9.47192682401596,
                                 initial, best),
             'CONDITIONAL_POP4_REVISIT_REDUCED')
+
+
+    def test_pop0_revisit8_gate_uses_count_plus_fp(self):
+        self.assertEqual(
+            pop0_revisit8_status(10., 9., 336.25482118341034, 33.6254, 3., 3.1),
+            'CONDITIONAL_POP0_REVISIT8_REDUCED')
+        self.assertEqual(
+            pop0_revisit8_status(10., 9., 336.25482118341034, 33.6255, 3., 3.1),
+            'CONDITIONAL_POP0_REVISIT8_IMPROVED')
+        self.assertEqual(
+            pop0_revisit8_status(10., 9., 336.25482118341034, 33.6254, 3., 2.),
+            'CONDITIONAL_POP0_REVISIT8_IMPROVED')
+        self.assertEqual(
+            pop0_revisit8_status(10., 10., 336.25482118341034, 33.6254, 3., 4.),
+            'CONDITIONAL_POP0_REVISIT8_NO_IMPROVEMENT')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
