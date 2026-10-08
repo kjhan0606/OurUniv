@@ -470,6 +470,22 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop1_line_status(10., 10., 809.7459785875657, 80.9745, 3., 4.),
             'CONDITIONAL_POP1_LINE_NO_IMPROVEMENT')
 
+    def test_pop1_rejected_step_does_not_improve(self):
+        self.assertEqual(
+            pop1_line_status(8208933.190534484, 8208984.786896571,
+                             809.7459785875661, 1848.6781202056213, 1., 0.),
+            'CONDITIONAL_POP1_LINE_NO_IMPROVEMENT')
+
+    def test_pop1_secant_stays_inside_the_sign_bracket(self):
+        positive, negative = 0.11476529714749317, 0.014765297147493167
+        theta = tracer0_secant(positive, 809.7459785875661, negative, -1848.6781202056213)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - positive), abs(theta - negative))
+        self.assertAlmostEqual(theta, 0.08430567338185109)
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, -1848.6781202056213, positive, 809.7459785875661)
+
     def test_pop11_revisit_three_steps_improved_without_a_tenfold_drop(self):
         initial = -142420.23671111895 + 5013.605979035632
         best = -142420.23671111895 + 5253.047414546184
