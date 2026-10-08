@@ -732,6 +732,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop14_revisit6_status(10., 10., 484.7936133463083, 48.4793, 3., 4.),
             'CONDITIONAL_POP14_REVISIT6_NO_IMPROVEMENT')
 
+
+    def test_pop14_revisit6_two_steps_meet_the_gate(self):
+        initial = -142420.236711119 + 5860.422459658225
+        best = -142420.236711119 + 5915.370948653073
+        self.assertEqual(
+            pop14_revisit6_status(8208706.0508437585, 8208651.510122626,
+                                  484.79361334630585, 30.663013792200143,
+                                  initial, best),
+            'CONDITIONAL_POP14_REVISIT6_REDUCED')
+
     def test_population14_revisit4_gate_uses_count_plus_fp(self):
         self.assertEqual(pop14_revisit4_status(10., 9., 1096., 109., 3., 3.1),
                          'CONDITIONAL_POP14_REVISIT4_REDUCED')
