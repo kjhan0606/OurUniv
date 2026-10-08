@@ -16812,10 +16812,10 @@ def main():
                     or int(location.get('index_in_block', -1)) != 0
                     or int(location.get('flat_index', -1)) != N_IC + 9):
                 raise ValueError(
-                    'population-0 secant requires the joint infinity norm at population coordinate 3')
+                    'population-0 secant requires the joint infinity norm at population coordinate 0')
             if abs(float(location.get('value')) - float(current['population_coordinate_0_gradient'])) > 1e-6:
                 raise ValueError('population-0 line did not start at the recorded derivative')
-            if abs(float(nuisance_gradient[9]) - float(current['population_coordinate_3_gradient'])) > 1e-6:
+            if abs(float(nuisance_gradient[9]) - float(current['population_coordinate_0_gradient'])) > 1e-6:
                 raise ValueError('population-0 derivative does not match the recorded nuisance gradient')
             if float(recorded['population_coordinate_0']) != float(current['population_coordinate_0']):
                 raise ValueError('population-0 line did not start at the recorded white coordinate')
