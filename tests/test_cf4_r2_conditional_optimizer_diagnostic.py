@@ -741,6 +741,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, -542.8941177183739, positive, 4261.167895863255)
 
+    def test_pop4_revisit_secant_meets_the_accepted_end_gate(self):
+        initial = -142420.236711119 + 5974.402139239697
+        best = -142420.236711119 + 5977.523608313021
+        self.assertEqual(
+            pop4_revisit_status(8208592.790380232, 8208589.665904312,
+                                542.8941177183742, 9.47192682401596,
+                                initial, best),
+            'CONDITIONAL_POP4_REVISIT_REDUCED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
