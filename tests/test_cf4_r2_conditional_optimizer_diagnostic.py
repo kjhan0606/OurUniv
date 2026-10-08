@@ -16,7 +16,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop3_revisit_status, pop3_revisit2_status, pop3_revisit3_status,
     reproduction_failures,
     scaled_nuisance,
-    tracer0_line_status, tracer0_secant,
+    tracer0_line_status, tracer0_revisit2_status, tracer0_secant,
 )
 
 
@@ -292,6 +292,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertLess(abs(theta - negative), abs(theta - positive))
         self.assertAlmostEqual(theta, -0.0363019052092244)
+
+    def test_tracer0_revisit2_gate_uses_the_count_log_likelihood(self):
+        self.assertEqual(tracer0_revisit2_status(10., 9., 895.970, 89.597, 3., 3.1),
+                         'CONDITIONAL_TRACER0_REVISIT2_REDUCED')
+        self.assertEqual(tracer0_revisit2_status(10., 9., 895.970, 89.598, 3., 3.1),
+                         'CONDITIONAL_TRACER0_REVISIT2_IMPROVED')
+        self.assertEqual(tracer0_revisit2_status(10., 9., 895.970, 89.597, 3., 2.),
+                         'CONDITIONAL_TRACER0_REVISIT2_IMPROVED')
+        self.assertEqual(tracer0_revisit2_status(10., 10., 895.970, 89.597, 3., 4.),
+                         'CONDITIONAL_TRACER0_REVISIT2_NO_IMPROVEMENT')
 
     def test_tracer4_line_gate_uses_count_plus_fp(self):
         self.assertEqual(tracer4_line_status(10., 9., 682.934, 68.293, 3., 3.1),
