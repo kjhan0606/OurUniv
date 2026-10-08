@@ -551,6 +551,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                                   65.5573929047156, 6.5558, 1., 1.),
             'CONDITIONAL_POP11_REVISIT4_IMPROVED')
 
+    def test_pop11_revisit4_secant_meets_the_accepted_end_gate(self):
+        initial = -142420.236711119 + 5973.527200671365
+        best = -142420.236711119 + 5974.402139239697
+        self.assertEqual(
+            pop11_revisit4_status(8208593.629772191, 8208592.790380232,
+                                  65.5573929047159, 4.549920068464542,
+                                  initial, best),
+            'CONDITIONAL_POP11_REVISIT4_REDUCED')
+
     def test_pop11_revisit3_three_steps_improved_without_a_tenfold_drop(self):
         initial = -142420.23671111895 + 5645.364285825175
         best = -142420.23671111895 + 5846.452918299063
