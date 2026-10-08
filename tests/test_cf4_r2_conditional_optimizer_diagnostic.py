@@ -328,6 +328,23 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             'CONDITIONAL_POP0_REVISIT7_NO_IMPROVEMENT')
 
 
+    def test_pop0_revisit7_rejected_step_does_not_improve(self):
+        self.assertEqual(
+            pop0_revisit7_status(8208651.1227584565, 8224802.805308412,
+                                 991.4788707891084, 324024.51306475233, 1., 0.),
+            'CONDITIONAL_POP0_REVISIT7_NO_IMPROVEMENT')
+
+    def test_pop0_revisit7_secant_stays_inside_the_sign_bracket(self):
+        positive, negative = 0.06371840835870071, -0.0362815916412993
+        theta = tracer0_secant(positive, 324024.51306475233, negative, -991.4788707891084)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - negative), abs(theta - positive))
+        self.assertAlmostEqual(theta, -0.03597653623006103)
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, -991.4788707891084, positive, 324024.51306475233)
+
+
     def test_pop0_revisit6_rejected_step_does_not_improve(self):
         self.assertEqual(
             pop0_revisit6_status(8208706.210870936, 8219699.266073297,
