@@ -9,7 +9,8 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
     tracer2_line_status, tracer4_line_status, tracer_pair_newton_step, tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
-    pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status, pop14_revisit_status,
+    pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
+    pop12_revisit2_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status, pop14_revisit5_status,
     pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status,
@@ -506,6 +507,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP12_REVISIT_IMPROVED')
         self.assertEqual(pop12_revisit_status(10., 10., 1006., 100., 3., 4.),
                          'CONDITIONAL_POP12_REVISIT_NO_IMPROVEMENT')
+
+    def test_population12_revisit2_gate_uses_count_plus_fp(self):
+        self.assertEqual(pop12_revisit2_status(10., 9., 659.664, 65.966, 3., 3.1),
+                         'CONDITIONAL_POP12_REVISIT2_REDUCED')
+        self.assertEqual(pop12_revisit2_status(10., 9., 659.664, 65.967, 3., 3.1),
+                         'CONDITIONAL_POP12_REVISIT2_IMPROVED')
+        self.assertEqual(pop12_revisit2_status(10., 9., 659.664, 65.966, 3., 2.),
+                         'CONDITIONAL_POP12_REVISIT2_IMPROVED')
+        self.assertEqual(pop12_revisit2_status(10., 10., 659.664, 65.966, 3., 4.),
+                         'CONDITIONAL_POP12_REVISIT2_NO_IMPROVEMENT')
 
     def test_population14_gate_uses_count_plus_fp(self):
         self.assertEqual(pop14_line_status(10., 9., 1058., 100., 3., 3.1),
