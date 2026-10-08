@@ -836,6 +836,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                                    93.06800982891079, 9.3069, 3., 3.1),
             'CONDITIONAL_TRACER4_REVISIT_IMPROVED')
 
+    def test_tracer4_revisit_secant_meets_the_accepted_end_gate(self):
+        initial = -142394.81260779343 + 5978.423264787913
+        best = -142392.90580909158 + 5978.259938462888
+        self.assertEqual(
+            tracer4_revisit_status(8208563.429289561, 8208561.665003976,
+                                   93.06800982891079, 4.623539209986719,
+                                   initial, best),
+            'CONDITIONAL_TRACER4_REVISIT_REDUCED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
