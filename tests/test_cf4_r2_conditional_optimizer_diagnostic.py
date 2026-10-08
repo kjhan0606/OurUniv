@@ -399,6 +399,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(abs(theta - positive), abs(theta - negative))
         self.assertAlmostEqual(theta, -0.2717258215183748)
 
+    def test_pop4_secant_meets_the_accepted_end_gate(self):
+        initial = -142420.236711119 + 5310.71470520702
+        best = -142420.236711119 + 5313.276050871325
+        self.assertEqual(
+            pop4_line_status(8209255.160704653, 8209252.606482146,
+                             193.59921272852313, 7.621834032470206,
+                             initial, best),
+            'CONDITIONAL_POP4_LINE_REDUCED')
+
     def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
         positive, negative = 0.2760982361105669, 0.17609823611056688
         theta = tracer0_secant(positive, 895.9700267980062, negative, -16349.668105529856)

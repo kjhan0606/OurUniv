@@ -807,6 +807,7 @@ def main():
     full_gradient31 = os.environ.get('CF4_R2_FULL_GRADIENT31') == '1'
     pop4_line = os.environ.get('CF4_R2_POP4_LINE') == '1'
     pop4_line_secant = os.environ.get('CF4_R2_POP4_LINE_SECANT') == '1'
+    full_gradient32 = os.environ.get('CF4_R2_FULL_GRADIENT32') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
             pop9_newton, pop9_secant_mode, pop9_secant2, full_gradient, full_gradient2,
             tracer2_line, tracer0_revisit, tracer0_revisit_secant, full_gradient3,
@@ -824,7 +825,7 @@ def main():
             pop3_revisit3_secant, full_gradient23, pop0_revisit4,
             pop0_revisit4_secant, full_gradient24, tracer4_line, full_gradient25,
             tracer0_revisit2, tracer0_revisit2_secant, full_gradient26,
-            pop12_revisit2, pop12_revisit2_secant, full_gradient27, tracer3_line, tracer3_line_secant, full_gradient28, tracer0_revisit3, tracer0_revisit3_secant, full_gradient29, pop11_line, full_gradient30, pop11_revisit, full_gradient31, pop4_line, pop4_line_secant)) > 1:
+            pop12_revisit2, pop12_revisit2_secant, full_gradient27, tracer3_line, tracer3_line_secant, full_gradient28, tracer0_revisit3, tracer0_revisit3_secant, full_gradient29, pop11_line, full_gradient30, pop11_revisit, full_gradient31, pop4_line, pop4_line_secant, full_gradient32)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
     if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
             or pop9_secant_mode or pop9_secant2 or full_gradient or full_gradient2
@@ -845,7 +846,7 @@ def main():
             or pop3_revisit3_secant or full_gradient23 or pop0_revisit4
             or pop0_revisit4_secant or full_gradient24 or tracer4_line or full_gradient25
             or tracer0_revisit2 or tracer0_revisit2_secant or full_gradient26
-            or pop12_revisit2 or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant):
+            or pop12_revisit2 or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -952,6 +953,7 @@ def main():
         full_gradient31_only=full_gradient31,
         pop4_line_only=pop4_line,
         pop4_line_secant_only=pop4_line_secant,
+        full_gradient32_only=full_gradient32,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
                               or pop9_line or pop9_newton or pop9_secant_mode
                               or pop9_secant2 or full_gradient or full_gradient2
@@ -981,7 +983,7 @@ def main():
                               or tracer4_line or full_gradient25
                               or tracer0_revisit2 or tracer0_revisit2_secant
                               or full_gradient26 or pop12_revisit2
-                              or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant),
+                              or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -11996,6 +11998,124 @@ def main():
             report['joint_map'] = False
             _save(report_path, report, started)
             print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
+
+        if full_gradient32:
+            recorded = json.loads(
+                (BASE / 'r2_conditional_pop4_line_secant_20261008/result.json').read_text())
+            if recorded.get('status') != 'CONDITIONAL_POP4_LINE_REDUCED':
+                raise ValueError('thirty-second full gradient requires the reduced population-4 secant')
+            rows = recorded.get('evaluations') or []
+            if len(rows) != 2 or rows[0].get('step') != 'verify' or rows[1].get('step') != 'secant':
+                raise ValueError('thirty-second full gradient requires the population-4 secant evaluation')
+            saved = rows[1]
+            if float(saved['objective']) >= float(rows[0]['objective']):
+                raise ValueError('population-4 secant did not improve on its verified point')
+            if float(saved['population_coordinate_4']) != float(recorded['secant_population_coordinate_4']):
+                raise ValueError('secant evaluation is not the proposed population-4 coordinate')
+            if not (float(rows[0]['population_coordinate_4_gradient']) > 0.
+                    and float(saved['population_coordinate_4_gradient']) < 0.):
+                raise ValueError('population-4 secant did not change the derivative sign')
+            if abs(float(saved['population_coordinate_4_gradient'])) > abs(
+                    float(rows[0]['population_coordinate_4_gradient'])) / 10.:
+                raise ValueError('population-4 secant did not meet its tenfold gate')
+            shared = ('tracer0', 'tracer2', 'tracer3', 'tracer4', 'population_coordinate_0',
+                      'population_coordinate_2', 'population_coordinate_3',
+                      'population_coordinate_6', 'population_coordinate_9',
+                      'population_coordinate_11', 'population_coordinate_12',
+                      'population_coordinate_14')
+            if any(float(saved[key]) != float(rows[0][key]) for key in shared):
+                raise ValueError('population-4 secant moved another recorded coordinate')
+
+            def count_fp(row):
+                return (float(row['terms']['count_log_likelihood'])
+                        + float(row['terms']['conditional_FP_log_likelihood']))
+
+            if count_fp(saved) + 1e-6 < count_fp(rows[0]):
+                raise ValueError('population-4 secant made the count plus conditional-FP likelihood worse')
+            q = np.array(q_best, dtype=np.float64, copy=True)
+            q[N_IC] = float(saved['tracer0'])
+            q[N_IC + 2] = float(saved['tracer2'])
+            q[N_IC + 3] = float(saved['tracer3'])
+            q[N_IC + 4] = float(saved['tracer4'])
+            q[N_IC + 9] = float(saved['population_coordinate_0'])
+            q[N_IC + 11] = float(saved['population_coordinate_2'])
+            q[N_IC + 12] = float(saved['population_coordinate_3'])
+            q[N_IC + 13] = float(saved['population_coordinate_4'])
+            q[N_IC + 15] = float(saved['population_coordinate_6'])
+            q[N_IC + 18] = float(saved['population_coordinate_9'])
+            q[N_IC + 20] = float(saved['population_coordinate_11'])
+            q[N_IC + 21] = float(saved['population_coordinate_12'])
+            q[N_IC + 23] = float(saved['population_coordinate_14'])
+            report['pop4_line_secant_job_id'] = recorded.get('job_id')
+            report['Q_LEAN'] = (
+                'one full gradient at the reduced population-4 secant, including the IC pullback '
+                'and all 24 nuisance components; no further population-4 step, IC update, or heldout')
+            state = evaluate_full(q)
+            nuisance = np.asarray(state['gradient'][N_IC:], dtype=np.float64)
+            objective_ok = abs(float(state['value']) - float(saved['objective'])) / max(
+                abs(float(saved['objective'])), 1.) <= 1e-8
+
+            def component_ok(got, expected):
+                return abs(float(got) - float(expected)) <= 1e-4 * max(abs(float(expected)), 1.)
+
+            tracer_ok = component_ok(nuisance[0], saved['tracer0_gradient'])
+            tracer2_ok = component_ok(nuisance[2], saved['tracer2_gradient'])
+            tracer3_ok = component_ok(nuisance[3], saved['tracer3_gradient'])
+            tracer4_ok = component_ok(nuisance[4], saved['tracer4_gradient'])
+            population0_ok = component_ok(nuisance[9], saved['population_coordinate_0_gradient'])
+            population2_ok = component_ok(nuisance[11], saved['population_coordinate_2_gradient'])
+            population3_ok = component_ok(nuisance[12], saved['population_coordinate_3_gradient'])
+            population4_ok = component_ok(nuisance[13], saved['population_coordinate_4_gradient'])
+            population6_ok = component_ok(nuisance[15], saved['population_coordinate_6_gradient'])
+            population9_ok = component_ok(nuisance[18], saved['population_coordinate_9_gradient'])
+            population11_ok = component_ok(nuisance[20], saved['population_coordinate_11_gradient'])
+            population12_ok = component_ok(nuisance[21], saved['population_coordinate_12_gradient'])
+            population14_ok = component_ok(nuisance[23], saved['population_coordinate_14_gradient'])
+            population_ok = (population0_ok and population2_ok and population3_ok and population4_ok
+                             and population6_ok and population9_ok and population11_ok
+                             and population12_ok and population14_ok)
+            report['objective'] = float(state['value'])
+            report['tracer0'] = float(q[N_IC])
+            report['tracer2'] = float(q[N_IC + 2])
+            report['tracer3'] = float(q[N_IC + 3])
+            report['tracer4'] = float(q[N_IC + 4])
+            report['population_coordinate_0'] = float(q[N_IC + 9])
+            report['population_coordinate_2'] = float(q[N_IC + 11])
+            report['population_coordinate_3'] = float(q[N_IC + 12])
+            report['population_coordinate_4'] = float(q[N_IC + 13])
+            report['population_coordinate_6'] = float(q[N_IC + 15])
+            report['population_coordinate_9'] = float(q[N_IC + 18])
+            report['population_coordinate_11'] = float(q[N_IC + 20])
+            report['population_coordinate_12'] = float(q[N_IC + 21])
+            report['population_coordinate_14'] = float(q[N_IC + 23])
+            report['tracer0_gradient'] = float(nuisance[0])
+            report['tracer2_gradient'] = float(nuisance[2])
+            report['tracer3_gradient'] = float(nuisance[3])
+            report['tracer4_gradient'] = float(nuisance[4])
+            report['population_coordinate_0_gradient'] = float(nuisance[9])
+            report['population_coordinate_2_gradient'] = float(nuisance[11])
+            report['population_coordinate_3_gradient'] = float(nuisance[12])
+            report['population_coordinate_4_gradient'] = float(nuisance[13])
+            report['population_coordinate_6_gradient'] = float(nuisance[15])
+            report['population_coordinate_9_gradient'] = float(nuisance[18])
+            report['population_coordinate_11_gradient'] = float(nuisance[20])
+            report['population_coordinate_12_gradient'] = float(nuisance[21])
+            report['population_coordinate_14_gradient'] = float(nuisance[23])
+            report['terms'] = {key: state['detail'][key] for key in TERM_KEYS}
+            report['nuisance_gradient'] = nuisance.tolist()
+            if objective_ok and tracer_ok and tracer2_ok and tracer3_ok and tracer4_ok and population_ok:
+                report['joint_gradient'] = block_gradient_summary(state['gradient'])
+                np.savez(out / 'gradient.npz',
+                         gradient=np.asarray(state['gradient'], dtype=np.float64),
+                         q=np.asarray(q, dtype=np.float64))
+            report['status'] = full_gradient_record_status(
+                objective_ok, tracer_ok and tracer3_ok and tracer4_ok, population_ok, tracer2_ok)
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'],
                                   longer_warm_start_authorized=False), allow_nan=False), flush=True)
             return
 
