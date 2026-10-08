@@ -11,7 +11,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
-    pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop11_revisit2_status, pop11_revisit3_status, pop11_revisit4_status, pop13_line_status, pop10_line_status, pop1_line_status, pop4_line_status, pop14_revisit_status,
+    pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop11_revisit2_status, pop11_revisit3_status, pop11_revisit4_status, pop13_line_status, pop10_line_status, pop1_line_status, pop4_line_status, pop4_revisit_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status, pop14_revisit5_status, pop14_revisit6_status,
     pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status, pop0_revisit5_status, pop0_revisit6_status, pop0_revisit7_status,
@@ -710,6 +710,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_POP4_LINE_IMPROVED')
         self.assertEqual(pop4_line_status(10., 10., 971.9560505156035, 97.1956, 3., 4.),
                          'CONDITIONAL_POP4_LINE_NO_IMPROVEMENT')
+
+    def test_pop4_revisit_gate_uses_count_plus_fp(self):
+        self.assertEqual(
+            pop4_revisit_status(10., 9., 542.8941177183742, 54.2894, 3., 3.1),
+            'CONDITIONAL_POP4_REVISIT_REDUCED')
+        self.assertEqual(
+            pop4_revisit_status(10., 9., 542.8941177183742, 54.2895, 3., 3.1),
+            'CONDITIONAL_POP4_REVISIT_IMPROVED')
+        self.assertEqual(
+            pop4_revisit_status(10., 9., 542.8941177183742, 54.2894, 3., 2.),
+            'CONDITIONAL_POP4_REVISIT_IMPROVED')
+        self.assertEqual(
+            pop4_revisit_status(10., 10., 542.8941177183742, 54.2894, 3., 4.),
+            'CONDITIONAL_POP4_REVISIT_NO_IMPROVEMENT')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
