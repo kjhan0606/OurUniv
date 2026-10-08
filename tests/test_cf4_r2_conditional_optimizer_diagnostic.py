@@ -18,7 +18,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop3_revisit_status, pop3_revisit2_status, pop3_revisit3_status,
     reproduction_failures,
     scaled_nuisance,
-    tracer0_line_status, tracer0_revisit2_status, tracer0_secant,
+    tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_secant,
 )
 
 
@@ -304,6 +304,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                          'CONDITIONAL_TRACER0_REVISIT2_IMPROVED')
         self.assertEqual(tracer0_revisit2_status(10., 10., 895.970, 89.597, 3., 4.),
                          'CONDITIONAL_TRACER0_REVISIT2_NO_IMPROVEMENT')
+
+    def test_tracer0_revisit3_gate_uses_the_count_log_likelihood(self):
+        self.assertEqual(tracer0_revisit3_status(10., 9., 1134.545, 113.4545, 3., 3.1),
+                         'CONDITIONAL_TRACER0_REVISIT3_REDUCED')
+        self.assertEqual(tracer0_revisit3_status(10., 9., 1134.545, 113.4546, 3., 3.1),
+                         'CONDITIONAL_TRACER0_REVISIT3_IMPROVED')
+        self.assertEqual(tracer0_revisit3_status(10., 9., 1134.545, 113.4545, 3., 2.),
+                         'CONDITIONAL_TRACER0_REVISIT3_IMPROVED')
+        self.assertEqual(tracer0_revisit3_status(10., 10., 1134.545, 113.4545, 3., 4.),
+                         'CONDITIONAL_TRACER0_REVISIT3_NO_IMPROVEMENT')
 
     def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
         positive, negative = 0.2760982361105669, 0.17609823611056688
