@@ -363,6 +363,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop11_revisit_status(10., 10., 762.4874205196338, 76.2487, 3., 4.),
             'CONDITIONAL_POP11_REVISIT_NO_IMPROVEMENT')
 
+    def test_pop11_revisit_three_steps_improved_without_a_tenfold_drop(self):
+        initial = -142420.23671111895 + 5013.605979035632
+        best = -142420.23671111895 + 5253.047414546184
+        self.assertEqual(
+            pop11_revisit_status(8209552.090364812, 8209312.8085845355,
+                                 762.4874205196336, 793.340778356706,
+                                 initial, best),
+            'CONDITIONAL_POP11_REVISIT_IMPROVED')
+
     def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
         positive, negative = 0.2760982361105669, 0.17609823611056688
         theta = tracer0_secant(positive, 895.9700267980062, negative, -16349.668105529856)
