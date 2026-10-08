@@ -303,6 +303,14 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(tracer0_revisit2_status(10., 10., 895.970, 89.597, 3., 4.),
                          'CONDITIONAL_TRACER0_REVISIT2_NO_IMPROVEMENT')
 
+    def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
+        positive, negative = 0.2760982361105669, 0.17609823611056688
+        theta = tracer0_secant(positive, 895.9700267980062, negative, -16349.668105529856)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - positive), abs(theta - negative))
+        self.assertAlmostEqual(theta, 0.2709028932654769)
+
     def test_tracer4_line_gate_uses_count_plus_fp(self):
         self.assertEqual(tracer4_line_status(10., 9., 682.934, 68.293, 3., 3.1),
                          'CONDITIONAL_TRACER4_LINE_REDUCED')
