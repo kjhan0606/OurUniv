@@ -7,7 +7,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
-    tracer2_line_status, tracer3_line_status, tracer4_line_status, tracer_pair_newton_step,
+    tracer2_line_status, tracer3_line_status, tracer4_line_status, tracer4_revisit_status, tracer_pair_newton_step,
     tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
@@ -791,6 +791,21 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                                  336.25482118341364, 0.0016989132560376458,
                                  initial, best),
             'CONDITIONAL_POP0_REVISIT8_REDUCED')
+
+
+    def test_tracer4_revisit_gate_uses_count_plus_fp(self):
+        self.assertEqual(
+            tracer4_revisit_status(10., 9., 329.8449370157337, 32.9844, 3., 3.1),
+            'CONDITIONAL_TRACER4_REVISIT_REDUCED')
+        self.assertEqual(
+            tracer4_revisit_status(10., 9., 329.8449370157337, 32.9845, 3., 3.1),
+            'CONDITIONAL_TRACER4_REVISIT_IMPROVED')
+        self.assertEqual(
+            tracer4_revisit_status(10., 9., 329.8449370157337, 32.9844, 3., 2.),
+            'CONDITIONAL_TRACER4_REVISIT_IMPROVED')
+        self.assertEqual(
+            tracer4_revisit_status(10., 10., 329.8449370157337, 32.9844, 3., 4.),
+            'CONDITIONAL_TRACER4_REVISIT_NO_IMPROVEMENT')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
