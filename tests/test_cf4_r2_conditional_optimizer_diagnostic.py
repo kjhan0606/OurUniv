@@ -11,7 +11,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
-    pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop11_revisit2_status, pop11_revisit3_status, pop13_line_status, pop10_line_status, pop1_line_status, pop4_line_status, pop14_revisit_status,
+    pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop11_revisit2_status, pop11_revisit3_status, pop11_revisit4_status, pop13_line_status, pop10_line_status, pop1_line_status, pop4_line_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status, pop14_revisit5_status, pop14_revisit6_status,
     pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status, pop0_revisit5_status, pop0_revisit6_status, pop0_revisit7_status,
@@ -507,6 +507,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(
             pop11_revisit3_status(10., 10., 824.7243300726143, 82.4724, 3., 4.),
             'CONDITIONAL_POP11_REVISIT3_NO_IMPROVEMENT')
+
+    def test_pop11_revisit4_gate_uses_count_plus_fp(self):
+        self.assertEqual(
+            pop11_revisit4_status(10., 9., 480.1873616849716, 48.0187, 3., 3.1),
+            'CONDITIONAL_POP11_REVISIT4_REDUCED')
+        self.assertEqual(
+            pop11_revisit4_status(10., 9., 480.1873616849716, 48.0188, 3., 3.1),
+            'CONDITIONAL_POP11_REVISIT4_IMPROVED')
+        self.assertEqual(
+            pop11_revisit4_status(10., 9., 480.1873616849716, 48.0187, 3., 2.),
+            'CONDITIONAL_POP11_REVISIT4_IMPROVED')
+        self.assertEqual(
+            pop11_revisit4_status(10., 10., 480.1873616849716, 48.0187, 3., 4.),
+            'CONDITIONAL_POP11_REVISIT4_NO_IMPROVEMENT')
 
     def test_pop11_revisit3_three_steps_improved_without_a_tenfold_drop(self):
         initial = -142420.23671111895 + 5645.364285825175
