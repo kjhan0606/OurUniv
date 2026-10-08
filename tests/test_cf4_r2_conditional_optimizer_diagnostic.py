@@ -331,6 +331,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(abs(theta - positive), abs(theta - negative))
         self.assertAlmostEqual(theta, 0.5282842811180337)
 
+    def test_tracer3_secant_meets_the_tenfold_gate(self):
+        initial = -142436.3914841816 + 4810.707946311214
+        best = -142423.65173731328 + 4810.587073462019
+        self.assertEqual(
+            tracer3_line_status(8209771.096772627, 8209758.453135235,
+                                598.7345278345147, 28.544918313510692,
+                                initial, best),
+            'CONDITIONAL_TRACER3_LINE_REDUCED')
+
     def test_tracer4_line_gate_uses_count_plus_fp(self):
         self.assertEqual(tracer4_line_status(10., 9., 682.934, 68.293, 3., 3.1),
                          'CONDITIONAL_TRACER4_LINE_REDUCED')
