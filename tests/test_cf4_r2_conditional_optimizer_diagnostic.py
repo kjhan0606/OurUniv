@@ -323,6 +323,13 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(abs(theta - negative), abs(theta - positive))
         self.assertAlmostEqual(theta, 0.27640657716872846)
 
+    def test_tracer0_revisit3_secant_meets_the_tenfold_gate(self):
+        self.assertEqual(
+            tracer0_revisit3_status(8209758.453135235, 8209755.03961515,
+                                    1134.5452128087713, 104.01340469296662,
+                                    -142423.65173731328, -142420.236711119),
+            'CONDITIONAL_TRACER0_REVISIT3_REDUCED')
+
     def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
         positive, negative = 0.2760982361105669, 0.17609823611056688
         theta = tracer0_secant(positive, 895.9700267980062, negative, -16349.668105529856)
