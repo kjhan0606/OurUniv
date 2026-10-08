@@ -11,7 +11,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
-    pop12_revisit2_status, pop11_line_status, pop14_revisit_status,
+    pop12_revisit2_status, pop11_line_status, pop11_revisit_status, pop14_revisit_status,
     pop9_revisit_status, pop14_revisit2_status, pop14_revisit3_status,
     pop14_revisit4_status, pop14_revisit5_status,
     pop0_revisit_status, pop0_revisit2_status, pop0_revisit3_status, pop0_revisit4_status,
@@ -348,6 +348,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                               578.6464599997995, 762.4874205196342,
                               initial, best),
             'CONDITIONAL_POP11_LINE_IMPROVED')
+
+    def test_pop11_revisit_gate_uses_the_new_derivative(self):
+        self.assertEqual(
+            pop11_revisit_status(10., 9., 762.4874205196338, 76.2487, 3., 3.1),
+            'CONDITIONAL_POP11_REVISIT_REDUCED')
+        self.assertEqual(
+            pop11_revisit_status(10., 9., 762.4874205196338, 76.2488, 3., 3.1),
+            'CONDITIONAL_POP11_REVISIT_IMPROVED')
+        self.assertEqual(
+            pop11_revisit_status(10., 9., 762.4874205196338, 76.2487, 3., 2.),
+            'CONDITIONAL_POP11_REVISIT_IMPROVED')
+        self.assertEqual(
+            pop11_revisit_status(10., 10., 762.4874205196338, 76.2487, 3., 4.),
+            'CONDITIONAL_POP11_REVISIT_NO_IMPROVEMENT')
 
     def test_tracer0_revisit2_secant_stays_inside_the_sign_bracket(self):
         positive, negative = 0.2760982361105669, 0.17609823611056688
