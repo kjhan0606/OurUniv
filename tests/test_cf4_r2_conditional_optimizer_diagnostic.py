@@ -7,7 +7,8 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     block_gradient_summary, diagnostic_status, finite_difference_agreement,
     finite_difference_status, gradient_agreement, nuisance_block_status, nuisance_scale,
     coordinate_line_action, full_gradient_record_status, pop9_line_status, pop9_newton_step,
-    tracer2_line_status, tracer4_line_status, tracer_pair_newton_step, tracer_pair_status,
+    tracer2_line_status, tracer3_line_status, tracer4_line_status, tracer_pair_newton_step,
+    tracer_pair_status,
     pop3_line_status, pop0_line_status, pop_pair_status, pop2_line_status,
     pop12_line_status, pop14_line_status, pop6_line_status, pop12_revisit_status,
     pop12_revisit2_status, pop14_revisit_status,
@@ -311,6 +312,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(theta, positive)
         self.assertLess(abs(theta - positive), abs(theta - negative))
         self.assertAlmostEqual(theta, 0.2709028932654769)
+
+    def test_tracer3_line_gate_uses_count_plus_fp(self):
+        self.assertEqual(tracer3_line_status(10., 9., 598.735, 59.873, 3., 3.1),
+                         'CONDITIONAL_TRACER3_LINE_REDUCED')
+        self.assertEqual(tracer3_line_status(10., 9., 598.735, 59.874, 3., 3.1),
+                         'CONDITIONAL_TRACER3_LINE_IMPROVED')
+        self.assertEqual(tracer3_line_status(10., 9., 598.735, 59.873, 3., 2.),
+                         'CONDITIONAL_TRACER3_LINE_IMPROVED')
+        self.assertEqual(tracer3_line_status(10., 10., 598.735, 59.873, 3., 4.),
+                         'CONDITIONAL_TRACER3_LINE_NO_IMPROVEMENT')
 
     def test_tracer4_line_gate_uses_count_plus_fp(self):
         self.assertEqual(tracer4_line_status(10., 9., 682.934, 68.293, 3., 3.1),
