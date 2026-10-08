@@ -807,6 +807,35 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer4_revisit_status(10., 10., 329.8449370157337, 32.9844, 3., 4.),
             'CONDITIONAL_TRACER4_REVISIT_NO_IMPROVEMENT')
 
+    def test_tracer4_revisit_sign_change_stays_improved(self):
+        initial = -142420.236711119 + 5977.5409024630535
+        best = -142394.81260779343 + 5978.423264787913
+        self.assertEqual(
+            tracer4_revisit_status(8208589.648606465, 8208563.429289561,
+                                   329.8449370157307, 93.06800982891079,
+                                   initial, best),
+            'CONDITIONAL_TRACER4_REVISIT_IMPROVED')
+
+    def test_tracer4_revisit_secant_stays_inside_the_sign_bracket(self):
+        positive, negative = 0.5357437290186818, 0.43574372901868186
+        theta = tracer0_secant(positive, 93.06800982891079, negative, -137.4683568046625)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - positive), abs(theta - negative))
+        self.assertEqual(theta, 0.4953735214076467)
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, -137.4683568046625, positive, 93.06800982891079)
+
+    def test_tracer4_revisit_accepted_end_gate(self):
+        self.assertEqual(
+            tracer4_revisit_status(8208563.429289561, 8208563.4,
+                                   93.06800982891079, 9.3068, 3., 3.1),
+            'CONDITIONAL_TRACER4_REVISIT_REDUCED')
+        self.assertEqual(
+            tracer4_revisit_status(8208563.429289561, 8208563.4,
+                                   93.06800982891079, 9.3069, 3., 3.1),
+            'CONDITIONAL_TRACER4_REVISIT_IMPROVED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
