@@ -411,6 +411,15 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop11_revisit2_status(10., 10., 793.5140851613787, 79.3514, 3., 4.),
             'CONDITIONAL_POP11_REVISIT2_NO_IMPROVEMENT')
 
+    def test_pop11_revisit2_three_steps_improved_without_a_tenfold_drop(self):
+        initial = -142420.23671111895 + 5313.450747129416
+        best = -142420.23671111895 + 5526.00578201406
+        self.assertEqual(
+            pop11_revisit2_status(8209252.431771433, 8209040.126391783,
+                                  793.5140851613793, 575.7497278965304,
+                                  initial, best),
+            'CONDITIONAL_POP11_REVISIT2_IMPROVED')
+
     def test_pop11_revisit_three_steps_improved_without_a_tenfold_drop(self):
         initial = -142420.23671111895 + 5013.605979035632
         best = -142420.23671111895 + 5253.047414546184
