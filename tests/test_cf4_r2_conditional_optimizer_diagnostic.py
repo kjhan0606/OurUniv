@@ -285,6 +285,14 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(pop0_revisit4_status(10., 10., 1321.908, 132.190, 3., 4.),
                          'CONDITIONAL_POP0_REVISIT4_NO_IMPROVEMENT')
 
+    def test_population0_revisit4_secant_stays_inside_the_sign_bracket(self):
+        negative, positive = -0.03689363492481951, 0.0631063650751805
+        theta = tracer0_secant(positive, 222075.27977415553, negative, -1321.9075411483052)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - negative), abs(theta - positive))
+        self.assertAlmostEqual(theta, -0.0363019052092244)
+
     def test_population3_revisit3_gate_uses_count_plus_fp(self):
         self.assertEqual(pop3_revisit3_status(10., 9., 852.294, 85.229, 3., 3.1),
                          'CONDITIONAL_POP3_REVISIT3_REDUCED')
