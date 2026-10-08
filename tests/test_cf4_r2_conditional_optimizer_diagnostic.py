@@ -731,6 +731,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, -620.8935209944603, positive, 47989.92103017981)
 
+
+    def test_pop3_revisit4_secant_meets_the_accepted_end_gate(self):
+        count = -142420.23671111895
+        self.assertEqual(
+            pop3_revisit4_status(
+                8208651.510122626, 8208651.1227584565,
+                620.8935209944598, 14.3287979345126,
+                count + 5915.370948653073, count + 5915.757788626992),
+            'CONDITIONAL_POP3_REVISIT4_REDUCED')
+
     def test_population3_revisit3_secant_stays_inside_the_sign_bracket(self):
         negative, positive = -0.41357431852137316, -0.3135743185213732
         theta = tracer0_secant(positive, 32781.02780396851, negative, -852.2941648681355)
