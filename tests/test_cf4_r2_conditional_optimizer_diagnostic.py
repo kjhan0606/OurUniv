@@ -311,6 +311,16 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertLess(abs(theta - negative), abs(theta - positive))
         self.assertAlmostEqual(theta, -0.035901507358026205)
 
+    def test_pop0_revisit5_secant_meets_the_tenfold_gate(self):
+        initial_likelihood = -142420.23671111895 + 5313.276050871325
+        best_likelihood = -142420.23671111895 + 5313.450747129417
+        self.assertEqual(
+            pop0_revisit5_status(
+                8209252.606482146, 8209252.431771433,
+                872.6957988329941, 0.01021211907156118,
+                initial_likelihood, best_likelihood),
+            'CONDITIONAL_POP0_REVISIT5_REDUCED')
+
     def test_population0_revisit4_secant_stays_inside_the_sign_bracket(self):
         negative, positive = -0.03689363492481951, 0.0631063650751805
         theta = tracer0_secant(positive, 222075.27977415553, negative, -1321.9075411483052)
