@@ -27,7 +27,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop5_line_step, pop5_line_status, pop5_revisit_status,
     pop0_revisit9_step, pop0_revisit9_status,
     pop0_revisit10_step, pop0_revisit10_status, pop0_revisit11_status,
-    pop3_revisit5_step, pop3_revisit5_status,
+    pop3_revisit5_step, pop3_revisit5_status, pop3_revisit6_status,
     pop13_revisit_step, pop13_revisit_status,
 )
 
@@ -1517,6 +1517,38 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_full_gradient61_names_population3_and_steps_by_minus01(self):
+        gradient = 290.6757060377401
+        white = -0.41031737268391766
+        pop0 = 0.0012797140533682971
+        objective = 8208480.955026312
+        self.assertEqual(abs(gradient) / 10., 29.06757060377401)
+        self.assertEqual(format(abs(gradient) / 10., '.3f'), '29.068')
+        self.assertEqual(abs(273.5525091954018) / 10., 27.35525091954018)
+        self.assertGreater(abs(gradient), abs(273.5525091954018) / 10.)
+        self.assertNotEqual(abs(gradient) / 10., abs(273.5525091954018) / 10.)
+        self.assertEqual(pop3_revisit5_step(gradient), -0.1)
+        self.assertEqual(white - 0.1, -0.5103173726839176)
+        self.assertEqual(0.5 * white, -0.20515868634195883)
+        self.assertEqual(0.5 * (white - 0.1), -0.2551586863419588)
+        self.assertLess(abs(pop0), 1.)
+        self.assertEqual(1e-4 * max(abs(pop0), 1.), 1e-4)
+        self.assertGreater(abs(pop0), abs(0.001279714049275571) / 10.)
+        self.assertEqual(abs(0.001279714049275571) / 10., 0.0001279714049275571)
+        self.assertEqual(pop0 - 0.001279714049275571, 4.092726157978177e-12)
+        self.assertEqual(-62.062407505775354 - (-62.0624075057131), -6.225775450729998e-11)
+        self.assertEqual(gradient - 290.67570603774215, -2.0463630789890885e-12)
+        self.assertGreater(abs(-41.22166316079686), abs(2.2229824052020826) / 10.)
+        self.assertLessEqual(abs(2.207010726047706), 542.8941177183742 / 10.)
+        self.assertLessEqual(abs(5.337583066622327), abs(-233.42232564563201) / 10.)
+        self.assertGreater(abs(gradient), abs(pop0))
+        self.assertGreater(abs(gradient), abs(-164.05538348949278))
+        self.assertEqual(float(100 * np.exp(0.5 * 0.3259753562964724)), 117.70221865062094)
+        self.assertEqual(
+            pop3_revisit6_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_POP3_REVISIT6_NO_IMPROVEMENT')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
 
     def test_pop0_revisit11_secant_reduced_queues_one_full_gradient(self):
         negative = -0.03582769110596287
