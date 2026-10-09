@@ -1110,6 +1110,33 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(white, gradient, white + 0.05, gradient)
 
+    def test_tracer6_support_step3_improved_without_a_sign_change(self):
+        initial_g = -238.50953348555262
+        best_g = -223.56095110860338
+        initial_obj = 8208522.5797250355
+        best_obj = 8208511.01850836
+        initial_like = -136375.5537545813
+        best_like = -136363.98498913736
+        white0 = 0.12597535629647244
+        white1 = 0.17597535629647243
+        delta_count = 11.478750340611441
+        delta_fp = 0.09001510333564511
+        delta_tracer = 0.007548767814823609
+        self.assertEqual(white0 + 0.05, white1)
+        self.assertLess(abs((best_obj - initial_obj) - (-delta_count - delta_fp + delta_tracer)), 1e-9)
+        self.assertLess(abs(delta_tracer - 0.5 * (white1 ** 2 - white0 ** 2)), 1e-12)
+        self.assertLess(best_obj, initial_obj)
+        self.assertLess(best_g, 0.)
+        self.assertLess(initial_g, 0.)
+        self.assertGreater(abs(best_g), abs(initial_g) / 10.)
+        self.assertGreater(best_like, initial_like)
+        self.assertEqual(
+            tracer6_support_step3_status(initial_obj, best_obj, abs(initial_g), abs(best_g),
+                                         initial_like, best_like),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP3_IMPROVED')
+        with self.assertRaises(ValueError):
+            tracer0_secant(white0, initial_g, white1, best_g)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
