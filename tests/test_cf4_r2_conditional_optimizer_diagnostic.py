@@ -1470,6 +1470,53 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             pop0_revisit10_step(0.)
 
+    def test_pop0_revisit10_secant_stays_inside_the_sign_bracket(self):
+        positive = -0.03571685047779585
+        negative = -0.13571685047779586
+        g_pos = 362.2367269677417
+        g_neg = -326446.38296246435
+        theta = tracer0_secant(positive, g_pos, negative, g_neg)
+        obj0 = 8208510.739070199
+        obj1 = 8224814.914291897
+        count = -142342.5947882921
+        fp0 = 5978.88956203627
+        fp1 = -10325.27708797582
+        prior0 = 4.180606498333799
+        prior1 = 4.189178183381578
+        ic = 8072142.026921511
+        tracer_prior = 0.8263159343553188
+        rise = obj1 - obj0
+        dfp = fp1 - fp0
+        dprior = prior1 - prior0
+        residual = rise - (-dfp + dprior)
+        derivatives = (
+            -56.67514861204005, 35.295488773328586, 28.211046509269472,
+            -31.183485327233306, -223.56921281996955, g_pos,
+            -3.4822793321725074, -14.657305206069886, -216.5385939036377)
+        self.assertEqual(theta, -0.03582769110596287)
+        self.assertEqual(0.3 + theta, 0.2641723088940371)
+        self.assertEqual(0.3 + positive, 0.2642831495222041)
+        self.assertEqual(0.3 + negative, 0.16428314952220413)
+        self.assertLess(negative, theta)
+        self.assertLess(theta, positive)
+        self.assertLess(positive - theta, theta - negative)
+        self.assertEqual(rise, 16304.175221697427)
+        self.assertEqual(residual, 2.874003257602453e-10)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(dprior - 0.5 * (negative ** 2 - positive ** 2), -3.1051550219984847e-16)
+        self.assertEqual(ic + tracer_prior + prior0 - count - fp0 - obj0, 9.313225746154785e-10)
+        self.assertEqual(ic + tracer_prior + prior1 - count - fp1 - obj1, 9.313225746154785e-10)
+        self.assertGreater(abs(g_neg), abs(g_pos) / 10.)
+        self.assertEqual(abs(g_pos) / 10., 36.223672696774166)
+        self.assertGreaterEqual(min(abs(value) for value in derivatives), 1.)
+        self.assertLessEqual(abs(-3.4822793321725074), abs(273.5525091954018) / 10.)
+        self.assertEqual(
+            pop0_revisit10_status(obj0, obj0, abs(g_pos), abs(g_pos), count + fp0, count + fp0),
+            'CONDITIONAL_POP0_REVISIT10_NO_IMPROVEMENT')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, g_neg, positive, g_pos)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
