@@ -930,6 +930,27 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer6_revisit_status(objective, objective - 1., initial, 27.0749, 3., 3.),
             'CONDITIONAL_TRACER6_REVISIT_IMPROVED')
 
+    def test_tracer6_revisit_half_step_improves_without_the_tenfold_drop(self):
+        initial_g = 270.74828769716316
+        best_g = 261.94891913129055
+        initial_obj = 8208560.996369408
+        best_obj = 8208547.671551434
+        initial_like = -142392.2379837209 + 5978.259938462888
+        best_like = -142378.99792921095 + 5978.3447506951325
+        self.assertGreater(best_g, initial_g / 10.)
+        self.assertGreater(best_like, initial_like)
+        self.assertEqual(
+            tracer6_revisit_status(initial_obj, best_obj, initial_g, best_g,
+                                   initial_like, best_like),
+            'CONDITIONAL_TRACER6_REVISIT_IMPROVED')
+        delta_count = -142378.99792921095 - (-142392.2379837209)
+        delta_fp = 5978.3447506951325 - 5978.259938462888
+        delta_tracer = 0.8111696309108478 - 0.8111208630960242
+        self.assertLess(abs((best_obj - initial_obj) - (-delta_count - delta_fp + delta_tracer)), 1e-9)
+        white0, white1 = -0.02402464370352757, 0.02597535629647243
+        self.assertEqual(white1, white0 + 0.05)
+        self.assertLess(abs(delta_tracer - 0.5 * (white1 ** 2 - white0 ** 2)), 1e-12)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
