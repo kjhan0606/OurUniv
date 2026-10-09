@@ -28,6 +28,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop0_revisit9_step, pop0_revisit9_status,
     pop0_revisit10_step, pop0_revisit10_status,
     pop3_revisit5_step, pop3_revisit5_status,
+    pop13_revisit_step, pop13_revisit_status,
 )
 
 
@@ -1516,6 +1517,27 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_pop13_revisit_steps_against_the_negative_derivative(self):
+        white = -0.012419780844287421
+        gradient = -233.42232564563966
+        step = pop13_revisit_step(gradient)
+        self.assertEqual(step, 0.1)
+        self.assertEqual(white + step, 0.08758021915571258)
+        self.assertEqual(0.3 * white, -0.0037259342532862264)
+        self.assertEqual(0.3 * (white + step), 0.026274065746713773)
+        self.assertGreater(abs(gradient), 1091.1301573851867 / 10.)
+        self.assertEqual(abs(gradient) / 10., 23.342232564563965)
+        self.assertLess(abs(0.0020606823328553625), 1.)
+        self.assertLessEqual(abs(0.0020606823328553625), abs(362.2367269677485) / 10.)
+        self.assertGreater(abs(68.93745432353856), abs(273.5525091954018) / 10.)
+        self.assertGreater(abs(-174.70479066883163), 23.834)
+        self.assertEqual(
+            pop13_revisit_status(10., 9., abs(gradient), abs(gradient) / 10., 1., 1.),
+            'CONDITIONAL_POP13_REVISIT_REDUCED')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        with self.assertRaises(ValueError):
+            pop13_revisit_step(0.)
 
     def test_pop0_revisit10_secant_reduced_stops_the_coordinate(self):
         positive = -0.03571685047779585
