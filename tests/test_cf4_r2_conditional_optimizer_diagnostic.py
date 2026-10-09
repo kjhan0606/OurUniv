@@ -876,6 +876,26 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, -16669.361922521985, positive, 505.49504868952965)
 
+    def test_tracer0_revisit4_secant_improves_without_the_tenfold_drop(self):
+        initial_g = 505.49504868952863
+        best_g = 50.59476630458172
+        initial_obj = 8208561.665003976
+        best_obj = 8208560.996369408
+        initial_count = -142392.90580909158
+        best_count = -142392.2379837209
+        self.assertGreater(best_g, initial_g / 10.)
+        self.assertEqual(
+            tracer0_revisit4_status(initial_obj, best_obj, initial_g, best_g,
+                                    initial_count, best_count),
+            'CONDITIONAL_TRACER0_REVISIT4_IMPROVED')
+        delta_obj = best_obj - initial_obj
+        delta_count = best_count - initial_count
+        delta_tracer = 0.8111208630960242 - 0.8119300591379364
+        self.assertLess(abs(delta_obj - (-delta_count + delta_tracer)), 1e-9)
+        white_pos, white_neg = 0.27640657716872846, 0.273463350045866
+        self.assertLess(
+            abs(delta_tracer - 0.5 * (white_neg ** 2 - white_pos ** 2)), 1e-12)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
