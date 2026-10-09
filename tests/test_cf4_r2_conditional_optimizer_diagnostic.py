@@ -1192,6 +1192,31 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, gradient_negative, positive, gradient_positive)
 
+    def test_pop5_secant_meets_the_accepted_end_gate(self):
+        negative = 0.07311500623629187
+        theta = 0.07451017941546588
+        initial_g = -238.34390670220077
+        best_g = 2.6689179176258726
+        obj0 = 8208511.01850836
+        obj1 = 8208510.854108464
+        count = -142342.5947882921
+        fp0 = 5978.60979915473
+        fp1 = 5978.774302031556
+        pop0 = 4.180281801233866
+        pop1 = 4.180384782583661
+        self.assertLess(negative, theta)
+        self.assertLess(theta, negative + 0.1)
+        self.assertEqual(0.5 * theta, 0.03725508970773294)
+        self.assertLess(obj1, obj0)
+        self.assertGreater(best_g, 0.)
+        self.assertLess(initial_g, 0.)
+        self.assertLess(abs(best_g), abs(initial_g) / 10.)
+        self.assertLess(abs((obj1 - obj0) - ((pop1 - pop0) - (fp1 - fp0))), 1e-9)
+        self.assertLess(abs((pop1 - pop0) - 0.5 * (theta ** 2 - negative ** 2)), 1e-15)
+        self.assertEqual(
+            pop5_line_status(obj0, obj1, abs(initial_g), abs(best_g), count + fp0, count + fp1),
+            'CONDITIONAL_POP5_LINE_REDUCED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
