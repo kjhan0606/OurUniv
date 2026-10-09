@@ -19,7 +19,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     reproduction_failures,
     scaled_nuisance,
     tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_revisit4_status, tracer0_secant,
-    tracer6_line_status,
+    tracer6_line_status, tracer6_revisit_first_step, tracer6_revisit_status,
 )
 
 
@@ -913,6 +913,22 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             'CONDITIONAL_TRACER6_LINE_NO_IMPROVEMENT')
         self.assertLess(27.0748, initial / 10.)
         self.assertGreater(27.0749, initial / 10.)
+
+    def test_tracer6_support_stop_does_not_improve_or_repeat_the_step(self):
+        initial = 270.74828769716277
+        objective = 8208560.996369408
+        self.assertEqual(
+            tracer6_line_status(objective, objective, initial, initial, 1., 1.),
+            'CONDITIONAL_TRACER6_LINE_NO_IMPROVEMENT')
+        self.assertEqual(tracer6_revisit_first_step(-initial), 0.05)
+        with self.assertRaises(ValueError):
+            tracer6_revisit_first_step(initial)
+        self.assertEqual(
+            tracer6_revisit_status(objective, objective - 1., initial, 27.0748, 3., 3.),
+            'CONDITIONAL_TRACER6_REVISIT_REDUCED')
+        self.assertEqual(
+            tracer6_revisit_status(objective, objective - 1., initial, 27.0749, 3., 3.),
+            'CONDITIONAL_TRACER6_REVISIT_IMPROVED')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
