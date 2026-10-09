@@ -24,6 +24,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_support_step_size, tracer6_support_step_status, tracer6_revisit3_status,
     tracer6_support_step2_status, tracer6_revisit4_status,
     tracer6_support_step3_status,
+    pop5_line_step, pop5_line_status,
 )
 
 
@@ -1136,6 +1137,29 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             'CONDITIONAL_TRACER6_SUPPORT_STEP3_IMPROVED')
         with self.assertRaises(ValueError):
             tracer0_secant(white0, initial_g, white1, best_g)
+
+    def test_pop5_line_uses_the_fifty_first_gradient_gate(self):
+        gradient = -238.34390670220037
+        white = 0.07311500623629187
+        self.assertEqual(pop5_line_step(gradient), 0.1)
+        self.assertEqual(pop5_line_step(-gradient), -0.1)
+        self.assertEqual(0.5 * white, 0.036557503118145936)
+        self.assertEqual(white + 0.1, 0.1731150062362919)
+        objective = 8208511.01850836
+        gate = abs(gradient) / 10.
+        self.assertEqual(
+            pop5_line_status(objective, objective - 1., abs(gradient), gate + 0.001, 1., 1.1),
+            'CONDITIONAL_POP5_LINE_IMPROVED')
+        self.assertEqual(
+            pop5_line_status(objective, objective - 1., abs(gradient), gate - 0.001, 1., 1.1),
+            'CONDITIONAL_POP5_LINE_REDUCED')
+        self.assertEqual(
+            pop5_line_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_POP5_LINE_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            pop5_line_step(0.)
+        with self.assertRaises(ValueError):
+            tracer0_secant(white, gradient, white + 0.1, gradient)
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
