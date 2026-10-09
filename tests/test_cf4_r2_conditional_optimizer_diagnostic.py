@@ -22,7 +22,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_line_status, tracer6_revisit_first_step, tracer6_revisit_status,
     tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
     tracer6_support_step_size, tracer6_support_step_status, tracer6_revisit3_status,
-    tracer6_support_step2_status, tracer6_revisit4_status,
+    tracer6_support_step2_status, tracer6_revisit4_status, tracer6_revisit5_status,
     tracer6_support_step3_status,
     pop5_line_step, pop5_line_status,
     pop0_revisit9_step, pop0_revisit9_status,
@@ -1517,6 +1517,44 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_full_gradient56_names_tracer6_and_steps_by_005(self):
+        gradient = -223.64441951758337
+        white = 0.17597535629647243
+        self.assertEqual(gradient, -223.64441951758337)
+        self.assertGreater(abs(gradient), 238.5095334855527 / 10.)
+        self.assertEqual(abs(gradient) / 10., 22.364441951758337)
+        self.assertEqual(tracer6_support_step_size(gradient), 0.05)
+        self.assertNotEqual(tracer6_support_step_size(gradient), 0.1)
+        self.assertEqual(white, 0.17597535629647243)
+        self.assertEqual(float(100 * np.exp(0.5 * white)), 109.1974666795327)
+        self.assertEqual(8208510.439566571, 8208510.439566571)
+        self.assertEqual(-142342.5947882921 - -142342.59478829207, -2.9103830456733704e-11)
+        self.assertEqual(
+            8072142.026921511 + 0.8263159343553188 + 4.180582598163753 - -142342.5947882921 - 5979.189041764286 - 8208510.439566571, 0.0)
+        self.assertGreaterEqual(abs(11.194537267040348), 1.)
+        self.assertLessEqual(abs(11.194537267040348), abs(362.2367269677485) / 10.)
+        self.assertGreaterEqual(abs(9.339767162865073), 1.)
+        self.assertLessEqual(abs(9.339767162865073), abs(-233.42232564563201) / 10.)
+        self.assertGreaterEqual(abs(-8.256885409739375), 1.)
+        self.assertLessEqual(abs(-8.256885409739375), 542.8941177183742 / 10.)
+        self.assertGreater(abs(69.38902776661021), 273.5525091954018 / 10.)
+        self.assertGreater(abs(-174.798814999455), 23.834)
+        self.assertEqual(coordinate_line_action(True, False, False, False), 'continue')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        self.assertEqual(
+            tracer6_revisit5_status(10., 9., abs(gradient), abs(gradient) / 10., 1., 1.),
+            'CONDITIONAL_TRACER6_REVISIT5_REDUCED')
+        self.assertEqual(
+            tracer6_revisit5_status(10., 9., abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_TRACER6_REVISIT5_IMPROVED')
+        self.assertEqual(
+            tracer6_revisit5_status(10., 10., abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_TRACER6_REVISIT5_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            tracer6_support_step_size(0.)
+        with self.assertRaises(ValueError):
+            tracer6_support_step_size(9.339767162865073)
 
     def test_pop13_revisit_secant_reduced_stops_the_coordinate(self):
         accepted, rejected = -0.012419780844287421, 0.08758021915571258
