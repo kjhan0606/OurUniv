@@ -18,7 +18,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop3_revisit_status, pop3_revisit2_status, pop3_revisit3_status, pop3_revisit4_status,
     reproduction_failures,
     scaled_nuisance,
-    tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_secant,
+    tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_revisit4_status, tracer0_secant,
 )
 
 
@@ -844,6 +844,20 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                                    93.06800982891079, 4.623539209986719,
                                    initial, best),
             'CONDITIONAL_TRACER4_REVISIT_REDUCED')
+
+    def test_tracer0_revisit4_gate_uses_the_count_log_likelihood(self):
+        self.assertEqual(
+            tracer0_revisit4_status(10., 9., 505.4950486895277, 50.5495, 3., 3.1),
+            'CONDITIONAL_TRACER0_REVISIT4_REDUCED')
+        self.assertEqual(
+            tracer0_revisit4_status(10., 9., 505.4950486895277, 50.5496, 3., 3.1),
+            'CONDITIONAL_TRACER0_REVISIT4_IMPROVED')
+        self.assertEqual(
+            tracer0_revisit4_status(10., 9., 505.4950486895277, 50.5495, 3., 2.),
+            'CONDITIONAL_TRACER0_REVISIT4_IMPROVED')
+        self.assertEqual(
+            tracer0_revisit4_status(10., 10., 505.4950486895277, 50.5495, 3., 4.),
+            'CONDITIONAL_TRACER0_REVISIT4_NO_IMPROVEMENT')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
