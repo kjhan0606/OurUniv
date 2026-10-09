@@ -859,6 +859,23 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer0_revisit4_status(10., 10., 505.4950486895277, 50.5495, 3., 4.),
             'CONDITIONAL_TRACER0_REVISIT4_NO_IMPROVEMENT')
 
+    def test_tracer0_revisit4_rejected_step_does_not_improve(self):
+        self.assertEqual(
+            tracer0_revisit4_status(8208561.665003976, 8209398.463877712,
+                                    505.49504868952965, 16669.361922521985,
+                                    -142392.90580909158, -143229.72732348583),
+            'CONDITIONAL_TRACER0_REVISIT4_NO_IMPROVEMENT')
+
+    def test_tracer0_revisit4_secant_stays_inside_the_sign_bracket(self):
+        positive, negative = 0.27640657716872846, 0.17640657716872846
+        theta = tracer0_secant(positive, 505.49504868952965, negative, -16669.361922521985)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - positive), abs(theta - negative))
+        self.assertEqual(theta, 0.273463350045866)
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, -16669.361922521985, positive, 505.49504868952965)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
