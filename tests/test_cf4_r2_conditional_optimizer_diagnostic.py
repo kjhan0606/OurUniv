@@ -20,6 +20,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     scaled_nuisance,
     tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_revisit4_status, tracer0_secant,
     tracer6_line_status, tracer6_revisit_first_step, tracer6_revisit_status,
+    tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
 )
 
 
@@ -950,6 +951,28 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         white0, white1 = -0.02402464370352757, 0.02597535629647243
         self.assertEqual(white1, white0 + 0.05)
         self.assertLess(abs(delta_tracer - 0.5 * (white1 ** 2 - white0 ** 2)), 1e-12)
+
+    def test_tracer6_revisit2_keeps_the_support_safe_step(self):
+        gradient = -261.948919131281
+        self.assertEqual(tracer6_revisit2_first_step(gradient), 0.05)
+        self.assertEqual(tracer6_revisit2_continuation_step(gradient), 0.05)
+        self.assertEqual(tracer6_revisit2_continuation_step(-gradient), -0.05)
+        self.assertGreater(abs(gradient), 270.74828769716277 / 10.)
+        with self.assertRaises(ValueError):
+            tracer6_revisit2_first_step(-gradient)
+        with self.assertRaises(ValueError):
+            tracer6_revisit2_continuation_step(0.)
+        objective = 8208547.671551459
+        gate = abs(gradient) / 10.
+        self.assertEqual(
+            tracer6_revisit2_status(objective, objective - 1., abs(gradient), gate + 0.001, 1., 1.1),
+            'CONDITIONAL_TRACER6_REVISIT2_IMPROVED')
+        self.assertEqual(
+            tracer6_revisit2_status(objective, objective - 1., abs(gradient), gate - 0.001, 1., 1.1),
+            'CONDITIONAL_TRACER6_REVISIT2_REDUCED')
+        self.assertEqual(
+            tracer6_revisit2_status(objective, objective - 1., abs(gradient), gate - 0.001, 1., 0.),
+            'CONDITIONAL_TRACER6_REVISIT2_IMPROVED')
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
