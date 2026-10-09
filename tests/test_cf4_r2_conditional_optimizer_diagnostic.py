@@ -1283,6 +1283,40 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, initial_g, positive, failed_g)
 
+    def test_pop0_revisit9_secant_reduced_stops_the_coordinate(self):
+        negative = -0.03587365036756075
+        theta = -0.03571685047779585
+        line_g = -512.4156757903997
+        secant_g = 0.0020660503449805023
+        obj0 = 8208510.854108488
+        obj1 = 8208510.81393529
+        count = -142342.5947882921
+        fp0 = 5978.774302031556
+        fp1 = 5978.814469617511
+        prior0 = 4.180384782583662
+        prior1 = 4.180379169892341
+        ic = 8072142.026921511
+        tracer_prior = 0.8263159343553188
+        drop = obj0 - obj1
+        residual = (obj1 - obj0) - (-(fp1 - fp0) + (prior1 - prior0))
+        prior_err = (prior1 - prior0) - 0.5 * (theta ** 2 - negative ** 2)
+        self.assertEqual(0.3 + theta, 0.2642831495222041)
+        self.assertLess(negative, theta)
+        self.assertLess(theta, negative + 0.1)
+        self.assertEqual(abs(line_g) / 10., 51.24156757903997)
+        self.assertLess(abs(secant_g), abs(line_g) / 10.)
+        self.assertLess(abs(secant_g), 1.)
+        self.assertEqual(drop, 0.040173198096454144)
+        self.assertEqual(residual, 5.505809141936879e-10)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(prior_err, -2.17057274931598e-16)
+        self.assertEqual(ic + tracer_prior + prior0 - count - fp0, obj0)
+        self.assertEqual(ic + tracer_prior + prior1 - count - fp1, obj1)
+        self.assertEqual(
+            pop0_revisit9_status(obj0, obj1, abs(line_g), abs(secant_g),
+                                 count + fp0, count + fp1),
+            'CONDITIONAL_POP0_REVISIT9_REDUCED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
