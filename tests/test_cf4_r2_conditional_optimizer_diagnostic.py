@@ -1161,6 +1161,37 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(white, gradient, white + 0.1, gradient)
 
+    def test_pop5_line_sign_change_has_one_secant(self):
+        negative = 0.07311500623629187
+        positive = 0.1731150062362919
+        gradient_negative = -238.34390670220088
+        gradient_positive = 16845.120014479984
+        self.assertEqual(negative + 0.1, positive)
+        theta = tracer0_secant(positive, gradient_positive, negative, gradient_negative)
+        self.assertEqual(theta, 0.07451017941546588)
+        self.assertGreater(theta, negative)
+        self.assertLess(theta, positive)
+        self.assertLess(abs(theta - negative), abs(theta - positive))
+        self.assertEqual(0.5 * positive, 0.08655750311814595)
+        self.assertEqual(0.5 * theta, 0.03725508970773294)
+        count = -142342.5947882921
+        fp0 = 5978.609799154731
+        fp1 = 5144.173483611274
+        pop0 = 4.180281801233866
+        pop1 = 4.192593301857495
+        obj0 = 8208511.01850836
+        obj1 = 8209345.467135403
+        self.assertLess(abs((obj1 - obj0) - ((pop1 - pop0) - (fp1 - fp0))), 1e-9)
+        self.assertLess(abs((pop1 - pop0) - 0.5 * (positive ** 2 - negative ** 2)), 1e-16)
+        self.assertGreater(obj1, obj0)
+        self.assertGreater(abs(gradient_positive), abs(gradient_negative) / 10.)
+        self.assertEqual(
+            pop5_line_status(obj0, obj1, abs(gradient_negative), abs(gradient_positive),
+                             count + fp0, count + fp1),
+            'CONDITIONAL_POP5_LINE_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, gradient_negative, positive, gradient_positive)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
