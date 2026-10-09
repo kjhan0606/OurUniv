@@ -1517,6 +1517,45 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
 
+    def test_pop0_revisit10_secant_reduced_stops_the_coordinate(self):
+        positive = -0.03571685047779585
+        negative = -0.13571685047779586
+        theta = tracer0_secant(positive, 362.2367269677417, negative, -326446.38296246435)
+        obj0 = 8208510.739070199
+        obj1 = 8208510.718994812
+        count = -142342.59478829207
+        fp0 = 5978.88956203627
+        fp1 = 5978.909641388713
+        prior0 = 4.180606498333799
+        prior1 = 4.180610463354765
+        ic = 8072142.026921511
+        tracer_prior = 0.8263159343553188
+        delta = obj1 - obj0
+        dfp = fp1 - fp0
+        dprior = prior1 - prior0
+        residual = delta - (-dfp + dprior)
+        g_saved = 0.0020606823469525304
+        self.assertEqual(theta, -0.03582769110596287)
+        self.assertEqual(0.3 + theta, 0.2641723088940371)
+        self.assertLess(negative, theta)
+        self.assertLess(theta, positive)
+        self.assertEqual(delta, -0.020075387321412563)
+        self.assertEqual(residual, 1.0035705599875655e-10)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(
+            dprior - 0.5 * (theta ** 2 - positive ** 2), 2.4665599424045226e-16)
+        self.assertEqual(ic + tracer_prior + prior0 - count - fp0 - obj0, 9.313225746154785e-10)
+        self.assertEqual(ic + tracer_prior + prior1 - count - fp1 - obj1, 0.)
+        self.assertLess(abs(g_saved), 1.)
+        self.assertLessEqual(abs(g_saved), abs(362.2367269677485) / 10.)
+        self.assertEqual(abs(362.2367269677485) / 10., 36.22367269677485)
+        self.assertGreater(abs(68.9374543235389), abs(273.5525091954018) / 10.)
+        self.assertGreater(abs(-174.70479066883175), 23.834)
+        self.assertEqual(
+            pop0_revisit10_status(
+                obj0, obj1, abs(362.2367269677485), abs(g_saved), count + fp0, count + fp1),
+            'CONDITIONAL_POP0_REVISIT10_REDUCED')
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
