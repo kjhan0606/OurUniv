@@ -1244,6 +1244,45 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             pop0_revisit9_step(0.)
 
+    def test_pop0_revisit9_secant_stays_inside_the_sign_bracket(self):
+        negative = -0.03587365036756075
+        positive = 0.06412634963243925
+        initial_g = -512.4156757903997
+        failed_g = 326283.52567259746
+        theta = tracer0_secant(positive, failed_g, negative, initial_g)
+        obj0 = 8208510.854108488
+        obj1 = 8224799.428132071
+        count = -142342.5947882921
+        fp0 = 5978.774302031556
+        fp1 = -10309.798308915426
+        prior0 = 4.180384782583662
+        prior1 = 4.181797417546905
+        ic = 8072142.026921511
+        tracer_prior = 0.8263159343553188
+        rise = obj1 - obj0
+        residual = rise - (-(fp1 - fp0) + (prior1 - prior0))
+        prior_err = (prior1 - prior0) - 0.5 * (positive ** 2 - negative ** 2)
+        self.assertEqual(theta, -0.03571685047779585)
+        self.assertEqual(0.3 + theta, 0.2642831495222041)
+        self.assertLess(negative, theta)
+        self.assertLess(theta, positive)
+        self.assertLess(theta - negative, positive - theta)
+        self.assertEqual(rise, 16288.574023582973)
+        self.assertEqual(residual, 1.027729013003409e-09)
+        self.assertLess(abs(residual), 2e-9)
+        self.assertEqual(prior_err, -8.604228440844963e-16)
+        self.assertLess(abs(prior_err), 1e-15)
+        self.assertEqual(ic + tracer_prior + prior0 - count - fp0, obj0)
+        self.assertEqual(ic + tracer_prior + prior1 - count - fp1, obj1)
+        self.assertGreater(abs(failed_g), abs(initial_g) / 10.)
+        self.assertEqual(
+            pop0_revisit9_status(obj0, obj0, abs(initial_g), abs(initial_g),
+                                 count + fp0, count + fp0),
+            'CONDITIONAL_POP0_REVISIT9_NO_IMPROVEMENT')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, initial_g, positive, failed_g)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
