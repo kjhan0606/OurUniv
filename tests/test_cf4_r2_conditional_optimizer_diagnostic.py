@@ -1518,6 +1518,31 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
 
+    def test_pop13_revisit_secant_reduced_stops_the_coordinate(self):
+        accepted, rejected = -0.012419780844287421, 0.08758021915571258
+        g_line, g_rejected = -233.42232564563201, 9125.82896064206
+        theta = tracer0_secant(rejected, g_rejected, accepted, g_line)
+        self.assertEqual(theta, -0.00992575307961334)
+        self.assertEqual(0.3 * theta, -0.0029777259238840015)
+        drop = 8208510.439566571 - 8208510.718994812
+        self.assertEqual(drop, -0.27942824084311724)
+        residual = drop - (-0.2794003755734593 + -2.78651910115002e-05)
+        self.assertEqual(residual, -7.864642270760669e-11)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertGreater(abs(9.339767162867238), 1.)
+        self.assertLessEqual(abs(9.339767162867238), abs(g_line) / 10.)
+        self.assertGreaterEqual(abs(11.19453726704444), 1.)
+        self.assertLessEqual(abs(11.19453726704444), abs(362.2367269677485) / 10.)
+        self.assertGreater(abs(69.38902776660828), abs(273.5525091954018) / 10.)
+        self.assertGreater(abs(-174.79881499945654), 23.834)
+        self.assertGreaterEqual(8.25688540973767, 1.)
+        initial = -142342.59478829207 + 5978.909641388713
+        best = -142342.59478829207 + 5979.189041764286
+        self.assertEqual(
+            pop13_revisit_status(8208510.718994812, 8208510.439566571,
+                                 abs(g_line), abs(9.339767162867238), initial, best),
+            'CONDITIONAL_POP13_REVISIT_REDUCED')
+
     def test_pop13_revisit_secant_uses_the_positive_rejected_end_first(self):
         accepted, rejected = -0.012419780844287421, 0.08758021915571258
         g_accepted, g_rejected = -233.42232564563201, 9125.82896064206
