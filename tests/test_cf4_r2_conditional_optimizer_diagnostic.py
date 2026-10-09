@@ -26,6 +26,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_support_step3_status,
     pop5_line_step, pop5_line_status,
     pop0_revisit9_step, pop0_revisit9_status,
+    pop0_revisit10_step, pop0_revisit10_status,
     pop3_revisit5_step, pop3_revisit5_status,
 )
 
@@ -1426,6 +1427,48 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
                 obj0, obj1, abs(273.5525091954018), abs(-3.4822793321745538),
                 count + fp0, count + fp1),
             'CONDITIONAL_POP3_REVISIT5_REDUCED')
+
+    def test_pop0_revisit10_uses_the_fifty_fourth_gradient_gate(self):
+        gradient = 362.23672696774145
+        white = -0.03571685047779585
+        derivatives = (
+            -56.675148612040786, 35.29548877332851, 28.211046509269252,
+            -31.18348532723347, -223.56921281996927, gradient,
+            -3.4822793321738716, -14.65730520606909, -216.53859390363849)
+        diffs = (
+            -7.538858426414663e-12, -2.1316282072803006e-13, -2.092548356813495e-12,
+            -1.5631940186722204e-13, 5.684341886080802e-14, -2.2737367544323206e-13,
+            6.821210263296962e-13, 4.263256414560601e-13, -3.979039320256561e-13)
+        objective = 8208510.739070199
+        gap = (8072142.026921511 + 0.8263159343553188 + 4.180606498333799
+               - (-142342.5947882921) - 5978.88956203627 - objective)
+        self.assertEqual(pop0_revisit10_step(gradient), -0.1)
+        self.assertEqual(pop0_revisit10_step(-gradient), 0.1)
+        self.assertGreater(abs(gradient), abs(-512.4156757903997) / 10.)
+        self.assertEqual(abs(gradient) / 10., 36.223672696774145)
+        self.assertEqual(0.3 + white, 0.2642831495222041)
+        self.assertEqual(white - 0.1, -0.13571685047779586)
+        self.assertEqual(0.3 + (white - 0.1), 0.16428314952220413)
+        self.assertLessEqual(abs(-3.4822793321738716), abs(273.5525091954018) / 10.)
+        self.assertLess(abs(-14.65730520606909), 542.8941177183742 / 10.)
+        self.assertGreater(abs(-216.53859390363849), 23.834)
+        self.assertGreaterEqual(min(abs(value) for value in derivatives), 1.)
+        self.assertTrue(all(abs(value) < 1e-6 for value in diffs))
+        self.assertEqual(gap, 9.313225746154785e-10)
+        self.assertEqual(
+            pop0_revisit10_status(objective, objective - 1., abs(gradient),
+                                  abs(gradient) / 10. + 0.001, 1., 1.1),
+            'CONDITIONAL_POP0_REVISIT10_IMPROVED')
+        self.assertEqual(
+            pop0_revisit10_status(objective, objective - 1., abs(gradient),
+                                  abs(gradient) / 10. - 0.001, 1., 1.1),
+            'CONDITIONAL_POP0_REVISIT10_REDUCED')
+        self.assertEqual(
+            pop0_revisit10_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_POP0_REVISIT10_NO_IMPROVEMENT')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        with self.assertRaises(ValueError):
+            pop0_revisit10_step(0.)
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
