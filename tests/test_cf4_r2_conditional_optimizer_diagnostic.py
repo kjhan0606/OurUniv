@@ -22,7 +22,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_line_status, tracer6_revisit_first_step, tracer6_revisit_status,
     tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
     tracer6_support_step_size, tracer6_support_step_status, tracer6_revisit3_status,
-    tracer6_support_step2_status, tracer6_revisit4_status, tracer6_revisit5_status, tracer6_support_step4_status, tracer6_revisit6_status, tracer6_support_step5_status, tracer6_revisit7_status,
+    tracer6_support_step2_status, tracer6_revisit4_status, tracer6_revisit5_status, tracer6_support_step4_status, tracer6_revisit6_status, tracer6_support_step5_status, tracer6_revisit7_status, tracer6_support_step6_status,
     tracer6_support_step3_status,
     pop5_line_step, pop5_line_status,
     pop0_revisit9_step, pop0_revisit9_status,
@@ -1517,6 +1517,38 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_tracer6_revisit7_support_change_keeps_the_005_step(self):
+        white = 0.2759753562964724
+        gradient = -186.5500936807379
+        proposal = 0.3259753562964724
+        objective = 8208489.846138006
+        self.assertEqual(white + 0.05, proposal)
+        self.assertEqual(tracer6_support_step_size(gradient), 0.05)
+        self.assertNotEqual(tracer6_support_step_size(gradient), 0.025)
+        self.assertGreater(abs(gradient), abs(-186.55009368072817) / 10.)
+        self.assertEqual(abs(gradient) / 10., 18.655009368073788)
+        self.assertEqual(gradient - (-186.5500936807381), 1.9895196601282805e-13)
+        self.assertEqual(5979.381555965149 - 5979.38155596515, -9.094947017729282e-13)
+        self.assertEqual(8072142.0269214865 + 0.8489134699849659 + 4.180582598163753 - -142322.17127641622 - 5979.381555965149 - objective, 0.0)
+        self.assertEqual(float(100 * np.exp(0.5 * white)), 114.79614051767668)
+        self.assertGreaterEqual(min(abs(value) for value in (-60.18071087617793, -4.68132084276926, -12.228800052945918, -39.105541092839985, -186.5500936807379, 17.698540430076154, 64.73533884303359, -4.310166105389108, -178.0139997709454, 6.448524547737966)), 1.)
+        self.assertLessEqual(abs(17.698540430076154), abs(362.2367269677485) / 10.)
+        self.assertLessEqual(abs(6.448524547737966), abs(-233.42232564563201) / 10.)
+        self.assertLessEqual(abs(-4.310166105389108), 542.8941177183742 / 10.)
+        self.assertGreater(abs(64.73533884303359), 273.5525091954018 / 10.)
+        self.assertGreater(abs(-178.0139997709454), 23.834)
+        self.assertEqual(
+            tracer6_revisit7_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_TRACER6_REVISIT7_NO_IMPROVEMENT')
+        self.assertEqual(
+            tracer6_support_step6_status(10., 9., abs(gradient), abs(gradient) / 10., 1., 1.),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP6_REDUCED')
+        self.assertEqual(
+            tracer6_support_step6_status(10., 11., abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP6_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            tracer6_support_step_size(0.)
 
     def test_full_gradient58_names_tracer6_and_steps_by_005(self):
         gradient = -186.5500936807381
