@@ -337,7 +337,7 @@ def tracer6_revisit2_status(initial_objective, best_objective, initial_abs_gradi
     return 'CONDITIONAL_TRACER6_REVISIT2_NO_IMPROVEMENT'
 
 
-def tracer6_support_step(gradient):
+def tracer6_support_step_size(gradient):
     """Score the +0.05 step on its own support. Do not halve it."""
     if float(gradient) >= 0.:
         raise ValueError('tracer-6 support step requires a negative derivative')
@@ -21434,7 +21434,7 @@ def main():
                 report['evaluations'] = []
             else:
                 baseline['step'] = 'verify'
-                step = tracer6_support_step(baseline['tracer6_gradient'])
+                step = tracer6_support_step_size(baseline['tracer6_gradient'])
                 if abs(step - 0.05) > 1e-12:
                     raise ValueError('tracer-6 support step is not +0.05')
                 proposal = origin.copy()

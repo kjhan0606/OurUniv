@@ -21,7 +21,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer0_line_status, tracer0_revisit2_status, tracer0_revisit3_status, tracer0_revisit4_status, tracer0_secant,
     tracer6_line_status, tracer6_revisit_first_step, tracer6_revisit_status,
     tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
-    tracer6_support_step, tracer6_support_step_status,
+    tracer6_support_step_size, tracer6_support_step_status,
 )
 
 
@@ -977,9 +977,9 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
 
     def test_tracer6_support_step_scores_the_same_half_step(self):
         gradient = -261.94891913129004
-        self.assertEqual(tracer6_support_step(gradient), 0.05)
+        self.assertEqual(tracer6_support_step_size(gradient), 0.05)
         with self.assertRaises(ValueError):
-            tracer6_support_step(-gradient)
+            tracer6_support_step_size(-gradient)
         objective = 8208547.671551434
         gate = abs(gradient) / 10.
         self.assertEqual(
