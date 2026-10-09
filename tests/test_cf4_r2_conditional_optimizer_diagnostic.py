@@ -1518,6 +1518,64 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
 
+    def test_pop5_revisit_sign_change_queues_one_secant(self):
+        negative = 0.07451017941546588
+        positive = 0.17451017941546587
+        g_neg = -179.60957974176384
+        g_pos = 16867.732307710565
+        objective0 = 8208481.070149725
+        objective1 = 8209319.969881736
+        count = -142313.47804254713
+        fp0 = 5979.479359143987
+        fp1 = 5140.592078152069
+        prior0 = 4.180582598163753
+        prior1 = 4.1930336161053
+        ic = 8072142.0269214865
+        tracer_prior = 0.8639622377997895
+        theta = tracer0_secant(positive, g_pos, negative, g_neg)
+        delta_objective = objective1 - objective0
+        delta_fp = fp1 - fp0
+        delta_prior = prior1 - prior0
+        residual = delta_objective - (-delta_fp + delta_prior)
+        self.assertEqual(negative + 0.1, positive)
+        self.assertEqual(theta, 0.07556377229186596)
+        self.assertEqual(0.5 * theta, 0.03778188614593298)
+        self.assertLess(negative, theta)
+        self.assertLess(theta, positive)
+        self.assertGreater(positive - theta, theta - negative)
+        self.assertEqual(delta_objective, 838.899732010439)
+        self.assertEqual(delta_fp, -838.8872809919176)
+        self.assertEqual(delta_prior, 0.01245101794154646)
+        self.assertEqual(residual, 5.799165592179634e-10)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(delta_prior - 0.5 * (positive ** 2 - negative ** 2), -1.2663481374630692e-16)
+        self.assertEqual(ic + tracer_prior + prior0 - count - fp0 - objective0, 0.0)
+        self.assertEqual(ic + tracer_prior + prior1 - count - fp1 - objective1, -9.313225746154785e-10)
+        self.assertLess(g_neg, 0.)
+        self.assertGreater(g_pos, 0.)
+        self.assertGreater(abs(g_pos), abs(g_neg) / 10.)
+        self.assertEqual(abs(g_neg) / 10., 17.960957974176385)
+        self.assertNotEqual(abs(g_neg) / 10., abs(-179.60957974176327) / 10.)
+        self.assertEqual(format(abs(g_neg) / 10., '.3f'), '17.961')
+        self.assertEqual(g_neg - (-179.60957974176327), -5.684341886080801e-13)
+        self.assertEqual(float(100 * np.exp(0.5 * 0.3259753562964724)), 117.70221865062094)
+        derivatives = (
+            -62.06240750571353, -25.311584894600227, -33.13682957743554,
+            -43.21488298594798, -164.02895850096385, 20.932194608194894,
+            62.43204014002461, -2.2909095827464583, g_neg, 4.986584760929821)
+        self.assertEqual(min(abs(value) for value in derivatives), 2.2909095827464583)
+        self.assertGreaterEqual(min(abs(value) for value in derivatives), 1.)
+        self.assertLessEqual(abs(20.932194608194894), abs(362.2367269677485) / 10.)
+        self.assertLessEqual(abs(4.986584760929821), abs(-233.42232564563201) / 10.)
+        self.assertLessEqual(abs(-2.2909095827464583), 542.8941177183742 / 10.)
+        self.assertGreater(abs(62.43204014002461), abs(273.5525091954018) / 10.)
+        self.assertEqual(
+            pop5_revisit_status(objective0, objective0, abs(g_neg), abs(g_neg), 1., 1.),
+            'CONDITIONAL_POP5_REVISIT_NO_IMPROVEMENT')
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        with self.assertRaises(ValueError):
+            tracer0_secant(negative, g_neg, positive, g_pos)
+
     def test_full_gradient59_names_population5_and_steps_by_01(self):
         gradient = -179.60957974176327
         white = 0.07451017941546588
