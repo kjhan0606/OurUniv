@@ -27,6 +27,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop5_line_step, pop5_line_status, pop5_revisit_status, pop5_revisit2_status,
     pop0_revisit9_step, pop0_revisit9_status,
     pop0_revisit10_step, pop0_revisit10_status, pop0_revisit11_status, pop0_revisit12_status,
+    pop0_revisit13_status,
     pop3_revisit5_step, pop3_revisit5_status, pop3_revisit6_status,
     pop13_revisit_step, pop13_revisit_status,
 )
@@ -1517,6 +1518,67 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_full_gradient64_names_population0_and_steps_by_plus01(self):
+        gradient = -369.0199460097031
+        white = -0.035830557565609475
+        pop4 = -1.1000521890600297
+        pop5 = 2.070679793428255
+        pop8 = -13.585636501089791
+        objective = 8208480.766528566
+        checked = (
+            -62.062407505775816, -25.320681980978698, -33.153483480918645,
+            -43.210493692647375, -164.0672610426421, gradient,
+            355.30668512865446, pop4, pop5, 4.746771779554123)
+        diffs = {
+            0: -6.81197320773208e-11,
+            2: -2.4215296434704214e-11,
+            3: -2.673061771929497e-11,
+            4: -4.092726157978177e-12,
+            6: 1.057287590811029e-11,
+            9: 6.480149750132114e-12,
+            12: -2.2737367544323206e-13,
+            13: 2.1032064978498966e-12,
+            14: -2.2737367544323206e-13,
+            22: -4.595435143528448e-12,
+        }
+        self.assertEqual(pop0_revisit10_step(gradient), 0.1)
+        self.assertEqual(pop0_revisit10_step(-gradient), -0.1)
+        self.assertEqual(white + 0.1, 0.06416944243439053)
+        self.assertEqual(0.3 + white, 0.2641694424343905)
+        self.assertEqual(0.3 + white + 0.1, 0.36416944243439053)
+        self.assertLess(gradient, 0.)
+        self.assertGreater(abs(gradient), 1.)
+        self.assertEqual(abs(gradient) / 10., 36.90199460097031)
+        self.assertEqual(format(abs(gradient) / 10., '.3f'), '36.902')
+        self.assertNotEqual(abs(gradient) / 10., 36.902)
+        self.assertEqual(abs(0.002332932001004387) / 10., 0.0002332932001004387)
+        self.assertEqual(format(abs(0.002332932001004387) / 10., '.3f'), '0.000')
+        self.assertGreater(abs(gradient), 0.0002332932001004387)
+        self.assertGreaterEqual(min(abs(value) for value in checked), abs(pop4))
+        self.assertGreaterEqual(abs(pop4), 1.)
+        self.assertNotEqual(1e-4 * max(abs(pop4), 1.), 1e-4)
+        self.assertGreater(abs(pop5), abs(2.070679793428482) / 10.)
+        self.assertEqual(abs(2.070679793428482) / 10., 0.2070679793428482)
+        self.assertNotEqual(pop5, gradient)
+        self.assertGreater(abs(pop8), 1.)
+        self.assertGreater(abs(355.30668512865446), 0.3805631199799269)
+        self.assertLessEqual(abs(pop4), 542.8941177183742 / 10.)
+        self.assertLessEqual(abs(4.746771779554123), abs(-233.42232564563201) / 10.)
+        self.assertEqual(max(diffs, key=lambda index: abs(diffs[index])), 0)
+        self.assertEqual(diffs[0], -6.81197320773208e-11)
+        self.assertEqual(diffs[9], 6.480149750132114e-12)
+        self.assertEqual(objective - 8208480.766528566, 0.0)
+        self.assertEqual(-142313.4780425471 - -142313.47804254713, 2.9103830456733704e-11)
+        self.assertEqual(16777216 + 9, 16777225)
+        self.assertEqual(16777216 + 14, 16777230)
+        self.assertEqual(float(100 * np.exp(0.5 * 0.3259753562964724)), 117.70221865062094)
+        self.assertEqual(
+            pop0_revisit13_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_POP0_REVISIT13_NO_IMPROVEMENT')
+        self.assertEqual(
+            full_gradient_record_status(True, True, True, True),
+            'CONDITIONAL_FULL_GRADIENT_RECORDED')
 
     def test_pop5_revisit2_secant_reduced_queues_one_full_gradient(self):
         white = 0.0765438051588915
