@@ -1518,6 +1518,54 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
 
+    def test_tracer6_support_step5_improved_queues_one_full_gradient(self):
+        white0 = 0.22597535629647242
+        white1 = 0.2759753562964724
+        gradient0 = -206.35780567850628
+        gradient1 = -186.55009368072817
+        objective0 = 8208499.679400425
+        objective1 = 8208489.846138006
+        count0 = -142331.92021652748
+        count1 = -142322.17127641616
+        fp0 = 5979.2846848888175
+        fp1 = 5979.38155596515
+        tracer0 = 0.8363647021701422
+        tracer1 = 0.8489134699849659
+        ic = 8072142.0269214865
+        population = 4.180582598163753
+        delta_objective = objective1 - objective0
+        delta_count = count1 - count0
+        delta_fp = fp1 - fp0
+        delta_tracer = tracer1 - tracer0
+        residual = delta_objective - (-delta_count - delta_fp + delta_tracer)
+        self.assertEqual(white0 + 0.05, white1)
+        self.assertEqual(delta_objective, -9.833262419328094)
+        self.assertEqual(residual, 5.02350161468712e-10)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(delta_tracer - 0.5 * (white1 ** 2 - white0 ** 2), -3.469446951953614e-18)
+        self.assertLess(abs(delta_tracer - 0.5 * (white1 ** 2 - white0 ** 2)), 1e-12)
+        self.assertEqual(ic + tracer0 + population - count0 - fp0 - objective0, 0.0)
+        self.assertEqual(ic + tracer1 + population - count1 - fp1 - objective1, 0.0)
+        self.assertLess(gradient0, 0.)
+        self.assertLess(gradient1, 0.)
+        self.assertGreater(abs(gradient1), abs(gradient0) / 10.)
+        self.assertEqual(abs(gradient0) / 10., 20.635780567850627)
+        self.assertEqual(float(100 * np.exp(0.5 * white1)), 114.79614051767668)
+        self.assertGreaterEqual(min(abs(value) for value in (-60.180710876229305, -4.6813208427929105, -12.228800052969259, -39.105541092843865, -186.55009368072817, 17.69854043008775, 64.7353388430337, -4.3101661053878, -178.0139997709459, 6.448524547733004)), 1.)
+        self.assertLessEqual(abs(17.69854043008775), abs(362.2367269677485) / 10.)
+        self.assertLessEqual(abs(6.448524547733004), abs(-233.42232564563201) / 10.)
+        self.assertLessEqual(abs(-4.3101661053878), 542.8941177183742 / 10.)
+        self.assertGreater(abs(64.7353388430337), 273.5525091954018 / 10.)
+        self.assertGreater(abs(-178.0139997709459), 23.834)
+        likelihood0 = count0 + fp0
+        likelihood1 = count1 + fp1
+        self.assertEqual(
+            tracer6_support_step5_status(
+                objective0, objective1, abs(gradient0), abs(gradient1), likelihood0, likelihood1),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP5_IMPROVED')
+        with self.assertRaises(ValueError):
+            tracer6_support_step_size(0.)
+
     def test_tracer6_revisit6_support_change_keeps_the_005_step(self):
         white = 0.22597535629647242
         gradient = -206.3578056785051
