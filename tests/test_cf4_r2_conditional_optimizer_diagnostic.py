@@ -23,7 +23,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
     tracer6_support_step_size, tracer6_support_step_status, tracer6_revisit3_status,
     tracer6_support_step2_status, tracer6_revisit4_status, tracer6_revisit5_status, tracer6_support_step4_status, tracer6_revisit6_status, tracer6_support_step5_status, tracer6_revisit7_status, tracer6_support_step6_status,
-    tracer6_support_step3_status,
+    tracer6_support_step3_status, tracer6_revisit8_status,
     pop5_line_step, pop5_line_status, pop5_revisit_status, pop5_revisit2_status,
     pop0_revisit9_step, pop0_revisit9_status,
     pop0_revisit10_step, pop0_revisit10_status, pop0_revisit11_status, pop0_revisit12_status,
@@ -1518,6 +1518,99 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
+
+    def test_full_gradient67_names_tracer6_line(self):
+        gradient = -164.04053987283538
+        own_gate = abs(-164.02895850096368) / 10.
+        line_gate = abs(gradient) / 10.
+        pop0 = 0.002256602760160195
+        pop0_saved = 0.0022566027606149425
+        pop8 = 0.1606061944962431
+        values = {
+            0: -62.062407505713885,
+            2: -25.314642258495613,
+            3: -33.139662793973436,
+            4: -43.21332584155364,
+            5: -2.1499250303300657,
+            6: gradient,
+            9: pop0,
+            12: 70.85747294138264,
+            13: -15.492147921434373,
+            14: -162.4927762699186,
+            17: pop8,
+            22: 4.6766209476625615,
+        }
+        saved = {
+            0: -62.06240750571477,
+            6: -164.0405398728352,
+            9: pop0_saved,
+            12: 70.85747294138196,
+            17: 0.16060619449763577,
+            22: 4.676620947666595,
+        }
+        diffs = {index: values[index] - saved[index] for index in saved}
+        below = sorted(index for index, value in (
+            (9, pop0), (17, pop8), (5, values[5]), (6, gradient)) if abs(value) < 1.)
+        objective = 8208480.64461356
+        ic = 8072142.0269214865
+        tracer_prior = 0.8639622377997895
+        population_prior = 4.181215025367132
+        count = -142313.47804254713
+        fp = 5979.905527736704
+        secant_fp = 5979.905527736705
+        self.assertEqual(16777216 + 6, 16777222)
+        self.assertEqual(own_gate, 16.402895850096368)
+        self.assertEqual(line_gate, 16.40405398728354)
+        self.assertNotEqual(line_gate, own_gate)
+        self.assertEqual(format(own_gate, '.3f'), '16.403')
+        self.assertEqual(format(line_gate, '.3f'), '16.404')
+        self.assertGreater(abs(gradient), own_gate)
+        self.assertGreater(abs(gradient), 18.655009368073785)
+        self.assertGreater(abs(gradient), 1.)
+        self.assertEqual(tracer6_support_step_size(gradient), 0.05)
+        self.assertEqual(0.3259753562964724 + 0.05, 0.3759753562964724)
+        with self.assertRaises(ValueError):
+            tracer6_support_step_size(0.)
+        self.assertEqual(below, [9, 17])
+        self.assertEqual(min((9, 17), key=lambda index: abs((pop0, pop8)[index == 17])), 9)
+        self.assertEqual(1e-4 * max(abs(pop0), 1.), 1e-4)
+        self.assertEqual(1e-4 * max(abs(pop8), 1.), 1e-4)
+        self.assertEqual(abs(pop0) / 10., 0.0002256602760160195)
+        self.assertEqual(abs(pop0_saved) / 10., 0.00022566027606149425)
+        self.assertNotEqual(abs(pop0) / 10., abs(pop0_saved) / 10.)
+        self.assertGreater(abs(pop0), abs(pop0_saved) / 10.)
+        self.assertLess(abs(pop0), 1.)
+        self.assertLess(abs(pop8), 1.)
+        self.assertGreater(abs(values[12]), 0.3690110978312417)
+        self.assertGreater(abs(values[14]), 0.2070679793428482)
+        self.assertLessEqual(abs(values[13]), 542.8941177183742 / 10.)
+        self.assertLessEqual(abs(values[22]), abs(-233.42232564563201) / 10.)
+        self.assertEqual(max(diffs, key=lambda index: abs(diffs[index])), 22)
+        self.assertEqual(diffs[22], -4.033218203858269e-12)
+        self.assertEqual(fp - secant_fp, -9.094947017729282e-13)
+        self.assertNotEqual(fp, secant_fp)
+        self.assertEqual(ic + tracer_prior + population_prior - count - fp - objective, 0.0)
+        self.assertEqual(format(1.8209067972071895, '.6f'), '1.820907')
+        self.assertEqual(format(12.683474196080232, '.6f'), '12.683474')
+        self.assertEqual(format(73.16082313977495, '.6f'), '73.160823')
+        self.assertEqual(format(abs(gradient), '.6f'), '164.040540')
+        self.assertEqual(format(90.52578672081717, '.6f'), '90.525787')
+        self.assertEqual(format(162.4927762699186, '.6f'), '162.492776')
+        self.assertEqual(float(100 * np.exp(0.5 * 0.3259753562964724)), 117.70221865062094)
+        self.assertEqual(0.3 + -0.03583179970308488, 0.2641682002969151)
+        self.assertEqual(0.5 * -0.010011571272851271, -0.005005785636425636)
+        self.assertEqual(int(596.6815483910032), 596)
+        self.assertEqual(format(10.702079772949219, '.2f'), '10.70')
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+        self.assertEqual(
+            tracer6_revisit8_status(1., 1., 10., 10., 0., 0.),
+            'CONDITIONAL_TRACER6_REVISIT8_NO_IMPROVEMENT')
+        self.assertEqual(
+            tracer6_revisit8_status(2., 1., 10., 9., 0., 0.),
+            'CONDITIONAL_TRACER6_REVISIT8_IMPROVED')
+        self.assertEqual(
+            tracer6_revisit8_status(2., 1., 10., 1., 0., 0.),
+            'CONDITIONAL_TRACER6_REVISIT8_REDUCED')
 
     def test_pop0_revisit14_secant_reduced_queues_one_full_gradient(self):
         verified = -0.035717259497908965
