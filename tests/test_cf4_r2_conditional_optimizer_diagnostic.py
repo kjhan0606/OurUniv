@@ -25,6 +25,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_support_step2_status, tracer6_revisit4_status,
     tracer6_support_step3_status,
     pop5_line_step, pop5_line_status,
+    pop0_revisit9_step, pop0_revisit9_status,
 )
 
 
@@ -1216,6 +1217,32 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(
             pop5_line_status(obj0, obj1, abs(initial_g), abs(best_g), count + fp0, count + fp1),
             'CONDITIONAL_POP5_LINE_REDUCED')
+
+    def test_pop0_revisit9_uses_the_fifty_second_gradient_gate(self):
+        gradient = -512.4156757903945
+        white = -0.03587365036756075
+        self.assertEqual(pop0_revisit9_step(gradient), 0.1)
+        self.assertEqual(pop0_revisit9_step(-gradient), -0.1)
+        self.assertGreater(abs(gradient), 336.25482118341364 / 10.)
+        self.assertEqual(abs(gradient) / 10., 51.241567579039454)
+        self.assertEqual(0.3 + white, 0.26412634963243925)
+        self.assertEqual(white + 0.1, 0.06412634963243925)
+        self.assertEqual(0.3 + (white + 0.1), 0.36412634963243923)
+        self.assertLess(abs(2.6689179176247357), abs(-238.34390670220037) / 10.)
+        objective = 8208510.854108488
+        self.assertEqual(
+            pop0_revisit9_status(objective, objective - 1., abs(gradient),
+                                 abs(gradient) / 10. + 0.001, 1., 1.1),
+            'CONDITIONAL_POP0_REVISIT9_IMPROVED')
+        self.assertEqual(
+            pop0_revisit9_status(objective, objective - 1., abs(gradient),
+                                 abs(gradient) / 10. - 0.001, 1., 1.1),
+            'CONDITIONAL_POP0_REVISIT9_REDUCED')
+        self.assertEqual(
+            pop0_revisit9_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_POP0_REVISIT9_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            pop0_revisit9_step(0.)
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
