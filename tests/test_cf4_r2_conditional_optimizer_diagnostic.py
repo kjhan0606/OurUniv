@@ -992,6 +992,25 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer6_support_step_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
             'CONDITIONAL_TRACER6_SUPPORT_STEP_NO_IMPROVEMENT')
 
+    def test_tracer6_support_step_improved_without_a_sign_change(self):
+        initial_g = -261.9489191312816
+        best_g = -251.26375904165042
+        initial_obj = 8208547.671551434
+        best_obj = 8208534.83278695
+        initial_like = -136400.65317851581
+        best_like = -136387.8118652634
+        self.assertLess(best_obj, initial_obj)
+        self.assertLess(best_g, 0.)
+        self.assertLess(initial_g, 0.)
+        self.assertGreater(abs(best_g), abs(initial_g) / 10.)
+        self.assertGreater(best_like, initial_like)
+        self.assertEqual(
+            tracer6_support_step_status(initial_obj, best_obj, abs(initial_g), abs(best_g),
+                                        initial_like, best_like),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP_IMPROVED')
+        with self.assertRaises(ValueError):
+            tracer0_secant(0.02597535629647243, initial_g, 0.07597535629647244, best_g)
+
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
         accepted = -142420.23671111898 + 5310.71470520702
