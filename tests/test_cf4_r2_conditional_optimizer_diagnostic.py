@@ -23,6 +23,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     tracer6_revisit2_first_step, tracer6_revisit2_continuation_step, tracer6_revisit2_status,
     tracer6_support_step_size, tracer6_support_step_status, tracer6_revisit3_status,
     tracer6_support_step2_status, tracer6_revisit4_status,
+    tracer6_support_step3_status,
 )
 
 
@@ -1088,6 +1089,26 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             'CONDITIONAL_TRACER6_REVISIT4_NO_IMPROVEMENT')
         with self.assertRaises(ValueError):
             tracer0_secant(0.12597535629647244, gradient, 0.17597535629647244, gradient)
+
+    def test_tracer6_support_step3_scores_the_refused_step(self):
+        gradient = -238.50953348555274
+        white = 0.12597535629647244
+        self.assertEqual(tracer6_support_step_size(gradient), 0.05)
+        self.assertEqual(white + 0.05, 0.17597535629647243)
+        self.assertGreater(abs(gradient), 251.26375904165926 / 10.)
+        objective = 8208522.5797250355
+        gate = abs(gradient) / 10.
+        self.assertEqual(
+            tracer6_support_step3_status(objective, objective - 1., abs(gradient), gate + 0.001, 1., 1.1),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP3_IMPROVED')
+        self.assertEqual(
+            tracer6_support_step3_status(objective, objective - 1., abs(gradient), gate - 0.001, 1., 1.1),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP3_REDUCED')
+        self.assertEqual(
+            tracer6_support_step3_status(objective, objective, abs(gradient), abs(gradient), 1., 1.),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP3_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            tracer0_secant(white, gradient, white + 0.05, gradient)
 
     def test_pop4_line_improved_before_the_sign_change(self):
         initial = -142420.23671111898 + 5253.047414546184
