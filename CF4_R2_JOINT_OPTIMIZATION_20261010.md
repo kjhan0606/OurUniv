@@ -174,3 +174,25 @@ between split/unsplit packing, velocity-dependent support refresh, and a
 65-candidate/64-cell-workspace case preserving all 325 bin components.
 GPU test 418678 was canceled while pending due to QOSMaxGRESPerUser.
 These are packing tests, not a full N256 target/gradient or memory validation.
+
+N256 recovery check submitted as syntax job 418697, source commit 60d12b4,
+H100 typed GRES gpu:H100:1, 2 CPUs, 96 GiB, 75-minute Slurm limit and
+one exact evaluation. H200 was fully allocated; syn09 had two unallocated
+H100 GPUs at submission. Queue reports QOSMaxGRESPerUser, so availability
+does not imply immediate eligibility. Do not duplicate or manually launch it.
+Output: /gpfs/kjhan/CF4/z0_density/r2_chunked_replay_20261011.
+The check uses 16384-cell support blocks and replays gradient78, retaining
+the same conditional target and checking all five terms and full gradient.
+It does not assess the failed broad candidate's peak or prove sampler mixing.
+No posterior, held-out score, uncertainty or MW/M31/M33 identification is
+delivered by this check. Same NEW field and ambiguous/unresolved LG roles
+remain requirements of the subsequent science route.
+
+Job 418697 completed successfully (exit 0:0) in 11m37s on H100 syn09.
+The unchanged-target checkpoint replay passed, including the full canonical
+gradient and five objective terms. Objective: 8208466.323127571; exactly one
+target evaluation, no IC update. Application host peak was 11.096 GiB;
+Slurm batch MaxRSS was 9627408 KiB. This verifies chunked target equivalence
+at gradient78 only, not the failed broad candidate's memory or posterior
+mixing. Next recovery requirement is broad-support state validation before
+any bounded optimization/sampler continuation; R2 remains incomplete.
