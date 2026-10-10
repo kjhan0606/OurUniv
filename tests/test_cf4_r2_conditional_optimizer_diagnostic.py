@@ -28,7 +28,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop0_revisit9_step, pop0_revisit9_status,
     pop0_revisit10_step, pop0_revisit10_status, pop0_revisit11_status, pop0_revisit12_status,
     pop0_revisit13_status, pop0_revisit14_status,
-    pop0_revisit15_step, pop0_revisit15_status, pop0_revisit16_status,
+    pop0_revisit15_step, pop0_revisit15_status, pop0_revisit16_status, pop0_revisit17_status,
     pop3_revisit5_step, pop3_revisit5_status, pop3_revisit6_status, pop3_revisit7_status,
     pop3_revisit8_status,
     pop13_revisit_step, pop13_revisit_status,
@@ -2086,6 +2086,88 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(
             pop2_revisit_status(objective0, objective1, abs(g_neg), abs(g_pos), 0., 0.),
             'CONDITIONAL_POP2_REVISIT_NO_IMPROVEMENT')
+
+    def test_full_gradient74_names_one_population0_line(self):
+        white = -0.03601817746630569
+        gradient = -355.5282677703676
+        secant_gradient = -355.5282677703641
+        step_white = white + 0.1
+        count = -142299.81701650968
+        count_verify = -142299.8170165097
+        objective = 8208466.505644284
+        identity = (8072142.0269214865 + 0.9015597734294367 + 4.181605416242371
+                    - count - 5980.421458902307 - objective)
+        nuisance = [-66.10804596100193, -37.52040741217155, -67.81012874723426, -76.2926878969744, -51.72491233909828, -2.221359688808935, -110.38348025576286, 101.64281480018153, 46.54918117650551, -355.5282677703676, -105.22393171236506, -353.8017312002779, 340.6820876918122, -7.473247481211338, 2.089831088271376, -133.23650893264823, -119.11596250501093, -14.726031350775056, 9.478007454883377, -115.78998452940104, 19.04253241952426, 129.45587267445683, 1.5632523467661035, 34.188295483697566]
+        self.assertEqual(pop0_revisit15_step(gradient), 0.1)
+        self.assertEqual(pop0_revisit15_step(-gradient), -0.1)
+        self.assertEqual(pop5_line_step(2.089831088271376), -0.1)
+        self.assertNotEqual(pop0_revisit15_step(gradient), pop5_line_step(2.089831088271376))
+        self.assertEqual(step_white, 0.06398182253369432)
+        self.assertEqual(step_white - white, 0.1)
+        self.assertEqual(0.3 + white, 0.2639818225336943)
+        self.assertEqual(0.3 + step_white, 0.3639818225336943)
+        self.assertEqual((0.3 + white) + 0.1, 0.36398182253369427)
+        self.assertNotEqual(0.3 + step_white, (0.3 + white) + 0.1)
+        self.assertEqual(16777216 + 9, 16777225)
+        self.assertLess(gradient, 0.)
+        self.assertGreater(abs(gradient), 0.00022566027606149425)
+        self.assertGreater(abs(gradient), 0.00013553813665528116)
+        self.assertNotEqual(0.00022566027606149425, 0.00013553813665528116)
+        self.assertEqual(format(0.00022566027606149425, '.3f'), '0.000')
+        self.assertNotEqual(0.00022566027606149425, 0.000)
+        self.assertEqual(abs(gradient) / 10., 35.55282677703676)
+        self.assertEqual(abs(secant_gradient) / 10., 35.55282677703641)
+        self.assertNotEqual(abs(gradient) / 10., abs(secant_gradient) / 10.)
+        self.assertEqual(format(abs(gradient) / 10., '.3f'), '35.553')
+        self.assertEqual(format(abs(secant_gradient) / 10., '.3f'), '35.553')
+        self.assertNotEqual(abs(gradient) / 10., 35.553)
+        self.assertEqual(gradient - secant_gradient, -3.524291969370097e-12)
+        self.assertLess(gradient - secant_gradient, 0.)
+        self.assertEqual(1.5632523467661035 - 1.563252346756622, 9.481526674903762e-12)
+        self.assertGreater(abs(9.481526674903762e-12), abs(gradient - secant_gradient))
+        self.assertGreater(9.481526674903762e-12, 0.)
+        self.assertEqual(identity, -9.313225746154785e-10)
+        self.assertNotEqual(identity, 0.)
+        self.assertEqual(count - count_verify, 2.9103830456733704e-11)
+        self.assertEqual((count - count_verify) / 9.313225746154785e-10, 0.03125)
+        self.assertGreater(count - count_verify, 0.)
+        self.assertNotEqual(count, count_verify)
+        self.assertEqual([index for index, value in enumerate(nuisance) if abs(value) < 1.], [])
+        self.assertEqual(min(range(24), key=lambda index: abs(nuisance[index])), 22)
+        self.assertEqual(nuisance[22], 1.5632523467661035)
+        self.assertEqual(max(range(24), key=lambda index: abs(nuisance[index])), 9)
+        self.assertNotEqual(1e-4 * max(abs(gradient), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(nuisance[22]), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(2.089831088271376), 1.), 1e-4)
+        self.assertGreaterEqual(abs(-14.726031350775056), 1.)
+        self.assertGreater(abs(-353.8017312002779), abs(-2.598336989703646) / 10.)
+        self.assertGreater(abs(340.6820876918122), 0.3690110978312417)
+        self.assertGreater(abs(2.089831088271376), 0.2070679793428482)
+        self.assertLessEqual(abs(2.089831088271376), 16.082954304664682)
+        self.assertLessEqual(abs(2.089831088271376), 16.565390557877073)
+        self.assertEqual(
+            pop0_revisit17_status(objective, objective, abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP0_REVISIT17_NO_IMPROVEMENT')
+        self.assertEqual(
+            pop0_revisit17_status(objective, objective - 1., abs(gradient), abs(gradient) / 10., 0., 0.),
+            'CONDITIONAL_POP0_REVISIT17_REDUCED')
+        self.assertEqual(
+            pop0_revisit17_status(objective, objective - 1., abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP0_REVISIT17_IMPROVED')
+        self.assertEqual(coordinate_line_action(True, False, False, False), 'continue')
+        self.assertEqual(coordinate_line_action(True, True, True, False), 'stop')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        self.assertEqual(int(600.9337002700195), 600)
+        self.assertEqual(format(10.920299530029297, '.2f'), '10.92')
+        self.assertNotEqual(10.920299530029297, 10.92)
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+        self.assertEqual(format(1.7928537824321493, '.6f'), '1.792854')
+        self.assertEqual(format(12.50910460864101, '.6f'), '12.509105')
+        self.assertEqual(format(69.56998417090114, '.6f'), '69.569984')
+        self.assertEqual(format(110.38348025576286, '.6f'), '110.383480')
+        self.assertEqual(format(171.7983129486301, '.6f'), '171.798313')
+        self.assertEqual(format(355.5282677703676, '.6f'), '355.528268')
+        self.assertNotEqual(355.5282677703676, 355.528268)
 
     def test_pop5_revisit4_reduced_secant_queues_one_full_gradient(self):
         verify_white = 0.07751671674194167
