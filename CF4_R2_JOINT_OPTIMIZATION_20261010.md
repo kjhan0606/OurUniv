@@ -297,3 +297,17 @@ invalid-step rejection and repeated rejected states. The two-proposal scope
 is tuning only; acceptance is not a mixing criterion. Q-GOAL: same NEW field;
 MW/M31 ambiguity and unresolved M33 remain, with no truth-ID candidate choice.
 Q-LEAN: reuse the existing adapter/kernel and short pilot, not a new pipeline.
+
+Step-.1 pilot 418838 completed on H200 in 23m21s, exit 0, batch MaxRSS
+11537096 KiB (11.00 GiB), initial target replay passed. Both transitions were
+accepted, dH -1.470161751 / -1.433679603, RMS .0825838253 / .0825733117.
+Fundamental-mode jumps were [.00206310,.00117065,-.00011080] and
+[-.00032622,.00285136,.00072498]; nuisance jump norms .00367077/.00576689.
+Raw results: `/gpfs/kjhan/CF4/z0_density/r2_conditional_hmc_step010_20261011`.
+Larger full-state movement does not establish low-k mixing; unknown posterior
+width prevents interpreting these jumps as a convergence test. Neither two
+acceptances nor negative energy errors validate stationarity or integration
+accuracy across the posterior. Request warranted Astra mid-course advice
+before a larger sampling bundle, on trajectory length/metric, bounded cost,
+retained-state diagnostics, uncertainty and observation calibration. This
+is not an exit review, and no exit email or R3 entry is authorized.
