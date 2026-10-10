@@ -272,7 +272,25 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         if start_checkpoint is not None:
             start_checkpoint = Path(start_checkpoint)
             replay = json.loads((start_checkpoint.parent / 'result.json').read_text())
-            if (replay.get('status') != 'CONDITIONAL_FULL_GRADIENT_RECORDED'
+            hmc_replay = False
+            if (sampling_driver is not None
+                    and start_checkpoint == BASE / 'r2_conditional_hmc_step010_20261011/hmc_retained_state.npz'
+                    and replay.get('status') == 'CONDITIONAL_HMC_TRANSITION_PILOT_NOT_POSTERIOR'
+                    and replay.get('accepted_proposals') == 2
+                    and replay.get('source_commit') == 'a7f0a071fac14abe18e8dea1ed44f00ae12dcfdf'
+                    and replay.get('target_orders') == dict(value=2, gradient=2, matched_primal=True)
+                    and replay.get('checkpoint_replay_passed') is True):
+                # Known terminal retained state, not the MAP best-evaluation file.
+                with np.load(start_checkpoint, allow_pickle=False) as saved:
+                    terminal_value = float(saved['objective'])
+                terminal = replay['evaluations'][-1]
+                if abs(terminal_value-terminal['objective']) > 1e-6:
+                    raise ValueError('terminal retained HMC state has mismatched terms')
+                hmc_replay = True
+                replay = dict(replay, likelihood_changed=False,
+                              objective=terminal_value, terms=terminal)
+                report['restart_kind'] = 'terminal retained HMC state, including original RNG'
+            if ((not hmc_replay and replay.get('status') != 'CONDITIONAL_FULL_GRADIENT_RECORDED')
                     or replay.get('N') != N or replay.get('box_cMpc_h') != BOX
                     or replay.get('likelihood_changed') is not False):
                 raise ValueError('restart requires a recorded gradient of the same conditional target')

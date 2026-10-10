@@ -13,7 +13,7 @@ set -euo pipefail
 : "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_DIR:?}" "${CF4_GPU_MODE:?}"
 CF4_REPLAY_ENTRY=${CF4_REPLAY_ENTRY:-scripts/cf4_r2_chunked_replay.py}
 case "$CF4_REPLAY_ENTRY" in
-  scripts/cf4_r2_chunked_replay.py|scripts/cf4_r2_broad_trial_replay.py|scripts/cf4_r2_conditional_hmc_pilot.py) ;;
+  scripts/cf4_r2_chunked_replay.py|scripts/cf4_r2_broad_trial_replay.py|scripts/cf4_r2_conditional_hmc_pilot.py|scripts/cf4_r2_hmc_transport.py) ;;
   *) exit 2 ;;
 esac
 module purge

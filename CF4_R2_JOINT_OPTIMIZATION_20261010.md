@@ -311,3 +311,20 @@ accuracy across the posterior. Request warranted Astra mid-course advice
 before a larger sampling bundle, on trajectory length/metric, bounded cost,
 retained-state diagnostics, uncertainty and observation calibration. This
 is not an exit review, and no exit email or R3 entry is authorized.
+
+Astra's concrete advice and driver disposition are recorded in
+`config/cf4_r2_hmc_transport_astra_20261011.md`. Compact transport runner
+resumes the verified terminal q/value/gradient/RNG of 418838. The adapter
+requires that known pilot lineage and successful terminal acceptance, then
+replays full gradient/component terms before continuation. Four small wiring
+tests passed on grammar debug job1171253: scheduled warmup/frozen retained
+step and rejection repeats, whole-trajectory budget guard/RNG restoration,
+interrupted endpoint exclusion, and fundamental sine projection. Prior kernel
+suite job1171251 passed eleven cases including partial-trajectory interruption.
+These tests do not demonstrate actual-data mixing. Submit one H200 allocation
+with 96 GiB (retaining headroom for the historic ~78.92-GiB broad-support peak),
+6-hour Slurm and 5.5-hour app cap, 49 exact calls; no heldout values or credible
+intervals. Four fixed diagnostic states are not a validated posterior. No
+extra evolution is run to produce field summaries in this transport bundle;
+native present-field moments and scientific predictive validation remain
+subsequent requirements rather than being inferred from IC mode traces.
