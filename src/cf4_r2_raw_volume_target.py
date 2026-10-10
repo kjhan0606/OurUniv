@@ -134,6 +134,7 @@ class FreshRawSupport:
     def __init__(self,positions,angular,population,observation,geometry,*,source_spacing,
                  volume_order=4,block=4096,max_components=40_000_000,
                  max_support_cells=32768,
+                 support_chunk_cells=None,
                  source_conditioning_radius_cMpc_h=None):
         self.positions=np.asarray(positions);self.angular=np.asarray(angular)
         self.population=np.asarray(population,dtype=int);self.o=observation;self.g=geometry
@@ -151,6 +152,10 @@ class FreshRawSupport:
         if int(max_support_cells) < 1:
             raise ValueError('positive source-cell workspace ceiling required')
         self.max_components=max_components;self.max_support_cells=int(max_support_cells)
+        if support_chunk_cells is not None and int(support_chunk_cells)<1:
+            raise ValueError('positive support chunk size required')
+        self.support_chunk_cells=(None if support_chunk_cells is None
+                                  else int(support_chunk_cells))
         self.tree=cKDTree(self.positions%self.box,boxsize=self.box)
         self.nsub=len(self.offsets)
         def weight(vel,tr,pos,sky,voxel,radius,pop):
@@ -189,38 +194,52 @@ class FreshRawSupport:
         spatial=np.sqrt(3.)*(1.5*self.box/self.g['grid_size']+.5*self.spacing)
         radius=conversion*np.max(speed+8*sigma)+spatial
         centres=(np.asarray(self.o['voxel'])+.5)*self.box/self.g['grid_size']
-        candidates=self.tree.query_ball_point(centres,radius,workers=1)
-        for row,ids in enumerate(candidates):
+        # Materialize only one unfiltered Python neighbour list at a time.
+        # Batched query_ball_point retains every broad-radius list before the
+        # local speed filter, which can dominate host memory at trial states.
+        # Retain the same sorted, locally filtered arrays and global padding.
+        candidates=[]
+        for centre in centres:
+            ids=self.tree.query_ball_point(centre,radius,workers=1)
             ids=np.asarray(sorted(ids),dtype=np.int32)
-            delta=(self.positions[ids]-centres[row]+self.box/2)%self.box-self.box/2
+            delta=(self.positions[ids]-centre+self.box/2)%self.box-self.box/2
             local_sigma=sigma if np.ndim(sigma)==0 else sigma[ids]
-            candidates[row]=ids[np.linalg.norm(delta,axis=1)<=conversion*(speed[ids]+8*local_sigma)+spatial]
-        width=checked_padded_support_width(
-            map(len,candidates), max_cells=self.max_support_cells)
+            candidates.append(ids[np.linalg.norm(delta,axis=1)<=conversion*(speed[ids]+8*local_sigma)+spatial])
+        largest=max(map(len,candidates),default=0)
+        if self.support_chunk_cells is None:
+            width=checked_padded_support_width(
+                map(len,candidates), max_cells=self.max_support_cells)
+        else:
+            width=checked_padded_support_width(
+                [min(largest,self.support_chunk_cells)],max_cells=self.max_support_cells)
         batches=[{k:[] for k in ('ids','node','bin','row')} for _ in range(6)];total=0
-        for row,ids in enumerate(candidates):
-            if not len(ids):raise ValueError(f'empty candidate support at row{row}')
-            used=len(ids);ids=np.pad(ids,(0,width-used),constant_values=ids[0])
-            expanded=np.repeat(ids,self.nsub)
-            pos=((self.positions[ids,None]+self.offsets[None])%self.box).reshape(-1,3)
-            if velocity_closure is None:
-                value=self.weight(jnp.asarray(v[expanded]),jnp.asarray(tr),jnp.asarray(pos),
-                    jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
-                    jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]))
-            else:
-                value=self.mixed_weight(jnp.asarray(v[expanded]),jnp.asarray(pos),
-                    jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
-                    jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]),
-                    jnp.asarray(var[expanded]),core,scale,fraction,jnp.asarray(tr))
-            positive=np.asarray(value)>0
-            positive[:,used*self.nsub:]=False
-            bins,indices=np.nonzero(positive)
-            if not len(indices):raise ValueError(f'zero selected support at row{row}')
-            total+=len(indices)
-            if total>self.max_components:raise MemoryError('bounded raw component workspace exceeded')
-            b=batches[self.population[row]]
-            b['ids'].append(expanded[indices]);b['node'].append((indices%self.nsub).astype(np.int32))
-            b['bin'].append(bins.astype(np.int32));b['row'].append(np.full(len(indices),row,dtype=np.int32))
+        for row,row_ids in enumerate(candidates):
+            if not len(row_ids):raise ValueError(f'empty candidate support at row{row}')
+            row_components=0
+            step=width if self.support_chunk_cells is None else self.support_chunk_cells
+            for start in range(0,len(row_ids),step):
+                ids=row_ids[start:start+step]
+                used=len(ids);ids=np.pad(ids,(0,width-used),constant_values=ids[0])
+                expanded=np.repeat(ids,self.nsub)
+                pos=((self.positions[ids,None]+self.offsets[None])%self.box).reshape(-1,3)
+                if velocity_closure is None:
+                    value=self.weight(jnp.asarray(v[expanded]),jnp.asarray(tr),jnp.asarray(pos),
+                        jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
+                        jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]))
+                else:
+                    value=self.mixed_weight(jnp.asarray(v[expanded]),jnp.asarray(pos),
+                        jnp.asarray(self.angular[:,expanded]),jnp.asarray(self.o['voxel'][row]),
+                        jnp.asarray(self.source_conditioning_radius[row]),int(self.population[row]),
+                        jnp.asarray(var[expanded]),core,scale,fraction,jnp.asarray(tr))
+                positive=np.asarray(value)>0
+                positive[:,used*self.nsub:]=False
+                bins,indices=np.nonzero(positive)
+                row_components+=len(indices);total+=len(indices)
+                if total>self.max_components:raise MemoryError('bounded raw component workspace exceeded')
+                b=batches[self.population[row]]
+                b['ids'].append(expanded[indices]);b['node'].append((indices%self.nsub).astype(np.int32))
+                b['bin'].append(bins.astype(np.int32));b['row'].append(np.full(len(indices),row,dtype=np.int32))
+            if not row_components:raise ValueError(f'zero selected support at row{row}')
         packs=[]
         for b in batches:
             payload={k:np.concatenate(vals) if vals else np.empty(0,dtype=np.int32) for k,vals in b.items()}
@@ -229,4 +248,5 @@ class FreshRawSupport:
             payload['mask']=np.arange(count+pad)<count
             packs.append({k:jnp.asarray(v) for k,v in payload.items()})
         return tuple(packs),dict(components=total,max_cells=width,radius=radius,
+            largest_candidate_cells=largest,support_chunk_cells=self.support_chunk_cells,
             packing_seconds=time.monotonic()-tic,source_volume_order=round(self.nsub**(1/3)))

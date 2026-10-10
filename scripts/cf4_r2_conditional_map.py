@@ -155,7 +155,8 @@ def _resource_snapshot_count(name):
 
 def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
-         maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0):
+         maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
+         support_chunk_cells=None):
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU allocation required')
     expected = os.environ['CF4_EXPECTED_COMMIT']
@@ -300,7 +301,9 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         source = source_geometry_at_resolution(source, N)
         obs = ResolutionObservationTarget(
             N, source, mix, observation, geometry, train_keys, train_counts, jnp.asarray(exposure),
-            force_order=1, fine_order=2, max_support_cells=MAX_SUPPORT_CELLS)
+            force_order=1, fine_order=2, max_support_cells=MAX_SUPPORT_CELLS,
+            support_chunk_cells=support_chunk_cells)
+        report['support_chunk_cells']=support_chunk_cells
         settings = {k: parent_result['settings'][k]
                     for k in ('cosmology', 'a_start', 'a_stop', 'a_nbody_maxstep')}
         settings.update(n=N, box_cMpc_h=BOX)

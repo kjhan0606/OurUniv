@@ -12,6 +12,25 @@ class RawVolumeTargetTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):jax.config.update('jax_enable_x64',True)
 
+    def test_chunking_retains_candidates_beyond_workspace_ceiling(self):
+        geometry=dict(box_size_cMpc_h=384.,grid_size=128,
+                      little_h=.746,hubble_km_s_Mpc=74.6)
+        positions=np.tile([292.,192.,192.],(65,1))
+        obs=dict(voxel=np.array([[97,64,64]]),radius=np.array([100.]))
+        support=FreshRawSupport(positions,np.ones((2,65)),[0],obs,geometry,
+            source_spacing=3.,volume_order=1,block=64,max_support_cells=64)
+        # Isolate packing from the mark law: every bin/node has positive weight.
+        support.weight=lambda vel,tr,pos,sky,voxel,radius,pop:np.ones((5,len(pos)))
+        with self.assertRaises(MemoryError):
+            support.build(np.zeros((65,3)),np.zeros(9))
+        support.support_chunk_cells=32
+        packs,info=support.build(np.zeros((65,3)),np.zeros(9))
+        selected=np.asarray(packs[0]['ids'])[np.asarray(packs[0]['mask'])]
+        np.testing.assert_array_equal(np.bincount(selected,minlength=65),np.full(65,5))
+        self.assertEqual(info['largest_candidate_cells'],65)
+        self.assertEqual(info['components'],325)
+        self.assertEqual(info['max_cells'],64)
+
     def test_volume_rule_normalization_and_moments(self):
         offsets,weights=volume_rule(3.,4)
         self.assertAlmostEqual(float(weights.sum()),1.,places=14)
@@ -27,8 +46,25 @@ class RawVolumeTargetTests(unittest.TestCase):
         obs=dict(voxel=np.array([[97,64,64]]),radius=np.array([100.]))
         support=FreshRawSupport(positions,np.ones((2,2)),[0],obs,geometry,
             source_spacing=3.,volume_order=2,block=64)
+        native_tree=support.tree
+        class RowOnlyTree:
+            def query_ball_point(self,centre,*args,**kwargs):
+                # A batched query would recreate the host-memory regression.
+                np.testing.assert_equal(np.asarray(centre).shape,(3,))
+                return native_tree.query_ball_point(centre,*args,**kwargs)
+        support.tree=RowOnlyTree()
         def ids(v):
+            support.support_chunk_cells=None
             packs,_=support.build(v,np.zeros(9))
+            reference=packs[0]
+            support.support_chunk_cells=1
+            chunked,info=support.build(v,np.zeros(9))
+            def entries(pack):
+                mask=np.asarray(pack['mask'])
+                return sorted(zip(*(np.asarray(pack[k])[mask].tolist()
+                                    for k in ('ids','node','bin','row'))))
+            self.assertEqual(entries(reference),entries(chunked[0]))
+            self.assertEqual(info['support_chunk_cells'],1)
             return set(np.asarray(packs[0]['ids'])[np.asarray(packs[0]['mask'])].tolist())
         v=np.zeros((2,3));self.assertEqual(ids(v),{0})
         v[1,0]=-6000.;self.assertEqual(ids(v),{0,1})

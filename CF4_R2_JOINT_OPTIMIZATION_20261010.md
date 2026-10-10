@@ -135,3 +135,42 @@ At 00:00 KST Oct11, Slurm reports RUNNING (elapsed1m15s). All 15 focused
 tests passed (2 affine, 5 budget, 3 linked-radius, 5 exposure). The main
 application recorded STARTED with the frozen source and 18-call cap.
 No completed replay/accepted joint update was yet recorded at that check.
+# Terminal result: job 418606
+
+Slurm reports FAILED after 01:12:42, exit 1:0. Eight finite evaluations
+were saved; evaluations 3, 5 and 6 were accepted. Evaluations 7 and 8
+were improving objective trials but were not accepted. Checkpoint replay
+passed. The subsequent candidate required 191040 padded source cells,
+exceeding the configured 131072 workspace ceiling; no support was truncated.
+This is a numerical workspace failure, not evidence of posterior convergence.
+
+The best evaluated objective was 7493930.197595556 versus initial
+8208466.323127545. Its IC prior NLL fell to 7223516.112365052, but count
+log likelihood worsened to -276345.4036981737 from -142299.81701650965.
+Do not equate objective decrease with improved observed structure or choose
+this unaccepted trial as a posterior draw. The last accepted state is saved
+separately in accepted_parameters.npz.
+
+Batch MaxRSS was 82750756K (about 78.92 GiB), greater than the 48 GiB
+request; the previous application peak of 36.22 GiB was stale at failure.
+A blind ceiling increase or identical restart is not justified. Inspect
+candidate-list materialization and shape-dependent packing before the next
+allocation; preserve all source contributions and the unchanged likelihood.
+Any rerun must correct the host memory estimate and request at least 20%
+margin. R2 posterior, uncertainty, held-out prediction and calibration remain
+undelivered.
+
+Recovery implementation: query/filter candidates one observation at a time;
+optional support_chunk_cells evaluates all locally selected candidates in
+bounded blocks, without truncation. Default legacy ceiling behavior remains.
+The option is forwarded through ResolutionObservationTarget and the MAP
+entry point, but is not enabled in the production launcher. The total retained
+component ceiling remains: blocking the weight workspace does not bound all
+packed components or compiled adjoint memory.
+
+Grammar CPU Slurm job 1171037 completed, exit 0, 20 seconds, MaxRSS 588420K.
+All six raw-volume tests passed, including real-weight component identity
+between split/unsplit packing, velocity-dependent support refresh, and a
+65-candidate/64-cell-workspace case preserving all 325 bin components.
+GPU test 418678 was canceled while pending due to QOSMaxGRESPerUser.
+These are packing tests, not a full N256 target/gradient or memory validation.
