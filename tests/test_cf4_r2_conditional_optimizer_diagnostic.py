@@ -2289,6 +2289,51 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(format(13.834774017333984, '.2f'), '13.83')
         self.assertNotEqual(13.834774017333984, 13.83)
 
+    def test_pop3_revisit9_reduced_secant_queues_one_full_gradient(self):
+        initial = 8208466.486239768
+        best = 8208466.413144759
+        initial_g = 269.66669559198755
+        best_g = -3.7201387874915253
+        self.assertEqual(
+            pop3_revisit9_status(initial, best, abs(initial_g), abs(best_g), 0., 0.07332165478146635),
+            'CONDITIONAL_POP3_REVISIT9_REDUCED')
+        self.assertEqual(
+            pop3_revisit9_status(initial, initial, abs(initial_g), abs(best_g), 0., 0.07332165478146635),
+            'CONDITIONAL_POP3_REVISIT9_NO_IMPROVEMENT')
+        self.assertLess(best, initial)
+        self.assertLessEqual(abs(best_g), abs(initial_g) / 10.)
+        self.assertGreater(abs(best_g), 0.3690110978312417)
+        self.assertEqual(abs(initial_g) / 10., 26.966669559198756)
+        self.assertEqual(abs(269.666695591988) / 10., 26.9666695591988)
+        self.assertEqual(abs(269.66669559198914) / 10., 26.966669559198913)
+        self.assertEqual(abs(269.66669559198823) / 10., 26.966669559198824)
+        self.assertEqual(len({26.966669559198756, 26.9666695591988, 26.966669559198913, 26.966669559198824}), 4)
+        self.assertEqual(format(26.966669559198756, '.3f'), '26.967')
+        self.assertNotEqual(26.966669559198756, 26.967)
+        self.assertEqual(-0.41259130668419575 - -0.41204161762975566, -0.0005496890544400834)
+        self.assertEqual(0.5 * -0.41259130668419575, -0.20629565334209787)
+        self.assertEqual(0.5 * -0.41204161762975566 + 0.5 * (-0.41259130668419575 - -0.41204161762975566), 0.5 * -0.41259130668419575)
+        self.assertEqual(2.9103830456733704e-11, -(-2.9103830456733704e-11))
+        self.assertNotEqual(2.637534635141492e-11, 2.9103830456733704e-11)
+        self.assertEqual(0.0, 0.0)
+        self.assertEqual(-9.313225746154785e-10, -9.313225746154785e-10)
+        self.assertNotEqual(-9.313225746154785e-10, 0.0)
+        self.assertGreater(2.070930094077994e-10, 0.)
+        self.assertGreater(3.191891195797325e-16, 0.)
+        self.assertGreaterEqual(abs(-1.5345224305062817), 1.)
+        self.assertGreater(abs(357.6188493537551), abs(best_g))
+        self.assertLess(abs(0.0010025355801651786), 1.)
+        self.assertEqual(0.0010025355801651786 - 0.0010025355817567944, -1.5916157281026244e-12)
+        self.assertLess(-1.5916157281026244e-12, 0.)
+        self.assertEqual(
+            full_gradient_record_status(True, True, True, True),
+            'CONDITIONAL_FULL_GRADIENT_RECORDED')
+        self.assertEqual(int(1059.210923463921), 1059)
+        self.assertEqual(format(13.825935363769531, '.2f'), '13.83')
+        self.assertNotEqual(13.825935363769531, 13.83)
+        self.assertNotEqual(13.825935363769531, 13.834774017333984)
+        self.assertEqual(format(13.834774017333984, '.2f'), '13.83')
+
     def test_pop0_revisit17_secant_reduced_queues_one_full_gradient(self):
         line_white = -0.03601817746630569
         secant_white = -0.03590901837478598
