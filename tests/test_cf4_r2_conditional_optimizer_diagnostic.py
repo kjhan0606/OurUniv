@@ -2228,6 +2228,67 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(format(269.66669559198914, '.6f'), '269.666696')
         self.assertNotEqual(269.66669559198914, 269.666696)
 
+    def test_pop3_revisit9_sign_stop_queues_one_secant(self):
+        white = -0.41204161762975566
+        rejected = -0.5120416176297556
+        gradient = 269.666695591988
+        rejected_gradient = -48788.37683170375
+        theta = white - gradient * (rejected - white) / (rejected_gradient - gradient)
+        self.assertEqual(theta, -0.41259130668419575)
+        self.assertLess(rejected, theta)
+        self.assertLess(theta, white)
+        self.assertLess(white - theta, theta - rejected)
+        self.assertEqual((white - theta) + (theta - rejected), 0.09999999999999998)
+        self.assertNotEqual((white - theta) + (theta - rejected), 0.1)
+        self.assertEqual(rejected - white, -0.09999999999999998)
+        self.assertNotEqual(rejected - white, -0.1)
+        self.assertEqual(rejected, white + (-0.1))
+        self.assertEqual(0.5 * theta, -0.20629565334209787)
+        self.assertEqual(0.5 * white + 0.5 * (theta - white), 0.5 * theta)
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        self.assertEqual(pop3_revisit5_step(gradient), -0.1)
+        self.assertEqual(pop3_revisit5_step(rejected_gradient), 0.1)
+        self.assertNotEqual(pop3_revisit5_step(rejected_gradient), theta)
+        self.assertEqual(pop0_revisit15_step(0.0010025355817567944), -0.1)
+        self.assertNotEqual(pop0_revisit15_step(0.0010025355817567944), theta)
+        self.assertLess(abs(0.0010025355817567944), 1.)
+        self.assertNotEqual(0.0010025355817567944, 0.0010025355810746733)
+        self.assertEqual(0.0010025355817567944 - 0.0010025355810746733, 6.821210263296962e-13)
+        self.assertGreater(6.821210263296962e-13, 0.)
+        self.assertEqual(abs(gradient) / 10., 26.9666695591988)
+        self.assertEqual(abs(269.66669559198914) / 10., 26.966669559198913)
+        self.assertEqual(abs(269.66669559198823) / 10., 26.966669559198824)
+        self.assertNotEqual(26.9666695591988, 26.966669559198913)
+        self.assertNotEqual(26.9666695591988, 26.966669559198824)
+        self.assertNotEqual(26.966669559198913, 26.966669559198824)
+        self.assertEqual(format(26.9666695591988, '.3f'), '26.967')
+        self.assertNotEqual(26.9666695591988, 26.967)
+        self.assertGreater(abs(gradient), 0.3690110978312417)
+        self.assertGreater(abs(rejected_gradient), abs(gradient) / 10.)
+        self.assertEqual(
+            8210912.49456623 - 8208466.486239768, 2446.00832646247)
+        self.assertLess(-1.2823875294998288e-10, 0.)
+        self.assertGreater(2.7755575615628914e-16, 0.)
+        self.assertNotEqual(-2.220446049250313e-15, 0.0)
+        self.assertGreater(3.3164582191602676e-12, 0.)
+        self.assertLess(-1.1368683772161603e-12, 0.)
+        self.assertGreater(
+            abs(3.3164582191602676e-12),
+            abs(-1.1368683772161603e-12))
+        self.assertGreater(abs(64946.29437466277), abs(rejected_gradient))
+        self.assertEqual(
+            pop3_revisit9_status(
+                8208466.486239768, 8208466.486239768,
+                abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP3_REVISIT9_NO_IMPROVEMENT')
+        with self.assertRaises(ValueError):
+            tracer0_secant(rejected, rejected_gradient, white, gradient)
+        self.assertEqual(tracer0_secant(white, gradient, rejected, rejected_gradient), theta)
+        self.assertEqual(int(1056.1335764309624), 1056)
+        self.assertEqual(format(13.834774017333984, '.2f'), '13.83')
+        self.assertNotEqual(13.834774017333984, 13.83)
+
     def test_pop0_revisit17_secant_reduced_queues_one_full_gradient(self):
         line_white = -0.03601817746630569
         secant_white = -0.03590901837478598
