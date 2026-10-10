@@ -238,3 +238,21 @@ Q-GOAL: same NEW evolved field; MW/M31 ambiguous, M33 unresolved, no truth-ID
 candidate selection; their LG observables and <=0.3 cMpc/h refinement remain
 later requirements. Q-LEAN: reuse kernels; no new scalar probes or separate
 RAMSES simulations. Obtain warranted Astra advice before a large chain.
+
+HMC mechanics regression rerun on grammar Slurm job 1171217, debug
+partition, 2 CPUs, 8 GiB, 10-minute cap: all 10 existing tests passed
+(2.761 seconds test time). Coverage includes prior-flow conservation,
+full-map reversibility/volume preservation, Gaussian mean/covariance,
+rejection retention and RNG checkpoint replay. These small algorithm tests
+do not validate the active CF4 target wiring, N256 integration error or
+scientific chain mixing. No numerical test was run on the login node.
+
+Active-v6 HMC wiring test 1171218 passed on grammar debug (one small
+mocked rejection-retention test). Next bounded pilot: replay gradient78,
+then two fixed-step .02, one-step matched-GL2 HMC proposals; three full
+target calls total, chunk size 16384, fixed existing inverse-Laplacian IC
+metric and provisional nuisance scales squared as inverse mass. These are
+not posterior curvature measurements. Preserve the retained current state
+after every proposal, including rejection; do not select the best evaluated
+candidate. One H200 GPU, 2 CPUs, 96 GiB, 75-minute Slurm / 60-minute app cap.
+No heldout values, UQ claim, MAP continuation or standalone simulation.

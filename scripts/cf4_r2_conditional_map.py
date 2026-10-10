@@ -156,7 +156,7 @@ def _resource_snapshot_count(name):
 def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
          maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
-         support_chunk_cells=None, recorded_trial=None):
+         support_chunk_cells=None, recorded_trial=None, sampling_driver=None):
     if recorded_trial is not None and (start_checkpoint is not None or max_evaluations != 1):
         raise ValueError('recorded trial is a one-evaluation diagnostic, not an optimizer restart')
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
@@ -410,6 +410,14 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             optimizer_objective = AffineObjective(objective, q0, scale, replay_value)
             optimizer_start = np.zeros_like(q0)
             del scale
+
+        if sampling_driver is not None:
+            if replay is None or recorded_trial is not None:
+                raise ValueError('sampling pilot requires the replayed canonical gradient checkpoint')
+            sampling_driver(objective, q0, out, report,
+                            lambda: _save_report(report_path, report, started))
+            print(json.dumps(report, allow_nan=False), flush=True)
+            return
 
         def accepted_step(z):
             x = (optimizer_objective.physical(z)
