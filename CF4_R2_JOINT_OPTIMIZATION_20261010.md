@@ -259,6 +259,43 @@ No heldout values, UQ claim, MAP continuation or standalone simulation.
 
 ### Validation continuation boundary
 
+#### Prospective current-v6 predictive scoring protocol
+
+Freeze this protocol before loading current-v6 heldout outcomes. Use the
+existing sky-closed split and exclusions, without choosing regions from
+their observed counts. Condition predictions on the training data and the
+same target/selection assumptions used by the sampler. The primary count
+score is the joint heldout log posterior predictive density:
+logmeanexp across retained draws of each draw's summed heldout log
+likelihood. Do not substitute the mean log likelihood or the likelihood
+of the posterior mean field. Include exposed zero-count cells according
+to the existing count observation law, not only occupied cells. Report
+per-cell scores secondarily, alongside region-level count predictive
+coverage and randomized discrete PIT, retaining spatial dependence in
+interpretation. Compare a declared prior-predictive baseline under the
+same exposure and nuisance assumptions; never tune on these scores.
+
+Conditional FP predictive scoring is separate and is authorized only for
+an independently held-out eligible cohort with documented disjoint parent
+and observation identities. The 1414 training marks are not a holdout.
+Use the same conditioning and redshift/association law, and marginalize
+over retained states rather than plugging in a fitted field. No secure
+heldout FP cohort has been established by this protocol alone; do not
+invent one or relabel training residuals as predictive validation.
+
+Open outcomes only after target, scoring implementation and retained-draw
+selection are fixed independently of those outcomes. Exclude all warmup;
+keep rejection repeats. Four transport states cannot establish coverage,
+MCSE or posterior calibration. Record prior development exposure of the
+split/cohort: absent verified isolation, label the exercise retrospective
+heldout validation and require untouched data or independent observation
+mocks for confirmatory calibration. A changed model after inspection
+requires a fresh evaluation split, not another claim on the same test set.
+
+This protocol does not resolve MW/M31 role ambiguity or M33 in the NEW
+field, nor infer unrestricted CF4 mark availability. Those limitations
+remain explicit and must not be concealed by count predictive success.
+
 Driver inspection of the active adapter confirms that it loads only v6
 training counts plus heldout geometry, not heldout count values. Preserve
 that separation during metric/step tuning. Before opening heldout values,
@@ -328,3 +365,18 @@ intervals. Four fixed diagnostic states are not a validated posterior. No
 extra evolution is run to produce field summaries in this transport bundle;
 native present-field moments and scientific predictive validation remain
 subsequent requirements rather than being inferred from IC mode traces.
+
+### Live transport observation (418866)
+
+At Slurm elapsed 01:02:28, the job remained RUNNING with nine completed
+exact target evaluations and three complete warmup transitions. The third
+transition used four steps at epsilon 0.10891039991387863, accepted with
+signed energy error -6.850325016304851, and took 1574.49 seconds.
+Its canonical RMS displacement was 0.3577330951 and proposal-metric RMS
+displacement 0.4331052039; fundamental cosine displacements were
+[0.0180627425, 0.0297382026, 0.0270688234]. These are transport diagnostics,
+not posterior-width-normalized movement or evidence of convergence.
+All three observed transitions are warmup and must be excluded from
+posterior uncertainty summaries. Continue the already-running bounded
+bundle; no extra simulation, restart, promotion or R2 exit is justified
+by these interim observations.
