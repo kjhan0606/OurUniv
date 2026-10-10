@@ -256,3 +256,19 @@ not posterior curvature measurements. Preserve the retained current state
 after every proposal, including rejection; do not select the best evaluated
 candidate. One H200 GPU, 2 CPUs, 96 GiB, 75-minute Slurm / 60-minute app cap.
 No heldout values, UQ claim, MAP continuation or standalone simulation.
+
+### Validation continuation boundary
+
+Driver inspection of the active adapter confirms that it loads only v6
+training counts plus heldout geometry, not heldout count values. Preserve
+that separation during metric/step tuning. Before opening heldout values,
+freeze the predictive scoring protocol and the sampled-target fingerprint.
+Evaluate predictions over retained post-warmup states (including rejection
+repeats), not the best objective candidate. Report count and conditional FP
+scores separately; conditional linked-mark performance cannot establish full
+CF4 inclusion/survival calibration. The old N128 survival holdout screen uses
+a different cohort and unconditional field fixture and is not a v6 posterior
+validation result. Reuse its numerical utilities only after checking the
+active observation contract. Mean/variance accumulation alone does not prove
+mixing or supply Monte Carlo uncertainty. MW/M31 roles remain ambiguous and
+M33 unresolved in this R2 field; no truth labels may choose a generated state.
