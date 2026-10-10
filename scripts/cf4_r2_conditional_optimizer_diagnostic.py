@@ -1573,6 +1573,7 @@ def main():
     full_gradient68 = os.environ.get('CF4_R2_FULL_GRADIENT68') == '1'
     pop5_revisit3 = os.environ.get('CF4_R2_POP5_REVISIT3') == '1'
     pop5_revisit3_secant = os.environ.get('CF4_R2_POP5_REVISIT3_SECANT') == '1'
+    full_gradient69 = os.environ.get('CF4_R2_FULL_GRADIENT69') == '1'
     if sum((fd_only, nuisance_block, tracer0_line, tracer0_secant_mode, pop9_line,
             pop9_newton, pop9_secant_mode, pop9_secant2, full_gradient, full_gradient2,
             tracer2_line, tracer0_revisit, tracer0_revisit_secant, full_gradient3,
@@ -1590,7 +1591,7 @@ def main():
             pop3_revisit3_secant, full_gradient23, pop0_revisit4,
             pop0_revisit4_secant, full_gradient24, tracer4_line, full_gradient25,
             tracer0_revisit2, tracer0_revisit2_secant, full_gradient26,
-            pop12_revisit2, pop12_revisit2_secant, full_gradient27, tracer3_line, tracer3_line_secant, full_gradient28, tracer0_revisit3, tracer0_revisit3_secant, full_gradient29, pop11_line, full_gradient30, pop11_revisit, full_gradient31, pop4_line, pop4_line_secant, full_gradient32, pop0_revisit5, pop0_revisit5_secant, full_gradient33, pop11_revisit2, full_gradient34, pop10_line, pop10_line_secant, full_gradient35, pop1_line, pop1_line_secant, full_gradient36, pop11_revisit3, full_gradient37, pop13_line, pop13_line_secant, full_gradient38, pop0_revisit6, pop0_revisit6_secant, full_gradient39, pop14_revisit6, full_gradient40, pop3_revisit4, pop3_revisit4_secant, full_gradient41, pop0_revisit7, pop0_revisit7_secant, full_gradient42, pop11_revisit4, pop11_revisit4_secant, full_gradient43, pop4_revisit, pop4_revisit_secant, full_gradient44, pop0_revisit8, pop0_revisit8_secant, full_gradient45, tracer4_revisit, tracer4_revisit_secant, full_gradient46, tracer0_revisit4, tracer0_revisit4_secant, full_gradient47, tracer6_line, tracer6_revisit, full_gradient48, tracer6_revisit2, tracer6_support_step, full_gradient49, tracer6_revisit3, tracer6_support_step2, full_gradient50, tracer6_revisit4, tracer6_support_step3, full_gradient51, pop5_line, pop5_line_secant, full_gradient52, pop0_revisit9, pop0_revisit9_secant, full_gradient53, pop3_revisit5, pop3_revisit5_secant, full_gradient54, pop0_revisit10, pop0_revisit10_secant, full_gradient55, pop13_revisit, pop13_revisit_secant, full_gradient56, tracer6_revisit5, tracer6_support_step4, full_gradient57, tracer6_revisit6, tracer6_support_step5, full_gradient58, tracer6_revisit7, tracer6_support_step6, full_gradient59, pop5_revisit, pop5_revisit_secant, full_gradient60, pop0_revisit11, pop0_revisit11_secant, full_gradient61, pop3_revisit6, pop3_revisit6_secant, full_gradient62, pop0_revisit12, pop0_revisit12_secant, full_gradient63, pop5_revisit2, pop5_revisit2_secant, full_gradient64, pop0_revisit13, pop0_revisit13_secant, full_gradient65, pop3_revisit7, pop3_revisit7_secant, full_gradient66, pop0_revisit14, pop0_revisit14_secant, full_gradient67, tracer6_revisit8, tracer6_support_step7, full_gradient68, pop5_revisit3, pop5_revisit3_secant)) > 1:
+            pop12_revisit2, pop12_revisit2_secant, full_gradient27, tracer3_line, tracer3_line_secant, full_gradient28, tracer0_revisit3, tracer0_revisit3_secant, full_gradient29, pop11_line, full_gradient30, pop11_revisit, full_gradient31, pop4_line, pop4_line_secant, full_gradient32, pop0_revisit5, pop0_revisit5_secant, full_gradient33, pop11_revisit2, full_gradient34, pop10_line, pop10_line_secant, full_gradient35, pop1_line, pop1_line_secant, full_gradient36, pop11_revisit3, full_gradient37, pop13_line, pop13_line_secant, full_gradient38, pop0_revisit6, pop0_revisit6_secant, full_gradient39, pop14_revisit6, full_gradient40, pop3_revisit4, pop3_revisit4_secant, full_gradient41, pop0_revisit7, pop0_revisit7_secant, full_gradient42, pop11_revisit4, pop11_revisit4_secant, full_gradient43, pop4_revisit, pop4_revisit_secant, full_gradient44, pop0_revisit8, pop0_revisit8_secant, full_gradient45, tracer4_revisit, tracer4_revisit_secant, full_gradient46, tracer0_revisit4, tracer0_revisit4_secant, full_gradient47, tracer6_line, tracer6_revisit, full_gradient48, tracer6_revisit2, tracer6_support_step, full_gradient49, tracer6_revisit3, tracer6_support_step2, full_gradient50, tracer6_revisit4, tracer6_support_step3, full_gradient51, pop5_line, pop5_line_secant, full_gradient52, pop0_revisit9, pop0_revisit9_secant, full_gradient53, pop3_revisit5, pop3_revisit5_secant, full_gradient54, pop0_revisit10, pop0_revisit10_secant, full_gradient55, pop13_revisit, pop13_revisit_secant, full_gradient56, tracer6_revisit5, tracer6_support_step4, full_gradient57, tracer6_revisit6, tracer6_support_step5, full_gradient58, tracer6_revisit7, tracer6_support_step6, full_gradient59, pop5_revisit, pop5_revisit_secant, full_gradient60, pop0_revisit11, pop0_revisit11_secant, full_gradient61, pop3_revisit6, pop3_revisit6_secant, full_gradient62, pop0_revisit12, pop0_revisit12_secant, full_gradient63, pop5_revisit2, pop5_revisit2_secant, full_gradient64, pop0_revisit13, pop0_revisit13_secant, full_gradient65, pop3_revisit7, pop3_revisit7_secant, full_gradient66, pop0_revisit14, pop0_revisit14_secant, full_gradient67, tracer6_revisit8, tracer6_support_step7, full_gradient68, pop5_revisit3, pop5_revisit3_secant, full_gradient69)) > 1:
         raise RuntimeError('conditional diagnostic modes are separate jobs')
     if (tracer0_line or tracer0_secant_mode or pop9_line or pop9_newton
             or pop9_secant_mode or pop9_secant2 or full_gradient or full_gradient2
@@ -1611,7 +1612,7 @@ def main():
             or pop3_revisit3_secant or full_gradient23 or pop0_revisit4
             or pop0_revisit4_secant or full_gradient24 or tracer4_line or full_gradient25
             or tracer0_revisit2 or tracer0_revisit2_secant or full_gradient26
-            or pop12_revisit2 or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32 or pop0_revisit5 or pop0_revisit5_secant or full_gradient33 or pop11_revisit2 or full_gradient34 or pop10_line or pop10_line_secant or full_gradient35 or pop1_line or pop1_line_secant or full_gradient36 or pop11_revisit3 or full_gradient37 or pop13_line or pop13_line_secant or full_gradient38 or pop0_revisit6 or pop0_revisit6_secant or full_gradient39 or pop14_revisit6 or full_gradient40 or pop3_revisit4 or pop3_revisit4_secant or full_gradient41 or pop0_revisit7 or pop0_revisit7_secant or full_gradient42 or pop11_revisit4 or pop11_revisit4_secant or full_gradient43 or pop4_revisit or pop4_revisit_secant or full_gradient44 or pop0_revisit8 or pop0_revisit8_secant or full_gradient45 or tracer4_revisit or tracer4_revisit_secant or full_gradient46 or tracer0_revisit4 or tracer0_revisit4_secant or full_gradient47 or tracer6_line or tracer6_revisit or full_gradient48 or tracer6_revisit2 or tracer6_support_step or full_gradient49 or tracer6_revisit3 or tracer6_support_step2 or full_gradient50 or tracer6_revisit4 or tracer6_support_step3 or full_gradient51 or pop5_line or pop5_line_secant or full_gradient52 or pop0_revisit9 or pop0_revisit9_secant or full_gradient53 or pop3_revisit5 or pop3_revisit5_secant or full_gradient54 or pop0_revisit10 or pop0_revisit10_secant or full_gradient55 or pop13_revisit or pop13_revisit_secant or full_gradient56 or tracer6_revisit5 or tracer6_support_step4 or full_gradient57 or tracer6_revisit6 or tracer6_support_step5 or full_gradient58 or tracer6_revisit7 or tracer6_support_step6 or full_gradient59 or pop5_revisit or pop5_revisit_secant or full_gradient60 or pop0_revisit11 or pop0_revisit11_secant or full_gradient61 or pop3_revisit6 or pop3_revisit6_secant or full_gradient62 or pop0_revisit12 or pop0_revisit12_secant or full_gradient63 or pop5_revisit2 or pop5_revisit2_secant or full_gradient64 or pop0_revisit13 or pop0_revisit13_secant or full_gradient65 or pop3_revisit7 or pop3_revisit7_secant or full_gradient66 or pop0_revisit14 or pop0_revisit14_secant or full_gradient67 or tracer6_revisit8 or tracer6_support_step7 or full_gradient68 or pop5_revisit3 or pop5_revisit3_secant):
+            or pop12_revisit2 or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32 or pop0_revisit5 or pop0_revisit5_secant or full_gradient33 or pop11_revisit2 or full_gradient34 or pop10_line or pop10_line_secant or full_gradient35 or pop1_line or pop1_line_secant or full_gradient36 or pop11_revisit3 or full_gradient37 or pop13_line or pop13_line_secant or full_gradient38 or pop0_revisit6 or pop0_revisit6_secant or full_gradient39 or pop14_revisit6 or full_gradient40 or pop3_revisit4 or pop3_revisit4_secant or full_gradient41 or pop0_revisit7 or pop0_revisit7_secant or full_gradient42 or pop11_revisit4 or pop11_revisit4_secant or full_gradient43 or pop4_revisit or pop4_revisit_secant or full_gradient44 or pop0_revisit8 or pop0_revisit8_secant or full_gradient45 or tracer4_revisit or tracer4_revisit_secant or full_gradient46 or tracer0_revisit4 or tracer0_revisit4_secant or full_gradient47 or tracer6_line or tracer6_revisit or full_gradient48 or tracer6_revisit2 or tracer6_support_step or full_gradient49 or tracer6_revisit3 or tracer6_support_step2 or full_gradient50 or tracer6_revisit4 or tracer6_support_step3 or full_gradient51 or pop5_line or pop5_line_secant or full_gradient52 or pop0_revisit9 or pop0_revisit9_secant or full_gradient53 or pop3_revisit5 or pop3_revisit5_secant or full_gradient54 or pop0_revisit10 or pop0_revisit10_secant or full_gradient55 or pop13_revisit or pop13_revisit_secant or full_gradient56 or tracer6_revisit5 or tracer6_support_step4 or full_gradient57 or tracer6_revisit6 or tracer6_support_step5 or full_gradient58 or tracer6_revisit7 or tracer6_support_step6 or full_gradient59 or pop5_revisit or pop5_revisit_secant or full_gradient60 or pop0_revisit11 or pop0_revisit11_secant or full_gradient61 or pop3_revisit6 or pop3_revisit6_secant or full_gradient62 or pop0_revisit12 or pop0_revisit12_secant or full_gradient63 or pop5_revisit2 or pop5_revisit2_secant or full_gradient64 or pop0_revisit13 or pop0_revisit13_secant or full_gradient65 or pop3_revisit7 or pop3_revisit7_secant or full_gradient66 or pop0_revisit14 or pop0_revisit14_secant or full_gradient67 or tracer6_revisit8 or tracer6_support_step7 or full_gradient68 or pop5_revisit3 or pop5_revisit3_secant or full_gradient69):
         budget_seconds = 70 * 60
     elif fd_only or nuisance_block:
         budget_seconds = 40 * 60
@@ -1826,6 +1827,7 @@ def main():
         full_gradient68_only=full_gradient68,
         pop5_revisit3_only=pop5_revisit3,
         pop5_revisit3_secant_only=pop5_revisit3_secant,
+        full_gradient69_only=full_gradient69,
         ic_coordinates_fixed=(nuisance_block or tracer0_line or tracer0_secant_mode
                               or pop9_line or pop9_newton or pop9_secant_mode
                               or pop9_secant2 or full_gradient or full_gradient2
@@ -1855,7 +1857,7 @@ def main():
                               or tracer4_line or full_gradient25
                               or tracer0_revisit2 or tracer0_revisit2_secant
                               or full_gradient26 or pop12_revisit2
-                              or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32 or pop0_revisit5 or pop0_revisit5_secant or full_gradient33 or pop11_revisit2 or full_gradient34 or pop10_line or pop10_line_secant or full_gradient35 or pop1_line or pop1_line_secant or full_gradient36 or pop11_revisit3 or full_gradient37 or pop13_line or pop13_line_secant or full_gradient38 or pop0_revisit6 or pop0_revisit6_secant or full_gradient39 or pop14_revisit6 or full_gradient40 or pop3_revisit4 or pop3_revisit4_secant or full_gradient41 or pop0_revisit7 or pop0_revisit7_secant or full_gradient42 or pop11_revisit4 or pop11_revisit4_secant or full_gradient43 or pop4_revisit or pop4_revisit_secant or full_gradient44 or pop0_revisit8 or pop0_revisit8_secant or full_gradient45 or tracer4_revisit or tracer4_revisit_secant or full_gradient46 or tracer0_revisit4 or tracer0_revisit4_secant or full_gradient47 or tracer6_line or tracer6_revisit or full_gradient48 or tracer6_revisit2 or tracer6_support_step or full_gradient49 or tracer6_revisit3 or tracer6_support_step2 or full_gradient50 or tracer6_revisit4 or tracer6_support_step3 or full_gradient51 or pop5_line or pop5_line_secant or full_gradient52 or pop0_revisit9 or pop0_revisit9_secant or full_gradient53 or pop3_revisit5 or pop3_revisit5_secant or full_gradient54 or pop0_revisit10 or pop0_revisit10_secant or full_gradient55 or pop13_revisit or pop13_revisit_secant or full_gradient56 or tracer6_revisit5 or tracer6_support_step4 or full_gradient57 or tracer6_revisit6 or tracer6_support_step5 or full_gradient58 or tracer6_revisit7 or tracer6_support_step6 or full_gradient59 or pop5_revisit or pop5_revisit_secant or full_gradient60 or pop0_revisit11 or pop0_revisit11_secant or full_gradient61 or pop3_revisit6 or pop3_revisit6_secant or full_gradient62 or pop0_revisit12 or pop0_revisit12_secant or full_gradient63 or pop5_revisit2 or pop5_revisit2_secant or full_gradient64 or pop0_revisit13 or pop0_revisit13_secant or full_gradient65 or pop3_revisit7 or pop3_revisit7_secant or full_gradient66 or pop0_revisit14 or pop0_revisit14_secant or full_gradient67 or tracer6_revisit8 or tracer6_support_step7 or full_gradient68 or pop5_revisit3 or pop5_revisit3_secant),
+                              or pop12_revisit2_secant or full_gradient27 or tracer3_line or tracer3_line_secant or full_gradient28 or tracer0_revisit3 or tracer0_revisit3_secant or full_gradient29 or pop11_line or full_gradient30 or pop11_revisit or full_gradient31 or pop4_line or pop4_line_secant or full_gradient32 or pop0_revisit5 or pop0_revisit5_secant or full_gradient33 or pop11_revisit2 or full_gradient34 or pop10_line or pop10_line_secant or full_gradient35 or pop1_line or pop1_line_secant or full_gradient36 or pop11_revisit3 or full_gradient37 or pop13_line or pop13_line_secant or full_gradient38 or pop0_revisit6 or pop0_revisit6_secant or full_gradient39 or pop14_revisit6 or full_gradient40 or pop3_revisit4 or pop3_revisit4_secant or full_gradient41 or pop0_revisit7 or pop0_revisit7_secant or full_gradient42 or pop11_revisit4 or pop11_revisit4_secant or full_gradient43 or pop4_revisit or pop4_revisit_secant or full_gradient44 or pop0_revisit8 or pop0_revisit8_secant or full_gradient45 or tracer4_revisit or tracer4_revisit_secant or full_gradient46 or tracer0_revisit4 or tracer0_revisit4_secant or full_gradient47 or tracer6_line or tracer6_revisit or full_gradient48 or tracer6_revisit2 or tracer6_support_step or full_gradient49 or tracer6_revisit3 or tracer6_support_step2 or full_gradient50 or tracer6_revisit4 or tracer6_support_step3 or full_gradient51 or pop5_line or pop5_line_secant or full_gradient52 or pop0_revisit9 or pop0_revisit9_secant or full_gradient53 or pop3_revisit5 or pop3_revisit5_secant or full_gradient54 or pop0_revisit10 or pop0_revisit10_secant or full_gradient55 or pop13_revisit or pop13_revisit_secant or full_gradient56 or tracer6_revisit5 or tracer6_support_step4 or full_gradient57 or tracer6_revisit6 or tracer6_support_step5 or full_gradient58 or tracer6_revisit7 or tracer6_support_step6 or full_gradient59 or pop5_revisit or pop5_revisit_secant or full_gradient60 or pop0_revisit11 or pop0_revisit11_secant or full_gradient61 or pop3_revisit6 or pop3_revisit6_secant or full_gradient62 or pop0_revisit12 or pop0_revisit12_secant or full_gradient63 or pop5_revisit2 or pop5_revisit2_secant or full_gradient64 or pop0_revisit13 or pop0_revisit13_secant or full_gradient65 or pop3_revisit7 or pop3_revisit7_secant or full_gradient66 or pop0_revisit14 or pop0_revisit14_secant or full_gradient67 or tracer6_revisit8 or tracer6_support_step7 or full_gradient68 or pop5_revisit3 or pop5_revisit3_secant or full_gradient69),
         LG_roles=dict(MW='ambiguous', M31='ambiguous', M33='unresolved'),
         Q_GOAL='reproduce and attribute the existing conditional target before any longer fit',
         Q_LEAN='two saved states, best-state component split, one directional finite difference; no sampler or heldout',
@@ -36290,6 +36292,335 @@ def main():
             report['joint_map'] = False
             _save(report_path, report, started)
             print(json.dumps(dict(status=report['status'], evaluations=len(records),
+                                  longer_warm_start_authorized=False), allow_nan=False), flush=True)
+            return
+
+
+
+        if full_gradient69:
+            recorded = json.loads(
+                (BASE / 'r2_conditional_pop5_revisit3_secant_20261010/result.json').read_text())
+            rows = recorded.get('evaluations') or []
+            if (recorded.get('status') != 'CONDITIONAL_POP5_REVISIT3_REDUCED'
+                    or recorded.get('job_id') != '418285'
+                    or recorded.get('source_commit') != 'c1aca90cb94f128f19d0f8eacb4b9a3b9c79ba88'
+                    or recorded.get('pop5_revisit3_job_id') != '418278'
+                    or recorded.get('secant_population_coordinate_5') != 0.07751671674194167
+                    or recorded.get('support_shape_changed') is True
+                    or recorded.get('budget_stop') is True
+                    or recorded.get('Q_LEAN') != (
+                        'verify the accepted end of the population-5 bracket, then one secant; '
+                        'no further line step, IC update, or heldout')
+                    or len(rows) != 2
+                    or rows[0].get('step') != 'verify'
+                    or rows[1].get('step') != 'secant'):
+                raise ValueError('sixty-ninth full gradient requires the reduced population-5 secant')
+            verified, saved = rows
+            if (float(verified['population_coordinate_5']) != 0.0765438051588915
+                    or float(saved['population_coordinate_5']) != 0.07751671674194167
+                    or 0.5 * float(verified['population_coordinate_5']) != 0.03827190257944575
+                    or 0.5 * float(saved['population_coordinate_5']) != 0.03875835837097084
+                    or float(verified['population_coordinate_5'])
+                    >= float(saved['population_coordinate_5'])
+                    or float(verified['population_coordinate_5_gradient']) != -165.65390557877075
+                    or float(saved['population_coordinate_5_gradient']) != 2.1509295454801833
+                    or float(verified['population_coordinate_5_gradient']) >= 0.
+                    or float(saved['population_coordinate_5_gradient']) <= 0.
+                    or float(verified['population_coordinate_5_gradient'])
+                    * float(saved['population_coordinate_5_gradient'])
+                    != -356.30987983356255
+                    or float(verified['objective']) != 8208466.823045053
+                    or float(saved['objective']) != 8208466.743509629
+                    or float(saved['objective']) >= float(verified['objective'])):
+                raise ValueError('population-5 secant did not reduce the accepted bracket')
+            verify_gate = abs(float(verified['population_coordinate_5_gradient'])) / 10.
+            saved_gate = abs(float(saved['population_coordinate_5_gradient'])) / 10.
+            line_gate = abs(-165.6539055787712) / 10.
+            gradient_gate = abs(-165.653905578772) / 10.
+            own_gate = abs(2.070679793428482) / 10.
+            if (verify_gate != 16.565390557877073
+                    or line_gate != 16.56539055787712
+                    or gradient_gate != 16.5653905578772
+                    or verify_gate == line_gate
+                    or verify_gate == gradient_gate
+                    or line_gate == gradient_gate
+                    or verify_gate == 16.565
+                    or line_gate == 16.565
+                    or gradient_gate == 16.565
+                    or format(verify_gate, '.3f') != '16.565'
+                    or format(line_gate, '.3f') != '16.565'
+                    or format(gradient_gate, '.3f') != '16.565'
+                    or saved_gate != 0.21509295454801833
+                    or saved_gate == 0.215
+                    or format(saved_gate, '.3f') != '0.215'
+                    or own_gate != 0.2070679793428482
+                    or own_gate == 0.207
+                    or format(own_gate, '.3f') != '0.207'
+                    or abs(float(saved['population_coordinate_5_gradient'])) > verify_gate
+                    or abs(float(saved['population_coordinate_5_gradient'])) <= own_gate
+                    or abs(float(saved['population_coordinate_5_gradient'])) <= 1.):
+                raise ValueError('population-5 secant gates drifted')
+            if coordinate_line_action(True, True, True, False) != 'stop':
+                raise ValueError('reduced population-5 secant did not stop')
+            if coordinate_line_action(True, False, True, False) != 'stop':
+                raise ValueError('a reduced population-5 secant would take another secant')
+            delta_objective = float(saved['objective']) - float(verified['objective'])
+            delta_count = (float(saved['terms']['count_log_likelihood'])
+                           - float(verified['terms']['count_log_likelihood']))
+            delta_fp = (float(saved['terms']['conditional_FP_log_likelihood'])
+                        - float(verified['terms']['conditional_FP_log_likelihood']))
+            delta_tracer = (float(saved['terms']['tracer_nuisance_prior_NLL'])
+                            - float(verified['terms']['tracer_nuisance_prior_NLL']))
+            delta_population = (float(saved['terms']['population_nuisance_prior_NLL'])
+                                - float(verified['terms']['population_nuisance_prior_NLL']))
+            delta_ic = (float(saved['terms']['IC_prior_NLL']) - float(verified['terms']['IC_prior_NLL']))
+            change_residual = delta_objective - (
+                -delta_count - delta_fp + delta_tracer + delta_population + delta_ic)
+            prior_residual = delta_population - 0.5 * (
+                float(saved['population_coordinate_5']) ** 2
+                - float(verified['population_coordinate_5']) ** 2)
+            if (delta_objective != -0.0795354237779975
+                    or delta_count != 0. or delta_tracer != 0. or delta_ic != 0.
+                    or delta_fp != 0.07961036757114925
+                    or delta_population != 7.494363312332553e-05
+                    or change_residual != 1.6002843494788976e-10
+                    or change_residual <= 0. or abs(change_residual) >= 1e-9
+                    or change_residual / 9.313225746154785e-10 != 0.1718292236328125
+                    or prior_residual != -7.116703060194851e-16
+                    or prior_residual >= 0.):
+                raise ValueError('population-5 secant residual drifted')
+
+            def row_identity(row):
+                terms = row['terms']
+                return (float(terms['IC_prior_NLL']) + float(terms['tracer_nuisance_prior_NLL'])
+                        + float(terms['population_nuisance_prior_NLL'])
+                        - float(terms['count_log_likelihood'])
+                        - float(terms['conditional_FP_log_likelihood'])
+                        - float(row['objective']))
+
+            if row_identity(verified) != 0. or row_identity(saved) != 0.:
+                raise ValueError('population-5 secant identities are not zero')
+            initial_likelihood = (float(verified['terms']['count_log_likelihood'])
+                                  + float(verified['terms']['conditional_FP_log_likelihood']))
+            saved_likelihood = (float(saved['terms']['count_log_likelihood'])
+                                + float(saved['terms']['conditional_FP_log_likelihood']))
+            if pop5_revisit3_status(
+                    verified['objective'], saved['objective'],
+                    abs(float(verified['population_coordinate_5_gradient'])),
+                    abs(float(saved['population_coordinate_5_gradient'])),
+                    initial_likelihood, saved_likelihood) != 'CONDITIONAL_POP5_REVISIT3_REDUCED':
+                raise ValueError('population-5 secant status is not reduced')
+            names = {
+                0: 'tracer0_gradient', 2: 'tracer2_gradient', 3: 'tracer3_gradient',
+                4: 'tracer4_gradient', 5: 'tracer5_gradient', 6: 'tracer6_gradient',
+                9: 'population_coordinate_0_gradient',
+                12: 'population_coordinate_3_gradient',
+                13: 'population_coordinate_4_gradient',
+                14: 'population_coordinate_5_gradient',
+                17: 'population_coordinate_8_gradient',
+                22: 'population_coordinate_13_gradient'}
+            expected_saved = {
+                0: -66.10804596100064,
+                2: -67.80949119947883,
+                3: -76.29400957892567,
+                4: -51.7266329316885,
+                5: -2.2213653011763306,
+                6: -110.38270963860407,
+                9: -359.7448550468642,
+                12: 346.25405065266125,
+                13: -3.701132775470633,
+                14: 2.1509295454801833,
+                17: -14.555927116785622,
+                22: 1.6557243220193445,
+            }
+            if any(float(saved[names[index]]) != value for index, value in expected_saved.items()):
+                raise ValueError('saved population-5 derivatives drifted')
+            checked_below = [index for index, value in expected_saved.items() if abs(value) < 1.]
+            if (checked_below != []
+                    or abs(expected_saved[17]) < 1.
+                    or abs(expected_saved[14]) < 1.
+                    or abs(expected_saved[5]) < 1.
+                    or 1e-4 * max(abs(expected_saved[17]), 1.) == 1e-4
+                    or 1e-4 * max(abs(expected_saved[14]), 1.) == 1e-4):
+                raise ValueError('a checked secant derivative below 1 changed the pin')
+            if abs(float(verified['population_coordinate_8_gradient'])) >= 1.:
+                raise ValueError('population-8 verify derivative left the recorded value below 1')
+            if float(verified['population_coordinate_8_gradient']) != -0.5570775454882226:
+                raise ValueError('population-8 verify derivative drifted')
+            if abs(expected_saved[9]) <= 0.00022566027606149425:
+                raise ValueError('population-0 derivative is not outside its own gate')
+            if abs(expected_saved[12]) <= 0.3690110978312417:
+                raise ValueError('population-3 derivative is not outside its own gate')
+            if abs(expected_saved[13]) > 542.8941177183742 / 10.:
+                raise ValueError('population 4 has left its reduced gate')
+            if abs(expected_saved[22]) > abs(-233.42232564563201) / 10.:
+                raise ValueError('population 13 has left its line gate')
+            if abs(expected_saved[6]) <= abs(-110.35181616702818) / 10.:
+                raise ValueError('tracer 6 is inside its own gate')
+            expected_verify = {
+                0: -66.10804596100076,
+                2: -67.80237395862169,
+                3: -76.27908562412361,
+                4: -51.73031764479332,
+                5: -2.2213935103044147,
+                6: -110.35181616703979,
+                9: 6.440485892077793,
+                12: 66.31587008741485,
+                13: -11.360197536686435,
+                14: -165.65390557877075,
+                17: -0.5570775454882226,
+                22: 1.7168722314703164,
+            }
+            if any(float(verified[names[index]]) != value
+                   for index, value in expected_verify.items()):
+                raise ValueError('population-5 secant verify derivatives drifted')
+            line_values = {
+                0: -66.10804596100041,
+                2: -67.80237395862164,
+                3: -76.2790856241235,
+                4: -51.73031764479333,
+                5: -2.2213935103044147,
+                6: -110.35181616703981,
+                9: 6.440485892082568,
+                12: 66.31587008741462,
+                13: -11.360197536686833,
+                14: -165.6539055787712,
+                17: -0.5570775454889048,
+                22: 1.716872231461031,
+            }
+            expected_diff = {
+                0: -3.410605131648481e-13,
+                2: -4.263256414560601e-14,
+                3: -1.1368683772161603e-13,
+                4: 1.4210854715202004e-14,
+                5: 0.0,
+                6: 2.842170943040401e-14,
+                9: -4.774847184307873e-12,
+                12: 2.2737367544323206e-13,
+                13: 3.979039320256561e-13,
+                14: 4.547473508864641e-13,
+                17: 6.821210263296962e-13,
+                22: 9.28546128875496e-12,
+            }
+            diffs = {index: expected_verify[index] - line_values[index] for index in expected_diff}
+            if any(diffs[index] != value for index, value in expected_diff.items()):
+                raise ValueError('population-5 secant verify differences drifted')
+            if max(diffs, key=lambda index: abs(diffs[index])) != 22:
+                raise ValueError('population-13 difference is not the largest')
+            line = json.loads(
+                (BASE / 'r2_conditional_pop5_revisit3_20261010/result.json').read_text())
+            line_rows = line.get('evaluations') or []
+            if (line.get('status') != 'CONDITIONAL_POP5_REVISIT3_NO_IMPROVEMENT'
+                    or line.get('job_id') != '418278'
+                    or line.get('source_commit') != '60713a2f690c466e1bd9a84da8298dbb5a2e2cdb'
+                    or len(line_rows) != 2
+                    or line_rows[0].get('step') != 'verify'
+                    or float(line_rows[0]['population_coordinate_5'])
+                    != float(verified['population_coordinate_5'])
+                    or float(line_rows[0]['objective']) != float(verified['objective'])):
+                raise ValueError('population-5 secant does not verify the unimproved line')
+            for key in ('IC_prior_NLL', 'tracer_nuisance_prior_NLL', 'population_nuisance_prior_NLL',
+                        'count_log_likelihood', 'conditional_FP_log_likelihood'):
+                if float(verified['terms'][key]) - float(line_rows[0]['terms'][key]) != 0.:
+                    raise ValueError('population-5 secant verify terms do not match the line')
+            if (float(verified['terms']['count_log_likelihood']) == -142299.81701650965
+                    or float(verified['terms']['conditional_FP_log_likelihood'])
+                    == 5980.1036677424645):
+                raise ValueError('population-5 secant verify collapsed the gradient-68 terms')
+            shared = ('tracer0', 'tracer4', 'tracer5', 'tracer6',
+                      'population_coordinate_0', 'population_coordinate_3',
+                      'population_coordinate_4', 'population_coordinate_8',
+                      'population_coordinate_13')
+            if any(float(verified[key]) != float(saved[key]) for key in shared):
+                raise ValueError('population-5 secant moved another recorded coordinate')
+            if (float(saved['tracer6']) != 0.4259753562964724
+                    or float(100 * np.exp(0.5 * float(saved['tracer6']))) != 123.73694044672878
+                    or float(saved['population_coordinate_0']) != -0.03583179970308488
+                    or float(saved['population_coordinate_3']) != -0.4114823435353389
+                    or float(saved['population_coordinate_8']) != -0.010011571272851271):
+                raise ValueError('population-5 secant changed an accepted coordinate')
+            saved_q = np.load(BASE / 'r2_conditional_full_gradient68_20261010/gradient.npz')['q']
+            if (saved_q.shape != (N_IC + 24,)
+                    or not np.array_equal(saved_q[:N_IC], np.asarray(q_best[:N_IC]))
+                    or float(saved_q[N_IC + 14]) != 0.0765438051588915
+                    or float(saved_q[N_IC + 6]) != 0.4259753562964724
+                    or float(saved_q[N_IC + 9]) != -0.03583179970308488
+                    or float(saved_q[N_IC + 12]) != -0.4114823435353389
+                    or float(saved_q[N_IC + 13]) != -0.260425090674694
+                    or float(saved_q[N_IC + 17]) != -0.010011571272851271
+                    or float(saved_q[N_IC + 22]) != -0.00992575307961334):
+                raise ValueError('sixty-eighth state does not match the population-5 baseline')
+            q = np.array(saved_q, dtype=np.float64, copy=True)
+            q[N_IC + 14] = float(saved['population_coordinate_5'])
+            if (float(q[N_IC + 14]) != 0.07751671674194167
+                    or float(q[N_IC + 14]) == float(saved_q[N_IC + 14])
+                    or float(q[N_IC + 14]) == 0.1765438051588915
+                    or N_IC + 14 != 16777230):
+                raise ValueError('population-5 full gradient left the secant white')
+            if (float(q[N_IC + 6]) != float(saved_q[N_IC + 6])
+                    or float(q[N_IC + 9]) != float(saved_q[N_IC + 9])
+                    or float(q[N_IC + 12]) != float(saved_q[N_IC + 12])
+                    or float(q[N_IC + 17]) != float(saved_q[N_IC + 17])):
+                raise ValueError('population-5 full gradient moved a closed coordinate')
+            if not np.array_equal(
+                    np.concatenate((q[:N_IC + 14], q[N_IC + 15:])),
+                    np.concatenate((saved_q[:N_IC + 14], saved_q[N_IC + 15:]))):
+                raise ValueError('population-5 full gradient moved another coordinate')
+            aliases = (0, 4, 6, 9, 12, 13, 17, 22)
+            if any(float(q[N_IC + 14]) == float(q[N_IC + index]) for index in aliases):
+                raise ValueError('population-5 white matches another recorded coordinate')
+            checked = tuple((index, names[index]) for index in names)
+            report['pop5_revisit3_secant_job_id'] = recorded.get('job_id')
+            report['full_gradient68_job_id'] = '418264'
+            report['Q_LEAN'] = (
+                'one full gradient at the reduced population-5 secant, including the IC '
+                'pullback and all 24 nuisance components; no further population-5 step, '
+                'IC update, or heldout')
+            state = evaluate_full(q)
+            nuisance = np.asarray(state['gradient'][N_IC:], dtype=np.float64)
+            objective_ok = abs(float(state['value']) - float(saved['objective'])) / max(
+                abs(float(saved['objective'])), 1.) <= 1e-8
+
+            def component_ok(got, expected):
+                return abs(float(got) - float(expected)) <= 1e-4 * max(abs(float(expected)), 1.)
+
+            component_matches = all(
+                component_ok(nuisance[index], saved[name]) for index, name in checked)
+            report['objective'] = float(state['value'])
+            report['tracer6'] = float(q[N_IC + 6])
+            report['tracer0'] = float(q[N_IC])
+            report['tracer4'] = float(q[N_IC + 4])
+            report['population_coordinate_0'] = float(q[N_IC + 9])
+            report['population_coordinate_3'] = float(q[N_IC + 12])
+            report['population_coordinate_4'] = float(q[N_IC + 13])
+            report['population_coordinate_5'] = float(q[N_IC + 14])
+            report['population_coordinate_8'] = float(q[N_IC + 17])
+            report['population_coordinate_13'] = float(q[N_IC + 22])
+            report['tracer6_gradient'] = float(nuisance[6])
+            report['tracer0_gradient'] = float(nuisance[0])
+            report['tracer2_gradient'] = float(nuisance[2])
+            report['tracer3_gradient'] = float(nuisance[3])
+            report['tracer4_gradient'] = float(nuisance[4])
+            report['tracer5_gradient'] = float(nuisance[5])
+            report['population_coordinate_0_gradient'] = float(nuisance[9])
+            report['population_coordinate_3_gradient'] = float(nuisance[12])
+            report['population_coordinate_4_gradient'] = float(nuisance[13])
+            report['population_coordinate_5_gradient'] = float(nuisance[14])
+            report['population_coordinate_8_gradient'] = float(nuisance[17])
+            report['population_coordinate_13_gradient'] = float(nuisance[22])
+            report['terms'] = {key: state['detail'][key] for key in TERM_KEYS}
+            report['nuisance_gradient'] = nuisance.tolist()
+            if objective_ok and component_matches:
+                report['joint_gradient'] = block_gradient_summary(state['gradient'])
+                np.savez(out / 'gradient.npz',
+                         gradient=np.asarray(state['gradient'], dtype=np.float64),
+                         q=np.asarray(q, dtype=np.float64))
+            report['status'] = full_gradient_record_status(
+                objective_ok, component_matches, component_matches, component_matches)
+            report['longer_warm_start_authorized'] = False
+            report['joint_map'] = False
+            _save(report_path, report, started)
+            print(json.dumps(dict(status=report['status'],
                                   longer_warm_start_authorized=False), allow_nan=False), flush=True)
             return
 
