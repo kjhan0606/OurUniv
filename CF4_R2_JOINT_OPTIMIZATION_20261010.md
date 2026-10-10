@@ -272,3 +272,17 @@ validation result. Reuse its numerical utilities only after checking the
 active observation contract. Mean/variance accumulation alone does not prove
 mixing or supply Monte Carlo uncertainty. MW/M31 roles remain ambiguous and
 M33 unresolved in this R2 field; no truth labels may choose a generated state.
+
+Current-v6 matched-GL2 HMC pilot 418824 completed successfully on H200 in
+22m37s, exit 0; Slurm batch MaxRSS 11507480 KiB (10.97 GiB). Initial
+gradient78 replay passed. Both fixed .02 / one-step transitions were
+accepted: energy errors -0.00798481144 and -0.01677079126, canonical jump
+RMS .01652161249 and .01651966180. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_conditional_hmc_pilot_20261011`.
+This demonstrates two finite, MH-corrected active-target transitions, not
+stationarity, sufficient low-k movement, effective sample size or calibrated
+uncertainty. The objective increased on accepted proposals; HMC acceptance
+uses total Hamiltonian, not monotonic objective descent. Next bounded tuning
+should assess larger steps and record fundamental-mode/nuisance movement;
+do not promote the two retained states to a posterior or launch a large
+chain without the warranted Astra science review.
