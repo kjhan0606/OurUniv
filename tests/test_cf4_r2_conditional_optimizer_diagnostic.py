@@ -2352,6 +2352,83 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer0_secant(failed, failed_gradient, white, gradient)
 
 
+    def test_pop5_revisit5_secant_queues_one_full_gradient(self):
+        initial = 8208466.393512041
+        best = 8208466.323127546
+        g_verify = -155.83164153568046
+        g_secant = 2.0260452150729957
+        accepted = 0.0784613121345734
+        theta = 0.07937656860297954
+        count = -142299.81701650968
+        fp_verify = 5980.533817814088
+        fp_secant = 5980.604274540032
+        like_initial = count + fp_verify
+        like_best = count + fp_secant
+        self.assertEqual(best - initial, -0.07038449496030807)
+        self.assertLess(best, initial)
+        self.assertEqual(theta - accepted, 0.0009152564684061365)
+        self.assertEqual(0.5 * theta, 0.03968828430148977)
+        self.assertEqual(
+            0.5 * accepted + 0.5 * (theta - accepted), 0.5 * theta)
+        self.assertEqual(g_verify * g_secant, -315.7219516903357)
+        self.assertLess(g_verify * g_secant, 0.)
+        self.assertEqual(abs(g_verify) / 10., 15.583164153568045)
+        self.assertNotEqual(abs(g_verify) / 10., 15.583164153568024)
+        self.assertNotEqual(abs(g_verify) / 10., 15.583164153567989)
+        self.assertEqual(format(abs(g_verify) / 10., '.3f'), '15.583')
+        self.assertNotEqual(abs(g_verify) / 10., 15.583)
+        self.assertLessEqual(abs(g_secant), abs(g_verify) / 10.)
+        self.assertGreater(abs(g_secant), 0.2070679793428482)
+        self.assertEqual(
+            pop5_revisit5_status(
+                initial, best, abs(g_verify), abs(g_secant), like_initial, like_best),
+            'CONDITIONAL_POP5_REVISIT5_REDUCED')
+        self.assertEqual(
+            pop5_revisit5_status(
+                initial, initial, abs(g_verify), abs(g_secant), like_initial, like_initial),
+            'CONDITIONAL_POP5_REVISIT5_NO_IMPROVEMENT')
+        self.assertEqual(pop5_line_step(g_secant), -0.1)
+        self.assertEqual(pop5_line_step(g_verify), 0.1)
+        self.assertNotEqual(pop5_line_step(g_secant), theta - accepted)
+        self.assertEqual(pop0_revisit15_step(0.0018867937843086435), -0.1)
+        self.assertEqual(pop0_revisit15_step(-344.48453713017767), 0.1)
+        self.assertEqual(pop3_revisit5_step(331.0552007639878), -0.1)
+        self.assertGreaterEqual(abs(1.5304409677873398), 1.)
+        self.assertGreaterEqual(abs(g_secant), 1.)
+        self.assertGreaterEqual(abs(-344.48453713017767), 1.)
+        self.assertLess(abs(0.0018867937843086435), 1.)
+        self.assertNotEqual(0.0018867937843086435, 0.0018867937847633909)
+        self.assertNotEqual(0.0018867937843086435, 0.0018867937824896541)
+        self.assertNotEqual(0.0018867937843086435, 0.0018867937852181382)
+        self.assertEqual(1e-4 * max(abs(0.0018867937843086435), 1.), 1e-4)
+        self.assertEqual(1e-4 * max(abs(g_secant), 1.), 0.00020260452150729958)
+        self.assertNotEqual(1e-4 * max(abs(g_secant), 1.), 1e-4)
+        self.assertEqual(1e-4 * abs(g_verify), 0.015583164153568047)
+        self.assertNotEqual(1e-4 * abs(g_verify), abs(g_verify) / 10. / 1000.)
+        self.assertEqual(like_best - like_initial, 0.07045672595268115)
+        self.assertEqual(0.07045672595268115 - 0.07045672594358621, 9.094947017729282e-12)
+        self.assertEqual(7.22310706517959e-05 - 7.223107065228076e-05, -4.848552115355176e-16)
+        self.assertLess(7.22310706517959e-05 - 7.223107065228076e-05, 0.)
+        self.assertEqual(-8.737366385958012e-11 / -9.313225746154785e-10, 0.09381675720214844)
+        self.assertEqual(int(1062.4386371369474), 1062)
+        self.assertNotEqual(int(1062.4386371369474), 18 * 60 + 2)
+        self.assertEqual(format(13.783817291259766, '.2f'), '13.78')
+        self.assertNotEqual(13.783817291259766, 13.78)
+        self.assertNotEqual(13.783817291259766, 13.762870788574219)
+        self.assertNotEqual(13.783817291259766, 13.79525375366211)
+        line_diff = {'tracer0_gradient': -4.121147867408581e-13, 'tracer2_gradient': -5.115907697472721e-13, 'tracer3_gradient': -3.694822225952521e-13, 'tracer4_gradient': 1.4210854715202004e-13, 'tracer5_gradient': 4.440892098500626e-16, 'tracer6_gradient': 2.4158453015843406e-13, 'population_coordinate_0_gradient': -4.547473508864641e-13, 'population_coordinate_2_gradient': -1.1368683772161603e-12, 'population_coordinate_3_gradient': -2.2737367544323206e-13, 'population_coordinate_4_gradient': 2.842170943040401e-14, 'population_coordinate_5_gradient': -2.2737367544323206e-13, 'population_coordinate_8_gradient': 2.842170943040401e-14, 'population_coordinate_13_gradient': -2.984279490192421e-13}
+        grad_diff = {'tracer0_gradient': -2.4016344468691386e-12, 'tracer2_gradient': -5.684341886080801e-13, 'tracer3_gradient': -7.673861546209082e-13, 'tracer4_gradient': -1.9895196601282805e-13, 'tracer5_gradient': -1.3322676295501878e-15, 'tracer6_gradient': 3.410605131648481e-13, 'population_coordinate_0_gradient': 1.8189894035458565e-12, 'population_coordinate_2_gradient': -3.410605131648481e-13, 'population_coordinate_3_gradient': -1.3642420526593924e-12, 'population_coordinate_4_gradient': -2.5579538487363607e-13, 'population_coordinate_5_gradient': -5.684341886080801e-13, 'population_coordinate_8_gradient': 8.242295734817162e-13, 'population_coordinate_13_gradient': -3.0950797480500114e-12}
+        self.assertEqual(
+            max(line_diff, key=lambda name: abs(line_diff[name])),
+            'population_coordinate_2_gradient')
+        self.assertLess(line_diff['population_coordinate_2_gradient'], 0.)
+        self.assertEqual(
+            max(grad_diff, key=lambda name: abs(grad_diff[name])),
+            'population_coordinate_13_gradient')
+        self.assertLess(grad_diff['population_coordinate_13_gradient'], 0.)
+        self.assertTrue(all(value != 0. for value in line_diff.values()))
+        self.assertTrue(all(value != 0. for value in grad_diff.values()))
+
     def test_pop5_revisit5_sign_stop_queues_one_secant(self):
         accepted = 0.0784613121345734
         rejected = 0.1784613121345734
