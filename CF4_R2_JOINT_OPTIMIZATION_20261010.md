@@ -119,3 +119,19 @@ The driver checks the implementation; the review evaluated design, not the
 subsequently edited diff. Tests cover transformed coupled gradients/optimum,
 budget/callback behavior and the existing observation wiring, in the same
 Slurm allocation before optimization. No separate exit audit was requested.
+
+## Execution
+
+Source `4c7ef5133fda4fdf6aa542632c2f9da931694399` committed and pushed.
+Job **418606** started 2026-10-10 23:59:02 KST on syn104 through the
+`h200` Slurm partition, `gpu:H200:1`, 2 CPUs, 48 GiB, six-hour limit.
+Immediately before submission H200 had 8 configured/7 allocated GPUs;
+H100/A100 were not needed for mode selection. No manual node execution.
+Output: `/gpfs/kjhan/CF4/z0_density/r2_joint_warm_start_20261010/`.
+Logs: `/gpfs/kjhan/CF4/logs/cf4_R2_joint_418606.{out,err}`.
+Submission/running state is not a test pass or an optimization outcome.
+
+At 00:00 KST Oct11, Slurm reports RUNNING (elapsed1m15s). All 15 focused
+tests passed (2 affine, 5 budget, 3 linked-radius, 5 exposure). The main
+application recorded STARTED with the frozen source and 18-call cap.
+No completed replay/accepted joint update was yet recorded at that check.

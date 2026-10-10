@@ -22,6 +22,9 @@ one <=18-evaluation joint warm start (5h application/6h Slurm). This replaces
 the historical no-IC-update restriction for this bounded experiment only.
 All full R2 science requirements and the separate Astra exit audit remain;
 R3 has not started.
+Joint warm-start job418606 started2026-10-10 23:59:02 KST on syn104 via
+Slurm h200/gpu:H200:1, 2CPU/48GiB/6h, source4c7ef51. Current evidence and
+output/log paths are in the recovery record; submission is not a science pass.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
