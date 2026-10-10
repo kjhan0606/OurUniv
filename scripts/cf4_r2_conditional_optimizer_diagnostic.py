@@ -37118,7 +37118,8 @@ def main():
                     or min(range(24), key=lambda index: abs(float(nuisance_gradient[index]))) != 22
                     or float(nuisance_gradient[22]) != 1.6557243220254922
                     or abs(float(nuisance_gradient[22])) <= 1.
-                    or float(recorded.get('population_coordinate_2')) != 0.014827038075365416
+                    or 'population_coordinate_2' in recorded
+                    or float(recorded.get('population_coordinate_5')) != 0.07751671674194167
                     or float(recorded.get('objective')) != 8208466.743509629):
                 raise ValueError('population-2 secant requires the sixty-ninth full gradient')
             if location.get('block') == 'population' and int(location.get('index_in_block', -1)) == 5:
