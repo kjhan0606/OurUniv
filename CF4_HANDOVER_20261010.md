@@ -3,9 +3,9 @@
 작성 기준: 2026-10-10 23:41 KST
 
 저장소: `/home/kjhan/BACKUP/CF4` · 브랜치 `agent/freeze-zoom-pipeline`
-기준 HEAD: `a7b81a7fb7578640a74729730cfdc42ab01abf8e`
+과학 기준 커밋: `a7b81a7fb7578640a74729730cfdc42ab01abf8e`
 `Record the reduced population-5 secant and queue one full gradient.`
-이 커밋은 origin에 push되어 있다. amend하지 않는다.
+Job 418601은 이 커밋을 요구한다. 이 인수인계서는 그 다음 문서 커밋이다. 다섯 과학 경로는 `a7b81a7`과 같다. 그 커밋을 amend하지 않는다.
 
 이 문서는 `CF4_HANDOVER_20261006.md`의 실행 상태를 이어 받는다. 2026-10-06 문서의 과학 목표와 데이터 한계는 그대로다. 활성 계획의 긴 좌표 기록은 `CF4_MASTER_PLAN.md`의 2026-10-06 continuation과 `CF4_R2_CONDITIONAL_OPTIMIZER_DESIGN_20261006.md`에 있다. 종료 절차는 `CF4_R2_EXIT_AUDIT_GATE_20261006.md`다.
 
