@@ -207,3 +207,34 @@ can serve as a broader recorded-state replay with component-value checks;
 the exact failing state requires deterministic trajectory reproduction or
 explicit pre-evaluation candidate capture. Do not loosen checkpoint lineage
 checks merely to accept a failed run's arbitrary saved file.
+
+Broad recorded-trial replay 418811 completed on H200 syn104 in 12m09s,
+exit 0:0. All five objective terms matched evaluation 8; objective
+7493930.197595556. Support retained 36505268 components, largest candidate
+77550 cells, using 16384-cell blocks. Application peak 10.675 GiB;
+Slurm batch MaxRSS 10231300 KiB. No optimizer transition occurred.
+This is not a replay of the unsaved failing candidate and not a posterior.
+The output inherited incorrect resource/nuisance labels: host request was
+96 GiB (not 48), H200 was checked with 2 unallocated GPUs, and nuisances
+were saved trial-8 coordinates (not zero). Preserve the raw result; correct
+future metadata from Slurm rather than hardcoded claims. No full-gradient
+reference exists for this trial, although a finite full gradient was computed.
+
+Driver next-route decision after recovery: do not restart the identical MAP
+experiment. The numerical recovery enables the unchanged conditional target,
+but optimizing the 16M-dimensional Gaussian prior toward its mode is not a
+posterior sampling strategy. Return to the reusable prior-split HMC kernel,
+with exact GL2 acceptance and fresh chunked support; initially use matched
+GL2 forces to avoid confounding force approximation with integrator failure.
+Use gradient78 as a declared diagnostic initializer, not unaccepted trial 8
+as a selected posterior sample. Before a larger chain: wire the exact current
+v6 cohort/conditioning, use a fixed metric, retain rejected states, record
+canonical prior/likelihood terms, test reversibility and Gaussian reference
+behavior in a small Slurm CPU test, then run a bounded transition pilot.
+Freeze the heldout scoring protocol before opening heldout values. Successful
+transitions alone do not establish mixing, uncertainty, observational
+resolution or selection calibration. These remain R2 delivery requirements.
+Q-GOAL: same NEW evolved field; MW/M31 ambiguous, M33 unresolved, no truth-ID
+candidate selection; their LG observables and <=0.3 cMpc/h refinement remain
+later requirements. Q-LEAN: reuse kernels; no new scalar probes or separate
+RAMSES simulations. Obtain warranted Astra advice before a large chain.

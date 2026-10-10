@@ -222,10 +222,11 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             measured_prior_exact_GL2_peak_GiB=KNOWN_DEVICE_PEAK_GIB,
             measured_prior_device_limit_GiB=KNOWN_DEVICE_LIMIT_GIB,
             current_device_limit_GiB=float(device_limit / 1024 ** 3) if device_limit else None,
-            host_request_GiB=48,
+            host_request_GiB=(int(os.environ['SLURM_MEM_PER_NODE']) / 1024
+                              if os.environ.get('SLURM_MEM_PER_NODE') else None),
             previous_joint_pilot_host_peak_GiB=15.260330200195312,
             lbfgs_history_estimate_GiB=2 * maxcor * (N_IC + 24) * 8 / 1024 ** 3,
-            host_request_has_20_percent_margin=True,
+            host_request_has_20_percent_margin=None,
         )
         if device_limit and 1.2 * KNOWN_DEVICE_PEAK_GIB * 1024 ** 3 > device_limit:
             raise MemoryError('measured exact-GL2 device peak lacks 20 percent headroom here')
@@ -266,6 +267,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
                 raise ValueError('recorded trial coordinates invalid')
             report.update(recorded_trial=str(recorded_trial), recorded_trial_evaluation=8,
                           recorded_trial_optimizer_accepted=False,
+                          initialized_nuisances='saved trial 8 nuisance coordinates; unchanged priors',
                           IC_lineage='unaccepted recorded diagnostic trial; not a posterior draw')
         if start_checkpoint is not None:
             start_checkpoint = Path(start_checkpoint)
