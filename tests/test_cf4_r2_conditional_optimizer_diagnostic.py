@@ -2086,6 +2086,104 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop2_revisit_status(objective0, objective1, abs(g_neg), abs(g_pos), 0., 0.),
             'CONDITIONAL_POP2_REVISIT_NO_IMPROVEMENT')
 
+    def test_pop0_revisit15_secant_reduced_queues_one_full_gradient(self):
+        accepted = -0.03583179970308488
+        saved = -0.03590646609168676
+        g_line = 243.18828792633946
+        g_verify = 243.18828792632854
+        g_saved = 0.0013553813665528117
+        objective0 = 8208466.685685918
+        objective1 = 8208466.676606872
+        ic = 8072142.0269214865
+        tracer_prior = 0.9015597734294367
+        prior0 = 4.1812947647508345
+        prior1 = 4.18129744296945
+        count_line = -142299.81701650965
+        count = -142299.8170165097
+        count_gradient = -142299.81701650968
+        fp0 = 5980.241106616332
+        fp1 = 5980.250188340764
+        delta_objective = objective1 - objective0
+        delta_fp = fp1 - fp0
+        delta_prior = prior1 - prior0
+        residual = delta_objective - (-delta_fp + delta_prior)
+        prior_residual = delta_prior - 0.5 * (saved ** 2 - accepted ** 2)
+        identity0 = ic + tracer_prior + prior0 - count - fp0 - objective0
+        identity1 = ic + tracer_prior + prior1 - count - fp1 - objective1
+        likelihood_line = count_line + fp0
+        likelihood_verify = count + fp0
+        likelihood_saved = count + fp1
+        self.assertEqual(saved, -0.03590646609168676)
+        self.assertEqual(0.3 + saved, 0.26409353390831325)
+        self.assertEqual(accepted - saved, 7.466638860188085e-05)
+        self.assertNotEqual(saved, -0.1358317997030849)
+        self.assertEqual(16777216 + 9, 16777225)
+        self.assertGreater(g_line, 0.)
+        self.assertGreater(g_verify, 0.)
+        self.assertGreater(g_saved, 0.)
+        self.assertLess(g_saved, 1.)
+        self.assertEqual(g_line * g_saved, 0.3296128740192406)
+        self.assertEqual(g_verify * g_saved, 0.3296128740192258)
+        self.assertNotEqual(g_line * g_saved, g_verify * g_saved)
+        self.assertEqual(delta_objective, -0.009079045616090298)
+        self.assertLess(delta_objective, 0.)
+        self.assertEqual(delta_fp, 0.009081724431780458)
+        self.assertEqual(delta_prior, 2.6782186157703336e-06)
+        self.assertEqual(residual, 5.970743899297304e-10)
+        self.assertGreater(residual, 0.)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(residual / 9.313225746154785e-10, 0.6411037445068359)
+        self.assertEqual(prior_residual, 4.163336342344337e-17)
+        self.assertGreater(prior_residual, 0.)
+        self.assertEqual(identity0, 0.0)
+        self.assertEqual(identity1, 0.0)
+        self.assertEqual(count - count_line, -5.820766091346741e-11)
+        self.assertEqual(count - count_gradient, -2.9103830456733704e-11)
+        self.assertNotEqual(count, count_line)
+        self.assertNotEqual(count, count_gradient)
+        self.assertNotEqual(fp0, 5980.241106616331)
+        self.assertEqual(likelihood_saved - likelihood_line, 0.009081724361749366)
+        self.assertEqual(likelihood_saved - likelihood_verify, 0.009081724419957027)
+        self.assertGreater(likelihood_saved, likelihood_line)
+        self.assertEqual(abs(g_line) / 10., 24.318828792633944)
+        self.assertEqual(abs(g_verify) / 10., 24.318828792632853)
+        self.assertEqual(abs(243.188287926329) / 10., 24.3188287926329)
+        self.assertNotEqual(abs(g_line) / 10., abs(g_verify) / 10.)
+        self.assertNotEqual(abs(g_line) / 10., abs(243.188287926329) / 10.)
+        self.assertNotEqual(abs(g_verify) / 10., abs(243.188287926329) / 10.)
+        self.assertEqual(format(abs(g_line) / 10., '.3f'), '24.319')
+        self.assertNotEqual(abs(g_line) / 10., 24.319)
+        self.assertEqual(abs(g_saved) / 10., 0.00013553813665528116)
+        self.assertEqual(format(abs(g_saved) / 10., '.3f'), '0.000')
+        self.assertNotEqual(abs(g_saved) / 10., 0.000)
+        self.assertEqual(abs(0.0022566027606149425) / 10., 0.00022566027606149425)
+        self.assertGreater(abs(g_saved), abs(0.0022566027606149425) / 10.)
+        self.assertLess(abs(g_saved), abs(g_line) / 10.)
+        self.assertEqual(1e-4 * max(abs(g_saved), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(-14.560811461036163), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(-140.6857484239093), 1.), 1e-4)
+        self.assertGreater(abs(-140.6857484239093), 1.)
+        self.assertGreater(abs(-140.6857484239093), abs(-2.598336989703646) / 10.)
+        self.assertGreater(0.001075686027008818, 0.)
+        self.assertLess(abs(0.001075686027008818), 1.)
+        self.assertEqual(
+            0.001075686027008818 - 0.0010756860341710889, -7.16227077646181e-12)
+        self.assertEqual(coordinate_line_action(True, False, True, False), 'stop')
+        self.assertEqual(coordinate_line_action(True, False, False, False), 'continue')
+        self.assertEqual(
+            pop0_revisit15_status(
+                objective0, objective1, abs(g_line), abs(g_saved),
+                likelihood_line, likelihood_saved),
+            'CONDITIONAL_POP0_REVISIT15_REDUCED')
+        self.assertEqual(
+            pop0_revisit15_status(
+                objective0, objective1, abs(g_verify), abs(g_saved),
+                likelihood_verify, likelihood_saved),
+            'CONDITIONAL_POP0_REVISIT15_REDUCED')
+        self.assertEqual(int(1071.4857079059584), 1071)
+        self.assertEqual(format(13.779590606689453, '.2f'), '13.78')
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+
     def test_pop0_revisit15_sign_change_queues_one_secant(self):
         accepted = -0.03583179970308488
         rejected = -0.1358317997030849
