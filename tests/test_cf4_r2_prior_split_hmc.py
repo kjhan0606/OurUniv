@@ -13,10 +13,30 @@ import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from cf4_r2_prior_split_hmc import (
     FixedSplitMetric,split_trajectory,split_hmc_step,canonical_from_optimizer_oracle,
-    inverse_laplacian_metric_symbol,bounded_split_pilot,restore_numpy_rng)
+    inverse_laplacian_metric_symbol,bounded_split_pilot,restore_numpy_rng,PilotBudgetStop)
 
 
 class PriorSplitTests(unittest.TestCase):
+    def test_budget_stop_mid_trajectory_does_not_retain_partial_endpoint(self):
+        calls = []
+        callbacks = []
+        def limited(q):
+            calls.append(q.copy())
+            if len(calls) == 2:
+                raise PilotBudgetStop()
+            return self.oracle(q)
+        value, gradient = self.oracle(self.q)
+        q, result, grad, trace, reason = bounded_split_pilot(
+            limited, self.metric, self.q, value, gradient, self.rng,
+            warmup=0, retained=1, steps=3, seconds_left=lambda: 100.,
+            callback=lambda *args: callbacks.append(args))
+        np.testing.assert_array_equal(q, self.q)
+        np.testing.assert_array_equal(grad, gradient)
+        self.assertEqual(result, value)
+        self.assertEqual(trace, [])
+        self.assertEqual(callbacks, [])
+        self.assertEqual(reason, 'application time budget')
+
     def setUp(self):
         self.rng=np.random.default_rng(270929)
         modes=np.meshgrid(*[np.fft.fftfreq(2)]*3,indexing='ij')
