@@ -1519,6 +1519,67 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             tracer0_secant(negative, g_neg, positive, g_pos)
 
+    def test_tracer6_support_step7_improved_queues_one_full_gradient(self):
+        verified = 0.3759753562964724
+        saved = 0.4259753562964724
+        g0 = -138.72354222799916
+        g1 = -110.35181616702818
+        objective0 = 8208473.062978312
+        objective1 = 8208466.823045053
+        count_delta = 6.160812665882986
+        fp_delta = 0.0991693617143028
+        prior_delta = 0.020048767814823565
+        residual = (objective1 - objective0) - (-count_delta - fp_delta + prior_delta)
+        prior_residual = prior_delta - 0.5 * (saved ** 2 - verified ** 2)
+        pop8 = -0.55707754548845
+        pop5 = -165.65390557877245
+        diffs = {
+            5: 0.0,
+            14: 0.0,
+            22: 4.808597964256478e-12,
+        }
+        self.assertEqual(saved, verified + 0.05)
+        self.assertEqual(0.3259753562964724 + 0.05 + 0.05, saved)
+        self.assertEqual(16777216 + 6, 16777222)
+        self.assertLess(g0, 0.)
+        self.assertLess(g1, 0.)
+        self.assertGreater(g1 * g0, 0.)
+        self.assertEqual(abs(g0) / 10., 13.872354222799917)
+        self.assertEqual(abs(-138.7235422279993) / 10., 13.872354222799931)
+        self.assertNotEqual(abs(g0) / 10., abs(-138.7235422279993) / 10.)
+        self.assertEqual(format(abs(g0) / 10., '.3f'), '13.872')
+        self.assertEqual(format(abs(-138.7235422279993) / 10., '.3f'), '13.872')
+        self.assertEqual(abs(g1) / 10., 11.035181616702818)
+        self.assertEqual(format(abs(g1) / 10., '.3f'), '11.035')
+        self.assertGreater(abs(g1), abs(g0) / 10.)
+        self.assertEqual(objective1 - objective0, -6.239933259785175)
+        self.assertEqual(residual, -2.709832358505082e-12)
+        self.assertLess(residual, 0.)
+        self.assertLess(abs(residual), 1e-9)
+        self.assertEqual(residual / 9.313225746154785e-10, -0.0029096603393554688)
+        self.assertEqual(prior_residual, -4.163336342344337e-17)
+        self.assertLess(prior_residual, 0.)
+        self.assertGreater(abs(pop5), abs(g1))
+        self.assertLess(abs(pop8), 1.)
+        self.assertEqual(1e-4 * max(abs(pop8), 1.), 1e-4)
+        self.assertGreater(abs(6.440485892088479), 1.)
+        self.assertGreater(abs(66.31587008741167), 0.3690110978312417)
+        self.assertLessEqual(abs(-11.360197536685469), 542.8941177183742 / 10.)
+        self.assertLessEqual(abs(1.7168722314607752), abs(-233.42232564563201) / 10.)
+        self.assertEqual(max(diffs, key=lambda index: abs(diffs[index])), 22)
+        self.assertEqual(float(100 * np.exp(0.5 * verified)), 120.68186450175409)
+        self.assertEqual(float(100 * np.exp(0.5 * saved)), 123.73694044672878)
+        self.assertEqual(0.5 * -0.010011571272851271, -0.005005785636425636)
+        self.assertEqual(int(1402.1596948930528), 1402)
+        self.assertEqual(format(14.946136474609375, '.2f'), '14.95')
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+        self.assertEqual(
+            tracer6_support_step7_status(objective0, objective1, abs(g0), abs(g1), 0., 1.),
+            'CONDITIONAL_TRACER6_SUPPORT_STEP7_IMPROVED')
+        self.assertEqual(
+            full_gradient_record_status(True, True, True, True),
+            'CONDITIONAL_FULL_GRADIENT_RECORDED')
+
     def test_tracer6_revisit8_support_change_queues_one_recompiled_step(self):
         verified = 0.3259753562964724
         improved = 0.3759753562964724
