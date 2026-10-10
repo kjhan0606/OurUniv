@@ -29,6 +29,7 @@ from cf4_r2_conditional_optimizer_diagnostic import (
     pop0_revisit10_step, pop0_revisit10_status, pop0_revisit11_status, pop0_revisit12_status,
     pop0_revisit13_status, pop0_revisit14_status,
     pop0_revisit15_step, pop0_revisit15_status, pop0_revisit16_status, pop0_revisit17_status,
+    pop0_revisit18_status,
     pop3_revisit5_step, pop3_revisit5_status, pop3_revisit6_status, pop3_revisit7_status,
     pop3_revisit8_status, pop3_revisit9_status,
     pop13_revisit_step, pop13_revisit_status,
@@ -2288,6 +2289,143 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
         self.assertEqual(int(1056.1335764309624), 1056)
         self.assertEqual(format(13.834774017333984, '.2f'), '13.83')
         self.assertNotEqual(13.834774017333984, 13.83)
+
+
+    def test_full_gradient76_names_one_population0_line(self):
+        white = -0.03590901837478598
+        gradient = 357.6188493537501
+        objective = 8208466.413144759
+        ic = 8072142.0269214865
+        tracer_prior = 0.9015597734294367
+        population_prior = 4.181828136334907
+        count = -142299.8170165097
+        secant_count = -142299.81701650968
+        fp = 5980.514181147921
+        secant_fp = 5980.514181147922
+        proposal = white + (-0.1)
+        saved = {
+            'tracer0_gradient': -66.1080459610013,
+            'tracer2_gradient': -67.80326850677002,
+            'tracer3_gradient': -76.27526399110563,
+            'tracer4_gradient': -51.726022889421415,
+            'tracer5_gradient': -2.2213793539822038,
+            'tracer6_gradient': -110.35138187663209,
+            'population_coordinate_0_gradient': 357.6188493537551,
+            'population_coordinate_2_gradient': 58.80419747795,
+            'population_coordinate_3_gradient': -3.7201387874915253,
+            'population_coordinate_4_gradient': -24.896888475976773,
+            'population_coordinate_5_gradient': -197.15806057279323,
+            'population_coordinate_8_gradient': -1.5345224305062817,
+            'population_coordinate_13_gradient': 1.8907704023845784,
+        }
+        measured = {
+            'tracer0_gradient': -66.1080459610023,
+            'tracer2_gradient': -67.80326850677062,
+            'tracer3_gradient': -76.27526399110621,
+            'tracer4_gradient': -51.726022889421216,
+            'tracer5_gradient': -2.2213793539822024,
+            'tracer6_gradient': -110.35138187663186,
+            'population_coordinate_0_gradient': 357.6188493537501,
+            'population_coordinate_2_gradient': 58.80419747794954,
+            'population_coordinate_3_gradient': -3.7201387874910705,
+            'population_coordinate_4_gradient': -24.896888475977057,
+            'population_coordinate_5_gradient': -197.15806057279335,
+            'population_coordinate_8_gradient': -1.5345224305059406,
+            'population_coordinate_13_gradient': 1.8907704023858574,
+        }
+        self.assertEqual(
+            pop0_revisit18_status(objective, objective, abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP0_REVISIT18_NO_IMPROVEMENT')
+        self.assertEqual(
+            pop0_revisit18_status(objective, objective - 1., abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP0_REVISIT18_IMPROVED')
+        self.assertEqual(
+            pop0_revisit18_status(
+                objective, objective - 1., abs(gradient), abs(gradient) / 10., 0., 0.),
+            'CONDITIONAL_POP0_REVISIT18_REDUCED')
+        self.assertEqual(
+            pop0_revisit18_status(
+                objective, objective - 1., abs(gradient), abs(gradient) / 10., 0., -1.),
+            'CONDITIONAL_POP0_REVISIT18_IMPROVED')
+        self.assertEqual(pop0_revisit15_step(gradient), -0.1)
+        self.assertEqual(pop0_revisit15_step(-gradient), 0.1)
+        with self.assertRaises(ValueError):
+            pop0_revisit15_step(0.)
+        self.assertEqual(pop3_revisit5_step(-3.7201387874910705), 0.1)
+        self.assertEqual(pop5_line_step(-197.15806057279335), 0.1)
+        self.assertNotEqual(pop3_revisit5_step(-3.7201387874910705), proposal)
+        self.assertEqual(proposal, -0.13590901837478597)
+        self.assertEqual(white - 0.1, proposal)
+        self.assertEqual(proposal - white, -0.09999999999999999)
+        self.assertNotEqual(proposal - white, -0.1)
+        self.assertNotEqual(proposal - white, -0.10000000000000003)
+        self.assertNotEqual(proposal - white, -0.09999999999999998)
+        self.assertEqual(0.3 + white, 0.264090981625214)
+        self.assertEqual((0.3 + white) + (-0.1), 0.164090981625214)
+        self.assertEqual(0.3 + (white + (-0.1)), 0.16409098162521402)
+        self.assertEqual(0.3 + white + (-0.1), 0.164090981625214)
+        self.assertEqual(0.3 + white - 0.1, 0.164090981625214)
+        self.assertNotEqual((0.3 + white) + (-0.1), 0.3 + (white + (-0.1)))
+        self.assertEqual(16777216 + 9, 16777225)
+        self.assertEqual(
+            ic + tracer_prior + population_prior - count - fp - objective, -9.313225746154785e-10)
+        self.assertNotEqual(-9.313225746154785e-10, 0.0)
+        self.assertEqual(count - secant_count, -2.9103830456733704e-11)
+        self.assertEqual(fp - secant_fp, -9.094947017729282e-13)
+        self.assertEqual(0. - (-(count - secant_count) - (fp - secant_fp)), -3.001332515850663e-11)
+        self.assertLess(0. - (-(count - secant_count) - (fp - secant_fp)), 0.)
+        self.assertEqual(abs(gradient) / 10., 35.76188493537501)
+        self.assertEqual(format(abs(gradient) / 10., '.3f'), '35.762')
+        self.assertNotEqual(abs(gradient) / 10., 35.762)
+        self.assertGreater(abs(gradient), 0.00022566027606149425)
+        self.assertEqual(
+            measured['population_coordinate_0_gradient'] - saved['population_coordinate_0_gradient'],
+            -5.002220859751105e-12)
+        self.assertLess(
+            measured['population_coordinate_0_gradient'] - saved['population_coordinate_0_gradient'], 0.)
+        self.assertEqual(
+            max(saved, key=lambda name: abs(measured[name] - saved[name])),
+            'population_coordinate_0_gradient')
+        self.assertEqual(
+            measured['population_coordinate_3_gradient'] - saved['population_coordinate_3_gradient'],
+            4.547473508864641e-13)
+        self.assertGreater(
+            measured['population_coordinate_3_gradient'] - saved['population_coordinate_3_gradient'], 0.)
+        self.assertTrue(all(measured[name] - saved[name] != 0. for name in saved))
+        self.assertEqual(1e-4 * max(abs(gradient), 1.), 0.03576188493537501)
+        self.assertNotEqual(1e-4 * max(abs(gradient), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(-1.5345224305059406), 1.), 1e-4)
+        self.assertGreaterEqual(abs(-1.5345224305059406), 1.)
+        self.assertGreater(abs(-3.7201387874910705), 0.3690110978312417)
+        self.assertLess(abs(-3.7201387874910705), 26.966669559198756)
+        self.assertGreater(abs(58.80419747794954), 0.25983369897036457)
+        self.assertGreaterEqual(abs(58.80419747794954), 1.)
+        self.assertGreater(abs(-197.15806057279335), 0.2070679793428482)
+        self.assertGreater(abs(-197.15806057279335), 16.082954304664682)
+        self.assertGreater(abs(-197.15806057279335), 16.565390557877073)
+        self.assertLess(abs(-24.896888475977057), 54.28941177183742)
+        self.assertLess(abs(1.8907704023858574), 23.3422325645632)
+        self.assertGreaterEqual(abs(1.8907704023858574), 1.)
+        self.assertGreater(abs(-110.35138187663186), 11.035181616702818)
+        self.assertEqual(float(100 * np.exp(0.5 * 0.4259753562964724)), 123.73694044672878)
+        self.assertEqual(8208466.486239768 + (-0.07309500873088837), objective)
+        self.assertEqual(int(593.1710079739569), 593)
+        self.assertNotEqual(593.1710079739569, 593.840936321998)
+        self.assertEqual(format(10.925739288330078, '.2f'), '10.93')
+        self.assertNotEqual(10.925739288330078, 10.93)
+        self.assertNotEqual(10.925739288330078, 10.927505493164062)
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+        self.assertNotEqual(104.85063171386719, 104.85)
+        self.assertEqual(format(1.7928263833307714, '.6f'), '1.792826')
+        self.assertEqual(format(12.50904819076307, '.6f'), '12.509048')
+        self.assertEqual(format(69.56111664463356, '.6f'), '69.561117')
+        self.assertEqual(format(110.35138187663186, '.6f'), '110.351382')
+        self.assertEqual(format(126.05602109604513, '.6f'), '126.056021')
+        self.assertEqual(format(357.6188493537501, '.6f'), '357.618849')
+        self.assertNotEqual(357.6188493537501, 357.618849)
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        self.assertEqual(coordinate_line_action(True, False, False, False), 'continue')
 
     def test_pop3_revisit9_reduced_secant_queues_one_full_gradient(self):
         initial = 8208466.486239768
