@@ -286,3 +286,14 @@ uses total Hamiltonian, not monotonic objective descent. Next bounded tuning
 should assess larger steps and record fundamental-mode/nuisance movement;
 do not promote the two retained states to a posterior or launch a large
 chain without the warranted Astra science review.
+
+Next bounded tuning: same initial checkpoint and RNG, fixed step .1 (rather
+than .02), two one-step transitions, three exact evaluations including the
+initial replay. Record three fundamental cosine projections and their jumps,
+IC mean square and all 24 nuisance coordinates/jump norm. No heldout values,
+target change, posterior moment claim or new dynamics fixture. Wiring tests
+1171228 on grammar debug passed all three cases, including mode projection,
+invalid-step rejection and repeated rejected states. The two-proposal scope
+is tuning only; acceptance is not a mixing criterion. Q-GOAL: same NEW field;
+MW/M31 ambiguity and unresolved M33 remain, with no truth-ID candidate choice.
+Q-LEAN: reuse the existing adapter/kernel and short pilot, not a new pipeline.
