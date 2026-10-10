@@ -4,10 +4,25 @@ import unittest
 import numpy as np
 
 from cf4_r2_conditional_map import BudgetedObjective, EvaluationBudgetStop
+from cf4_affine_objective import AffineObjective
 from cf4_r2_raw_volume_target import checked_padded_support_width
 
 
 class ConditionalMapBudgetTest(unittest.TestCase):
+    def test_affine_replay_is_cached_and_trials_obey_same_hard_budget(self):
+        origin = np.array([1., .02])
+        objective = BudgetedObjective(
+            lambda q: (float(q @ q), 2 * q, {}),
+            max_evaluations=2, deadline=time.monotonic() + 30)
+        value, _ = objective(origin)  # Replay consumes the first call.
+        scaled = AffineObjective(objective, origin, [1., .001], value)
+        self.assertEqual(scaled(np.zeros(2))[0], 0.)
+        self.assertEqual(len(objective.records), 1)
+        scaled(np.ones(2))  # A trial consumes the second call.
+        with self.assertRaises(EvaluationBudgetStop):
+            scaled(-np.ones(2))
+        self.assertEqual(len(objective.records), 2)
+
     def test_support_workspace_ceiling_raises_without_truncating(self):
         self.assertEqual(checked_padded_support_width([32768]), 32768)
         with self.assertRaisesRegex(MemoryError, 'candidate support was not truncated'):

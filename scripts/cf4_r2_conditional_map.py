@@ -10,6 +10,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.optimize import minimize
+from cf4_affine_objective import AffineObjective
 
 from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_count_exposure import build_population_exposure_masks
@@ -125,6 +126,7 @@ class BudgetedObjective:
                    objective=value,
                    gradient_inf=float(np.max(np.abs(gradient))),
                    gradient_rms=float(np.sqrt(np.mean(gradient * gradient))),
+                   optimizer_accepted=False,
                    **detail)
         self.records.append(row)
         self._last_x = x.copy()
@@ -151,7 +153,9 @@ def _resource_snapshot_count(name):
     return None if value is None else int(value)
 
 
-def main():
+def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
+         max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
+         maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0):
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU allocation required')
     expected = os.environ['CF4_EXPECTED_COMMIT']
@@ -178,9 +182,9 @@ def main():
                       'current LCDM and 24 standard-normal nuisance priors once'),
         target_orders=dict(value=2, gradient=2, matched_primal=True),
         support_rule='rebuild shifted-source support for every distinct optimizer candidate; existing 8-sigma truncation remains approximate',
-        optimizer=dict(method='L-BFGS-B', max_exact_value_gradient_evaluations=MAX_EVALUATIONS,
-                       max_iterations=MAX_ITERATIONS, max_line_search_trials=MAX_LINE_SEARCH,
-                       maxcor=3, application_seconds=APP_SECONDS),
+        optimizer=dict(method='L-BFGS-B', max_exact_value_gradient_evaluations=max_evaluations,
+                       max_iterations=max_iterations, max_line_search_trials=max_line_search,
+                       maxcor=maxcor, application_seconds=app_seconds),
         pmwd_forward_evolution_per_target_evaluation=True,
         separate_ramses_or_standalone_simulation=False,
         physical_velocity_variance_in_likelihood=False,
@@ -198,13 +202,15 @@ def main():
     objective = None
 
     try:
-        if 'H200' not in str(jax.devices()[0].device_kind).upper():
-            raise RuntimeError('this retry requires the available typed H200 allocation')
+        gpu_mode = os.environ.get('CF4_GPU_MODE', 'h200')
+        if (gpu_mode not in ('h200', 'h100', 'a100')
+                or gpu_mode.upper() not in str(jax.devices()[0].device_kind).upper()):
+            raise RuntimeError('allocation does not match the requested typed GPU mode')
         stats = jax.devices()[0].memory_stats() or {}
         device_limit = stats.get('bytes_limit', 0)
         h200_free = _resource_snapshot_count('CF4_H200_FREE_TYPED_GPUS')
         report['resource_evidence'] = dict(
-            selected_mode='h200 / gpu:H200:1',
+            selected_mode=f'{gpu_mode} / gpu:{gpu_mode.upper()}:1',
             h200_was_checked=h200_free is not None,
             h200_idle=None if h200_free is None else h200_free > 0,
             h200_free_typed_gpus_at_submit=h200_free,
@@ -215,7 +221,7 @@ def main():
             current_device_limit_GiB=float(device_limit / 1024 ** 3) if device_limit else None,
             host_request_GiB=48,
             previous_joint_pilot_host_peak_GiB=15.260330200195312,
-            lbfgs_history_estimate_GiB=0.75,
+            lbfgs_history_estimate_GiB=2 * maxcor * (N_IC + 24) * 8 / 1024 ** 3,
             host_request_has_20_percent_margin=True,
         )
         if device_limit and 1.2 * KNOWN_DEVICE_PEAK_GIB * 1024 ** 3 > device_limit:
@@ -236,6 +242,28 @@ def main():
         del white0
         if q0.shape != (N_IC + 24,):
             raise ValueError('canonical N256 IC plus 24 current nuisance coordinates required')
+        replay = None
+        replay_gradient = None
+        if start_checkpoint is not None:
+            start_checkpoint = Path(start_checkpoint)
+            replay = json.loads((start_checkpoint.parent / 'result.json').read_text())
+            if (replay.get('status') != 'CONDITIONAL_FULL_GRADIENT_RECORDED'
+                    or replay.get('N') != N or replay.get('box_cMpc_h') != BOX
+                    or replay.get('likelihood_changed') is not False):
+                raise ValueError('restart requires a recorded gradient of the same conditional target')
+            with np.load(start_checkpoint, allow_pickle=False) as saved:
+                q0 = np.asarray(saved['q'], dtype=np.float64).copy()
+                replay_gradient = np.asarray(saved['gradient'], dtype=np.float64).copy()
+            if (q0.shape != (N_IC + 24,) or replay_gradient.shape != q0.shape
+                    or not np.isfinite(q0).all() or not np.isfinite(replay_gradient).all()):
+                raise ValueError('restart coordinates/gradient are invalid')
+            report.update(start_checkpoint=str(start_checkpoint),
+                          initialized_nuisances='saved conditional gradient checkpoint; unchanged priors',
+                          IC_lineage='saved conditional diagnostic, not a posterior draw',
+                          optimizer_coordinates=dict(IC_scale=1.0,
+                              nuisance_scale=np.broadcast_to(nuisance_scale, (24,)).tolist(),
+                              rule='q=q_start+D*z; fixed D; same target and chain-rule gradient'),
+                          longer_warm_start_authorized=True)
 
         rho128, velocity128, _, _, source, mix, observation, geometry = load_inputs()
         del rho128, velocity128
@@ -297,11 +325,15 @@ def main():
 
         source_jax = {k: jnp.asarray(v) for k, v in source.items()}
         obs_jax = {k: jnp.asarray(v) for k, v in observation.items()}
+        start_field = None
         def evaluate(q):
+            nonlocal start_field
             white = jnp.asarray(q[:N_IC])
             tracer = jnp.asarray(q[N_IC:N_IC + 9])
             population = jnp.asarray(q[N_IC + 9:])
             (rho, velocity), pullback = jax.vjp(field, white)
+            if start_field is None:
+                start_field = (np.asarray(rho).copy(), np.asarray(velocity).copy())
             packs, support_info = obs.support(rho, velocity, tracer, 2)
             (score, components), grads = obs.derivative(
                 rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
@@ -319,19 +351,58 @@ def main():
                     np.savez(out / 'best_parameters.npz', white_ic=best['x'][:N_IC],
                              tracer_white=best['x'][N_IC:N_IC + 9],
                              population_white=best['x'][N_IC + 9:],
-                             objective=best['objective'])
+                             objective=best['objective'], optimizer_accepted=False)
             _save_report(report_path, report, started)
 
         objective = BudgetedObjective(
-            evaluate, max_evaluations=MAX_EVALUATIONS,
-            deadline=started + APP_SECONDS, on_evaluation=persist_report)
+            evaluate, max_evaluations=max_evaluations,
+            deadline=started + app_seconds, on_evaluation=persist_report)
         solver = None
         budget_stop = None
+        optimizer_objective = objective
+        optimizer_start = q0
+        if replay is not None:
+            replay_value, live_gradient = objective(q0)
+            live_terms = objective.records[0]
+            if (abs(replay_value - replay['objective']) > 1e-8 * abs(replay['objective'])
+                    or any(abs(live_terms[k] - replay['terms'][k]) > 1e-3 for k in TERM_KEYS)
+                    or not np.allclose(live_gradient, replay_gradient, rtol=1e-4, atol=1e-4)):
+                raise AssertionError('checkpoint replay does not match the frozen target/gradient')
+            report['checkpoint_replay_passed'] = True
+            del replay_gradient, live_gradient
+            scale = np.ones_like(q0)
+            scale[N_IC:] = nuisance_scale
+            optimizer_objective = AffineObjective(objective, q0, scale, replay_value)
+            optimizer_start = np.zeros_like(q0)
+            del scale
+
+        def accepted_step(z):
+            x = (optimizer_objective.physical(z)
+                 if isinstance(optimizer_objective, AffineObjective) else np.asarray(z))
+            # Callback metadata must not trigger another expensive evaluation.
+            if not np.array_equal(x, objective._last_x):
+                raise RuntimeError('accepted optimizer state is absent from the evaluation cache')
+            row = objective.records[-1]
+            row['optimizer_accepted'] = True
+            report.setdefault('accepted_evaluations', []).append(row['evaluation'])
+            np.savez(out / 'accepted_parameters.npz', white_ic=x[:N_IC],
+                     tracer_white=x[N_IC:N_IC + 9], population_white=x[N_IC + 9:],
+                     objective=row['objective'], optimizer_accepted=True)
+            if np.array_equal(x, objective.best['x']):
+                objective.best['detail']['optimizer_accepted'] = True
+                np.savez(out / 'best_parameters.npz', white_ic=x[:N_IC],
+                         tracer_white=x[N_IC:N_IC + 9], population_white=x[N_IC + 9:],
+                         objective=row['objective'], optimizer_accepted=True)
+            report['evaluations'] = objective.records.copy()
+            _save_report(report_path, report, started)
+
         try:
             solver = minimize(
-                objective, q0, method='L-BFGS-B', jac=True,
-                options=dict(maxiter=MAX_ITERATIONS, maxfun=MAX_EVALUATIONS,
-                             maxls=MAX_LINE_SEARCH, maxcor=3, ftol=1e-9, gtol=1e-4))
+                optimizer_objective, optimizer_start, method='L-BFGS-B', jac=True,
+                callback=accepted_step,
+                options=dict(maxiter=max_iterations, maxfun=max_evaluations,
+                             maxls=max_line_search, maxcor=maxcor,
+                             ftol=0.0 if replay is not None else 1e-9, gtol=1e-4))
         except EvaluationBudgetStop as stop:
             budget_stop = str(stop)
 
@@ -365,6 +436,7 @@ def main():
             exact_target_evaluations=len(objective.records),
             initial_objective=objective.records[0]['objective'],
             best_objective=best['objective'],
+            best_is_optimizer_accepted=bool(best['detail'].get('optimizer_accepted', False)),
             objective_improvement=objective.records[0]['objective'] - best['objective'],
             initial_components={k: objective.records[0][k] for k in (
                 'IC_prior_NLL', 'tracer_nuisance_prior_NLL', 'population_nuisance_prior_NLL',
@@ -378,10 +450,20 @@ def main():
             best_density_max=float(rho.max()),
             density_change_rms_from_initializer=float(np.sqrt(np.mean((rho - initial_rho) ** 2))),
             velocity_change_rms_km_s=np.sqrt(np.mean((velocity - initial_velocity) ** 2, axis=(1, 2, 3))).tolist(),
+            density_change_rms_from_run_start=float(np.sqrt(np.mean((rho - start_field[0]) ** 2))),
+            velocity_change_rms_from_run_start_km_s=np.sqrt(
+                np.mean((velocity - start_field[1]) ** 2, axis=(1, 2, 3))).tolist(),
             physical_mass_weighted_dispersion_km_s=np.sqrt(
                 (variance * rho[None, ...]).sum(axis=(1, 2, 3)) / rho.sum()).tolist(),
             physical_dispersion_not_in_likelihood=True,
             PMWD_candidate_evolutions=len(objective.records) + 1,
+            canonical_gradient_blocks={name: dict(
+                rms=float(np.sqrt(np.mean(best['gradient'][region] ** 2))),
+                inf=float(np.max(np.abs(best['gradient'][region]))))
+                for name, region in (('IC', slice(0, N_IC)),
+                                     ('tracer', slice(N_IC, N_IC + 9)),
+                                     ('population', slice(N_IC + 9, None)))},
+            IC_update_rms=float(np.sqrt(np.mean((qwhite - q0[:N_IC]) ** 2))),
         )
         np.savez(out / 'conditional_best_field.npz', white_ic=qwhite,
                  tracer_white=best['x'][N_IC:N_IC + 9],
@@ -390,6 +472,7 @@ def main():
                  physical_velocity_variance_km2_s2=variance.astype(np.float32),
                  velocity_valid=valid, box_cMpc_h=BOX,
                  native_mesh_origin_fraction=0., R2_complete=False,
+                 optimizer_accepted=bool(best['detail'].get('optimizer_accepted', False)),
                  posterior_sample=False)
         _save_report(report_path, report, started)
         print(json.dumps(report, allow_nan=False), flush=True)

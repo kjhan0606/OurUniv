@@ -7,7 +7,23 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 continuation — 2026-10-06
+## Current R2 recovery — 2026-10-10
+
+418601 has completed (10m04s, exit0). IC gradient RMS1.792859/inf12.509119
+and nuisance inf354.618602 establish continuing nonstationarity. The IC
+remains fixed; no posterior, uncertainty or heldout prediction was delivered.
+The historical scalar-coordinate sequence below is closed as an execution
+method, not promoted. Its infinity-norm priority and repeated scalar gates
+do not establish that IC updates must remain frozen. The proposed single
+bounded joint optimization, using unchanged conditional v6 and saved
+gradient78, is recorded in `CF4_R2_JOINT_OPTIMIZATION_20261010.md`.
+Astra's mid-course CONDITIONAL GO and the driver's evidence check support
+one <=18-evaluation joint warm start (5h application/6h Slurm). This replaces
+the historical no-IC-update restriction for this bounded experiment only.
+All full R2 science requirements and the separate Astra exit audit remain;
+R3 has not started.
+
+## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
 Conditional gradient check. Job 414921 reduced the tracer-0 derivative from
 13,524.69 to -410.477 at tracer 0 = 0.230145. Job 414929 failed before any

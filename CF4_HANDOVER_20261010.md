@@ -1,5 +1,9 @@
 # OurUniv / CF4 업무인수인계서
 
+업데이트: 아래 23:41 실행 상태는 과거 기록이다. 418601은 10m04s/exit0으로
+완료했고 gradient가 저장됐다. 반복 단일계수 조정은 종료하며, 현 후속 설계는
+`CF4_R2_JOINT_OPTIMIZATION_20261010.md`를 따른다. R2는 미완료다.
+
 작성 기준: 2026-10-10 23:41 KST
 
 저장소: `/home/kjhan/BACKUP/CF4` · 브랜치 `agent/freeze-zoom-pipeline`
