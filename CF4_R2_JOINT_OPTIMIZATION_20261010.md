@@ -196,3 +196,14 @@ Slurm batch MaxRSS was 9627408 KiB. This verifies chunked target equivalence
 at gradient78 only, not the failed broad candidate's memory or posterior
 mixing. Next recovery requirement is broad-support state validation before
 any bounded optimization/sampler continuation; R2 remains incomplete.
+
+Recovery provenance clarification: neither saved parameter file contains the
+candidate that triggered the 191040-cell exception. `accepted_parameters.npz`
+is evaluation 6; `best_parameters.npz` is unaccepted evaluation 8, whose
+support width was 77568 and whose objective is recorded. The persistence
+callback runs only after a finite completed evaluation. Thus replaying either
+file cannot be advertised as reproducing the failing candidate. Evaluation 8
+can serve as a broader recorded-state replay with component-value checks;
+the exact failing state requires deterministic trajectory reproduction or
+explicit pre-evaluation candidate capture. Do not loosen checkpoint lineage
+checks merely to accept a failed run's arbitrary saved file.

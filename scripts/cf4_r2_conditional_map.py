@@ -156,7 +156,9 @@ def _resource_snapshot_count(name):
 def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
          maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
-         support_chunk_cells=None):
+         support_chunk_cells=None, recorded_trial=None):
+    if recorded_trial is not None and (start_checkpoint is not None or max_evaluations != 1):
+        raise ValueError('recorded trial is a one-evaluation diagnostic, not an optimizer restart')
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU allocation required')
     expected = os.environ['CF4_EXPECTED_COMMIT']
@@ -245,6 +247,26 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             raise ValueError('canonical N256 IC plus 24 current nuisance coordinates required')
         replay = None
         replay_gradient = None
+        trial_reference = None
+        if recorded_trial is not None:
+            recorded_trial = Path(recorded_trial)
+            provenance = json.loads((recorded_trial.parent / 'result.json').read_text())
+            if (recorded_trial != BASE / 'r2_joint_warm_start_20261010/best_parameters.npz'
+                    or provenance.get('source_commit') != '4c7ef5133fda4fdf6aa542632c2f9da931694399'
+                    or provenance.get('N') != N or provenance.get('box_cMpc_h') != BOX
+                    or provenance.get('best_evaluation') != 8
+                    or provenance.get('target_orders') != dict(value=2, gradient=2, matched_primal=True)):
+                raise ValueError('recorded trial lineage is not the known conditional-v6 evaluation 8')
+            trial_reference = provenance['evaluations'][7]
+            with np.load(recorded_trial, allow_pickle=False) as saved:
+                if bool(saved['optimizer_accepted']) or abs(float(saved['objective']) - trial_reference['objective']) > 1e-6:
+                    raise ValueError('recorded trial metadata mismatch')
+                q0 = np.concatenate((saved['white_ic'], saved['tracer_white'], saved['population_white']))
+            if q0.shape != (N_IC + 24,) or not np.isfinite(q0).all():
+                raise ValueError('recorded trial coordinates invalid')
+            report.update(recorded_trial=str(recorded_trial), recorded_trial_evaluation=8,
+                          recorded_trial_optimizer_accepted=False,
+                          IC_lineage='unaccepted recorded diagnostic trial; not a posterior draw')
         if start_checkpoint is not None:
             start_checkpoint = Path(start_checkpoint)
             replay = json.loads((start_checkpoint.parent / 'result.json').read_text())
@@ -364,6 +386,14 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         budget_stop = None
         optimizer_objective = objective
         optimizer_start = q0
+        if trial_reference is not None:
+            trial_value, trial_gradient = objective(q0)
+            if (abs(trial_value - trial_reference['objective']) > 1e-8 * abs(trial_reference['objective'])
+                    or any(abs(objective.records[0][k] - trial_reference[k]) > 1e-3 for k in TERM_KEYS)):
+                raise AssertionError('recorded trial objective terms changed')
+            report['recorded_trial_terms_replay_passed'] = True
+            report['recorded_trial_full_gradient_reference_available'] = False
+            del trial_gradient
         if replay is not None:
             replay_value, live_gradient = objective(q0)
             live_terms = objective.records[0]
