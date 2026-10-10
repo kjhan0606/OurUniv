@@ -2352,6 +2352,84 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             tracer0_secant(failed, failed_gradient, white, gradient)
 
 
+    def test_pop5_revisit5_sign_stop_queues_one_secant(self):
+        accepted = 0.0784613121345734
+        rejected = 0.1784613121345734
+        gneg = -155.83164153568023
+        gpos = 16870.176577455582
+        initial = 8208466.393512041
+        best = 8209306.8202527985
+        theta = tracer0_secant(rejected, gpos, accepted, gneg)
+        self.assertEqual(theta, 0.07937656860297954)
+        self.assertNotEqual(theta, accepted)
+        self.assertNotEqual(theta, rejected)
+        self.assertLess(accepted, theta)
+        self.assertLess(theta, rejected)
+        self.assertEqual(theta - accepted, 0.0009152564684061365)
+        self.assertEqual(rejected - theta, 0.09908474353159386)
+        self.assertEqual((theta - accepted) + (rejected - theta), 0.09999999999999999)
+        self.assertNotEqual((theta - accepted) + (rejected - theta), 0.1)
+        self.assertLess(theta - accepted, rejected - theta)
+        self.assertEqual(0.5 * theta, 0.03968828430148977)
+        self.assertEqual(0.5 * accepted + 0.5 * (theta - accepted), 0.5 * theta)
+        self.assertEqual(rejected, accepted + 0.1)
+        self.assertEqual(rejected - accepted, 0.09999999999999999)
+        self.assertNotEqual(rejected - accepted, 0.1)
+        self.assertNotEqual(rejected - accepted, 0.10000000000000002)
+        self.assertEqual(gneg * gpos, -2628907.309061687)
+        self.assertLess(gneg * gpos, 0.)
+        self.assertEqual(best - initial, 840.4267407571897)
+        self.assertGreater(best, initial)
+        self.assertEqual(pop5_line_step(gneg), 0.1)
+        self.assertEqual(pop5_line_step(gpos), -0.1)
+        self.assertNotEqual(pop5_line_step(gpos), theta - accepted)
+        self.assertEqual(pop0_revisit15_step(0.0018867937847633909), -0.1)
+        self.assertEqual(pop3_revisit5_step(67.71047756134459), -0.1)
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        with self.assertRaises(ValueError):
+            tracer0_secant(accepted, gneg, rejected, gpos)
+        self.assertEqual(abs(gneg) / 10., 15.583164153568024)
+        self.assertEqual(abs(-155.8316415356799) / 10., 15.583164153567989)
+        self.assertNotEqual(abs(gneg) / 10., abs(-155.8316415356799) / 10.)
+        self.assertEqual(format(abs(gneg) / 10., '.3f'), '15.583')
+        self.assertNotEqual(abs(gneg) / 10., 15.583)
+        self.assertEqual(1e-4 * max(abs(0.0018867937847633909), 1.), 1e-4)
+        self.assertNotEqual(0.0018867937847633909, 0.0018867937824896541)
+        self.assertNotEqual(0.0018867937847633909, 0.0018867937852181382)
+        self.assertEqual(1e-4 * abs(gneg), 0.015583164153568025)
+        self.assertNotEqual(1e-4 * abs(gneg), 1e-4)
+        self.assertEqual(1e-4 * abs(-155.8316415356799), 0.01558316415356799)
+        self.assertNotEqual(1e-4 * abs(gneg), 1e-4 * abs(-155.8316415356799))
+        self.assertGreaterEqual(abs(-1.5323830421727354), 1.)
+        self.assertEqual(1e-4 * max(abs(-1.5323830421727354), 1.), 0.00015323830421727354)
+        self.assertEqual(gneg - -155.8316415356799, -3.410605131648481e-13)
+        self.assertEqual(-2.7966517990307693e-12, -2.7966517990307693e-12)
+        self.assertLess(-2.7966517990307693e-12, 0.)
+        like_initial = -142299.81701650968 + 5980.533817814088
+        like_best = -142299.81701650968 + 5140.119923188144
+        self.assertEqual(
+            pop5_revisit5_status(initial, best, abs(gneg), abs(gpos), like_initial, like_best),
+            'CONDITIONAL_POP5_REVISIT5_NO_IMPROVEMENT')
+        self.assertEqual(
+            pop5_revisit5_status(initial, initial, abs(gneg), abs(gneg), like_initial, like_initial),
+            'CONDITIONAL_POP5_REVISIT5_NO_IMPROVEMENT')
+        self.assertEqual(
+            pop5_revisit5_status(initial, initial - 1., abs(gneg), abs(gneg) / 10., like_initial, like_initial),
+            'CONDITIONAL_POP5_REVISIT5_REDUCED')
+        self.assertEqual(best - initial, 840.4267407571897)
+        self.assertEqual(-840.4138946259445 - -840.4138946259336, -1.0913936421275139e-11)
+        self.assertEqual(0.01284613121345668 - 0.012846131213457339, -6.591949208711867e-16)
+        self.assertLess(0.01284613121345668 - 0.012846131213457339, 0.)
+        self.assertEqual(3.171862772433087e-11 / -9.313225746154785e-10, -0.0340576171875)
+        self.assertEqual(int(1067.028250894975), 1067)
+        self.assertNotEqual(int(1067.028250894975), 17 * 60 + 59)
+        self.assertEqual(format(13.762870788574219, '.2f'), '13.76')
+        self.assertNotEqual(13.762870788574219, 13.76)
+        self.assertNotEqual(13.762870788574219, 13.79525375366211)
+        self.assertEqual(format(13.79525375366211, '.2f'), '13.80')
+        self.assertEqual(float(100 * np.exp(0.5 * 0.4259753562964724)), 123.73694044672878)
+
     def test_full_gradient77_names_one_population5_line(self):
         nuisance = [-66.1080459610012, -37.52122719449163, -67.80445921231622, -76.2792875319802, -51.72773062660552, -2.2213819959788244, -110.35841728017506, 101.64255948185507, 46.55125527901723, 0.0018867937824896541, -96.28899936268222, -148.08298269574695, 67.71047756134573, -21.29209179105471, -155.8316415356799, -110.43239823557018, -117.9579594086178, -1.5323830421735312, 16.15614201376329, -115.0102666142381, 19.04226378749087, 138.61918829549032, 1.4367109547059218, 33.9894024689335]
         pop5 = -155.8316415356799
