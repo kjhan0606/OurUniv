@@ -2087,6 +2087,62 @@ class ConditionalDiagnosticGateTest(unittest.TestCase):
             pop2_revisit_status(objective0, objective1, abs(g_neg), abs(g_pos), 0., 0.),
             'CONDITIONAL_POP2_REVISIT_NO_IMPROVEMENT')
 
+    def test_pop0_revisit16_sign_stop_queues_one_secant(self):
+        white = -0.03590646609168676
+        failed_white = -0.13590646609168677
+        gradient = 363.8563766673452
+        failed_gradient = -325347.270094148
+        theta = tracer0_secant(white, gradient, failed_white, failed_gradient)
+        self.assertEqual(theta, -0.03601817746630569)
+        self.assertEqual(pop0_revisit15_step(gradient), -0.1)
+        self.assertEqual(pop0_revisit15_step(failed_gradient), 0.1)
+        self.assertEqual(failed_white - white, -0.1)
+        self.assertEqual(failed_white, white - 0.1)
+        self.assertEqual(white - theta, 0.0001117113746189266)
+        self.assertEqual(theta - failed_white, 0.09988828862538109)
+        self.assertEqual((white - theta) + (theta - failed_white), 0.1)
+        self.assertLess(white - theta, theta - failed_white)
+        self.assertEqual(0.3 + theta, 0.2639818225336943)
+        self.assertEqual((0.3 + white) + (theta - white), 0.26398182253369434)
+        self.assertNotEqual(0.3 + theta, (0.3 + white) + (theta - white))
+        self.assertEqual(gradient * failed_gradient, -118379678.85506882)
+        self.assertLess(gradient * failed_gradient, 0.)
+        with self.assertRaises(ValueError):
+            tracer0_secant(failed_white, failed_gradient, white, gradient)
+        self.assertEqual(coordinate_line_action(False, True, False, False), 'stop')
+        self.assertEqual(coordinate_line_action(False, False, False, False), 'midpoint')
+        self.assertEqual(8224715.739591803 - 8208466.600938824, 16249.138652979396)
+        self.assertEqual(-(-16249.13006233332) + 0.00859064660916875 + (-5.329638952389359e-10), 16249.138652979396)
+        self.assertEqual(-5.329638952389359e-10 / 9.313225746154785e-10, -0.572265625)
+        self.assertLess(-5.329638952389359e-10, 0.)
+        self.assertLess(abs(-5.329638952389359e-10), 1e-9)
+        self.assertEqual(7.28583859910259e-17, 0.00859064660916875 - 0.5 * (failed_white ** 2 - white ** 2))
+        self.assertGreater(7.28583859910259e-17, 0.)
+        self.assertEqual(-142299.81701650965 - -142299.8170165097, 5.820766091346741e-11)
+        self.assertEqual(5.820766091346741e-11, 2 * 2.9103830456733704e-11)
+        self.assertEqual(5.820766091346741e-11 / 9.313225746154785e-10, 0.0625)
+        self.assertNotEqual(-142299.81701650965, -142299.8170165097)
+        self.assertGreater(abs(-6.369305083353538e-11), abs(1.3642420526593924e-12))
+        self.assertLess(abs(0.5899675730594862), 1.)
+        self.assertGreaterEqual(abs(-1.1368095880749212), 1.)
+        self.assertEqual(1e-4 * max(abs(0.5899675730594862), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(gradient), 1.), 1e-4)
+        self.assertNotEqual(1e-4 * max(abs(-1.1368095880749212), 1.), 1e-4)
+        self.assertEqual(abs(gradient) / 10., 36.385637666734524)
+        self.assertEqual(abs(363.85637666734385) / 10., 36.38563766673438)
+        self.assertNotEqual(abs(gradient) / 10., abs(363.85637666734385) / 10.)
+        self.assertEqual(format(abs(gradient) / 10., '.3f'), '36.386')
+        self.assertNotEqual(abs(gradient) / 10., 36.386)
+        self.assertGreater(abs(failed_gradient), abs(gradient) / 10.)
+        self.assertGreater(abs(-3.7831335430786783), 0.3690110978312417)
+        self.assertGreater(abs(-188359.656881561), 1.)
+        self.assertEqual(
+            pop0_revisit16_status(8208466.600938824, 8208466.600938824, abs(gradient), abs(gradient), 0., 0.),
+            'CONDITIONAL_POP0_REVISIT16_NO_IMPROVEMENT')
+        self.assertEqual(int(1066.4839881359367), 1066)
+        self.assertEqual(format(13.803665161132812, '.2f'), '13.80')
+        self.assertEqual(format(104.85063171386719, '.2f'), '104.85')
+
     def test_full_gradient72_names_one_population0_line(self):
         white = -0.03590646609168676
         gradient = 363.85637666734385
