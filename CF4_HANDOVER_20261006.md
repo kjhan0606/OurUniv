@@ -1,6 +1,6 @@
 # OurUniv / CF4 업무인수인계서
 
-작성 기준: 2026-10-06 (KST)
+작성 기준: 2026-10-06 (KST). 실행 상태는 `CF4_HANDOVER_20261010.md`가 이어 받는다. 이 파일은 그때까지의 역사다.
 
 저장소: `/home/kjhan/BACKUP/CF4` · 브랜치 `agent/freeze-zoom-pipeline`
 기준 계획: `CF4_MASTER_PLAN.md`, `CF4_END_TO_END_REPLAN_20260913.md`
