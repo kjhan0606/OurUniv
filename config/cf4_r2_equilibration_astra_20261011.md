@@ -42,3 +42,18 @@ must not seed/select candidates.
 Q-LEAN: compact existing target/kernel/restart/readout. No separate RAMSES/TNG
 run, scalar pilot ladder or expanded gating framework. R2 remains open;
 no exit email or R3 approval.
+
+## Driver check of current heldout access paths
+
+Static inspection of conditional_map and raw_field_profile confirms the
+current count path requests train_keys/train_counts and geometric heldout
+voxel/exclusion masks, not heldout counts. load_train_singletons is called
+with include_fp_parameters=False; it selects roles==0 using structural group
+IDs and point geometry. Photometry/cut arrays are indexed by selected training
+PGCs before entering the observation target. Whole-catalogue membership/IDs
+and point geometry are accessed, so "heldout measurements unused" does not
+mean "all heldout metadata inaccessible". This is a code-path check only;
+it does not prove historical development blindness, an independent FP
+heldout cohort, or absence of upstream calibration leakage. The existing
+prospective heldout protocol still requires those assessments before any
+predictive validation claim. No heldout measurement values were scored here.
