@@ -11,6 +11,7 @@ import jax.numpy as jnp
 import numpy as np
 from scipy.optimize import minimize
 from cf4_affine_objective import AffineObjective
+from cf4_r2_field_readout import present_field_readout
 
 from cf4_r1_particle_forward import make_dynamics, particle_grid
 from cf4_r2_count_exposure import build_population_exposure_masks
@@ -275,8 +276,11 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             hmc_replay = False
             if (sampling_driver is not None
                     and replay.get('status') == 'CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR'
-                    and replay.get('source_commit') == 'c4ea6cf149dc4759d1c4cc6226a46502c2e3f1d5'
-                    and start_checkpoint == BASE / 'r2_hmc_transport_20261011/hmc_retained_state.npz'
+                    and (start_checkpoint, replay.get('source_commit')) in {
+                        (BASE / 'r2_hmc_transport_20261011/hmc_retained_state.npz',
+                         'c4ea6cf149dc4759d1c4cc6226a46502c2e3f1d5'),
+                        (BASE / 'r2_hmc_equilibrate_20261011/hmc_retained_state.npz',
+                         '462524d26b3f5847d55544f3583da1e2b0f82922')}
                     and replay.get('checkpoint_replay_passed') is True
                     and replay.get('target_orders') == dict(value=2, gradient=2, matched_primal=True)):
                 with np.load(start_checkpoint, allow_pickle=False) as saved:
@@ -400,8 +404,11 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             (score, components), grads = obs.derivative(
                 rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
             ic_gradient, = pullback((grads[0], grads[1]))
-            return assemble_conditional_objective(
+            value, gradient, detail = assemble_conditional_objective(
                 q, score, components, ic_gradient, grads[2], grads[3], support_info)
+            if sampling_driver is not None:
+                detail['present_field_readout'] = present_field_readout(rho, velocity)
+            return value, gradient, detail
 
         def persist_report(_x, row, best):
             report['evaluations'] = objective.records.copy()

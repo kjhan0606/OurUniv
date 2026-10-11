@@ -45,6 +45,7 @@ def run(objective, initial, out, report, save):
     q = initial.copy()
     value, gradient = objective(q)
     current_terms = {k: objective.records[-1][k] for k in TERM_KEYS}
+    current_field = objective.records[-1].get('present_field_readout')
     metric = FixedSplitMetric(inverse_laplacian_metric_symbol(N), np.diag(SCALES**2))
     fingerprint = dict(N=N, box=384., target_rules=report['target_rules'],
         target_orders=report['target_orders'], split=report['split_source'],
@@ -75,6 +76,7 @@ def run(objective, initial, out, report, save):
             phase='warmup' if index<6 else 'fixed_diagnostic', posterior_sample=False,
             discard_for_inference=True)
         report['current_state_terms'] = current_terms.copy()
+        report['current_present_field_readout'] = current_field
         save()
     checkpoint(next_index)
     end_index = int(os.environ.get('CF4_HMC_END_INDEX', '10'))
@@ -102,6 +104,7 @@ def run(objective, initial, out, report, save):
         q, value, gradient = new_q, new_value, new_gradient
         if info['accepted']:
             current_terms = {k: objective.records[-1][k] for k in TERM_KEYS}
+            current_field = objective.records[-1].get('present_field_readout')
         delta = q-before
         spectral_delta = fftn(delta[:N**3].reshape((N,)*3), norm='ortho', workers=1)
         proposal_distance = (np.sum(np.abs(spectral_delta)**2/metric.c)
@@ -109,6 +112,7 @@ def run(objective, initial, out, report, save):
         row = dict(index=index, warmup=index<6, discard_for_inference=True, steps=steps, step=step, **info,
             **movement(q,before,N), **mode_readout(q,N), objective=value,
             current_terms=current_terms.copy(), acceptance_probability=float(np.exp(info['log_acceptance'])),
+            present_field_readout=current_field,
             seconds=time.monotonic()-started,
             canonical_jump_rms=float(np.sqrt(np.mean(delta*delta))),
             proposal_metric_jump_rms=float(np.sqrt(proposal_distance/(N**3+24))))

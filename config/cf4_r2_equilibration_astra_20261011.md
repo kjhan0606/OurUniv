@@ -82,3 +82,13 @@ evaluate a bounded, explicitly costed equilibration/slow-block proposal.
 Do not relabel these states as production draws or automatically launch
 long multichain production. MW/M31 ambiguity and unresolved M33 remain;
 truth labels must not choose generated-field candidates. No R2 exit email.
+
+The oracle now attaches density moments and mass-weighted bulk/spatial
+velocity summaries to its already computed field, only for sampling runs.
+The transport commits that summary on acceptance and repeats the retained
+summary on rejection. These summaries are not within-cell dispersion or UQ.
+Terminal419084 was added to the exact path/source restart allowlist; full
+target/component/gradient replay and the existing metric/RNG fingerprint
+checks remain required. Grammar1172571 completed exit0:0: all six transport
+regressions passed, including rejection-summary preservation and real-kernel
+continuous/resumed equality. This is wiring validation, not CF4 convergence.

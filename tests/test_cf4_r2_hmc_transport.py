@@ -18,7 +18,8 @@ class Oracle:
         self.deadline = time.monotonic()+100000.
     def __call__(self, q):
         value = float(q@q/2)
-        self.records.append({k:value+i for i,k in enumerate(transport.TERM_KEYS)})
+        self.records.append(dict({k:value+i for i,k in enumerate(transport.TERM_KEYS)},
+                                 present_field_readout={'fixture_coordinate_sum':float(q.sum())}))
         return value, q.copy()
 
 
@@ -63,6 +64,7 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(report['diagnostic_retained'],4)
         for previous,row in zip(report['sampler_trace'][::2],report['sampler_trace'][1::2]):
             self.assertEqual(row['current_terms'],previous['current_terms'])
+            self.assertEqual(row['present_field_readout'],previous['present_field_readout'])
             self.assertEqual(row['canonical_jump_rms'],0.)
         self.assertEqual(int(saved['next_index']),10)
         self.assertFalse(bool(saved['posterior_sample']))
