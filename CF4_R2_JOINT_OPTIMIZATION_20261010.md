@@ -380,3 +380,32 @@ All three observed transitions are warmup and must be excluded from
 posterior uncertainty summaries. Continue the already-running bounded
 bundle; no extra simulation, restart, promotion or R2 exit is justified
 by these interim observations.
+
+### Completed transport and discarded equilibration continuation
+
+418866 completed in 05:01:12, exit 0, batch MaxRSS 15789296K. Six adapted
+warmup transitions and four frozen diagnostics completed; fixed acceptance
+was 3/4 with signed energy errors -.50182, -.59025, +.47453, +.80746.
+IC prior still moved from 8185130 after warmup to 8247765 at the terminal
+state. These four diagnostics do not establish stationarity or uncertainty.
+
+Driver adopts Astra's mid-course recommendation for a substantive discarded
+equilibration block, not immediate metric replacement or production. Resume
+terminal418866 with unchanged target, metric, RNG and frozen epsilon
+.11996093316338646, independent trajectory lengths 4/6, end index30 (up to20
+new complete transitions), 97 exact calls including replay, 11.5h app cap
+inside12h Slurm. Whole-trajectory budget checks may finish fewer transitions.
+Request48GiB: latest chunked application peak16.43GiB has almost3x headroom;
+historical78.92GiB belonged to the unchunked path, which is not used here.
+All states explicitly discard_for_inference, regardless of adaptation flag.
+
+Grammar1171375 passed six resume tests, including actual Gaussian split-HMC
+continuous8 versus split6/resume8 equality of terminal coordinates, gradient,
+RNG, terms, step, fingerprint and scientific trace (excluding wall times).
+This verifies continuation mechanics, not actual-data convergence.
+Q-GOAL: same NEW N256 z=0 field; MW/M31 remain ambiguous and M33 unresolved.
+Their eventual observables must constrain those roles on that same LG field;
+no truth-ID initialization/selection. Heldout prediction, observation
+calibration and present-field uncertainty remain incomplete.
+Q-LEAN: reuse current oracle/kernel; no separate simulation or gate framework.
+R2 remains open; no exit email or R3 entry.

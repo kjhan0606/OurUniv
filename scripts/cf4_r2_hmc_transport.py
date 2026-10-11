@@ -66,13 +66,14 @@ def run(objective, initial, out, report, save):
             raise ValueError('transport resume schedule/phase is inconsistent')
     report.update(status='CONDITIONAL_HMC_TRANSPORT_RUNNING_NOT_POSTERIOR',
         optimizer=None, sampler_trace=trace, posterior_sample=False,
-        posterior_uncertainty=False, sampler_fingerprint=fingerprint,
+        posterior_uncertainty=False, discard_for_inference=True, sampler_fingerprint=fingerprint,
         Q_LEAN='one sequential bounded warmup/transport bundle; no holdout values or separate simulation')
     def checkpoint(index):
         np.savez(out/'hmc_retained_state.npz', q=q, gradient=gradient, objective=value,
             rng_state=json.dumps(rng.bit_generator.state), next_index=index, step=step,
             fingerprint=json.dumps(fingerprint), current_terms=json.dumps(current_terms),
-            phase='warmup' if index<6 else 'fixed_diagnostic', posterior_sample=False)
+            phase='warmup' if index<6 else 'fixed_diagnostic', posterior_sample=False,
+            discard_for_inference=True)
         report['current_state_terms'] = current_terms.copy()
         save()
     checkpoint(next_index)
@@ -105,7 +106,7 @@ def run(objective, initial, out, report, save):
         spectral_delta = fftn(delta[:N**3].reshape((N,)*3), norm='ortho', workers=1)
         proposal_distance = (np.sum(np.abs(spectral_delta)**2/metric.c)
                              + np.sum((delta[N**3:]/SCALES)**2))
-        row = dict(index=index, warmup=index<6, steps=steps, step=step, **info,
+        row = dict(index=index, warmup=index<6, discard_for_inference=True, steps=steps, step=step, **info,
             **movement(q,before,N), **mode_readout(q,N), objective=value,
             current_terms=current_terms.copy(), acceptance_probability=float(np.exp(info['log_acceptance'])),
             seconds=time.monotonic()-started,
@@ -123,5 +124,7 @@ def run(objective, initial, out, report, save):
 
 
 if __name__ == '__main__':
-    main(start_checkpoint=START, max_evaluations=49, app_seconds=19800,
+    main(start_checkpoint=START,
+         max_evaluations=int(os.environ.get('CF4_HMC_MAX_EVALUATIONS', '49')),
+         app_seconds=int(os.environ.get('CF4_HMC_APP_SECONDS', '19800')),
          support_chunk_cells=16384, sampling_driver=run)
