@@ -1,0 +1,125 @@
+{
+  "schema": "hong2021-v51-bounded-support-calibration-audit-result-record-v1",
+  "status": "complete_structure_risk_amplification_sealed_and_no_risk_model_selected",
+  "program": "config/hong2021_v51_bounded_support_calibration_audit_program.json",
+  "program_sha256": "ba30af32cfd147e97ebd62118536cab5b0c9b30cdb81a17538fed5305f1928ba",
+  "audit_code_commit": "c7107d3e071abe21d2effa22ab0d8162bf2b6606",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v51_bounded_support_calibration_audit/audit.json",
+    "sha256": "a73395b3d99a727cf371cc25205e57c314eebe56fc84389df9e7d2f4c22769d2",
+    "decision_digest_sha256": "4e3f0082f552a85062ad5f56656d0259d88104a276ea8d71b1ee3ef5242a19ba",
+    "classification": "structure_risk_conditioning_amplifies_the_bounded_extreme_tail",
+    "next": "freeze_a_matched_train_only_no-risk-channel_model_ablation_with_all_other_V50_information_support_and_gates_unchanged"
+  },
+  "integrity": {
+    "worktree_clean_at_audit": true,
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "pytest_passed": 396,
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "909057b202896cb0e0d43b83675a8d5b90d8da7789117e46241a40df8bc93748",
+    "audit_log_sha256": "ad1c190c61c4965cc3a931bd8d7796bcf79b61e20df40e265bd28b34ad4fc921",
+    "decision_digest_independently_verified": true,
+    "maximum_inverse_CDF_error": 3.2753667811302734e-7,
+    "maximum_quadrature_32_to_64_relative_difference": 3.6033798680016546e-7
+  },
+  "domain_summary": {
+    "TNG100": {
+      "lower_PIT_1e_5_observed_over_expected": 0.06799344663266782,
+      "upper_PIT_1e_5_observed_over_expected": 2.5351842244466143,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.2576580154257515,
+      "sampled_over_truth_mean_delta_squared": 71.33073779131152,
+      "quadrature_over_truth_mean_delta_squared": 50.666779012838184,
+      "top_backbone_stratum_quadrature_over_truth_mean_delta_squared": 47.876897528517105,
+      "top_structure_risk_stratum_quadrature_over_truth_mean_delta_squared": 52.5973700113877,
+      "model_expected_native_voxels_above_global_train_maximum": 0.47552780823916774,
+      "rho_squared_fraction_above_global_train_maximum": 0.13016240178599509,
+      "rho_squared_fraction_in_upper_five_percent_support_layer": 0.18167667922625538,
+      "fifth_component_rho_squared_fraction": 0.8187215333441502,
+      "fifth_component_responsibility_to_weight_ratio": 0.993136247279189,
+      "effective_responsibility_components": 4.675400111393454
+    },
+    "SIMBA": {
+      "lower_PIT_1e_5_observed_over_expected": 1.6920637376237624,
+      "upper_PIT_1e_5_observed_over_expected": 1.255828555267636,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.21884509095609062,
+      "sampled_over_truth_mean_delta_squared": 3.3144288334059895,
+      "quadrature_over_truth_mean_delta_squared": 6.5177209329796435,
+      "top_backbone_stratum_quadrature_over_truth_mean_delta_squared": 5.225048329093988,
+      "top_structure_risk_stratum_quadrature_over_truth_mean_delta_squared": 6.263487167127545,
+      "model_expected_native_voxels_above_global_train_maximum": 0.6980226429451799,
+      "rho_squared_fraction_above_global_train_maximum": 0.0719651545051834,
+      "rho_squared_fraction_in_upper_five_percent_support_layer": 0.08066282090664402,
+      "fifth_component_rho_squared_fraction": 0.551673189979809,
+      "fifth_component_responsibility_to_weight_ratio": 1.0044074675315433,
+      "effective_responsibility_components": 4.601285847134305
+    },
+    "Swift": {
+      "lower_PIT_1e_5_observed_over_expected": 2.336385489093062,
+      "upper_PIT_1e_5_observed_over_expected": 1.4951001752559594,
+      "posterior_predictive_delta_q99_999_log10rho_dex": 0.24752784453468735,
+      "sampled_over_truth_mean_delta_squared": 4.146017814599619,
+      "quadrature_over_truth_mean_delta_squared": 8.030271820984987,
+      "top_backbone_stratum_quadrature_over_truth_mean_delta_squared": 6.536330258125933,
+      "top_structure_risk_stratum_quadrature_over_truth_mean_delta_squared": 7.497166052190895,
+      "model_expected_native_voxels_above_global_train_maximum": 1.6124144195162589,
+      "rho_squared_fraction_above_global_train_maximum": 0.08534247984458525,
+      "rho_squared_fraction_in_upper_five_percent_support_layer": 0.09657239817968574,
+      "fifth_component_rho_squared_fraction": 0.5475559915510194,
+      "fifth_component_responsibility_to_weight_ratio": 0.9955994865602311,
+      "effective_responsibility_components": 4.610834376222746
+    }
+  },
+  "frozen_branch_evidence": {
+    "train_unoccupied_support_margin_dominates_common_tail": false,
+    "boundary_dominated_domains": [],
+    "structure_risk_ablation_improves_development_Q4_every_domain": true,
+    "structure_risk_conditioning_amplifies_common_tail": true,
+    "risk_amplified_domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "bounded_upper_tail_overdispersed": false,
+    "upper_PIT_overdispersed_domains": [],
+    "effective_component_failure": false,
+    "component_failure_domains": [],
+    "extreme_quantiles_calibrated": false,
+    "physical_second_moment_calibrated": false,
+    "interpretation": "The fixed support margin is not the dominant source of the physical tail and all five components remain occupied. The structure-risk channel is a common-domain amplifier, while severe high-backbone errors show that it is not proven to be the only remaining cause."
+  },
+  "selected_next_model": {
+    "model": "matched train-only no-risk-channel V50 ablation",
+    "rule": "retrain from the same initialization and seed with only the standardized V41 structure-risk input channel fixed to zero in train, validation diagnostics, and inference; keep the six remaining condition channels, target, support, architecture, optimizer, schedule, donor ranks, controls, and development gates unchanged",
+    "purpose": "turn the inference-only risk-zero improvement into a valid matched causal model comparison without posthoc feature removal",
+    "guaranteed_repair": false,
+    "reason_not_guaranteed": "The top backbone stratum also overpredicts the physical second moment by factors 5.23 to 47.88, so removing risk can test and reduce amplification but may not remove the underlying high-density calibration error."
+  },
+  "training_anomaly": {
+    "V50_logged_AMP_gradient_overflow_count": 1,
+    "step": 8400,
+    "sealed_training_report_literal_Infinity_occurrences": 1,
+    "sealed_training_report_modified": false
+  },
+  "scientific_conclusion": [
+    "The frozen global support margin is not the common failure mechanism: the model expects only 0.48 to 1.61 native voxels per domain above the global train residual maximum, and that region contributes 7.2 to 13.0 percent rather than at least 50 percent of quadrature rho squared.",
+    "Bounded PIT is asymmetric rather than commonly overdispersed. At probability 1e-5 the upper observed-over-expected ratios are 2.54, 1.26, and 1.50, while the lower ratios are 0.068, 1.69, and 2.34 for TNG100, SIMBA, and Swift.",
+    "All five latent components remain supported: effective responsibility counts are 4.60 to 4.68 and every component responsibility-to-weight ratio stays near one, even though the fifth component carries 55 to 82 percent of rho squared.",
+    "The q99.9-and-above structure-risk strata overpredict physical mean delta squared by factors 52.60, 6.26, and 7.50, and the sealed inference risk ablation improves development Q4 in all domains. The pre-frozen branch therefore selects a matched no-risk-channel retraining experiment.",
+    "Risk is an amplifier, not yet a complete explanation: the q99.9-and-above backbone strata independently overpredict by factors 47.88, 5.23, and 6.54. The matched retrain is a causal ablation and must pass the unchanged three-domain development gate before any independent data access."
+  ],
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_inputs_opened": false,
+    "validation_truth_opened": false,
+    "development_arrays_opened": false,
+    "support_changed": false,
+    "threshold_changed_after_diagnostic": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

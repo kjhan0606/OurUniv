@@ -1,0 +1,48 @@
+{
+  "schema": "ouruniv-lg-z0-forward-likelihood-v8-proposal-audit-v1",
+  "status": "frozen_before_conditional_proposal_audit",
+  "frozen_date": "2026-08-15",
+  "parent_result": {
+    "path": "config/cf4_lg_v7_development_result_record.json",
+    "sha256": "a67a51d14c1d933575f64dda074c0db7af37b30cb10de471460dc568bf8c17ff",
+    "required_status": "complete_single_stage_importance_failure_fresh_v7_locked"
+  },
+  "immutable_inputs": {
+    "v7_likelihood_program": {
+      "path": "config/p2_lg_z0_forward_likelihood_v7_development.json",
+      "sha256": "e42f4be5b01658c8dc67195d80d818292f585d8a31ce04385d514cc838df1705"
+    },
+    "v7_development_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v7_z0_forward_likelihood_development/result.json",
+      "sha256": "fec9f153a6bd139adf351ef8851c5a155f08baa6ff16b542fdef217aac0c7c31"
+    },
+    "v6_proposal_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v6_latent_midpoint/lg_peak_proposals_manifest.json",
+      "sha256": "f6834de385337a8e08e3a9c08a76d5be537f681da0bea138886b21d316a89114"
+    }
+  },
+  "proposal": {
+    "source": "prospective_v7_bank.latent_midpoint_sampling_proposal in the immutable v7 likelihood program",
+    "target_prior_source": "prospective_v7_bank.latent_midpoint_target_prior in the immutable v7 likelihood program",
+    "must_include_exact_target_prior_as_defensive_component": true,
+    "minimum_defensive_component_weight": 0.5,
+    "maximum_analytic_target_prior_over_proposal_ratio": 2.0,
+    "importance_weight": "exp(z0_log_likelihood + log_target_midpoint_prior - log_sampling_proposal)"
+  },
+  "bank_size_selection": {
+    "candidate_sizes": [64, 128, 256],
+    "selection_rule": "Choose the smallest candidate size whose 0.5-percent cluster-bootstrap lower bound on expected importance ESS is at least 8.",
+    "bootstrap_seed": 20260815,
+    "bootstrap_replicates": 20000,
+    "lower_quantile": 0.005,
+    "minimum_lower_bound_ESS": 8.0,
+    "maximum_authorized_size": 256
+  },
+  "firewall": {
+    "fresh_phase_or_catalog_accessed": false,
+    "likelihood_target_or_scale_change_authorized": false,
+    "v6_or_v7_candidate_promotion_authorized": false,
+    "audit_uses_only_consumed_v6_development_rows": true,
+    "failure_action": "Stop without opening fresh fields; design a rejuvenated SMC kernel rather than enlarge the bank beyond 256."
+  }
+}

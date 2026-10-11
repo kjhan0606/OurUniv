@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-v20-driver-adjudication-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "driver": "codex",
+  "source_audit": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "purpose": "Resolve an ambiguity in the v20 audit packet without changing the frozen gate or re-fitting any member.",
+  "finding": {
+    "opus_statement": "legacy per-voxel flags read 47/47 at both 68% and 95%",
+    "actual_source_field": "config/cf4_b1_calibration_diagnosis_result_v3.json::failure_histogram",
+    "field_semantics": "integer count of development members failing each named component; denominator is the 64 serialized members",
+    "recomputed_from_serialized_members": {
+      "member_count": 64,
+      "coverage68_fail_count": 47,
+      "coverage95_fail_count": 47,
+      "coverage68_fail_fraction": 0.734375,
+      "coverage95_fail_fraction": 0.734375,
+      "coverage68_only": 9,
+      "coverage95_only": 9,
+      "both": 38,
+      "neither": 8,
+      "union": 56
+    },
+    "arithmetic_check": "38+9=47 for each component; 9+9+38+8=64; union=9+9+38=56",
+    "conclusion": "There is no denominator contradiction in the data. The v20 phrase 47/47 was ambiguous and is corrected to 47/64 failing members (73.4375%) at each legacy component. The contingency table is internally consistent."
+  },
+  "action": {
+    "legacy_metric_scope": "retained diagnostic-only; explicitly reported as failing_members/64",
+    "proposed_latent_mode_metric": "unchanged and not adopted as promotion gate",
+    "strict_gate": "unchanged 8/64 pass; technical NO-GO remains",
+    "validation_and_B2": "closed",
+    "remaining_v20_blocker": "arm-level causal isolation, especially D, on fresh disjoint development seeds",
+    "same_seed_refit": false
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "ouruniv-cf4-phasec-pmwd-scan-diagnostic-v1-result-record-v1",
+  "date": "2026-09-01",
+  "status": "PASS_SCAN_LOOP_REPAIR_PROCEED_TO_ALL_EIGHT_GENERATOR_GATE",
+  "lineage": {
+    "commit": "7a5f0b66b8dab08a763bdc871b4f9d7b22829bee",
+    "program": {
+      "path": "config/cf4_phasec_pmwd_scan_diagnostic_v1.json",
+      "sha256": "fa99690bac24282bce9275439297d287dda141fb0740177d417d416db82233cc"
+    },
+    "implementation": {
+      "path": "src/cf4_phasec_pmwd_scan_diagnostic.py",
+      "sha256": "ed180607f32b0009061139333d1039c9cfaceb7e71a9f681e63b5b1d01362669"
+    },
+    "array_job_id": 329918,
+    "aggregate_job_id": 329920
+  },
+  "artifacts": {
+    "seed_2026083002": {
+      "result_sha256": "397b268d705e0d4da8d5717d8ffa559680012d1bd042431a71769674c5ae582d",
+      "manifest_sha256": "c6e52952b0358c52ba479cd3c52a96a44b9e484ac285bfc41fd17a657af333e7",
+      "complete_sha256": "3feb1f6089d58328fb90d7f15bf37d8536b08960e618f12b7fe02ec9ece014df"
+    },
+    "seed_2026083007": {
+      "result_sha256": "5475f5493ffc96dedaeca4dbad677c4efc6022b9cc91045c49ef7cf5b6cd7adb",
+      "manifest_sha256": "1649a6be631868d0c0bdd8812b692cc5d0cbbfa6c48164843f0ff7d37f5f8149",
+      "complete_sha256": "55eb09b35f9f1c1c633bd1904731e5761637ba2bfd5ded21f322fe33fdf16dcd"
+    },
+    "aggregate": {
+      "directory": "/gpfs/kjhan/CF4/z0_density/phasec_pmwd_scan_diagnostic_v1_aggregate",
+      "aggregate_sha256": "b33ac99b47db479aa1e2dfbd6e36f469d8d06b6926dabbb1e4e44d56e422a73d",
+      "manifest_sha256": "c3ef94ebf399c6a419363bd90104e6edab07776cfb22e16d1f2e1df8e7409fb1",
+      "complete_sha256": "a32c4d88988971eb9621741d8fc263004cf58c07f1a510aac1b3b2a636d27b51",
+      "independent_validation": "PASS"
+    }
+  },
+  "outcomes": [
+    {
+      "seed": 2026083002,
+      "all_scan_candidates_finite": true,
+      "first_nonfinite_step": null,
+      "density_cross_correlation_1_over_128_vs_1_over_256": 0.9999997278000644,
+      "density_relative_L2": 0.0007433232653640327,
+      "velocity_cross_correlation": 0.9999999506028876,
+      "velocity_relative_L2": 0.00032049480951867524
+    },
+    {
+      "seed": 2026083007,
+      "all_scan_candidates_finite": true,
+      "first_nonfinite_step": null,
+      "density_cross_correlation_1_over_128_vs_1_over_256": 0.9999996768898199,
+      "density_relative_L2": 0.0008077532137351686,
+      "velocity_cross_correlation": 0.9999999549801832,
+      "velocity_relative_L2": 0.0003037328214171974
+    }
+  ],
+  "audit": {
+    "same_white_fields_and_cosmology_as_prior_runs": true,
+    "same_PM_force_drift_kick_step_implementation": true,
+    "changed_element": "PMWD nbody steps lowered through jax.lax.scan rather than a Python loop unrolled inside an outer jax.jit",
+    "evidence": [
+      "Seed 2026083002 became finite at the two step sizes that were nonfinite in the monolithic outer-jit run.",
+      "Seed 2026083007 became finite at 1/64, which was nonfinite in V5, while its refined scan results match the previously finite refined results.",
+      "No particle displacement, velocity, or acceleration became nonfinite at any recorded scan step."
+    ],
+    "interpretation": "The evidence strongly isolates the failure to the monolithic outer-jit Python-loop lowering/execution path rather than to the frozen white fields or a monotonic PMWD time-step instability."
+  },
+  "decision": {
+    "scan_loop_repair_admissible": true,
+    "all_eight_scan_generator_gate_allowed": true,
+    "sampler_allowed_now": false,
+    "actual_observational_posterior_allowed": false,
+    "validation_or_Phase_D_allowed": false,
+    "next_step": "all-eight-seed scan-loop generator gate using 1/128 and 1/256"
+  },
+  "scope_firewall": {
+    "actual_observational_datum_used": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

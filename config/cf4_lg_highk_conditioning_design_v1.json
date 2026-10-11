@@ -1,0 +1,131 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-conditioning-design-v1",
+  "status": "design_frozen_real_schedule_and_highk_execution_unauthorized",
+  "frozen_date": "2026-08-25",
+  "objective": "Complete the explicit Local-Group peak posterior with statistically valid high-k Gaussian degrees of freedom while preserving every promoted CF4 N192 parent exactly, then use forward z=0 observables to select zoom candidates whose IC particle spacing is below 0.3 cMpc/h.",
+  "promoted_posterior": {
+    "result_record": {
+      "path": "config/cf4_lowk_parent_posterior_bridge_v1_result.json",
+      "sha256": "865a9cb0aa55857d96fed18bb81164f7d126def9da5ec70104c6b02f504f8c2b"
+    },
+    "bank": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lowk_parent_posterior_bridge_v1/posterior_bank.npz",
+      "sha256": "25ec02b9ddfa736c170c6c84332845f026790b1162f4ba14ba63fc2aa34d9e76"
+    },
+    "result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lowk_parent_posterior_bridge_v1/result.json",
+      "sha256": "3aa9b4757678531b036b7d697ebbd7ea3d9ddcde066a0ff3b1421c1d70f30d7f"
+    },
+    "particle_count": 8192,
+    "bridge_group_count": 4,
+    "particles_per_group": 2048,
+    "parent_count": 256,
+    "parent_ESS": 40.68327087020479,
+    "representation": "Equal-weight geometry particles with an exact 256-parent conditional probability vector on every particle."
+  },
+  "probability_contract": {
+    "joint_state": "Choose geometry particle g from the equal-weight promoted bank, then choose parent j from P(j|g), then draw the N576 field from p(x576|y_j,g,LG_peak).",
+    "factorization": "p(g,j,x576|CF4,LG_peak) = p(g|CF4,LG_peak) P(j|g,CF4,LG_peak) p(x576|y_j,g,LG_peak)",
+    "peak_evidence_policy": "The promoted bank already contains the normalized LG peak evidence. Do not multiply by peak evidence again after drawing a joint state.",
+    "z0_weight": "After equal-weight posterior resampling, the only new scientific weight is the preregistered normalized z=0 forward likelihood. A nonuniform screening or allocation probability would also require its exact inverse-probability correction.",
+    "single_parent_selection_forbidden": true,
+    "top_parent_seed_is_not_a_selected_realization": true
+  },
+  "information_firewall": {
+    "CF4_information": "The N192 parent density and velocity modes are the CF4-supported large-scale constrained realization.",
+    "explicit_LG_information": "The two R=1.5 Mpc/h protohalo-centre targets, their twelve shell probes, latent midpoint, axis, and later MW/M31/M33 z=0 observables are additional Local-Group information, not information claimed to come from CF4.",
+    "unresolved_information": "Modes not constrained by the N192 parent or the explicit LG likelihood remain LCDM conditional-Gaussian draws with random phases.",
+    "large_structure_policy": "Virgo, Coma, Local Void, Bootes Void, and other CF4-supported structures are forward-validation observables; they may not be silently used to choose a parent or retune the LG likelihood."
+  },
+  "resolution_ladder": {
+    "box_size_mpc_h": 384.0,
+    "CF4_parent": {"mesh": 192, "spacing_mpc_h": 2.0},
+    "LG_conditioning_source": {"mesh": 576, "spacing_mpc_h": 0.6666666666666666},
+    "RAMSES_global_base": {"level": 9, "mesh": 512, "spacing_mpc_h": 0.75},
+    "zoom_pilot": {"finest_IC_level": 12, "particle_spacing_mpc_h": 0.09375, "runtime_levelmax": 19},
+    "zoom_production": {"finest_IC_level": 13, "particle_spacing_mpc_h": 0.046875, "runtime_levelmax": 21},
+    "requirement": "The <=0.3 cMpc/h IC requirement is met in the Lagrangian LG zoom, not by claiming that the global N576 conditioning mesh itself has that resolution.",
+    "phase_policy": "Every shared Fourier band is projected from the same canonical realization; it is never redrawn when changing mesh or zoom level."
+  },
+  "joint_schedule": {
+    "method": "Perform one systematic resampling of the flattened geometry-parent joint probability independently within each bridge group.",
+    "count_per_group": 64,
+    "total_count": 256,
+    "master_seed": 2026082501,
+    "fine_field_seed_start": 2026090001,
+    "likelihood_noise_seed_start": 2026091001,
+    "group_balance": "Exactly 64 scheduled states from each of the four bridge groups.",
+    "duplicates": "Repeated geometry or parent indices are allowed and represent posterior mass; every repeat receives independent fine-field and mock-noise seeds.",
+    "one_shot": true,
+    "no_retry_or_seed_extension_after_opening": true,
+    "schedule_gate": {
+      "bank_lineage_and_shape_pass": true,
+      "all_probability_sums_within": 1e-12,
+      "all_geometry_keys_reconstruct_exactly": true,
+      "empirical_parent_L1_must_not_exceed_fixed_q999_null": true,
+      "null_draws": 50000,
+      "null_seed": 2026082502,
+      "failure_action": "Stop and diagnose the sampler. Do not search for a more favorable schedule seed."
+    }
+  },
+  "conditional_field_engine": {
+    "coarse_mesh": 192,
+    "fine_mesh": 576,
+    "construction": "x=z+R*(y_j-Rz)+Q A* (A Q A* + Sigma)^-1 (t-A[z+R*(y_j-Rz)]-epsilon)",
+    "projection": "Use the exact variance-preserving R/R* contract including every output-Nyquist equivalence class.",
+    "covariance": "Use the existing exact 27-phase AQA* cache; no stationary approximation.",
+    "mock_noise": "epsilon is an independent Gaussian likelihood-noise draw, which makes the output a posterior sample rather than a MAP edit.",
+    "FFT_workers": 1,
+    "forbidden": ["workers=-1", "independent N512 phase redraw", "single-parent replication", "peak-evidence double counting"],
+    "technical_pilot": {
+      "field_count": 4,
+      "schedule_indices": [0, 64, 128, 192],
+      "purpose": "Exercise one prospectively fixed field from each bridge group without PM, halo finding, or science selection.",
+      "required_checks": [
+        "finite field and likelihood solve",
+        "N192 round-trip relative RMS <= 2e-6",
+        "direct small-mesh and cached-kernel controls agree",
+        "conditioned correction is in ker(R)",
+        "unconditioned null-space control retains LCDM power"
+      ]
+    }
+  },
+  "forward_and_zoom_gates": {
+    "production_field_count": 256,
+    "PM_policy": "Forward every scheduled state; no result-dependent early allocation.",
+    "z0_likelihood_source": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "PM_acceptance": {
+      "minimum_jointly_eligible_realizations": 8,
+      "minimum_z0_weight_ESS": 8.0,
+      "maximum_single_normalized_weight": 0.25,
+      "P1_environment_required_at_actual_pair_midpoint": true
+    },
+    "M33": "M33 is not a hard PM/FoF constraint; it is mandatory in the RAMSES unmerged-HOP/PHEW definitive gate.",
+    "zoom_sequence": [
+      "Trace accepted z=0 particle IDs back to the IC to build the Lagrangian mask.",
+      "Run the L12/L19 pilot zoom and require HOP M200c, MW-M31 kinematics, M33, and contamination gates.",
+      "Only a passing pilot may advance to the L13/L21 production zoom."
+    ],
+    "Slurm": "Every field, PM, and RAMSES execution is submitted through Slurm. Request measured or estimated peak memory plus 20 percent. Manual syn101 execution is forbidden."
+  },
+  "implementation_sequence": [
+    "Implement and test the joint schedule builder on synthetic posterior banks.",
+    "Run a read-only lineage and probability preflight on the promoted real bank.",
+    "Freeze and audit the one-shot 256-state schedule.",
+    "Implement the exact scalable conditional-field correction and small-mesh equivalence controls.",
+    "Request approval before submitting the four-field technical pilot.",
+    "Stop for technical-pilot evaluation before any PM production."
+  ],
+  "authorization": {
+    "design_and_synthetic_tests_authorized": true,
+    "real_bank_read_only_preflight_authorized": true,
+    "real_schedule_generation_authorized": false,
+    "conditional_field_technical_pilot_authorized": false,
+    "PM_authorized": false,
+    "RAMSES_authorized": false,
+    "zoom_IC_generation_authorized": false
+  }
+}

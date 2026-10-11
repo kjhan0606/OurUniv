@@ -1,0 +1,51 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-conditioning-b3292-v3-pair-diagnostic",
+  "status": "frozen_before_forward",
+  "source_search": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_environment_v3/result.json",
+  "purpose": "Reproduce the exact 256 proposals with the pre-environment v11 pair screen to separate pair-formation failure from the v12 Local-Volume environment rejection. This is diagnostic only and cannot promote a candidate.",
+  "parent_seed": 3292,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+  "parent_field_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d",
+  "mesh_size": 512,
+  "frozen_k_max_h_mpc": 0.6,
+  "box_size_mpc_h": 384.0,
+  "seed_bank": {
+    "count": 256,
+    "field_seed_start": 40101,
+    "geometry_seed_start": 41101,
+    "likelihood_noise_seed_start": 42101,
+    "midpoint_seed_start": 43101
+  },
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_prior": {
+      "distribution": "diagonal_normal",
+      "mean_mpc_h": [-0.971, -6.353, 2.853],
+      "sigma_mpc_h": [3.0, 3.0, 3.0],
+      "basis": "R=5 Mpc/h observer preimage from job 394168"
+    },
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "hard_p2_config": "config/p2_lg_targets_v11_parent_b3292_beta025_l9.json",
+  "output": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_pair_diagnostic_v3",
+  "retention": {
+    "conditioned_fields": false,
+    "full_particle_state": false,
+    "passing_conditioned_fields": false,
+    "passing_halo_catalogues_only": true,
+    "reproducibility": "The four seed sequences exactly match the completed v3 environment search."
+  },
+  "science_policy": {
+    "diagnostic_only": true,
+    "candidate_promotion_forbidden": true,
+    "threshold_retuning_forbidden": true,
+    "all_modes_at_or_below_0p6_h_Mpc_are_frozen": true,
+    "RAMSES_execution_forbidden_from_this_result": true
+  }
+}

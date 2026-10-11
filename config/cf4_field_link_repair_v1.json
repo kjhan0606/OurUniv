@@ -1,0 +1,18 @@
+{
+  "output_name": "stable_field_link_repair_v1",
+  "steps_per_branch": 6000,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.01,
+  "ema_decay": 0.999,
+  "seed": 913131,
+  "gradient_clip": 10,
+  "checkpoint_every": 2000,
+  "learning_seconds_per_branch": 3000,
+  "application_seconds": 6600,
+  "host_peak_GiB": 4.5,
+  "gpu_reserved_peak_GiB": 8,
+  "extra_parameters": 37991,
+  "categorical_frozen": true,
+  "branches": ["control", "linked_budget"],
+  "status": "MATCHED_REPAIR_NOT_OBSERVED_LG_POSTERIOR"
+}

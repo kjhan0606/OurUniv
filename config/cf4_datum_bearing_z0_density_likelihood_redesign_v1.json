@@ -1,0 +1,447 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-density-likelihood-redesign-v1",
+  "date": "2026-09-01",
+  "status": "AUDIT_COMPLETE_PHASE_A_DATUM_BUILDER_RECOMMENDED_APPROVAL_REQUIRED",
+  "scope": {
+    "scientific_question": "How to build and validate a datum-bearing posterior for the present-day local density and velocity fields before using an IC as the downstream physical closure.",
+    "primary_product": "posterior samples of the z=0 matter density and peculiar-velocity fields with calibrated global and ROI-dependent effective resolution",
+    "numerical_target_cell_size_cMpc_h_max": 0.3,
+    "IC_role": "downstream proposal and physical-closure variable only after the z=0 likelihood route passes development mocks",
+    "audit_only": true,
+    "field_inference_executed": false,
+    "Slurm_job_submitted": false,
+    "GPFS_artifact_created": false
+  },
+  "authorization": {
+    "basis": "The user approved completion of the datum-bearing z=0 density-likelihood design audit on 2026-09-01.",
+    "write_design_record": true,
+    "write_static_contract_tests": true,
+    "commit_and_push_design_record": true,
+    "implement_Phase_A_datum_builder": false,
+    "submit_Phase_A_Slurm": false,
+    "run_mock_inference": false,
+    "consume_actual_counts_in_field_inference": false,
+    "open_untouched_validation_seeds": false,
+    "infer_IC": false,
+    "increase_resolution": false,
+    "automatic_follow_on": false
+  },
+  "audit_lineage": {
+    "repository": "git@github.com:kjhan0606/OurUniv.git",
+    "branch": "agent/freeze-zoom-pipeline",
+    "parent_commit": "69599930d65f4b550ebf94f953d2a81d50168ec6",
+    "bindings": [
+      {
+        "path": "config/cf4_science_route_v3.json",
+        "bytes": 11612,
+        "sha256": "2ac2fc372aad3e256342a2a1dde74f7dc8ea31282da8b0af04d912e49eef7afb",
+        "role": "existing z=0-primary science route"
+      },
+      {
+        "path": "config/cf4_2mpp_joint_likelihood_v1.json",
+        "bytes": 8528,
+        "sha256": "6db1cc307a9f7cd1142eeeefbc41ab4f33a0d1718389c1e940bb41da2730ff85",
+        "role": "earlier blocked joint-likelihood design"
+      },
+      {
+        "path": "config/cf4_twompp_metadata_consistent_subset_program_v1.json",
+        "bytes": 3619,
+        "sha256": "439adb82f33ec6411742a01f33607606c39e959ef0f942d332a03e31e38e2444",
+        "role": "frozen metadata-consistent subset contract"
+      },
+      {
+        "path": "config/cf4_twompp_metadata_consistent_subset_v1_result_record.json",
+        "bytes": 4197,
+        "sha256": "117500c9a01d254d968beb8066671c010a524ae3885a21e6c54f1181e402f885",
+        "role": "passing 36,635-row subset result"
+      },
+      {
+        "path": "config/cf4_twompp_exact_joint_covariance_pilot_v1_result_record.json",
+        "bytes": 12892,
+        "sha256": "b77789db9abe3d10fe7912fe7151aa7064e125506c2df6bfcb122d5f26f94dcc",
+        "role": "terminal exact one-geometry Fisher screen"
+      },
+      {
+        "path": "data/2mpp_catalog.csv",
+        "bytes": 7528160,
+        "sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d",
+        "role": "actual galaxy rows from which the count datum must be built"
+      },
+      {
+        "path": "src/cf4_twompp_metadata_consistent_subset_v1.py",
+        "bytes": 17291,
+        "sha256": "46e4435f4a991c03c26f3d3a1bea68d7537b37a4e16d199a2397697701001683",
+        "role": "reusable exact row-classification path"
+      },
+      {
+        "path": "src/cf4_twompp_joint_information_budget_pilot_v1.py",
+        "bytes": 35147,
+        "sha256": "d318031ef47a4063671f77d564565afd63ca97bb0920580cb779f2004e83df22",
+        "role": "reusable raw selection and eight-subpoint voxel quadrature path"
+      },
+      {
+        "path": "src/cf4_population_calibration.py",
+        "bytes": 71052,
+        "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af",
+        "role": "reusable development seed schedule and CF4 velocity mock components, not a 2M++ count mock generator"
+      }
+    ]
+  },
+  "audit_findings": {
+    "actual_count_datum_status": "ABSENT",
+    "present_density_posterior_status": "NOT_CREATED",
+    "IC_posterior_status": "NOT_CREATED",
+    "observational_0p3_cMpc_h_status": "NOT_ESTABLISHED",
+    "what_recent_Fisher_jobs_did": "They evaluated expected information under homogeneous Gaussianized-Poisson designs; they did not bin the observed 36,635 galaxies and did not evaluate a galaxy-count likelihood.",
+    "exact_Fisher_terminal_decision": "Do not execute the 64-geometry production for the unchanged linear Fisher design because the exact normalization-marginalized one-geometry material gate failed. This is not a rejection of a datum-bearing nonlinear count likelihood.",
+    "reusable_assets": [
+      "metadata-consistent CF4-disjoint 36,635-row selector",
+      "official NSIDE=512 RING angular completeness maps in the verified equatorial convention",
+      "six tracer populations and Schechter radial response",
+      "two-point Gauss quadrature per voxel axis, giving eight subpoints per voxel",
+      "CF4 grouped velocity likelihood operators and development/validation seed firewall"
+    ],
+    "non_reusable_as_is": [
+      "The Fisher expected_counts arrays are normalized to the observed population totals and must not be used as a Poisson intensity.",
+      "The empirical CF4 grouped-velocity population generator is not a six-population 2M++ count generator.",
+      "An unconstrained 1+b*delta intensity can become negative and is forbidden.",
+      "A fixed Carrick density cube is a smoothed qualitative reference, not an exact count datum or truth field.",
+      "The current N32 linear Gaussian truths cannot calibrate nonlinear RSD, FoG, HOD, or model discrepancy for a final resolution claim."
+    ]
+  },
+  "earlier_blocker_reassessment": {
+    "official_2Mpp_source": "CLOSED",
+    "full_empty_sky_angular_response": "CLOSED_BY_OFFICIAL_NSIDE512_MAPS_AND_VERIFIED_COORDINATE_CONVENTION",
+    "CF4_2Mpp_double_counting_for_v1": "CLOSED_BY_CONSERVATIVE_17007_TARGET_EXCLUSION",
+    "metadata_inconsistent_zero_exposure_rows": "CLOSED_BY_FROZEN_319_RECNO_EXCLUSION_WITHOUT_DENSITY_OUTCOME_ACCESS",
+    "K_correction_evolution_extinction_and_luminosity_function": "PARTLY_CLOSED_Ksmag_IS_SOURCE_CORRECTED_BUT_RADIAL_RESPONSE_CALIBRATION_REMAINS_A_NUISANCE",
+    "RSD_FoG_and_redshift_error": "OPEN_IMPLEMENTATION_AND_MOCK_CALIBRATION_REQUIRED",
+    "luminosity_bias_overdispersion_HOD_and_model_discrepancy": "OPEN_DEVELOPMENT_MOCK_CALIBRATION_REQUIRED",
+    "CF4_shared_redshift_covariance": "NOT_ACTIVE_WHILE_THE_CONSERVATIVE_DISJOINT_SUBSET_IS_ENFORCED",
+    "immutable_k_frontier_and_gate_contract": "OPEN_RECONCILIATION_REQUIRED_BEFORE_PHASE_D_OR_VALIDATION"
+  },
+  "scientific_route_decision": {
+    "selected_route": "CF4 velocities plus actual 2M++ counts to a z=0 density/velocity posterior, followed by IC inference or IC-conditioned physical closure and PM forward validation",
+    "rejected_immediate_route": "Return directly to low-k IC candidate selection before constructing a datum-bearing z=0 likelihood",
+    "reason": "The requested observable product is the present-day field. It can be tested directly on count and velocity mocks, while an IC-first candidate screen can hide failure behind random high-k modes and a later forward map.",
+    "posterior_factorization": "p(eta_z0,v_z0,theta | N_2Mpp,D_CF4) proportional to p_z0(eta_z0,v_z0) L_CF4(D_CF4 | v_z0,theta_CF4) product_{p,i} Poisson(N_{p,i} | lambda_{p,i}(eta_z0,v_z0,theta_2Mpp)) p(theta)",
+    "z0_pilot_prior": "At N32 only, use a whitened joint z=0 density/velocity prior with delta=exp(eta-sigma_eta^2/2)-1 and the frozen LCDM large-scale covariance. This is a technical likelihood pilot, not the final nonlinear model.",
+    "nonlinear_closure_after_mock_pass": "Replace or augment the technical z=0 prior with a differentiable PM forward model from an IC latent while retaining z=0 density and velocity as the primary reported posterior products.",
+    "IC_directness_claim": "NOT_ALLOWED_BEFORE_Z0_MOCK_PASS"
+  },
+  "actual_datum_contract": {
+    "source_rows": 36635,
+    "source_policy": "Re-read the SHA-bound 2M++ catalog and exactly reproduce the frozen CF4-overlap, ZoA, cloned-redshift, radial, magnitude, and 319-recno metadata-consistency exclusions. Do not create a new outcome-dependent subset.",
+    "population_order": [
+      "apparent_0_absolute_0",
+      "apparent_0_absolute_1",
+      "apparent_0_absolute_2",
+      "apparent_1_absolute_0",
+      "apparent_1_absolute_1",
+      "apparent_1_absolute_2"
+    ],
+    "population_counts_exact": [9617, 3463, 527, 15671, 6197, 1160],
+    "coordinate_frame": "supergalactic Cartesian, observer at the periodic box center",
+    "position_semantics": "observed redshift-space radius from Vcmb under the frozen cosmology, with sky direction transformed from the verified ICRS catalog coordinates",
+    "pilot_grid": {
+      "N": 32,
+      "box_size_cMpc_h": 384.0,
+      "cell_size_cMpc_h": 12.0,
+      "radial_min_cMpc_h": 5.0,
+      "radial_max_cMpc_h": 180.0
+    },
+    "voxel_assignment": "NGP/floor assignment into exactly one voxel per retained row",
+    "count_dtype": "int64",
+    "CIC_fractional_counts_allowed": false,
+    "required_arrays": [
+      "counts_all[6,32,32,32]",
+      "counts_train[6,32,32,32]",
+      "counts_holdout[6,32,32,32]",
+      "raw_selection_exposure[6,32,32,32]"
+    ],
+    "required_row_manifest_columns": [
+      "recno",
+      "population_index",
+      "voxel_flat_index",
+      "split",
+      "redshift_space_radius_cMpc_h"
+    ],
+    "holdout": {
+      "split_before_voxelization": true,
+      "unit": "catalog row",
+      "rule": "deterministic Bernoulli-like hash of recno and a precommitted salt",
+      "training_fraction": 0.8,
+      "holdout_fraction": 0.2,
+      "adjacent_voxel_random_holdout_allowed": false,
+      "reason": "Row thinning preserves the Poisson thinning interpretation and avoids a spatial-voxel split that leaks selection and nearby structure."
+    },
+    "identity_gates": [
+      "all arrays have exact shape and dtype",
+      "all counts are nonnegative integers",
+      "counts_all equals counts_train plus counts_holdout elementwise",
+      "each population sum equals its frozen population count",
+      "grand total equals 36,635",
+      "every retained recno occurs once and every excluded recno occurs zero times",
+      "every occupied index is inside the N32 box"
+    ]
+  },
+  "selection_response_contract": {
+    "angular": "official ARES/BORG NSIDE=512 RING maps sampled in the verified equatorial convention after mapping the supergalactic voxel quadrature coordinates back to ICRS",
+    "radial": "six-population Schechter response with Mstar=-23.28 and alpha=-0.94 under the frozen cosmology and magnitude cuts",
+    "voxel_integration": "two-point Gauss quadrature on each axis, eight subpoints per voxel",
+    "response_semantics": "raw dimensionless exposure/support only",
+    "forbidden_normalization": "Do not normalize the selection field so that its expected-count sum equals the observed population count. The six population normalizations are likelihood nuisance parameters.",
+    "selection_only_baseline": "six independent normalization parameters times the raw exposure, with density response fixed to zero",
+    "zero_exposure_rule": "a positive observed count in a zero-exposure voxel is a hard datum-builder failure"
+  },
+  "positive_count_likelihood": {
+    "baseline_distribution": "independent Poisson counts conditional on the latent intensity",
+    "intensity_equation": "lambda[p,i] = integral_{s in voxel_i} R_p(s;phi_p) integral dx K_p(s|x,v_z0(x),sigma_FoG_p,sigma_z_p) exp(alpha_p + b_p eta_z0(x))",
+    "positivity": "exp(alpha_p+b_p*eta) and positive selection/RSD kernels guarantee lambda>=0; every voxel with an observed count must have lambda>0",
+    "RSD_kernel_normalization": "For every real-space source location and population, integral ds K_p(s|x,...)=1 before the survey selection is applied.",
+    "coherent_RSD": "The kernel mean includes the line-of-sight displacement induced by the predicted z=0 peculiar velocity.",
+    "small_scale_RSD": "Population-specific positive FoG/group-dispersion and redshift-error scales broaden the line-of-sight kernel.",
+    "mass_conservation_test": "With R_p=1 and a box-safe synthetic field, the total intensity is conserved by the real-to-redshift-space operator to the declared numerical tolerance.",
+    "real_space_substitution_allowed": false,
+    "negative_binomial_role": "predeclared stress/alternative model only; it may replace Poisson only after development-mock evidence and before validation is opened"
+  },
+  "nuisance_hierarchy": {
+    "population_normalization": "six independent alpha_p parameters with external luminosity-function/selection calibration priors; a universal normalization is forbidden",
+    "galaxy_bias": "six positive b_p parameters, represented on a log scale; soft luminosity dependence may be used but no universal scalar is allowed",
+    "selection_calibration": "low-dimensional angular and radial calibration templates with external priors, never a free per-voxel field",
+    "RSD_FoG": "six positive small-scale velocity-dispersion parameters plus frozen or calibrated redshift-error terms",
+    "overdispersion_HOD": "disabled in the matched Poisson arm and enabled only in the declared stress arm or a frozen post-development alternative",
+    "model_discrepancy": "a shrinkage-regularized smooth log-intensity term may be tested in the stress arm; it must not absorb arbitrary cosmological modes",
+    "CF4_overlap": "The 17,007 non-unmatched 2M++ targets remain excluded from the density count factor. CF4 group marks remain canonical. Reintroduction would require a new shared-latent/covariance design and is forbidden in v1.",
+    "identifiability": "Report posterior rank, alpha-bias-selection correlations, Hessian or Fisher singular values near the mode, and chain diagnostics before any field claim."
+  },
+  "development_mock_contract": {
+    "firewall": {
+      "development": {
+        "count": 64,
+        "seed_start_inclusive": 2026083000,
+        "seed_stop_exclusive": 2026083064,
+        "purpose": "method development and calibration only"
+      },
+      "untouched_validation": {
+        "count": 256,
+        "seed_start_inclusive": 2026083064,
+        "seed_stop_exclusive": 2026083320,
+        "purpose": "one-time validation only after the likelihood and all gates are frozen"
+      }
+    },
+    "new_truth_seeds_allowed": false,
+    "seed_or_parent_ranking_allowed": false,
+    "minimum_truth_model_for_sampler_smoke": "matched N32 log-density Poisson generator using one existing development seed",
+    "minimum_truth_model_for_science_calibration": "evolve the same predeclared seeds with PMWD on a generator grid finer than the N32 inference grid, then generate the six tracer populations and bin to N32",
+    "TNG100_role": "inform local HOD, luminosity-bias, overdispersion, and FoG nuisance distributions only; it is too small to provide 384 cMpc/h low-k truth or cosmic variance",
+    "stress_arms": [
+      {
+        "id": "A",
+        "truth": "matched positive Poisson log-intensity in real space",
+        "purpose": "implementation and posterior self-consistency"
+      },
+      {
+        "id": "B",
+        "truth": "positive Poisson intensity with coherent RSD",
+        "purpose": "large-scale redshift-space recovery"
+      },
+      {
+        "id": "C",
+        "truth": "coherent RSD plus population-dependent FoG and redshift errors",
+        "purpose": "small-scale velocity-model robustness"
+      },
+      {
+        "id": "D",
+        "truth": "overdispersed/HOD counts with selection perturbations and smooth model discrepancy",
+        "purpose": "misspecification robustness and alternative-model decision"
+      }
+    ],
+    "eight_mock_assignment": "Use seeds 2026083000 through 2026083007 exactly once, two per stress arm. Reuse seed 2026083000 from the smoke rather than generating another truth.",
+    "sixty_four_mock_assignment": "Use all 64 development seeds exactly once, 16 per stress arm including the first eight."
+  },
+  "staged_program": [
+    {
+      "phase": "AUDIT",
+      "status": "COMPLETE",
+      "work": "design and static contract tests only",
+      "field_inference": false
+    },
+    {
+      "phase": "A",
+      "status": "RECOMMENDED_APPROVAL_REQUIRED",
+      "work": "implement the deterministic actual-datum builder and run one Slurm CPU validation that publishes the six integer count grids, raw selection exposure, row/split manifest, hashes, and COMPLETE marker",
+      "field_inference": false,
+      "mock_seed_consumption": 0,
+      "automatic_follow_on": false,
+      "prospective_resources": {
+        "controller": "syntax_submit_and_audit_only",
+        "backend": "Slurm_CPU_only",
+        "cpus_per_task": 1,
+        "expected_peak_memory_MiB": 768,
+        "requested_memory_MiB": 1024,
+        "memory_headroom_multiplier": 1.3333333333333333,
+        "time_limit": "00:20:00",
+        "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_twompp_v1",
+        "manual_numerical_execution_on_syntax_or_syn101_allowed": false,
+        "refuse_overwrite": true,
+        "same_filesystem_plain_directory_rename": true,
+        "renameat2_required": false
+      }
+    },
+    {
+      "phase": "B",
+      "status": "BLOCKED_PENDING_PHASE_A_RESULT_AND_SEPARATE_APPROVAL",
+      "work": "one matched development-mock differentiable smoke: exact likelihood/gradient checks, positive intensity, RSD conservation, optimization, and short non-scientific sampler mechanics",
+      "field_inference": "mock only",
+      "development_seeds": [2026083000],
+      "actual_observational_field_inference": false,
+      "prospective_resource_ceiling_subject_to_implementation_benchmark": {
+        "backend": "Slurm_single_GPU",
+        "cpus_per_task": 8,
+        "expected_peak_memory_MiB": 19660,
+        "requested_memory_MiB": 24576,
+        "memory_headroom_multiplier": 1.25,
+        "time_limit": "08:00:00"
+      }
+    },
+    {
+      "phase": "C",
+      "status": "BLOCKED_PENDING_PHASE_B_TECHNICAL_PASS_AND_SEPARATE_APPROVAL",
+      "work": "eight-mock balanced development pilot with four chains per mock, all four stress arms, heldout prediction, posterior predictive checks, and nuisance-identifiability diagnostics",
+      "field_inference": "mock only",
+      "development_seed_start_inclusive": 2026083000,
+      "development_seed_stop_exclusive": 2026083008,
+      "actual_observational_field_inference": false,
+      "prospective_per_task_resource_ceiling_subject_to_Phase_B_measurement": {
+        "backend": "Slurm_GPU_array",
+        "cpus_per_task": 8,
+        "expected_peak_memory_MiB": 19660,
+        "requested_memory_MiB": 24576,
+        "memory_headroom_multiplier": 1.25,
+        "time_limit": "12:00:00"
+      }
+    },
+    {
+      "phase": "D",
+      "status": "BLOCKED_PENDING_PHASE_C_AND_PRECOMMITTED_GATE_AMENDMENT",
+      "work": "64-development-mock calibration, final likelihood choice, resolution-frontier gate freeze, and resource estimate from measured MaxRSS plus at least 20 percent",
+      "development_seed_start_inclusive": 2026083000,
+      "development_seed_stop_exclusive": 2026083064,
+      "actual_observational_field_inference": false,
+      "resources": "not authorized and must be recalculated from Phase B/C measurements"
+    },
+    {
+      "phase": "E",
+      "status": "LOCKED",
+      "work": "one-time 256-mock independent validation of the frozen likelihood and k-frontier gates",
+      "validation_seed_start_inclusive": 2026083064,
+      "validation_seed_stop_exclusive": 2026083320,
+      "actual_observational_field_inference": false,
+      "resources": "not authorized"
+    },
+    {
+      "phase": "F",
+      "status": "BLOCKED_PENDING_VALIDATION_PASS_AND_SEPARATE_APPROVAL",
+      "work": "infer the actual z=0 density/velocity posterior, first at the validated coarse resolution and then through the separately approved multiresolution ladder",
+      "actual_observational_field_inference": true,
+      "IC_inference": false
+    },
+    {
+      "phase": "G",
+      "status": "BLOCKED_PENDING_Z0_POSTERIOR_VALIDATION_AND_SEPARATE_APPROVAL",
+      "work": "infer or condition ICs, PM-forward them, and require reproduction of the z=0 posterior and predeclared structures without seed selection",
+      "IC_inference": true
+    }
+  ],
+  "diagnostics_and_gates": {
+    "Phase_A_hard_gates": [
+      "all identity gates in actual_datum_contract pass",
+      "raw selection exposure is finite and lies in [0,1]",
+      "no positive count has zero exposure",
+      "train and holdout row manifests are disjoint and exhaustive",
+      "all input and output hashes are published",
+      "no field inference or mock seed access occurs"
+    ],
+    "Phase_B_technical_gates": [
+      "all evaluated lambda values are finite and nonnegative, and positive wherever counts are positive",
+      "analytic/autodiff gradients agree with finite differences on predeclared directional probes",
+      "RSD forward and adjoint tests pass",
+      "RSD mass conservation passes with unit selection",
+      "no NaN, invalid log probability, or sampler state corruption",
+      "short-chain output is labeled mechanics-only and cannot support a science promotion"
+    ],
+    "Phase_C_and_D_required_reports": [
+      "four-chain rank-normalized R-hat, bulk ESS, tail ESS, divergence fraction, and energy diagnostics",
+      "nuisance posterior rank and alpha-bias-selection-RSD correlation structure",
+      "heldout log predictive density relative to the six-normalization selection-only baseline",
+      "posterior predictive count histogram, zero fraction, one-point PDF, radial counts, angular completeness residuals, P(k), 2PCF, redshift-space monopole, and quadrupole by population",
+      "truth response, cross-correlation, residual power, posterior variance reduction, and 68/95 percent coverage for density and velocity globally and in each frozen ROI",
+      "separate results for every stress arm; no indiscriminate pooling"
+    ],
+    "heldout_core_rule": "Before Phase D results are inspected, freeze a bootstrap procedure for the heldout log-predictive-density difference. The selection-only baseline must be beaten with a strictly positive lower confidence bound; point improvement alone is insufficient.",
+    "no_single_information_cutoff": true,
+    "old_Fisher_I_0p5_reused_as_likelihood_gate": false,
+    "old_historical_0p8_response_bundle_reused_without_reconciliation": false,
+    "required_gate_amendment": "Before Phase D and before opening validation, reconcile cf4_science_route_v3 and cf4_kf_bin_manifest_design_v1 into one coherent predictive, coverage, and resolution-frontier contract. This amendment must be committed before Phase D outcomes are inspected."
+  },
+  "resolution_and_low_high_boundary_policy": {
+    "technical_pilot_resolution_cMpc_h": 12.0,
+    "technical_pilot_science_resolution_claim_allowed": false,
+    "target_numerical_cell_size_cMpc_h_max": 0.3,
+    "numerical_and_observational_resolution_are_distinct": true,
+    "boundary_can_move": true,
+    "boundary_rule": "The observationally constrained frontier is the highest contiguous k-bin from low k that passes the frozen mock coverage, heldout-prediction, posterior-variance, and residual-calibration gates in the relevant global or ROI domain.",
+    "arbitrary_manual_boundary_allowed": false,
+    "skip_failed_k_bin_allowed": false,
+    "maximize_frontier_subject_to_calibration": true,
+    "multiresolution_ladder": "After N32 likelihood validation, increase density and forward-model resolution in separately approved stages. A 384 cMpc/h full box requires at least N=1280 for 0.3 cMpc/h cells; a power-of-two full grid would use N=2048, so a validated coarse global field plus predeclared zoom refinements is the preferred cost-aware route.",
+    "high_k_beyond_observational_frontier": "Draw from the LCDM conditional prior and constrain further with explicitly modeled Local Group and other small-scale observations. Do not label those modes CF4- or 2M++-measured.",
+    "0p3_claim": "A numerical cell size at or below 0.3 cMpc/h is required for the final IC/zoom product, but the observational effective resolution may remain coarser and must be reported from mocks."
+  },
+  "known_risks_and_required_controls": [
+    {
+      "risk": "normalization-density-bias degeneracy",
+      "control": "six independent normalizations and biases, external priors, heldout prediction, and rank/correlation diagnostics"
+    },
+    {
+      "risk": "RSD treated as real-space structure",
+      "control": "explicit mass-conserving real-to-redshift-space kernel with coherent velocity, FoG, and redshift-error terms"
+    },
+    {
+      "risk": "selection calibrated on the same counts",
+      "control": "use the raw official response and external calibration priors; never renormalize exposure to the observed totals"
+    },
+    {
+      "risk": "model passes matched mocks but erases filaments under misspecification",
+      "control": "PMWD-based higher-resolution truth and RSD/FoG/HOD/selection stress arms, with P(k), 2PCF, multipoles, and one-point posterior predictive checks"
+    },
+    {
+      "risk": "repeated tuning on the validation set or seed selection",
+      "control": "64/256 firewall, no seed ranking, one-time validation, and commit the gates before opening validation"
+    },
+    {
+      "risk": "claiming 0.3 cMpc/h because of cell size alone",
+      "control": "report numerical cell size and mock-calibrated observational frontier separately"
+    }
+  ],
+  "references": [
+    {
+      "citation": "Lavaux and Jasche 2016, MNRAS 455, 3169",
+      "url": "https://academic.oup.com/mnras/article/455/3/3169/2892571",
+      "relevance": "2M++ six-population Poisson count likelihood with angular/radial response and positive power-law density bias"
+    },
+    {
+      "citation": "Jasche and Lavaux 2019, A&A 625, A64",
+      "url": "https://arxiv.org/abs/1806.11117",
+      "relevance": "hierarchical nonlinear forward inference with PM gravity, RSD, bias, selection, and noise nuisance parameters"
+    }
+  ],
+  "next_action": {
+    "recommended": "Implement Phase A only: deterministic integer-count datum builder, static/unit tests, and one fail-closed Slurm CPU validation on GPFS.",
+    "requires_new_user_approval": true,
+    "implementation_before_approval_allowed": false,
+    "Slurm_before_approval_allowed": false,
+    "automatic_Phase_B_after_Phase_A_allowed": false
+  }
+}

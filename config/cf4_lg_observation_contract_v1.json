@@ -1,0 +1,38 @@
+{
+  "status": "SOURCE_BACKED_DEVELOPMENT_INTERFACE_NOT_CALIBRATED_LG_LIKELIHOOD",
+  "frame": "ICRS axes; physical positions at z=0 in kpc, peculiar velocities km/s; identities MW/M31/M33",
+  "observable_order_per_galaxy": ["distance_modulus_mag", "heliocentric_vlos_km_s", "pmra_star_uas_yr", "pmdec_uas_yr"],
+  "galaxy_order": ["M31", "M33"],
+  "measurements": {
+    "M31": {"ra_deg": 10.68, "dec_deg": 41.27, "value": [24.407, -300.8, 45.9, -20.5], "sigma": [0.032, 1.2, 8.1, 6.6], "distance_source": "https://arxiv.org/pdf/2107.08029#page=7", "motion_source": "https://arxiv.org/html/2508.01127v1#S4.T3", "PM_reduction_distance_kpc": 784},
+    "M33": {"ra_deg": 23.46, "dec_deg": 30.66, "value": [24.622, -179.5, 45.3, 26.3], "sigma": [0.030, 0.6, 9.7, 7.3], "distance_source": "https://arxiv.org/html/2304.00037v1#S4.SS5", "motion_source": "https://arxiv.org/html/2508.01127v1#S4.T4", "PM_reduction_distance_kpc": 840}
+  },
+  "covariance": {
+    "status": "PARTIAL_APPROXIMATION_REQUIRES_EXPLICIT_OPT_IN",
+    "distance_common_LMC_DEB_sigma_mag": 0.026,
+    "distance_common_LMC_PLR_fractional_sigma": [0.0042, 0.0041],
+    "unreported_covariances": "COM pmra/pmdec and intergalaxy Gaia systematics, rotation/LOS/PM coupling, residual distance ladder correlations",
+    "policy": "Do not sum this Gaia product with earlier Gaia measurements or its derived velocities. Additional systematics remain nuisance/model discrepancy, not zero by evidence."
+  },
+  "solar_reference": {
+    "R0_kpc": 8.122,
+    "U_Vtotal_W_km_s": [7.01, 244.17, 4.95],
+    "motion_source": "https://arxiv.org/html/2508.01127v1#S4.SS3",
+    "R0_context_source": "https://www.nature.com/articles/s41550-025-02563-1",
+    "status": "Fixed reference for interface tests only; caller supplies solar nuisance position/velocity for inference. U toward GC, V Galactic rotation, W north."
+  },
+  "mass_priors": {
+    "source": "https://www.nature.com/articles/s41550-025-02563-1",
+    "category": "Dynamical-study assumptions, NOT direct independent measurements",
+    "MW": {"definition": "M200c excluding separately modeled LMC", "mean_Msun": 1e12, "sigma_Msun": 2e11},
+    "M31": {"definition": "M200c", "mean_Msun": 1.3e12, "sigma_Msun": 4e11},
+    "M33": {"definition": "assumed isolated M200c; NOT stripped bound subhalo mass", "mean_Msun": 3e11, "sigma_Msun": 1e11},
+    "enabled": false,
+    "reason": "Resolve mass operator, LMC/reflex treatment and correlated astrophysical priors before activation."
+  },
+  "requires_resolved_halos": true,
+  "requires_M33": true,
+  "isolation_gate_enabled": false,
+  "sky_conditioning_rounding_tolerance_deg": 0.01,
+  "limits": "No N32 LG scoring or best anonymous pair. Sky directions conditioned at tabulated precision, not an invented angular error. Halo-COM/stellar-disk offsets, solar/LMC reflex and PM discrepancy require calibration before production. CF4 overlap/ladder correlations must be addressed before combining with parent posterior."
+}

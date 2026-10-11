@@ -1,0 +1,43 @@
+{
+  "schema": "ouruniv-cf4-z1-fable-pre-bundle-design-audit-v1",
+  "date": "2026-09-05",
+  "auditor": "fable",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
+  "verdict": "CONDITIONAL-GO",
+  "attribution_note": "The returned Fable advice used an erroneous RT/feedback/dust goal supplied by the driver. The user subsequently corrected that goal. The correct_final_project_goal below is the driver correction, not a fresh Fable re-audit. Numerical-kernel advice remains available; full goal-alignment approval must not be inferred from the erroneous prompt.",
+  "correct_final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct a q-corrected LCDM-consistent IC with conditional high-k structure, and forward-validate it with PMWD/HOP/RAMSES for the observed MW, Andromeda, Triangulum, Virgo, Coma, Local Void and Bootes Void environments, with a <=0.3 cMpc/h zoom target.",
+  "overmeasurement": {
+    "mandatory": [
+      "Q1-versus-JAX value agreement on non-degenerate boundary, multi-wrap and normalization fixtures",
+      "mass conservation and arbitrary-cotangent/representative mass-gradient agreement",
+      "static-shape, overflow/fail-closed and provenance checks",
+      "one representative warm-runtime and peak-memory bound"
+    ],
+    "defer_or_remove_from_z1": [
+      "new GPFS calibration reanalysis of the existing eight-task posterior",
+      "broad k-shell/ROI and failed-run provenance expansion",
+      "duplicate mutation/inode/receipt checks beyond the minimal contract"
+    ]
+  },
+  "final_goal_contribution": {
+    "z0_density_velocity_posterior": "indirect but necessary numerical-likelihood foundation; no posterior is produced",
+    "q_corrected_ic": "indirect prerequisite only",
+    "conditional_high_k_and_0p3_zoom": "no direct contribution in Z1",
+    "pmwd_hop_ramses_forward_validation": "no direct contribution in Z1",
+    "rt_stellar_agn_dust": "not an assigned CF4 project objective; erroneously included in the original audit prompt"
+  },
+  "feasibility": {
+    "judgment": "development-fixture static response-basis contraction is feasible",
+    "single_largest_blocker": "A few mass-gradient directions do not prove arbitrary posterior-state-dependent latent/bias VJP preservation at the full PM source count.",
+    "direct_sourcewise_jax": "NO-GO under Q2.0 resource preflight"
+  },
+  "scope_decision": {
+    "perform_now": "Z1-B-Q1-INTEGRATION only",
+    "defer": [
+      "Z1-A calibration reanalysis beyond the recorded diagnostic",
+      "Z1-C broad convergence/provenance expansion",
+      "actual CF4 posterior, held-out promotion, IC, PMWD/HOP/RAMSES and <=0.3 cMpc/h claim"
+    ],
+    "closure_meaning": "A pass closes only the development-fixture differentiable contraction bridge; it is not observational or cosmological validation."
+  }
+}

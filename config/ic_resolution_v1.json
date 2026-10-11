@@ -1,0 +1,59 @@
+{
+  "schema": "ouruniv-ic-resolution-v1",
+  "frozen_date": "2026-07-29",
+  "units": {
+    "box_and_comoving_length": "Mpc/h",
+    "particle_mass": "Msun/h",
+    "amr_cell_length": "comoving Mpc/h"
+  },
+  "cosmology": {
+    "Omega_m": 0.31,
+    "h": 0.746
+  },
+  "box_size_mpc_h": 384.0,
+  "global_base_level": 9,
+  "global_base_particles_per_dimension": 512,
+  "global_base_spacing_mpc_h": 0.75,
+  "global_base_dm_particle_mass_msun_h": 36291796875.0,
+  "zoom_tiers": {
+    "pilot": {
+      "purpose": "z=0 LG candidate, Lagrangian-mask, HOP, and contamination gate",
+      "finest_ic_particle_level": 12,
+      "dm_particle_spacing_mpc_h": 0.09375,
+      "dm_particle_mass_msun_h": 70882415.77148438,
+      "runtime_amr_levelmax": 19,
+      "minimum_cell_ckpc_h": 0.732421875,
+      "minimum_cell_physical_kpc_at_z0": 0.9817987600536193
+    },
+    "production": {
+      "purpose": "aggressive DMO LG realization after the pilot gate",
+      "finest_ic_particle_level": 13,
+      "dm_particle_spacing_mpc_h": 0.046875,
+      "dm_particle_mass_msun_h": 8860301.971435547,
+      "runtime_amr_levelmax": 21,
+      "minimum_cell_ckpc_h": 0.18310546875,
+      "minimum_cell_physical_kpc_at_z0": 0.24544969001340483
+    }
+  },
+  "reference_halo_particle_counts": {
+    "assumed_mw_mass_msun_h": 1200000000000.0,
+    "assumed_m33_mass_msun_h": 100000000000.0,
+    "pilot": {
+      "mw": 16929.445574606863,
+      "m33": 1410.7871312172388
+    },
+    "production": {
+      "mw": 135435.5645968549,
+      "m33": 11286.29704973791
+    }
+  },
+  "policies": {
+    "ramses_levelmin_equals_global_base_level": true,
+    "zoom_ic_level_is_not_ramses_levelmin": true,
+    "production_requires_pilot_pass": true,
+    "production_requires_particle_id_lagrangian_traceback": true,
+    "box_center_geometric_mask_forbidden_for_science": true,
+    "separate_zoom_runs_for_lg_virgo_coma": true,
+    "minimum_cell_size_is_not_a_claim_of_converged_physical_resolution": true
+  }
+}

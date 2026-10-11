@@ -1,0 +1,18 @@
+{
+  "steps_per_branch": 1000,
+  "learning_rate": 0.0002,
+  "paired_native_seed": 983124,
+  "structural_seed": 716201,
+  "screen_seed": 826103,
+  "gradient_clip": 10.0,
+  "past_baseline_decay": 0.95,
+  "learning_deadline_seconds": 10800,
+  "total_deadline_seconds": 14000,
+  "gpu_peak_limit_GiB": 20,
+  "feature_block_side": 8,
+  "feature_centers": [0.25, 0.75],
+  "screen_modes_each_half": [0, 1, 2, 3],
+  "mode_scales": [[0.75], [0.375], [0.1875], [0.75, 0.375, 0.1875]],
+  "screen_mode_weights": [0.2916666666666667, 0.2916666666666667, 0.2916666666666667, 0.125],
+  "limits": "One matched repair; no actual CF4/LG posterior, halo assignment, extra trial or automatic next bundle."
+}

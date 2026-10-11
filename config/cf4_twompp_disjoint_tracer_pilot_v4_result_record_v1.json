@@ -1,0 +1,128 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-v4-result-record-v1",
+  "date": "2026-09-01",
+  "status": "TECHNICAL_INPUT_GATE_PASS_NO_FIELD_INFERENCE",
+  "implementation_lineage": {
+    "branch": "agent/freeze-zoom-pipeline",
+    "commit": "0d237af7a6d7c0dc2863904e7af3f1322aa4d86c",
+    "remote": "origin",
+    "remote_commit_at_submission": "0d237af7a6d7c0dc2863904e7af3f1322aa4d86c",
+    "program": {
+      "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v4.json",
+      "sha256": "3cbd089d9e64cabe550259e4738dd2810102a6e4d3ec4c0e5d582748f0a206d9"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_disjoint_tracer_pilot_v4.py",
+      "sha256": "b43f3535c7b7516bdf44e2a4b8ed95de187c85ea2dc4655eebe4953ad98d3e71"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_disjoint_tracer_pilot_v4.sbatch",
+      "bytes": 3194,
+      "sha256": "f3a5ab2f7c7ba3c1175962bd1d2b874a01b4e5640f59616fd1d030fd99a3987c"
+    },
+    "v3_failure_audit": {
+      "path": "config/cf4_twompp_disjoint_tracer_pilot_v3_failure_audit_v1.json",
+      "sha256": "7f4b577b4317a7743b7590a413286a9fef811d7beeae3920f8128637e26ccbc5"
+    }
+  },
+  "execution": {
+    "Slurm_job_id": 329501,
+    "controller": "syntax",
+    "cluster": "syntax",
+    "node": "syn04",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 7,
+    "partition": "a10",
+    "cpus": 1,
+    "requested_memory_MiB": 1024,
+    "expected_peak_memory_MiB": 700,
+    "memory_headroom_multiplier": 1.46285714285714,
+    "reported_batch_MaxRSS_KiB": 3516,
+    "manual_execution_on_syntax_or_syn101": false,
+    "automatic_follow_on_executed": false
+  },
+  "artifacts": {
+    "directory": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot",
+    "result": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/result.json",
+      "bytes": 6192,
+      "sha256": "9456064288e1abeb205419183d8a790ed63a775dffd0814516af38e93a3ed7e2"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/manifest.json",
+      "bytes": 220,
+      "sha256": "260a6d88fa381db1642ed9605c6aff179ebdb69bbd55c98ce1a8a713869924d2"
+    },
+    "COMPLETE": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/pilot/COMPLETE",
+      "bytes": 307,
+      "sha256": "c9f2e9471d2273109da1a35b63ff3d8586803e7e01b3b87e4e933594bc774768"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/logs/pilot-329501.out",
+      "bytes": 984,
+      "sha256": "772ab966bd058fe19611016c19292bd63eb210730aabf5122cf7b56af5ce2148"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v4/logs/pilot-329501.err",
+      "bytes": 216,
+      "sha256": "889da800d5e30dfd71a994640bba1787333a365847c4e5ac927f40f7c11008a9"
+    }
+  },
+  "gate_result": {
+    "status": "PASS_TECHNICAL_INPUT_GATE_NO_FIELD_INFERENCE",
+    "failed_gates": [],
+    "all_nine_gates_passed": true,
+    "coordinate_convention": "equatorial_ICRS_RA_DEC",
+    "map_11_5_catalog_agreement": {
+      "rows": 69160,
+      "median_absolute_difference": 0.0,
+      "p95_absolute_difference": 0.003076927661895712,
+      "maximum_absolute_difference": 0.029411792755126953,
+      "frozen_median_limit": 0.01,
+      "frozen_p95_limit": 0.05
+    },
+    "map_12_5_catalog_agreement": {
+      "rows": 69160,
+      "median_absolute_difference": 0.0,
+      "p95_absolute_difference": 0.0050000000000000044,
+      "maximum_absolute_difference": 1.0,
+      "frozen_median_limit": 0.01,
+      "frozen_p95_limit": 0.05
+    },
+    "unique_CF4_associated_2Mpp_targets_excluded": 17007,
+    "eligible_CF4_disjoint_real_2Mpp_tracers": 36954,
+    "occupied_N32_voxels": 6356,
+    "occupied_N32_voxel_fraction": 0.1939697265625,
+    "six_population_counts": {
+      "apparent_0_absolute_0": 9617,
+      "apparent_0_absolute_1": 3463,
+      "apparent_0_absolute_2": 527,
+      "apparent_1_absolute_0": 15900,
+      "apparent_1_absolute_1": 6275,
+      "apparent_1_absolute_2": 1172
+    }
+  },
+  "interpretation": {
+    "technical_input_route": "GO",
+    "coordinate_mismatch_diagnosis_confirmed": true,
+    "official_completeness_maps_invalid": false,
+    "CF4_disjoint_2Mpp_sample_nonempty_and_supported": true,
+    "maximum_12_5_difference_requires_characterization_before_likelihood": true,
+    "maximum_12_5_difference_note": "The frozen robust median and p95 gates pass, but a maximum absolute difference of 1.0 indicates a small outlier or boundary class that must be localized before any Poisson likelihood consumes the map.",
+    "astropy_warning_note": "The log contains one divide-by-zero distance-modulus warning from invalid or nonpositive-redshift catalogue rows; 28 invalid-observed-field rows were excluded by the frozen partition.",
+    "present_density_posterior_validated": false,
+    "joint_velocity_density_information_budget_executed": false,
+    "observational_resolution_0p3_cMpc_h_established": false,
+    "IC_inferred": false
+  },
+  "next": {
+    "approval_required": true,
+    "recommended_stage": "equatorial_completeness_outlier_and_zero_exposure_audit_then_joint_velocity_density_information_budget_implementation",
+    "first_gate": "Localize all large map/catalog discrepancies and prove that no accepted tracer is assigned zero exposure before implementing the count likelihood.",
+    "second_gate": "Implement the N32 joint velocity-plus-disjoint-2M++ covariance/information calculation with known-selection ceiling and nuisance-marginalized scenarios.",
+    "field_inference_before_these_gates": false,
+    "automatic_submission_authorized": false
+  }
+}

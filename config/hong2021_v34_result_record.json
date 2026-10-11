@@ -1,0 +1,77 @@
+{
+  "schema": "hong2021-v34-oriented-multiscale-nonlinear-sufficiency-result-record-v1",
+  "status": "complete_development_only_negative_sufficiency_audit",
+  "program": "config/hong2021_v34_oriented_nonlinear_sufficiency_program.json",
+  "program_sha256": "82f7027589484e711a4956c56128073590374aea0e8a7484323ba95e6f7b8314",
+  "implementation_commit": "d0ff6bb42403d90e48c24d2c808dcfd14b1e7595",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v34_oriented_nonlinear_sufficiency/audit.json",
+    "sha256": "eaacff87253d5c1e7789cf662acb0204ab6336bfa01994e158f20bf64029b701",
+    "decision_digest_sha256": "5ee2e60aeb63fbe57ee52c2fa9a5a5379e3ce196b2c7e92fdec2f039b03904a2",
+    "classification": "local_residual_mean_not_predictable_by_frozen_nonlinear_audit",
+    "next": "freeze_conditional_multiscale_residual_spectrum_and_phase_coupling_audit"
+  },
+  "supported_factors": {
+    "nonlinear_scalar": [],
+    "oriented_patch": [],
+    "multiscale_increment": [],
+    "material_full_model_gain": []
+  },
+  "factor_4": {
+    "nonlinear_scalar_over_v33_linear_base_rmse": {
+      "TNG100": 0.9986834795915125,
+      "SIMBA": 0.9984933274163046,
+      "Swift": 0.999028625092341
+    },
+    "oriented_single_scale_over_nonlinear_scalar_rmse": {
+      "TNG100": 0.9986077302974294,
+      "SIMBA": 0.9990424693928392,
+      "Swift": 0.9986107568006699
+    },
+    "oriented_multiscale_over_single_scale_rmse": {
+      "TNG100": 0.9991970151132189,
+      "SIMBA": 0.9993121687459099,
+      "Swift": 0.9991933325448706
+    },
+    "oriented_multiscale_over_v33_linear_base_rmse": {
+      "TNG100": 0.9964922315993266,
+      "SIMBA": 0.9968511022038148,
+      "Swift": 0.9968359670590885
+    }
+  },
+  "factor_8": {
+    "nonlinear_scalar_over_v33_linear_base_rmse": {
+      "TNG100": 0.993333965980667,
+      "SIMBA": 0.9936564978961424,
+      "Swift": 0.9948660044774951
+    },
+    "oriented_single_scale_over_nonlinear_scalar_rmse": {
+      "TNG100": 0.9982260494046196,
+      "SIMBA": 0.9988540484217004,
+      "Swift": 0.99682424977452
+    },
+    "oriented_multiscale_over_single_scale_rmse": {
+      "TNG100": 1.001389062373515,
+      "SIMBA": 1.000647398854224,
+      "Swift": 0.9979989480423024
+    },
+    "oriented_multiscale_over_v33_linear_base_rmse": {
+      "TNG100": 0.9929491957347191,
+      "SIMBA": 0.9931603705607486,
+      "Swift": 0.9897221021890263
+    }
+  },
+  "scientific_conclusion": [
+    "A fixed nonlinear learner sees weak residual-mean information in the scalar, oriented 3x3x3, and coarser oriented 3x3x3 conditions, but no preregistered improvement rule passes simultaneously in all three domains.",
+    "The best complete model reduces validation RMSE by only 0.31 to 0.35 percent at 1.25 Mpc/h and 0.68 to 1.03 percent at 2.5 Mpc/h relative to the frozen V33 linear reference.",
+    "The V31 failure should therefore not be addressed by another deterministic conditional-mean backbone expansion. The next mechanism audit must decompose residual auto-power and backbone-residual cross-power and test whether conditional-copula translation destroys query-aligned phase coupling.",
+    "The physically correct V33 sig_v channel remains available for the later CF4 interface, but neither sig_v nor local deterministic mean is currently the limiting mechanism."
+  ],
+  "firewall": {
+    "simulation_identity_feature_used": false,
+    "validation_used_for_fit_or_early_stopping": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

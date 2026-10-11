@@ -1,0 +1,142 @@
+{
+  "schema": "ouruniv-lg-z0-forward-importance-v8-program-v1",
+  "status": "frozen_authorized_before_fresh_v8_generation",
+  "frozen_date": "2026-08-15",
+  "purpose": "Draw a fresh defensive-mixture bank for the latent Lagrangian Local-Group midpoint, retain exact p(q)/g(q) importance correction, and evaluate the unchanged normalized z=0 halo-pair likelihood with the unchanged P1 and P2 physical gates.",
+  "authorization": {
+    "result_record_path": "config/cf4_lg_v8_proposal_audit_result_record.json",
+    "result_record_sha256": "31ea3f233c198773bad0a0f511d9781231b9fbff5de1b392efe9ac1596a86565",
+    "required_status": "complete_pass_authorize_fresh_v8",
+    "selected_bank_size": 256,
+    "bootstrap_0p5_percent_lower_ESS": 8.474227054960878
+  },
+  "information_firewall": {
+    "v4_v5_v6_v7_role": "consumed development and proposal-design data only",
+    "fresh_v8_fields_opened_at_freeze": false,
+    "fresh_seed_bank": "proposal seeds 5269--5524, fixed before any corresponding field is generated",
+    "CF4_claim": "MW/M31/M33 observables and the peak likelihood are explicitly additional Local-Group information, not information inferred from CF4.",
+    "likelihood_target_or_scale_changed_after_v7": false,
+    "P1_or_P2_threshold_changed": false,
+    "no_same_model_seed_extension_after_v8": true
+  },
+  "implementation": {
+    "v7_likelihood_program": {
+      "path": "config/p2_lg_z0_forward_likelihood_v7_development.json",
+      "sha256": "e42f4be5b01658c8dc67195d80d818292f585d8a31ce04385d514cc838df1705"
+    },
+    "generator": {
+      "path": "src/cf4_lg_peak_cr.py",
+      "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"
+    },
+    "midpoint_proposal": {
+      "path": "src/cf4_lg_midpoint_proposal.py",
+      "sha256": "24cb00fb681ae5c410760f378209b70f128290f38dc79975362995a53b28ab69"
+    },
+    "z0_likelihood": {
+      "path": "src/cf4_lg_z0_likelihood.py",
+      "sha256": "0fa110b3165de723896666b9249e81d81400d2b9a4a5968d108fecf6cb9d4f22"
+    },
+    "importance_gate": {
+      "path": "src/cf4_lg_z0_importance.py",
+      "sha256": "fde4384fee2ee39bea2fff7b967db6702eec9a3ad2c193d4eddd7537a57eb3f8"
+    }
+  },
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "parent_projection_mesh_size": 192,
+  "frozen_mode_mesh_size": 64,
+  "box_size_mpc_h": 384.0,
+  "seed_bank": {
+    "count": 256,
+    "proposal_seed_start": 5269,
+    "geometry_seed_start": 6369,
+    "likelihood_noise_seed_start": 7469,
+    "midpoint_seed_start": 8569
+  },
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_prior": {
+      "distribution": "diagonal_normal",
+      "mean_mpc_h": [0.0, -6.0, 4.0],
+      "sigma_mpc_h": [3.0, 3.0, 3.0],
+      "role": "Target latent prior inherited unchanged from v6."
+    },
+    "protohalo_midpoint_sampling_proposal": {
+      "distribution": "equal_weight_two_component_diagonal_normal_mixture",
+      "components": [
+        {
+          "weight": 0.5,
+          "mean_mpc_h": [0.0, -6.0, 4.0],
+          "sigma_mpc_h": [3.0, 3.0, 3.0],
+          "role": "defensive exact target-prior component"
+        },
+        {
+          "weight": 0.5,
+          "mean_mpc_h": [0.6969726423783698, -6.426151873339617, 4.56182697130288],
+          "sigma_mpc_h": [1.5, 1.5, 1.5],
+          "role": "v6-development transport component frozen before v8"
+        }
+      ],
+      "importance_correction": "Store and use exact log p_target(q)-log g_proposal(q) for every realization.",
+      "analytic_target_prior_over_proposal_bound": 2.0
+    },
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "candidate_preselection": {
+    "member_mass_range_msun_h": [200000000000.0, 8000000000000.0],
+    "mass_ratio_max": 8.0,
+    "separation_range_mpc_h": [0.15, 2.0],
+    "midpoint_max_offset_mpc_h": 8.0,
+    "external_mass_threshold_msun_h": 5000000000000.0,
+    "basis": "A deliberately loose, prospectively fixed support around the unchanged P2 screen; it is not an acceptance gate."
+  },
+  "z0_likelihood": {
+    "pair_identity": "uniform finite mixture over every preselected unordered pair in a realization",
+    "no_pair_log_likelihood": "negative_infinity",
+    "member_log10_mass": {
+      "target_msun_h": [1200000000000.0, 1200000000000.0],
+      "sigma_dex": [0.35, 0.35]
+    },
+    "separation_mpc_h": {"target": 0.574, "sigma": 0.30},
+    "midpoint_offset_vector_mpc_h": {
+      "target": [0.0, 0.0, 0.0],
+      "sigma_each_axis": 2.0
+    },
+    "total_radial_velocity_km_s": {"target": -109.0, "sigma": 80.0},
+    "tangential_speed_km_s": {"target": 57.0, "sigma": 80.0},
+    "isolation": {
+      "form": "logistic_survival_factor",
+      "half_probability_radius_mpc_h": 3.0,
+      "width_mpc_h": 0.5
+    },
+    "scale_interpretation": "These are effective PM forward-model discrepancy scales inherited from the frozen P2 target/ranking resolution, not claims of measurement-only uncertainty.",
+    "m33_policy": "M33 is excluded from this PM likelihood because N576 FoF may merge it with M31; it remains mandatory at the RAMSES/HOP gate.",
+    "normalization": "All Gaussian terms include their fixed normalizing constants. The pair mixture uses log-mean-exp, not log-sum-exp, so extra candidate pairs do not receive an automatic evidence bonus."
+  },
+  "selection_policy": {
+    "target_log_weight": "logmeanexp of the unchanged z0 likelihood over pairs that jointly pass hard P2 and recentered P1, plus exact log p_target(q)-log g_proposal(q)",
+    "parent_centered_P1_required": true,
+    "same_P2_physical_support_required": true,
+    "all_five_P1_gates_at_the_same_actual_pair_midpoint_required": true,
+    "minimum_jointly_eligible_realizations": 8,
+    "minimum_fresh_importance_ESS": 8.0,
+    "maximum_fresh_single_weight": 0.25,
+    "pass_requires_all": true,
+    "stop_before_RAMSES_for_review": true,
+    "definitive_acceptance_requires_RAMSES_HOP_M200c_M33_and_contamination": true,
+    "no_same_model_seed_extension": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v8_z0_importance",
+    "parent_projection_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v8_z0_importance",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v8_z0_importance",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v8_z0_importance"
+  }
+}

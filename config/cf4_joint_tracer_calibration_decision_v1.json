@@ -1,0 +1,36 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-decision-v1",
+  "date": "2026-09-20",
+  "calibration_artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v1/result.json",
+  "calibration_job": "388273",
+  "decision": "CONDITIONAL_DEVELOPMENT_GO_PRODUCTION_NO_GO",
+  "what_is_fixed": [
+    "official ARES angular survival is an explicit voxel exposure offset",
+    "Schechter radial survival is an explicit population-dependent offset",
+    "six positive population-specific bias amplitudes are fitted jointly",
+    "CF4-overlapping 2M++ targets remain excluded"
+  ],
+  "holdout_result": {
+    "population_count": 6,
+    "positive_bias_fits": 6,
+    "holdout_deviance_improvement_by_population": [-0.7053271921, 8.2165265936, 0.2841950983, -0.9830358469, -0.6047024388, 0.3271989237],
+    "interpretation": "The calibration is technically executable but not uniformly predictive; the Carrick reference covariate plus static selection offset is insufficient for production."
+  },
+  "production_no_go_reasons": [
+    "three of six populations degrade on spatial holdout",
+    "no external survival validation yet",
+    "redshift-space RSD/FoG and model-discrepancy nuisance are absent",
+    "Carrick density is a reconstructed covariate, not an independent truth"
+  ],
+  "next_required_model": {
+    "name": "joint_calibrated_tracer_v2",
+    "must_include": [
+      "population-specific radial selection nuisance with priors",
+      "coherent RSD displacement and FoG/discrepancy term",
+      "mask-boundary robustness and zero-completeness masking",
+      "independent survival/bias validation or posterior predictive calibration"
+    ],
+    "production_IC_allowed": false,
+    "stage_transition": "remain at stage 4 development; do not generate final IC"
+  }
+}

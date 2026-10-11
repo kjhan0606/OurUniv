@@ -1,0 +1,45 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v18",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "3ba5b7ae60554a7f414088143441a564eac2ac2a",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "CONDITIONAL_NO_GO_UNTIL_RECEIPT_AND_PROVENANCE_REPAIRS",
+  "risk_level": "MODERATE",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v18.txt",
+  "findings": {
+    "numerical_periodic_test": true,
+    "historical_base_result_superseded": true,
+    "historical_mode_result_supersession_and_schema": false,
+    "implementation_dependency_pins": false,
+    "pooled_guard_inherited_dependency_metadata": false,
+    "replacement_validation_range_sealed": true,
+    "hash_receipt_bound_to_audited_commit": false,
+    "all_linked_artifact_hashes_pinned": false,
+    "exact_regression_selection_recorded": false,
+    "reported_metrics_faithful": true,
+    "science_boundary_sealed": true,
+    "forward_pointers_current": false
+  },
+  "observations": [
+    "The production-bound periodic edge test is present and the grid-wrap repair is numerically exercised.",
+    "Base result v1/v2 validation ranges are explicitly superseded and the replacement range remains sealed.",
+    "Mode coverage result v1/v2 still carry complete statuses; v2 also carries the v1 schema label. Historical status and schema must be corrected.",
+    "The mode implementation block associates one current generator with historical draw-sigma results; provenance must be split by result or explicitly declare that historical generator hashes are unavailable.",
+    "The hash receipt v1 is bound to parent commit 366159c rather than audited HEAD 3ba5b7a. It also claims all linked hashes while several historical and audit-linked paths are unpinned.",
+    "The record contains the selected test filenames and count, but not the exact command, exit status, and elapsed time for the audited commit.",
+    "Metrics remain faithful to the sealed development evidence: 64/64 fits, strict 8/64, 47/47 coverage failures, analytic mode coverage 0.744140625/0.96875, and pooled guard failure.",
+    "No observational posterior, validation opening, frontier promotion, IC/PM/HOP/RAMSES run, or 0.3 cMpc/h claim is authorized."
+  ],
+  "required_next": [
+    "Supersede mode coverage result v1/v2 and correct the v2 schema label.",
+    "Split current versus historical mode-coverage implementation provenance or explicitly mark unavailable historical generator hashes.",
+    "Reissue a hash receipt bound to audited commit 3ba5b7a with explicit certified-commit, receipt-generation, and self-scope fields.",
+    "Pin every linked artifact path in the result record, including historical results, old audit/raw files, predecessor, backup, and diagnosis/width intermediates.",
+    "Record the exact 26-test command, exit status, and elapsed time at the audited commit.",
+    "Refresh all forward pointers to v18/v19 and keep validation sealed; do not execute the mark arm or open B2."
+  ],
+  "recommendation": "Accept the numerical periodic repair and development metrics as internally credible, but keep B1 conditionally closed until these local provenance and receipt repairs are committed and re-audited."
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "hong2021-v57-grid-tail-component-audit-result-record-v1",
+  "status": "complete_numerically_unresolved_audit_selected_higher_accuracy_train_only_reaudit",
+  "program": "config/hong2021_v57_grid_tail_component_audit_program.json",
+  "program_sha256": "a8d7e63dd1c2f95c642962bf0c755581172bb9a99a1e26c17ced061a3dbe187c",
+  "audit_code_commit": "e5aefca0b6182d295bcae058b07afbe8ea13188d",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v57_grid_tail_component_audit/audit.json",
+    "sha256": "10310d69319227ff4dc1768afc9a6a8c83ad5cd6282aee01cd5cb5ff4f5f4b13",
+    "decision_digest_sha256": "fb1c3568b548ae9a5ddd66f3ad9a214cd89de02fb35d4d912660f9c50244442b",
+    "classification": "V56_grid_tail_component_decomposition_is_numerically_unresolved",
+    "next": "freeze_a_higher_accuracy_train_only_grid_tail_audit_without_training_or_development_access"
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_audit": true,
+    "pytest_passed": 437,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "35472402130da3aa5eabbda5f5c5d6b4337f1db9aa9e38a5a670ff2276fcdb31",
+    "audit_log_sha256": "957a2b6c3fab65a557f7787feacfd1dd2f633710eac4a1ccb00f5c62769e0e33",
+    "TNG100_numerical_requirements_pass": true,
+    "SIMBA_numerical_requirements_pass": false,
+    "Swift_numerical_requirements_pass": false,
+    "decision_digest_independently_verified": true
+  },
+  "numerical_failure": {
+    "V56_gate_reproduction_limit": 1e-10,
+    "predicted_complete_moment_relative_difference_from_V56_gate": {
+      "TNG100": 1.18015578130975e-11,
+      "SIMBA": 2.2147372959555995e-10,
+      "Swift": 2.8181030131049514e-10
+    },
+    "tail_32_to_64_limit": 0.02,
+    "maximum_tail_32_to_64_relative_difference": {
+      "TNG100": {
+        "threshold": "grid_09",
+        "value": 0.0008660749762881366,
+        "truth_exceedance_count": 3
+      },
+      "SIMBA": {
+        "threshold": "grid_09",
+        "value": 0.02480749630578466,
+        "truth_exceedance_count": 0
+      },
+      "Swift": {
+        "threshold": "grid_10",
+        "value": 0.02368694348316178,
+        "truth_exceedance_count": 0
+      }
+    },
+    "cause": "The V57 32/64 control uses global Gauss-Hermite quadrature followed by discontinuous threshold binning. Ranked-component accumulation also changes floating summation order relative to the exact V56 gate. These are audit-integration effects, not evidence of a new model failure.",
+    "required_repair": "Keep an unranked, exact-algorithm V56 64-point reproduction accumulator, and replace threshold-binned global Gauss-Hermite tail integration with direct Gauss-Legendre integration over the analytic component-normal CDF interval on each side of every fixed threshold."
+  },
+  "descriptive_findings_not_eligible_for_model_selection": {
+    "reason": "The frozen V57 program forbids scientific mechanism classification when any numerical requirement fails.",
+    "TNG100": {
+      "complete_predicted_over_truth_mean_delta_squared": 8.176958714706021,
+      "region_positive_excess_shares": {
+        "below_grid": 0.0,
+        "inside_grid": 0.03345142592703548,
+        "beyond_grid": 0.9665485740729645
+      },
+      "q99_999_anchor": {
+        "predicted_over_truth_probability": 1.02806156485195,
+        "predicted_over_truth_conditional_amplitude": 12.95426932952545,
+        "predicted_over_truth_tail_moment": 13.317786398425556,
+        "highest_location_rank_moment_share": 0.90828679920584
+      },
+      "above_global_train_maximum": {
+        "truth_exceedance_count": 0,
+        "predicted_analytic_exceedance_probability": 0.0015542503678899779,
+        "predicted_mean_delta_squared_tail_contribution_64": 3475627.7685361416,
+        "highest_location_rank_moment_share": 0.9735596127774054
+      },
+      "supported_grid_weighted_mean_absolute_log_probability_ratio": 0.6076973178939246,
+      "supported_grid_weighted_mean_absolute_log_conditional_amplitude_ratio": 2.823293764461768
+    },
+    "cross_domain_above_global_train_maximum": {
+      "SIMBA_positive_excess_share": 0.4561189520780039,
+      "SIMBA_highest_location_rank_moment_share": 0.9035122099955347,
+      "Swift_positive_excess_share": 0.5144226521298256,
+      "Swift_highest_location_rank_moment_share": 0.8672489851951074
+    },
+    "provisional_interpretation": "The numerically valid TNG100 rows strongly suggest that V56 leaves most residual moment beyond its final scored threshold and that the highest-location mixture component carries that tail. This interpretation must be reproduced by V58 before selecting the next model."
+  },
+  "selected_next_audit": {
+    "training_or_refit": false,
+    "population": "the identical immutable train-only V56 probe and strata",
+    "thresholds": "the identical q99.999 anchor and 16 V56 grid thresholds",
+    "primary_tail_integration": "fixed high-order Gauss-Legendre integration over each analytic normal-CDF probability interval, eliminating threshold indicators from the integrand",
+    "control_tail_integration": "a lower-order Gauss-Legendre rule on the same exact intervals",
+    "gate_reproduction": "the exact original V56 unranked 64-point Gauss-Hermite calculation and aggregation order",
+    "classification_rules": "unchanged from the frozen V57 program",
+    "posthoc_tolerance_change": false
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "threshold_changed": false,
+    "support_changed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

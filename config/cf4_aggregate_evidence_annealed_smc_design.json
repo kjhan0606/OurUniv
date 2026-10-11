@@ -1,0 +1,374 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-annealed-smc-design-v1",
+  "status": "frozen_scientific_design_before_implementation",
+  "frozen_date": "2026-08-16",
+  "scientific_method": "aggregate_evidence_annealed_SMC",
+  "purpose": "Replace the closed fixed-proposal IID importance architecture with a prospective controlled-weight SMC estimator of the 256-parent aggregate geometry evidence.",
+  "source_failure": {
+    "result_record": "config/cf4_peak_evidence_adaptation_fallback_result_record.json",
+    "result_record_sha256": "d890b7ba4baa2887e6518bb6cd02cbaa3c23dbeeb7c31aeea5dbeccbe35618c0",
+    "required_status": "complete_fail_insufficient_fallback_adaptation_support_stop",
+    "interpretation": "The sealed g_A IID importance architecture failed its prospective geometry-support gate; this is not evidence of physical tension or parent preference."
+  },
+  "authorization": {
+    "implementation_authorized": true,
+    "synthetic_and_oracle_regression_authorized": true,
+    "response_atlas_construction_authorized": true,
+    "production_execution_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "fixed_inputs": {
+    "physical_model": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "reference_calibration": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+      "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988"
+    },
+    "density_filter": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+      "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+      "shape": [576, 576, 289],
+      "dtype": "float32"
+    },
+    "parent_count": 256,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_prior": "exactly_uniform_1_over_256",
+    "box_size_mpc_h": 384.0,
+    "coarse_N": 192,
+    "fine_N": 576,
+    "dx_mpc_h": 0.6666666666666666,
+    "refinement_ratio": 3,
+    "constraint_dimension": 14,
+    "peak_sigma_delta": 0.25,
+    "midpoint_prior_mean_mpc_h": [0.0, -6.0, 4.0],
+    "midpoint_prior_sigma_mpc_h": [3.0, 3.0, 3.0],
+    "protohalo_separation_cells": 6,
+    "half_separation_cells": 3,
+    "shell_radius_cells": 2,
+    "physical_targets_changed": false
+  },
+  "target": {
+    "midpoint_state": "q in R^3, unbounded and not wrapped",
+    "axis_state": "unoriented axis [a] in RP2 represented by one canonical unit vector",
+    "pi0": "p(q) times Uniform(RP2)",
+    "log_Z_bar": "logsumexp_j(log_Z_j(q,a)) - log(256)",
+    "gamma_beta": "pi0(q,a) * exp(beta * log_Z_bar(q,a))",
+    "beta_range": [0.0, 1.0],
+    "initial_normalizer": 1.0,
+    "terminal_normalizer": "I_bar = integral pi0(q,a) Z_bar(q,a) dq da",
+    "all_gaussian_normalizing_constants_required": true
+  },
+  "piecewise_geometry": {
+    "rounding": "IEEE-754 NumPy rint, nearest integer with exact half ties to even",
+    "midpoint_grid": "m = mod([288,288,288] + rint(q/dx), 576)",
+    "raw_axis_offset": "o = rint(3*a), integer components",
+    "canonical_vector_rule": {
+      "index": "lowest coordinate index attaining max(abs(vector))",
+      "sign": "if the selected coordinate is negative multiply the full vector by -1",
+      "zero_vector": "fatal; mathematically impossible for a unit axis here"
+    },
+    "canonical_axis_state": "normalize a, then apply canonical_vector_rule to a",
+    "canonical_axis_offset": "apply canonical_vector_rule independently to raw o",
+    "likelihood_cache_key": ["m_x", "m_y", "m_z", "o_x", "o_y", "o_z"],
+    "covariance_cache_key": [
+      "m_x mod 3",
+      "m_y mod 3",
+      "m_z mod 3",
+      "canonical_o_x",
+      "canonical_o_y",
+      "canonical_o_z"
+    ],
+    "point_construction": "centres m-o and m+o; six fixed Cartesian shell probes of radius 2 cells around each centre",
+    "antipodal_contract": "a and -a may permute centres but must give identical normalized log_Z",
+    "periodicity": "only point and grid indices are modulo 576; q itself remains unbounded"
+  },
+  "exact_covariance": {
+    "operator": "Q = I - R*R",
+    "method": "existing exact 27-fine-phase response cache",
+    "stationary_approximation_allowed": false,
+    "observation_covariance": "C_G = A_G Q A_G* + 0.25^2 I_14",
+    "log_Z_j": "-0.5 * [14 log(2*pi) + logdet(C_G) + (t-mu_j)^T C_G^-1 (t-mu_j)]",
+    "maximum_phase_count": 27,
+    "cholesky_and_logdet_cached_by_covariance_key": true
+  },
+  "replicates": {
+    "count": 4,
+    "particles_per_replicate": 2048,
+    "execution_order": [0, 1, 2, 3],
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "bit_generator": "NumPy PCG64DXSM",
+    "seed_sequence_contract": {
+      "initial_particle_i": "SeedSequence(master, spawn_key=(0,i))",
+      "resampling_event_e": "SeedSequence(master, spawn_key=(1,e))",
+      "MH_stage_s_sweep_h_particle_i": "SeedSequence(master, spawn_key=(2,s,h,i))"
+    },
+    "shared_random_particles_between_replicates": false,
+    "shared_deterministic_evidence_cache_allowed": true
+  },
+  "initialization": {
+    "beta": 0.0,
+    "normalized_particle_weights": "W_i = 1/2048",
+    "log_normalizer": 0.0,
+    "midpoint": "independent draw from the unchanged diagonal Gaussian p(q)",
+    "axis": "draw z=2U-1 and phi=2*pi*V on S2, then canonicalize to RP2",
+    "initial_ancestor_label": "particle index 0 through 2047",
+    "old_2048_or_8192_particle_reuse": false
+  },
+  "adaptive_tempering": {
+    "target_conditional_ESS": 1638.4,
+    "target_conditional_ESS_fraction": 0.8,
+    "incremental_weight": "u_i(delta) = exp(delta * log_Z_bar_i)",
+    "conditional_ESS": "2048 * (sum_i W_i u_i)^2 / sum_i W_i u_i^2",
+    "endpoint_rule": "if CESS(1-beta) >= 1638.4, set next beta exactly to 1",
+    "bisection": {
+      "low": 0.0,
+      "high": "1-beta",
+      "feasible_rule": "CESS(delta) >= 1638.4; equality is feasible",
+      "update": "feasible midpoint replaces low; infeasible midpoint replaces high",
+      "interval_tolerance": 1e-10,
+      "returned_increment": "largest certified feasible low",
+      "all_sums": "float64 log-sum-exp"
+    },
+    "temperature_stagnation": "fatal if remaining beta exceeds 1e-10 but selected increment is <=1e-12",
+    "maximum_positive_temperature_stages": 256,
+    "normalizer_increment": "log_c = log(sum_i W_i exp(delta*log_Z_bar_i))",
+    "normalizer_update": "log_I_bar_hat += log_c",
+    "particle_weight_update": "W_i <- W_i*u_i / sum_k W_k*u_k"
+  },
+  "resampling": {
+    "ESS": "1 / sum_i W_i^2",
+    "trigger": "strictly ESS < 1024.0; equality does not resample",
+    "method": "systematic",
+    "uniform": "U0 drawn uniformly on [0,1/2048)",
+    "thresholds": "U0 + k/2048 for k=0..2047",
+    "CDF_tie_rule": "select lowest index whose cumulative weight is >= threshold",
+    "CDF_last_value": "set exactly to 1.0 before searching",
+    "post_resampling_weights": "exactly 1/2048",
+    "ancestor_labels": "offspring inherit the selected particle's initial ancestor label",
+    "event_counter": "starts at zero and increments only when resampling occurs"
+  },
+  "MH_rejuvenation": {
+    "schedule": "after every positive beta update and optional resampling, execute exactly four complete sweeps at the new beta",
+    "sweeps_per_stage": 4,
+    "one_move_per_particle_per_sweep": true,
+    "move_mixture": {
+      "q_local": 0.4,
+      "axis_local": 0.3,
+      "joint_local": 0.2,
+      "prior_independence": 0.1
+    },
+    "q_local": {
+      "whitened_scales": [0.25, 0.6, 1.5],
+      "scale_probabilities": [0.5, 0.3, 0.2],
+      "proposal": "q' = q + prior_sigma * selected_scale * Normal3(0,I)",
+      "boundary": "none; q remains in R^3",
+      "symmetry": true
+    },
+    "axis_local": {
+      "kernel": "antipodal_vMF centred on current unoriented axis",
+      "kappa_values": [100.0, 10.0, 1.0],
+      "kappa_probabilities": [0.5, 0.3, 0.2],
+      "density": "kappa*cosh(kappa*a_dot_b)/(4*pi*sinh(kappa)) on S2, followed by canonical RP2 folding",
+      "sampling": "choose sign plus or minus with probability 1/2, sample vMF(sign*a,kappa), normalize and canonicalize",
+      "boundary": "none on RP2",
+      "symmetry": "K([a],[b]) = K([b],[a])"
+    },
+    "joint_local": "draw q scale and axis kappa independently from the frozen scale distributions and propose both",
+    "prior_independence": "draw q prime from p(q) and a prime from Uniform(RP2)",
+    "local_log_acceptance": "min(0, log_p(q_prime)-log_p(q) + beta*(log_Z_bar_prime-log_Z_bar))",
+    "axis_only_log_acceptance": "min(0, beta*(log_Z_bar_prime-log_Z_bar))",
+    "prior_independence_log_acceptance": "min(0, beta*(log_Z_bar_prime-log_Z_bar))",
+    "accept_tie_rule": "accept when log(U) <= log_acceptance",
+    "nonfinite_oracle_value": "fatal numerical failure, never a silent rejection",
+    "MH_weights": "unchanged by rejuvenation"
+  },
+  "genealogy": {
+    "terminal_descendant_fraction": "g_r = number of terminal particles descended from initial particle r divided by 2048",
+    "genealogical_ESS": "1 / sum_r g_r^2",
+    "MCMC_changes_ancestor_label": false
+  },
+  "oracle_and_cache": {
+    "production_cache_starts_empty": true,
+    "cache_values": [
+      "canonical geometry key",
+      "covariance key",
+      "log_Z_j for all 256 parents as float64",
+      "log_Z_bar as float64"
+    ],
+    "controller_return_values": ["canonical geometry key", "log_Z_bar"],
+    "controller_forbidden_values": [
+      "parent seed",
+      "parent identity",
+      "parent-specific log_Z",
+      "CF4 deviance",
+      "CF4 rank",
+      "top parent diagnostics"
+    ],
+    "new_keys_within_one_oracle_call": "deduplicate and sort lexicographically before evaluation",
+    "cache_collision_rule": "same key must reproduce bitwise-identical log_Z; otherwise fatal",
+    "old_bank_cache_import": false,
+    "parent_response_atlas": {
+      "purpose": "avoid one N576 inverse FFT per parent at every SMC sweep without approximating the target",
+      "construction": "one exact fine inverse FFT per parent, then extract a local point-response cube as float64",
+      "midpoint_core_domain": "all midpoint cells whose q rounding bins intersect prior_mean plus or minus 10 prior_sigma independently in each coordinate",
+      "point_padding_cells": 5,
+      "padding_reason": "maximum centre offset 3 plus shell radius 2",
+      "grid_cell_bounds": {
+        "r_min": "ceil((mean-10*sigma)/dx - 0.5)",
+        "r_max": "floor((mean+10*sigma)/dx + 0.5)"
+      },
+      "target_truncated_to_atlas": false,
+      "outside_atlas_policy": "evaluate by the exact full-response slow path for all outside keys in that batch; never reject, clip or approximate",
+      "dtype": "float64",
+      "per_parent_SHA256_required": true
+    },
+    "regression_cache_namespace": "separate and forbidden as a production cache input"
+  },
+  "information_firewall": {
+    "temperature_controller_uses_only_log_Z_bar": true,
+    "resampling_uses_only_current_SMC_weights": true,
+    "MH_uses_only_pi0_and_log_Z_bar": true,
+    "parent_specific_terminal_evaluation_only_after_all_particle_histories_are_frozen": true,
+    "CF4_deviance_opened_only_after_four_terminal_parent_vectors_are_frozen": true,
+    "old_2048_bank_role": "oracle regression only",
+    "old_8192_bank_role": "oracle regression only",
+    "old_rows_used_as_particles_or_estimators": false,
+    "old_rows_used_to_initialize_cache": false,
+    "result_dependent_seed_or_kernel_changes": false
+  },
+  "terminal_parent_reconstruction": {
+    "conditional_parent_probability": "c_ij = exp(log_Z_ij - logsumexp_k(log_Z_ik))",
+    "bounds": "0 <= c_ij <= 1 and sum_j c_ij = 1 for every terminal particle",
+    "replicate_parent_probability": "P_rj = sum_i W_ri * c_rij",
+    "replicate_parent_integral": "I_rj_hat = 256 * exp(log_I_bar_r_hat) * P_rj",
+    "pooled_parent_integral": "I_j_hat = arithmetic_mean_r(I_rj_hat)",
+    "pooled_I_bar": "arithmetic_mean_r(exp(log_I_bar_r_hat))",
+    "pooled_parent_probability": "P_j = I_j_hat / sum_k I_k_hat",
+    "future_joint_sampler": "choose replicate proportional to exp(log_I_bar_r), choose terminal particle by W_ri, then choose parent by c_rij",
+    "future_joint_sampler_authorized_now": false
+  },
+  "validation": {
+    "synthetic_master_seed": 2026082305,
+    "null_likelihood_test": {
+      "Z_j": 1.0,
+      "required_beta_jump": "0 directly to 1",
+      "required_log_normalizer_absolute_error": 1e-12,
+      "required_uniform_parent_max_error": 1e-12
+    },
+    "dense_discrete_toy": {
+      "geometry_states": 64,
+      "synthetic_parents": 8,
+      "multimodal": true,
+      "exact_enumeration_required": true,
+      "pooled_log_normalizer_absolute_error_max": 0.05,
+      "pooled_parent_probability_L1_max": 0.05
+    },
+    "geometry_key_tests": [
+      "positive and negative exact half-cell ties use ties-to-even",
+      "axis-component max-absolute ties use lowest coordinate index",
+      "a and -a produce the same canonical cache key",
+      "a and -a normalized log_Z difference at most 1e-12"
+    ],
+    "phase_27_tests": "compare covariance, Cholesky, logdet and log_Z to the existing dense phase-control reference",
+    "atlas_tests": {
+      "random_in_atlas_keys": 1024,
+      "random_outside_atlas_keys": 64,
+      "full_response_log_Z_max_difference": 1e-10
+    },
+    "old_bank_regression": {
+      "adaptation_2048_record": "config/cf4_peak_evidence_adaptation_v1_result_record.json",
+      "adaptation_2048_record_sha256": "b3d90fd580fa56cf6c1456d6018458958f2b6430d3656bd79845976485220238",
+      "adaptation_8192_record": "config/cf4_peak_evidence_adaptation_fallback_result_record.json",
+      "adaptation_8192_record_sha256": "d890b7ba4baa2887e6518bb6cd02cbaa3c23dbeeb7c31aeea5dbeccbe35618c0",
+      "immutable_regression_input_only": true,
+      "cache_artifacts_reused_in_production": false,
+      "key_arrays_exact": true,
+      "log_Z_max_difference": 1e-10,
+      "log_Z_bar_max_difference": 1e-10
+    },
+    "SMC_unit_tests": [
+      "conditional ESS root and endpoint rule",
+      "normalizer accumulation with and without resampling",
+      "systematic-resampling CDF tie rule",
+      "genealogical ESS",
+      "local and independence MH detailed balance",
+      "terminal parent reconstruction identity",
+      "same-seed bitwise reproducibility",
+      "controller API cannot receive parent-specific or CF4 fields"
+    ]
+  },
+  "prospective_gates": {
+    "all_four_replicates_reach_beta_one": true,
+    "maximum_temperature_stages_per_replicate": 256,
+    "all_values_finite": true,
+    "all_lineage_exact": true,
+    "minimum_genealogical_ESS_each_replicate": 128.0,
+    "replicate_log_I_bar_range_max_nat": 0.2,
+    "replicate_log_I_bar_sample_SE_max_nat": 0.1,
+    "maximum_pairwise_parent_probability_L1": 0.2,
+    "pooled_parent_ESS_min": 32.0,
+    "maximum_pooled_parent_probability": 0.1,
+    "weighted_CF4_reference_Q99_mass_max": 0.05,
+    "weighted_CF4_deviance_Q90_le_reference_Q99p5": true,
+    "weighted_CF4_one_sided_KS_permutation_p_min": 0.01,
+    "CF4_permutation_seed": 2026081901,
+    "CF4_permutations": 100000,
+    "pass_requires_all": true,
+    "old_IID_geometry_ESS_or_max_weight_gate_reused": false,
+    "reason_old_gate_not_reused": "SMC has a distinct controlled-weight and replicate-stability contract; this is a new estimator, not a retrospective relaxation."
+  },
+  "failure_actions": {
+    "invalid_lineage_or_numerics": "No scientific conclusion. Repair only the invalid implementation and rerun the identical frozen program.",
+    "oracle_regression_failure": "Stop before production SMC.",
+    "SMC_temperature_genealogy_or_replicate_instability": "Stop this architecture. No automatic particle increase, extra replicate, kernel retuning, or seed extension.",
+    "stable_SMC_but_parent_support_or_CF4_failure": "Report physical tension. Do not alter peak targets, sigma, or CF4 gates after reading results.",
+    "all_gates_pass": "Authorize only the design of a separate joint parent-geometry conditional-field bank."
+  },
+  "artifacts": {
+    "exclusive_create_and_atomic_publication": true,
+    "required_lineage": [
+      "design SHA256",
+      "program SHA256",
+      "all source and runner SHA256",
+      "git commit",
+      "Python NumPy SciPy versions",
+      "V8 physical-model SHA256",
+      "density-filter SHA256",
+      "27-phase calibration SHA256",
+      "256-parent manifest and field SHA256",
+      "2048 and 8192 regression-record SHA256",
+      "response-atlas shard SHA256",
+      "evidence-cache shard SHA256"
+    ],
+    "response_atlas_storage": "one immutable float64 NPY shard per parent plus a canonical JSON manifest",
+    "evidence_cache_storage": "append-only immutable NPY or NPZ shards containing keys and log_Z[unique_key,256], each with SHA256",
+    "replicate_storage": [
+      "terminal q and canonical a",
+      "terminal canonical keys",
+      "terminal normalized weights",
+      "terminal log_Z_bar",
+      "initial ancestor labels",
+      "beta schedule",
+      "CESS and actual ESS history",
+      "normalizer increments",
+      "resampling ancestors",
+      "move proposal and acceptance counts by scale",
+      "terminal parent probability vector"
+    ],
+    "JSON_policy": "summaries, lineage, gates, and decisions only; no per-particle or per-cache-cell dictionaries"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_run_sequentially": true,
+    "oracle_calls_batch_all_new_keys_per_sweep": true,
+    "process_table_polling": false,
+    "automatic_follow_on_execution": false
+  }
+}

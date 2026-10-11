@@ -1,0 +1,79 @@
+{
+  "schema": "hong2021-v69-train-only-population-pair-estimator-rank-convergence-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine whether a finite empirical-rank ensemble can estimate the domain-balanced population sub-Mpc pair functional reproducibly before any pair objective or model refit is reconsidered.",
+  "parent_evidence": {
+    "v68_result_record": "config/hong2021_v68_result_record.json",
+    "v68_result_record_sha256": "ae8730e699ed97c5d356a83e88bcb64c260556cb041af8d3df6504d0e6a76ec2",
+    "required_status": "complete_no_refit_audit_selected_train_only_pair_estimator_convergence",
+    "required_classification": "domain_balanced_population_pair_objective_is_not_train_split_stable",
+    "required_candidate_selected": false,
+    "required_population_value_stable": false,
+    "required_optimization_safe": true,
+    "required_training_or_refit_performed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v65_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+    "v65_audit_sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "v65_audit_decision_digest_sha256": "e80016232d9efa9495a9ab8e45fdc62a4a04805b64e15a97820a25932234a47d",
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "immutable_queries": "the exact sixteen V65 immutable train queries per domain",
+  "donor_streams": {
+    "members": 64,
+    "rank_levels": [8, 16, 32, 64],
+    "stream_A_seed": 169069,
+    "stream_B_seed": 169070,
+    "donor_domain": "cycle DOMAIN_ORDER starting at the query domain",
+    "donor_index": "uniform train object excluding the identical query object in the identical domain",
+    "signed_cube_isometry": "uniform frozen signed cube isometry",
+    "prefix_rule": "each smaller rank level is the exact prefix of the same 64-member stream"
+  },
+  "pair_probe": {
+    "anchor_seed": 165069,
+    "anchors_per_query": 4096,
+    "offsets_cells": [1, 2, 3],
+    "aggregation": "for each stream, rank level, domain, and separation, arithmetic-mean predicted and truth pair moments across all sixteen query objects before taking the natural-log ratio"
+  },
+  "convergence_rules": {
+    "adjacent_tolerance": "maximum absolute 32-to-64 population log-ratio difference is at most ln(1.1) in both streams",
+    "independent_stream_tolerance": "maximum absolute stream-A-to-stream-B rank64 population log-ratio difference is at most ln(1.1)",
+    "select_rank64_estimator": "both adjacent and independent-stream tolerances, ancestry, numerical integrity, memory, and all firewalls pass",
+    "diagnostic_only_lower_levels": "8 and 16 are recorded but cannot be selected after the sealed V68 failure",
+    "no_estimator_selected": "any required condition fails"
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v69_pair_estimator_rank_convergence/audit.json",
+  "firewall": {
+    "gradient_or_optimizer_step": "forbidden",
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "posthoc_rank_seed_tolerance_or_metric_tuning": "forbidden",
+    "training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

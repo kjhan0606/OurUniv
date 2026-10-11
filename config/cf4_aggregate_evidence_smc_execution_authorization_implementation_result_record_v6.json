@@ -1,0 +1,82 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-implementation-result-record-v6",
+  "status": "complete_pass_postcommit_authorization_v6_implementation",
+  "date": "2026-08-18",
+  "purpose": "Seal the tested, v6-only fail-closed execution authorization boundary. This record creates no grant, release, manifest, pilot, receipt, data, state, cache, launch, production execution, or downstream action.",
+  "commit_lineage": {
+    "git_commit": "1c896eb39aa7e4f13b53685ca3c6538969175bee",
+    "parent_commit": "b88812b050597a5a367f51b6a0192c42b6a8596d",
+    "tree": "2e946657340fe2f438db6755a0d1ce523390fbf0",
+    "subject": "Add v6 execution authorization boundary",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_url": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "HEAD_local_tracking_and_remote_ref_commit": "1c896eb39aa7e4f13b53685ca3c6538969175bee"
+  },
+  "committed_authorization_files": [
+    {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v6.json", "sha256": "cdbb6d0299a1012f402422ad9001a7cb58907db2175c14e9590e018325af7772", "git_blob_oid": "d94b057c6bf833a9d7231eabed7f6ea1eca13e10", "git_mode": "100644"},
+    {"path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v6.json", "sha256": "f870e20e9b6eb2e063fdd79797c4b6137be6d38c1c9229c42c625ca1d74a2fd9", "git_blob_oid": "27c22f1a2172ab278aecc0df79851285705de7bc", "git_mode": "100644"},
+    {"path": "src/cf4_aggregate_evidence_smc_execution_authorized_v6.py", "sha256": "685352d83137ca8b9bdf6bf6a65d97c5cd9a8d4305d3085628db6c29cb2d6c44", "git_blob_oid": "6583e21248a7cd165e23ec1de0843828c48c36b1", "git_mode": "100644"},
+    {"path": "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v6.py", "sha256": "fa2a1acf7d6b0ea6a1c61b6fcbed1c400c8eb0db1bab850ba612c2fb456583ff", "git_blob_oid": "ae3302030562fe48a38a2593f4ad30b1010242c9", "git_mode": "100644"},
+    {"path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v6_lageunha.sh", "sha256": "73edcbc1329b9884faba0f926fdf2ea579e26d665fa3bbb44033083854d7fa48", "git_blob_oid": "476899fc0c016cb75b9d3fcb5e516d836563164d", "git_mode": "100755"},
+    {"path": "scripts/launch_cf4_aggregate_evidence_smc_authorized_v6_lageunha.sh", "sha256": "1c45e7e9f0eaacedca7392fa6e75f39f6c189129b66c12547f5bd2357bc3d69c", "git_blob_oid": "8a77d39dd3b0205ee9aaf3ca9378228f2cf18660", "git_mode": "100755"},
+    {"path": "tests/test_cf4_aggregate_evidence_smc_authorized_v6_runner.py", "sha256": "0ba5ff22c884a1731e0a4adcf8c339745fd2e4590d483ed30cca0abe4590b72b", "git_blob_oid": "7410e39ed2558d26474263242bd5ae25b2337a67", "git_mode": "100644"}
+  ],
+  "scope": {
+    "commit_addition_count": 7,
+    "commit_modified_path_count": 0,
+    "commit_deleted_path_count": 0,
+    "commit_renamed_path_count": 0,
+    "excluded_user_owned_outside_scope": {"path": "scripts/tripwire/", "worktree_status": "untracked_user_owned", "included_in_authorization_commit": false, "touched_by_authorization_implementation": false},
+    "v5_modified_or_reused": false
+  },
+  "prior_references": {
+    "v6_shared_design": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_design.json", "sha256": "5d17ad724e780b4c5f5d0f2de1b497a9207719f338627ca92441e4acbf7adb18"},
+    "v6_shared_source": {"path": "src/cf4_aggregate_evidence_smc_shared_annealing_v6.py", "sha256": "b6f676caca512af9bd88be12f54b08844bd3d3f6e335ac1e5cc9d4265482c060"},
+    "v6_shared_implementation_record": {"path": "config/cf4_aggregate_evidence_smc_shared_annealing_v6_implementation_result_record.json", "sha256": "d025efa5338fe12b43a255131a5d781302f6f9c954d6ff663d3a9c35833c50ee"},
+    "v5_postmortem": {"path": "config/cf4_aggregate_evidence_smc_production_v5_postmortem_result_record.json", "sha256": "f8eb0d38a49e2a7e6a16a4a2178418dd635f120145f1bad63213a42ae2746743", "v5_namespace_reuse_forbidden": true}
+  },
+  "verification": {
+    "focused_test_command": "PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_smc_execution_authorized_v6.py tests/test_cf4_aggregate_evidence_smc_authorized_v6_runner.py",
+    "focused_test_result": "6 passed in 0.21s; exit 0",
+    "syntax_and_static_command": "bash -n scripts/run_cf4_aggregate_evidence_smc_authorized_v6_lageunha.sh scripts/launch_cf4_aggregate_evidence_smc_authorized_v6_lageunha.sh; python -m json.tool config/cf4_aggregate_evidence_smc_execution_authorization_design_v6.json; python -m json.tool config/cf4_aggregate_evidence_smc_execution_authorization_program_v6.json; git diff --check",
+    "syntax_and_static_result": "exit 0",
+    "seven_file_SHA256_blob_OID_and_mode_exact": true,
+    "canonical_path_v5_path_hostname_and_pre_reservation_fail_closed_tests_pass": true,
+    "completion_status_allowlist_and_read_only_postcheck_tests_pass": true
+  },
+  "runtime_state": {
+    "observed_read_only": true,
+    "grant_path": "config/cf4_aggregate_evidence_smc_execution_grant_v6.json",
+    "grant_present": false,
+    "release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_release.json",
+    "release_present": false,
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_manifest.json",
+    "manifest_present": false,
+    "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_disposable_pilot",
+    "pilot_root_present": false,
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_receipts",
+    "receipt_root_present": false,
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6",
+    "data_root_present": false,
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_run",
+    "state_root_present": false,
+    "pilot_executed": false,
+    "production_executed": false,
+    "cache_populated": false,
+    "downstream_execution_occurred": false
+  },
+  "authorization": {
+    "v6_design_and_implementation_authorized": true,
+    "grant_creation_authorized": false,
+    "release_or_manifest_creation_authorized": false,
+    "pilot_execution_authorized": false,
+    "production_execution_authorized": false,
+    "cache_population_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-likelihood-contract-amendment-result-v1",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "PASS_CONTRACT_AMENDMENT_DEVELOPMENT_CALIBRATION_PENDING",
+  "contract": {
+    "path": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
+    "bytes": 10694,
+    "sha256": "9e4d6563818a250e81730891f01111ce54bf65cbc8374d1941b91c6ec1a35925"
+  },
+  "test": {
+    "path": "tests/test_cf4_bundle_b1_likelihood_contract_amendment.py",
+    "bytes": 4566,
+    "sha256": "9de056fb8925e29076f31ebbae923a11b2f5b6a30b20eeb03c01b2131856ef69"
+  },
+  "validation": {
+    "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_bundle_b1_likelihood_contract_amendment.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_joint_contract.py tests/test_cf4_kf_bin_manifest_design.py tests/test_cf4_kf_bin_manifest.py tests/test_cf4_kf_roi_leakage.py tests/test_cf4_constraint_frontier.py tests/test_cf4_population_calibration.py tests/test_cf4_population_calibration_aggregate_v2.py tests/test_cf4_population_calibration_result.py tests/test_cf4_same_truth_information_budget.py tests/test_cf4_same_truth_information_budget_v2.py tests/test_cf4_same_truth_information_budget_v2_result.py",
+    "result": "99 passed in 4.74s",
+    "scope": "B1 contract and fail-closed frontier tests only; no catalog, GPFS, Slurm, mock, posterior, IC or PM execution"
+  },
+  "closed_contracts": [
+    "active CF4-group plus disjoint 2M++ count factorization",
+    "positive unnormalized six-population selection intensity",
+    "observer-centred spherical RSD, FoG/redshift broadening and differentiable TSC deposition",
+    "six-population bias/normalization nuisance hierarchy and bounded discrepancy basis",
+    "source-bound CF4/2M++ overlap and shared-redshift covariance policy",
+    "development 64-seed and untouched 256-seed mock firewall"
+  ],
+  "explicitly_deferred": [
+    "development-mock calibration and model-choice evidence",
+    "untouched validation coverage, held-out prediction and k-frontier measurement",
+    "independent LG, Virgo, Coma, Local Void, Bootes Void and observer-environment likelihood factors",
+    "observational z=0 posterior, high-k completion, IC/PM/HOP/RAMSES and 0.3 cMpc/h claim"
+  ],
+  "scientific_disposition": {
+    "actual_z0_posterior": "NOT_CREATED",
+    "posterior_promotion": "BLOCKED_PENDING_DEVELOPMENT_CALIBRATION",
+    "KF_EXPAND": "NOT_AUTHORIZED",
+    "B2_IC_FORWARD": "NOT_STARTED",
+    "resolution_claim": "NOT_ALLOWED"
+  },
+  "next_bundle_action": "Run the declared 64 development mocks once the user approves the next B1 in-bundle execution boundary; keep the 256 validation seeds sealed."
+}

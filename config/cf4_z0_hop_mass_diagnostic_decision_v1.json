@@ -1,0 +1,18 @@
+{
+  "schema": "ouruniv-cf4-z0-hop-mass-diagnostic-decision-v1",
+  "date": "2026-09-20",
+  "job": "388604",
+  "stage": "7/8",
+  "decision": "Z0_LARGE_SCALE_HOP_PASS_LG_RESOLUTION_NO_GO",
+  "artifact": "/gpfs/kjhan/CF4/diagnostics/cf4_z0_hop_mass_v1.json",
+  "checks": {
+    "aexp": 1.01680611403509,
+    "particle_count": 16777216,
+    "particle_mass_msun_h": 289018992633.86847,
+    "hop_group_count": 93452,
+    "groups_count_ge_100": 64155
+  },
+  "scientific_finding": "The uniform L8 run is adequate for large-scale density/cluster environment diagnostics but cannot resolve MW/M31 halos: a 1e12 Msun/h halo contains only about 3-4 particles.",
+  "consequence": "Do not claim Local Group reproduction from this catalog. Promote a separately generated zoom IC with <=0.3 cMpc/h LG resolution before MW/M31/M33/HOP gates.",
+  "next": "Define the LG zoom mask/target coordinate from the CF4 posterior and generate a multi-level zoom IC; retain this L8 run as the parent/environment realization."
+}

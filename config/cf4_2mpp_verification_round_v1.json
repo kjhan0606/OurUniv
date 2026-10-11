@@ -1,0 +1,73 @@
+{
+  "schema": "ouruniv-cf4-2mpp-verification-round-v1",
+  "date": "2026-09-03",
+  "purpose": "Sequential verification of the five remaining science gates before independent fable and grok review.",
+  "scope": {
+    "gpfs_used": false,
+    "slurm_used": false,
+    "production_inference_run": false,
+    "science_claim_created": false
+  },
+  "overall_status": "NO_GO_KF_EXPAND",
+  "checks": {
+    "1_jax_x64_value_gradient": {
+      "status": "PASS",
+      "environment": "circle",
+      "jax_version": "0.10.1",
+      "jax_enable_x64": true,
+      "numpy_jax_intensity_max_abs_error": 0.0,
+      "numpy_jax_poisson_abs_error": 0.0,
+      "numpy_jax_shared_redshift_abs_error": 0.0,
+      "gradient_finite": true,
+      "note": "Direct differentiable kernel smoke passed; the full 16,584-row checked bridge was not used as a production inference run."
+    },
+    "2_preregistered_gh_boundary_stress": {
+      "status": "FAIL",
+      "case_id": "RSD_FOG_boundary_v1",
+      "low_order": 3,
+      "high_orders": [7, 9],
+      "relative_l1_tolerance": 0.005,
+      "relative_l1_gh3_vs_gh7": 0.6180055758765202,
+      "relative_l1_gh3_vs_gh9": 0.6589085428636273,
+      "science_claim_authorized": false,
+      "interpretation": "Low-order Gauss-Hermite/TSC convolution is unresolved on the frozen edge/cell-boundary stress fixture."
+    },
+    "3_selection_lf_bias_model_discrepancy": {
+      "status": "PARTIAL_NO_GO",
+      "raw_exposure_cubic_kernel_contract": "PASS",
+      "raw_exposure_scaling_max_abs_error": 0.0,
+      "required_inputs_declared": 5,
+      "calibrated_selection_generator_in_local_kernel": false,
+      "bias_hod_model_discrepancy_calibration": false,
+      "required_inputs": [
+        "angular completeness including empty-sky positions",
+        "radial selection",
+        "K/evolution/extinction correction",
+        "K-band luminosity function",
+        "population mean-density calibration"
+      ]
+    },
+    "4_development_and_untouched_validation_mocks": {
+      "status": "NO_GO",
+      "development_mock_count": 64,
+      "untouched_validation_mock_count": 256,
+      "untouched_validation_performed": false,
+      "coverage_status": "NOT_EVALUATED",
+      "heldout_prediction_status": "NOT_EVALUATED",
+      "frontier_promotion": false
+    },
+    "5_observational_resolution_frontier": {
+      "status": "NO_GO",
+      "observational_constraint_frontier_created": false,
+      "target_0p3_cMpc_h_claim": "NOT_ALLOWED",
+      "response_phase_cross_correlation_variance_coverage_heldout_all_required": true,
+      "prior_conditional_high_k_must_not_be_labeled_CF4_measured": true
+    }
+  },
+  "next_allowed_sequence": [
+    "resolve GH boundary-stress convergence without relaxing the preregistered tolerance",
+    "complete selection/LF/bias/HOD/model-discrepancy mock calibration",
+    "run independent untouched validation and held-out frontier gates",
+    "only then open KF-EXPAND and construct the z=0 posterior"
+  ]
+}

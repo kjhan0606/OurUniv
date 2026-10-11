@@ -1,0 +1,25 @@
+VERDICT: CONDITIONAL
+
+RISK_LEVEL: MODERATE (provenance/documentation risk; science-boundary risk low)
+
+Opus v16 audit of HEAD ae15de0:
+
+1. grid-wrap is present and the reported 64-member metrics are internally
+   consistent, but the periodic regression is only a source-string assertion,
+   not a numerical continuity test.
+2. count_information_diagnosis_result_v1 is pre-periodic-RSD and is not
+   labelled superseded; the repaired base dependency is not pinned in every
+   dependent diagnostic.
+3. The mode diagnostic still contains a stale instruction to add the rejected
+   mark-side arm, and the base result has stale validation-range metadata.
+4. D=1.5 remains frozen without refit, the mark arm is not executed, and
+   validation/B2 remain sealed. The n=512 independent-power claim was removed.
+
+REQUIRED_NEXT: byte-level hash verification; label count-information v1;
+pin the repaired dependency in all diagnostics; add numerical periodic and
+edge-continuity tests; remove the stale mode next action and regenerate
+dependents; correct validation-range metadata; freeze width policy before
+opening validation.
+
+RECOMMENDATION: CONDITIONAL. Complete the local repairs and re-audit; do not
+open validation or B2 before closure.

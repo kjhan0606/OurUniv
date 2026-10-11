@@ -1,0 +1,86 @@
+{
+  "schema": "ouruniv-cf4-q6-non-degenerate-fixture-manifest-v1",
+  "bundle": "Q6.0",
+  "date": "2026-09-04",
+  "status": "FROZEN_SPEC_BEFORE_EXECUTION",
+  "purpose": "Pre-register development-only fixtures that exercise Q1 topology and anisotropic LOS/sigma variation; no held-out data are included.",
+  "count_semantics": "source_count is per-fixture array length; fixture families are independent and are not summed into a single pool.",
+  "q1_reference": {
+    "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "tree_sha": "4444868df93572389602b518239e239591db134a",
+    "source_git_blob_sha": "f4d34d656f4f8adac56617255da2665ca9825304",
+    "source_mode": "100644",
+    "source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2"
+  },
+  "randomness": {
+    "generator": "numpy.random.Generator",
+    "bit_generator": "PCG64",
+    "generator_source": "scripts/cf4_q6_development_fixture.py",
+    "generator_source_sha256": "3b93ae88e4059aa1cd127835864ed25b1905710821893d432cf3c4034b8dfe55",
+    "array_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
+    "canonical_json_digest": "cf4_q4_preflight.canonical_sha256: json.dumps(payload, sort_keys=True, separators=(',', ':')).encode('utf-8'), no newline",
+    "development_namespace": "cf4-q6-development-20260904",
+    "heldout_namespace": "cf4-q4-heldout-20260904",
+    "heldout_touched": false
+  },
+  "geometry": {
+    "grid_size": 8,
+    "box_size_cMpc_h": 8.0,
+    "tail_cutoff_sigma": 8.0,
+    "los_vectors_are_unit_normalized": true,
+    "non_degenerate_los_and_sigma_required": true
+  },
+  "fixtures": [
+    {
+      "id": "same_knot_different_coefficient",
+      "seed": 62001,
+      "source_count": 32,
+      "purpose": "same topology but changed mass/derivative coefficients; must aggregate state basis without geometry-only shortcut"
+    },
+    {
+      "id": "translated_cell",
+      "seed": 62002,
+      "source_count": 32,
+      "purpose": "translated target cell and absolute 27-stencil mapping; must not merge across target cells"
+    },
+    {
+      "id": "near_coincident",
+      "seed": 62003,
+      "source_count": 32,
+      "purpose": "one-ulp and subcell position changes; bitwise-distinct coefficients remain distinct"
+    },
+    {
+      "id": "interval_permutation",
+      "seed": 62004,
+      "source_count": 32,
+      "purpose": "different ordered breakpoints; interval order is part of the signature"
+    },
+    {
+      "id": "seam_sliver_clip",
+      "seed": 62005,
+      "source_count": 32,
+      "purpose": "periodic seam, sliver merge, tiny-negative clip and T=8 tail renormalization rules"
+    },
+    {
+      "id": "los_sigma_variation",
+      "seed": 62006,
+      "source_count": 192,
+      "purpose": "non-degenerate LOS directions and sigma values; anisotropic machinery must not be tested only at [1,0,0] and sigma=1"
+    },
+    {
+      "id": "cold_zero_near_zero",
+      "seed": 62007,
+      "source_count": 32,
+      "purpose": "exact sigma=0 branch and sourcewise handling below 64*eps_float64*cell_spacing"
+    }
+  ],
+  "freeze_rules": {
+    "fixture_order": "listed order",
+    "seed_changes": "forbidden after first candidate implementation",
+    "topology_changes": "forbidden after first candidate implementation",
+    "heldout_split_or_retuning": "forbidden",
+    "resource_claim": "none; this manifest specifies fixtures only"
+  },
+  "manifest_payload_sha256": "94c77b71cb7c667daa9f6f8d39077d6464afd3058437398bc542817f4f1b79ab",
+  "manifest_hash_scope": "cf4_q4_preflight.canonical_sha256 over canonical sorted JSON payload with manifest_payload_sha256 omitted; separators=(',', ':'), UTF-8, no newline"
+}

@@ -1,0 +1,62 @@
+{
+  "algorithm": {
+    "automatic_promotion_or_manual_truth_edit_allowed": false,
+    "class_precedence": [
+      "secure_joint_mark",
+      "coordinate_redshift_conflict",
+      "nonreciprocal_collision",
+      "extended_review_candidate",
+      "unmatched"
+    ],
+    "delta_vcmb_definition": "CF4 Vcmb minus 2M++ Vcmb",
+    "nearest_neighbour": "bidirectional scipy.spatial.cKDTree on unit sphere",
+    "secure_joint_mark": "mutual nearest AND separation <= 3.0 arcsec AND abs(delta Vcmb) <= 300 km/s; exact one-to-one"
+  },
+  "inputs": {
+    "cf4_galaxies": {
+      "path": "data/cf4_galaxies.csv",
+      "raw_sha256": "28e7b8bd386f53716ed84cddd67a6f7602f98bc1394923a312f906555da7f709",
+      "rows": 55877
+    },
+    "twompp_catalog": {
+      "ZoA_rows_excluded": 3813,
+      "path": "data/2mpp_catalog.csv",
+      "raw_sha256": "05d39f49af58caa7aa199420cc7354b3aa9fe3dbacf8d6c33222479c288fb23d",
+      "real_Cln_rows": 1840,
+      "real_rows_eligible": 69160,
+      "rows_including_ZoA": 72973
+    }
+  },
+  "mapping": {
+    "canonical_order": "ascending integer CF4 recno",
+    "class_counts": {
+      "coordinate_redshift_conflict": 188,
+      "extended_review_candidate": 273,
+      "nonreciprocal_collision": 5,
+      "secure_joint_mark": 16584,
+      "unmatched": 38827
+    },
+    "rows": 55877,
+    "sha256": "64e4f8a1a8a612a19788ac759062930991a8ffe52bfa203635845fa1ad7a83bf",
+    "unique_cf4_1PGC_in_non_unmatched": 11868,
+    "unique_cf4_1PGC_secure": 11610,
+    "unique_cf4_1PGC_total": 38035,
+    "unique_twompp_targets_in_non_unmatched": 17007
+  },
+  "result_policy": {
+    "Cln_flag_retained_in_mapping": true,
+    "Cln_radial_redshift_allowed_as_independent_observation": false,
+    "Cln_radial_redshift_class": "imputed_latent",
+    "ZoA_rows_allowed_as_matching_observations": false,
+    "ZoA_selector": "Ref.strip() == 'zoa'",
+    "quarantine_classes_may_be_auto_promoted": false,
+    "secure_mapping_role": "joint-likelihood de-duplication mark"
+  },
+  "schema": "ouruniv-cf4-2mpp-crossmatch-summary-v1",
+  "status": "COMPLETE",
+  "thresholds": {
+    "absolute_delta_vcmb_kms_max_inclusive": 300.0,
+    "extended_review_separation_arcsec_max_inclusive": 30.0,
+    "secure_separation_arcsec_max_inclusive": 3.0
+  }
+}

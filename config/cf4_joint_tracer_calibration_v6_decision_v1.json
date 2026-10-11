@@ -1,0 +1,17 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v6-decision-v1",
+  "date": "2026-09-20",
+  "job": "388369",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v6/result.json",
+  "decision": "CONSERVATIVE_HOLDOUT_GATE_PASS_PRODUCTION_REVIEW_REQUIRED",
+  "gate": {
+    "untouched_holdout": "modulo-7 remainder-3",
+    "survival_perturbation": "+20% low-completeness response",
+    "all_six_population_log_score_nonnegative": true,
+    "log_score_improvements": [1029.2667,398.8347,106.8103,9119.6747,3699.5498,570.1517]
+  },
+  "diagnostic": "All six fitted survival-response slopes hit the lower bound 0.5; the nuisance is absorbing a selection mismatch and is not yet a physical calibration certificate.",
+  "meaning": "The remaining conservative gate is numerically passed, but production requires widening/reparameterizing this nuisance and checking boundary stability before IC generation.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

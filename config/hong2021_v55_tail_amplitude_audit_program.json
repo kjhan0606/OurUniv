@@ -1,0 +1,149 @@
+{
+  "schema": "hong2021-v55-fixed-threshold-tail-amplitude-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Explain the sealed V54 train-only high-backbone failure without development or independent-data access by decomposing the physical second moment at each fixed V54 output threshold into exceedance probability and conditional beyond-threshold amplitude, and by partitioning the total moment into five mutually exclusive fixed output-density bins.",
+  "parent_evidence": {
+    "v54_record": "config/hong2021_v54_result_record.json",
+    "v54_record_sha256": "cd773f385dcffaa881e30c8abce0b840a79e0ba625f1db603059b435805f683f",
+    "required_status": "complete_train_only_mechanism_gate_failure_development_unopened",
+    "required_classification": "proper_exceedance_tail_score_does_not_calibrate_train_high_backbone_physical_moments",
+    "required_next": "stop_before_development_sampling_and_audit_which_fixed_threshold_or_beyond_threshold_amplitudes_dominate_the_remaining_train_moment",
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v54_program": "config/hong2021_v54_physical_tail_brier_program.json",
+    "v54_program_sha256": "84e06be3980deeb63456fb53a56d05d22eca68fea663d023b6be5e75460fbd90",
+    "v54_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.pt",
+    "v54_checkpoint_sha256": "2a0489130b249700345ebb3bc97f648b00da003786713cdb16301d0dfcaa5206",
+    "v54_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v54/physical_tail_brier_bounded_mixture_step12000.json",
+    "v54_training_report_sha256": "96884ebac44d53d461a93e837b872e1b3d28f5e6eda6a3c13f4b58ddf810da07",
+    "v54_training_report_decision_digest_sha256": "a7fd0a11d2e0461f62fb4fc6fba5bc5fff4671dbb637ca7122d9a3bd56ff6edf",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v54_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_physical_tail_brier_sequence/preflight.json",
+    "v54_preflight_sha256": "2151b72fbdb882dcd12d685af7ef431abd7e749b0c9f229c730326aa752c33ca",
+    "v54_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_train_high_backbone_gate/decision.json",
+    "v54_train_gate_sha256": "e01611d46dfe9328558b8beb9292ac8f3c152c0b0c9613d14c8f9cebd80e6624",
+    "v54_train_gate_decision_digest_sha256": "ed634eff7ff03c3ab703926d656bc8a46907d4565c944aab051ca40273b3c1d7",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "population": {
+    "split": "immutable train only",
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "probe": "the identical deterministic V51/V53/V54 4096-voxel probe per object",
+    "query_stratum": "the domainwise q99.9-and-above query-backbone stratum using the exact boundaries sealed in the V54 train-gate decision",
+    "validation_or_development_access": false
+  },
+  "fixed_output_thresholds": {
+    "coordinate": "log10rho=4.5*y",
+    "source": "the four immutable common V54 train-only thresholds",
+    "quantile_labels": [
+      "q99",
+      "q99_9",
+      "q99_99",
+      "q99_999"
+    ],
+    "values": [
+      1.115832544863224,
+      2.0498113185167313,
+      2.778471887111664,
+      3.3113619089126587
+    ],
+    "mutually_exclusive_bins": [
+      "at_or_below_q99",
+      "q99_to_q99_9",
+      "q99_9_to_q99_99",
+      "q99_99_to_q99_999",
+      "above_q99_999"
+    ],
+    "strict_exceedance_rule": "log10rho is strictly greater than the threshold"
+  },
+  "decomposition": {
+    "truth_exceedance_probability": "mean indicator of strict threshold exceedance within the fixed top query-backbone stratum",
+    "predicted_exceedance_probability": "mean analytic V54 bounded-mixture survival probability within the same stratum; this is the probability optimized by the V54 Brier terms",
+    "truth_tail_moment": "mean delta-squared times the strict exceedance indicator within the same stratum",
+    "predicted_tail_moment": "mean V54 mixture-quadrature delta-squared contribution above the threshold within the same stratum",
+    "truth_conditional_amplitude": "truth_tail_moment divided by truth_exceedance_probability",
+    "predicted_conditional_amplitude": "predicted_tail_moment divided by predicted_exceedance_probability",
+    "exact_ratio_identity": "predicted_tail_moment/truth_tail_moment equals (predicted_probability/truth_probability) times (predicted_conditional_amplitude/truth_conditional_amplitude)",
+    "log_error_terms": [
+      "log_probability_ratio",
+      "log_conditional_amplitude_ratio",
+      "log_tail_moment_ratio"
+    ],
+    "bin_moment_partition": "truth and predicted delta-squared contributions in the five mutually exclusive fixed output-density bins; their sums must reproduce the complete top-backbone moments",
+    "positive_excess_share": "positive part of predicted-minus-truth bin moment divided by the sum of positive excess over all five bins"
+  },
+  "numerics": {
+    "primary": "64-point Gauss-Hermite quadrature of each of the five bounded-mixture components, identical nodes and implementation family to the V54 train gate",
+    "control": "32-point Gauss-Hermite quadrature",
+    "analytic_probability": "float64 bounded-mixture CDF with exact zero or one outside support",
+    "maximum_complete_moment_relative_difference_from_v54_gate": 1e-10,
+    "maximum_bin_partition_relative_error": 1e-12,
+    "maximum_log_ratio_identity_absolute_error": 1e-12,
+    "maximum_32_to_64_complete_moment_relative_difference": 0.005,
+    "maximum_32_to_64_tail_moment_relative_difference_for_classification": 0.02,
+    "minimum_empirical_exceedance_count_for_classification": 1,
+    "failure_action": "if any numerical or empirical-support requirement fails, report all measurements but make no scientific dominance classification and freeze a higher-accuracy train-only tail integration audit"
+  },
+  "classification": {
+    "highest_threshold": "q99_999",
+    "beyond_threshold_amplitude_dominates_domain": "above_q99_999 positive-excess share is at least 0.5 and the absolute log conditional-amplitude ratio is strictly greater than the absolute log exceedance-probability ratio",
+    "fixed_threshold_probability_dominates_domain": "the absolute log exceedance-probability ratio is strictly greater than the absolute log conditional-amplitude ratio at q99_999",
+    "common_amplitude_dominance": "beyond-threshold amplitude dominates independently in TNG100, SIMBA, and Swift",
+    "common_probability_dominance": "fixed-threshold probability dominates independently in TNG100, SIMBA, and Swift",
+    "mixed": "neither common condition holds",
+    "branches": [
+      {
+        "condition": "any numerical or empirical-support requirement fails",
+        "classification": "fixed_threshold_tail_decomposition_is_numerically_or_empirically_unresolved",
+        "next": "freeze_a_higher_accuracy_train_only_tail_integration_audit_without_training_or_development_access"
+      },
+      {
+        "condition": "common_amplitude_dominance",
+        "classification": "V54_probability_score_leaves_beyond_highest_threshold_amplitudes_unconstrained",
+        "next": "freeze_one_matched_train_only_model_with_a_proper_survival_score_grid_spanning_q99_999_to_the_immutable_train_maximum_while_retaining_the_unchanged_bounded_NLL"
+      },
+      {
+        "condition": "common_probability_dominance",
+        "classification": "V54_highest_fixed_threshold_exceedance_probability_remains_miscalibrated",
+        "next": "freeze_one_matched_train_only_model_that_changes_only_the_predeclared_proper_tail_score_weighting_and_reuses_the_same_thresholds"
+      },
+      {
+        "condition": "otherwise",
+        "classification": "V54_tail_failure_is_mixed_across_probability_amplitude_or_domain",
+        "next": "seal_the_domainwise_fixed_bin_decomposition_before_selecting_any_further_model"
+      }
+    ]
+  },
+  "output": {
+    "audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v55_tail_amplitude_audit/audit.json",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v55_tail_amplitude_audit_sequence"
+  },
+  "firewall": {
+    "training_or_refit": "forbidden",
+    "new_development_sample": "forbidden",
+    "development_access": "forbidden",
+    "validation_access": "forbidden",
+    "threshold_change": "forbidden",
+    "support_change": "forbidden",
+    "posthoc_scale_or_clipping": "forbidden",
+    "posthoc_DC_or_Ak": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

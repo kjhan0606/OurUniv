@@ -46,20 +46,25 @@ def _read_record(fh):
     return payload
 
 
-def _header_bytes(N1, N2, N3, dx, offset, astart, omega_m, omega_l, h0):
+def _header_bytes(N1, N2, N3, dx, offset, astart, omega_m, omega_l, h0,
+                  omega_b=None):
     ints = np.array([N1, N2, N3], np.int32).tobytes()
-    flts = np.array([dx, offset[0], offset[1], offset[2],
-                     astart, omega_m, omega_l, h0], np.float32).tobytes()
+    values = [dx, offset[0], offset[1], offset[2],
+              astart, omega_m, omega_l, h0]
+    if omega_b is not None:
+        values.append(omega_b)
+    flts = np.array(values, np.float32).tobytes()
     return ints + flts
 
 
 # ----------------------------- field writer / reader -----------------------------
-def write_grafic_field(path, field, dx, offset, astart, omega_m, omega_l, h0):
+def write_grafic_field(path, field, dx, offset, astart, omega_m, omega_l, h0,
+                       omega_b=None):
     """Write one GRAFIC1 field file. field: (N1,N2,N3) real, x-axis first."""
     N1, N2, N3 = field.shape
     with open(path, "wb") as fh:
         _write_record(fh, _header_bytes(N1, N2, N3, dx, offset, astart,
-                                        omega_m, omega_l, h0))
+                                        omega_m, omega_l, h0, omega_b))
         for k in range(N3):                      # one record per k-plane, i1 fastest
             plane = np.ascontiguousarray(field[:, :, k], np.float32).ravel(order="F")
             _write_record(fh, plane.tobytes())
@@ -70,7 +75,10 @@ def read_grafic_field(path):
     with open(path, "rb") as fh:
         hdr = _read_record(fh)
         N1, N2, N3 = np.frombuffer(hdr[:12], np.int32)
+        if len(hdr) not in (44, 48):
+            raise ValueError(f"unsupported GRAFIC header payload size {len(hdr)}")
         dx, x1, x2, x3, astart, om, ol, h0 = np.frombuffer(hdr[12:44], np.float32)
+        omega_b = (None if len(hdr) == 44 else float(np.frombuffer(hdr[44:48], np.float32)[0]))
         field = np.empty((int(N1), int(N2), int(N3)), np.float32)
         for k in range(int(N3)):
             plane = np.frombuffer(_read_record(fh), np.float32).reshape(
@@ -78,7 +86,8 @@ def read_grafic_field(path):
             field[:, :, k] = plane
     meta = dict(N=(int(N1), int(N2), int(N3)), dx=float(dx),
                 offset=(float(x1), float(x2), float(x3)), astart=float(astart),
-                omega_m=float(om), omega_l=float(ol), h0=float(h0))
+                omega_m=float(om), omega_l=float(ol), h0=float(h0),
+                omega_b=omega_b, header_bytes=len(hdr))
     return field, meta
 
 
@@ -155,7 +164,8 @@ def lpt2_displacement(delta, L_mpc):
 
 # ----------------------------- full IC directory -----------------------------
 def write_grafic_ic(outdir, delta, velx, vely, velz, L_mpc_h, h,
-                    astart, omega_m, omega_l, offset_mpc=(0.0, 0.0, 0.0)):
+                    astart, omega_m, omega_l, offset_mpc=(0.0, 0.0, 0.0),
+                    omega_b=None):
     """Write ic_deltab + ic_velc{x,y,z} into outdir (GRAFIC1, RAMSES-ready).
 
     delta, vel*: (N,N,N) grids (delta dimensionless; vel in km/s proper).
@@ -166,12 +176,13 @@ def write_grafic_ic(outdir, delta, velx, vely, velz, L_mpc_h, h,
     h0 = 100.0 * h
     off = tuple(float(o) for o in offset_mpc)
     args = (dx, off, astart, omega_m, omega_l, h0)
-    write_grafic_field(os.path.join(outdir, "ic_deltab"), delta, *args)
-    write_grafic_field(os.path.join(outdir, "ic_velcx"), velx, *args)
-    write_grafic_field(os.path.join(outdir, "ic_velcy"), vely, *args)
-    write_grafic_field(os.path.join(outdir, "ic_velcz"), velz, *args)
+    write_grafic_field(os.path.join(outdir, "ic_deltab"), delta, *args, omega_b=omega_b)
+    write_grafic_field(os.path.join(outdir, "ic_velcx"), velx, *args, omega_b=omega_b)
+    write_grafic_field(os.path.join(outdir, "ic_velcy"), vely, *args, omega_b=omega_b)
+    write_grafic_field(os.path.join(outdir, "ic_velcz"), velz, *args, omega_b=omega_b)
     return dict(outdir=outdir, N=N, dx_mpc=dx, box_mpc=L_mpc_h / h, h0=h0,
-                astart=astart, omega_m=omega_m, omega_l=omega_l)
+                astart=astart, omega_m=omega_m, omega_l=omega_l,
+                omega_b=omega_b)
 
 
 # ----------------------------- self-test -----------------------------

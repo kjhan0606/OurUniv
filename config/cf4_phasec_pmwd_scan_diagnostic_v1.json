@@ -1,0 +1,99 @@
+{
+  "schema": "ouruniv-cf4-phasec-pmwd-scan-diagnostic-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_MOCK_ONLY_STEP_LOCALIZATION_WAITING_EXECUTION",
+  "authorization": {
+    "basis": "Mock-only failure analysis within the user-approved replacement Phase C; the generator-v1 record explicitly names step-localized PMWD diagnosis as the next allowed work.",
+    "Slurm_GPU_diagnostic_array": true,
+    "Slurm_CPU_aggregate": true,
+    "GPFS_write_new_outputs_only": true,
+    "sampler": false,
+    "actual_observational_data": false,
+    "validation_seed": false,
+    "Phase_D_or_later": false
+  },
+  "lineage": {
+    "redesign_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_redesign_v1.json",
+      "sha256": "f5817e71c8038e64825516f01ddfd8e61a077ef664cf5b73acbc4a4bd1c14a76"
+    },
+    "generator_v1_result": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_redesign_generator_v1_result_record.json",
+      "sha256": "908531dd0a9510e5b18f729dc58aa5765b111c92863e371f1d64d5ba7a5325d5"
+    },
+    "diagnostic_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_pmwd_scan_diagnostic.py",
+      "sha256": "ed180607f32b0009061139333d1039c9cfaceb7e71a9f681e63b5b1d01362669"
+    }
+  },
+  "assignments": [
+    {
+      "index": 0,
+      "seed": 2026083002,
+      "prior_monolithic_outcomes": {"1_over_64": "finite", "1_over_128": "nonfinite", "1_over_256": "nonfinite"}
+    },
+    {
+      "index": 1,
+      "seed": 2026083007,
+      "prior_monolithic_outcomes": {"1_over_64": "nonfinite", "1_over_128": "finite", "1_over_256": "finite"}
+    }
+  ],
+  "grid": {
+    "box_size_cMpc_h": 384.0,
+    "inference_N": 32,
+    "truth_N": 64,
+    "truth_cell_size_cMpc_h": 6.0
+  },
+  "cosmology": {"Om": 0.31, "Ob": 0.05, "h": 0.746, "A_s_1e9": 1.63, "ns": 0.96},
+  "high_k_white_tag": 843927701,
+  "integrator": {
+    "lpt_order": 2,
+    "a_start": 0.015625,
+    "a_stop": 1.0,
+    "a_lpt_maxstep": 0.0078125,
+    "a_nbody_maxsteps": [0.015625, 0.0078125, 0.00390625],
+    "loop_implementation": "jax.lax.scan over pmwd.nbody_step instead of outer-jit Python-loop unrolling",
+    "float_dtype": "float64",
+    "mesh_to_particle_ratio": 1
+  },
+  "diagnostics": {
+    "record_LPT_and_nbody_init_finiteness": true,
+    "record_every_step_particle_displacement_velocity_acceleration_finiteness": true,
+    "record_first_nonfinite_step_and_component": true,
+    "record_final_density_momentum_finiteness_and_conservation": true,
+    "compare_finite_N32_fields_between_1_over_128_and_1_over_256": true,
+    "comparison_gates": {
+      "density_cross_correlation_min": 0.999,
+      "density_relative_L2_max": 0.03,
+      "velocity_cross_correlation_min": 0.995,
+      "velocity_relative_L2_max": 0.05
+    }
+  },
+  "decision_rule": {
+    "scan_loop_repair_admissible": "all three step sizes finite for both seeds and the 1/128 versus 1/256 N32 comparison passes for both seeds",
+    "automatic_sampler_release": false,
+    "next_if_pass": "freeze and run a scan-loop all-eight-seed generator gate with at least 9216 MiB host memory per GPU task",
+    "next_if_fail": "stop and audit the first nonfinite PMWD state transition; do not tune the sampler"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/phasec_pmwd_scan_diagnostic_v1",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/phasec_pmwd_scan_diagnostic_v1_aggregate",
+    "array": "0-1",
+    "expected_peak_host_memory_MiB_per_task": 7031,
+    "requested_host_memory_MiB_per_task": 9216,
+    "time_limit": "01:00:00",
+    "aggregate_expected_peak_host_memory_MiB": 512,
+    "aggregate_requested_host_memory_MiB": 1024,
+    "manual_syntax_or_syn101_numerical_execution": false,
+    "monitoring_loop": false
+  },
+  "scope_firewall": {
+    "counts_or_velocity_mock_generated": false,
+    "optimizer_or_sampler_run": false,
+    "actual_2Mpp_or_CF4_datum_read": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

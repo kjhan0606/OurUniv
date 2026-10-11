@@ -1,0 +1,89 @@
+{
+  "schema": "hong2021-v40-object-structure-observable-sufficiency-result-record-v1",
+  "status": "complete_development_only_transferable_observable_support",
+  "program": "config/hong2021_v40_object_structure_sufficiency_program.json",
+  "program_sha256": "707f62ccb1ea6d7aee5ef6fa77355e28412119fffdd694924f2d7280f97d3162",
+  "implementation_commit": "74250c9f102951ab9d5d7edf03c2c463c046615c",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v40_object_structure_sufficiency/audit.json",
+    "sha256": "6b52c8a81f2345a3f2683daec432e3628049c839bc6e4d49be501a7108b1f409",
+    "decision_digest_sha256": "ee388440eda07a6f7dfafcb7b8a8d733b7650b897aca15df87988daa61c8ff7b",
+    "structure_supported_thresholds": ["dense", "extreme"],
+    "structure_location_supported": true,
+    "object_amplitude_supported": true,
+    "observable_increment_supported": true,
+    "classification": "object_amplitude_and_structure_location_are_transferably_observable",
+    "next": "freeze_two_stage_structure_seeded_amplitude_calibrated_stochastic_residual"
+  },
+  "leave_one_source_out_extreme_structure": {
+    "TNG100": {
+      "average_precision_over_prevalence": 162.9963608211662,
+      "top_count_recall": 0.4783484390735146,
+      "component_delta_squared_mass_recall": 0.7744746119590136,
+      "full_over_backbone_average_precision": 1.2666902938029838
+    },
+    "SIMBA": {
+      "average_precision_over_prevalence": 177.1221267827593,
+      "top_count_recall": 0.6188436830835118,
+      "component_delta_squared_mass_recall": 0.9177614288079151,
+      "full_over_backbone_average_precision": 1.1268475050868458
+    },
+    "Swift": {
+      "average_precision_over_prevalence": 197.17705256396852,
+      "top_count_recall": 0.5856065002901916,
+      "component_delta_squared_mass_recall": 0.8918656763943279,
+      "full_over_backbone_average_precision": 1.1496327905816397
+    }
+  },
+  "leave_one_source_out_object_Q4_amplitude": {
+    "TNG100": {
+      "full_rmse_over_constant": 0.609511702039018,
+      "spearman": 0.8673828710020878,
+      "full_rmse_over_permuted_control": 0.634310544949405
+    },
+    "SIMBA": {
+      "full_rmse_over_constant": 0.6209709523117974,
+      "spearman": 0.7942765567765566,
+      "full_rmse_over_permuted_control": 0.539804622326613
+    },
+    "Swift": {
+      "full_rmse_over_constant": 0.4674317763355695,
+      "spearman": 0.894949405209641,
+      "full_rmse_over_permuted_control": 0.4133273604015231
+    }
+  },
+  "scientific_conclusion": [
+    "Rare high-density locations are strongly registered to the target-free conditioning representation even when the evaluated simulation source is completely omitted from model fitting.",
+    "At the extreme threshold, the leave-one-source-out classifier recovers 47.8 to 61.9 percent of truth-positive 1.25 Mpc/h blocks at a matched selection count and 77.4 to 91.8 percent of connected-structure delta-squared mass.",
+    "The full observable representation improves extreme-structure average precision over backbone alone by factors of 1.127 to 1.267, while the fixed spatial roll destroys the signal by factors above 160. The signal is therefore spatial rather than a marginal-score artifact.",
+    "Object-level Q4 amplitude is also transferable: leave-one-source-out RMSE is 0.467 to 0.621 of the equal-source constant baseline and Spearman correlation is 0.794 to 0.895.",
+    "V39 failed because unsupervised descriptor correspondence did not convert this supervised structure and amplitude information into a calibrated stochastic density field. The next model must explicitly separate structure seeding from object amplitude calibration."
+  ],
+  "next_experiment_boundary": {
+    "primary": "freeze a two-stage train-only residual model whose first stage predicts extreme-structure risk and object Q4 amplitude and whose second stage places an unchanged empirical LCDM innovation subject to those predictions",
+    "required_controls": [
+      "same fixed development objects and V31 donor identities/isometries",
+      "backbone-only structure-risk ablation",
+      "spatially rolled risk-map control",
+      "object-amplitude-shuffled control",
+      "unchanged V31 inverse and exact residual DC projection"
+    ],
+    "forbidden": [
+      "validation tuning",
+      "validation-derived density thresholds",
+      "density clipping",
+      "post-hoc A(k)",
+      "donor reselection",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "new_generator_fit_or_sampled_in_audit": false,
+    "validation_used_for_fit_threshold_or_hyperparameter_choice": false,
+    "simulation_identity_feature_used": false,
+    "density_field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "decision": "ZOOM_Z0_FORWARD_PASS",
+  "stage": 8,
+  "job_id": 388664,
+  "run_dir": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_z0_production_v1/job_388664",
+  "ic": "/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v3",
+  "binary": "/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax_maxiter30/ramses_lb_minimax3d_maxiter30",
+  "evolution": {
+    "a_start": 0.02,
+    "a_final": 1.00144168,
+    "levelmin": 8,
+    "runtime_levelmax": 19,
+    "mpi_ranks": 8,
+    "openmp_threads_per_rank": 2,
+    "maxrss_kib": 19746324,
+    "reported_memory_percent": 27.1
+  },
+  "outputs": {
+    "initial": "output_00001",
+    "final": "output_00002",
+    "final_info": "output_00002/info_00002.txt"
+  },
+  "gates": {
+    "run_completed": true,
+    "boundary_warning_count": 0,
+    "fine_poisson_warning_count": 0,
+    "nan_or_negative_state_count": 0,
+    "final_aexp_at_least_0_99": true,
+    "oom": false
+  },
+  "interpretation": "The v3 trace-derived zoom IC survives full DMO evolution to z=0 with fail-closed runtime gates. This establishes a usable z=0 snapshot, not yet MW/M31/M33 structure reproduction; halo and contamination diagnostics are required next."
+}

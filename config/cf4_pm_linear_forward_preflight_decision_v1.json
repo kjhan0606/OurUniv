@@ -1,0 +1,11 @@
+{
+  "schema": "ouruniv-cf4-pm-linear-forward-preflight-decision-v1",
+  "date": "2026-09-20",
+  "job": "388406",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/pm_linear_forward_preflight_v1/result.json",
+  "decision": "PM_PREFLIGHT_PASS_NONLINEAR_PMWD_PENDING",
+  "checks": {"all_finite": true, "zero_mean_delta": true, "velocity_finite": true, "linear_growth_recovery": true},
+  "input": "/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1",
+  "caveat": "This is a linear consistency preflight, not nonlinear PMWD evolution. The density-based GRAFIC IC still requires a dedicated PMWD/RAMSES adapter.",
+  "stage": "6/8 PM preflight passed"
+}

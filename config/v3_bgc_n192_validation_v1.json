@@ -1,0 +1,51 @@
+{
+  "schema": "cf4-v3-bgc-n192-validation-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_validation_run": true,
+  "N64_authorization": "recon/linear_cr/v3_bgc_n64_validation_v1/v3_bgc_n64_comparison_result.json",
+  "model": {
+    "N": 192,
+    "box_size_mpc_h": 384.0,
+    "grid_spacing_mpc_h": 2.0,
+    "velocity_estimator": "bgc",
+    "error_scale": 0.9,
+    "sigma_nl_km_s": 0.0,
+    "bgc_window": 801,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "holdout_fraction": 0.2,
+    "holdout_assignment": "SplitMix64 raw catalog index",
+    "split_seed": 20260829,
+    "sample_seeds": [201, 202, 203, 204, 205, 206, 207, 208]
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "abs_z_mean_max": 0.1,
+    "z_std_range": [0.9, 1.1],
+    "coverage_1sigma_range": [0.62, 0.75],
+    "coverage_2sigma_range": [0.92, 0.98],
+    "delta_log_score_min": 0.0,
+    "external_local_sheet_gate": {
+      "gaussian_radius_mpc_h": 5.0,
+      "posterior_mean_delta_min": -0.25
+    },
+    "policy": "All gates must pass before generating an N192 all-data BGc parent ensemble. PM, HOP, and P2 remain unauthorized by this validation run alone."
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_n192_validation_v1"
+  },
+  "result": {
+    "status": "complete_passed",
+    "adjoint_relative_error": 1.8678893455235942e-06,
+    "mean_cg_relative_residual": 2.3175753085524775e-05,
+    "heldout_n": 3984,
+    "z_mean": 0.023472373654265695,
+    "z_std": 1.012300663954841,
+    "coverage_1sigma": 0.7083333333333334,
+    "coverage_2sigma": 0.9505522088353414,
+    "delta_log_score": 374.9205189593995,
+    "observer_delta_R5_posterior_mean": 0.43034863471984863,
+    "verdict": "AUTHORIZE_N192_ALL_DATA_BGC_ENSEMBLE"
+  }
+}

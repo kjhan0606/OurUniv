@@ -1,0 +1,90 @@
+{
+  "schema": "hong2021-v66-train-only-conditional-gradient-routing-result-record-v1",
+  "status": "complete_no_refit_audit_selected_train_only_nonlocal_context_predictability",
+  "program": "config/hong2021_v66_conditional_gradient_routing_audit_program.json",
+  "program_sha256": "f3aaa8ee8852341675bcdec264ba991a4d23b4ed6550cfa309e1b85d5b7730ca",
+  "code_commit": "435a1024e96c324b83e73fbeb67901a1079e7a95",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v66_conditional_gradient_routing_audit/audit.json",
+    "sha256": "44f6f9cf2050338c2125f0884d0db8e43ba33127ce2d63d8cde234aae092e748",
+    "decision_digest_sha256": "fcd74439c3945578a2f5c2de6eb3d8ad4dd46ead5de18f8163f53361cc59c1c7",
+    "classification": "final_output_layer_features_do_not_resolve_object_level_pair_gradient_conflict",
+    "next": "stop_before_refit_and_design_a_nonlocal_train_only_structure_hypothesis",
+    "candidate_selected": false
+  },
+  "conditional_gradient_routing": {
+    "conditional_routing_supported": false,
+    "optimization_scale_pass": true,
+    "combined_update_compatible": true,
+    "global_median_leave_one_out_cosine": 0.5504540142320771,
+    "global_negative_cosine_fraction": 0.4166666666666667,
+    "coefficient_0_1_scaled_pair_to_bounded_NLL_L2_ratio": 5.071727205264907,
+    "aggregate_pair_to_bounded_NLL_cosine": 0.036905044954707165,
+    "combined_update_pair_descent_dot_product": 6.726633623986619,
+    "combined_update_bounded_NLL_descent_dot_product": 0.030821304026480117,
+    "maximum_V65_bias_gradient_absolute_difference": 0.0,
+    "V65_bias_gradient_reproduction_tolerance": 1e-05,
+    "first_singular_direction_squared_norm_fraction": 0.87557501165719,
+    "domains": {
+      "TNG100": {
+        "median_leave_one_out_global_mean_cosine": -0.06295176643945255,
+        "negative_global_mean_cosine_fraction": 0.5,
+        "median_leave_one_out_same_domain_mean_cosine": -0.23504821309363638,
+        "negative_same_domain_mean_cosine_fraction": 0.75
+      },
+      "SIMBA": {
+        "median_leave_one_out_global_mean_cosine": 0.7555938285638426,
+        "negative_global_mean_cosine_fraction": 0.25,
+        "median_leave_one_out_same_domain_mean_cosine": 0.8838485491499974,
+        "negative_same_domain_mean_cosine_fraction": 0.25
+      },
+      "Swift": {
+        "median_leave_one_out_global_mean_cosine": -0.16639375949115276,
+        "negative_global_mean_cosine_fraction": 0.5,
+        "median_leave_one_out_same_domain_mean_cosine": -0.7891643772337188,
+        "negative_same_domain_mean_cosine_fraction": 1.0
+      }
+    }
+  },
+  "numerical_and_resource_integrity": {
+    "maximum_inverse_CDF_error": 2.384185791015625e-07,
+    "numerical_pass": true,
+    "peak_allocated_bytes": 1274624000,
+    "peak_allocated_bytes_limit": 30064771072,
+    "memory_pass": true,
+    "pytest_passed": 499,
+    "pytest_log_sha256": "9199a856d33e3fd4ec39739103dd7258ea8714bdafb3cab1ed28d0a1df2f366a",
+    "audit_log_sha256": "44f6f9cf2050338c2125f0884d0db8e43ba33127ce2d63d8cde234aae092e748",
+    "sequence_status": "complete_no_refit_train_only_conditional_gradient_routing_audit",
+    "sequence_status_sha256": "8f12858ccb78c7c6bb799a6566bdef9970ea1fe569589afee9e0eb020b1d4156"
+  },
+  "scientific_conclusion": [
+    "The full final 1x1 convolution weight has a nonzero pair gradient for every immutable query, and the V65 bias gradients are reproduced exactly. The audit is therefore numerically bound to the same pair problem rather than a changed sampler or query set.",
+    "Adding all 480 feature-responsive output weights leaves five of twelve query gradients opposite to the leave-one-out common direction. TNG100 and Swift retain negative domain-median coherence, so a last-layer-only direct pair refit is not supported.",
+    "The aggregate pair gradient has a safe scale and is first-order compatible with bounded NLL. Optimization magnitude or a direct NLL conflict is not the reason for rejection.",
+    "A single singular direction contains 87.56% of the twelve pair-gradient squared norm. The residual failure is consistent with one dominant nonlocal correction whose sign and amplitude vary by object, motivating a target-free global-context predictability audit before any architectural refit."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only target-free nonlocal context predictability audit",
+    "response": "the mean signed source-balanced sub-Mpc pair log ratio of each of the 48 V65 immutable train queries",
+    "predictors": [
+      "the eight sealed target-free observable context features",
+      "the eight-band backbone, count, and velocity log-power descriptors",
+      "the sealed target-free V45 object-amplitude prediction"
+    ],
+    "required_generalization": "predeclared leave-one-simulation-domain-out prediction with no simulation identity and no truth-derived predictor",
+    "selection_question": "can observable global context predict the object-specific sign and amplitude of the dominant pair correction across simulation domains well enough to justify a new nonlocal conditioning head?"
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "development_rank_or_selection_accessed": false,
+    "posthoc_coefficient_or_threshold_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

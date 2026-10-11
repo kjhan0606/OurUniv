@@ -1,0 +1,24 @@
+{
+  "schema": "cf4-p2-lg-targets-v7-bgc-n576-parent3023",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "extends": "config/p2_lg_targets_v6_bgc_l10_parent3023.json",
+  "extends_sha256": "de30645d1e37cd0993e0c09a577d4e5f40fc13a594828268e740316f38562824",
+  "change_from_v6": "After 0/8 canonical-L10 proposals, enlarge the preregistered small-scale ensemble to 32 without changing any physical gate. N576 is now the explicit canonical long-mode source and PM mesh. It is not a RAMSES level: a promoted source is Fourier-projected to the L9 base, interpolated into L10--L12, and supplemented only above the N576 Nyquist frequency.",
+  "paired_small_scale_seeds": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032],
+  "screen": {
+    "canonical_mesh_size": 576,
+    "canonical_projection": "identity on the N576 PM mesh; promoted physical modes are projected/interpolated, never redrawn"
+  },
+  "selection_policy": {
+    "canonical_power_of_two_parent_level": null,
+    "canonical_source_grid_size": 576,
+    "canonical_source_is_not_a_ramses_level": true,
+    "promote_only_a_candidate_derived_from_the_canonical_L10_field": false,
+    "promote_only_a_candidate_derived_from_the_frozen_N576_source": true,
+    "small_scale_ensemble_size": 32
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p2_n576_parent3023_v1"
+  }
+}

@@ -1,0 +1,44 @@
+Act as the primary independent SCIENCE PLAN auditor for OurUniv/CF4. Do not
+execute tools, edit files, or claim you inspected anything not supplied here.
+Return a substantive GO / CONDITIONAL GO / NO-GO and brief Korean explanation.
+
+Final user goal: actual CF4 plus galaxy-density and explicit LG observations
+-> present z=0 density/mean-velocity/physical-dispersion POSTERIOR -> LCDM IC
+-> forward validation -> phase-consistent LG zoom. LG <=0.3 cMpc/h only;
+surroundings1-2 sufficient. Fine unconstrained phases remain prior information.
+Do not silently substitute direct CF4->IC or unconstrained fine phases without
+LG observational constraints. Driver planning approval does not yet launch
+the next implementation bundle.
+
+Audit the attached exact design. Explicitly answer:
+1. Q-GOAL: Is this ONE spatial diffusion replacement an appropriate immediate
+   investment toward that final goal, or another attractive-field detour given
+   the unresolved environment/member/selection/inference connection?
+2. Q-LEAN: Are implementation and tests proportionate? Separate essential
+   changes from deferred science and unnecessary new diagnostic ladders.
+3. Feasibility: paired discrete/continuous49+49 variables, legal-branch
+   canonicalization, coherent3D generation, conservative seven moments,
+   cascaded support, training data/crops and24h single-GPU budget. Challenge
+   normalization/inference claims; distinguish normalized sampler from known
+   likelihood and scientific posterior. No guaranteed convergence forecast.
+4. MW/M31/M33: NO native truth seeds or known member masks on NEW fields.
+   Shared-cell M33 and uncertain MW/M31 assignments must remain possible.
+   Does the stated future same-field allocation/observation path suffice to
+   justify the field-first experiment? State explicitly what remains missing.
+   The current plan DOES NOT train q_S or deliver an LG-conditioned map.
+5. Give only mandatory changes for this concrete next implementation versus
+   later prerequisites. In particular, if you think q_S feasibility must be
+   demonstrated before ANY more field training, say NO-GO with a concrete lean
+   alternative, not blanket permission plus contradictory conditions.
+
+Evidence: evaluated previous native-NLL versus ES-repair branches have real
+checkpoint inverse tests passing and0/16 morphology passes each. Retained
+true-parent power/native .655/.664; rollout .436/.462. Current small local
+flow architecture and score-function repair line is CLOSED. Peak finding,
+14-coefficient composite proxy and necessary budget diagnostics are also
+CLOSED; do not propose repeating them. There is only one historically reused
+TNG100 box, not independent-universe validation.32 selected member fixtures
+cannot estimate a population-selection probability. Large new simulations,
+raw-data passes and actual-data inference are not approved in this design.
+
+You are evaluating the submitted plan/evidence, not auditing executed code.

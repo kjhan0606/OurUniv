@@ -1,0 +1,194 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-execution-authorization-design-v1",
+  "status": "prospective_design_only_all_runtime_unauthorized",
+  "date": "2026-08-20",
+  "purpose": "Define a future fail-closed one-shot authorization boundary for the audited v6-open shared-schedule production implementation without issuing a grant or release, creating a receipt or cache, running production, or authorizing downstream work.",
+  "lineage": {
+    "design_parent_commit": "7d13151f6f6ed6a99b6219bd2dca923bf8a1b9c2",
+    "implementation_commit": "7eb25554abec278a3710b99aed90e73c39f37b9b",
+    "implementation_result_record_commit": "7d13151f6f6ed6a99b6219bd2dca923bf8a1b9c2",
+    "branch": "agent/freeze-zoom-pipeline",
+    "remote": "origin",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_implementation_result_record.json",
+      "sha256": "57ccc0ac99ead2a3903e96e22f0b40182e2a6db3a3b3184a5257d8d8530ba867",
+      "git_blob_oid": "03b412d2ec7e3783c648a82d6b68c8c95fb56749",
+      "mode": "100644"
+    }
+  },
+  "implementation_hard_pins": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_program.json",
+      "sha256": "54ffb61a9053a6e7935a7355a6d5a948184c4ded8dc585cf85b45d209a9b2dbc",
+      "git_blob_oid": "4a14d6993e50d3e5574733a2393eabac1d65bb7c",
+      "mode": "100644"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py",
+      "sha256": "4c59d09252bb2f78fe1871211b9409e9a4b2b117d2a40f65cab7197d066fb564",
+      "git_blob_oid": "962c98a50cffbee00ead5cd338108df46b407dea",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh",
+      "sha256": "e0bfac8b662e8805cfcc99a07bf5a2e2124149a6968b8645f9141cdc8b28d0d7",
+      "git_blob_oid": "ceb03f296f2e0c2b3fd99e1ab9b358cd23d83817",
+      "mode": "100755"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_lageunha.sh",
+      "sha256": "4a84041de75554d7c8b41cd2d432ba8a5d534cd15acdd14e0d5bf03d92ace725",
+      "git_blob_oid": "51ea1c3166be9ddd65c490d34c59de565f84924c",
+      "mode": "100755"
+    },
+    {
+      "path": "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.sh",
+      "sha256": "702b561c5a6fee2d943507524047a5b198328453855834691ef51e727364b2fe",
+      "git_blob_oid": "db83d1da7af91f22ef0196113b6a8edc73bca6bd",
+      "mode": "100755"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.py",
+      "sha256": "5c980991133c3d490fc057bd345657ed38f7127c4960e2630988c2edb54b90be",
+      "git_blob_oid": "1e752ce52a453a3a7cfdbe67ee62191fa9cc2d93",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_runner.py",
+      "sha256": "f439f2e738a8a5ba93c7f3abe989ab7700e65a224d05da19b823f39cb8244974",
+      "git_blob_oid": "4cea7506b16eecacbfe36c3703155b81c97b7f60",
+      "mode": "100644"
+    }
+  ],
+  "frozen_science_hard_pins": {
+    "execution_design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_design.json",
+      "commit": "e9c3489b0f1f26f0a2594ac0291566e62aade63e",
+      "sha256": "08d99219b88a232dc809b3a2c945381cbbcda1fac0c7202c1c2681a09be609aa"
+    },
+    "capability_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_capability_implementation_result_record.json",
+      "sha256": "6322bd38b3b1b432019eb84fec29cf42ced2b01b70f086a0878b7b9192f9abda"
+    },
+    "shared_schedule_capability": {
+      "path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production.py",
+      "sha256": "64c60886b8ab62bca45dbe7e223f87662ae8285c177cb7386373b1ee98f74bbb"
+    },
+    "pilot_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_disposable_pilot_result_record.json",
+      "sha256": "0ff9c60ca1351b82337e1620fab3ee53952ed81709efebb42972013b7746d4bf"
+    },
+    "receipt_schedule_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/pilot/schedule_manifest.json",
+      "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+      "mode": "0444"
+    },
+    "pilot_schedule_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot/1b6ed3e5a2f9874c3d1b0f6a8e91c265f4ab73de0298b56c1d0e97a4f63b281c/schedule_manifest.json",
+      "sha256": "ad0caacaf3635f7c560b02758e26e3035a3e68f42aed7ed1d79e6ffaecd37aea",
+      "mode": "0444"
+    }
+  },
+  "fixed_science": {
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "beta": [0.0, 0.1531397846993059, 0.3181984675451238, 0.5129471527439684, 0.7369993853258423, 1.0],
+    "schedule_sha256": "c1b96d871e8c66d04e5028ed32773dc19656ad5b60149a047e025d75a69221b6",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "P_pool": "evidence_weighted",
+    "runtime_override": false
+  },
+  "canonical_paths": {
+    "future_grant": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution_grant.json",
+    "future_external_release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_release.json",
+    "future_external_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_execution_manifest.json",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_receipts",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_cache",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_v1_run"
+  },
+  "future_authorization_contract": {
+    "one_shot": true,
+    "canonical_paths_only": true,
+    "future_grant_must_be_a_separately_audited_single_file_addition": true,
+    "future_release_and_manifest_must_be_external_read_only_paired_objects": true,
+    "grant_must_pin_this_design_full_sha256": true,
+    "grant_must_pin_implementation_commit_result_record_and_all_seven_file_sha256": true,
+    "grant_must_bind_release_path_release_id_payload_sha256_manifest_path_manifest_sha256_and_manifest_id": true,
+    "receipt_must_be_exclusive_and_hardlink_the_release": true,
+    "release_inode_device_size_link_count_and_sha256_revalidated_before_and_after_science": true,
+    "program_source_runner_and_science_pins_must_be_revalidated_before_and_after_science": true,
+    "restart_checkpoint_or_cache_import": false,
+    "automatic_retry_resume_retune_or_scale_up": false,
+    "automatic_follow_on": false
+  },
+  "resource_and_execution_contract": {
+    "host_casefold_exact": "lageunha",
+    "backend": "Lageunha_local_one_shot_CPU_runner",
+    "Slurm_submission": false,
+    "syn101_execution": false,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "replicates_sequential": true,
+    "required_MemAvailable_GiB": 80,
+    "minimum_free_disk_GiB": 40,
+    "timeout": "12h",
+    "process_table_polling": false
+  },
+  "lifecycle_and_audit": {
+    "design_precommit_verdict_required": "DESIGN COMMIT GO",
+    "design_postcommit_verdict_required": "LINEAGE GO",
+    "grant_release_and_manifest_require_separate_design_and_audits": true,
+    "no_runtime_action_before_all_future_audits": true,
+    "RUNNING_COMPLETE_FAILED_are_mutually_exclusive": true,
+    "terminal_marker_mode": "0444",
+    "complete_data_state_and_cache_directory_mode": "0555",
+    "scientific_complete_statuses": [
+      "complete_pass_production_smc",
+      "complete_scientific_fail_production_smc"
+    ],
+    "invalid_provenance_artifact_or_postcheck_routes_to_FAILED": true
+  },
+  "authorization": {
+    "authorization_design_creation_and_precommit_audit_authorized": true,
+    "authorization_design_commit_authorized_before_precommit_audit": false,
+    "existing_program_source_runner_modification_authorized": false,
+    "grant_creation_authorized": false,
+    "external_release_creation_authorized": false,
+    "external_manifest_creation_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "retry_resume_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "runtime_state": {
+    "observed_read_only": true,
+    "grant_present": false,
+    "release_present": false,
+    "manifest_present": false,
+    "receipt_root_present": false,
+    "cache_root_present": false,
+    "data_root_present": false,
+    "state_root_present": false,
+    "production_executed": false,
+    "downstream_execution_occurred": false
+  },
+  "next": {
+    "authorized_now": "precommit_audit_this_single_design_file_only",
+    "after_design_lineage_go": "prospective_grant_release_manifest_design_only",
+    "production_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

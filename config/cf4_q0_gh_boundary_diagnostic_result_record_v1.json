@@ -1,0 +1,23 @@
+{
+  "schema": "ouruniv-cf4-q0-gh-boundary-diagnostic-result-record-v1",
+  "date": "2026-09-05",
+  "source_contract": {
+    "path": "config/cf4_q0_gh_boundary_diagnostic_bundle_v1.json",
+    "sha256": "e51aab6c055e484e3cdcbc9739a7c6fc128d09941702fc01c940c2ef7a47e434"
+  },
+  "status": "PASS_WITH_SCIENCE_NO_GO",
+  "scope": "development-only; no KF-EXPAND, actual CF4 inference, IC, PM, HOP, RAMSES or resolution claim",
+  "frozen_gate": {
+    "relative_l1_tolerance": 0.005,
+    "requirement": "GH3 versus GH7 or GH9 relative L1 <= tolerance"
+  },
+  "measurements": {
+    "GH3_vs_GH7_relative_L1": 0.6180055758765202,
+    "GH3_vs_GH9_relative_L1": 0.6589085428636273,
+    "GH7_vs_GH9_relative_L1": 0.206394487649476,
+    "GH7_vs_GH15_relative_L1": 0.404236043450054,
+    "GH9_vs_GH15_relative_L1": 0.302245951533415
+  },
+  "decision": "Do not promote the point-deposit GH/TSC convolution; design a cell-integrated or analytic LOS convolution and compare against a NumPy oracle first.",
+  "provenance_note": "This tracked result record preserves the science NO-GO while leaving the original user-owned contract file unchanged and unstaged."
+}

@@ -1,0 +1,147 @@
+{
+  "schema": "hong2021-v65-train-only-structure-factorization-result-record-v1",
+  "status": "complete_no_refit_audit_selected_train_only_conditional_gradient_routing_probe",
+  "program": "config/hong2021_v65_structure_factorization_audit_program.json",
+  "program_sha256": "58c244e03a5f7fbb9cef29943869067fe3c202d01f3f3773d3cb69d4022bcc21",
+  "code_commit": "63e451c1dec278dc54a652b8239e77347a0d6b08",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+    "sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "decision_digest_sha256": "e80016232d9efa9495a9ab8e45fdc62a4a04805b64e15a97820a25932234a47d",
+    "classification": "train_only_structure_factorization_does_not_select_a_single_model_change",
+    "next": "stop_before_refit_and_design_a_new_train_only_structure_hypothesis",
+    "candidate_selected": false
+  },
+  "causal_factorization": {
+    "rank_dependence_causal": false,
+    "query_parameter_spatial_arrangement_causal": true,
+    "direct_pair_bias_gradient_coherent": false,
+    "domain_median_and_q90_mean_absolute_log_error": {
+      "TNG100": {
+        "source_balanced": [
+          0.42460292777975805,
+          1.000199510495844
+        ],
+        "same_domain": [
+          0.5034390537724907,
+          0.8045519999591383
+        ],
+        "spatially_permuted_rank": [
+          0.49319065961424124,
+          0.8962067396674749
+        ],
+        "rolled_parameter": [
+          1.5633476662016916,
+          2.4468840974494395
+        ],
+        "rolled_over_source_balanced_median_error": 3.681905055097975
+      },
+      "SIMBA": {
+        "source_balanced": [
+          0.4270151880061231,
+          1.1367934896158025
+        ],
+        "same_domain": [
+          0.7262424119629094,
+          1.1066690838352808
+        ],
+        "spatially_permuted_rank": [
+          0.4621661835344083,
+          1.3119031765903846
+        ],
+        "rolled_parameter": [
+          1.196406528076742,
+          2.119048998321448
+        ],
+        "rolled_over_source_balanced_median_error": 2.801789167413845
+      },
+      "Swift": {
+        "source_balanced": [
+          0.6211638946691018,
+          1.1568776009597581
+        ],
+        "same_domain": [
+          0.6830664725938485,
+          1.1119502927509894
+        ],
+        "spatially_permuted_rank": [
+          0.5791161456097121,
+          1.1127672377656257
+        ],
+        "rolled_parameter": [
+          1.2037760738610537,
+          2.4448331676043424
+        ],
+        "rolled_over_source_balanced_median_error": 1.9379363227515232
+      }
+    }
+  },
+  "bias_gradient_evidence": {
+    "global_median_leave_one_out_cosine": 0.7473726372275885,
+    "global_negative_cosine_fraction": 0.4166666666666667,
+    "negative_queries": 5,
+    "total_queries": 12,
+    "coefficient_0_1_scaled_pair_to_bounded_NLL_L2_ratio": 2.759415296956634,
+    "domains": {
+      "TNG100": {
+        "median_leave_one_out_cosine": 0.1055416033772561,
+        "negative_cosine_fraction": 0.5
+      },
+      "SIMBA": {
+        "median_leave_one_out_cosine": 0.8195919148864056,
+        "negative_cosine_fraction": 0.25
+      },
+      "Swift": {
+        "median_leave_one_out_cosine": -0.09976501230616003,
+        "negative_cosine_fraction": 0.5
+      }
+    }
+  },
+  "numerical_and_resource_integrity": {
+    "maximum_inverse_CDF_error": 7.152557373046875e-07,
+    "exact_spatial_permutation_rank_multiset_preserved": true,
+    "numerical_pass": true,
+    "peak_allocated_bytes": 1658400768,
+    "peak_allocated_bytes_limit": 30064771072,
+    "memory_pass": true,
+    "pytest_passed": 493,
+    "pytest_log_sha256": "7985735d7f4e0d1573e54a14662edea0dcd714f99cb4c680f473279743351c97",
+    "audit_log_sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "sequence_status": "complete_no_refit_train_only_structure_factorization_audit",
+    "sequence_status_sha256": "644cc28c4dc8fa7ad9c8d67e687cedd6deab5868793c0931aab908c00f0d73b4"
+  },
+  "scientific_conclusion": [
+    "Same-domain donor ranks do not reduce both median and q90 pair error in every domain, and spatial rank permutation does not worsen the median in Swift. Donor-rank dependence is therefore not the common causal repair.",
+    "Rolling the query-local likelihood-parameter fields while preserving the ranks worsens the median pair error by factors of 3.68, 2.80, and 1.94 in TNG100, SIMBA, and Swift. The spatial arrangement of predicted parameters is causally important in every domain.",
+    "The shared final-bias pair gradient has an acceptable aggregate scale and median cosine, but five of twelve immutable train queries point against the leave-one-out common direction. A global bias correction is not a coherent repair.",
+    "The bias-only probe cannot test whether the final convolution weights can use local decoder features to route opposite object-specific corrections. That conditional-routing hypothesis must be audited without a fit before a direct pair objective is authorized."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only final-output-layer conditional gradient-routing audit",
+    "same_frozen_evidence": [
+      "the first four V65 immutable train queries per domain",
+      "the first four source-balanced V65 ranks per query",
+      "the V65 pair anchors and three sub-Mpc separations",
+      "the sealed V63 checkpoint with no parameter update"
+    ],
+    "required_new_measurements": [
+      "per-query pair and bounded-NLL gradients for the complete final 1x1 convolution weight plus bias",
+      "leave-one-out gradient cosines globally and within each simulation domain",
+      "comparison against the sealed V65 bias-only coherence result",
+      "first-order pair-versus-NLL compatibility of the coefficient-0.1 combined update"
+    ],
+    "selection_question": "do the local decoder features make the direct pair correction coherent in the train-only final output layer, or does the remaining object-level sign conflict rule out a pair-objective refit?"
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "development_rank_or_selection_accessed": false,
+    "posthoc_coefficient_or_threshold_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

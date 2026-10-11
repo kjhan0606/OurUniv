@@ -1,0 +1,35 @@
+{
+  "parameters": 530804,
+  "static_layer_sum": {"encoder":288384,"down":69216,"up":69168,"decoder":103968,"head":68},
+  "architecture": "10 input channels; two-convolution GN8-SiLU blocks; widths16/32/64; stride3x3 down, nearest up then3x3 conv; four softmax outputs",
+  "batch": 1,
+  "shape": [128,128,128],
+  "fp32_weights_grad_adam2_GiB": 0.007910549640655518,
+  "host_GiB": {
+    "thirteen_prepared_training_cases_15_FP32_channels": 1.5234375,
+    "native_loading_and_feature_temporaries": 0.65,
+    "baseline_accumulator_and_maps": 0.2,
+    "evaluation_float64_arrays_and_plotting": 0.5,
+    "python_torch_HDF5_libraries": 1.0,
+    "allocator_and_miscellaneous": 1.1265625,
+    "engineering_peak": 5,
+    "request_plus_twenty_percent": 6
+  },
+  "gpu_GiB": {
+    "weights_grad_optimizer": 0.008,
+    "input_targets_loss_augmentation_buffers": 0.8,
+    "checkpointed_block_boundaries_skips_and_gradients": 3.0,
+    "block_recompute_and_convolution_activations": 4.0,
+    "convolution_workspace": 8.0,
+    "allocator_and_miscellaneous": 4.192,
+    "engineering_peak": 20,
+    "plus_twenty_percent": 24
+  },
+  "largest_FP32_activation_GiB": 0.25,
+  "largest_activation_description": "decoder concatenation32x128^3",
+  "predicted_update_seconds": [0.3,3.0],
+  "prediction_limits": "Engineering estimates, not measured runtime/convergence.2000 updates10-100min before evaluation;70min learning cap may truncate. No automatic extension.",
+  "measurement": "Same-job focused tests assert exact model parameter count. Measure first update and every50 updates; stop if engineering host/GPU peaks exceeded, no separate sizing job.",
+  "output_estimate_GiB": 1.0,
+  "storage": "One final checkpoint, three development role-map HDF5 groups, frozen baseline and compact JSON/PNG. No snapshot or filesystem diagnostics."
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "hong2021-v82b-consumed-loo-gaussian-controls-result-record-v1",
+  "status": "complete_both_scale_only_Gaussian_controls_fail",
+  "recorded_at": "2026-08-13T00:58:00+09:00",
+  "program": {
+    "path": "config/hong2021_v82b_consumed_loo_gaussian_controls_program.json",
+    "sha256": "8aca170b2a8441ab6cb70329c63a094c4f3b311e38933954f236b2e7d89b04b8"
+  },
+  "report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82b_consumed_gaussian_sequence/report.json",
+    "sha256": "8a8b8da73c902e79bca69dfb6bd05508aca9fb000444e716da607df2e8f32e4d",
+    "decision_digest_sha256": "b04a0eea8e952403a905c86dec31319ba0d527b9e5284a9c3d0c5e04769faa24"
+  },
+  "frozen_decision": {
+    "branch": "both_Gaussian_controls_fail_conditional_nonGaussian_model_warranted",
+    "stationary_six_rank_coverage_p_values": [0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001],
+    "quartile_scale_six_rank_coverage_p_values": [0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001],
+    "individual_reference_threshold": 0.004166666666666667,
+    "automatic_training_authorized": false
+  },
+  "aggregate_rank_shape": {
+    "TNG100": {
+      "stationary_TV_mean_bias_variance_ratio": [0.04888126429389505, -0.17056143283843994, 0.9744609013550155],
+      "quartile_scale_TV_mean_bias_variance_ratio": [0.05243995610405417, -0.16869902610778809, 0.9781617799063701]
+    },
+    "SIMBA": {
+      "stationary_TV_mean_bias_variance_ratio": [0.05451497610877542, -0.18749892711639404, 0.9696957487612483],
+      "quartile_scale_TV_mean_bias_variance_ratio": [0.0577317756765029, -0.18669843673706055, 0.9739988948419125]
+    },
+    "Swift": {
+      "stationary_TV_mean_bias_variance_ratio": [0.0559006648905137, -0.19118547439575195, 0.9664023447030464],
+      "quartile_scale_TV_mean_bias_variance_ratio": [0.05914011422325583, -0.1871347427368164, 0.9705763751310693]
+    }
+  },
+  "stationary_power_ratio_0p3_1_1_3_3_6_6_10_h_mpc": {
+    "TNG100": [1.3766562333855483, 0.9994756443624706, 1.0109023843165175, 1.0837092748950208],
+    "SIMBA": [1.3410805929634675, 0.9700729219937296, 0.9757196905521659, 1.057965720150635],
+    "Swift": [1.3809583073371803, 0.9956538632459124, 0.9862619045049426, 1.0573588858832528]
+  },
+  "conditional_location_evidence": {
+    "truth_residual_quartile_mean_low_to_high": {
+      "TNG100": [0.009785074403693535, 0.005266162360433722, -0.002304669329290549, -0.012746567434836702],
+      "SIMBA": [0.0058195033413383345, 0.007586605757578238, 0.0007840605209583084, -0.014190169619874876],
+      "Swift": [0.00794533036331848, 0.006484254131499087, 0.0008573888968646956, -0.015286973391682262]
+    },
+    "quartile_scale_rank_mean_bias_low_to_high": {
+      "TNG100": [0.20865154266357422, -0.042772769927978516, -0.3085770606994629, -0.5320978164672852],
+      "SIMBA": [0.008126258850097656, 0.08165216445922852, -0.20153141021728516, -0.6350407600402832],
+      "Swift": [0.12913894653320312, 0.029041767120361328, -0.20746469497680664, -0.6992549896240234]
+    },
+    "truth_residual_skewness_low_to_high": {
+      "TNG100": [0.8426239672707487, 0.7476200223988968, 0.5382141470417544, 0.09976716657332506],
+      "SIMBA": [0.8035963888603785, 0.7665461804262593, 0.6211789693400152, 0.20100446886055084],
+      "Swift": [0.8411839608936692, 0.7764310615100737, 0.6346135043570088, 0.2197131876791259]
+    }
+  },
+  "interpretation": {
+    "power_sampler_failure": false,
+    "scale_only_Gaussian_failure": true,
+    "frozen_branch_preserved": true,
+    "why_flow_training_does_not_start_yet": "The scale-only conditional Gaussian omitted the newly exposed conditional residual location. Its large monotone quartile rank bias means this cheaper explanation must be tested before attributing all failure to non-Gaussian shape.",
+    "next_low_cost_test": "V82C reuses the same seeds, LOO P(k), and quartile scale, adds LOO quartile residual location, and applies the same exact rank/coverage reference rule.",
+    "V82C_pass_interpretation": "Conditional Gaussian location-scale is sufficient; do not train a flow.",
+    "V82C_fail_interpretation": "Conditional skew/non-Gaussian shape or richer continuous conditioning remains; a conditional flow or equivalent distributional model is warranted for design.",
+    "statistical_validation_claim": false
+  }
+}

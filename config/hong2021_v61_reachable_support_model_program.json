@@ -1,0 +1,109 @@
+{
+  "schema": "hong2021-v61-reachable-support-bounded-mixture-program-v1",
+  "status": "frozen_before_preflight_model_implementation_training_or_evaluation",
+  "purpose": "Test the single V59/V60-selected repair: retain the complete V56 model, bounded NLL, four V54 proper tail scores, optimizer, schedule, data, augmentation, and gates, but replace the 16-cell upper survival grid by the byte-bound 134-cell V60 grid that reaches the immutable bounded-output supremum.",
+  "parent_evidence": {
+    "v60_record": "config/hong2021_v60_result_record.json",
+    "v60_record_sha256": "fa879b4a6fa81544c1ac971c540d6ff3a543e9209598e1b959a693236400aece",
+    "required_status": "complete_reachable_support_grid_selected_V61_preflight",
+    "required_total_cells": 134,
+    "required_existing_thresholds_byte_equal": true,
+    "required_final_threshold_equals_global_reachable_upper": true,
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v56_program": "config/hong2021_v56_survival_grid_program.json",
+    "v56_program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "v56_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid_sequence/preflight.json",
+    "v56_preflight_sha256": "eb6a8d984a907c0983828f192a40388578dc2fcbb53415a161606e606c639295",
+    "v56_preflight_decision_digest_sha256": "07c1d78b8e837785e44118dbcce4484786b631ed34039a5c221ae10924a7ed43",
+    "v60_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid/grid.json",
+    "v60_grid_sha256": "d9c9aa2d91c746139589b10a858ff749b114b3eb8cec0fb134f823b39db0a2db",
+    "v60_grid_decision_digest_sha256": "66bcb9fd1dbf872e6e05f3a9c9a86cbd0ed08c4f21b9d67a6bbad368456d5d70",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "single_model_change": {
+    "V56_grid_cells": 16,
+    "V61_grid_cells": 134,
+    "first_16_thresholds": "byte-equal to V56",
+    "final_threshold_log10rho": 8.85270822700113,
+    "final_threshold_source": "byte-bound V60 global reachable upper log10rho supremum",
+    "physical_moment_weighting": "unchanged successive (10^log10rho-1)^2 increments normalized over the full grid",
+    "upper_survival_score_coefficient": 0.1,
+    "reference_probability": 1e-05,
+    "normalization": 9.9999e-06
+  },
+  "unchanged_model_and_training": {
+    "likelihood": "V56 five-component bounded-logit Gaussian mixture on open standardized residual support [-13.78839653180272, 10.259036149654781]",
+    "network": "V56 LocalMixtureUNet with 588239 parameters and all seven condition channels",
+    "loss": "V56 bounded NLL plus 0.1 times the four V54 physical-tail Brier score plus 0.1 times the upper survival-grid score",
+    "initialization_seed": 144044,
+    "initialization": "the exact V56 same-seed zero-output-weight initialization",
+    "optimizer": "AdamW learning rate 2e-4, weight decay 1e-4, cosine schedule, gradient-norm clip 1.0, AMP, and EMA 0.999",
+    "steps": 12000,
+    "fixed_validation_diagnostic_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "batch": "one uniformly selected immutable train object from each of TNG100, SIMBA, and Swift",
+    "augmentation": "the same uniformly selected 48 signed cube isometries applied jointly to all inputs, backbone, and target"
+  },
+  "hard_preflight": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "real_batch": "object zero from each immutable train source with fixed signed cube isometry index 7, identical to V56",
+    "checks": [
+      "all frozen hashes and decision digests",
+      "clean worktree and exact initialized output",
+      "V61 bounded NLL and V54 tail-score components reproduce V56 preflight within 1e-7",
+      "134 finite ordered thresholds and positive weights summing to one within 1e-12",
+      "first 16 thresholds byte-equal V56 and final threshold byte-equal V60 reachable supremum",
+      "finite composite loss and exact loss identity within 1e-7",
+      "finite nonzero gradients of both total composite loss and the 118 appended-cell score contribution",
+      "peak allocated GPU memory strictly below 28 GiB",
+      "development and independent-data firewalls remain closed"
+    ],
+    "peak_allocated_bytes_limit": 30064771072,
+    "failure_action": "stop before training, preserve the failed preflight, and optimize only the algebraic score implementation without changing the frozen objective"
+  },
+  "train_only_mechanism_gate": {
+    "population": "the identical seed-146046 immutable train-only 4096-voxel probe per object for 432 TNG100, 202 SIMBA, and 409 Swift objects",
+    "primary": "64-point Gauss-Hermite quadrature",
+    "control": "32-point Gauss-Hermite quadrature",
+    "maximum_relative_quadrature_difference": 0.005,
+    "query_stratum": "domainwise q99.9-and-above query-backbone stratum",
+    "absolute_predicted_over_truth_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "pass": "all three domains independently satisfy the absolute interval and numerical convergence before any development sampling"
+  },
+  "output_roots": {
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence/preflight.json",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v61",
+    "train_mechanism": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_train_high_backbone_gate",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_e30_reachable_support_grid"
+  },
+  "firewall": {
+    "training_before_preflight_pass": "forbidden",
+    "new_development_sample_before_train_gate_pass": "forbidden",
+    "development_access_before_train_gate_pass": "forbidden",
+    "validation_use_for_selection": "forbidden",
+    "posthoc_scale_or_clipping": "forbidden",
+    "posthoc_DC_or_Ak": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

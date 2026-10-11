@@ -1,0 +1,40 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v8",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "requested_scope": "current integrated joint calibration after exact grouped Fisher and seed-stream record repair",
+  "invocation": {
+    "mode": "normal authenticated Claude mode",
+    "bare": false,
+    "effort": "low",
+    "timeout_seconds": 180,
+    "permission_mode": "plan",
+    "file_modification_forbidden": true,
+    "network_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true
+  },
+  "status": "COMPLETE",
+  "verdict": "NO-GO",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v8.txt",
+  "findings": {
+    "source_result_record_consistent": true,
+    "all_seed_streams_declared_and_quarantined": true,
+    "target_exclusion_17007_consistent": true,
+    "same_latent_joint_generation": true,
+    "optimizer_fit_success_64_of_64": true,
+    "grouped_mark_fisher_exact_rank_one": true,
+    "canonical_vectorized_joint_error_max_below_tolerance": true,
+    "strict_gate_pass_count": 11,
+    "strict_gate_required_count": 64,
+    "strict_gate_pass": false,
+    "coverage_failure_count": {"coverage68": 50, "coverage95": 49}
+  },
+  "caveats": [
+    "The 17,007 exclusion probe intersects against an intentionally empty synthetic count identity set; it is an interface non-leakage check, not proof of real observational binning cleanliness.",
+    "The eight-mode latent field is a technical proxy, not a full LCDM covariance realization."
+  ],
+  "required_next": "Recalibrate posterior-width and D-arm stress variance using the same 64 development seeds with the mean model and gate frozen; keep validation sealed and do not start B2."
+}

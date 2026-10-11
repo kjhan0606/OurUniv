@@ -1,0 +1,34 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v6",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "requested_scope": "four-file concise closure audit at commit 3363393",
+  "invocation": {
+    "mode": "normal authenticated Claude mode",
+    "bare": false,
+    "effort": "low",
+    "timeout_seconds": 180,
+    "permission_mode": "plan",
+    "file_modification_forbidden": true,
+    "network_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true
+  },
+  "status": "COMPLETE",
+  "verdict": "NO-GO",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v6.txt",
+  "findings": {
+    "seed_firewall_consistent": true,
+    "target_exclusion_17007_consistent": true,
+    "same_latent_joint_generation": true,
+    "optimizer_fit_success_64_of_64": true,
+    "grouped_likelihood_consistency": true,
+    "record_error_figure_consistent": false,
+    "mark_fisher_rank_one_exact": false,
+    "strict_gate_pass_count": 11,
+    "strict_gate_required_count": 64
+  },
+  "required_next": "Fix the grouped mark-Fisher rank-1 term and record/result discrepancy, then diagnose coverage using development seeds only; no validation or B2."
+}
