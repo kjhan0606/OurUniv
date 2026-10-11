@@ -274,6 +274,23 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             replay = json.loads((start_checkpoint.parent / 'result.json').read_text())
             hmc_replay = False
             if (sampling_driver is not None
+                    and replay.get('status') == 'CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR'
+                    and replay.get('source_commit') == 'c4ea6cf149dc4759d1c4cc6226a46502c2e3f1d5'
+                    and start_checkpoint == BASE / 'r2_hmc_transport_20261011/hmc_retained_state.npz'
+                    and replay.get('checkpoint_replay_passed') is True
+                    and replay.get('target_orders') == dict(value=2, gradient=2, matched_primal=True)):
+                with np.load(start_checkpoint, allow_pickle=False) as saved:
+                    terminal_value = float(saved['objective'])
+                    terminal_terms = json.loads(str(saved['current_terms']))
+                terminal = replay['sampler_trace'][-1]
+                if (abs(terminal_value-terminal['objective']) > 1e-6
+                        or terminal_terms != terminal['current_terms']):
+                    raise ValueError('retained transport state has mismatched terms')
+                hmc_replay = True
+                replay = dict(replay, likelihood_changed=False,
+                              objective=terminal_value, terms=terminal_terms)
+                report['restart_kind'] = 'terminal retained transport state; not best evaluation'
+            if (sampling_driver is not None
                     and start_checkpoint == BASE / 'r2_conditional_hmc_step010_20261011/hmc_retained_state.npz'
                     and replay.get('status') == 'CONDITIONAL_HMC_TRANSITION_PILOT_NOT_POSTERIOR'
                     and replay.get('accepted_proposals') == 2

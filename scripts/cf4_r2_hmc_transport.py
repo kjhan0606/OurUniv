@@ -1,13 +1,16 @@
 """One bounded sequential transport bundle; not a posterior delivery."""
 import json
+import os
 import time
+from pathlib import Path
 import numpy as np
 from scipy.fft import fftn
 from cf4_r2_conditional_map import BASE, N, TERM_KEYS, EvaluationBudgetStop, main
 from cf4_r2_conditional_hmc_pilot import movement
 from cf4_r2_prior_split_hmc import FixedSplitMetric, inverse_laplacian_metric_symbol, split_hmc_step
 
-START = BASE/'r2_conditional_hmc_step010_20261011/hmc_retained_state.npz'
+START = Path(os.environ.get('CF4_HMC_START',
+    str(BASE/'r2_conditional_hmc_step010_20261011/hmc_retained_state.npz')))
 SCALES = np.array([.002,.005,.005,.005,.010,.005,.030,.010,.010,
     .0005,.003,.001,.001,.003,.002,.003,.003,.003,.010,.010,.020,.003,.003,.020])
 
@@ -29,11 +32,16 @@ def mode_readout(q, n):
 
 
 def run(objective, initial, out, report, save):
+    resume_metadata = None
     with np.load(START, allow_pickle=False) as saved:
         if not np.array_equal(initial, saved['q']):
             raise ValueError('resume coordinates differ from retained terminal state')
         rng = np.random.default_rng()
         rng.bit_generator.state = json.loads(str(saved['rng_state']))
+        if 'fingerprint' in saved.files:
+            resume_metadata = dict(fingerprint=json.loads(str(saved['fingerprint'])),
+                next_index=int(saved['next_index']), step=float(saved['step']),
+                phase=str(saved['phase']))
     q = initial.copy()
     value, gradient = objective(q)
     current_terms = {k: objective.records[-1][k] for k in TERM_KEYS}
@@ -45,6 +53,17 @@ def run(objective, initial, out, report, save):
     fingerprint['metric']['nuisance_inverse_mass'] = (SCALES**2).tolist()
     step = .1
     trace = []
+    next_index = 0
+    if resume_metadata is not None:
+        if resume_metadata['fingerprint'] != fingerprint:
+            raise ValueError('transport target/metric fingerprint changed')
+        next_index = resume_metadata['next_index']
+        step = resume_metadata['step']
+        previous = json.loads((START.parent/'result.json').read_text())
+        trace = previous['sampler_trace'].copy()
+        if (next_index != len(trace) or not np.isfinite(step) or not .01 <= step <= .15
+                or resume_metadata['phase'] != ('warmup' if next_index<6 else 'fixed_diagnostic')):
+            raise ValueError('transport resume schedule/phase is inconsistent')
     report.update(status='CONDITIONAL_HMC_TRANSPORT_RUNNING_NOT_POSTERIOR',
         optimizer=None, sampler_trace=trace, posterior_sample=False,
         posterior_uncertainty=False, sampler_fingerprint=fingerprint,
@@ -56,8 +75,11 @@ def run(objective, initial, out, report, save):
             phase='warmup' if index<6 else 'fixed_diagnostic', posterior_sample=False)
         report['current_state_terms'] = current_terms.copy()
         save()
-    checkpoint(0)
-    for index in range(10):
+    checkpoint(next_index)
+    end_index = int(os.environ.get('CF4_HMC_END_INDEX', '10'))
+    if end_index < next_index:
+        raise ValueError('transport end index precedes retained state')
+    for index in range(next_index, end_index):
         before_rng = rng.bit_generator.state
         lengths = [2,2,4,4,6,6]
         steps = lengths[index] if index<6 else int(rng.choice([4,6]))

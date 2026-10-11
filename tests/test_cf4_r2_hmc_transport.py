@@ -88,5 +88,56 @@ class TransportTests(unittest.TestCase):
         self.assertAlmostEqual(row['fundamental_sine'][0],np.linalg.norm(cube))
         np.testing.assert_allclose(row['fundamental_sine'][1:],0.,atol=1e-14)
 
+    def test_completed_transport_resume_preserves_rng_step_and_history(self):
+        previous,saved,_,_,_=self.exercise('normal')
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            start=root/'start.npz'
+            np.savez(start,**saved)
+            (root/'result.json').write_text(json.dumps(previous))
+            out=root/'continued'
+            out.mkdir()
+            report=dict(target_rules='fixture',target_orders={'value':2,'gradient':2},
+                        split_source='fixture',association_ledger_source_commit='fixture')
+            with patch.object(transport,'START',start), patch.object(transport,'N',4), \
+                    patch.object(transport,'split_hmc_step') as transition, \
+                    patch.dict(transport.os.environ,{'CF4_HMC_END_INDEX':'10'}):
+                transport.run(Oracle(),saved['q'],out,report,lambda:None)
+                transition.assert_not_called()
+            self.assertEqual(report['sampler_trace'],previous['sampler_trace'])
+            with np.load(out/'hmc_retained_state.npz',allow_pickle=False) as restored:
+                for key in ('q','rng_state','step','next_index','fingerprint'):
+                    np.testing.assert_array_equal(restored[key],saved[key])
+
+    def test_real_kernel_continuation_matches_uninterrupted_chain(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            start = root/'initial.npz'
+            q = np.arange(88, dtype=float)/100
+            np.savez(start, q=q, rng_state=json.dumps(np.random.default_rng(345).bit_generator.state))
+
+            def execute(source, destination, initial, end):
+                destination.mkdir()
+                report = dict(target_rules='fixture', target_orders={'value':2,'gradient':2},
+                              split_source='fixture', association_ledger_source_commit='fixture')
+                def save():
+                    (destination/'result.json').write_text(json.dumps(report))
+                with patch.object(transport, 'START', source), patch.object(transport, 'N', 4), \
+                        patch.dict(transport.os.environ, {'CF4_HMC_END_INDEX':str(end)}):
+                    transport.run(Oracle(), initial, destination, report, save)
+                with np.load(destination/'hmc_retained_state.npz', allow_pickle=False) as state:
+                    saved = {k:state[k].copy() for k in state.files}
+                return report, saved
+
+            full, full_state = execute(start, root/'full', q, 8)
+            _, midway = execute(start, root/'first', q, 6)
+            resumed, resumed_state = execute(root/'first/hmc_retained_state.npz',
+                                            root/'resumed', midway['q'], 8)
+            for key in full_state:
+                np.testing.assert_array_equal(resumed_state[key], full_state[key], err_msg=key)
+            for expected, actual in zip(full['sampler_trace'], resumed['sampler_trace']):
+                self.assertEqual({k:v for k,v in actual.items() if k!='seconds'},
+                                 {k:v for k,v in expected.items() if k!='seconds'})
+
 
 if __name__=='__main__': unittest.main()
