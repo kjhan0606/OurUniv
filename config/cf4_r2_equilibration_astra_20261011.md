@@ -92,3 +92,29 @@ target/component/gradient replay and the existing metric/RNG fingerprint
 checks remain required. Grammar1172571 completed exit0:0: all six transport
 regressions passed, including rejection-summary preservation and real-kernel
 continuous/resumed equality. This is wiring validation, not CF4 convergence.
+
+## Bounded longer-trajectory comparison: provisional driver plan
+
+Astra inspected the actual trace and original metric rationale. Its interim
+advice does not diagnose mass6000 as faulty from small fundamental jumps.
+For419084 L6 accepted5/7 and L4 accepted10/13. Rejection-inclusive total
+IC squared displacement per force was about.0408 versus.0298. This is a
+whole-IC transport proxy, not low-k ESS or a proven stationary comparison.
+It supports one bounded longer-trajectory experiment rather than another
+scalar curvature ladder or unbounded identical repeats.
+
+Continue terminal419084 with same target, epsilon, metric and RNG, but
+predeclare an independent state-independent uniform mixture of L8/L12.
+All resulting states remain discarded. At most10 new proposals,97 exact
+calls including replay, app11.5h/Slurm12h,48GiB host (measured18.53GiB).
+Complete-trajectory time/call guards may stop before10 proposals. Same-field
+summaries use existing evaluations; no extra dynamics. Native truth roles
+never initialize/select candidates; MW/M31 ambiguous and M33 unresolved.
+This remains R2 conditional development, not LG reconstruction or exit.
+
+Implementation exposes CF4_HMC_LENGTHS and records the fixed schedule;
+lengths must be distinct integers1..12. Grammar1172573 completed exit0:0,
+all eight transport tests passed, including long schedules, invalid input,
+rejected summaries, budget guards and actual continuous/resumed equality.
+The full CF4 checkpoint replay still has to pass in the next allocation.
+Final Astra advice and driver disposition remain pending before submission.

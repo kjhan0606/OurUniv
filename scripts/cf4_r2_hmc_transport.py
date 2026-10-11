@@ -80,12 +80,18 @@ def run(objective, initial, out, report, save):
         save()
     checkpoint(next_index)
     end_index = int(os.environ.get('CF4_HMC_END_INDEX', '10'))
+    lengths_text = os.environ.get('CF4_HMC_LENGTHS', '4,6')
+    fixed_lengths = tuple(int(item) for item in lengths_text.split(','))
+    if (not fixed_lengths or any(item < 1 or item > 12 for item in fixed_lengths)
+            or len(set(fixed_lengths)) != len(fixed_lengths)):
+        raise ValueError('distinct trajectory lengths in 1..12 required')
+    report['fixed_trajectory_lengths'] = list(fixed_lengths)
     if end_index < next_index:
         raise ValueError('transport end index precedes retained state')
     for index in range(next_index, end_index):
         before_rng = rng.bit_generator.state
         lengths = [2,2,4,4,6,6]
-        steps = lengths[index] if index<6 else int(rng.choice([4,6]))
+        steps = lengths[index] if index<6 else int(rng.choice(fixed_lengths))
         # Reserve complete-trajectory time using conservative measured-force cost.
         if (objective.max_evaluations-len(objective.records) < steps
                 or objective.deadline-time.monotonic() < steps*500.+120.):

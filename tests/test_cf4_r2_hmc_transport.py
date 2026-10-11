@@ -76,6 +76,19 @@ class TransportTests(unittest.TestCase):
         np.testing.assert_array_equal(saved['q'],q)
         self.assertEqual(report['diagnostic_retained'],0)
 
+    def test_fixed_long_trajectory_schedule_is_explicit(self):
+        with patch.dict(transport.os.environ, {'CF4_HMC_LENGTHS':'8,12'}):
+            report, _, calls, _, _ = self.exercise('normal')
+        self.assertEqual(report['fixed_trajectory_lengths'], [8,12])
+        self.assertTrue(all(call[1] in (8,12) for call in calls[6:]))
+        self.assertTrue(all(row['discard_for_inference'] for row in report['sampler_trace']))
+
+    def test_invalid_trajectory_lengths_fail_before_proposal(self):
+        for text in ('0,8', '8,8', '8,13'):
+            with self.subTest(text=text), patch.dict(transport.os.environ, {'CF4_HMC_LENGTHS':text}):
+                with self.assertRaises(ValueError):
+                    self.exercise('normal')
+
     def test_interrupted_candidate_is_not_rejection_or_sample(self):
         report,saved,calls,rng,q=self.exercise('mid_stop')
         self.assertEqual(len(calls),1)
