@@ -136,3 +136,12 @@ if not, close the length experiment and address an evidenced slow block or
 oracle cost. No further tiny length ladder, automatic mass reduction, or
 posterior promotion based on acceptance alone. Q-GOAL/Q-LEAN limits above
 remain in force. No R2 exit approval, email or R3 entry.
+
+Submitted419672 on h200/gpu:H200:1,48GiB,12h; scheduler confirmed RUNNING
+on syn104. Source308b146d9e18031cd479750f6c3079ccaaeae9eb; output
+/gpfs/kjhan/CF4/z0_density/r2_hmc_long_equilibrate_20261011.
+The initial submission419671 was cancelled after10seconds to correct
+Slurm's comma-separated --export parsing: CF4_HMC_LENGTHS='8,12' is now
+passed through the submission environment with --export=ALL, not as a
+comma-containing assignment inside the export list. No inference outcome
+was produced by419671. Actual target replay and new transitions are pending.
