@@ -57,3 +57,28 @@ it does not prove historical development blindness, an independent FP
 heldout cohort, or absence of upstream calibration leakage. The existing
 prospective heldout protocol still requires those assessments before any
 predictive validation claim. No heldout measurement values were scored here.
+
+## Completed block 419084: driver disposition
+
+Slurm COMPLETED, exit0:0, elapsed10:22:40, batch MaxRSS19428264KiB
+(18.53GiB). All20 new transitions10--29 completed:15 accepted,5 rejected.
+The final transition29 was accepted, signed energy error -.1296069473.
+All states remain explicitly discarded for inference. No heldout values
+were scored, no posterior intervals established, and R2 is not complete.
+
+Across this block IC-prior NLL changed8247764.898 ->8337866.903,
+count log likelihood -139570.732 ->-138367.522, and conditional FP log
+likelihood5982.224 ->5977.826. The late prior value decreased on the last
+accepted move, but this does not erase the much larger block-wide drift.
+Fundamental cosine coordinates remain near(-9.29,-4.90,-9.37); the last
+accepted jumps were(-.001331,-.003351,+.004462). Thus neither equilibrium
+nor adequate exploration of slow modes is demonstrated. Acceptance75%
+is evidence of functioning MH correction, not posterior quality.
+
+Next in-scope implementation: connect compact present-field summaries to
+the already evaluated oracle field and preserve them on MH rejection;
+extend same-target terminal restart to this exact recorded lineage. Then
+evaluate a bounded, explicitly costed equilibration/slow-block proposal.
+Do not relabel these states as production draws or automatically launch
+long multichain production. MW/M31 ambiguity and unresolved M33 remain;
+truth labels must not choose generated-field candidates. No R2 exit email.
