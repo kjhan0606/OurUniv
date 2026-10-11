@@ -118,3 +118,21 @@ all eight transport tests passed, including long schedules, invalid input,
 rejected summaries, budget guards and actual continuous/resumed equality.
 The full CF4 checkpoint replay still has to pass in the next allocation.
 Final Astra advice and driver disposition remain pending before submission.
+
+Final Astra verdict: CONDITIONAL GO for this one L8/12 continuation, not
+production or exit. Driver adopts it: the slowing prior drift but continuing
+band/nuisance/count drift supports further discarded equilibration, while
+the small nonstationary L6 efficiency advantage justifies a single bounded
+length comparison, not an optimal-metric claim. The passing test1172573
+supersedes the review's earlier reference to submitted-test status.
+Record the new trajectory policy as a separate segment without rewriting
+the historical trace. Stop on replay/gradient/numerical/capacity failure;
+ordinary rejection repeats remain valid. Never auto-extend this allocation.
+Afterward compare rejection-inclusive displacement per force, energy errors
+and drift, separating IC modes/nuisances from field summaries. Whole-box
+mass/bulk summaries can be conservation checks rather than mixing metrics.
+If useful transport improves, cost subsequent equilibration/multichain work;
+if not, close the length experiment and address an evidenced slow block or
+oracle cost. No further tiny length ladder, automatic mass reduction, or
+posterior promotion based on acceptance alone. Q-GOAL/Q-LEAN limits above
+remain in force. No R2 exit approval, email or R3 entry.

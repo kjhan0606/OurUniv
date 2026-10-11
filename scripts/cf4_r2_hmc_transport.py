@@ -86,6 +86,9 @@ def run(objective, initial, out, report, save):
             or len(set(fixed_lengths)) != len(fixed_lengths)):
         raise ValueError('distinct trajectory lengths in 1..12 required')
     report['fixed_trajectory_lengths'] = list(fixed_lengths)
+    report['trajectory_segment'] = dict(start_index=next_index,
+        requested_end_index=end_index, start_checkpoint=str(START),
+        fixed_lengths=list(fixed_lengths), policy='state-independent uniform mixture')
     if end_index < next_index:
         raise ValueError('transport end index precedes retained state')
     for index in range(next_index, end_index):
