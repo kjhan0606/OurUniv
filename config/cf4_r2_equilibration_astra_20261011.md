@@ -145,3 +145,26 @@ Slurm's comma-separated --export parsing: CF4_HMC_LENGTHS='8,12' is now
 passed through the submission environment with --export=ALL, not as a
 comma-containing assignment inside the export list. No inference outcome
 was produced by419671. Actual target replay and new transitions are pending.
+
+## Terminal 419672 and user budget-change authorization
+
+Slurm COMPLETED, exit0:0, elapsed09:30:08, MaxRSS20520928KiB
+(19.57GiB), empty stderr. Exact evaluations89 of97; new transitions30--37
+completed, seven accepted and one rejected. The next complete trajectory
+could not fit the remaining evaluation budget. This is a protective stop,
+not an OOM, crash, or evidence of stationary sampling.
+
+Terminal count log likelihood is -137141.53874999422 and IC-prior NLL
+8379756.490895055. Density mean square changed10.08372315639 at replay
+to11.85118465847; continuing field drift excludes posterior promotion.
+All states remain discarded; heldout scoring and UQ remain incomplete.
+
+The user approved changing the calculation budget after this terminal
+report. A bounded completion of the original ten-proposal comparison needs
+only indices38--39: at most25 exact calls including replay, Slurm4h,
+application3.5h, host48GiB, unchanged target/epsilon/metric and L8/12 policy.
+This is a proposed replacement allocation, not a submitted job or an
+authorization for unbounded repeats. Check terminal lineage and replay
+wiring before submission. Automatic monitoring remains stopped unless
+explicitly requested again. Evaluate the completed length comparison
+before any larger equilibration allocation; do not claim R2 completion.

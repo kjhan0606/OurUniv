@@ -280,7 +280,9 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
                         (BASE / 'r2_hmc_transport_20261011/hmc_retained_state.npz',
                          'c4ea6cf149dc4759d1c4cc6226a46502c2e3f1d5'),
                         (BASE / 'r2_hmc_equilibrate_20261011/hmc_retained_state.npz',
-                         '462524d26b3f5847d55544f3583da1e2b0f82922')}
+                         '462524d26b3f5847d55544f3583da1e2b0f82922'),
+                        (BASE / 'r2_hmc_long_equilibrate_20261011/hmc_retained_state.npz',
+                         '308b146d9e18031cd479750f6c3079ccaaeae9eb')}
                     and replay.get('checkpoint_replay_passed') is True
                     and replay.get('target_orders') == dict(value=2, gradient=2, matched_primal=True)):
                 with np.load(start_checkpoint, allow_pickle=False) as saved:
