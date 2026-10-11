@@ -168,3 +168,12 @@ authorization for unbounded repeats. Check terminal lineage and replay
 wiring before submission. Automatic monitoring remains stopped unless
 explicitly requested again. Evaluate the completed length comparison
 before any larger equilibration allocation; do not claim R2 completion.
+
+Restart lineage allowlist added for terminal419672/source308b146. Grammar
+1173412 completed exit0:0, eight transport regressions passed. User requested
+proceeding; submitted420128 on h200/gpu:H200:1,48GiB,4h, application12600s,
+25 evaluations and end index40. Sourcec508d3921e5dd3747add2ca85eea5c4d91297a7e.
+Output /gpfs/kjhan/CF4/z0_density/r2_hmc_long_finish_20261012.
+Full actual target/gradient replay remains mandatory inside the allocation.
+This bounded completion does not authorize automatic monitoring or further
+allocations, posterior promotion, R2 exit email, or R3 entry.
