@@ -6,7 +6,7 @@ Velocity summaries are density-weighted, including empty cells with zero weight.
 import numpy as np
 
 
-def present_field_readout(rho, velocity):
+def present_field_readout(rho, velocity, *, box=None):
     rho = np.asarray(rho)
     velocity = np.asarray(velocity)
     if (rho.ndim != 3 or len(set(rho.shape)) != 1
@@ -21,10 +21,29 @@ def present_field_readout(rho, velocity):
     bulk = np.array([np.sum(rho*v, dtype=np.float64)/mass for v in velocity])
     rms = [float(np.sqrt(np.sum(rho*(v-b)**2, dtype=np.float64)/mass))
            for v,b in zip(velocity,bulk)]
-    return dict(density_mean=float(rho.mean(dtype=np.float64)),
+    result = dict(density_mean=float(rho.mean(dtype=np.float64)),
                 density_mean_square=float(np.mean(rho*rho, dtype=np.float64)),
                 occupied_fraction=float(np.count_nonzero(rho)/rho.size),
                 mass_weighted_bulk_velocity_km_s=bulk.tolist(),
                 mass_weighted_spatial_velocity_rms_km_s=rms,
                 posterior_uncertainty=False,
                 velocity_rms_role='spatial variation of cell means, not within-cell dispersion or UQ')
+    if box is not None:
+        if not np.isfinite(box) or box <= 200:
+            raise ValueError('box must exceed twice the largest diagnostic radius')
+        # Same cell-centred source geometry as the observation target; observer box/2.
+        n = rho.shape[0]
+        axis = (np.arange(n)+.5)*box/n-box/2
+        radius2 = axis[:,None,None]**2+axis[None,:,None]**2+axis[None,None,:]**2
+        spheres = {}
+        for radius in (50,100):
+            mask = radius2 <= radius**2
+            weights = rho[mask]
+            total = float(weights.sum(dtype=np.float64))
+            spheres[str(radius)] = dict(
+                density_mean=float(weights.mean()) if weights.size else None,
+                mass_weighted_velocity_km_s=[float(np.sum(weights*v[mask])/total)
+                    for v in velocity] if total > 0 else None)
+        result['observer_spheres_cMpc_h'] = spheres
+        result['sphere_geometry'] = 'cell centres (i+0.5)*box/n; observer box/2'
+    return result

@@ -282,7 +282,9 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
                         (BASE / 'r2_hmc_equilibrate_20261011/hmc_retained_state.npz',
                          '462524d26b3f5847d55544f3583da1e2b0f82922'),
                         (BASE / 'r2_hmc_long_equilibrate_20261011/hmc_retained_state.npz',
-                         '308b146d9e18031cd479750f6c3079ccaaeae9eb')}
+                         '308b146d9e18031cd479750f6c3079ccaaeae9eb'),
+                        (BASE / 'r2_hmc_long_finish_retry_20261012/hmc_retained_state.npz',
+                         '1b7b3647e93b8491b84aeec57b529495ae7861d8')}
                     and replay.get('checkpoint_replay_passed') is True
                     and replay.get('target_orders') == dict(value=2, gradient=2, matched_primal=True)):
                 with np.load(start_checkpoint, allow_pickle=False) as saved:
@@ -409,7 +411,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             value, gradient, detail = assemble_conditional_objective(
                 q, score, components, ic_gradient, grads[2], grads[3], support_info)
             if sampling_driver is not None:
-                detail['present_field_readout'] = present_field_readout(rho, velocity)
+                detail['present_field_readout'] = present_field_readout(rho, velocity, box=BOX)
             return value, gradient, detail
 
         def persist_report(_x, row, best):

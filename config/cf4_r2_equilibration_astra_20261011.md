@@ -217,3 +217,25 @@ observables must later constrain that same LG field, never truth-seeded
 candidates. Q-LEAN: retain existing target/kernel/readouts and avoid a new
 gate framework. Independent chains, heldout prediction and calibration
 remain necessary; this recovery alone does not complete R2.
+
+## Next discarded block: adopted Astra advice and user submission request
+
+Astra CONDITIONAL GO for ONE24h block, not production or exit. Driver
+checked the cited completed traces and adopts retained L8/12, unchanged
+epsilon/metric/target, terminal420759 restart, end index60,193 calls including
+replay,23h application/24h Slurm,48GiB. Expected16--20 complete proposals,
+not guaranteed20. No automatic doubling if structural drift persists.
+Compare first/second-half field, band, nuisance and likelihood behavior with
+rejection repeats before costing independent chains or a specific repair.
+
+Eight fixed spatial readouts added from the already computed field: mean
+density and three mass-weighted velocities in R50/R100cMpc/h spheres,
+cell centres(i+.5)*box/N and observer box/2, matching cell_centres geometry.
+Empty diagnostic regions report null rather than invented velocities.
+These are environmental diagnostics, not observations, UQ or LG identities.
+Exact terminal420759 path/source1b7b364 added to restart allowlist; full
+target/gradient replay remains mandatory. Grammar1177937 completed exit0:0,
+all11 field/transport tests passed, including spatial mass weighting and
+actual continuous/resumed equality. User explicitly requested submission.
+Freeze HEAD after submission; record the job in the conversation until it
+has passed the startup HEAD guard. Automatic monitoring remains stopped.
