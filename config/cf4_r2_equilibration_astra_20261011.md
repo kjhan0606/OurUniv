@@ -177,3 +177,43 @@ Output /gpfs/kjhan/CF4/z0_density/r2_hmc_long_finish_20261012.
 Full actual target/gradient replay remains mandatory inside the allocation.
 This bounded completion does not authorize automatic monitoring or further
 allocations, posterior promotion, R2 exit email, or R3 entry.
+
+## Completed longer-trajectory comparison: driver evaluation
+
+420128 failed after12s before numerical execution: the driver committed its
+submission record while the job was queued, violating the runner's exact
+HEAD guard. No physics or memory failure. Corrected submission420759 used
+HEAD1b7b364 without subsequent commits while queued/running. It completed
+02:37:43, exit0:0, MaxRSS15502800KiB, empty stderr, actual checkpoint replay
+passed. Indices38/39 (both L12) rejected/accepted;25 exact calls. Together
+with419672 the original ten new proposals30--39 are complete, eight accepted.
+
+Rejection-inclusive IC squared RMS displacement per force:
+L4 .02979834 (13 proposals), L6 .04079802 (7),
+L8 .07432852 (2), L12 .07800981 (8).
+Fundamental-cosine squared displacement per force respectively
+1.08971e-5,2.44071e-5,5.06414e-5,4.54120e-5.
+Nuisance squared displacement per force respectively
+.00018039,.00016520,.00019215,.00033757.
+These are descriptive nonstationary transport proxies, NOT ESS, posterior
+widths, an optimal-length determination, or a controlled stationary benchmark.
+The longer segment required112 force calls and42463.53 trajectory seconds.
+
+From state29 to39, count log likelihood improved -138367.52 ->-137011.76,
+IC-prior NLL rose8337866.90 ->8378281.97, and conditional FP log likelihood
+changed5977.826 ->5977.843. The k4--8 IC band changed .44540 ->.49804.
+Replayed starting density mean square10.08372 increased to11.97078, rising
+on every accepted new transition. This is continuing field drift, not
+stationarity. All draws remain discarded; no heldout/UQ claim or R2 exit.
+
+Driver closes the length experiment and provisionally retains the L8/12
+mixture without another length ladder. A warranted Astra mid-course advice
+request compares one costed larger discarded equilibration allocation
+(<=24h Slurm,23h application,48GiB,193 evaluations,<=20 proposals) against
+an evidenced slow-block/oracle-cost repair. This allocation is NOT submitted
+or approved by the review yet. Automatic monitoring remains stopped.
+Q-GOAL: same NEW field, MW/M31 roles ambiguous and M33 unresolved; their
+observables must later constrain that same LG field, never truth-seeded
+candidates. Q-LEAN: retain existing target/kernel/readouts and avoid a new
+gate framework. Independent chains, heldout prediction and calibration
+remain necessary; this recovery alone does not complete R2.
