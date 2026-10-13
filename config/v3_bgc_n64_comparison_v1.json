@@ -1,0 +1,52 @@
+{
+  "schema": "cf4-v3-bgc-n64-comparison-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_comparison": true,
+  "prerequisite": {
+    "config": "config/v3_bgc_mock_validation_v2.json",
+    "status": "complete_passed",
+    "selected_window": 801
+  },
+  "common_model": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "holdout_fraction": 0.2,
+    "split_seed": 20260813,
+    "sample_seeds": [81, 82, 83, 84, 85, 86, 87, 88],
+    "sigma_nl_km_s": 0.0,
+    "delta_h0_prior_km_s_mpc": 3.0
+  },
+  "control": {
+    "velocity_estimator": "wf15",
+    "error_scale": 0.9,
+    "note": "Accepted P0 estimator restricted to the BGc target redshift range."
+  },
+  "bgc": {
+    "velocity_estimator": "bgc",
+    "error_scale": 1.0,
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "redshift_neighbour_window": 801,
+    "holdout_policy": "Assign target holdout first; exclude every held-out raw target row from the median reference pool.",
+    "nearby_policy": "Rows below 1500 km/s are reference-only and never enter the Gaussian BGc likelihood."
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "each_model_abs_z_mean_max": 0.1,
+    "each_model_z_std_range": [0.9, 1.1],
+    "each_model_coverage_1sigma_range": [0.62, 0.75],
+    "each_model_coverage_2sigma_range": [0.92, 0.98],
+    "each_model_delta_log_score_min": 0.0,
+    "minimum_common_raw_holdout_rows": 3000,
+    "external_local_sheet_gate": {
+      "gaussian_radius_mpc_h": 5.0,
+      "bgc_posterior_mean_delta_min": -0.25,
+      "role": "This is a separately labelled observer-environment gate, not a peculiar-velocity calibration statistic."
+    },
+    "policy": {
+      "bgc_statistical_adoption": "Both estimators and all numerical gates must pass; cross-estimator log densities are not compared because their transformed observables and variances differ.",
+      "N192_and_P2_authorization": "Statistical adoption plus the external Local-Sheet gate are required. If calibration passes but the Local-Sheet gate fails, retain BGc only as the distant-row correction and develop a hierarchical likelihood below 1500 km/s before another P2 run."
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "hong2021-v20-conditional-structure-audit-v1",
+  "scope": "TNG100, SIMBA, Swift frozen train caches and existing V20 E8 development ensembles only",
+  "Astrid_used": false,
+  "EAGLE_RefL0100N1504_used": false,
+  "gate_failure": {
+    "Q3_generated_minus_truth_log10rho_99_999_dex": {
+      "TNG100": 0.22112021971197837,
+      "SIMBA": 0.21250164178181752,
+      "Swift": 0.05154766597787219
+    },
+    "Q4_generated_over_truth_mean_delta_squared": {
+      "TNG100": 3.982133906878551,
+      "SIMBA": 2.9545054859204063,
+      "Swift": 1.9417030350822286
+    },
+    "Q5_all_domains": true,
+    "two_point_all_scales": false
+  },
+  "voxel_conditional_audit": {
+    "feature": "per-voxel corrected deterministic mean m in y units",
+    "deciles": 10,
+    "fit_data": "train-only V14 standardized caches and matching train data",
+    "generated_data": "existing V20 step-10000 validation ensembles",
+    "generated_residual_std_range_by_decile": {
+      "TNG100": [0.14552676187338162, 0.19513243427638863],
+      "SIMBA": [0.13306079303854305, 0.13458942220136905],
+      "Swift": [0.13588945285371287, 0.13884765587400352]
+    },
+    "train_standardized_residual_rms_range_by_decile": {
+      "TNG100": [1.7722132809729303, 2.159615607192145],
+      "SIMBA": [1.8534939586581463, 2.232134363582995],
+      "Swift": [1.8843546822683883, 2.267941773304388]
+    },
+    "interpretation": "V20 residual variance is conditionally heteroscedastic at voxel scale; cube-level marginal stratification is rejected."
+  },
+  "independent_design_audit": {
+    "reviewer": "Claude Fable",
+    "cube_stratified_variant": "FAIL",
+    "required_corrections": [
+      "refit the V21 Gaussianization on affine-normalized u using the frozen V20 recipe",
+      "center each transformed cube before Addendum-B projection",
+      "define m as the per-voxel corrected deterministic mean field",
+      "pin interpolation centers, two-sided bin clamp, source-balanced moment formula, and Q6"
+    ]
+  }
+}

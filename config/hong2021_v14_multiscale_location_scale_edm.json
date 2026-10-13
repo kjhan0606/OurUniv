@@ -1,0 +1,140 @@
+{
+  "schema": "hong2021-v14-three-domain-multiscale-location-scale-edm-plan-v1",
+  "status": "frozen_after_three_domain_audit_before_v14_model_training",
+  "purpose": "Replace the operator-confounded V7 residual model with one common-CIC, three-code, target-free conditional location-scale likelihood without post-hoc power rescaling.",
+  "audit": "config/hong2021_v14_baseline_audit_record.json",
+  "data_firewall": "config/hong2021_v14_data_firewall_v2.json",
+  "data": {
+    "TNG100": {
+      "train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5",
+      "validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5"
+    },
+    "CAMELS_SIMBA": {
+      "train": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5",
+      "validation": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5"
+    },
+    "CAMELS_Swift_EAGLE": {
+      "train": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5",
+      "validation": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5"
+    },
+    "target_operator": "exact periodic cell-centred raw-particle CIC at 0.3125 Mpc/h; log10(rho/box_mean)/4.5; finite positive values retained without clipping or floor"
+  },
+  "frozen_backbone": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v4_split00_l0_groupnorm_std_cosine/minimum_validation_loss.pt",
+    "role": "unchanged deterministic conditional mean and input preprocessing",
+    "trainable": false
+  },
+  "deterministic_mean_correction": {
+    "architecture": "ConditionalResidualUNet, four condition channels, base_channels=16, zero-initialized output",
+    "condition": ["standardized galaxy count", "standardized mean radial peculiar velocity", "frozen V4 mean", "radial geometry"],
+    "target": "truth minus frozen V4 mean, exact per-cube DC removed",
+    "output_projection": "subtract exact spatial mean on every forward pass",
+    "loss": "0.5 uniform voxel MSE + 0.5 train-only density-tail-weighted voxel MSE",
+    "tail_bins_log10_rho": ["<-1", "-1..0", "0..1", "1..2", ">=2"],
+    "tail_frequency_weighting": "equal one-third average of the three training-source voxel probabilities; inverse square root; cap 10; renormalize to expectation one",
+    "augmentation": "all 48 signed cube isometries: 6 axis permutations times 8 reflections",
+    "training": {
+      "steps": 5000,
+      "batch": 6,
+      "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift_EAGLE": 2},
+      "learning_rate": 0.0001,
+      "minimum_learning_rate": 0.00001,
+      "weight_decay": 0.0001,
+      "ema_decay": 0.999,
+      "gradient_clip_norm": 1.0,
+      "validation_every": 500,
+      "seed": 142021
+    },
+    "candidate_steps": [1000, 3000, 5000],
+    "selection": "Among candidates improving combined validation MSE over the exact zero-correction baseline in every source, minimize the worst source-relative validation MSE; smallest step breaks an exact tie.",
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v14_mean_correction"
+  },
+  "location_scale_model": {
+    "fit_stage": "after the deterministic correction checkpoint is selected, before EDM residual cache preparation",
+    "features": [
+      "log1p_occupied_cells",
+      "log1p_standardized_count_sum",
+      "occupied_standardized_count_mean",
+      "occupied_standardized_count_std",
+      "occupied_standardized_velocity_mean",
+      "occupied_standardized_velocity_std",
+      "corrected_deterministic_mean_cube_mean",
+      "corrected_deterministic_mean_cube_std"
+    ],
+    "simulation_identity_feature": false,
+    "target_feature_at_inference": false,
+    "cube_location": "source-balanced ridge prediction of residual DC",
+    "fourier_edges_h_mpc": [0.0, 1.0, 3.0, 6.0, "inf"],
+    "band_0_scale": "exp of equal-source training mean log RMS; no observable regression",
+    "band_1_scale": "exp of equal-source training mean log RMS; no observable regression",
+    "band_2_scale": "exp of source-balanced ridge prediction of log RMS",
+    "band_3_scale": "exp of source-balanced ridge prediction of log RMS",
+    "ridge_regularization_candidates": [0.0, 1e-6, 1e-5, 0.0001, 0.001, 0.01, 0.1, 1.0],
+    "ridge_selection": "per predicted target, five-fold equal-source train-only CV with fold-local feature scaling",
+    "ridge_seed": 143021,
+    "scale_prediction_clipping": false,
+    "transform": "subtract predicted DC; split into four exhaustive non-DC Fourier bands; divide each band by its positive predicted scale; sum standardized bands",
+    "inverse": "split the generated standardized residual with the same masks; multiply by the same target-free predicted scales; sum; add predicted DC",
+    "implementation": "src/hong2021_v14_multiscale.py",
+    "posthoc_Ak": false
+  },
+  "stochastic_edm": {
+    "architecture": "ObservableContextUNet from scratch, condition_channels=4, base_channels=32",
+    "target": "zero-DC multiscale-standardized corrected residual",
+    "sigma_data": "equal-source RMS fitted from the three standardized training residual caches only",
+    "loss": "0.5 uniform EDM denoising + 0.5 original-truth density-tail-weighted EDM denoising",
+    "tail_weights": "the same frozen three-source training-only weights as deterministic correction",
+    "augmentation": "all 48 signed cube isometries",
+    "training": {
+      "steps": 10000,
+      "batch": 6,
+      "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift_EAGLE": 2},
+      "learning_rate": 0.0002,
+      "minimum_learning_rate": 0.00002,
+      "weight_decay": 0.0001,
+      "ema_decay": 0.999,
+      "gradient_clip_norm": 1.0,
+      "edm_p_mean": -0.8,
+      "edm_p_std": 1.2,
+      "validation_every": 500,
+      "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift_EAGLE": 99175},
+      "seed": 144021
+    },
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v14_multiscale_edm"
+  },
+  "development_selection": {
+    "candidate_steps": [2000, 5000, 10000],
+    "sampler": {"ensemble_members": 16, "sampling_steps": 40, "sigma_min": 0.002, "sigma_max": 40.0, "rho": 7.0},
+    "TNG100": {
+      "indices": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "seed": 15777
+    },
+    "SIMBA": {
+      "indices_file": "config/hong2021_simba_dev_representative16_v1.json",
+      "seed": 16777
+    },
+    "Swift_EAGLE": {
+      "indices_file": "config/hong2021_swift_eagle_dev_representative16_v1.json",
+      "seed": 17777
+    },
+    "field_gate": "all eight unchanged checks from src/hong2021_v6_gate.py must pass independently in all three development domains",
+    "selection": "select the smallest predeclared step passing every field check in all three domains",
+    "failure": "if no candidate passes all three domains, this V14 attempt fails and no Astrid file is downloaded or opened"
+  },
+  "locked_independent_order_after_development_pass": [
+    "freeze the selected mean-correction checkpoint, location-scale JSON, EDM checkpoint, preprocessing, representative rules, commands, and SHA256 hashes in a committed record",
+    "verify zero local Astrid files before the commit",
+    "download and prepare raw-CIC Astrid CV0-26 only after that commit",
+    "sample exactly one predeclared observer per realization with ensemble16, 40 steps, and seed 28777",
+    "run the unchanged eight-check Astrid field gate once",
+    "run unchanged Astrid grid-HOP only if and after the field gate passes",
+    "never try another checkpoint, scale, seed, subset, target operator, or threshold after seeing Astrid"
+  ],
+  "forbidden": [
+    "EAGLE RefL0100N1504 or Astrid truth in fitting or selection",
+    "historical SIMBA CV0-15 in fitting or selection",
+    "simulation label conditioning",
+    "target-derived inference context or scale",
+    "post-hoc A(k), scalar amplitude transfer, clipping, pseudocount, or learned floor"
+  ]
+}

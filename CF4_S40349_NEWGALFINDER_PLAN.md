@@ -1,0 +1,163 @@
+# Seed 40349 z=0 NewGalFinder structure plan
+
+Date: 2026-09-24
+
+## Goal and claim boundary
+
+Use the user's latest GalaxyFinder pipeline to identify the z=0 halo and
+subhalo structure in seed40349's completed trace-only zoom. NewGalFinder is
+preferred over HOP here because it operates inside opFoF hosts with density
+peaks, watershed membership, iterative boundedness, and tidal-radius tests.
+Its DMO fallback can therefore test whether an M33-scale bound subhalo is
+separable from an M31-scale host instead of relying on HOP regroup thresholds.
+
+This analysis may identify a viable MW/M31/M33 analogue, ambiguity, or a
+failure. It cannot promote the parent by itself. Any fine substructure comes
+from one random conditional high-k realization, not directly recovered CF4
+information.
+
+## Frozen inputs and software
+
+- RAMSES snapshot:
+  `/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268/output_00003`
+- NewDD/opFoF working source and binaries:
+  `/home/kjhan/BACKUP/GalaxyFinder`; preserve its existing staged DMO-reader
+  changes and record exact binary/source hashes.
+- NewGalFinder source: GalaxyFinder branch
+  `agent/fix-newgalfinder-periodic-unwrapping`, commit
+  `96560d9ceef34a0143304d8a32534649634d5116`, checked out separately at
+  `/gpfs/kjhan/CF4/external/GalaxyFinder_newgal_586a62e` so the user's dirty
+  local tree is not overwritten.
+- NewGalFinder binary: the same finder physics, rebuilt with `NMEG=8000L` and
+  `NBODY`. SHA256:
+  `2702135f6195714257a7ca3298c5bda2f128a7bc2f987587ca336f8d091dff09`.
+- Input/output ABI: `INDEX`, `VarPM`, `XYZDBL`, `NBODY`; the compact `DmType`
+  is compile-time asserted to be 72 bytes, exactly matching the measured opFoF
+  member layout. The branch also fixes value sorting and post-shift bounds in
+  periodic halo unwrapping and includes the latest DMO peak fallback fixes.
+
+## Execution order
+
+1. Run NewDD with all DMO particle masses preserved, 16 MPI ranks and 512
+   slabs, then run opFoF on the same slabs. Validate catalog and member files.
+2. Inspect the opFoF header count and largest host before releasing the larger
+   NewGalFinder allocation.
+3. Run NewGalFinder on the validated opFoF catalog. It contains 146,681 hosts;
+   the largest contains 165,853 particles. This is safely below the 8 GB worker
+   allocator ceiling. The four-rank build reserves 80 GB for the master and
+   8 GB for each of three workers; allowing for OpenMP stacks and overhead gives
+   an expected ceiling near 125 GB. Request 150 GB (at least 20% margin), use
+   4 MPI ranks x16 OpenMP threads on one grammar normal node, and impose a
+   24-hour ceiling.
+4. Parse the resulting subhalo catalog without oracle identities. Locate an
+   isolated MW/M31-scale pair near the constrained observer/environment,
+   search for an M33-scale bound satellite around either component, and measure
+   masses, separation, radial/tangential velocities, environment drift, and
+   low-resolution contamination from the RAMSES particle masses.
+
+The first launch, grammar job1113477, was cancelled after54 seconds when its
+preflight-incomplete hydro build read the 72-byte DMO records with a 168-byte
+stride. The resulting false coordinates triggered grid-size overflow. It made
+no usable output. The corrected DMO ABI and periodic-unwrapping branch above
+are mandatory for the rerun; adding memory would not fix this error.
+
+The corrected-ABI launch, job1113504, demonstrated valid coordinates and DMO
+subhalo separation, reaching host number4992 without an allocation failure.
+It was then cancelled deliberately after9m47s: with `DM_DENSITY_WEIGHT=0`, the
+code still computed an empty stellar FFT before every dedicated DMO search.
+Commit96560d9 routes zero-star hosts directly to the same adaptive DMO finder
+and zero-initializes per-halo state. This removes a scientifically inert cost
+and the associated large-host memory risk without changing the DMO algorithm.
+
+Production job1113522 completed all146681 input FoF hosts on2026-09-24
+21:38:44 KST in2h57m38s/exit0. The finder wrote its catalogue and a
+`NEWGALFINDER_PASS` result. Its dependent validation job1113532 failed before
+reading the catalogue because `python` was absent from the grammar node's
+batch PATH (exit127). The runner now uses the verified absolute Python3.13
+path. Evaluation-only retry1114528 completed2026-09-25 01:52:23 KST/exit0.
+It parsed103220 recorded hosts and152931 bound components, including18215
+multi-component hosts. The frozen LG pair screen finds0 accepted pairs:
+5 eligible hosts,2 pairs passing separation,1 also passing mass ratio and
+midpoint,0 passing the3 cMpc/h isolation cut. The nearest candidate has
+separation1.1357 cMpc/h, masses2.0848e12 and5.3960e11 Msun/h, and
+isolation2.7388 cMpc/h. Diagnostic decision:
+`NEWGAL_DIAGNOSTIC_PAIR_NO_GO`. Virgo and Coma candidates remain present near
+their frozen positions. This finder result does not identify an M33 analogue
+or promote the trace-only zoom. Preserve the catalogue and final RAMSES dump.
+
+The next bounded readout uses the existing `GALCATALOG.LIST.00003` and
+`GALFIND.DATA.00003`. It identifies the exact massive halo responsible for
+the nearest pair's isolation failure, lists the bound components of the five
+eligible local hosts and that intruder, and reads their DMO member masses and
+particle levels to diagnose low-resolution contamination. It applies the
+unchanged M33 mass/separation/fraction cuts to every local host. This is one
+CPU Slurm analysis of saved catalogues, with no finder rerun, new simulation,
+or post-hoc threshold change. The output can distinguish a real local triplet
+from a catalogue interpretation issue, but cannot by itself promote the IC.
+
+Local catalogue/member audit job1114563 completed2026-09-25 01:58:34 KST in6s,
+exit0. Its output is
+`/gpfs/kjhan/CF4/diagnostics/cf4_lg_s40349_zoom_l19_z0_newgalfinder_local_audit_v1.json`.
+The isolation source is a distinct FoF host90370 of6.1498e12 Msun/h at
+2.73884 cMpc/h from the nearest candidate pair's midpoint. It has82461
+particles and20 bound components. Another eligible LG-scale host90515 has
+2.5309e12 Msun/h and lies0.8532 cMpc/h from that midpoint, so the local
+configuration is not an unambiguous two-primary system. The nearest pair
+hosts93620/93731 have2.0848e12/5.3960e11 Msun/h and separation1.1357
+cMpc/h. Their FoF mass divided by particle count and all examined bound
+members agree with the finest DMO particle mass7.09348e7 Msun/h; low-mass
+resolution contamination does not explain the pair's isolation failure.
+The stored `levelp` field is zero for these members, so resolution here is
+diagnosed by particle mass rather than `levelp`.
+
+Both pair hosts contain bound M33-scale components under the frozen mass,
+distance and mass-fraction cuts: child136031 is6.0649e10 Msun/h at0.2806
+cMpc/h from its primary (855 finest-mass particles), and child136172 is
+5.8805e10 Msun/h at0.1644 cMpc/h (829 particles). The nearby third eligible
+host90515 also contains two such components. These are candidate substructures
+of one random fine-phase realization, with no observational identity assignment.
+The strict pair result remains NO-GO; finder-level M33-like components do not
+repair the isolation and role ambiguity. Close seed40349 as a trace-only
+diagnostic rather than retuning the frozen thresholds or selecting a new best
+random seed from this result. Preserve the final dump and catalogues for now.
+
+## Observed-frame cross-check — 2026-09-25
+
+The small, read-only `scripts/cf4_lg_observed_geometry_check.py` checks the
+same frozen pair against the actual M31 sky/distance entry, using the P1
+de Vaucouleurs supergalactic Cartesian frame, the zoom's h=0.746 and its
+384 cMpc/h observer-centred box. Astropy transforms the observed ICRS M31
+direction to SG Cartesian. Both possible MW/M31 assignments are reported;
+neither is chosen by target fit. They give angular discrepancies **57.5683°**
+and **122.4317°**. Their separation is **1.5224 physical Mpc**, versus the
+M31 distance-modulus value **0.7610 physical Mpc** in the observational
+contract. The potential MW hosts lie **3.7691** and **4.5651 cMpc/h** from
+the box-centre observer. These are geometric diagnostics, not a calibrated
+galaxy-centre likelihood: solar offset, halo/galaxy COM discrepancy and
+distance covariance are not modeled here. Nevertheless, the differences are
+far larger than those omitted small offsets. The old pair score never used
+the observed sky direction and permitted a midpoint several Mpc/h from the
+observer; passing its loose cuts would not establish an observed LG.
+
+This independent observational mismatch reinforces, but does not replace,
+the frozen isolation NO-GO. NewGalFinder's several bound M33-scale children
+remain unidentified; no child can be promoted by selecting the nearest one.
+Do not retune pair thresholds, recenter the observed frame after seeing this
+seed, or spend another zoom run on this candidate. The next scientific bridge
+must make the MW observer, M31/M33 directions and distances, velocities,
+latent role assignments, and bound M33 existence predictions of the *same*
+evolved state under a phase-consistent IC posterior. Its first bounded test
+should use an actual matched IC/forward state with known coordinate transform,
+and explicitly show LG-on versus LG-off changes in local IC modes; anonymous
+pair cuts and post-hoc seed ranking do not meet that criterion.
+
+## Q-GOAL and Q-LEAN driver review
+
+Q-GOAL: strong. This directly attacks the unresolved MW/M31/M33 structural
+identification that blocks scientific promotion after the z=0 forward pass.
+
+Q-LEAN: acceptable. It reuses the one final RAMSES dump and one required
+NewDD/opFoF conversion, replaces rather than duplicates HOP, and performs one
+fixed NewGalFinder run. No RAMSES rerun, finder parameter sweep, or extra raw
+snapshot is authorized. NewDD slabs are transient and should be removed after
+the opFoF/NewGalFinder products and science decision are sealed.

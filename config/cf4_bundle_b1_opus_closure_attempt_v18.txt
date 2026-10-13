@@ -1,0 +1,18 @@
+VERDICT: CONDITIONAL
+
+RISK_LEVEL: MODERATE (artifact provenance and receipt binding; science boundary remains sealed)
+
+Opus v18 audit of HEAD 3ba5b7ae60554a7f414088143441a564eac2ac2a:
+
+1. The production-bound periodic/edge test and grid-wrap repair are credible.
+2. Base result v1/v2 validation metadata are superseded and the replacement validation range remains sealed.
+3. Mode-coverage result v1/v2 are historical but still marked COMPLETE; v2 has the v1 schema label. Correct both and point them to v3.
+4. The mode implementation block conflates the current generator with historical draw-sigma results. Split per-result provenance or state that historical generator hashes are unavailable.
+5. Hash receipt v1 verifies parent 366159c, not audited HEAD 3ba5b7a, and does not cover every linked historical/audit path. Reissue it with explicit certified-commit and self-scope fields and extend the record pins.
+6. The record lists 26 regression tests but omits the exact command, exit status, and elapsed time for the audited commit.
+7. Metrics are internally faithful: 64/64 fits, 8/64 strict passes, 47/47 coverage failures, analytic mode coverage 0.744140625/0.96875, pooled guard failure, and derivative step differences near 1e-6.
+8. No observational posterior, validation opening, frontier promotion, IC/PM/HOP/RAMSES run, or 0.3 cMpc/h claim is present.
+
+REQUIRED_NEXT: correct historical mode labels/provenance; reissue a receipt certified at 3ba5b7a with explicit self-exclusion; pin every linked artifact; record the exact 26-test command/exit/time; refresh pointers to v18/v19; keep validation and B2 sealed.
+
+RECOMMENDATION: CONDITIONAL. Complete these local repairs, then re-audit.

@@ -1,0 +1,16 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-hash-verification-receipt-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_NO_MISMATCH",
+  "verified_commit": "366159cb4bfa87f30036bf91b94065ef51747448",
+  "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 python inline_sha256_wc_verifier",
+  "scope": "result_record_v3 implementation dependency current_artifact and audit artifact pins",
+  "hash_entries": 43,
+  "mismatches": 0,
+  "missing_files": 0,
+  "method": "read each record path, compare wc byte length and hashlib.sha256 digest to pinned bytes/sha256",
+  "validation_opened": false,
+  "observational_z0_posterior": "NOT_CREATED",
+  "B2_IC_FORWARD": "NOT_STARTED"
+}

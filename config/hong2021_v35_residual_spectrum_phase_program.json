@@ -1,0 +1,131 @@
+{
+  "schema": "hong2021-v35-conditional-residual-spectrum-phase-coupling-program-v1",
+  "status": "frozen_revision_before_implementation_or_execution",
+  "freeze_revision": {
+    "reason": "Pre-implementation code audit found that V31 conditional_forward uses constant endpoint extension outside the train-derived per-bin residual support. The coherent validation round trip must therefore distinguish support truncation from phase translation before either mechanism is assigned to the remaining Q3/Q4 and 2PCF failures.",
+    "execution_before_revision": false
+  },
+  "purpose": "Test whether the V31 conditional-copula donor transport fails because residual spectral amplitudes depend on target-free context and/or because translating a donor innovation destroys the query-aligned backbone-residual Fourier cross phase needed for the total-density 2PCF.",
+  "parent_evidence": {
+    "v34_record": "config/hong2021_v34_result_record.json",
+    "v34_record_sha256": "62805e10aa0395a04d5207dc0e41642dcf26f98675a4c02abe2d31400e7816e4",
+    "required_classification": "local_residual_mean_not_predictable_by_frozen_nonlinear_audit",
+    "required_next": "freeze_conditional_multiscale_residual_spectrum_and_phase_coupling_audit"
+  },
+  "development_domains": {
+    "TNG100": {
+      "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+      "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+      "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500",
+      "train_objects": 432,
+      "validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+      "validation_data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+      "validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "validation_objects": 93,
+      "phase_object_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/tng/ensemble16.h5",
+      "phase_object_selection_sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840"
+    },
+    "SIMBA": {
+      "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+      "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+      "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c",
+      "train_objects": 202,
+      "validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+      "validation_data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+      "validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "validation_objects": 64,
+      "phase_object_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/simba_dev/ensemble16.h5",
+      "phase_object_selection_sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504"
+    },
+    "Swift": {
+      "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+      "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+      "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3",
+      "train_objects": 409,
+      "validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+      "validation_data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+      "validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "validation_objects": 148,
+      "phase_object_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/swift_dev/ensemble16.h5",
+      "phase_object_selection_sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88"
+    }
+  },
+  "v31_conditional_copula": {
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "fit_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.json",
+    "fit_report_sha256": "bd80a7751d5d0a88bf09e897809bec43b546defdfbd6a787c1fe408d5b12c7c9"
+  },
+  "fourier_measurement": {
+    "voxel_mpc_h": 0.3125,
+    "edges_h_mpc": [0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, "inf"],
+    "dc": "subtract each field mean and exclude the Fourier DC mode",
+    "auto_power": "sum |FFT(field)|^2 per band divided by the band mode count",
+    "cross_power": "sum Re[FFT(backbone)*conj(FFT(residual))] per band divided by mode count",
+    "cross_correlation": "cross_power/sqrt(backbone_auto_power*residual_auto_power)",
+    "total_power_identity": "P_truth=P_backbone+P_residual+2*C_backbone_residual"
+  },
+  "conditional_spectrum_audit": {
+    "fit_rows": "all development train cubes with exactly equal total sample weight per source",
+    "validation_rows": "all development validation cubes, never used for fitting or early stopping",
+    "features": [
+      "the frozen eight target-free observable_context_features",
+      "log backbone auto-power in each of the eight Fourier bands",
+      "log galaxy-count auto-power in each band",
+      "log mean-radial-velocity auto-power in each band"
+    ],
+    "targets": "log physical residual auto-power in each of the eight bands",
+    "constant_reference": "equal-source train mean log residual power per band",
+    "learner": {
+      "implementation": "one sklearn HistGradientBoostingRegressor per band",
+      "loss": "squared_error",
+      "learning_rate": 0.05,
+      "max_iter": 128,
+      "max_leaf_nodes": 15,
+      "min_samples_leaf": 20,
+      "l2_regularization": 1.0,
+      "early_stopping": false,
+      "random_state": 35021
+    },
+    "supported": "nonlinear/constant log-power validation RMSE <=0.90 in all three domains in at least two common bands"
+  },
+  "phase_translation_audit": {
+    "objects": "the exact 16 frozen V28/V31 development object source_index values in each domain",
+    "coherent_control": "u=F_train(r_truth|m), then r_control=F_train^-1(u|m), followed by exact residual-mean subtraction",
+    "translations_native_cells": [1, 2, 4, 8, 16],
+    "translations_mpc_h": [0.3125, 0.625, 1.25, 2.5, 5.0],
+    "directions": [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1]],
+    "translated_transport": "periodically roll the complete conditional quantile field u by scale*direction, invert it at the unchanged query backbone m, and subtract residual mean; this preserves the donor innovation pattern and marginal ranks while destroying only its alignment with the query",
+    "reference": "m plus the exact truth residual after the same residual-mean subtraction",
+    "measurements": [
+      "coherent-control maximum absolute reconstruction error",
+      "fraction of validation voxels mapped to conditional CDF endpoints and coherent-control log10-density tail error",
+      "translated total-power ratio and absolute log10 power error per band",
+      "exact and translated backbone-residual cross-correlation per band",
+      "error as a function of translation scale"
+    ],
+    "phase_coupling_material": "there is at least one common band below 6 h/Mpc where all domains have |exact backbone-residual cross-correlation|>=0.05 and the mean translated total-power absolute log10 error at either 2.5 or 5 Mpc/h is >=0.02 dex",
+    "conditional_support_material": "in any domain, either at least 1e-5 of validation voxels map exactly to u=0 or u=1 or the coherent-control maximum absolute reconstruction error exceeds 0.1 dex in log10 density (=4.5*y)"
+  },
+  "predeclared_interpretation": {
+    "if_conditional_support_is_material": "replace finite endpoint saturation with a train-only conditional tail likelihood or explicit extreme-value continuation; never use validation extrema, clipping, or post-hoc amplitude correction",
+    "if_spectrum_and_phase_supported": "replace donor transport with a query-aligned conditional multiscale stochastic field model that jointly learns residual auto-covariance and backbone-residual cross-covariance",
+    "if_only_phase_supported": "retain train residual spectral amplitudes but replace translated donor phases with a query-aligned joint conditional residual model",
+    "if_only_spectrum_supported": "condition the stochastic residual band amplitudes on target-free context while retaining an independent phase innovation",
+    "if_neither_supported": "do not add another density-field learner; audit the downstream 2PCF estimator and finite-ensemble gate implementation"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v35_residual_spectrum_phase/audit.json",
+  "firewall": {
+    "posthoc_Ak": false,
+    "validation_used_for_spectrum_fit_or_early_stopping": false,
+    "phase_translations_are_diagnostic_not_generated_candidates": true,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

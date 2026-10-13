@@ -1,0 +1,180 @@
+{
+  "schema": "ouruniv-cf4-bgc-population-calibration-result-record-v1",
+  "date": "2026-08-31",
+  "status": "COMPLETE_64_MOCK_DEVELOPMENT_CALIBRATION_NO_GO",
+  "scope": "Empirical grouped-CF4 count-conditioned population selection, lognormal distance noise, leakage-free BGc, and linear z=0 constrained-realization calibration at N32 only.",
+  "executions": {
+    "member_array": {
+      "Slurm_array_job_id": 328686,
+      "state": "COMPLETED",
+      "task_count": 64,
+      "task_index_range": [0, 63],
+      "all_task_exit_codes": "0:0",
+      "elapsed_range": ["00:00:50", "00:01:12"],
+      "maximum_batch_MaxRSS_KiB": 1420208,
+      "requested_memory_MiB_per_task": 2048,
+      "implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d",
+      "member_output_size_GiB_rounded": 2.5
+    },
+    "preserved_failed_aggregates": [
+      {
+        "Slurm_job_id": 328695,
+        "state": "FAILED",
+        "elapsed_seconds": 3,
+        "cause": "assistant implementation incorrectly required a fulfilled live Slurm Dependency field to remain populated",
+        "Python_aggregation_started": false,
+        "artifact_published": false
+      },
+      {
+        "Slurm_job_id": 328769,
+        "state": "FAILED",
+        "elapsed_seconds": 3,
+        "cause": "assistant supplied the wrong expected runtime commit in sbatch export",
+        "Python_aggregation_started": false,
+        "artifact_published": false
+      },
+      {
+        "Slurm_job_id": 328782,
+        "state": "FAILED",
+        "elapsed_seconds": 15,
+        "cause": "aggregator incorrectly required identical density and theta mode-bin support despite the frozen Nyquist-plane exclusion",
+        "Python_aggregation_started": true,
+        "artifact_published": false
+      }
+    ],
+    "successful_aggregate": {
+      "Slurm_job_id": 328809,
+      "state": "COMPLETED",
+      "node": "syn02",
+      "elapsed_seconds": 19,
+      "exit_code": "0:0",
+      "requested_cpus": 4,
+      "requested_memory_MiB": 4096,
+      "reported_batch_MaxRSS_KiB": 3516,
+      "reported_MaxRSS_caveat": "The aggregate batch MaxRSS is implausibly low for the arrays read and is retained as raw Slurm accounting, not used as a measured-memory claim.",
+      "aggregation_runtime_commit": "62b86aa5c19eda9f620540ce43894f83fb8caaa9",
+      "member_accounting_precondition": "exactly 64 rows 328686_0 through 328686_63, each COMPLETED and 0:0"
+    }
+  },
+  "bindings": {
+    "scientific_program": {
+      "path": "config/cf4_bgc_population_calibration_program_v1.json",
+      "sha256": "38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0"
+    },
+    "member_source": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "corrected_aggregate_source": {
+      "path": "src/cf4_population_calibration_aggregate_v2.py",
+      "sha256": "371016743b9c0609c15a400f30560cc288ac694301f59f482e3fa0cb132a9969"
+    },
+    "aggregate_correction": {
+      "path": "config/cf4_bgc_population_calibration_aggregate_correction_v4.json",
+      "sha256": "17280db23b952293031e643a1f18e3bc14246b9827027594aa07c8369495acf0"
+    },
+    "successful_runner": {
+      "path": "scripts/run_cf4_bgc_population_calibration_aggregate_v4.sbatch",
+      "sha256": "09f275d7dc8bc293033b1a692fde03185e684d9ba444342010a86b2b3a609a18"
+    },
+    "aggregate_artifact": {
+      "directory": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+      "result_json_sha256": "9214a9d7000862832f8e428cef5121e205899f34a819b2d0b4b795cef46e691b",
+      "result_json_bytes": 24233,
+      "metrics_npz_sha256": "0c5603e7a2933541729b81953e7477933534c9bc52120fa767a0fea4675da5fd",
+      "metrics_npz_bytes": 365133,
+      "manifest_json_sha256": "e9b9670fef3df8fce9cf239a558e9ec45a6e63d05547c5de04cd75579a566141",
+      "manifest_json_bytes": 381,
+      "COMPLETE_sha256": "10232f2a329c7f6dbd822300983a6ab3245d645c74502c11f201e99d40b87548",
+      "COMPLETE_bytes": 260,
+      "validator_status": "PASS"
+    }
+  },
+  "population_generator_fidelity": {
+    "selection_semantics": "empirical_grouped_CF4_selection_conditioned_on_clean_group_count",
+    "full_survey_selection_normalization_modeled": false,
+    "conditioned_clean_group_count_per_mock": 22136,
+    "BGc_selected_group_count_range": [19196, 21513],
+    "passing_member_count": 41,
+    "failing_member_count": 23,
+    "all_64_members_pass_required": true,
+    "all_64_members_pass": false,
+    "metric_maxima": {
+      "observed_distance_KS": 0.0985724611492591,
+      "distance_error_mag_KS": 0.04625948680881825,
+      "redshift_velocity_KS": 0.1655674015178894,
+      "angular_histogram_total_variation": 0.09247379833754969
+    },
+    "dominant_observed_failure": "some generated redshift-velocity distributions exceed the frozen KS maximum 0.10"
+  },
+  "calibration_result": {
+    "union_merged_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "density_available_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "theta_available_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "theta_bin_11": "UNAVAILABLE_FAIL_CLOSED_BECAUSE_THREE_DENSITY_MODES_ARE_NYQUIST_AXES",
+    "heldout_cumulative_prediction_pass_count": 12,
+    "heldout_cumulative_prediction_bin_count": 12,
+    "heldout_per_row_improvement_range": [0.07936913488538413, 0.10011561785022956],
+    "heldout_bootstrap_lower_95_range": [0.06471293840640405, 0.08479446531158073],
+    "density_strict_gate_pass_count": 0,
+    "theta_strict_gate_pass_count": 0,
+    "density_frontier_prefix_bin_count": 0,
+    "theta_frontier_prefix_bin_count": 0,
+    "joint_frontier_prefix_bin_count": 0,
+    "development_k_eff_global_h_Mpc_or_null": null,
+    "lowest_bin": {
+      "cumulative_upper_k_h_Mpc": 0.0462800306058163,
+      "response": 0.2855317688285811,
+      "correlation_r": 0.3280485513394589,
+      "residual_power_ratio": 1.1865236529657166,
+      "posterior_prior_variance_ratio_median": 0.6956093021265969,
+      "phase_null_p_value": 0.0038910505836575876,
+      "coverage68": 0.5544921875,
+      "coverage95": 0.8814453125000002,
+      "heldout_improvement_pass": true,
+      "strict_gate": false
+    },
+    "gate_summary": {
+      "response_0p8_to_1p2_pass_bins": 0,
+      "correlation_at_least_0p7_pass_bins": 0,
+      "residual_at_most_0p5_pass_bins": 0,
+      "variance_reduction_pass_density_bins": 1,
+      "phase_null_pass_density_bins": 11,
+      "coverage68_pass_density_bins": 2,
+      "coverage95_pass_density_bins": 5,
+      "heldout_pass_density_bins": 12
+    }
+  },
+  "scientific_disposition": {
+    "development_population_mock_calibration": "NO_GO",
+    "current_low_k_parent_posterior_promotion": "NO_GO",
+    "untouched_256_mock_validation": "NOT_RUN_AND_STILL_UNAUTHORIZED",
+    "constraint_frontier_promotion": "NOT_ALLOWED",
+    "0p3_cMpc_h_observational_density_or_velocity_claim": "NOT_ALLOWED",
+    "N32_cell_size_cMpc_h": 12.0,
+    "interpretation": "The current CF4-only BGc plus linear-CR chain improves held-out radial-velocity prediction but does not recover the z=0 density/velocity phase field under the population-selection/noise mocks, even in the lowest tested bin.",
+    "result_is_not_evidence_for": [
+      "a_stable_low_k_parent_posterior",
+      "a_high_resolution_z0_density_map",
+      "a_constrained_IC",
+      "a_0p3_cMpc_h_frontier"
+    ]
+  },
+  "recommended_next_stage_requiring_user_approval": {
+    "name": "same_truth_nested_likelihood_ablation",
+    "purpose": "Locate the low-k information loss before any resolution increase or new model training.",
+    "reuse_without_new_truth_seeds": [
+      "the_same_64_truth_fields",
+      "the_same_generated_population_catalogs",
+      "the_same_frozen_train_holdout_splits"
+    ],
+    "ordered_arms": [
+      "A: ideal linear radial-velocity datum at true positions with the exact linear likelihood",
+      "B: observed-distance positions and lognormal noise with a direct radial-velocity likelihood but no BGc",
+      "C: BGc likelihood on a fixed population design",
+      "D: the completed full population-selection plus BGc chain"
+    ],
+    "decision": "Compare response, correlation, residual, coverage, variance reduction, and held-out prediction arm by arm. Do not retune the generator or open the 256 validation seeds.",
+    "new_Slurm_execution_authorized_by_this_record": false
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-zoom-l19-twostep-decision-v1",
+  "date": "2026-09-23",
+  "job": 1108357,
+  "stage": "8/8 bounded runtime-AMR gate",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "run": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_twostep_v1/job_1108357",
+  "effective_namelist": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_twostep_v1/job_1108357/ramses.nml",
+  "checks": {
+    "completed": true,
+    "exit_code": 0,
+    "elapsed_seconds": 118,
+    "max_rss_gib": 48.72,
+    "requested_memory_gib": 64,
+    "nparttot": 190000000,
+    "ngridtot": 24000000,
+    "particle_count": 138632600,
+    "morton_self_lookup_mismatch": 0,
+    "configured_runtime_levelmax": 19,
+    "maximum_refined_level_seen": 12,
+    "final_scale_factor": 0.02455,
+    "main_steps": 2,
+    "fine_multigrid_nonconvergence_count": 0,
+    "maximum_reported_fine_residual": 7.437e-05,
+    "epsilon": 0.0001,
+    "boundary_warning_count": 0,
+    "unexpected_full_snapshots": 0
+  },
+  "decision": "TRACE_ONLY_ZOOM_L19_TWOSTEP_PASS",
+  "interpretation": "The L9-L12 particle hierarchy remains numerically stable for two coarse steps with the L19 runtime ceiling enabled, enlarged capacity headroom, converged Poisson solves, and no output. This is an operational startup pass only; it does not test nonlinear refinement above L12 or z=0 LG structure.",
+  "limitations": [
+    "No AMR level above L12 was populated by a=0.02455.",
+    "No final density field, halo catalogue, contamination measurement, or MW/M31/M33 identification exists for the zoom.",
+    "The parent remains trace-only because frozen-threshold HOP merges the pair.",
+    "The single high-k phase realization is prior content and cannot establish robustness."
+  ],
+  "next": "Design and review a bounded early-nonlinear gate with one final snapshot before committing resources to a full z=0 L9/L12/L19 evolution."
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-record-v1",
+  "date": "2026-08-31",
+  "status": "IMPLEMENTATION_FAIL_THETA_NOT_DERIVED_FROM_STORED_VELOCITY",
+  "execution": {
+    "Slurm_job_id": 328661,
+    "worker": "syn04",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:43",
+    "allocated_CPUs": 4,
+    "requested_memory_MiB": 4096,
+    "batch_MaxRSS_KiB": 956188,
+    "batch_MaxVMSize_KiB": 6394944,
+    "stderr_bytes": 0,
+    "submission_count_consumed": 1,
+    "execution_count_consumed": 1,
+    "development_truth_seed_unique_count_consumed": 1
+  },
+  "bindings": {
+    "implementation_commit": "48c8873daa8d67e6bb9619e89514fc9deb2ff8d7",
+    "implementation_source_sha256": "772bd190e26741fdf583e93a4d083c840f34fdeae8ad6eeacdf86173912f3fd5",
+    "execution_config_path": "config/cf4_bgc_fixed_design_smoke_execution_v1.json",
+    "execution_config_sha256": "81d9f6274e50772caad2300ac539bb8146b53522a9ef1e38fad8e0d50dc2067f",
+    "bin_manifest_file_sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+    "bin_manifest_body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+  },
+  "artifacts": {
+    "preserved_output_directory": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v1/smoke",
+    "result_json_sha256": "3989350a34f8fdec20c336d71e9fbb7f1c446937f064a77240e7c3df46eccc58",
+    "fields_npz_sha256": "2c62b323b89ee99164c8d8c4fcbc25baee727e8eacb963190508401fd0a89f54",
+    "artifact_manifest_json_sha256": "43897bd9af9e831c806dfa41c35e85f6281c10a59eeb1e6de4f9e333737adbe5",
+    "COMPLETE_sha256": "e12bd673fae37b1ec325b9b11431f6eb6c3be28ce70726f07ecf4fcb5494d39b",
+    "runner_self_validation": "PASS_BEFORE_INDEPENDENT_SEMANTIC_AUDIT"
+  },
+  "passed_checks": {
+    "mock_datum_formula_max_abs_residual": 0.0,
+    "truth_seed_white_exact": true,
+    "truth_nuisance_seed_exact": true,
+    "observed_vobs_used_as_posterior_datum": false,
+    "adjoint_relative_error": 0.0,
+    "mean_cg_relative_residual": 0.00002184881851305027,
+    "maximum_sample_cg_relative_residual": 0.00002866425536409178,
+    "truth_radial_forward_CIC_relative_error": 1.6945989081439593e-15
+  },
+  "failed_check": {
+    "claim_under_test": "stored theta equals minus the discrete spectral divergence of the stored velocity divided by 100 f",
+    "stored_theta_was": "a direct copy of delta",
+    "full_grid_velocity_divergence_relative_error": 0.08921667080889188,
+    "non_Nyquist_velocity_divergence_relative_error": 5.923231436921225e-16,
+    "cause": "real-grid spectral derivatives cannot represent Nyquist-plane derivatives; the implementation copied delta instead of reconstructing theta and excluding ambiguous Nyquist-plane modes from theta metrics",
+    "disposition": "FAIL_IMPLEMENTATION_SEMANTICS_PRESERVE_ARTIFACT_DO_NOT_USE_FOR_SCIENCE"
+  },
+  "scientific_disposition": {
+    "fixed_design_mock_validated": false,
+    "population_selection_function_validated": false,
+    "development_64_mock_execution_performed": false,
+    "untouched_256_mock_validation_performed": false,
+    "frontier_evaluated": false,
+    "science_claim_allowed": false,
+    "KF_EXPAND_authorized": false,
+    "IC_PM_HOP_RAMSES_authorized": false,
+    "next_action": "Correct theta to be reconstructed from stored velocity, exclude Nyquist-plane modes only from theta metrics, and execute one separately bound correction smoke without consuming a new unique truth seed."
+  }
+}

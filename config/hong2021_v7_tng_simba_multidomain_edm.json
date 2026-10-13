@@ -1,0 +1,80 @@
+{
+  "schema": "hong2021-v7-tng-simba-multidomain-edm-v1",
+  "status": "complete_failed_locked_simba_field_gate_grid_hop_skipped",
+  "purpose": "Learn a source-robust unresolved-density distribution without tuning on the locked SIMBA cross-code test",
+  "parent_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v6_edm_laplacian_sigma2/minimum_validation.pt",
+  "data": {
+    "tng_train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "tng_validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "simba_train": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16_23_train_all_observers.h5",
+    "simba_train_realizations": [16, 17, 18, 19, 20, 21, 22, 23],
+    "simba_train_samples": 202,
+    "simba_validation": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv24_26_validation_all_observers.h5",
+    "simba_validation_realizations": [24, 25, 26],
+    "simba_validation_samples": 64,
+    "locked_test": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16.h5",
+    "locked_test_realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "locked_test_policy": "No training, normalization fitting, checkpoint selection, or hyperparameter tuning may use CV 0-15"
+  },
+  "training": {
+    "method": "EDM fine-tuning from accepted V6 EMA weights",
+    "simulation_label_conditioning": false,
+    "batch": 6,
+    "tng_per_batch": 3,
+    "simba_per_batch": 3,
+    "steps": 10000,
+    "examples_per_source": 30000,
+    "learning_rate": 0.00005,
+    "minimum_learning_rate": 0.000005,
+    "weight_decay": 0.0001,
+    "ema_decay": 0.999,
+    "validation_every_steps": 500,
+    "checkpoint_selection": "minimize max(TNG validation / initial TNG validation, SIMBA validation / initial SIMBA validation)",
+    "residual_scale": "Frozen TNG V6 train residual RMS; no SIMBA scalar calibration",
+    "augmentation": "independent uniform random 48 signed cube isometries",
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v7_multidomain_edm"
+  },
+  "smoke_test": {
+    "status": "passed",
+    "steps": 20,
+    "initial_fixed_validation_loss": {
+      "tng": 0.6776805818080902,
+      "simba": 0.5129853039979935
+    },
+    "final_fixed_validation_loss": {
+      "tng": 0.6776626408100128,
+      "simba": 0.5117693394422531
+    },
+    "finite_sample_generated": true,
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v7_multidomain_edm_smoke",
+    "sample": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/evaluation/hong2021_v7_smoke_sample.h5"
+  },
+  "acceptance": {
+    "primary": "The selected checkpoint must pass the unchanged field gate on both the original representative TNG test and locked SIMBA CV 0-15",
+    "hop": "Run grid-HOP separately for each source only after both field gates pass",
+    "forbidden": [
+      "simulation-label conditioning",
+      "post-hoc A(k) correction",
+      "residual scaling fitted on locked truth",
+      "checkpoint selection using locked-test metrics"
+    ]
+  },
+  "result": {
+    "training_complete": true,
+    "selected_checkpoint_step": 500,
+    "selected_worst_relative_validation_loss": 1.002119753254681,
+    "tng_field_gate_pass": true,
+    "locked_simba_field_gate_pass": false,
+    "grid_hop_run": false,
+    "advance_to_forward_dynamics": false,
+    "locked_simba_metrics": {
+      "total_power_ratio_k_3_6": 1.0659234568536788,
+      "total_power_ratio_k_6_10": 1.840074661460781,
+      "generated_over_truth_residual_rms": 1.1393723462019842,
+      "coverage_68": 0.6835434436798096,
+      "coverage_95": 0.9015088081359863,
+      "rank_histogram_tv": 0.07753404449014104
+    },
+    "decision": "V7 improves the V6 SIMBA domain-shift metrics but still overproduces high-k variance and fails the frozen locked-test field gate; do not run grid-HOP or forward dynamics"
+  }
+}

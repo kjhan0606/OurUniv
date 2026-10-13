@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 """Exact linear-Gaussian Wiener filter and constrained realizations for CF4.
 
-This is the statistically controlled replacement for ``power_complete`` and for
-subtracting two nonlinear MAP optimizations as if they were a Hoffman--Ribak
-operator.  The model is
+This is the statistically controlled generalization of ``power_complete``.
+The earlier routine had the correct aim--restore Wiener-suppressed high-k power
+with random phases--but approximated the residual covariance by an isotropic
+k-shell filter.  The method below samples the full linear posterior covariance.
+It also replaces subtracting two nonlinear MAP optimizations as if they were a
+Hoffman--Ribak operator.  The model is
 
     s ~ N(0, I)
     u = A s + B q + epsilon
@@ -81,56 +84,247 @@ def stratified_holdout(cz: np.ndarray, fraction: float, seed: int) -> np.ndarray
     return out
 
 
-def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
-    z = np.load(args.catalog)
+def raw_index_hash_holdout(
+    raw_idx: np.ndarray, fraction: float, seed: int
+) -> np.ndarray:
+    """Estimator-independent deterministic holdout keyed by raw catalog row.
+
+    SplitMix64 turns catalog indices into stable pseudorandom uniforms.  Thus a
+    row shared by two velocity estimators always receives the same assignment,
+    even when their cuts, positions, or radial ordering differ.
+    """
+    idx = np.asarray(raw_idx, dtype=np.uint64)
+    if idx.ndim != 1:
+        raise ValueError("raw_idx must be one-dimensional")
+    if fraction <= 0:
+        return np.zeros(idx.size, dtype=bool)
+    if fraction >= 1:
+        return np.ones(idx.size, dtype=bool)
+    with np.errstate(over="ignore"):
+        x = idx + np.uint64(seed) + np.uint64(0x9E3779B97F4A7C15)
+        x = (x ^ (x >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
+        x = (x ^ (x >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
+        x = x ^ (x >> np.uint64(31))
+    uniform = x.astype(np.float64) / float(2**64)
+    return uniform < fraction
+
+
+def prepare_bgc_catalog(
+    args: argparse.Namespace,
+    z: np.lib.npyio.NpzFile,
+) -> dict[str, np.ndarray]:
+    """Build a leakage-free BGc catalog for the linear CR likelihood.
+
+    The target split is frozen before estimating any running median.  All raw
+    rows assigned to the holdout set are then removed from the reference pool,
+    including candidates later rejected by geometric or velocity cuts.
+    """
+    from cf4_bgc import bgc_transform_from_reference
+
+    if getattr(args, "local_distance_max", 0.0) > 0:
+        raise ValueError("BGc and the experimental local-direct likelihood cannot be combined")
+
     hcat = float(z["H0"]) / 100.0
     h0 = float(z["H0"])
-    dm = z["dm"].astype(np.float64)
-    edm = z["e_dm"].astype(np.float64)
-    dist = z["dist"].astype(np.float64)
-    nhat = z["nhat"].astype(np.float64)
-    cz = modified_cz(z["v3k"].astype(np.float64), args.Om)
+    cz_all = z["v3k"].astype(np.float64)
+    dist_all = z["dist"].astype(np.float64)
+    edm_all = z["e_dm"].astype(np.float64)
+    nhat_all = z["nhat"].astype(np.float64)
+    pgc_all = z["pgc"].astype(np.int64)
+    sigln_all = (LN10 / 5.0) * np.maximum(edm_all, args.edm_floor)
+
+    finite_scalar = (
+        np.isfinite(cz_all)
+        & np.isfinite(dist_all)
+        & np.isfinite(edm_all)
+        & np.isfinite(sigln_all)
+        & (dist_all > 0)
+        & (edm_all > 0)
+    )
+    finite_direction = np.all(np.isfinite(nhat_all), axis=1)
+    candidate = (
+        finite_scalar
+        & finite_direction
+        & (cz_all >= args.bgc_cz_min)
+        & (cz_all <= args.bgc_cz_max)
+    )
+    candidate_idx = np.flatnonzero(candidate)
+    if candidate_idx.size < 3:
+        raise ValueError("fewer than 3 catalog rows lie in the BGc target range")
+
+    if getattr(args, "holdout_by_raw_index_hash", False):
+        candidate_hold = raw_index_hash_holdout(
+            candidate_idx, args.holdout, args.split_seed
+        )
+    else:
+        candidate_hold = stratified_holdout(
+            cz_all[candidate_idx], args.holdout, args.split_seed
+        )
+    raw_hold = np.zeros(cz_all.size, dtype=bool)
+    raw_hold[candidate_idx[candidate_hold]] = True
+    reference = (
+        finite_scalar
+        & (cz_all >= args.bgc_pool_cz_min)
+        & (cz_all <= args.bgc_pool_cz_max)
+        & ~raw_hold
+    )
+    if reference.sum() < 3:
+        raise ValueError("fewer than 3 training rows remain in the BGc reference pool")
+
+    result = bgc_transform_from_reference(
+        cz_all[candidate_idx],
+        dist_all[candidate_idx],
+        sigln_all[candidate_idx],
+        cz_all[reference],
+        dist_all[reference],
+        h0=h0,
+        window=args.bgc_window,
+        cz_min=args.bgc_cz_min,
+        cz_max=args.bgc_cz_max,
+    )
+    dpos_all = result.distance
+    vobs_all = result.velocity
+    sig_all = result.sigma_velocity
+    rmax_hmpc = args.box_size / 2.0 * args.radial_fraction
+    keep_candidate = (
+        result.corrected
+        & np.isfinite(dpos_all)
+        & np.isfinite(vobs_all)
+        & np.isfinite(sig_all)
+        & (dpos_all * hcat < rmax_hmpc)
+        & (np.abs(vobs_all) < args.vmax)
+    )
+    selected = np.flatnonzero(keep_candidate)
+    raw_idx = candidate_idx[selected]
+    cz = cz_all[raw_idx]
+    nhat = nhat_all[raw_idx]
+    dpos = dpos_all[selected]
+    vobs = vobs_all[selected]
+    sig_measure = sig_all[selected]
+    variance = (args.error_scale * sig_measure) ** 2 + args.sigma_nl**2
+    pos_hmpc = dpos[:, None] * nhat * hcat + args.box_size / 2.0
+    hold = raw_hold[raw_idx]
+
+    # B columns: external bulk flow [km/s] and delta-H0 [km/s/Mpc].
+    B = np.column_stack((nhat, -dpos))
+    q_std = np.array(
+        [args.bulk_prior, args.bulk_prior, args.bulk_prior, args.h0_prior],
+        dtype=np.float64,
+    )
+    return {
+        "raw_idx": raw_idx,
+        "pgc": pgc_all[raw_idx],
+        "cz": cz,
+        "pos": pos_hmpc,
+        "rhat": nhat,
+        "vobs": vobs,
+        "sig_measure": sig_measure,
+        "variance": variance,
+        "likelihood_kind": np.full(raw_idx.size, 2, dtype=np.int8),
+        "B": B,
+        "q_std": q_std,
+        "holdout": hold,
+        "bgc_reference_n": np.int64(reference.sum()),
+        "bgc_candidate_n": np.int64(candidate_idx.size),
+    }
+
+
+def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
+    z = np.load(args.catalog)
+    if getattr(args, "velocity_estimator", "wf15") == "bgc":
+        return prepare_bgc_catalog(args, z)
+    hcat = float(z["H0"]) / 100.0
+    h0 = float(z["H0"])
+    dm_all = z["dm"].astype(np.float64)
+    edm_all = z["e_dm"].astype(np.float64)
+    dist_all = z["dist"].astype(np.float64)
+    nhat_all = z["nhat"].astype(np.float64)
+    pgc_all = z["pgc"].astype(np.int64)
+    cz_all = modified_cz(z["v3k"].astype(np.float64), args.Om)
 
     # Unbiased distance and its exact lognormal variance.
-    ksig = (LN10 / 5.0) * edm
-    dc = dist * np.exp(-0.5 * ksig**2)
-    sig_c = dc * np.sqrt(np.expm1(ksig**2))
-    dz = cz / h0
+    ksig_all = (LN10 / 5.0) * edm_all
+    dc_all = dist_all * np.exp(-0.5 * ksig_all**2)
+    sig_c_all = dc_all * np.sqrt(np.expm1(ksig_all**2))
+    dz_all = cz_all / h0
     sig_z = args.position_sigma / h0
-    wc = 1.0 / np.maximum(sig_c, 1e-4) ** 2
+    wc = 1.0 / np.maximum(sig_c_all, 1e-4) ** 2
     wz = 1.0 / sig_z**2
-    dpos = (wc * dc + wz * dz) / (wc + wz)
+    dpos_wf_all = (wc * dc_all + wz * dz_all) / (wc + wz)
 
     # Watkins--Feldman: Gaussian because it is linear in distance modulus.
-    cz_positive = np.where(cz > 0, cz, np.nan)
-    vobs = cz * LN10 * (np.log10(cz_positive / h0) - (dm - 25.0) / 5.0)
-    sig_measure = cz * LN10 * np.maximum(edm, args.edm_floor) / 5.0
-
-    rmax_hmpc = args.box_size / 2.0 * args.radial_fraction
-    pos_hmpc = dpos[:, None] * nhat * hcat
-    radius_hmpc = np.linalg.norm(pos_hmpc, axis=1)
-    keep = (
-        np.isfinite(cz)
-        & np.isfinite(dm)
-        & np.isfinite(edm)
-        & np.isfinite(vobs)
-        & np.isfinite(sig_measure)
-        & (cz >= args.cz_min)
-        & (cz <= args.cz_max)
-        & (edm > 0)
-        & (radius_hmpc < rmax_hmpc)
-        & (np.abs(vobs) < args.vmax)
+    cz_positive = np.where(cz_all > 0, cz_all, np.nan)
+    vobs_wf_all = cz_all * LN10 * (
+        np.log10(cz_positive / h0) - (dm_all - 25.0) / 5.0
+    )
+    sig_wf_all = (
+        cz_all * LN10 * np.maximum(edm_all, args.edm_floor) / 5.0
     )
 
-    raw_idx = np.flatnonzero(keep)
-    cz = cz[keep]
-    pos_hmpc = pos_hmpc[keep] + args.box_size / 2.0
-    nhat = nhat[keep]
-    vobs = vobs[keep]
-    sig_measure = sig_measure[keep]
-    dpos = dpos[keep]
-    pgc = z["pgc"].astype(np.int64)[keep]
-    variance = (args.error_scale * sig_measure) ** 2 + args.sigma_nl**2
+    rmax_hmpc = args.box_size / 2.0 * args.radial_fraction
+    radius_wf_hmpc = np.abs(dpos_wf_all) * hcat
+    finite_common = (
+        np.isfinite(cz_all)
+        & np.isfinite(dm_all)
+        & np.isfinite(edm_all)
+        & np.isfinite(dc_all)
+        & np.isfinite(sig_c_all)
+        & (edm_all > 0)
+    )
+    keep_wf = (
+        finite_common
+        & np.isfinite(vobs_wf_all)
+        & np.isfinite(sig_wf_all)
+        & (cz_all >= args.cz_min)
+        & (cz_all <= args.cz_max)
+        & (radius_wf_hmpc < rmax_hmpc)
+        & (np.abs(vobs_wf_all) < args.vmax)
+    )
+
+    # At small redshift the WF15 expansion fails when |u| is comparable to cz
+    # and is undefined for negative cz.  For precise nearby distances, use the
+    # direct low-z relation u = cz - H0*d.  The distance is debiased for its
+    # lognormal measurement distribution and its exact variance is propagated.
+    use_local = args.local_distance_max > 0
+    keep_local = np.zeros_like(keep_wf)
+    vobs_local_all = cz_all - h0 * dc_all
+    sig_local_all = h0 * sig_c_all
+    if use_local:
+        keep_local = (
+            finite_common
+            & np.isfinite(vobs_local_all)
+            & np.isfinite(sig_local_all)
+            & (dc_all <= args.local_distance_max)
+            & (edm_all <= args.local_edm_max)
+            & (np.abs(vobs_local_all) <= args.local_vmax)
+            & (dc_all * hcat < rmax_hmpc)
+        )
+        # Each catalog row enters exactly one likelihood.
+        keep_wf &= ~keep_local
+
+    idx_wf = np.flatnonzero(keep_wf)
+    idx_local = np.flatnonzero(keep_local)
+    raw_idx = np.concatenate((idx_wf, idx_local))
+    kind = np.concatenate(
+        (
+            np.zeros(idx_wf.size, dtype=np.int8),
+            np.ones(idx_local.size, dtype=np.int8),
+        )
+    )
+    cz = np.concatenate((cz_all[idx_wf], cz_all[idx_local]))
+    nhat = np.concatenate((nhat_all[idx_wf], nhat_all[idx_local]), axis=0)
+    dpos = np.concatenate((dpos_wf_all[idx_wf], dc_all[idx_local]))
+    vobs = np.concatenate((vobs_wf_all[idx_wf], vobs_local_all[idx_local]))
+    sig_measure = np.concatenate((sig_wf_all[idx_wf], sig_local_all[idx_local]))
+    variance = np.concatenate(
+        (
+            (args.error_scale * sig_wf_all[idx_wf]) ** 2 + args.sigma_nl**2,
+            (args.local_error_scale * sig_local_all[idx_local]) ** 2
+            + args.local_sigma_nl**2,
+        )
+    )
+    pos_hmpc = dpos[:, None] * nhat * hcat + args.box_size / 2.0
+    pgc = pgc_all[raw_idx]
 
     # B columns: external bulk flow [km/s] and delta-H0 [km/s/Mpc].
     B = np.column_stack((nhat, -dpos))
@@ -139,7 +333,20 @@ def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
         dtype=np.float64,
     )
 
-    hold = stratified_holdout(cz, args.holdout, args.split_seed)
+    if getattr(args, "holdout_by_raw_index_hash", False):
+        hold = raw_index_hash_holdout(raw_idx, args.holdout, args.split_seed)
+    elif use_local:
+        hold = np.zeros(cz.size, dtype=bool)
+        for label in (0, 1):
+            select = np.flatnonzero(kind == label)
+            radial_coordinate = cz[select] if label == 0 else dpos[select]
+            local_hold = stratified_holdout(
+                radial_coordinate, args.holdout, args.split_seed + label
+            )
+            hold[select[local_hold]] = True
+    else:
+        # Preserve the v1 split bit-for-bit when the hybrid likelihood is off.
+        hold = stratified_holdout(cz, args.holdout, args.split_seed)
     return {
         "raw_idx": raw_idx,
         "pgc": pgc,
@@ -149,6 +356,7 @@ def prepare_catalog(args: argparse.Namespace) -> dict[str, np.ndarray]:
         "vobs": vobs,
         "sig_measure": sig_measure,
         "variance": variance,
+        "likelihood_kind": kind,
         "B": B,
         "q_std": q_std,
         "holdout": hold,
@@ -247,6 +455,65 @@ def build_forward(
         return jax.grad(lambda s: jnp.vdot(forward(s), y))(zero)
 
     return A, AT, float(f_growth), np.dtype(np.float64 if args.float64 else np.float32)
+
+
+def build_observer_density_probe(args: argparse.Namespace):
+    """Linear z=0 Gaussian-smoothed density at the observer (box centre)."""
+    import jax
+    import jax.numpy as jnp
+    from pmwd import Configuration, SimpleLCDM, boltzmann
+    from pmwd.boltzmann import linear_power
+
+    dtype = jnp.float64 if args.float64 else jnp.float32
+    N = args.N
+    L = args.box_size
+    spacing = L / N
+    conf = Configuration(
+        ptcl_spacing=float(spacing),
+        ptcl_grid_shape=(N,) * 3,
+        mesh_shape=1,
+        cosmo_dtype=jnp.float64,
+        float_dtype=dtype,
+    )
+    cosmo = boltzmann(
+        SimpleLCDM(
+            conf,
+            Omega_m=args.Om,
+            Omega_b=args.Ob,
+            h=args.h,
+            A_s_1e9=args.A_s_1e9,
+            n_s=args.ns,
+        ),
+        conf,
+    )
+    kx = 2.0 * np.pi * np.fft.fftfreq(N, d=spacing)
+    kz = 2.0 * np.pi * np.fft.rfftfreq(N, d=spacing)
+    KX, KY, KZ = np.meshgrid(kx, kx, kz, indexing="ij")
+    kmag = np.sqrt(KX**2 + KY**2 + KZ**2)
+    delta_amp = jnp.sqrt(
+        linear_power(jnp.asarray(kmag, jnp.float64), 1.0, cosmo, conf) * L**3
+    ).astype(dtype)
+    window = jnp.asarray(
+        np.exp(-0.5 * kmag**2 * args.observer_delta_radius**2), dtype=dtype
+    )
+    centre = N // 2
+
+    def probe(s):
+        sk = jnp.fft.rfftn(s.reshape((N, N, N)), norm="ortho")
+        delta = jnp.fft.irfftn(sk * delta_amp, s=(N, N, N)) / spacing**3
+        smooth = jnp.fft.irfftn(
+            jnp.fft.rfftn(delta) * window, s=(N, N, N)
+        )
+        return jnp.atleast_1d(smooth[centre, centre, centre])
+
+    D = jax.jit(probe)
+    zero = jnp.zeros((N, N, N), dtype=dtype)
+
+    @jax.jit
+    def DT(y):
+        return jax.grad(lambda s: jnp.vdot(probe(s), y))(zero)
+
+    return D, DT
 
 
 def cg_solve(matvec, rhs, precond_diag, args):
@@ -365,6 +632,17 @@ def main():
     ap.add_argument("--ns", type=float, default=0.96)
     ap.add_argument("--cz-min", type=float, default=1000.0, help="km/s")
     ap.add_argument("--cz-max", type=float, default=18000.0, help="km/s")
+    ap.add_argument(
+        "--velocity-estimator",
+        choices=("wf15", "bgc"),
+        default="wf15",
+        help="radial peculiar-velocity estimator",
+    )
+    ap.add_argument("--bgc-window", type=int, default=801)
+    ap.add_argument("--bgc-cz-min", type=float, default=1500.0, help="km/s")
+    ap.add_argument("--bgc-cz-max", type=float, default=18000.0, help="km/s")
+    ap.add_argument("--bgc-pool-cz-min", type=float, default=500.0, help="km/s")
+    ap.add_argument("--bgc-pool-cz-max", type=float, default=30000.0, help="km/s")
     ap.add_argument("--vmax", type=float, default=6000.0, help="WF15 estimator cut [km/s]")
     ap.add_argument("--edm-floor", type=float, default=0.04343, help="mag")
     ap.add_argument("--sigma-nl", type=float, default=250.0, help="km/s")
@@ -378,7 +656,54 @@ def main():
     ap.add_argument("--radial-fraction", type=float, default=0.95)
     ap.add_argument("--bulk-prior", type=float, default=150.0, help="1D km/s")
     ap.add_argument("--h0-prior", type=float, default=3.0, help="km/s/Mpc")
+    ap.add_argument(
+        "--local-distance-max",
+        type=float,
+        default=0.0,
+        help="Mpc; positive enables direct u=cz-H0*d likelihood for nearby rows",
+    )
+    ap.add_argument(
+        "--local-edm-max", type=float, default=0.25, help="maximum local DM error [mag]"
+    )
+    ap.add_argument(
+        "--local-vmax", type=float, default=1500.0, help="local |u| cut [km/s]"
+    )
+    ap.add_argument(
+        "--local-sigma-nl",
+        type=float,
+        default=200.0,
+        help="nearby nonlinear velocity dispersion [km/s]",
+    )
+    ap.add_argument(
+        "--local-error-scale",
+        type=float,
+        default=1.0,
+        help="multiplier on propagated nearby distance errors",
+    )
+    ap.add_argument(
+        "--observer-delta",
+        type=float,
+        default=0.0,
+        help="optional z=0 linear density target at the box-centre observer",
+    )
+    ap.add_argument(
+        "--observer-delta-sigma",
+        type=float,
+        default=0.0,
+        help="enable the observer-density Gaussian constraint when positive",
+    )
+    ap.add_argument(
+        "--observer-delta-radius",
+        type=float,
+        default=5.0,
+        help="Gaussian smoothing radius of observer density [Mpc/h]",
+    )
     ap.add_argument("--holdout", type=float, default=0.2)
+    ap.add_argument(
+        "--holdout-by-raw-index-hash",
+        action="store_true",
+        help="use an estimator-independent raw-row hash split",
+    )
     ap.add_argument("--split-seed", type=int, default=20260729)
     ap.add_argument("--sample-seeds", type=parse_seeds, default=parse_seeds("1,2,3,4"))
     ap.add_argument("--precond-probes", type=int, default=4)
@@ -398,18 +723,56 @@ def main():
         f"sig_med={np.median(np.sqrt(data['variance'])):.0f} km/s",
         flush=True,
     )
+    kinds = data["likelihood_kind"]
+    print(
+        f"[data] likelihood rows: WF15={int(np.sum(kinds == 0))} "
+        f"local-direct={int(np.sum(kinds == 1))} "
+        f"BGc={int(np.sum(kinds == 2))}",
+        flush=True,
+    )
 
     A, AT, f_growth, npdtype = build_forward(data["pos"][train], data["rhat"][train], args)
     import jax
     import jax.numpy as jnp
 
     scale = jnp.asarray(np.sqrt(data["variance"][train]), dtype=npdtype)
-    dnorm = jnp.asarray(data["vobs"][train], dtype=npdtype) / scale
-    Bn = jnp.asarray(data["B"][train], dtype=npdtype) / scale[:, None]
+    velocity_dnorm = jnp.asarray(data["vobs"][train], dtype=npdtype) / scale
+    velocity_Bn = jnp.asarray(data["B"][train], dtype=npdtype) / scale[:, None]
     qvar = jnp.asarray(data["q_std"] ** 2, dtype=npdtype)
 
-    An = jax.jit(lambda s: A(s) / scale)
-    ATn = jax.jit(lambda y: AT(y / scale))
+    use_observer_density = args.observer_delta_sigma > 0
+    if use_observer_density:
+        Dobs, DTobs = build_observer_density_probe(args)
+        obs_sigma = jnp.asarray(args.observer_delta_sigma, dtype=npdtype)
+        dnorm = jnp.concatenate(
+            (
+                velocity_dnorm,
+                jnp.asarray([args.observer_delta], dtype=npdtype) / obs_sigma,
+            )
+        )
+        Bn = jnp.concatenate(
+            (
+                velocity_Bn,
+                jnp.zeros((1, velocity_Bn.shape[1]), dtype=npdtype),
+            ),
+            axis=0,
+        )
+        An = jax.jit(
+            lambda s: jnp.concatenate((A(s) / scale, Dobs(s) / obs_sigma))
+        )
+        ATn = jax.jit(
+            lambda y: AT(y[:-1] / scale) + DTobs(y[-1:] / obs_sigma)
+        )
+        print(
+            f"[observer] delta_L Gaussian R={args.observer_delta_radius:.1f} Mpc/h "
+            f"target={args.observer_delta:+.3f}+/-{args.observer_delta_sigma:.3f}",
+            flush=True,
+        )
+    else:
+        dnorm = velocity_dnorm
+        Bn = velocity_Bn
+        An = jax.jit(lambda s: A(s) / scale)
+        ATn = jax.jit(lambda y: AT(y / scale))
 
     @jax.jit
     def Cnorm(y):
@@ -418,13 +781,13 @@ def main():
     # Compile and prove the implemented adjoint numerically before sampling.
     rng = np.random.default_rng(913)
     sx = jnp.asarray(rng.standard_normal((args.N,) * 3), dtype=npdtype)
-    dy = jnp.asarray(rng.standard_normal(train.sum()), dtype=npdtype)
+    dy = jnp.asarray(rng.standard_normal(dnorm.size), dtype=npdtype)
     lhs = float(jnp.vdot(An(sx), dy))
     rhs = float(jnp.vdot(sx, ATn(dy)))
     adjoint_rel = abs(lhs - rhs) / max(abs(lhs), abs(rhs), 1e-30)
     print(f"[operator] f={f_growth:.5f} adjoint_rel={adjoint_rel:.3e}", flush=True)
 
-    probe_power = np.zeros(train.sum(), dtype=np.float64)
+    probe_power = np.zeros(dnorm.size, dtype=np.float64)
     for i in range(args.precond_probes):
         sprobe = jnp.asarray(rng.standard_normal((args.N,) * 3), dtype=npdtype)
         probe_power += np.asarray(An(sprobe), np.float64) ** 2
@@ -442,47 +805,21 @@ def main():
         f"q=(bulk {mean_q[:3]}, dH0 {mean_q[3]:+.3f})",
         flush=True,
     )
+    if use_observer_density:
+        print(
+            f"[observer] posterior-mean delta_L="
+            f"{float(Dobs(mean_s)[0]):+.4f}",
+            flush=True,
+        )
 
+    # Held-out posterior-predictive diagnostics need all draws together.  An
+    # all-data production ensemble does not: stream each draw to disk so a
+    # large seed batch cannot retain hundreds of N^3 JAX/NumPy arrays and OOM.
+    retain_samples = bool(hold.any())
     samples_jax = []
     samples_np = []
     qs = []
     sample_meta = []
-    for seed in args.sample_seeds:
-        rs = np.random.default_rng(seed)
-        xi = jnp.asarray(rs.standard_normal((args.N,) * 3), dtype=npdtype)
-        q0 = jnp.asarray(rs.standard_normal(4) * data["q_std"], dtype=npdtype)
-        eps0 = jnp.asarray(rs.standard_normal(train.sum()), dtype=npdtype)
-        sample_rhs = dnorm - An(xi) - Bn @ q0 - eps0
-        alpha, rel, sec = cg_solve(Cnorm, sample_rhs, precond_diag, args)
-        scr = xi + ATn(alpha)
-        qcr = np.asarray(q0 + qvar * (Bn.T @ alpha), np.float64)
-        scr_np = np.asarray(scr, np.float32)
-        samples_jax.append(scr)
-        samples_np.append(scr_np)
-        qs.append(qcr)
-        stats = field_statistics(scr_np, args.box_size)
-        sample_meta.append({"seed": seed, "cg_rel": rel, "seconds": sec, "q": qcr.tolist(), **stats})
-        print(
-            f"[sample {seed}] cg_rel={rel:.3e} sec={sec:.1f} "
-            f"std={stats['std']:.5f} skew={stats['skew']:+.4f} "
-            f"kurt={stats['excess_kurtosis']:+.4f}",
-            flush=True,
-        )
-
-    held_diag = {}
-    if hold.any():
-        A_hold, _, _, _ = build_forward(data["pos"][hold], data["rhat"][hold], args)
-        held_diag = posterior_predictive(
-            A_hold, data, hold, mean_s, mean_q, samples_jax, qs
-        )
-        print(
-            f"[holdout] n={held_diag['n']} z={held_diag['z_mean']:+.3f}"
-            f"+/-{held_diag['z_std']:.3f} cov68={held_diag['coverage_1sigma']:.3f} "
-            f"cov95={held_diag['coverage_2sigma']:.3f} "
-            f"dlogscore={held_diag['delta_log_score']:+.1f}",
-            flush=True,
-        )
-
     mean_np = np.asarray(mean_s, np.float32)
     common = {
         "s_map": mean_np,
@@ -499,20 +836,97 @@ def main():
         "holdout_raw_idx": data["raw_idx"][hold],
     }
     output_files = []
-    for seed, scr, qcr in zip(args.sample_seeds, samples_np, qs):
-        path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
-        np.savez(
-            path,
-            **common,
-            s_out=scr,
-            sample_seed=np.int64(seed),
-            nuisance_q=qcr,
+    for seed in args.sample_seeds:
+        rs = np.random.default_rng(seed)
+        xi = jnp.asarray(rs.standard_normal((args.N,) * 3), dtype=npdtype)
+        q0 = jnp.asarray(rs.standard_normal(4) * data["q_std"], dtype=npdtype)
+        eps0 = jnp.asarray(rs.standard_normal(dnorm.size), dtype=npdtype)
+        sample_rhs = dnorm - An(xi) - Bn @ q0 - eps0
+        alpha, rel, sec = cg_solve(Cnorm, sample_rhs, precond_diag, args)
+        scr = xi + ATn(alpha)
+        qcr = np.asarray(q0 + qvar * (Bn.T @ alpha), np.float64)
+        scr_np = np.asarray(scr, np.float32)
+        stats = field_statistics(scr_np, args.box_size)
+        sample_meta.append({"seed": seed, "cg_rel": rel, "seconds": sec, "q": qcr.tolist(), **stats})
+        print(
+            f"[sample {seed}] cg_rel={rel:.3e} sec={sec:.1f} "
+            f"std={stats['std']:.5f} skew={stats['skew']:+.4f} "
+            f"kurt={stats['excess_kurtosis']:+.4f}",
+            flush=True,
         )
-        output_files.append(str(path))
+        if use_observer_density:
+            print(
+                f"[observer sample {seed}] delta_L="
+                f"{float(Dobs(scr)[0]):+.4f}",
+                flush=True,
+            )
+        if retain_samples:
+            samples_jax.append(scr)
+            samples_np.append(scr_np)
+            qs.append(qcr)
+        else:
+            path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
+            np.savez(
+                path,
+                **common,
+                s_out=scr_np,
+                sample_seed=np.int64(seed),
+                nuisance_q=qcr,
+            )
+            output_files.append(str(path))
+            del scr_np, scr, alpha, xi, q0, eps0, sample_rhs
+
+    held_diag = {}
+    held_by_likelihood = {}
+    if hold.any():
+        A_hold, _, _, _ = build_forward(data["pos"][hold], data["rhat"][hold], args)
+        held_diag = posterior_predictive(
+            A_hold, data, hold, mean_s, mean_q, samples_jax, qs
+        )
+        print(
+            f"[holdout] n={held_diag['n']} z={held_diag['z_mean']:+.3f}"
+            f"+/-{held_diag['z_std']:.3f} cov68={held_diag['coverage_1sigma']:.3f} "
+            f"cov95={held_diag['coverage_2sigma']:.3f} "
+            f"dlogscore={held_diag['delta_log_score']:+.1f}",
+            flush=True,
+        )
+        for label, name in ((0, "WF15"), (1, "local_direct"), (2, "BGc")):
+            select = hold & (data["likelihood_kind"] == label)
+            if not select.any():
+                continue
+            A_kind, _, _, _ = build_forward(
+                data["pos"][select], data["rhat"][select], args
+            )
+            diag = posterior_predictive(
+                A_kind, data, select, mean_s, mean_q, samples_jax, qs
+            )
+            held_by_likelihood[name] = diag
+            print(
+                f"[holdout {name}] n={diag['n']} z={diag['z_mean']:+.3f}"
+                f"+/-{diag['z_std']:.3f} cov68={diag['coverage_1sigma']:.3f} "
+                f"cov95={diag['coverage_2sigma']:.3f} "
+                f"dlogscore={diag['delta_log_score']:+.1f}",
+                flush=True,
+            )
+
+    if retain_samples:
+        for seed, scr, qcr in zip(args.sample_seeds, samples_np, qs):
+            path = outdir / f"cf4_linear_cr_{args.tag}_s{seed}.npz"
+            np.savez(
+                path,
+                **common,
+                s_out=scr,
+                sample_seed=np.int64(seed),
+                nuisance_q=qcr,
+            )
+            output_files.append(str(path))
 
     manifest = {
         "status": "diagnostic" if hold.any() else "all_data",
-        "method": "linear Gaussian WF + Matheron constrained realization",
+        "method": (
+            f"linear Gaussian {args.velocity_estimator.upper()} + "
+            "Matheron constrained realization"
+        ),
         "catalog": os.path.abspath(args.catalog),
         "catalog_sha256": sha256_file(args.catalog),
         "configuration": vars(args) | {"sample_seeds": args.sample_seeds},
@@ -525,9 +939,16 @@ def main():
         "mean_nuisance_q": mean_q.tolist(),
         "train_normalized_residual_rms": float(np.sqrt(np.mean(train_resid**2))),
         "heldout": held_diag,
+        "heldout_by_likelihood": held_by_likelihood,
         "samples": sample_meta,
         "outputs": output_files,
     }
+    if "bgc_reference_n" in data:
+        manifest["bgc"] = {
+            "reference_training_rows": int(data["bgc_reference_n"]),
+            "target_candidate_rows": int(data["bgc_candidate_n"]),
+            "holdout_excluded_from_reference_pool": True,
+        }
     manifest_path = outdir / f"manifest_{args.tag}.json"
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)

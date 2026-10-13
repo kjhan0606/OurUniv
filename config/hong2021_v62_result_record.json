@@ -1,0 +1,104 @@
+{
+  "schema": "hong2021-v62-conditional-physical-moment-gradient-audit-result-record-v1",
+  "status": "complete_no_refit_audit_selected_V63_conditional_moment_model",
+  "program": "config/hong2021_v62_conditional_moment_gradient_audit_program.json",
+  "program_sha256": "f8b75e0b69937931f60cbd51036c89275c01c1d69e8a508dd94deedefcd5fb2a",
+  "code_commit": "aa900451f1faa807d413bd0367135cd0052a0811",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v62_conditional_moment_gradient_audit/audit.json",
+    "sha256": "931cd585d6b8653c29a405817e8ac5b74f1d4e329b063a6570c13127f34dd273",
+    "decision_digest_sha256": "915b244703d70c4f89677cf5e279c30db26caee35ad2adcba1ca5df11dc0dcfc",
+    "classification": "direct_conditional_log_physical_moment_objective_has_gate_aligned_optimization_scale",
+    "candidate_selected": true,
+    "training_or_refit_performed": false
+  },
+  "fixed_batch_moment_ratios": {
+    "definition": "64-point quadrature predicted mean delta squared divided by exact target mean delta squared in the fixed object-0 domainwise q99.9-backbone mask",
+    "same_seed_initialization": {
+      "TNG100": 3.129022471811007,
+      "SIMBA": 1.5360726815617007,
+      "Swift": 6.149073875885933
+    },
+    "V56_step12000_EMA": {
+      "TNG100": 31.736189919486893,
+      "SIMBA": 0.9389179831248194,
+      "Swift": 1.1524848258315008
+    },
+    "V61_step12000_EMA": {
+      "TNG100": 338.4739764407154,
+      "SIMBA": 1.7356324192470327,
+      "Swift": 1.241864156083053
+    },
+    "selected_voxels": {
+      "TNG100": 705,
+      "SIMBA": 249,
+      "Swift": 202
+    }
+  },
+  "optimization_evidence": {
+    "candidate_to_V61_appended_output_gradient_L2_per_selected_voxel_ratio": {
+      "same_seed_initialization": 78782392844.31274,
+      "V56_step12000_EMA": 429167742.2436765,
+      "V61_step12000_EMA": 63480679.75735862
+    },
+    "minimum_ratio": 63480679.75735862,
+    "required_minimum_ratio": 1000000.0,
+    "gradient_ratio_pass": true,
+    "maximum_32_to_64_quadrature_relative_difference": 1.0042999051408823e-10,
+    "quadrature_limit": 0.005,
+    "numerical_pass": true,
+    "masks_nonempty": true,
+    "initialization_full_model": {
+      "V56_composite": 1.7068933087051112,
+      "candidate_score": 0.7974053595552164,
+      "candidate_coefficient": 0.1,
+      "candidate_composite": 1.786633844660633,
+      "gradient_L2": 50.99387721568765,
+      "gradient_maximum_absolute": 20.902847290039062,
+      "gradient_finite": true,
+      "peak_allocated_bytes": 11352551936,
+      "peak_allocated_bytes_limit": 30064771072,
+      "memory_pass": true
+    }
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_audit": true,
+    "pytest_passed": 463,
+    "pytest_log_sha256": "a9746067bf2c91fdc40c54e57c882df0308e8f2579ad169e85d0af15b6d6447e",
+    "audit_log_sha256": "64f8d81208103f3fa8d64ebce98de86dddb9ca6a387710596aea91561de08155",
+    "launcher_log_sha256": "56251d503ff0a5e40ebf731fa69ffa0d332de1c159d334d93efc46c186b81fe5",
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1"
+  },
+  "scientific_conclusion": [
+    "The V61 failure is an optimization-signal failure, not a quadrature failure: its appended score is finite but its gradient is tens of millions to tens of billions of times smaller than the direct conditional moment candidate on the same real train batch.",
+    "The direct source-balanced log physical-moment mismatch sees exactly the q99.9-backbone functional used by the locked train gate and gives a strong correction to TNG100 while producing small corrections for the already near-calibrated V56 SIMBA and Swift batch moments.",
+    "The 32- and 64-point differentiable quadratures agree to 1.01e-10, and the full initialization composite has finite gradients with 11.35 GiB peak allocation.",
+    "The selected V63 experiment changes one factor relative to V56: add the coefficient-0.1 conditional log physical-moment term while retaining the complete V56 likelihood, four V54 scores, 16-cell V56 grid, network, data, optimizer, schedule, augmentation, seed, and locked gates."
+  ],
+  "selected_next_step": {
+    "action": "freeze and hard-preflight one V63 conditional moment model before any training",
+    "single_changed_factor": "add 0.1 times the source-balanced q99.9-backbone conditional log physical-moment mismatch to the complete V56 objective",
+    "required_preflight": [
+      "exact V56 base-loss reproduction and identical initialization",
+      "nonempty domainwise masks using only sealed train boundaries",
+      "32-to-64 quadrature convergence",
+      "finite candidate and composite gradients with an optimization-relevant candidate-to-NLL gradient ratio",
+      "Ada peak allocation below the frozen limit",
+      "no validation, development, Astrid, or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

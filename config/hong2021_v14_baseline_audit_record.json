@@ -1,0 +1,48 @@
+{
+  "schema": "hong2021-v14-three-domain-baseline-audit-record-v1",
+  "status": "complete_before_v14_model_freeze_or_training",
+  "audit_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_baseline_audit",
+  "common_target": "raw PartType1 periodic cell-centred CIC, 0.3125 Mpc/h cells, log10(rho/mean)/4.5, no clipping or floor",
+  "development_datasets": {
+    "TNG100": {"train_samples": 432, "validation_samples": 93},
+    "CAMELS_SIMBA": {"train_samples": 202, "validation_samples": 64},
+    "CAMELS_Swift_EAGLE": {"train_samples": 409, "validation_samples": 148}
+  },
+  "frozen_v4_mean_residual": {
+    "TNG100_train": {"dc_mean": 0.017682787798414076, "centered_rms_mean": 0.09957106609794276, "band_rms_mean": [0.023090588674811577, 0.05874598971395581, 0.061266079674371414, 0.046576568460160936]},
+    "TNG100_validation": {"dc_mean": 0.018694957893502007, "centered_rms_mean": 0.10366943895175892, "band_rms_mean": [0.030733915606653818, 0.062100341843981895, 0.061472868767156394, 0.04635749949562934]},
+    "SIMBA_train": {"dc_mean": 0.02780791130470167, "centered_rms_mean": 0.10101983644584618, "band_rms_mean": [0.027503478903286527, 0.06006181627364442, 0.06087456636204578, 0.04612712132384871]},
+    "SIMBA_validation": {"dc_mean": 0.027478132426040247, "centered_rms_mean": 0.10068930382840335, "band_rms_mean": [0.028242279164260253, 0.05981951969442889, 0.06039668805897236, 0.0459173817653209]},
+    "Swift_EAGLE_train": {"dc_mean": 0.022969189799028678, "centered_rms_mean": 0.10046522550667411, "band_rms_mean": [0.028397608844422186, 0.05970506886507596, 0.06005647925154504, 0.045844120927574]},
+    "Swift_EAGLE_validation": {"dc_mean": 0.023547195030275633, "centered_rms_mean": 0.10042477514896844, "band_rms_mean": [0.02735587795944633, 0.05968378725889567, 0.0604264791551474, 0.04600264008685544]}
+  },
+  "target_free_ridge_vs_source_balanced_constant_validation_rmse_ratio": {
+    "residual_dc": {"TNG100": 0.8111606881025522, "SIMBA": 0.6910562565112794, "Swift_EAGLE": 0.8648338657879302, "dominates_all": true},
+    "band_0": {"TNG100": 1.5409172656299706, "SIMBA": 0.6843536835154063, "Swift_EAGLE": 0.8814961799165194, "dominates_all": false},
+    "band_1": {"TNG100": 1.146016669320425, "SIMBA": 0.9545923525009357, "Swift_EAGLE": 0.9273886273269167, "dominates_all": false},
+    "band_2": {"TNG100": 0.8972063543234139, "SIMBA": 0.862969873663151, "Swift_EAGLE": 0.8352719207053249, "dominates_all": true},
+    "band_3": {"TNG100": 0.9786774360192483, "SIMBA": 0.7877125940065142, "Swift_EAGLE": 0.7909622369638664, "dominates_all": true}
+  },
+  "density_bin_fractions_log10_rho": {
+    "bins": ["<-1", "-1..0", "0..1", "1..2", ">=2"],
+    "TNG100_train": [0.3648546271853977, 0.48952422318635164, 0.12787712061846698, 0.015981727176242404, 0.001762301833541305],
+    "TNG100_validation": [0.37115162675098706, 0.4849658678936702, 0.1256964898878528, 0.01636915309454805, 0.0018168623729418682],
+    "SIMBA_train": [0.3514883589036394, 0.526074758850702, 0.10985500977771116, 0.011549902434396271, 0.0010319700335512066],
+    "SIMBA_validation": [0.350336492061615, 0.5267970561981201, 0.10991662740707397, 0.011853814125061035, 0.0010960102081298828],
+    "Swift_EAGLE_train": [0.359890264, 0.51572782, 0.111211772, 0.012026481, 0.001143663],
+    "Swift_EAGLE_validation": [0.35513731, 0.521626086, 0.110531369, 0.011615959, 0.001089276]
+  },
+  "diagnosis": [
+    "V7 mixed TNG NGP and SIMBA adaptive-smoothed CMD targets, so its cross-code high-k error was partly a target-operator confound rather than only an ML failure.",
+    "After one common CIC operator, train/validation residual statistics are stable within SIMBA and Swift-EAGLE and the two highest-frequency bands agree closely across all three codes.",
+    "The frozen TNG-only V4 mean retains source-dependent cube DC and a TNG-validation low-frequency miss, so a compact three-source deterministic correction is needed before stochastic modelling.",
+    "Observable conditioning is supported for DC and bands 2-3 but rejected for bands 0-1 because it harms TNG validation.",
+    "A post-hoc A(k), suite label, target-derived inference scale, clipping, or EAGLE/Astrid-driven choice is neither needed nor permitted."
+  ],
+  "independence": {
+    "EAGLE_RefL0100N1504_truth_reopened": false,
+    "Astrid_files_present_or_opened": false,
+    "historical_SIMBA_CV0_15_used": false,
+    "model_selection_from_this_audit": "development TNG100, SIMBA CV16-26, and Swift-EAGLE CV0-26 only"
+  }
+}

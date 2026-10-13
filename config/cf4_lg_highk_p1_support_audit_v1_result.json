@@ -1,0 +1,66 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-p1-support-audit-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_parent_centered_prefilter_rejected",
+  "scope": "Read-only audit of the promoted low-k parent posterior, frozen 256-state joint high-k schedule, and legacy parent-centered P1 result",
+  "execution": {
+    "job_id": 323877,
+    "state": "COMPLETED",
+    "elapsed": "00:00:05",
+    "max_rss_kib": 3512,
+    "exit_code": "0:0",
+    "requested_memory": "1G"
+  },
+  "inputs": {
+    "posterior_bank": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lowk_parent_posterior_bridge_v1/posterior_bank.npz",
+      "sha256": "25ec02b9ddfa736c170c6c84332845f026790b1162f4ba14ba63fc2aa34d9e76"
+    },
+    "joint_schedule": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_joint_schedule_v1/schedule.npz",
+      "sha256": "10c8526f3508a908a14981636ca9f730480838b65ea4bbcd3186c0730f330ccd"
+    },
+    "legacy_p1_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3/p1_result.json",
+      "sha256": "050df61252ff038de9aec8fd6902dd42367b49c6ce1ac9782681158cf310cecd"
+    },
+    "slurm_log": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_p1_support_audit_v1_slurm-323877.log",
+      "sha256": "5d28c5ec6a715686f1faf02c099555a745961891269cd55ff3331d3f0420261e"
+    }
+  },
+  "support": {
+    "parent_count": 256,
+    "schedule_count": 256,
+    "legacy_full_p1_parent_seeds": [3429],
+    "posterior_full_p1_mass": 0.0005648162999048254,
+    "expected_full_p1_count_under_independent_256_draws": 0.1445929727756353,
+    "independent_probability_of_zero_full_p1_rows": 0.8653391029057077,
+    "schedule_full_p1_count": 0,
+    "schedule_full_p1_mass": 0.0,
+    "posterior_gate_mass": {
+      "Virgo": 0.2583261514561377,
+      "Coma": 0.7292757690335349,
+      "LocalVoid": 0.18433130417732324,
+      "BootesVoid": 0.2639831575044075,
+      "ObserverEnvironment": 0.26746425687844866
+    },
+    "schedule_gate_mass": {
+      "Virgo": 0.2890625,
+      "Coma": 0.67578125,
+      "LocalVoid": 0.20703125,
+      "BootesVoid": 0.234375,
+      "ObserverEnvironment": 0.32421875
+    }
+  },
+  "decision": {
+    "legacy_parent_centered_p1_prefilter_has_support": false,
+    "legacy_parent_centered_p1_prefilter_authorized": false,
+    "forward_all_256_scheduled_states_before_pair_recentered_p1": true,
+    "pair_recentered_p1_final_environment_gate_retained": true,
+    "lowk_posterior_promotion_revoked": false,
+    "single_parent_reversion_authorized": false,
+    "production_pm_authorized": false
+  },
+  "next": "Implement and test a streaming high-k-to-PM pilot path that never persists N576 fields, never applies parent-centered P1 before PM, and retains hard P2 plus pair-recentered P1 after forward evolution; seek approval before Slurm execution."
+}

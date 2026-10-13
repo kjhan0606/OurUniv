@@ -1,0 +1,185 @@
+{
+  "schema": "hong2021-v73-train-truth-gate-attainability-audit-program-v1",
+  "status": "frozen_before_any_train_target_payload_read_or_audit_implementation",
+  "purpose": "Measure whether the V72 sampling-sensitive scientific gate is statistically attainable at sixteen truth queries per domain before spending another fresh partition or training another generator. Use only already-consumed V70 fit-train truth, cluster-aware truth-versus-truth oracle bootstraps, a TNG spatial heterogeneity jackknife, and a paired stability audit of the already consumed V72 stage-A maximum-energy comparison.",
+  "scope_limits": {
+    "this_is_not_a_V73_generator": true,
+    "no_model_fit_training_gradient_optimizer_or_sampling": true,
+    "no_validation_development_stage_B_Astrid_or_EAGLE_payload": true,
+    "no_change_to_the_sealed_V72_verdict": true,
+    "no_gate_threshold_change_authorized": true,
+    "no_fresh_partition_consumed": true
+  },
+  "parent_evidence": {
+    "v72_result_record": "config/hong2021_v72_result_record.json",
+    "v72_result_record_sha256": "e047761ce216ca88ca3e77a902ac1dfb19b092e8d52f3414979993fb70812064",
+    "v72_program": "config/hong2021_v72_locked_spatial_quantile_transport_program.json",
+    "v72_program_sha256": "83add01ae90cff6c3e1f656901daf7b9ed09a24c2f8bc59b6c52603531d8f9e4",
+    "v70_model_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_model_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v70_train_gate_program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "v70_train_gate_program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728",
+    "v35_data_registry": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_data_registry_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v72_stage_A_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/decision.json",
+    "v72_stage_A_decision_sha256": "d1548eaca502e7b7f5eeba03fec77751cd73b2dc00a380e9fbaa79e485d8b362"
+  },
+  "frozen_measurement_sources": {
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate": "src/hong2021_v6_gate.py",
+    "field_gate_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "tail_measurement": "src/hong2021_v20_development_gate.py",
+    "tail_measurement_sha256": "f63b8eb8813f1c21265e7a5ec13a6543e7372fdce6d9955909bb33635149a028",
+    "energy_score": "src/hong2021_v72_sqt.py",
+    "energy_score_sha256": "e0d032c8629e19fa4c1390ae94a103201c804b0cfe68042eea6a94b7f41a755f",
+    "v72_gate_current_recovered_source": "src/hong2021_v72_gate.py",
+    "v72_gate_current_recovered_source_sha256": "0a1e6d41a6f9d0c32f204ac92ff2c3a4ba2b0d7afafae11cfcd530c5804105fc"
+  },
+  "already_consumed_train_inputs": {
+    "TNG100": {
+      "truth_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+      "truth_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+      "deterministic_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+      "deterministic_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500",
+      "total_objects": 432,
+      "excluded_V70_mechanism_holdout_indices": [32, 35, 79, 94, 98, 103, 122, 135, 149, 215, 303, 316, 323, 347, 399, 416],
+      "audit_fit_objects": 416,
+      "grouping": "four x-z quadrants from center_position_mpc_h using x<37.5 and z<37.5; four truth queries from each quadrant per trial"
+    },
+    "SIMBA": {
+      "truth_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+      "truth_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+      "deterministic_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+      "deterministic_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c",
+      "total_objects": 202,
+      "excluded_V70_mechanism_holdout_indices": [5, 15, 43, 50, 70, 100, 102, 107, 109, 127, 155, 164, 171, 186, 199, 201],
+      "audit_fit_objects": 186,
+      "grouping": "CAMELS realizations 16-23; two truth queries from each realization per trial"
+    },
+    "Swift": {
+      "truth_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+      "truth_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+      "deterministic_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+      "deterministic_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3",
+      "total_objects": 409,
+      "excluded_V70_mechanism_holdout_indices": [12, 36, 38, 57, 69, 178, 198, 201, 218, 269, 283, 288, 292, 305, 339, 406],
+      "audit_fit_objects": 393,
+      "grouping": "CAMELS realizations 0-19; select sixteen realizations without replacement and one truth query from each selected realization per trial"
+    }
+  },
+  "metadata_precheck_already_performed_without_target_payload": {
+    "allowed_fields_read": ["HDF5 root attributes", "dataset names and shapes", "center_position_mpc_h", "realization"],
+    "target_or_conditional_mean_payload_read": false,
+    "verified_shapes": "truth and deterministic fields are aligned [objects,1,64,64,64]",
+    "verified_each_sampling_group_has_at_least_two_fit_objects": true
+  },
+  "summary_cache": {
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+    "read_each_fit_object_once": true,
+    "density_scale": 4.5,
+    "voxel_mpc_h": 0.3125,
+    "per_truth_or_deterministic_cube": [
+      "largest 2048 log10-density voxel values in descending order",
+      "cube maximum log10-density",
+      "mean (10^log10rho-1)^2",
+      "Hann-windowed log-density power spectrum using the frozen SpectralBinner",
+      "open-boundary two-point function through 10 Mpc/h using the frozen OpenBoundaryTwoPoint",
+      "the frozen 400-bin log10-density histogram on [-4,6]",
+      "the frozen peak/void environment statistics"
+    ],
+    "per_truth_residual_cube": "mean squared centered truth-minus-deterministic residual",
+    "top_2048_exactness": "At q=0.99999, sixteen cubes require at most the largest 43 pooled values and 256 resampled cubes require at most the largest 673 pooled values; 2048 values per distinct cube is sufficient for exact linear-interpolated pooled quantiles even in the worst concentration case."
+  },
+  "same_domain_truth_oracle_bootstrap": {
+    "trials": 10000,
+    "seed": 730001,
+    "truth_queries_per_trial": 16,
+    "oracle_members_per_query": 16,
+    "query_selection": "without replacement under the frozen domain group quotas",
+    "oracle_selection": "for each query, draw sixteen indices with replacement from the same group after excluding every query index in that trial; duplicates are retained as an ordinary empirical cluster bootstrap and unique-donor counts are reported",
+    "second_exchangeable_oracle": "draw an independent oracle ensemble B by the identical rule solely to measure the finite-sample behavior of a strict A-better-than-B maximum-energy comparison",
+    "measurements": {
+      "q99_999": "absolute pooled oracle-minus-query log10rho q99.999 difference <=0.1 dex",
+      "Q4": "pooled oracle-over-query mean delta-squared ratio in [2/3,1.5]",
+      "high_k_power": "mean oracle-over-query total log-density power in [0.9,1.1] in both 3-6 and 6-10.0531 h/Mpc bands",
+      "residual_RMS": "oracle cubes' own centered truth-minus-own-deterministic residual RMS over query cubes' corresponding residual RMS in [0.9,1.1]",
+      "density_PDF": "oracle-versus-query histogram TV is strictly lower than deterministic-query-versus-query histogram TV",
+      "two_point": "the frozen KS between sixteen query rows and 256 oracle rows is strictly lower than the frozen KS between the same query rows and their sixteen deterministic rows in every 0-1, 1-3, and 3-10 Mpc/h scale mean",
+      "environment": "every frozen oracle mean peak/void statistic has strictly smaller absolute error from the query truth mean than the deterministic query mean",
+      "maximum_energy": "mean per-query unbiased scalar energy score from oracle A maxima is strictly lower than exchangeable oracle B; this relative coin-flip diagnostic is excluded from the absolute attainability decision"
+    },
+    "absolute_core": ["q99_999", "Q4", "high_k_power", "residual_RMS"],
+    "comparative_morphology_core": ["density_PDF", "two_point", "environment"],
+    "sampling_sensitive_core_joint": "all absolute and comparative morphology core checks pass",
+    "explicit_exclusions": {
+      "rank_histogram_and_voxel_coverage": "truth fields from different queries are not exchangeable at aligned voxels conditional on only a coarse group; using them would not be a valid perfect conditional-model null",
+      "exact_DC": "a deterministic numerical invariant with no sampling uncertainty",
+      "maximum_energy_from_joint_decision": "requires a named model-versus-control alternative, not an absolute perfect-model null"
+    }
+  },
+  "cross_domain_common_law_stress": {
+    "trials_per_ordered_source_target_pair": 5000,
+    "seed": 730003,
+    "ordered_pairs": "all six source-domain to different target-domain pairs",
+    "target_queries": "the identical grouped sixteen-query rule",
+    "source_oracle": "256 truth cubes drawn with replacement with equal probability per source x-z quadrant or source CAMELS realization, then uniformly within that group",
+    "primary_checks": ["q99_999", "Q4", "high_k_power", "residual_RMS"],
+    "interpretation_limit": "This tests a domain-blind common empirical law. Failure is not a mathematical lower bound for a conditional model because target-free inputs could identify domain differences; it becomes relevant only together with an identifiability audit such as V67."
+  },
+  "TNG_spatial_heterogeneity_jackknife": {
+    "blocks": "the same four x-z quadrants",
+    "operation": "compute full-fit and four leave-one-quadrant-out q99.999, Q4, two high-k powers, two-point means, and maximum-distribution summaries",
+    "material_if_any": [
+      "leave-one-block-out q99.999 range exceeds 0.1 dex",
+      "leave-one-block-out Q4 mean-delta-squared maximum/minimum exceeds 1.5",
+      "leave-one-block-out mean power maximum/minimum exceeds 1.1 in either frozen high-k band"
+    ],
+    "claim_limit": "This is a within-box spatial heterogeneity diagnostic, not an estimate of independent-box cosmic variance."
+  },
+  "consumed_V72_energy_stability": {
+    "bootstrap_trials": 100000,
+    "seed": 730002,
+    "resampling_unit": "the sixteen already consumed stage-A queries within each domain",
+    "candidate_arm": "conditioning_stratified_spatial_quantile_transport",
+    "control_arm": "independent_voxel_V63_marginal",
+    "bound_artifact_hashes": {
+      "candidate/TNG100": "2d316779c91cde2d1c8b2c60a567f97b57584694b8b1ea72dcc3487f547390a6",
+      "candidate/SIMBA": "0edbeb09fc749d065a8a1b5a19ef10dad7834f79ce9a6b3a278fa8e27cbae80e",
+      "candidate/Swift": "1230296da0536126ced51207a0eb1b3789e29e2a8319f47fce68270e77c25873",
+      "control/TNG100": "55f553572a8bb4acdcc5eb117aa0721c1a1280cb5381531bdcd99ab3e4a370da",
+      "control/SIMBA": "c3de317860613c079c52e8ac47106b8f176f7d51caf9595826bbf5f9b9fa7de3",
+      "control/Swift": "a907c12f0ca85c18076906b497e792535df056a5f7aa05fbbe2076d102e00a6d"
+    },
+    "report": "paired mean candidate-minus-control energy, percentile 95% bootstrap interval, and bootstrap probability that the mean is below zero",
+    "decision_role": "diagnostic only; never changes or reopens V72"
+  },
+  "predeclared_decisions": {
+    "maximum_acceptable_false_rejection_probability": 0.2,
+    "gate_redesign_required": "same-domain truth-oracle all-three-domain sampling-sensitive core joint pass probability is below 0.8, or any single domain's absolute-core pass probability is below 0.8",
+    "domain_blind_common_law_materially_incompatible": "any ordered cross-domain pair has absolute-core joint pass probability below 0.2; this is a stress finding, not proof that a conditional model is impossible",
+    "V72_energy_difference_underpowered": "the paired 95% bootstrap interval contains zero; report independently per domain without changing the sealed Boolean outcome",
+    "TNG_spatial_heterogeneity_material": "any frozen leave-one-block criterion is met",
+    "if_gate_redesign_required": "stop all new Hong generator candidates and propose a separately approved null-calibrated gate redesign before any fresh payload",
+    "if_gate_reliable_but_domain_stress_or_TNG_heterogeneity_material": "run a target-free identifiability and independent-box design audit before any new generator",
+    "if_gate_reliable_and_no_material_stress": "a separately frozen candidate design may be considered, but this audit does not authorize it or any fresh payload"
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability",
+    "summary_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+    "bootstrap_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/bootstrap_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/audit_result.json"
+  },
+  "resource_and_firewall": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "maximum_workers": 16,
+    "training_or_model_checkpoint_access": "forbidden",
+    "validation_or_development_access": "forbidden except the six explicitly hash-bound already consumed V72 stage-A ensemble files for the energy stability diagnostic",
+    "V72_stage_B_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_or_independent_EAGLE_access": "forbidden",
+    "fresh_unallocated_validation_access": "forbidden",
+    "new_candidate_or_gate_change_after_result": "requires a separate program and explicit user approval"
+  }
+}

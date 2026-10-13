@@ -1,0 +1,70 @@
+{
+  "schema": "hong2021-v70-intermediate-checkpoint-access-deviation-v1",
+  "status": "disclosed_integrity_only_access_literal_firewall_failed_selection_blinding_preserved",
+  "purpose": "Disclose and classify operator reads of the mutable V70 last.pt before the fixed 30000-step fit completed.",
+  "discovered_while_training_step_was_at_least": 15100,
+  "applicable_frozen_rule": {
+    "program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728",
+    "rule": "checkpoint_access_before_fixed_training_complete",
+    "required_value": "forbidden"
+  },
+  "known_access_scope_from_operator_transcript": {
+    "unique_checkpoint_steps_read": [
+      5750,
+      7750,
+      10000,
+      10250,
+      12000,
+      12500,
+      13000,
+      15000
+    ],
+    "operations": [
+      "load last.pt on CPU",
+      "read step, fixed program hash, AMP scaler, overflow events, and firewall metadata",
+      "count nonfinite values in model, EMA, and optimizer tensors",
+      "compare model and EMA only as an integrity diagnostic"
+    ],
+    "model_forward_inference_performed": false,
+    "sample_or_prediction_generated": false,
+    "mechanism_holdout_payload_or_metric_read": false,
+    "validation_or_development_payload_or_metric_read": false,
+    "Astrid_or_EAGLE_payload_or_metric_read": false,
+    "checkpoint_selected_or_rejected": false,
+    "early_stopping_or_training_length_changed": false,
+    "optimizer_model_loss_or_schedule_changed": false,
+    "sampler_seed_member_metric_or_threshold_changed": false
+  },
+  "freeze_order": {
+    "fixed_training_source_commit": "ee3769bbee768baca03382dbb1b2ff6d7bbce407",
+    "fixed_training_source_commit_time": "2026-08-11T16:01:31+09:00",
+    "train_gate_program_freeze_commit": "dfd654cd65443521b4e0a0ab837de0479ffe180b",
+    "train_gate_program_freeze_time": "2026-08-11T16:07:02+09:00",
+    "development_program_freeze_commit": "a6429ee651a36ce88e3862b8e9de17523176b8c6",
+    "development_program_freeze_time": "2026-08-11T16:22:30+09:00",
+    "scientific_train_and_development_selection_rules_frozen_before_known_access": true
+  },
+  "assessment": {
+    "literal_precompletion_checkpoint_access_firewall_satisfied": false,
+    "posthoc_model_checkpoint_sampler_seed_metric_or_threshold_tuning_occurred": false,
+    "train_or_development_target_information_disclosed": false,
+    "fixed_final_checkpoint_selection_preserved": true,
+    "train_and_development_gate_selection_blinding_preserved": true,
+    "statistical_gate_may_proceed_with_disclosed_protocol_deviation": true,
+    "reason": "The reads exposed only numerical integrity and training-state metadata after all applicable selection rules were frozen. They supplied no target-dependent performance information and caused no decision or scientific change."
+  },
+  "corrective_actions": {
+    "further_precompletion_checkpoint_access": "forbidden",
+    "allowed_live_monitoring": "history.json, process state, GPU state, sequence status, and file existence only",
+    "restart_same_deterministic_run": "rejected because it recreates the same already-observed trajectory and adds no blinding",
+    "restart_with_changed_seed_or_configuration": "forbidden as posthoc intervention",
+    "terminal_seal_requirement": "bind this exact deviation record and report literal firewall failure separately from the preserved no-tuning and target-blinding claims"
+  },
+  "firewall_after_discovery": {
+    "development_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "schema": "hong2021-v63-conditional-log-physical-moment-model-program-v1",
+  "status": "frozen_before_preflight_model_implementation_training_or_evaluation",
+  "purpose": "Test one model change selected by V62: retain the complete V56 bounded-mixture model and objective, and add only 0.1 times a source-balanced q99.9-backbone conditional log physical-moment mismatch that directly targets the locked train-gate functional.",
+  "parent_evidence": {
+    "v62_record": "config/hong2021_v62_result_record.json",
+    "v62_record_sha256": "873fa8c236c86681f1cba6c061c18cfed6c0bf644956658735e19b429bbe3a86",
+    "required_status": "complete_no_refit_audit_selected_V63_conditional_moment_model",
+    "required_classification": "direct_conditional_log_physical_moment_objective_has_gate_aligned_optimization_scale",
+    "required_candidate_selected": true,
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v56_program": "config/hong2021_v56_survival_grid_program.json",
+    "v56_program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "v56_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid_sequence/preflight.json",
+    "v56_preflight_sha256": "eb6a8d984a907c0983828f192a40388578dc2fcbb53415a161606e606c639295",
+    "v56_preflight_decision_digest_sha256": "07c1d78b8e837785e44118dbcce4484786b631ed34039a5c221ae10924a7ed43",
+    "v61_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_train_high_backbone_gate/decision.json",
+    "v61_train_gate_sha256": "3aab86f7c91b1a998d4f07b85d496a9ad268284dc26efeba68776f630ac9bb4e",
+    "v61_train_gate_decision_digest_sha256": "9eb5e4eb87b327d1af900c70019f0984f427669b079b0784f38fb38cf597b908",
+    "v62_program": "config/hong2021_v62_conditional_moment_gradient_audit_program.json",
+    "v62_program_sha256": "f8b75e0b69937931f60cbd51036c89275c01c1d69e8a508dd94deedefcd5fb2a",
+    "v62_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v62_conditional_moment_gradient_audit/audit.json",
+    "v62_audit_sha256": "931cd585d6b8653c29a405817e8ac5b74f1d4e329b063a6570c13127f34dd273",
+    "v62_audit_decision_digest_sha256": "915b244703d70c4f89677cf5e279c30db26caee35ad2adcba1ca5df11dc0dcfc",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "single_model_change": {
+    "retained_V56_objective": "bounded NLL plus 0.1 times the four fixed V54 physical-tail Brier scores plus 0.1 times the original byte-bound 16-cell V56 upper survival-grid score",
+    "added_term": "0.1 times the arithmetic mean over TNG100, SIMBA, and Swift of 0.5 times squared ln(predicted conditional mean delta squared divided by exact target conditional mean delta squared)",
+    "mask": "for each source, physical backbone plus immutable target mean greater than or equal to that source's sealed q99.9 train-probe boundary",
+    "predicted_moment": "64-point differentiable Gauss-Hermite expectation of (exp(4.5 ln(10) y)-1)^2 under the unchanged bounded mixture, averaged over the source mask",
+    "truth_moment": "exact float64 (exp(4.5 ln(10) y)-1)^2 averaged over the identical immutable train-target mask",
+    "coefficient": 0.1,
+    "all_V56_terms_retained_exactly": true,
+    "network_support_initialization_optimizer_schedule_data_augmentation_seed_and_gates_unchanged": true,
+    "density_or_residual_clipping": false,
+    "posthoc_scale_DC_or_Ak": false
+  },
+  "sealed_q99_9_backbone_boundaries": {
+    "TNG100": 0.4621520478129412,
+    "SIMBA": 0.411563094049693,
+    "Swift": 0.4358510056436045,
+    "source": "byte-bound V61 train-only gate; identical to the earlier V56/V53 train-only boundaries"
+  },
+  "unchanged_model_and_training": {
+    "likelihood": "V56 five-component bounded-logit Gaussian mixture on open standardized residual support [-13.78839653180272, 10.259036149654781]",
+    "network": "V56 LocalMixtureUNet with 8490415 parameters and all seven condition channels",
+    "initialization_seed": 144044,
+    "initialization": "exact V56 same-seed zero-output-weight initialization",
+    "optimizer": "AdamW learning rate 2e-4, weight decay 1e-4, cosine schedule to 2e-5, gradient-norm clip 1.0, AMP, and EMA 0.999",
+    "steps": 12000,
+    "fixed_validation_diagnostic_steps": [
+      4000,
+      8000,
+      12000
+    ],
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "batch": "one uniformly selected immutable train object from each of TNG100, SIMBA, and Swift",
+    "augmentation": "the same uniformly selected 48 signed cube isometries applied jointly to all conditions, target, backbone, and therefore the moment mask",
+    "checkpoint_selection": "fixed step 12000 EMA only"
+  },
+  "hard_preflight": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "real_batch": "object zero from each immutable train source with signed cube isometry index 7",
+    "checks": [
+      "all frozen hashes, canonical decision digests, clean worktree, and locked firewalls",
+      "a complete train-cache scan proves every possible train object has at least one q99.9 mask voxel and reports all count distributions",
+      "the exact initialized network and V56 base-loss components reproduce the sealed V56 preflight within 1e-7",
+      "the 64-point candidate score and domain moments reproduce the sealed V62 audit within 1e-7 relative or absolute tolerance",
+      "32-to-64 candidate-moment relative differences are at most 0.005",
+      "candidate, V56 base, and total composite gradients are finite and nonzero",
+      "the coefficient-scaled candidate output-gradient L2 is between 0.01 and 100 times the bounded-NLL output-gradient L2 on the real batch",
+      "peak allocated GPU memory is strictly below 28 GiB",
+      "no validation, development, Astrid, or historical EAGLE access"
+    ],
+    "candidate_to_NLL_output_gradient_L2_ratio_interval": [
+      0.01,
+      100.0
+    ],
+    "maximum_32_to_64_relative_difference": 0.005,
+    "peak_allocated_bytes_limit": 30064771072,
+    "failure_action": "stop before training and preserve the failed hard preflight without changing the frozen objective"
+  },
+  "train_only_mechanism_gate": {
+    "population": "the identical seed-146046 immutable train-only 4096-voxel probe per object for 432 TNG100, 202 SIMBA, and 409 Swift objects",
+    "primary": "64-point Gauss-Hermite quadrature",
+    "control": "32-point Gauss-Hermite quadrature",
+    "maximum_relative_quadrature_difference": 0.005,
+    "query_stratum": "domainwise q99.9-and-above query-backbone stratum",
+    "absolute_predicted_over_truth_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "pass": "all three domains independently satisfy the absolute interval and numerical convergence before any development sampling"
+  },
+  "sampling_and_development_if_train_gate_passes": {
+    "candidate": "same-voxel monotone bounded-mixture CDF inversion of the unchanged paired V31 donor conditional-rank field using V63 query-local parameters",
+    "post_sample": "undo immutable standardization and apply one exact residual DC projection before adding the unchanged query backbone",
+    "ensemble_members": 16,
+    "objects_per_domain": 16,
+    "field_Q3_Q4_gates": "byte-identical to V56",
+    "global_residual_scale": 1.0,
+    "sample_clipping": false,
+    "posthoc_Fourier_Ak": false,
+    "independent_gate_action_on_pass": "seal V63 and await explicit user approval before any EAGLE access"
+  },
+  "fixed_branches": [
+    {
+      "condition": "hard preflight fails",
+      "classification": "V63_conditional_moment_model_is_not_preflight_safe",
+      "next": "stop_before_training_and_preserve_the_failed_preflight"
+    },
+    {
+      "condition": "train-only mechanism gate fails in any domain",
+      "classification": "conditional_log_physical_moment_objective_does_not_calibrate_all_train_high_backbone_domains",
+      "next": "stop_before_development_sampling_and_audit_the_fixed_training_response_without_posthoc_tuning"
+    },
+    {
+      "condition": "train-only mechanism gate passes",
+      "classification": "conditional_log_physical_moment_objective_calibrates_all_train_high_backbone_domains",
+      "next": "proceed_to_locked_V63_development_sampling_and_evaluation"
+    }
+  ],
+  "output_roots": {
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63",
+    "train_mechanism": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate",
+    "development": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_e31_conditional_moment"
+  },
+  "firewall": {
+    "training_before_preflight_pass": "forbidden",
+    "new_development_sample_before_train_gate_pass": "forbidden",
+    "development_access_before_train_gate_pass": "forbidden",
+    "validation_use_for_selection": "forbidden",
+    "posthoc_scale_or_clipping": "forbidden",
+    "posthoc_DC_or_Ak": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "bundle": "Z10-FIXED-TRUTH-TRACER-RECOVERY",
+  "status": "USER_APPROVED_BOUNDED_CALCULATION",
+  "purpose": "Condition on the exact Z9 native PM density and velocity, and infer only the 25 observation nuisance parameters. Determine whether the large Z9 curvature displacement persists when density/velocity reconstruction is removed.",
+  "goal_alignment": "Diagnose the present-day density/velocity posterior before further model expansion. Final target remains LG-only 0.3 cMpc/h with 1-2 cMpc/h surroundings, followed by consistent IC and forward evolution. This diagnostic is still 12 cMpc/h and is not a recovered density map.",
+  "data": {
+    "Z9_plan": "config/cf4_z9_tracer_response_plan_v1.json",
+    "cases": [
+      {"task": 0, "Z9_task": 1, "true_curvature": 0.0},
+      {"task": 1, "Z9_task": 3, "true_curvature": 0.2}
+    ],
+    "contract": "Regenerate with the frozen Z9 loader, assert exact equality with saved Z9 mock arrays, then use the saved data. No new noise, no new PM, no real observed counts/velocities, no covariance refitting. Keep heldout counts and radial rows excluded from the likelihood."
+  },
+  "model": {
+    "fixed": ["native truth density", "native truth mass-weighted mean velocity", "coordinate origin", "response selection grid", "all Z9 prior scales"],
+    "free": "All 25 standardized observation nuisance parameters: six normalizations, six biases, six FoG dispersions, two selection coefficients, four radial calibration coefficients, one common curvature. They retain their independent standard-normal priors; no nuisance fixed to generator truth.",
+    "curvature_prior": "gamma=0.2*q; q~N(0,1)",
+    "interpretation": "This is an oracle conditional diagnostic. It removes field freedom and the field prior together, so it cannot isolate the field prior alone or establish real-data calibration. Finite noisy mocks need not yield intervals containing every true parameter."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "initialization": "zero plus .5 independent standardized jitter; no optimized or generator-truth initialization"},
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "required": ["exact saved-data agreement", "same original observation map and likelihood with only field degrees removed", "finite-difference gradient and heldout exclusion checks", "all 25 nuisance coordinates and log posterior convergence", "physical curvature intervals compared with true values and Z9 free-field intervals", "bias-curvature correlations and independent heldout prediction"],
+    "decision": "If curvature recovers here while Z9 free-field fits remain displaced, the discrepancy is linked to field inference/prior/coupling under this mock. If it persists, prioritize the conditional likelihood, nuisance identifiability or sampling. No automatic production promotion in either case.",
+    "stop": "Two conditional fits, automatic aggregation, driver interpretation. No further bundle without user approval."
+  },
+  "resources": {
+    "posterior": {"GPU_per_task": 1, "CPUs": 4, "estimated_host_MiB": 4096, "requested_host_MiB": 4916, "time_limit": "01:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregation": {"CPUs": 1, "estimated_host_MiB": 1000, "requested_host_MiB": 1200, "time_limit": "00:05:00"},
+    "output_budget_MiB": 50,
+    "memory_margin": 0.2
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z10_fixed_truth_v1",
+  "next_bundle_requires_user_approval": true
+}

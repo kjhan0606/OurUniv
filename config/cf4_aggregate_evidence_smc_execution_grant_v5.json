@@ -1,0 +1,34 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v5",
+  "status": "sealed_one_shot_execution_authorization",
+  "one_shot": true,
+  "authorization_program_sha256": "e5590144ac74c5be3ad0002166ee5c02610517377f489805369ea78e8e7e39e9",
+  "grant_id": "4e935e71e4deed7b805d24de9f3505928696413ea1d3aefe6060a6f3508cafd0",
+  "authorization": {
+    "production_SMC_execution_authorized": true,
+    "oracle_cache_population_authorized": true,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5",
+  "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+  "receipts_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts",
+  "external_release": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+    "release_id": "20d1eccec62a610ff63daf78ce2df49f825e1a92cf8d21976820d8f65107907b",
+    "payload_sha256": "d1a6eeaa36fc09b127e1d0c560ef0c1427e2dfec26822c506379d7ba9ab9ad2b",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+    "manifest_sha256": "43d6b4fb2542b2675eeb702dc07ec993e8a8bc1d84ed53834147f78624260001",
+    "manifest_id": "7316ffadaf6c6beb838cc26bed50bbe346b4923eb902ca39bc50add86c0beac2"
+  },
+  "precommit_audit_verdict": "EXECUTION GO"
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "ouruniv-cf4-phasec-sampler-mechanics-acf-audit-v1",
+  "date": "2026-09-02",
+  "status": "AUTHORIZED_OFFLINE_EXISTING_DRAW_ACF_AUDIT",
+  "authorization": {
+    "basis": "The user approved proceeding from the Claude Opus 5 audit. This stage analyzes only the already completed mock sampler draw artifacts.",
+    "offline_existing_draws_only": true,
+    "new_GPU_calculation": false,
+    "actual_observational_field_inference": false,
+    "actual_2Mpp_count_read": false,
+    "actual_CF4_velocity_datum_used": false,
+    "validation_or_Phase_D": false
+  },
+  "lineage": {
+    "sampler_mechanics_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/cf4_phasec_sampler_mechanics_pilot_v1.json",
+      "sha256": "2adb8db5b93428974fad3174f2b457a61279826ae3235a5a3c2b7c9588b76586"
+    },
+    "sampler_mechanics_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_pilot.py",
+      "sha256": "4ce1acfde795e46a8cc9bd2af14887096fb462b0d2c8637ad5ebd11cf3466007"
+    },
+    "acf_audit_implementation": {
+      "path": "/home/kjhan/BACKUP/CF4/src/cf4_phasec_sampler_mechanics_acf_audit.py",
+      "sha256": "b9a727cd2bfe0af6be2dff8ca186fea327ed3d4b955a2b2063679634f6bdd322"
+    }
+  },
+  "task_keys": ["task_0", "task_1"],
+  "inputs": {
+    "task_0": {
+      "task_root": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v1/mechanics_00_mock_00_seed_2026083000_arm_A",
+      "result_sha256": "907e689af4495a43cafd6d7aabe62b4162851daf4a7758171b32c09f2d985edb",
+      "diagnostics_sha256": "a9383ad374f9e11bc1b854f62205fac3c3996952f416b5a2cba41e30df3f1265"
+    },
+    "task_1": {
+      "task_root": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v1/mechanics_01_mock_06_seed_2026083006_arm_D",
+      "result_sha256": "1f06e1d4448c12d02c1c13050d8c8484a2e5ddbabf3280a1593c84258fa56d4f",
+      "diagnostics_sha256": "4c81d3f30795fc9a20604be8b92c5ce68f21124af11918226cce861216228b63"
+    },
+    "aggregate": {
+      "path": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_v1_aggregate/aggregate.json",
+      "sha256": "adfdc60f7a0d27961bff65b5dbcb51244f59b3cd44b336b3975571eeb616a1ae"
+    }
+  },
+  "analysis": {
+    "maximum_lag": 64,
+    "projection": "stored convergence_projection_samples",
+    "white_probe_indices": [0, 1, 31, 32, 1024, 4096, 16384, 32767],
+    "harmonic_reference": "cos(step_size * integration_steps)",
+    "classification_lag1_tolerance": 0.05,
+    "classification_observed_ESS_gate": 100.0
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm CPU only",
+    "output": "/gpfs/kjhan/CF4/z0_density/phasec_sampler_mechanics_acf_audit_v1",
+    "expected_peak_host_memory_MiB": 256,
+    "requested_host_memory_MiB": 1024,
+    "time_limit": "00:10:00",
+    "manual_syntax_syn06_or_syn101_numerical_execution": false,
+    "monitoring_loop": false
+  },
+  "scope_firewall": {
+    "actual_2Mpp_or_CF4_datum_read": false,
+    "new_posterior_created": false,
+    "new_GPU_calculation": false,
+    "remaining_mock_indices_released": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

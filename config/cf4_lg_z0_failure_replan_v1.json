@@ -1,0 +1,48 @@
+{
+  "decision": "V3_ZOOM_ENGINEERING_PASS_SCIENCE_PROMOTION_NO_GO",
+  "stage": 8,
+  "evidence": {
+    "ramsey_z0": "config/cf4_lg_zoom_z0_production_decision_v1.json",
+    "hop_structure": "config/cf4_lg_zoom_z0_structure_gate_decision_v1.json",
+    "hop_gate_result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_z0_gate_v1/gate_result.json"
+  },
+  "what_passed": [
+    "v3 nested IC initialized and evolved to a=1.001",
+    "no initial-condition boundary warnings",
+    "no fine-Poisson nonconvergence warnings",
+    "no NaN or negative-state failures",
+    "clean MW-scale pair masses and zero halo contamination"
+  ],
+  "science_failures": [
+    "validated regroup-HOP pair has positive total radial velocity (+76.1 km/s), not the observed approaching MW-M31 sign",
+    "M33 is unresolved/undefined in the current gate",
+    "Virgo candidate profile is heavily contaminated",
+    "OPFoF cross-check is unavailable because its implementation requests excessive linked memory"
+  ],
+  "promotion": {
+    "v3_as_final_CF4_constrained_realization": false,
+    "v3_as_engineering_reference_snapshot": true,
+    "single_realization_highk_tuning": false,
+    "uniform_parent_HOP_as_LG_validation": false
+  },
+  "next_required_bundle": [
+    {
+      "task": "Repair the high-k/LG conditioning contract so pair approach velocity and an M33-capable protohalo proxy are explicit likelihood terms while low-k CF4 modes and LCDM power are preserved.",
+      "q_goal": "GO",
+      "q_lean": "KEEP",
+      "stop": "Do not generate new ICs until the conditioning observables and power-preservation checks are specified."
+    },
+    {
+      "task": "Generate a statistically valid small ensemble from the posterior/conditional-field bank, not a hand-tuned single seed; forward-evolve only the preregistered candidates.",
+      "q_goal": "GO",
+      "q_lean": "KEEP",
+      "stop": "Reject any candidate-selection rule that uses post-hoc halo success without the declared likelihood/weight correction."
+    },
+    {
+      "task": "Implement a memory-bounded independent halo cross-check or explicitly defer it; do not rerun the current OPFoF nx=16384/512 path unchanged.",
+      "q_goal": "CONDITIONAL",
+      "q_lean": "DEFER unless it can be made memory-safe without a new gate ladder."
+    }
+  ],
+  "final_status": "The current v3 run proves a technically viable zoom pipeline, but the original scientific objective is not yet achieved."
+}

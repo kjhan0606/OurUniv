@@ -1,0 +1,61 @@
+{
+  "schema": "ouruniv-cf4-z1-calibration-operator-repair-plan-v1",
+  "date": "2026-09-05",
+  "bundle": "Z1-CALIBRATION-ADJUDICATION-Q1-INTEGRATION",
+  "status": "CLOSED_NARROW_CONTRACTION_ONLY",
+  "closure_record": "config/cf4_z1_opus_closure_audit_v1.json",
+  "basis": "Opus conditional closure audit of Z0-DENSITY-LIKELIHOOD-REPAIR and user instruction to proceed.",
+  "pre_bundle_design_audit": {
+    "auditor": "fable",
+    "status": "RECEIVED_CONDITIONAL_GO",
+    "record": "config/cf4_z1_fable_pre_bundle_design_audit_v1.json",
+    "required_questions": [
+      "over-measurement versus scientific value",
+      "contribution to the CF4-to-z=0-posterior-to-q-corrected-IC-to-PMWD/HOP/RAMSES forward-validation objective",
+      "feasibility under current compute/data contracts",
+      "mandatory versus deferred work"
+    ],
+    "entry_rule": "Record advice, resolve mandatory changes and obtain user approval before entering the next bundle. RT/stellar/AGN/dust is not an assigned CF4 objective."
+  },
+  "objective": "Complete the minimal development-fixture Q1 response-basis JAX value/gradient bridge before any actual CF4 inference; retain the repaired mock calibration as a recorded diagnostic, not a second analysis campaign.",
+  "work_packages": [
+    {
+      "id": "Z1-A-CALIBRATION",
+      "method": "Keep the existing eight-task calibration adjudication as a diagnostic record; do not launch a second GPFS reanalysis in Z1.",
+      "execution": "record-only",
+      "deliverable": "existing calibration diagnostic record",
+      "promotion": false
+    },
+    {
+      "id": "Z1-B-Q1-INTEGRATION",
+      "method": "Reuse the sealed Q1 NumPy cell-integrated oracle and its boundary/non-boundary result record; implement a static source-response-basis JAX contraction counterpart and compare value/mass gradients against that oracle on development fixtures. The direct 7,077,888-source JAX route remains closed by Q2.0.",
+      "execution": "Slurm-only numerical execution; no actual CF4 datum",
+      "deliverable": "Q1 JAX-versus-NumPy response-basis result record",
+      "promotion": false
+    },
+    {
+      "id": "Z1-C-CONVERGENCE-PROVENANCE",
+      "method": "Defer broad k-shell/ROI and provenance expansion; retain existing aggregate/task hashes and failed-run directories.",
+      "execution": "deferred",
+      "deliverable": "none in Z1",
+      "promotion": false
+    }
+  ],
+  "entry_constraints": {
+    "actual_CF4_observational_inference": false,
+    "actual_2Mpp_counts": false,
+    "observed_CF4_velocity_datum": false,
+    "validation_seed": false,
+    "parent_posterior_promotion": false,
+    "high_k_frontier_claim": false,
+    "IC_PM_HOP_RAMSES": false,
+    "resolution_0p3_cMpc_h_claim": false,
+    "GPFS_specific_implementation": false
+  },
+  "baseline_bindings": {
+    "q1_plan": "config/cf4_q1_cell_integrated_convolution_plan_v1.json",
+    "q1_numpy_implementation": "src/cf4_q1_cell_integrated_convolution.py",
+    "q1_result_record": "config/cf4_q1_cell_integrated_convolution_result_record_v1.json"
+  },
+  "closure_rule": "After Z1 work packages finish, obtain one Opus bundle-closure audit; do not enter actual CF4 inference or B2/IC without a separate explicit promotion decision."
+}

@@ -1,0 +1,22 @@
+{
+  "status": "GENERATED_STATE_SUPPORT_DIAGNOSTIC_ONLY",
+  "job": 403323,
+  "job_state": "COMPLETED",
+  "elapsed_seconds": 6,
+  "source_commit": "1c7d504",
+  "catalog": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_z0_v1/job_1109268/FoF_Data/FoF.00003/GALCATALOG.LIST.00003",
+  "catalog_size_bytes": 28688912,
+  "log": "/gpfs/kjhan/CF4/logs/cf4_lg_roles_403323.out",
+  "frame": "de Vaucouleurs supergalactic Cartesian",
+  "observer_cMpc_h": [192.0, 192.0, 192.0],
+  "local_radius_cMpc_h": 5.0,
+  "support_rule": "Every FoF host within the existing fixed 5 cMpc/h observer aperture and every bound component of those hosts; no mass, sky, or truth-ID ranking.",
+  "all_hosts": 103220,
+  "all_bound_components": 152931,
+  "local_hosts": 521,
+  "local_bound_components": 579,
+  "ordered_role_hypotheses_including_unresolved": 193434636,
+  "enumeration": "NOT_RUN_UNTRUNCATED_SUPPORT_EXCEEDS_100000",
+  "interpretation": "The generated-state local support is too broad for explicit triple enumeration; this does not mean that the observed LG is absent or that any role is identified. A normalized physical role/selection model or exact/factorized likelihood sum is needed; selecting a best target-matching triple would bias the IC posterior.",
+  "limits": "The one trace-only seed already failed the frozen LG gate. This readout is not a likelihood, posterior weight, IC update, or promotion. No new simulation was run."
+}
