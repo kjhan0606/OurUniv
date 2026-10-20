@@ -143,6 +143,59 @@ class BudgetedObjective:
         return value, gradient.copy()
 
 
+class BudgetedScoreObjective:
+    """Budget scalar likelihood-primal evaluations under the same target.
+
+    This path is for gradient-free transition mechanics. It appends scalar
+    evaluations to the parent report while leaving the parent's gradient
+    cache untouched. The caller must not invoke the gradient objective after
+    beginning this scalar-only sequence.
+    """
+
+    def __init__(self, evaluate, parent):
+        self.evaluate = evaluate
+        self.parent = parent
+        self.last_x = None
+        self.last_score = None
+        self.last_record = None
+
+    def __call__(self, x):
+        x = np.asarray(x, dtype=np.float64)
+        if x.ndim != 1 or not np.isfinite(x).all():
+            raise ValueError('score-only target requires a finite canonical vector')
+        if self.last_x is not None and np.array_equal(x, self.last_x):
+            return float(self.last_score)
+        if len(self.parent.records) >= self.parent.max_evaluations:
+            raise EvaluationBudgetStop('exact-target evaluation ceiling reached')
+        if time.monotonic() >= self.parent.deadline:
+            raise EvaluationBudgetStop('application walltime ceiling reached')
+
+        value, score, detail = self.evaluate(x)
+        value, score = float(value), float(score)
+        finite_pair = np.isfinite(value) and np.isfinite(score)
+        true_zero_likelihood = value == np.inf and score == -np.inf
+        if (np.isnan(value) or np.isnan(score) or score == np.inf or value == -np.inf
+                or not (finite_pair or true_zero_likelihood)):
+            raise FloatingPointError('nonfinite scalar target or likelihood score')
+        json_detail = {}
+        for key, item in detail.items():
+            if isinstance(item, (float, np.floating)) and not np.isfinite(item):
+                json_detail[key] = 'Infinity' if item > 0 else '-Infinity'
+            else:
+                json_detail[key] = item
+        row = dict(evaluation=len(self.parent.records) + 1,
+                   objective='Infinity' if value == np.inf else value,
+                   gradient_evaluated=False, scalar_score_evaluator=True,
+                   **json_detail)
+        self.parent.records.append(row)
+        self.last_x = x.copy()
+        self.last_score = score
+        self.last_record = row
+        if self.parent.on_evaluation is not None:
+            self.parent.on_evaluation(x, row, None)
+        return score
+
+
 def _save_report(path, report, started):
     report['elapsed_seconds'] = time.monotonic() - started
     report['host_peak_GiB'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 ** 2
@@ -399,13 +452,34 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         source_jax = {k: jnp.asarray(v) for k, v in source.items()}
         obs_jax = {k: jnp.asarray(v) for k, v in observation.items()}
         start_field = None
+        field_cache_white = None
+        field_cache_state = None
+        field_cache_hits = 0
+        field_cache_misses = 0
+
+        def cached_field(white):
+            nonlocal field_cache_white, field_cache_state
+            nonlocal field_cache_hits, field_cache_misses
+            white = np.asarray(white, dtype=np.float64)
+            if (field_cache_white is not None
+                    and np.array_equal(white, field_cache_white)):
+                field_cache_hits += 1
+                return field_cache_state, True
+            state = field(jnp.asarray(white))
+            field_cache_white = white.copy()
+            field_cache_state = state
+            field_cache_misses += 1
+            return state, False
+
         def evaluate(q):
-            nonlocal start_field
+            nonlocal start_field, field_cache_white, field_cache_state
             white = jnp.asarray(q[:N_IC])
             tracer = jnp.asarray(q[N_IC:N_IC + 9])
             population = jnp.asarray(q[N_IC + 9:])
             (rho, velocity), pullback = jax.vjp(field, white)
-            if start_field is None:
+            field_cache_white = np.asarray(white, dtype=np.float64).copy()
+            field_cache_state = (rho, velocity)
+            if start_field is None and (sampling_driver is None or include_present_field_readout):
                 start_field = (np.asarray(rho).copy(), np.asarray(velocity).copy())
             packs, support_info = obs.support(rho, velocity, tracer, 2)
             (score, components), grads = obs.derivative(
@@ -416,6 +490,28 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             if sampling_driver is not None and include_present_field_readout:
                 detail['present_field_readout'] = present_field_readout(rho, velocity, box=BOX)
             return value, gradient, detail
+
+        def evaluate_score(q):
+            q = np.asarray(q, dtype=np.float64)
+            white = q[:N_IC]
+            tracer = jnp.asarray(q[N_IC:N_IC + 9])
+            population = jnp.asarray(q[N_IC + 9:])
+            (rho, velocity), cache_hit = cached_field(white)
+            packs, support_info = obs.support(rho, velocity, tracer, 2)
+            # Use the exact matched GL2 primal returned by the existing
+            # value-and-gradient target. ESS discards gradients and avoids
+            # the PMWD pullback; nuisance proposals reuse the evolved field.
+            (score, components), _unused_grads = obs.derivative(
+                rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
+            value, detail = conditional_target_terms(
+                q, score, components, support_info)
+            detail.update(
+                gradient_evaluated=False,
+                pmwd_field_cache_hit=cache_hit,
+                pmwd_field_cache_hits=field_cache_hits,
+                pmwd_field_cache_misses=field_cache_misses,
+            )
+            return value, float(score), detail
 
         def persist_report(_x, row, best):
             report['evaluations'] = objective.records.copy()
@@ -433,6 +529,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         objective = BudgetedObjective(
             evaluate, max_evaluations=max_evaluations,
             deadline=started + app_seconds, on_evaluation=persist_report)
+        objective.score_only = BudgetedScoreObjective(evaluate_score, objective)
         solver = None
         budget_stop = None
         optimizer_objective = objective

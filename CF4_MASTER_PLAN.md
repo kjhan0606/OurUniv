@@ -130,6 +130,38 @@ Resume only an R2 path justified by the extant conditional estimand and
 full-target correction evidence; the selection/group denominator remains
 unresolved and broad parent-table search is closed.
 
+R2 recovery update2026-10-21: Astra reviewed a materially different exact
+blockwise elliptical-slice proposal as CONDITIONAL, not unconditional launch
+approval. The driver adopts one capped feasibility sweep because the target
+has standard-normal IC plus24 nuisance coordinates and the transition can use
+the complete count+mark likelihood without a gradient or local Hessian. This
+does not assume CIC caused the failed curvature screen. A fixed radial
+`|k|<=64` IC block, its orthogonal complement and the24 nuisance coordinates
+are updated sequentially; each slice threshold uses the unchanged full
+conditional-v6 likelihood. The boundary is an engineering partition, not an
+information cutoff: continuous FP marks/nonlinear evolution may couple to
+higher modes. The pilot uses the current matched GL2 value-gradient primal's
+direct likelihood terms, avoiding the known0.005473-nat discrepancy from a
+separately compiled value-only evaluation. ESS proposal evaluations discard
+observation-side gradients, skip the PMWD pullback and reuse the exactly
+matched evolved field for nuisance-only proposals; tracer-dependent support
+is rebuilt each time. The saved anchor replay still checks the complete value
+and gradient. Code/math regressions are in
+`src/cf4_r2_block_elliptical_slice.py` and
+`tests/test_cf4_r2_block_elliptical_slice.py`. One three-block sweep is capped
+at8 proposal evaluations/block (24 total plus one anchor replay),3h
+application/3.5h Slurm,48GiB host request and38.4GiB RSS guard, fresh
+16,384-cell support. Record per-block bracket, angle, displacement, runtime,
+the existing low-band readout and peak RSS; no field output or promotion.
+This is only transition feasibility; no automatic second sweep or parameter
+ladder. Q-GOAL: it moves
+toward the first conditional z=0 posterior only. MW/M31 stay role-ambiguous
+and M33 unresolved until their observables constrain those same roles on the
+same NEW evolved LG field at`<=0.3 cMpc/h`; native truth IDs are evaluation/
+calibration only. Q-LEAN: no new data, source census, heldout read, gravity
+run or R3 entry. R2 remains NO-GO. Full contract and limits:
+`CF4_R2_BLOCK_ELLIPTICAL_SLICE_PILOT_20261021.md`.
+
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
 Conditional gradient check. Job 414921 reduced the tracer-0 derivative from
