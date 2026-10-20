@@ -311,3 +311,14 @@ Next design advice requested from the existing Astra reviewer compares a
 target-preserving, justified slow-block/metric intervention or oracle-cost
 repair against explicitly costed burn-in. No new allocation, metric change,
 monitoring loop or posterior promotion follows from this analytical check.
+
+Existing per-evaluation support timing provides a bounded cost attribution:
+185 packing records total14861.91s, mean80.33s (range76.70--88.39s), about
+21.6% of19:09:01 elapsed. Even eliminating all of that measured packing
+time would provide only about1.28x end-to-end speedup under otherwise
+unchanged costs. This is an idealized upper bound for this component, not
+a promised implementation speedup. The uninstrumented remainder cannot be
+assigned wholly to PMWD or likelihood derivatives from these records alone.
+Do not pursue packing optimization as a substitute for the observed
+mode-exploration problem without evidence of actual useful improvement.
+The timing evidence was sent to Astra for the pending next-action advice.
