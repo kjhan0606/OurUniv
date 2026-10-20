@@ -93,6 +93,17 @@ author was contacted, consistent with the no-email instruction, and the large
 mock archive was not downloaded again. Sources: [Zenodo v1.1.0 manifest](https://zenodo.org/records/6824749),
 [Howlett et al. data-availability statement](https://academic.oup.com/mnras/article/515/1/953/6611706).
 
+A direct read of the primary Howlett et al. paper further confirms why the
+public release cannot close this denominator: §2.5 says the composite DR8–DR14
+sample had no publicly available angular mask that tracked its imaging,
+targeting, tiling and veto history; §3.2 says the mock construction does not
+account for redshift-success rate. The paper's SDSS-PV selection model and
+mock suite remain useful for the published FP/counting regimes, but they are
+not an attempt-complete source-specific parent for the CF4-linked marks. This
+is a bounded literature check, not a new data or mock analysis; it supports
+closing the public-parent search and retaining the explicitly conditional
+estimand. Source: [Howlett et al. (2022), §§2.5, 3.2 and Data Availability](https://academic.oup.com/mnras/article/515/1/953/6611706).
+
 The bounded run-4 result identifies only a post-target-selection historical
 tiling frame: run-entry flags and some later spectrum-record stages for one
 deterministically selected SDSS-I/II run. It is not representative of the 75
