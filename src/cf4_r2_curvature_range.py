@@ -83,6 +83,26 @@ def relative_action_change(reference, comparison):
     return float(np.linalg.norm(reference - comparison) / denominator)
 
 
+def support_summary_difference(plus, minus):
+    """Compare stable support-size summaries, not volatile timing metadata.
+
+    This does not identify exact cell membership; it only reports differences
+    in the summary quantities emitted by the active support builder.
+    """
+    fields = {
+        "component_count_delta": "components",
+        "largest_candidate_cells_delta": "largest_candidate_cells",
+        "radius_delta_cMpc_h": "radius",
+    }
+    if any(key not in summary or not np.isfinite(summary[key])
+           for summary in (plus, minus) for key in fields.values()):
+        raise ValueError("support summaries must contain finite comparison fields")
+    return {
+        output: float(plus[source] - minus[source])
+        for output, source in fields.items()
+    }
+
+
 def response_range(responses, *, relative_rank_tolerance=1e-10):
     """Build a re-orthogonalized range and singular values from few responses."""
     responses = tuple(np.asarray(row, dtype=np.float64) for row in responses)

@@ -2,12 +2,11 @@
 
 ## Decision and scope
 
-Status: bounded diagnostic design and implementation adopted after driver
-verification and an Astra CONDITIONAL GO; targeted tests pass. The single
-Slurm calculation has not yet been submitted. This is a matrix-free local
-falsification at one saved state, **not** an N256
+Status: Slurm job 431243 completed with exit 0. Its predeclared result is
+**INCONCLUSIVE_NUMERICAL_OR_STEP_INSTABILITY_STOP**. This remains a
+matrix-free local diagnostic at one saved state, **not** an N256
 likelihood-informed-subspace (LIS) sampler, posterior, field delivery, or
-authorization for an automatic follow-up.
+authorization for a smaller-step rerun.
 
 The active estimand is unchanged: the conditional v6 training target
 (47,121 count rows and 1,414 linked selected marks) on the 384 cMpc/h box at
@@ -15,6 +14,65 @@ nominal 1.5 cMpc/h field sampling. Mark-presence ignorability, full-survey
 selection/inclusion, held-out prediction, shared covariance and calibrated
 uncertainty remain unresolved. Do not describe this as a full-survey
 calibrated CF4 posterior.
+
+## Completed run and scientific interpretation
+
+Job 431243 ran on `h200` / `gpu:H200:1` (`syn104`) for 1:48:16 and exited
+0. Slurm reports batch `MaxRSS=12,879,444K`; the application report records
+12.78 GiB peak RSS, both below the 48 GiB request. The checkpoint replay
+passed and all 17 exact-target gradients completed. The immutable result is
+`/gpfs/kjhan/CF4/z0_density/r2_curvature_range_screen_20261021_v1/result.json`.
+It confirms `heldout_count_values_loaded=0`,
+`heldout_FP_marks_loaded=0`, `posterior_sample=false`,
+`posterior_uncertainty=false`, and `R2_complete=false`.
+
+The two predeclared h-versus-h/2 checks changed the IC/joint actions by
+28.40%/28.30% and 27.93%/27.86%, respectively, failing the 5% stability gate.
+All eight actions exceeded the predeclared ten-times replay-noise gate by at
+least 3.39 billion-fold (the smallest action-to-proxy ratio is about
+3.39e10). This rules out domination by that particular replay discrepancy,
+not deterministic discretization error or finite-step bias.
+The finite-step validation responses put 87.25% and 91.96% of their squared
+energy outside the four-vector sketch. Because the stability gate failed
+first, these fractions do **not** falsify rank-4 local curvature. The report
+correctly returns an inconclusive verdict; neither a posterior nor a usable
+proposal basis was obtained.
+
+Post-run source audit found that the saved `support_changed` booleans are not
+support-identity tests: at the run commit the code compared serialized
+summaries containing `packing_seconds` and the continuously varying search
+radius. Across paired evaluations, the summary component counts differed by
+only 3–138 out of about 28.44 million; largest-candidate counts differed by
+at most one. These summaries do not expose exact source-cell identities or
+explain the action instability. The active forward readout is CIC, so
+particle-grid knot crossings are a plausible regularity concern, but this
+run did not measure crossings and does not establish their causal role.
+Accordingly, no smaller-h repeat is currently discriminating: it could
+reflect different knot crossings rather than convergence to a local Hessian.
+
+A post-run reporting correction replaces the ambiguous boolean in future
+runs with stable support-summary deltas (component count, largest candidate
+count, and radius), explicitly not exact cell membership. The completed
+result JSON is preserved unchanged. Eight curvature-range tests pass after
+the correction.
+
+Astra's read-only review agrees with the inconclusive classification and
+recommends suspending the local-Hessian/LIS branch: no smaller-h repeat, rank
+increase, or N256 LIS sampler. A smaller-step convergence check becomes
+eligible only after an independent targeted check establishes local
+smoothness of the unchanged-target stencils, or bounds knot-crossing/support
+effects below the existing 5% action tolerance. The driver independently
+checked the result fields, gate ordering, support-summary implementation,
+and CIC readout; it adopts this advice. This is not an R2 exit audit.
+
+**Driver disposition:** close this one screen as inconclusive and return to
+the unresolved R2 observation-law/posterior requirements. No new sampler,
+target change, heldout read, PM/RAMSES run, or R3 transition follows from this
+result. The current source reconciliation still bars a broad parent-table
+search; a full-survey calibrated posterior requires source-matched
+eligibility/attempt/failure/FP-quality/linkage data and defensible
+group/covariance calibration. Any conditional v6 field remains explicitly
+conditional and is not yet a posterior delivery.
 
 ## Existing evidence and driver check
 
@@ -104,7 +162,8 @@ requested memory. No login-node target evaluation or manual GPU execution.
 Submission procedure: inspect H200 first and, if idle, use `h200` with
 `--gres=gpu:H200:1`; otherwise inspect the permitted H100 and A100 modes and
 submit one compatible typed-GRES job. Record the selected partition and GRES
-in the Slurm environment and result JSON. The job has not yet been submitted.
+in the Slurm environment and result JSON. Job 431243 used the idle H200 and
+records `gpu:H200:1` in Slurm accounting and its result JSON.
 
 ## Audit and goal alignment
 

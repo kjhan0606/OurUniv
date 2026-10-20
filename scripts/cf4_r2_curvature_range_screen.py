@@ -4,6 +4,7 @@ This is not a posterior draw, LIS sampler, global rank estimate, or field
 delivery. Every oracle call uses the unchanged conditional-v6 GL2 target.
 """
 
+import json
 import os
 import resource
 import time
@@ -22,6 +23,7 @@ from cf4_r2_curvature_range import (  # noqa: E402
     outside_range_energy_fraction,
     relative_action_change,
     response_range,
+    support_summary_difference,
 )
 from cf4_r2_conditional_map import (  # noqa: E402
     EvaluationBudgetStop,
@@ -68,8 +70,10 @@ def _record_action(objective, q0, direction, step, *, name, role, n_ic):
         likelihood_Hessian_action_IC_norm=float(np.linalg.norm(action[:n_ic])),
         likelihood_Hessian_action_nuisance_cross_norm=float(np.linalg.norm(action[n_ic:])),
         nuisance_cross_response=action[n_ic:].tolist(),
-        support_changed=(objective.records[plus_eval - 1].get("support")
-                         != objective.records[minus_eval - 1].get("support")),
+        support_summary_difference=support_summary_difference(
+            json.loads(objective.records[plus_eval - 1]["support"]),
+            json.loads(objective.records[minus_eval - 1]["support"]),
+        ),
     )
     return action, row
 

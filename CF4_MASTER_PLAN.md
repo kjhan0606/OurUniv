@@ -110,7 +110,21 @@ M33 unresolved; their observables must constrain those same roles on the same
 NEW evolved LG field at<=0.3 cMpc/h, with truth identities reserved for
 calibration/evaluation. Details:
 `CF4_R2_CURVATURE_RANGE_SCREEN_20261021.md`. R2 remains NO-GO and R3 has not
-started. The single Slurm screen is prepared but not yet submitted.
+started. Slurm job431243 completed on `h200` / `gpu:H200:1` (exit0,
+17 exact gradients, 1:48:16, application peak12.78GiB). The local screen is
+`INCONCLUSIVE_NUMERICAL_OR_STEP_INSTABILITY_STOP`: h-to-h/2 action changes
+are27.9–28.4%, above the predeclared5% gate. The independent finite-step
+responses lie87.25%/91.96% outside the rank-4 sketch, but that cannot falsify
+local rank4 because stability failed first. No posterior, UQ or heldout value
+was accessed. Astra's read-only review agrees: suspend the local-Hessian/LIS
+branch; do not run a smaller-h repeat absent independent evidence that CIC
+knot/support effects are below the5% action tolerance. The driver verified
+the gate order, exact result fields, and that the old `support_changed` flag
+compared serialized metadata including timing/radius rather than cell
+identity; future runs now report only support-summary deltas, with the old
+result preserved unchanged. Resume only an R2 path justified by the extant
+conditional estimand and full-target correction evidence; the selection /
+group denominator remains unresolved and broad parent-table search is closed.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 

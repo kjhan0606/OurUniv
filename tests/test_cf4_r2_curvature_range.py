@@ -14,6 +14,7 @@ from cf4_r2_curvature_range import (
     outside_range_energy_fraction,
     relative_action_change,
     response_range,
+    support_summary_difference,
 )
 
 
@@ -77,6 +78,23 @@ class CurvatureRangeTests(unittest.TestCase):
         first = np.array([1., 2., -3.])
         self.assertAlmostEqual(relative_action_change(first, 3. * first), 2. / 3.)
         self.assertEqual(relative_action_change(first, first), 0.0)
+
+    def test_support_summary_difference_ignores_volatile_timing(self):
+        plus = dict(components=101, largest_candidate_cells=10, radius=42.1,
+                    packing_seconds=20.0)
+        minus = dict(components=100, largest_candidate_cells=9, radius=42.0,
+                     packing_seconds=1.0)
+        difference = support_summary_difference(plus, minus)
+        self.assertEqual(difference["component_count_delta"], 1.0)
+        self.assertEqual(difference["largest_candidate_cells_delta"], 1.0)
+        self.assertAlmostEqual(difference["radius_delta_cMpc_h"], 0.1)
+
+    def test_support_summary_difference_rejects_incomplete_metadata(self):
+        with self.assertRaises(ValueError):
+            support_summary_difference(
+                dict(components=10, largest_candidate_cells=4),
+                dict(components=10, largest_candidate_cells=4),
+            )
 
     def test_invalid_shapes_and_step_are_rejected(self):
         with self.assertRaises(ValueError):
