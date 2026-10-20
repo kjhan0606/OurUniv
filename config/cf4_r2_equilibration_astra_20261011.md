@@ -256,3 +256,37 @@ likelihood analysis remains pending before deciding another allocation.
 Status remains CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR:
 R2 incomplete,all states discarded,no heldout prediction or UQ delivered.
 No follow-on calculation submitted; automatic monitoring remains stopped.
+
+## Driver first/second-half assessment of421553
+
+Existing JSON trace only; rejection repeats included, no new field evolution
+or heldout access. Indices40--49 versus50--59 (10 states each):
+
+| Summary | First half | Second half |
+| --- | ---: | ---: |
+| Accepted proposals | 7/10 | 9/10 |
+| Mean density second moment | 12.402800 | 12.823131 |
+| Mean IC band power k4--8 | .513047 | .536147 |
+| Mean count log likelihood | -136850.121 | -136689.722 |
+| Mean conditional FP log likelihood | 5979.353 | 5980.788 |
+| Mean R50 density | 1.481909 | 1.482917 |
+| Mean R100 density | 1.575212 | 1.577560 |
+
+Among19 adjacent stored density-second-moment differences,12 increased,
+3 decreased and4 repeated due to rejection. Both halves still move upward:
+40->49 is12.12973->12.52501;50->59 is12.54286->12.97806.
+The second-half endpoint decrease from its maximum13.01048 shows some
+bidirectional movement but does not erase the comparable half-wide drift.
+Large-radius mean densities are relatively stable; they average away the
+smaller-scale structural changes and cannot establish field stationarity.
+All24 nuisance coordinates were inspected; half means shift in several
+coordinates (e.g.5: -.01879->.00546,16:.02335->.01356,
+20:-1.50108->-1.49189). No posterior width or significance is inferred
+from these short dependent nonstationary traces.
+
+Driver decision: NO-GO for production draws, intervals or independent-chain
+promotion on present evidence. Do not automatically double the allocation.
+The next design must explain the persistent k4--8/structural equilibration
+and cost before choosing further burn-in versus a targeted transport/cost
+change; regional stability alone is insufficient. No new calculation or
+automatic monitoring was started for this analysis. R2 remains incomplete.
