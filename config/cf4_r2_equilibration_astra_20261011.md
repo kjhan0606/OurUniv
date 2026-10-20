@@ -239,3 +239,20 @@ all11 field/transport tests passed, including spatial mass weighting and
 actual continuous/resumed equality. User explicitly requested submission.
 Freeze HEAD after submission; record the job in the conversation until it
 has passed the startup HEAD guard. Automatic monitoring remains stopped.
+
+## Submitted block421553: verified terminal record
+
+Submitted h200/gpu:H200:1 after syn104 showed8 configured/7 allocated GPUs;
+48GiB host,24h Slurm,23h application,193 evaluations,end index60.
+Source5016282433a375ac9dd89660a10b1ae53d25a370; output
+/gpfs/kjhan/CF4/z0_density/r2_hmc_equil24h_20261013.
+Slurm COMPLETED,exit0:0,elapsed19:09:01,batch MaxRSS19694680KiB
+(18.78GiB). Checkpoint replay passed;185 evaluations completed.
+All20 new transitions40--59 completed:16 accepted,4 rejected.
+Terminal density mean square12.97806165699 versus11.97077577217 at
+the previous retained state. This endpoint difference alone neither proves
+nor quantifies stationarity. First/second-half regional,band,nuisance and
+likelihood analysis remains pending before deciding another allocation.
+Status remains CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR:
+R2 incomplete,all states discarded,no heldout prediction or UQ delivered.
+No follow-on calculation submitted; automatic monitoring remains stopped.
