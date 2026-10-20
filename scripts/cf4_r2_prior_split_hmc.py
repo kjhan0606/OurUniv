@@ -60,6 +60,28 @@ def inverse_laplacian_metric_symbol(n,fundamental_mass=6000.):
     return 1./mass
 
 
+def band_scaled_inverse_mass(symbol, *, factor=4., lower=4., upper=8.):
+    """Fixed diagnostic change on lower<|integer k|<=upper only.
+
+    Changes the proposal metric, never the target or Gaussian prior.
+    Not an estimate of posterior curvature or an adaptive production metric.
+    """
+    c = np.asarray(symbol, dtype=float)
+    if (c.ndim != 3 or len(set(c.shape)) != 1 or c.shape[0] < 2
+            or not np.isfinite(c).all() or np.any(c <= 0)
+            or not np.isfinite([factor, lower, upper]).all()
+            or factor <= 0 or lower < 0 or upper <= lower):
+        raise ValueError('positive cubic symbol, factor and ordered band required')
+    modes = np.fft.fftfreq(c.shape[0])*c.shape[0]
+    k2 = modes[:,None,None]**2+modes[None,:,None]**2+modes[None,None,:]**2
+    mask = (k2 > lower**2) & (k2 <= upper**2)
+    result = c.copy()
+    result[mask] *= factor
+    if not np.isfinite(result).all() or np.any(result <= 0):
+        raise ValueError('scaled metric must remain positive and finite')
+    return result
+
+
 class FixedSplitMetric:
     def __init__(self, ic_inverse_mass, nuisance_inverse_mass):
         c=np.asarray(ic_inverse_mass,dtype=float)

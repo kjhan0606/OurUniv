@@ -322,3 +322,30 @@ assigned wholly to PMWD or likelihood derivatives from these records alone.
 Do not pursue packing optimization as a substitute for the observed
 mode-exploration problem without evidence of actual useful improvement.
 The timing evidence was sent to Astra for the pending next-action advice.
+
+## Adopted paired band-metric design
+
+Astra CONDITIONAL GO for one common-state control, not another24h repeat.
+Driver adopts its bounded design: terminal421553/state59; armA unchangedC,
+armB4*C only on16<integer_k_squared<=64 (existing4<k<=8band).
+Fundamental/otherIC/nuisance metric,fulltarget,epsilon remain unchanged.
+Four predeclared matched Gaussian-momentum/uniform pairs, each arm starts
+at the SAME state59; L8 botharms. Clone diagnostic RNG, preserve original
+checkpoint/RNG, never choose or continue a preferred endpoint.
+65exactcalls including shared replay,7.5happ/8hSlurm,48GiB; reserve a full
+pair before starting it. Failed arms must not be silently omitted.
+
+Report proposed and rejection-inclusive retained band displacement perforce,
+plus acceptance-probability-weighted proposed displacement perforce.
+Engineering spending rule (not statistical validation): B may be considered
+for another bounded discarded run only if pooled weighted movement>=2*A
+and improves in>=3/4pairs without numerical/capacity failure. Mixed results
+are inconclusive; poor gain rejects this factor4proposal, not launches a
+factor ladder. No posterior/UQ/exit claim follows even from clear gain.
+
+Implemented only the fixed band-symbol transformation so far; it is not
+called by existing transport and changes no existing run. Grammar1200173
+completed exit0:0,10 band/transport tests passed, including exact band edges,
+unchanged out-of-band/input and real-field symmetry. Paired diagnostic
+driver/common-random/rejection-output wiring remains to implement before
+any GPU submission. Q-GOAL/Q-LEAN and MW/M31/M33 limitations above apply.
