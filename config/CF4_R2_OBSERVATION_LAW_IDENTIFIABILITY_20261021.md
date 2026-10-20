@@ -82,6 +82,17 @@ query template, exact cohort binding, per-batch response hashes, and
 aggregate counts are in
 [`cf4_r2_dr14_tiling_cohort_probe_20261021.md`](cf4_r2_dr14_tiling_cohort_probe_20261021.md).
 
+On 2026-10-21 the current public SDSS-PV archive was checked at Zenodo v1.1.0.
+Its file manifest contains the selected PV catalogue, random catalogue, mock
+description, and the previously audited mock ensemble; it does not publish
+the Table-1 supersets or a row-level preselection/failed-target parent. The
+Howlett et al. paper states that the exact queries for the catalogue and its
+supersets are available upon reasonable request. This establishes a possible
+author-supplied route, not a currently accessible calibration input. No
+author was contacted, consistent with the no-email instruction, and the large
+mock archive was not downloaded again. Sources: [Zenodo v1.1.0 manifest](https://zenodo.org/records/6824749),
+[Howlett et al. data-availability statement](https://academic.oup.com/mnras/article/515/1/953/6611706).
+
 The bounded run-4 result identifies only a post-target-selection historical
 tiling frame: run-entry flags and some later spectrum-record stages for one
 deterministically selected SDSS-I/II run. It is not representative of the 75

@@ -64,6 +64,11 @@ constrain those same roles on the same NEW evolved LG field, with truth IDs
 used only for calibration/evaluation. Execution record:
 `config/cf4_r2_equilibration_astra_20261011.md`; source/identifiability and
 bounded DR14 evidence: `config/CF4_R2_OBSERVATION_LAW_IDENTIFIABILITY_20261021.md`.
+The current Zenodo v1.1.0 manifest was checked afterward: it exposes the
+selected PV catalogue, randoms and mocks, but not the row-level selection
+supersets; the paper says exact superset queries are available on request.
+No author contact or repeat mock download was made. The observation-law
+denominator remains the active external-data blocker.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
