@@ -157,7 +157,8 @@ def _resource_snapshot_count(name):
 def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
          maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
-         support_chunk_cells=None, recorded_trial=None, sampling_driver=None):
+         support_chunk_cells=None, recorded_trial=None, sampling_driver=None,
+         include_present_field_readout=True, save_best_parameters=True):
     if recorded_trial is not None and (start_checkpoint is not None or max_evaluations != 1):
         raise ValueError('recorded trial is a one-evaluation diagnostic, not an optimizer restart')
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
@@ -412,7 +413,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             ic_gradient, = pullback((grads[0], grads[1]))
             value, gradient, detail = assemble_conditional_objective(
                 q, score, components, ic_gradient, grads[2], grads[3], support_info)
-            if sampling_driver is not None:
+            if sampling_driver is not None and include_present_field_readout:
                 detail['present_field_readout'] = present_field_readout(rho, velocity, box=BOX)
             return value, gradient, detail
 
@@ -422,7 +423,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             if best is not None:
                 report['best_evaluation'] = best['detail']['evaluation']
                 report['best_objective'] = best['objective']
-                if row['new_best']:
+                if row['new_best'] and save_best_parameters:
                     np.savez(out / 'best_parameters.npz', white_ic=best['x'][:N_IC],
                              tracer_white=best['x'][N_IC:N_IC + 9],
                              population_white=best['x'][N_IC + 9:],

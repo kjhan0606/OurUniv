@@ -84,6 +84,34 @@ supersets; the paper says exact superset queries are available on request.
 No author contact or repeat mock download was made. The observation-law
 denominator remains the active external-data blocker.
 
+R2 update2026-10-21: the driver compared the saved exact-GL2 full gradients
+at terminal states38,40,60 after verifying identical target fingerprints and
+that source-commit differences changed only restart allowlists/optional field
+readout. IC total-gradient cosines are0.3477,0.00530,0.0115; after
+subtracting q, IC likelihood-NLL-gradient cosines are-0.1413,0.000728,0.1551.
+The corresponding total/likelihood 24-nuisance cosines are-0.7159/-0.7157,
+0.8090/0.8089,-0.4094/-0.4090. These dependent, explicitly discarded
+transport states show state-dependent scores, not local curvature, posterior
+rank or stationarity. The older low-k A/B comparison had similar selected
+coefficients but not identical complete q. Astra's mid-course
+advice is CONDITIONAL GO for one single-anchor local curvature-range
+falsification, and NO-GO for a new N256 LIS sampler. The driver adopts only
+that bounded screen: anchor state60, standard-normal prior coordinates,
+four IC sketch plus two independent validation directions, h=0.1 with two
+half-step repeats, 17 exact GL2 gradients maximum, fresh 16,384-cell support
+blocks, application3h/Slurm3.5h, and a no-promotion interpretation. The
+exact-target prior Hessian is subtracted as identity; HMC mass scaling is not
+used. The driver implemented the matrix-free screen by reusing the exact
+target/replay hook, with only optional field-readout and best-candidate file
+output disabled. Six pure-math tests, existing map-budget/linked-radius/
+count-exposure tests, Python compilation, shell syntax and whitespace checks
+pass. No local target evaluation was run. MW/M31 remain role-ambiguous and
+M33 unresolved; their observables must constrain those same roles on the same
+NEW evolved LG field at<=0.3 cMpc/h, with truth identities reserved for
+calibration/evaluation. Details:
+`CF4_R2_CURVATURE_RANGE_SCREEN_20261021.md`. R2 remains NO-GO and R3 has not
+started. The single Slurm screen is prepared but not yet submitted.
+
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
 Conditional gradient check. Job 414921 reduced the tracer-0 derivative from
