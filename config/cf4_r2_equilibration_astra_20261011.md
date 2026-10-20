@@ -360,3 +360,14 @@ preservation, rejection movement zero with nonzero proposed/weighted movement,
 band boundaries and existing transport resume tests. These are mechanics
 fixtures, not actual CF4 control results. Full Slurm entrypoint/budget and
 checkpoint replay wiring are still pending; no GPU control submitted yet.
+
+Full paired driver/budget and terminal421553 lineage replay are now wired.
+All arms start state59, fixed diagnostic seed2026102001, original chain RNG
+untouched. Each completed arm is saved before attempting the next; a failed
+arm propagates failure and cannot be silently dropped. Reserve16 calls and
+8120s before each pair. Four pairs maximum,65 total calls including replay,
+27000s application/8h Slurm,48GiB. No endpoint chain checkpoint is written.
+Complete-pair and insufficient-budget fixtures plus band/common-random/
+rejection/transport regressions passed13 tests in grammar1200177,exit0:0.
+The runner permits the explicit new entrypoint; shell syntax and diff checks
+passed. Preparing one advised bounded submission, no automatic monitoring.

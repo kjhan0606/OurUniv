@@ -1,13 +1,36 @@
 import unittest
+import time
 from unittest.mock import patch
 import numpy as np
 from cf4_r2_prior_split_hmc import (
     band_scaled_inverse_mass, inverse_laplacian_metric_symbol, FixedSplitMetric,
 )
 from cf4_r2_band_control import paired_control
+from cf4_r2_band_control import run
 
 
 class BandMetricTests(unittest.TestCase):
+    def test_driver_complete_pairs_and_budget_stop(self):
+        class Oracle:
+            def __init__(self, cap):
+                self.records=[]
+                self.max_evaluations=cap
+                self.deadline=time.monotonic()+100000
+            def __call__(self,q):
+                self.records.append({'present_field_readout':{'fixture':1}})
+                return float(q@q/2),q.copy()
+        for cap, expected in ((65,4),(1,0)):
+            report={}
+            oracle=Oracle(cap)
+            q=np.zeros(12**3+24)
+            with patch('cf4_r2_conditional_map.N',12):
+                run(oracle,q,None,report,lambda:None)
+            self.assertEqual(report['complete_pairs'],expected)
+            self.assertEqual(len(oracle.records),1+16*expected)
+            self.assertFalse(report['selected_endpoint'])
+            self.assertFalse(report['original_chain_rng_consumed'])
+            np.testing.assert_array_equal(q,0.)
+
     def test_rejected_proposal_readout_is_not_retained_movement(self):
         metric = FixedSplitMetric(np.ones((12,)*3), np.eye(2))
         q = np.zeros(12**3+2)
