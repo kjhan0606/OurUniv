@@ -349,3 +349,14 @@ completed exit0:0,10 band/transport tests passed, including exact band edges,
 unchanged out-of-band/input and real-field symmetry. Paired diagnostic
 driver/common-random/rejection-output wiring remains to implement before
 any GPU submission. Q-GOAL/Q-LEAN and MW/M31/M33 limitations above apply.
+
+Paired computational core now implemented in scripts/cf4_r2_band_control.py:
+same-state A/B and diagnostic RNG clones, proposed/retained/acceptance-weighted
+band displacement perforce. split_hmc_step accepts an optional readout callback
+without changing its momentum, dynamics or acceptance draw. It never returns
+a selected endpoint from the comparison. Grammar1200175 completed exit0:0,
+12 tests passed: identical-arm common-random equality, original coordinate
+preservation, rejection movement zero with nonzero proposed/weighted movement,
+band boundaries and existing transport resume tests. These are mechanics
+fixtures, not actual CF4 control results. Full Slurm entrypoint/budget and
+checkpoint replay wiring are still pending; no GPU control submitted yet.

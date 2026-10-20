@@ -173,7 +173,8 @@ def split_trajectory(oracle,metric,q,p,step,steps,initial_evaluation=None):
     return q,p,value,gradient
 
 
-def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_value=None):
+def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_value=None,
+                   proposal_readout=None):
     """One fixed-metric MH-corrected proposal, including rejected states."""
     p=metric.momentum(rng)
     start=float(value)+metric.kinetic(p)
@@ -197,11 +198,14 @@ def split_hmc_step(oracle,metric,q,value,gradient,rng,*,step,steps,endpoint_valu
     if np.isfinite(new_value) and not np.isfinite(delta):
         raise FloatingPointError('nonfinite Hamiltonian error at finite target')
     log_accept=min(0.,-delta)
+    diagnostics = ({} if proposal_readout is None
+                   else dict(proposal_readout(proposed, q)))
     accepted=bool(np.log(rng.uniform())<log_accept)
     if accepted:
         q,value,gradient=proposed,new_value,new_gradient
     return q,value,gradient,dict(accepted=accepted,log_acceptance=log_accept,
-                                energy_error=delta,force_evaluations=calls)
+                                energy_error=delta,force_evaluations=calls,
+                                proposal_readout=diagnostics)
 
 
 class PilotBudgetStop(RuntimeError):
