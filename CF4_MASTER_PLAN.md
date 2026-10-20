@@ -122,9 +122,13 @@ knot/support effects are below the5% action tolerance. The driver verified
 the gate order, exact result fields, and that the old `support_changed` flag
 compared serialized metadata including timing/radius rather than cell
 identity; future runs now report only support-summary deltas, with the old
-result preserved unchanged. Resume only an R2 path justified by the extant
-conditional estimand and full-target correction evidence; the selection /
-group denominator remains unresolved and broad parent-table search is closed.
+result preserved unchanged. A source check of the installed `circle`
+environment (PMWD0.1.dev131+g0552bc013) confirms this target's CIC particle
+readout uses floor-selected indices, `1-|d|` weights and sign gradients; grid
+knot crossings are a concrete possible cause, not a measured explanation.
+Resume only an R2 path justified by the extant conditional estimand and
+full-target correction evidence; the selection/group denominator remains
+unresolved and broad parent-table search is closed.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 

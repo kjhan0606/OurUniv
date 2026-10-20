@@ -50,6 +50,20 @@ run did not measure crossings and does not establish their causal role.
 Accordingly, no smaller-h repeat is currently discriminating: it could
 reflect different knot crossings rather than convergence to a local Hessian.
 
+The driver independently verified the mechanism-level concern in the
+installed forward path. In the `circle` environment, PMWD is
+`0.1.dev131+g0552bc013`. Our R2 field maps `evolve(white)` through
+`particle_grid` (`scripts/cf4_r2_conditional_map.py:386–397`); that routine
+uses PMWD `scatter` for mass, momentum and second moment
+(`src/cf4_r1_particle_forward.py:77–98`). PMWD's multilinear scatter uses
+`floor` to select mesh indices and weights `1-|d2|`; its custom VJP uses a
+`sign` derivative (`pmwd/pm_util.py:128–149` in the installed environment).
+Thus the unchanged target has a piecewise-defined particle-to-mesh derivative
+at grid knots. This makes knot crossings a concrete possible contributor to
+the finite-step instability, but the completed run did not count crossings
+or measure their contribution. It is not evidence that CIC is the sole cause,
+nor does it justify silently replacing the target's assignment scheme.
+
 A post-run reporting correction replaces the ambiguous boolean in future
 runs with stable support-summary deltas (component count, largest candidate
 count, and radius), explicitly not exact cell membership. The completed
