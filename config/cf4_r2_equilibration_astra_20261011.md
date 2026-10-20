@@ -401,3 +401,99 @@ Applied native-node diagnostic origin correction; isolated equivalent copies
 passed3 tests in grammar1200181. Comparing repository files with those tested
 copies is required before launch. Full paired mechanism tests1200177 remain
 valid; no prior/likelihood/kernel change for this resource replacement.
+
+## Bounded paired band-metric control result — 2026-10-21 KST
+
+Job429996 completed normally on `h100` with typed `gpu:H100:1`, node `syn08`,
+source commit `666edbdff5702f7d525efec6461b7fe1cf3049a7`. Slurm reports
+`COMPLETED`, exit0, elapsed5:41:03, MaxRSS16,684,480KiB (15.91GiB) against
+48GiB requested. Output:
+`/gpfs/kjhan/CF4/z0_density/r2_band_metric_control_h100_20261020/result.json`;
+logs `cf4_band_h100_429996.{out,err}`. Checkpoint replay passed. The three
+hwloc CPU-binding warnings were confined to startup; the result JSON has
+`error:null` and no numerical/capacity failure.
+
+The predeclared design asked for four complete same-state A/B pairs,65 exact
+target calls including replay, and reserved16 calls plus8120s before a new
+pair. This H100 run completed3 pairs using49 calls, then stopped with
+`insufficient complete-pair budget`; the fourth pair was not started. The
+overall status is `CONDITIONAL_BAND_CONTROL_DIAGNOSTIC_NOT_POSTERIOR`, not a
+posterior or stationarity result. Per-force alpha-weighted squared band
+displacement is the predeclared comparison:
+
+| Pair | A accepted / alpha | A ΔH | A weighted jump/force | B accepted / alpha | B ΔH | B weighted jump/force | B wins |
+| --- | --- | ---: | ---: | --- | ---: | ---: | --- |
+| 0 | yes / 0.4491 | 0.8005 | 0.634942 | no / 0.08138 | 2.5086 | 0.405678 | no |
+| 1 | no / 0.3040 | 1.1906 | 0.450878 | no / 0.6264 | 0.4678 | 3.295806 | yes |
+| 2 | yes / 0.2840 | 1.2588 | 0.396885 | yes / 0.3194 | 1.1412 | 1.591450 | yes |
+
+Across the three completed pairs, pooled A=1.482705 and B=5.292935,
+B/A=3.5698; B wins2/3. Acceptance counts are A2/3 and B1/3. Mean acceptance
+probabilities are A0.3457 and B0.3424. Thus B has much larger proposed
+band motion and a larger pooled alpha-weighted score, but it loses pair0 and
+has only2 wins; B's first-pair alpha is particularly poor. The predeclared
+spending rule requires B>=2*A and B wins at least3/4 complete pairs. Although
+the pooled-movement inequality is met, only three of four pairs were completed,
+so that rule is **inconclusive and not passed**. Do not promote factor4 as an
+adopted metric, infer posterior mixing/ESS, or infer a stationary posterior.
+Do not launch a factor ladder or silently count the incomplete fourth pair.
+
+Driver disposition: retain the result as a bounded sampler-mixing diagnostic.
+It does not change the observation target or current-field posterior, and it
+delivers no held-out prediction, calibrated uncertainty, selection/bias or
+multi-member group calibration, or MW/M31/M33 identification. R2 remains
+incomplete/NO-GO. Q-GOAL: this can only be a sampler engineering input to the
+CF4-conditioned same evolved z=0 field; it supplies no LG science result.
+Q-LEAN: the run stayed within the original paired design and did not add a
+metric sweep, simulation, or target change. MW/M31 remain role-ambiguous and
+M33 unresolved; their observables must constrain those same roles on the same
+NEW evolved LG field. Native truth identities remain evaluation/calibration
+only, never candidate seeds or selectors.
+
+## Astra advice and bounded pair-3 completion — 2026-10-21 KST
+
+Astra's read-only post-run verdict is **inconclusive**, not a sampler failure
+and not a passed metric-adoption rule. It recommends completing exactly the
+missing fourth matched pair because that pair can change the predeclared
+engineering decision; no fifth pair, factor ladder, or production metric
+adoption follows automatically. Q-GOAL: this remains sampler engineering for
+the same CF4-conditioned evolved z=0 field and provides no field, calibrated
+posterior, mixing/ESS or UQ result. Q-LEAN: one missing pair is proportionate;
+additional metric/step/trajectory sweeps are not. MW/M31 remain
+role-ambiguous, M33 unresolved, and their observables must constrain those
+same roles on the same NEW evolved LG field. Truth identities remain
+calibration/evaluation only.
+
+Driver evidence check: `split_hmc_step` draws one momentum vector of length
+`256^3+24` and one acceptance uniform; the A/B controller clones the same
+generator state and advances the diagnostic stream once per matched pair.
+Replaying seed2026102001 with that exact draw size reproduced the recorded
+decisions for pairs0–2, using shared uniforms
+`0.378395465449627`, `0.6461830557339759`, and `0.06099715537565553`.
+The next pair's expected shared uniform is `0.25203270157118596`. Thus the
+missing pair is reproducible without repeating any of the first three target
+trajectories. The driver adopts Astra's one-pair recommendation and adds
+fail-closed RNG replay/acceptance checks; seven focused tests pass.
+
+The continuation will replay the frozen state once and evaluate only pair3:
+17 exact target evaluations in the new job (one checkpoint replay plus16
+force evaluations), with a 2.75h application guard and3h Slurm cap. Since the
+prior job used49 evaluations including its own replay, the auditable
+cross-job total is66—one more than the original single-job65-call ceiling,
+solely because the checkpoint must be independently replayed in a new job.
+No original-chain RNG, target, likelihood, prior, selected state, or heldout
+value is changed. The prior artifact remains immutable; the continuation
+will merge its three completed rows only for applying the unchanged four-pair
+rule. Based on measured MaxRSS15.91GiB, request20GiB host RAM (about26% headroom)
+instead of repeating the prior48GiB request. No standalone simulation or
+field promotion follows.
+
+Pre-submit resource snapshot2026-10-21 KST: H200 `syn104` had7/8 GPUs
+allocated and the `part_h200` QoS reports `GrpTRES=gres/gpu=6`; this user's
+H200 allocation requests already consume that six-GPU cap, so no H200 slot is
+eligible to this job despite one physical GPU remaining. H100 `syn08` was
+5/5 allocated and `syn09` 4/5, leaving one eligible typed H100. A100
+`syn101` and `syn102` were each8/8 allocated. Therefore select Slurm
+`h100` with `--gres=gpu:H100:1`, 2 CPUs,20GiB RAM and a3h wall cap. No manual
+node execution. Output path:
+`/gpfs/kjhan/CF4/z0_density/r2_band_metric_pair3_20261021`.

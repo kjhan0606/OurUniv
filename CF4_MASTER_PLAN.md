@@ -7,7 +7,7 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 recovery — 2026-10-10
+## Current R2 recovery — 2026-10-21
 
 418601 has completed (10m04s, exit0). IC gradient RMS1.792859/inf12.509119
 and nuisance inf354.618602 establish continuing nonstationarity. The IC
@@ -25,6 +25,20 @@ R3 has not started.
 Joint warm-start job418606 started2026-10-10 23:59:02 KST on syn104 via
 Slurm h200/gpu:H200:1, 2CPU/48GiB/6h, source4c7ef51. Current evidence and
 output/log paths are in the recovery record; submission is not a science pass.
+
+R2 update2026-10-21: the bounded same-state A/B band-metric control429996
+completed3/4 predeclared pairs before its runtime guard. Pooled movement
+favored B by3.57x, but B won2/3 only, so the unchanged4-pair spending rule is
+inconclusive. Astra advised completing only pair3; the driver independently
+reconstructed the exact prior RNG uniforms and adopted that bounded
+continuation. This remains sampler engineering, not a posterior or z=0 map.
+The new job performs one checkpoint replay plus16 force evaluations; after
+its separate-process replay, the total across both jobs is66 target calls.
+R2 remains NO-GO: heldout prediction, calibrated uncertainty and the full
+selection/group observation law remain unresolved. MW/M31 are role-ambiguous
+and M33 unresolved; their observables must constrain those same roles on the
+same NEW evolved LG field, with truth IDs used only for calibration/evaluation.
+Execution record: `config/cf4_r2_equilibration_astra_20261011.md`.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
