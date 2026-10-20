@@ -9,22 +9,28 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 recovery — 2026-10-21
 
-418601 has completed (10m04s, exit0). IC gradient RMS1.792859/inf12.509119
-and nuisance inf354.618602 establish continuing nonstationarity. The IC
-remains fixed; no posterior, uncertainty or heldout prediction was delivered.
-The historical scalar-coordinate sequence below is closed as an execution
-method, not promoted. Its infinity-norm priority and repeated scalar gates
-do not establish that IC updates must remain frozen. The proposed single
-bounded joint optimization, using unchanged conditional v6 and saved
-gradient78, is recorded in `CF4_R2_JOINT_OPTIMIZATION_20261010.md`.
-Astra's mid-course CONDITIONAL GO and the driver's evidence check support
-one <=18-evaluation joint warm start (5h application/6h Slurm). This replaces
-the historical no-IC-update restriction for this bounded experiment only.
-All full R2 science requirements and the separate Astra exit audit remain;
-R3 has not started.
-Joint warm-start job418606 started2026-10-10 23:59:02 KST on syn104 via
-Slurm h200/gpu:H200:1, 2CPU/48GiB/6h, source4c7ef51. Current evidence and
-output/log paths are in the recovery record; submission is not a science pass.
+The single bounded joint warm-start proposal on unchanged conditional v6
+started as approved, but job 418606 FAILED after 1:12:42 (exit 1) at a
+fail-closed support check: the trial required 191,040 padded source cells,
+above the 131,072 workspace ceiling. It completed eight exact evaluations;
+accepted states are evaluations 3, 5, 6, while best evaluation 8 was an
+unaccepted line-search trial. No posterior, uncertainty or heldout prediction
+was delivered. Its result reports an application host peak of 80.25 GiB
+against a 48 GiB request; do not treat that allocation as a valid headroom
+estimate. A later chunked replay of recorded evaluation 8 retained
+36,505,268 support components with a 16,384-cell block and 10.675 GiB
+application peak, but it did
+not reproduce the unsaved failing candidate. The driver therefore closed the
+identical MAP restart and returned to prior-split HMC with the unchanged exact
+GL2 target. See `config/cf4_r2_equilibration_astra_20261011.md`.
+
+The subsequent exact-GL2 HMC/equilibration traces through job 421553 remain
+explicitly discarded for inference. The 24h block still showed density,
+`k^2=4–8` band and nuisance drift; it established neither stationarity nor a
+posterior. The same-state band-metric control 429996/430888 then failed its
+predeclared rule (pooled B/A 2.60679, but B won only 2/4 pairs); close that
+proposal without further metric/trajectory tuning. R2 remains NO-GO and R3
+has not started.
 
 R2 update2026-10-21: the bounded same-state A/B band-metric control429996
 completed3/4 predeclared pairs before its runtime guard. Astra advised
@@ -59,6 +65,14 @@ No selection correction is fit. R2 remains NO-GO: heldout prediction,
 calibrated uncertainty and the full selection/group observation law remain
 unresolved. The active route is joint latent-IC and evolved present-state/
 history inference; the z=0 posterior remains the first science delivery.
+On currently reviewed inputs, any later field posterior would be explicitly
+conditional on the frozen v6 observation model and observed linked-mark
+presence, not a full-survey calibrated CF4 posterior; mark-presence
+conditioning does not itself prove availability bias ignorable. Astra's
+2026-10-21 read-only advice is to retain that estimand but not begin an N256
+likelihood-informed-subspace sampler without training-only basis-rank,
+setup-cost and full-target-correction evidence. No new sampler or broad
+parent-table search is authorized by the completed source reconciliation.
 MW/M31 are role-ambiguous and M33 unresolved; their observables must
 constrain those same roles on the same NEW evolved LG field, with truth IDs
 used only for calibration/evaluation. Execution record:

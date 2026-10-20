@@ -130,6 +130,35 @@ those same roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with
 native truth IDs used only for calibration/evaluation.
 R2 remains NO-GO.
 
+## Scope of the only currently identifiable field target
+
+If R2 later delivers a field posterior without new parent/failure data, its
+estimand is the posterior under the frozen **conditional v6 model** for the
+47,121 training count rows and the 1,414 observed linked SDSS-PV marks—not a
+full-survey calibrated CF4 posterior. Conditioning on observed mark presence
+does not by itself make the conditional mark distribution immune to
+availability bias. Keep the published object-level FP measurement cuts
+separate from the unmodeled parent eligibility, redshift success, FP-quality,
+Tempel/CF4 linkage and group-inclusion processes; do not fit or silently set
+those missing probabilities from selected rows. A held-out predictive check
+within this selected cohort can assess only that conditional model and cannot
+validate the missing parent/failure process. Published calibration dependence
+and unresolved shared count/mark covariance remain explicit limitations.
+
+Driver disposition after Astra's 2026-10-21 read-only advice: retain this
+conditional estimand, but do not start an N256 likelihood-informed-subspace
+implementation or pilot without training-only basis-rank, setup-cost and
+full-target-correction evidence. The existing exact target/kernel remains the
+reference; there is no posterior promotion or R2 exit. Q-GOAL: this is still
+only a route toward the first z=0 density/velocity posterior in the same
+latent-IC/evolved-field model. MW/M31 are role-ambiguous and M33 unresolved;
+their observables must ultimately constrain those same roles on the same NEW
+evolved LG field at `<=0.3 cMpc/h`, with native truth IDs used only for
+calibration/evaluation. Q-LEAN: preserve this boundary and settled evidence;
+no new sampler architecture, data census, diagnostic ladder, or gravity run.
+Reopen sampler development only with a costed, capped, falsifiable proposal
+that corrects both informed and complementary blocks against the full target.
+
 ## Evidence already in the repository
 
 - [`CF4_R2_SELECTED_MARK_DENOMINATOR_AUDIT_20261005.md`](../CF4_R2_SELECTED_MARK_DENOMINATOR_AUDIT_20261005.md)
