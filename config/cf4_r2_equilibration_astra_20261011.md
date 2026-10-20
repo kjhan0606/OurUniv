@@ -497,3 +497,149 @@ eligible to this job despite one physical GPU remaining. H100 `syn08` was
 `h100` with `--gres=gpu:H100:1`, 2 CPUs,20GiB RAM and a3h wall cap. No manual
 node execution. Output path:
 `/gpfs/kjhan/CF4/z0_density/r2_band_metric_pair3_20261021`.
+
+## Pair-3 completion and spending-rule disposition — 2026-10-21 KST
+
+Job430888 completed normally on `h100` / `gpu:H100:1`, node `syn08`, using
+source commit `d58995e3ae03441143536f277ea5fb925c2ef7b1`. Slurm reports exit
+0:0, elapsed1:56:51, and MaxRSS12,816,504KiB (12.22GiB) against20GiB
+requested. The checkpoint replay passed, the prior three acceptance decisions
+were reconstructed exactly, and pair3 completed. The result is at
+`/gpfs/kjhan/CF4/z0_density/r2_band_metric_pair3_20261021/result.json`.
+
+Pair3 A was accepted (alpha0.54012; weighted squared band jump/force
+0.725324); B was rejected (alpha0.09562; weighted score0.462932), so B loses
+this pair. Independently summing the four saved pair rows gives A=2.208029,
+B=5.755867, B/A=2.606790, with B wins2/4. The pooled-score threshold
+B>=2*A passes, but the predeclared >=3/4 pair-win threshold fails. Therefore
+`engineering_gain_rule_passed=false`; the factor-four proposal is closed
+without another pair, factor ladder, metric change, or endpoint adoption.
+This is not evidence of sampler failure; it simply does not justify spending
+more on this proposal under its stated rule. Across both jobs the exact target
+evaluation count is66, with zero repeated prior target trajectories. The
+separate-process replay accounts for the extra call beyond the original
+single-job budget.
+
+Astra's read-only post-calculation mid-course verdict agrees: continuation was
+supported, the spending rule fails, and this proposal should close. Astra
+verified the pair3 replay/acceptance, aggregate scores and the distinction
+between a local engineering result and posterior evidence. The driver
+independently recomputed the four-row aggregates from the saved result JSON
+and adopts that narrow recommendation. Astra's advice also points back to the
+observation-law boundary; it is not an R2 exit approval.
+
+Slurm and JSON both show normal completion, no error/stop reason, four complete
+pairs, and the intended conditional diagnostic status. Every endpoint remains
+discarded for inference: `selected_endpoint=false`, `posterior_sample=false`,
+`posterior_uncertainty=false`, `heldout_scored=false`, and `R2_complete=false`.
+The result is neither a calibrated posterior nor a z=0 density/velocity map.
+Astra's post-calculation R2 mid-course audit does not substitute for the
+required future R2 exit audit.
+
+Driver disposition and next R2 priority: stop sampler/metric tuning and return
+to the observation-law blocker—what is observed, selected, linked, grouped,
+and lost from the underlying CF4 population, with defensible shared
+count/mark covariance and predictive calibration. Do not invent missing
+survival/bias parameters or call the conditional linked-mark likelihood a
+full-survey likelihood. The driver completed the source/identifiability table
+by reusing the settled denominator, source-access and v6 graph audits; no new
+catalogue census or heldout read was made. The table separates the observed
+47,121-count/1,414-mark conditional component from unobserved parent/failure
+denominators, group inclusion, and shared covariance. Its record is
+`config/CF4_R2_OBSERVATION_LAW_IDENTIFIABILITY_20261021.md`.
+
+The proposed DR14 `Target`/`TargetInfo` bridge was tested read-only against the
+exact frozen 1,414-mark training cohort using eight public SkyServer SQL
+requests, each capped at 200 object IDs. The local frozen PGC-to-SDSS-PV join
+was 1,414/1,414 unique. All 1,414 SDSS `bestObjID`s exist in DR14
+`SpecObjAll`; they yield 1,414 science-primary and 1,512 total spectral rows,
+all with `zWarning=0`. However, the tested candidate
+`SpecObjAll.targetObjID -> Target.targetID -> TargetInfo.targetID` join yields
+zero `Target` and zero `TargetInfo` links. This closes that direct-key route
+as a target-parent bridge; one representative object's `Target.bestObjID` and
+`Target.specObjID` keys were also absent, but alternate keys were not checked
+cohort-wide. No bulk catalogue was downloaded and no target/success rate is
+estimated. Absence of a link is not evidence of a failed or unselected source.
+
+The next boundary is an actual source-specific parent/failure sample, if one
+becomes available, or a narrower conditional estimand with availability-bias
+assumptions justified externally. Do not infer such assumptions from selected
+rows, or launch another sampler or large simulation in this reconciliation.
+Q-GOAL: this evidence is relevant to whether CF4 can constrain the same
+z=0 field and eventual IC/history, but it does not produce that field. Q-LEAN:
+one exact-cohort test closes the unsupported route without a new catalogue
+census or repeated metric work. MW/M31 remain role-ambiguous and M33
+unresolved; their observables must constrain those roles on the same NEW
+evolved LG field, with native truth IDs used only for calibration/evaluation.
+R2 remains NO-GO.
+
+## 2026-10-21 update — bounded SDSS-I/II tiling provenance and parent probe
+
+The exact frozen 1,414-mark cohort now has a partial historical targeting
+bridge. Eight bounded DR14 SkyServer requests (at most 180 selected IDs per
+request) found 1,400 selected spectra with `SpecObjAll.targetObjID` matching
+`sdssTiledTargetAll.targetID` and `sdssTilingInfo.targetID`. The same-target
+`SpecObjAll.tile = sdssTilingInfo.tile` comparison matched 1,385 selected
+spectra; 15 more have historical tiling rows but no tile equality, and 14
+have no historical target/tiling record. These are selected-spectrum
+provenance categories, not success/failure categories. Official DR14
+descriptions limit these tables to SDSS-I/II tiling (`targetID` is the CAS
+DR7 object ID; `sdssTilingInfo` records each target/run).
+
+Astra advised one bounded parent-feasibility aggregate. The canonical run was
+fixed independently of the cohort as the first indexed `sdssTileAll` pair
+(`tileRun=4`, `tile=73`); the final aggregate was correctly run over the
+**entire indexed `tileRun=4`**, beginning with all `sdssTilingInfo` rows and
+not conditioning on a specific assigned tile. A first exploratory query of
+only `tileRun=4,tile=73` was discarded from inference because selecting a
+tile conditions on assignment.
+
+The full run-4 aggregate returned 28,633 distinct target/run inputs. By raw
+`tiMask`, the rows were 0:23, 2:254, 4:1,636, 5:881, 6:60, and 7:25,779.
+The TILED bit was set for 26,660; DECOLLIDED for 26,093; COVERED for 28,356;
+REMOVED/CULLED for zero. A left join to `sdssTiledTargetAll` matched 26,360
+of 28,633 IDs, leaving 2,273 unmatched (retained, not filtered). A left join
+to `SpecObjAll` by `targetObjID` found 27,023 targets with any spectrum row,
+26,621 with a same-tile spectrum row, 25,087 with a same-tile
+`sciencePrimary` row, and 24,880 with a same-tile `sciencePrimary`,
+`zWarning=0`, non-null redshift record. The last count is a narrow catalogue
+record proxy, not a vetted FP-usable redshift or distance measurement.
+
+This identifies a limited **post-target-selection tiling-run frame** for one
+historical SDSS-I/II run, with assignment flags and some spectrum-record
+status independent of the selected CF4 training IDs. It does not identify
+photometric pre-target eligibility; the 2,273 target-table key mismatch
+remains unexplained; it does not establish source-matched FP quality,
+morphology, or downstream CF4/Tempel linkage; and a single run is not
+representative of the 75 cohort-linked runs, let alone transferable to all
+34,059 SDSS-PV marks or the heterogeneous CF4 sample. No selection/survival
+probability is estimated or fitted. The 2,273 target-table mismatches remain
+in-frame with unknown selection attributes; the 24,880 clean-warning, non-null
+redshift records are not complete observation outcomes or FP-usable distance
+measurements. The exact cohort
+binding, SQL templates/fingerprints, aggregate table, and interpretation are
+in `config/cf4_r2_dr14_tiling_cohort_probe_20261021.md`.
+
+Driver disposition: retain this as partial SDSS-I/II provenance and a
+post-selection stage feasibility result, but close it as a route to a full
+CF4/SDSS-PV parent/failure denominator unless a source-matched parent and
+remaining quality/linkage stages are independently supplied. Do not expand
+to a global table scan, archive download, or sampler restart. Q-GOAL: this
+constrains at most a narrow observation stage; it is not a z=0 map or
+posterior. The active route remains joint latent-IC/evolved-state/history
+inference, with z=0 posterior first. MW/M31 remain role-ambiguous and M33
+unresolved; their observables must constrain those same roles on the same NEW
+evolved LG field at `<=0.3 cMpc/h`, with native truth IDs used only for
+calibration/evaluation. Q-LEAN: two exact-cohort query rounds and one
+run-bounded aggregate; no large data transfer, simulation, or new gates.
+R2 remains NO-GO; this is not the separate R2 exit audit.
+
+Astra's final advisory accepts the parent-feasibility result narrowly and
+recommends stopping exploratory coverage queries. It emphasizes that run4 is
+a deterministic feasibility example, not representative of the 75
+cohort-linked runs; the 2,273 target-table misses remain in-frame with
+unknown attributes; and the spectrum/redshift-record proxies are not
+attempt-complete outcomes. The driver adopts that advice. The run-level SQL
+fingerprint is retained, but the exact submitted SQL text and raw response
+were not saved; the evidence file labels its join description as a
+reconstruction rather than a replayable query.

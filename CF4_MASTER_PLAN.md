@@ -27,18 +27,43 @@ Slurm h200/gpu:H200:1, 2CPU/48GiB/6h, source4c7ef51. Current evidence and
 output/log paths are in the recovery record; submission is not a science pass.
 
 R2 update2026-10-21: the bounded same-state A/B band-metric control429996
-completed3/4 predeclared pairs before its runtime guard. Pooled movement
-favored B by3.57x, but B won2/3 only, so the unchanged4-pair spending rule is
-inconclusive. Astra advised completing only pair3; the driver independently
-reconstructed the exact prior RNG uniforms and adopted that bounded
-continuation. This remains sampler engineering, not a posterior or z=0 map.
-The new job performs one checkpoint replay plus16 force evaluations; after
-its separate-process replay, the total across both jobs is66 target calls.
-R2 remains NO-GO: heldout prediction, calibrated uncertainty and the full
-selection/group observation law remain unresolved. MW/M31 are role-ambiguous
-and M33 unresolved; their observables must constrain those same roles on the
-same NEW evolved LG field, with truth IDs used only for calibration/evaluation.
-Execution record: `config/cf4_r2_equilibration_astra_20261011.md`.
+completed3/4 predeclared pairs before its runtime guard. Astra advised
+completing only pair3; the driver reconstructed the prior RNG uniforms and
+adopted that bounded continuation. Job430888 completed pair3 with one
+checkpoint replay plus16 force evaluations (66 cumulative exact target calls
+across both jobs). The four-pair result is pooled A=2.208029, B=5.755867
+(B/A=2.60679), with B winning2/4 pairs. The >=2x pooled threshold passes,
+but the required >=3/4 pair-win threshold fails; the unchanged engineering
+rule is false. Astra's read-only mid-course audit independently verified the
+pair continuation and agreed to close this proposal without further
+sampler/metric tuning; the driver checked the saved rows and adopts that
+advice. This remains sampler engineering, not a posterior or z=0 map. The
+review is not the separate R2 exit audit. The driver's source-and-
+identifiability reconciliation reuses settled denominator and v6 graph
+audits; it finds no full eligible-parent/failure denominator or shared-group
+covariance calibration in the reviewed inputs. The bounded DR14 exact-cohort
+probe found all 1,414 frozen selected marks as `SpecObjAll` best-object rows
+but zero direct `Target`/`TargetInfo` links via the tested key. A separate
+SDSS-I/II tiling join matches 1,400 selected objects, and 1,385 spectra match
+the historical tiling `tile` exactly. One run-bounded aggregate, starting
+from all run-4 `sdssTilingInfo` targets, identified a limited
+post-target-selection frame: 28,633 target/run inputs, 26,660 with the TILED
+bit, 27,023 with any `SpecObjAll` target match, and 24,880 with a same-tile
+science-primary, `zWarning=0`, non-null-z record. The `sdssTiledTargetAll`
+join is missing for 2,273 of those run IDs, and no pre-target eligibility,
+FP-quality, or CF4/Tempel linkage law follows from this single SDSS-I/II run.
+This first indexed run is a deterministic feasibility example, not a
+representative sample of the 75 cohort-linked runs; the 2,273 mismatches have
+unknown selection attributes and remain in the frame.
+No selection correction is fit. R2 remains NO-GO: heldout prediction,
+calibrated uncertainty and the full selection/group observation law remain
+unresolved. The active route is joint latent-IC and evolved present-state/
+history inference; the z=0 posterior remains the first science delivery.
+MW/M31 are role-ambiguous and M33 unresolved; their observables must
+constrain those same roles on the same NEW evolved LG field, with truth IDs
+used only for calibration/evaluation. Execution record:
+`config/cf4_r2_equilibration_astra_20261011.md`; source/identifiability and
+bounded DR14 evidence: `config/CF4_R2_OBSERVATION_LAW_IDENTIFIABILITY_20261021.md`.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
