@@ -31,9 +31,9 @@ def present_field_readout(rho, velocity, *, box=None):
     if box is not None:
         if not np.isfinite(box) or box <= 200:
             raise ValueError('box must exceed twice the largest diagnostic radius')
-        # Same cell-centred source geometry as the observation target; observer box/2.
+        # Input is native PM nodes, not the count-cell readout.
         n = rho.shape[0]
-        axis = (np.arange(n)+.5)*box/n-box/2
+        axis = np.arange(n)*box/n-box/2
         radius2 = axis[:,None,None]**2+axis[None,:,None]**2+axis[None,None,:]**2
         spheres = {}
         for radius in (50,100):
@@ -45,5 +45,5 @@ def present_field_readout(rho, velocity, *, box=None):
                 mass_weighted_velocity_km_s=[float(np.sum(weights*v[mask])/total)
                     for v in velocity] if total > 0 else None)
         result['observer_spheres_cMpc_h'] = spheres
-        result['sphere_geometry'] = 'cell centres (i+0.5)*box/n; observer box/2'
+        result['sphere_geometry'] = 'native nodes i*box/n; observer box/2'
     return result

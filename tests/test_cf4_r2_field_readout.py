@@ -7,10 +7,10 @@ class FieldReadoutTests(unittest.TestCase):
     def test_fixed_observer_spheres(self):
         rho = np.ones((8,8,8))
         velocity = np.full((3,8,8,8), 7.)
-        rho[3,3,3] = 3.
-        velocity[:,3,3,3] = 11.
+        rho[4,4,4] = 3.
+        velocity[:,4,4,4] = 11.
         result = present_field_readout(rho, velocity, box=384.)
-        axis = (np.arange(8)+.5)*48.-192.
+        axis = np.arange(8)*48.-192.
         r2 = axis[:,None,None]**2+axis[None,:,None]**2+axis[None,None,:]**2
         for radius in (50,100):
             count = np.count_nonzero(r2 <= radius**2)

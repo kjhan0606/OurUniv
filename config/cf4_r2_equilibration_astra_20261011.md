@@ -371,3 +371,33 @@ Complete-pair and insufficient-budget fixtures plus band/common-random/
 rejection/transport regressions passed13 tests in grammar1200177,exit0:0.
 The runner permits the explicit new entrypoint; shell syntax and diff checks
 passed. Preparing one advised bounded submission, no automatic monitoring.
+
+## Regional diagnostic coordinate correction identified after submission
+
+Source inspection: particle_grid returns native nodes at i*dx, as explicitly
+documented in src/cf4_r2_native_to_count_cells.py and conditional_map's
+native_mesh_origin_fraction=0 metadata. present_field_readout receives that
+native field directly, but its regional masks currently use(i+.5)*dx.
+Thus R50/R100 regional readouts in421553 and the submitted paired control
+are half-cell-offset diagnostics, NOT correctly observer-centred native-node
+summaries. Do not use them for quantitative regional validation or claim
+the earlier relative stability proves observer-centred environmental mixing.
+The global density moments, band displacement, likelihood, target gradient,
+MH decisions and paired engineering spending rule do not use these masks.
+Those results are unaffected by this diagnostic-only geometry discrepancy.
+
+Preserve submitted source6782f05/HEAD while429961 may still be queued:
+no runtime patch or new commit during this interval. Correct the diagnostic
+origin explicitly and add a native-node versus cell-centre boundary fixture
+after the allocation is terminal (or otherwise source-safe). Do not rerun
+the expensive experiment just to regenerate these secondary summaries.
+No monitoring query or new calculation was performed for this finding.
+
+User explicitly resumed autonomous work.429961 remained PENDING/QOSGrpGRES
+with zero runtime. H200 was checked first; part_h200 GrpTRES caps GPUs at6.
+H100 syn09 showed5 configured/4 allocated GPUs. Cancelled the unstarted
+429961 to replace it on permitted h100/gpu:H100:1 without duplicate runs.
+Applied native-node diagnostic origin correction; isolated equivalent copies
+passed3 tests in grammar1200181. Comparing repository files with those tested
+copies is required before launch. Full paired mechanism tests1200177 remain
+valid; no prior/likelihood/kernel change for this resource replacement.
