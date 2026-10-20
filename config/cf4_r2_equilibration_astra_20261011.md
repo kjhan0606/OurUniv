@@ -290,3 +290,24 @@ The next design must explain the persistent k4--8/structural equilibration
 and cost before choosing further burn-in versus a targeted transport/cost
 change; regional stability alone is insufficient. No new calculation or
 automatic monitoring was started for this analysis. R2 remains incomplete.
+
+## Cost and transport mechanism, next design question
+
+421553 used184 forces in68308.07 trajectory seconds (~371s/force), with
+14 L8 and6 L12 proposals. This is substantial cost for20 transitions,
+not20 independent posterior samples. The implementation's Fourier inverse
+mass is C(k)=k^2/(k^2+5999). Its exact Gaussian-prior rotation angle is
+L*epsilon*sqrt(C(k)): for integer|k|=4 approximately .0495/.0743 radians
+for L8/L12, and for|k|=8 approximately .0986/.1479. Full likelihood kicks
+change this dynamics, so these prior-only angles do NOT establish posterior
+correlation times or prove the metric is faulty. They do expose why large
+whole-IC jumps (dominated by many high-k coordinates) cannot by themselves
+justify adequate transport of the still-drifting k4--8 block.
+
+Do not infer a prescription to reduce every Fourier mass: the preserved
+matched600-vs6000 controls in CF4_R2_METRIC_SENSITIVITY_20261002.md found
+loss of acceptance at600 for that earlier target/state/configuration.
+Next design advice requested from the existing Astra reviewer compares a
+target-preserving, justified slow-block/metric intervention or oracle-cost
+repair against explicitly costed burn-in. No new allocation, metric change,
+monitoring loop or posterior promotion follows from this analytical check.
