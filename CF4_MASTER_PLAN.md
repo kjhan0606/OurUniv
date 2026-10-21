@@ -202,16 +202,20 @@ no new search/calculation ladder. MW/M31 roles remain ambiguous and M33
 unresolved; their observables still must constrain those same roles on the
 same NEW evolved LG field at<=0.3 cMpc/h, with native truth IDs used only for
 calibration/evaluation. R2 remains NO-GO; no exit email or R3.
-ESS feasibility job431345 remains pending on `h200` for `QOSGrpGRES` at the
-2026-10-21 09:54 KST check. It was submitted at07:12 KST expecting HEAD
+ESS feasibility job431345 remained pending on `h200` for `QOSGrpGRES` at the
+2026-10-21 10:04 KST check. It was submitted at07:12 KST expecting HEAD
 `744dbe1f19d48a2e7ba060b8f3e2b70fe92a5901`. The shared worktree's
 `CF4_MASTER_PLAN.md` was subsequently modified at09:46 KST, and the submitted
-script's startup `git diff --quiet` guard explicitly includes that file; the
-guard therefore cannot pass in the current worktree. The job is left intact
-because cancellation requires authorization. Do not submit a replacement
-while this stale job remains live. The user-requested scoped commit/push can
-proceed, but will also make the stale job's expected-HEAD check fail; wait for
-its terminal state before submitting a corrected pilot. R2 remains NO-GO.
+script's startup `git diff --quiet` guard explicitly includes that file. The
+user-requested scoped commit/push completed as `0e033ff`, so the old job's
+expected-HEAD check will also fail before its science pilot. It remains intact
+because cancellation requires authorization. To avoid both cancellation and
+concurrent duplicate inference, queue exactly one corrected copy of the same
+already-approved feasibility pilot with `afterfail:431345`; this dependency
+allocates no GPU before the stale job terminates. The predecessor cannot reach
+the sampler under the current HEAD. Do not use `afterany`, and do not
+automatically retry if the corrected pilot reaches the sampler and then fails
+a scientific/resource gate. R2 remains NO-GO.
 
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
