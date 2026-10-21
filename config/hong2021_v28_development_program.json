@@ -1,0 +1,120 @@
+{
+  "schema": "hong2021-v28-train-only-empirical-joint-residual-control-development-program-v1",
+  "status": "frozen_before_implementation_sampling_or_development_evaluation",
+  "purpose": "Test whether observation-matched resampling of intact train latent cubes restores the physical tails and field morphology lost by learned V26/V27 likelihoods.",
+  "design_audit": {
+    "path": "config/hong2021_v28_design_audit.json",
+    "sha256": "b2c1fc773cc658b6b912e618c00dbefe0c22bb94d12f70237b7cd338e705cbce",
+    "selected_control": "source_balanced_observation_matched_full_cube_latent_knn"
+  },
+  "parent_evidence": {
+    "v27_registry": "config/hong2021_v27_development_program.json",
+    "v27_registry_sha256": "2cc9710285987d53ce3b4f4b9f8cce78c087e51bd4b1f0e00f5e8c6d70347984",
+    "v27_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/development_decision.json",
+    "v27_decision_sha256": "275d61ee63c221154c50a4dbecbeb04b9bdedc247a3d1aacacfab2c730b531ad",
+    "v27_decision_digest_sha256": "ca2046ef081c1c6f984bcea88eec4cdbe8abb3b7fe61df2e689269eb3e7575e7",
+    "v27_corrected_latent_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/trained_flow_latent_audit_correction_v2.json",
+    "v27_corrected_latent_audit_sha256": "00ffa15d05816501c532a63821c698d2ebbe29e5e22c54974ee5fcc10da38105",
+    "required_classification": "explicit_conditional_flow_remains_latent_miscalibrated_after_phase_repair",
+    "required_next": "freeze_and_test_train_only_empirical_joint_residual_control"
+  },
+  "inherited_artifacts": {
+    "attestation": "config/hong2021_v21_derived_artifacts.json",
+    "attestation_sha256": "5622fc5a22b7502eac433f50e6cc2b51e6253c6e89b179335b1f8eef4e6d5852",
+    "profile_sha256": "7db8eb5427720ce4976e63073cbf7fd19c7d0cbbede7e0baa07d708593ecaf99",
+    "gaussianization_sha256": "1ee6fa7a398cbfd08c4d135e279f85d097fa65d74c464f4782b3d33422039fd0",
+    "coordinate": "V21 conditional-affine G21 latent with exact zero DC",
+    "physical_inverse": "unchanged V21 conditional-affine inverse followed by V14 location-scale Fourier inverse"
+  },
+  "donor_library": {
+    "development_train_only": true,
+    "sources": {
+      "TNG100": {
+        "objects": 432,
+        "data_sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d",
+        "cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"
+      },
+      "SIMBA": {
+        "objects": 202,
+        "data_sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7",
+        "cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"
+      },
+      "Swift": {
+        "objects": 409,
+        "data_sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd",
+        "cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"
+      }
+    },
+    "total_objects": 1043,
+    "resampling_unit": "one complete 1x64x64x64 latent cube from one unique donor within each query ensemble",
+    "target_or_validation_truth_in_library": false
+  },
+  "condition_descriptor": {
+    "local_fields": ["preprocessed_count", "preprocessed_line_of_sight_velocity", "corrected_deterministic_mean"],
+    "radius_exclusion": "observer radius is identical for every cube and invariant under the allowed isometries, so it cannot rank donors",
+    "local_pooling": "exact nonoverlapping average from 64^3 to 8^3 for each of three fields",
+    "local_standardization": "per-channel source-balanced train-only mean and standard deviation over pooled voxels",
+    "global_features": "the eight train-only target-free cube-isometry-invariant observable features inherited by V27",
+    "global_standardization": "per-feature source-balanced train-only mean and standard deviation over cubes",
+    "validation_density_truth_used": false
+  },
+  "matching_and_sampling": {
+    "global_prefilter_per_source": 64,
+    "global_distance": "mean squared difference over eight standardized global features",
+    "orientation_search": "all 48 signed cube isometries; retain the minimum local distance for each donor",
+    "local_distance": "mean squared difference over 3x8x8x8 standardized local descriptor values",
+    "total_distance": "global_distance + local_distance with no fitted weights",
+    "ensemble_members": 16,
+    "source_quota": "five unique donors from each source plus one extra; the extra source cycles TNG100,SIMBA,Swift over the fixed 48 development queries, giving exactly 256 selected donors from every source overall",
+    "within_source_selection": "smallest total-distance unique donors after choosing each donor's best isometry",
+    "latent_transform": "apply the selected isometry to the complete donor latent cube and no other alteration",
+    "query_inverse": "invert every selected latent with the query object's corrected mean and predicted location/scales",
+    "randomness": false,
+    "posthoc_tail_control": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "development_subsets": "exactly the frozen V27 representative subsets",
+    "field_gate": "unchanged V6 high-k, residual calibration, rank/coverage, PDF, 2PCF, peak/void, and DC checks",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+      "generated_max_above_truth_max_dex": 0.3
+    },
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "pass": "field gate plus Q3 and Q4 independently in all three domains",
+    "comparison": "V27 step 30000"
+  },
+  "fixed_failure_classification": [
+    {
+      "condition": "all three domains pass field plus Q3/Q4",
+      "classification": "intact_train_joint_residual_control_sufficient",
+      "next": "seal V28 and await explicit approval before Astrid"
+    },
+    {
+      "condition": "Q3/Q4 pass all domains but any field check fails",
+      "classification": "joint_residual_support_repaired_but_observation_matching_or_deterministic_backbone_limits_morphology",
+      "next": "audit deterministic current-density backbone and local condition matching; do not return to flow variants"
+    },
+    {
+      "condition": "any Q3 or Q4 check fails",
+      "classification": "train_empirical_joint_support_does_not_transfer_through_current_representation",
+      "next": "audit V21/V14 density representation and deterministic backbone before any new learned residual model"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact registry, design, parent audit, data, cache, profile, and transform hashes",
+    "actual donor counts 432, 202, and 409 and exact zero-DC latent caches",
+    "descriptor fit uses train cubes only and all fitted scales are finite and positive",
+    "48-isometry descriptor/latent pairing test",
+    "deterministic unique source-balanced donor selection and exact 6/5/5 quota",
+    "one real query physical inverse is finite with no validation target access in selection",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain V28 development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  }
+}

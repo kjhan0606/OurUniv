@@ -1,0 +1,212 @@
+{
+  "schema": "hong2021-v84b-group-held-out-spliced-tail-program-v1",
+  "status": "frozen_before_preflight_training_or_group_holdout_evaluation",
+  "amendment": {
+    "revision": 1,
+    "reason": "Replace the inherited torch.erfinv inverse-normal call by the distribution-equivalent Acklam rational approximation after the first preflight encountered a missing system libnvrtc-builtins.so.13.0.",
+    "superseded_program_sha256": "5a6c89fc032f33a1245f43d731189e5e4114c2e564acef55e96d2d62a45c03bb",
+    "failed_preflight_status": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_sequence/status",
+    "failed_preflight_status_sha256": "8f7c144f120f5dfe01b2c59c54cec3ef75d270b2140321b1426763b81795ab9c",
+    "training_performed_before_failure": false,
+    "group_holdout_payload_accessed_before_failure": false,
+    "CUDA_round_trip_error_after_fix": 1.1920928955078125e-7
+  },
+  "purpose": "Test the V84A1 attribution prospectively: retain the V70/V72 spatial copula, train a proper conditional marginal only on simulation-group/spatially embargoed fit objects, and explicitly model the rare lower and upper tails that V83 missed.",
+  "freeze_commit": "1c499abc7eeeaa7ba10169ecf2b88bbbebd622b8",
+  "parent_evidence": {
+    "v84a1_result": "config/hong2021_v84a1_result_record.json",
+    "v84a1_result_sha256": "f960617c99fd974b8063e246c847d455be7796d4d37006eced7016d2c3b69c35",
+    "required_findings": [
+      "V83 random-object holdout was not group independent in any domain",
+      "all three consumed validation selections failed at least one direct 1e-4 PIT tail",
+      "candidate/control rank-TV differences were below 0.005, attributing the primary rank failure to the conditional marginal rather than the V70/V72 spatial copula"
+    ]
+  },
+  "single_model_change": {
+    "changed": "replace the V83 all-range RQS density by a normalized V83 RQS centre spliced at fixed standardized residual thresholds to learned conditional lower/central/upper masses and learned conditional exponential tail scales",
+    "unchanged": "seven condition channels, V48 U-Net body, source-balanced batches, all 48 cube isometries, target standardization, fixed-step EMA selection, and the frozen V70/V72 spatial copula reserved for later production sampling",
+    "objective": "proper_spliced_conditional_NLL_only",
+    "forbidden_objective_terms": [
+      "tail reweighting",
+      "tail Brier score",
+      "physical moment penalty",
+      "PIT or coverage loss",
+      "power spectrum loss",
+      "two-point loss"
+    ],
+    "posthoc_operations": {
+      "global_scale": false,
+      "quantile_calibration": false,
+      "sample_clipping": false,
+      "Fourier_Ak": false,
+      "phase_randomization": false
+    }
+  },
+  "model": {
+    "condition_channels": 7,
+    "domain_identity_condition": false,
+    "network": "V48 three-level 3D U-Net with a 47-channel V83 RQS core plus four conditional tail channels",
+    "trainable_parameters": 8491603,
+    "central_distribution": {
+      "family": "V83 unconstrained 16-bin monotone rational-quadratic spline, renormalized between the two splice thresholds",
+      "lower_threshold_standardized_residual": -2.35,
+      "upper_threshold_standardized_residual": 3.10
+    },
+    "tail_distribution": {
+      "family": "two-sided exponential excess distributions",
+      "conditional_mass": "softmax of lower logit, fixed zero central logit, and upper logit",
+      "initial_mass_each_side": 0.005,
+      "lower_scale_range": [0.05, 3.0],
+      "upper_scale_range": [0.05, 1.5],
+      "initial_lower_scale": 0.35,
+      "initial_upper_scale": 0.54,
+      "physical_constraint": "upper scale at most 1.5 gives 1 - 2 ln(10) target_std beta_max = 0.3177070386410583 > 0, so the residual contribution to physical density squared is finite"
+    },
+    "threshold_provenance": {
+      "payload": "planned group-fit train objects only",
+      "probe_voxels_per_object": 8192,
+      "probe_seed": 840284,
+      "domain_q005": {
+        "TNG100": -2.3526242923736573,
+        "SIMBA": -2.296410166025162,
+        "Swift": -2.353152287006378
+      },
+      "domain_q995": {
+        "TNG100": 3.051678737401962,
+        "SIMBA": 3.134735298156734,
+        "Swift": 3.099087870120998
+      },
+      "rule": "round the median domain q005 and q995 to two decimals before any training"
+    },
+    "spatial_factorization": "V84B learns no spatial latent transform; a later production candidate may reuse V70/V72 only after this group-held-out marginal gate passes"
+  },
+  "frozen_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "training_domains": {
+      "TNG100": {
+        "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+        "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+        "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500"
+      },
+      "SIMBA": {
+        "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+        "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+        "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c"
+      },
+      "Swift": {
+        "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+        "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+        "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3"
+      }
+    }
+  },
+  "partition": {
+    "source": "immutable V35 train files only; validation files are outside the V84B contract",
+    "algorithm": {
+      "TNG100": "seed 840184 periodic-uniform anchor; 44 nearest observer centers are holdout; discard every other center within 10 cMpc/h of any holdout center as embargo",
+      "SIMBA": "seed 840185 permutation of realization IDs; hold out two complete realizations",
+      "Swift": "seed 840186 permutation of realization IDs; hold out three complete realizations"
+    },
+    "TNG100_anchor_mpc_h": [46.13425049584893, 43.249171685769426, 63.42777338966693],
+    "TNG100_minimum_holdout_fit_center_distance_mpc_h": 10.008548157440949,
+    "SIMBA_fit_realizations": [16, 17, 18, 19, 22, 23],
+    "SIMBA_holdout_realizations": [20, 21],
+    "Swift_fit_realizations": [0, 1, 2, 3, 4, 5, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    "Swift_holdout_realizations": [6, 8, 9],
+    "counts": {
+      "TNG100": {"fit": 361, "holdout": 44, "embargo": 27},
+      "SIMBA": {"fit": 146, "holdout": 56, "embargo": 0},
+      "Swift": {"fit": 348, "holdout": 61, "embargo": 0}
+    },
+    "sha256": "1127cf7f11193d31dac6fbc1da9cd84e40446300e3963c0646cde19b3aedf7ff",
+    "holdout_use": "one fixed post-training mechanism gate only; never early stopping, checkpoint selection, threshold selection, or hyperparameter selection"
+  },
+  "training": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "CPU_affinity": "64-79",
+    "steps": 12000,
+    "seed": 840144,
+    "batch": "one uniformly sampled group-fit object from each domain",
+    "augmentation": "one independently uniform choice from all 48 signed cube isometries per source and step",
+    "objective": "proper_spliced_conditional_NLL_only",
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "final_cosine_learning_rate": 0.00002,
+    "weight_decay": 0.0001,
+    "gradient_norm_clip": 1.0,
+    "AMP": true,
+    "EMA_decay": 0.999,
+    "checkpoint_selection": "fixed_step_12000_EMA_only",
+    "holdout_diagnostics_during_training": false
+  },
+  "hard_preflight": {
+    "payload": "group-fit voxel payload only",
+    "checks": [
+      "all frozen implementation and train-input hashes",
+      "at least 100000 fit voxels in each tail and domain",
+      "finite upper physical second moment for every allowed upper scale",
+      "finite proper NLL and nonzero gradients in both central and tail heads",
+      "CDF/ICDF round trip",
+      "peak allocated GPU memory below 28 GiB",
+      "no group-holdout voxel, validation, consumed development, Astrid, or historical EAGLE payload access"
+    ],
+    "failure_action": "stop before training"
+  },
+  "group_holdout_gate": {
+    "checkpoint": "fixed step-12000 EMA only",
+    "domains_must_pass_independently": true,
+    "NLL_improvement_over_standard_normal": "strictly positive",
+    "PIT_mean_interval": [0.49, 0.51],
+    "maximum_100_bin_PIT_total_variation": 0.01,
+    "backbone_quartile_PIT_mean_interval": [0.47, 0.53],
+    "central_coverage_intervals": {
+      "50": [0.48, 0.52],
+      "80": [0.78, 0.82],
+      "95": [0.94, 0.96]
+    },
+    "tail_probabilities_each_side": [0.001, 0.0001],
+    "tail_observed_over_expected_interval": [0.8, 1.25],
+    "access": "exactly once after the fixed checkpoint and training report are sealed",
+    "pass_action": "record result and prospectively design an all-train production refit without changing model or hyperparameters",
+    "failure_action": "stop V84B without opening any validation or consumed-development payload"
+  },
+  "implementation": {
+    "contract": {"path": "src/hong2021_v84b_contract.py", "sha256": "eddac98c5e9c80108a61b56e1a15af96e569a98afbe03c9968ffbb7ae8e4f785"},
+    "network": {"path": "src/hong2021_v84b_network.py", "sha256": "809c2023ca638b8a2ae6cf066de312f48866fe302fc330a0fb777b2afce33940"},
+    "preflight": {"path": "src/hong2021_v84b_preflight.py", "sha256": "158191be6afe31f4814cb7bba782003b2eaa3ea5417578c0a3fec5bfc83d2d8a"},
+    "train": {"path": "src/hong2021_v84b_train.py", "sha256": "f8719ed68ed8a3036a70ff91fbdc033b4b837a9ac4acdd7fc9c6609b5628c701"},
+    "group_gate": {"path": "src/hong2021_v84b_group_gate.py", "sha256": "fc763d5cb65f4d33c6f7bd81071469042fe1d3d67888352fcb9fd0d85bf9f38e"}
+  },
+  "output_roots": {
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_sequence/preflight.json",
+    "derived": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail",
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/step12000.pt",
+    "training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/training_report.json",
+    "group_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_gate/decision.json"
+  },
+  "authorization": {
+    "user_approved_next_V84B_stage": true,
+    "approved_scope": "prospective contract, hard preflight, one fixed group-fit training, and exactly one group-held-out mechanism gate",
+    "production_refit_authorized": false,
+    "consumed_development_sampling_authorized": false,
+    "independent_validation_authorized": false
+  },
+  "firewall": {
+    "training_before_hard_preflight_pass": "forbidden",
+    "holdout_use_for_stopping_checkpoint_threshold_or_hyperparameter_selection": "forbidden",
+    "validation_payload_access": "forbidden",
+    "consumed_development_payload_access": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true,
+    "automatic_production_refit_after_group_gate_pass": "forbidden_until_result_recorded_and_reviewed"
+  }
+}

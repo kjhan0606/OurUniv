@@ -1,0 +1,92 @@
+{
+  "schema": "hong2021-v29-direct-physical-residual-transport-development-program-v1",
+  "status": "frozen_before_implementation_sampling_or_development_evaluation",
+  "purpose": "Test the same V28 observation-matched donors in a condition-consistent physical residual coordinate without cross-condition nonlinear inversion.",
+  "design_audit": {
+    "path": "config/hong2021_v29_design_audit.json",
+    "sha256": "e23f8cc3e58e71dc144dc0a72ded29d2f367708a17767ec3f417581ed30ccdb1",
+    "selected_change": "same_donors_direct_centered_physical_y_residual_transport"
+  },
+  "parent_evidence": {
+    "v28_registry": "config/hong2021_v28_development_program.json",
+    "v28_registry_sha256": "7d51039e3acf3a9297ce70e9f9db19f17b9290b9501fdb72ac047422220ac3a6",
+    "v28_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_decision.json",
+    "v28_decision_sha256": "6caf29d6b22b4dab4976a5301bc00a6f557e85f9299dbd1aec00c333161c740b",
+    "v28_decision_digest_sha256": "21bfc212ecaa7214363d000374e637afc61765b6019d0df04edc5ab144f80e1f",
+    "v28_failure_mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/failure_mechanism_audit.json",
+    "v28_failure_mechanism_audit_sha256": "622c8e5ccee9d42b5cf428f6fb3ae3b9887365ac4e15d77f98692625da206949",
+    "required_classification": "cross_condition_inverse_inflates_intact_train_residuals",
+    "required_next": "replace_latent_transplantation_with_condition_consistent_physical_residual_representation"
+  },
+  "frozen_v28_selections": {
+    "tng": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/tng/ensemble16.h5",
+      "sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840"
+    },
+    "simba_dev": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/simba_dev/ensemble16.h5",
+      "sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504"
+    },
+    "swift_dev": {
+      "ensemble": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/swift_dev/ensemble16.h5",
+      "sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88"
+    },
+    "aggregate_donor_counts": {"TNG100": 256, "SIMBA": 256, "Swift": 256},
+    "reuse_exactly": ["source_index", "donor_source", "donor_index", "donor_isometry", "donor_distance"]
+  },
+  "physical_residual": {
+    "coordinate": "normalized log-density y where log10rho=4.5*y",
+    "donor_baseline": "donor corrected deterministic mean plus donor predicted residual location",
+    "raw_donor_residual": "donor train target y minus donor baseline",
+    "dc_projection": "subtract the raw donor residual cube mean exactly before transport",
+    "orientation": "apply the already-selected V28 signed cube isometry to the complete centered physical residual",
+    "query_baseline": "query corrected deterministic mean plus query predicted residual location",
+    "sample": "query baseline plus oriented centered donor physical residual",
+    "new_fitted_parameters": false,
+    "query_dependent_nonlinear_inverse": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 field gate",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+      "generated_max_above_truth_max_dex": 0.3
+    },
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "pass": "field plus Q3 and Q4 in every development domain",
+    "comparison": "paired against V28 with identical donor selections"
+  },
+  "fixed_classification": [
+    {
+      "condition": "all-domain field plus Q3/Q4 pass",
+      "classification": "direct_physical_residual_coordinate_sufficient",
+      "next": "seal V29 and await explicit approval before Astrid"
+    },
+    {
+      "condition": "Q3/Q4 pass all domains but any field check fails",
+      "classification": "physical_support_repaired_but_deterministic_backbone_or_local_phase_alignment_limits_morphology",
+      "next": "audit and replace deterministic current-density backbone before learned residual modeling"
+    },
+    {
+      "condition": "any Q3 or Q4 check fails",
+      "classification": "direct_physical_residual_transport_still_mismatches_validation_population",
+      "next": "replace the deterministic current-density backbone and its local condition representation"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V29 registry/design and V28 decision/audit/ensemble hashes",
+    "exact equality of all reused V28 donor selection arrays",
+    "source-balanced 256/256/256 selected donors and valid train-only donor indices",
+    "one real donor residual has exact post-centering DC and finite physical sample",
+    "no validation target access before the output truth dataset is written",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain V29 pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  }
+}

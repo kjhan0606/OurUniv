@@ -1,0 +1,39 @@
+{
+  "schema": "cf4-v3-bgc-error-scale-tuning-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_tuning": true,
+  "development_source": "config/v3_bgc_n64_comparison_v2.json",
+  "reason": "The paired V2 BGc result had z_std=0.9067 and coverage68=0.7567, consistent with a modestly over-wide measurement error, while all numerical, bias, score, and Local-Sheet diagnostics passed.",
+  "fixed_model": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "split_seed": 20260817,
+    "sample_seeds": [91, 92, 93, 94, 95, 96, 97, 98],
+    "holdout_assignment": "SplitMix64 raw catalog index",
+    "bgc_window": 801,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "sigma_nl_km_s": 0.0
+  },
+  "candidate_error_scales": [0.88, 0.9, 0.92, 0.94, 0.96, 1.0],
+  "selection": {
+    "objective": "abs(z_mean) + abs(z_std-1) + abs(coverage68-0.682689492) + abs(coverage95-0.954499736)",
+    "eligibility": "adjoint <= 5e-5, every CG residual <= 1e-4, and delta_log_score > 0",
+    "tie_break": "larger error_scale",
+    "no_interpolation": true
+  },
+  "fresh_validation_reserved_before_tuning": {
+    "split_seed": 20260823,
+    "sample_seeds": [121, 122, 123, 124, 125, 126, 127, 128],
+    "policy": "Run exactly once at the selected candidate. Use the unchanged acceptance and Local-Sheet gates from V2."
+  },
+  "result": {
+    "status": "complete",
+    "selected_error_scale": 0.9,
+    "development_z_mean": 0.016164231125466656,
+    "development_z_std": 1.0052382931158668,
+    "development_coverage_1sigma": 0.7073047858942065,
+    "development_coverage_2sigma": 0.9481108312342569,
+    "development_delta_log_score": 353.0746044840125
+  }
+}

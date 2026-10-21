@@ -1,0 +1,87 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-joint-support-autopsy-result-record-v1",
+  "status": "complete_pass_lineage_and_terminal_reproduction_authorize_CF4_mode_release_audit_only",
+  "completed_at": "2026-08-15T18:13:03+09:00",
+  "purpose": "Seal the consumed-only V8 support-collapse autopsy before any N64-N192 CF4 mode-release likelihood is calculated.",
+  "immutable_evidence": {
+    "terminal_record": {
+      "path": "config/cf4_lg_v8_result_record.json",
+      "sha256": "a726e656e165ae48524292af02955b938dd616c03c5c24536c18cb59a6551786"
+    },
+    "fable_independent_audit": {
+      "path": "config/cf4_lg_v8_fable_independent_audit.json",
+      "sha256": "412caf31db42b25fe0774bf2c2d9d8833460970271ea5f0e3fe42e1f53f4a742"
+    },
+    "autopsy_program": {
+      "path": "config/p2_lg_v8_joint_support_autopsy.json",
+      "sha256": "bdfee80318a634c428170c0ba9adf7ce7469885d104dd646132e8314e52517b4"
+    },
+    "implementation": {
+      "path": "src/cf4_lg_v8_joint_support_autopsy.py",
+      "sha256": "9c1f3b3625b625c0a8f2bfccc3673b3480232abf93418e5b0ab0849a18842031"
+    },
+    "full_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_joint_support_autopsy/result.json",
+      "sha256": "3bbb7e8f1dca735c86a2209dec311393dbf773a5645ffb4a76a40c2ce3e1f9ec"
+    }
+  },
+  "integrity": {
+    "all_256_N576_proposal_fields_rehashed": true,
+    "all_256_N192_projection_fields_rehashed": true,
+    "all_240_P2_halo_catalogs_rehashed": true,
+    "all_manifest_and_result_links_pass": true,
+    "exact_seed_set_5269_through_5524": true,
+    "terminal_funnel_exactly_reproduced": true
+  },
+  "funnel": {
+    "generated": 256,
+    "parent_P1": 240,
+    "finite_soft_likelihood": 149,
+    "hard_P2_realizations": 13,
+    "hard_P2_pairs": 17,
+    "recentered_P1_realizations": 3,
+    "recentered_P1_pairs": 3,
+    "joint_realizations": 1,
+    "joint_pairs": 1,
+    "joint_seed": 5422
+  },
+  "stagewise_importance": {
+    "likelihood_only_ESS": 10.262914815551733,
+    "soft_with_importance_correction_ESS": 16.611140660098705,
+    "hard_P2_ESS": 6.5072844111306,
+    "recentered_P1_ESS": 1.0000108021689273,
+    "joint_ESS": 1.0,
+    "joint_maximum_normalized_weight": 1.0
+  },
+  "attribution": {
+    "hard_P2_pair_count": 17,
+    "hard_P2_pair_recentered_P1_failure_counts": {
+      "Virgo": 16,
+      "MassiveHaloVeto": 14,
+      "Coma": 13,
+      "ObserverEnvironment": 11,
+      "BootesVoid": 1,
+      "LocalVoid": 1
+    },
+    "recentered_P1_survivor_hard_P2_outcomes": {
+      "5399": "fails separation upper bound by 0.6279034160472057 Mpc/h",
+      "5422": "passes the frozen hard-P2 screen",
+      "5512": "fails mass-ratio bound by 0.34615402491789826 and separation upper bound by 0.7617833081005092 Mpc/h"
+    },
+    "pair_prior_sensitivity": {
+      "uniform_pair_mixture_ESS": 16.611140660098705,
+      "best_pair_ESS": 16.69449016169135,
+      "normalized_weight_total_variation": 0.23101112021043915
+    },
+    "interpretation": "The proposal importance ratio is not the terminal bottleneck. Support collapses primarily at the pair-recentered large-scale structure gates, and the hard-P2/recentered-P1 same-pair intersection contains only one realization. Descriptive latent correlations are too weak to justify another q-only transport proposal."
+  },
+  "decision": {
+    "V8_closed": true,
+    "same_model_seed_extension_authorized": false,
+    "seed_5422_promotion_authorized": false,
+    "fresh_V9_authorized": false,
+    "RAMSES_authorized": false,
+    "CF4_mode_release_audit_authorized": true,
+    "next": "Freeze and execute a separate N64-N192 CF4 mode-release audit using result-blind criteria set by Fable."
+  }
+}

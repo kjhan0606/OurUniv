@@ -1,0 +1,43 @@
+{
+  "schema": "hong2021-v72-preimplementation-spatial-float32-tie-threshold-erratum-v1",
+  "status": "disclosed_code_only_bound_correction_before_V72_implementation_or_fresh_payload_access",
+  "purpose": "Correct the numerical tie-frequency guard for sorting 16,384 spatial voxels per stratum. This does not alter SQT, the data selections, seeds, sampler, scientific metrics, or any pass threshold.",
+  "original_program": "config/hong2021_v72_locked_spatial_quantile_transport_program.json",
+  "original_program_sha256": "71e935a311780fc738cb65a7cef64670c1fcd411e7935880826d5f594b9f0060",
+  "original_program_commit": "f5b384b",
+  "audit": {
+    "scope": "CUDA float32 standard-normal tensors only, using both frozen stage seeds, 48 sequential queries per seed, 16 members, 16 strata, and 16384 values per stratum",
+    "fresh_stage_input_or_target_payload_read": false,
+    "GPFS_scientific_input_opened": false,
+    "stage_A_seed": 170082,
+    "stage_A_queries": 48,
+    "stage_A_minimum_tied_value_fraction": 0.0001888275146484375,
+    "stage_A_maximum_tied_value_fraction": 0.00023937225341796875,
+    "stage_A_mean_tied_value_fraction": 0.00022146105766296387,
+    "stage_B_seed": 170083,
+    "stage_B_queries": 48,
+    "stage_B_minimum_tied_value_fraction": 0.000202178955078125,
+    "stage_B_maximum_tied_value_fraction": 0.000244140625,
+    "stage_B_mean_tied_value_fraction": 0.00022650758425394693,
+    "original_maximum_marginal_tied_voxel_fraction": 2e-05,
+    "pre_inverse_stratum_multiset_equality": "unaffected and required bitwise exact",
+    "rank_disagreement_excluding_marginal_ties": "unaffected and required zero"
+  },
+  "correction": {
+    "maximum_marginal_tied_voxel_fraction": 0.0003,
+    "candidate_construction_changed": false,
+    "strata_changed": false,
+    "noise_seed_changed": false,
+    "sampler_or_member_count_changed": false,
+    "fresh_selection_changed": false,
+    "scientific_metric_or_pass_threshold_changed": false,
+    "reason": "Float32 collision count scales with the 16,384-value spatial sort and is harmless under the already frozen stable tie rule; 3e-4 exceeds the complete two-seed synthetic maximum while remaining a small diagnostic fraction."
+  },
+  "firewall": {
+    "V72_implementation_started_before_correction": false,
+    "fresh_stage_A_payload_or_metric_read": false,
+    "fresh_stage_B_payload_or_metric_read": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

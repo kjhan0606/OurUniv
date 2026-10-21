@@ -1,0 +1,28 @@
+{
+  "schema": "cf4-v2-local-likelihood-tuning-v1",
+  "frozen_date": "2026-07-29",
+  "frozen_before_tuning_runs": true,
+  "status": "hyperparameter_tuning_only",
+  "inherits": "config/v2_local_likelihood_dev_v1.json",
+  "fixed_model": {
+    "N": 64,
+    "local_distance_max_mpc": 15.0,
+    "local_max_distance_modulus_error_mag": 0.25,
+    "local_max_abs_velocity_km_s": 1500.0,
+    "local_error_scale": 1.0,
+    "split_seed": 20260805,
+    "sample_seeds": [61, 62, 63, 64]
+  },
+  "candidate_local_sigma_nl_km_s": [50.0, 100.0, 150.0],
+  "selection_rule": [
+    "minimize absolute(local heldout z_std - 1)",
+    "then minimize absolute(local heldout z_mean)",
+    "then maximize common-WF log predictive density"
+  ],
+  "anti_leakage_policy": {
+    "these_holdout_rows_are_spent_after_tuning": true,
+    "selected_hyperparameter_requires_a_new_split_seed": true,
+    "new_split_seed": 20260809,
+    "N192_is_not_authorized_by_tuning_results": true
+  }
+}

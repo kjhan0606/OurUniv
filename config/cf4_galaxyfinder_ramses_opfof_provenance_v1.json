@@ -1,0 +1,91 @@
+{
+  "stage": "8_z0_structure_validation",
+  "status": "pipeline_pass_science_conditional",
+  "purpose": "Use the RAMSES-aware GalaxyFinder NewDD/opFoF implementation with individual-particle masses for a z=0 halo cross-check.",
+  "ramses_run": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_z0_production_v1/job_388664",
+  "snapshot": 2,
+  "box_cMpc_h": 384.0,
+  "newdd_opfof_source": {
+    "repository": "https://github.com/kjhan0606/GalaxyFinder",
+    "commit": "d445b60",
+    "binaries": ["NewDD/newdd.exe", "opFoF/opfof.exe"],
+    "mass_linking_law": "0.2*(m/(2.7755e11*omega_m))^(1/3)",
+    "ramse_unit_adapter": [
+      "DM-only parser stops after x,y,z,vx,vy,vz,mass to avoid ABI-dependent optional records",
+      "boxlen_ini is supplied as NEWDD_BOXLEN_CMPCH=384",
+      "coordinates, velocities and masses are converted before NewDD slab output"
+    ],
+    "local_patches": [
+      "mpiicx compiler wrapper",
+      "DM-only RAMSES particle ABI path",
+      "RAMSES code-unit box length and unit conversion",
+      "legacy header/linker compatibility fixes"
+    ]
+  },
+  "slurm": {
+    "build_job": 392215,
+    "pipeline_job": 392217,
+    "pipeline_exit": 0,
+    "wrapper": "scripts/run_galaxyfinder_ramses_halo_v1.sbatch"
+  },
+  "interpretation": {
+    "pipeline": "PASS",
+    "science": "CONDITIONAL",
+    "reason": "The first successful run contains 3449 decoded HaloQ records. The dominant LG pair is recovered, but M33, environment statistics, and full catalog quality remain mandatory before any production claim.",
+    "catalog_summary": {
+      "header_bytes": 28,
+      "haloq_record_bytes": 120,
+      "halo_count": 3449,
+      "mw_m31_candidate": {
+        "mass_1_Msun_h": 677853487995.3223,
+        "mass_2_Msun_h": 663169972715.3877,
+        "separation_cMpc_h": 1.120244247421984,
+        "relative_radial_velocity_km_s": -36.90116263607161,
+        "particle_counts": [9556, 9349]
+      },
+      "m33_candidate": {
+        "mass_Msun_h": 118603079942.22934,
+        "particle_count": 1672,
+        "separation_from_m31_cMpc_h": 0.7893324730412854,
+        "catalog_index": 3150
+      },
+      "lg_environment": {
+        "within_3_cMpc_h_halos_mass_ge_1e10": 39,
+        "shell_0_1_halos_mass_ge_1e10": 3,
+        "shell_1_2_halos_mass_ge_1e10": 11,
+        "shell_2_3_halos_mass_ge_1e10": 28,
+        "shell_1_2_halos_mass_ge_1e11": 3
+      },
+      "catalog_resolution": {
+        "minimum_particles": 20,
+        "median_particles": 86,
+        "halo_count_np_ge_50": 2246,
+        "halo_count_np_ge_100": 1604,
+        "halo_count_np_ge_500": 661,
+        "mass_bins_Msun_h": {
+          "1e9_1e10": 1447,
+          "1e10_1e11": 937,
+          "1e11_1e12": 1017,
+          "1e12_1e13": 48
+        }
+      },
+      "comparison": "Consistent with the prior HOP pair (6.76e11/6.54e11 Msun/h, 1.126 cMpc/h, -36.6 km/s).",
+      "remaining_checks": ["M33 candidate", "Virgo/Coma and void environment", "catalog mass function and minimum-member sensitivity"]
+      ,"scope_caveat": {
+        "observed": "The accepted HaloQ catalog occupies only the central zoom region; the raw RAMSES particle files themselves span the full normalized box.",
+        "consequence": "Do not use this catalog alone to claim Virgo/Coma or Local/Bootes Void reproduction.",
+        "next_action": "Run a parent/base-resolution halo-environment diagnostic with an explicitly calibrated minimum-member and mass threshold, then combine it with the zoom LG catalog."
+      },
+      "mass_abi_diagnostic": {
+        "status": "CORRECTED_PASS",
+        "newdd_dm_records": 20637968,
+        "dmtype_record_bytes": 168,
+        "zero_mass_records": 0,
+        "base_particle_mass_Msun_h": 290549171915.899,
+        "base_particle_count": 16770718,
+        "note": "The superseded 112-byte diagnostic misread an NCHEM=9 DmType whose actual size is 168 bytes, producing a false 1.5x record count and false zero masses.",
+        "decision": "Mass conversion is valid. Test a disk-lean lbase=9 parent-only evolution before considering lbase=10."
+      }
+    }
+  }
+}

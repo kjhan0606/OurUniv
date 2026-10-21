@@ -1,0 +1,78 @@
+{
+  "schema": "hong2021-v67-train-only-nonlocal-context-predictability-result-record-v1",
+  "status": "complete_no_refit_audit_selected_train_only_population_pair_objective_probe",
+  "program": "config/hong2021_v67_nonlocal_context_predictability_audit_program.json",
+  "program_sha256": "e200bb88c3e820c0350067db926f724b28b3cdef22c58bf6dd3ad07e6070933a",
+  "code_commit": "d2451ac7a0b8325d867f730588e2634d85d09ad9",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v67_nonlocal_context_predictability_audit/audit.json",
+    "sha256": "f9be95021e365a67187554dd6d7f9a11b3f9e29eed29a0986945d88f8ecc9a78",
+    "decision_digest_sha256": "3fff90a267a760cc272fe5a407c7c399e10dd60af3ee8ceb03697651d15da771",
+    "classification": "target_free_global_context_does_not_predict_the_pair_correction_cross_domain",
+    "next": "stop_before_refit_and_do_not_add_a_nonlocal_context_head",
+    "candidate_selected": false
+  },
+  "cross_domain_probe": {
+    "feature_components": 33,
+    "ridge_alpha": 10.0,
+    "cross_domain_predictive": false,
+    "permutation_significant": false,
+    "pooled": {
+      "Ridge_RMSE": 0.8802375928145699,
+      "constant_reference_RMSE": 0.8181994193387189,
+      "relative_RMSE_improvement_over_constant": -0.07582280310830732,
+      "Pearson_prediction_response": -0.1900312247816132,
+      "zero_threshold_sign_accuracy": 0.4791666666666667
+    },
+    "permutation_p_values": {
+      "pooled_Pearson": 0.8054474708171206,
+      "pooled_relative_RMSE_improvement": 0.1245136186770428
+    },
+    "held_domain_Pearson": {
+      "TNG100": -0.03962929232641855,
+      "SIMBA": -0.17495942697490502,
+      "Swift": -0.033449542615755015
+    }
+  },
+  "numerical_and_provenance_integrity": {
+    "feature_query_response_provenance_pass": true,
+    "numerical_pass": true,
+    "audit_only_fixed_probe_fit_performed": true,
+    "probe_artifact_saved_or_reused": false,
+    "pytest_passed": 505,
+    "pytest_log_sha256": "ed69b358b11effa0ed852c3becc2a246b652b1ac1fc854874b4867abd0495922",
+    "audit_log_sha256": "f9be95021e365a67187554dd6d7f9a11b3f9e29eed29a0986945d88f8ecc9a78",
+    "sequence_status": "complete_train_only_target_free_nonlocal_context_predictability_audit",
+    "sequence_status_sha256": "8412119bf04a9f769a778972217a77a4e036f5e7031826cea7a30f87bd884456"
+  },
+  "scientific_conclusion": [
+    "The sealed target-free 33-component descriptor does not predict the V65 signed pair residual in any held simulation domain. All three held-domain Pearson correlations are negative.",
+    "The pooled Ridge prediction is worse than the foldwise constant reference and has 47.9% sign accuracy. Its permutation statistics are not significant, so a nonlocal context head is not supported.",
+    "The failure of per-object bias, final-layer, and observable-context routing does not by itself rule out a pair objective because 2PCF is a population statistic. Requiring each noisy individual cube to share a gradient direction confounds the desired ensemble moment with cosmic variance.",
+    "The next no-refit audit must aggregate predicted and true pair moments across frozen train objects before taking their log ratio, then test that population gradient across disjoint source-balanced train folds."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only domain-balanced population pair-objective stability audit",
+    "required_construction": [
+      "four predeclared disjoint folds, each containing four of the sixteen V65 queries per domain",
+      "aggregate predicted and true pair moments across objects before computing each domain and separation log ratio",
+      "exact final-output-layer gradient assembled from per-object pair-moment Jacobians without an optimizer step",
+      "fold-to-fold gradient coherence, value stability, bounded-NLL scale, and first-order compatibility"
+    ],
+    "selection_question": "does the scientifically correct population-level pair functional have a stable common train-only gradient after individual-cube cosmic variance is averaged out?"
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "development_rank_or_selection_accessed": false,
+    "simulation_identity_used_as_predictor": false,
+    "truth_derived_predictor_used": false,
+    "posthoc_feature_alpha_threshold_or_metric_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

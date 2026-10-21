@@ -1,0 +1,21 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/r1_tsc_trial_v5",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "reference_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359203",
+  "cic_alignment_reference": "/gpfs/kjhan/CF4/z0_density/r1_planar_diagnosis_v4/job_359206/result.json",
+  "particle_n": 128,
+  "wave_number": 4,
+  "final_linear_amplitude": 0.3,
+  "time_factor": 8,
+  "cases": [
+    {"name": "pm128", "mesh_ratio": 1, "mesh_shift": 0.0, "force": "pm"},
+    {"name": "pm256", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "pm"},
+    {"name": "tsc128", "mesh_ratio": 1, "mesh_shift": 0.0, "force": "tsc"},
+    {"name": "tsc256", "mesh_ratio": 2, "mesh_shift": 0.0, "force": "tsc"},
+    {"name": "tsc128_halfcell", "mesh_ratio": 1, "mesh_shift": 0.5, "force": "tsc"},
+    {"name": "tsc256_halfcell", "mesh_ratio": 2, "mesh_shift": 0.5, "force": "tsc"}
+  ],
+  "application_seconds_cap": 1080,
+  "previous_R1_allocation_seconds": 5178,
+  "scope": "Isolated TSC scatter/gather correction trial. Same plane, particles, FFT Poisson, modes and KDK. No production PMWD/HMC patch, no high-k filtering or gain adjustment. No real CF4/LG posterior or MW/M31/M33 identification."
+}

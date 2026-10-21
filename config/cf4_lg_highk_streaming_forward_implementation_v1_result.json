@@ -1,0 +1,87 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-streaming-forward-implementation-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_implementation_waiting_integrated_pilot_approval",
+  "scope": "Design, implementation, and synthetic verification only; no covariance-cache construction, N576 field generation, PM, FoF, or scientific selection was executed.",
+  "lineage": {
+    "commit": "1853364c696d8f7776b15ebd2c781462af3b1b90",
+    "tree": "0c613a09c69d4ea8db8276a77e1aa1b7fe1bb6c2",
+    "branch": "agent/freeze-zoom-pipeline",
+    "remote": "origin"
+  },
+  "files": [
+    {
+      "path": "config/cf4_lg_highk_streaming_forward_program_v1.json",
+      "sha256": "34a8e8976be7b5b8690568b620898910d534913ca8326cb5f86120f63cfcd8b1"
+    },
+    {
+      "path": "src/cf4_lg_highk_covariance_cache.py",
+      "sha256": "6da87bb7ef73ada54269424c82e949d16059a87eb209bc79235144681979040d"
+    },
+    {
+      "path": "src/cf4_lg_highk_streaming_forward.py",
+      "sha256": "0494bdf3440e85906e4ded45ce9b1284fc40533b9a7c8f12aab1dac617201814"
+    },
+    {
+      "path": "scripts/run_cf4_lg_highk_covariance_cache_v1.sbatch",
+      "sha256": "6133a11ac9e0770ffc16cb8675703c9b1ba068a94e2503b1c667b7924e6b7368"
+    },
+    {
+      "path": "scripts/run_cf4_lg_highk_streaming_pm_pilot_v1.sbatch",
+      "sha256": "c41462d9d275ae095023b89d2a0feb0e45ba652b4e49fc1cd405d28f61211c4c"
+    }
+  ],
+  "tests": {
+    "new_and_highk_regression": {
+      "passed": 21,
+      "failed": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q -p no:cacheprovider tests/test_cf4_lg_highk_covariance_cache.py tests/test_cf4_lg_highk_streaming_forward.py tests/test_cf4_lg_highk_streaming_slurm.py tests/test_cf4_lg_highk_conditional_field.py tests/test_cf4_lg_highk_technical_pilot.py tests/test_cf4_lg_highk_p1_support_audit.py"
+    },
+    "existing_P2_and_z0_likelihood_regression": {
+      "passed": 10,
+      "failed": 0
+    },
+    "bash_syntax_passed": true,
+    "python_compile_passed": true,
+    "git_diff_check_passed": true
+  },
+  "audit_findings": {
+    "legacy_v8_conflict": "The V8 program still requires parent-centered P1 and therefore cannot be reused as the execution program. Only its SHA-pinned candidate preselection, normalized z=0 likelihood, and statistical thresholds are inherited.",
+    "actual_unique_covariance_keys": 250,
+    "previous_working_estimate_of_230_corrected": true,
+    "parent_centered_P1_prefilter": "prohibited",
+    "pair_recentered_P1": "retained as a downstream final environment gate",
+    "midpoint_importance_correction": "not reapplied because the 256 rows are already equal-weight joint posterior draws",
+    "peak_evidence": "not reapplied"
+  },
+  "implementation_contract": {
+    "covariance_cache": "250 exact AQA* matrices computed once with no fields or science selection",
+    "pilot_indices": [0, 64, 128, 192],
+    "production_batching": "16 Slurm array tasks times 16 rows, maximum concurrency four after a passing pilot",
+    "field_persistence": false,
+    "full_particle_state_persistence": false,
+    "persistent_outputs": "Atomic per-row FoF halo catalogue plus field, P2, likelihood, identity, and timing diagnostics",
+    "restart": "Only verified deterministic replay of the identical schedule row is allowed; thresholds and seeds cannot change.",
+    "numerical_failure": "Any high-k gate failure stops before PM.",
+    "manual_syn101_execution": false
+  },
+  "resources": {
+    "covariance_cache": {
+      "slurm_memory": "19G",
+      "basis": "1.2 times the measured 15728660 KiB high-k technical-pilot peak, rounded upward"
+    },
+    "integrated_PM_pilot": {
+      "slurm_memory": "48G",
+      "basis": "1.2 times a conservative 40 GiB pre-pilot estimate; production must use the pilot's measured MaxRSS plus 20 percent",
+      "gpu_partitions": "h200,h100,a100"
+    }
+  },
+  "authorization": {
+    "covariance_cache_execution": false,
+    "integrated_four_row_PM_pilot_execution": false,
+    "production_256_forward_execution": false,
+    "pair_recentered_P1_aggregation_execution": false,
+    "RAMSES": false
+  },
+  "next": "After user approval, change only the cache and integrated-pilot authorization flags, refresh the program SHA pins in both Slurm scripts, commit and push, then submit the cache job followed by the four-row pilot with an afterok dependency. Stop for pilot result and memory evaluation before production."
+}

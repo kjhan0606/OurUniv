@@ -1,0 +1,94 @@
+{
+  "schema": "ouruniv-cf4-bgc-population-calibration-aggregate-correction-v4",
+  "date": "2026-08-31",
+  "status": "ASSISTANT_STRUCTURAL_AGGREGATION_ERROR_SINGLE_V4_CORRECTION_AUTHORIZED",
+  "authorization_basis": "Standing user instruction permits correction of an assistant-caused implementation failure without a new approval.",
+  "preserved_failed_jobs": [
+    {
+      "Slurm_job_id": 328695,
+      "failure_layer": "shell_precondition",
+      "cause": "invalid live Dependency assertion",
+      "aggregate_artifact_published": false
+    },
+    {
+      "Slurm_job_id": 328769,
+      "failure_layer": "shell_precondition",
+      "cause": "incorrect expected runtime SHA supplied by assistant",
+      "aggregate_artifact_published": false
+    },
+    {
+      "Slurm_job_id": 328782,
+      "failure_layer": "Python_aggregation_structural_metadata",
+      "state": "FAILED",
+      "elapsed_seconds": 15,
+      "exit_code": "1:0",
+      "error": "delta/theta available bin IDs differ",
+      "stdout_sha256": "a6e8439ac18c18499b98f703cfed418eae389f28b909b7fe1f87522fcf8837f3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aggregate_artifact_published": false
+    }
+  ],
+  "root_cause_and_fix": {
+    "density_available_merged_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "theta_available_merged_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "density_bin_11_mode_count": 3,
+    "theta_bin_11_mode_count": 0,
+    "structural_cause": "The three density modes in bin 11 are self-conjugate Nyquist-axis modes. The frozen theta definition excludes all Nyquist planes, so theta correctly has no bin-11 mode.",
+    "v3_bug": "The aggregator incorrectly required identical density and theta available-bin sets.",
+    "v4_policy": "Evaluate density and theta on their actual supports. Map theta bin 11 to unavailable and false before the joint contiguous-prefix frontier, so the absent domain fails closed and is never silently omitted.",
+    "truth_metric_or_candidate_value_used_to_choose_fix": false,
+    "threshold_seed_population_or_member_changed": false
+  },
+  "authorization": {
+    "single_v4_aggregate_correction_submission": true,
+    "reuse_exact_completed_64_member_artifacts": true,
+    "member_rerun": false,
+    "metric_threshold_change": false,
+    "seed_change": false,
+    "population_generator_change": false,
+    "automatic_retry_after_v4": false,
+    "untouched_256_mock_validation": false,
+    "frontier_promotion": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "bindings": {
+    "scientific_program": {
+      "path": "config/cf4_bgc_population_calibration_program_v1.json",
+      "sha256": "38ff44a066a55048f9d35ef93c64cce2f98702b4a785099087ffc97a698a00f0"
+    },
+    "frozen_member_and_metric_source": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "corrected_aggregate_source": {
+      "path": "src/cf4_population_calibration_aggregate_v2.py",
+      "sha256": "371016743b9c0609c15a400f30560cc288ac694301f59f482e3fa0cb132a9969"
+    },
+    "v3_correction": {
+      "path": "config/cf4_bgc_population_calibration_aggregate_correction_v3.json",
+      "sha256": "a8a1054d7e9c181afdcb3677cdf86b41375f1bf4121b3a4afb9340a8d6db4f57"
+    },
+    "failed_v3_runner": {
+      "path": "scripts/run_cf4_bgc_population_calibration_aggregate_v3.sbatch",
+      "sha256": "9a39340997696ba17b0ed9a9e72fa119600895f22d7b7544fbaef5837fd81768"
+    },
+    "member_implementation_commit": "342bb7c77ac60801a303cb81311a30b3506c8f1d"
+  },
+  "execution": {
+    "backend": "Slurm_CPU_only_after_exact_accounting_verification_of_328686",
+    "persistent_Slurm_comment": "cf4_bgc_pop_v4_accounted_328686_failed_328695_328769_328782",
+    "cpus_per_task": 4,
+    "expected_peak_memory_MiB": 3200,
+    "requested_memory_MiB": 4096,
+    "memory_headroom_multiplier": 1.28,
+    "time_limit": "00:30:00",
+    "members_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "output": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "maximum_v4_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true
+  }
+}

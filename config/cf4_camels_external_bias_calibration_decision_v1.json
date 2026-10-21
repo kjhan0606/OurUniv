@@ -1,0 +1,21 @@
+{
+  "schema": "ouruniv-cf4-camels-external-bias-calibration-decision-v1",
+  "date": "2026-09-20",
+  "job": "388375",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/camels_external_bias_calibration_v1/result.json",
+  "decision": "EXTERNAL_BIAS_SEPARATION_PASS",
+  "source": "CAMELS SIMBA DM CIC truth plus subhalo counts; Carrick field was not accessed",
+  "gates": {"all_populations_supported": true, "finite": true, "train_validation_consistent": true},
+  "bias_prior": [
+    {"population":0,"train_mean":0.0422023,"train_sd":0.0072516,"validation_mean":0.0401280,"validation_sd":0.0060364},
+    {"population":1,"train_mean":0.0313066,"train_sd":0.0069507,"validation_mean":0.0364417,"validation_sd":0.0033090},
+    {"population":2,"train_mean":0.0371998,"train_sd":0.0086776,"validation_mean":0.0395849,"validation_sd":0.0062789},
+    {"population":3,"train_mean":0.0441773,"train_sd":0.0116953,"validation_mean":0.0553518,"validation_sd":0.0144429},
+    {"population":4,"train_mean":0.0655710,"train_sd":0.0187055,"validation_mean":0.0660455,"validation_sd":0.0184111},
+    {"population":5,"train_mean":0.1323198,"train_sd":0.0165957,"validation_mean":0.1440669,"validation_sd":0.0094396}
+  ],
+  "separation_rule": "Carrick density is a covariate/reference only; tracer bias is constrained by this external DM-truth prior and remains a nuisance.",
+  "remaining_scope": "Apply this prior in the CF4 likelihood and repeat the untouched holdout; do not interpret the external slopes as direct CF4 luminosity bias without that test.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

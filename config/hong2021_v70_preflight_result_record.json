@@ -1,0 +1,82 @@
+{
+  "schema": "hong2021-v70-query-aligned-latent-spatial-hard-preflight-result-record-v1",
+  "status": "complete_corrected_hard_preflight_pass_authorized_train_only_latent_cache",
+  "program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+  "program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+  "program_freeze_commit": "692511d62d4f5a999b47a6bdecc417fce7df9764",
+  "implementation_commit": "b496ecf5702178e4accc7d4cc557232c07d254f7",
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/preflight.json",
+    "sha256": "5b708473534954ff45f19ae0711249dd2d7305fa7288458467b71a78b853a3c4",
+    "decision_digest_sha256": "ea8985dce4221896a14e34140284d81c3097ec5b773009fa3a8859312c8f0c6b",
+    "status": "pass",
+    "representation_pass": true,
+    "model_pass": true,
+    "latent_cache_construction_authorized": true
+  },
+  "representation": {
+    "TNG100": {
+      "rank_clamp_fraction": 5.7220458984375e-06,
+      "latent_mean": -0.027234962180297993,
+      "latent_standard_deviation": 0.999648947585972,
+      "maximum_normal_CDF_roundtrip_error": 1.439205804532051e-08
+    },
+    "SIMBA": {
+      "rank_clamp_fraction": 3.814697265625e-06,
+      "latent_mean": 0.03023691042178505,
+      "latent_standard_deviation": 1.0081411913174683,
+      "maximum_normal_CDF_roundtrip_error": 1.4383531754535994e-08
+    },
+    "Swift": {
+      "rank_clamp_fraction": 1.9073486328125e-06,
+      "latent_mean": -0.03200356521446157,
+      "latent_standard_deviation": 0.9990414345156938,
+      "maximum_normal_CDF_roundtrip_error": 1.4384119562116382e-08
+    }
+  },
+  "model": {
+    "parameters": 8771649,
+    "full_precision_EDM_loss": 1.0065531730651855,
+    "AMP_EDM_loss": 1.0065531730651855,
+    "AMP_to_full_relative_difference": 0.0,
+    "condition_permutation_mean_absolute_response": 0.0027578696608543396,
+    "gradient_tensors_expected": 174,
+    "gradient_tensors_present": 174,
+    "gradient_tensors_with_nonzero_norm": 174,
+    "gradient_nonzero_values": 8771645,
+    "gradient_values": 8771649,
+    "gradient_L2": 0.13674232363700867,
+    "peak_allocated_bytes": 6396549632,
+    "peak_allocated_bytes_limit": 30064771072
+  },
+  "false_positive_recovery": {
+    "initial_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_latent_spatial_sequence/attempt1_invalid_unscaled_amp_gradient/preflight_false_positive.json",
+    "initial_report_sha256": "3a4e699724dbe50527c19425a029ebdac429e73c80cc4d8e2b3377cb31340bcc",
+    "reason_sha256": "23d86e5c1956689ed1257e9b44cd672aabd0416daeb21faf13ac3b1019bdbd7a",
+    "problem": "The first implementation called AMP backward without a GradScaler and accepted an aggregate nonzero gradient even though only 194 of 8771649 scalar gradient values were nonzero.",
+    "correction": "The preserved rerun uses a full-precision backward and requires every one of the 174 trainable parameter tensors to have a present, finite, nonzero gradient. No cache, optimizer, or training was created by the invalid attempt.",
+    "posthoc_model_or_threshold_change": false
+  },
+  "integrity": {
+    "network_source_sha256": "bdb1126605cdb346aed4ec9249a42a533021dfc02be71558c2eedb7a78216470",
+    "preflight_source_sha256": "1e227fd305a34c6ce1928c0051ffb7d20234c8f811106fff50e29c986946e81a",
+    "latent_cache_source_sha256": "6892fce67011e26adcb55677e5b1a86e5079935d9f7b9ab9375f47d5c171dbe4",
+    "recovery_runner_sha256": "6618d7e394e65fd244698858ed6aa2a22ceaa245232f8e56e2f0e6ce7a1fd2d9",
+    "pytest_passed": 527,
+    "pytest_log_sha256": "e5f1c761005993fe5b1edec5a559bb95662a3248a6f1e538f0315edf6d31ebb3",
+    "preflight_log_sha256": "db2bf85b6613b5ce4a2b9d74b8720842887e5b5c84781022107f38891f1237ad",
+    "sequence_status_sha256": "82e9c3ff695543faa8f2bff56d3b1ff92ce98c6e66f2cba7c5c4a34d04a722ef"
+  },
+  "next": "construct_and_fully_scan_the_frozen_train_only_latent_cache_before_any_optimizer_is_created",
+  "firewall": {
+    "optimizer_constructed": false,
+    "optimizer_step_performed": false,
+    "latent_cache_written": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

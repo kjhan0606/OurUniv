@@ -1,0 +1,205 @@
+{
+  "schema": "ouruniv-cf4-bgc-population-calibration-program-v1",
+  "date": "2026-08-31",
+  "status": "USER_APPROVED_FROZEN_64_MOCK_DEVELOPMENT_CALIBRATION",
+  "purpose": "Calibrate the grouped-CF4 BGc plus linear constrained-realization chain on independent LCDM truth fields with newly generated population selection and distance noise before any untouched validation or frontier promotion.",
+  "authorization": {
+    "authorization_basis": "User approved the population-selection/noise truth-mock generator and the 64-mock development calibration after the fixed-design smoke passed.",
+    "development_64_mock_calibration": true,
+    "Slurm_member_array_submission": true,
+    "Slurm_dependent_aggregation_submission": true,
+    "GPFS_declared_read_write": true,
+    "untouched_256_mock_validation": false,
+    "frontier_promotion": false,
+    "KF_EXPAND": false,
+    "IC_PM_HOP_RAMSES": false,
+    "observational_CF4_inference": false,
+    "automatic_retry": false,
+    "automatic_follow_on_after_aggregate": false,
+    "network_access": false
+  },
+  "selection_contract": {
+    "semantics": "empirical_grouped_CF4_selection_conditioned_on_clean_group_count",
+    "conditioned_clean_group_count": 22136,
+    "selection_basis_fields": [
+      "grouped_CF4_distance",
+      "grouped_CF4_sky_direction",
+      "grouped_CF4_distance_modulus_error"
+    ],
+    "observed_vpec_or_vobs_used_for_generation_or_inference": false,
+    "observed_v3k_use": "post_generation_population_fidelity_reference_only",
+    "observed_v3k_used_for_generation_or_inference": false,
+    "full_survey_selection_normalization_modeled": false,
+    "full_group_formation_or_multiplicity_regenerated": false,
+    "interpretation_limit": "This diagnoses the empirical grouped-catalog-conditioned likelihood. It is not a first-principles survey selection function validation."
+  },
+  "inputs": {
+    "catalog": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37",
+      "semantics": "selection_and_error_marks; observed_v3k_is_diagnostic_reference_only"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+      "body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+    }
+  },
+  "source_bindings": {
+    "population_calibration": {
+      "path": "src/cf4_population_calibration.py",
+      "sha256": "fe3b1dd38258b2ed28fd27a551287e14e797232f8f89da83ae1cc59c3309b2af"
+    },
+    "fixed_design_field_kernels": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "constraint_frontier_gates": {
+      "path": "src/cf4_constraint_frontier.py",
+      "sha256": "d1692175a3d13f13eec0e4c319879e771e25300b2f5b003ad46f1aa5370cc699"
+    },
+    "linear_CR": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "BGc_likelihood": {
+      "path": "src/cf4_bgc.py",
+      "sha256": "9ffbc8d07ca07ee05cba53f58d3e3cca5598bd27fffa8610c0c856bba043a90d"
+    },
+    "CF4_ingest": {
+      "path": "src/cf4_ingest.py",
+      "sha256": "de0df0c427a935e82cd76904ee522145cc0c9c5b64ed8494b6ca3b8478af1b26"
+    }
+  },
+  "development": {
+    "mock_count": 64,
+    "truth_seed_start": 2026083000,
+    "truth_seed_stop_exclusive": 2026083064,
+    "truth_seed_2026083000_previously_consumed_by_fixed_design_smoke": true,
+    "new_unique_truth_seed_count_in_this_execution": 63,
+    "posterior_draw_count": 16,
+    "truth_model": "independent_LCDM_Gaussian_white_fields_transformed_to_linear_z0_density_and_velocity",
+    "member_weight": "exactly_1_over_64",
+    "post_result_retuning_allowed": false
+  },
+  "validation_firewall": {
+    "truth_seed_start": 2026083064,
+    "truth_seed_stop_exclusive": 2026083320,
+    "truth_seed_count": 256,
+    "may_be_opened_or_executed_by_this_program": false,
+    "development_results_may_promote_frontier_without_validation": false
+  },
+  "generator": {
+    "proposal_oversampling_factor": 4,
+    "radial_histogram_bins": 24,
+    "longitude_histogram_bins": 24,
+    "sin_latitude_histogram_bins": 12,
+    "empirical_kernel": "joint source-row resampling followed by uniform jitter within frozen radial-volume, longitude, and sin-latitude cells",
+    "edm_floor_mag": 0.04343,
+    "distance_noise": "d_obs=d_true*exp(epsilon), epsilon~Normal(0,max(e_DM,0.04343)*ln(10)/5); implementation samples d_obs from the empirical kernel then obtains the paired d_true by exact inversion",
+    "radial_fraction": 0.95,
+    "log_gaussian_density_bias": 1.0,
+    "density_coupling": "conditional fixed-count Gumbel top-k draw with log weight equal to bias times CIC truth delta",
+    "redshift_generation": "cz=H0*d_true+truth_radial_velocity+bulk_dot_rhat-d_true*delta_H0",
+    "bulk_prior_sigma_km_s_per_axis": 150.0,
+    "delta_H0_prior_sigma_km_s_Mpc": 3.0,
+    "fidelity_longitude_bins": 12,
+    "fidelity_sin_latitude_bins": 6
+  },
+  "population_fidelity_gates": {
+    "conditioned_clean_group_count": 22136,
+    "BGc_selected_group_count_reference": 19313,
+    "BGc_selected_group_count_min": 15450,
+    "BGc_selected_group_count_max": 23176,
+    "observed_distance_KS_max": 0.1,
+    "distance_error_mag_KS_max": 0.05,
+    "redshift_velocity_KS_max": 0.1,
+    "angular_histogram_total_variation_max": 0.15,
+    "all_64_members_must_pass": true
+  },
+  "inference": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "BGc_window": 801,
+    "BGc_target_cz_km_s": [1500.0, 18000.0],
+    "BGc_reference_pool_cz_km_s": [500.0, 30000.0],
+    "holdout_fraction": 0.2,
+    "holdout_raw_index_hash_seed": 20260823,
+    "holdout_rows_excluded_from_BGc_reference_pool": true,
+    "CG_tolerance": 3e-05,
+    "CG_max_iterations": 500,
+    "preconditioner_probe_count": 4,
+    "analytic_posterior_mean_required_for_point_metrics": true,
+    "theta_definition": "minus_discrete_spectral_divergence_of_stored_velocity_divided_by_100f",
+    "theta_Nyquist_plane_modes_excluded": true
+  },
+  "aggregate_gates": {
+    "mock_cluster_bootstrap_replicates": 2000,
+    "mock_cluster_bootstrap_seed": 2026800000,
+    "response_min_inclusive": 0.8,
+    "response_max_inclusive": 1.2,
+    "correlation_r_min_inclusive": 0.7,
+    "residual_power_ratio_max_inclusive": 0.5,
+    "phase_null": "one-sided independent random sign per canonical mock-mode cross contribution",
+    "phase_null_replicates": 256,
+    "phase_null_seed_delta": 2026800001,
+    "phase_null_seed_theta": 2026800002,
+    "phase_null_p_max_inclusive": 0.01,
+    "variance_statistic": "median per mock and bin of posterior sample variance ddof=1 divided by prior variance; cluster-bootstrap median over mocks",
+    "variance_bootstrap_upper_max_exclusive": 0.8,
+    "coverage_interval": "analytic posterior mean plus or minus Student-t_15 multiplier times component sample standard deviation from 16 draws",
+    "coverage68_nominal": 0.6826894921370859,
+    "coverage68_abs_error_max": 0.05,
+    "coverage95_nominal": 0.9544997361036416,
+    "coverage95_abs_error_max": 0.025,
+    "coverage_bootstrap_requirement": "two-sided_95_percent_mock_cluster_bootstrap_interval_contains_nominal",
+    "complex_mode_components": "real_and_imaginary_for_nonself_conjugate_modes; real_only_for_self_conjugate_modes",
+    "heldout_statistic": "mean per-heldout-row log predictive density improvement over paired prior predictive, evaluated cumulatively from the lowest bin",
+    "heldout_per_row_improvement_lower_min_exclusive": 0.0,
+    "strict_gate_combination": "response_and_correlation_and_residual_and_phase_and_variance_and_coverage68_and_coverage95_and_heldout",
+    "frontier_rule": "contiguous prefix from the lowest available N32 bin; delta and theta both must pass"
+  },
+  "resolution_semantics": {
+    "cell_size_cMpc_h": 12.0,
+    "N32_is_implementation_and_development_calibration_only": true,
+    "global_metrics_only": true,
+    "ROI_metrics_evaluated": false,
+    "target_cell_size_cMpc_h": 0.3,
+    "target_0p3_cMpc_h_reached": false,
+    "development_frontier_is_science_frontier": false
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "member_array": "0-63%8",
+    "member_cpus_per_task": 4,
+    "member_expected_peak_memory_MiB": 1600,
+    "member_requested_memory_MiB": 2048,
+    "member_time_limit": "01:00:00",
+    "aggregate_cpus_per_task": 4,
+    "aggregate_expected_peak_memory_MiB": 3200,
+    "aggregate_requested_memory_MiB": 4096,
+    "aggregate_time_limit": "00:30:00",
+    "memory_minimum_headroom_multiplier": 1.2,
+    "member_output_root": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/members",
+    "aggregate_output": "/gpfs/kjhan/CF4/kf_design/bgc_population_calibration_v1/aggregate",
+    "maximum_member_array_submissions": 1,
+    "maximum_aggregate_submissions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  }
+}

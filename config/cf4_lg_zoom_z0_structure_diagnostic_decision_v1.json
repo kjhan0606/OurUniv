@@ -1,0 +1,25 @@
+{
+  "decision": "LG_PAIR_PROVISIONAL_CANDIDATE",
+  "stage": 8,
+  "snapshot": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_z0_production_v1/job_388664/output_00002",
+  "hop_job": 390703,
+  "pair_jobs": [390982, 390987, 390991],
+  "diagnostics": {
+    "hop_mass": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_z0_hop_mass_v1.json",
+    "pair_screen": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_pair_v1.json",
+    "pair_kinematics": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_pair_kinematics_v1.json"
+  },
+  "screened_pairs": 6,
+  "provisional_best_pair": {
+    "group_i": 25,
+    "group_j": 86,
+    "separation_cMpc_h": 0.4453313782005461,
+    "mass_i_msun_h": 820557096030.0985,
+    "mass_j_msun_h": 572604766900.3568,
+    "radial_velocity_km_s": -69.19519974324699,
+    "tangential_velocity_km_s": 29.331180797177634,
+    "contamination_i": 0.0,
+    "contamination_j": 0.0
+  },
+  "interpretation": "The pair satisfies the current coarse LG screening and is the only approaching candidate among six. It is not promoted to MW/M31 until halo profile, isolation/environment, and M33/satellite diagnostics are completed."
+}

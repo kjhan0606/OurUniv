@@ -1,0 +1,44 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v19",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "4da663a6974ab59907344a504ed95e5a25520232",
+  "audit_mode": "packet_internal_no_tree_tools",
+  "status": "COMPLETE_DESK_AUDIT",
+  "verdict": "NO-GO",
+  "promotion_disposition": "NO_GO_DEVELOPMENT_ONLY; validation and B2 remain closed",
+  "risk_level": "MODERATE_PROVENANCE_AND_GATE_CONTRACT",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v19.txt",
+  "findings": {
+    "periodic_rsd_repair_supported_but_mutation_check_requested": false,
+    "lexical_import_closure_consistent": false,
+    "runtime_import_closure_evidence": true,
+    "receipt_anchor_at_head": false,
+    "receipt_record_mutual_pin_cycle": true,
+    "regression_anchor_non_tautological": false,
+    "metric_contingency_reconciled": true,
+    "per_arm_width_direction_two_sided": true,
+    "science_boundary_sealed": true
+  },
+  "blocking_findings": [
+    "The lexical import check record (exit 1, zero matches) contradicts the packet's live check (exit 0, one self-match).",
+    "Receipt and regression anchors point to 493d845 while HEAD is 4da663a; post-anchor receipt/record edits are not independently anchored.",
+    "The result record pins receipt bytes while the receipt verifies the record, creating a mutual hash cycle with no fixed point at HEAD."
+  ],
+  "substantive_findings": [
+    "The strict 2/16 pass count is uniform across arms, so a D-specific causal attribution is not justified.",
+    "Per-arm legacy coverage is two-sided: A/C/D over-cover while B under-covers; no pooled scalar width policy can close all arms.",
+    "The 2x2 legacy coverage contingency is 68-only=9, 95-only=9, both=38, neither=8; union=56, matching the strict failure count.",
+    "Per-arm median coverage fields require explicit legacy-per-voxel scope labels."
+  ],
+  "required_next": [
+    "Use a one-way external certificate or immutable annotated tag; remove the mutual record-receipt pin.",
+    "Re-run or scope the lexical import check so it does not self-match; retain the runtime sys.modules guard.",
+    "Anchor the regression to an exact certified source/test commit and use a non-tautological src/tests diff to HEAD.",
+    "Extend the production periodic test with an explicit production-entry mutation guard and keep all six faces/corners covered.",
+    "Keep per-arm width policy diagnostic-only; any two-sided per-arm amendment requires fresh disjoint development seeds and a separate audit.",
+    "Do not open validation, promote the frontier, or start B2."
+  ],
+  "recommendation": "NO-GO. Repair provenance/anchor defects and retain the scientific boundary; the development gate result is not evidence for or against the final CF4 method."
+}

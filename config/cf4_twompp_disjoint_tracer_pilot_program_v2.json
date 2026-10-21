@@ -1,0 +1,41 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-program-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_ASSISTANT_HEADER_CONTRACT_CORRECTION_V2",
+  "authorization_basis": "The user approved the independent z=0 density-tracer design. Standing instructions permit correction of the assistant-caused immediate V1 header assertion failure without another approval.",
+  "frozen_v1_program": {
+    "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v1.json",
+    "sha256": "695f362b8942e911ebac5a942217bc75128cdbc45ca042e535b9bd2123517ee5"
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_disjoint_tracer_pilot_v2.py",
+    "sha256": "d19a8b6b65475fc3c9be2e870f6740da4ce566c3ed872a6852d5a66ffad5ad9f"
+  },
+  "implementation_correction_v2": {
+    "failed_v1_Slurm_job_id": 329498,
+    "failed_v1_state": "FAILED",
+    "failed_v1_exit_code": "1:0",
+    "failed_v1_elapsed_seconds": 5,
+    "failed_v1_output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v1",
+    "failure": "V1 compared internal output field names RA and DEC against the actual VizieR input header fields _RA and _DE.",
+    "failure_before_catalog_deserialization": true,
+    "failure_before_scientific_or_numerical_gate": true,
+    "input_changed": false,
+    "exclusion_policy_changed": false,
+    "selection_or_population_changed": false,
+    "threshold_changed": false,
+    "random_seed_changed": false,
+    "scientific_design_changed": false,
+    "automatic_retry_after_v2_failure": false
+  },
+  "execution": {
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v2/pilot",
+    "maximum_submissions": 1,
+    "requested_cpus": 1,
+    "expected_peak_memory_MiB": 700,
+    "requested_memory_MiB": 1024,
+    "time_limit": "00:15:00",
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "DEVELOPMENT_RATE_MARGINAL_NOT_TRACER_CALIBRATION",
+  "rate_prior_family": "independent Gamma(shape, shape / published_N128_rate) per six populations",
+  "rate_shape": 1.0,
+  "rate_shape_status": "fixed broad sensitivity reference with coefficient of variation one; not inferred from observed totals or independently calibrated",
+  "rate_mean_source": "config/cf4_r2_common_cosmology_v1.json published_prior, cell-volume scaled",
+  "training_fraction": 0.6,
+  "survival": "36 disjoint calibration-only Beta(yes+1,no+1) distributions retained; mean used for the bounded N128 mechanics screen, full marginalization still required",
+  "bias": "six published linear-regime values held fixed for the mechanics screen; nonlinear PM bias transfer is not calibrated",
+  "FoG": "inherited development widths held fixed for the mechanics screen; physical RSD/FoG mock calibration is missing",
+  "diffuse_fraction": "zero without claiming the physical unresolved component is absent",
+  "posterior_status": "not approved for production inference"
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-sol-closure-audit-v2",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "gpt-5.6-sol",
+  "auditor_role": "backup_auditor",
+  "primary_auditor": "claude-opus-5",
+  "audit_trigger": "Primary Claude Opus 5 timed out without inspection or verdict",
+  "commit_audited": "9eb0556",
+  "verdict": "NO-GO",
+  "scope": "B1 repair v2 synthetic calibration and joint-interface harness",
+  "positive_findings": [
+    "v2 fixes train-conditioned holdout exposure scaling",
+    "v2 uses the declared 16 draws and relabels v1 as a count-only smoke",
+    "TSC/RSD/ownership/support probes are useful and reproducible",
+    "only development seeds were consumed and all downstream promotion remains blocked"
+  ],
+  "blocking_findings": [
+    "The 64 mock truth, count generation, posterior mean and gates remain count-only; the CF4 grouped velocity/shared-redshift factor is not coupled to inference or gates.",
+    "The CF4 score uses random velocities independent of each mock field, so it is an interface probe rather than joint calibration.",
+    "Source-bound selection, empty-sky response, demonstrated 17,007-target exclusion before binning, conservative TSC/RSD/FoG generation and the declared D-arm selection/HOD/discrepancy stress are not part of the 64 mock path.",
+    "Posterior draws are smoothed local-noise draws rather than samples from the declared joint posterior; near-unity coverage is not calibrated uncertainty.",
+    "GH3 versus GH7/9 convergence and observer-sphere boundary suppression remain untested.",
+    "The contract records run_development_mocks=false while the v2 result claims execution; an explicit bounded execution amendment is required."
+  ],
+  "interpretation": {
+    "v2_artifact": "repaired count-smoke plus joint-interface tests",
+    "full_B1_joint_calibration": "NOT_COMPLETE",
+    "observational_posterior": "NOT_CREATED",
+    "frontier": "NOT_PROMOTED",
+    "resolution_0p3_cMpc_h": "NOT_ALLOWED"
+  },
+  "required_next_action": [
+    "Bind the local execution grant separately from the frozen design contract.",
+    "Implement one integrated harness in which one frozen synthetic LCDM field generates both disjoint 2M++ counts and CF4 grouped marks through the contracted selection, ownership, RSD/FoG, nuisance, discrepancy and uncertainty paths.",
+    "Rerun only the 64 development seeds after integration; keep the 256 validation seeds sealed."
+  ],
+  "driver_disposition": "STOP_AT_NO_GO; no KF_EXPAND, observational posterior, high-k promotion, IC/PM/HOP/RAMSES or validation execution is authorized."
+}

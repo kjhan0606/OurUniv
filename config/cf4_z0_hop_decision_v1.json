@@ -1,0 +1,20 @@
+{
+  "schema": "ouruniv-cf4-z0-hop-decision-v1",
+  "date": "2026-09-20",
+  "job": "388595",
+  "stage": "7/8",
+  "decision": "Z0_HOP_CATALOG_PASS_ENVIRONMENT_DIAGNOSTICS_PENDING",
+  "source": "/gpfs/kjhan/CF4/ramses/cf4_production_ic_z0_dmo_v1/job_388424/output_00002",
+  "work": "/gpfs/kjhan/CF4/hop/cf4_z0_v1/job_388595",
+  "checks": {
+    "scale_factor": 1.01680611403509,
+    "ramse_particle_count": 16777216,
+    "hop_reader_completed": true,
+    "regroup_completed": true,
+    "group_count": 95850,
+    "tag_count": 16777216,
+    "tag_file_nonempty": true
+  },
+  "interpretation": "A valid z=0 HOP catalog is now available. This alone does not establish MW/M31/M33, Virgo/Coma, Local Void, or Bootes Void reproduction.",
+  "next": "Run a Slurm diagnostic that reads the z=0 RAMSES particles and HOP tags, reports mass-ranked groups and environment summaries, and applies no target promotion."
+}

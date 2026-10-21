@@ -1,0 +1,44 @@
+{
+  "schema": "ouruniv-explicit-lg-peak-likelihood-v2-midk",
+  "frozen_date": "2026-08-02",
+  "supersedes": "config/p2_lg_peak_likelihood_v1.json",
+  "activation_condition": "The v1 high-k-only diagnostic had free sigma(delta_R1.5)=0.018 and reduced target RMSE by only 0.5--1.8 percent; the candidate-centred audit also produced zero survivors.",
+  "information_status": "These constraints are an explicit additional MW/M31 morphological likelihood and are not attributed to CF4.",
+  "method": "Matheron Gaussian conditioning of the N576 white field while freezing the N64 long-mode support inherited from the valid CF4 parent. N64--N192 modes may change and every N192 projection must therefore repeat the unchanged P1 gates before P2.",
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "parent_projection_mesh_size": 192,
+  "frozen_mode_mesh_size": 64,
+  "box_size_mpc_h": 384.0,
+  "proposal_seeds": [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008],
+  "geometry_seeds": [6101, 6102, 6103, 6104, 6105, 6106, 6107, 6108],
+  "likelihood_noise_seeds": [7201, 7202, 7203, 7204, 7205, 7206, 7207, 7208],
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14,
+    "calibration": "Before any v2 nonlinear forward, frozen-N64 free sigma(delta_R1.5)=0.6382 and two development geometries gave chi2=8.24 and 10.34 for 14 noisy constraints."
+  },
+  "selection_policy": {
+    "all_eight_proposals_receive_the_same_likelihood": true,
+    "orientation_is_drawn_isotropically_from_the_frozen_geometry_seed": true,
+    "n64_long_mode_coefficients_must_remain_unchanged": true,
+    "n64_to_n192_changes_are_explicit_additional_information": true,
+    "repeat_all_five_p1_gates_on_every_n192_projection": true,
+    "no_threshold_retuning_after_forward_results": true,
+    "use_the_existing_P2_FoF_gates_unchanged": true,
+    "definitive_acceptance_still_requires_RAMSSES_HOP_M200c_and_contamination": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v2_midk",
+    "parent_projection_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v2_midk",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v2_midk",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v2_midk"
+  }
+}

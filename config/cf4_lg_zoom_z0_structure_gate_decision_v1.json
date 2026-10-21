@@ -1,0 +1,22 @@
+{
+  "decision": "LG_STRUCTURE_CONDITIONAL_NO_GO",
+  "stage": 8,
+  "snapshot": "/gpfs/kjhan/CF4/ramses/cf4_lg_zoom_z0_production_v1/job_388664/output_00002",
+  "hop_gate_job": 391003,
+  "hop_gate_result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_zoom_z0_gate_v1/gate_result.json",
+  "opfof_crosscheck_job": 391029,
+  "hop": {
+    "clean_zoom": true,
+    "mass_range": true,
+    "separation": true,
+    "tangential_velocity": true,
+    "approaching": false,
+    "m33": "not_resolved",
+    "phase_preserved": false
+  },
+  "opfof": {
+    "status": "IMPLEMENTATION_FAIL_NOT_SCIENCE_FAIL",
+    "reason": "nx=16384 linked allocation requested about 824 GB; no scientific result was produced. Do not retry unchanged."
+  },
+  "interpretation": "The z=0 zoom is clean and contains a Local-Group-scale pair, but the validated HOP gate does not reproduce the observed approaching MW-M31 kinematics and does not resolve M33. Final LG reproduction is NO-GO pending a corrected halo/kinematic diagnostic or revised IC conditioning."
+}

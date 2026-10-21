@@ -1,0 +1,33 @@
+VERDICT: CONDITIONAL
+
+RISK_LEVEL: MODERATE — integrity and physics firewalls are clean; residual risk is
+methodological (in-sample width tuning, weak gate power, and one curated artifact).
+
+Opus audit of HEAD 729e27e:
+
+1. All declared hashes/bytes and analytic-sigma implementation checks pass.
+   The 64-member analytic result is 0.751953125 (68%) and 0.966796875 (95%),
+   with counts [47,46,49,48,52,45,49,49] and [62,63,62,61,62,60,63,62].
+2. The strict per-voxel gate remains unchanged at 8/64 and must not be used as
+   a meaningful promotion gate because its coverage statistic is not a
+   frequentist coverage frequency.
+3. The four v10 provenance/firewall blockers are closed. Validation remains
+   sealed and B2 remains closed.
+4. The analytic sigma is correctly reconstructed from the Laplace covariance,
+   but the width factors remain in-sample tuned and must not be claimed as
+   out-of-sample calibration.
+5. The proposed per-mode Bonferroni bands are too weak: they admit a uniform
+   approximately seven-point overcoverage. Add a pooled or directional guard.
+6. The mark-side misspecification arm is not yet preregistered: form, seeds,
+   member allocation, and width re-fit/freeze policy are unspecified.
+7. The D-arm analytic sigma is an expected-Fisher approximation under a
+   misspecified Poisson objective; label it accordingly or implement sandwich
+   covariance.
+8. The mode v3 result was hand-edited after generation and has a schema/version
+   mismatch; make the pointer and next_action code-generated. Refresh stale
+   current pointers and interpretation values.
+
+RECOMMENDATION: Keep validation [2026083320,2026083576) sealed and do not start
+B2-IC-FORWARD. Accept the metric only in principle. Add a directional pooled
+guard, preregister the mark-side arm and width freeze policy, correct covariance
+wording, and regenerate the result machine-reproducibly before adoption.

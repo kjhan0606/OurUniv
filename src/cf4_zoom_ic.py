@@ -2,11 +2,11 @@
 """Nested mass-refined GRAFIC zoom IC for lagRAMSES (Scheme A), preserving cr6.e19.
 
 P0 (plumbing validation): build a coarse full-box level + nested sub-box levels by
-DOWNSAMPLING the running 1024^3 parent (ic_cr6_e19_1024/level_010), plus a geometric
+Fourier-projecting the running 1024^3 parent (ic_cr6_e19_1024/level_010), plus a geometric
 Lagrangian ic_refmap sphere. No pmwd/transfer needed here:
   - hydro=off => ic_deltab is header-only for N-body (positions come from ic_velc*),
-  - coarse+equal-or-lower resolution than the parent => plain downsample is exact and
-    mode-consistent with the parent (no fresh small-scale power to synthesize).
+  - coarse+equal-or-lower resolution than the parent => retain the exact shared
+    physical Fourier modes (no fresh small-scale power to synthesize).
 P2 (science, levels finer than the parent) will instead synthesize fresh small-scale
 power via embed_ic + a transfer function measured from the parent; that is a separate
 code path added later.
@@ -20,6 +20,7 @@ import os
 import sys
 import argparse
 import numpy as np
+from scipy import fft as sfft
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import grafic_io as G
@@ -31,6 +32,30 @@ def block_downsample(a, N):
     assert M % N == 0, (M, N)
     r = M // N
     return a.reshape(N, r, N, r, N, r).mean(axis=(1, 3, 5))
+
+
+def fourier_resample_field(a, N, workers=-1):
+    """Sample the same periodic physical field on a smaller Fourier grid.
+
+    Unlike mean pooling, this preserves the amplitude and phase of every
+    retained physical mode.  The ``(N/M)^3`` factor converts between the
+    unnormalised FFT conventions for two sampled physical fields; it is not
+    the ``(N/M)^1.5`` white-noise normalization used for random fields.
+    """
+    a = np.asarray(a)
+    M = a.shape[0]
+    if a.ndim != 3 or a.shape != (M, M, M):
+        raise ValueError("input must be a cubic 3-D field")
+    if N > M or N <= 0 or N % 2:
+        raise ValueError("N must be a positive even integer no larger than input")
+    if N == M:
+        return a.astype(np.float32, copy=False)
+    source = sfft.rfftn(a.astype(np.float32, copy=False), workers=workers)
+    half = N // 2
+    index = np.r_[0:half, M - half:M]
+    target = source[np.ix_(index, index, np.arange(half + 1))].copy()
+    target *= np.float32((float(N) / M) ** 3)
+    return sfft.irfftn(target, s=(N, N, N), axes=(0, 1, 2), workers=workers).astype(np.float32)
 
 
 def snap_subbox(N, Nmin, L_hmpc, center_hmpc, half_hmpc):
@@ -96,8 +121,10 @@ def main():
         N = 2 ** L
         assert N <= Npar, f"P0 only supports levels <= parent ({Npar}); level {L} => {N}"
         dxg = (Lbox_mpc) / N                              # GRAFIC comoving Mpc cell
-        vx = block_downsample(vx1, N); vy = block_downsample(vy1, N); vz = block_downsample(vz1, N)
-        dd = block_downsample(d1, N) if d1 is not None else None
+        vx = fourier_resample_field(vx1, N)
+        vy = fourier_resample_field(vy1, N)
+        vz = fourier_resample_field(vz1, N)
+        dd = fourier_resample_field(d1, N) if d1 is not None else None
 
         if L == Lc:
             i0, i1 = 0, N

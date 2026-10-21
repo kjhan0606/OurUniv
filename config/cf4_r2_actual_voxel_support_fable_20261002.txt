@@ -1,0 +1,61 @@
+Read-only science/code advice. Do not edit files, build, submit jobs, or run
+simulations. Return PASS/CONDITIONAL PASS/REJECT/NO VERDICT for the current
+interpretation, then the smallest justified next implementation.
+
+Project goal: actual CF4+galaxy-conditioned present-day density/mean velocity/
+physical dispersion posterior at1.5cMpc/h in384box, then SAME-state MW/M31/M33
+conditioning at<=.3local, forward validation and phase-consistent zoom ICs.
+R2 incomplete, no production posterior. No new simulation needed here.
+Q-GOAL: does the remedy advance that actual-state delivery?
+Q-LEAN: avoid endless quadrature ladders/new validation frameworks.
+MW/M31 ambiguous,M33 unresolved; native identities never seed generated roles.
+
+Inspect these scoped files:
+src/cf4_r2_moment_target.py
+src/cf4_r2_marked_tracer_jax.py (predict_source_marked_radial_key_density)
+src/cf4_r2_shell_cdf_count.py
+src/cf4_r2_raw_volume_target.py (FreshRawSupport)
+scripts/cf4_r2_raw_field_profile.py (load_inputs)
+scripts/cf4_r2_raw_source_mixture.py (observed_radius construction)
+scripts/cf4_r2_actual_support_localization.py
+CF4_R2_NATIVE_RSD_MOCK_20261002.md (last bundled continuation only)
+/gpfs/kjhan/CF4/z0_density/r2_actual_support_localization_20261002_v1/result.json
+
+Evidence: small joint moment/nuisance AD and previous mixture tests passed.
+Actual N128 saved nonstationary same-state moments,47121training counts and
+1414graph-closed training rawFP links. No heldout/new PM. Optional new law uses
+normalized core+broad Gaussian, core30km/s, broad width sqrt(core²+.5²*LOSvar),
+fraction.5; development probes, NOT calibration priors or fitted parameters.
+Counts integrate Gaussian radius/mark probability within exact voxel-boundary
+intervals; source positions still GL cell-volume nodes. Raw FP conditions on
+observed count voxel and individual redshift-derived radius, sums same source
+mixture before numerator/denominator normalization, with exact periodic roots
+and radial Jacobian. Both use same8sigma tail; production defaults unchanged.
+
+Actual GL1 support fails trainingrow2; GL2 fixes row2 but failsrow76. All-source
+readout (not local tree only) for row76,PGC22913,pop0,r122.3466753073,
+voxel[80,85,34], spacing3, observer[192]*3:
+GL2 core/broad8sigma weight0; untruncated core3.88e-69,broad2.28e-47;
+legacy TSC core30 gives.00176014. GL1 all untruncated voxel weights0.
+At row2,r97.90991262,voxel[82,88,51],GL1 untruncated broad3.59e-100,
+GL2 broad8sigma.00337527 vsTSC.00220644. All source cells/masses/angular and
+GL1/2 nodes retained. Untruncated diagnostic uses27images and is NOT an
+adopted exact unbounded periodic likelihood. Native full-grid voxel forward
+had positive support and score improvement but6%test excess; not CF4validation.
+
+Driver interpretation: finite source-volume rays can miss a tiny voxel/sphere
+intersection and TSC hid that. This is not uniquely proven as the whole cause;
+check actual radius/voxel registration and source semantics before accepting.
+No blind GL4/8 ladder, likelihood floor, arbitrary width inflation, TSC
+fallback adoption, extra simulation or chain. Need coherent actual-data count
+AND continuous raw-mark support, not two incompatible prediction measures.
+
+Questions:
+1 Is the zero localized to source angular/volume quadrature, measurement
+conditioning or a concrete source/coordinate bug? Distinguish proof/inference.
+2 Smallest coherent remedy: geometry-adapted source quadrature, exact observed
+direction continuous point conditional, or declared approximate shared response?
+Give actionable equations/contracts and cost, not an unbounded research plan.
+3 How preserve count/raw normalization and uncertainty without double-using
+the observed point, native truth, or an empirical correction from heldout?
+4 Essential vs deferred, and one bounded decisive actual-state calculation.

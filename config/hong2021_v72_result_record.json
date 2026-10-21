@@ -1,0 +1,170 @@
+{
+  "schema": "hong2021-v72-terminal-result-record-v1",
+  "status": "complete_single_use_stage_A_failure_sealed_stage_B_unopened_independent_gate_locked",
+  "purpose": "Bind the Path-B V72 conditioning-stratified spatial quantile transport program, fresh stage-A result, two audited execution recoveries, exact failure modes, and terminal seal without repeating stage A or accessing stage B or EAGLE.",
+  "record_base_commit": "4488ff5925eb9f224d667679b1ad3b9c5fe8f81e",
+  "frozen_program": {
+    "path": "config/hong2021_v72_locked_spatial_quantile_transport_program.json",
+    "sha256": "83add01ae90cff6c3e1f656901daf7b9ed09a24c2f8bc59b6c52603531d8f9e4",
+    "feasibility_audit": "config/hong2021_v72_feasibility_and_fresh_partition_audit.json",
+    "feasibility_audit_sha256": "8699a6776b7cfdad71cf58717ed8898a3dddabbd91ccf05d29b6f60c3983524e",
+    "preimplementation_erratum": "config/hong2021_v72_preimplementation_spatial_tie_threshold_erratum.json",
+    "preimplementation_erratum_sha256": "5746fc94fc3f80b6ace24b44d9a3de4d9d209ae67165f916d130e4a552eeb233",
+    "freeze_commit": "ac3977af9f87d0d558a446e46e02929620d9d438",
+    "implementation_commit": "405f7590005798aded777b056243353b8d3f8825"
+  },
+  "code_only_preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/preflight.json",
+    "sha256": "d3e2d7e71923054ba5c4234fad36ddb6d7b497ffec3878a507c467bb2b11c0a8",
+    "decision_digest_sha256": "eea57f8e441b345c28eed57956135343fd9fc47d851396b70b4eea43773213f4",
+    "status": "complete_code_only_V72_preflight_stage_A_authorized_stage_B_locked",
+    "fresh_payload_or_metric_accessed": false,
+    "preflight_pass": true
+  },
+  "fresh_stage_A": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A",
+    "sample_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_sample.log",
+    "sample_log_sha256": "b3e54b3e8a3672656135bab3d83017cfc0d8e5fbd158b444a9d5d907be7ded51",
+    "domains": 3,
+    "queries_per_domain": 16,
+    "members_per_query": 16,
+    "source_indices": {
+      "TNG100": [2, 6, 9, 14, 17, 26, 30, 39, 48, 51, 60, 64, 67, 82, 86, 87],
+      "SIMBA": [2, 3, 14, 18, 19, 24, 35, 36, 41, 47, 50, 55, 59, 60, 61, 63],
+      "Swift": [5, 16, 20, 32, 38, 56, 74, 77, 82, 94, 111, 114, 115, 122, 143, 145]
+    },
+    "maximum_absolute_residual_DC": 4.336808689942018E-18,
+    "maximum_inverse_CDF_error": 7.152557373046875E-7,
+    "maximum_marginal_tied_voxel_fraction": 0.0002551078796386719,
+    "frozen_maximum_marginal_tied_voxel_fraction": 0.0003,
+    "maximum_pre_inverse_stratum_multiset_error": 0.0,
+    "maximum_rank_disagreement_fraction_excluding_marginal_ties": 0.0,
+    "maximum_physical_pre_DC_sorted_residual_difference_diagnostic": 0.16901697463355625,
+    "maximum_physical_post_DC_sorted_residual_difference_diagnostic": 0.1686551570892334,
+    "peak_allocated_bytes": 1510728704,
+    "numerical_and_SQT_invariants_pass": true
+  },
+  "audited_execution_recoveries": {
+    "metadata_only": {
+      "program": "config/hong2021_v72_stage_A_evaluator_metadata_recovery_program.json",
+      "program_sha256": "8ad681eb58075701ed680dada751b7e2f659d9850bdede9eab4d209fbf86a0e9",
+      "freeze_commit": "8a72cb2e18b7204b88f1fd3de9c1d7b1b3e8d3ee",
+      "implementation_commit": "3bb400b4b0300a584b6ed829f39c8e553be9b325",
+      "record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_metadata_recovery.json",
+      "record_sha256": "981f81b25ef2c829ce226649761f1e12d7eb18fca11d8ad1984db677f049e0ea",
+      "decision_digest_sha256": "ca9d1294b4b774e335c9fa8fb7c31fac46d45e413f988535c525b75a7c2552ce",
+      "only_change": "add missing HDF5 root attribute diagnostic_k_h_mpc=1.0",
+      "all_nine_dataset_manifests_unchanged": true,
+      "sampling_repeated": false
+    },
+    "gate_label_only": {
+      "program": "config/hong2021_v72_stage_A_gate_label_recovery_program.json",
+      "program_sha256": "cbbcc1d73e6f01e2e66772e55af31181b6e4355aed5974e8f9aa837f4ff34352",
+      "freeze_commit": "7aca17acd0406c7ded9b293ef6e8adcc7273f486",
+      "implementation_commit": "4488ff5925eb9f224d667679b1ad3b9c5fe8f81e",
+      "record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/stage_A_gate_label_recovery.json",
+      "record_sha256": "04416210623b4d35288e82116580b5ddcdfdb2f6419a7597ebd0ede708f4657a",
+      "decision_digest_sha256": "0a7a5d7f7a32fcea59ff0ed034dfcdc7d927a1c4a2e06597ed632335b3dacb0e",
+      "only_change": "strictly read the sole evaluator candidate key sqt instead of the legacy hard-coded edm key",
+      "all_nine_ensembles_and_metrics_hash_verified": true,
+      "metrics_recomputed": false,
+      "stage_A_resampled_or_reevaluated": false
+    }
+  },
+  "stage_A_gate": {
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/decision.json",
+    "decision_sha256": "d1548eaca502e7b7f5eeba03fec77751cd73b2dc00a380e9fbaa79e485d8b362",
+    "decision_digest_sha256": "9d82622f19a39a274ae17dd8cfae6b1d1a3840b6912cdf5d62e298e54641eb23",
+    "status": "complete_single_V72_SQT_stage_gate",
+    "stage_pass": false,
+    "classification": "V72_SQT_is_not_fresh_screen_sufficient",
+    "fair_q99_999_all_domains": false,
+    "symmetric_Q4_all_domains": false,
+    "cube_maximum_energy_better_than_independent_control_all_domains": false,
+    "all_three_field_pass": false,
+    "explicit_spectral_all_domains": true,
+    "explicit_residual_RMS_all_domains": true
+  },
+  "domain_results": {
+    "TNG100": {
+      "q99_999_error_dex": 0.18988316827497131,
+      "q99_999_pass": false,
+      "generated_over_truth_mean_delta_squared": 2.248500586309196,
+      "Q4_pass": false,
+      "candidate_cube_maximum_energy_score": 0.2117007733633121,
+      "independent_control_cube_maximum_energy_score": 0.13745574628313384,
+      "raw_V70_cube_maximum_energy_score": 0.21439316632846991,
+      "energy_better_than_independent_control": false,
+      "power_3_6_h_mpc": 1.0019463554764534,
+      "power_6_10_h_mpc": 1.0017703774060496,
+      "residual_RMS_ratio": 0.964503557356574,
+      "field_pass": false,
+      "field_failure": "two_point_improves_deterministic_all_scales at 0-1 Mpc/h: generated mean KS 0.21354166666666666 versus deterministic 0.20833333333333334"
+    },
+    "SIMBA": {
+      "q99_999_error_dex": -0.012875255174074063,
+      "q99_999_pass": true,
+      "generated_over_truth_mean_delta_squared": 0.8729389498526212,
+      "Q4_pass": true,
+      "candidate_cube_maximum_energy_score": 0.12046559328834217,
+      "independent_control_cube_maximum_energy_score": 0.11574830052753289,
+      "raw_V70_cube_maximum_energy_score": 0.1173268827299277,
+      "energy_better_than_independent_control": false,
+      "power_3_6_h_mpc": 1.044905272622832,
+      "power_6_10_h_mpc": 1.0506003181565935,
+      "residual_RMS_ratio": 1.0024136278945697,
+      "field_pass": true
+    },
+    "Swift": {
+      "q99_999_error_dex": -0.03146874014665668,
+      "q99_999_pass": true,
+      "generated_over_truth_mean_delta_squared": 0.9936575903661184,
+      "Q4_pass": true,
+      "candidate_cube_maximum_energy_score": 0.13082164662579696,
+      "independent_control_cube_maximum_energy_score": 0.13127816741665205,
+      "raw_V70_cube_maximum_energy_score": 0.138092178478837,
+      "energy_better_than_independent_control": true,
+      "power_3_6_h_mpc": 1.0415562440176285,
+      "power_6_10_h_mpc": 1.0561430524835826,
+      "residual_RMS_ratio": 1.0124668623818538,
+      "field_pass": true
+    }
+  },
+  "scientific_conclusion": {
+    "spectral_and_RMS_problem_solved": true,
+    "evidence": "All three domains are within the predeclared 0.9-1.1 intervals in both high-k power bands and residual RMS; density PDF, rank calibration, coverage, and exact DC also pass everywhere.",
+    "SQT_is_fresh_screen_sufficient": false,
+    "reason": "Hard spatial rank transport places the largest marginal innovations preferentially at V70 high-rank locations. On fresh TNG100 this produces an over-heavy physical tail and Q4 moment, slightly worsens the sub-Mpc two-point statistic, and has substantially worse per-query maximum energy score than the independent marginal control. SIMBA also loses the strict maximum-energy comparison, while Swift passes all declared checks.",
+    "cross_domain_robustness": "The method transfers useful small-scale structure but its extreme-density calibration is domain-dependent and is not robust enough for a constrained-realization IC pipeline.",
+    "no_posthoc_override_or_V72_retry": true
+  },
+  "terminal_seal": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/sealed_result.json",
+    "sha256": "7d78ba387adfd99114c57a1da21509c1d421b2d22021143289081821fd85099f",
+    "decision_digest_sha256": "0aa9c7c3aee60578e798a72c6c253770413bd00d7b88e8faa06db2e5ccb7d6c8",
+    "status": "sealed_stage_A_failure_stage_B_unopened_independent_gate_locked",
+    "stage_A_single_use_consumed": true,
+    "stage_B_accessed": false,
+    "two_stage_pass": false
+  },
+  "verification": {
+    "local_full_test_suite": "585 passed in 22.33s",
+    "lageunha_full_test_suite_before_gate_recovery": "585 passed in 38.55s",
+    "repository_clean_at_gate_and_seal": true
+  },
+  "firewall": {
+    "stage_A_attempts": 1,
+    "stage_A_resampling_reevaluation_or_posthoc_tuning": false,
+    "stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  },
+  "authorization": {
+    "rerun_or_modify_V72": false,
+    "open_V72_stage_B": false,
+    "open_independent_EAGLE": false,
+    "required_next": "Treat V72 stage A as consumed development evidence. Any follow-up must be a separately frozen candidate and may use only an untouched partition for selection or confirmation."
+  }
+}

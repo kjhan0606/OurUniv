@@ -1,0 +1,21 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/r1_resolution_mixing_v2",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "fidelity_seeds": [2026091301, 2026091401, 2026091402],
+  "fidelity_arms": [["mesh1_dt128", 1, 4], ["mesh2_dt128", 2, 4], ["mesh4_dt128", 4, 4], ["mesh4_dt256", 4, 8]],
+  "initialization_seeds": [2026091311, 2026091312, 2026091413, 2026091414],
+  "sampler_seed": 2026091420,
+  "warmup_steps": 128,
+  "chunk_size": 8,
+  "sampling_arms": [
+    {"name": "fixed8", "sampling_steps": 2048, "integration_steps": 8},
+    {"name": "random16_48", "sampling_steps": 512, "integration_steps": 32, "integration_steps_range": [16, 48]}
+  ],
+  "sampler_max_step": 0.1,
+  "projection_wavevectors": [[1, 0, 0], [1, 1, 0], [2, 1, 0], [4, 0, 0], [8, 4, 0], [12, 7, 2]],
+  "engineering_mixing_limits": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100},
+  "application_seconds_cap": 6600,
+  "R1_previous_GPU_seconds": 352,
+  "R1_total_GPU_seconds_cap": 14400,
+  "scope": "Same baseline likelihood/data for sampler comparison. Common ICs, particle masses, apertures and observation scales for force/time sensitivity. No observed LG, mass calibration, nested backend, particle convergence, independent solver or R1 closure."
+}

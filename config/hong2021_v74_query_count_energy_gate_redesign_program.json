@@ -1,0 +1,158 @@
+{
+  "schema": "hong2021-v74-query-count-energy-gate-redesign-program-v1",
+  "status": "frozen_before_V74_implementation_or_new_bootstrap_draws",
+  "purpose": "Prospectively redesign only the sampling-sensitive query count and strict maximum-energy ordering identified by V73. Test whether increasing from sixteen to thirty-two truth queries makes the unchanged physical and morphology core attainable, and replace the exchangeable coin-flip energy ordering with a one-sided truth-oracle-calibrated no-detectable-inferiority rule. Do not train, sample a model, relax a physical threshold, access fresh data, or reinterpret V72.",
+  "authorization": {
+    "user_instruction": "The user explicitly instructed '다음 단계 진행' after receiving the V73 result and recommendation for a V74 prospective gate redesign.",
+    "V74_redesign_audit_authorized": true,
+    "new_generator_or_fresh_gate_execution_authorized": false,
+    "V72_reinterpretation_authorized": false
+  },
+  "parent_evidence": {
+    "V73_result_record": "config/hong2021_v73_result_record.json",
+    "V73_result_record_sha256": "2af963ef3ad9e940e4022e9440643202122efc867136c84584db831a16efa7a2",
+    "V73_program": "config/hong2021_v73_train_truth_gate_attainability_audit_program.json",
+    "V73_program_sha256": "cf92b53504c6501faf9d6043661f070a3e7458dc57ccd94bff77365760a1cf05",
+    "V73_source": "src/hong2021_v73_gate_attainability.py",
+    "V73_source_sha256": "e01555d1f2ca56eb237595dfd21e1877056671fd3ff4e22bcd95014fa7c86796",
+    "V73_audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/audit_result.json",
+    "V73_audit_result_sha256": "274925549c6eb652979c76a2ddac4496a08a81158d10a68ffe96cad6b788e002",
+    "V73_decision_digest_sha256": "f04e4d916b12c08ee4f4c2b4d573eeb8150c8695990ff2151133342478e6791d",
+    "V73_summary_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.json",
+    "V73_summary_record_sha256": "6b9d741be1bd3ce5c50a15c146e9dcbdb3d2008e1668d668ce2ecaa99131f24c",
+    "V73_summary_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+    "V73_summary_cache_sha256": "1d85f76c9df4ea9a26cb8c82bae746f586cb904d8cc65294aa92c6295c36a2b8"
+  },
+  "scope_limits": {
+    "this_is_not_a_generator": true,
+    "V73_summary_is_the_only_density_derived_input": true,
+    "raw_train_truth_reread": false,
+    "validation_or_fresh_partition_access": false,
+    "V72_stage_B_access": false,
+    "Astrid_access": false,
+    "historical_or_independent_EAGLE_access": false,
+    "model_checkpoint_access": false,
+    "training_or_model_sampling": false,
+    "physical_threshold_relaxation": false,
+    "rank_coverage_or_exact_DC_redesign": false,
+    "V72_verdict_change": false
+  },
+  "population": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects": {
+      "TNG100": 416,
+      "SIMBA": 186,
+      "Swift": 393
+    },
+    "source": "the immutable V73 fit-train summary after excluding all forty-eight V70 mechanism-holdout objects",
+    "grouping": {
+      "TNG100": "the four frozen x-z quadrants",
+      "SIMBA": "the eight frozen CAMELS realisations 16-23",
+      "Swift": "the twenty frozen CAMELS realisations 0-19"
+    }
+  },
+  "candidate_query_counts": [16, 32],
+  "query_selection": {
+    "without_replacement": true,
+    "TNG100": {
+      "16": "four queries from every x-z quadrant",
+      "32": "eight queries from every x-z quadrant"
+    },
+    "SIMBA": {
+      "16": "two queries from every realisation",
+      "32": "four queries from every realisation"
+    },
+    "Swift": {
+      "16": "select sixteen of twenty realisations without replacement and draw one query from each",
+      "32": "draw one query from all twenty realisations, select twelve realisations without replacement, and draw one additional distinct query from each selected realisation"
+    }
+  },
+  "truth_oracle": {
+    "members_per_query": 16,
+    "selection": "draw with replacement from the query's frozen group after excluding every query index in that trial",
+    "second_energy_oracle": "draw an independent oracle B by the identical law",
+    "duplicates_retained": true,
+    "coarse_oracle_limit": "This is a group-conditional empirical-population oracle, not an exact repeated draw at identical target-free conditioning."
+  },
+  "independent_monte_carlo_phases": {
+    "calibration": {
+      "trials_per_query_count_and_domain": 20000,
+      "seed": 740001,
+      "uses": [
+        "estimate unchanged-gate pass probabilities for comparison",
+        "freeze domain-and-query-count energy upper margins"
+      ]
+    },
+    "verification": {
+      "trials_per_query_count_and_domain": 20000,
+      "seed": 740002,
+      "uses": [
+        "select the lowest query count whose unchanged sampling core is attainable",
+        "verify the calibrated energy family-wise false-rejection rate"
+      ]
+    },
+    "independence_limit": "The seeds are independent Monte Carlo draws from one fixed empirical population; this tests resampling stability, not independent-box generalization."
+  },
+  "unchanged_sampling_sensitive_core": {
+    "q99_999": "absolute pooled oracle-minus-query log10rho q99.999 difference <=0.1 dex",
+    "Q4": "pooled oracle-over-query mean delta-squared ratio in [2/3,1.5]",
+    "high_k_power": "mean oracle-over-query log-density power in [0.9,1.1] in both 3-6 and 6-10.0531 h/Mpc bands",
+    "residual_RMS": "oracle-own centered truth-minus-deterministic residual RMS over query-own residual RMS in [0.9,1.1]",
+    "density_PDF": "oracle-query histogram TV is strictly lower than deterministic-query histogram TV",
+    "two_point": "oracle-query KS is strictly lower than deterministic-query KS in every frozen 0-1, 1-3, and 3-10 Mpc/h scale mean",
+    "environment": "every frozen oracle mean peak/void statistic has strictly smaller absolute error than the deterministic query mean",
+    "absolute_core": ["q99_999", "Q4", "high_k_power", "residual_RMS"],
+    "morphology_core": ["density_PDF", "two_point", "environment"],
+    "joint": "all absolute and morphology checks pass",
+    "all_thresholds_and_strict_inequalities_identical_to_V73": true
+  },
+  "query_count_decision": {
+    "probability_interval": "two-sided 95-percent Wilson interval over the 20000 verification trials",
+    "attainable_if": [
+      "the Wilson lower bound of the aligned all-three-domain joint pass probability is at least 0.8",
+      "the Wilson lower bound of every single-domain absolute-core pass probability is at least 0.8"
+    ],
+    "selection": "choose the lowest candidate query count satisfying every attainability condition",
+    "if_neither_count_is_attainable": "do not relax a threshold; classify that an additional metric-level redesign is required",
+    "V73_reproduction_check": "the sixteen-query verification all-domain joint point estimate and each domain absolute/joint point estimate must be within 0.02 absolute of V73"
+  },
+  "energy_redesign": {
+    "old_rule": "candidate mean per-query maximum-energy score must be strictly lower than the independent control in every domain",
+    "old_rule_null_behavior": "exchangeable oracle A beats oracle B with probability one half and is therefore not an attainable all-domain validity gate",
+    "statistic": "mean over queries of oracle-A unbiased scalar maximum-energy score minus oracle-B score",
+    "calibration_quantile": 0.9833333333333333,
+    "multiplicity_reason": "one-sided alpha 0.05 divided by three domains; each domain-and-query-count upper margin is the linear 59/60 quantile of its calibration null",
+    "prospective_rule": "candidate-minus-control mean maximum-energy score must not exceed the frozen domain-and-query-count oracle upper margin",
+    "interpretation": "no detectable inferiority at family-wise alpha approximately 0.05; superiority is separately reported and is not required",
+    "verification": "report per-domain and aligned all-domain false-rejection probabilities and Wilson intervals; energy redesign is calibrated only if the all-domain point false-rejection probability is <=0.06 and its Wilson upper 95-percent bound is <=0.065",
+    "consumed_V72_diagnostic": "apply only the selected sixteen-query frozen margin to the already recorded V72 candidate-minus-control mean deltas as a diagnostic; never change V72"
+  },
+  "excluded_components": {
+    "rank_histogram_and_voxel_coverage": "V73 established that the coarse cross-query donor construction is not a valid exact conditional null for aligned-voxel calibration; these require a separate audit before a complete prospective gate can be frozen",
+    "exact_DC": "deterministic numerical invariant, not a sampling problem",
+    "cross_domain_common_law": "already measured by V73 and not rerun",
+    "TNG_spatial_heterogeneity": "already measured by V73 and not rerun"
+  },
+  "predeclared_outcomes": {
+    "query_count_redesign_sufficient": "one candidate query count satisfies every Wilson-lower attainability rule and the V73 sixteen-query reproduction check passes",
+    "additional_metric_redesign_required": "neither query count satisfies the attainability rule",
+    "energy_redesign_calibrated": "the frozen oracle-margin verification meets both family-wise false-rejection limits",
+    "full_prospective_gate_complete": false,
+    "reason_full_gate_remains_incomplete": "rank histogram and voxel coverage still lack a defensible exact-conditional null audit"
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign",
+    "calibration_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/calibration_arrays.npz",
+    "verification_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/verification_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v74_gate_redesign/audit_result.json"
+  },
+  "resource_and_firewall": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "maximum_workers": 1,
+    "nice": 15,
+    "cpu_affinity": "logical CPU 64",
+    "existing_RAMSES_run_must_not_be_modified_or_stopped": true,
+    "new_candidate_or_fresh_gate_after_result": "forbidden without a separately frozen complete gate and explicit user approval"
+  }
+}

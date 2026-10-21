@@ -1,0 +1,25 @@
+{
+  "schema": "ouruniv-cf4-pm-ramses-adapter-preflight-decision-v1",
+  "date": "2026-09-20",
+  "job": "388411",
+  "host": "syn103",
+  "stage": "6/8",
+  "decision": "PM_RAMSES_ADAPTER_PREFLIGHT_PASS_NONLINEAR_PENDING",
+  "binary": "/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax/ramses_lb_minimax3d",
+  "namelist": "config/ramses_cf4_production_ic_pm_preflight_v1.nml",
+  "input": "/gpfs/kjhan/CF4/kf_design/production_ic_grafic_v1",
+  "run_dir": "/gpfs/kjhan/CF4/ramses/cf4_production_ic_pm_preflight_v1/job_388411",
+  "checks": {
+    "grafic_header_read": true,
+    "box_cMpc_h": 384.0,
+    "level": 8,
+    "cell_cMpc_h": 1.5,
+    "particle_count_per_rank": 4194305,
+    "poisson_fftw3": true,
+    "steps_completed": 2,
+    "run_completed": true,
+    "finite_and_abort_free": true
+  },
+  "scope": "Uniform L8 DMO adapter and short PM evolution only; no z=0 nonlinear claim, HOP catalogue, zoom promotion, or <=0.3 cMpc/h claim.",
+  "next": "Run a separately budgeted nonlinear evolution and then HOP/void/cluster diagnostics before stage 7 promotion."
+}

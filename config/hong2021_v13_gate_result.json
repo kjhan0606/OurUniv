@@ -1,0 +1,39 @@
+{
+  "schema": "hong2021-v13-locked-sequence-result-v1",
+  "selected_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v12_gaussianized/validation_checkpoints/step_005000.pt",
+  "selected_step": 5000,
+  "dc_model_sha256": "c743611fda5715222bd42db99e65359518f8c7b4e168453b55de52991577d5c3",
+  "development": {
+    "TNG": {"field_gate_pass": true, "high_k_power_ratio": [0.9725243685829682, 0.9665706598612711], "residual_rms_ratio": 0.931359273136013},
+    "SIMBA_CV24_26": {"field_gate_pass": true, "high_k_power_ratio": [0.9558099869566359, 0.9784684727635096], "residual_rms_ratio": 0.9604790382614697}
+  },
+  "historical_SIMBA_CV0_15_stress": {
+    "field_gate_pass": true,
+    "high_k_power_ratio": [0.967039206966066, 0.9695166575233163],
+    "residual_rms_ratio": 0.9611429129948439,
+    "rank_histogram_tv": 0.022336819592644185
+  },
+  "EAGLE_confirmation32": {
+    "opening": "first_and_only_confirmation32_opening",
+    "field_gate_pass": false,
+    "high_k_power_ratio": [0.8680899072685343, 0.6290133321269858],
+    "residual_rms_ratio": 0.8927643411657273,
+    "coverage68_minus_finite_ensemble_expected": -0.05315289497375486,
+    "rank_histogram_tv": 0.05981330310597139,
+    "failed_checks": [
+      "high_k_total_power_within_10_percent",
+      "residual_rms_within_10_percent",
+      "rank_histogram_tv_at_most_0.05",
+      "finite_ensemble_coverage_within_0.03",
+      "all_selected_peak_void_statistics_improve_deterministic"
+    ],
+    "passed_checks": [
+      "density_pdf_improves_deterministic",
+      "two_point_improves_deterministic_all_scales",
+      "exact_dc_projection"
+    ]
+  },
+  "grid_hop_run": false,
+  "accepted": false,
+  "post_confirmation_policy": "no EAGLE-driven iteration; require non-EAGLE development data and a new untouched independent simulation family"
+}

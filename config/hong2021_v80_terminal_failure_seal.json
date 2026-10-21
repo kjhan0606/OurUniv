@@ -1,0 +1,99 @@
+{
+  "schema": "hong2021-v80-single-use-terminal-failure-seal-v1",
+  "status": "sealed_single_use_sampling_implementation_failure_no_retry",
+  "sealed_at": "2026-08-12T19:07:14+09:00",
+  "purpose": "Seal the only authorized V80 candidate attempt after selected TNG100 payload access and a deterministic HDF5 diagnostic-shape write failure. Preserve all partial artifacts and prohibit correction, resampling, metric evaluation, manifest construction, V79 gate execution, or use of another fresh subset under this candidate.",
+  "candidate_program": {
+    "path": "config/hong2021_v80_single_candidate_program.json",
+    "sha256": "43d41ae9722e2321d3a206492d543e39ba5e8b22868e4f3a755cd1b2147dc205",
+    "freeze_commit": "f7cdf927df18cd9047062dbafd3fcecef30de8f2",
+    "freeze_commit_time": "2026-08-12T19:02:33+09:00"
+  },
+  "execution": {
+    "host": "Lageunha",
+    "runner": "scripts/hong2021_v80_single_candidate_v79_lageunha.sh",
+    "runner_sha256": "701cb74dbb75c8471b37ea65a122821ff3257d37839fe91bc937c9eaf4d79ea1",
+    "runner_commit": "ea7aeeaec8daef8d0a1ec8522ee133ff2c3dd415",
+    "tmux_session": "hong_v80_v79_single",
+    "tmux_auto_exited": true,
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/status",
+    "status_sha256": "7fcb6d9cd3ddfa1b6a85f577937e8ff01860dfd0e7f555409cdce395e26cbb61",
+    "status": "failed_terminal_V80_no_retry exit=1 previous=sampling_single_frozen_V80_candidate_and_control"
+  },
+  "completed_pre_failure_steps": {
+    "Lageunha_full_tests": "655 passed in 50.81s",
+    "pytest_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/pytest.log",
+    "pytest_log_sha256": "bcfb6f636d5dc8c65702f0770e2bef4e72aa8d20f5aed6ca9d4aa37a0d570b42",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/preflight.json",
+    "preflight_sha256": "8c027c00123b011aba29f406dc8fa263a2a2872d6ccda0339f390a7341f26f3d",
+    "preflight_decision_digest_sha256": "67069bd7a84e7770012614893349bce142029078aead44bb5ba16fd311041775",
+    "candidate_program_frozen_and_pushed_before_sampling": true,
+    "selected_payload_accessed_before_candidate_freeze": false
+  },
+  "failure": {
+    "phase": "sampling TNG100 query position 0, frozen source index 10, candidate arm diagnostic write",
+    "exception": "TypeError: Can't broadcast (16, 1) -> (16,)",
+    "source": "src/hong2021_v80_sample.py",
+    "line": 387,
+    "operation": "write per-member maximum_absolute_residual_DC into the frozen HDF5 dataset row",
+    "root_cause": "_calibrate_and_project retained the singleton channel axis and returned DC shape (16,1), while the declared diagnostic dataset row has shape (16,). The scientific generated tensor itself had the declared (16,1,64,64,64) shape and finite/DC checks had passed before this storage mismatch.",
+    "scientific_statistical_result_available": false,
+    "V79_global_p_available": false,
+    "candidate_pass": false,
+    "classification": "terminal_single_use_execution_failure_not_a_statistical_model_rejection",
+    "sample_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_sequence/sample.log",
+    "sample_log_sha256": "a747a1d9d1c135e8299006ebac86999d9b2be142e80e168c9ac7d0abc79156e8"
+  },
+  "selected_payload_access": {
+    "TNG100": {
+      "input_and_target_source_indices_read": [10],
+      "candidate_field_computed": true,
+      "candidate_sample_truth_and_conditional_mean_written_before_diagnostic_failure": true,
+      "control_field_written": false
+    },
+    "SIMBA": {"input_and_target_source_indices_read": [], "candidate_field_computed": false},
+    "Swift": {"input_and_target_source_indices_read": [], "candidate_field_computed": false},
+    "no_scientific_metric_was_computed_or_disclosed": true,
+    "reserved_V79_partition_is_now_locked_against_retry": true
+  },
+  "preserved_partial_artifacts": {
+    "candidate_TNG100": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_calibrated_sqt_single_candidate/candidate/tng/ensemble16.h5.partial",
+      "bytes": 19032535,
+      "sha256": "a6cb71cace222fa520a590eff1fdf6cd8f268c0f65febff2da7279f16dccca0d"
+    },
+    "control_TNG100": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80_calibrated_sqt_single_candidate/control/tng/ensemble16.h5.partial",
+      "bytes": 5232,
+      "sha256": "f3bc7dfde1751e636ba5487083dcb138d695fac4735c755895740ca0e97331fd"
+    },
+    "partial_artifacts_deleted_renamed_or_repaired": false
+  },
+  "unperformed_steps": {
+    "complete_candidate_or_control_sampling": false,
+    "ensemble_metric_evaluation": false,
+    "execution_manifest_construction": false,
+    "V79_gate_execution": false,
+    "V79_decision_or_gate_seal": false,
+    "V72_stage_B_access": false,
+    "Astrid_or_EAGLE_access": false,
+    "RAMSES_modified_or_stopped": false
+  },
+  "clerical_timestamp_erratum": {
+    "finding": "The human-readable frozen_at fields in the V80 calibration and final candidate JSON were accidentally entered later than wall-clock time.",
+    "authoritative_order": "Git commit identities and commit times, artifact hashes, preflight, and runner start establish the actual order.",
+    "calibration_program_freeze_commit_time": "2026-08-12T18:47:43+09:00",
+    "candidate_program_freeze_commit_time": "2026-08-12T19:02:33+09:00",
+    "runner_commit_time": "2026-08-12T19:03:44+09:00",
+    "sequence_started_after_runner_commit": true,
+    "scientific_configuration_affected": false
+  },
+  "terminal_policy": {
+    "retry_authorized": false,
+    "shape_fix_and_resample_authorized": false,
+    "seed_sampler_member_metric_partition_calibration_or_candidate_change_authorized": false,
+    "remaining_reserved_indices_may_be_opened_by_this_candidate": false,
+    "next": "Stop this candidate. Any departure from the approved no-retry design would require a new explicit user decision and a new statistical design; it cannot be called completion of V79."
+  },
+  "decision_digest_sha256": "ec68edb37a65b981c6077bdd5749fba40d9bb8c509cf4ad76d09c0a3b5f95359"
+}

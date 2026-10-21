@@ -1,0 +1,115 @@
+{
+  "schema": "ouruniv-cf4-all-parent-peak-evidence-program-v1",
+  "status": "frozen_before_all_256_parent_evidence_only_audit",
+  "frozen_date": "2026-08-16",
+  "purpose": "Evaluate the unchanged Local-Group peak model over every sealed CF4 posterior parent with 64 common midpoint/axis draws, then gate parent support, Monte-Carlo stability, and weighted CF4 compatibility before any conditional field or PM forward is allowed.",
+  "authorization": {
+    "phase_cache_result_record": "config/cf4_peak_evidence_phase_control_v2_result_record.json",
+    "phase_cache_result_record_sha256": "5e5cded4689c9b7df8b647d8209770826aebbe8574b48c8f465ec79482e5d509",
+    "required_status": "complete_pass_exact_N576_phase_cache"
+  },
+  "implementation": {
+    "path": "src/cf4_all_parent_peak_evidence.py",
+    "sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e"
+  },
+  "pinned_local_files": [
+    {"path": "src/cf4_all_parent_peak_evidence.py", "sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e"},
+    {"path": "src/cf4_peak_evidence_phase_cache.py", "sha256": "6359497a141aa0814c0dd663353ae6623f01e3676c0c2fdfea5a1b272e9d7106"},
+    {"path": "src/cf4_lg_peak_cr.py", "sha256": "d6fb1d3fd0fba27aa8bb3a12aa0efb51e3e6f064db2b660be30d80798688e6a9"},
+    {"path": "config/cf4_independent_parent_architecture_design.json", "sha256": "b17e6ec0ec67cc7329614e98a989a447be5ec43edd1f6a370c481e19f9cd132b"},
+    {"path": "config/cf4_peak_evidence_phase_control_v2_result_record.json", "sha256": "5e5cded4689c9b7df8b647d8209770826aebbe8574b48c8f465ec79482e5d509"},
+    {"path": "config/p2_lg_z0_forward_importance_v8.json", "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"}
+  ],
+  "Local_Group_model": {
+    "source_program": "config/p2_lg_z0_forward_importance_v8.json",
+    "source_program_sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2",
+    "changes_from_V8": "None. Peak targets, sigma, midpoint prior/proposal, geometry, and normalized constants remain unchanged."
+  },
+  "reference_calibration": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+    "sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+    "required_status": "complete_reference_calibration_parent3429_pass"
+  },
+  "density_filter": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/peak_evidence_phase_control_v2/density_filter_rfft.npy",
+    "sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a",
+    "shape": [576, 576, 289],
+    "dtype": "float32",
+    "gaussian_radius_mpc_h": 1.5
+  },
+  "mesh": {
+    "coarse_N": 192,
+    "fine_N": 576,
+    "refinement_ratio": 3,
+    "box_size_mpc_h": 384.0
+  },
+  "parents": {
+    "seed_range_inclusive": [3193, 3448],
+    "count": 256,
+    "proposal": "Exactly uniform and stratified: every parent appears once for each common integration draw.",
+    "subset_or_result_dependent_replication_allowed": false
+  },
+  "integration": {
+    "draw_count": 64,
+    "common_random_numbers": true,
+    "midpoint_seed_range_inclusive": [2026081701, 2026081764],
+    "axis_seed_range_inclusive": [2026081801, 2026081864],
+    "reuse_identical_draws_for_every_parent": true,
+    "parent_marginal_log_evidence": "logmeanexp over normalized log Z_peak + log p(midpoint) - log g(midpoint)",
+    "half_bank_stability_split": "first 32 versus second 32 common draws"
+  },
+  "CF4_weighted_shift_test": {
+    "statistic": "sup_d(F_uniform(d)-F_evidence_weighted(d)) over the 256 sealed parent marginal deviances",
+    "null": "Randomly permute the 256 evidence weights over the fixed CF4 parent deviances.",
+    "rng": "NumPy Generator PCG64DXSM",
+    "seed": 2026081901,
+    "permutations": 100000,
+    "tail": "one-sided greater-or-equal with plus-one correction"
+  },
+  "execution": {
+    "host": "LagEunha",
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "multiprocessing_start_method": "fork after read-only filter and point sets are prepared",
+    "memory_policy": "Read-only filter is copy-on-write shared; each worker holds at most one parent mean transform.",
+    "process_table_polling": false
+  },
+  "gates": {
+    "all_256_parent_lineage_exact": true,
+    "all_16384_normalized_evidence_rows_finite": true,
+    "half_bank_parent_weight_L1_max": 0.20,
+    "half_bank_ESS_relative_difference_max": 0.20,
+    "joint_parent_geometry_ESS_min": 128.0,
+    "maximum_joint_parent_geometry_weight_max": 0.025,
+    "parent_ESS_min": 32.0,
+    "maximum_parent_weight_max": 0.10,
+    "weighted_CF4_reference_Q99_mass_max": 0.05,
+    "weighted_CF4_deviance_Q90_le_reference_Q99p5": true,
+    "weighted_CF4_one_sided_KS_permutation_p_min": 0.01,
+    "pass_requires_all": true
+  },
+  "failure_actions": {
+    "invalid_numerical_or_lineage": "Do not draw a scientific conclusion. Stop and repair lineage or numerical validity, then rerun the identical frozen program.",
+    "Monte_Carlo_or_proposal_instability": "Do not alter physical targets. Freeze a new independent common-random integration bank with more draws; parent-support and CF4-tension diagnostics are not interpretable until this passes.",
+    "parent_support_or_CF4_compatibility": "Stop the architecture. Do not tune peak targets or sigma after seeing the result; report tension or support collapse."
+  },
+  "information_firewall": {
+    "evidence_only": true,
+    "all_256_parents_required": true,
+    "new_N576_null_field_drawn": false,
+    "conditional_or_candidate_field_generated": false,
+    "PM_or_halo_finder_run": false,
+    "parent_or_seed_selection_allowed": false,
+    "threshold_retuning_after_result": false,
+    "RAMSES_authorized": false
+  },
+  "storage": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/all_parent_peak_evidence_v1",
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/all_parent_peak_evidence_v1/result.json",
+    "write_policy": "exclusive create; JSON evidence and lifecycle files only"
+  },
+  "decision": {
+    "pass": "Authorize a separately frozen parent-stratified conditional-field bank. Candidate generation and PM remain subject to that new program.",
+    "fail": "Apply the preregistered failure classification; do not generate fields or select a parent."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v17",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "1048fec",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "CONDITIONAL_NO_GO_UNTIL_LOCAL_REPAIRS",
+  "risk_level": "MODERATE",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v17.txt",
+  "findings": {
+    "numerical_periodic_test": true,
+    "count_information_v1_labelled_superseded": true,
+    "dependency_pins_in_primary_chain": true,
+    "pooled_guard_implementation_pin": false,
+    "calibration_and_width_implementation_pins": false,
+    "stale_base_result_validation_metadata": true,
+    "result_record_hashes_shell_verified": false,
+    "reported_metrics_faithful": true,
+    "science_boundary_sealed": true,
+    "diagnostic_generators_traceable": false
+  },
+  "required_next": [
+    "Supersede the stale validation-range metadata in base result v1 and v2.",
+    "Keep a successor result record with exact implementation, dependency, artifact and regression-selection pins.",
+    "Run and record byte-level hash verification.",
+    "Add implementation/dependency pins to pooled guard, calibration diagnosis and width repair outputs.",
+    "Commit generator provenance for pooled/mode/derivative diagnostics or explicitly mark them auditor-reproduced.",
+    "Record the exact regression selection and include the repaired dependency test.",
+    "Keep replacement validation range sealed and freeze width policy before validation."
+  ],
+  "recommendation": "Accept the grid-wrap repair and regenerated metrics as credible, but do not close B1 or open validation/B2 until the remaining local provenance and stale-base metadata repairs are committed and re-audited."
+}
