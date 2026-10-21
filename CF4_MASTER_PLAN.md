@@ -162,6 +162,57 @@ calibration only. Q-LEAN: no new data, source census, heldout read, gravity
 run or R3 entry. R2 remains NO-GO. Full contract and limits:
 `CF4_R2_BLOCK_ELLIPTICAL_SLICE_PILOT_20261021.md`.
 
+R2 selected-mark holdout update2026-10-21: Astra's mid-course audit is
+CONDITIONAL GO for bounded score-blind mark-evaluation plumbing, not for R2
+closure. The driver adopts its advice. The existing holdout evaluator scores
+2M++ counts only and is incomplete as validation of the joint count+FP
+conditional model. A role-aware identity manifest was built from v6 roles,
+source/group ownership and existing Tempel/2M++/CF4 identity edges. All197
+role-1 single-mark candidates pass the active no-unresolved-association,
+no-collision rule and have role-1 source-group, linked-point, Tempel-parent,
+2M++ GID and CF4-group links wherever those relationships exist. The broader
+role-1 singleton screen excludes435 groups for not having exactly one secure
+role-1 count link. The manifest used only IDs, role/membership labels and
+factor ownership; no heldout mark, count/key, position/radius, field state or
+fit value was loaded. Existing training assets still cover0/197 candidate
+PGCs. Output is
+`/gpfs/kjhan/CF4/z0_density/r2_mark_holdout_manifest_20261021_v1/`;
+implementation contract and preserved Astra response:
+`CF4_R2_MARK_HOLDOUT_EVALUATION_CONTRACT_20261021.md` and
+`CF4_R2_MARK_HOLDOUT_ASTRA_REVIEW_20261021.md`.
+
+The driver added a role-aware manifest builder and a joint count+mark
+predictive aggregator. Per state, count and all row-level mark factors are
+summed before one equal-weight log-mean-exp; repeats and zero-probability
+states are retained. A reported mark-given-count score is joint predictive
+minus count predictive. Measurement extraction, live support/weights and
+scoring remain sealed until valid post-fit draws exist; the single-sweep ESS
+pilot is not such a posterior. Focused synthetic tests passed (8 manifest,
+3 post-fit-input transform, 17 score, 7 optical/cut, 3 association-ledger
+and 3 linked-radius tests).
+One optional raw-mixture JAX regression initially selected the login-node GPU
+backend and was interrupted without a verdict. It was rerun CPU-only under
+Slurm job431594 on `a100_pcie`/`syn103`; the backend assertion passed and all5
+tests passed in57s (peak RSS 986,720KiB). The durable run record is
+`CF4_R2_RAW_MIXTURE_CPU_TEST_20261021.md`. No simulation, sampler extension,
+field result or heldout score was produced. Q-GOAL: closes
+a concrete joint-evaluation omission on the route to the first conditional
+z=0 posterior, not to the <=0.3 cMpc/h LG product. Q-LEAN: bounded plumbing,
+no new search/calculation ladder. MW/M31 roles remain ambiguous and M33
+unresolved; their observables still must constrain those same roles on the
+same NEW evolved LG field at<=0.3 cMpc/h, with native truth IDs used only for
+calibration/evaluation. R2 remains NO-GO; no exit email or R3.
+ESS feasibility job431345 remains pending on `h200` for `QOSGrpGRES` at the
+2026-10-21 09:54 KST check. It was submitted at07:12 KST expecting HEAD
+`744dbe1f19d48a2e7ba060b8f3e2b70fe92a5901`. The shared worktree's
+`CF4_MASTER_PLAN.md` was subsequently modified at09:46 KST, and the submitted
+script's startup `git diff --quiet` guard explicitly includes that file; the
+guard therefore cannot pass in the current worktree. The job is left intact
+because cancellation requires authorization. Do not submit a replacement
+while this stale job remains live. The user-requested scoped commit/push can
+proceed, but will also make the stale job's expected-HEAD check fail; wait for
+its terminal state before submitting a corrected pilot. R2 remains NO-GO.
+
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
 Conditional gradient check. Job 414921 reduced the tracer-0 derivative from
