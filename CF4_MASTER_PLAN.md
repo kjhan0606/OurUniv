@@ -211,7 +211,7 @@ user-requested scoped commit/push completed as `0e033ff`, so the old job's
 expected-HEAD check will also fail before its science pilot. It remains intact
 because cancellation requires authorization. To avoid both cancellation and
 concurrent duplicate inference, queue exactly one corrected copy of the same
-already-approved feasibility pilot with `afterfail:431345`; this dependency
+already-approved feasibility pilot with `afternotok:431345`; this dependency
 allocates no GPU before the stale job terminates. The predecessor cannot reach
 the sampler under the current HEAD. Do not use `afterany`, and do not
 automatically retry if the corrected pilot reaches the sampler and then fails
