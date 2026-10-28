@@ -46,17 +46,20 @@ calibrated, unless eligible-parent, failure, and linkage selection information
 or a defensible external sensitivity model is supplied. R2 remains NO-GO; R3
 has not started.
 
-The scalar-value probe was submitted as job439009 on `h100` with
-`gpu:H100:1`, 2 CPUs, 18GiB host memory, 2h30m Slurm / 2h application cap,
-source commit `a456d997a0049e8a533bd0389ca51e76c2427a8c`. The submission-time
-typed-GPU snapshot was H2001 free of8 (occupied), H1002 free, A1001 free, so
-H100 was selected. While it waited, documentation commit `03dd6f6` changed
-`CF4_MASTER_PLAN.md`, a path covered by the runner's startup diff guard.
-The driver cancelled 439009 before allocation because it would fail that exact
-source check before any calculation; the job performed no evaluation and
-consumed no GPU. Submit one corrected copy of the same bounded probe only
-after committing the corrected state, pinning its current HEAD, and taking a
-fresh H200-first typed-GPU snapshot. Do not change its target or caps.
+The corrected scalar-value probe 439023 completed on syntax with exit 0 in
+25:19 (batch MaxRSS 10.64 GiB under 18 GiB requested). At the fixed anchor the
+matched scalar took 400.46 s; direct value-only calls took 178.01, 142.38, and
+144.50 s (mean 154.97 s, 0.387x time). The aggregate q0/repeat scores and matched/direct
+objective are equal at float64 precision; one FP term differs by one ULP
+(`9.09e-13` nat), so retain the emitted strict-repeat-mismatch status but
+classify the difference as roundoff-level. This is a cost result, not
+low-k-movement or sampler evidence. Next is one bounded training-only N256
+count-intensity VJP as specified in the design draft, with a 20 GiB host request
+(over 20% above the prior 15.26 GiB measured joint-target peak), 2 h application /
+2.5 h Slurm cap, committed/pinned sources, and a fresh H200-first typed-GPU
+decision. It is one feasibility measurement only, not authority for sketches
+or a sampler. R2 remains NO-GO; no posterior, uncertainty, field, or heldout
+prediction exists.
 
 At this R2 sampler turning point, Astra judged a fixed Gaussian-reference ESS
 with exact full-target residual mathematically valid, but not ready for

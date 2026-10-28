@@ -65,15 +65,14 @@ or mixing. The high-mode move does not substitute for low-mode exploration.
 The nuisance timeout is a budget stop, not a block failure. Astra also
 corrected the cost interpretation above.
 
-Before any new sampler, one bounded Slurm diagnostic is planned to compare
-the old matched-gradient scalar score with the direct value-only primal at the
-same anchor, test exact repeatability at that anchor, and record target/
-support timings. It uses one full anchor replay plus one matched scalar and
-three direct scalar evaluations; one nuisance coordinate is perturbed only
-to invalidate the same-point cache between direct repeats. The 2h30m job
-requests 18GiB host RAM (about28% above the observed14.06GiB peak). It produces
-no field or posterior and reads no heldout values. Even a faster direct-value
-route would address evaluator cost only, not the low-k movement failure.
+Before any new sampler, one bounded Slurm diagnostic compared the old
+matched-gradient scalar score with the direct value-only primal at the same
+anchor and measured repeatability plus target/support timings. It used one
+full anchor replay, one matched scalar evaluation, and three direct-value
+evaluations; one nuisance coordinate was perturbed only to invalidate the
+same-point cache between direct repeats. It produced no field or posterior
+and read no heldout values. Even a faster direct-value route addresses
+evaluator cost only, not the low-k movement failure.
 
 Job439009 was submitted on `h100` / `gpu:H100:1` after a typed-GPU
 snapshot (H200:1 free of8, H100:2 free, A100:1 free). It pinned code commit
@@ -81,9 +80,33 @@ snapshot (H200:1 free of8, H100:2 free, A100:1 free). It pinned code commit
 documentation commit changed `CF4_MASTER_PLAN.md`, which is explicitly in
 the runner's startup diff guard. The driver cancelled 439009 before allocation
 to avoid a guaranteed pre-calculation source-guard failure. It performed no
-evaluation and consumed no GPU. Submit at most one corrected copy of the same
-bounded diagnostic, pinned to the then-current committed HEAD after a fresh
-H200-first typed-GPU check; do not change its target, cap or partition policy.
+evaluation and consumed no GPU. The one corrected copy, 439023, was pinned to
+the then-current committed HEAD after a fresh H200-first typed-GPU check and
+completed as recorded below.
+The corrected submission, job 439023 on h100 / gpu:H100:1 pinned to
+`eb068b4b1d6ec5f99d276f5ddfb99dda52d4af7e`, completed on syntax with exit 0
+in 25:19; Slurm batch MaxRSS was 10.64 GiB under the 18 GiB request. The fixed
+anchor replay, matched scalar score, and three direct-value scores all
+completed. The matched score evaluation took 400.46 s; direct-value evaluations
+took 178.01, 142.38, and 144.50 s (mean 154.97 s, ratio 0.387, about 2.58x faster).
+Direct-minus-matched objective was 0; only the FP term differed by
+`-9.09e-13` nat. The aggregate q0 and repeated scores are identical, but the
+strict termwise repeat flag is false because the FP reduction differs by one
+float64 ULP (`9.09e-13` nat). Treat this as roundoff-level non-bitwise
+agreement, not a scientific mismatch; preserve the emitted
+`VALUE_ONLY_REPEAT_MISMATCH_NOT_POSTERIOR` status rather than rewriting the
+historical artifact. This supports direct `obs.value` for cost feasibility,
+not low-k movement or sampler efficacy. No field, posterior transition,
+uncertainty, or heldout score was produced. Full Slurm output:
+`/gpfs/kjhan/CF4/logs/cf4_r2_valueprobe_439023.out`.
+
+The next bounded calculation is the already specified single training-only
+count-intensity VJP at the fixed anchor. It measures one actual N256 reverse
+pass only; it cannot be inferred from the scalar speed ratio and does not
+authorize discovery/validation sketches or a sampler. Before submission,
+raise the host request to 20 GiB (more than 20% above the prior 15.26 GiB
+measured joint-target peak), retain the 2 h application / 2.5 h Slurm caps, pin committed
+sources, and take a fresh H200-first typed-GPU snapshot. R2 stays NO-GO.
 
 The following sampler bundle remains design-only until evidence is ready:
 
@@ -127,6 +150,20 @@ order d/r). Use discovery probes only to propose a subspace, then independent
 training-only probes to check projected information, residual information,
 uncertainty and stability. These are still not evidence of full posterior
 rank.
+
+A further read-only source check confirmed the train exposure mask includes
+zero-count cells, and the count intensity can be exactly zero for some
+exposed outputs because of the source-side selection/deposition operators.
+Astra advised that \(\lambda=0,J=0\) does not establish zero Fisher
+information: \(\lambda(t)=t^2\) has a positive-side \((\lambda')^2/\lambda\)
+limit of4. The driver therefore rejects the “full Poisson Fisher” label for
+this sketch. The only current candidate is a fixed-anchor,
+positive-intensity-row PSD surrogate used solely to construct the Gaussian
+proposal; all train-exposed rows, including zero and newly activated cells,
+remain in every exact target/residual evaluation. No arbitrary intensity
+floor and no full structural-zero census. This does not guarantee useful
+mixing; nonfinite/over-cap geometry stops the candidate rather than being
+regularized invisibly.
 
 Driver disposition: adopt these corrections in the design draft, but do not
 implement or submit this sampler yet. The reverse-pass count, useful
