@@ -65,19 +65,25 @@ or mixing. The high-mode move does not substitute for low-mode exploration.
 The nuisance timeout is a budget stop, not a block failure. Astra also
 corrected the cost interpretation above.
 
-Before any new sampler, one bounded Slurm diagnostic will compare the old
-matched-gradient scalar score with the direct value-only primal at the same
-anchor, test exact repeatability at that anchor, and record target/support
-timings. It uses one full anchor replay plus one matched scalar and three
-direct scalar evaluations; one nuisance coordinate is perturbed only to
-invalidate the same-point cache between direct repeats. The 2h30m job requests
-18GiB host RAM (about28% above the observed14.06GiB peak). It produces no
-field or posterior and reads no heldout values. Even a faster direct-value
+Before any new sampler, one bounded Slurm diagnostic is planned to compare
+the old matched-gradient scalar score with the direct value-only primal at the
+same anchor, test exact repeatability at that anchor, and record target/
+support timings. It uses one full anchor replay plus one matched scalar and
+three direct scalar evaluations; one nuisance coordinate is perturbed only
+to invalidate the same-point cache between direct repeats. The 2h30m job
+requests 18GiB host RAM (about28% above the observed14.06GiB peak). It produces
+no field or posterior and reads no heldout values. Even a faster direct-value
 route would address evaluator cost only, not the low-k movement failure.
-Job439009 was submitted on `h100` / `gpu:H100:1` after checking the three
-typed-GPU modes (H200:1 free of8, H100:2 free, A100:1 free). Its current
-Slurm state is `PENDING` for `QOSGrpGRES`; it has no allocation. Leave it
-queued and do not duplicate it or change partitions to bypass the limit.
+
+Job439009 was submitted on `h100` / `gpu:H100:1` after a typed-GPU
+snapshot (H200:1 free of8, H100:2 free, A100:1 free). It pinned code commit
+`a456d997a0049e8a533bd0389ca51e76c2427a8c`; while it waited, a later
+documentation commit changed `CF4_MASTER_PLAN.md`, which is explicitly in
+the runner's startup diff guard. The driver cancelled 439009 before allocation
+to avoid a guaranteed pre-calculation source-guard failure. It performed no
+evaluation and consumed no GPU. Submit at most one corrected copy of the same
+bounded diagnostic, pinned to the then-current committed HEAD after a fresh
+H200-first typed-GPU check; do not change its target, cap or partition policy.
 
 The following sampler bundle remains design-only until evidence is ready:
 
@@ -96,6 +102,39 @@ The proposal is not yet selected: the evidence does not establish a best new
 sampler. If no exact, costed proposal can be justified, do not launch another
 inference job. External denominator or justified sensitivity information is
 still required for any full-survey selection claim.
+
+## Gaussian-reference ESS design advice — 2026-10-28
+
+The driver requested Astra's advice because choosing a replacement sampler is
+a material R2 turning point. Astra judged the Gaussian-reference ESS math
+valid only for one fixed full-rank reference with the exact residual
+`log pi - log g`; a state-dependent plug-in reference is not covered by
+that invariance argument. The complete unchanged target must score every
+transition. A joint ESS in fixed Gaussian-whitened coordinates is the
+simplest proposed move; if separate blocks are later used, define them in
+those coordinates or use exact Gaussian conditionals. Full rank does not
+guarantee useful movement, especially for the complementary modes or the
+field–population coupling.
+
+The count Fisher is exactly zero for the 15 population coordinates because
+the count intensity does not depend on them. A separate, fixed-anchor
+15-dimensional raw-FP curvature block is a reasonable proposal component;
+include prior precision once, and treat PSD clipping as proposal geometry
+only. The finite VJP sketch has the correct unbiased matrix expectation, but
+its sample eigenvalues can be severely inflated (for example, identity
+information in dimension d with r probes gives nonzero sketch eigenvalues of
+order d/r). Use discovery probes only to propose a subspace, then independent
+training-only probes to check projected information, residual information,
+uncertainty and stability. These are still not evidence of full posterior
+rank.
+
+Driver disposition: adopt these corrections in the design draft, but do not
+implement or submit this sampler yet. The reverse-pass count, useful
+movement criteria, memory/time caps and falsification thresholds are not
+numerically specified, and an adjoint may cost roughly a full expensive
+N256 evaluation. If these cannot be costed within a small fixed cap, close
+this sampler candidate. This review does not reopen the closed prior-ellipse
+ESS branch or change R2's NO-GO disposition.
 
 Q-GOAL: ESS feasibility work was relevant to the first z=0 conditional field
 posterior, but achieved none of the posterior, uncertainty, or heldout

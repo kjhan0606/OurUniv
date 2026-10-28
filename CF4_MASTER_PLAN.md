@@ -50,9 +50,28 @@ The scalar-value probe was submitted as job439009 on `h100` with
 `gpu:H100:1`, 2 CPUs, 18GiB host memory, 2h30m Slurm / 2h application cap,
 source commit `a456d997a0049e8a533bd0389ca51e76c2427a8c`. The submission-time
 typed-GPU snapshot was H2001 free of8 (occupied), H1002 free, A1001 free, so
-H100 was selected. The current authoritative Slurm check is `PENDING`, reason
-`QOSGrpGRES`, with no GPU allocation. Leave this one bounded probe queued;
-do not submit a duplicate or switch partitions to bypass the QoS limit.
+H100 was selected. While it waited, documentation commit `03dd6f6` changed
+`CF4_MASTER_PLAN.md`, a path covered by the runner's startup diff guard.
+The driver cancelled 439009 before allocation because it would fail that exact
+source check before any calculation; the job performed no evaluation and
+consumed no GPU. Submit one corrected copy of the same bounded probe only
+after committing the corrected state, pinning its current HEAD, and taking a
+fresh H200-first typed-GPU snapshot. Do not change its target or caps.
+
+At this R2 sampler turning point, Astra judged a fixed Gaussian-reference ESS
+with exact full-target residual mathematically valid, but not ready for
+implementation/submission. The VJP sketch's matrix expectation is unbiased;
+its small-sample eigenvalues can be inflated and cannot be treated as a
+reliable informed spectrum. A discovery/independent-validation split,
+including residual-information checks, is needed. Count Fisher has no
+population-nuisance information; a separate fixed-anchor raw-FP curvature
+proposal is plausible but leaves field-population coupling as an efficiency
+risk. The reference must remain fixed through transitions; no state-adaptive
+plug-in covariance. The driver adopts this as design advice only: no new
+sampler implementation or run until adjoint cost, spectrum stability,
+movement criteria and hard caps are made quantitative. See
+`CF4_R2_ESS_PILOT_RESULT_20261028.md` and
+`CF4_R2_GAUSSIAN_REFERENCE_DESIGN_DRAFT_20261028.md`.
 
 Q-GOAL: this closes one sampler feasibility branch on the route to the
 conditional z=0 density/velocity posterior, but supplies neither that
