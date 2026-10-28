@@ -74,6 +74,10 @@ invalidate the same-point cache between direct repeats. The 2h30m job requests
 18GiB host RAM (about28% above the observed14.06GiB peak). It produces no
 field or posterior and reads no heldout values. Even a faster direct-value
 route would address evaluator cost only, not the low-k movement failure.
+Job439009 was submitted on `h100` / `gpu:H100:1` after checking the three
+typed-GPU modes (H200:1 free of8, H100:2 free, A100:1 free). Its current
+Slurm state is `PENDING` for `QOSGrpGRES`; it has no allocation. Leave it
+queued and do not duplicate it or change partitions to bypass the limit.
 
 The following sampler bundle remains design-only until evidence is ready:
 

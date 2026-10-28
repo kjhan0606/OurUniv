@@ -46,6 +46,14 @@ calibrated, unless eligible-parent, failure, and linkage selection information
 or a defensible external sensitivity model is supplied. R2 remains NO-GO; R3
 has not started.
 
+The scalar-value probe was submitted as job439009 on `h100` with
+`gpu:H100:1`, 2 CPUs, 18GiB host memory, 2h30m Slurm / 2h application cap,
+source commit `a456d997a0049e8a533bd0389ca51e76c2427a8c`. The submission-time
+typed-GPU snapshot was H2001 free of8 (occupied), H1002 free, A1001 free, so
+H100 was selected. The current authoritative Slurm check is `PENDING`, reason
+`QOSGrpGRES`, with no GPU allocation. Leave this one bounded probe queued;
+do not submit a duplicate or switch partitions to bypass the QoS limit.
+
 Q-GOAL: this closes one sampler feasibility branch on the route to the
 conditional z=0 density/velocity posterior, but supplies neither that
 posterior nor heldout prediction or calibrated uncertainty. MW/M31 remain
