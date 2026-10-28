@@ -217,6 +217,20 @@ the sampler under the current HEAD. Do not use `afterany`, and do not
 automatically retry if the corrected pilot reaches the sampler and then fails
 a scientific/resource gate. R2 remains NO-GO.
 
+ESS retry disposition: syntax accounting confirms431345 failed before the
+pilot, while corrected job431607 ran17:36 and reached its first proposal score
+evaluation before failing with a duplicate `gradient_evaluated` keyword in
+the scalar-target record. This is an isolated bookkeeping exception, not a
+scientific or ESS feasibility verdict. The driver now merges score detail
+first and makes record-level evaluator flags authoritative. A regression
+reproducing colliding detail metadata was added; grammar Slurm job1230199
+passed all8 target-budget tests and6 ESS mechanics tests. Preserve failed
+outputs. One retry of the already-approved bounded pilot is warranted from
+its verified original anchor, in a fresh output path, with identical target,
+partition, proposal/evaluation/time/memory caps. A scientific/resource gate
+failure after reaching the sampler is not automatically retried. R2 remains
+NO-GO; no heldout score or uncertainty is delivered.
+
 ## Historical R2 continuation — 2026-10-06 to 2026-10-10
 
 Conditional gradient check. Job 414921 reduced the tracer-0 derivative from

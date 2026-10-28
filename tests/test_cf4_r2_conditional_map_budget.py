@@ -89,7 +89,9 @@ class ConditionalMapBudgetTest(unittest.TestCase):
         gradient_x = objective._last_x.copy()
         gradient_result = objective._last_result
         score_objective = BudgetedScoreObjective(
-            lambda q: (float(q @ q), -0.5 * float(q @ q), {'kind': 'scalar'}),
+            lambda q: (float(q @ q), -0.5 * float(q @ q),
+                       {'kind': 'scalar', 'gradient_evaluated': False,
+                        'scalar_score_evaluator': False}),
             objective)
 
         candidate = np.array([0.5, 0.25])
@@ -98,6 +100,7 @@ class ConditionalMapBudgetTest(unittest.TestCase):
         self.assertEqual(len(objective.records), 2)
         self.assertFalse(objective.records[-1]['gradient_evaluated'])
         self.assertTrue(objective.records[-1]['scalar_score_evaluator'])
+        self.assertEqual(objective.records[-1]['kind'], 'scalar')
         np.testing.assert_array_equal(objective._last_x, gradient_x)
         self.assertIs(objective._last_result, gradient_result)
         self.assertEqual(callbacks[-1], (2, False, True))

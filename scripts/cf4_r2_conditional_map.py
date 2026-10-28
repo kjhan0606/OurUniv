@@ -183,10 +183,10 @@ class BudgetedScoreObjective:
                 json_detail[key] = 'Infinity' if item > 0 else '-Infinity'
             else:
                 json_detail[key] = item
-        row = dict(evaluation=len(self.parent.records) + 1,
+        row = dict(json_detail)
+        row.update(evaluation=len(self.parent.records) + 1,
                    objective='Infinity' if value == np.inf else value,
-                   gradient_evaluated=False, scalar_score_evaluator=True,
-                   **json_detail)
+                   gradient_evaluated=False, scalar_score_evaluator=True)
         self.parent.records.append(row)
         self.last_x = x.copy()
         self.last_score = score
