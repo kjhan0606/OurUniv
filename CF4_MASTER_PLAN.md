@@ -53,12 +53,17 @@ matched scalar took 400.46 s; direct value-only calls took 178.01, 142.38, and
 objective are equal at float64 precision; one FP term differs by one ULP
 (`9.09e-13` nat), so retain the emitted strict-repeat-mismatch status but
 classify the difference as roundoff-level. This is a cost result, not
-low-k-movement or sampler evidence. Next is one bounded training-only N256
-count-intensity VJP as specified in the design draft, with a 20 GiB host request
-(over 20% above the prior 15.26 GiB measured joint-target peak), 2 h application /
-2.5 h Slurm cap, committed/pinned sources, and a fresh H200-first typed-GPU
-decision. It is one feasibility measurement only, not authority for sketches
-or a sampler. R2 remains NO-GO; no posterior, uncertainty, field, or heldout
+low-k-movement or sampler evidence. The first bounded training-only N256
+count-intensity VJP submission, job 439311 on H200, failed at the anchor
+metadata guard after 20 seconds; no VJP or inference was performed. The guard
+mistakenly required an absent top-level `likelihood_changed` field. The
+corrected validator now checks the anchor's recorded target rules, source
+revision, replay, target orders, training counts and held-out non-access; its
+two regression tests and a check against the actual retained anchor pass. Next
+is one corrected, committed/pinned submission with a fresh H200-first typed-GPU
+snapshot, retaining the 20 GiB host request and 2 h application / 2.5 h Slurm
+caps. It is a feasibility measurement only, not authority for sketches or a
+sampler. R2 remains NO-GO; no posterior, uncertainty, field, or held-out
 prediction exists.
 
 At this R2 sampler turning point, Astra judged a fixed Gaussian-reference ESS

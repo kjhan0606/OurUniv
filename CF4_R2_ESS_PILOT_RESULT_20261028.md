@@ -100,13 +100,19 @@ not low-k movement or sampler efficacy. No field, posterior transition,
 uncertainty, or heldout score was produced. Full Slurm output:
 `/gpfs/kjhan/CF4/logs/cf4_r2_valueprobe_439023.out`.
 
-The next bounded calculation is the already specified single training-only
-count-intensity VJP at the fixed anchor. It measures one actual N256 reverse
-pass only; it cannot be inferred from the scalar speed ratio and does not
-authorize discovery/validation sketches or a sampler. Before submission,
-raise the host request to 20 GiB (more than 20% above the prior 15.26 GiB
-measured joint-target peak), retain the 2 h application / 2.5 h Slurm caps, pin committed
-sources, and take a fresh H200-first typed-GPU snapshot. R2 stays NO-GO.
+The first submission of the already specified training-only count-intensity
+VJP, job 439311 on H200, failed at anchor metadata validation after 20 seconds.
+The preflight required a top-level `likelihood_changed` field that the retained
+anchor's result does not write; the actual recorded target contract, source
+revision, checkpoint replay, and target orders match. No forward map or reverse
+pass ran, and no scientific result was produced. The validator now checks the
+recorded target rules, training counts, holdout non-access, replay and target
+orders directly. Its two regression tests pass, and it accepts the actual
+retained anchor with the expected coordinate shape. The next action is one
+corrected, committed/pinned resubmission after a fresh H200-first typed-GPU
+snapshot. Keep the 20 GiB host request and 2 h application / 2.5 h Slurm caps;
+this remains a feasibility measurement only and authorizes neither sketches
+nor a sampler. R2 stays NO-GO.
 
 The following sampler bundle remains design-only until evidence is ready:
 

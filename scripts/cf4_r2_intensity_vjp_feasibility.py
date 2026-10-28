@@ -23,6 +23,30 @@ from cf4_r2_resolution_target import source_geometry_at_resolution
 ANCHOR = BASE / "r2_hmc_equil24h_20261013/hmc_retained_state.npz"
 ANCHOR_SOURCE_COMMIT = "5016282433a375ac9dd89660a10b1ae53d25a370"
 OUT_BASE = BASE / "r2_intensity_vjp_feasibility_20261029"
+ANCHOR_TARGET_RULES = (
+    "count occurrence once; no extra f_n or group-incidence factor; "
+    "current LCDM and 24 standard-normal nuisance priors once"
+)
+
+
+def _anchor_result_matches_contract(result):
+    expected_orders = dict(value=2, gradient=2, matched_primal=True)
+    return (
+        result.get("status") == "CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR"
+        and result.get("source_commit") == ANCHOR_SOURCE_COMMIT
+        and result.get("N") == N
+        and result.get("box_cMpc_h") == BOX
+        and result.get("target_rules") == ANCHOR_TARGET_RULES
+        and result.get("target_orders") == expected_orders
+        and result.get("checkpoint_replay_passed") is True
+        and result.get("conditional_count_rows") == 47121
+        and result.get("count_training_keys") == 37951
+        and result.get("heldout_count_values_loaded") == 0
+        and result.get("heldout_FP_marks_loaded") == 0
+        and result.get("R2_complete") is False
+        and result.get("posterior_sample") is False
+        and result.get("posterior_uncertainty") is False
+    )
 
 
 def _save_report(path, report, started):
@@ -73,13 +97,7 @@ def _count_operator_inputs():
 def _validated_anchor():
     result_path = ANCHOR.parent / "result.json"
     result = json.loads(result_path.read_text())
-    expected_orders = dict(value=2, gradient=2, matched_primal=True)
-    if (result.get("status") != "CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR"
-            or result.get("source_commit") != ANCHOR_SOURCE_COMMIT
-            or result.get("N") != N or result.get("box_cMpc_h") != BOX
-            or result.get("likelihood_changed") is not False
-            or result.get("checkpoint_replay_passed") is not True
-            or result.get("target_orders") != expected_orders):
+    if not _anchor_result_matches_contract(result):
         raise ValueError("anchor is not the verified unchanged conditional-v6 state")
     with np.load(ANCHOR, allow_pickle=False) as saved:
         q = np.asarray(saved["q"], dtype=np.float64).copy()

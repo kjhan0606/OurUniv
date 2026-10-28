@@ -2,9 +2,10 @@
 
 **Status: the Gaussian-reference ESS remains design-only; no production
 sampler or sampler pilot is approved.** The separately bounded one-pullback
-feasibility diagnostic is implemented but not yet submitted. The value-only
-score-cost probe 439023 completed on syntax with
-exit 0 in 25:19 (MaxRSS 10.64 GiB). At the same anchor, the matched scalar
+feasibility diagnostic was submitted once as job 439311, but its metadata
+guard failed before any VJP; the corrected validator is regression-tested.
+The value-only score-cost probe 439023 completed on syntax with exit 0 in
+25:19 (MaxRSS 10.64 GiB). At the same anchor, the matched scalar
 evaluation took 400.46 s and direct value-only evaluations took 178.01, 142.38,
 and 144.50 s (mean 154.97 s; 0.387x time, about 2.58x faster). The direct and
 matched objective agree at float64 precision; one FP term differs by one ULP
@@ -212,7 +213,16 @@ outcomes or held-out metric are loaded. The three Gaussian-reference
 mechanics tests, five count-forward wiring tests, and twenty synthetic
 count/mark holdout-plumbing tests pass; Python compilation, SBATCH shell
 syntax, and whitespace checks pass. These are source-level checks only:
-N256 execution and PMWD reverse memory remain untested.
+N256 execution and PMWD reverse memory remain untested. The first submission
+of this one-pullback diagnostic, job 439311, ended after 20 seconds at the
+anchor metadata guard: it required a top-level `likelihood_changed` key that
+the retained anchor does not write. The target rules, source revision,
+checkpoint replay, target orders and training/held-out metadata do match. No
+N256 forward intensity map or VJP ran. The guard now uses those recorded
+contract fields; two regression tests pass, and `_validated_anchor()` accepts
+the actual retained state and its (16,777,240)-coordinate vector. Resubmit
+once only after committing this correction and taking a fresh H200-first
+snapshot.
 
 The exact `squeue`/`sacct` query on syntax established job 439023 as terminal
 `COMPLETED`, exit 0, elapsed 25:19, MaxRSS 10.64 GiB. Its ID was invalid on
@@ -229,7 +239,8 @@ authoritative for syntax jobs.
 2. Do not use job 439023's scalar-value timing as a proxy for an intensity VJP:
    the active map has \(N_{IC}=256^3=16,777,216\) white-field coordinates
    and the count predictor returns \(6\times128^3=12,582,912\) intensities.
-   The drafted one-shot feasibility gate is implemented but has not run. It
+   Job 439311 failed at the anchor metadata gate before running the drafted
+   one-shot feasibility calculation. The corrected gate now
    uses the fixed anchor to construct only the exact positive-row mask and one
    deterministic random cotangent, then performs one reverse pullback through
    the actual N256 intensity map (no JVP, held-out values, or dense \(J\)). It
