@@ -7,6 +7,55 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 disposition — 2026-10-28
+
+The single capped block-ESS feasibility job438631 completed at the Slurm
+level (exit0) but its science pilot stopped at the predeclared three-hour
+application limit after completing only the low- and high-Fourier blocks.
+The low block used7 target evaluations over4,304s and moved only
+8.2456e-5 RMS in prior-normalized coordinates; the high block used5 over
+2,926s and moved0.09978 RMS. The nuisance block reached only2 evaluations
+in2,846s before the walltime stop. This is not evidence that nuisance cannot
+move, and the one-anchor result gives no stationarity, mixing or posterior-
+width estimate. The logged ~70s is support-packing time, not full target
+evaluation time; the completed IC blocks cost about615s and585s per target
+evaluation. Application peak host RSS was14.06GiB. No posterior sample,
+uncertainty, field, or heldout score was produced.
+
+Following the predeclared pilot contract and the 2026-10-28 Astra advice,
+close this prior-ellipse ESS branch. Do not extend the job, repeat the same
+sweep, tune its brackets/cutoff, or launch a multi-start run from this result.
+A focused source inspection found a concrete score-cost issue: the old
+score-only route called `obs.derivative` and discarded its observation
+gradients. The driver added an opt-in direct `obs.value` backend while keeping
+the prior matched-gradient backend as the default. One capped diagnostic
+(one anchor replay, one matched scalar evaluation, and three direct-value
+evaluations) will compare same-state terms, deterministic repeatability and
+wall time; it is not a sampler retry and cannot establish better low-k
+movement. Its Slurm cap is2h30m, with an 18GiB host-memory request (above the
+observed14.06GiB peak plus20% headroom), and one typed GPU selected only after
+checking H200 first, then H100/A100 if needed. The design of any new sampler
+remains a separate next step: retain the conditional v6 estimand and its
+observed-mark-presence limitation; move observation-constrained correlated
+low-k directions; correct informed, complementary and nuisance moves against
+the unchanged full target; and state training-only construction,
+setup/evaluation costs, falsifiable movement criteria and hard caps before
+launch. Do not start a sampler or broad source-data census absent that
+evidence. Any later field posterior remains conditional, not full-survey
+calibrated, unless eligible-parent, failure, and linkage selection information
+or a defensible external sensitivity model is supplied. R2 remains NO-GO; R3
+has not started.
+
+Q-GOAL: this closes one sampler feasibility branch on the route to the
+conditional z=0 density/velocity posterior, but supplies neither that
+posterior nor heldout prediction or calibrated uncertainty. MW/M31 remain
+role-ambiguous and M33 unresolved; their observables must eventually constrain
+those same roles on the same NEW evolved LG field at<=0.3 cMpc/h, with native
+truth identities used only for calibration/evaluation. Q-LEAN: honoring the
+fixed time/evaluation bound is proportionate; no automatic retry, parameter
+ladder, extra simulation, or field promotion. Full result and Astra advice:
+`CF4_R2_ESS_PILOT_RESULT_20261028.md`.
+
 ## Current R2 recovery — 2026-10-21
 
 The single bounded joint warm-start proposal on unchanged conditional v6

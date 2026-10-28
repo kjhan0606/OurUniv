@@ -20,6 +20,7 @@ from cf4_r2_resolution_target import (
     ResolutionObservationTarget,
     source_geometry_at_resolution,
 )
+from cf4_r2_scalar_primal import scalar_observation_terms
 
 BASE = Path('/gpfs/kjhan/CF4/z0_density')
 ROOT = Path(__file__).resolve().parents[1]
@@ -211,9 +212,14 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
          maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
          support_chunk_cells=None, recorded_trial=None, sampling_driver=None,
-         include_present_field_readout=True, save_best_parameters=True):
+         include_present_field_readout=True, save_best_parameters=True,
+         score_only_backend='matched_value_and_gradient_primal'):
     if recorded_trial is not None and (start_checkpoint is not None or max_evaluations != 1):
         raise ValueError('recorded trial is a one-evaluation diagnostic, not an optimizer restart')
+    if score_only_backend not in ('matched_value_and_gradient_primal', 'direct_value_only'):
+        raise ValueError('unsupported scalar score backend')
+    if score_only_backend == 'direct_value_only' and sampling_driver is None:
+        raise ValueError('direct value-only scores are restricted to explicit scalar pilots')
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend() != 'gpu':
         raise RuntimeError('Slurm GPU allocation required')
     expected = os.environ['CF4_EXPECTED_COMMIT']
@@ -238,7 +244,10 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
                          'group-incidence/survival calibration'),
         target_rules=('count occurrence once; no extra f_n or group-incidence factor; '
                       'current LCDM and 24 standard-normal nuisance priors once'),
-        target_orders=dict(value=2, gradient=2, matched_primal=True),
+        target_orders=dict(
+            value=2, gradient=2,
+            matched_primal=(score_only_backend == 'matched_value_and_gradient_primal')),
+        score_only_backend=score_only_backend,
         support_rule='rebuild shifted-source support for every distinct optimizer candidate; existing 8-sigma truncation remains approximate',
         optimizer=dict(method='L-BFGS-B', max_exact_value_gradient_evaluations=max_evaluations,
                        max_iterations=max_iterations, max_line_search_trials=max_line_search,
@@ -472,6 +481,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             return state, False
 
         def evaluate(q):
+            target_started = time.monotonic()
             nonlocal start_field, field_cache_white, field_cache_state
             white = jnp.asarray(q[:N_IC])
             tracer = jnp.asarray(q[N_IC:N_IC + 9])
@@ -487,26 +497,33 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             ic_gradient, = pullback((grads[0], grads[1]))
             value, gradient, detail = assemble_conditional_objective(
                 q, score, components, ic_gradient, grads[2], grads[3], support_info)
+            detail['target_evaluation_seconds'] = time.monotonic() - target_started
+            detail['support_packing_seconds'] = float(support_info.get('packing_seconds', 0.0))
+            detail['observation_gradient_primal_computed'] = True
             if sampling_driver is not None and include_present_field_readout:
                 detail['present_field_readout'] = present_field_readout(rho, velocity, box=BOX)
             return value, gradient, detail
 
-        def evaluate_score(q):
+        def evaluate_score(q, backend=score_only_backend):
+            target_started = time.monotonic()
             q = np.asarray(q, dtype=np.float64)
             white = q[:N_IC]
             tracer = jnp.asarray(q[N_IC:N_IC + 9])
             population = jnp.asarray(q[N_IC + 9:])
             (rho, velocity), cache_hit = cached_field(white)
             packs, support_info = obs.support(rho, velocity, tracer, 2)
-            # Use the exact matched GL2 primal returned by the existing
-            # value-and-gradient target. ESS discards gradients and avoids
-            # the PMWD pullback; nuisance proposals reuse the evolved field.
-            (score, components), _unused_grads = obs.derivative(
-                rho, velocity, tracer, population, packs, source_jax, obs_jax, 2)
+            (score, components) = scalar_observation_terms(
+                obs, rho, velocity, tracer, population, packs, source_jax, obs_jax, 2,
+                backend=backend)
             value, detail = conditional_target_terms(
                 q, score, components, support_info)
             detail.update(
                 gradient_evaluated=False,
+                observation_gradient_primal_computed=(
+                    backend == 'matched_value_and_gradient_primal'),
+                scalar_score_backend=backend,
+                target_evaluation_seconds=time.monotonic() - target_started,
+                support_packing_seconds=float(support_info.get('packing_seconds', 0.0)),
                 pmwd_field_cache_hit=cache_hit,
                 pmwd_field_cache_hits=field_cache_hits,
                 pmwd_field_cache_misses=field_cache_misses,
@@ -530,6 +547,9 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
             evaluate, max_evaluations=max_evaluations,
             deadline=started + app_seconds, on_evaluation=persist_report)
         objective.score_only = BudgetedScoreObjective(evaluate_score, objective)
+        if sampling_driver is not None and score_only_backend == 'direct_value_only':
+            objective.score_only_matched_primal = BudgetedScoreObjective(
+                lambda q: evaluate_score(q, 'matched_value_and_gradient_primal'), objective)
         solver = None
         budget_stop = None
         optimizer_objective = objective
