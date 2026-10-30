@@ -1,0 +1,170 @@
+{
+  "schema": "hong2021-v75-rank-coverage-exact-label-null-audit-result-record-v1",
+  "status": "complete_exact_label_null_valid_scalar_composite_not_promoted_due_to_metric_masking",
+  "purpose": "Bind the frozen V75 exact truth-label randomization audit, preserve its preregistered outcome, and record the subsequently identified logical masking defect before any complete gate or new candidate was frozen or executed.",
+  "completed_at": "2026-08-12T15:47:00+09:00",
+  "record_base_commit": "8aee29bd77f6c3b52428d6f032ff0e625b3c4f15",
+  "frozen_program": {
+    "path": "config/hong2021_v75_rank_coverage_exact_null_audit_program.json",
+    "sha256": "6f0eaf9d06c151e429e7d378dc4f1c4460d1ea170214367fce0262ca559a13b6",
+    "freeze_commit": "218b516d25616f5004de4ded066f893142740164",
+    "implementation_commit": "8aee29bd77f6c3b52428d6f032ff0e625b3c4f15"
+  },
+  "parent": {
+    "V74_result_record": "config/hong2021_v74_result_record.json",
+    "V74_result_record_sha256": "9c36f02be71a1a142531bf2c83389c83331737ff8aff8de24ace2b2b738145fb",
+    "V74_decision_preserved": true,
+    "V72_decision_preserved": true
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "logical CPU 64, nice 15, one process",
+    "runner": "scripts/hong2021_v75_rank_coverage_exact_null_lageunha.sh",
+    "runner_sha256": "d0bd8afc9033f566cdfed4b62aa70358d8d790a5eebd1029a9c81de248b7e058",
+    "source": "src/hong2021_v75_rank_coverage_exact_null.py",
+    "source_sha256": "06c1c1a3daabddc947c2f64f26fbd93c627b4488dfb723472c804619b9fcccd2",
+    "synthetic_label_assignments_per_phase_and_scenario": 100000,
+    "V72_random_relabelings_per_arm_and_domain": 99999,
+    "raw_fit_train_truth_accessed": false,
+    "training_or_model_sampling_performed": false
+  },
+  "old_rule_audit": {
+    "old_rank_rule": "voxel rank total-variation distance <= 0.05",
+    "old_coverage_rule": "maximum absolute deviation from the fixed finite-ensemble 68/95-percent expectations <= 0.03",
+    "invalid": true,
+    "reason": [
+      "The fixed linear-quantile coverage expectation is distribution-dependent and is exact only for a uniform value distribution, not for general physical residual fields.",
+      "Fixed voxel-count cutoffs do not condition on spatial dependence; even exactly exchangeable fields can be rejected almost always when within-field dependence is strong."
+    ],
+    "physical_coverage_counterexample": {
+      "uniform": {"coverage68": 0.600252, "coverage95": 0.838812},
+      "normal": {"coverage68": 0.604514, "coverage95": 0.852452},
+      "lognormal": {"coverage68": 0.604976, "coverage95": 0.851066},
+      "Student_t_3": {"coverage68": 0.607868, "coverage95": 0.857964}
+    },
+    "old_joint_pass_probability_under_exact_null": {
+      "independent_normal_voxels": 1.0,
+      "spatially_correlated_normal": 0.04412,
+      "perfect_within_field_dependence": 0.0,
+      "rounded_heavy_tail_with_ties": 0.05678
+    }
+  },
+  "exact_truth_label_randomization": {
+    "method": "For each query, pool the sixteen generated residual fields with the truth residual field, designate each of the seventeen fields as truth in turn, and randomize the truth label jointly at field level across queries. Frozen iid priority fields travel with each field to resolve ties.",
+    "preserves": [
+      "arbitrary within-field spatial dependence",
+      "the empirical marginal value distribution",
+      "the exact finite-ensemble quantile interpolation rule",
+      "rounded-value ties"
+    ],
+    "valid": true,
+    "preregistered_scalar_composite": "max(rank_tv/0.05, coverage_deviation/0.03)",
+    "preregistered_domain_alpha": 0.016666666666666666,
+    "preregistered_null_rejection_probability": {
+      "independent_normal_voxels": 0.01652,
+      "spatially_correlated_normal": 0.01637,
+      "perfect_within_field_dependence": 0.0122,
+      "rounded_heavy_tail_with_ties": 0.01686
+    },
+    "preregistered_power": {
+      "location_bias": {"probability": 0.87, "Wilson_95_lower": 0.7901964855992357},
+      "underdispersion": {"probability": 1.0, "Wilson_95_lower": 0.9630065017930143}
+    },
+    "preregistered_replacement_selected": true
+  },
+  "post_result_logical_audit": {
+    "status": "scalar_composite_not_promoted",
+    "defect": "A large null scale in one component can dominate max(rank_tv/0.05, coverage_deviation/0.03), causing an extreme conditional p-value in the other component to be hidden. Null calibration of the scalar statistic does not guarantee simultaneous sensitivity to both scientific requirements.",
+    "decisive_consumed_V72_example": {
+      "arm": "candidate",
+      "domain": "TNG100",
+      "rank_conditional_p": 0.00001,
+      "coverage_conditional_p": 0.97439,
+      "scalar_composite_conditional_p": 0.97439,
+      "problem": "The scalar composite passes although the rank statistic is at the minimum Monte Carlo tail probability."
+    },
+    "exploratory_nonselection_calibration_at_per_test_alpha_1_over_120": {
+      "role": "design evidence only; to be frozen and reproduced separately before selection",
+      "individual_false_rejection_probability_range": [0.00547, 0.00887],
+      "six_test_family_false_rejection_probability": {
+        "independent_normal_voxels": 0.0483,
+        "spatially_correlated_normal": 0.04252,
+        "perfect_within_field_dependence": 0.03636,
+        "rounded_heavy_tail_with_ties": 0.04573
+      },
+      "largest_family_Wilson_95_upper": 0.049646275894496106
+    },
+    "required_correction": "Retain exact truth-label randomization but test rank and coverage separately at 1/120 each across three domains, rejecting the gate when any of the six conditional p-values is at or below its threshold."
+  },
+  "consumed_V72_diagnostic": {
+    "verdict_changed": false,
+    "candidate_conditional_p_values": {
+      "TNG100": {"rank": 0.00001, "coverage": 0.97439, "scalar_composite": 0.97439},
+      "SIMBA": {"rank": 0.00003, "coverage": 0.00183, "scalar_composite": 0.00183},
+      "Swift": {"rank": 0.00001, "coverage": 0.00001, "scalar_composite": 0.00001}
+    },
+    "control_conditional_p_values": {
+      "TNG100": {"rank": 0.00001, "coverage": 0.72446, "scalar_composite": 0.72446},
+      "SIMBA": {"rank": 0.00334, "coverage": 0.01008, "scalar_composite": 0.01008},
+      "Swift": {"rank": 0.00001, "coverage": 0.00001, "scalar_composite": 0.00001}
+    },
+    "interpretation": "These already consumed V72 data exposed the scalar-composite masking defect. They are diagnostic only and cannot select or validate the corrected prospective rule."
+  },
+  "decision": {
+    "classification": "exact_label_null_valid_scalar_composite_not_promoted_due_to_metric_masking",
+    "old_fixed_gate_invalid": true,
+    "exact_truth_label_randomization_valid": true,
+    "preregistered_V75_outcome_preserved": true,
+    "preregistered_scalar_composite_promoted_to_complete_gate": false,
+    "complete_prospective_gate_complete": false,
+    "new_candidate_or_fresh_gate_authorized": false,
+    "next": "Freeze and execute a target-free V76 audit of separate rank and coverage conditional p-values using only the immutable V75 arrays and result."
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null",
+    "audit_result": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/audit_result.json",
+      "sha256": "b42be3029ad219d11f0bebad6d8b51835d062b227ec97a8d3aeddec3ece0def2",
+      "decision_digest_sha256": "83febaa581bb29bbd0882d2abbb0a2fc5ff87ee87f144326fd8f2830c04c17fc"
+    },
+    "synthetic_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/synthetic_arrays.npz",
+      "sha256": "ee9540f3426fd8c622675b52e95e8b02c1cd6d075c02b59e61326df333262cbe"
+    },
+    "V72_diagnostic_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/V72_diagnostic_arrays.npz",
+      "sha256": "f70b586c7e98f501cc5fcc6fda8b323e14aa11aecaad90e266243d379e13a029"
+    },
+    "sequence_pytest_log_sha256": "e92505220b37aa607fed208cc528fef2547a91c4a1f591f818ca98630f56dde0",
+    "sequence_audit_log_sha256": "3cc6aab8ffc7aaef74a2205eef61e4977cc4487d2a73be352029fba2bd0f6735",
+    "sequence_status_sha256": "fbc80a95d02d3ed7ac30ca4d18944249ea5335e0bcdef6b11213d0b860f138ec"
+  },
+  "verification": {
+    "local_full_tests": "613 passed in 64.39s",
+    "Lageunha_V75_tests": "9 passed in 13.17s",
+    "test_source": "tests/test_hong2021_v75_rank_coverage_exact_null.py",
+    "test_source_sha256": "fd5251ab2edee43dc30ab51566bf6c103a90b34a222fce9261b1c70f9f22de88",
+    "synthetic_arrays_nonfinite_values": 0,
+    "V72_diagnostic_arrays_nonfinite_values": 0,
+    "decision_digest_recomputed_equal": true,
+    "repository_clean_during_audit": true
+  },
+  "firewall": {
+    "raw_fit_train_truth_accessed": false,
+    "validation_or_fresh_payload_accessed": false,
+    "V72_stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_or_independent_EAGLE_accessed": false,
+    "model_checkpoint_accessed": false,
+    "training_or_model_sampling_performed": false,
+    "new_candidate_constructed": false
+  },
+  "authorization": {
+    "rerun_or_reinterpret_V72": false,
+    "freeze_or_execute_a_complete_prospective_gate": false,
+    "implement_or_train_a_new_generator": false,
+    "open_fresh_validation_Stage_B_Astrid_or_EAGLE": false,
+    "required_next": "Execute only the separately frozen V76 nonmasking audit after its program has been committed and pushed."
+  }
+}

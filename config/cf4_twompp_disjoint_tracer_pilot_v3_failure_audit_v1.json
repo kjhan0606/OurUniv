@@ -1,0 +1,105 @@
+{
+  "schema": "ouruniv-cf4-twompp-disjoint-tracer-pilot-v3-failure-audit-v1",
+  "date": "2026-09-01",
+  "status": "FAILED_COORDINATE_CONVENTION_AUDIT_COMPLETE_NO_FIELD_INFERENCE",
+  "scope": "Technical 2M++ input pilot only",
+  "preserved_attempts": [
+    {
+      "version": "v1",
+      "Slurm_job_id": 329498,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed_seconds": 5,
+      "node": "syn04",
+      "failure_layer": "input_header_assertion_before_catalog_deserialization",
+      "cause": "The implementation compared internal RA/DEC names with the actual VizieR _RA/_DE input header.",
+      "assistant_implementation_error": true,
+      "scientific_gate_reached": false,
+      "output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v1"
+    },
+    {
+      "version": "v2",
+      "Slurm_job_id": 329499,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed_seconds": 4,
+      "node": "syn04",
+      "failure_layer": "isolated_python_import_before_program_load",
+      "cause": "The correction wrapper used a normal sibling import unavailable under python -I -P.",
+      "assistant_implementation_error": true,
+      "scientific_gate_reached": false,
+      "output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v2"
+    },
+    {
+      "version": "v3",
+      "Slurm_job_id": 329500,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed_seconds": 13,
+      "node": "syn04",
+      "failure_layer": "technical_angular_completeness_gate",
+      "failed_gates": [
+        "completeness_11_5_p95_abs_difference",
+        "completeness_12_5_median_abs_difference",
+        "completeness_12_5_p95_abs_difference"
+      ],
+      "cause": "V3 transformed catalogue ICRS RA/DEC to Galactic coordinates before sampling completeness maps whose official ARES catalogue convention is equatorial.",
+      "assistant_coordinate_interpretation_error": true,
+      "technical_gate_reached": true,
+      "field_inference_reached": false,
+      "output_root_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3",
+      "staging_directory_preserved": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3/.pilot.staging",
+      "exact_agreement_metrics_serialized": false,
+      "serialization_limitation": "The frozen V1 implementation raised before writing its collected measurements. Exact failed differences are therefore unavailable and are not reconstructed or invented."
+    }
+  ],
+  "v3_bindings": {
+    "program": {
+      "path": "config/cf4_twompp_disjoint_tracer_pilot_program_v3.json",
+      "sha256": "90a5a6a0c8d914c7437e877224781bc771f95718a4e7381f20461b4afe8ded2e"
+    },
+    "implementation": {
+      "path": "src/cf4_twompp_disjoint_tracer_pilot_v3.py",
+      "sha256": "750869a08e8b1fac6f6c171adca9e9e6c47f63b9214e3fd5506e8acbbe927669"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_twompp_disjoint_tracer_pilot_v3.sbatch",
+      "sha256": "d682b3eb8e4ed4e8c65845a3ac4bda62c910c595498e40be6c03a8af6ab59a32"
+    },
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3/logs/pilot-329500.err",
+      "bytes": 1233,
+      "sha256": "771b6138dd1290d4574d071cc5edab814857ab907f1accfaea1038a14f231a70"
+    },
+    "stdout": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_disjoint_tracer_v3/logs/pilot-329500.out",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "coordinate_diagnosis": {
+    "verdict": "ANGULAR_COMPLETENESS_COORDINATE_CONVENTION_MISMATCH",
+    "official_ARES_repository_commit": "6cf608ed8c70474c15c8ca76cce675742e291c71",
+    "README_statement": "The official example explicitly declares the 2M++ angles to be equatorial coordinates.",
+    "preparation_script_statement": "prepare_2mpp.py writes radians(c['ra']) and radians(c['dec']) into the phi/theta catalogue columns.",
+    "loader_statement": "GalaxySurvey converts catalogue phi/theta directly into a unit vector before querying the HEALPix map; no Galactic rotation is applied.",
+    "official_data_invalid": false
+  },
+  "v4_constraints": {
+    "change_only_map_query_coordinate_convention": true,
+    "numerical_threshold_change_allowed": false,
+    "input_change_allowed": false,
+    "CF4_exclusion_change_allowed": false,
+    "population_change_allowed": false,
+    "failure_metrics_must_be_written_before_failed_gate_raise": true,
+    "field_inference_allowed": false,
+    "automatic_follow_on_allowed": false
+  },
+  "claims": {
+    "likelihood_validated": false,
+    "present_density_posterior_inferred": false,
+    "information_frontier_established": false,
+    "observational_resolution_established": false,
+    "IC_inferred": false
+  }
+}

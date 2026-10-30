@@ -1,0 +1,59 @@
+{
+  "schema": "hong2021-v82c-consumed-loo-location-scale-Gaussian-result-record-v1",
+  "status": "complete_location_scale_Gaussian_fails_nonGaussian_model_warranted",
+  "recorded_at": "2026-08-13T01:31:00+09:00",
+  "program": {
+    "path": "config/hong2021_v82c_consumed_loo_location_scale_program.json",
+    "sha256": "42711523d1aba1a4d1fc3350e84112728330ef1e110a3b251cd54a94001a88b5"
+  },
+  "report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82c_consumed_location_scale_sequence/report.json",
+    "sha256": "30e1512abef1dda304eab4a91c815564330ca90c74f624d614eff3194676dd60",
+    "decision_digest_sha256": "fa748180be445bd87b70b4552fa57f022df567f18bc14c283794c29a9e65dade"
+  },
+  "decision": {
+    "branch": "conditional_location_scale_Gaussian_fails_nonGaussian_model_warranted",
+    "six_rank_coverage_p_values": [0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001],
+    "individual_reference_threshold": 0.004166666666666667,
+    "conditional_flow_or_equivalent_nonGaussian_model_warranted": true,
+    "automatic_training_authorized_by_V82C_program": false,
+    "statistical_validation_claim": false
+  },
+  "integrity": {
+    "TNG100_V82B_scale_histogram_exactly_reproduced": true,
+    "SIMBA_V82B_scale_histogram_exactly_reproduced": true,
+    "Swift_V82B_scale_histogram_exactly_reproduced": true,
+    "same_V82B_seeds_power_and_scale": true,
+    "only_new_component": "leave-one-query-out conditional-mean-quartile residual location"
+  },
+  "aggregate_rank_shape": {
+    "TNG100_TV_mean_bias_variance_ratio": [0.054029079044566435, -0.2016202211380005, 0.9824259683436475],
+    "SIMBA_TV_mean_bias_variance_ratio": [0.05926552239586325, -0.2191096544265747, 0.9775983888776233],
+    "Swift_TV_mean_bias_variance_ratio": [0.06116345349480124, -0.22497975826263428, 0.9738968915073225]
+  },
+  "quartile_rank_mean_bias_low_to_high": {
+    "TNG100": [-0.29703569412231445, -0.28925228118896484, -0.21198749542236328, -0.008205413818359375],
+    "SIMBA": [-0.3035402297973633, -0.288358211517334, -0.23608636856079102, -0.04845380783081055],
+    "Swift": [-0.29824113845825195, -0.28946971893310547, -0.2455897331237793, -0.06661844253540039]
+  },
+  "power_ratio_0p3_1_1_3_3_6_6_10_h_mpc": {
+    "TNG100": [1.513415755035229, 1.0498333620052867, 1.0596989603172595, 1.137595640534861],
+    "SIMBA": [1.5078408178766094, 1.0283718053582902, 1.0280598384922028, 1.1173182786809561],
+    "Swift": [1.5588964480467573, 1.0633849434189502, 1.0450296447938507, 1.123079629766157]
+  },
+  "scientific_interpretation": {
+    "location_sign_error": false,
+    "reason_mean_matching_worsened_rank": "The consumed truth residual is positively skewed in the lower conditional-mean quartiles. Its conditional mean lies above its conditional median, so shifting a symmetric Gaussian to the truth mean overshoots the median required for uniform ranks.",
+    "Gaussian_family_finding": "Neither stationary Gaussian, conditional-scale Gaussian, nor conditional-location-scale Gaussian can reproduce conditional residual ranks even under LOO consumed fitting.",
+    "spatial_model_finding": "V82A already showed V72 spatial transport is useful and far better than the independent-marginal control in high-k power. Do not discard it.",
+    "next_model_class": "A conditional non-Gaussian residual flow or equivalent monotone conditional distribution model composed with the existing spatial transport.",
+    "hard_constraints": [
+      "exact residual DC projection",
+      "preserve or explicitly condition on coarse/low-k structure",
+      "continuous conditional environment rather than four hard deployment bins",
+      "proper likelihood, flow-matching, or score objective only",
+      "multiscale rank, coverage, P(k), PDF, tail, 2pCF, and morphology used as gates rather than heuristic training losses"
+    ],
+    "independent_validation_still_required_after_model_freeze": true
+  }
+}

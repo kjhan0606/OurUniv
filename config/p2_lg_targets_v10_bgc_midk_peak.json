@@ -1,0 +1,26 @@
+{
+  "schema": "cf4-p2-lg-targets-v10-bgc-midk-peak",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-08-02",
+  "extends": "config/p2_lg_targets_v9_bgc_n576_parent3429.json",
+  "extends_sha256": "d64405882d308902aee30b64b463bc28464e626d428ecf7a17bec6fde35635b6",
+  "change_from_v9": "Run the unchanged N576 FoF gates on eight explicitly labelled MW/M31 peak-conditioned fields. N64 long modes are unchanged; all eight changed N192 projections independently passed the unchanged five-gate P1 screen before this config was frozen.",
+  "paired_small_scale_seeds": [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008],
+  "input": {
+    "p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3/p1_result.json",
+    "conditioned_proposal_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v2_midk/lg_peak_proposals_manifest.json",
+    "conditioned_proposal_manifest_sha256": "73df43f60d74c0eee7fd81de235f566e16b3d2d04e297211bd413b4f04d200c8",
+    "conditioned_p1_result": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v2_midk/p1_result.json",
+    "conditioned_p1_result_sha256": "aea7faa743386f09f891ca6112c2896312082d9af3bb66c7b863b9e60a49db7c"
+  },
+  "selection_policy_addendum": {
+    "information_label": "additional MW/M31 morphology, not CF4-only",
+    "p1_revalidation_required": true,
+    "p1_survivors": [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008],
+    "P2_physical_thresholds_changed_from_v9": false,
+    "no_retuning_after_v10_forward": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v2_midk"
+  }
+}

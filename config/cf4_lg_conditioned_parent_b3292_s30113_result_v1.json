@@ -1,0 +1,203 @@
+{
+  "schema": "ouruniv-cf4-lg-conditioned-parent-b3292-s30113-result-v1",
+  "date": "2026-09-22",
+  "stage": "7/8 parent RAMSES z=0 validation completed; candidate rejected and stage-4 high-k reselection running",
+  "status": "seed_30113_historical_forward_complete_v12_environment_rejection_superseded",
+  "large_scale_parent": {
+    "result_record": "config/cf4_parent_recovery_b3292_beta025_result_v1.json",
+    "parent_seed": 3292,
+    "conditioning_beta": 0.25,
+    "candidate": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+    "candidate_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d"
+  },
+  "random_high_k_control": {
+    "job": 394154,
+    "result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_p2_l9_v1/p2_screen_result.json",
+    "result_sha256": "c4b0e2f810395e0c2dbb8310473c498396aa05eded0a484d5b49fa0a9a389864",
+    "n_realizations": 32,
+    "hard_P2_passes": 0,
+    "interpretation": "Unconditioned high-k rejection sampling is too inefficient; this is not evidence against the recovered large-scale parent."
+  },
+  "observer_preimage": {
+    "job": 394168,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_b3292_beta0p25_observer_preimage_v1.json",
+    "result_sha256": "795d739fe45edb38a342634f7c466422985441c8888385913df02d22589a563f",
+    "R5_lagrangian_offset_mpc_h": [-0.971, -6.353, 2.853]
+  },
+  "boundary_diagnosis": {
+    "rejected_job": 394171,
+    "rejected_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_pilot_v1/result.json",
+    "rejected_result_sha256": "d66061205971b01b778658e13b35972ae25dd80b7b13462d4a35919c33e32035",
+    "finding": "Freezing every N192 coefficient left only modes beyond the 1.57 h/Mpc axis Nyquist. Those modes have negligible response after 1.5 Mpc/h smoothing, so the declared LG peak likelihood could not be realized.",
+    "correction": "Freeze the physically recovered parent band k<=0.6 h/Mpc and condition k>0.6 h/Mpc with explicitly additional LG observations."
+  },
+  "conditioned_pilot": {
+    "job": 394208,
+    "result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_pilot_v2/result.json",
+    "result_sha256": "19f3ba80d291ca8c42b73095ec246d889af2c63f57dda1bcc16c29a3cdd5b406",
+    "n_realizations": 32,
+    "hard_P2_passes": 1,
+    "frozen_k_max_h_mpc": 0.6,
+    "selected": {
+      "pilot_index": 12,
+      "field_seed": 30113,
+      "geometry_seed": 31113,
+      "likelihood_noise_seed": 32113,
+      "midpoint_seed": 33113,
+      "field_value_sha256": "0fbac87513616fb49f72669f7aee69eee764c99b3c4b23ad2ff73b3b6e6342b7",
+      "frozen_mode_relative_rms": 2.4247870915585355e-7,
+      "mw_m31_proxy": {
+        "masses_msun_h": [2213799609375.0, 907294921875.0],
+        "mass_ratio": 2.44,
+        "separation_mpc_h": 1.046075464343728,
+        "midpoint_offset_mpc_h": 3.513531904737407,
+        "isolation_mpc_h": 3.3492096124964106,
+        "total_radial_velocity_km_s": -39.7250721482834,
+        "tangential_velocity_km_s": 100.84879378568688,
+        "ranking_score": 2.287224170620096
+      },
+      "M33_status": "unresolved and non-gating at L9 PM; mandatory in the later zoom HOP/PHEW gate"
+    }
+  },
+  "selected_artifacts": {
+    "reproduction_job": 394217,
+    "result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1/result.json",
+    "result_sha256": "9f48e776b0af1060e907122cd3331ec25ee1488a13fcad88d6de2abe8a4a437e",
+    "field": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1/passing_field_000.npz",
+    "field_file_sha256": "80fa9fa24f33e8458ef1ec13e7b3d9606ed726ca35229731c15d3683572adf09",
+    "halo_catalogue": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1/passing_halos_000.npz",
+    "halo_catalogue_sha256": "811bb69a1e6f3c6f9d5914c11cd3da77cee99082d73ecbb67ccab373a459fe20"
+  },
+  "environment_revalidation": {
+    "jobs": [394219, 394223],
+    "n256_result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_selected_s30113_n256_environment_v1.json",
+    "n256_result_sha256": "0189d776e39a10ac3c8ae78b37bd3928db3a50e5e8b70bee92e1cb8973fd9b6b",
+    "p1_gates": {
+      "Virgo": true,
+      "Coma": true,
+      "LocalVoid": true,
+      "BootesVoid": true,
+      "ObserverEnvironment": true
+    },
+    "n512_result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_selected_s30113_n512_clusters_v1.json",
+    "n512_result_sha256": "7cb4d0d54286a0031e99894dd062fdaa78f4f53d91f8e50570bc2bd193a7e16d",
+    "virgo_mass_msun_h": 327025381640625.0,
+    "virgo_target_separation_mpc_h": 4.421479505469749,
+    "coma_mass_msun_h": 581285710546875.0,
+    "coma_target_separation_mpc_h": 4.240337855596284
+  },
+  "grafic_parent_ic": {
+    "job": 394229,
+    "directory": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1/grafic_l9",
+    "mesh_size": 512,
+    "spacing_mpc_h": 0.75,
+    "roundtrip_relative_error": 0.0,
+    "phase_transfer_median_r": 1.0,
+    "phase_transfer_min_r": 0.999,
+    "peak_rss_kib": 11888936
+  },
+  "ramses_parent_forward": {
+    "preflight_job": 394244,
+    "z0_job": 394245,
+    "run": "/gpfs/kjhan/CF4/ramses/cf4_lg_b3292_s30113_parent_z0_v1/job_394245",
+    "initial_snapshot": 1,
+    "final_snapshot": 2,
+    "final_aexp": 1.00806708192456,
+    "fine_steps": 157,
+    "mass_conservation_error": 0.0,
+    "energy_conservation_error": -0.00306,
+    "elapsed": "00:11:11",
+    "peak_rss_kib": 50646504
+  },
+  "galaxyfinder_parent_validation": {
+    "pipeline_job": 394268,
+    "validation_job": 394270,
+    "finder": "GalaxyFinder RAMSES NewDD plus variable-mass opFoF",
+    "source_repository": "https://github.com/kjhan0606/GalaxyFinder",
+    "source_commit_with_lagRamses_support": "d0aceae",
+    "production_newdd_sha256": "54ebaa30b4a2a3a81f0359e2b7d20b8b8bb8b174290dccd97de80db72aa49200",
+    "production_opfof_sha256": "517cc51811a3915f7482f0d368241a64385bf11e7ff45926f7f8c85ecbb27c3a",
+    "nsplit": 256,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_parent_galaxyfinder_v1.json",
+    "result_sha256": "5a1973a3a9a4caa0d645a1b292c0be73bc833dfc0ce664ad0ad1a72ae3f33232",
+    "halo_count": 142500,
+    "lg_pair": {
+      "masses_msun_h": [2578623900753.602, 1525383152558.4702],
+      "separation_mpc_h": 0.8568558984738025,
+      "midpoint_offset_mpc_h": 3.598670257075597,
+      "peculiar_radial_velocity_km_s": -145.0326415542934,
+      "total_radial_velocity_km_s": -59.34705170691315,
+      "tangential_velocity_km_s": 99.5640444512836
+    },
+    "virgo": {
+      "mass_msun_h": 329301167720239.5,
+      "target_separation_mpc_h": 4.346096138648271
+    },
+    "coma": {
+      "mass_msun_h": 586655096744836.5,
+      "target_separation_mpc_h": 4.092555295056198
+    },
+    "member_id_artifact": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s30113_parent_members_v1.npz",
+    "member_id_artifact_sha256": "770f5c9527295a75da0382a3aafe75ccf2b574e1a3c25bba42a49c15107f36c3",
+    "conditional_issue": "A 1.22e13 Msun/h FoF group lies 4.16 Mpc/h from the observer. The frozen definitive exclusion is HOP/M200c-based, so FoF alone neither passes nor rejects it.",
+    "hop_job": 394274
+  },
+  "hop_parent_validation": {
+    "pipeline_job": 394274,
+    "validation_job": 394294,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_parent_hop_v1.json",
+    "result_sha256": "d3bf5e78022a092d892ef0b21a5db5fb2fc2155d224d269f814d47b2f4f0a25b",
+    "group_count": 74432,
+    "virgo_mass_msun_h": 327477499527168.0,
+    "coma_mass_msun_h": 552371685949440.0,
+    "nearest_massive_group": {
+      "mass_msun_h": 11066917729075.2,
+      "npart": 305,
+      "observer_distance_mpc_h": 4.148266529527755,
+      "lg_midpoint_distance_mpc_h": 3.3548483481225375
+    },
+    "decision": "HOP_LOCAL_ENVIRONMENT_FAIL"
+  },
+  "lagrangian_trace": {
+    "job": 394280,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s30113_lagrangian_trace_v1.json",
+    "result_sha256": "7ff6f29346d4afc40b87d6b7dc83b28c35340bc2d0782dbba87a15ebf4c1c1d7",
+    "position_artifact": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s30113_lagrangian_positions_v1.npz",
+    "position_artifact_sha256": "b897b56db553359ff521a4f152f8cd90765be9f3fb858cb676fd156acb170baa",
+    "matched_particle_ids": 449,
+    "lg_member_ids": 113,
+    "nearby_group_member_ids": 336,
+    "lg_footprint_span_mpc_h": [7.336378104983737, 4.44419085174178, 5.078313841419998],
+    "nearby_group_footprint_span_mpc_h": [7.350572098127742, 4.449399846855016, 8.062911237905013]
+  },
+  "environment_gate_correction": {
+    "finding": "The v11 P2 screen enforced only 3 Mpc/h isolation and omitted the already-frozen 8 Mpc/h Local-Volume massive-halo exclusion.",
+    "corrected_screen": "config/p2_lg_targets_v12_parent_b3292_beta025_l9_environment.json",
+    "regression_job": 394293,
+    "regression_result": "3 passed",
+    "fresh_search_config": "config/cf4_lg_highk_conditioning_pilot_b3292_v3_environment.json",
+    "fresh_search_job": 394297,
+    "fresh_proposals": 256,
+    "fresh_search_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_environment_v3/result.json",
+    "fresh_search_result_sha256": "183719219dfa039ef6cc84a44e12e469f06a66f4fce8e1dae5a6464e9feb33d2",
+    "fresh_search_pass_count": 0,
+    "fresh_search_decision": "NO_CONDITIONED_LG_CANDIDATE",
+    "pair_formation_diagnostic_job": 395247,
+    "environment_attribution_job": 395248
+  },
+  "gate_reassessment": {
+    "record": "config/cf4_local_volume_halo_gate_correction_v1.json",
+    "finding": "The v12 no-halo-above-5e12-Msun/h-within-8-Mpc/h rule is stronger than standard LG isolation and can reject the observed Centaurus A group. It is no longer a candidate rejection gate.",
+    "parent_persistence_job": 396101,
+    "parent_persistence_result": "/gpfs/kjhan/CF4/diagnostics/cf4_parent_b3292_local_halo_persistence_v1.json",
+    "parent_persistence_result_sha256": "b4cc0fca1baecea77799c8155d3208a265da5600725ed182384863a57b338e21",
+    "v12_status": "DIAGNOSTIC_ONLY_SUPERSEDED_FOR_SELECTION",
+    "seed_30113_status": "NOT_PROMOTED_BECAUSE_A_BETTER_V11_PAIR_CANDIDATE_EXISTS"
+  },
+  "decision": {
+    "selected_L9_field": "SEED_30113_NOT_SELECTED_AFTER_GATE_CORRECTION",
+    "production_IC": "NO_GO",
+    "zoom_IC": "NO_GO_FOR_SEED_30113",
+    "next": "Exactly reproduce the minimum-ranking-score v11 pair candidate, field seed 40274 at diagnostic index 173, then repeat the phase-identical GRAFIC -> RAMSES -> GalaxyFinder -> HOP chain. Keep the P1 observer density/excess-mass gate and standard 3 Mpc/h pair isolation; do not use the superseded v12 8 Mpc/h blanket halo veto."
+  }
+}

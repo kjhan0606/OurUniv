@@ -1,0 +1,73 @@
+{
+  "schema": "hong2021-v68-train-only-population-pair-objective-result-record-v1",
+  "status": "complete_no_refit_audit_selected_train_only_pair_estimator_convergence",
+  "program": "config/hong2021_v68_population_pair_objective_audit_program.json",
+  "program_sha256": "818433d4567b67a3f9ee0eca2271d25da720cd2baf4b4ef042e96b0ad90a852c",
+  "code_commit": "af829218a6d51c50fae1c3f944c385662406da23",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v68_population_pair_objective_audit/audit.json",
+    "sha256": "774ffa71b900619560e466a7c8c5e2d8a35f6d856c5cd0d3a5a38d252f046e1b",
+    "decision_digest_sha256": "68d9f909afa43d9889cf979de1d1bb2c5b8cd198a0a194c86a145d591d014e2c",
+    "classification": "domain_balanced_population_pair_objective_is_not_train_split_stable",
+    "next": "stop_before_refit_and_do_not_add_a_pair_objective",
+    "candidate_selected": false
+  },
+  "population_audit": {
+    "population_value_stable": false,
+    "population_gradient_coherent": false,
+    "optimization_safe": true,
+    "maximum_rank8_to_sealed_rank16_full_population_log_ratio_difference": 0.9459277137638538,
+    "maximum_fold_to_full_population_log_ratio_difference": 1.339947346020256,
+    "fold_gradient_median_leave_one_out_cosine": 0.48935541197998494,
+    "fold_gradient_negative_fraction": 0.0,
+    "full_population_score": 0.17946764196028414,
+    "full_coefficient_0_1_pair_to_bounded_NLL_L2_ratio": 21.5395215331184,
+    "fold_cosines": {
+      "fold0": 0.7181002599832584,
+      "fold1": 0.3428588422661596,
+      "fold2": 0.6358519816938103,
+      "fold3": 0.13935217650757561
+    }
+  },
+  "numerical_and_resource_integrity": {
+    "maximum_inverse_CDF_error": 7.152557373046875e-07,
+    "numerical_pass": true,
+    "peak_allocated_bytes": 1189881344,
+    "peak_allocated_bytes_limit": 30064771072,
+    "memory_pass": true,
+    "pytest_passed": 511,
+    "pytest_log_sha256": "28b319963857e3eaad6c6f8ab143e1b8df2e103b789f8ae9378bd67ef6f25230",
+    "audit_log_sha256": "774ffa71b900619560e466a7c8c5e2d8a35f6d856c5cd0d3a5a38d252f046e1b",
+    "sequence_status": "complete_no_refit_train_only_population_pair_objective_audit",
+    "sequence_status_sha256": "f2d8d4c9f2548c8b2d55ccc61c512a1dbf7aee65e1343cccfa5f3f4f7d58b5cf"
+  },
+  "scientific_conclusion": [
+    "Aggregating objects before the log ratio removes outright sign conflict: all four population-fold gradient cosines are positive. This confirms that individual-cube cosmic variance was a material confounder in V65 and V66.",
+    "The frozen coherence threshold is nevertheless missed, with median fold cosine 0.489 and two weak folds. A population objective is not yet train-split stable.",
+    "The larger failure is estimator convergence: rank8 and sealed rank16 full-population log ratios differ by as much as 0.946, and fold values differ from the full value by as much as 1.340. The finite-rank pair estimator is too noisy to serve as a training objective.",
+    "No pair-objective refit is authorized. The estimator's Monte Carlo convergence must be established independently of any model update before pair-loss design resumes."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit train-only population pair-estimator rank-convergence audit",
+    "rank_levels": [8, 16, 32, 64],
+    "required_design": [
+      "one frozen source-balanced donor stream whose prefixes define every rank level",
+      "the same sixteen V65 train queries per domain and the same pair anchors",
+      "full-population pair log ratios only, with no gradient and no model update",
+      "predeclared adjacent-level and independent-stream convergence criteria"
+    ],
+    "selection_question": "is there a finite empirical-rank ensemble size at which the domain-balanced population pair estimator is stable enough to define a train objective?"
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "development_rank_or_selection_accessed": false,
+    "posthoc_fold_rank_coefficient_threshold_or_metric_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

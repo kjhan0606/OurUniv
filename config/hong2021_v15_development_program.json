@@ -1,0 +1,76 @@
+{
+  "schema": "hong2021-v15-predeclared-development-program-v1",
+  "status": "frozen_after_v14_development_failure_before_v15_e0",
+  "purpose": "Diagnose and correct the V14 EDM noise-scale mismatch without post-hoc spectral rescaling, target-derived inference features, or independent-data reuse.",
+  "v14_failure": {
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v14_multiscale_edm/development_decision.json",
+    "decision_sha256": "9d12144ccf6755f4b19dc47fe9da152e29fab56120797d30a940ba8e7997b6f3",
+    "development_pass": false,
+    "selected_checkpoint": null,
+    "astrid_used": false
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "posthoc_Ak": false,
+    "simulation_label_conditioning": false,
+    "target_derived_inference_features": false,
+    "clipping": false,
+    "pseudocount": false,
+    "density_floor": false
+  },
+  "e0_diagnostic": {
+    "selection_role": "none; diagnosis only",
+    "v14_checkpoint_steps": [2000, 5000, 10000],
+    "fixed_sigmas": [0.5, 2.0, 8.0, 32.0],
+    "representative_objects_per_domain": 16,
+    "noise_seeds": {"TNG100": 25173, "SIMBA": 25174, "Swift": 25175},
+    "measurements": [
+      "fixed-sigma denoising MSE relative to the zero estimator",
+      "fixed-sigma denoising MSE relative to the noisy input",
+      "fixed-sigma Fourier-band error over target residual power",
+      "four-band field-statistic trend over the three frozen V14 candidates",
+      "generated over truth peak and void count trend"
+    ],
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v15/e0_v14_diagnostic.json",
+    "decision": "E0 cannot promote a model or alter a gate. E2 runs next regardless of E0 values."
+  },
+  "e2_noise_distribution": {
+    "single_change_from_v14": "replace fixed edm_p_mean=-0.8 by log(0.6*sigma_data), retaining edm_p_std=1.2",
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "tail_exponent": 0.5,
+    "tail_maximum": 10.0,
+    "training_seed": 144021,
+    "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+    "sampler": {"ensemble_members": 16, "steps": 40, "sigma_min": 0.002, "sigma_max": 40.0, "rho": 7.0},
+    "sampling_seeds": {"TNG100": 25777, "SIMBA": 26777, "Swift": 27777},
+    "selection": "smallest candidate passing all unchanged V6 field checks in all three development domains"
+  },
+  "e3_tail_weight": {
+    "run_only_if": "E2 has no three-domain passing candidate",
+    "single_change_from_e2": "reduce inverse density-frequency tail exponent from 0.5 to 0.25",
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "tail_exponent": 0.25,
+    "tail_maximum": 10.0,
+    "training_seed": 144021,
+    "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+    "sampler": {"ensemble_members": 16, "steps": 40, "sigma_min": 0.002, "sigma_max": 40.0, "rho": 7.0},
+    "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777},
+    "selection": "smallest candidate passing all unchanged V6 field checks in all three development domains"
+  },
+  "fixed_decision_order": [
+    "run E0 without selecting or changing any candidate",
+    "train and gate E2 exactly as declared",
+    "if E2 passes, stop development and create a new committed independent seal",
+    "if E2 fails, train and gate E3 exactly as declared",
+    "if E3 passes, stop development and create a new committed independent seal",
+    "if E3 fails, stop without opening Astrid and escalate to a separately predeclared representation redesign"
+  ],
+  "unchanged_field_gate": "src/hong2021_v6_gate.py",
+  "v14_plan_sha256": "cc3b2f37ef941881ba4e6888463afaba2c85597a2b99f8b2f20f763ead9df487",
+  "v14_firewall_sha256": "96d22452dc1098c7f285054e0135d23079af77fc593923f5d9a4a3f5e0e7bf00"
+}

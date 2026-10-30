@@ -1,0 +1,92 @@
+{
+  "schema": "ouruniv-cf4-b1-gate-redesign-proposal-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "PROPOSED_DEVELOPMENT_ONLY_PENDING_CLOSURE_AND_APPROVAL",
+  "purpose": "Replace the non-frequency per-voxel coverage components before any validation or frontier promotion.",
+  "legacy_gate": {
+    "coverage68_coverage95": "retain as diagnostic only; remove from promotion decision",
+    "reason": "single-member spatial spread over posterior draws is not frequentist coverage over independent truth seeds"
+  },
+  "proposed_primary_coverage_gate": {
+    "unit": "each latent coefficient mode across independent development truth seeds",
+    "interval_sigma": "analytic sqrt(diag(Laplace covariance))",
+    "member_count": 64,
+    "mode_count": 8,
+    "targets": {
+      "coverage68": 0.6826894921370859,
+      "coverage95": 0.9544997361036416
+    },
+    "familywise_alpha": 0.05,
+    "multiple_testing_correction": "Bonferroni over 8 modes x 2 interval levels",
+    "per_test_alpha": 0.003125,
+    "acceptance_count_by_mode": {
+      "coverage68": [32, 54],
+      "coverage95": [55, 64]
+    },
+    "acceptance_construction": "central binomial quantiles at p=target, n=64, alpha=0.003125",
+    "current_analytic_sigma_counts_by_mode": {
+      "coverage68": [48, 48, 50, 47, 46, 48, 47, 47],
+      "coverage95": [59, 64, 63, 61, 61, 63, 62, 63]
+    },
+    "current_result_is_in_sample": true,
+    "promotion_ready": false,
+    "directional_overcoverage_guard": {
+      "statistic": "per-seed mean of eight mode coverage indicators",
+      "null_target": 0.6826894921370859,
+      "maximum_tolerated_absolute_overcoverage": 0.05,
+      "upper_limit": 0.7326894921370859,
+      "coverage95_tolerance": 0.02,
+      "coverage95_upper_limit": 0.9744997361036416,
+      "bootstrap": {
+        "unit": "independent truth seed",
+        "replicates": 10000,
+        "rng": "PCG64(20260905)",
+        "percentile": 97.5,
+        "pass_rule": "one-sided bootstrap upper percentile <= upper_limit"
+      },
+      "current_after_periodic_rsd_repair": {
+        "mean_coverage68": 0.744140625,
+        "bootstrap_upper_97_5_coverage68": 0.787109375,
+        "mean_coverage95": 0.96875,
+        "bootstrap_upper_97_5_coverage95": 0.982421875,
+        "pass": false,
+        "source": "config/cf4_b1_pooled_coverage_guard_result_v1.json"
+      },
+      "power_sensitivity": {
+        "status": "NOT_COMPUTED_AS_INDEPENDENT_N512_POWER",
+        "reason": "the eight modes are correlated within each truth seed; the adopted unit is the seed-cluster bootstrap, so an independent-pair n=512 power number is not a valid gate calibration",
+        "required_followup": "If power is needed, preregister a seed-cluster simulation at explicit seed counts (for example 64 and 256) and report the complete data-generating and resampling unit"
+      }
+    }
+  },
+  "D_arm_stress_stratum": {
+    "member_count": 16,
+    "role": "diagnostic stress report; no standalone promotion claim at n=16",
+    "acceptance_count_by_mode_if_used_as_stop_check": {
+      "coverage68": [5, 16],
+      "coverage95": [12, 16]
+    }
+  },
+  "other_gate_components": [
+    "response",
+    "correlation",
+    "residual_power",
+    "heldout_gain",
+    "optimizer_convergence",
+    "joint_factor_consistency"
+  ],
+  "required_before_adoption": [
+    "freeze this contract before touching sealed validation seeds",
+    "do not execute the mark-side misspecification arm unless a new information-adequacy calculation justifies it",
+    "decide and record whether width is fixed or estimated by a discrepancy model using the regenerated derivative and direct-z diagnostics",
+    "run one untouched validation evaluation only after the above closure"
+  ],
+  "scientific_boundary": {
+    "validation_opened": false,
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier_promotion": "BLOCKED",
+    "B2_IC_FORWARD": "NOT_STARTED",
+    "0p3_cMpc_h_claim": "NOT_ALLOWED"
+  }
+}

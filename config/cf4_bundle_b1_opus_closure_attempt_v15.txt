@@ -1,0 +1,24 @@
+VERDICT: NO-GO
+
+RISK_LEVEL: HIGH (methodological; no operational or data-safety risk)
+
+Opus audit of HEAD 242d79a:
+
+1. Artifact hashes, seed firewall, strict-gate immutability and scientific
+   boundaries pass. The information-null mark arm is correctly not executed.
+2. Blocking: the RSD forward model uses scipy.ndimage.map_coordinates with
+   mode="wrap" on a 32 grid. SciPy's wrap convention has period GRID-1, not
+   GRID, making the sampler discontinuous at the boundary. This explains the
+   B/C/D finite-difference Fisher instability (steps 1e-3/1e-4/1e-5 differ
+   by factors of 70--95).
+3. The count sandwich ratio near one is tautological because it reuses the
+   same derivative; direct z covariance shows A/C/D widths are broad.
+4. Fix the sampler to mode="grid-wrap" (or use an analytic differentiable
+   shift), then rerun calibration, mode coverage, pooled guard and derivative
+   diagnosis. Replace step-fixed expected Fisher with observed information or
+   an adjoint after continuity is restored.
+5. Reconcile stale D=1.068 numbers with corrected D=0.9859. Do not run the
+   mark arm, open validation, or start B2.
+
+RECOMMENDATION: NO-GO until the periodic sampler is fixed and all dependent
+development diagnostics are regenerated.

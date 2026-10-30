@@ -1,0 +1,33 @@
+{
+  "schema": "ouruniv-cf4-all-parent-peak-evidence-independent-preexecution-audit-v1",
+  "status": "complete_GO_for_frozen_all_parent_evidence_execution",
+  "audit_date": "2026-08-16",
+  "auditor_role": "Fable scientific design and independent audit; no production-code modification",
+  "scope": {
+    "implementation": "src/cf4_all_parent_peak_evidence.py",
+    "implementation_sha256": "b82bc7b035d39662acef37c35673b3b064a323056a752be2e33d440b3e20a64e",
+    "program": "config/cf4_all_parent_peak_evidence_program.json",
+    "program_sha256": "9280ccab55d32771245df1e8b230bbac4f924d7ead8173afa404b8fb542af77d",
+    "runner": "scripts/run_cf4_all_parent_peak_evidence_lageunha.sh"
+  },
+  "scientific_purpose": "Test, without generating a conditional field, whether the unchanged 14-point Local-Group peak likelihood retains adequate support over all 256 sealed CF4 posterior parents after exact N192-to-N576 null-space treatment and integration over 64 common midpoint/axis proposals.",
+  "verified_contracts": {
+    "prerequisite_status_and_authorization_hard_gates": true,
+    "canonical_output_hard_gate": true,
+    "all_16384_joint_parent_geometry_weights_included": true,
+    "joint_ESS_and_maximum_weight_gates_connected_to_final_pass": true,
+    "per_parent_geometry_ESS_recorded": true,
+    "one_sided_weighted_CF4_KS_direction_and_ties_correct": true,
+    "PCG64DXSM_100000_permutation_plus_one_pvalue_correct": true,
+    "failure_priority_invalid_then_MC_then_physical_tension": true,
+    "runner_host_hash_HEAD_thread_and_lifecycle_gates_fail_closed": true
+  },
+  "independent_decision": {
+    "execution_GO": true,
+    "required_entrypoint": "scripts/launch_cf4_all_parent_peak_evidence_lageunha.sh",
+    "conditional_field_bank_authorized_before_result": false,
+    "candidate_generation_authorized": false,
+    "PM_or_RAMSES_authorized": false,
+    "post_execution_rule": "A COMPLETE lifecycle marker records computational completion only. A subsequent conditional-field design is allowed only if conditional_field_bank_authorized is true in the validated result."
+  }
+}

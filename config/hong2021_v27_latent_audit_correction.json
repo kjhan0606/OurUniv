@@ -1,0 +1,26 @@
+{
+  "schema": "hong2021-v27-latent-audit-cross-domain-ratio-correction-v1",
+  "status": "frozen_before_corrected_classification",
+  "superseded_audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v27_e15_parent_aligned_haar_flow/trained_flow_latent_audit.json",
+    "sha256": "84f8a4420ebc0ded979fbfcca2934993187503c0d4df9520e63a5c72f164ec87",
+    "schema": "hong2021-v27-frozen-trained-flow-latent-audit-v1"
+  },
+  "implementation_error": "The v1 summary divided the maximum roundtrip error pooled across all domains by each domain's tail excess. This can combine a numerator from TNG100 with a denominator from SIMBA and has no within-domain causal meaning.",
+  "corrected_rule": "For each domain divide that domain's maximum roundtrip error by that same domain's generated-minus-truth absolute latent maximum, then take the maximum of the three within-domain ratios.",
+  "unchanged": [
+    "all stored V27 candidate diagnostics",
+    "roundtrip RMS threshold 0.001",
+    "within-domain roundtrip-error/tail-excess threshold 0.01",
+    "logdet threshold 0.0001 per dimension",
+    "stored physical replay threshold two float32 eps",
+    "V26 comparison scores and strict all-domain classification",
+    "Astrid and historical-EAGLE firewall"
+  ],
+  "firewall": {
+    "thresholds_changed": false,
+    "model_or_samples_changed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

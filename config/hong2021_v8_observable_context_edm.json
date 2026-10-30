@@ -1,0 +1,81 @@
+{
+  "schema": "hong2021-v8-observable-context-edm-plan-v1",
+  "status": "development_only_before_locked_gates",
+  "purpose": "Adapt unresolved-density amplitude and shape to observable cube-level domain shifts without simulation labels or locked truth",
+  "parent_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v7_multidomain_edm/minimum_validation.pt",
+  "data": {
+    "tng_train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "tng_train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_train_laplacian_sigma2.h5",
+    "tng_validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "tng_validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v6/tng100_validation_laplacian_sigma2.h5",
+    "simba_development_train": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16_23_train_all_observers.h5",
+    "simba_development_train_cache": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16_23_train_laplacian_sigma2.h5",
+    "simba_development_validation": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv24_26_validation_all_observers.h5",
+    "simba_development_validation_cache": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv24_26_validation_laplacian_sigma2.h5",
+    "historical_simba_stress": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v1/simba_cv16.h5",
+    "historical_simba_policy": "CV0-15 was inspected after V7 and therefore is not an independent V8 test. It remains excluded from V8 feature fitting, training, checkpoint selection, and hyperparameter tuning, and is reported only as a conservative cross-code stress test.",
+    "eagle_policy": "The 156 reserved cubes in config/hong2021_eagle_confirmation_seal_v1.json remain unopened until TNG/SIMBA development gates and the historical SIMBA stress test pass; EAGLE confirmation32 is the new independent V8 test"
+  },
+  "model": {
+    "simulation_label_conditioning": false,
+    "truth_or_target_context": false,
+    "feature_weighting": "Equal-source moments from TNG train and SIMBA CV16-23 development train",
+    "features": [
+      "log1p occupied cells",
+      "log1p preprocessed galaxy-count sum",
+      "occupied count mean and standard deviation",
+      "occupied radial-velocity mean and standard deviation",
+      "deterministic mean-field cube mean and standard deviation"
+    ],
+    "context_injection": "MLP added to the time embedding of every residual block",
+    "initialization": "V7 EMA backbone plus zero final context layer; exact V7 function at step zero"
+  },
+  "training": {
+    "steps": 10000,
+    "batch": 6,
+    "tng_per_batch": 3,
+    "simba_per_batch": 3,
+    "backbone_learning_rate": 0.00002,
+    "context_learning_rate": 0.0002,
+    "minimum_learning_rate": 0.000002,
+    "ema_decay": 0.999,
+    "validation_every_steps": 500,
+    "candidate_checkpoints": "Retain every 500-step EMA checkpoint",
+    "augmentation": "48 signed cube isometries"
+  },
+  "development_checkpoint_selection": {
+    "predeclared_steps": [500, 2000, 5000, 10000],
+    "screening": {
+      "tng_indices": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "simba_indices_file": "config/hong2021_simba_dev_representative16_v1.json",
+      "ensemble_per_object": 8,
+      "sampling_steps": 20,
+      "score": "Maximum absolute natural-log deviation from one across the two high-k total-power ratios and residual-RMS ratio in both development domains",
+      "tie_break": "Smaller training step",
+      "historically_inspected_or_sealed_data": false
+    },
+    "confirmation": {
+      "selected_candidates": 1,
+      "ensemble_per_object": 16,
+      "sampling_steps": 40,
+      "criterion": "All eight unchanged field-gate checks pass in both TNG and SIMBA CV24-26 development domains",
+      "fallback_if_failed": "Declare V8 failed; do not inspect the sealed EAGLE confirmation"
+    }
+  },
+  "frozen_sequence": [
+    "Smoke-test training and sampling",
+    "Train on TNG plus SIMBA development train only",
+    "Select among retained checkpoints using TNG and SIMBA CV24-26 development gates",
+    "Require unchanged full TNG and SIMBA CV24-26 development field gates",
+    "Run the historically inspected SIMBA CV0-15 cross-code stress test without using it for model selection",
+    "Only then open a predeclared subset of the 156 reserved EAGLE cubes once as the new independent test",
+    "Run grid-HOP only if all applicable field gates pass"
+  ],
+  "forbidden": [
+    "simulation labels",
+    "post-hoc A(k) correction",
+    "feature fitting on validation or locked data",
+    "checkpoint selection on historical SIMBA CV0-15 or sealed EAGLE",
+    "threshold relaxation after inspecting a failure"
+  ]
+}

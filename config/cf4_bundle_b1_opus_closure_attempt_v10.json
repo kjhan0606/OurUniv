@@ -1,0 +1,53 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v10",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "audited_commit": "e513cae",
+  "invocation": {
+    "mode": "normal authenticated Claude mode",
+    "bare": false,
+    "effort": "low",
+    "permission_mode": "plan",
+    "permission_prompts": "none",
+    "file_modification_forbidden": true,
+    "network_forbidden": true,
+    "GPFS_forbidden": true,
+    "Slurm_forbidden": true
+  },
+  "status": "COMPLETE",
+  "verdict": "NO-GO",
+  "risk_level": "MEDIUM",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v10.txt",
+  "findings": {
+    "hash_and_byte_consistency": true,
+    "result_record_consistent": true,
+    "strict_gate_pass_count": 8,
+    "strict_gate_required_count": 64,
+    "fit_success_count": 64,
+    "fit_abnormal_termination_count": 0,
+    "failure_histogram": {"coverage68": 50, "coverage95": 50},
+    "canonical_vectorized_joint_error_max": 7.566995918750763e-10,
+    "same_truth_joint_generation": true,
+    "grouped_mark_fisher_exact": true,
+    "d_width_repair_mean_model_unchanged": true,
+    "mode_metric_definition_correct_but_diagnostic_only": true,
+    "in_sample_width_tuning": true,
+    "legacy_per_voxel_gate_is_not_coverage_frequency": true,
+    "undeclared_auxiliary_stream": [2026401000, 2026401064],
+    "mode_artifact_provenance_incomplete": true,
+    "dead_count_objective": true,
+    "mark_side_misspecification_arm_missing": true,
+    "validation_opened": false,
+    "observational_z0_posterior": false,
+    "B2_IC_FORWARD": false
+  },
+  "required_next": [
+    "Do not open validation or start B2.",
+    "Declare the counts+1000 auxiliary stream in the seed firewall.",
+    "Embed width configuration and source hash in mode-coverage artifacts.",
+    "Redesign the strict gate using a stated across-seed calibration acceptance region; do not promote the mode metric yet.",
+    "Remove or wire the dead _count_objective and add a mark-side misspecification arm before promotion arguments."
+  ]
+}

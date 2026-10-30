@@ -1,0 +1,31 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-spatial-trace-decision-v1",
+  "date": "2026-09-23",
+  "job": 1108300,
+  "stage": "8/8 trace-only zoom preparation",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "report": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_spatial_trace_v1.json",
+  "report_sha256": "260d8b5794b0eafe40594cebc1cfa5a8aa8ff8dc4b6371a49b3160416908da25",
+  "positions": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s40349_spatial_lagrangian_positions_v1.npz",
+  "positions_sha256": "8d5b8c24f341ffcba89caa5d8639d87d8830b8cc4e890d121c9903e116e02b6e",
+  "mask": "/gpfs/kjhan/CF4/masks/cf4_lg_b3292_s40349_spatial_mask_l9_v1.npz",
+  "mask_sha256": "126b96971732aea541e33165446c792d0b3311a192051a92faa176b7e49f723e",
+  "checks": {
+    "z0_radius_cMpc_h": 5.0,
+    "z0_particles": 1886,
+    "selected_pair_members_retained": 143,
+    "selected_pair_members_total": 143,
+    "initial_span_cMpc_h": [14.13250473345488, 11.20732590833572, 14.089482527374287],
+    "mask_base_level": 9,
+    "mask_occupied_base_cells": 6896,
+    "mask_subbox_side_base_cells": 42,
+    "mask_buffer_cMpc_h": 1.5,
+    "mask_pad_base_cells": 8,
+    "periodic_origin_shift_required": false
+  },
+  "decision": "TRACE_ONLY_SPATIAL_MASK_PASS",
+  "interpretation": "The complete parent particle population inside a 5 cMpc/h z=0 LG-environment sphere is traced to the initial state and enclosed by a buffered L9 sparse mask. This fixes the halo-member-only contamination risk but does not validate the parent, identify M33, or authorize production zoom promotion.",
+  "next": "Bind a physically shaped LCDM high-k continuation to the exact seed-40349 L9 parent, then generate only a bounded L12 zoom-IC pilot before any forward zoom evolution."
+}

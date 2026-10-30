@@ -1,0 +1,120 @@
+{
+  "schema": "hong2021-v37-query-aligned-conditional-copula-development-program-v1",
+  "status": "frozen_before_implementation_sampling_or_development_evaluation",
+  "purpose": "Test whether the V31 donor conditional-rank field fails because it is not spatially registered to the query observables/backbone, using a target-free bounded translation and a matched shuffled-query causal control while preserving the exact donor identities, orientations, marginal coordinate, and density inverse.",
+  "parent_evidence": {
+    "v36_record": "config/hong2021_v36_result_record.json",
+    "v36_record_sha256": "07380c5f813f4d7547f8b20fd0055c22188edda2ca5bcffa0531d0862819bca5",
+    "required_classification": "tail_failure_is_joint_donor_query_coupling_not_marginal_tail_prediction",
+    "required_next": "replace_donor_transport_with_joint_query_aligned_conditional_stochastic_field"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_program": "config/hong2021_v31_development_program.json",
+    "v31_program_sha256": "48fca645621078d512e0e667eac925292cbb22bfa693ffa776fbc2627f8646ff",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "conditional_copula_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.json",
+    "conditional_copula_report_sha256": "bd80a7751d5d0a88bf09e897809bec43b546defdfbd6a787c1fe408d5b12c7c9",
+    "selection_rule": "reuse every V28/V31 source_index, donor_source, donor_index, and donor_isometry byte-for-byte; donor reselection is forbidden"
+  },
+  "train_only_descriptor_fit": {
+    "sources": ["TNG100", "SIMBA", "Swift"],
+    "data_and_cache": "reuse and reverify the V35 kinematic3 train data and V21 train backbone cache for every source",
+    "grid": "nonoverlapping factor-4 pooling of the native 64^3 cube to 16^3 cells (1.25 Mpc/h)",
+    "channels": [
+      "log1p summed galaxy count",
+      "count-weighted mean radial peculiar velocity",
+      "exact individual-galaxy population radial-velocity dispersion reconstructed from count, mean, and unbiased native sig_v",
+      "mean frozen V14 corrected backbone including predicted residual DC"
+    ],
+    "normalization": "one common four-channel mean and standard deviation; compute each source moment over all of its train objects/cells, then average the three source moments with exactly one-third weight per source",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v37/query_alignment_descriptor.json",
+    "target_density_used": false
+  },
+  "query_aligned_transport": {
+    "baseline": "unchanged V31 conditional forward, frozen donor isometry, query conditional inverse, and exact residual-mean projection",
+    "translation_candidates_coarse_cells": "all integer triples in [-4,4]^3, corresponding to at most 5 Mpc/h per axis, including zero",
+    "distance": "mean squared difference across the four train-standardized 16^3 descriptor channels after applying the frozen donor isometry and a periodic coarse-grid roll",
+    "selection": "minimum descriptor distance; exact ties prefer smallest squared displacement and then lexicographic shift",
+    "native_action": "periodically roll the complete oriented donor conditional-rank cube by four native cells per selected coarse shift before the unchanged query conditional inverse",
+    "aligned_arm": "select the shift with the actual query descriptor",
+    "shuffled_query_control": "select the shift with the next frozen query descriptor cyclically within the same 16-object domain, but invert at the unchanged actual query backbone",
+    "ensemble_members": 16,
+    "new_random_numbers": false,
+    "donor_reselection": false,
+    "field_clipping": false,
+    "posthoc_Ak": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "arms": ["aligned", "shuffled_query_control"],
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "V31_reference_metrics": {
+      "TNG100": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_e18_physical_conditional_copula/development_candidate/tng/ensemble_evaluation/metrics.json",
+        "sha256": "b3357fb5b954548be07ab32628e37307c46a4a367197b816e33baaf96acd6898"
+      },
+      "SIMBA": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_e18_physical_conditional_copula/development_candidate/simba_dev/ensemble_evaluation/metrics.json",
+        "sha256": "fde3a4d15b232f47a792d0bbb7b153c6e1f1a072fac9226a0ef1754fb2d4d0f7"
+      },
+      "Swift": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v31_e18_physical_conditional_copula/development_candidate/swift_dev/ensemble_evaluation/metrics.json",
+        "sha256": "48726186a1757d8fb9e6dbbd8ad3df047cbbe96f460bb43cf227f9c00b577881"
+      }
+    },
+    "primary_pass": "the aligned arm passes the unchanged field gate plus Q3 and Q4 independently in all three domains",
+    "causal_alignment_material": "aligned Q4/V31 <=0.75 and aligned Q4/shuffled_control <=0.90 in every domain",
+    "selection_role": "only the aligned arm can be selected; the shuffled arm is a negative control and cannot become a candidate"
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "bounded_query_alignment_sufficient",
+      "next": "seal_v37_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass all domains but any field check fails",
+      "classification": "global_query_alignment_repairs_tails_but_not_morphology",
+      "next": "freeze_train_only_local_bijective_multiscale_registration_without_changing_the_marginal_coordinate"
+    },
+    {
+      "condition": "causal_alignment_material but Q3 or Q4 still fails",
+      "classification": "global_query_alignment_is_causal_but_insufficient",
+      "next": "replace_one_global_shift_by_train_only_local_bijective_multiscale_registration"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "bounded_global_translation_does_not_explain_joint_coupling",
+      "next": "fit_a_train_only_query_conditioned_gaussian_copula_innovation_field_without_donor_translation_search"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact program, parent record, V35 data/cache, V31 model/report, selections, and reference metric hashes",
+    "descriptor normalization uses train cubes only and is source balanced",
+    "FFT or direct shift scorer agrees with brute-force mean squared error and never returns a shift outside the frozen range",
+    "aligned and shuffled arms reuse identical donor identities and isometries",
+    "one real sample is finite and has exact residual DC below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v37_e19_query_aligned_copula",
+  "firewall": {
+    "validation_truth_used_for_alignment_fit_or_shift_selection": false,
+    "validation_used_for_model_or_hyperparameter_choice": false,
+    "donor_reselection": false,
+    "field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

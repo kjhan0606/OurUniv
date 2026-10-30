@@ -1,0 +1,54 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-preflight-failure-record-v1",
+  "date": "2026-09-01",
+  "status": "V3_PREFLIGHT_FAILED_ARRAY_NEVER_STARTED_NO_SCIENCE_RESULT",
+  "lineage": {
+    "commit": "632a0fca412749eb9cf149d36d7ec754ad51dca5",
+    "execution_amendment": {
+      "path": "config/cf4_datum_bearing_z0_phasec_execution_amendment_v3.json",
+      "sha256": "f2c52c834e133ec4e8702275f63214d37fdeb0ab1f53a83e2b6e6a99d83bfb50"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "657f3353e9105ba7a10babb82c6821ae0c8def2a2e1bb12047fffd1bf7a3c1de"
+    },
+    "preflight_job_id": 329873,
+    "dependency_cancelled_array_job_id": 329874,
+    "failed_empty_aggregate_job_id": 329875
+  },
+  "preflight_outcome": {
+    "node": "syn05",
+    "partition": "a40",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:49",
+    "MaxRSS_KiB": 1520680,
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-pre3-329873.err",
+      "bytes": 1143,
+      "sha256": "417f3af002a609ab34297c320e2a3cd163422477b2092330acfc6e1d36dd2c23"
+    }
+  },
+  "failure_boundary": {
+    "N64_nested_white_created_ephemerally": true,
+    "N64_PMWD_truth_created_ephemerally": true,
+    "mock_counts_and_velocity_created_ephemerally": true,
+    "CPU_LCDM_transfer_created": true,
+    "cross_device_growth_strict_PhaseB_same_device_tolerance_passed": false,
+    "joint_likelihood_value_or_gradient_created": false,
+    "optimizer_started": false,
+    "sampler_started": false,
+    "posterior_draw_count": 0,
+    "science_metric_created": false,
+    "validation_seed_access": false
+  },
+  "failure": "the GPU CF4 operator and CPU transfer growth rates failed the inherited same-device relative tolerance 2e-13 before the first joint value/gradient",
+  "execution_only_repair": {
+    "record_both_growth_rates_and_relative_difference": true,
+    "cross_device_growth_relative_tolerance": 5e-10,
+    "count_and_CF4_likelihood_use_same_GPU_growth_rate": true,
+    "CPU_transfer_amplitude_formula_unchanged": true,
+    "science_contract_change": false,
+    "seed_arm_sampler_gate_or_diagnostic_change": false
+  }
+}

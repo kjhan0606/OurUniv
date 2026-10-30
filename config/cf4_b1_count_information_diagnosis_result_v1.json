@@ -1,0 +1,536 @@
+{
+  "schema": "ouruniv-cf4-b1-count-information-diagnosis-result-v1",
+  "status": "SUPERSEDED_PRE_PERIODIC_RSD_REPAIR",
+  "superseded_by": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
+  "source_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_integrated_joint_calibration_v3.py",
+    "bytes": 21546,
+    "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
+  },
+  "dependency_artifact": {
+    "path": "src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13601,
+    "sha256": "feafa4f0c14fc721a39e6376e6303a14e80a4c90956089c56dcedec906187339"
+  },
+  "definition": {
+    "expected_information": "declared count Fisher at MAP",
+    "empirical_information": "outer product of per-voxel count scores at MAP",
+    "sandwich_covariance": "A^-1 B A^-1",
+    "finite_difference_step": 0.0001,
+    "sample_indices": [
+      0,
+      1,
+      2,
+      3,
+      16,
+      17,
+      18,
+      19,
+      32,
+      33,
+      34,
+      35,
+      48,
+      49,
+      50,
+      51
+    ],
+    "member_count": 16,
+    "validation_opened": false
+  },
+  "by_arm": {
+    "A": {
+      "member_count": 4,
+      "mode_count": 8,
+      "median_by_mode": [
+        0.9936478506202479,
+        0.9985425118908382,
+        0.9961313811670527,
+        0.9985099797676575,
+        0.9947285816974161,
+        1.0001306625816917,
+        0.9954091753711436,
+        0.9977940966248291
+      ],
+      "median_over_modes_and_members": 0.997077771171671,
+      "fraction_modes_above_1p1": 0.0,
+      "fraction_modes_below_0p9": 0.0
+    },
+    "B": {
+      "member_count": 4,
+      "mode_count": 8,
+      "median_by_mode": [
+        0.9958993791977742,
+        0.9981292398562425,
+        0.9986718937806605,
+        0.9954302380198672,
+        0.9993869465271801,
+        1.0010544136159063,
+        0.998105271565175,
+        1.000182433387501
+      ],
+      "median_over_modes_and_members": 0.9979640029126331,
+      "fraction_modes_above_1p1": 0.0,
+      "fraction_modes_below_0p9": 0.03125
+    },
+    "C": {
+      "member_count": 4,
+      "mode_count": 8,
+      "median_by_mode": [
+        0.9913578562454576,
+        0.9979146287427575,
+        0.9975401703995941,
+        0.9940450811362569,
+        1.0022229328707375,
+        0.9946707490085773,
+        0.9904494208996104,
+        0.9983490014199399
+      ],
+      "median_over_modes_and_members": 0.9969083686249577,
+      "fraction_modes_above_1p1": 0.0,
+      "fraction_modes_below_0p9": 0.03125
+    },
+    "D": {
+      "member_count": 4,
+      "mode_count": 8,
+      "median_by_mode": [
+        1.1027649501364456,
+        1.0348314443128426,
+        1.105227589917925,
+        1.0327733849212304,
+        1.163257211841113,
+        1.1044052821221517,
+        1.0824598037650883,
+        1.1002634445710666
+      ],
+      "median_over_modes_and_members": 1.0680555518823254,
+      "fraction_modes_above_1p1": 0.4375,
+      "fraction_modes_below_0p9": 0.0625
+    }
+  },
+  "members": [
+    {
+      "index": 0,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083000,
+        "counts": 2026400000,
+        "count_split": 2026401000,
+        "marks": 2026500000,
+        "posterior": 2026600000
+      },
+      "expected_information_trace": 169361.7811287844,
+      "empirical_score_covariance_trace": 168379.01706891772,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9888940309562343,
+        0.9993969316562625,
+        0.9944561038948914,
+        0.9957514565385578,
+        0.9966481220103107,
+        0.9966738269220129,
+        0.9939125022296166,
+        0.9957100726658278
+      ],
+      "sandwich_to_expected_sigma_median": 0.9957307646021928,
+      "sandwich_to_expected_sigma_min": 0.9888940309562343,
+      "sandwich_to_expected_sigma_max": 0.9993969316562625
+    },
+    {
+      "index": 1,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083001,
+        "counts": 2026400001,
+        "count_split": 2026401001,
+        "marks": 2026500001,
+        "posterior": 2026600001
+      },
+      "expected_information_trace": 258870.3943575767,
+      "empirical_score_covariance_trace": 257981.3917693476,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0033239930617497,
+        0.9963935957506732,
+        0.9978066584392139,
+        0.9997702657046437,
+        1.0015479562219487,
+        1.0001552862736212,
+        0.9990780388856728,
+        0.9945587117467912
+      ],
+      "sandwich_to_expected_sigma_median": 0.9994241522951582,
+      "sandwich_to_expected_sigma_min": 0.9945587117467912,
+      "sandwich_to_expected_sigma_max": 1.0033239930617497
+    },
+    {
+      "index": 2,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083002,
+        "counts": 2026400002,
+        "count_split": 2026401002,
+        "marks": 2026500002,
+        "posterior": 2026600002
+      },
+      "expected_information_trace": 531220.2947262505,
+      "empirical_score_covariance_trace": 522007.85035675956,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9951431524293973,
+        1.0070594300384212,
+        1.0003373914637532,
+        1.0030389470121412,
+        0.9928090413845213,
+        1.0019006979430936,
+        0.9935689814866259,
+        1.0049819515288798
+      ],
+      "sandwich_to_expected_sigma_median": 1.0011190447034233,
+      "sandwich_to_expected_sigma_min": 0.9928090413845213,
+      "sandwich_to_expected_sigma_max": 1.0070594300384212
+    },
+    {
+      "index": 3,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083003,
+        "counts": 2026400003,
+        "count_split": 2026401003,
+        "marks": 2026500003,
+        "posterior": 2026600003
+      },
+      "expected_information_trace": 201079.8514677314,
+      "empirical_score_covariance_trace": 199126.23699575572,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9921525488110984,
+        0.9976880921254138,
+        0.9939903873445416,
+        0.9972496938306715,
+        0.9925660200508126,
+        1.000106038889762,
+        0.9969058485126705,
+        0.9998781205838304
+      ],
+      "sandwich_to_expected_sigma_median": 0.997077771171671,
+      "sandwich_to_expected_sigma_min": 0.9921525488110984,
+      "sandwich_to_expected_sigma_max": 1.000106038889762
+    },
+    {
+      "index": 16,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083016,
+        "counts": 2026400016,
+        "count_split": 2026401016,
+        "marks": 2026500016,
+        "posterior": 2026600016
+      },
+      "expected_information_trace": 711955.1540319088,
+      "empirical_score_covariance_trace": 146569.86113314022,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9904293249442117,
+        0.9252989449287071,
+        1.0004389883395313,
+        0.9858623504557914,
+        0.9884852874666303,
+        0.5314509404385793,
+        0.9796237397744842,
+        1.0095636872674074
+      ],
+      "sandwich_to_expected_sigma_median": 0.9871738189612109,
+      "sandwich_to_expected_sigma_min": 0.5314509404385793,
+      "sandwich_to_expected_sigma_max": 1.0095636872674074
+    },
+    {
+      "index": 17,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083017,
+        "counts": 2026400017,
+        "count_split": 2026401017,
+        "marks": 2026500017,
+        "posterior": 2026600017
+      },
+      "expected_information_trace": 304466.08636062546,
+      "empirical_score_covariance_trace": 306381.3123512677,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9949242968134139,
+        0.9994979593070339,
+        0.9969047992217897,
+        0.9960516194815322,
+        1.001214692357002,
+        1.006449150852969,
+        1.004900263419966,
+        0.9978184026063115
+      ],
+      "sandwich_to_expected_sigma_median": 0.9986581809566727,
+      "sandwich_to_expected_sigma_min": 0.9949242968134139,
+      "sandwich_to_expected_sigma_max": 1.006449150852969
+    },
+    {
+      "index": 18,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083018,
+        "counts": 2026400018,
+        "count_split": 2026401018,
+        "marks": 2026500018,
+        "posterior": 2026600018
+      },
+      "expected_information_trace": 554508.8704926912,
+      "empirical_score_covariance_trace": 548287.1981697397,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9999744880772691,
+        0.9981488764935301,
+        0.9957324551870379,
+        0.9950015399858535,
+        1.0040809936501833,
+        0.9983581018422797,
+        0.9974051100951756,
+        1.0002132916764641
+      ],
+      "sandwich_to_expected_sigma_median": 0.9982534891679049,
+      "sandwich_to_expected_sigma_min": 0.9950015399858535,
+      "sandwich_to_expected_sigma_max": 1.0040809936501833
+    },
+    {
+      "index": 19,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083019,
+        "counts": 2026400019,
+        "count_split": 2026401019,
+        "marks": 2026500019,
+        "posterior": 2026600019
+      },
+      "expected_information_trace": 2282201.773401282,
+      "empirical_score_covariance_trace": 7797351.346106229,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9968744615821344,
+        0.9981096032189547,
+        1.0049595334831407,
+        0.995858936053881,
+        0.9975592006973582,
+        1.003750725389533,
+        0.9988054330351744,
+        1.0001515750985377
+      ],
+      "sandwich_to_expected_sigma_median": 0.9984575181270645,
+      "sandwich_to_expected_sigma_min": 0.995858936053881,
+      "sandwich_to_expected_sigma_max": 1.0049595334831407
+    },
+    {
+      "index": 32,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083032,
+        "counts": 2026400032,
+        "count_split": 2026401032,
+        "marks": 2026500032,
+        "posterior": 2026600032
+      },
+      "expected_information_trace": 1108995.9859440709,
+      "empirical_score_covariance_trace": 305540.9716591097,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9966702904611151,
+        0.9986828106967147,
+        1.0055872387840326,
+        0.9988762638948699,
+        1.0047265164940848,
+        1.0051065982959464,
+        1.0028301702643003,
+        0.998896532926192
+      ],
+      "sandwich_to_expected_sigma_median": 1.000863351595246,
+      "sandwich_to_expected_sigma_min": 0.9966702904611151,
+      "sandwich_to_expected_sigma_max": 1.0055872387840326
+    },
+    {
+      "index": 33,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083033,
+        "counts": 2026400033,
+        "count_split": 2026401033,
+        "marks": 2026500033,
+        "posterior": 2026600033
+      },
+      "expected_information_trace": 472907.33028864226,
+      "empirical_score_covariance_trace": 473234.4721586484,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9898735115279329,
+        0.9971464467888003,
+        0.9964557960722769,
+        0.989213898377644,
+        0.9955409852681031,
+        0.9946396986216609,
+        1.0000512334682516,
+        0.9978014699136878
+      ],
+      "sandwich_to_expected_sigma_median": 0.9959983906701899,
+      "sandwich_to_expected_sigma_min": 0.989213898377644,
+      "sandwich_to_expected_sigma_max": 1.0000512334682516
+    },
+    {
+      "index": 34,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083034,
+        "counts": 2026400034,
+        "count_split": 2026401034,
+        "marks": 2026500034,
+        "posterior": 2026600034
+      },
+      "expected_information_trace": 265979.626529566,
+      "empirical_score_covariance_trace": 252910.08897920634,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9928422009629823,
+        1.0062456844828085,
+        0.9986245447269114,
+        0.9579741939493235,
+        1.0023713466595348,
+        0.9947017993954939,
+        0.8188840558954127,
+        0.9961175445117315
+      ],
+      "sandwich_to_expected_sigma_median": 0.9954096719536127,
+      "sandwich_to_expected_sigma_min": 0.8188840558954127,
+      "sandwich_to_expected_sigma_max": 1.0062456844828085
+    },
+    {
+      "index": 35,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083035,
+        "counts": 2026400035,
+        "count_split": 2026401035,
+        "marks": 2026500035,
+        "posterior": 2026600035
+      },
+      "expected_information_trace": 255416.42619800064,
+      "empirical_score_covariance_trace": 195371.90924497036,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9813698859518699,
+        0.9966422069759973,
+        0.9775675004861725,
+        0.9997025815659535,
+        1.0020745190819402,
+        0.9684987416367489,
+        0.9808476083309692,
+        1.0105771106353454
+      ],
+      "sandwich_to_expected_sigma_median": 0.9890060464639336,
+      "sandwich_to_expected_sigma_min": 0.9684987416367489,
+      "sandwich_to_expected_sigma_max": 1.0105771106353454
+    },
+    {
+      "index": 48,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083048,
+        "counts": 2026400048,
+        "count_split": 2026401048,
+        "marks": 2026500048,
+        "posterior": 2026600048
+      },
+      "expected_information_trace": 275215.15841335244,
+      "empirical_score_covariance_trace": 221920.45160331673,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0222495490464807,
+        1.022223006932316,
+        1.0313058839193359,
+        1.024088339867592,
+        1.031860347698225,
+        1.0063597911827122,
+        1.0392060487827601,
+        0.6187254602747799
+      ],
+      "sandwich_to_expected_sigma_median": 1.0231689444570362,
+      "sandwich_to_expected_sigma_min": 0.6187254602747799,
+      "sandwich_to_expected_sigma_max": 1.0392060487827601
+    },
+    {
+      "index": 49,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083049,
+        "counts": 2026400049,
+        "count_split": 2026401049,
+        "marks": 2026500049,
+        "posterior": 2026600049
+      },
+      "expected_information_trace": 2392711.9195012283,
+      "empirical_score_covariance_trace": 639236.6248503118,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0421083692876045,
+        1.0040087165281573,
+        1.0511870880297751,
+        1.0414584299748688,
+        1.0804236027222376,
+        1.0720570260355364,
+        1.0260340634407539,
+        1.064054077729114
+      ],
+      "sandwich_to_expected_sigma_median": 1.04664772865869,
+      "sandwich_to_expected_sigma_min": 1.0040087165281573,
+      "sandwich_to_expected_sigma_max": 1.0804236027222376
+    },
+    {
+      "index": 50,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083050,
+        "counts": 2026400050,
+        "count_split": 2026401050,
+        "marks": 2026500050,
+        "posterior": 2026600050
+      },
+      "expected_information_trace": 662539.6957123826,
+      "empirical_score_covariance_trace": 631153.7363920708,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.1634215309852867,
+        1.047439881693369,
+        1.1592680918060747,
+        0.8192046659000644,
+        1.2460908209599886,
+        1.136753538208767,
+        1.1257135587474163,
+        1.1364728114130194
+      ],
+      "sandwich_to_expected_sigma_median": 1.1366131748108932,
+      "sandwich_to_expected_sigma_min": 0.8192046659000644,
+      "sandwich_to_expected_sigma_max": 1.2460908209599886
+    },
+    {
+      "index": 51,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083051,
+        "counts": 2026400051,
+        "count_split": 2026401051,
+        "marks": 2026500051,
+        "posterior": 2026600051
+      },
+      "expected_information_trace": 15438460.819324685,
+      "empirical_score_covariance_trace": 10169587.938393421,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.1687911901792327,
+        1.14288647794646,
+        1.2657994926600105,
+        1.227006299559385,
+        1.256556428021265,
+        1.1897577630252538,
+        1.2181964984243256,
+        1.2038516611998222
+      ],
+      "sandwich_to_expected_sigma_median": 1.211024079812074,
+      "sandwich_to_expected_sigma_min": 1.14288647794646,
+      "sandwich_to_expected_sigma_max": 1.2657994926600105
+    }
+  ],
+  "interpretation": {
+    "purpose": "test whether A/C overcoverage is a count-side expected-information mismatch before adding mark-side misspecification",
+    "mean_model_changed": false,
+    "observational_z0_posterior": "NOT_CREATED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Historical pre-repair diagnostic only; use config/cf4_b1_count_derivative_diagnosis_result_v2.json for the repaired dependency and keep validation sealed."
+}

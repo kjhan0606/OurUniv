@@ -1,0 +1,184 @@
+{
+  "schema": "hong2021-v76-separate-rank-coverage-nonmasking-audit-result-record-v1",
+  "status": "complete_separate_exact_label_rank_coverage_rule_selected",
+  "purpose": "Bind the prospectively frozen correction of the V75 scalar-composite masking defect and authorize only the subsequent freezing of a complete 32-query prospective gate.",
+  "completed_at": "2026-08-12T16:04:00+09:00",
+  "record_base_commit": "2f5bbc1bbd5de77d34037e38da436131e0ee8d19",
+  "frozen_program": {
+    "path": "config/hong2021_v76_separate_rank_coverage_nonmasking_audit_program.json",
+    "sha256": "f72e2b0ff7ae7bd23acea3e120f0fb6e89b4088c57b6b7feb1405eef973796c0",
+    "freeze_commit": "974a450195dded9688b4ff4e7ad0a40fdb117e97",
+    "implementation_commit": "2f5bbc1bbd5de77d34037e38da436131e0ee8d19"
+  },
+  "parent": {
+    "V75_result_record": "config/hong2021_v75_result_record.json",
+    "V75_result_record_sha256": "ae5bbfd7124ceb20a80062adb8a63afd54dad2a34ba5cc02e66ec972ec93059f",
+    "V75_exact_field_label_null_retained": true,
+    "V75_scalar_composite_retained": false,
+    "V75_decision_preserved": true,
+    "V72_decision_preserved": true
+  },
+  "selected_rule": {
+    "metrics": ["rank_tv", "coverage_deviation"],
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "number_of_tests": 6,
+    "family_wise_alpha": 0.05,
+    "per_test_alpha": 0.008333333333333333,
+    "metric_pass": "exact field-label conditional p-value strictly greater than 1/120",
+    "domain_pass": "both metric tests pass",
+    "all_domain_pass": "all six tests pass",
+    "multiplicity": "Bonferroni; no independence assumption required",
+    "nonmasking": "Any rank or coverage p-value at or below 1/120 fails regardless of the other metric."
+  },
+  "existing_null_calibration": {
+    "V75_synthetic_arrays_regenerated": false,
+    "scenarios": {
+      "independent_normal_voxels": {
+        "rank_rejection": 0.00887,
+        "rank_Wilson_95_upper": 0.009470293388614501,
+        "coverage_rejection": 0.00806,
+        "coverage_Wilson_95_upper": 0.00863339791858671,
+        "three_domain_family_diagnostic": 0.04877479397207718
+      },
+      "spatially_correlated_normal": {
+        "rank_rejection": 0.00776,
+        "rank_Wilson_95_upper": 0.008323086877362504,
+        "coverage_rejection": 0.00816,
+        "coverage_Wilson_95_upper": 0.008736791113853549,
+        "three_domain_family_diagnostic": 0.04220200714148303
+      },
+      "perfect_within_field_dependence": {
+        "rank_rejection": 0.00706,
+        "rank_Wilson_95_upper": 0.0075982045335230225,
+        "coverage_rejection": 0.00547,
+        "coverage_Wilson_95_upper": 0.005946523742342226,
+        "three_domain_family_diagnostic": 0.036155295847999924
+      },
+      "rounded_heavy_tail_with_ties": {
+        "rank_rejection": 0.00799,
+        "rank_Wilson_95_upper": 0.008561009831780608,
+        "coverage_rejection": 0.00883,
+        "coverage_Wilson_95_upper": 0.009428995572932053,
+        "three_domain_family_diagnostic": 0.04499767394266685
+      }
+    },
+    "individual_point_limit": 0.01,
+    "individual_Wilson_upper_limit": 0.011,
+    "family_diagnostic_limit": 0.055,
+    "individual_calibrated": true,
+    "family_diagnostic_calibrated": true,
+    "mathematical_Bonferroni_FWER_upper": 0.05
+  },
+  "deterministic_nonmasking": {
+    "grid_comparisons": 36,
+    "mismatches": 0,
+    "rank_only_signal_detected": true,
+    "coverage_only_signal_detected": true,
+    "pass": true
+  },
+  "independent_synthetic_power": {
+    "seed": 760101,
+    "replications_per_alternative": 100,
+    "location_bias": {
+      "rank_detection": 0.86,
+      "coverage_detection": 0.1,
+      "union_detection": 0.86,
+      "union_Wilson_95": [0.7786281178903616, 0.9147365634006086],
+      "power_sufficient": true
+    },
+    "underdispersion": {
+      "rank_detection": 1.0,
+      "coverage_detection": 1.0,
+      "union_detection": 1.0,
+      "union_Wilson_95": [0.9630065017930143, 1.0],
+      "power_sufficient": true
+    },
+    "frozen_minimum_union_power": 0.8,
+    "frozen_minimum_Wilson_lower": 0.7,
+    "power_sufficient": true
+  },
+  "consumed_V75_diagnostic": {
+    "selection_role": false,
+    "V72_verdict_changed": false,
+    "scalar_masking_cases": ["candidate/TNG100", "control/TNG100"],
+    "candidate_separate_pass": {
+      "TNG100": false,
+      "SIMBA": false,
+      "Swift": false
+    },
+    "control_separate_pass": {
+      "TNG100": false,
+      "SIMBA": false,
+      "Swift": false
+    },
+    "interpretation": "The consumed V72 examples demonstrate that the selected rule removes scalar masking, but they neither selected the rule nor change the sealed V72 verdict."
+  },
+  "decision": {
+    "classification": "separate_exact_label_rank_coverage_rule_selected",
+    "individual_null_calibration_pass": true,
+    "family_null_diagnostic_pass": true,
+    "nonmasking_pass": true,
+    "power_pass": true,
+    "complete_prospective_gate_complete": false,
+    "complete_prospective_gate_may_be_frozen": true,
+    "complete_gate_or_new_candidate_execution_authorized": false,
+    "next": "Freeze a complete prospective 32-query gate combining V74 physical, morphology, and energy rules with V76 separate rank and coverage tests, then await explicit approval before any new candidate or fresh evaluation."
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "logical CPU 64, nice 15, one process; RAMSES ranks on CPU 0-63 remained active",
+    "runner": "scripts/hong2021_v76_separate_rank_coverage_nonmasking_lageunha.sh",
+    "runner_sha256": "d436a5461dd15f7b197eceac4eb447f5ddd04428fee5cd4a8bc4a9748cdb9f45",
+    "source": "src/hong2021_v76_separate_rank_coverage_nonmasking.py",
+    "source_sha256": "533fcdf12f3d8ad29220052e7eb5db37e495c13f4ba8a96f98fc7c206a0b6455",
+    "training_or_model_sampling_performed": false,
+    "raw_fit_train_truth_accessed": false
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking",
+    "audit_result": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking/audit_result.json",
+      "sha256": "4bcfef8f64bfce5e60132e9568e564398673864c7738e31d5c71ec852f8d462b",
+      "decision_digest_sha256": "4556904b37a4d5f377ccf2cc3787d9d34b6b82463e89e83b1f2980ae9bafbf63"
+    },
+    "power_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v76_separate_rank_coverage_nonmasking/power_arrays.npz",
+      "sha256": "a5be3f1246610b60da09c597731ed0232765df06575a9b32c4f4beaf5e2596ff"
+    },
+    "sequence_pytest_log_sha256": "61f8be8056b8d97561fa52512a0e41ab388ba81c596be2d8f1bea5fe70d63279",
+    "sequence_audit_log_sha256": "c161d4ceae0ed1ec23f8136da921cf5abc65adb60db354c9b8049001fe4fd50d",
+    "sequence_status_sha256": "f83613ef2de2e36e4dbf863e945458af4aeb737e1540a4a87fe0c7479342669c"
+  },
+  "verification": {
+    "local_full_tests": "621 passed in 60.83s",
+    "local_V75_V76_tests": "17 passed in 10.25s",
+    "Lageunha_V76_tests": "8 passed in 7.66s",
+    "test_source": "tests/test_hong2021_v76_separate_rank_coverage_nonmasking.py",
+    "test_source_sha256": "c4a47ed8494b857d7fb969ee46040a83b758f1b29c1971d030ea4539ab271587",
+    "output_arrays": 12,
+    "nonfinite_values": 0,
+    "decision_digest_recomputed_equal": true,
+    "repository_clean_during_audit": true
+  },
+  "firewall": {
+    "raw_fit_train_truth_accessed": false,
+    "validation_or_fresh_payload_accessed": false,
+    "V72_ensemble_or_array_accessed": false,
+    "V72_stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_or_independent_EAGLE_accessed": false,
+    "model_checkpoint_accessed": false,
+    "training_or_model_sampling_performed": false,
+    "new_candidate_constructed": false,
+    "RAMSES_interrupted": false
+  },
+  "authorization": {
+    "rerun_or_reinterpret_V72": false,
+    "freeze_a_complete_prospective_gate_specification": true,
+    "execute_the_complete_gate_or_construct_a_new_candidate": false,
+    "implement_or_train_a_new_generator": false,
+    "open_fresh_validation_Stage_B_Astrid_or_EAGLE": false,
+    "required_next": "Freeze the complete gate specification and await explicit user approval before candidate construction or evaluation."
+  }
+}

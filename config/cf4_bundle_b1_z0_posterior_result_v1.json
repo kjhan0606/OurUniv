@@ -1,0 +1,73 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-z0-posterior-result-v1",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "DEVELOPMENT_NO_GO_PERIODIC_RSD_REPAIR_STRICT_GATE_8_OF_64",
+  "governance": "config/cf4_bundle_execution_governance_v1.json",
+  "opus_closure_attempt": "config/cf4_bundle_b1_opus_closure_attempt_v3.json",
+  "opus_closure_attempt_current": "config/cf4_bundle_b1_opus_closure_attempt_v8.json",
+  "opus_closure_attempt_current_v10": "config/cf4_bundle_b1_opus_closure_attempt_v10.json",
+  "opus_closure_attempt_current_v11": "config/cf4_bundle_b1_opus_closure_attempt_v11.json",
+  "opus_closure_attempt_current_v12": "PENDING_ANALYTIC_SIGMA_GATE_PROPOSAL_AUDIT",
+  "opus_closure_attempt_current_v13": "PENDING_MACHINE_REPRODUCIBILITY_AND_GATE_POWER_AUDIT",
+  "opus_closure_attempt_current_v14": "PENDING_GUARD_COUNT_SIDE_PLAN_AUDIT",
+  "opus_closure_attempt_current_v15": "PENDING_COUNT_DERIVATIVE_MARK_PLAN_AUDIT",
+  "opus_closure_attempt_current_v16": "config/cf4_bundle_b1_opus_closure_attempt_v16.json",
+  "opus_closure_attempt_current_v17": "config/cf4_bundle_b1_opus_closure_attempt_v17.json",
+  "opus_closure_attempt_current_v18": "config/cf4_bundle_b1_opus_closure_attempt_v18.json",
+  "opus_closure_attempt_current_v19": "config/cf4_bundle_b1_opus_closure_attempt_v19.json",
+  "opus_closure_attempt_current_v20": "config/cf4_bundle_b1_opus_closure_attempt_v20.json",
+  "likelihood_contract_amendment": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
+  "development_calibration_result": "config/cf4_bundle_b1_development_mock_calibration_result_record_v2.json",
+  "sol_closure_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
+  "sol_closure_audit_current": "config/cf4_bundle_b1_sol_closure_audit_v3.json",
+  "integrated_joint_calibration_result": "config/cf4_bundle_b1_integrated_joint_development_calibration_result_record_v3.json",
+  "width_repair_current": "config/cf4_b1_posterior_width_repair_result_v3.json",
+  "coverage_metric_amendment": "config/cf4_b1_coverage_metric_amendment_v1.json",
+  "mode_coverage_diagnosis_current": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+  "pooled_coverage_guard_result": "config/cf4_b1_pooled_coverage_guard_result_v1.json",
+  "count_information_diagnosis_result": "config/cf4_b1_count_information_diagnosis_result_v1.json",
+  "count_derivative_diagnosis_result": "config/cf4_b1_count_derivative_diagnosis_result_v2.json",
+  "mark_misspecification_plan": "config/cf4_b1_mark_misspecification_plan_v1.json",
+  "seed_firewall_repair": "config/cf4_bundle_b1_seed_firewall_repair_v1.json",
+  "scope": {
+    "kf_design_contract_validated": true,
+    "kf_expand_executed": false,
+    "new_z0_posterior_generated": false,
+    "frozen_bgc_wf_baseline_reused_as_control": true,
+    "independent_truth_mocks_executed": true,
+    "heldout_data_opened": false,
+    "frontier_promoted": false,
+    "ic": false,
+    "pm_hop_ramses": false,
+    "gpfs": false,
+    "slurm": false
+  },
+  "validation": {
+    "command": "pytest -q tests/test_cf4_kf_bin_manifest_design.py tests/test_cf4_kf_bin_manifest.py tests/test_cf4_kf_roi_leakage.py tests/test_cf4_constraint_frontier.py tests/test_cf4_population_calibration.py tests/test_cf4_population_calibration_aggregate_v2.py tests/test_cf4_population_calibration_result.py tests/test_cf4_same_truth_information_budget.py tests/test_cf4_same_truth_information_budget_v2.py tests/test_cf4_same_truth_information_budget_v2_result.py",
+    "result": "89 passed in 4.00s",
+    "interpretation": "Contract and fail-closed frontier machinery are internally consistent; this is not an observational frontier pass.",
+    "amendment_command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q tests/test_cf4_bundle_b1_likelihood_contract_amendment.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_joint_contract.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_jax.py",
+    "amendment_result": "28 passed, 2 skipped",
+    "amendment_interpretation": "Active likelihood and independent-mock contracts are frozen for development calibration; no external data or inference was run."
+    ,"development_calibration": "64 local synthetic N32 mocks completed after grid-wrap RSD repair; fit_success 64/64 but the frozen strict low-k gate passes only 8/64, analytic mode coverage is 0.7441/0.9688 and the pooled guard fails, so no posterior or frontier promotion is allowed."
+    ,"sol_audit": "NO-GO backup verdict: v2 is a repaired count-smoke plus interface probes, not an integrated 64-mock CF4+2M++ calibration."
+  },
+  "data_readiness": {
+    "D_CF4_groups": "READY_GROUPED_DISTANCE_RADIAL_VELOCITY_LIKELIHOOD",
+    "D_CF4_galaxies": "DIAGNOSTIC_ONLY_SELECTION_BIAS_AND_JOINT_COVARIANCE_MISSING",
+    "D_galaxy_density_external": "ACTIVE_CONTRACT_FROZEN_CALIBRATION_PENDING",
+    "D_LG": "DEFERRED_B1_VALIDATION_TARGET_NOT_ACTIVE_LIKELIHOOD",
+    "D_clusters": "DEFERRED_B1_VALIDATION_TARGET_NOT_ACTIVE_LIKELIHOOD",
+    "D_voids": "DEFERRED_B1_VALIDATION_TARGET_NOT_ACTIVE_LIKELIHOOD",
+    "D_observer": "DEFERRED_B1_PRIOR_OR_GATE_NOT_ACTIVE_LIKELIHOOD"
+  },
+  "blocking_contracts": [
+    "Development calibration of the frozen 2M++ selection, RSD/FoG, luminosity-dependent bias/HOD and model-discrepancy arms",
+    "Independent 64-mock calibration and untouched 256-mock coverage/held-out frontier comparison",
+    "Identifiability and posterior diagnostic gates before any observational field claim",
+    "LG, Virgo, Coma, Local Void, Boötes Void and observer-environment factors are explicitly deferred until their provenance/covariance contracts are complete"
+  ],
+  "scientific_disposition": "NO_NEW_Z0_POSTERIOR_OR_FRONTIER_CLAIM_AUTHORIZED; existing BGc/WF products remain controls only",
+    "next": "The initial v3 validation-range attempt remains quarantined. Opus v21 and record-only edits close B1 as a development-only NO-GO: coverage is 47/64 with consistent contingency, and no D mechanism is resolvable at n=16 with confounded controls. Await user approval for any next bundle; validation and B2 remain closed."
+}

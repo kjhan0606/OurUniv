@@ -1,0 +1,55 @@
+{
+  "schema": "hong2021-v38-gaussian-copula-innovation-result-record-v1",
+  "status": "complete_development_only_linear_query_conditioning_falsified",
+  "program": "config/hong2021_v38_gaussian_copula_innovation_program.json",
+  "program_sha256": "d2eeff96a9365ef300866978a36146faa10a579dd5f4c66b5b657da1a69b70f8",
+  "implementation_commit": "34e9bb3e10c07be04270400fa9a1b3a9379da9b3",
+  "fit": {
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v38/gaussian_copula_wiener.npz",
+    "artifact_sha256": "d162042900fa35dc3cf1a9f41e0b69286db507b183467ddd644a6ca8fb3cb0b6",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v38/gaussian_copula_wiener.json",
+    "report_sha256": "5cac737c266868e4a1ab0657c0b55c29a1a1084d975ce0bae988178b30f65c4a",
+    "report_decision_digest_sha256": "7518803f04d18c3fc5d743c2ea38b15dc5d67f0e393680c55fd1092cfcc9bd80",
+    "explained_power_fraction": [0.005799064311604335, 0.006584748572291956, 0.0007844110983436354, 0.0003451937898444352, 0.00018878807980207669, 0.0004496211745946758, 0.0019196370484008967, 0.005124497411576132]
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v38_gaussian_copula_sequence/preflight.json",
+    "sha256": "ef84223c9f737d06d36313d5e46ae7bb283d010f666729cc58bebd3ff0b74809",
+    "decision_digest_sha256": "5543dfc3c5ca162a6ee2aaa6eda6deb47f6b1dc681954e8b0849934e004d4d0e"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v38_e20_gaussian_copula_innovation/development_decision.json",
+    "sha256": "83f2da8a3cdf6f3ece732e9815c2222e10094360d4f2f70910ef6387e3e5b55f",
+    "decision_digest_sha256": "4e8e39da2cb302a22018b5c01a95114efe38ed5c48980e64608b74781eefe179",
+    "development_pass": false,
+    "conditional_innovation_material": false,
+    "classification": "linear_gaussian_query_conditioning_is_not_a_common_domain_repair",
+    "next": "freeze_a_train_only_nonparametric_local_patch_copula_with_bijective_overlap_consistency"
+  },
+  "Q4_V31_query_conditioned_zero_predictor": {
+    "TNG100": [12.430654369910183, 154.0749251735613, 12.854188891951383],
+    "SIMBA": [6.348658275131794, 14.825428816684108, 6.884395768441161],
+    "Swift": [2.2148310662425215, 6.395853768945622, 2.084206838085211]
+  },
+  "scientific_conclusion": [
+    "The seven target-free fields explain only 0.019 to 0.658 percent of common-domain Gaussian conditional-rank power in the frozen Fourier bands.",
+    "The zero-predictor innovation control remains close to V31 in Q3/Q4, proving that the midpoint Gaussian coordinate and train-only innovation power normalization alone are not the dominant failure.",
+    "Adding the weak linear query predictor raises Q4 by factors of 2.15 to 11.99 relative to the paired zero-predictor control. Small average score correlations place rare high ranks on high-backbone voxels and catastrophically amplify nonlinear density moments.",
+    "A linear Gaussian conditional field must therefore be rejected. The next model must retain intact empirical local rank patches and impose query dependence through bijective patch correspondence rather than additive Gaussian prediction."
+  ],
+  "next_experiment_boundary": {
+    "primary": "freeze a train-only nonparametric local patch copula using intact donor conditional-rank patches, target-free query matching, and a bijective overlap-consistent assignment",
+    "required_controls": ["identical frozen donors and isometries", "no additive query score", "exact preservation of the donor rank multiset", "unchanged V31 conditional inverse and density-mean projection"],
+    "forbidden": ["validation-tuned patch size or cost weights", "donor translation or reselection", "Gaussian additive predictor", "density clipping", "post-hoc A(k)", "Astrid or historical EAGLE access"]
+  },
+  "firewall": {
+    "validation_used_for_fit_or_hyperparameter_choice": false,
+    "validation_power_used_for_scaling": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "hong2021-v37-query-aligned-conditional-copula-result-record-v1",
+  "status": "complete_development_only_bounded_translation_falsified",
+  "program": "config/hong2021_v37_query_aligned_copula_program.json",
+  "program_sha256": "aff92b603e94bb1c3ed52d0303490efe63259ae823912e3ddf91690d24a2499a",
+  "implementation_commit": "d453b4b8e939e76017c0629e550a61eec961204b",
+  "descriptor": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v37/query_alignment_descriptor.json",
+    "sha256": "212f55a5e43cf309d580fc3d05fac8c441d13ac3315ec531da6ddef698a55b28",
+    "decision_digest_sha256": "e9b83e2c39d02b433263eaaf0188c16c125926a50a0ffc7a5564f14079c25cc1"
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v37_query_alignment_sequence/preflight.json",
+    "sha256": "2bed757f8240111777767057fd3b1398847212aeb043f68b39f44fee6706e80b",
+    "decision_digest_sha256": "e7373a2d815d3c15e7ecf22b0e77bc8e7cf074e046e7f3b5d7a4e57322d4ca9f"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v37_e19_query_aligned_copula/development_decision.json",
+    "sha256": "09b2107ebd0add793f07e46b48b3b7d612c3b8d0739853ab42f6ac3d786ef230",
+    "decision_digest_sha256": "42c6a7aff1d9cdbf3f56bcd385f244622a908100a9ed21b0697f081316f4c6cd",
+    "development_pass": false,
+    "causal_alignment_material": false,
+    "classification": "bounded_global_translation_does_not_explain_joint_coupling",
+    "next": "fit_a_train_only_query_conditioned_gaussian_copula_innovation_field_without_donor_translation_search"
+  },
+  "aligned_arm": {
+    "Q3_all_domains": false,
+    "Q4_all_domains": false,
+    "all_three_field_pass": false,
+    "TNG100": {
+      "failed_field_checks": ["two_point_improves_deterministic_all_scales"],
+      "mean_descriptor_mse_after_over_before": 0.9630604262537014,
+      "mean_shift_coarse_cells": 1.7558518527390752,
+      "delta_q99_999_dex": 0.21020697535563926,
+      "generated_max_above_truth_max_dex": 1.4323108792304993,
+      "Q4": 3.6349593426521136,
+      "Q4_over_V31": 0.2924189857173527,
+      "Q4_over_shuffled": 0.6240529010679062
+    },
+    "SIMBA": {
+      "failed_field_checks": ["two_point_improves_deterministic_all_scales"],
+      "mean_descriptor_mse_after_over_before": 0.9661395794188661,
+      "mean_shift_coarse_cells": 1.9259168553057375,
+      "delta_q99_999_dex": 0.29963207930330427,
+      "generated_max_above_truth_max_dex": 1.259518414735794,
+      "Q4": 6.0706342417903,
+      "Q4_over_V31": 0.9562074345014699,
+      "Q4_over_shuffled": 1.176010644800495
+    },
+    "Swift": {
+      "failed_field_checks": ["finite_ensemble_coverage_within_0.03"],
+      "mean_descriptor_mse_after_over_before": 0.970628958297107,
+      "mean_shift_coarse_cells": 1.4301654195980473,
+      "delta_q99_999_dex": 0.18465748757895728,
+      "generated_max_above_truth_max_dex": 1.1409870386123657,
+      "Q4": 3.5050005199669934,
+      "Q4_over_V31": 1.5825137065253716,
+      "Q4_over_shuffled": 0.5785496990932816
+    }
+  },
+  "scientific_conclusion": [
+    "The bounded target-free translation is not a common-domain repair: it strongly reduces TNG100 Q4, barely changes SIMBA Q4, and worsens Swift Q4 relative to the exact V31 paired donors.",
+    "Actual-query alignment beats the shuffled-query control in TNG100 and Swift but not SIMBA, so a domain-common causal alignment rule is not supported.",
+    "Descriptor mismatch decreases in every domain while density-tail and field responses do not improve consistently. Minimizing an observation-space translation distance is therefore not equivalent to sampling the conditional density innovation.",
+    "The TNG100 response remains evidence that query-residual coupling matters, but the next model must learn a train-only conditional innovation law rather than search over rigid donor translations."
+  ],
+  "next_experiment_boundary": {
+    "primary": "fit a train-only query-conditioned Gaussian-copula innovation field in the V31 conditional-rank coordinate, with an explicit donor-innovation residual and no translation search",
+    "required_controls": [
+      "retain the exact V31 marginal conditional inverse and residual-mean projection",
+      "fit all cross-covariance and innovation power from source-balanced train cubes only",
+      "compare a query-conditioned arm with its zero-predictor donor-innovation control using identical donors and isometries",
+      "evaluate unchanged Q1 through Q5 and field gates on the frozen development objects"
+    ],
+    "forbidden": [
+      "validation-based coefficient, band, ridge, or checkpoint selection",
+      "donor translation or reselection",
+      "field clipping",
+      "post-hoc A(k)",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "validation_truth_used_for_alignment_fit_or_shift_selection": false,
+    "validation_used_for_model_or_hyperparameter_choice": false,
+    "donor_reselection": false,
+    "field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

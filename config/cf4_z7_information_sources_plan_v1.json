@@ -1,0 +1,43 @@
+{
+  "bundle": "Z7-DATA-SOURCE-STRUCTURE-RECOVERY",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z7_information_sources_result_v1.json",
+  "date": "2026-09-06",
+  "driver_design_review": "GO for a controlled channel-ablation bundle. Z6 improved intervals but not mean-field correlation. Distinguish what the velocity and galaxy-count data actually constrain before changing the model or grid again; reuse all joint baselines and calibrated prior.",
+  "goal": "Maximize genuinely constrained structure in a CF4-informed z=0 posterior, eventually supporting 1-2 cMpc/h surroundings and LG-only 0.3 cMpc/h zoom ICs. Numerical grid resolution is not observational information. This remains N32=12 cMpc/h development work.",
+  "data": {
+    "Z6_plan": "config/cf4_z6_native_physics_plan_v1.json",
+    "Z6_root": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1",
+    "tasks": [0,1,2,3],
+    "cases": [
+      {"task": 0, "Z6_case": 1, "truth_index": 0, "channel": "velocity_only", "use_counts": false, "use_radial": true},
+      {"task": 1, "Z6_case": 1, "truth_index": 0, "channel": "counts_only", "use_counts": true, "use_radial": false},
+      {"task": 2, "Z6_case": 2, "truth_index": 5, "channel": "velocity_only", "use_counts": false, "use_radial": true},
+      {"task": 3, "Z6_case": 2, "truth_index": 5, "channel": "counts_only", "use_counts": true, "use_radial": false}
+    ],
+    "reuse": "Identical saved Z6 synthetic training/heldout counts and radial velocities, same native truth, covariance, nuisance priors and 80/20 split. Assert exact regenerated datum agreement, then use saved arrays. Actual observational counts or velocities are never inference data.",
+    "joint_baselines": ["task_1", "task_2"],
+    "no_new_PM_or_covariance_fit": true
+  },
+  "implementation": {
+    "switches": "Disable exactly one likelihood factor, never the latent velocity field or its prior. Counts-only still includes coherent RSD/FoG. Velocity-only skips TSC work in its likelihood but retains count prediction for heldout comparison.",
+    "nuisances": "All 24 remain free; parameters absent from the selected likelihood retain their prior. No fixing to generator values.",
+    "tests": "Channel sum equals joint likelihood plus one prior; disabled data cannot change values or gradients; joint default unchanged. Reuse existing physical-field and HMC checks."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero plus .5 standardized jitter, no truth/conditional optimizer initializer", "inverse_mass": "identity"},
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "outputs": ["existing physical mean/SD/coverage, bias intervals and heldout predictions", "side-by-side source comparison for each truth", "physical-density mean/truth shell correlation and log-density posterior/prior variance ratio in the existing ten Fourier bins", "one compact source-contribution plot"],
+    "spectral_definition": "Whole-box Fourier shells; physical-density correlation and latent log-density variance contraction are different statistics. Retain negative estimated contractions, do not rescale power or apply filters selected by outcomes. No hard low/high boundary or actual CF4 information frontier is certified by two mocks.",
+    "stop": "Complete these four fits plus comparisons. Do not automatically increase resolution, resample more chains, alter priors, use actual data or enter the next bundle."
+  },
+  "resources": {
+    "tests": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "posterior": {"GPUs_per_task": 1, "CPUs_per_task": 4, "estimated_host_MiB": 6144, "requested_host_MiB": 7373, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06", "basis": "Z6 observed process peak about4425MiB; 6144MiB working estimate with 20 percent request headroom"},
+    "comparison": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:15:00"},
+    "new_output_budget_GiB": 5
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z7_information_sources_v1",
+  "completion": "Slurm test job, four GPU fits, and afterany CPU aggregation/comparison. Missing or failed fits are reported and never promoted. No GPFS-specific tests or process polling loops.",
+  "next_bundle_requires_user_approval": true
+}

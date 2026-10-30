@@ -1,0 +1,25 @@
+VERDICT: CONDITIONAL
+
+RISK_LEVEL: MEDIUM — artifacts and numerical firewalls are clean, but the
+proposed mark-side experiment is information-null for the posterior.
+
+Opus audit of HEAD b6e5a92:
+
+1. Hashes/bytes, guard reproducibility, seed-cluster bootstrap unit, both
+   coverage levels, strict-gate immutability and scientific boundaries pass.
+2. The pooled guard reproduces 0.79296875 (68%) and 0.98046875 (95%); both
+   fail their declared limits. The guard must be treated as primary and
+   arm-stratified, not as an appendix to weak per-mode bands.
+3. Count-side sandwich ratios A/B/C are about 0.997/0.998/0.997 and D about
+   1.068, but the four-members-per-arm sample is weak and the shared finite
+   difference cancels derivative-scale errors.
+4. The proposed E_MARK_HEAVY_TAIL arm is procedurally clean but scientifically
+   empty: MARK_FISHER is only about 0.005% of total precision. Its mixture also
+   confounds tail shape with an 18% variance increase.
+5. Direct member z covariance points to arm-dependent count/Laplace width
+   behavior; do not interpret a null mark arm as evidence against mark errors.
+
+RECOMMENDATION: Do not execute E. First run an independent count derivative
+step-ladder and direct z-covariance check, correct D variance standardization,
+record the 95 tolerance, and freeze width policy. Keep validation sealed and
+do not start B2.

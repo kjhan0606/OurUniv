@@ -1,0 +1,116 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-issuance-result-record-v6-open",
+  "status": "complete_pass_postcommit_v6_open_grant_issuance_record",
+  "date": "2026-08-18",
+  "purpose": "Record the audited, one-file v6-open pilot-grant issuance and its paired read-only external authorization objects. This record does not authorize or perform receipt creation, pilot or production execution, cache population, downstream execution, or any runtime action.",
+  "grant_commit_lineage": {
+    "git_commit": "7faaad0a68fe32d63835b75861b1663c53cfba91",
+    "parent_commit": "98b10c92ed40650b5589b732e38ac668407d958e",
+    "tree": "669679c35ca2a6b7320cb5166dda5d909da0fef6",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_url_fetch": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_url_push": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "HEAD_local_tracking_and_remote_ref_commit": "7faaad0a68fe32d63835b75861b1663c53cfba91"
+  },
+  "issued_grant": {
+    "path": "config/cf4_aggregate_evidence_smc_execution_grant_v6_open.json",
+    "sha256": "384b9c1fc0a9ccfe46cf1ff6b3a7524995e0c12f7017a048bb06fcebef8ea4d8",
+    "git_blob_oid": "55c35c2b30aafff7a581579c93a68c4959b52c36",
+    "git_mode": "100644",
+    "filesystem_mode": "0644",
+    "grant_id": "8f6689e85bd4e19fe114cda1dd1051f46af259b79c5f52d95ab6d697641b5f7d",
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v6-open",
+    "status": "sealed_one_shot_staged_execution_authorization",
+    "one_shot": true,
+    "pilot_stage_authorized": true,
+    "production_stage_authorized": false,
+    "cache_population_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  },
+  "authorization_lift": {
+    "path": "config/cf4_aggregate_evidence_smc_execution_authorization_grant_release_lift_v6_open.json",
+    "commit": "98b10c92ed40650b5589b732e38ac668407d958e",
+    "sha256": "15f597294d50198ffd1e7747e1e42adb3b994cb25a33ec5e01364b39e30d134f",
+    "git_blob_oid": "b4363b8cfc737108a3b277dcff583f7f76b9dc06",
+    "git_mode": "100644",
+    "grant_and_external_pair_creation_only": true,
+    "runtime_unauthorized_by_lift": true
+  },
+  "frozen_grant_release_design": {
+    "path": "config/cf4_aggregate_evidence_smc_execution_authorization_grant_release_design_v6_open.json",
+    "commit": "ef72afcac5db1e6290ce8e494ad90b566f2e976f",
+    "sha256": "78ef4fbf095adf692f7f73bd133b115c8f0a072a429f5a84df8022440f300b38",
+    "git_blob_oid": "2bd6d006cbcf15f97c89d8772894e0c64d63d409",
+    "git_mode": "100644"
+  },
+  "paired_external_objects": {
+    "release": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_release.json",
+      "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-release-v6-open",
+      "status": "complete_pass_external_postcommit_lineage_audit",
+      "mode": "0444",
+      "sha256": "32da63e6a27622f1ae57bd4b431ddf9892a69db566a824fbc517a5201c2c5bc3",
+      "payload_sha256": "81cd280301abfe75a29c8fc8fba33a60ed492945b03cf9b14f09de574d9ced2a",
+      "release_id": "dc66fe4bd14d38ded3acf66d54673321e0a13516d23a53da48798eecd3317c35",
+      "manifest_sha256": "5c946a100dfd3fea1eca4dcec00f5347960252fabc4eddc62a9f0b3eb73ef23d",
+      "manifest_id": "82fbc16750c505f718f0bebbaf1080f96ebb44a8a39ba305e5f25713f81d7e27"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_open_manifest.json",
+      "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-manifest-v6-open",
+      "status": "complete_paired_external_manifest",
+      "mode": "0444",
+      "sha256": "5c946a100dfd3fea1eca4dcec00f5347960252fabc4eddc62a9f0b3eb73ef23d",
+      "release_id": "dc66fe4bd14d38ded3acf66d54673321e0a13516d23a53da48798eecd3317c35",
+      "release_payload_sha256": "81cd280301abfe75a29c8fc8fba33a60ed492945b03cf9b14f09de574d9ced2a",
+      "manifest_id": "82fbc16750c505f718f0bebbaf1080f96ebb44a8a39ba305e5f25713f81d7e27"
+    },
+    "grant_binds_release_manifest_ids_and_full_hashes": true,
+    "pair_binding_consistent": true,
+    "acyclic_release_manifest_binding": true
+  },
+  "audits": {
+    "precommit_verdict": "COMMIT GO",
+    "postcommit_verdict": "LINEAGE GO",
+    "grant_commit_scope": "one addition only: config/cf4_aggregate_evidence_smc_execution_grant_v6_open.json",
+    "grant_commit_addition_count": 1,
+    "grant_commit_modified_deleted_or_renamed_path_count": 0,
+    "runner_remains_fail_closed": {
+      "source": "src/cf4_aggregate_evidence_smc_execution_authorized_v6_open.py",
+      "absent_grant_rejected": true,
+      "present_grant_still_rejected_as_unreachable": true,
+      "authorization_or_runtime_execution_performed_by_this_record": false
+    }
+  },
+  "runtime_absence": {
+    "receipt_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_receipts", "present": false},
+    "pilot_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_disposable_pilot", "present": false},
+    "data_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open", "present": false},
+    "state_root": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_run", "present": false},
+    "pilot_executed": false,
+    "production_executed": false,
+    "cache_populated": false,
+    "downstream_executed": false,
+    "execution_occurred": false
+  },
+  "scope_and_exclusions": {
+    "this_result_record_addition_only": true,
+    "excluded_user_owned_outside_scope": {"path": "scripts/tripwire/", "worktree_status": "untracked_user_owned", "touched": false},
+    "no_code_pair_grant_runtime_or_commit_change_by_this_record": true
+  },
+  "verification": {
+    "json_validation": "python -m json.tool config/cf4_aggregate_evidence_smc_execution_grant_issuance_result_record_v6_open.json; exit 0",
+    "provenance_checks": "git show, git diff-tree, git ls-tree, sha256sum, stat, release/manifest/grant cross-binding assertions; passed",
+    "diff_check": "git diff --check; exit 0",
+    "grant_sha_blob_mode_exact": true,
+    "lift_and_frozen_design_sha_commit_exact": true,
+    "external_pair_ids_hashes_modes_and_binding_exact": true,
+    "runtime_roots_absent": true
+  },
+  "next_step": "No execution is authorized by this result record. Any future pilot must receive separate, bounded authorization and must pass the fail-closed runner gates."
+}

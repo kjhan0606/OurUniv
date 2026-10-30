@@ -1,0 +1,17 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-boundary-stability-decision-v1",
+  "date": "2026-09-20",
+  "job": "388372",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v7/result.json",
+  "decision": "BOUNDARY_INSTABILITY_DETECTED_PRODUCTION_NO_GO",
+  "test": {"holdout": "modulo-7 remainder-3", "survival_perturbation": "+20%", "survival_response_bounds": [0.2,3.0]},
+  "result": {
+    "all_population_log_scores_nonnegative": true,
+    "survival_response_at_lower_bound": [true,true,false,true,true,true]
+  },
+  "interpretation": "Widening the nuisance bounds does not identify the survival response; five populations run to the new lower bound. Additional unconstrained nuisance freedom would absorb selection mismatch into density and is scientifically unsafe.",
+  "resolved": "The source of the conservative-gate failure is identified as selection-response non-identifiability, not optimizer failure.",
+  "required_external_input": "Population-matched survival/bias calibration or a CAMELS-like mock with CF4 luminosity/ARES selection applied and independently validated.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}
