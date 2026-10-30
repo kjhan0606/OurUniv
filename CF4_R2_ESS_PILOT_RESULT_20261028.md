@@ -188,3 +188,28 @@ field at<=0.3 cMpc/h; native truth IDs remain evaluation/calibration only.
 Q-LEAN: the fixed pilot was a bounded and relevant test. Continuing with
 automatic repeats, an ESS parameter ladder, heldout scoring without valid
 draws, extra gravity simulations, or field promotion would be unnecessary.
+
+## Addendum — corrected count-intensity VJP and bounded next check (2026-10-30)
+
+The corrected training-only N256 count-intensity VJP, job439314, completed on
+H200 (`gpu:H200:1`) with exit0 in4:31 (batch MaxRSS5.95GiB). Result:
+`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_feasibility_20261029/439314/result.json`.
+At the fixed conditional-v6 anchor, the one finite pullback had white-IC norm
+957.57 and tracer norm230.06. The map covered 11,009,805 training-exposed
+population-cells: 1,993,850 positive and 9,015,955 zero. Minimum positive
+intensity was1.9562e-37 and maximum inverse-square-root weight2.26094e18.
+Peak device allocation was43.78GiB. This shows one reverse pass is
+computationally feasible on this H200, not that tiny-intensity rows dominate,
+that a useful spectrum is stable, or that a sampler can mix. No heldout
+outcome/score, posterior, uncertainty or field was produced.
+
+Astra's mid-course response and the driver's bounded disposition are recorded
+in `CF4_R2_VJP_TAIL_SCREEN_ASTRA_REVIEW_20261030.md`. The prepared one-hour
+screen uses two fixed Gaussian seeds and the lowest-intensity1% positive-row
+partition, with full/tail/rest VJPs per seed and one repeated full VJP (seven
+pullbacks total). It measures decomposition/repeat error and per-coordinate
+gradient concentration, without changing the target, applying an intensity
+floor, or accessing heldout outcomes. Its pass only permits consideration of
+a separately budgeted sketch experiment; it is neither a sampler nor R2
+closure. The implementation's five pure NumPy tests and static checks pass;
+the screen has not yet run. R2 remains NO-GO.

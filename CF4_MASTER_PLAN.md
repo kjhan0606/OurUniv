@@ -7,6 +7,48 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 update — 2026-10-30
+
+The corrected training-only N256 count-intensity VJP, job439314, completed on
+H200 (`gpu:H200:1`) with status `ONE_TRAINING_VJP_FINITE_NOT_SAMPLER` (exit0,
+4:31, batch MaxRSS5.95GiB). At the fixed conditional-v6 anchor it used 47,121
+training count occurrences/37,951 keys in a 384 cMpc/h box, N256 (1.5
+cMpc/h cells). Of 11,009,805 training-exposed population-cells, 1,993,850
+had positive intensity and 9,015,955 were zero. The finite single VJP had
+white-IC norm957.57, tracer norm230.06 and joint norm984.82; device peak was
+43.78GiB. The minimum positive intensity was1.9562e-37, giving a maximum
+inverse-square-root weight2.26094e18. This weight is an arithmetic warning,
+not evidence by itself that the row dominates: contribution also depends on
+the intensity Jacobian. No heldout outcomes or scores, posterior, uncertainty,
+sampler or field were produced. Source result:
+`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_feasibility_20261029/439314/result.json`.
+
+Astra's mid-course advice is preserved verbatim in
+`CF4_R2_VJP_TAIL_SCREEN_ASTRA_REVIEW_20261030.md`: do one fixed-anchor,
+training-only concentration/repeat screen before releasing discovery and
+validation sketches; do not infer tail dominance from a single VJP or from
+the large weight alone. The driver implemented a single bounded diagnostic:
+lowest-intensity1% of positive training-exposed rows, deterministic row-ID
+tie-break, two fixed Gaussian seeds, full/tail/rest pullbacks for each, plus
+one repeat of the first full pullback (seven total). It compares IC and tracer
+norms, tail squared-norm shares, cross terms, decomposition error and repeat
+error. It adds no floor, drops no target row, reads no heldout values, and is
+not a sampler. Pure NumPy tests (5), Python compilation, shell syntax and
+whitespace checks pass. At this record the diagnostic is prepared but not yet
+submitted. One-hour application/75-minute Slurm caps and the same20GiB host
+request are fixed. A pass allows consideration of separately budgeted
+discovery/validation sketches only; it does not demonstrate rank, mixing,
+stationarity, posterior uncertainty or R2 completion.
+
+Q-GOAL: this is a focused diagnostic on the route to the first conditional-v6
+z=0 density/velocity posterior at1.5 cMpc/h, not the posterior itself. MW/M31
+remain role-ambiguous and M33 unresolved; their observables must eventually
+constrain those same roles on the same NEW evolved LG field at<=0.3 cMpc/h,
+with native truth identities used only for calibration/evaluation. Q-LEAN:
+one seven-pullback screen is proportionate; no threshold/seed ladder, new
+simulation, field promotion or heldout read. R2 remains NO-GO and R3 has not
+started.
+
 ## Current R2 disposition — 2026-10-28
 
 The single capped block-ESS feasibility job438631 completed at the Slurm

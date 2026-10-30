@@ -282,3 +282,27 @@ observational resolution.
 - **Q-LEAN:** one proposal family and one capped falsification, reusing the
   current target and scalar-evaluator work. No new gravity simulation,
   source census, held-out scoring before draws, or diagnostic ladder.
+
+## 2026-10-30 VJP result and bounded concentration screen
+
+The corrected feasibility job439314 completed on H200 / `gpu:H200:1` (exit0,
+4:31, batch MaxRSS5.95GiB). The one training-only positive-row VJP is finite:
+white-IC norm957.57, tracer norm230.06, joint norm984.82; device peak43.78GiB.
+Among 11,009,805 training-exposed cells, 1,993,850 have positive intensity.
+The minimum is1.9562e-37, so the largest `1/sqrt(lambda)` is2.26094e18.
+This amplification alone does not establish row influence because the
+Jacobian also enters the contribution. No posterior, heldout score or field
+was produced. Full run record:
+`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_feasibility_20261029/439314/result.json`.
+
+Astra recommended one bounded fixed-anchor tail/repeat screen, not a ladder;
+the verbatim review is in
+`CF4_R2_VJP_TAIL_SCREEN_ASTRA_REVIEW_20261030.md`. The prepared implementation
+uses the same anchor/operator and positive-row convention, fixed lowest-1%
+intensity tail, two fixed seeds, six full/tail/rest VJPs and one repeated
+original-seed full VJP. Its predeclared decomposition/repeat tolerance is
+1e-8; tail share itself is not a failure gate. It has one-hour application,
+75-minute Slurm and20GiB host-memory caps, no floor/row deletion, and no
+heldout access. Five pure NumPy tests, compilation, shell syntax and
+whitespace checks pass. This is a numerical diagnostic, not a sketch, sampler,
+posterior or R2 completion; at this record it has not yet been submitted.
