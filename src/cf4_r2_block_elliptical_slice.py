@@ -108,6 +108,69 @@ def elliptical_slice_step(position, current_log_likelihood, log_likelihood,
     raise SliceEvaluationLimit(max_evaluations, max_evaluations, contractions)
 
 
+def _fourier_projector(n, n_ic, full_size, mask, dimension, name):
+    def apply(vector):
+        q = np.asarray(vector, dtype=np.float64)
+        if q.shape != (full_size,) or not np.isfinite(q).all():
+            raise ValueError("canonical vector does not match the declared IC/nuisance shape")
+        field = q[:n_ic].reshape((n, n, n))
+        spectrum = fft.rfftn(field, norm="ortho", workers=1)
+        projected = fft.irfftn(spectrum * mask, s=(n, n, n),
+                               norm="ortho", workers=1)
+        result = np.zeros_like(q)
+        result[:n_ic] = projected.reshape(-1)
+        return result
+
+    def draw_auxiliary(rng):
+        white = rng.standard_normal((n, n, n))
+        spectrum = fft.rfftn(white, norm="ortho", workers=1)
+        projected = fft.irfftn(spectrum * mask, s=(n, n, n),
+                               norm="ortho", workers=1)
+        result = np.zeros(full_size, dtype=np.float64)
+        result[:n_ic] = projected.reshape(-1)
+        return result
+
+    apply.dimension = int(dimension)
+    apply.block_name = name
+    apply.draw_auxiliary = draw_auxiliary
+    return apply
+
+
+def _nuisance_projector(n_ic, full_size, nuisance_count):
+    def apply(vector):
+        q = np.asarray(vector, dtype=np.float64)
+        if q.shape != (full_size,) or not np.isfinite(q).all():
+            raise ValueError("canonical vector does not match the declared IC/nuisance shape")
+        result = np.zeros_like(q)
+        if nuisance_count:
+            result[n_ic:] = q[n_ic:]
+        return result
+
+    def draw_auxiliary(rng):
+        result = np.zeros(full_size, dtype=np.float64)
+        if nuisance_count:
+            result[n_ic:] = rng.standard_normal(nuisance_count)
+        return result
+
+    apply.dimension = int(nuisance_count)
+    apply.block_name = "nuisance"
+    apply.draw_auxiliary = draw_auxiliary
+    return apply
+
+
+def _fourier_geometry(n):
+    n = int(n)
+    kx = np.fft.fftfreq(n) * n
+    ky = np.fft.fftfreq(n) * n
+    kz_half = np.fft.rfftfreq(n) * n
+    radius2_half = (kx[:, None, None] ** 2 + ky[None, :, None] ** 2
+                    + kz_half[None, None, :] ** 2)
+    k_full = np.fft.fftfreq(n) * n
+    radius2_full = (k_full[:, None, None] ** 2 + k_full[None, :, None] ** 2
+                    + k_full[None, None, :] ** 2)
+    return radius2_half, radius2_full
+
+
 def real_fourier_band_projectors(n, cutoff, *, nuisance_count=24):
     """Return fixed radial low/high projectors for a real cubic IC field.
 
@@ -121,70 +184,53 @@ def real_fourier_band_projectors(n, cutoff, *, nuisance_count=24):
             or nuisance_count < 0):
         raise ValueError("valid cubic grid, nonnegative cutoff and nuisance size required")
 
-    kx = np.fft.fftfreq(n) * n
-    ky = np.fft.fftfreq(n) * n
-    kz = np.fft.rfftfreq(n) * n
-    radius2 = (kx[:, None, None] ** 2 + ky[None, :, None] ** 2
-               + kz[None, None, :] ** 2)
-    low_mask = radius2 <= float(cutoff) ** 2
+    radius2_half, radius2_full = _fourier_geometry(n)
+    low_mask = radius2_half <= float(cutoff) ** 2
     high_mask = ~low_mask
     n_ic = n ** 3
     full_size = n_ic + nuisance_count
-    full_kx = np.fft.fftfreq(n) * n
-    full_ky = np.fft.fftfreq(n) * n
-    full_kz = np.fft.fftfreq(n) * n
-    full_radius2 = (full_kx[:, None, None] ** 2 + full_ky[None, :, None] ** 2
-                    + full_kz[None, None, :] ** 2)
-    low_dimension = int(np.count_nonzero(full_radius2 <= float(cutoff) ** 2))
+    low_dimension = int(np.count_nonzero(radius2_full <= float(cutoff) ** 2))
     if not 0 < low_dimension < n_ic:
         raise ValueError("cutoff must leave both Fourier blocks nonempty")
 
-    def projector(mask, dimension, name):
-        def apply(vector):
-            q = np.asarray(vector, dtype=np.float64)
-            if q.shape != (full_size,) or not np.isfinite(q).all():
-                raise ValueError("canonical vector does not match the declared IC/nuisance shape")
-            field = q[:n_ic].reshape((n, n, n))
-            spectrum = fft.rfftn(field, norm="ortho", workers=1)
-            projected = fft.irfftn(spectrum * mask, s=(n, n, n),
-                                   norm="ortho", workers=1)
-            result = np.zeros_like(q)
-            result[:n_ic] = projected.reshape(-1)
-            return result
+    return (_fourier_projector(n, n_ic, full_size, low_mask, low_dimension,
+                               "ic_low_fourier"),
+            _fourier_projector(n, n_ic, full_size, high_mask,
+                               n_ic - low_dimension, "ic_high_fourier"),
+            _nuisance_projector(n_ic, full_size, nuisance_count))
 
-        def draw_auxiliary(rng):
-            white = rng.standard_normal((n, n, n))
-            spectrum = fft.rfftn(white, norm="ortho", workers=1)
-            projected = fft.irfftn(spectrum * mask, s=(n, n, n),
-                                   norm="ortho", workers=1)
-            result = np.zeros(full_size, dtype=np.float64)
-            result[:n_ic] = projected.reshape(-1)
-            return result
 
-        apply.dimension = dimension
-        apply.block_name = name
-        apply.draw_auxiliary = draw_auxiliary
-        return apply
+def real_fourier_physical_mode_projectors(n, *, nuisance_count=24):
+    """Return fixed physical-mode blocks plus exact IC/nuisance complements.
 
-    def nuisance_projector(vector):
-        q = np.asarray(vector, dtype=np.float64)
-        if q.shape != (full_size,) or not np.isfinite(q).all():
-            raise ValueError("canonical vector does not match the declared IC/nuisance shape")
-        result = np.zeros_like(q)
-        if nuisance_count:
-            result[n_ic:] = q[n_ic:]
-        return result
+    The IC partition is the fundamental shell k^2=1, the slow-mode shell set
+    k^2 in {4,5,6,7,8}, and their complete orthogonal complement. These
+    integer Fourier coordinates are fixed by the periodic box, not learned
+    from a data-dependent sketch. All blocks still require the same complete
+    likelihood when used in a transition.
+    """
+    if (not isinstance(n, int) or n < 4 or not isinstance(nuisance_count, int)
+            or nuisance_count < 0):
+        raise ValueError("physical-mode projectors require n>=4 and nonnegative nuisance size")
 
-    def draw_nuisance_auxiliary(rng):
-        result = np.zeros(full_size, dtype=np.float64)
-        if nuisance_count:
-            result[n_ic:] = rng.standard_normal(nuisance_count)
-        return result
+    radius2_half, radius2_full = _fourier_geometry(n)
+    fundamental_mask = radius2_half == 1.0
+    slow_mask = (radius2_half >= 4.0) & (radius2_half <= 8.0)
+    complement_mask = ~(fundamental_mask | slow_mask)
+    fundamental_dimension = int(np.count_nonzero(radius2_full == 1.0))
+    slow_dimension = int(np.count_nonzero((radius2_full >= 4.0)
+                                          & (radius2_full <= 8.0)))
+    n_ic = n ** 3
+    complement_dimension = n_ic - fundamental_dimension - slow_dimension
+    if (fundamental_dimension <= 0 or slow_dimension <= 0
+            or complement_dimension <= 0):
+        raise ValueError("grid does not contain all physical-mode blocks and complement")
+    full_size = n_ic + nuisance_count
 
-    nuisance_projector.dimension = nuisance_count
-    nuisance_projector.block_name = "nuisance"
-    nuisance_projector.draw_auxiliary = draw_nuisance_auxiliary
-
-    return (projector(low_mask, low_dimension, "ic_low_fourier"),
-            projector(high_mask, n_ic - low_dimension, "ic_high_fourier"),
-            nuisance_projector)
+    return (_fourier_projector(n, n_ic, full_size, fundamental_mask,
+                               fundamental_dimension, "ic_fundamental_k2_1"),
+            _fourier_projector(n, n_ic, full_size, slow_mask, slow_dimension,
+                               "ic_slow_k2_4_to_8"),
+            _fourier_projector(n, n_ic, full_size, complement_mask,
+                               complement_dimension, "ic_fourier_complement"),
+            _nuisance_projector(n_ic, full_size, nuisance_count))

@@ -9,43 +9,58 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 update — 2026-11-02
 
-The seven-pullback training-only VJP tail screen, job441842, completed on
-Syntax/H100 (`gpu:H100:1`) with exit0 in18:33 Slurm elapsed (application
-1,076.70s; host peak6.42GiB). At the frozen N256/384 cMpc/h conditional-v6
-anchor, the lowest-intensity1% of positive training-exposed rows contained
-19,939 cells. For two fixed Gaussian probes, its white-IC tail squared-norm
-shares were3.61e-13 and2.88e-13; tracer shares were9.13e-15 and2.50e-14.
-All full=tail+rest decompositions passed the predeclared1e-8 tolerance with
-errors below8.7e-15; the repeated original full pullback differed by7.21e-15
-for white IC and0 for tracer. The minimum positive intensity remains
-1.9562e-37 and maximum inverse-square-root weight2.26094e18. Thus the extreme
-weight did not make this1% tail dominate these two probes; this is not a
-general trace/rank/spectrum estimate or a likelihood-gradient result.
-
+The single rank-4 count-geometry sketch, job447447, FAILED at its predeclared
+8-vs-8 discovery-subspace stability gate on Syntax/H200 (`gpu:H200:1`): the
+four canonical correlations were0.3922,0.2069,0.1106,0.02269 versus the
+required minimum0.80. Basis orthogonality passed, so the failure is genuine
+instability of this candidate range. The16 finite-sketch singular values are
+not a Fisher spectrum. The runner stopped before repeat/validation; no basis,
+`F_p`, sampler, posterior, uncertainty, heldout score or field was produced.
 The machine result is
-`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_tail_screen_20261030/441842/result.json`;
-the checked-in interpretation is `CF4_R2_VJP_TAIL_SCREEN_RESULT_20261102.md`.
-No heldout values were loaded or scored. No sampler, posterior, uncertainty,
-or field was produced. Astra's read-only review returned CONDITIONAL GO for
-one separately capped discovery/independent-validation geometry experiment,
-and NO-GO for sampler launch from this result alone. The driver checked the
-review against the exact machine result and adopts it. The frozen experiment
-and its specific numerical gates, residual-trace upper bound, resource
-estimate, and no-ladder disposition are in
-`CF4_R2_VJP_GEOMETRY_SKETCH_PLAN_20261102.md`. The screen's pass permits only
-that one proposal-geometry experiment. If it passes, the separate15-D raw-FP
-curvature `F_p` check follows; only after both checks may a distinct
-full-target pilot be designed. No sampler launch is authorized by this
-screen alone.
+`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_geometry_sketch_20261102/447447/result.json`;
+the interpretation is `CF4_R2_VJP_GEOMETRY_SKETCH_RESULT_20261102.md`.
 
-Q-GOAL: this advances the route to the first conditional-v6 N256 z=0
-density/velocity posterior, not the posterior itself. MW/M31 remain
-role-ambiguous and M33 unresolved; future observables must constrain those
-roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native truth
-IDs restricted to calibration/evaluation. Q-LEAN: one fixed1% partition,
-two probes and seven pullbacks were proportionate; no floor, row deletion,
-heldout read, threshold ladder or new gravity simulation. R2 remains NO-GO;
-R3 has not started.
+Astra's independent read-only verdict is **REJECT this rank-4 candidate** and
+**NO-GO** for the unused64 validation probes, its conditional raw-FP `F_p`
+check, or sampler launch. Astra also found an impossible unexecuted precision
+gate: with64 probes and four Bonferroni-adjusted two-sided95% chi-square
+intervals, relative half-width is0.630972 for every positive estimate,
+exceeding the required0.50. At least91 probes meet that width alone, but this
+does not authorize reopening the failed candidate. Astra also noted that the
+measured16.9447GiB process peak leaves only18.0% headroom in the20GiB request;
+the GPU memory itself was not limiting. The driver independently checked the
+arithmetic, added a deterministic pre-run width helper/regression, and made
+the closed sketch runner fail before GPU setup. The rank-4 proposal is closed
+without `F_p` or a sampler retry.
+
+Next, the driver will evaluate one materially different, fixed
+physically-indexed conditional-move design for the fundamental and `k^2=4–8`
+Fourier coordinates while preserving complete-field/nuisance moves and the
+unchanged full count+FP+prior target. This is not a retry of the closed
+million-dimensional low-block ESS, and its broad all-IC arm is a control—not
+an HMC comparator or replacement claim. The explicit one-anchor contract is
+in `CF4_R2_PHYSICAL_MODE_ESS_AB_PLAN_20261102.md`. Astra returned CONDITIONAL
+GO for this capped engineering screen with plan clarifications; the driver
+adopted them. A bracket-cap failure aborts that arm, A/B is resource-matched
+but not decisive,0.10 is only a compute-spending threshold, and unfinished
+complement/nuisance blocks are diagnosed separately. The 24GiB host request
+uses a stated20GiB planning maximum plus a runtime guard; the Slurm wrapper
+queries allocated JAX GPU memory before target evaluation. The driver added a
+pre-run chi-square precision-width helper and regression, fixed real-Fourier
+projectors for the fundamental, `k^2=4..8`, and complete complements, and a
+bounded A/B runner. Focused CPU tests pass (10 geometry-metric;7 ESS/projector)
+and static checks pass; this validates math/wiring only, not N256 target
+movement. Any pass supports only a future HMC-augmentation design, not a
+posterior or R2 completion. No job has been submitted yet.
+
+Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
+conditional-v6 N256 z=0 density/velocity posterior with uncertainty and
+heldout prediction. MW/M31 remain role-ambiguous and M33 unresolved; their
+observables must constrain those roles on the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with truth IDs restricted to calibration/evaluation.
+Q-LEAN: the failed16-pullback candidate is closed; no validation/Fp ladder,
+heldout read, new gravity run, or field promotion. R2 remains NO-GO; R3 has not
+started.
 
 ## R2 pre-submission update — 2026-10-30
 

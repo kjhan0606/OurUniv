@@ -8,6 +8,7 @@ import numpy as np
 
 from cf4_r2_vjp_geometry_metrics import (
     chi_square_second_moment_interval,
+    chi_square_second_moment_relative_half_width,
     leading_left_basis,
     project_probe,
     subspace_canonical_correlations,
@@ -60,6 +61,25 @@ class VJPGeometryMetricsTests(unittest.TestCase):
         self.assertGreater(result["lower"], 0.0)
         self.assertGreater(result["upper"], result["lower"])
         self.assertAlmostEqual(result["per_interval_confidence"], 0.9875)
+
+    def test_precision_gate_feasibility_is_checked_before_probe_design(self):
+        # With four Bonferroni-adjusted two-sided intervals, n=64 cannot meet
+        # a 0.50 relative half-width for any positive second-moment estimate.
+        width64 = chi_square_second_moment_relative_half_width(64, family_size=4)
+        width90 = chi_square_second_moment_relative_half_width(90, family_size=4)
+        width91 = chi_square_second_moment_relative_half_width(91, family_size=4)
+        self.assertAlmostEqual(width64, 0.6309723942, places=9)
+        self.assertGreater(width90, 0.50)
+        self.assertLessEqual(width91, 0.50)
+        values = np.random.default_rng(81).normal(size=64)
+        interval = chi_square_second_moment_interval(values, family_size=4)
+        self.assertAlmostEqual(interval["relative_half_width"], width64, places=14)
+
+    def test_precision_width_rejects_invalid_sample_or_family_settings(self):
+        with self.assertRaises(ValueError):
+            chi_square_second_moment_relative_half_width(0)
+        with self.assertRaises(ValueError):
+            chi_square_second_moment_relative_half_width(64, family_size=0)
 
     def test_residual_ucl_and_validation_summary_are_finite(self):
         rng = np.random.default_rng(992)

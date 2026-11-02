@@ -11,6 +11,7 @@ from cf4_r2_block_elliptical_slice import (  # noqa: E402
     SliceEvaluationLimit,
     elliptical_slice_step,
     real_fourier_band_projectors,
+    real_fourier_physical_mode_projectors,
 )
 
 
@@ -41,6 +42,24 @@ class BlockEllipticalSliceTests(unittest.TestCase):
         self.assertAlmostEqual(float(q_low @ q_high), 0.0, places=12)
         self.assertAlmostEqual(float(q_low @ q_nuisance), 0.0, places=12)
         self.assertAlmostEqual(float(q_high @ q_nuisance), 0.0, places=12)
+
+    def test_physical_mode_blocks_are_orthogonal_idempotent_and_complete(self):
+        n = 8
+        fundamental, slow, complement, nuisance = real_fourier_physical_mode_projectors(
+            n, nuisance_count=3)
+        self.assertEqual(fundamental.dimension, 6)
+        self.assertEqual(slow.dimension, 66)
+        self.assertEqual(complement.dimension, n ** 3 - 6 - 66)
+        self.assertEqual(nuisance.dimension, 3)
+        q = np.random.default_rng(608).standard_normal(n ** 3 + 3)
+        pieces = [projector(q) for projector in
+                  (fundamental, slow, complement, nuisance)]
+        np.testing.assert_allclose(sum(pieces), q, rtol=0, atol=3e-14)
+        for projector, piece in zip((fundamental, slow, complement, nuisance), pieces):
+            np.testing.assert_allclose(projector(piece), piece, rtol=0, atol=3e-14)
+        for index, first in enumerate(pieces):
+            for second in pieces[index + 1:]:
+                self.assertAlmostEqual(float(first @ second), 0.0, places=11)
 
     def test_sequential_blocks_recover_correlated_gaussian_target(self):
         precision_likelihood = np.array([[2.0, 0.8], [0.8, 1.4]])

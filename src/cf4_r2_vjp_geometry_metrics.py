@@ -45,6 +45,30 @@ def subspace_canonical_correlations(first, second):
     return np.sort(np.clip(correlations, 0.0, 1.0))[::-1]
 
 
+def chi_square_second_moment_relative_half_width(sample_size, *, family_alpha=0.05,
+                                                  family_size=4):
+    """Return exact relative half-width before drawing Gaussian probes.
+
+    For zero-mean Gaussian projections, the two-sided chi-square interval for
+    their second moment depends on sample count and family size, not on the
+    observed scale. A design can therefore reject impossible precision gates
+    before spending a reverse pass.
+    """
+    sample_size = int(sample_size)
+    alpha = float(family_alpha)
+    family_size = int(family_size)
+    if (sample_size < 1 or not math.isfinite(alpha)
+            or not 0.0 < alpha < 1.0 or family_size < 1):
+        raise ValueError("positive sample count and valid family-wise interval settings required")
+    per_tail = alpha / (2.0 * family_size)
+    lower_ratio = sample_size / float(chi2.ppf(1.0 - per_tail, sample_size))
+    upper_ratio = sample_size / float(chi2.ppf(per_tail, sample_size))
+    width = max(1.0 - lower_ratio, upper_ratio - 1.0)
+    if not math.isfinite(width) or width < 0.0:
+        raise FloatingPointError("chi-square interval width is nonfinite or invalid")
+    return float(width)
+
+
 def project_probe(basis, probe):
     """Project one full VJP and return coordinates plus residual/full norms."""
     basis = np.asarray(basis, dtype=np.float64)
@@ -80,7 +104,8 @@ def chi_square_second_moment_interval(values, *, family_alpha=0.05,
     degrees = values.size
     lower = degrees * estimate / float(chi2.ppf(1.0 - per_tail, degrees))
     upper = degrees * estimate / float(chi2.ppf(per_tail, degrees))
-    relative_half_width = max(estimate - lower, upper - estimate) / estimate
+    relative_half_width = chi_square_second_moment_relative_half_width(
+        degrees, family_alpha=alpha, family_size=family_size)
     return dict(estimate=estimate, lower=float(lower), upper=float(upper),
                 relative_half_width=float(relative_half_width),
                 degrees_of_freedom=int(degrees),

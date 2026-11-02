@@ -19,6 +19,7 @@ from cf4_r2_intensity_vjp_feasibility import (
 )
 from cf4_r2_intensity_vjp_tail_screen import _build_intensity_operator, _load_training_rows
 from cf4_r2_vjp_geometry_metrics import (
+    chi_square_second_moment_relative_half_width,
     leading_left_basis,
     project_probe,
     subspace_canonical_correlations,
@@ -48,6 +49,16 @@ THETA_MIN_RAD = 0.10
 RESIDUAL_LIMIT_NATS = 1.0
 BOOTSTRAP_REPLICATES = 10000
 BOOTSTRAP_SEED = 20261102
+
+
+def _assert_registered_precision_gate_feasible():
+    width = chi_square_second_moment_relative_half_width(
+        len(VALIDATION_SEEDS), family_size=RANK)
+    if width > DIRECTIONAL_RELATIVE_HALF_WIDTH_LIMIT:
+        raise RuntimeError(
+            "closed rank-4 candidate has an impossible registered validation-width gate; "
+            "do not launch or increase its probe count"
+        )
 
 
 def _probe_vector(seed, positive_ids, intensities, pullback):
@@ -113,6 +124,7 @@ def _check_device_headroom(snapshot, limit_bytes):
 
 
 def _main():
+    _assert_registered_precision_gate_feasible()
     expected, mode, out = _assert_job_contract()
     started = time.monotonic()
     report_path = out / "result.json"
