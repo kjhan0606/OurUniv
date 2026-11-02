@@ -59,9 +59,10 @@ selected. Four startup regression suites passed. At the latest check the job
 was still initializing the target, with no proposal evaluation recorded and
 no heldout values, posterior sample/uncertainty, or field produced. The result
 metadata currently labels H200 `idle=true` solely because one GPU was free;
-that label is inaccurate and must be corrected in the run record after the
-process exits. This bookkeeping defect does not change the typed allocation
-or target calculation.
+that label is inaccurate. The source now records `h200_has_free_typed_gpu`
+instead, with a regression test; this pinned job's raw result is unchanged and
+must be interpreted using the Slurm snapshot above. The bookkeeping defect
+does not change the typed allocation or target calculation.
 
 Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
 conditional-v6 N256 z=0 density/velocity posterior with uncertainty and

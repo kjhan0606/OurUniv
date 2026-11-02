@@ -208,6 +208,15 @@ def _resource_snapshot_count(name):
     return None if value is None else int(value)
 
 
+def _has_free_typed_gpu(free_count):
+    if free_count is None:
+        return None
+    free_count = int(free_count)
+    if free_count < 0:
+        raise ValueError('free typed GPU count cannot be negative')
+    return free_count > 0
+
+
 def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
          max_iterations=MAX_ITERATIONS, max_line_search=MAX_LINE_SEARCH,
          maxcor=3, app_seconds=APP_SECONDS, nuisance_scale=1.0,
@@ -279,7 +288,7 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         report['resource_evidence'] = dict(
             selected_mode=f'{gpu_mode} / gpu:{gpu_mode.upper()}:1',
             h200_was_checked=h200_free is not None,
-            h200_idle=None if h200_free is None else h200_free > 0,
+            h200_has_free_typed_gpu=_has_free_typed_gpu(h200_free),
             h200_free_typed_gpus_at_submit=h200_free,
             h100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_H100_FREE_TYPED_GPUS'),
             a100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_A100_FREE_TYPED_GPUS'),

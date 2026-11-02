@@ -8,12 +8,20 @@ from cf4_r2_conditional_map import (
     BudgetedObjective,
     BudgetedScoreObjective,
     EvaluationBudgetStop,
+    _has_free_typed_gpu,
 )
 from cf4_affine_objective import AffineObjective
 from cf4_r2_raw_volume_target import checked_padded_support_width
 
 
 class ConditionalMapBudgetTest(unittest.TestCase):
+    def test_gpu_availability_does_not_claim_partition_is_idle(self):
+        self.assertIsNone(_has_free_typed_gpu(None))
+        self.assertTrue(_has_free_typed_gpu(1))
+        self.assertFalse(_has_free_typed_gpu(0))
+        with self.assertRaisesRegex(ValueError, 'cannot be negative'):
+            _has_free_typed_gpu(-1)
+
     def test_affine_replay_is_cached_and_trials_obey_same_hard_budget(self):
         origin = np.array([1., .02])
         objective = BudgetedObjective(
