@@ -285,11 +285,13 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         stats = jax.devices()[0].memory_stats() or {}
         device_limit = stats.get('bytes_limit', 0)
         h200_free = _resource_snapshot_count('CF4_H200_FREE_TYPED_GPUS')
+        h200_idle = _resource_snapshot_count('CF4_H200_IDLE_TYPED_GPUS')
         report['resource_evidence'] = dict(
             selected_mode=f'{gpu_mode} / gpu:{gpu_mode.upper()}:1',
             h200_was_checked=h200_free is not None,
             h200_has_free_typed_gpu=_has_free_typed_gpu(h200_free),
             h200_free_typed_gpus_at_submit=h200_free,
+            h200_idle_typed_gpus_at_submit=h200_idle,
             h100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_H100_FREE_TYPED_GPUS'),
             a100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_A100_FREE_TYPED_GPUS'),
             measured_prior_exact_GL2_peak_GiB=KNOWN_DEVICE_PEAK_GIB,

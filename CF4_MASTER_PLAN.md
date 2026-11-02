@@ -225,7 +225,9 @@ objective-record increment to equal `force_evaluations`.
 
 Caps:25 exact value+gradient target evaluations including checkpoint replay;
 4h application budget,4h30m Slurm wall,24GiB host RAM with runtime GPU
-allocation guard. If fewer than two transitions fit, keep the partial trace
+allocation guard. For partition selection, H200 is idle only when its node is
+`IDLE`; a spare GRES on a `MIXED` H200 node is occupied, so choose a free
+H100/A100 instead. If fewer than two transitions fit, keep the partial trace
 and stop—no retry or extension. No heldout read, posterior promotion, pCN,
 MALA augmentation, retuning, or separate simulation. The fixed plan is
 `CF4_R2_HMC_RETAINED_BLOCK_JUMPS_PLAN_20261102.md`; implementation/tests and

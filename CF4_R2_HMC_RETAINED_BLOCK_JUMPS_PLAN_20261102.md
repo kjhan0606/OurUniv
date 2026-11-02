@@ -27,7 +27,9 @@ Slurm wall time is4h30m. Request24GiB host RAM, rounded above the measured
 18.7825GiB process peak plus20% headroom (22.54GiB). Require allocated GPU
 memory of at least39,826,427,463 bytes, 20% above the prior measured exact
 GL2 peak. No retry or automatic extension if a budget guard stops before two
-transitions.
+transitions. For allocation selection, an H200 typed device counts as idle
+only when its node is `IDLE`; a spare GPU on a `MIXED` H200 node is recorded as
+available but occupied, and selection falls through to a free H100 then A100.
 
 ## Interpretation limits
 

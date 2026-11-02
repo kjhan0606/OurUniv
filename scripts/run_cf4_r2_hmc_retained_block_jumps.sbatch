@@ -14,22 +14,24 @@ set -euo pipefail
 : "${SLURM_JOB_ID:?}" "${CF4_EXPECTED_COMMIT:?}" "${CF4_R2_OUT_BASE:?}" \
   "${CF4_HMC_START:?}" "${CF4_GPU_MODE:?}" \
   "${CF4_SUBMIT_PARTITION:?}" "${CF4_SUBMIT_GRES:?}" \
+  "${CF4_H200_IDLE_TYPED_GPUS:?}" \
   "${CF4_H200_FREE_TYPED_GPUS:?}" "${CF4_H100_FREE_TYPED_GPUS:?}" \
   "${CF4_A100_FREE_TYPED_GPUS:?}"
 case "$CF4_GPU_MODE:$CF4_SUBMIT_PARTITION:$CF4_SUBMIT_GRES" in
   h200:h200:gpu:H200:1|h100:h100:gpu:H100:1|a100:a100:gpu:A100:1) ;;
   *) echo "unsupported recorded GPU mode: $CF4_GPU_MODE/$CF4_SUBMIT_PARTITION/$CF4_SUBMIT_GRES" >&2; exit 2 ;;
 esac
-for name in CF4_H200_FREE_TYPED_GPUS CF4_H100_FREE_TYPED_GPUS CF4_A100_FREE_TYPED_GPUS; do
+for name in CF4_H200_IDLE_TYPED_GPUS CF4_H200_FREE_TYPED_GPUS \
+            CF4_H100_FREE_TYPED_GPUS CF4_A100_FREE_TYPED_GPUS; do
   value="${!name}"
   [[ "$value" =~ ^[0-9]+$ ]] || { echo "$name must be an integer" >&2; exit 2; }
 done
-if (( CF4_H200_FREE_TYPED_GPUS > 0 )); then
-  [[ "$CF4_GPU_MODE" == h200 ]] || { echo "H200 was free and must be preferred" >&2; exit 2; }
+if (( CF4_H200_IDLE_TYPED_GPUS > 0 )); then
+  [[ "$CF4_GPU_MODE" == h200 ]] || { echo "H200 has an idle typed device and must be preferred" >&2; exit 2; }
 elif (( CF4_H100_FREE_TYPED_GPUS > 0 )); then
-  [[ "$CF4_GPU_MODE" == h100 ]] || { echo "H200 busy; free H100 must be preferred" >&2; exit 2; }
+  [[ "$CF4_GPU_MODE" == h100 ]] || { echo "H200 occupied; free H100 must be preferred" >&2; exit 2; }
 elif (( CF4_A100_FREE_TYPED_GPUS > 0 )); then
-  [[ "$CF4_GPU_MODE" == a100 ]] || { echo "H200/H100 busy; free A100 must be selected" >&2; exit 2; }
+  [[ "$CF4_GPU_MODE" == a100 ]] || { echo "H200/H100 occupied; free A100 must be selected" >&2; exit 2; }
 else
   echo "no free typed H200/H100/A100 GPU in pre-submit snapshot" >&2
   exit 2
@@ -67,7 +69,8 @@ MIN_DEVICE_MEMORY_BYTES=39826427463
 }
 export CF4_GPU_MODE CF4_GPU_MEMORY_LIMIT_BYTES="$GPU_MEMORY_LIMIT_BYTES"
 export CF4_SUBMIT_PARTITION CF4_SUBMIT_GRES
-export CF4_H200_FREE_TYPED_GPUS CF4_H100_FREE_TYPED_GPUS CF4_A100_FREE_TYPED_GPUS
+export CF4_H200_IDLE_TYPED_GPUS CF4_H200_FREE_TYPED_GPUS
+export CF4_H100_FREE_TYPED_GPUS CF4_A100_FREE_TYPED_GPUS
 "$PY" -m py_compile scripts/cf4_r2_hmc_transport.py
 "$PY" tests/test_cf4_r2_hmc_transport.py -q
 "$PY" tests/test_cf4_r2_prior_split_hmc.py -q
