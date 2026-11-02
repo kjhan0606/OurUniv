@@ -145,9 +145,17 @@ projector are implemented in `src/cf4_r2_block_mala.py`,
 `scripts/cf4_r2_block_mala_screen.py`. Thirteen CPU mechanics/projector
 regressions pass; a direct N256 geometry check confirms dimensions `6` and
 `1,852`.
-The typed-GPU Slurm runner is `scripts/run_cf4_r2_block_mala_screen.sbatch`;
-the target has not yet been submitted or evaluated. This screen cannot close
-R2 or authorize R3.
+The typed-GPU Slurm runner `scripts/run_cf4_r2_block_mala_screen.sbatch`
+completed as job447590 on `h100`/`gpu:H100:1` (exit0,70:06, ten exact
+target evaluations, host RSS11.72GiB). The result is
+`CF4_R2_BLOCK_MALA_SCREEN_RESULT_20261102.md` and the complete raw record is
+preserved under `/gpfs/kjhan/CF4/z0_density/r2_block_mala_screen_20261102/447590/`.
+Three of four fundamental-block proposals were accepted, all downhill at the
+two dependent/discarded anchors; none of four `16<k^2<=64` proposals was
+accepted, with proposed `ΔU=+99.6` to `+190.0` dominated by count-NLL increase.
+This is candidate-specific negative evidence, not posterior or stationarity
+evidence. A mid-course Astra review of the result/next R2 action is requested;
+it is not an exit audit. This screen cannot close R2 or authorize R3.
 
 ## R2 pre-submission update — 2026-10-30
 
