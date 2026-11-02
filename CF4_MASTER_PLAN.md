@@ -248,6 +248,18 @@ two existing-kernel transitions answer the missing per-step evidence; no
 sampler campaign or new gravity run. R2 remains open/NO-GO and R3 has not
 started.
 
+First submission of this diagnostic, job447676, started on Syntax/H100 but
+failed after10s in the preflight mechanics test suite. The wrapper exported
+production schedule variables (`CF4_HMC_END_INDEX=62` and lengths `8,12`)
+before tests whose fixtures expect the default short schedule; two tests
+therefore failed before any exact CF4 target evaluation. MaxRSS was3.52MiB;
+no result directory or scientific output was created. This is a wrapper/test
+environment wiring error, not HMC or target evidence. The wrapper now unsets
+runtime schedule variables for all tests and exports them only after the
+focused suites pass. The corrected suites pass locally; one fresh, source-
+pinned Slurm retry is still required. No target result, posterior, uncertainty,
+heldout score or field exists from job447676.
+
 ## R2 pre-submission update — 2026-10-30
 
 The corrected training-only N256 count-intensity VJP, job439314, completed on

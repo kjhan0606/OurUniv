@@ -55,9 +55,9 @@ git diff --quiet "$CF4_EXPECTED_COMMIT" -- \
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/scripts:$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
-export CF4_HMC_END_INDEX=62 CF4_HMC_LENGTHS=8,12
-export CF4_HMC_MAX_EVALUATIONS=25 CF4_HMC_APP_SECONDS=14400
-export CF4_R2_OUT_DIR="$CF4_R2_OUT_BASE/$SLURM_JOB_ID"
+# Do not let the production schedule contaminate small mechanics fixtures.
+unset CF4_HMC_END_INDEX CF4_HMC_LENGTHS CF4_HMC_MAX_EVALUATIONS \
+  CF4_HMC_APP_SECONDS CF4_R2_OUT_DIR
 PY=/home/kjhan/miniconda3/envs/circle/bin/python3.11
 GPU_MEMORY_LIMIT_BYTES=$("$PY" -c 'import jax; d=jax.devices()[0]; s=d.memory_stats(); assert d.platform == "gpu" and s and s.get("bytes_limit") is not None; print(int(s["bytes_limit"]))')
 [[ "$GPU_MEMORY_LIMIT_BYTES" =~ ^[0-9]+$ ]] || {
@@ -78,5 +78,8 @@ export CF4_H100_FREE_TYPED_GPUS CF4_A100_FREE_TYPED_GPUS
 "$PY" tests/test_cf4_r2_prior_split_hmc.py -q
 "$PY" tests/test_cf4_r2_conditional_map_budget.py -q
 "$PY" tests/test_cf4_r2_linked_point_conditioning_radius.py -q
+export CF4_HMC_END_INDEX=62 CF4_HMC_LENGTHS=8,12
+export CF4_HMC_MAX_EVALUATIONS=25 CF4_HMC_APP_SECONDS=14400
+export CF4_R2_OUT_DIR="$CF4_R2_OUT_BASE/$SLURM_JOB_ID"
 exec timeout --signal=TERM --kill-after=30s 14400s \
   "$PY" scripts/cf4_r2_hmc_transport.py
