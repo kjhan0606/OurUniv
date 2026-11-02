@@ -154,8 +154,38 @@ Three of four fundamental-block proposals were accepted, all downhill at the
 two dependent/discarded anchors; none of four `16<k^2<=64` proposals was
 accepted, with proposed `ΔU=+99.6` to `+190.0` dominated by count-NLL increase.
 This is candidate-specific negative evidence, not posterior or stationarity
-evidence. A mid-course Astra review of the result/next R2 action is requested;
-it is not an exit audit. This screen cannot close R2 or authorize R3.
+evidence. The follow-up Astra mid-course review is advisory and is not an R2
+exit audit. This screen cannot close R2 or authorize R3.
+
+Astra's mid-course result review is preserved verbatim in
+`CF4_R2_BLOCK_MALA_SCREEN_ASTRA_RESULT_REVIEW_20261102.md`. The driver adopts
+its bounded causal check: close the fixed `epsilon=0.05` shell candidate, but
+do not generalize this to all MALA or shell proposals and do not launch a
+step-size retry. Reconstruct the first already-rejected state38 shell
+direction from the pinned checkpoint/RNG, verify its starting and endpoint
+scores and Hastings accounting, compare `grad U(x)·d` with `U(x+d)-U(x)`,
+and check the starting directional derivative with the predeclared symmetric
+`h=1e-4` difference. The endpoint gradient change is descriptive only, not a
+Hessian-spectrum estimate. The ceiling is five exact target evaluations,
+including the common runner's mandatory checkpoint replay; no adaptive
+extension or heldout access. The implementation and plan are
+`scripts/cf4_r2_mala_shell_direction_diagnostic.py`,
+`scripts/run_cf4_r2_mala_shell_direction_diagnostic.sbatch`, and
+`CF4_R2_MALA_SHELL_DIRECTION_DIAG_PLAN_20261102.md`. This calculation has
+not yet been submitted. Its only possible inference concerns local gradient
+consistency versus finite-displacement nonlinearity along this one direction;
+it cannot establish a posterior, mixing, or a replacement sampler. The raw
+record also stores the selected partition, typed GRES and free typed GPU
+counts observed at submission.
+
+Q-GOAL: this is one targeted sampler diagnostic on the way to the conditional
+z=0 posterior, not a field product. MW/M31 remain role-ambiguous and M33
+unresolved; their observables must ultimately constrain those same roles on
+the same NEW evolved LG field at `<=0.3 cMpc/h`, with native truth IDs only for
+calibration/evaluation. Q-LEAN: reuse one recorded rejected direction and
+the existing target/FD convention, with a hard five-evaluation ceiling; no
+scale ladder, retry, separate simulation, heldout read or field promotion.
+R2 remains open/NO-GO and R3 has not started.
 
 ## R2 pre-submission update — 2026-10-30
 
