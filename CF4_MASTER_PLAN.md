@@ -171,12 +171,19 @@ including the common runner's mandatory checkpoint replay; no adaptive
 extension or heldout access. The implementation and plan are
 `scripts/cf4_r2_mala_shell_direction_diagnostic.py`,
 `scripts/run_cf4_r2_mala_shell_direction_diagnostic.sbatch`, and
-`CF4_R2_MALA_SHELL_DIRECTION_DIAG_PLAN_20261102.md`. This calculation has
-not yet been submitted. Its only possible inference concerns local gradient
-consistency versus finite-displacement nonlinearity along this one direction;
-it cannot establish a posterior, mixing, or a replacement sampler. The raw
-record also stores the selected partition, typed GRES and free typed GPU
-counts observed at submission.
+`CF4_R2_MALA_SHELL_DIRECTION_DIAG_PLAN_20261102.md`. Job447634 completed on
+Syntax/H100 with five exact target evaluations and source-pinned reproduction
+of the recorded proposal endpoints and Hastings terms. The predeclared local
+directional FD passes at relative discrepancy9.11e-7; however
+`grad U(x)·d=-289.98` while the full finite-step change is `+120.73`, with
+relative endpoint-gradient change0.2205. This confirms local directional
+gradient consistency but shows that the linear prediction does not describe
+this finite shell displacement. It is not a Hessian-spectrum, posterior,
+mixing or replacement-sampler result. Full details are in
+`CF4_R2_MALA_SHELL_DIRECTION_RESULT_20261102.md`; the raw record also stores
+the selected partition, typed GRES and free typed GPU counts. A new
+mid-course Astra advisory review is requested because this finding affects
+sampler direction; it is not an R2 exit audit.
 
 Q-GOAL: this is one targeted sampler diagnostic on the way to the conditional
 z=0 posterior, not a field product. MW/M31 remain role-ambiguous and M33
