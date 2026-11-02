@@ -7,7 +7,47 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 update — 2026-10-30
+## Current R2 update — 2026-11-02
+
+The seven-pullback training-only VJP tail screen, job441842, completed on
+Syntax/H100 (`gpu:H100:1`) with exit0 in18:33 Slurm elapsed (application
+1,076.70s; host peak6.42GiB). At the frozen N256/384 cMpc/h conditional-v6
+anchor, the lowest-intensity1% of positive training-exposed rows contained
+19,939 cells. For two fixed Gaussian probes, its white-IC tail squared-norm
+shares were3.61e-13 and2.88e-13; tracer shares were9.13e-15 and2.50e-14.
+All full=tail+rest decompositions passed the predeclared1e-8 tolerance with
+errors below8.7e-15; the repeated original full pullback differed by7.21e-15
+for white IC and0 for tracer. The minimum positive intensity remains
+1.9562e-37 and maximum inverse-square-root weight2.26094e18. Thus the extreme
+weight did not make this1% tail dominate these two probes; this is not a
+general trace/rank/spectrum estimate or a likelihood-gradient result.
+
+The machine result is
+`/gpfs/kjhan/CF4/z0_density/r2_intensity_vjp_tail_screen_20261030/441842/result.json`;
+the checked-in interpretation is `CF4_R2_VJP_TAIL_SCREEN_RESULT_20261102.md`.
+No heldout values were loaded or scored. No sampler, posterior, uncertainty,
+or field was produced. Astra's read-only review returned CONDITIONAL GO for
+one separately capped discovery/independent-validation geometry experiment,
+and NO-GO for sampler launch from this result alone. The driver checked the
+review against the exact machine result and adopts it. The frozen experiment
+and its specific numerical gates, residual-trace upper bound, resource
+estimate, and no-ladder disposition are in
+`CF4_R2_VJP_GEOMETRY_SKETCH_PLAN_20261102.md`. The screen's pass permits only
+that one proposal-geometry experiment. If it passes, the separate15-D raw-FP
+curvature `F_p` check follows; only after both checks may a distinct
+full-target pilot be designed. No sampler launch is authorized by this
+screen alone.
+
+Q-GOAL: this advances the route to the first conditional-v6 N256 z=0
+density/velocity posterior, not the posterior itself. MW/M31 remain
+role-ambiguous and M33 unresolved; future observables must constrain those
+roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native truth
+IDs restricted to calibration/evaluation. Q-LEAN: one fixed1% partition,
+two probes and seven pullbacks were proportionate; no floor, row deletion,
+heldout read, threshold ladder or new gravity simulation. R2 remains NO-GO;
+R3 has not started.
+
+## R2 pre-submission update — 2026-10-30
 
 The corrected training-only N256 count-intensity VJP, job439314, completed on
 H200 (`gpu:H200:1`) with status `ONE_TRAINING_VJP_FINITE_NOT_SAMPLER` (exit0,

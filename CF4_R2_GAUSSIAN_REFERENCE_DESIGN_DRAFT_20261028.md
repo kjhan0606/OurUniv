@@ -17,6 +17,28 @@ the direct-value evaluator is suitable for the next bounded feasibility
 diagnostic. This establishes evaluator cost only, not low-k movement or
 sampler efficacy.
 
+## Status update — 2026-11-02
+
+The corrected seven-pullback tail/repeat screen, job441842, passed on
+Syntax/H100. At one frozen anchor, the lowest-intensity1% tail had
+white-IC squared-norm shares3.61e-13 and2.88e-13 and tracer shares9.13e-15
+and2.50e-14 across two fixed Gaussian probes. Full=tail+rest and repeated
+pullback errors were below8.7e-15. This shows no tail domination for those
+probes despite the maximum `1/sqrt(lambda)=2.26094e18`; it is not a reliable
+trace/rank/spectrum estimate and does not validate the likelihood score.
+Details and limits are in `CF4_R2_VJP_TAIL_SCREEN_RESULT_20261102.md`.
+
+This evidence satisfies only the prior screen gate. Astra returned
+CONDITIONAL GO for one separately capped discovery/independent-validation
+geometry experiment and NO-GO for sampler launch from this result alone. The
+driver checked and adopted that advice; the frozen experiment, conservative
+absolute-residual bound, resource budget and no-ladder consequence are in
+`CF4_R2_VJP_GEOMETRY_SKETCH_PLAN_20261102.md`. A separate raw-FP `F_p` check
+is still required after a sketch pass. Any eventual sampler must use a fixed
+reference and the unchanged full target at every transition. The result does
+not authorize bypassing these requirements. R2 remains NO-GO; no posterior
+or held-out result exists.
+
 ## Goal and fixed target
 
 Keep the full N256 / 384 cMpc/h conditional-v6 target, not a reduced field:
