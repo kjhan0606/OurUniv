@@ -33,8 +33,10 @@ elif (( CF4_H100_FREE_TYPED_GPUS > 0 )); then
 elif (( CF4_A100_FREE_TYPED_GPUS > 0 )); then
   [[ "$CF4_GPU_MODE" == a100 ]] || { echo "H200/H100 occupied; free A100 must be selected" >&2; exit 2; }
 else
-  echo "no free typed H200/H100/A100 GPU in pre-submit snapshot" >&2
-  exit 2
+  [[ "$CF4_GPU_MODE" == h100 ]] || {
+    echo "all typed GPUs occupied; use the H100 shared queue fallback" >&2
+    exit 2
+  }
 fi
 [[ "$SLURM_JOB_PARTITION" == "$CF4_SUBMIT_PARTITION" ]]
 JOB_INFO=$(scontrol show job -o "$SLURM_JOB_ID")

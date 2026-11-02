@@ -30,6 +30,8 @@ GL2 peak. No retry or automatic extension if a budget guard stops before two
 transitions. For allocation selection, an H200 typed device counts as idle
 only when its node is `IDLE`; a spare GPU on a `MIXED` H200 node is recorded as
 available but occupied, and selection falls through to a free H100 then A100.
+If all three modes are fully allocated, submit one H100 typed request to the
+shared Slurm queue (no manual node execution); record that all-free count as0.
 
 ## Interpretation limits
 

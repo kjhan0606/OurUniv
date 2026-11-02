@@ -286,14 +286,19 @@ def main(*, start_checkpoint=None, max_evaluations=MAX_EVALUATIONS,
         device_limit = stats.get('bytes_limit', 0)
         h200_free = _resource_snapshot_count('CF4_H200_FREE_TYPED_GPUS')
         h200_idle = _resource_snapshot_count('CF4_H200_IDLE_TYPED_GPUS')
+        h100_free = _resource_snapshot_count('CF4_H100_FREE_TYPED_GPUS')
+        a100_free = _resource_snapshot_count('CF4_A100_FREE_TYPED_GPUS')
         report['resource_evidence'] = dict(
             selected_mode=f'{gpu_mode} / gpu:{gpu_mode.upper()}:1',
             h200_was_checked=h200_free is not None,
             h200_has_free_typed_gpu=_has_free_typed_gpu(h200_free),
             h200_free_typed_gpus_at_submit=h200_free,
             h200_idle_typed_gpus_at_submit=h200_idle,
-            h100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_H100_FREE_TYPED_GPUS'),
-            a100_free_typed_gpus_at_submit=_resource_snapshot_count('CF4_A100_FREE_TYPED_GPUS'),
+            h100_free_typed_gpus_at_submit=h100_free,
+            a100_free_typed_gpus_at_submit=a100_free,
+            all_allowed_typed_gpus_busy_at_submit=(
+                all(value is not None for value in (h200_free,h100_free,a100_free))
+                and h200_free + h100_free + a100_free == 0),
             measured_prior_exact_GL2_peak_GiB=KNOWN_DEVICE_PEAK_GIB,
             measured_prior_device_limit_GiB=KNOWN_DEVICE_LIMIT_GIB,
             current_device_limit_GiB=float(device_limit / 1024 ** 3) if device_limit else None,
