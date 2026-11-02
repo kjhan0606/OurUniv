@@ -51,7 +51,17 @@ projectors for the fundamental, `k^2=4..8`, and complete complements, and a
 bounded A/B runner. Focused CPU tests pass (10 geometry-metric;7 ESS/projector)
 and static checks pass; this validates math/wiring only, not N256 target
 movement. Any pass supports only a future HMC-augmentation design, not a
-posterior or R2 completion. No job has been submitted yet.
+posterior or R2 completion. The bounded screen is now running as Syntax Slurm
+job 447520 on `syn09`/`h100` (`gpu:H100:1`), submitted 2026-11-02 17:03:55 KST
+from commit `1318a330636c`. At submission H200 was occupied (7/8 GPUs allocated,
+one free), H100 had three free GPUs, and A100 had none; H100 was therefore
+selected. Four startup regression suites passed. At the latest check the job
+was still initializing the target, with no proposal evaluation recorded and
+no heldout values, posterior sample/uncertainty, or field produced. The result
+metadata currently labels H200 `idle=true` solely because one GPU was free;
+that label is inaccurate and must be corrected in the run record after the
+process exits. This bookkeeping defect does not change the typed allocation
+or target calculation.
 
 Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
 conditional-v6 N256 z=0 density/velocity posterior with uncertainty and
