@@ -11,6 +11,7 @@ from cf4_r2_block_elliptical_slice import (  # noqa: E402
     SliceEvaluationLimit,
     elliptical_slice_step,
     real_fourier_band_projectors,
+    real_fourier_hmc_drift_band_projector,
     real_fourier_physical_mode_projectors,
 )
 
@@ -60,6 +61,31 @@ class BlockEllipticalSliceTests(unittest.TestCase):
         for index, first in enumerate(pieces):
             for second in pieces[index + 1:]:
                 self.assertAlmostEqual(float(first @ second), 0.0, places=11)
+
+    def test_hmc_drift_band_is_the_4_lt_k_le_8_shell_not_k2_4_to_8(self):
+        n = 32
+        shell = real_fourier_hmc_drift_band_projector(n, nuisance_count=2)
+        fundamental, _, _, _ = real_fourier_physical_mode_projectors(
+            n, nuisance_count=2)
+        self.assertEqual(fundamental.dimension, 6)
+        self.assertEqual(shell.dimension, 1852)
+        x = np.arange(n, dtype=np.float64)[:, None, None]
+        for k, expected_inside in ((4, False), (5, True), (8, True), (9, False)):
+            wave = np.cos(2.0 * np.pi * k * x / n) * np.ones((1, n, n))
+            canonical = np.concatenate((wave.reshape(-1), np.zeros(2)))
+            projected = shell(canonical)[:n ** 3].reshape(n, n, n)
+            if expected_inside:
+                np.testing.assert_allclose(projected, wave, rtol=0, atol=2e-14)
+            else:
+                np.testing.assert_allclose(projected, 0.0, rtol=0, atol=2e-14)
+        q = np.random.default_rng(18).standard_normal(n ** 3 + 2)
+        projected = shell(q)
+        np.testing.assert_allclose(shell(projected), projected, rtol=0, atol=4e-14)
+        self.assertAlmostEqual(float(projected @ fundamental(q)), 0.0, places=10)
+        self.assertEqual(float(np.linalg.norm(projected[n ** 3:])), 0.0)
+        zero_mode = np.ones((n, n, n), dtype=np.float64)
+        fundamental_zero = np.concatenate((zero_mode.reshape(-1), np.zeros(2)))
+        np.testing.assert_allclose(fundamental(fundamental_zero), 0.0, rtol=0, atol=2e-14)
 
     def test_sequential_blocks_recover_correlated_gaussian_target(self):
         precision_likelihood = np.array([[2.0, 0.8], [0.8, 1.4]])

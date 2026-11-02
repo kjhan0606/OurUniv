@@ -33,12 +33,12 @@ arithmetic, added a deterministic pre-run width helper/regression, and made
 the closed sketch runner fail before GPU setup. The rank-4 proposal is closed
 without `F_p` or a sampler retry.
 
-Next, the driver will evaluate one materially different, fixed
-physically-indexed conditional-move design for the fundamental and `k^2=4–8`
-Fourier coordinates while preserving complete-field/nuisance moves and the
-unchanged full count+FP+prior target. This is not a retry of the closed
-million-dimensional low-block ESS, and its broad all-IC arm is a control—not
-an HMC comparator or replacement claim. The explicit one-anchor contract is
+The then-selected experiment (completed below) was a materially different,
+fixed physical-mode ESS A/B design for the fundamental and `k^2=4–8` Fourier
+coordinates, under the unchanged full count+FP+prior target. This was not a
+retry of the closed million-dimensional low-block ESS, and its broad all-IC
+arm was a control—not an HMC comparator or replacement claim. The explicit
+one-anchor contract is
 in `CF4_R2_PHYSICAL_MODE_ESS_AB_PLAN_20261102.md`. Astra returned CONDITIONAL
 GO for this capped engineering screen with plan clarifications; the driver
 adopted them. A bracket-cap failure aborts that arm, A/B is resource-matched
@@ -96,6 +96,58 @@ observables must constrain those roles on the same NEW evolved LG field at
 Q-LEAN: the failed16-pullback candidate is closed; no validation/Fp ladder,
 heldout read, new gravity run, or field promotion. R2 remains NO-GO; R3 has not
 started.
+
+## R2 corrected sampler direction — 2026-11-02
+
+Astra's independent read-only review accepts the `447541` result as failure of
+that fixed capped ESS candidate only. No transition was accepted, Arm B never
+reached its band/complement/nuisance blocks, and no movement ratio, posterior,
+uncertainty, heldout result or field exists. Do not retry the bracket or infer
+that all physical-mode proposals are impossible. Full result and verbatim
+review: `CF4_R2_PHYSICAL_MODE_ESS_AB_RESULT_20261102.md` and
+`CF4_R2_PHYSICAL_MODE_ESS_AB_ASTRA_REVIEW_20261102.md`.
+
+Before a new sampler implementation, the driver caught a Fourier-band
+identification error: the ESS pilot's 66-coordinate `k^2=4..8` shell is not
+the band whose drift was measured in the 24-hour HMC run. The preserved HMC
+evidence uses `4<|k|<=8`, i.e. `16<k^2<=64` (1,852 real N256 coordinates).
+The failed ESS job never reached either shell. Read-only orthonormal-FFT
+projection of the two discarded full gradients gives per-coordinate RMS
+10.891962/10.853915 in this HMC shell and110.180225/103.125104 in the six
+fundamental coordinates at states38/60. These are dependent transport states,
+not independent chains. The projection was single-thread CPU-only on LagEunha;
+no target or heldout evaluation was run.
+
+The next candidate is a two-state, two-block conditional-MALA engineering
+screen using `epsilon=0.01` for `k^2=1` and `epsilon=0.05` for
+`16<k^2<=64`, with the exact full conditional-v6 target/gradient and the
+forward/reverse Gaussian Hastings ratio. It is capped at eight proposals plus
+two anchor value+gradient replays. Astra's plan audit is **GO for this bounded
+screen only**; its adopted conditions include rebuilding unchanged live
+support at every candidate, explicit distinction of proposed versus retained
+(zero on rejection) motion, nonzero-drift detailed-balance regressions, no
+efficiency ratio against unmatched whole-IC HMC displacement, no automatic
+retuning, and preservation of partial outcomes. See
+`CF4_R2_BLOCK_MALA_SCREEN_PLAN_20261102.md` and verbatim
+`CF4_R2_BLOCK_MALA_SCREEN_ASTRA_REVIEW_20261102.md`.
+
+Q-GOAL: this targets documented transport on the route to the first
+conditional-v6 N256 z=0 density/velocity posterior only; posterior uncertainty,
+equilibration, heldout prediction and selection/group-observation calibration
+remain separate and unresolved. MW/M31 remain role-ambiguous, M33 unresolved;
+their observables must ultimately constrain those same roles on the same NEW
+evolved LG field at `<=0.3 cMpc/h`, with native truth IDs calibration/
+evaluation-only. Q-LEAN: one fixed shell projector and one corrected MALA
+transition, no geometry campaign, ESS retry, heldout read or separate
+simulation. The fixed-scale MALA mechanics and new HMC-drift Fourier
+projector are implemented in `src/cf4_r2_block_mala.py`,
+`src/cf4_r2_block_elliptical_slice.py`, and
+`scripts/cf4_r2_block_mala_screen.py`. Thirteen CPU mechanics/projector
+regressions pass; a direct N256 geometry check confirms dimensions `6` and
+`1,852`.
+The typed-GPU Slurm runner is `scripts/run_cf4_r2_block_mala_screen.sbatch`;
+the target has not yet been submitted or evaluated. This screen cannot close
+R2 or authorize R3.
 
 ## R2 pre-submission update — 2026-10-30
 

@@ -234,3 +234,28 @@ def real_fourier_physical_mode_projectors(n, *, nuisance_count=24):
             _fourier_projector(n, n_ic, full_size, complement_mask,
                                complement_dimension, "ic_fourier_complement"),
             _nuisance_projector(n_ic, full_size, nuisance_count))
+
+
+def real_fourier_hmc_drift_band_projector(n, *, nuisance_count=24):
+    """Project onto the measured HMC drift shell ``4 < |k| <= 8``.
+
+    This is the 1,852-real-coordinate ``16 < k^2 <= 64`` shell for N=256.
+    It is distinct from the older 66-coordinate ``k^2=4..8`` physical-mode
+    block used by a stopped ESS feasibility attempt.  Modes must remain below
+    Nyquist so the real degrees of freedom can be counted by full-lattice
+    multiplicity without Nyquist self-conjugacy special cases.
+    """
+    if (not isinstance(n, int) or n <= 16 or not isinstance(nuisance_count, int)
+            or nuisance_count < 0):
+        raise ValueError("HMC drift shell requires n>16 and nonnegative nuisance size")
+
+    radius2_half, radius2_full = _fourier_geometry(n)
+    band_mask = (radius2_half > 16.0) & (radius2_half <= 64.0)
+    band_dimension = int(np.count_nonzero(
+        (radius2_full > 16.0) & (radius2_full <= 64.0)))
+    n_ic = n ** 3
+    full_size = n_ic + nuisance_count
+    if band_dimension <= 0:
+        raise ValueError("grid does not contain the measured HMC drift shell")
+    return _fourier_projector(n, n_ic, full_size, band_mask, band_dimension,
+                              "ic_hmc_drift_4_lt_k_le_8")
