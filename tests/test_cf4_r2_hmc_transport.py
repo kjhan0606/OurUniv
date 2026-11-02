@@ -27,7 +27,8 @@ class TransportTests(unittest.TestCase):
     def exercise(self, mode):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)
-            q=np.arange(88,dtype=float)/100
+            n=20
+            q=np.arange(n**3+24,dtype=float)/100
             rng=np.random.default_rng(345)
             original_rng=json.dumps(rng.bit_generator.state)
             start=out/'start.npz'
@@ -47,7 +48,7 @@ class TransportTests(unittest.TestCase):
                          energy_error=-.1 if accepted else 2.,force_evaluations=steps))
             report=dict(target_rules='fixture',target_orders={'value':2,'gradient':2},
                         split_source='fixture',association_ledger_source_commit='fixture')
-            with patch.object(transport,'START',start), patch.object(transport,'N',4), \
+            with patch.object(transport,'START',start), patch.object(transport,'N',n), \
                     patch.object(transport,'split_hmc_step',transition):
                 transport.run(oracle,q,out,report,lambda:None)
             with np.load(out/'hmc_retained_state.npz',allow_pickle=False) as f:
@@ -66,6 +67,11 @@ class TransportTests(unittest.TestCase):
             self.assertEqual(row['current_terms'],previous['current_terms'])
             self.assertEqual(row['present_field_readout'],previous['present_field_readout'])
             self.assertEqual(row['canonical_jump_rms'],0.)
+            self.assertEqual(row['fundamental_jump_rms'],0.)
+            self.assertEqual(row['hmc_drift_shell_jump_rms'],0.)
+            self.assertEqual(row['remaining_ic_jump_rms'],0.)
+            self.assertEqual(row['canonical_nuisance_jump_rms'],0.)
+            self.assertEqual(row['target_evaluations'], row['force_evaluations'])
         self.assertEqual(int(saved['next_index']),10)
         self.assertFalse(bool(saved['posterior_sample']))
 
@@ -103,6 +109,44 @@ class TransportTests(unittest.TestCase):
         self.assertAlmostEqual(row['fundamental_sine'][0],np.linalg.norm(cube))
         np.testing.assert_allclose(row['fundamental_sine'][1:],0.,atol=1e-14)
 
+    def test_fixed_n256_hmc_shell_has_expected_real_coordinate_counts(self):
+        fundamental, drift = transport.hmc_drift_mode_indices(256)
+        self.assertEqual(fundamental.shape,(6,3))
+        self.assertEqual(drift.shape,(1852,3))
+        self.assertEqual(len({tuple(index) for index in fundamental}),6)
+        self.assertEqual(len({tuple(index) for index in drift}),1852)
+
+    def test_retained_block_jump_readout_partitions_parseval_energy(self):
+        n=20
+        coordinate=np.arange(n)
+        x=coordinate[:,None,None]
+        y=coordinate[None,:,None]
+        z=coordinate[None,None,:]
+        delta=np.zeros(n**3+24,dtype=np.float64)
+        delta[:n**3]=(np.sin(2*np.pi*x/n)+.25*np.cos(2*np.pi*5*x/n)
+                       +.1*np.cos(2*np.pi*2*(x+y+z)/n)).ravel()
+        delta[n**3:]=np.linspace(-.03,.03,24)
+        readout,_=transport.retained_block_jump_readout(delta,n)
+        self.assertEqual(readout['fundamental_mode_count'],6)
+        self.assertEqual(readout['hmc_drift_shell_mode_count'],1852)
+        self.assertEqual(readout['remaining_ic_mode_count'],n**3-1858)
+        self.assertEqual(readout['canonical_nuisance_mode_count'],24)
+        self.assertGreater(readout['fundamental_jump_rms'],0.)
+        self.assertGreater(readout['hmc_drift_shell_jump_rms'],0.)
+        self.assertGreater(readout['remaining_ic_jump_rms'],0.)
+        self.assertGreater(readout['canonical_nuisance_jump_rms'],0.)
+        block_energy=(readout['fundamental_mode_count']*readout['fundamental_jump_rms']**2
+                      +readout['hmc_drift_shell_mode_count']*readout['hmc_drift_shell_jump_rms']**2
+                      +readout['remaining_ic_mode_count']*readout['remaining_ic_jump_rms']**2
+                      +readout['canonical_nuisance_mode_count']*readout['canonical_nuisance_jump_rms']**2)
+        np.testing.assert_allclose(block_energy,np.dot(delta,delta),rtol=2e-14,atol=1e-12)
+
+    def test_zero_retained_displacement_has_zero_jump_in_every_block(self):
+        readout,_=transport.retained_block_jump_readout(np.zeros(20**3+24),20)
+        for name in ('fundamental_jump_rms','hmc_drift_shell_jump_rms',
+                     'remaining_ic_jump_rms','canonical_nuisance_jump_rms'):
+            self.assertEqual(readout[name],0.)
+
     def test_completed_transport_resume_preserves_rng_step_and_history(self):
         previous,saved,_,_,_=self.exercise('normal')
         with tempfile.TemporaryDirectory() as temp:
@@ -114,7 +158,7 @@ class TransportTests(unittest.TestCase):
             out.mkdir()
             report=dict(target_rules='fixture',target_orders={'value':2,'gradient':2},
                         split_source='fixture',association_ledger_source_commit='fixture')
-            with patch.object(transport,'START',start), patch.object(transport,'N',4), \
+            with patch.object(transport,'START',start), patch.object(transport,'N',20), \
                     patch.object(transport,'split_hmc_step') as transition, \
                     patch.dict(transport.os.environ,{'CF4_HMC_END_INDEX':'10'}):
                 transport.run(Oracle(),saved['q'],out,report,lambda:None)
@@ -128,7 +172,7 @@ class TransportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             start = root/'initial.npz'
-            q = np.arange(88, dtype=float)/100
+            q = np.arange(20**3+24, dtype=float)/100
             np.savez(start, q=q, rng_state=json.dumps(np.random.default_rng(345).bit_generator.state))
 
             def execute(source, destination, initial, end):
@@ -137,7 +181,7 @@ class TransportTests(unittest.TestCase):
                               split_source='fixture', association_ledger_source_commit='fixture')
                 def save():
                     (destination/'result.json').write_text(json.dumps(report))
-                with patch.object(transport, 'START', source), patch.object(transport, 'N', 4), \
+                with patch.object(transport, 'START', source), patch.object(transport, 'N', 20), \
                         patch.dict(transport.os.environ, {'CF4_HMC_END_INDEX':str(end)}):
                     transport.run(Oracle(), initial, destination, report, save)
                 with np.load(destination/'hmc_retained_state.npz', allow_pickle=False) as state:

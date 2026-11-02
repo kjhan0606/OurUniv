@@ -210,6 +210,38 @@ the existing target/FD convention, with a hard five-evaluation ceiling; no
 scale ladder, retry, separate simulation, heldout read or field promotion.
 R2 remains open/NO-GO and R3 has not started.
 
+## R2 next bounded diagnostic — retained HMC block jumps (2026-11-02)
+
+Following Astra's advice, do not launch the proposed fundamental-MALA/HMC
+augmentation: the existing evidence is not matched. Close only the missing
+trace-measurement gap by adding retained post-Metropolis block-jump records to
+the existing exact HMC transport runner, then resume the discarded state60
+checkpoint for at most two unchanged transitions (indices60–61). Preserve
+its target, priors, metric, step, saved RNG, and fixed `{8,12}` length mixture.
+Measure `k^2=1` (6 coordinates), the exact measured shell
+`16<k^2<=64` (1,852 N256 coordinates), the remaining IC, and24 nuisances;
+rejected transitions must have zero movement. Require the per-transition
+objective-record increment to equal `force_evaluations`.
+
+Caps:25 exact value+gradient target evaluations including checkpoint replay;
+4h application budget,4h30m Slurm wall,24GiB host RAM with runtime GPU
+allocation guard. If fewer than two transitions fit, keep the partial trace
+and stop—no retry or extension. No heldout read, posterior promotion, pCN,
+MALA augmentation, retuning, or separate simulation. The fixed plan is
+`CF4_R2_HMC_RETAINED_BLOCK_JUMPS_PLAN_20261102.md`; implementation/tests and
+the typed-GPU wrapper are in `scripts/cf4_r2_hmc_transport.py`,
+`tests/test_cf4_r2_hmc_transport.py`, and
+`scripts/run_cf4_r2_hmc_retained_block_jumps.sbatch`.
+
+Q-GOAL: this is a sampler transport diagnostic, not the conditional-v6 z=0
+density/velocity posterior, uncertainty or heldout prediction. MW/M31 remain
+role-ambiguous and M33 unresolved; their observables must ultimately constrain
+those same roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with
+native truth IDs calibration/evaluation-only. Q-LEAN: one readout helper and
+two existing-kernel transitions answer the missing per-step evidence; no
+sampler campaign or new gravity run. R2 remains open/NO-GO and R3 has not
+started.
+
 ## R2 pre-submission update — 2026-10-30
 
 The corrected training-only N256 count-intensity VJP, job439314, completed on
