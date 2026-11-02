@@ -33,11 +33,7 @@ test "$(git rev-parse HEAD)" = "$CF4_EXPECTED_COMMIT"
 git diff --quiet "$CF4_EXPECTED_COMMIT" -- \
   CF4_MASTER_PLAN.md \
   CF4_R2_PHYSICAL_MODE_ESS_AB_PLAN_20261102.md \
-  src/cf4_r2_block_elliptical_slice.py \
-  scripts/cf4_r2_conditional_map.py \
-  scripts/cf4_r2_physical_mode_ess_ab.py \
-  scripts/run_cf4_r2_physical_mode_ess_ab.sbatch \
-  tests/test_cf4_r2_block_elliptical_slice.py
+  config scripts src tests
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
 export JAX_ENABLE_X64=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH="$PWD/scripts:$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
