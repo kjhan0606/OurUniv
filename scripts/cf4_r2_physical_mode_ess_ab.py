@@ -85,7 +85,7 @@ def _mode_rms(projector, final, initial):
 
 
 def _run_arm(name, blocks, budgets, seed, initial, initial_score,
-             slow_modes, evaluate, objective, save):
+             slow_modes, evaluate, objective, report, save):
     started, first_eval = time.monotonic(), len(objective.records)
     q, score = initial.copy(), float(initial_score)
     results, complete = [], True
@@ -241,7 +241,7 @@ def run_comparison(objective, q0, _out, report, save):
              ARM_B_BUDGETS, SEED_B))
     for name, blocks, budgets, seed in arms:
         result = _run_arm(name, blocks, budgets, seed, q0, anchor_score,
-                          (fundamental, slow), evaluate, objective, save)
+                          (fundamental, slow), evaluate, objective, report, save)
         report["arm_results"].append(result)
         report["exact_target_evaluations"] = len(objective.records)
         save()
