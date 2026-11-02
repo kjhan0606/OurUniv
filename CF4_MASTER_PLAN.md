@@ -51,18 +51,26 @@ projectors for the fundamental, `k^2=4..8`, and complete complements, and a
 bounded A/B runner. Focused CPU tests pass (10 geometry-metric;7 ESS/projector)
 and static checks pass; this validates math/wiring only, not N256 target
 movement. Any pass supports only a future HMC-augmentation design, not a
-posterior or R2 completion. The bounded screen is now running as Syntax Slurm
-job 447520 on `syn09`/`h100` (`gpu:H100:1`), submitted 2026-11-02 17:03:55 KST
-from commit `1318a330636c`. At submission H200 was occupied (7/8 GPUs allocated,
-one free), H100 had three free GPUs, and A100 had none; H100 was therefore
-selected. Four startup regression suites passed. At the latest check the job
-was still initializing the target, with no proposal evaluation recorded and
-no heldout values, posterior sample/uncertainty, or field produced. The result
-metadata currently labels H200 `idle=true` solely because one GPU was free;
-that label is inaccurate. The source now records `h200_has_free_typed_gpu`
-instead, with a regression test; this pinned job's raw result is unchanged and
-must be interpreted using the Slurm snapshot above. The bookkeeping defect
-does not change the typed allocation or target calculation.
+posterior or R2 completion.
+
+The first bounded-screen submission, job447520 on Syntax/H100 (`syn09`,
+`gpu:H100:1`), failed after13:42 with MaxRSS9.49GiB before any A/B proposal.
+It passed matched-GL2 checkpoint replay (evaluation1, target597.69s,
+support-packing100.17s), then evaluated the scalar anchor (evaluation2,
+175.29s); aggregate scores matched exactly, with a 9.09e-13-nat FP-component
+roundoff difference. The runner then raised `NameError: report is not defined`
+inside `_run_arm`; `arm_results` is empty, so this is an implementation failure
+and gives no movement or sampler evidence. Preserve its raw result at
+`/gpfs/kjhan/CF4/z0_density/r2_physical_mode_ess_ab_20261102/447520/`.
+The driver fixed the missing report argument and added a direct runner
+regression (commit `4efb85e`); CPU tests pass (1 runner,7 ESS/projector,9
+target-budget tests). The earlier resource-label fix (`6be7fb1`) replaces the
+incorrect `h200_idle` inference with `h200_has_free_typed_gpu`; job447520's raw
+metadata remains unchanged and is interpreted from its recorded Slurm
+snapshot. One corrected retry of the already-audited bounded screen is next,
+using the same target, discarded anchor, proposal/evaluation/resource caps,
+and a fresh output directory after a new H200-first typed-GPU snapshot. No
+retry follows a scientific or resource-gate failure.
 
 Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
 conditional-v6 N256 z=0 density/velocity posterior with uncertainty and
