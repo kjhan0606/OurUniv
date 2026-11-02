@@ -67,9 +67,15 @@ regression (commit `4efb85e`); CPU tests pass (1 runner,7 ESS/projector,9
 target-budget tests). The earlier resource-label fix (`6be7fb1`) replaces the
 incorrect `h200_idle` inference with `h200_has_free_typed_gpu`; job447520's raw
 metadata remains unchanged and is interpreted from its recorded Slurm
-snapshot. One corrected retry of the already-audited bounded screen is next,
-using the same target, discarded anchor, proposal/evaluation/resource caps,
-and a fresh output directory after a new H200-first typed-GPU snapshot. No
+snapshot. The one corrected retry of the already-audited bounded screen is
+now running as Syntax Slurm job447541 on `syn09`/`h100` (`gpu:H100:1`),
+submitted 2026-11-02 17:21:04 KST from commit `ce38d4c`. At submission H200 was
+occupied (5/8 allocated,3 free), H100 had three free GPUs, and A100 had none.
+The fresh output is
+`/gpfs/kjhan/CF4/z0_density/r2_physical_mode_ess_ab_20261102_retry1/447541/`.
+Its source pin and four startup regression suites passed; the latest result
+was still `STARTED`, before any target evaluation. It uses the same target,
+discarded anchor, proposal/evaluation/resource caps as the audited plan. No
 retry follows a scientific or resource-gate failure.
 
 Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
