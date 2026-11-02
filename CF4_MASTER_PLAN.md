@@ -181,9 +181,25 @@ gradient consistency but shows that the linear prediction does not describe
 this finite shell displacement. It is not a Hessian-spectrum, posterior,
 mixing or replacement-sampler result. Full details are in
 `CF4_R2_MALA_SHELL_DIRECTION_RESULT_20261102.md`; the raw record also stores
-the selected partition, typed GRES and free typed GPU counts. A new
-mid-course Astra advisory review is requested because this finding affects
-sampler direction; it is not an R2 exit audit.
+the selected partition, typed GRES and free typed GPU counts. Astra accepted
+this narrow interpretation and found no substantive inconsistency; its review
+is `CF4_R2_MALA_SHELL_DIRECTION_ASTRA_REVIEW_20261102.md`, not an R2 exit
+audit.
+
+The driver then reconciled existing exact-GL2 prior-split HMC evidence with a
+possible fixed `k^2=1` MALA component without rerunning a target. Between the
+saved state38/state60 endpoints, the exact `16<k^2<=64` projection has net RMS
+displacement0.28454 per mode over22 trace transitions (17 accepted),208 exact
+target/force calls and77,166.47s. This is a segment-level net, not
+per-transition movement or efficiency; the historical trace omitted
+per-step shell jumps. The four MALA shell attempts retained no movement. A
+fixed full-target MALA step composed with the unchanged full-space
+prior-split HMC would preserve the same target, but the low-mode screen has
+only four proposals at two dependent anchors, and its accepted moves were
+downhill. There is not enough matched evidence to launch that augmentation.
+The design and evidence gap are recorded in
+`CF4_R2_MALA_HMC_AUGMENTATION_RECONCILIATION_20261102.md`; no new job was
+submitted. R2 remains open/NO-GO and R3 has not started.
 
 Q-GOAL: this is one targeted sampler diagnostic on the way to the conditional
 z=0 posterior, not a field product. MW/M31 remain role-ambiguous and M33

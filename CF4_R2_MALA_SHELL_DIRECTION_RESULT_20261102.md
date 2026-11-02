@@ -33,8 +33,8 @@ For the fixed unit direction `v=d/||d||` and the predeclared `h=1e-4`:
   `1e-2` tolerance.
 - For the original finite shell displacement, `grad U(x)·d=-289.9766`,
   whereas the fully evaluated `U(x+d)-U(x)=+120.7285`; finite-step minus
-  first-order prediction is `+410.7051`. The endpoint gradient changes by
-  relative L2 `0.2205`.
+  first-order prediction is `+410.7051`. The full canonical endpoint gradient
+  changes by relative L2 `0.2205` (not a shell-projected gradient change).
 
 Thus the tested starting directional derivative is locally consistent with
 the target value. The first-order change is nevertheless a poor prediction
@@ -57,5 +57,7 @@ The fixed `epsilon=0.05` identity-metric shell MALA candidate remains closed.
 The diagnostic supports checking finite-step proposal geometry before
 redesign; it does not determine whether a different metric, conditional
 proposal or existing HMC route will work. R2 remains open/NO-GO; R3 has not
-started. A separate mid-course Astra advisory review of this finding is
-pending; this is not the R2 exit audit.
+started. Astra accepted this narrow interpretation and found no substantive
+result inconsistency. Its full mid-course advice is preserved in
+`CF4_R2_MALA_SHELL_DIRECTION_ASTRA_REVIEW_20261102.md`; this is not the R2
+exit audit.
