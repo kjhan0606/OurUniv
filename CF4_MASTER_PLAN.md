@@ -73,10 +73,20 @@ submitted 2026-11-02 17:21:04 KST from commit `ce38d4c`. At submission H200 was
 occupied (5/8 allocated,3 free), H100 had three free GPUs, and A100 had none.
 The fresh output is
 `/gpfs/kjhan/CF4/z0_density/r2_physical_mode_ess_ab_20261102_retry1/447541/`.
-Its source pin and four startup regression suites passed; the latest result
-was still `STARTED`, before any target evaluation. It uses the same target,
-discarded anchor, proposal/evaluation/resource caps as the audited plan. No
-retry follows a scientific or resource-gate failure.
+Its source pin and four startup regression suites passed. The retry completed
+in28:01/exit0 (MaxRSS12,407,372KiB; application peak12.22GiB; peak GPU use
+33,056,607,488 bytes of74,962,354,176). Matched checkpoint replay passed and
+the direct scalar anchor matched the replayed aggregate score exactly. All6
+proposal evaluations then exhausted their fixed slice brackets without an
+accepted transition: Arm A's full-IC block hit its4-evaluation cap; Arm B's
+6-coordinate fundamental `k^2=1` block hit its2-evaluation cap, so its
+`k^2=4–8`, complement and nuisance blocks were never attempted. Final status
+is `PHYSICAL_MODE_ESS_AB_INCOMPLETE_STOP`; the A/B comparison is incomplete,
+not evidence against all ESS/physical-mode moves. No field, posterior,
+uncertainty or heldout result was produced. Preserve the raw result unchanged.
+This closes this one-anchor, fixed-cap candidate with no further retry. An
+Astra mid-course review was requested for the scientific disposition and next
+R2 sampler plan; it is advice, not an R2 exit audit.
 
 Q-GOAL: this supplies no field/posterior and does not close the R2 goal of a
 conditional-v6 N256 z=0 density/velocity posterior with uncertainty and
