@@ -50,6 +50,39 @@ diagnostic alone is not useful. Any large calculation needs an explicit cost
 and convergence/MC-error contract; do not read held-out outcomes before valid
 sampling.
 
+## Current R2 update — 2026-11-03 delayed-acceptance screen
+
+The canceled HMC submission447673 was already superseded by completed job447829;
+447829 remains the retained-block transport diagnostic described above and is
+not being repeated. The next bounded sampler-cost candidate is a support-safe
+delayed-acceptance screen: update only the N128-restricted component of the
+discarded N256 state60 anchor plus nine tracer nuisances, and preserve the fine
+orthogonal complement and 15 FP-population nuisances. A positive event-log
+floor exists only in the N128 training-count proposal surrogate; each
+stage-one-accepted candidate is corrected by the unchanged N256 training-count
++ linked-FP + prior target. No held-out outcomes are read.
+
+Astra reviewed the bounded design as CONDITIONAL GO, subject to real-field
+coisometry/Nyquist, restricted-metric, differentiable-floor, prior-increment,
+and detailed-balance checks. The driver implemented those checks and they pass
+along with the existing prior-split HMC, target-budget, and scalar-primal CPU
+regressions (5, 11, 9, and 2 tests respectively); shell syntax, Python compile,
+and whitespace checks pass. The fixed screen has eight independently seeded
+proposals from one explicitly discarded anchor, at most nine exact N256 scalar
+values, a four-GPU-hour application cap, 4:30 Slurm wall, 24 GiB host request,
+20 GiB runtime RSS stop, and the pre-measured GPU-memory guard. No tuning,
+held-out scoring, extra gravity calculation, posterior claim, field promotion,
+or R2 exit is authorized by this screen. Full contract and Astra advice are in
+`CF4_R2_DELAYED_ACCEPTANCE_COUNT_SURROGATE_PLAN_20261103.md`.
+
+Q-GOAL: this is sampler-cost feasibility only, not the R2 z=0 field/posterior,
+uncertainty, held-out prediction, or calibration. MW/M31 remain role-ambiguous
+and M33 unresolved; their observables must constrain those same roles on the
+same NEW evolved LG field at <=0.3 cMpc/h, with truth identities used only for
+calibration/evaluation. Q-LEAN: one fixed training-only count surrogate, one
+conditional Fourier block, and eight proposals; no search ladder or unrelated
+diagnostics. R2 remains open/NO-GO and R3 has not started.
+
 ## Current R2 update — 2026-11-02
 
 The single rank-4 count-geometry sketch, job447447, FAILED at its predeclared
