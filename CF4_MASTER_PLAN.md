@@ -7,6 +7,49 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 update — 2026-11-03
+
+The two-transition retained-block HMC diagnostic, Syntax job 447829, completed
+successfully (H100, `gpu:H100:1`, exit 0, 02:28:07). It replayed the discarded
+state 60 checkpoint, used 21 exact target evaluations, and both fixed-kernel
+transitions were accepted. Per-coordinate retained jumps at indices 60/61 were
+fundamental RMS 0.020812/0.009283, exact shell `16<k^2<=64` RMS 0.113506/
+0.078486, remaining-IC RMS 1.117153/0.771218, and 24-nuisance RMS 0.014464/
+0.011151. Every transition's objective-record growth matched its force-call
+count. Full interpretation is in
+`CF4_R2_HMC_RETAINED_BLOCK_JUMPS_RESULT_20261103.md`; raw machine record:
+`/gpfs/kjhan/CF4/z0_density/r2_hmc_retained_block_jumps_20261102/447829/result.json`.
+
+The trace has 62 states and remains explicitly discarded. Its objective rises
+from 8,213,134 at index 0 to 8,516,907 at index 61, mostly because the IC-prior
+NLL moves from 8,077,223 to 8,386,209 while the training-count NLL improves
+141,887→136,666. This is not itself sampler failure. However, later observed
+summaries continue to change: `4<integer_k<=8` white-IC band power rises
+0.48722→0.55163 from index 37 to 61, and the available density mean-square
+readout rises 11.8512→13.1449. There are no independent chains, R-hat, ESS,
+posterior MC error or held-out result. Recorded transition times sum to 48.11 h
+across the accumulated trace, excluding setup/replays and inter-job time. The
+observer-sphere readout changes geometry between inherited index 59 (cell
+centres) and indices 60–61 (native nodes); exclude those sphere summaries from
+across-index comparison.
+Status is `CONDITIONAL_HMC_TRANSPORT_DIAGNOSTIC_NOT_POSTERIOR`; no field is
+promoted and R2 remains open/NO-GO. Do not resubmit this completed job or
+extend it just to repeat the two-step readout.
+
+Q-GOAL: still no R2 science delivery. The goal remains the CF4+galaxy
+conditioned z=0 density/velocity posterior at 1.5 cMpc/h with uncertainty,
+held-out prediction and calibrated observation/sampler error. MW/M31 remain
+role-ambiguous and M33 unresolved; their observables must constrain those same
+roles on the same NEW evolved LG field at ≤0.3 cMpc/h, with truth IDs
+restricted to calibration/evaluation. N256/384 cMpc/h does not deliver LG
+resolution.
+Q-LEAN: reuse this evidence; determine whether the unchanged exact-target HMC
+can support a properly initialized multi-chain posterior run at defensible
+cost or a substantive sampler redesign is necessary. Another small block-jump
+diagnostic alone is not useful. Any large calculation needs an explicit cost
+and convergence/MC-error contract; do not read held-out outcomes before valid
+sampling.
+
 ## Current R2 update — 2026-11-02
 
 The single rank-4 count-geometry sketch, job447447, FAILED at its predeclared
