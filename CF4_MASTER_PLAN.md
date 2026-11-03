@@ -75,6 +75,22 @@ held-out scoring, extra gravity calculation, posterior claim, field promotion,
 or R2 exit is authorized by this screen. Full contract and Astra advice are in
 `CF4_R2_DELAYED_ACCEPTANCE_COUNT_SURROGATE_PLAN_20261103.md`.
 
+The corrected successor screen was submitted as Syntax job449120 at
+2026-11-03 19:30 KST, commit `cdc7f53`, on `h100` with `gpu:H100:1`, 24 GiB
+host memory and a4:30 wall cap. H200 was occupied (5/8 GPUs allocated;3 free
+on the mixed node), while H100 had3 free typed GPUs, so the permitted fallback
+was selected. The wrapper's four regression suites passed on the allocated
+node. The N128 surrogate compiled with estimated peak19.70 GiB against the
+H100 allocation limit69.81 GB; the event-log floor was unused at the anchor.
+The exact N256 anchor replay differed from the recorded target by
+4.47e-8 nat (<1e-7). Proposal0 passed stage one and was then rejected by the
+exact correction: the surrogate count score improved200.8 nat while the exact
+N256 count score worsened4,831.7 nat, yielding `log(alpha2)=-5,033.0` and zero
+retained displacement. This is one fixed-anchor engineering outcome, not a
+posterior conclusion; the remaining predeclared proposals continue under the
+same caps. Live machine record:
+`/gpfs/kjhan/CF4/z0_density/r2_da_count_surrogate_screen_20261103/449120/result.json`.
+
 Q-GOAL: this is sampler-cost feasibility only, not the R2 z=0 field/posterior,
 uncertainty, held-out prediction, or calibration. MW/M31 remain role-ambiguous
 and M33 unresolved; their observables must constrain those same roles on the
