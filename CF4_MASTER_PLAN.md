@@ -7,6 +7,38 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 update — 2026-11-04
+
+The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
+completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight
+proposals accepted the surrogate stage and all eight were rejected by the exact
+N256 correction. The surrogate count score improved by201–428 nat, while the
+fine count likelihood worsened by4,408–4,832 nat; FP changes were at most1.85
+nat. Anchor replay and all Fourier/prior/correction identities passed; the
+event-rate floor was unused. Astra's mid-course review found no implementation
+defect and recommends closing this fixed configuration without retuning. Full
+result/review: `CF4_R2_DELAYED_ACCEPTANCE_COUNT_SURROGATE_RESULT_20261104.md`.
+
+The driver completed the advised exact-HMC cost decision using the latest
+measured two-transition mean of1.1422 H100 GPU-hours per transition. Four-chain
+scenarios range from about877 GPU-hours for4×(64 warmup+128 retained) to2,924
+GPU-hours for4×(128+512); none is known to satisfy a defensible field-level
+MC-error criterion. **NO-GO for immediate multi-chain production** until a
+scientifically adequate MC-error contract and an explicitly acceptable
+resource ceiling exist. The model's missing full-survey selection/group
+calibration remains independent of sampler convergence. Decision and
+arithmetic: `CF4_R2_EXACT_N256_POSTERIOR_FEASIBILITY_20261104.md`.
+
+R2 remains open/NO-GO: no posterior, uncertainty, calibrated heldout result,
+or promoted z=0 field exists. Do not run more sampler screens, retune the
+closed surrogate, read heldout outcomes, or start R3. The next decision is the
+large exact-target run's resource/precision contract versus a specifically
+justified cost reduction. MW/M31 remain role-ambiguous and M33 unresolved;
+their observables must constrain those roles on the same NEW evolved LG field
+at `<=0.3 cMpc/h`, with native truth identities reserved for calibration/
+evaluation. The present N256 field is 1.5 cMpc/h and does not deliver LG
+resolution.
+
 ## Current R2 update — 2026-11-03
 
 The two-transition retained-block HMC diagnostic, Syntax job 447829, completed
