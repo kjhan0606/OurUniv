@@ -107,8 +107,10 @@ schedule, complete equal-length traces, and R-hat/ESS cutoffs without
 trimming. `scripts/cf4_r2_four_chain_report.py` now accepts exactly four
 distinct chain reports, records their SHA-256 provenance, refuses to overwrite
 an output file, and returns nonzero for invalid input or a failed scalar gate.
-Synthetic CLI-path and non-promotion regressions pass; the combined focused
-CPU suite is 61/61 under Python 3.11. This is not an integrated four-chain
+Synthetic CLI-path, fail-closed, and non-promotion regressions pass. A
+4,096-state-per-chain IID control exercises the scalar-gate PASS path without
+promoting a map. The focused CPU suite, including cross-chain-field tests, is
+67/67 under Python 3.11. This is not an integrated four-chain
 supervisor, restart path, or production qualification pipeline; warmup
 viability, full-field gate integration, N256 summary overhead, and replay
 wall-time/memory have not been measured. Q-GOAL remains

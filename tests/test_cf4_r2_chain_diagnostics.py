@@ -12,10 +12,10 @@ import tempfile
 
 class DiagnosticsTests(unittest.TestCase):
     @staticmethod
-    def synthetic_chain_report(chain_index):
+    def synthetic_chain_report(chain_index,retained_count=8):
         rng=np.random.default_rng(100+chain_index)
         trace=[dict(iteration=index+1,warmup=True) for index in range(8)]
-        for index in range(8):
+        for index in range(retained_count):
             row=dict(warmup=False,
                 iteration=index+9,
                 fine_energy=float(rng.normal()),
@@ -47,10 +47,11 @@ class DiagnosticsTests(unittest.TestCase):
             chain_id=f'chain-{chain_index}',source_commit='commit',
             target='conditional-v6',N=256,box_cMpc_h=384.,
             fine_volume_order=2,force_volume_order=1,
-            max_proposals=16,warmup_proposals=8,
-            schedule=dict(proposals=16,warmup=8),
-            field_mcse_contract=dict(batch_sizes=[2,4],minimum_batches=2,
-                retained_capacity=8),
+            max_proposals=retained_count+8,warmup_proposals=8,
+            schedule=dict(proposals=retained_count+8,warmup=8),
+            field_mcse_contract=dict(batch_sizes=[retained_count//4,
+                retained_count//2],minimum_batches=2,
+                retained_capacity=retained_count),
             association_ledger_source_commit='association-commit',
             observation_target_revision='conditional-v6-test',
             source_conditioning_rule='test-only',
@@ -58,7 +59,8 @@ class DiagnosticsTests(unittest.TestCase):
                 max_attempts=4,attempts=[dict(attempt=1,status='FINITE',
                     state_sha256=f'{chain_index+1:064x}')],selected_attempt=1,
                 selected_state_sha256=f'{chain_index+1:064x}'),
-            retained_states=8,retained_state_records=8,trace=trace)
+            retained_states=retained_count,retained_state_records=retained_count,
+            trace=trace)
 
     def test_iid_and_displaced_chains(self):
         x=np.random.default_rng(91).normal(size=(2,10000))
@@ -149,6 +151,15 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(result['status'],
             'FOUR_CHAIN_SCALAR_DIAGNOSTICS_ONLY_FIELD_GATE_PENDING')
         self.assertEqual(result['scalar_gate'],'FAIL')
+
+    def test_four_chain_scalar_gate_passes_independent_iid_control(self):
+        reports=[self.synthetic_chain_report(index,retained_count=4096)
+            for index in range(4)]
+        result=four_chain_scalar_diagnostics(reports)
+        self.assertEqual(result['scalar_gate'],'PASS')
+        self.assertEqual(result['failing_observables'],[])
+        self.assertFalse(result['R2_complete'])
+        self.assertFalse(result['heldout_scored'])
 
     def test_four_chain_gate_rejects_missing_chain_and_heldout_access(self):
         reports=[self.synthetic_chain_report(index) for index in range(4)]

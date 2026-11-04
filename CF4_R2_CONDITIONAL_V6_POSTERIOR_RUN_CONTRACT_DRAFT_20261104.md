@@ -121,7 +121,7 @@ runner**:
   `CF4_R2_MASTER_SEED` and `CF4_R2_CHAIN_INDEX` select the deterministic stream
   family, while `CF4_R2_CHAIN_ID` may name its retained-state store. Support
   and numerical failures abort. Seven focused start-helper tests and the
-  targeted 61-test CPU regression set pass under the runner's Python 3.11.
+  targeted 67-test CPU regression set pass under the runner's Python 3.11.
   The canonical state store is format v2 and now stores/checksums the
   post-transition NumPy RNG state with each retained state, including exact
   rejection repeats; a synthetic restore test reproduces the next RNG draws.
@@ -158,7 +158,9 @@ runner**:
   retained traces, and the frozen scalar thresholds without trimming or
   promotion. `scripts/cf4_r2_four_chain_report.py` runs this gate on exactly
   four distinct chain-report files, records input hashes, defaults to stdout,
-  and refuses to overwrite an output file. Synthetic CLI-path tests pass.
+  and refuses to overwrite an output file. Synthetic CLI-path, fail-closed,
+  and non-promotion tests pass; a 4,096-state-per-chain IID control exercises
+  the diagnostic PASS path without representing CF4 inference.
   This is not an integrated chain supervisor/restart or production
   qualification pipeline. Warmup viability, full-field cross-chain/MCSE
   qualification, held-out scoring, and N256 summary cost remain
