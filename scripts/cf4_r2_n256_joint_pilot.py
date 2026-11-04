@@ -17,7 +17,7 @@ from cf4_r2_resolution_target import (source_geometry_at_resolution,
 from cf4_r2_prior_split_hmc import FixedSplitMetric,inverse_laplacian_metric_symbol,PilotBudgetStop
 from cf4_r2_corrected_split_hmc import corrected_split_step
 from cf4_r2_affine_force import AffineCorrectedForce
-from cf4_r2_chain_schedule import ChainSchedule
+from cf4_r2_chain_schedule import ChainSchedule, review_warmup
 from cf4_r2_posterior_moments import PresentMomentAccumulator
 from cf4_r2_canonical_state_store import CanonicalStateStore
 from cf4_r2_independent_chain_start import (
@@ -85,6 +85,9 @@ def main():
         max_proposals=maximum,warmup_proposals=warmup,frozen_affine_force=affine,
         long_chain=long_chain,application_budget_seconds=budget,
         initialization_policy=start_policy,
+        warmup_adaptation_contract=(schedule.adaptation_contract()
+            if schedule is not None else None),
+        warmup_review=None,
         field_mcse_contract=field_mcse_contract,
         sampling_status='NOT_ASSESSED_FOR_STATIONARITY',
         limitations='bounded development transitions, no stationarity/UQ; fine2 needs fine4 sensitivity; conditional selection; MW/M31 ambiguous,M33 unresolved')
@@ -354,7 +357,19 @@ def main():
                 report['rng_stream_states']={name:generator.bit_generator.state
                     for name,generator in chain_rngs.items()}
             checkpoint();save();print(json.dumps(row),flush=True)
-            if long_chain:step=schedule.next_step(step,i,info['log_acceptance'])
+            if long_chain:
+                step=schedule.next_step(step,i,info['log_acceptance'])
+                if i+1==schedule.warmup:
+                    warmup_review=review_warmup(report['trace'],
+                        expected_transitions=schedule.warmup,final_step=step,
+                        minimum_step=1e-6,maximum_step=schedule.maximum_step)
+                    warmup_review['adaptation']=schedule.adaptation_contract()
+                    report['warmup_review']=warmup_review
+                    save()
+                    if warmup_review['status']!='READY_FOR_RETAINED_DIAGNOSTIC_NOT_EQUILIBRATION':
+                        raise RuntimeError('warmup had zero accepted transitions; retained sampling was not started')
+                    report['frozen_production_step']=step
+                    save()
             elif i<warmup:step=float(np.clip(step*np.exp((np.exp(info['log_acceptance'])-.65)/np.sqrt(i+1)),1e-6,.3))
         if long_chain and accumulator.n:
             np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())

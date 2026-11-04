@@ -69,12 +69,24 @@ restore now adopts serialized arrays directly instead of allocating another
 4.625GiB of zero-filled state per scale. Five adapter tests, thirteen
 field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
 tests pass; the reporting-region helper has five geometry tests. The four-chain
-runner/replay path, field-MCSE checkpoint/replay recovery, warmup
-viability/adaptation contract, MCSE precision thresholds, and held-out stage
-remain incomplete. At N256 the two persistent scales alone require9.25GiB;
-finalization peak RSS is unmeasured. No GPU job
+runner/replay path, field-MCSE checkpoint/replay recovery, the proposed
+128/512 warmup/production contract, MCSE precision thresholds, and held-out
+stage remain incomplete. The legacy 48/12 one-chain diagnostic now records
+its diminishing warmup-only step-size rule and checks the complete warmup for
+valid transitions, bounded steps, and at least one accepted transition before
+retention. This is only an operational viability check—not equilibration or
+stationarity evidence. Seven focused schedule tests pass. At N256 the two
+persistent scales alone require9.25GiB; finalization peak RSS is unmeasured. No GPU job
 was submitted. Details and fail-closed requirements are in
 `CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`.
+
+Q-GOAL: this adds only a fail-closed operational warmup check on the route to
+the conditional z=0 posterior; it creates no field or posterior. MW/M31 remain
+role-ambiguous and M33 unresolved; their observables must constrain those same
+roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native truth IDs
+reserved for calibration/evaluation. Q-LEAN: a small schedule helper, runner
+hook and focused tests only—no target/data change, GPU calculation or extra
+diagnostic ladder.
 
 The current code bundle adds a tested independent standard-normal prior-start
 primitive and an opt-in `CF4_R2_START_POLICY=independent_prior` branch to the

@@ -133,8 +133,14 @@ runner**:
   direct accumulation exactly. It reads no likelihood or held-out data, but
   is not yet wired into runner resume and has no N256 cost/memory measurement.
   This remains one chain per runner invocation and does not implement the
-  proposed four-chain supervisor, sampler restoration from retained RNG
-  metadata, or warmup-end viability review. Legacy format-v1 state stores
+  proposed four-chain supervisor or sampler restoration from retained RNG
+  metadata. The legacy 48/12 schedule now records its diminishing
+  Robbins–Monro log-step equation and, after the complete 12-transition
+  warmup, validates transition records and step bounds; zero accepted
+  transitions stop before retention. A nonzero acceptance result only permits
+  the retained diagnostic to proceed and explicitly does not establish
+  equilibration or stationarity. Seven focused schedule tests pass. This is
+  not the proposed 128/512 warmup/production contract. Legacy format-v1 state stores
   remain readable and checksum-verifiable but cannot be extended without RNG
   history. The lossless state store is wired
   into this legacy long-chain path and redundant every-eighth full-field dumps
