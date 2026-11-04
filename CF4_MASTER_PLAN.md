@@ -9,6 +9,25 @@ Direct subsequent user instructions take precedence over this file.
 
 ## Current R2 update — 2026-11-04
 
+The targeted 32,768-cell support-chunk replay, Syntax job449672, completed on
+A100 (`gpu:A100:1`, exit0,13:58) from the same discarded N256 checkpoint as
+job447829. It performed one exact value+gradient target evaluation and zero
+HMC transitions. Checkpoint replay passed: objective
+8,515,507.148618123, gradient RMS1.1360368589, and the rebuilt support has
+the same28,440,519 components. The measured wall times are not a valid A/B
+because job449672 used A100 and job447829 used H100, with first-evaluation
+compilation effects. The wider chunk also increases padded work for the
+largest observed row. Keep the default16,384; close32,768 as an unproven
+optimization, with no sampler/posterior claim. Result:
+`CF4_R2_SUPPORT_CHUNK_REPLAY_RESULT_20261104.md`; raw record:
+`/gpfs/kjhan/CF4/z0_density/r2_support_chunk_bench_20261104/449672/result.json`.
+
+The exact-target speedup candidate is closed. The next R2 action is to resolve
+the observation-model calibration limitation and define a field-level
+Monte-Carlo-error/resource contract; do not read held-out outcomes or launch
+the multi-chain target before those are defensible. R2 remains NO-GO, and MW,
+M31 and M33 role/component requirements remain unchanged.
+
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight
 proposals accepted the surrogate stage and all eight were rejected by the exact
