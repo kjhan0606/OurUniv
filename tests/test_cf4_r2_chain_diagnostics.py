@@ -2,6 +2,12 @@ import unittest
 import numpy as np
 from cf4_r2_chain_diagnostics import (retained_field_observables,
     four_chain_scalar_diagnostics,scalar_diagnostics,retained_scalar_matrix)
+from cf4_r2_four_chain_report import evaluate_reports,main as four_chain_report_main
+import contextlib
+import io
+import json
+from pathlib import Path
+import tempfile
 
 
 class DiagnosticsTests(unittest.TestCase):
@@ -176,6 +182,40 @@ class DiagnosticsTests(unittest.TestCase):
             'NUMERICAL_OR_TARGET_FAILURE'
         with self.assertRaisesRegex(ValueError,'invalid retry'):
             four_chain_scalar_diagnostics(reports)
+
+    def test_executable_report_hashes_inputs_and_never_promotes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            paths=[]
+            for index in range(4):
+                path=Path(temporary)/f'chain-{index}.json'
+                path.write_text(json.dumps(self.synthetic_chain_report(index)))
+                paths.append(path)
+            result=evaluate_reports(paths)
+        self.assertEqual(len(result['input_reports']),4)
+        self.assertTrue(all(len(row['sha256'])==64 for row in result['input_reports']))
+        self.assertEqual(result['status'],
+            'FOUR_CHAIN_SCALAR_DIAGNOSTICS_ONLY_FIELD_GATE_PENDING')
+        self.assertFalse(result['R2_complete'])
+        self.assertFalse(result['heldout_scored'])
+
+    def test_executable_report_requires_distinct_paths_and_refuses_overwrite(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            paths=[]
+            for index in range(4):
+                path=Path(temporary)/f'chain-{index}.json'
+                path.write_text(json.dumps(self.synthetic_chain_report(index)))
+                paths.append(path)
+            with self.assertRaisesRegex(ValueError,'four distinct'):
+                evaluate_reports([paths[0],paths[0],paths[2],paths[3]])
+            output=Path(temporary)/'diagnostics.json'
+            output.write_text('keep-existing')
+            stderr=io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                status=four_chain_report_main([*(str(path) for path in paths),
+                    '--output',str(output)])
+            self.assertEqual(status,2)
+            self.assertEqual(output.read_text(),'keep-existing')
+            self.assertIn('File exists',stderr.getvalue())
 
     def test_rejections_remain_in_retained_trace(self):
         row=dict(warmup=False,accepted=False,fine_energy=1.,white_mean_square=1.,

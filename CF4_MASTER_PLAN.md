@@ -104,10 +104,14 @@ and training-region density/occupancy/flow summaries for each retained state.
 The fail-closed four-chain scalar gate checks stream identities, distinct
 recorded prior-start states and their allowed retry history, shared target and
 schedule, complete equal-length traces, and R-hat/ESS cutoffs without
-trimming. The combined focused CPU suite is 59/59 under Python 3.11. This is
-still not an executable four-chain supervisor/report or interrupted-run
-resume path; warmup viability, full-field gate integration, N256 summary
-overhead, and replay wall-time/memory have not been measured. Q-GOAL remains
+trimming. `scripts/cf4_r2_four_chain_report.py` now accepts exactly four
+distinct chain reports, records their SHA-256 provenance, refuses to overwrite
+an output file, and returns nonzero for invalid input or a failed scalar gate.
+Synthetic CLI-path and non-promotion regressions pass; the combined focused
+CPU suite is 61/61 under Python 3.11. This is not an integrated four-chain
+supervisor, restart path, or production qualification pipeline; warmup
+viability, full-field gate integration, N256 summary overhead, and replay
+wall-time/memory have not been measured. Q-GOAL remains
 unchanged: no posterior or map is produced, and MW/M31 roles plus M33 remain
 unresolved for the same future evolved LG field. Q-LEAN: these are the scalar
 convergence observables required by the run contract; no target, observation
