@@ -27,13 +27,24 @@ review rejected repeating the native-TNG RSD mock: it and the subsequent
 moment-aware/actual-state operator work already ran (410544–410888), and do
 not calibrate the actual CF4 mark-availability or group-selection law. The
 driver independently checked the cited artifacts and adopted that advice.
-The immediate R2 action is the source-matched observation-calibration
-decision in `CF4_R2_OBSERVATION_CALIBRATION_DECISION_20261104.md`; no public
-parent search is repeated and no email is sent. In parallel, retain the
-field-level Monte-Carlo-error/resource contract requirement. Do not read
-held-out outcomes or launch the multi-chain target until observation scope
-and computational precision/cost are defensible. R2 remains NO-GO, and MW,
-M31 and M33 role/component requirements remain unchanged.
+The source-matched observation-calibration decision is recorded in
+`CF4_R2_OBSERVATION_CALIBRATION_DECISION_20261104.md`; no public parent search
+was repeated and no email was sent. A subsequent read-only current-v6
+training-only PGC bridge found7,531 individual Kourkchi-2020 TF rows with raw
+HI/photometry inputs (5,448 SDSS-i and3,666 W1). Its forward conditional-TF
+specification is in `CF4_R2_TF_FORWARD_SOURCE_FACTOR_SPEC_20261104.md`. It
+does not establish the selection law: source/sky heterogeneity, magnitude
+column semantics, nonlinear field-to-redshift mapping, and shared member
+motions remain unresolved. The active count+raw-FP target is unchanged; adding
+TF would not repair the FP-selection limitation, while replacing FP would be
+a separate target revision. No TF code or calculation is authorized by this
+feasibility note.
+
+Continue the field-level Monte-Carlo-error/resource-contract work for the
+explicitly conditional v6 target. Do not read held-out outcomes or launch the
+multi-chain target until observation scope and computational precision/cost
+are defensible. R2 remains NO-GO, and MW, M31 and M33 role/component
+requirements remain unchanged.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight
@@ -55,11 +66,32 @@ resource ceiling exist. The model's missing full-survey selection/group
 calibration remains independent of sampler convergence. Decision and
 arithmetic: `CF4_R2_EXACT_N256_POSTERIOR_FEASIBILITY_20261104.md`.
 
+Read-only implementation review of the proposed conditional-v6 run contract
+found it is not executable as written: the existing N256 runner is single-chain
+with a 48/12 default long-chain schedule, lacks independent-start construction
+and map-level MCSE, and the current two-chain report has no held-out stage. The
+draft also sealed held-out outcomes but did not preserve enough retained states
+for later joint predictive scoring. Require lossless retained-state persistence
+and fix/test the chain and field-diagnostic path before any large run; estimate
+for four×512 float64 canonical states alone is about256GiB. Astra's read-only
+mid-course review returned **NO-GO as written, remediable gaps**. The driver
+adopts the supported corrections; the first code bundle now implements a
+lossless retained-state store with rejection-repeat, resume and checksum tests
+(6/6 pass), but the store is not integrated into a production chain runner.
+The 3,200 GPU-hour proposal was withdrawn because it excluded held-out scoring
+and implementation cost. The conditional-v6 posterior alone also cannot
+complete R2 while source-matched FP/group selection calibration remains
+unresolved. Findings and disposition are tracked in
+`CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`. No new job
+was submitted.
+
 R2 remains open/NO-GO: no posterior, uncertainty, calibrated heldout result,
 or promoted z=0 field exists. Do not run more sampler screens, retune the
 closed surrogate, read heldout outcomes, or start R3. The next decision is the
-large exact-target run's resource/precision contract versus a specifically
-justified cost reduction. MW/M31 remain role-ambiguous and M33 unresolved;
+implementation and regression of an auditable independent-chain, retained-
+state, and field-MCSE pipeline, while resolving the existing
+observation-calibration limitation; then cost the full sealed-heldout pass.
+MW/M31 remain role-ambiguous and M33 unresolved;
 their observables must constrain those roles on the same NEW evolved LG field
 at `<=0.3 cMpc/h`, with native truth identities reserved for calibration/
 evaluation. The present N256 field is 1.5 cMpc/h and does not deliver LG
