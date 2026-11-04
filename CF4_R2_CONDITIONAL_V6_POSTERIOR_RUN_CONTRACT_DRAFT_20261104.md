@@ -190,14 +190,34 @@ if any chain lacks a valid value instead of silently omitting it. Thirteen
 field-MCSE tests, five cross-chain tests, and the three existing
 posterior-moment tests pass.
 
-These are tested primitives, **not yet wired to the chain runner**. The actual
-reporting masks, independent-start production driver, and online chain-to-map
-integration remain unimplemented. One accumulator holds37 float64 full-grid
+These are tested primitives, **not yet wired to the chain runner**. The
+independent-start production driver and online chain-to-map integration remain
+unimplemented. One accumulator holds37 float64 full-grid
 arrays:4.625GiB at N256 before finalization temporaries; two batch scales
 therefore require at least9.25GiB of persistent accumulator state, in addition
 to the field, JAX host buffers, checkpoints, and finalization temporaries. No
 high-N memory profile or production job was run; the eventual Slurm memory
 request must retain the required20% headroom based on measured peak RSS.
+
+#### Reporting-domain decision — 2026-11-04
+
+The field-map summaries use the full periodic box plus one explicitly named
+training-data-bearing region. `src/cf4_r2_field_reporting_regions.py` builds
+that region from only the frozen population-major `train_keys`: union their
+observed 128-grid count voxels over tracer populations, then lift each
+3 cMpc/h coarse cell to its aligned 2x2x2 block of 1.5 cMpc/h native PM nodes.
+This uses the shared box origin and the native node convention at coordinate
+zero; held-out and buffered keys are not included. The helper rejects duplicate
+or out-of-range keys and non-integer refinement, with five focused geometry
+regressions in `tests/test_cf4_r2_field_reporting_regions.py`.
+
+This mask is a reporting domain for cells that contain training count data; it
+is **not** a claim that those PM nodes exhaust all likelihood influence. RSD,
+volume integration, and interpolation can transmit information beyond the
+same-coordinate coarse cells. The full-box summary remains mandatory, and the
+region must be reported with its explicit cell denominator. The mask builder
+has not yet been wired into a chain run, and it does not read held-out outcome
+values or generated-field/native-truth identities.
 
 **Q-GOAL:** this makes field-level uncertainty measurement more executable,
 but produces no posterior or validated z=0 map. MW/M31 are still

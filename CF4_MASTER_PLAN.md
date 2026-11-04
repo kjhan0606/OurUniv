@@ -50,8 +50,12 @@ The 2026-11-04 field-diagnostic bundle now has tested multi-scale,
 chain-local fixed-batch MCSE accumulators and a cross-chain spatial
 disagreement summarizer. Thirteen field-MCSE tests, five cross-chain tests,
 and the three existing posterior-moment tests pass. The code is not connected
-to the N256 chain runner or independent-start driver, and actual reporting
-masks remain to be frozen. Each batch scale holds37 float64 full-grid arrays
+to the N256 chain runner or independent-start driver. The full-box and
+training-count-cell reporting domains are now defined: the latter is built
+only from training keys and lifted from 128 coarse cells to aligned 256 native
+PM nodes; it is a data-bearing summary region, not a full likelihood-support
+claim. Its helper has focused geometry tests but is not yet wired to a chain.
+Each batch scale holds37 float64 full-grid arrays
 (4.625GiB at N256) before finalization temporaries; two scales need at least
 9.25GiB of accumulator state. No GPU job was submitted. Details and fail-closed
 next requirements are in
