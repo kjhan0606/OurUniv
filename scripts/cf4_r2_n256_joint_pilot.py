@@ -288,7 +288,9 @@ def main():
         report['schedule']=schedule.__dict__ if schedule else None
         report['retained_state_store']=(dict(path=str(state_store.directory),
             capacity=state_store.capacity,lossless_dtype='float64',
-            records_include_rejections=True,heldout_scored=False)
+            format_version=state_store.VERSION,
+            records_include_rejections=True,per_state_rng_state=True,
+            heldout_scored=False)
             if state_store is not None else None)
         def white_summary(q):
             spectrum=fft.fftn(q[:NIC].reshape((N,)*3),norm='ortho',workers=2)
@@ -300,7 +302,12 @@ def main():
         report.update(phase='BOUNDED_TRANSITIONS',initial_fine_energy=energy,initial_force_energy=coarse,
             initial_white=white_summary(q))
         def checkpoint():
-            np.savez(out/'accepted_checkpoint.npz',canonical=q,fine_energy=energy,force_energy=coarse,force_gradient=gradient)
+            rng_states=({name:generator.bit_generator.state
+                for name,generator in chain_rngs.items()} if chain_rngs is not None
+                else {'transition':rng.bit_generator.state})
+            np.savez(out/'accepted_checkpoint.npz',canonical=q,fine_energy=energy,
+                force_energy=coarse,force_gradient=gradient,
+                rng_stream_states_json=np.array(json.dumps(rng_states,sort_keys=True)))
         checkpoint();save()
         for i in range(maximum):
             before=q.copy()
@@ -327,7 +334,8 @@ def main():
                 field_mcse.update(accepted_field,transition=accumulator.n,
                     accepted=bool(info['accepted']))
                 state_store.append(q,previous_state=before,previous_target=before_energy,
-                    transition=i-warmup+1,accepted=info['accepted'],target_value=energy)
+                    transition=i-warmup+1,accepted=info['accepted'],target_value=energy,
+                    rng_state=rng.bit_generator.state)
                 report['retained_states']=accumulator.n
                 report['retained_state_records']=len(state_store)
                 if field_mcse.retained_states!=accumulator.n:

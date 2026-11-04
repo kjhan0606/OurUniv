@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+from collections.abc import Mapping
 
 import numpy as np
 
@@ -25,7 +26,7 @@ class CanonicalStateStore:
     resume; an indexed state with a bad checksum is an error, never skipped.
     """
 
-    VERSION = 1
+    VERSION = 2
     STATE_FILE = "canonical_states.npy"
     META_FILE = "canonical_states.meta.json"
     INDEX_FILE = "canonical_states.jsonl"
@@ -51,16 +52,24 @@ class CanonicalStateStore:
             raise ValueError("partial canonical-state store; preserve and inspect before resume")
         if all(present):
             metadata = json.loads(self.meta_path.read_text())
+            stored_version = metadata.get("version")
+            if (not isinstance(stored_version, int) or isinstance(stored_version, bool)
+                    or stored_version not in (1, self.VERSION)):
+                raise ValueError("unsupported canonical-state store format version")
+            expected["version"] = stored_version
             if metadata != expected:
                 raise ValueError("canonical-state store metadata/contract mismatch")
+            self.format_version = stored_version
             self.states = np.load(self.state_path, mmap_mode="r+", allow_pickle=False)
             if (self.states.shape != (self.capacity, self.dimension)
                     or self.states.dtype != np.dtype("<f8")):
                 raise ValueError("canonical-state array shape or dtype mismatch")
-            self.records = self._read_index(repair_partial_tail=True)
+            self.records = self._read_index(repair_partial_tail=True,
+                require_rng_state=self.format_version >= 2)
             if self.records:
                 self.read_state(len(self.records) - 1)
         else:
+            self.format_version = self.VERSION
             self.states = np.lib.format.open_memmap(self.state_path, mode="w+",
                 dtype=np.dtype("<f8"), shape=(self.capacity, self.dimension))
             self.states.flush()
@@ -73,7 +82,19 @@ class CanonicalStateStore:
         value = np.ascontiguousarray(np.asarray(state, dtype=np.dtype("<f8")))
         return hashlib.sha256(value.tobytes(order="C")).hexdigest()
 
-    def _read_index(self, *, repair_partial_tail):
+    @staticmethod
+    def _canonical_rng_state(rng_state):
+        if not isinstance(rng_state, Mapping) or not rng_state:
+            raise ValueError("nonempty JSON-compatible bit-generator state required")
+        try:
+            encoded = json.dumps(rng_state, sort_keys=True, allow_nan=False,
+                separators=(",", ":")).encode("utf-8")
+            normalized = json.loads(encoded)
+        except (TypeError, ValueError, OverflowError) as error:
+            raise ValueError("RNG state must be finite and JSON-compatible") from error
+        return normalized, hashlib.sha256(encoded).hexdigest()
+
+    def _read_index(self, *, repair_partial_tail, require_rng_state):
         with self.index_path.open("r+b" if repair_partial_tail else "rb") as stream:
             content = stream.read()
             last_newline = content.rfind(b"\n")
@@ -93,7 +114,16 @@ class CanonicalStateStore:
             expected_index = len(records)
             checksum = record.get("state_sha256")
             previous_checksum = record.get("previous_state_sha256")
+            rng_checksum = record.get("rng_state_sha256")
             transition = record.get("transition")
+            if require_rng_state:
+                try:
+                    _, verified_rng_checksum = self._canonical_rng_state(
+                        record.get("rng_state"))
+                except ValueError as error:
+                    raise ValueError(f"invalid RNG state at index {expected_index}") from error
+            else:
+                verified_rng_checksum = None
             if (record.get("index") != expected_index
                     or record.get("chain_id") != self.chain_id
                     or record.get("contract_id") != self.contract_id
@@ -101,6 +131,10 @@ class CanonicalStateStore:
                     or any(ch not in "0123456789abcdef" for ch in checksum)
                     or not isinstance(previous_checksum, str) or len(previous_checksum) != 64
                     or any(ch not in "0123456789abcdef" for ch in previous_checksum)
+                    or (require_rng_state and (not isinstance(rng_checksum, str)
+                        or len(rng_checksum) != 64
+                        or any(ch not in "0123456789abcdef" for ch in rng_checksum)
+                        or rng_checksum != verified_rng_checksum))
                     or not isinstance(record.get("accepted"), bool)
                     or not isinstance(transition, int) or isinstance(transition, bool)
                     or transition < 1
@@ -124,8 +158,10 @@ class CanonicalStateStore:
         return len(self.records)
 
     def append(self, state, *, previous_state, previous_target, transition,
-               accepted, target_value):
+               accepted, target_value, rng_state):
         """Persist one post-Metropolis state, even when the proposal rejected."""
+        if self.format_version != self.VERSION:
+            raise ValueError("legacy canonical-state store is readable but cannot be extended safely")
         if len(self.records) >= self.capacity:
             raise ValueError("canonical-state store capacity exhausted")
         if not isinstance(transition, int) or isinstance(transition, bool) or transition < 1:
@@ -138,6 +174,7 @@ class CanonicalStateStore:
         previous_target = float(previous_target)
         if not math.isfinite(target_value) or not math.isfinite(previous_target):
             raise ValueError("retained target value must be finite")
+        rng_state, rng_checksum = self._canonical_rng_state(rng_state)
         raw_q = np.asarray(state)
         raw_previous = np.asarray(previous_state)
         if (raw_q.dtype.kind != "f" or raw_q.dtype.itemsize != 8
@@ -170,7 +207,8 @@ class CanonicalStateStore:
             contract_id=self.contract_id, transition=transition,
             accepted=bool(accepted), target_value=target_value,
             state_sha256=checksum, previous_target_value=previous_target,
-            previous_state_sha256=previous_checksum)
+            previous_state_sha256=previous_checksum,
+            rng_state=rng_state,rng_state_sha256=rng_checksum)
         encoded = (json.dumps(record, sort_keys=True, allow_nan=False,
             separators=(",", ":")) + "\n").encode("utf-8")
         with self.index_path.open("ab", buffering=0) as stream:
@@ -198,4 +236,5 @@ class CanonicalStateStore:
             self.read_state(index, verify=True)
         return dict(chain_id=self.chain_id, states=len(self.records),
             dimension=self.dimension, contract_id=self.contract_id,
-            all_checksums_valid=True)
+            all_checksums_valid=True,
+            all_rng_state_checksums_valid=(self.format_version >= 2))

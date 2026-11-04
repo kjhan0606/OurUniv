@@ -73,11 +73,15 @@ exact fine-target count score is `-inf` while the linked raw-mark score is
 finite; support errors and all other nonfinite evaluations abort. The branch
 is still embedded in the legacy 48-proposal/12-warmup one-chain diagnostic,
 not a four-chain production driver or the proposed 128/512 contract. Seven
-start-helper tests and 45 targeted CPU regressions pass under the Slurm runner's
-Python 3.11 environment, but no real N256 target/GPU start was attempted.
-RNG-aware per-state replay, warmup
-viability, map precision thresholds and calibrated observation selection
-remain open; R2 stays NO-GO and no posterior/cost claim follows.
+start-helper tests and 49 targeted CPU regressions pass under the Slurm runner's
+Python 3.11 environment, but no real N256 target/GPU start was attempted. The
+canonical state index is now format v2 and stores/checksums the post-transition
+NumPy RNG state beside every retained q, including rejections. This is audit
+metadata, not yet an executable crash/restart path: the accepted-state
+checkpoint also records all current RNG streams, but the runner does not yet
+restore them or synchronize field-MCSE/checkpoint replay. Warmup viability, map
+precision thresholds and calibrated observation selection also remain open;
+R2 stays NO-GO and no posterior/cost claim follows.
 
 Q-GOAL: this enables sampler initialization only; it creates no z=0
 posterior or promoted field. MW/M31 remain role-ambiguous and M33 unresolved;

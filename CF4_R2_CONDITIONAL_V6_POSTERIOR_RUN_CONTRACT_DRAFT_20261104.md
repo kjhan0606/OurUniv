@@ -116,13 +116,21 @@ runner**:
   `CF4_R2_MASTER_SEED` and `CF4_R2_CHAIN_INDEX` select the deterministic stream
   family, while `CF4_R2_CHAIN_ID` may name its retained-state store. Support
   and numerical failures abort. Seven focused start-helper tests and the
-  targeted 45-test CPU regression set pass under the runner's Python 3.11.
-  This remains one chain per runner
-  invocation and does not implement the proposed four-chain supervisor,
-  per-retained-state RNG replay, or warmup-end viability review. The lossless
-  state store is wired into this legacy long-chain path and redundant
-  every-eighth full-field dumps were removed; this still does not turn the
-  diagnostic into the proposed production pipeline.
+  targeted 49-test CPU regression set pass under the runner's Python 3.11.
+  The canonical state store is format v2 and now stores/checksums the
+  post-transition NumPy RNG state with each retained state, including exact
+  rejection repeats; a synthetic restore test reproduces the next RNG draws.
+  The accepted-state checkpoint records all current RNG streams, but no runner
+  recovery path yet restores the state and reconciles it with field-MCSE
+  sufficient statistics.
+  This remains one chain per runner invocation and does not implement the
+  proposed four-chain supervisor, sampler restoration from retained RNG
+  metadata, or warmup-end viability review. Legacy format-v1 state stores
+  remain readable and checksum-verifiable but cannot be extended without RNG
+  history. The lossless state store is wired
+  into this legacy long-chain path and redundant every-eighth full-field dumps
+  were removed; this still does not turn the diagnostic into the proposed
+  production pipeline.
 - `src/cf4_r2_posterior_moments.py` accumulates posterior sample moments and
   occupancy, but no fixed-batch field means or map-level MCSE. Its output
   explicitly sets `posterior_MC_error_estimated=False`.
@@ -149,8 +157,10 @@ these findings:
    keeping those outcomes sealed. The lossless per-transition canonical-state
    store is implemented in `src/cf4_r2_canonical_state_store.py`, wired into
    the existing one-chain long-chain diagnostic, and tested with exact
-   rejection-repeat/resume cases (7/7 tests pass). It is not yet connected to
-   an independent-start production driver.
+   rejection-repeat/resume cases. Its v2 index also persists/checksums
+   transition RNG state; eleven canonical-store tests pass. Legacy v1 stores
+   remain inspectable but are not resume-compatible. The store is not yet
+   connected to an independent-start production driver or runner resume path.
 2. The candidate field criterion is incomplete. The implementation must
    define reporting regions, batch lengths/count, nonfinite and zero-variance
    handling, cross-chain map disagreement, and posterior-SD-map precision;
