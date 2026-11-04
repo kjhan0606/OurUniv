@@ -143,3 +143,189 @@ def compare_chain_field_maps(chain_means, chain_posterior_sds, draw_counts,
                 mean_ratio, defined, within_sd, regions),
             posterior_sd_map_disagreement_over_mean_sd=_summaries(
                 sd_ratio, defined, mean_sd, regions)))
+
+
+class StreamingChainFieldMapComparison:
+    """Summarize cross-chain map disagreement while loading one chain at a time.
+
+    Unlike :func:`compare_chain_field_maps`, this accumulator does not retain
+    the chain axis or return full-grid maps. It is intended for large saved
+    fields where the caller can stream map arrays from their source archive.
+    The returned regional summaries use the same definitions as the full-map
+    comparison.
+    """
+
+    def __init__(self, map_shape, draw_counts, *, regions=None):
+        self.map_shape = tuple(map_shape)
+        counts = np.asarray(draw_counts)
+        if (len(self.map_shape) not in (3, 4)
+                or min(self.map_shape) < 1
+                or counts.ndim != 1 or counts.size < 2
+                or not np.issubdtype(counts.dtype, np.integer)
+                or np.any(counts < 2)):
+            raise ValueError("valid map shape and at least two chain draw counts required")
+        self.draw_counts = counts.astype(np.int64, copy=True)
+        self.weights = self.draw_counts.astype(np.float64) / self.draw_counts.sum()
+        if regions is None:
+            regions = {"full_box": np.ones(self.map_shape[-3:], dtype=bool)}
+        elif "full_box" not in regions:
+            regions = {"full_box": np.ones(self.map_shape[-3:], dtype=bool), **regions}
+        self.regions = {}
+        for name, raw_mask in regions.items():
+            mask = np.asarray(raw_mask)
+            if mask.dtype != np.bool_ or mask.ndim != 3:
+                raise ValueError(f"region {name!r} must be a three-dimensional boolean map")
+            if (self.map_shape[-3:] != mask.shape
+                    or self.map_shape[:-3] not in ((), (self.map_shape[0],))):
+                raise ValueError(f"region {name!r} does not match field map shape")
+            self.regions[name] = mask
+        self._leading_components = (self.map_shape[0]
+            if len(self.map_shape) == 4 else None)
+        self.valid_chain_count = np.zeros(self.map_shape, dtype=np.uint16)
+        self.mean_average = np.zeros(self.map_shape, dtype=np.float64)
+        self.mean_m2 = np.zeros(self.map_shape, dtype=np.float64)
+        self.sd_average = np.zeros(self.map_shape, dtype=np.float64)
+        self.sd_m2 = np.zeros(self.map_shape, dtype=np.float64)
+        self.within_sd_variance = np.zeros(self.map_shape, dtype=np.float64)
+        self.weighted_sd_average = np.zeros(self.map_shape, dtype=np.float64)
+        self._updates = 0
+
+    @staticmethod
+    def _update_welford(average, m2, values, valid, count_ratio, count_new):
+        delta = np.subtract(values, average)
+        np.copyto(delta, 0., where=~valid)
+        squared = delta * delta
+        squared *= count_ratio
+        m2 += squared
+        np.divide(delta, count_new, out=delta, where=valid)
+        average += delta
+
+    def update(self, means, posterior_sds, *, valid=None):
+        if self._updates >= self.draw_counts.size:
+            raise ValueError("more chain maps supplied than declared")
+        means = np.asarray(means, dtype=np.float64)
+        sds = np.asarray(posterior_sds, dtype=np.float64)
+        if means.shape != self.map_shape or sds.shape != self.map_shape:
+            raise ValueError("streamed chain maps must match the frozen map shape")
+        finite = np.isfinite(means) & np.isfinite(sds) & (sds >= 0.)
+        if valid is None:
+            good = finite
+        else:
+            valid = np.asarray(valid)
+            if valid.dtype != np.bool_ or valid.shape != self.map_shape:
+                raise ValueError("streamed validity map must be boolean and aligned")
+            if np.any(valid & ~finite):
+                raise ValueError("valid chain cells must have finite means and nonnegative SDs")
+            good = valid & finite
+
+        old_count = self.valid_chain_count
+        new_count = old_count.copy()
+        np.add(new_count, good, out=new_count, casting="unsafe")
+        count_ratio = np.zeros(self.map_shape, dtype=np.float64)
+        np.divide(old_count, new_count, out=count_ratio, where=good)
+        self._update_welford(self.mean_average, self.mean_m2,
+            means, good, count_ratio, new_count)
+        self._update_welford(self.sd_average, self.sd_m2,
+            sds, good, count_ratio, new_count)
+
+        temporary = np.empty(self.map_shape, dtype=np.float64)
+        with np.errstate(over="ignore", invalid="ignore"):
+            np.multiply(sds, sds, out=temporary)
+        if not np.isfinite(temporary[good]).all():
+            raise ValueError("chain posterior-SD map squares overflow float64")
+        np.copyto(temporary, 0., where=~good)
+        temporary *= self.weights[self._updates]
+        self.within_sd_variance += temporary
+        np.multiply(sds, self.weights[self._updates], out=temporary)
+        np.copyto(temporary, 0., where=~good)
+        self.weighted_sd_average += temporary
+        self.valid_chain_count = new_count
+        self._updates += 1
+
+    @staticmethod
+    def _regional_ratio_summary(numerator_sd, denominator_sd, defined,
+            region_cell_count):
+        zero = defined & (denominator_sd == 0.)
+        positive = defined & (denominator_sd > 0.)
+        ratio = np.full(denominator_sd.shape, np.nan, dtype=np.float64)
+        np.divide(numerator_sd, denominator_sd, out=ratio, where=positive)
+        ratio[zero & (numerator_sd == 0.)] = 0.
+        ratio[zero & (numerator_sd > 0.)] = np.inf
+        finite = ratio[defined & np.isfinite(ratio)]
+        return dict(region_cells=int(region_cell_count),
+            defined_cells=int(defined.sum()),
+            undefined_cells=int(region_cell_count - defined.sum()),
+            finite_ratio_cells=int(finite.size),
+            nonfinite_ratio_cells=int(defined.sum() - finite.size),
+            zero_denominator_cells=int(zero.sum()),
+            p50=float(np.percentile(finite, 50)) if finite.size else None,
+            p95=float(np.percentile(finite, 95)) if finite.size else None,
+            p99=float(np.percentile(finite, 99)) if finite.size else None,
+            max_finite=float(np.max(finite)) if finite.size else None)
+
+    def _summarize_region(self, region):
+        components = (range(self._leading_components)
+            if self._leading_components is not None else (None,))
+        summaries = []
+        for component in components:
+            index = (component, region) if component is not None else region
+            counts = self.valid_chain_count[index]
+            defined = counts == self.draw_counts.size
+            mean_between = np.sqrt(self.mean_m2[index] / (self.draw_counts.size - 1))
+            within_sd = np.sqrt(self.within_sd_variance[index])
+            sd_between = np.sqrt(self.sd_m2[index] / (self.draw_counts.size - 1))
+            mean_sd = self.weighted_sd_average[index]
+            summaries.append(dict(
+                mean_map_disagreement_over_within_sd=
+                    self._regional_ratio_summary(mean_between, within_sd,
+                        defined, int(region.sum())),
+                posterior_sd_map_disagreement_over_mean_sd=
+                    self._regional_ratio_summary(sd_between, mean_sd,
+                        defined, int(region.sum()))))
+        return summaries if self._leading_components is not None else summaries[0]
+
+    def finalize(self):
+        if self._updates != self.draw_counts.size:
+            raise ValueError("stream ended before all declared chain maps were read")
+        by_region = {name: self._summarize_region(region)
+            for name, region in self.regions.items()}
+        if self._leading_components is None:
+            mean_summary = {name: value[
+                "mean_map_disagreement_over_within_sd"]
+                for name, value in by_region.items()}
+            sd_summary = {name: value[
+                "posterior_sd_map_disagreement_over_mean_sd"]
+                for name, value in by_region.items()}
+        else:
+            mean_summary = [{name: value[axis][
+                "mean_map_disagreement_over_within_sd"]
+                for name, value in by_region.items()}
+                for axis in range(self._leading_components)]
+            sd_summary = [{name: value[axis][
+                "posterior_sd_map_disagreement_over_mean_sd"]
+                for name, value in by_region.items()}
+                for axis in range(self._leading_components)]
+        return dict(
+            status="CROSS_CHAIN_FIELD_DISAGREEMENT_DIAGNOSTIC_NOT_CONVERGENCE_EVIDENCE",
+            n_chains=int(self.draw_counts.size), draw_counts=self.draw_counts.copy(),
+            total_retained_states=int(self.draw_counts.sum()),
+            regional_summary=dict(
+                mean_map_disagreement_over_within_sd=mean_summary,
+                posterior_sd_map_disagreement_over_mean_sd=sd_summary))
+
+
+def compare_chain_field_maps_streaming(chain_maps, draw_counts, *, regions=None):
+    """Consume ``(mean, posterior_sd, valid)`` maps one chain at a time."""
+    iterator = iter(chain_maps)
+    try:
+        first_mean, first_sd, first_valid = next(iterator)
+    except StopIteration as error:
+        raise ValueError("at least two streamed chain maps are required") from error
+    accumulator = StreamingChainFieldMapComparison(
+        np.asarray(first_mean).shape, draw_counts, regions=regions)
+    accumulator.update(first_mean, first_sd, valid=first_valid)
+    del first_mean, first_sd, first_valid
+    for mean, posterior_sd, valid in iterator:
+        accumulator.update(mean, posterior_sd, valid=valid)
+        del mean, posterior_sd, valid
+    return accumulator.finalize()

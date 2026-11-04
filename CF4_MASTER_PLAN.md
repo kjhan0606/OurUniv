@@ -67,7 +67,7 @@ unjustified defaults are selected. Each scale finalizes independently so the
 two sets of full-map outputs are not simultaneously retained. Checkpoint
 restore now adopts serialized arrays directly instead of allocating another
 4.625GiB of zero-filled state per scale. Seven adapter tests, seventeen
-field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
+field-MCSE primitive tests, seven cross-chain tests, and three posterior-moment
 tests pass; the reporting-region helper has five geometry tests. The runner
 now writes each normally completed chain's field-MCSE sufficient statistics
 to `field_mcse_sufficient_statistics_unassessed.npz`, refusing to overwrite an
@@ -78,8 +78,11 @@ not a periodic crash/restart checkpoint. A file-based four-chain field report
 now exists in `scripts/cf4_r2_four_chain_field_mcse_report.py`: it verifies
 four distinct chain-indexed RNG designs and matching target/domain metadata,
 computes chain-separated density/velocity/occupancy disagreement before the
-destructive pooled merge, and emits only scalar regional summaries. Four
-synthetic NPZ/report tests pass. It does not run or pass the scalar convergence
+destructive pooled merge, and emits only scalar regional summaries. The map
+comparison now reads one chain's selected map members at a time and uses
+online Welford updates; its regional summaries agree with the original
+in-memory comparator within `1e-12` in two added regressions. Four synthetic
+NPZ/report tests pass. It does not run or pass the scalar convergence
 gate, select MCSE thresholds, or promote a field. The two-accumulator raw
 array floor is18.5GiB at N256, excluding finalization temporaries; N256 memory
 and I/O remain unmeasured. The proposed 128/512 warmup/production contract,

@@ -13,7 +13,7 @@ from pathlib import Path
 
 import numpy as np
 
-from cf4_r2_cross_chain_field_diagnostics import compare_chain_field_maps
+from cf4_r2_cross_chain_field_diagnostics import compare_chain_field_maps_streaming
 from cf4_r2_field_reporting_regions import training_count_cell_region
 from cf4_r2_retained_field_mcse import RetainedFieldMCSEDiagnostics
 
@@ -131,36 +131,42 @@ def _load_statistics(path, train_keys, expected_summary):
     return diagnostics
 
 
-def _load_chain_maps(paths, shape, batch_size):
-    density_mean = np.empty((4,) + shape, dtype=np.float64)
-    density_sd = np.empty_like(density_mean)
-    velocity_mean = np.empty((4, 3) + shape, dtype=np.float64)
-    velocity_sd = np.empty_like(velocity_mean)
-    velocity_valid = np.empty((4, 3) + shape, dtype=bool)
-    occupancy_mean = np.empty((4,) + shape, dtype=np.float64)
-    occupancy_sd = np.empty_like(occupancy_mean)
-    for index, path in enumerate(paths):
-        with np.load(path, allow_pickle=False) as maps:
-            density_mean[index] = maps["density_contrast_mean"]
-            density_sd[index] = maps["density_contrast_posterior_sd"]
-            velocity_mean[index] = maps["velocity_conditional_mean"]
-            velocity_sd[index] = maps["velocity_conditional_posterior_sd"]
-            velocity_valid[index] = maps["velocity_variance_defined"]
-            occupancy_mean[index] = maps["velocity_occupancy_fraction"]
-            occupancy_sd[index] = maps["velocity_occupancy_posterior_sd"]
-    return dict(density_mean=density_mean, density_sd=density_sd,
-        velocity_mean=velocity_mean, velocity_sd=velocity_sd,
-        velocity_valid=velocity_valid, occupancy_mean=occupancy_mean,
-        occupancy_sd=occupancy_sd)
+def _cross_chain_summary_from_files(paths, *, map_shape, draw_counts,
+        regions, mean_member, sd_member, valid_member=None):
+    def chain_maps():
+        for path in paths:
+            with np.load(path, allow_pickle=False) as archive:
+                mean = np.asarray(archive[mean_member], dtype=np.float64)
+                posterior_sd = np.asarray(archive[sd_member], dtype=np.float64)
+                valid = (None if valid_member is None else
+                    np.asarray(archive[valid_member], dtype=bool))
+                if mean.shape != map_shape or posterior_sd.shape != map_shape:
+                    raise ValueError("chain map shape differs from the field-MCSE grid")
+                if valid is not None and valid.shape != map_shape:
+                    raise ValueError("chain map validity shape differs from the field grid")
+                yield mean, posterior_sd, valid
+                del mean, posterior_sd, valid
 
-
-def _cross_chain_summary(means, sds, draw_counts, regions, valid=None):
-    result = compare_chain_field_maps(means, sds, draw_counts,
-        valid=valid, regions=regions)
-    summary = dict(status=result["status"], draw_counts=result["draw_counts"].tolist(),
+    result = compare_chain_field_maps_streaming(chain_maps(), draw_counts,
+        regions=regions)
+    return dict(status=result["status"],
+        draw_counts=result["draw_counts"].tolist(),
+        total_retained_states=result["total_retained_states"],
         regional_summary=result["regional_summary"])
-    del result
-    return summary
+
+
+def _component_summary_list(result):
+    """Restore the report's historical one-entry-per-velocity-component shape."""
+    regional = result["regional_summary"]
+    mean = regional["mean_map_disagreement_over_within_sd"]
+    sd = regional["posterior_sd_map_disagreement_over_mean_sd"]
+    return [dict(status=result["status"],
+        draw_counts=list(result["draw_counts"]),
+        total_retained_states=result["total_retained_states"],
+        regional_summary=dict(
+            mean_map_disagreement_over_within_sd=mean[axis],
+            posterior_sd_map_disagreement_over_mean_sd=sd[axis]))
+        for axis in range(len(mean))]
 
 
 def evaluate_four_chain_field_mcse(report_paths, *, train_keys):
@@ -215,19 +221,25 @@ def evaluate_four_chain_field_mcse(report_paths, *, train_keys):
         RetainedFieldMCSEDiagnostics.REGION_NAME: region}
     chain_counts = np.asarray([item["field_summary"]["retained_states"]
         for item in metadata], dtype=np.int64)
+    if len(set(chain_counts.tolist())) != 1:
+        raise ValueError("field-MCSE report requires equal retained chain lengths")
 
     # Preserve chain-specific disagreement before the destructive pooled merge.
-    maps = _load_chain_maps(map_paths, shape, first_batch_size)
     cross_chain = dict(
-        density=_cross_chain_summary(maps["density_mean"], maps["density_sd"],
-            chain_counts, regions),
-        velocity_components=[_cross_chain_summary(
-            maps["velocity_mean"][:, axis], maps["velocity_sd"][:, axis],
-            chain_counts, regions, valid=maps["velocity_valid"][:, axis])
-            for axis in range(3)],
-        occupancy=_cross_chain_summary(maps["occupancy_mean"],
-            maps["occupancy_sd"], chain_counts, regions))
-    del maps
+        density=_cross_chain_summary_from_files(map_paths, map_shape=shape,
+            draw_counts=chain_counts, regions=regions,
+            mean_member="density_contrast_mean",
+            sd_member="density_contrast_posterior_sd"),
+        velocity_components=_component_summary_list(
+            _cross_chain_summary_from_files(map_paths, map_shape=(3,) + shape,
+                draw_counts=chain_counts, regions=regions,
+                mean_member="velocity_conditional_mean",
+                sd_member="velocity_conditional_posterior_sd",
+                valid_member="velocity_variance_defined")),
+        occupancy=_cross_chain_summary_from_files(map_paths, map_shape=shape,
+            draw_counts=chain_counts, regions=regions,
+            mean_member="velocity_occupancy_fraction",
+            sd_member="velocity_occupancy_posterior_sd"))
     gc.collect()
 
     # Load/merge one source chain at a time: only two full accumulators are

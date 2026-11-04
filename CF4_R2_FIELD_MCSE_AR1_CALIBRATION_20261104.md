@@ -103,3 +103,10 @@ calibrate batch lengths on spatially correlated synthetic maps with
 heterogeneous autocorrelation. Keep all target/held-out data sealed and R2
 NO-GO until observation scope and the full resource/MCSE contract are
 defensible.
+
+Before that N256 profile, the cross-chain map comparison was changed to stream
+one chain's selected density/velocity/occupancy members at a time through
+online Welford accumulators. This avoids retaining all four chain maps at once
+and preserves the existing regional summaries; scalar and three-component
+regressions agree with the full in-memory comparator within `1e-12`. This is
+an implementation-memory reduction, not an N256 memory/I/O measurement.

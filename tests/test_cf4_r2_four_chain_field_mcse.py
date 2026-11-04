@@ -100,6 +100,8 @@ class FourChainFieldMCSEReportTests(unittest.TestCase):
             for item in result["statistics_files"]))
         self.assertTrue(all(item["selected_members_crc_verified"]
             for item in result["map_files"]))
+        # The report CLI serializes this structure with allow_nan=False.
+        json.dumps(result, allow_nan=False)
 
     def test_refuses_wrong_training_keys(self):
         with self.assertRaisesRegex(ValueError, "training-key identity"):

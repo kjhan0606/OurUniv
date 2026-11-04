@@ -170,7 +170,11 @@ runner**:
   `scripts/cf4_r2_four_chain_field_mcse_report.py` now reads four completed
   chain reports, verifies the four chain-indexed RNG streams and shared target
   contract, computes chain-separated map disagreement before pooling, and
-  combines persisted sufficient statistics one source chain at a time. It
+  combines persisted sufficient statistics one source chain at a time. The
+  map comparison streams one chain's selected map members through online
+  Welford summaries instead of retaining all four chain maps at once; two new
+  tests match its scalar/vector regional summaries to the original
+  in-memory comparator within `1e-12`. It
   reads only training keys from the supplied split and never reads held-out
   outcomes. Four small synthetic NPZ/report tests pass. This report explicitly
   does not evaluate the scalar convergence gate or promote a field. It is not
