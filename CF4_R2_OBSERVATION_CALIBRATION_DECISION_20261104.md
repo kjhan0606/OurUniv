@@ -51,6 +51,65 @@ This check adopts Astra's advice to reject a repeated mock bundle, after
 independently checking the cited repository evidence. The advice is
 mid-course guidance, not an R2 exit audit, posterior promotion, or R3 approval.
 
+## Selection-factor cancellation audit — 2026-11-04
+
+Astra's later read-only advice was **NO-GO** for treating a public DR14
+reconstruction as closure of this blocker, but **CONDITIONAL GO** for using
+the existing SDSS-PV mocks only to test the FP subfactor under their own
+selection model. The driver checked the current factor wiring directly:
+
+\[
+\pi(F,\theta\mid C,Y_{A=1})\;\propto\;
+\pi(F,\theta)\,p(C\mid F,\theta_c)
+\prod_{i\in I_{\rm linked}}p(Y_i\mid C_i,A_i=1,T_i=1,F,\theta_p),
+\]
+
+where \(F\) is the evolved field, \(C\) is the observed 2M++ count
+catalogue, \(A_i\) denotes entry into the linked CF4/Tempel/SDSS-PV mark
+cohort, and \(T_i\) denotes the explicitly modeled per-object FP
+measurement cuts. In code, the first factor is the single sparse Poisson
+count score (`count_field_loglike`); the second is the source-weighted raw
+mark numerator divided by its same-state cut-normalization integral
+(`raw_field_logpdf` / `row_logpdf`). The latter includes the declared finite
+K/magnitude support and FP cut rectangle. It does **not** supply
+\(p(A\mid C,F)\): source eligibility, targeting, redshift success, usable
+mark availability, and catalogue linkage into the 1,414-row cohort are not
+represented by that denominator. Nor is another `f_n` factor appropriate;
+the published object-level correction is already reflected in the source
+likelihood definition and is not group inclusion.
+
+This omission is not automatically fatal to every conditional likelihood.
+The cohort-selection factor can be dropped for field inference only if its
+probability is constant in \(F\) after conditioning on the variables actually
+held fixed in this target (equivalently, a defensible conditional-independence
+argument for \(A\)). If availability depends on latent distance, velocity,
+environment, FP residual, or unconditioned group properties, the term need not
+cancel. The frozen 47,121 count rows and 1,414 selected marks contain neither
+the eligible non-mark roster nor a demonstrated set of sufficient observed
+conditioning variables; the code does not establish the required
+independence. Therefore the existing factorization remains an explicitly
+conditional development target, not evidence that mark availability is
+ignorable or a full-survey calibrated posterior.
+
+Driver disposition: adopt Astra's distinction, but do not repeat the DR14
+catalogue/mock sweep, request data by email, add an arbitrary selection prior,
+or launch a sampler to compensate. Preserve the conditional-v6 boundary and
+R2 NO-GO. If a source-matched denominator is unavailable, only a separately
+justified selection-independence argument could change this decision; the
+current selected-only evidence does not provide one.
+
+**Q-GOAL:** this resolves which observation factor is presently represented,
+not the required z=0 posterior, its uncertainty, or held-out prediction. MW
+and M31 remain role-ambiguous and M33 unresolved; all three must ultimately
+constrain those same components on the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with native truth identities reserved for calibration and
+evaluation.
+
+**Q-LEAN:** one code-to-likelihood factorization check using existing files;
+no new catalogue extraction, archive pass, simulation, sampler screen, or
+additional instrumentation. The result does not close observation
+calibration.
+
 ## Minimum source-matched information to change the decision
 
 For the active training cohort only, seek documentation or a parent extract

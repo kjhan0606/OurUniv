@@ -40,6 +40,17 @@ TF would not repair the FP-selection limitation, while replacing FP would be
 a separate target revision. No TF code or calculation is authorized by this
 feasibility note.
 
+A bounded selection-factor cancellation check (Astra advice, independently
+verified against the current code) confirms that the target includes the
+2M++ count Poisson factor and the raw FP likelihood normalized over its
+declared per-object measurement cuts, but no factor for entry/linkage into
+the 1,414-mark CF4/Tempel/SDSS-PV cohort. Omitting that cohort-selection factor
+is defensible only if its probability is field-independent after conditioning
+on variables actually held fixed; the current 47,121 count rows and selected
+marks do not establish this. The conditional-v6 target remains explicitly
+conditional, and R2 remains NO-GO. No archive query, email, or sampler was
+launched. Details: `CF4_R2_OBSERVATION_CALIBRATION_DECISION_20261104.md`.
+
 Continue the field-level Monte-Carlo-error/resource-contract work for the
 explicitly conditional v6 target. Do not read held-out outcomes or launch the
 multi-chain target until observation scope and computational precision/cost
