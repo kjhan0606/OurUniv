@@ -77,12 +77,32 @@ SD-map stability; an MCSE criterion for the mean alone does not validate the
 uncertainty map. Any percentile gate must be reported separately for the full
 box and each observation-informed region, with its valid-cell denominator.
 
-The first-version `p95 MCSE(mean)/posterior_SD <=0.10` remains only a
-candidate threshold, not yet a complete field criterion: batch lengths,
-regional domains, zero/invalid-cell policy, cross-chain disagreement and
-posterior-SD precision must be fixed in the tested implementation. If these
-cannot be estimated stably at the proposed draw count, report insufficient
-Monte Carlo precision rather than promote the maps.
+## Spatial precision-gate correction — 2026-11-05
+
+The first-version regional point-estimate rule
+`p95 MCSE(mean)/posterior_SD <=0.10` is **not a qualified production gate**.
+The spatial synthetic run at job450009 found substantial marginal
+false-passing against its declared velocity-y reference in a 147-cell
+synthetic central region: for batch64, 1.17%, 7.42%, and 23.83% at spatial
+correlation lengths0, 1, and2 cells; batch32 gives25.78%, 39.06%, and48.05%.
+At length2/batch64, the Wilson95% interval is19.02–29.41%. These are
+per-observable/per-scale rates, **not** the joint false-acceptance rate of the
+complete gate. The velocity reference is asymptotic, and the generator's
+spatially varying AR process does not establish joint spatial stationarity.
+The archived study also did not preserve paired replicates needed to evaluate
+the conjunction. See
+`CF4_R2_SPATIAL_MCSE_CALIBRATION_PLAN_20261104.md`.
+
+Therefore keep0.10 descriptive/provisional only; do not pass production chains
+using this point estimate and do not tune an inflation factor or replacement
+threshold against the same development run. Before another calibration,
+specify the actual joint acceptance event across scales, observables, regions,
+and map summaries; set an acceptable false-acceptance probability; distinguish
+exact finite-length references from asymptotic references; preserve paired
+replicates; and fail closed on unexpected undefined/nonfinite cells. No new
+batch-length, threshold, or correlation sweep is implied. If a defensible
+precision contract cannot be demonstrated at the available sample count,
+report insufficient Monte Carlo precision and do not promote the maps.
 
 Accumulate posterior moments and fixed-batch map summaries online; full
 density/velocity map samples need not be written for every state. However,
