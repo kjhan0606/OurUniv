@@ -50,6 +50,19 @@ references. This does not settle the production threshold or batch sizes.
   or resource/time stop ends the job. No automatic retry, parameter ladder,
   threshold retuning, or interpretation as an R2 chain is permitted.
 
+## Startup correction — 2026-11-04
+
+The first Syntax submission, job450007, failed six seconds after start because
+the pinned `circle` Python environment does not install `pytest`. The synthetic
+study never started and no tests ran in that allocation; its job-specific
+output directory is preserved empty. The local regression uses only the
+standard-library `unittest` framework, so the wrapper is corrected to run that
+same focused test file with `unittest discover`. One source-pinned retry of the
+identical design and resource cap is appropriate: this is an environment/test-
+runner wiring failure before any calculation, not a scientific/resource-gate
+failure. No correlation length, batch scale, threshold, replicate count,
+target, or memory/time cap changes.
+
 ## Scientific relation and limitations
 
 Q-GOAL: calibrating the regional MCSE machinery is necessary to quantify

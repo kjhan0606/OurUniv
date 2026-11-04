@@ -58,8 +58,8 @@ export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONHASHSEED=0
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
-"$python" -I -P -m pytest -q \
-    tests/test_cf4_r2_mcse_spatial_calibration.py
+"$python" -I -P -m unittest discover -s tests \
+    -p test_cf4_r2_mcse_spatial_calibration.py -v
 "$python" -I -P scripts/cf4_r2_mcse_spatial_calibration.py \
     --grid-size 16 --draws 512 --chains 4 --replicates 256 \
     --seed 20261104 --batch-sizes 32 64 --minimum-batches 8 \
