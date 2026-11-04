@@ -116,13 +116,17 @@ runner**:
   `CF4_R2_MASTER_SEED` and `CF4_R2_CHAIN_INDEX` select the deterministic stream
   family, while `CF4_R2_CHAIN_ID` may name its retained-state store. Support
   and numerical failures abort. Seven focused start-helper tests and the
-  targeted 49-test CPU regression set pass under the runner's Python 3.11.
+  targeted 51-test CPU regression set pass under the runner's Python 3.11.
   The canonical state store is format v2 and now stores/checksums the
   post-transition NumPy RNG state with each retained state, including exact
   rejection repeats; a synthetic restore test reproduces the next RNG draws.
   The accepted-state checkpoint records all current RNG streams, but no runner
   recovery path yet restores the state and reconciles it with field-MCSE
-  sufficient statistics.
+  sufficient statistics. `src/cf4_r2_retained_diagnostic_replay.py` now
+  rebuilds posterior moments and field-MCSE from every checksum-verified
+  retained q, including rejection repeats; a synthetic regression matches
+  direct accumulation exactly. It reads no likelihood or held-out data, but
+  is not yet wired into runner resume and has no N256 cost/memory measurement.
   This remains one chain per runner invocation and does not implement the
   proposed four-chain supervisor, sampler restoration from retained RNG
   metadata, or warmup-end viability review. Legacy format-v1 state stores

@@ -73,7 +73,7 @@ exact fine-target count score is `-inf` while the linked raw-mark score is
 finite; support errors and all other nonfinite evaluations abort. The branch
 is still embedded in the legacy 48-proposal/12-warmup one-chain diagnostic,
 not a four-chain production driver or the proposed 128/512 contract. Seven
-start-helper tests and 49 targeted CPU regressions pass under the Slurm runner's
+start-helper tests and 51 targeted CPU regressions pass under the Slurm runner's
 Python 3.11 environment, but no real N256 target/GPU start was attempted. The
 canonical state index is now format v2 and stores/checksums the post-transition
 NumPy RNG state beside every retained q, including rejections. This is audit
@@ -90,6 +90,18 @@ evolved LG field at `<=0.3 cMpc/h`, with truth IDs used only for
 calibration/evaluation. Q-LEAN: the change is limited to start construction,
 stream isolation and strict retry classification; it launches no new
 simulation, changes no target, and does not relax the NO-GO gates.
+
+A deterministic diagnostic-replay primitive now reconstructs posterior field
+moments and chain-local field-MCSE from every checksum-verified retained q,
+including rejection repeats, using only the frozen PM field callback. It never
+evaluates the observation likelihood or held-out outcomes. Synthetic replay
+matches direct accumulation across both retained-state and MCSE sufficient
+statistics; the combined focused CPU suite is 51/51 under Python 3.11. The
+primitive is not yet wired into an interrupted-run resume path, and its
+N256/H200 wall-time and memory cost has not been measured. Q-GOAL remains
+unchanged: no posterior or map is produced, and MW/M31 roles plus M33 remain
+unresolved for the same future evolved LG field. Q-LEAN: this is only replay
+bookkeeping; no target, observation law, or simulation changed.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight
