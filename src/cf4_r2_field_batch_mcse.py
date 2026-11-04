@@ -449,3 +449,112 @@ class FieldBatchMCSEAccumulator:
             velocity_occupancy_mcse_over_sd=self._region_summary(
                 occupancy_ratio, np.ones(self.shape, dtype=bool), occupancy_sd, regions))
         return report
+
+
+class MultiScaleFieldMCSEAccumulator:
+    """Keep chain-local field diagnostics at several predeclared batch sizes."""
+
+    def __init__(self, shape, *, batch_sizes, minimum_batches=8,
+                 density_reference=1.0):
+        sizes = tuple(batch_sizes)
+        if (len(sizes) < 2 or any(not isinstance(size, int) or size < 2
+                                  for size in sizes)
+                or len(set(sizes)) != len(sizes)):
+            raise ValueError("at least two distinct integer batch sizes >=2 required")
+        self.batch_sizes = tuple(sorted(sizes))
+        self.minimum_batches = minimum_batches
+        self.shape = tuple(shape)
+        self.density_reference = float(density_reference)
+        self.accumulators = {
+            size: FieldBatchMCSEAccumulator(self.shape, batch_size=size,
+                minimum_batches=minimum_batches,
+                density_reference=density_reference)
+            for size in self.batch_sizes}
+
+    @property
+    def states(self):
+        counts = {acc.states for acc in self.accumulators.values()}
+        if len(counts) != 1:
+            raise RuntimeError("multi-scale state counters diverged")
+        return counts.pop()
+
+    @property
+    def estimated_accumulator_bytes(self):
+        return sum(acc.estimated_accumulator_bytes
+            for acc in self.accumulators.values())
+
+    def update(self, field):
+        for accumulator in self.accumulators.values():
+            accumulator.update(field)
+
+    def checkpoint_arrays(self):
+        result = dict(format_version=np.array(1, dtype=np.int64),
+            batch_sizes=np.asarray(self.batch_sizes, dtype=np.int64),
+            minimum_batches=np.array(self.minimum_batches, dtype=np.int64),
+            density_reference=np.array(self.density_reference, dtype=np.float64))
+        for size, accumulator in self.accumulators.items():
+            for key, value in accumulator.checkpoint_arrays().items():
+                if key in ("format_version", "batch_size", "minimum_batches",
+                           "density_reference"):
+                    continue
+                result[f"batch{size}_{key}"] = value
+        return result
+
+    @classmethod
+    def from_checkpoint(cls, state):
+        version = np.asarray(state["format_version"])
+        sizes = np.asarray(state["batch_sizes"])
+        minimum = np.asarray(state["minimum_batches"])
+        reference = np.asarray(state["density_reference"])
+        if (version.shape or version.dtype.kind not in "iu" or int(version) != 1
+                or sizes.ndim != 1 or sizes.dtype.kind not in "iu"
+                or minimum.shape or minimum.dtype.kind not in "iu"
+                or reference.shape or reference.dtype != np.dtype(np.float64)
+                or not np.isfinite(reference)):
+            raise ValueError("invalid multi-scale field-MCSE checkpoint metadata")
+        batch_sizes = tuple(int(size) for size in sizes)
+        if (len(batch_sizes) < 2 or tuple(sorted(set(batch_sizes))) != batch_sizes
+                or min(batch_sizes) < 2):
+            raise ValueError("invalid multi-scale checkpoint batch sizes")
+        child_states = {}
+        for size in batch_sizes:
+            prefix = f"batch{size}_"
+            child = dict(format_version=np.array(1, dtype=np.int64),
+                batch_size=np.array(size, dtype=np.int64),
+                minimum_batches=minimum, density_reference=reference)
+            child.update({key[len(prefix):]: value for key, value in state.items()
+                if key.startswith(prefix)})
+            if not child:
+                raise ValueError(f"missing batch-size-{size} checkpoint")
+            child_states[size] = FieldBatchMCSEAccumulator.from_checkpoint(child)
+        counts = {acc.states for acc in child_states.values()}
+        if len(counts) != 1:
+            raise ValueError("multi-scale checkpoint state counters diverged")
+        if any(acc.minimum_batches != int(minimum)
+               or acc.density_reference != float(reference)
+               for acc in child_states.values()):
+            raise ValueError("multi-scale checkpoint contracts diverged")
+        result = cls(next(iter(child_states.values())).shape,
+            batch_sizes=batch_sizes, minimum_batches=int(minimum),
+            density_reference=float(reference))
+        result.accumulators = child_states
+        return result
+
+    def finalize(self, *, regions=None):
+        """Return each scale independently; never discard a partial final batch."""
+        scales = {}
+        for size, accumulator in self.accumulators.items():
+            status = dict(status="INSUFFICIENT_COMPLETE_BATCHES",
+                retained_states=accumulator.states,
+                complete_batches=accumulator.batches,
+                pending_states=accumulator.pending_states,
+                batch_size=size, minimum_batches=self.minimum_batches)
+            if (accumulator.pending_states == 0
+                    and accumulator.batches >= self.minimum_batches):
+                status = accumulator.finalize(regions=regions)
+                status["status"] = "FIELD_MCSE_AVAILABLE_NOT_CONVERGENCE_EVIDENCE"
+            scales[str(size)] = status
+        return dict(retained_states=self.states, batch_sizes=self.batch_sizes,
+            minimum_batches=self.minimum_batches,
+            estimated_accumulator_bytes=self.estimated_accumulator_bytes,
+            scales=scales)

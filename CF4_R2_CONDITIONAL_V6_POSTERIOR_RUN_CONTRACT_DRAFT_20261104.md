@@ -175,27 +175,29 @@ the terminal state as a posterior. No automatic continuation is included.
 
 ### Field-map MCSE primitive — 2026-11-04
 
-`src/cf4_r2_field_batch_mcse.py` now provides a chain-local, fixed-batch
-accumulator for normalized density (reporting the density contrast relative to
-the declared reference), conditional mean/SD velocity, and velocity
-occupancy. It counts repeated post-Metropolis states, retains incomplete-batch
-statistics losslessly in a restart checkpoint, rejects nonfinite/overflowing
-inputs before counting them, and reports undefined and zero-posterior-SD cells
-explicitly rather than dropping them from regional summaries. Its batch-delta
-MCSE formulas are checked against direct synthetic covariance calculations.
-Eleven focused tests pass, including partial-batch checkpoint/resume; the
-existing posterior-moment regression also passes (3/3).
+`src/cf4_r2_field_batch_mcse.py` now provides chain-local fixed-batch
+accumulators for normalized density (reporting contrast relative to a declared
+reference), conditional mean/SD velocity, and occupancy. Its multiscale
+wrapper independently finalizes each predeclared batch length and refuses to
+use an incomplete trailing batch. It counts repeated post-Metropolis states,
+retains partial-batch sufficient statistics losslessly, rejects
+nonfinite/overflowing inputs before counting them, and explicitly reports
+undefined and zero-posterior-SD cells. The batch-delta MCSE formulas are
+checked against direct synthetic covariance calculations. The new
+`src/cf4_r2_cross_chain_field_diagnostics.py` compares chain-specific mean and
+posterior-SD maps, supports unequal chain lengths, and marks a cell undefined
+if any chain lacks a valid value instead of silently omitting it. Thirteen
+field-MCSE tests, five cross-chain tests, and the three existing
+posterior-moment tests pass.
 
-This is a tested primitive, **not yet wired to the chain runner**. It handles
-one batch length and one chain; two-scale reporting, the actual predeclared
-reporting masks, cross-chain spatial disagreement, and the independent-start
-production driver remain unimplemented. One accumulator holds37 float64
-full-grid arrays:4.625GiB at N256, excluding temporary arrays during final
-map construction. Two simultaneous batch lengths therefore require at least
-9.25GiB of persistent accumulator state, in addition to the field, JAX host
-buffers, checkpoints, and finalization temporaries. No high-N memory profile
-or production job was run; the eventual Slurm memory request must retain the
-required20% headroom based on measured peak RSS.
+These are tested primitives, **not yet wired to the chain runner**. The actual
+reporting masks, independent-start production driver, and online chain-to-map
+integration remain unimplemented. One accumulator holds37 float64 full-grid
+arrays:4.625GiB at N256 before finalization temporaries; two batch scales
+therefore require at least9.25GiB of persistent accumulator state, in addition
+to the field, JAX host buffers, checkpoints, and finalization temporaries. No
+high-N memory profile or production job was run; the eventual Slurm memory
+request must retain the required20% headroom based on measured peak RSS.
 
 **Q-GOAL:** this makes field-level uncertainty measurement more executable,
 but produces no posterior or validated z=0 map. MW/M31 are still
@@ -204,9 +206,10 @@ roles on the same NEW evolved LG field at`<=0.3 cMpc/h`, with native truth
 identities used only for calibration/evaluation. **Q-LEAN:** this is directly
 required to report uncertainty rather than only posterior means; do not add a
 GPU run merely to demonstrate the helper. Next, wire both batch scales into
-the independently initialized chain path, test rejection/restart behavior,
-add cross-chain map checks, and finish observation-calibration and held-out
-cost contracts before considering any large submission.
+the independently initialized chain path, wire its rejection/restart
+semantics and the cross-chain map comparison, and finish observation-
+calibration and held-out cost contracts before considering any large
+submission.
 
 ## Resource ceiling proposal
 

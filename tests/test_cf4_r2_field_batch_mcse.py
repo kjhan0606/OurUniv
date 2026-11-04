@@ -2,7 +2,8 @@ import unittest
 
 import numpy as np
 
-from cf4_r2_field_batch_mcse import FieldBatchMCSEAccumulator
+from cf4_r2_field_batch_mcse import (
+    FieldBatchMCSEAccumulator, MultiScaleFieldMCSEAccumulator)
 
 
 def field(rho, velocity, valid=None):
@@ -195,6 +196,49 @@ class FieldBatchMCSETests(unittest.TestCase):
         state["states"] = np.array(9, dtype=np.int64)
         with self.assertRaisesRegex(ValueError, "inconsistent .* counters"):
             FieldBatchMCSEAccumulator.from_checkpoint(state)
+
+    def test_multiscale_requires_complete_batches_at_each_scale(self):
+        acc = MultiScaleFieldMCSEAccumulator((1, 1, 1), batch_sizes=(2, 4),
+            minimum_batches=2)
+        for i in range(10):
+            acc.update(field(1. + i % 3, [float(i), 2. * i, -float(i)]))
+        result = acc.finalize()
+        self.assertEqual(result["retained_states"], 10)
+        self.assertEqual(result["scales"]["2"]["status"],
+            "FIELD_MCSE_AVAILABLE_NOT_CONVERGENCE_EVIDENCE")
+        self.assertEqual(result["scales"]["4"]["status"],
+            "INSUFFICIENT_COMPLETE_BATCHES")
+        self.assertEqual(result["scales"]["4"]["complete_batches"], 2)
+        self.assertEqual(result["scales"]["4"]["pending_states"], 2)
+        self.assertEqual(result["estimated_accumulator_bytes"],
+            2 * 37 * 8)
+
+    def test_multiscale_checkpoint_resume_matches_uninterrupted_chain(self):
+        states = [
+            field(1. + (i % 4), [float(i), -float(i), 3. * float(i)])
+            for i in range(16)]
+        uninterrupted = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+            batch_sizes=(2, 4), minimum_batches=2)
+        for item in states:
+            uninterrupted.update(item)
+        partial = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+            batch_sizes=(2, 4), minimum_batches=2)
+        for item in states[:7]:
+            partial.update(item)
+        snapshot = {key: np.array(value, copy=True)
+            for key, value in partial.checkpoint_arrays().items()}
+        resumed = MultiScaleFieldMCSEAccumulator.from_checkpoint(snapshot)
+        for item in states[7:]:
+            resumed.update(item)
+        expected, actual = uninterrupted.finalize(), resumed.finalize()
+        for size in ("2", "4"):
+            for key in ("density_contrast_mean", "density_posterior_sd",
+                        "density_mean_mcse", "density_sd_mcse",
+                        "velocity_conditional_mean", "velocity_mean_mcse",
+                        "velocity_sd_mcse", "velocity_occupancy_fraction"):
+                np.testing.assert_allclose(actual["scales"][size][key],
+                    expected["scales"][size][key], rtol=0., atol=0.,
+                    equal_nan=True, err_msg=f"scale={size}, key={key}")
 
     def test_region_mask_must_match_the_field(self):
         acc = FieldBatchMCSEAccumulator((1, 1, 1), batch_size=2,
