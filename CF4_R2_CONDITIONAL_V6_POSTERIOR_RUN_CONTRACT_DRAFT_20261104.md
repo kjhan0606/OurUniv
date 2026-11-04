@@ -247,9 +247,16 @@ These tested primitives are now wired through
 `src/cf4_r2_retained_field_mcse.py` into the existing one-chain
 `long_chain` output path. The adapter receives post-Metropolis retained fields,
 including the unchanged prior field after a rejected transition, and records
-accepted/rejected transition counts. The independent-start production driver
-and field-MCSE checkpoint/replay recovery in the chain runner remain
-unimplemented. One accumulator holds37 float64 full-grid
+accepted/rejected transition counts. At normal chain completion, the runner
+now writes `field_mcse_sufficient_statistics_unassessed.npz` for later
+post-processing and records its raw-array byte estimate in the report; it
+refuses to overwrite an existing file. This is not an interruption-safe
+checkpoint and is not written periodically. At N256 it is estimated at
+9.25GiB of raw arrays per chain (about37GiB for four), excluding small NPZ
+headers. No N256 file, read/write time, or peak RSS has been measured, and a
+file-based four-chain merger/report remains unimplemented. The independent-
+start production driver and field-MCSE checkpoint/replay recovery in the chain
+runner also remain unimplemented. One accumulator holds37 float64 full-grid
 arrays:4.625GiB at N256 before finalization temporaries; two batch scales
 therefore require at least9.25GiB of persistent accumulator state, in addition
 to the field, JAX host buffers, checkpoints, and finalization temporaries. No

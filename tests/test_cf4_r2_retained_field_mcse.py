@@ -126,6 +126,45 @@ class RetainedFieldMCSEDiagnosticsTests(unittest.TestCase):
         self.assertEqual(insufficient["reporting_region_cell_denominators"],
             dict(full_box=8, training_count_cells=2))
 
+    def test_independent_chain_pooling_matches_direct_map_mean_mcse(self):
+        series = ([1., 1., 2., 2., 3., 3., 4., 4.],
+                  [2., 2., 3., 3., 4., 4., 5., 5.])
+        chains = []
+        for values in series:
+            chain = diagnostics()
+            for transition, value in enumerate(values, 1):
+                chain.update(field(value), transition=transition,
+                    accepted=(transition % 2 == 1))
+            chains.append(chain)
+        pooled = chains[0].merge_independent_chains_inplace(chains[1:])
+        all_values = np.concatenate([np.asarray(values) for values in series])
+        expected_batches = np.concatenate([
+            np.asarray(values).reshape(-1, 4).mean(axis=1)
+            for values in series])
+        expected_mcse = expected_batches.std(ddof=1) / np.sqrt(
+            expected_batches.size)
+        result = pooled.finalize_scale(4)
+        self.assertEqual(pooled.retained_states, 16)
+        self.assertEqual(pooled.accepted_transitions, 8)
+        self.assertEqual(pooled.rejected_transitions, 8)
+        self.assertAlmostEqual(float(result["density_mean"][0, 0, 0]),
+            all_values.mean(), places=14)
+        self.assertAlmostEqual(float(result["density_posterior_sd"][0, 0, 0]),
+            all_values.std(ddof=1), places=14)
+        self.assertAlmostEqual(float(result["density_mean_mcse"][0, 0, 0]),
+            expected_mcse, places=14)
+
+    def test_independent_chain_pooling_refuses_training_domain_mismatch(self):
+        first, second = diagnostics(), diagnostics(keys=np.asarray([1, 15], dtype=np.int64))
+        for transition, value in enumerate((1., 1., 2., 2.), 1):
+            first.update(field(value), transition=transition,
+                accepted=(transition % 2 == 1))
+            second.update(field(value), transition=transition,
+                accepted=(transition % 2 == 1))
+        with self.assertRaisesRegex(ValueError, "contracts differ"):
+            first.merge_independent_chains_inplace([second])
+        self.assertEqual(first.retained_states, 4)
+
 
 if __name__ == "__main__":
     unittest.main()

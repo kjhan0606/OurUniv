@@ -374,6 +374,11 @@ def main():
         if long_chain and accumulator.n:
             np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             np.savez(out/'present_moments_unassessed.npz',**accumulator.arrays())
+            field_mcse_statistics_file='field_mcse_sufficient_statistics_unassessed.npz'
+            field_mcse_statistics_path=out/field_mcse_statistics_file
+            if field_mcse_statistics_path.exists():
+                raise FileExistsError('refusing to overwrite field-MCSE sufficient statistics')
+            np.savez(field_mcse_statistics_path,**field_mcse.checkpoint_arrays())
             field_mcse_outputs={}
             for batch_size in field_mcse.batch_sizes:
                 scale=field_mcse.finalize_scale(batch_size)
@@ -388,6 +393,9 @@ def main():
                 del scale
             report['field_mcse']=field_mcse.summary()
             report['field_mcse']['scales']=field_mcse_outputs
+            report['field_mcse']['sufficient_statistics_file']=field_mcse_statistics_file
+            report['field_mcse']['sufficient_statistics_raw_array_bytes_estimate']=field_mcse.estimated_accumulator_bytes
+            report['field_mcse']['sufficient_statistics_file_status']='UNASSESSED_CHAIN_STATISTICS_FOR_POSTPROCESSING'
         np.savez(out/'accepted_present_state.npz',**accepted_field,white_ic=q[:NIC],tracer=q[NIC:NIC+9],
             population_white=q[NIC+9:],fine_energy=energy,box_cMpc_h=BOX,native_mesh_origin_fraction=0.,R2_complete=False)
         report.update(status=('N256_CHAIN_FINISHED_REQUIRES_DIAGNOSTICS' if long_chain else

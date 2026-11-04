@@ -210,6 +210,45 @@ class RetainedFieldMCSEDiagnostics:
             raise ValueError("field-MCSE transition accounting is inconsistent")
         return result
 
+    def merge_independent_chains_inplace(self, other_chains):
+        """Destructively pool compatible complete-chain sufficient statistics.
+
+        The receiver's training domain and contract are retained. Chain-level
+        disagreement must be assessed before this merge; the pooled MCSE is
+        not itself evidence of chain convergence.
+        """
+        if isinstance(other_chains, RetainedFieldMCSEDiagnostics):
+            other_chains = (other_chains,)
+        else:
+            try:
+                other_chains = tuple(other_chains)
+            except TypeError as error:
+                raise ValueError("other chain field-MCSE accumulators required") from error
+        if not other_chains or any(not isinstance(chain,
+                RetainedFieldMCSEDiagnostics) for chain in other_chains):
+            raise ValueError("at least one other retained-field chain is required")
+        chains = (self,) + other_chains
+        if len({id(chain) for chain in chains}) != len(chains):
+            raise ValueError("a retained-field chain cannot be merged more than once")
+        contract = (self.shape, self.count_grid_size, self.population_count,
+            self.train_key_sha256, self.region_sha256, self.batch_sizes,
+            self.minimum_batches)
+        for chain in chains:
+            candidate = (chain.shape, chain.count_grid_size,
+                chain.population_count, chain.train_key_sha256,
+                chain.region_sha256, chain.batch_sizes, chain.minimum_batches)
+            if candidate != contract:
+                raise ValueError("retained-field chain MCSE contracts differ")
+            if chain.accepted_transitions + chain.rejected_transitions != chain.retained_states:
+                raise ValueError("field-MCSE transition accounting is inconsistent")
+        accepted = sum(chain.accepted_transitions for chain in chains)
+        rejected = sum(chain.rejected_transitions for chain in chains)
+        self.accumulator.merge_independent_chains_inplace(
+            [chain.accumulator for chain in other_chains])
+        self.accepted_transitions = accepted
+        self.rejected_transitions = rejected
+        return self
+
     def finalize_scale(self, batch_size):
         result = self.accumulator.finalize_scale(batch_size, regions=self.regions)
         if result["status"] == "INSUFFICIENT_COMPLETE_BATCHES":

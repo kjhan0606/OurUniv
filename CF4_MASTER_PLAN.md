@@ -66,12 +66,18 @@ minimum complete-batch count must be supplied explicitly; no scientifically
 unjustified defaults are selected. Each scale finalizes independently so the
 two sets of full-map outputs are not simultaneously retained. Checkpoint
 restore now adopts serialized arrays directly instead of allocating another
-4.625GiB of zero-filled state per scale. Five adapter tests, thirteen
+4.625GiB of zero-filled state per scale. Seven adapter tests, sixteen
 field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
-tests pass; the reporting-region helper has five geometry tests. The four-chain
-runner/replay path, field-MCSE checkpoint/replay recovery, the proposed
-128/512 warmup/production contract, MCSE precision thresholds, and held-out
-stage remain incomplete. The legacy 48/12 one-chain diagnostic now records
+tests pass; the reporting-region helper has five geometry tests. The runner
+now writes each normally completed chain's field-MCSE sufficient statistics
+to `field_mcse_sufficient_statistics_unassessed.npz`, refusing to overwrite an
+existing file. At N256 the raw arrays are estimated at 9.25GiB per chain
+(about37GiB for four); this is an array-byte estimate, not measured NPZ size,
+I/O time, or peak RSS. It is a normal-completion post-processing artifact,
+not a periodic crash/restart checkpoint. A file-based four-chain
+combiner/report and N256 memory/I/O profile remain incomplete, as do the
+proposed 128/512 warmup/production contract, MCSE precision thresholds, and
+held-out stage. The legacy 48/12 one-chain diagnostic now records
 its diminishing warmup-only step-size rule and checks the complete warmup for
 valid transitions, bounded steps, and at least one accepted transition before
 retention. This is only an operational viability check—not equilibration or
@@ -97,11 +103,13 @@ exact pooled ratio is0.1353 and the64-state estimate's median is0.1158; for
 `phi=0.90`, the exact ratio0.0954 but its estimate p95 is0.1025. This is a
 stationary scalar AR(1) estimator study, not an R2 chain or spatial-map
 calibration. A non-copying in-memory merge now pools complete equal-length
-chain sufficient statistics; 16 focused tests, including a fixed AR(1)
-reference comparison, pass. It is not integrated with the file-based chain
-report/runner and has no N256 memory or I/O profile. Keep32/64 and the `0.10`
-threshold provisional; no GPU job, target evaluation or held-out read was
-performed. Details and reproduction script:
+chain sufficient statistics; the retained-field wrapper has contract-aware
+pooling, and the runner writes the per-chain statistics on normal completion.
+The raw arrays are estimated at9.25GiB per N256 chain and37GiB for four; no
+production-size file, I/O time, peak RSS, or file-based four-chain merge has
+been measured or implemented. The saved file is not a restart checkpoint.
+Keep32/64 and the `0.10` threshold provisional; no GPU job, target evaluation
+or held-out read was performed. Details and reproduction script:
 `CF4_R2_FIELD_MCSE_AR1_CALIBRATION_20261104.md` and
 `scripts/cf4_r2_mcse_ar1_calibration.py`.
 

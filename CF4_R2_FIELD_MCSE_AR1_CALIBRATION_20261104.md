@@ -47,11 +47,15 @@ unqualified R2 chain. It therefore cannot certify a field-level threshold.
 
 `MultiScaleFieldMCSEAccumulator.merge_independent_chains_inplace` now combines
 complete equal-length chain sufficient statistics in-place, including the
-between-chain contribution to pooled batch-mean variance. Sixteen focused
-tests passed; the fixed-seed AR(1) test matches the pooled mean-MCSE formula at
-both scales. The helper has no file-based runner/report integration, and no
-N256 resource or I/O profile has been measured. Chain-specific disagreement
-must still be recorded separately before the destructive merge.
+between-chain contribution to pooled batch-mean variance. The retained-field
+adapter also validates domain/contract identity and transition accounting
+before pooling. Sixteen focused tests passed; the fixed-seed AR(1) test matches
+the pooled mean-MCSE formula at both scales. A normally completed chain now
+persists the sufficient statistics, but the helper has no file-based
+four-chain runner/report integration, and no N256 memory or I/O profile has
+been measured. The raw-array estimate is 9.25 GiB per chain and 37 GiB for
+four; it is not an observed file size. Chain-specific disagreement must still
+be recorded separately before the destructive merge.
 Keep 32/64 and eight batches per chain as test candidates only; do not freeze
 them as the R2 production contract. The candidate `0.10` threshold remains
 unaccepted pending the pooled implementation, spatially correlated
@@ -77,10 +81,13 @@ GPU calculation, or expanded diagnostic ladder.
 
 ## Next technical work
 
-Wire the in-memory merge to persisted/replayed per-chain sufficient statistics
-and a file-based four-chain report, after costing the storage-versus-replay
-tradeoff and preserving independent-chain disagreement separately. Calibrate
-the production path on spatially correlated synthetic maps with heterogeneous
-autocorrelation before choosing batch lengths or promoting the `0.10`
-candidate. Keep all target/held-out data sealed and R2 NO-GO until observation
-scope and the full resource/MCSE contract are defensible.
+Build a bounded-memory file-based four-chain report that checks chain
+provenance and preserves cross-chain disagreement before any pooled merge;
+first measure its I/O and peak RSS on a small synthetic fixture, then cost the
+N256 path against available host memory with the required 20% headroom. The
+per-chain statistics file is written only after normal completion and is not
+a restart checkpoint. Calibrate the production path on spatially correlated
+synthetic maps with heterogeneous autocorrelation before choosing batch
+lengths or promoting the `0.10` candidate. Keep all target/held-out data
+sealed and R2 NO-GO until observation scope and the full resource/MCSE
+contract are defensible.
