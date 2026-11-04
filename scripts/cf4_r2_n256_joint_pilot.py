@@ -20,20 +20,41 @@ from cf4_r2_affine_force import AffineCorrectedForce
 from cf4_r2_chain_schedule import ChainSchedule
 from cf4_r2_posterior_moments import PresentMomentAccumulator
 from cf4_r2_canonical_state_store import CanonicalStateStore
+from cf4_r2_retained_field_mcse import (RetainedFieldMCSEDiagnostics,
+    validate_field_mcse_schedule)
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density');ROOT=Path(__file__).resolve().parents[1]
 N=256;BOX=384.;NIC=N**3
 
 
+def _field_mcse_contract(*, enabled, retained_capacity):
+    if not enabled:
+        return None
+    raw_sizes=os.environ.get('CF4_R2_FIELD_MCSE_BATCH_SIZES','')
+    raw_minimum=os.environ.get('CF4_R2_FIELD_MCSE_MINIMUM_BATCHES','')
+    if not raw_sizes or not raw_minimum:
+        raise ValueError('long-chain mode requires predeclared field-MCSE batch sizes and minimum batches')
+    try:
+        sizes=tuple(int(item.strip()) for item in raw_sizes.split(','))
+        minimum=int(raw_minimum)
+    except ValueError as error:
+        raise ValueError('invalid field-MCSE batch configuration') from error
+    return validate_field_mcse_schedule(sizes,minimum,retained_capacity)
+
+
 def main():
     if not os.environ.get('SLURM_JOB_ID') or jax.default_backend()!='gpu':raise RuntimeError('Slurm GPU required')
-    out=Path(os.environ['CF4_R2_OUT_DIR']);out.mkdir(exist_ok=False);started=time.monotonic()
+    out=Path(os.environ['CF4_R2_OUT_DIR']);started=time.monotonic()
     affine=os.environ.get('CF4_R2_AFFINE_FORCE')=='1'
     long_chain=os.environ.get('CF4_R2_LONG_CHAIN')=='1'
     if long_chain and not affine:raise ValueError('long-chain mode requires checked affine force')
     schedule=ChainSchedule() if long_chain else None
     maximum=schedule.proposals if long_chain else (2 if affine else 4)
     warmup=schedule.warmup if long_chain else (0 if affine else 2)
+    retained_capacity=maximum-warmup
+    field_mcse_contract=_field_mcse_contract(enabled=long_chain,
+        retained_capacity=retained_capacity)
+    out.mkdir(exist_ok=False)
     budget=23*3600 if long_chain else 6300
     report=dict(status='STARTED',job_id=os.environ['SLURM_JOB_ID'],source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         N=N,box_cMpc_h=BOX,dx_cMpc_h=1.5,observed_count_grid=128,R2_complete=False,heldout_scored=False,
@@ -41,6 +62,7 @@ def main():
         target='conditional1414 rawFP/K marks plus47121 training counts, LCDM and24 proper nuisance priors once',
         max_proposals=maximum,warmup_proposals=warmup,frozen_affine_force=affine,
         long_chain=long_chain,application_budget_seconds=budget,
+        field_mcse_contract=field_mcse_contract,
         sampling_status='NOT_ASSESSED_FOR_STATIONARITY',
         limitations='bounded development transitions, no stationarity/UQ; fine2 needs fine4 sensitivity; conditional selection; MW/M31 ambiguous,M33 unresolved')
     def save():
@@ -67,7 +89,8 @@ def main():
         save()
         source=source_geometry_at_resolution(source,N)
         with np.load(BASE/'r2_sky_closed_split_v6/split.npz',allow_pickle=False) as f:
-            keys,counts=map(jnp.asarray,(f['train_keys'],f['train_counts']))
+            train_keys=np.asarray(f['train_keys'],dtype=np.int64)
+            keys,counts=map(jnp.asarray,(train_keys,f['train_counts']))
             exposure,_=build_population_exposure_masks(128,f['heldout_flat_voxels'],
                 f['train_window_excluded_keys'],f['heldout_window_excluded_keys'])
         obs=ResolutionObservationTarget(N,source,mix,o,g,keys,counts,jnp.asarray(exposure),force_order=1,fine_order=2)
@@ -178,6 +201,21 @@ def main():
         metric=FixedSplitMetric(inverse_laplacian_metric_symbol(N),np.eye(24)*1e-5)
         step=schedule.initial_step if long_chain else (.05220457782250625 if affine else .1)
         accumulator=PresentMomentAccumulator((N,)*3) if long_chain else None
+        field_mcse=(RetainedFieldMCSEDiagnostics((N,)*3,
+            train_keys=train_keys,
+            batch_sizes=field_mcse_contract['batch_sizes'],
+            minimum_batches=field_mcse_contract['minimum_batches'],
+            count_grid_size=128,population_count=6,density_reference=1.)
+            if long_chain else None)
+        if field_mcse is not None:
+            report['field_mcse_resource_contract']=dict(
+                persistent_accumulator_bytes=field_mcse.estimated_accumulator_bytes,
+                persistent_accumulator_GiB=field_mcse.estimated_accumulator_bytes/1024**3,
+                batch_sizes=field_mcse.batch_sizes,
+                minimum_batches=field_mcse.minimum_batches,
+                finalization='one batch scale at a time',
+                finalization_peak_RSS='not measured; this diagnostic is not production authorization')
+            save()
         state_store=(CanonicalStateStore(out/'canonical_states',
             chain_id=os.environ.get('CF4_R2_CHAIN_ID',out.name),
             capacity=schedule.proposals-schedule.warmup,dimension=NIC+24,
@@ -222,10 +260,18 @@ def main():
             if long_chain and i>=warmup:
                 # Every retained chain state counts, including repeated rejections.
                 accumulator.update(accepted_field)
+                field_mcse.update(accepted_field,transition=accumulator.n,
+                    accepted=bool(info['accepted']))
                 state_store.append(q,previous_state=before,previous_target=before_energy,
                     transition=i-warmup+1,accepted=info['accepted'],target_value=energy)
                 report['retained_states']=accumulator.n
                 report['retained_state_records']=len(state_store)
+                if field_mcse.retained_states!=accumulator.n:
+                    raise AssertionError('field-MCSE and posterior-moment retained-state counts diverged')
+                report['field_mcse_accounting']=dict(
+                    retained_states=field_mcse.retained_states,
+                    accepted_transitions=field_mcse.accepted_transitions,
+                    rejected_transitions=field_mcse.rejected_transitions)
                 if accumulator.n%8==0:
                     np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             report['trace'].append(row);report['rng_state']=rng.bit_generator.state
@@ -235,6 +281,20 @@ def main():
         if long_chain and accumulator.n:
             np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             np.savez(out/'present_moments_unassessed.npz',**accumulator.arrays())
+            field_mcse_outputs={}
+            for batch_size in field_mcse.batch_sizes:
+                scale=field_mcse.finalize_scale(batch_size)
+                record={key:value for key,value in scale.items()
+                    if not isinstance(value,np.ndarray)}
+                if scale['status']=='FIELD_MCSE_AVAILABLE_NOT_CONVERGENCE_EVIDENCE':
+                    filename=f'field_mcse_unassessed_batch_{batch_size}.npz'
+                    np.savez(out/filename,**{key:value for key,value in scale.items()
+                        if isinstance(value,np.ndarray)})
+                    record['map_file']=filename
+                field_mcse_outputs[str(batch_size)]=record
+                del scale
+            report['field_mcse']=field_mcse.summary()
+            report['field_mcse']['scales']=field_mcse_outputs
         np.savez(out/'accepted_present_state.npz',**accepted_field,white_ic=q[:NIC],tracer=q[NIC:NIC+9],
             population_white=q[NIC+9:],fine_energy=energy,box_cMpc_h=BOX,native_mesh_origin_fraction=0.,R2_complete=False)
         report.update(status=('N256_CHAIN_FINISHED_REQUIRES_DIAGNOSTICS' if long_chain else

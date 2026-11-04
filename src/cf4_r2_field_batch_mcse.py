@@ -186,13 +186,23 @@ class FieldBatchMCSEAccumulator:
         first = np.asarray(state["pending_rho"])
         if first.ndim != 3 or len(set(first.shape)) != 1 or min(first.shape) < 1:
             raise ValueError("invalid field-MCSE checkpoint shape")
-        result = cls(first.shape, batch_size=batch_size,
-            minimum_batches=minimum_batches,
-            density_reference=float(density_reference))
+        # Restore directly instead of allocating and then replacing another
+        # full set of N256 arrays (4.625 GiB per scale).
+        result = cls.__new__(cls)
+        result.shape = first.shape
+        result.batch_size = batch_size
+        result.minimum_batches = minimum_batches
+        result.density_reference = float(density_reference)
+        result.states = states
+        result.pending_states = pending_states
+        result.batches = batches
         for name in result._PENDING_ARRAYS + result._SUMMARY_ARRAYS:
             value = np.asarray(state[name])
-            target = getattr(result, name)
-            if (value.shape != target.shape or value.dtype != np.dtype(np.float64)
+            expected_shape = ((3,) + result.shape
+                if name in ("pending_v", "pending_v2", "sum_v", "sum_v2",
+                    "sum_v_sq", "sum_v2_sq", "sum_v_v2", "sum_occupied_v",
+                    "sum_occupied_v2") else result.shape)
+            if (value.shape != expected_shape or value.dtype != np.dtype(np.float64)
                     or not np.isfinite(value).all()):
                 raise ValueError(f"invalid field-MCSE checkpoint array {name}")
             setattr(result, name, value)
@@ -200,9 +210,6 @@ class FieldBatchMCSEAccumulator:
             raise ValueError("invalid pending occupancy checkpoint")
         if np.any(result.sum_occupied < 0) or np.any(result.sum_occupied > batches):
             raise ValueError("invalid batch occupancy checkpoint")
-        result.states = states
-        result.pending_states = pending_states
-        result.batches = batches
         return result
 
     @staticmethod
@@ -534,27 +541,41 @@ class MultiScaleFieldMCSEAccumulator:
                or acc.density_reference != float(reference)
                for acc in child_states.values()):
             raise ValueError("multi-scale checkpoint contracts diverged")
-        result = cls(next(iter(child_states.values())).shape,
-            batch_sizes=batch_sizes, minimum_batches=int(minimum),
-            density_reference=float(reference))
+        # Do not construct zero-filled grids before installing the restored
+        # child accumulators; at N256 that would transiently allocate another
+        # 4.625 GiB per scale.
+        result = cls.__new__(cls)
+        result.shape = next(iter(child_states.values())).shape
+        result.batch_sizes = batch_sizes
+        result.minimum_batches = int(minimum)
+        result.density_reference = float(reference)
         result.accumulators = child_states
         return result
 
     def finalize(self, *, regions=None):
         """Return each scale independently; never discard a partial final batch."""
-        scales = {}
-        for size, accumulator in self.accumulators.items():
-            status = dict(status="INSUFFICIENT_COMPLETE_BATCHES",
-                retained_states=accumulator.states,
-                complete_batches=accumulator.batches,
-                pending_states=accumulator.pending_states,
-                batch_size=size, minimum_batches=self.minimum_batches)
-            if (accumulator.pending_states == 0
-                    and accumulator.batches >= self.minimum_batches):
-                status = accumulator.finalize(regions=regions)
-                status["status"] = "FIELD_MCSE_AVAILABLE_NOT_CONVERGENCE_EVIDENCE"
-            scales[str(size)] = status
+        scales = {str(size): self.finalize_scale(size, regions=regions)
+            for size in self.batch_sizes}
         return dict(retained_states=self.states, batch_sizes=self.batch_sizes,
             minimum_batches=self.minimum_batches,
             estimated_accumulator_bytes=self.estimated_accumulator_bytes,
             scales=scales)
+
+    def finalize_scale(self, batch_size, *, regions=None):
+        """Finalize one scale at a time to bound full-map output memory."""
+        if not isinstance(batch_size, (int, np.integer)):
+            raise ValueError("batch size must be an integer")
+        size = int(batch_size)
+        if size not in self.accumulators:
+            raise ValueError("batch size is not part of the frozen multiscale contract")
+        accumulator = self.accumulators[size]
+        status = dict(status="INSUFFICIENT_COMPLETE_BATCHES",
+            retained_states=accumulator.states,
+            complete_batches=accumulator.batches,
+            pending_states=accumulator.pending_states,
+            batch_size=size, minimum_batches=self.minimum_batches)
+        if (accumulator.pending_states == 0
+                and accumulator.batches >= self.minimum_batches):
+            status = accumulator.finalize(regions=regions)
+            status["status"] = "FIELD_MCSE_AVAILABLE_NOT_CONVERGENCE_EVIDENCE"
+        return status

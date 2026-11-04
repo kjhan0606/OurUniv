@@ -46,19 +46,23 @@ multi-chain target until observation scope and computational precision/cost
 are defensible. R2 remains NO-GO, and MW, M31 and M33 role/component
 requirements remain unchanged.
 
-The 2026-11-04 field-diagnostic bundle now has tested multi-scale,
-chain-local fixed-batch MCSE accumulators and a cross-chain spatial
-disagreement summarizer. Thirteen field-MCSE tests, five cross-chain tests,
-and the three existing posterior-moment tests pass. The code is not connected
-to the N256 chain runner or independent-start driver. The full-box and
-training-count-cell reporting domains are now defined: the latter is built
-only from training keys and lifted from 128 coarse cells to aligned 256 native
-PM nodes; it is a data-bearing summary region, not a full likelihood-support
-claim. Its helper has focused geometry tests but is not yet wired to a chain.
-Each batch scale holds37 float64 full-grid arrays
-(4.625GiB at N256) before finalization temporaries; two scales need at least
-9.25GiB of accumulator state. No GPU job was submitted. Details and fail-closed
-next requirements are in
+The 2026-11-04 field-diagnostic bundle now connects the two-scale,
+chain-local field-MCSE accumulator and training-only reporting mask to the
+existing one-chain `long_chain` output path. It updates only from the
+post-Metropolis retained field; rejected transitions repeat the prior retained
+field. Both batch lengths, exact divisibility of the retained capacity, and a
+minimum complete-batch count must be supplied explicitly; no scientifically
+unjustified defaults are selected. Each scale finalizes independently so the
+two sets of full-map outputs are not simultaneously retained. Checkpoint
+restore now adopts serialized arrays directly instead of allocating another
+4.625GiB of zero-filled state per scale. Five adapter tests, thirteen
+field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
+tests pass; the reporting-region helper has five geometry tests. The N256
+independent-start driver, field-MCSE checkpoint/replay recovery, warmup
+viability/adaptation contract, MCSE precision thresholds, and held-out stage
+remain incomplete. At N256 the two persistent scales alone require9.25GiB;
+finalization peak RSS is unmeasured. No GPU job
+was submitted. Details and fail-closed requirements are in
 `CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
@@ -102,12 +106,12 @@ unresolved. Findings and disposition are tracked in
 `CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`. No new job
 was submitted.
 
-R2 remains open/NO-GO: no posterior, uncertainty, calibrated heldout result,
+R2 remains open/NO-GO: no posterior, uncertainty, calibrated held-out result,
 or promoted z=0 field exists. Do not run more sampler screens, retune the
-closed surrogate, read heldout outcomes, or start R3. The next decision is the
-implementation and regression of an auditable independent-chain, retained-
-state, and field-MCSE pipeline, while resolving the existing
-observation-calibration limitation; then cost the full sealed-heldout pass.
+closed surrogate, read held-out outcomes, or start R3. The next work is an
+auditable independent-chain driver and its resource/precision contract,
+alongside resolution of the existing observation-calibration limitation;
+then cost the full sealed-heldout pass.
 MW/M31 remain role-ambiguous and M33 unresolved;
 their observables must constrain those roles on the same NEW evolved LG field
 at `<=0.3 cMpc/h`, with native truth identities reserved for calibration/

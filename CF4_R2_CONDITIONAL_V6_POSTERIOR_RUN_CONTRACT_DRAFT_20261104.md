@@ -190,14 +190,28 @@ if any chain lacks a valid value instead of silently omitting it. Thirteen
 field-MCSE tests, five cross-chain tests, and the three existing
 posterior-moment tests pass.
 
-These are tested primitives, **not yet wired to the chain runner**. The
-independent-start production driver and online chain-to-map integration remain
+These tested primitives are now wired through
+`src/cf4_r2_retained_field_mcse.py` into the existing one-chain
+`long_chain` output path. The adapter receives post-Metropolis retained fields,
+including the unchanged prior field after a rejected transition, and records
+accepted/rejected transition counts. The independent-start production driver
+and field-MCSE checkpoint/replay recovery in the chain runner remain
 unimplemented. One accumulator holds37 float64 full-grid
 arrays:4.625GiB at N256 before finalization temporaries; two batch scales
 therefore require at least9.25GiB of persistent accumulator state, in addition
 to the field, JAX host buffers, checkpoints, and finalization temporaries. No
 high-N memory profile or production job was run; the eventual Slurm memory
 request must retain the required20% headroom based on measured peak RSS.
+
+The one-chain diagnostic requires explicit
+`CF4_R2_FIELD_MCSE_BATCH_SIZES` (exactly two sizes) and
+`CF4_R2_FIELD_MCSE_MINIMUM_BATCHES`; it rejects a retained capacity that ends
+inside either batch or cannot meet the declared minimum. No batch sizes or
+minimum were selected here. Each scale can be finalized separately to avoid
+holding both full map-output sets simultaneously. Checkpoint restore adopts
+serialized arrays directly, avoiding another zero-filled accumulator
+allocation per scale. Finalization peak RSS remains unmeasured; no GPU job was
+submitted.
 
 #### Reporting-domain decision — 2026-11-04
 
@@ -215,9 +229,9 @@ This mask is a reporting domain for cells that contain training count data; it
 is **not** a claim that those PM nodes exhaust all likelihood influence. RSD,
 volume integration, and interpolation can transmit information beyond the
 same-coordinate coarse cells. The full-box summary remains mandatory, and the
-region must be reported with its explicit cell denominator. The mask builder
-has not yet been wired into a chain run, and it does not read held-out outcome
-values or generated-field/native-truth identities.
+region must be reported with its explicit cell denominator. The mask is wired
+into the existing one-chain long-chain diagnostic; it does not read held-out
+outcome values or generated-field/native-truth identities.
 
 **Q-GOAL:** this makes field-level uncertainty measurement more executable,
 but produces no posterior or validated z=0 map. MW/M31 are still
@@ -225,9 +239,9 @@ role-ambiguous and M33 unresolved; their observables must constrain those
 roles on the same NEW evolved LG field at`<=0.3 cMpc/h`, with native truth
 identities used only for calibration/evaluation. **Q-LEAN:** this is directly
 required to report uncertainty rather than only posterior means; do not add a
-GPU run merely to demonstrate the helper. Next, wire both batch scales into
-the independently initialized chain path, wire its rejection/restart
-semantics and the cross-chain map comparison, and finish observation-
+GPU run merely to demonstrate the helper. Next, build the independently
+initialized chain path, its warmup/restart semantics and the cross-chain map
+comparison, and finish observation-
 calibration and held-out cost contracts before considering any large
 submission.
 
