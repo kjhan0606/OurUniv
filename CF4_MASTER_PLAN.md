@@ -46,6 +46,17 @@ multi-chain target until observation scope and computational precision/cost
 are defensible. R2 remains NO-GO, and MW, M31 and M33 role/component
 requirements remain unchanged.
 
+The 2026-11-04 field-MCSE bundle now has a tested NumPy primitive for
+normalized-density contrast, conditional-velocity and occupancy batch-means
+MCSE, including lossless partial-batch checkpoints and explicit zero/undefined
+cell reporting. Eleven focused tests and the three existing posterior-moment
+tests pass. The primitive is not connected to the chain runner, supports one
+batch scale/chain only, and has no cross-chain spatial diagnostic. It holds37
+float64 maps (4.625GiB at N256) per scale, before finalization temporaries;
+two scales need at least9.25GiB of accumulator state. No GPU job was submitted.
+Details and the fail-closed next requirements are in
+`CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`.
+
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight
 proposals accepted the surrogate stage and all eight were rejected by the exact

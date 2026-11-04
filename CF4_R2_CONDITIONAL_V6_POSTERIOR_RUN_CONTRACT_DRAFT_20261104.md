@@ -173,6 +173,41 @@ If any chain diagnostic or field-map MCSE target fails at the cap, report
 `INSUFFICIENT_MONTE_CARLO_PRECISION`; do not promote a MAP, a short trace, or
 the terminal state as a posterior. No automatic continuation is included.
 
+### Field-map MCSE primitive — 2026-11-04
+
+`src/cf4_r2_field_batch_mcse.py` now provides a chain-local, fixed-batch
+accumulator for normalized density (reporting the density contrast relative to
+the declared reference), conditional mean/SD velocity, and velocity
+occupancy. It counts repeated post-Metropolis states, retains incomplete-batch
+statistics losslessly in a restart checkpoint, rejects nonfinite/overflowing
+inputs before counting them, and reports undefined and zero-posterior-SD cells
+explicitly rather than dropping them from regional summaries. Its batch-delta
+MCSE formulas are checked against direct synthetic covariance calculations.
+Eleven focused tests pass, including partial-batch checkpoint/resume; the
+existing posterior-moment regression also passes (3/3).
+
+This is a tested primitive, **not yet wired to the chain runner**. It handles
+one batch length and one chain; two-scale reporting, the actual predeclared
+reporting masks, cross-chain spatial disagreement, and the independent-start
+production driver remain unimplemented. One accumulator holds37 float64
+full-grid arrays:4.625GiB at N256, excluding temporary arrays during final
+map construction. Two simultaneous batch lengths therefore require at least
+9.25GiB of persistent accumulator state, in addition to the field, JAX host
+buffers, checkpoints, and finalization temporaries. No high-N memory profile
+or production job was run; the eventual Slurm memory request must retain the
+required20% headroom based on measured peak RSS.
+
+**Q-GOAL:** this makes field-level uncertainty measurement more executable,
+but produces no posterior or validated z=0 map. MW/M31 are still
+role-ambiguous and M33 unresolved; their observables must constrain those
+roles on the same NEW evolved LG field at`<=0.3 cMpc/h`, with native truth
+identities used only for calibration/evaluation. **Q-LEAN:** this is directly
+required to report uncertainty rather than only posterior means; do not add a
+GPU run merely to demonstrate the helper. Next, wire both batch scales into
+the independently initialized chain path, test rejection/restart behavior,
+add cross-chain map checks, and finish observation-calibration and held-out
+cost contracts before considering any large submission.
+
 ## Resource ceiling proposal
 
 The latest measured exact-HMC cost is1.1422 H100 GPU-hours per transition
