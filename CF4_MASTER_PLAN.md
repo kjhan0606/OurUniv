@@ -22,10 +22,17 @@ optimization, with no sampler/posterior claim. Result:
 `CF4_R2_SUPPORT_CHUNK_REPLAY_RESULT_20261104.md`; raw record:
 `/gpfs/kjhan/CF4/z0_density/r2_support_chunk_bench_20261104/449672/result.json`.
 
-The exact-target speedup candidate is closed. The next R2 action is to resolve
-the observation-model calibration limitation and define a field-level
-Monte-Carlo-error/resource contract; do not read held-out outcomes or launch
-the multi-chain target before those are defensible. R2 remains NO-GO, and MW,
+The exact-target speedup candidate is closed. Astra's 2026-11-04 mid-course
+review rejected repeating the native-TNG RSD mock: it and the subsequent
+moment-aware/actual-state operator work already ran (410544–410888), and do
+not calibrate the actual CF4 mark-availability or group-selection law. The
+driver independently checked the cited artifacts and adopted that advice.
+The immediate R2 action is the source-matched observation-calibration
+decision in `CF4_R2_OBSERVATION_CALIBRATION_DECISION_20261104.md`; no public
+parent search is repeated and no email is sent. In parallel, retain the
+field-level Monte-Carlo-error/resource contract requirement. Do not read
+held-out outcomes or launch the multi-chain target until observation scope
+and computational precision/cost are defensible. R2 remains NO-GO, and MW,
 M31 and M33 role/component requirements remain unchanged.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
