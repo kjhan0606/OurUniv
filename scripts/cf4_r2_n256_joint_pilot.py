@@ -19,6 +19,7 @@ from cf4_r2_corrected_split_hmc import corrected_split_step
 from cf4_r2_affine_force import AffineCorrectedForce
 from cf4_r2_chain_schedule import ChainSchedule
 from cf4_r2_posterior_moments import PresentMomentAccumulator
+from cf4_r2_canonical_state_store import CanonicalStateStore
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density');ROOT=Path(__file__).resolve().parents[1]
 N=256;BOX=384.;NIC=N**3
@@ -177,7 +178,16 @@ def main():
         metric=FixedSplitMetric(inverse_laplacian_metric_symbol(N),np.eye(24)*1e-5)
         step=schedule.initial_step if long_chain else (.05220457782250625 if affine else .1)
         accumulator=PresentMomentAccumulator((N,)*3) if long_chain else None
+        state_store=(CanonicalStateStore(out/'canonical_states',
+            chain_id=os.environ.get('CF4_R2_CHAIN_ID',out.name),
+            capacity=schedule.proposals-schedule.warmup,dimension=NIC+24,
+            contract_id=f"{os.environ['CF4_EXPECTED_COMMIT']}:conditional-v6-n256-joint-v1")
+            if long_chain else None)
         report['schedule']=schedule.__dict__ if schedule else None
+        report['retained_state_store']=(dict(path=str(state_store.directory),
+            capacity=state_store.capacity,lossless_dtype='float64',
+            records_include_rejections=True,heldout_scored=False)
+            if state_store is not None else None)
         def white_summary(q):
             spectrum=fft.fftn(q[:NIC].reshape((N,)*3),norm='ortho',workers=2)
             coarse_spectrum=restrict_spectrum_preserve_dtype(spectrum,128)
@@ -192,6 +202,7 @@ def main():
         checkpoint();save()
         for i in range(maximum):
             before=q.copy()
+            before_energy=energy
             integrations=schedule.steps(i) if long_chain else 2
             try:
                 q,energy,coarse,gradient,info=corrected_split_step(force,
@@ -211,13 +222,11 @@ def main():
             if long_chain and i>=warmup:
                 # Every retained chain state counts, including repeated rejections.
                 accumulator.update(accepted_field)
+                state_store.append(q,previous_state=before,previous_target=before_energy,
+                    transition=i-warmup+1,accepted=info['accepted'],target_value=energy)
                 report['retained_states']=accumulator.n
+                report['retained_state_records']=len(state_store)
                 if accumulator.n%8==0:
-                    np.savez(out/f'draw_{accumulator.n:04d}.npz',canonical=q,
-                        rho=accepted_field['rho'].astype(np.float32),
-                        mean_velocity_km_s=accepted_field['mean_velocity_km_s'].astype(np.float32),
-                        velocity_valid=accepted_field['velocity_valid'],fine_energy=energy,
-                        iteration=i+1,native_mesh_origin_fraction=0.,R2_complete=False)
                     np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             report['trace'].append(row);report['rng_state']=rng.bit_generator.state
             checkpoint();save();print(json.dumps(row),flush=True)

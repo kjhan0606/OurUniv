@@ -76,8 +76,10 @@ and fix/test the chain and field-diagnostic path before any large run; estimate
 for four×512 float64 canonical states alone is about256GiB. Astra's read-only
 mid-course review returned **NO-GO as written, remediable gaps**. The driver
 adopts the supported corrections; the first code bundle now implements a
-lossless retained-state store with rejection-repeat, resume and checksum tests
-(6/6 pass), but the store is not integrated into a production chain runner.
+lossless retained-state store and wires it into the existing one-chain
+long-chain diagnostic, removing redundant full-field snapshot dumps. Focused
+rejection-repeat, resume and checksum tests pass (7/7). This is not yet an
+independent-start production pipeline.
 The 3,200 GPU-hour proposal was withdrawn because it excluded held-out scoring
 and implementation cost. The conditional-v6 posterior alone also cannot
 complete R2 while source-matched FP/group selection calibration remains

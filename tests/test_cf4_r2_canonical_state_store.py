@@ -6,6 +6,8 @@ from pathlib import Path
 import numpy as np
 
 from cf4_r2_canonical_state_store import CanonicalStateStore
+from cf4_r2_corrected_split_hmc import corrected_split_step
+from cf4_r2_prior_split_hmc import FixedSplitMetric
 
 
 class CanonicalStateStoreTests(unittest.TestCase):
@@ -96,6 +98,38 @@ class CanonicalStateStoreTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "float64"):
                 store.append(q.astype(np.float32), previous_state=q,
                     previous_target=3., transition=2, accepted=True, target_value=2.)
+
+    def test_corrected_hmc_sequence_persists_accepted_and_rejected_states(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = self.make_store(temporary, capacity=2, dimension=9)
+            metric = FixedSplitMetric(np.ones((2, 2, 2)), np.eye(1))
+
+            def gaussian(q):
+                return .5 * float(q @ q), np.asarray(q, dtype=np.float64)
+
+            q = np.linspace(-.4, .4, 9)
+            value, gradient = gaussian(q)
+            force_value = value
+            rng = np.random.default_rng(18)
+            previous = q.copy()
+            previous_value = value
+            q, value, force_value, gradient, info = corrected_split_step(
+                gaussian, lambda x: gaussian(x)[0], metric, q, value,
+                force_value, gradient, rng, step=.2, steps=2)
+            self.assertTrue(info["accepted"])
+            store.append(q, previous_state=previous, previous_target=previous_value,
+                transition=1, accepted=info["accepted"], target_value=value)
+
+            previous = q.copy()
+            previous_value = value
+            q, value, force_value, gradient, info = corrected_split_step(
+                gaussian, lambda _: np.inf, metric, q, value,
+                force_value, gradient, rng, step=.2, steps=2)
+            self.assertFalse(info["accepted"])
+            store.append(q, previous_state=previous, previous_target=previous_value,
+                transition=2, accepted=info["accepted"], target_value=value)
+            np.testing.assert_array_equal(store.read_state(1), store.read_state(0))
+            self.assertEqual(store.records[1]["accepted"], False)
 
 
 if __name__ == "__main__":

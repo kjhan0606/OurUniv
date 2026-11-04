@@ -105,12 +105,15 @@ report must distinguish posterior spread from Monte Carlo error.
 The proposed schedule and diagnostics are **not executable in the current
 runner**:
 
-- `scripts/cf4_r2_n256_joint_pilot.py` runs one chain from one supplied
+- `scripts/cf4_r2_n256_joint_pilot.py` still runs one chain from one supplied
   initializer/restart. Its optional `long_chain` mode requires
   `CF4_R2_AFFINE_FORCE=1`; `src/cf4_r2_chain_schedule.py` defaults to48
   proposals,12 warmup, then fixed4/8-step trajectories—not the proposed
   128/512 schedule. It does not construct independent chain starts or
-  implement the stated warmup-end viability review.
+  implement the stated warmup-end viability review. The lossless state store
+  is now wired into this legacy long-chain path and redundant every-eighth
+  full-field dumps were removed; this improves persistence but does not turn
+  the diagnostic into the proposed production pipeline.
 - `src/cf4_r2_posterior_moments.py` accumulates posterior sample moments and
   occupancy, but no fixed-batch field means or map-level MCSE. Its output
   explicitly sets `posterior_MC_error_estimated=False`.
@@ -135,8 +138,10 @@ these findings:
 
 1. Retaining only moments cannot score held-out data after the fit while
    keeping those outcomes sealed. The lossless per-transition canonical-state
-   store is implemented in `src/cf4_r2_canonical_state_store.py` with focused
-   tests, but it is not yet connected to the chain runner.
+   store is implemented in `src/cf4_r2_canonical_state_store.py`, wired into
+   the existing one-chain long-chain diagnostic, and tested with exact
+   rejection-repeat/resume cases (7/7 tests pass). It is not yet connected to
+   an independent-start production driver.
 2. The candidate field criterion is incomplete. The implementation must
    define reporting regions, batch lengths/count, nonfinite and zero-variance
    handling, cross-chain map disagreement, and posterior-SD-map precision;
