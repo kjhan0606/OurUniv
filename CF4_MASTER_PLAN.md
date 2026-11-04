@@ -57,13 +57,35 @@ two sets of full-map outputs are not simultaneously retained. Checkpoint
 restore now adopts serialized arrays directly instead of allocating another
 4.625GiB of zero-filled state per scale. Five adapter tests, thirteen
 field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
-tests pass; the reporting-region helper has five geometry tests. The N256
-independent-start driver, field-MCSE checkpoint/replay recovery, warmup
+tests pass; the reporting-region helper has five geometry tests. The four-chain
+runner/replay path, field-MCSE checkpoint/replay recovery, warmup
 viability/adaptation contract, MCSE precision thresholds, and held-out stage
 remain incomplete. At N256 the two persistent scales alone require9.25GiB;
 finalization peak RSS is unmeasured. No GPU job
 was submitted. Details and fail-closed requirements are in
 `CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`.
+
+The current code bundle adds a tested independent standard-normal prior-start
+primitive and an opt-in `CF4_R2_START_POLICY=independent_prior` branch to the
+existing N256 runner. It assigns separate reproducible prior/audit/transition
+RNG streams by four-chain index and allows at most four retries only when the
+exact fine-target count score is `-inf` while the linked raw-mark score is
+finite; support errors and all other nonfinite evaluations abort. The branch
+is still embedded in the legacy 48-proposal/12-warmup one-chain diagnostic,
+not a four-chain production driver or the proposed 128/512 contract. Seven
+start-helper tests and 45 targeted CPU regressions pass under the Slurm runner's
+Python 3.11 environment, but no real N256 target/GPU start was attempted.
+RNG-aware per-state replay, warmup
+viability, map precision thresholds and calibrated observation selection
+remain open; R2 stays NO-GO and no posterior/cost claim follows.
+
+Q-GOAL: this enables sampler initialization only; it creates no z=0
+posterior or promoted field. MW/M31 remain role-ambiguous and M33 unresolved;
+their observables must ultimately constrain those roles on the same NEW
+evolved LG field at `<=0.3 cMpc/h`, with truth IDs used only for
+calibration/evaluation. Q-LEAN: the change is limited to start construction,
+stream isolation and strict retry classification; it launches no new
+simulation, changes no target, and does not relax the NO-GO gates.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight

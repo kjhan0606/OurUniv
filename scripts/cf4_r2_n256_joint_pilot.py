@@ -20,6 +20,10 @@ from cf4_r2_affine_force import AffineCorrectedForce
 from cf4_r2_chain_schedule import ChainSchedule
 from cf4_r2_posterior_moments import PresentMomentAccumulator
 from cf4_r2_canonical_state_store import CanonicalStateStore
+from cf4_r2_independent_chain_start import (
+    PriorStartSelectionError, ZeroCountLikelihoodStart,
+    is_retryable_zero_count_likelihood, make_independent_chain_streams,
+    select_prior_start)
 from cf4_r2_retained_field_mcse import (RetainedFieldMCSEDiagnostics,
     validate_field_mcse_schedule)
 
@@ -48,6 +52,23 @@ def main():
     affine=os.environ.get('CF4_R2_AFFINE_FORCE')=='1'
     long_chain=os.environ.get('CF4_R2_LONG_CHAIN')=='1'
     if long_chain and not affine:raise ValueError('long-chain mode requires checked affine force')
+    start_policy=os.environ.get('CF4_R2_START_POLICY','provided_initializer')
+    if start_policy not in ('provided_initializer','independent_prior'):
+        raise ValueError('unknown N256 start policy')
+    if start_policy=='independent_prior' and not long_chain:
+        raise ValueError('independent prior starts are restricted to the long-chain diagnostic path')
+    if start_policy=='independent_prior' and os.environ.get('CF4_R2_RESTART_DIR'):
+        raise ValueError('independent prior starts cannot inherit a restart state')
+    chain_rngs=None;rng_metadata=None;chain_id=os.environ.get('CF4_R2_CHAIN_ID')
+    if start_policy=='independent_prior':
+        if not os.environ.get('CF4_R2_MASTER_SEED') or not os.environ.get('CF4_R2_CHAIN_INDEX'):
+            raise ValueError('independent prior starts require master seed and chain index')
+        master_seed=int(os.environ['CF4_R2_MASTER_SEED'])
+        chain_index=int(os.environ['CF4_R2_CHAIN_INDEX'])
+        chain_rngs,rng_metadata=make_independent_chain_streams(master_seed,chain_index)
+        chain_id=chain_id or f'conditional-v6-seed-{master_seed}-chain-{chain_index}'
+    elif long_chain:
+        chain_id=chain_id or out.name
     schedule=ChainSchedule() if long_chain else None
     maximum=schedule.proposals if long_chain else (2 if affine else 4)
     warmup=schedule.warmup if long_chain else (0 if affine else 2)
@@ -62,9 +83,11 @@ def main():
         target='conditional1414 rawFP/K marks plus47121 training counts, LCDM and24 proper nuisance priors once',
         max_proposals=maximum,warmup_proposals=warmup,frozen_affine_force=affine,
         long_chain=long_chain,application_budget_seconds=budget,
+        initialization_policy=start_policy,
         field_mcse_contract=field_mcse_contract,
         sampling_status='NOT_ASSESSED_FOR_STATIONARITY',
         limitations='bounded development transitions, no stationarity/UQ; fine2 needs fine4 sensitivity; conditional selection; MW/M31 ambiguous,M33 unresolved')
+    if rng_metadata is not None:report.update(chain_rng_design=rng_metadata,chain_id=chain_id)
     def save():
         report.update(seconds=time.monotonic()-started,host_peak_GiB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024**2)
         (out/'result.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
@@ -95,18 +118,21 @@ def main():
                 f['train_window_excluded_keys'],f['heldout_window_excluded_keys'])
         obs=ResolutionObservationTarget(N,source,mix,o,g,keys,counts,jnp.asarray(exposure),force_order=1,fine_order=2)
         restart=Path(os.environ['CF4_R2_RESTART_DIR']) if os.environ.get('CF4_R2_RESTART_DIR') else None
-        startfile=parent/'initial_present_state.npz'
-        if restart is not None:
-            previous=json.loads((restart/'result.json').read_text())
-            if previous['status']!='N256_RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR' or previous['fine_volume_order']!=2 or previous['N']!=N:
-                raise ValueError('completed same-target N256 restart required')
-            startfile=restart/'accepted_present_state.npz'
-        with np.load(startfile,allow_pickle=False) as f:
-            q=np.r_[f['white_ic'],f['tracer'],f['population_white']]
-            oldrho=f['rho'];oldvel=f['mean_velocity_km_s']
-            restart_fine=float(f['fine_energy']) if 'fine_energy' in f else None
-        if q.shape!=(NIC+24,):raise ValueError('matching canonical IC and24 nuisances required')
-        report['initializer']=str(startfile);save()
+        if start_policy=='independent_prior':
+            q=None;oldrho=None;oldvel=None;restart_fine=None
+        else:
+            startfile=parent/'initial_present_state.npz'
+            if restart is not None:
+                previous=json.loads((restart/'result.json').read_text())
+                if previous['status']!='N256_RAW_JOINT_TRANSITION_PILOT_NOT_POSTERIOR' or previous['fine_volume_order']!=2 or previous['N']!=N:
+                    raise ValueError('completed same-target N256 restart required')
+                startfile=restart/'accepted_present_state.npz'
+            with np.load(startfile,allow_pickle=False) as f:
+                q=np.r_[f['white_ic'],f['tracer'],f['population_white']]
+                oldrho=f['rho'];oldvel=f['mean_velocity_km_s']
+                restart_fine=float(f['fine_energy']) if 'fine_energy' in f else None
+            if q.shape!=(NIC+24,):raise ValueError('matching canonical IC and24 nuisances required')
+            report['initializer']=str(startfile);save()
         settings=json.loads((parent/'result.json').read_text())['settings']
         evolve,_,conf,_,pmass=make_dynamics(settings);mass=jnp.full(NIC,pmass)
         @jax.jit
@@ -118,7 +144,7 @@ def main():
             pos,vel=evolve(white);state=particle_grid(pos,vel,mass,conf)
             return state['rho'],jnp.moveaxis(state['mean_velocity_km_s'],-1,0),jnp.moveaxis(state['variance_km2_s2'],-1,0),state['valid']
         latest_fine={}
-        def oracle(q,order,gradient):
+        def oracle(q,order,gradient,*,allow_zero_count_start=False):
             nonlocal latest_fine
             if time.monotonic()-started>budget:raise PilotBudgetStop()
             tic=time.monotonic();white,t,p=map(jnp.asarray,(q[:NIC],q[NIC:NIC+9],q[NIC+9:]))
@@ -152,8 +178,23 @@ def main():
                         raise MemoryError('N256 fine target lacks20percent device margin')
                     del compiled
                 (score,parts),grad=obs.value(r,v,t,p,packs,source,o,order),None
-            energy=.5*float(q@q)-float(score)
-            if not np.isfinite(energy):raise FloatingPointError('nonfinite target, no floor')
+            score_value=float(score)
+            score_parts=np.asarray(parts,dtype=np.float64).reshape(-1)
+            energy=.5*float(q@q)-score_value
+            if not np.isfinite(energy):
+                zero_count_start=is_retryable_zero_count_likelihood(
+                    score_value,score_parts,order=order,gradient=gradient,
+                    retry_enabled=allow_zero_count_start)
+                if zero_count_start:
+                    row=dict(order=order,gradient=gradient,energy='inf',
+                        parts=['-inf',float(score_parts[1])],
+                        seconds=time.monotonic()-tic,**info,
+                        status='ZERO_COUNT_LIKELIHOOD_START')
+                    report['evaluations'].append(row);save();print(json.dumps(row),flush=True)
+                    raise ZeroCountLikelihoodStart(count_score=score_parts[0],
+                        raw_score=score_parts[1],
+                        reason='training count likelihood is -inf while linked raw-mark likelihood is finite')
+                raise FloatingPointError('nonfinite target, no floor')
             if order==2 and not gradient:
                 latest_fine=dict(rho=np.asarray(r),mean_velocity_km_s=np.asarray(v),
                     physical_velocity_variance_km2_s2=np.asarray(variance),velocity_valid=np.asarray(valid))
@@ -162,19 +203,39 @@ def main():
             row=dict(order=order,gradient=gradient,energy=energy,parts=np.asarray(parts).tolist(),seconds=time.monotonic()-tic,**info)
             report['evaluations'].append(row);save();print(json.dumps(row),flush=True)
             return energy,grad
-        report['phase']='N256_SAME_IC_RECONSTRUCTION';save()
-        r,v=field(jnp.asarray(q[:NIC]))
-        errors=dict(rho=float(jnp.max(jnp.abs(r-oldrho))),velocity=float(jnp.max(jnp.abs(v-oldvel))))
-        report['restart_field_max_abs']=errors;save()
-        if max(errors.values())>1e-7:raise AssertionError('N256 initializer reconstruction mismatch')
-        del oldrho,oldvel,r,v
+        initial_fine_energy=None
+        report['phase']=('INDEPENDENT_PRIOR_START_SELECTION' if start_policy=='independent_prior'
+                         else 'N256_SAME_IC_RECONSTRUCTION');save()
+        if start_policy=='independent_prior':
+            try:
+                selection=select_prior_start(chain_rngs['prior'],NIC+24,
+                    lambda candidate:oracle(candidate,2,False,
+                        allow_zero_count_start=True)[0])
+            except PriorStartSelectionError as error:
+                report['prior_start_selection']=error.as_report();save();raise
+            q=selection.state
+            initial_fine_energy=selection.target_energy
+            accepted_field=latest_fine
+            report['prior_start_selection']=selection.as_report()
+            report['prior_rng_state_after_start']=chain_rngs['prior'].bit_generator.state
+            save()
+        else:
+            r,v=field(jnp.asarray(q[:NIC]))
+            errors=dict(rho=float(jnp.max(jnp.abs(r-oldrho))),velocity=float(jnp.max(jnp.abs(v-oldvel))))
+            report['restart_field_max_abs']=errors;save()
+            if max(errors.values())>1e-7:raise AssertionError('N256 initializer reconstruction mismatch')
+            del oldrho,oldvel,r,v
         coarse,gradient=oracle(q,1,True)
         direct,_=oracle(q,1,False)
         if abs(coarse-direct)>1e-7:raise AssertionError('N256 AD/value primal mismatch')
-        seed=int(os.environ.get('CF4_R2_CHAIN_SEED',str(2026092917 if affine else 2026092916)))
-        report['seed']=seed;rng=np.random.default_rng(seed)
+        if start_policy=='independent_prior':
+            seed=master_seed;rng=chain_rngs['transition'];audit_rng=chain_rngs['audit']
+            report['seed']=master_seed
+        else:
+            seed=int(os.environ.get('CF4_R2_CHAIN_SEED',str(2026092917 if affine else 2026092916)))
+            report['seed']=seed;rng=np.random.default_rng(seed);audit_rng=rng
         wave=np.broadcast_to(np.cos(2*np.pi*np.arange(N)/N)[:,None,None],(N,)*3)
-        direction=np.r_[.03*wave.ravel(),.01*rng.normal(size=24)/np.sqrt(24)]
+        direction=np.r_[.03*wave.ravel(),.01*audit_rng.normal(size=24)/np.sqrt(24)]
         epsilon=2e-5;prior=float(q@direction)
         plus=oracle(q+epsilon*direction,1,False)[0];minus=oracle(q-epsilon*direction,1,False)[0]
         ad=float(gradient@direction)-prior;fd=(plus-minus)/(2*epsilon)-prior
@@ -182,7 +243,10 @@ def main():
         report['joint_PM_direction']=dict(likelihood_AD=ad,likelihood_FD=fd,relative_error=error);save()
         if error>2e-3:raise AssertionError('N256 PM/raw/count directional mismatch')
         del direction,wave
-        energy,_=oracle(q,2,False);accepted_field=latest_fine
+        if initial_fine_energy is None:
+            energy,_=oracle(q,2,False);accepted_field=latest_fine
+        else:
+            energy=initial_fine_energy
         if restart_fine is not None and abs(energy-restart_fine)>1e-7:
             raise AssertionError('same-target restart fine energy changed')
         force=lambda x:oracle(x,1,True)
@@ -217,7 +281,7 @@ def main():
                 finalization_peak_RSS='not measured; this diagnostic is not production authorization')
             save()
         state_store=(CanonicalStateStore(out/'canonical_states',
-            chain_id=os.environ.get('CF4_R2_CHAIN_ID',out.name),
+            chain_id=chain_id or out.name,
             capacity=schedule.proposals-schedule.warmup,dimension=NIC+24,
             contract_id=f"{os.environ['CF4_EXPECTED_COMMIT']}:conditional-v6-n256-joint-v1")
             if long_chain else None)
@@ -275,6 +339,9 @@ def main():
                 if accumulator.n%8==0:
                     np.savez(out/'moment_checkpoint.npz',**accumulator.checkpoint_arrays())
             report['trace'].append(row);report['rng_state']=rng.bit_generator.state
+            if chain_rngs is not None:
+                report['rng_stream_states']={name:generator.bit_generator.state
+                    for name,generator in chain_rngs.items()}
             checkpoint();save();print(json.dumps(row),flush=True)
             if long_chain:step=schedule.next_step(step,i,info['log_acceptance'])
             elif i<warmup:step=float(np.clip(step*np.exp((np.exp(info['log_acceptance'])-.65)/np.sqrt(i+1)),1e-6,.3))

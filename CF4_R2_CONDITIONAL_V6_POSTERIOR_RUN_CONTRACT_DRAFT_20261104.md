@@ -100,7 +100,7 @@ replay before production. Do not persist full field maps at every state
 unless a later, explicit need justifies the additional storage. The final
 report must distinguish posterior spread from Monte Carlo error.
 
-## Current implementation readiness (read-only code inspection)
+## Current implementation readiness (updated 2026-11-04)
 
 The proposed schedule and diagnostics are **not executable in the current
 runner**:
@@ -109,11 +109,20 @@ runner**:
   initializer/restart. Its optional `long_chain` mode requires
   `CF4_R2_AFFINE_FORCE=1`; `src/cf4_r2_chain_schedule.py` defaults to48
   proposals,12 warmup, then fixed4/8-step trajectories—not the proposed
-  128/512 schedule. It does not construct independent chain starts or
-  implement the stated warmup-end viability review. The lossless state store
-  is now wired into this legacy long-chain path and redundant every-eighth
-  full-field dumps were removed; this improves persistence but does not turn
-  the diagnostic into the proposed production pipeline.
+  128/512 schedule. The tested `CF4_R2_START_POLICY=independent_prior` branch
+  now draws the complete `N^3+24` standard-normal state and uses four-indexed,
+  separate prior/audit/transition RNG streams. Only an exact `-inf` count
+  component with finite raw-mark component may retry, at most four times;
+  `CF4_R2_MASTER_SEED` and `CF4_R2_CHAIN_INDEX` select the deterministic stream
+  family, while `CF4_R2_CHAIN_ID` may name its retained-state store. Support
+  and numerical failures abort. Seven focused start-helper tests and the
+  targeted 45-test CPU regression set pass under the runner's Python 3.11.
+  This remains one chain per runner
+  invocation and does not implement the proposed four-chain supervisor,
+  per-retained-state RNG replay, or warmup-end viability review. The lossless
+  state store is wired into this legacy long-chain path and redundant
+  every-eighth full-field dumps were removed; this still does not turn the
+  diagnostic into the proposed production pipeline.
 - `src/cf4_r2_posterior_moments.py` accumulates posterior sample moments and
   occupancy, but no fixed-batch field means or map-level MCSE. Its output
   explicitly sets `posterior_MC_error_estimated=False`.
@@ -146,10 +155,11 @@ these findings:
    define reporting regions, batch lengths/count, nonfinite and zero-variance
    handling, cross-chain map disagreement, and posterior-SD-map precision;
    do not use a whole-box p95 of mean MCSE as the sole pass.
-3. Four starts must independently draw all `N^3+24` standard-normal
-   coordinates. Specify RNG streams, bounded finite-support retries and
-   numerical-failure handling. The warmup adaptation, trajectory, freeze
-   point and early-stop review remain unimplemented.
+3. The tested start primitive now covers complete independent prior draws,
+   separate purpose-specific RNG streams, bounded finite-support retries and
+   fail-closed numerical-error handling. The four-chain launcher/replay path,
+   warmup adaptation, trajectory, freeze point and early-stop review remain
+   unimplemented.
 4. Specify held-out joint score as the posterior `logmeanexp` of per-draw
    joint count+mark log likelihoods, with chain-aware Monte Carlo error.
    Held-out scoring evaluations must be included in the cost and remain a
