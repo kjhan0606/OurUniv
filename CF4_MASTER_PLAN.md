@@ -66,7 +66,7 @@ minimum complete-batch count must be supplied explicitly; no scientifically
 unjustified defaults are selected. Each scale finalizes independently so the
 two sets of full-map outputs are not simultaneously retained. Checkpoint
 restore now adopts serialized arrays directly instead of allocating another
-4.625GiB of zero-filled state per scale. Seven adapter tests, sixteen
+4.625GiB of zero-filled state per scale. Seven adapter tests, seventeen
 field-MCSE primitive tests, five cross-chain tests, and three posterior-moment
 tests pass; the reporting-region helper has five geometry tests. The runner
 now writes each normally completed chain's field-MCSE sufficient statistics
@@ -74,10 +74,17 @@ to `field_mcse_sufficient_statistics_unassessed.npz`, refusing to overwrite an
 existing file. At N256 the raw arrays are estimated at 9.25GiB per chain
 (about37GiB for four); this is an array-byte estimate, not measured NPZ size,
 I/O time, or peak RSS. It is a normal-completion post-processing artifact,
-not a periodic crash/restart checkpoint. A file-based four-chain
-combiner/report and N256 memory/I/O profile remain incomplete, as do the
-proposed 128/512 warmup/production contract, MCSE precision thresholds, and
-held-out stage. The legacy 48/12 one-chain diagnostic now records
+not a periodic crash/restart checkpoint. A file-based four-chain field report
+now exists in `scripts/cf4_r2_four_chain_field_mcse_report.py`: it verifies
+four distinct chain-indexed RNG designs and matching target/domain metadata,
+computes chain-separated density/velocity/occupancy disagreement before the
+destructive pooled merge, and emits only scalar regional summaries. Four
+synthetic NPZ/report tests pass. It does not run or pass the scalar convergence
+gate, select MCSE thresholds, or promote a field. The two-accumulator raw
+array floor is18.5GiB at N256, excluding finalization temporaries; N256 memory
+and I/O remain unmeasured. The proposed 128/512 warmup/production contract,
+MCSE precision thresholds, and held-out stage are still incomplete. The
+legacy 48/12 one-chain diagnostic now records
 its diminishing warmup-only step-size rule and checks the complete warmup for
 valid transitions, bounded steps, and at least one accepted transition before
 retention. This is only an operational viability check—not equilibration or
@@ -86,13 +93,15 @@ persistent scales alone require9.25GiB; finalization peak RSS is unmeasured. No 
 was submitted. Details and fail-closed requirements are in
 `CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`.
 
-Q-GOAL: this adds only a fail-closed operational warmup check on the route to
-the conditional z=0 posterior; it creates no field or posterior. MW/M31 remain
-role-ambiguous and M33 unresolved; their observables must constrain those same
-roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with native truth IDs
-reserved for calibration/evaluation. Q-LEAN: a small schedule helper, runner
-hook and focused tests only—no target/data change, GPU calculation or extra
-diagnostic ladder.
+Q-GOAL: the warmup check and field-MCSE aggregation path make posterior
+qualification more executable but create no posterior or validated z=0 field.
+MW/M31 remain role-ambiguous and M33 unresolved; their observables must
+constrain those same roles on the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with native truth IDs reserved for calibration/evaluation.
+Q-LEAN: one file-based post-processing path plus a small warmup check and
+focused synthetic tests; no target/data change, held-out read, GPU calculation,
+or new simulation. The N256 memory/I/O profile remains a prerequisite to
+running the field report on production-sized chain artifacts.
 
 A CPU-only calibration of the field-mean batch estimator used four
 independent stationary Gaussian AR(1) chains, 512 states per chain and5,000
@@ -106,10 +115,12 @@ calibration. A non-copying in-memory merge now pools complete equal-length
 chain sufficient statistics; the retained-field wrapper has contract-aware
 pooling, and the runner writes the per-chain statistics on normal completion.
 The raw arrays are estimated at9.25GiB per N256 chain and37GiB for four; no
-production-size file, I/O time, peak RSS, or file-based four-chain merge has
-been measured or implemented. The saved file is not a restart checkpoint.
-Keep32/64 and the `0.10` threshold provisional; no GPU job, target evaluation
-or held-out read was performed. Details and reproduction script:
+production-size file, I/O time, or peak RSS has been measured. A synthetic
+file-based report now combines the saved sufficient statistics and separately
+reports chain disagreement first; its N256 resource path remains unprofiled.
+The saved file is not a restart checkpoint. Keep32/64 and the `0.10`
+threshold provisional; no GPU job, target evaluation or held-out read was
+performed. Details and reproduction script:
 `CF4_R2_FIELD_MCSE_AR1_CALIBRATION_20261104.md` and
 `scripts/cf4_r2_mcse_ar1_calibration.py`.
 

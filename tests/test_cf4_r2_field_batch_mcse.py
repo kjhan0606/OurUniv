@@ -228,6 +228,11 @@ class FieldBatchMCSETests(unittest.TestCase):
         snapshot = {key: np.array(value, copy=True)
             for key, value in partial.checkpoint_arrays().items()}
         resumed = MultiScaleFieldMCSEAccumulator.from_checkpoint(snapshot)
+        legacy_snapshot = dict(snapshot)
+        legacy_snapshot.pop("chain_count")
+        legacy_resumed = MultiScaleFieldMCSEAccumulator.from_checkpoint(
+            legacy_snapshot)
+        self.assertEqual(legacy_resumed.chain_count, 1)
         for item in states[7:]:
             resumed.update(item)
         expected, actual = uninterrupted.finalize(), resumed.finalize()
@@ -308,6 +313,38 @@ class FieldBatchMCSETests(unittest.TestCase):
             actual = pooled.finalize_scale(size)[
                 "density_mean_mcse_over_sd"][0, 0, 0]
             self.assertAlmostEqual(float(actual), expected_ratio, places=13)
+
+    def test_independent_chain_pooling_can_be_merged_incrementally_and_restored(self):
+        chains = []
+        raw = []
+        for chain_index in range(4):
+            values = np.asarray([1., 1., 2., 2., 3., 3., 4., 4.]) + .25 * chain_index
+            accumulator = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+                batch_sizes=(2, 4), minimum_batches=2)
+            for value in values:
+                accumulator.update(field(value, [0., 0., 0.]))
+            chains.append(accumulator)
+            raw.append(values)
+
+        pooled = chains[0]
+        for chain in chains[1:]:
+            pooled.merge_independent_chains_inplace(chain)
+        self.assertEqual(pooled.chain_count, 4)
+        self.assertEqual(pooled.states, 32)
+        with self.assertRaisesRegex(ValueError, "cannot accept new chain states"):
+            pooled.update(field(1., [0., 0., 0.]))
+        expected = np.concatenate(raw)
+        result = pooled.finalize_scale(4)
+        self.assertAlmostEqual(float(result["density_mean"][0, 0, 0]),
+            float(expected.mean()), places=14)
+
+        snapshot = {key: np.array(value, copy=True)
+            for key, value in pooled.checkpoint_arrays().items()}
+        restored = MultiScaleFieldMCSEAccumulator.from_checkpoint(snapshot)
+        self.assertEqual(restored.chain_count, 4)
+        self.assertEqual(restored.states, 32)
+        self.assertAlmostEqual(float(restored.finalize_scale(4)[
+            "density_mean"][0, 0, 0]), float(expected.mean()), places=14)
 
     def test_chain_pooling_fails_before_mutation_for_incomplete_chain(self):
         complete = MultiScaleFieldMCSEAccumulator((1, 1, 1),

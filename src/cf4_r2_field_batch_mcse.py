@@ -474,6 +474,7 @@ class MultiScaleFieldMCSEAccumulator:
         self.minimum_batches = minimum_batches
         self.shape = tuple(shape)
         self.density_reference = float(density_reference)
+        self.chain_count = 1
         self.accumulators = {
             size: FieldBatchMCSEAccumulator(self.shape, batch_size=size,
                 minimum_batches=minimum_batches,
@@ -493,6 +494,8 @@ class MultiScaleFieldMCSEAccumulator:
             for acc in self.accumulators.values())
 
     def update(self, field):
+        if self.chain_count != 1:
+            raise ValueError("pooled field-MCSE statistics cannot accept new chain states")
         for accumulator in self.accumulators.values():
             accumulator.update(field)
 
@@ -523,12 +526,15 @@ class MultiScaleFieldMCSEAccumulator:
 
         contract = (self.shape, self.batch_sizes, self.minimum_batches,
             self.density_reference)
-        state_counts = []
+        per_chain_state_counts = []
         for chain in chains:
             if (chain.shape, chain.batch_sizes, chain.minimum_batches,
                     chain.density_reference) != contract:
                 raise ValueError("independent chain field-MCSE contracts differ")
-            state_counts.append(chain.states)
+            if (not isinstance(chain.chain_count, int) or chain.chain_count < 1
+                    or chain.states % chain.chain_count):
+                raise ValueError("pooled field-MCSE chain accounting is inconsistent")
+            per_chain_state_counts.append(chain.states // chain.chain_count)
             for size in self.batch_sizes:
                 accumulator = chain.accumulators[size]
                 if (accumulator.pending_states != 0
@@ -537,7 +543,7 @@ class MultiScaleFieldMCSEAccumulator:
                 for name in accumulator._PENDING_ARRAYS:
                     if np.any(getattr(accumulator, name) != 0.):
                         raise ValueError("empty pending batch has nonzero checkpoint state")
-        if len(set(state_counts)) != 1:
+        if len(set(per_chain_state_counts)) != 1:
             raise ValueError("pooled field MCSE requires equal retained chain lengths")
 
         # Check all sums before mutating the receiver. A bound from each
@@ -573,13 +579,15 @@ class MultiScaleFieldMCSEAccumulator:
                         out=getattr(target, name))
                 target.states += source.states
                 target.batches += source.batches
+        self.chain_count = sum(chain.chain_count for chain in chains)
         return self
 
     def checkpoint_arrays(self):
         result = dict(format_version=np.array(1, dtype=np.int64),
             batch_sizes=np.asarray(self.batch_sizes, dtype=np.int64),
             minimum_batches=np.array(self.minimum_batches, dtype=np.int64),
-            density_reference=np.array(self.density_reference, dtype=np.float64))
+            density_reference=np.array(self.density_reference, dtype=np.float64),
+            chain_count=np.array(self.chain_count, dtype=np.int64))
         for size, accumulator in self.accumulators.items():
             for key, value in accumulator.checkpoint_arrays().items():
                 if key in ("format_version", "batch_size", "minimum_batches",
@@ -594,11 +602,14 @@ class MultiScaleFieldMCSEAccumulator:
         sizes = np.asarray(state["batch_sizes"])
         minimum = np.asarray(state["minimum_batches"])
         reference = np.asarray(state["density_reference"])
+        chain_count = (np.asarray(state["chain_count"])
+            if "chain_count" in state else np.array(1, dtype=np.int64))
         if (version.shape or version.dtype.kind not in "iu" or int(version) != 1
                 or sizes.ndim != 1 or sizes.dtype.kind not in "iu"
                 or minimum.shape or minimum.dtype.kind not in "iu"
                 or reference.shape or reference.dtype != np.dtype(np.float64)
-                or not np.isfinite(reference)):
+                or not np.isfinite(reference) or chain_count.shape
+                or chain_count.dtype.kind not in "iu" or int(chain_count) < 1):
             raise ValueError("invalid multi-scale field-MCSE checkpoint metadata")
         batch_sizes = tuple(int(size) for size in sizes)
         if (len(batch_sizes) < 2 or tuple(sorted(set(batch_sizes))) != batch_sizes
@@ -618,6 +629,9 @@ class MultiScaleFieldMCSEAccumulator:
         counts = {acc.states for acc in child_states.values()}
         if len(counts) != 1:
             raise ValueError("multi-scale checkpoint state counters diverged")
+        if any(acc.states % int(chain_count) or acc.batches % int(chain_count)
+               for acc in child_states.values()):
+            raise ValueError("multi-scale checkpoint chain accounting is inconsistent")
         if any(acc.minimum_batches != int(minimum)
                or acc.density_reference != float(reference)
                for acc in child_states.values()):
@@ -630,6 +644,7 @@ class MultiScaleFieldMCSEAccumulator:
         result.batch_sizes = batch_sizes
         result.minimum_batches = int(minimum)
         result.density_reference = float(reference)
+        result.chain_count = int(chain_count)
         result.accumulators = child_states
         return result
 

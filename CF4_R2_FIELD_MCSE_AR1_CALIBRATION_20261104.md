@@ -49,8 +49,9 @@ unqualified R2 chain. It therefore cannot certify a field-level threshold.
 complete equal-length chain sufficient statistics in-place, including the
 between-chain contribution to pooled batch-mean variance. The retained-field
 adapter also validates domain/contract identity and transition accounting
-before pooling. Sixteen focused tests passed; the fixed-seed AR(1) test matches
-the pooled mean-MCSE formula at both scales. A normally completed chain now
+before pooling. Seventeen focused field-MCSE primitive tests passed; the
+fixed-seed AR(1) test matches the pooled mean-MCSE formula at both scales. A
+normally completed chain now
 persists the sufficient statistics, but the helper has no file-based
 four-chain runner/report integration, and no N256 memory or I/O profile has
 been measured. The raw-array estimate is 9.25 GiB per chain and 37 GiB for
@@ -81,13 +82,24 @@ GPU calculation, or expanded diagnostic ladder.
 
 ## Next technical work
 
-Build a bounded-memory file-based four-chain report that checks chain
-provenance and preserves cross-chain disagreement before any pooled merge;
-first measure its I/O and peak RSS on a small synthetic fixture, then cost the
-N256 path against available host memory with the required 20% headroom. The
-per-chain statistics file is written only after normal completion and is not
-a restart checkpoint. Calibrate the production path on spatially correlated
-synthetic maps with heterogeneous autocorrelation before choosing batch
-lengths or promoting the `0.10` candidate. Keep all target/held-out data
-sealed and R2 NO-GO until observation scope and the full resource/MCSE
-contract are defensible.
+The file-based report is now implemented in
+`scripts/cf4_r2_four_chain_field_mcse_report.py` and
+`src/cf4_r2_four_chain_field_mcse.py`. It verifies four distinct chain-indexed
+PCG64 streams and matching training-domain/target metadata, reads only the
+training-key member of the split, reports density/velocity/occupancy
+chain-disagreement before pooling, then merges persisted statistics one source
+chain at a time. Four synthetic NPZ/report regressions pass. The report does
+not execute the scalar convergence gate, choose a precision threshold, read
+held-out outcomes, or promote a field. Sequential pooling now records pooled
+chain count in the checkpoint metadata while continuing to read prior
+single-chain checkpoints as one chain.
+
+N256 execution remains deferred: two live accumulator archives imply an
+18.5GiB raw-array floor before finalization temporaries, and there is no
+production-size I/O or peak-RSS measurement. Any later Slurm memory request
+must be based on a measured peak with the required 20% headroom. Next, measure
+the post-processing path on an appropriately sized synthetic fixture and
+calibrate batch lengths on spatially correlated synthetic maps with
+heterogeneous autocorrelation. Keep all target/held-out data sealed and R2
+NO-GO until observation scope and the full resource/MCSE contract are
+defensible.

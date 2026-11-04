@@ -167,10 +167,16 @@ runner**:
   and refuses to overwrite an output file. Synthetic CLI-path, fail-closed,
   and non-promotion tests pass; a 4,096-state-per-chain IID control exercises
   the diagnostic PASS path without representing CF4 inference.
-  This is not an integrated chain supervisor/restart or production
-  qualification pipeline. Warmup viability, full-field cross-chain/MCSE
-  qualification, held-out scoring, and N256 summary cost remain
-  unmeasured/unimplemented.
+  `scripts/cf4_r2_four_chain_field_mcse_report.py` now reads four completed
+  chain reports, verifies the four chain-indexed RNG streams and shared target
+  contract, computes chain-separated map disagreement before pooling, and
+  combines persisted sufficient statistics one source chain at a time. It
+  reads only training keys from the supplied split and never reads held-out
+  outcomes. Four small synthetic NPZ/report tests pass. This report explicitly
+  does not evaluate the scalar convergence gate or promote a field. It is not
+  an integrated chain supervisor/restart or production qualification
+  pipeline. Field-MCSE thresholds/spatial calibration, held-out scoring, and
+  N256 memory/I/O remain unmeasured or incomplete.
 - The production implementation must therefore be built and regression-
   tested before this is an executable run proposal. It must preserve the
   exact target (an approximate force is acceptable only with a verified
@@ -239,7 +245,7 @@ undefined and zero-posterior-SD cells. The batch-delta MCSE formulas are
 checked against direct synthetic covariance calculations. The new
 `src/cf4_r2_cross_chain_field_diagnostics.py` compares chain-specific mean and
 posterior-SD maps, supports unequal chain lengths, and marks a cell undefined
-if any chain lacks a valid value instead of silently omitting it. Thirteen
+if any chain lacks a valid value instead of silently omitting it. Seventeen
 field-MCSE tests, five cross-chain tests, and the three existing
 posterior-moment tests pass.
 
@@ -254,9 +260,14 @@ refuses to overwrite an existing file. This is not an interruption-safe
 checkpoint and is not written periodically. At N256 it is estimated at
 9.25GiB of raw arrays per chain (about37GiB for four), excluding small NPZ
 headers. No N256 file, read/write time, or peak RSS has been measured, and a
-file-based four-chain merger/report remains unimplemented. The independent-
-start production driver and field-MCSE checkpoint/replay recovery in the chain
-runner also remain unimplemented. One accumulator holds37 float64 full-grid
+file-based four-chain field-MCSE report is now implemented and has focused
+synthetic archive tests, but it has not been run on N256 files and its peak
+RSS/I/O are unmeasured. Its merge holds at most two raw accumulators, an
+18.5GiB floor at N256 before finalization temporaries; retain the required
+20% headroom from a measured production-size peak before any such run. The
+independent-start production driver and field-MCSE checkpoint/replay recovery
+in the chain runner also remain unimplemented. One accumulator holds37
+float64 full-grid
 arrays:4.625GiB at N256 before finalization temporaries; two batch scales
 therefore require at least9.25GiB of persistent accumulator state, in addition
 to the field, JAX host buffers, checkpoints, and finalization temporaries. No
@@ -290,7 +301,7 @@ behavior near the threshold. Scalar replicate quantiles are not a spatial
 regional-p95 calibration; actual field cells are correlated and
 heterogeneous. `MultiScaleFieldMCSEAccumulator.merge_independent_chains_inplace`
 now pools complete equal-length chain sufficient statistics without copying
-full maps; the 16-test field-MCSE suite includes an exact AR(1) estimator
+full maps; the 17-test field-MCSE suite includes an exact AR(1) estimator
 comparison. This helper is not yet integrated with the file-based chain
 runner/report, and no N256 memory or I/O profile exists. The detailed result
 and limitations are in

@@ -262,6 +262,7 @@ class RetainedFieldMCSEDiagnostics:
             accepted_transitions=self.accepted_transitions,
             rejected_transitions=self.rejected_transitions,
             batch_sizes=self.batch_sizes, minimum_batches=self.minimum_batches,
+            pooled_chain_count=self.accumulator.chain_count,
             estimated_accumulator_bytes=self.estimated_accumulator_bytes,
             reporting_region=self.REGION_NAME,
             full_box_cells=int(np.prod(self.shape)),
