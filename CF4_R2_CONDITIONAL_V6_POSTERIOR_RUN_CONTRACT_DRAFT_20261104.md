@@ -54,10 +54,15 @@ For scalar nuisance parameters, training log-likelihood components, and
 predeclared observables require four-chain rank-normalized **and folded**
 split-\(\hat R\le1.01\), bulk ESS\(\ge400\), and tail ESS\(\ge400\). The
 observable list must include selected low-k real/imaginary density and
-velocity modes, band powers, and fixed regional density/flow summaries; shell
-powers alone are insufficient. Name the implementation and ensure it handles
+mass-weighted momentum (\(\rho v\)) modes, band powers, and fixed regional
+density/flow summaries; shell powers alone are insufficient. Name the implementation and ensure it handles
 the independent chain starts and unequal/incomplete chains without silently
 truncating diagnostics to a favorable suffix.
+
+The scalar thresholds are the predeclared R2 screening rule, not a guarantee
+of global exploration. Rank normalization, folded split-Rhat, bulk/tail ESS,
+and Geyer's initial-monotone autocorrelation sequence follow the
+[Stan Reference Manual posterior-analysis definitions](https://mc-stan.org/docs/reference-manual/analysis.html).
 
 For the actual N256 density contrast, each velocity component, and velocity
 occupancy, compute chain-separated online first/second moments and fixed-batch
@@ -116,7 +121,7 @@ runner**:
   `CF4_R2_MASTER_SEED` and `CF4_R2_CHAIN_INDEX` select the deterministic stream
   family, while `CF4_R2_CHAIN_ID` may name its retained-state store. Support
   and numerical failures abort. Seven focused start-helper tests and the
-  targeted 51-test CPU regression set pass under the runner's Python 3.11.
+  targeted 59-test CPU regression set pass under the runner's Python 3.11.
   The canonical state store is format v2 and now stores/checksums the
   post-transition NumPy RNG state with each retained state, including exact
   rejection repeats; a synthetic restore test reproduces the next RNG draws.
@@ -134,14 +139,27 @@ runner**:
   history. The lossless state store is wired
   into this legacy long-chain path and redundant every-eighth full-field dumps
   were removed; this still does not turn the diagnostic into the proposed
-  production pipeline.
+  production pipeline. The runner now records retained-state low-k density
+  and mass-weighted momentum modes, density band powers, and training-region
+  density/occupancy/flow summaries. Their N256 wall-time overhead has not been
+  measured.
 - `src/cf4_r2_posterior_moments.py` accumulates posterior sample moments and
   occupancy, but no fixed-batch field means or map-level MCSE. Its output
   explicitly sets `posterior_MC_error_estimated=False`.
-- `src/cf4_r2_chain_diagnostics.py` supports scalar traces only, while
-  `scripts/cf4_r2_two_chain_report.py` reads two existing chains and has no
-  held-out scoring stage. Neither implements the proposed four-chain,
-  all-field contract.
+- `src/cf4_r2_chain_diagnostics.py` now computes rank-normalized folded
+  split-Rhat and Geyer initial-monotone bulk/tail ESS for equal-length scalar
+  chains. Controlled IID/AR(1) regressions cover the ESS estimator. The
+  retained-state runner records low-k density and mass-weighted momentum
+  modes, density band powers, and training-region density/occupancy/flow
+  summaries; its extractor refuses missing or nonfinite observables.
+  `four_chain_scalar_diagnostics` checks four independent chain indices,
+  distinct recorded prior-start states with only the permitted zero-count
+  retry history, shared target/schedule metadata, complete equal-length
+  retained traces, and the frozen scalar thresholds without trimming or
+  promotion. This is a
+  tested utility, not an executable report/supervisor. Warmup viability,
+  full-field cross-chain/MCSE qualification, held-out scoring, and N256
+  summary cost remain unmeasured/unimplemented.
 - The production implementation must therefore be built and regression-
   tested before this is an executable run proposal. It must preserve the
   exact target (an approximate force is acceptable only with a verified

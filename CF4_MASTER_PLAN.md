@@ -96,12 +96,22 @@ moments and chain-local field-MCSE from every checksum-verified retained q,
 including rejection repeats, using only the frozen PM field callback. It never
 evaluates the observation likelihood or held-out outcomes. Synthetic replay
 matches direct accumulation across both retained-state and MCSE sufficient
-statistics; the combined focused CPU suite is 51/51 under Python 3.11. The
-primitive is not yet wired into an interrupted-run resume path, and its
-N256/H200 wall-time and memory cost has not been measured. Q-GOAL remains
+statistics. The scalar-chain diagnostic now reports rank-normalized folded
+split-Rhat, bulk ESS, and 5%/95% tail ESS with Geyer's initial-monotone ESS
+sequence; controlled IID and AR(1) regressions check it. The retained-state
+runner also records fixed density/momentum low-k modes, density shell power,
+and training-region density/occupancy/flow summaries for each retained state.
+The fail-closed four-chain scalar gate checks stream identities, distinct
+recorded prior-start states and their allowed retry history, shared target and
+schedule, complete equal-length traces, and R-hat/ESS cutoffs without
+trimming. The combined focused CPU suite is 59/59 under Python 3.11. This is
+still not an executable four-chain supervisor/report or interrupted-run
+resume path; warmup viability, full-field gate integration, N256 summary
+overhead, and replay wall-time/memory have not been measured. Q-GOAL remains
 unchanged: no posterior or map is produced, and MW/M31 roles plus M33 remain
-unresolved for the same future evolved LG field. Q-LEAN: this is only replay
-bookkeeping; no target, observation law, or simulation changed.
+unresolved for the same future evolved LG field. Q-LEAN: these are the scalar
+convergence observables required by the run contract; no target, observation
+law, or simulation changed.
 
 The fixed N128 count-surrogate delayed-acceptance screen, Syntax job449120,
 completed successfully on H100 (`gpu:H100:1`, exit0, 01:01:30). All eight

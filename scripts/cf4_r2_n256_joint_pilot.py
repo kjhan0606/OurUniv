@@ -26,6 +26,7 @@ from cf4_r2_independent_chain_start import (
     select_prior_start)
 from cf4_r2_retained_field_mcse import (RetainedFieldMCSEDiagnostics,
     validate_field_mcse_schedule)
+from cf4_r2_chain_diagnostics import retained_field_observables
 
 BASE=Path('/gpfs/kjhan/CF4/z0_density');ROOT=Path(__file__).resolve().parents[1]
 N=256;BOX=384.;NIC=N**3
@@ -329,6 +330,8 @@ def main():
                 canonical_jump_rms=float(np.sqrt(np.mean((q-before)**2))),
                 **{k:(str(v) if isinstance(v,float) and not np.isfinite(v) else v) for k,v in info.items()})
             if long_chain and i>=warmup:
+                row.update(retained_field_observables(accepted_field,
+                    field_mcse.regions[field_mcse.REGION_NAME],workers=2))
                 # Every retained chain state counts, including repeated rejections.
                 accumulator.update(accepted_field)
                 field_mcse.update(accepted_field,transition=accumulator.n,
