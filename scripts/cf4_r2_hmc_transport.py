@@ -204,4 +204,5 @@ if __name__ == '__main__':
     main(start_checkpoint=START,
          max_evaluations=int(os.environ.get('CF4_HMC_MAX_EVALUATIONS', '49')),
          app_seconds=int(os.environ.get('CF4_HMC_APP_SECONDS', '19800')),
-         support_chunk_cells=16384, sampling_driver=run)
+         support_chunk_cells=int(os.environ.get('CF4_HMC_SUPPORT_CHUNK_CELLS', '16384')),
+         sampling_driver=run)
