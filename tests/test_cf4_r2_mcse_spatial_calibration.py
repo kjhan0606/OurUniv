@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from cf4_r2_mcse_spatial_calibration import (
+    _regional_p95,
     correlated_gaussian_sequence,
     exact_reference_maps,
     run_spatial_calibration,
@@ -16,6 +17,19 @@ from cf4_r2_mcse_spatial_calibration import (
 
 
 class SpatialMCSECalibrationTests(unittest.TestCase):
+    def test_regional_p95_fails_closed_on_nonfinite_cells(self):
+        values = np.asarray([[[1.0, np.nan], [2.0, 3.0]]])
+        region = np.ones(values.shape, dtype=bool)
+        with self.assertRaisesRegex(FloatingPointError, "nonfinite"):
+            _regional_p95(values, {"training_region": region})
+
+    def test_regional_p95_records_the_complete_finite_denominator(self):
+        values = np.arange(8.0).reshape(2, 2, 2)
+        summary = _regional_p95(values, {"full_box": np.ones_like(values,
+            dtype=bool)})
+        self.assertEqual(summary["full_box"]["cell_count"], 8)
+        self.assertEqual(summary["full_box"]["finite_cell_count"], 8)
+
     def test_fourier_fields_have_unit_marginals_and_spatial_correlation(self):
         fields = correlated_gaussian_sequence(np.random.default_rng(123),
             128, 8, 1.0)
@@ -58,20 +72,13 @@ class SpatialMCSECalibrationTests(unittest.TestCase):
         self.assertAlmostEqual(float(report["density_sd"][0, 0, 0]),
             sd_ratio, delta=3e-5)
 
-    def test_small_spatial_run_is_reproducible_and_nonpromoting(self):
+    def test_small_spatial_run_fails_closed_on_undefined_velocity_precision(self):
         kwargs = dict(size=8, draws=16, chains=2, replicates=2,
             seed=20261104, batch_sizes=(2, 4), minimum_batches=2,
             correlation_lengths=(0.0, 1.0))
-        first = run_spatial_calibration(**kwargs)
-        second = run_spatial_calibration(**kwargs)
-        self.assertEqual(first, second)
-        self.assertFalse(first["posterior_promoted"])
-        self.assertFalse(first["heldout_read"])
-        self.assertEqual(len(first["scenarios"]), 2)
-        metrics = first["scenarios"][1]["mcse_p95_estimate_distribution"]
-        self.assertIn("velocity_mean_x", metrics)
-        self.assertIn("velocity_sd_z", metrics)
-        self.assertIn("training_region", metrics["density_mean"]["4"])
+        with self.assertRaisesRegex(FloatingPointError,
+                "nonfinite cells in full_box"):
+            run_spatial_calibration(**kwargs)
         self.assertGreater(synthetic_design(8)["regions"][
             "training_region"].sum(), 1)
 

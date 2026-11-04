@@ -1,10 +1,10 @@
-"""Spatially correlated synthetic calibration for R2 field MCSE summaries.
+"""Spatially correlated synthetic negative control for R2 field MCSE summaries.
 
-The synthetic chains are stationary by construction.  Their per-cell temporal
-correlations are known, while spatial correlation changes the effective number
-of cells contributing to a regional percentile.  This is estimator
-calibration only: it is not an R2 target evaluation, chain-convergence test,
-or field promotion.
+Each cell has a stationary temporal marginal, but with spatially varying AR
+coefficients the generated joint spatial maps are not generally stationary.
+The saved run is therefore not a calibrated production-gate study. This code
+is estimator research only: it is not an R2 target evaluation,
+chain-convergence test, or field promotion.
 """
 from __future__ import annotations
 
@@ -197,12 +197,16 @@ def _make_chain_accumulator(rng, design, *, draws, size, correlation_length,
 
 def _regional_p95(values, regions):
     result = {}
+    values = np.asarray(values, dtype=np.float64)
     for name, region in regions.items():
-        selected = np.asarray(values)[region]
-        finite = selected[np.isfinite(selected)]
+        selected = values[region]
+        finite = np.isfinite(selected)
+        if not finite.all():
+            raise FloatingPointError(
+                f"regional MCSE map has nonfinite cells in {name}")
         result[name] = dict(cell_count=int(region.sum()),
-            finite_cell_count=int(finite.size),
-            p95=float(np.percentile(finite, 95)) if finite.size else None)
+            finite_cell_count=int(finite.sum()),
+            p95=float(np.percentile(selected, 95)) if selected.size else None)
     return result
 
 
@@ -261,7 +265,7 @@ def run_spatial_calibration(*, size=16, draws=512, chains=4, replicates=256,
         seed=20261104, batch_sizes=(32, 64), minimum_batches=8,
         correlation_lengths=(0., 1., 2.), threshold=0.10,
         lognormal_sigma=0.02):
-    """Calibrate region-p95 field MCSE using known stationary synthetic maps."""
+    """Run the regional-p95 estimator on a synthetic negative control."""
     if (not isinstance(size, int) or size < 4
             or not isinstance(draws, int) or draws < 2
             or not isinstance(chains, int) or chains < 2
@@ -326,11 +330,13 @@ def run_spatial_calibration(*, size=16, draws=512, chains=4, replicates=256,
             true_regional_p95=true_p95,
             mcse_p95_estimate_distribution=metrics))
 
-    return dict(schema="cf4-r2-spatial-field-mcse-calibration-v1",
-        status="SYNTHETIC_STATIONARY_ESTIMATOR_CALIBRATION_ONLY",
+    return dict(schema="cf4-r2-spatial-field-mcse-negative-control-v2",
+        status="SYNTHETIC_MARGINAL_STATIONARY_NEGATIVE_CONTROL_ONLY",
         posterior_promoted=False, heldout_read=False,
-        interpretation=("Known stationary synthetic fields only; no CF4 target, "
-            "R2 convergence, held-out prediction, or posterior qualification."),
+        interpretation=("Synthetic fields with stationary single-cell temporal "
+            "marginals; the spatially varying persistence design does not "
+            "establish joint spatial stationarity. No CF4 target, R2 "
+            "convergence, held-out prediction, or posterior qualification."),
         draws_per_chain=draws, chains=chains, replicates=replicates,
         seed=seed, grid_size=size, batch_sizes=list(batch_sizes),
         minimum_batches=minimum_batches, threshold=threshold,

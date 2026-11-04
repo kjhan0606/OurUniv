@@ -7,6 +7,42 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 update — 2026-11-05
+
+Syntax CPU job 450009 completed the bounded spatial field-MCSE synthetic study
+on `a10` (exit 0, 36:01, 2 GiB requested, MaxRSS 224,956 KiB). It does **not**
+calibrate the proposed production precision gate: for a 147-cell synthetic
+central reporting region the declared velocity-y p95 reference is 0.110984,
+while the individual batch-64 regional point-estimate false-pass fraction
+rises from 1.17% to 7.42% to 23.83% as synthetic spatial correlation length
+goes 0→1→2 cells (batch 32: 25.78%, 39.06%, 48.05%). At length 2, batch 64,
+the Wilson 95% interval is 19.02–29.41%. These are marginal, not the joint
+two-scale/all-observable gate rate,
+and the velocity reference is asymptotic, not exact finite-sample truth.
+
+Astra's read-only mid-course review accepted this only as a qualified synthetic
+negative control and rejected treating it as calibration. Driver verification
+also found the generated spatially varying AR process is not generally jointly
+stationary across cells, and the implementation silently removed nonfinite
+cells from regional percentiles while discarding the finite-cell count. The
+contract and interpretation now record these limitations; the code's
+regional summary now fails closed on any nonfinite cell (a regression test
+confirms that the small synthetic case contains undefined cells). Do not infer
+an inflation factor or lower threshold from the development run, or launch
+another batch/threshold/correlation sweep. Full result/disposition:
+`CF4_R2_SPATIAL_MCSE_CALIBRATION_PLAN_20261104.md` and raw JSON
+`/gpfs/kjhan/CF4/z0_density/r2_mcse_spatial_calibration_20261104/450009/result.json`.
+
+The separate N256 report memory/I/O profile is a resource-only prerequisite,
+not a precision calibration or sampler authorization. It uses synthetic
+job-scoped artifacts, does not read held-out outcomes, and must not be
+interpreted as posterior evidence. R2 remains NO-GO. The conditional-v6
+CF4/Tempel/SDSS-PV mark-availability/group-selection law is still unresolved;
+do not launch the multi-chain target or read held-out outcomes. MW/M31 remain
+role-ambiguous and M33 unresolved; their observables must ultimately constrain
+those same roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with
+native truth IDs used only for calibration/evaluation.
+
 ## Current R2 update — 2026-11-04
 
 The targeted 32,768-cell support-chunk replay, Syntax job449672, completed on

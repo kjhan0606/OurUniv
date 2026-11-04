@@ -80,3 +80,68 @@ The separate N256 I/O/peak-RSS profile of the four-chain file report remains
 required before production-sized field artifacts can be processed. R2 remains
 NO-GO until observation scope, sampler qualification, field MCSE, and held-out
 prediction are all defensible.
+
+## Completed result and interpretation — 2026-11-05
+
+Syntax Slurm job 450009 completed on `a10` with exit 0 in 36:01 (2 GiB
+requested, MaxRSS 224,956 KiB). It is a reproducible synthetic-estimator study only. The
+machine-readable result is
+`/gpfs/kjhan/CF4/z0_density/r2_mcse_spatial_calibration_20261104/450009/result.json`.
+
+For the 147-cell synthetic central reporting region, the declared velocity-y
+reference p95 is 0.110984, above the provisional 0.10 ratio threshold. Per-scale
+false-pass fractions relative to that declared reference are:
+
+| Spatial correlation length (cells) | Batch 32 | Batch 64 |
+|---:|---:|---:|
+| 0 |25.78%|1.17%|
+| 1 |39.06%|7.42%|
+| 2 |48.05%|23.83%|
+
+At length 2 / batch 64 the Wilson 95% interval is 19.02–29.41%. Larger batches
+helped in this case but did not make this individual regional point-estimate
+criterion dependable. These are **marginal rates for one metric, scale, and
+region**, not false-acceptance probabilities for the conjunctive production
+gate; the saved output does not preserve paired replicates needed to compute
+that joint event. Do not multiply marginal rates or assume independence.
+
+This is a qualified negative-control result, not a calibration of the
+production precision gate. In particular:
+
+- Density-mean and occupancy references use finite-length sums, but the
+  density-SD and conditional velocity references are influence-function /
+  asymptotic references. Label the rates above as false passes relative to the
+  declared asymptotic velocity-y reference, not exact finite-sample error.
+- The generator gives each cell its stationary temporal marginal, but its
+  spatially varying AR coefficients do not in general make the *joint spatial
+  map* stationary. The impact on regional-p95 distributions is unmeasured.
+- `_regional_p95` discarded nonfinite cells before taking percentiles, and its
+  finite-cell counts were not propagated into the saved result. The saved
+  result cannot establish whether any invalid cell was present, so the
+  promised fail-closed gate was not verified. The current source has since
+  been hardened to stop on any nonfinite regional cell; this source correction
+  does not retroactively validate the archived JSON.
+
+Astra's read-only mid-course review conditionally accepted the run as a
+synthetic diagnostic, rejected using it to calibrate the proposed production
+gate, and recommended closing it without a batch/threshold/correlation
+sweep. The driver independently checked the result table, reference types,
+generator covariance and finite-cell path, and adopts that disposition. Keep
+regional-p95 point estimates descriptive; do not derive an inflation factor
+or lower threshold from these development results. Future precision
+qualification must specify the actual joint acceptance event, its tolerated
+false-acceptance probability, exact versus asymptotic reference, and
+fail-closed treatment of undefined/nonfinite cells before any necessary new
+calibration.
+
+Q-GOAL: this prevents an unqualified precision gate from promoting the
+requested CF4+galaxy-conditioned 384 cMpc/h, N256 / 1.5 cMpc/h z=0 posterior. It
+creates no posterior, held-out prediction, or observation-selection
+calibration. MW/M31 roles remain ambiguous and M33 unresolved; their
+observables must constrain those same roles on the same NEW evolved LG field
+at <=0.3 cMpc/h, with native truth IDs reserved for calibration/evaluation.
+
+Q-LEAN: reuse this result; no new sampler, simulation, threshold sweep, or
+diagnostic ladder follows. The separate one-CPU N256 report memory/I/O profile
+remains a resource measurement only and does not repair this precision gate.
+R2 remains NO-GO.
