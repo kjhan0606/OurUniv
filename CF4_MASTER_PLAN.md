@@ -33,10 +33,19 @@ another batch/threshold/correlation sweep. Full result/disposition:
 `CF4_R2_SPATIAL_MCSE_CALIBRATION_PLAN_20261104.md` and raw JSON
 `/gpfs/kjhan/CF4/z0_density/r2_mcse_spatial_calibration_20261104/450009/result.json`.
 
-The separate N256 report memory/I/O profile is a resource-only prerequisite,
-not a precision calibration or sampler authorization. It uses synthetic
-job-scoped artifacts, does not read held-out outcomes, and must not be
-interpreted as posterior evidence. R2 remains NO-GO. The conditional-v6
+The separate N256 report memory/I/O profile, Syntax job 450056, completed on
+`a10` / `syn04` (CPU-only, 28 GiB requested, 7:09 wall). The actual report
+step took 122 s with MaxRSS 18.64 GiB, below the predeclared 23.333 GiB
+headroom ceiling; the fixture builder peaked at 16.50 GiB. All synthetic
+report/CRC/count checks passed and 42.19 GiB of job-scoped fixtures were
+removed. The 41 KiB profile JSON
+and logs remain at the paths in
+`CF4_R2_N256_REPORT_RESOURCE_PROFILE_PLAN_20261105.md`. Reads followed writes,
+so this does not measure cold storage. This is resource-only, not precision
+calibration or sampler authorization; it reads no held-out outcomes and is
+not posterior evidence. The precision contract now defines a joint field gate
+and a driver-proposed <=5% false-acceptance tolerance, but neither is
+calibrated. R2 remains NO-GO. The conditional-v6
 CF4/Tempel/SDSS-PV mark-availability/group-selection law is still unresolved;
 do not launch the multi-chain target or read held-out outcomes. MW/M31 remain
 role-ambiguous and M33 unresolved; their observables must ultimately constrain

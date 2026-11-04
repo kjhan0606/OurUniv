@@ -93,16 +93,53 @@ The archived study also did not preserve paired replicates needed to evaluate
 the conjunction. See
 `CF4_R2_SPATIAL_MCSE_CALIBRATION_PLAN_20261104.md`.
 
-Therefore keep0.10 descriptive/provisional only; do not pass production chains
-using this point estimate and do not tune an inflation factor or replacement
-threshold against the same development run. Before another calibration,
-specify the actual joint acceptance event across scales, observables, regions,
-and map summaries; set an acceptable false-acceptance probability; distinguish
-exact finite-length references from asymptotic references; preserve paired
-replicates; and fail closed on unexpected undefined/nonfinite cells. No new
-batch-length, threshold, or correlation sweep is implied. If a defensible
-precision contract cannot be demonstrated at the available sample count,
-report insufficient Monte Carlo precision and do not promote the maps.
+Therefore keep0.10 as the maximum scientifically tolerated relative MC error,
+not as a calibrated point-estimate cutoff; do not pass production chains using
+the current rule and do not tune an inflation factor or replacement threshold
+against the same development run.
+
+The **proposed joint field-precision event** is now explicit. Let `G_field`
+pass only when the following three field conditions hold together:
+
+1. At both batch sizes 32 and 64, for both the full box and frozen training
+   reporting region, the regional p95 of `MCSE / posterior_SD` is at most 0.10
+   for density mean, density posterior SD, occupancy, and each velocity
+   component's conditional mean and posterior SD.
+2. For those same two domains and all density/velocity/occupancy maps, the
+   regional p95 of between-chain mean-map disagreement / within-chain
+   posterior SD and between-chain posterior-SD-map disagreement / mean
+   posterior SD is at most0.10.
+3. Every required map cell is finite and defined. Nonfinite ratios, an
+   unexpected undefined cell, or a zero posterior SD with nonzero MCSE fails
+   closed; expected physically undefined cells must be enumerated and resolved
+   before defining the production reporting domain, not removed from a p95.
+
+The separately frozen scalar-chain gate `G_scalar` still requires
+rank-normalized and folded split-`Rhat <=1.01`, bulk ESS>=400, and tail
+ESS>=400 for every predeclared scalar and field observable. Overall chain
+qualification requires `G_field AND G_scalar`. The field calibration below
+does not by itself calibrate the false-acceptance probability of this entire
+combined sampler gate.
+
+The working false-acceptance tolerance is **at most 5%**: in each predeclared
+alternative/stress scenario where at least one true field regional-p95
+precision or disagreement component violates its corresponding 0.10
+requirement, the probability that the *entire* `G_field` conjunction
+nevertheless passes must have a one-sided 95% binomial upper confidence bound
+<=0.05. This is a
+driver-set field-gate risk criterion, not a result of job450009. Evaluate
+paired outcomes across metrics, scales, and regions; do not infer the joint
+probability from marginal rates.
+
+Before any further calibration, use a generator with a verified joint
+stationary spatial law (or a separately validated finite-sample reference),
+preserve paired gate outcomes, distinguish exact finite-length references
+from asymptotic ones, and enforce the fail-closed validity rule. A spatially
+varying persistence field requires its joint invariant covariance to be
+derived and checked. No new batch-length, threshold, or correlation sweep is
+implied by this contract amendment. If `G_field` cannot be shown to meet the
+5% risk bound at the available sample count, report insufficient Monte Carlo
+precision and do not promote the maps.
 
 Accumulate posterior moments and fixed-batch map summaries online; full
 density/velocity map samples need not be written for every state. However,

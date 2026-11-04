@@ -102,3 +102,49 @@ surviving result synthetic; recheck capacity at job start; clean only the
 exact fixture directory after validating both scales, counts, and report
 integrity. No job was launched by the audit. This advisory does not authorize
 or qualify an R2 posterior.
+
+## Completed profile — 2026-11-05
+
+Syntax job 450056 completed successfully on `a10` / `syn04` with one CPU,
+28 GiB requested, and wall time 7:09. The report step (`450056.2`) took 122 s
+and had MaxRSS 19,552,148 KiB = 18.64 GiB. This is below the predeclared
+23.333 GiB measured-peak ceiling, so the 28 GiB allocation exceeds the
+measured report-step peak by more than 20%. The separate fixture-generation
+step (`450056.1`) took 298 s and peaked at 17,299,644 KiB (16.50 GiB).
+
+The four synthetic statistics/map inputs totaled 45,298,569,814 bytes
+(42.19 GiB). CRC verification passed for all four statistics and selected-map
+archives; the pooled report had four chains, 2,048 retained synthetic states,
+64 complete batch-32 batches and 32 complete batch-64 batches, with both
+scales and all required regional summaries defined. The job validated these
+conditions, removed only its manifest-listed `fixtures/` directory, and left
+the 41 KiB `resource_profile.json` and Slurm logs. The job-start free-space
+guard measured 157,980,439,871,488 bytes on `/gpfs/kjhan/CF4`, above the
+55 GiB minimum.
+
+Authoritative resource result:
+`/gpfs/kjhan/CF4/z0_density/r2_n256_report_profile_20261105/450056/resource_profile.json`;
+Slurm stdout/stderr:
+`/gpfs/kjhan/CF4/logs/cf4_r2_n256_profile_450056.out` and `.err`.
+The executed source commit was
+`f8816f15c1d34fe3528a64dbbd4b3635030c8453`.
+
+Interpretation is limited to CPU memory and elapsed time of this report code
+path on synthetic N256-shaped inputs. Fixture reads followed writes
+immediately, so the observed 122 s is not cold-storage throughput. The run
+does not measure production sampler RSS, validate the MCSE precision gate,
+establish posterior convergence, or support a field/posterior claim. No
+held-out outcome or N256 target state was read; `R2_complete=false` and
+`posterior_promoted=false` remain in the saved profile.
+
+Q-GOAL: this removes one report-resource uncertainty on the path to the
+CF4+galaxy-conditioned 1.5 cMpc/h z=0 posterior, but delivers none of its
+field, uncertainty, or held-out prediction. MW/M31 remain role-ambiguous and
+M33 unresolved; their observables must constrain those same roles on the same
+NEW evolved LG field at `<=0.3 cMpc/h`, with truth IDs only for
+calibration/evaluation.
+
+Q-LEAN: one bounded resource run completed, with exact job-scoped cleanup.
+Do not repeat it or infer production chain memory/I/O from it. The selection
+law, target sampler qualification, and calibrated joint field-precision gate
+remain open; R2 remains NO-GO.
