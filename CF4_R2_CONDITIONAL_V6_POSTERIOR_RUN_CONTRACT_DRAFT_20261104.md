@@ -259,12 +259,36 @@ request must retain the required20% headroom based on measured peak RSS.
 The one-chain diagnostic requires explicit
 `CF4_R2_FIELD_MCSE_BATCH_SIZES` (exactly two sizes) and
 `CF4_R2_FIELD_MCSE_MINIMUM_BATCHES`; it rejects a retained capacity that ends
-inside either batch or cannot meet the declared minimum. No batch sizes or
-minimum were selected here. Each scale can be finalized separately to avoid
-holding both full map-output sets simultaneously. Checkpoint restore adopts
-serialized arrays directly, avoiding another zero-filled accumulator
-allocation per scale. Finalization peak RSS remains unmeasured; no GPU job was
-submitted.
+inside either batch or cannot meet the declared minimum. No production batch
+sizes or minimum were selected. A synthetic stationary-AR(1) study explored
+32/64 states and eight batches per chain at the 512-draw cap; it does not
+calibrate spatially correlated or actual sampler fields. Keep these values
+provisional. Each scale can be finalized separately to avoid holding both
+full map-output sets simultaneously. Checkpoint restore adopts serialized
+arrays directly, avoiding another zero-filled accumulator allocation per
+scale. Finalization peak RSS remains unmeasured; no GPU job was submitted.
+
+#### Synthetic batch-scale calibration — 2026-11-04
+
+`scripts/cf4_r2_mcse_ar1_calibration.py` ran 5,000 CPU-only replicates of
+four independent stationary Gaussian AR(1) chains with 512 retained states
+per chain. The candidate pooled batch-means estimator used 32- and 64-state
+scales, 16/8 batches per chain, and compared MCSE/posterior-SD with the
+provisional 0.10 threshold. At `phi=0.95`, the exact pooled ratio is 0.1353;
+the 64-state estimator median is 0.1158 and only 5.56% of scalar replicates
+put both point estimates below 0.10. At `phi=0.90`, exact is 0.0954 while the
+64-state estimate p95 over scalar replicates is 0.1025. This reveals the
+larger scale's sensitivity to slow correlation but also its conservative
+behavior near the threshold. Scalar replicate quantiles are not a spatial
+regional-p95 calibration; actual field cells are correlated and
+heterogeneous. `MultiScaleFieldMCSEAccumulator.merge_independent_chains_inplace`
+now pools complete equal-length chain sufficient statistics without copying
+full maps; the 16-test field-MCSE suite includes an exact AR(1) estimator
+comparison. This helper is not yet integrated with the file-based chain
+runner/report, and no N256 memory or I/O profile exists. The detailed result
+and limitations are in
+`CF4_R2_FIELD_MCSE_AR1_CALIBRATION_20261104.md`. No R2 target, held-out data,
+or GPU was accessed; R2 remains NO-GO.
 
 #### Reporting-domain decision — 2026-11-04
 

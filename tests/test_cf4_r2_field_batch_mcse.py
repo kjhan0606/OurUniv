@@ -240,6 +240,88 @@ class FieldBatchMCSETests(unittest.TestCase):
                     expected["scales"][size][key], rtol=0., atol=0.,
                     equal_nan=True, err_msg=f"scale={size}, key={key}")
 
+    def test_pooling_complete_chain_batches_matches_direct_combination(self):
+        rng = np.random.default_rng(8127)
+        chain_states = [1. + .08 * chain + rng.normal(0., .1, size=32)
+            for chain in range(4)]
+        accumulators = []
+        for states in chain_states:
+            accumulator = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+                batch_sizes=(4, 8), minimum_batches=2)
+            for rho in states:
+                accumulator.update(field(rho, [1., 2., 3.]))
+            accumulators.append(accumulator)
+
+        # Chain offsets must contribute to the pooled SD; do not silently
+        # report only the average within-chain spread.
+        within_sds = [acc.finalize_scale(4)["density_posterior_sd"][0, 0, 0]
+            for acc in accumulators]
+        pooled = accumulators[0].merge_independent_chains_inplace(
+            accumulators[1:])
+        all_states = np.concatenate(chain_states)
+        self.assertEqual(pooled.states, 128)
+        self.assertGreater(float(pooled.finalize_scale(4)[
+            "density_posterior_sd"][0, 0, 0]), np.mean(within_sds))
+        for size in (4, 8):
+            batch_means = np.concatenate([
+                states.reshape(-1, size).mean(axis=1)
+                for states in chain_states])
+            expected_mcse = batch_means.std(ddof=1) / np.sqrt(batch_means.size)
+            result = pooled.finalize_scale(size)
+            self.assertEqual(result["complete_batches"],
+                4 * (32 // size))
+            self.assertAlmostEqual(float(result["density_mean"][0, 0, 0]),
+                all_states.mean(), places=14)
+            self.assertAlmostEqual(float(result["density_posterior_sd"][0, 0, 0]),
+                all_states.std(ddof=1), places=14)
+            self.assertAlmostEqual(float(result["density_mean_mcse"][0, 0, 0]),
+                expected_mcse, places=14)
+
+    def test_pooling_ar1_chain_batches_matches_calibration_estimator(self):
+        rng = np.random.default_rng(20261104)
+        phi = .95
+        chains = []
+        for _ in range(4):
+            values = np.empty(512)
+            values[0] = rng.normal()
+            noise = rng.normal(size=511)
+            for index in range(1, values.size):
+                values[index] = (phi * values[index - 1]
+                    + np.sqrt(1. - phi * phi) * noise[index - 1])
+            chains.append(values)
+        accumulators = []
+        for values in chains:
+            accumulator = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+                batch_sizes=(32, 64), minimum_batches=8)
+            for value in values:
+                accumulator.update(field(1. + .1 * value, [0., 0., 0.]))
+            accumulators.append(accumulator)
+        pooled = accumulators[0].merge_independent_chains_inplace(
+            accumulators[1:])
+        for size in (32, 64):
+            batch_means = np.concatenate([
+                (1. + .1 * values).reshape(-1, size).mean(axis=1)
+                for values in chains])
+            expected_ratio = (batch_means.std(ddof=1)
+                / np.sqrt(batch_means.size)
+                / np.concatenate([1. + .1 * values for values in chains]).std(ddof=1))
+            actual = pooled.finalize_scale(size)[
+                "density_mean_mcse_over_sd"][0, 0, 0]
+            self.assertAlmostEqual(float(actual), expected_ratio, places=13)
+
+    def test_chain_pooling_fails_before_mutation_for_incomplete_chain(self):
+        complete = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+            batch_sizes=(2, 4), minimum_batches=2)
+        incomplete = MultiScaleFieldMCSEAccumulator((1, 1, 1),
+            batch_sizes=(2, 4), minimum_batches=2)
+        for _ in range(8):
+            complete.update(field(1., [1., 2., 3.]))
+        incomplete.update(field(1., [1., 2., 3.]))
+        before = complete.states
+        with self.assertRaisesRegex(ValueError, "complete batches"):
+            complete.merge_independent_chains_inplace([incomplete])
+        self.assertEqual(complete.states, before)
+
     def test_region_mask_must_match_the_field(self):
         acc = FieldBatchMCSEAccumulator((1, 1, 1), batch_size=2,
             minimum_batches=2)

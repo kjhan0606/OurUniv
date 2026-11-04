@@ -10,6 +10,8 @@ report the density-contrast mean (the R2 PM mesh convention uses reference 1).
 """
 from __future__ import annotations
 
+import math
+
 import numpy as np
 
 
@@ -493,6 +495,85 @@ class MultiScaleFieldMCSEAccumulator:
     def update(self, field):
         for accumulator in self.accumulators.values():
             accumulator.update(field)
+
+    def merge_independent_chains_inplace(self, other_chains):
+        """Pool complete chain batch statistics without allocating map copies.
+
+        This mutates the receiver. Chain-specific disagreement must be
+        evaluated and recorded before merging; the pooled result is only a
+        Monte Carlo precision diagnostic and is not a convergence verdict.
+        All chains must have equal retained lengths, identical contracts, no
+        incomplete batches, and at least the declared minimum batches at each
+        scale. ``other_chains`` may be one accumulator or an iterable.
+        """
+        if isinstance(other_chains, MultiScaleFieldMCSEAccumulator):
+            other_chains = (other_chains,)
+        else:
+            try:
+                other_chains = tuple(other_chains)
+            except TypeError as error:
+                raise ValueError("other independent chain accumulators required") from error
+        if not other_chains or any(
+                not isinstance(chain, MultiScaleFieldMCSEAccumulator)
+                for chain in other_chains):
+            raise ValueError("at least one other multi-scale chain accumulator required")
+        chains = (self,) + other_chains
+        if len({id(chain) for chain in chains}) != len(chains):
+            raise ValueError("a chain accumulator cannot be merged more than once")
+
+        contract = (self.shape, self.batch_sizes, self.minimum_batches,
+            self.density_reference)
+        state_counts = []
+        for chain in chains:
+            if (chain.shape, chain.batch_sizes, chain.minimum_batches,
+                    chain.density_reference) != contract:
+                raise ValueError("independent chain field-MCSE contracts differ")
+            state_counts.append(chain.states)
+            for size in self.batch_sizes:
+                accumulator = chain.accumulators[size]
+                if (accumulator.pending_states != 0
+                        or accumulator.batches < self.minimum_batches):
+                    raise ValueError("every chain needs complete batches at every scale")
+                for name in accumulator._PENDING_ARRAYS:
+                    if np.any(getattr(accumulator, name) != 0.):
+                        raise ValueError("empty pending batch has nonzero checkpoint state")
+        if len(set(state_counts)) != 1:
+            raise ValueError("pooled field MCSE requires equal retained chain lengths")
+
+        # Check all sums before mutating the receiver. A bound from each
+        # array's maximum absolute value guarantees elementwise addition cannot
+        # overflow; no full-size temporary copy is needed.
+        limit = np.finfo(np.float64).max
+        def max_abs(value):
+            low, high = float(np.min(value)), float(np.max(value))
+            if not math.isfinite(low) or not math.isfinite(high):
+                return math.inf
+            return max(abs(low), abs(high))
+
+        for size in self.batch_sizes:
+            target = self.accumulators[size]
+            for name in target._SUMMARY_ARRAYS:
+                terms = [max_abs(getattr(target, name))]
+                terms.extend(max_abs(getattr(chain.accumulators[size], name))
+                    for chain in other_chains)
+                try:
+                    bound = math.fsum(terms)
+                except OverflowError as error:
+                    raise OverflowError(
+                        "pooled field-MCSE sufficient statistic would overflow") from error
+                if not math.isfinite(bound) or bound > limit:
+                    raise OverflowError("pooled field-MCSE sufficient statistic would overflow")
+
+        for size in self.batch_sizes:
+            target = self.accumulators[size]
+            for chain in other_chains:
+                source = chain.accumulators[size]
+                for name in target._SUMMARY_ARRAYS:
+                    np.add(getattr(target, name), getattr(source, name),
+                        out=getattr(target, name))
+                target.states += source.states
+                target.batches += source.batches
+        return self
 
     def checkpoint_arrays(self):
         result = dict(format_version=np.array(1, dtype=np.int64),

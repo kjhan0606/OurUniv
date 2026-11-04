@@ -88,6 +88,30 @@ reserved for calibration/evaluation. Q-LEAN: a small schedule helper, runner
 hook and focused tests only—no target/data change, GPU calculation or extra
 diagnostic ladder.
 
+A CPU-only calibration of the field-mean batch estimator used four
+independent stationary Gaussian AR(1) chains, 512 states per chain and5,000
+replicates. Candidate batch sizes32/64 (16/8 batches per chain) show that the
+64-state scale detects slow correlation better than16/32 alone, but can
+conservatively fail near the `0.10` MCSE/SD threshold. For `phi=0.95`, the
+exact pooled ratio is0.1353 and the64-state estimate's median is0.1158; for
+`phi=0.90`, the exact ratio0.0954 but its estimate p95 is0.1025. This is a
+stationary scalar AR(1) estimator study, not an R2 chain or spatial-map
+calibration. A non-copying in-memory merge now pools complete equal-length
+chain sufficient statistics; 16 focused tests, including a fixed AR(1)
+reference comparison, pass. It is not integrated with the file-based chain
+report/runner and has no N256 memory or I/O profile. Keep32/64 and the `0.10`
+threshold provisional; no GPU job, target evaluation or held-out read was
+performed. Details and reproduction script:
+`CF4_R2_FIELD_MCSE_AR1_CALIBRATION_20261104.md` and
+`scripts/cf4_r2_mcse_ar1_calibration.py`.
+
+Q-GOAL: this reduces uncertainty-method risk but produces no conditional z=0
+posterior. MW/M31 remain role-ambiguous and M33 unresolved; their observables
+must constrain those same roles on the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with native truth IDs used only for calibration/evaluation.
+Q-LEAN: one bounded CPU synthetic run; no new CF4 calculation or diagnostic
+ladder.
+
 The current code bundle adds a tested independent standard-normal prior-start
 primitive and an opt-in `CF4_R2_START_POLICY=independent_prior` branch to the
 existing N256 runner. It assigns separate reproducible prior/audit/transition
