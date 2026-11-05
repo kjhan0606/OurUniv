@@ -1,4 +1,4 @@
-# R2 joint field-MCSE stress test — proposed, 2026-11-05
+# R2 joint field-MCSE stress test — result, 2026-11-05
 
 ## Decision question
 
@@ -123,14 +123,37 @@ evaluation.
 existing report and estimator; no parameter ladder, target/sampler call,
 public-data search, email, held-out read, GPU calculation or simulation.
 
-Status: **amended design after Astra CONDITIONAL review; implementation is
-written, focused Slurm tests and the bounded job are pending.** Adopted the
-review's corrections to the oracle estimand/zero-count handling,
-false-acceptance truth, once-only cross-chain comparisons, exact-binomial
-bounds, and reporting of whether cross-chain checks dominate. The driver
-independently verified these points against the existing accumulator and
-report implementation. The implementation uses chunked linear-time oracle
-recurrences, persists every paired replicate result before proceeding, and
-fails closed on invalid maps. No posterior, held-out data or R2 target is
-accessed by this synthetic calculation. Astra advice is not automatic
-authority; final execution depends on the pinned Slurm test gate.
+Status: **Syntax Slurm job450919 completed, exit0, in11:04** on `a10`/`syn04`
+from source commit `c2053cf3f6433f0e7f4746f655698389f7521175`; MaxRSS was
+262,012KiB under the2GiB request. All five focused startup suites passed
+(43 tests total). The oracle processed250,000 histories and qualified the
+predeclared alternative: the velocity-y finite-sample reference is0.1090724,
+with a one-sided97.5% Student-t/delta-method lower bound0.1090667>0.10. No
+zero-occupancy histories occurred. Across256 paired replicates there were
+0 false acceptances; exact one-sided Clopper-Pearson upper bounds are1.1634%
+at95% and1.4306% at97.5%. This meets the proposed risk bound for this
+alternative only.
+
+Crucially, `G_field`, the MCSE-only event, and the cross-chain event each
+passed0/256 replicates. Both batch scales failed the velocity-y mean-precision
+condition in both regions on every replicate. The cross-chain map statistic
+also failed for all velocity components. This is an all-reject negative
+control: it bounds false acceptance here but does not measure acceptance of
+adequately precise fields or establish useful discrimination. The report and
+raw artifacts are `CF4_R2_JOINT_FIELD_MCSE_STRESS_RESULT_20261105.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_joint_field_mcse_stress_20261105/450919/`.
+
+Astra's read-only result audit is **PASS for this fixed negative-control
+result only; NO-GO for production-gate qualification or R2 exit**. It notes
+that the cross-chain comparator measures spread among individual-chain means,
+not pooled-map MCSE; for four comparable independent chains, that spread is
+approximately twice pooled MCSE. Therefore its0.10 cutoff is an additional,
+stronger per-chain-agreement condition, not the0.10 pooled-precision
+requirement. Do not call its rejection evidence of nonstationarity or infer
+overconservatism from an all-reject result. A positive-control calculation is
+deferred until the scientific relationship between these two requirements is
+explicitly reconciled; no threshold or persistence sweep is authorized.
+
+The result confirms no posterior, held-out data or R2 target was accessed.
+The observation-selection denominator remains unresolved and R2 stays
+NO-GO. No sampler or production qualification follows from this study.

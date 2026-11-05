@@ -134,6 +134,46 @@ not infer the joint probability from marginal rates. A single stress scenario
 can qualify only that alternative and does not establish that the gate accepts
 genuinely precise fields or calibrate all relevant posterior dependence.
 
+### Cross-chain map disagreement is not pooled MCSE — 2026-11-05
+
+The implemented cross-chain map statistic is the across-chain sample SD of
+individual chain means (or posterior-SD maps), normalized by the within-chain
+posterior SD (or mean posterior SD). It is not the Monte-Carlo standard error
+of the equally weighted pooled posterior map. For `m` independent,
+equal-length, comparably mixed chains, if `s_B` is the across-chain SD of
+their means, the corresponding pooled-mean standard error is approximately
+`s_B/sqrt(m)`. Thus with four chains, a `s_B / within_SD <= 0.10` condition
+acts roughly like a `pooled_MCSE / within_SD <= 0.05` condition, before
+regional-percentile effects. Unequal autocorrelation, chain variances, or
+nonstationarity weaken this approximation; the two quantities must not be
+interchanged.
+
+The 2026-11-05 fixed stationary stress result is consistent with this
+distinction: the known velocity-x/z pooled precision ratios are about0.0534,
+yet their individual-chain mean-disagreement p95 medians are about0.174 in
+the full box and0.17 in the training region. This is not evidence of
+nonstationarity; it shows the0.10 cross-chain cutoff imposes a stricter
+separate chain-agreement requirement than the pooled precision limit. Its
+scientific purpose and acceptable sampling-cost implication must be made
+explicit before any positive-control run or production qualification. Do not
+relax it from this single negative-control result. The paired outcome and
+limitations are in `CF4_R2_JOINT_FIELD_MCSE_STRESS_RESULT_20261105.md`.
+
+Driver disposition: retain this as a separate **chain-local agreement and
+map-stability guard**, not as a second estimate of pooled MCSE. In the ideal
+IID/equal-chain case, `s_B / within_SD` is approximately
+`1/sqrt(ESS_per_chain)`; the0.10 cutoff corresponds roughly to100 effective
+states per chain, or400 pooled effective states across four balanced chains.
+That is consistent in scale with the existing scalar ESS>=400 screen, but is
+only a heuristic correspondence: autocorrelation, finite chain count and the
+regional p95 matter, and the posterior-SD-map ratio is a separate stability
+statistic. Keep the predeclared cutoff unchanged for now and label its extra
+per-chain requirement explicitly. The stress result does not show
+nonstationarity or justify loosening it. Defer a positive control until the
+chain-local requirement is frozen, and do not let it displace the
+source-matched selection work; it is not needed to reinterpret the completed
+negative control.
+
 Before any further calibration, use a generator with a verified joint
 stationary spatial law (or a separately validated finite-sample reference),
 preserve paired gate outcomes, distinguish exact finite-length references

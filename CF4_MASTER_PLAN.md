@@ -52,6 +52,36 @@ role-ambiguous and M33 unresolved; their observables must ultimately constrain
 those same roles on the same NEW evolved LG field at `<=0.3 cMpc/h`, with
 native truth IDs used only for calibration/evaluation.
 
+The bounded joint stationary field-MCSE stress, Syntax job450919, completed
+on `a10`/`syn04` (11:04, exit0, MaxRSS262,012KiB under2GiB requested); all43
+focused startup tests passed. Its predeclared velocity-y pooled finite-sample
+precision ratio is0.1090724, with an approximate one-sided97.5% lower bound
+0.1090667>0.10. Across256 paired replicates, false acceptance was0/256;
+exact one-sided binomial upper bounds are1.1634% at95% and1.4306% at97.5%.
+This satisfies the risk bound for this one known-inadequate synthetic law
+only. The complete `G_field`, MCSE-only and cross-chain conjunctions each
+passed0/256; both batch sizes failed velocity-y mean precision in both
+regions every time. This is an all-reject negative control, not evidence of
+production-gate calibration or acceptance behavior. Astra's mid-course audit
+accepts the fixed result only; R2 production qualification/exit remains
+NO-GO. Full result and exact limits:
+`CF4_R2_JOINT_FIELD_MCSE_STRESS_RESULT_20261105.md` and
+`/gpfs/kjhan/CF4/z0_density/r2_joint_field_mcse_stress_20261105/450919/`.
+
+The map cross-chain comparator measures spread among individual-chain means,
+not pooled-map MCSE. For four comparable independent chains it is
+approximately twice pooled MCSE; the0.10 cross-chain threshold therefore
+acts roughly like a0.05 pooled precision cutoff. Its scientific intent and
+sampling-cost consequences need an explicit analytic reconciliation before
+any positive-control job; do not infer nonstationarity or relax it from this
+single negative control. A status-label edge case affecting too-small
+replicate counts was corrected in commit `b8970cb`; its10-test CPU Slurm
+regression passed as job450966. The completed 450919 result was not rerun.
+Continue R2 by reconciling pooled precision versus per-chain agreement and
+the already-identified source-matched mark-selection denominator. Do not
+launch a positive-control ladder, production multi-chain target, or read
+held-out outcomes in the meantime.
+
 ## Current R2 update — 2026-11-04
 
 The targeted 32,768-cell support-chunk replay, Syntax job449672, completed on
