@@ -13,6 +13,7 @@
 #SBATCH --error=/gpfs/kjhan/CF4/logs/cf4_r2_joint_mcse_%j.err
 
 set -euo pipefail
+set -x
 
 repo=/home/kjhan/BACKUP/CF4
 python=/home/kjhan/miniconda3/envs/circle/bin/python3.11
