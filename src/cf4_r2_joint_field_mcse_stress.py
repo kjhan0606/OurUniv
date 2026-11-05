@@ -355,9 +355,16 @@ def _cross_chain_report(chain_reports, regions, threshold) -> dict:
         row["velocity_conditional_posterior_sd"] for row in chain_reports])
     velocity_valid = np.stack([
         row["velocity_variance_defined"] for row in chain_reports])
-    velocity = compare_chain_field_maps(velocity_means, velocity_sds,
-        np.full(len(chain_reports), int(chain_reports[0]["retained_states"])),
-        valid=velocity_valid, regions=regions)
+    draw_counts = np.full(len(chain_reports),
+        int(chain_reports[0]["retained_states"]))
+    # Region masks describe one scalar 3-D field. Velocity maps have an extra
+    # leading component axis, so compare each component against the same
+    # scalar masks rather than passing a 3-D mask to a 4-D map comparison.
+    velocity = {}
+    for axis, label in enumerate(("x", "y", "z")):
+        velocity[label] = compare_chain_field_maps(
+            velocity_means[:, axis], velocity_sds[:, axis], draw_counts,
+            valid=velocity_valid[:, axis], regions=regions)
 
     outputs = {}
     for name, report, component in (
@@ -376,14 +383,15 @@ def _cross_chain_report(chain_reports, regions, threshold) -> dict:
                 passed=bool(mean["passed"] and sd["passed"]))
     for axis, label in enumerate(("x", "y", "z")):
         name = f"velocity_{label}"
+        report = velocity[label]
         outputs[name] = {}
         for region_name, region in regions.items():
-            defined = velocity["defined_mask"][axis]
+            defined = report["defined_mask"]
             mean = _regional_gate_summary(
-                velocity["mean_map_disagreement_over_within_sd"][axis],
-                defined, region, threshold)
+                report["mean_map_disagreement_over_within_sd"], defined,
+                region, threshold)
             sd = _regional_gate_summary(
-                velocity["posterior_sd_map_disagreement_over_mean_sd"][axis],
+                report["posterior_sd_map_disagreement_over_mean_sd"],
                 defined, region, threshold)
             outputs[name][region_name] = dict(mean_map=mean,
                 posterior_sd_map=sd,
