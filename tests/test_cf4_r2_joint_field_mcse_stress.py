@@ -12,6 +12,7 @@ from cf4_r2_joint_field_mcse_stress import (
     _one_replicate,
     _one_sided_binomial_upper,
     _regional_gate_summary,
+    _stress_status,
     conditional_velocity_mean_variance,
     estimate_velocity_mean_oracle,
     reporting_regions,
@@ -123,6 +124,18 @@ class JointFieldMCSEStressTests(unittest.TestCase):
         self.assertAlmostEqual(upper, 1. - 0.05 ** (1. / 256), places=14)
         self.assertLess(upper, 0.05)
         self.assertGreater(_one_sided_binomial_upper(4, 256, 0.05), upper)
+
+    def test_zero_passes_do_not_bypass_unmet_risk_bound(self):
+        upper = _one_sided_binomial_upper(0, 1, 0.05)
+        self.assertAlmostEqual(upper, 0.95, places=14)
+        self.assertGreater(upper, 0.05)
+        self.assertEqual(_stress_status(risk_passed=upper <= 0.05,
+            g_field_passes=0),
+            "STRESS_CASE_RISK_BOUND_NOT_MET_BUT_GATE_REJECTED_ALL_REPLICATES")
+        self.assertEqual(_stress_status(risk_passed=True, g_field_passes=0),
+            "STRESS_CASE_RISK_BOUND_MET_BUT_GATE_REJECTED_ALL_REPLICATES")
+        self.assertEqual(_stress_status(risk_passed=True, g_field_passes=1),
+            "STRESS_CASE_RISK_BOUND_MET")
 
     def test_one_replicate_preserves_paired_gates_and_checks_cross_chain_once(self):
         size = 4

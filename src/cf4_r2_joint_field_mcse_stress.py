@@ -487,6 +487,18 @@ def _one_replicate(replicate_index, *, seed, size, draws, chains,
         g_field_pass=bool(mcse_passed and cross_chain["passed"]))
 
 
+def _stress_status(*, risk_passed: bool, g_field_passes: int) -> str:
+    """Separate the risk-bound result from whether the gate ever passed."""
+    if g_field_passes < 0:
+        raise ValueError("G_field pass count must be nonnegative")
+    all_rejected = g_field_passes == 0
+    if risk_passed:
+        return ("STRESS_CASE_RISK_BOUND_MET_BUT_GATE_REJECTED_ALL_REPLICATES"
+            if all_rejected else "STRESS_CASE_RISK_BOUND_MET")
+    return ("STRESS_CASE_RISK_BOUND_NOT_MET_BUT_GATE_REJECTED_ALL_REPLICATES"
+        if all_rejected else "STRESS_CASE_RISK_BOUND_NOT_MET")
+
+
 def run_gate_replicates(*, reference, seed=DEFAULT_SEED,
         replicates=DEFAULT_REPLICATES, size=DEFAULT_GRID_SIZE,
         draws=DEFAULT_DRAWS, chains=DEFAULT_CHAINS,
@@ -541,12 +553,8 @@ def run_gate_replicates(*, reference, seed=DEFAULT_SEED,
     upper975 = _one_sided_binomial_upper(false_acceptances, replicates,
         ALPHA_BINOMIAL)
     risk_passed = upper95 <= 0.05
-    if not gate_counts["g_field_passes"]:
-        status = "STRESS_CASE_RISK_BOUND_MET_BUT_GATE_REJECTED_ALL_REPLICATES"
-    elif risk_passed:
-        status = "STRESS_CASE_RISK_BOUND_MET"
-    else:
-        status = "STRESS_CASE_RISK_BOUND_NOT_MET"
+    status = _stress_status(risk_passed=risk_passed,
+        g_field_passes=gate_counts["g_field_passes"])
     return dict(status=status, stress_case_only=True,
         posterior_promoted=False, heldout_read=False,
         false_acceptance_definition=(
