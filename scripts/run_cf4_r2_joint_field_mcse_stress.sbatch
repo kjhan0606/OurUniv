@@ -66,10 +66,12 @@ for test_name in \
         test_cf4_r2_field_batch_mcse.py \
         test_cf4_r2_cross_chain_field_diagnostics.py \
         test_cf4_r2_four_chain_field_mcse.py; do
-    "$python" -I -P -m unittest discover -s tests -p "$test_name" -v
+    # -I ignores PYTHONPATH, which these source-tree tests require. User-site
+    # packages remain disabled above, and -P avoids implicit CWD imports.
+    "$python" -P -m unittest discover -s tests -p "$test_name" -v
 done
 
-"$python" -I -P scripts/cf4_r2_joint_field_mcse_stress.py \
+"$python" -P scripts/cf4_r2_joint_field_mcse_stress.py \
     --output-dir "$output_dir" \
     --seed 20261105 \
     --oracle-seed 20261106 \
