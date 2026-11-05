@@ -122,14 +122,17 @@ does not by itself calibrate the false-acceptance probability of this entire
 combined sampler gate.
 
 The working false-acceptance tolerance is **at most 5%**: in each predeclared
-alternative/stress scenario where at least one true field regional-p95
-precision or disagreement component violates its corresponding 0.10
-requirement, the probability that the *entire* `G_field` conjunction
-nevertheless passes must have a one-sided 95% binomial upper confidence bound
-<=0.05. This is a
-driver-set field-gate risk criterion, not a result of job450009. Evaluate
-paired outcomes across metrics, scales, and regions; do not infer the joint
-probability from marginal rates.
+alternative/stress scenario where at least one known-law or finite-sample true
+field-precision regional-p95 ratio violates its 0.10 requirement, the
+probability that the *entire* observed `G_field` conjunction nevertheless
+passes must have a one-sided 95% binomial upper confidence bound <=0.05.
+Realized cross-chain disagreement is an observed diagnostic within the gate,
+not a latent precision truth and must not define whether a replicate is a
+false acceptance. This is a driver-set field-gate risk criterion, not a result
+of job450009. Evaluate paired outcomes across metrics, scales, and regions; do
+not infer the joint probability from marginal rates. A single stress scenario
+can qualify only that alternative and does not establish that the gate accepts
+genuinely precise fields or calibrate all relevant posterior dependence.
 
 Before any further calibration, use a generator with a verified joint
 stationary spatial law (or a separately validated finite-sample reference),
