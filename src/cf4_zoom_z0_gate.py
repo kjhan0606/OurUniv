@@ -149,6 +149,32 @@ def extract_finest(files, fine_mass_code, box_mpc_h, velocity_unit):
     return pos, vel
 
 
+def extract_all(files, box_mpc_h, velocity_unit):
+    """Load every particle species; OPFoF uses positions/velocities only."""
+    total = 0
+    for path in files:
+        with path.open("rb") as fh:
+            _, n = _skip_header(fh)
+            total += n
+    pos = np.empty((total, 3), np.float32)
+    vel = np.empty((total, 3), np.float32)
+    mass = np.empty(total, np.float64)
+    cursor = 0
+    for path in files:
+        with path.open("rb") as fh:
+            _, n = _skip_header(fh)
+            xyz = [_record(fh, "<f8") for _ in range(3)]
+            vvv = [_record(fh, "<f8") for _ in range(3)]
+            mm = _record(fh, "<f8")
+        sl = slice(cursor, cursor + n)
+        for j in range(3):
+            pos[sl, j] = xyz[j] * box_mpc_h
+            vel[sl, j] = vvv[j] * velocity_unit
+        mass[sl] = mm
+        cursor += n
+    return pos, vel, mass
+
+
 def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
                           fine_mass_code):
     """Recompute HOP group properties without poshalo's coarse text rounding."""
@@ -156,8 +182,8 @@ def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
     with tag_path.open("rb") as fh:
         header = _record(fh, "<i4")
     ntags, ngroup = map(int, header)
-    # The second Fortran record starts after the 16-byte first record and its
-    # leading marker occupies bytes 16:20.
+    # The second Fortran record starts after the 16-byte first record; its
+    # four-byte leading marker occupies bytes 16:20.
     tags = np.memmap(tag_path, dtype="<i4", mode="r", offset=20, shape=(ntags,))
     count = np.zeros(ngroup, np.int64)
     mass_sum = np.zeros(ngroup)
@@ -212,11 +238,14 @@ def catalog_from_hop_tags(output, tag_path, box, mass_unit, velocity_unit,
 def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
                     reuse=False):
     """Run the user's serial multi-mass HOP and parse poshalo's group catalog."""
-    hop_dir = Path("/home/kjhan/BACKUP/lagRamses-de-nonstd/utils/f90/hop_ramses")
+    hop_dir = Path(os.environ.get(
+        "CF4_HOP_DIR",
+        "/home/kjhan/BACKUP/lagRamses-de-nonstd/utils/f90/hop_ramses"))
     hop_bin = hop_dir / "hop"
     regroup_bin = hop_dir / "regroup"
     poshalo_bin = hop_dir / "poshalo"
-    for exe in (hop_bin, regroup_bin, poshalo_bin):
+    required = (hop_bin, regroup_bin) if os.environ.get("CF4_SKIP_POSHALO") == "1" else (hop_bin, regroup_bin, poshalo_bin)
+    for exe in required:
         if not (exe.is_file() and os.access(exe, os.X_OK)):
             raise FileNotFoundError(f"missing executable: {exe}")
 
@@ -226,14 +255,16 @@ def run_hop_catalog(output, work, box, mass_unit, velocity_unit, fine_mass_code,
     if not (reuse and tag_path.exists()):
         prefix = output / f"part_{output.name[-5:]}.out"
         commands = [
-            ([str(hop_bin), "-in", str(prefix), "-p", "1.", "-o", "hop00010"],
+            ([str(hop_bin), "-in", str(prefix), "-p", "1.", "-nd", "64",
+              "-nh", "64", "-nm", "4", "-o", "hop00010"],
              "hop.log"),
             ([str(regroup_bin), "-root", "hop00010", "-douter", "80.",
               "-dsaddle", "200.", "-dpeak", "240.", "-f77", "-o", "grp00010"],
              "regroup.log"),
-            ([str(poshalo_bin), "-inp", str(output), "-pre", "grp00010",
-              "-cut", f"{fine_mass_code * 1.01:.18e}"], "poshalo.log"),
         ]
+        if os.environ.get("CF4_SKIP_POSHALO") != "1":
+            commands.append(([str(poshalo_bin), "-inp", str(output), "-pre", "grp00010",
+                              "-cut", f"{fine_mass_code * 1.01:.18e}"], "poshalo.log"))
         for command, logname in commands:
             print("[hop]", " ".join(command), flush=True)
             with (work / logname).open("w") as log:
@@ -460,6 +491,7 @@ def main():
                     default=Path("recon/screen3b_halos_cr6_e19.npz"))
     ap.add_argument("--nrank", type=int, default=16)
     ap.add_argument("--nfile", type=int, default=32)
+    ap.add_argument("--opfof-nx", type=int, default=2 ** 14)
     ap.add_argument("--halo-finder", choices=("hop", "opfof"), default="hop")
     ap.add_argument("--reuse-catalog", action="store_true")
     args = ap.parse_args()
@@ -493,12 +525,20 @@ def main():
     else:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
         import opfof_io
-        pos, vel = extract_finest(files, fine_mass_code, args.box, velocity_unit)
+        pos, vel, mass_code = extract_all(files, args.box, velocity_unit)
         opwork = args.work / "opfof_work"
         cat = opfof_io.fof_opfof(
-            pos, vel, L=args.box, nx=2 ** 14, nstep=10,
+            pos, vel, L=args.box, nx=args.opfof_nx, nstep=10,
             nfile=args.nfile, nid=args.nrank, outdir=str(opwork),
-            m_particle=fine_mass, nmin=20, verbose=True)
+            m_particle=1.0, nmin=20, verbose=True)
+        # OPFoF ignores particle masses; restore physical multi-mass halo sums
+        # from its member indices before applying the MW-scale pair cuts.
+        cat["mass"] = np.asarray([
+            mass_code[idx].sum() * mass_unit
+            for idx in (cat["member"][cat["head"][k]:
+                                  cat["head"][k] + cat["n"][k]]
+                        for k in range(len(cat["n"])))
+        ], dtype=float)
         np.savez(catalog_path, n=cat["n"], mass=cat["mass"],
                  pos=cat["pos"], vel=cat["vel"])
         cat = {k: cat[k] for k in ("n", "mass", "pos", "vel")}
@@ -545,7 +585,11 @@ def main():
 
     i, j = pair["i"], pair["j"]
     object_centers = [cat["pos"][i], cat["pos"][j]]
-    object_radii = [1.0, 1.0]
+    # A 1 Mpc/h extraction can truncate the outskirts of an OPFoF MW-scale
+    # group (especially when its linking length bridges a diffuse envelope),
+    # making the 200*rho_crit crossing undefined.  Keep the OPFoF/HOP center
+    # selection unchanged but collect a sufficiently large diagnostic sphere.
+    object_radii = [2.0, 2.0]
     if virgo_index is not None:
         object_centers.append(cat["pos"][virgo_index])
         object_radii.append(3.0)
@@ -559,20 +603,58 @@ def main():
         env_spheres.append((np.asarray(screen_pair["midpoint_mpc_h"]), 1.0))
     chunks, env = collect_regions(files, object_centers, object_radii, args.box,
                                   velocity_unit, mass_unit, env_spheres, fine_mass)
-    profiles = [spherical_overdensity(
-                    chunks[k], object_centers[k], args.box, fine_mass)
-                for k in range(2)]
-    virgo_profile = (spherical_overdensity(
-                        chunks[2], object_centers[2], args.box, fine_mass)
-                     if virgo_index is not None else None)
+    def profile_or_fof(k):
+        try:
+            return spherical_overdensity(
+                chunks[k], object_centers[k], args.box, fine_mass)
+        except RuntimeError as exc:
+            # OPFoF can identify a valid mixed-resolution group whose
+            # particle cloud does not provide a closed 200*rho_crit sphere
+            # in the extracted region.  Preserve the measured FOF mass and
+            # bulk velocity, but mark the spherical quantities unavailable;
+            # the contamination gate must remain false in this case.
+            print(f"[profile] unavailable for object {k}: {exc}; using FOF fallback",
+                  flush=True)
+            return {
+                "center_mpc_h": np.asarray(cat["pos"][pair["i"] if k == 0 else pair["j"]], float).tolist(),
+                "r200c_mpc_h": None,
+                "m200c_msun_h": float(cat["mass"][pair["i"] if k == 0 else pair["j"]]),
+                "velocity_kms": np.asarray(cat["vel"][pair["i"] if k == 0 else pair["j"]], float).tolist(),
+                "n_inside": int(cat["n"][pair["i"] if k == 0 else pair["j"]]),
+                "fine_particle_mass_msun_h": fine_mass,
+                "contaminant_count_r200c": None,
+                "contaminant_mass_fraction_r200c": None,
+                "nearest_contaminant_mpc_h": None,
+                "status": "fof_fallback_profile_unavailable",
+                "reason": str(exc),
+            }
 
-    c1 = np.asarray(profiles[0]["center_mpc_h"])
-    c2 = np.asarray(profiles[1]["center_mpc_h"])
+    profiles = [profile_or_fof(k) for k in range(2)]
+    virgo_profile = None
+    if virgo_index is not None:
+        try:
+            virgo_profile = spherical_overdensity(
+                chunks[2], object_centers[2], args.box, fine_mass)
+        except RuntimeError as exc:
+            virgo_profile = {"status": "profile_unavailable", "reason": str(exc)}
+
+    # OPFoF already supplies the group centers and bulk velocities used for
+    # the linking result.  Use those directly for the pair kinematics; a
+    # spherical-overdensity profile is an independent diagnostic and may be
+    # undefined for a mixed-resolution group.
+    if args.halo_finder == "opfof":
+        c1 = np.asarray(cat["pos"][i], float)
+        c2 = np.asarray(cat["pos"][j], float)
+        v1 = np.asarray(cat["vel"][i], float)
+        v2 = np.asarray(cat["vel"][j], float)
+    else:
+        c1 = np.asarray(profiles[0]["center_mpc_h"])
+        c2 = np.asarray(profiles[1]["center_mpc_h"])
+        v1 = np.asarray(profiles[0]["velocity_kms"])
+        v2 = np.asarray(profiles[1]["velocity_kms"])
     dr = min_image(c1 - c2, args.box)
     sep = float(np.linalg.norm(dr))
     rhat = dr / sep
-    v1 = np.asarray(profiles[0]["velocity_kms"])
-    v2 = np.asarray(profiles[1]["velocity_kms"])
     dv = v1 - v2
     vrad_pec = float(np.dot(dv, rhat))
     vtotal = vrad_pec + hubble_term * sep
@@ -607,17 +689,23 @@ def main():
     void_od = env[2]["mass"] / void_expected
     virgo_od = env[3]["mass"] / void_expected
 
+    mass1_gate = (pair["m1_fof_msun_h"] if args.halo_finder == "opfof"
+                  else profiles[0]["m200c_msun_h"])
+    mass2_gate = (pair["m2_fof_msun_h"] if args.halo_finder == "opfof"
+                  else profiles[1]["m200c_msun_h"])
     core_checks = {
-        "mass_1": 5e11 <= profiles[0]["m200c_msun_h"] <= 4e12,
-        "mass_2": 5e11 <= profiles[1]["m200c_msun_h"] <= 4e12,
+        "mass_1": 5e11 <= mass1_gate <= 4e12,
+        "mass_2": 5e11 <= mass2_gate <= 4e12,
         "separation": 0.3 <= sep <= 1.2,
         "approaching": vtotal < 0.0,
         "tangential": vtan < 100.0,
         "isolation": isolation >= 3.0,
     }
     contamination_checks = {
-        "halo_1": profiles[0]["contaminant_mass_fraction_r200c"] < 0.01,
-        "halo_2": profiles[1]["contaminant_mass_fraction_r200c"] < 0.01,
+        "halo_1": (profiles[0]["contaminant_mass_fraction_r200c"] is not None
+                   and profiles[0]["contaminant_mass_fraction_r200c"] < 0.01),
+        "halo_2": (profiles[1]["contaminant_mass_fraction_r200c"] is not None
+                   and profiles[1]["contaminant_mass_fraction_r200c"] < 0.01),
     }
     screen_group = None
     if screen_pair is not None:

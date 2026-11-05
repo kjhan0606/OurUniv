@@ -1,0 +1,14 @@
+{
+  "extends": "config/cf4_actual_data_corrected_v2.json",
+  "status": "USER_APPROVED_ONE_SAMPLING_LENGTH_CHECK",
+  "input_reference_plan": "config/cf4_actual_data_corrected_v2.json",
+  "input_root": "/gpfs/kjhan/CF4/z0_density/actual_data_corrected_v2_run1",
+  "output_root": "/gpfs/kjhan/CF4/z0_density/actual_data_longer_v3",
+  "sampler": {"draws_per_chain": 2048},
+  "execution_note": "Four fresh longer chains; unchanged 512 warmup, priors, observations, likelihood, selection calibration, HMC settings and gates. No exact last-state checkpoint exists. Do not pool with old chains or treat RNG overlap as independent replication. No automatic repeated extensions.",
+  "resources": {
+    "preflight": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:10:00"},
+    "fit": {"GPUs": 1, "CPUs": 4, "estimated_MiB": 8000, "requested_MiB": 9600, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "output_budget_GiB": 4
+  }
+}

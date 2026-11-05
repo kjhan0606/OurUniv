@@ -1,0 +1,107 @@
+{
+  "schema": "ouruniv-cf4-phasec-same-gpu-repeatability-diagnostic-v1-result-record-v1",
+  "date": "2026-09-01",
+  "status": "PREDECLARED_BITWISE_GATE_NO_GO_ALL_EIGHT_NUMERICAL_RUNS_PASS_SYN06_GPU_SWEEP_REQUIRED",
+  "lineage": {
+    "commit": "6638fba5970f7bdd684775604c41f12a1898b450",
+    "program": {
+      "path": "config/cf4_phasec_same_gpu_repeatability_diagnostic_v1.json",
+      "sha256": "46aba82ea404d13934abe5a1115dca01167a0ffaca322bf7a0e8ac4cb48ee911"
+    },
+    "implementation": {
+      "path": "src/cf4_phasec_same_gpu_repeatability_diagnostic.py",
+      "sha256": "79a5080bfb667f5b6294ae741f4246fc516a9b087d498aa4643cd4a7a8d0a8db"
+    },
+    "slurm_job_id": 329937
+  },
+  "device": {
+    "host": "syn05",
+    "slurm_job_gpus": "3",
+    "cuda_visible_devices": "0",
+    "physical_gpu_uuid": "GPU-517eb59e-4cf4-618f-0dc8-fc036ec41ba8",
+    "gpu_name": "NVIDIA A40",
+    "pci_bus_id": "00000000:0B:00.0",
+    "driver_version": "580.82.07",
+    "jax_version": "0.10.1",
+    "jaxlib_version": "0.10.1",
+    "device_record_sha256": "18089d49ba1e4b586eb3c8ebb9fd60514000b4a42cd9073e04d579fd4638c915"
+  },
+  "aggregate_artifact": {
+    "directory": "/gpfs/kjhan/CF4/z0_density/phasec_same_gpu_repeatability_v1_aggregate",
+    "aggregate_sha256": "6bf31b6260d7c41165ea0d1b91cf28826eef6f2751e4042115311434c1621fdc",
+    "manifest_sha256": "619dd57b8212cc226bcbb78bbbd5a391b72d3c40afb795146e0ff09fc53f36e4",
+    "complete_sha256": "20e28556b27824049aee27db4dabb5c5b61f376d21ad307cf17cd996413c153a",
+    "independent_validation": "PASS"
+  },
+  "task_result_sha256": {
+    "repeat_0_seed_2026083001": "7e31cdd6243f9817d49a1f20d24b246417c54bfe21949d079a345a57361a6f9a",
+    "repeat_0_seed_2026083006": "5c84a422fbfbeaaf300051cc10d3c34997c9eb6680d1a790c7cf5e441a128f92",
+    "repeat_0_seed_2026083002": "1774bb2242337ba4e9e815e479943807d9b80a8f7a614f3ecf9ef16570287e3d",
+    "repeat_0_seed_2026083007": "b2163d9565fcfcd2160f2cf00a7e2c29b0d8048285fb0db3a382ca368488cdf3",
+    "repeat_1_seed_2026083001": "4759ef32b1d764e905e4fd2a7da0919a12755080eb221a4e1a42fc92c91c5658",
+    "repeat_1_seed_2026083006": "b2aef17395935978891401f9b7a658a7ab68c1d1a6cc90e80e4f27613378c9f4",
+    "repeat_1_seed_2026083002": "0002a9a18efabef2ba2460c411bdb71ec12874e2092c3e8053484dd8edd3bed0",
+    "repeat_1_seed_2026083007": "3db99af2deac6bcb40d521797caa6f42853848961023fd81f967e4168d3aa498"
+  },
+  "predeclared_outcome": {
+    "valid_artifact_count": 8,
+    "expected_artifact_count": 8,
+    "all_eight_numerical_runs_pass": true,
+    "all_LPT_nbody_and_output_values_finite": true,
+    "exact_science_signature_repeatability_pass": false,
+    "exact_result_hash_repeatability_pass": false,
+    "sampler_released": false
+  },
+  "posthoc_difference_audit": {
+    "role": "magnitude characterization only; it does not retroactively change the predeclared exact-equality verdict",
+    "normalization": "absolute difference divided by max(1, absolute value from either repeat)",
+    "seeds": {
+      "2026083001": {
+        "maximum_absolute_scalar_difference": 7.275957614183426e-12,
+        "maximum_normalized_scalar_difference": 1.4011178727938173e-15
+      },
+      "2026083006": {
+        "maximum_absolute_scalar_difference": 1.0913936421275139e-11,
+        "maximum_normalized_scalar_difference": 8.725101100874282e-16
+      },
+      "2026083002": {
+        "maximum_absolute_scalar_difference": 1.4551915228366852e-11,
+        "maximum_normalized_scalar_difference": 2.041072938457642e-15
+      },
+      "2026083007": {
+        "maximum_absolute_scalar_difference": 1.0913936421275139e-11,
+        "maximum_normalized_scalar_difference": 7.434999569335937e-16
+      }
+    },
+    "largest_maximum_normalized_scalar_difference": 2.041072938457642e-15,
+    "interpretation": "Every structural, finite, and pass/fail field agrees. Numeric differences are at floating-point reduction roundoff scale, so the bitwise criterion is stricter than scientific repeatability; a tolerance must be frozen prospectively before it can be used as a gate."
+  },
+  "cross_run_interpretation": {
+    "syn05_same_GPU": "two fresh-process repeats of both prior failures and both controls all pass",
+    "prior_syn06_scan_array": "seeds 2026083001 and 2026083006 fail while seeds 2026083002 and 2026083007 pass",
+    "inference": "The catastrophic NaN behavior is not an intrinsic property of the frozen white fields and was not reproduced on the bound syn05 A40. The next audit must bind physical GPU UUIDs on syn06 rather than changing seeds or integration thresholds."
+  },
+  "resource_audit": {
+    "requested_host_memory_MiB": 9216,
+    "sacct_MaxRSS_KiB": 769452,
+    "elapsed": "00:01:59",
+    "memory_headroom_contract_satisfied": true
+  },
+  "decision": {
+    "bitwise_repeatability_gate_pass": false,
+    "all_eight_numerical_runs_pass": true,
+    "run_sampler_mechanics_pilot": false,
+    "replace_or_drop_any_seed": false,
+    "relax_generator_science_thresholds": false,
+    "run_actual_observational_posterior": false,
+    "next_allowed_work": "mock-only syn06 physical-GPU UUID sweep using exact bound scan-gate executions and a prospectively frozen roundoff-tolerant audit"
+  },
+  "scope_firewall": {
+    "actual_observational_datum_used": false,
+    "mock_counts_or_velocities_generated": false,
+    "optimizer_or_sampler_run": false,
+    "posterior_created": false,
+    "validation_or_Phase_D_started": false,
+    "target_0p3_cMpc_h_reached": false
+  }
+}

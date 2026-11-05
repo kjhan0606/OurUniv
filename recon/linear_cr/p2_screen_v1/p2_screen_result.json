@@ -1,0 +1,178 @@
+{
+  "schema": "cf4-p2-screen-result-v1",
+  "status": "complete",
+  "config": "/home/kjhan/BACKUP/CF4/config/p2_lg_targets_v1.json",
+  "config_sha256": "1c066ae189dee4c077b8400c4427d108f6e7dfc3d6ebedbd1b571cf22d7b3273",
+  "p1_result": "/home/kjhan/BACKUP/CF4/recon/linear_cr/p1_parent_v1/p1_result.json",
+  "cosmology": {
+    "Om": 0.31,
+    "Ob": 0.05,
+    "h": 0.746,
+    "A_s_1e9": 1.63,
+    "ns": 0.96
+  },
+  "particle_mass_msun_h": 25488888888.88888,
+  "results": [
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2001,
+      "seconds": 84.17624759674072,
+      "n_central_particles": 872283,
+      "n_halos": 795,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2002,
+      "seconds": 47.983083724975586,
+      "n_central_particles": 871684,
+      "n_halos": 780,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2003,
+      "seconds": 47.95981240272522,
+      "n_central_particles": 872573,
+      "n_halos": 755,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2004,
+      "seconds": 47.96572995185852,
+      "n_central_particles": 872605,
+      "n_halos": 772,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2005,
+      "seconds": 47.94982361793518,
+      "n_central_particles": 872145,
+      "n_halos": 805,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2006,
+      "seconds": 47.98108506202698,
+      "n_central_particles": 871861,
+      "n_halos": 809,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2007,
+      "seconds": 47.952263832092285,
+      "n_central_particles": 872752,
+      "n_halos": 797,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1002,
+      "small_scale_seed": 2008,
+      "seconds": 47.98399257659912,
+      "n_central_particles": 871903,
+      "n_halos": 788,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2001,
+      "seconds": 48.07433581352234,
+      "n_central_particles": 857357,
+      "n_halos": 798,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2002,
+      "seconds": 47.986942529678345,
+      "n_central_particles": 856646,
+      "n_halos": 823,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2003,
+      "seconds": 47.96006202697754,
+      "n_central_particles": 857730,
+      "n_halos": 828,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2004,
+      "seconds": 47.99159646034241,
+      "n_central_particles": 858234,
+      "n_halos": 830,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2005,
+      "seconds": 47.985438108444214,
+      "n_central_particles": 857699,
+      "n_halos": 810,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2006,
+      "seconds": 47.962860107421875,
+      "n_central_particles": 857115,
+      "n_halos": 810,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2007,
+      "seconds": 47.954171895980835,
+      "n_central_particles": 857574,
+      "n_halos": 794,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    },
+    {
+      "parent_seed": 1009,
+      "small_scale_seed": 2008,
+      "seconds": 47.94499683380127,
+      "n_central_particles": 858079,
+      "n_halos": 834,
+      "n_screen_pairs": 0,
+      "screen_pass": false,
+      "best_pair": null
+    }
+  ],
+  "passing_combinations": []
+}

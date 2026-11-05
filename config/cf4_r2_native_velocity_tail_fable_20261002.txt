@@ -1,0 +1,68 @@
+Read-only scientific design advice. Do not edit files, build, submit jobs,
+run simulations, or contact anyone. Use only Read/Glob/Grep if necessary.
+Project cwd /home/kjhan/BACKUP/CF4, OurUniv/CF4, not another project.
+
+Final objective: a scientifically defensible CF4+galaxy conditioned z=0
+density/velocity posterior in384 cMpc/h at1.5 cMpc/h (R2), then LG <=.3
+on that same NEW field, precise evolution and zoom IC. No development-map
+promotion. Native MW/M31/M33 truth cannot select inferred field candidates;
+MW/M31 roles remain ambiguous, M33 unresolved, their observables eventually
+must constrain that same field. Current bundle does not solve their roles.
+
+Important new finding needs advice, not routine code audit. Please read
+CF4_R2_NATIVE_RSD_MOCK_20261002.md,
+scripts/cf4_r2_native_rsd_mock_fit.py,
+src/cf4_r2_shell_cdf_count.py, and these exact results:
+/gpfs/kjhan/CF4/z0_density/r2_native_rsd_mock_fit_20261002_v2/result.json
+/gpfs/kjhan/CF4/z0_density/r2_native_ngp_refinement_20261002_v1/result.json
+/gpfs/kjhan/CF4/z0_density/r2_native_support_rows_20261002_v1/result.json
+No recursive storage scans or unrelated historical reports needed.
+
+Summary: native TNG100 K proxy (not2MASS Ks), one75 cMpc/h hydro box,
+125000 complete native1.5 matter cells. Two disjoint native halves translated
+to near/far source windows; each galaxy/cell once, not a physical384 universe.
+6050 selected native galaxies ALL>=300stellar particles. Counts in3Mpc/h
+cells use floor/NGP. Active likelihood uses source-volume GL2, sphericalRSD,
+Gaussian independent LOS residual with finite8sigma support, TSC count
+assignment, finite Schechter mark process and nine Gaussian nuisance priors.
+Train2656/test2360/buffer1034. Native field fixed, only nuisances optimized;
+no PM simulation, CF4 outcomes or independent-universe validation.
+
+Training optimizer NOW genuinely stationary:48iterations,53evaluations,
+gradient_inf .0005615. sigma182.2236km/s, alpha-.939502, Mstar-23.34107.
+Test score improves versus initial model, but test mean2504.1049 vs2360
+and aggregate count-radius L1 worsens222.63->285.63. This is development
+test: already inspected, no pristine-validation claim or further tuning
+against this score. GL4/LOS16 change active TSC intensities<.1%.
+At same endpoint NGP intensity differs36.6% and has two occupied zero
+training cells. GL4/LOS64 leaves one exactly0 and other4.15e-15.
+Actual two galaxy LOS residuals relative local native matter-cell mean are
+1558.84km/s(8.55455sigma),1777.79km/s(9.75612sigma); all selected residuals
+have absolute median.17335sigma,p90=1.6055,p95=2.5410,p99=4.6340,max9.7561;
+8/6050 beyond8sigma. Local residual alone does NOT exclude other source
+locations contributing to observed voxel. Both lie near native source
+window edges. Thus no claim yet that physical likelihood support is zero.
+
+Driver assessment: close mere optimizer extension; do NOT simply inflate
+Gaussian sigma, add intensity floor, or adopt NGP based on consumed test.
+Consider a minimal physically validated non-Gaussian LOS closure (e.g.
+core+satellite Gaussian mixture or Student-t, with proper tail normalization
+and periodic support), informed by TRAINING native galaxy residuals only.
+Separately correct/count operator mismatch so smoothing is not credited as
+physical scatter. Must eventually bridge native K/dust/velocity/NGP density
+to actual CF4/2M++ law and quantify calibration uncertainty, not plug point
+coefficients into R2. No new simulation or training corpus proposed now.
+
+Answer explicitly:
+1 Q-GOAL: does the diagnosis/next minimal bundle actually move toward R2 and
+LG final goal rather than another calibration detour?
+2 Q-LEAN: what is the smallest scientifically decisive next computation?
+3 How distinguish source-window/geometric support, numerical quadrature,
+and Gaussian/FoG failure from these data? What claim is justified now?
+4 Recommend the count operator and one minimal normalized residual law;
+note differentiability, tails/periodic images, parameter identifiability,
+train/validation leakage and required calibration-uncertainty treatment.
+5 State essential now vs deferred prerequisites. Do not recommend an entire
+framework or more bounded optimizer scans without physical justification.
+Return PASS/CONDITIONAL PASS/REJECT/NO VERDICT plus concrete advice, not
+automatic authorization. Driver independently evaluates your evidence.

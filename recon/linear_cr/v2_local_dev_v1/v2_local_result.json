@@ -1,0 +1,80 @@
+{
+  "schema": "cf4-v2-local-likelihood-development-result-v1",
+  "config": "/home/kjhan/BACKUP/CF4/config/v2_local_likelihood_dev_v1.json",
+  "control_manifest": "/home/kjhan/BACKUP/CF4/recon/linear_cr/manifest_v2local_control_n64.json",
+  "hybrid_manifest": "/home/kjhan/BACKUP/CF4/recon/linear_cr/manifest_v2local_hybrid15_n64.json",
+  "common_wf_holdout_n": 1318,
+  "control": {
+    "n": 1318,
+    "z_mean": 0.032289666530763816,
+    "z_std": 1.0158393379562425,
+    "coverage_1sigma": 0.7245827010622155,
+    "coverage_2sigma": 0.9499241274658573,
+    "log_predictive_density": -11591.500264066179,
+    "noise_only_log_density": -11659.780362594116,
+    "delta_log_score": 68.2800985279373,
+    "latent_rms_kms": 380.57450187535653,
+    "posterior_sd_median_kms": 134.477638382506
+  },
+  "hybrid": {
+    "n": 1318,
+    "z_mean": 0.024466947290695765,
+    "z_std": 1.0106664224567576,
+    "coverage_1sigma": 0.7215477996965098,
+    "coverage_2sigma": 0.9506828528072838,
+    "log_predictive_density": -11583.838557993222,
+    "noise_only_log_density": -11659.780362594116,
+    "delta_log_score": 75.9418046008941,
+    "latent_rms_kms": 383.158954395365,
+    "posterior_sd_median_kms": 131.69267140559725
+  },
+  "common_wf_logp_change_hybrid_minus_control": 7.661706072956804,
+  "hybrid_local_direct": {
+    "n": 51,
+    "z_mean": -0.4222541796118547,
+    "z_std": 0.5699058429292345,
+    "coverage_1sigma": 0.8431372549019608,
+    "coverage_2sigma": 1.0,
+    "log_predictive_density": -331.41871961694204,
+    "noise_only_log_density": -397.9493770971733,
+    "delta_log_score": 66.53065748023124,
+    "latent_rms_kms": 293.62934452594027,
+    "posterior_sd_median_kms": 33.92643822042784
+  },
+  "observer_density": {
+    "control": {
+      "gaussian_radius_mpc_h": 5.0,
+      "posterior_mean": -0.9646004438400269,
+      "sample_values": [
+        -0.8447650671005249,
+        -0.8545865416526794,
+        -1.194061279296875,
+        -0.8715434670448303
+      ],
+      "sample_mean": -0.9412390887737274,
+      "sample_std": 0.16891066720751854
+    },
+    "hybrid": {
+      "gaussian_radius_mpc_h": 5.0,
+      "posterior_mean": 0.030793942511081696,
+      "sample_values": [
+        0.11391127109527588,
+        -0.020948410034179688,
+        0.2041919231414795,
+        -0.06031873822212219
+      ],
+      "sample_mean": 0.05920901149511337,
+      "sample_std": 0.12209897222269107
+    },
+    "paired_difference": [
+      0.9586763381958008,
+      0.8336381316184998,
+      1.3982532024383545,
+      0.8112247288227081
+    ],
+    "paired_mean_difference": 1.0004481002688408
+  },
+  "global_common_wf_pass": true,
+  "local_direct_calibrated": false,
+  "verdict": "DO_NOT_PROMOTE"
+}

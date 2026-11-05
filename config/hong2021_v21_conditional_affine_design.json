@@ -1,0 +1,63 @@
+{
+  "schema": "hong2021-v21-voxel-conditional-affine-gaussianization-design-v1",
+  "status": "predeclared_after_v20_conditional_structure_failure_before_implementation",
+  "purpose": "Test whether the V20 failure is caused by voxel-level conditional location-scale heteroscedasticity rather than a global marginal mismatch.",
+  "parent": {
+    "registry": "config/hong2021_v20_development_program.json",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v20_e8_gaussianized_marginal/development_decision.json",
+    "decision_sha256": "9a615ddf60cf512a26fae6bb82c91963cd95c9c5e1cfcba8a9b52ea1cae2aa3a",
+    "decision_digest_sha256": "bd2eba71d846e1a7a90893c30414bfe5e1c944986018aa7493e237f56b39a30c",
+    "failure_class": "gaussianized_marginal_falsified_audit_conditional_structure",
+    "Astrid_used": false,
+    "EAGLE_RefL0100N1504_used": false
+  },
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "verdict_on_cube_stratified_variant": "FAIL",
+    "required_next_step": "voxel_level_conditional_structure_audit_and_affine_intervention",
+    "record": "config/hong2021_v20_conditional_structure_audit.json",
+    "record_sha256": "314feebe8c9af261962a7e4c73f0a0f71a1a17f664794bc56c6c392b03c429b4"
+  },
+  "firewall": {
+    "fit_sources": ["TNG100 train", "SIMBA train", "Swift train"],
+    "validation_or_test_data_used_for_fit": false,
+    "target_derived_inference_feature": false,
+    "simulation_identity_feature": false,
+    "independent_data_paths_accessed": false
+  },
+  "single_change": {
+    "name": "voxel_level_conditional_affine_before_equal_source_gaussianization",
+    "feature": "per-voxel corrected deterministic mean field m in y units, exactly the conditional_mean dataset produced by the frozen V14 mean-correction model",
+    "feature_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/location_scale_model.json",
+    "feature_artifact_sha256": "0132cb15088d16b89251c9f76ec8fc34cae1292f7549368ed0d9bd9000330bbe",
+    "bins": 10,
+    "r_definition": "the V14 standardized residual field in the frozen source cache, before V21 affine normalization",
+    "bin_edges": "per-source training voxel quantiles pooled with source weight 1/3 each at q=0.0,0.1,...,1.0; float64 searchsorted right; bin index clamped to [0,9] at both ends",
+    "bin_center": "equal-source weighted mean m within each bin",
+    "location": "mu_bin = mean over the three per-source bin means",
+    "scale": "sigma_bin = sqrt(mean over sources of E_source[(r-mu_bin)^2] within the bin)",
+    "interpolation": "piecewise-linear float64 mu(m) and log_sigma(m) evaluated at frozen bin centers, constant extrapolation beyond endpoint centers, then float32 field application; apply minimum_scale to sigma_bin before log_sigma is formed",
+    "minimum_scale": 0.25,
+    "minimum_scale_units": "V14 standardized-residual units",
+    "minimum_scale_binding_audit": "record whether the floor binds in every source and split; any binding is not tuned after results",
+    "fit_unit": "voxel",
+    "source_balance": "normalize each source-bin moment separately, then average the three source moments",
+    "target": "u=(r-mu(m))/sigma(m), then fit a new G21(u) using the byte-identical V20 equal-source train-only histogram/CDF recipe with 131072 bins, 8193 knots, z support [-5,5], and the same Addendum-A checks; subtract mean(G21(u)) per cube before Addendum-B projection",
+    "inverse": "apply G21^-1 after the unchanged sampler DC centering, then r=u*sigma(m)+mu(m) before the unchanged V14 inverse",
+    "new_free_parameters": "2 predeclared hyperparameters (10 bins, minimum scale 0.25) plus 20 train-derived statistics (10 mu and 10 log_sigma values); derived statistics are not tunable parameters",
+    "posthoc_tail_clipping": false
+  },
+  "inheritance": {
+    "training_from_scratch": true,
+    "architecture": "unchanged V20 ObservableContextUNet",
+    "noise_loss_sampler_initializer_gate": "unchanged V20 E8 protocol",
+    "candidate_steps": [5000, 10000],
+    "selection_role": "smallest candidate step passing every unchanged field check in all three domains",
+    "Q3_Q4_Q5_thresholds": "unchanged V20",
+    "Q6": "at step 10000, using frozen train-derived V21 m edges and equal-source per-domain reporting, generated/truth mean-delta-squared ratio and residual variance by deterministic-mean voxel decile; selection_role none",
+    "Astrid": "forbidden until development pass, committed seal, and explicit user approval"
+  },
+  "derived_artifacts": "new V21 affine profile, refit G21 transform, six V21 caches, sigma_data and balanced band variances re-derived from V21 caches; no V20 numeric artifact is reused",
+  "hard_preflight": "full pytest, train-only affine/profile audit, G21 Addendum-A roundtrip, per-cube centered Addendum-B audit, exact cache hashes, and unchanged evaluator/gate hashes",
+  "stop_rule": "Apply the unchanged V20 fixed_decision_order: on development pass select the smallest passing candidate and stop before seal; on field-gate failure with Q3/Q4 pass classify conditional spatial limitation; on Q3 or Q4 failure classify conditional affine falsification. Every failure stops with Astrid and historical EAGLE unopened; no affine-bin, floor, architecture, or threshold rescue is allowed in the same run."
+}

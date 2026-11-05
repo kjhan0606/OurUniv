@@ -1,0 +1,223 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-production-v5-postmortem-result-record-v1",
+  "status": "complete_postmortem_sealed_no_rerun",
+  "date": "2026-08-18",
+  "purpose": "Read-only postmortem of the one-shot v5 aggregate-evidence SMC namespace. This record does not alter the sealed artifacts, lifecycle markers, receipt, grant, release, manifest, cache, data, state, or execution authorization.",
+  "v4_tainted_and_read_only": true,
+  "scientific_outcome": {
+    "status": "complete_scientific_fail_production_smc",
+    "outcome_kind": "terminal",
+    "capability_status": "complete_scientific_fail",
+    "fable_canonical_primary_failure": "replicate_parent_probability_L1",
+    "fable_primary_failure_observed_maximum_pairwise_L1": 0.5163215650597401,
+    "recorded_result_failure_class": "replicate_log_I_bar_range",
+    "recorded_range": 0.219334273375015,
+    "recorded_range_threshold": 0.2,
+    "recorded_range_exceeds_threshold": true,
+    "result_and_gate_failure_class_agree": true,
+    "manifest_scientific_status_matches_result": true,
+    "valid_scientific_completion_under_base_bundle_validation": true
+  },
+  "gate_evidence": {
+    "post_terminal_gates_json": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/smc/post_terminal_cf4_gates.json",
+      "mode": "0600",
+      "sha256": "a86023cc3c6b41e8fc00022995ecd20c3e04e22bf16e8f0ab8d289be115b28a4",
+      "status": "complete_scientific_fail",
+      "failure_class": "replicate_log_I_bar_range"
+    },
+    "post_terminal_gates_npz": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/smc/post_terminal_cf4_gates.npz",
+      "mode": "0600",
+      "sha256": "73ccba8af2cf67577ab5d5d37cac508a18bd0a831565ea829774ff2822ef049b"
+    },
+    "terminal_parent_frozen_npz": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/smc/terminal_parent_frozen.npz",
+      "mode": "0600",
+      "sha256": "1bfd55238d7e62491343aa3aded710a5a1209f4396c2da0bc7a601e453a6ffd5",
+      "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+      "parent_seed_range_inclusive": [3193, 3448],
+      "parent_count": 256
+    },
+    "all_gate_statuses": {
+      "all_replicates_reach_beta_one": true,
+      "finite_and_artifact_contract": true,
+      "genealogical_ESS": true,
+      "lineage_and_authorization": true,
+      "maximum_pooled_parent_probability": true,
+      "maximum_temperature_stages": true,
+      "pooled_parent_ESS": true,
+      "replicate_log_I_bar_range": false,
+      "replicate_log_I_bar_sample_SE": true,
+      "replicate_parent_probability_L1": false,
+      "temperature_stagnation_absent": true,
+      "terminal_phase_complete_and_sealed": true,
+      "weighted_CF4_Q90": true,
+      "weighted_CF4_Q99_exceedance_mass": true,
+      "weighted_CF4_one_sided_KS_permutation": true
+    },
+    "pre_CF4_metrics": {
+      "maximum_pairwise_P_rep_L1": 0.5163215650597401,
+      "replicate_log_I_bar_range": 0.219334273375015,
+      "replicate_log_I_bar_sample_SE": 0.046623266621406485,
+      "maximum_P_pool": 0.08945109450165155,
+      "pooled_parent_ESS": 38.86159663104202,
+      "genealogical_ESS": [253.4322658610272, 755.186172128196, 195.12020841086715, 733.7830650804758]
+    },
+    "CF4_metrics": {
+      "weighted_CF4_Q90": 19799.073919927618,
+      "weighted_CF4_Q99_exceedance_mass": 0.01646533245524358,
+      "weighted_CF4_one_sided_KS": 0.07781812215048223,
+      "permutation_seed": 2026081901,
+      "permutations": 100000,
+      "permutation_exceedance_count": 51588,
+      "permutation_pvalue": 0.5158848411515885
+    },
+    "fable_null_calibration": {
+      "replicates": 20000,
+      "bit_generator": "PCG64DXSM",
+      "seed": 2026081801,
+      "pairwise_L1_q99": 0.303710938,
+      "pairwise_L1_q999": 0.319335938,
+      "maximum_tail_pvalue": 0.0000499975001,
+      "canonical_primary_failure_interpretation": "observed maximum pairwise L1 exceeds the calibrated null q999 and has the recorded maximum-tail probability"
+    }
+  },
+  "published_artifacts": {
+    "result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/result.json",
+      "mode": "0600",
+      "sha256": "efaef1051b9c37c7e7b86215081ca2b5759c10206bc1dc6f2f353b24aa5ef7b2",
+      "schema": "ouruniv-cf4-aggregate-evidence-smc-production-result-v1",
+      "status": "complete_scientific_fail_production_smc",
+      "failure_class": "replicate_log_I_bar_range"
+    },
+    "manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/manifest.json",
+      "mode": "0600",
+      "sha256": "0336e1a336bab8bd4ea1ff6e31308c515de039494691ade632bdd7d75b39eb34",
+      "schema": "ouruniv-cf4-aggregate-evidence-smc-production-manifest-v1",
+      "status": "complete_immutable_production_manifest",
+      "scientific_status": "complete_scientific_fail_production_smc"
+    },
+    "synthetic_validation": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/synthetic_validation.json",
+      "mode": "0600",
+      "sha256": "1922b86e7f2ea75facb62bb36aaa6e15277ab29ed9c1f357eb5ba4f3a5dcfb3e",
+      "status": "complete_pass",
+      "all_pass": true
+    },
+    "sealed_control_summary": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/oracle/sealed_oracle_control_summary.json",
+      "mode": "0600",
+      "sha256": "38ec0d50ce600488ea4e3af1dafc7264e041a4b3dc6e1bcbc0f49efe72ed0ba6",
+      "status": "complete_pass_exact_24_row_control",
+      "global_unique_key_count": 24,
+      "control_cache_reuse_authorized": false
+    },
+    "production_cache_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5/oracle/production_cache/manifest.json",
+      "mode": "0600",
+      "sha256": "407820a4a3860ed978587befe6593879126ae99daff4774a455e4d54b2f1b7c2",
+      "status": "complete_immutable_append_only_cache",
+      "shard_count": 88,
+      "total_row_count": 129368
+    }
+  },
+  "lifecycle_anomaly": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+    "FAILED": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run/FAILED",
+      "mode": "0600",
+      "sha256": "bdaa5e2e4c91fe08773ff68a80f8fe13bf9c35f72e77b5ac1f3bb8f228b24a86",
+      "status": "failed",
+      "exit_code": 1,
+      "failure_class": "invalid_provenance_or_execution"
+    },
+    "environment": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run/environment.txt",
+      "mode": "0600",
+      "sha256": "37c5f01fb88eb95109bcbc9b0c682250bf23ea35d166994219533cbe6a15d3dd",
+      "preflight_snapshot_sha256": "d9853ce8aca01fc073bf4e25f26bff4a1c411eff409ffc12ec27f7bd7d5aca2d"
+    },
+    "cause": "The v5 runner's read-only completion postcheck rejected the published manifest because its observed POSIX mode was 0600 rather than read-only.",
+    "scientific_artifacts_preserved_without_mutation": true,
+    "FAILED_marker_preserved_without_mutation": true,
+    "COMPLETE_marker_present": false,
+    "rerun_authorized": false,
+    "same_namespace_reuse_authorized": false
+  },
+  "receipt_artifacts": {
+    "receipt": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts/one-shot-receipt",
+    "release_anchor": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts/one-shot-receipt/release.anchor",
+      "mode": "0444",
+      "sha256": "f7ce8b3478ea71678d68dde488fa37f4ce3eb9ccf8d0ff8c175325a849055593",
+      "nlink": 2
+    },
+    "preflight_snapshot": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts/one-shot-receipt/preflight-snapshot.json",
+      "mode": "0600",
+      "sha256": "70a39048ee8baad880d068976e283ba6ef859f7acef702b0fa44a84630cffa2e",
+      "snapshot_sha256": "d9853ce8aca01fc073bf4e25f26bff4a1c411eff409ffc12ec27f7bd7d5aca2d",
+      "policy": 5
+    },
+    "preflight_snapshot_sha256_file": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts/one-shot-receipt/preflight-snapshot.sha256",
+      "mode": "0600",
+      "sha256": "d3e749c0c0d36154c36925b17ee4cb68414924f2d8e828ca06028fd4938dab59"
+    }
+  },
+  "provenance_and_code_state": {
+    "grant": {
+      "path": "config/cf4_aggregate_evidence_smc_execution_grant_v5.json",
+      "mode": "0644",
+      "sha256": "7e10656d8b10e72c2e6136fdf859309661525ec8aa3ef409c8309227d31ee7f6",
+      "grant_id": "4e935e71e4deed7b805d24de9f3505928696413ea1d3aefe6060a6f3508cafd0"
+    },
+    "external_release": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+      "mode": "0444",
+      "sha256": "f7ce8b3478ea71678d68dde488fa37f4ce3eb9ccf8d0ff8c175325a849055593",
+      "release_id": "20d1eccec62a610ff63daf78ce2df49f825e1a92cf8d21976820d8f65107907b"
+    },
+    "external_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+      "mode": "0444",
+      "sha256": "43d6b4fb2542b2675eeb702dc07ec993e8a8bc1d84ed53834147f78624260001",
+      "manifest_id": "7316ffadaf6c6beb838cc26bed50bbe346b4923eb902ca39bc50add86c0beac2"
+    },
+    "implementation_result_record_sha256": "8b3c6edc2b7cea80e88dbbd69efc3da62a9db87e5d814bf727e7b583d719b0b5",
+    "host_gate_extension_result_record_sha256": "809a670a020112987254f4040481ff56abed5075c0eca4dfce09e73a7d586b96",
+    "authorization_implementation": {
+      "path": "src/cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "sha256": "55c4db460dd4c24c2467a3102b45963a433af46afe11ff69e81d309356039a03"
+    },
+    "runner": {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "0e89186e426edd32bbbce8ff8e59ec46693068f0bff49c04e490b0f74d626bc0"
+    },
+    "current_git": {
+      "HEAD": "d107e2dc82d80f54ef800fc02aaa5ddb0cc8c3df",
+      "parent": "1248235893e76fde7d97047ea7b7e59efb272966",
+      "tree": "d07979d1f43285f3c13ebbad6b46c7fcffa1c7e5",
+      "branch_tracking_and_remote_ref_equal_HEAD": true
+    }
+  },
+  "decision": {
+    "next": "postmortem_seal_only",
+    "prospective_v6_design_may_be_considered": true,
+    "v6_execution_authorized": false,
+    "v5_rerun_or_same_namespace_reuse_authorized": false,
+    "production_cache_or_downstream_execution_authorized": false,
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false
+  },
+  "scope": {
+    "this_change_adds_only_this_postmortem_record": true,
+    "excluded_user_owned_outside_scope": {
+      "path": "scripts/tripwire/",
+      "worktree_status": "untracked_user_owned",
+      "touched_by_this_change": false
+    }
+  }
+}

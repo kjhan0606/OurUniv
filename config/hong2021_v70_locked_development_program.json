@@ -1,0 +1,100 @@
+{
+  "schema": "hong2021-v70-locked-three-domain-development-program-v1",
+  "status": "frozen_during_fixed_training_before_train_gate_result_or_development_access",
+  "purpose": "Run exactly one locked TNG100, SIMBA, and Swift development sample after, and only after, the predeclared V70 train-only joint-structure gate passes. Measure the candidate with the unchanged field, Q3, and Q4 gates; do not fit, select a checkpoint, tune a sampler, or alter a threshold from development results.",
+  "parent_programs": {
+    "v70_model_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_model_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v70_train_gate_program": "config/hong2021_v70_train_joint_structure_gate_program.json",
+    "v70_train_gate_program_sha256": "13ce1abfabe92a38072077637ef4f724f1951b6da6bd8214f472fd930c91f728",
+    "required_train_gate_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_train_joint_structure_gate/decision.json",
+    "required_train_gate_schema": "hong2021-v70-train-only-joint-structure-mechanism-decision-v1",
+    "required_train_gate_status": "complete_train_only_joint_structure_gate",
+    "required_train_mechanism_pass": true,
+    "required_candidate_selected": true,
+    "required_classification": "query_aligned_latent_spatial_score_learns_cross_domain_joint_structure",
+    "required_next": "run_one_locked_development_sampling_and_the_unchanged_field_Q3_Q4_gates",
+    "decision_hash_binding": "compute once after the gate writes its canonical decision, then bind that sha256 unchanged through sampling, evaluation, and the development decision"
+  },
+  "frozen_inputs": {
+    "v35_development_definition": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_development_definition_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "expected_v70_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "expected_v70_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json"
+  },
+  "immutable_development_selection": {
+    "objects_per_domain": 16,
+    "source": "the exact source_index arrays in the three hash-bound V28 phase-object-selection ensembles referenced by the V35 program",
+    "TNG100_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/tng/ensemble16.h5",
+    "TNG100_selection_sha256": "3e879fe7fadc8948d3d95c642f3d31ad39b90a26973bf1c0c1c6e947e16fc840",
+    "SIMBA_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/simba_dev/ensemble16.h5",
+    "SIMBA_selection_sha256": "1a9234f32dad5e22042794ffc87a27fcfd43f989863c47a401bc382a87fa5504",
+    "Swift_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v28_e16_empirical_joint_control/development_candidate/swift_dev/ensemble16.h5",
+    "Swift_selection_sha256": "15ad48b80d008c1f648bc1b95a43f0823ecd6c441f837f8b6d87cb302cd99a88",
+    "development_truth_or_source_index_access_before_train_gate_pass": "forbidden"
+  },
+  "fixed_sampling": {
+    "candidate_arm": "query_aligned_latent_spatial_score",
+    "diagnostic_control_arm": "independent_voxel_V63_marginal",
+    "control_may_affect_pass_decision": false,
+    "noise_seed": 170073,
+    "members_per_query": 16,
+    "inference_batch": 4,
+    "candidate": "the fixed step-30000 V70 EMA sampled with the already frozen deterministic 40-step probability-flow Heun sampler",
+    "control": "the exact same initial standard-normal latent innovations passed directly through the frozen V63 local inverse",
+    "sigma_steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "physical_inverse": "the frozen V63 bounded-mixture inverse followed by the frozen target affine inverse and exactly one residual DC projection",
+    "density_or_residual_clipping": false,
+    "posthoc_global_scale_or_Ak": false
+  },
+  "unchanged_development_gate": {
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256_at_freeze": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate_source": "src/hong2021_v6_gate.py",
+    "field_gate_source_sha256_at_freeze": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "Q3_Q4_measurement_source": "src/hong2021_v20_development_gate.py",
+    "Q3_Q4_measurement_source_sha256_at_freeze": "f63b8eb8813f1c21265e7a5ec13a6543e7372fdce6d9955909bb33635149a028",
+    "Q3_Q4_pass_source": "src/hong2021_v48_development_gate.py",
+    "Q3_Q4_pass_source_sha256_at_freeze": "f1b2e58ca766d3ce1e0e6c7f6a917d9fe7b9475ed2bb9318730bf57cfa37ad17",
+    "candidate_pass": "the candidate arm independently passes Q3 and Q4 across all three domains and every field_gate check passes in all three domains",
+    "diagnostic_control_excluded_from_selection": true,
+    "checkpoint_or_sampler_selection_from_development": false,
+    "development_repetition_after_failure": false
+  },
+  "fixed_branches": [
+    {
+      "condition": "the train-only mechanism gate does not pass exactly",
+      "classification": "V70_development_remains_locked",
+      "next": "stop_without_development_access_or_posthoc_tuning"
+    },
+    {
+      "condition": "the single locked candidate development gate fails",
+      "classification": "V70_joint_spatial_model_is_not_development_sufficient",
+      "next": "seal_the_failure_and_stop_before_independent_EAGLE_without_sampler_threshold_or_model_tuning"
+    },
+    {
+      "condition": "the single locked candidate development gate passes",
+      "classification": "V70_is_development_sufficient",
+      "next": "seal_V70_and_await_explicit_user_approval_before_independent_EAGLE_access"
+    }
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v70_development",
+  "firewall": {
+    "validation_or_development_access_before_train_gate_pass": "forbidden",
+    "training_or_gradient_during_development": "forbidden",
+    "checkpoint_sampler_seed_member_count_threshold_or_gate_tuning": "forbidden",
+    "second_development_attempt": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden without explicit user approval after the locked development pass",
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-count-smoke-v2-relabel-v1",
+  "date": "2026-09-04",
+  "status": "RELABELED_REPAIRED_COUNT_SMOKE_PLUS_INTERFACE_TESTS",
+  "artifact": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+  "effective_description": "Corrected train/holdout count-only smoke with separate source-bound joint-interface, TSC/RSD/support and nuisance-rank probes; not a 64-mock calibration of the full joint likelihood.",
+  "backup_audit": "config/cf4_bundle_b1_sol_closure_audit_v2.json",
+  "execution_grant": "config/cf4_bundle_b1_development_execution_amendment_v1.json",
+  "immutable_history": true,
+  "science_claims": {
+    "observational_z0_posterior": false,
+    "frontier_promotion": false,
+    "0p3_cMpc_h": false,
+    "validation_seed_access": false
+  }
+}

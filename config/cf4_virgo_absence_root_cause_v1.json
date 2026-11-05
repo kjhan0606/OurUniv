@@ -1,0 +1,34 @@
+{
+  "schema": "ouruniv-cf4-virgo-absence-root-cause-v1",
+  "stage": "8_z0_structure_validation",
+  "status": "ROOT_CAUSE_IDENTIFIED",
+  "slurm_jobs": [393227, 393228],
+  "box_cMpc_h": 384.0,
+  "parent_grid": 256,
+  "parent_cell_cMpc_h": 1.5,
+  "canonical_target_cMpc_h": [189.329829033528, 203.676745420703, 191.508856275301],
+  "recentered_lg_midpoint_cMpc_h": [191.3945342169332, 193.6556248138912, 188.05428308760463],
+  "recentered_target_cMpc_h": [188.7243632504612, 205.3323702345942, 187.56313936290564],
+  "canonical_target": {
+    "linear_delta_R2_R4_R8": [0.18911462494254305, 0.21542857112370736, 0.19181783857877302],
+    "z0_one_plus_delta_R2_R4_R8": [1.4385361939287356, 0.9052783952353686, 1.061361963525865],
+    "maximum_opfof_mass_within_4_cMpc_h_Msun_h": 998762778460.9038
+  },
+  "recentered_target": {
+    "linear_delta_R2_R4_R8": [0.219025026711489, 0.20893750496736427, 0.18050188393669447],
+    "z0_one_plus_delta_R2_R4_R8": [0.6751068258667329, 0.9763519777006876, 1.0771721012184696]
+  },
+  "checks": {
+    "raw_particles_cover_full_box": true,
+    "newdd_particle_count_matches_ramses": true,
+    "zero_mass_particles": 0,
+    "coordinate_recentering_explains_absence": false,
+    "cluster_scale_parent_peak_present": false
+  },
+  "decision": {
+    "root_cause": "The accepted parent IC lacks a Virgo-scale overdensity at the observed target; this is not primarily an OPFoF or lbase failure.",
+    "lbase9_or_lbase10_now": "NO_GO",
+    "required_next_step": "Add and calibrate a Virgo cluster-scale density constraint in the parent z=0 posterior/IC construction before repeating forward evolution."
+  },
+  "disk_policy": "Reuse existing IC and snapshots for diagnostics; do not create a higher-lbase full-box run until the Virgo parent constraint passes."
+}

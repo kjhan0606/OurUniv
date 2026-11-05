@@ -1,0 +1,9 @@
+{
+  "schema":"ouruniv-cf4-joint-tracer-calibration-v1","model_version":"v8","date":"2026-09-20",
+  "cosmology":{"h":0.6711,"H0_km_s_Mpc":67.11,"Omega_m":0.3175,"Omega_b":0.049,"Tcmb_K":2.7255},
+  "data":{"catalog":{"path":"data/2mpp_catalog.csv"},"crossmatch":{"path":"data/cf4_2mpp_crossmatch_v1.csv"},"map11":{"path":"/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz"},"map12":{"path":"/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz"},"carrick":{"path":"/gpfs/kjhan/CF4/observations/twompp_carrick_v1/twompp_density.npy"}},
+  "excluded_targets":17007,"holdout_modulus":7,"holdout_remainder":3,"survival_perturb":0.2,"fog_operator_scale_cMpc_h":3.0,
+  "external_fog_prior":[{"mean_cMpc_h":1.8228941612},{"mean_cMpc_h":1.7241014215},{"mean_cMpc_h":1.7535848087},{"mean_cMpc_h":1.7006782882},{"mean_cMpc_h":1.7397965560},{"mean_cMpc_h":1.6820999406}],
+  "external_bias_prior":[{"mean":0.0422023,"sd":0.0072516},{"mean":0.0313066,"sd":0.0069507},{"mean":0.0371998,"sd":0.0086776},{"mean":0.0441773,"sd":0.0116953},{"mean":0.0655710,"sd":0.0187055},{"mean":0.1323198,"sd":0.0165957}],
+  "design":{"grid_N":32,"box":384.0,"nside":512,"radial_min_cMpc_h":5.0,"radial_max_cMpc_h":180.0,"faint_apparent_K_max":12.5,"bright_apparent_K_max":11.5,"absolute_K_bright":-25.0,"absolute_K_faint":-21.0,"absolute_K_edges":[-25.0,-23.6666666666667,-22.3333333333333,-21.0],"abs_edges":[-25.0,-23.6666666666667,-22.3333333333333,-21.0],"Kmax":[11.5,12.5]}
+}

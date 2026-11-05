@@ -1,0 +1,100 @@
+{
+  "schema": "ouruniv-cf4-q1-cell-integrated-convolution-result-v1",
+  "date": "2026-09-04",
+  "bundle": "Q1",
+  "bundle_audit_status": "CONDITIONAL_PASS_AGY_AND_OPUS5",
+  "purpose": "Validate the NumPy cell-integrated periodic Gaussian LOS convolution oracle before any JAX promotion or CF4 posterior execution.",
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "implementation": {
+    "source": "src/cf4_q1_cell_integrated_convolution.py",
+    "fixture_source": "src/cf4_2mpp_boundary_stress.py",
+    "operator": "periodic_torus_expected_cell_response",
+    "operator_equation": "lambda_pc = E_epsilon [ sum_i m_pi W_TSC(c, (s_i + h*sigma_i*epsilon*rhat_i/(aH)) mod L) ]",
+    "method": "Piecewise polynomial TSC stencil integration against standard-normal moments through degree six; no finite-order point-deposit quadrature in the oracle.",
+    "tail_cutoff_sigma": 8.0,
+    "tail_probability": 1.244192114854348e-15,
+    "selection_order": "Exposure is applied only after the exposure-free convolution."
+  },
+  "verification": {
+    "targeted_tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src pytest -q tests/test_cf4_q1_cell_integrated_convolution.py tests/test_cf4_2mpp_joint_likelihood_local.py tests/test_cf4_2mpp_joint_likelihood_local_contract.py tests/test_cf4_2mpp_verification_round.py tests/test_cf4_2mpp_crossmatch_manifest.py",
+    "targeted_tests_status": "PASS",
+    "targeted_tests_passed": 30,
+    "targeted_tests_skipped": 0,
+    "independent_adaptive_reference": "PASS but semi-independent and limited: one representative source per boundary/non-boundary fixture is compared with SciPy adaptive vector integration. The committed checks do not yet establish a dedicated sigma>L extreme multi-wrap gate or all-population coverage.",
+    "reproducible_legacy_candidate_gate": "PASS; committed tests apply q1_candidate_oracle_gate to actual GH3/GH7/GH9/GH15 candidates on both fixtures and reject all of them.",
+    "oracle_numerical_stability_fix": "Local epsilon-minus-midpoint polynomial basis plus vector tail moments; negative clipping tightened to 1e-13. Sliver merge is 1e-10 in epsilon and still requires a pre-renormalization defect bound in Q2.",
+    "boundary_fixture": {
+      "case_id": "RSD_FOG_boundary_v1",
+      "mass_status": "PASS",
+      "mass_gate_interpretation": "By-construction after per-particle renormalization; not independent evidence of convolution accuracy.",
+      "max_absolute_mass_error": 8.881784197001252e-16,
+      "max_relative_mass_error": 2.1147105230955362e-16,
+      "GH3_vs_oracle_relative_l1": 0.7994679484991801,
+      "GH7_vs_oracle_relative_l1": 0.5966379061434811,
+      "GH9_vs_oracle_relative_l1": 0.547575429218513,
+      "GH15_vs_oracle_relative_l1": 0.45940056418896136
+    },
+    "nonboundary_fixture": {
+      "case_id": "RSD_FOG_nonboundary_v1",
+      "mass_status": "PASS",
+      "mass_gate_interpretation": "By-construction after per-particle renormalization; not independent evidence of convolution accuracy.",
+      "max_absolute_mass_error": 8.881784197001252e-16,
+      "max_relative_mass_error": 1.922464111905033e-16,
+      "GH3_vs_oracle_relative_l1": 0.7808893809987157,
+      "GH7_vs_oracle_relative_l1": 0.6102386459336437,
+      "GH9_vs_oracle_relative_l1": 0.5490217112889394,
+      "GH15_vs_oracle_relative_l1": 0.4434736575387819
+    }
+  },
+  "driver_audit": {
+    "status": "PASS_WITH_SCIENCE_NO_GO",
+    "summary": "Q1 NumPy oracle and mass/independent-reference checks pass. Existing point-deposit GH operators fail the new candidate-versus-oracle diagnostic by large margins; no downstream science is authorized.",
+    "downstream_authorized": false
+  },
+  "fable_plan_audit": {
+    "status": "CONDITIONAL_GO",
+    "required_amendments_applied": true,
+    "summary": "The Q1 plan is a direct numerical prerequisite but not sufficient for the final CF4-to-IC goal. Operator, comparison target, tolerances, exposure order, gradient gates, and performance gates were frozen before implementation."
+  },
+  "independent_agy_audit": {
+    "status": "CONDITIONAL_GO",
+    "mode": "read-only bundle audit",
+    "summary": "Operator, local polynomial integration, periodic handling, actual GH candidate tests, mass/exposure ordering, and downstream blocking pass. Dedicated extreme multi-wrap coverage is required in Q2.",
+    "downstream_authorized": false,
+    "gpfs_or_slurm_used": false,
+    "required_next_gates": ["sigma>L dedicated fixture", "retain fail-closed downstream gates"]
+  },
+  "independent_opus5_audit": {
+    "status": "CONDITIONAL_PASS",
+    "mode": "read-only bundle audit",
+    "attempted": true,
+    "summary": "Q1 operator and GH diagnostics are sound, but adaptive validation is semi-independent/limited and mass conservation is by-construction after renormalization.",
+    "required_next_gates": [
+      "dedicated sigma>L multi-wrap fixture with uniform-field check",
+      "all six populations and at least three sources per fixture in adaptive reference",
+      "pre-renormalization mass defect and dropped-sliver probability bounds",
+      "freeze/test clip and sliver thresholds",
+      "tail-cutoff 6/8/10 convergence gate",
+      "remove unsupported multi-wrap claim from result records"
+    ],
+    "audit_result_available": true
+  },
+  "science_decision": {
+    "status": "NO_GO_FOR_JAX_PROMOTION_AND_POSTERIOR",
+    "reason": "NumPy reference is validated, but JAX agreement, AD gradient agreement, calibrated selection/LF/bias/HOD/model-discrepancy mocks, coverage, and held-out frontier are not evaluated.",
+    "KF_EXPAND": false,
+    "z0_posterior": false,
+    "IC_generation": false,
+    "conditional_high_k": false,
+    "PM_HOP": false,
+    "zoom": false,
+    "resolution_claim_le_0p3_cMpc_h": false
+  },
+  "execution_policy": {
+    "gpfs_used": false,
+    "slurm_used": false,
+    "production_execution": false,
+    "grok_used": false
+  },
+  "next": "Q2 plan must include the agy/opus5 requirements: a dedicated sigma>L multi-wrap fixture, all-population adaptive checks, pre-renormalization mass/sliver bounds, frozen clip/sliver constants, and tail 6/8/10 convergence. Q2 implementation remains separately held by its fable-approved preflight and Q1 baseline conditions."
+}

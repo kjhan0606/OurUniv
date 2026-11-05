@@ -1,0 +1,33 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-zoom-l19-early-a005-decision-v1",
+  "date": "2026-09-23",
+  "job": 1108467,
+  "stage": "8/8 bounded early-nonlinear refinement gate",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "run": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_v1/job_1108467",
+  "effective_namelist": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l19_early_v1/job_1108467/ramses.nml",
+  "checks": {
+    "ramses_completed": true,
+    "slurm_state": "FAILED",
+    "slurm_exit_code": "1:0",
+    "elapsed_seconds": 263,
+    "max_rss_gib": 63.76,
+    "requested_memory_gib": 96,
+    "final_scale_factor": 0.05,
+    "main_steps": 9,
+    "configured_runtime_levelmax": 19,
+    "maximum_refined_level_seen": 12,
+    "fine_multigrid_nonconvergence_count": 0,
+    "maximum_reported_fine_residual": 9.858e-05,
+    "epsilon": 0.0001,
+    "boundary_warning_count": 0,
+    "full_snapshots": 1,
+    "snapshot_size_gib_rounded": 19
+  },
+  "decision": "INCONCLUSIVE_EPOCH_TOO_EARLY_NO_REFINEMENT_ABOVE_L12",
+  "interpretation": "RAMSES itself completed normally and wrote the single intended a=0.05 dump. The fail-closed runner returned exit 1 only because no AMR level above the loaded L12 hierarchy was populated. This does not show numerical instability; it means the chosen epoch did not exercise the intended nonlinear-refinement risk for this realization.",
+  "comparison_limit": "The historical a~0.05 L8 gate is not a matched onset reference: it used a different parent/seed, an approximately 19 percent larger transfer amplitude across sampled k, and a much larger fine IC cube. Those differences do not uniquely explain the onset shift.",
+  "next": "Preserve the a=0.05 dump and perform one same-rank restart to a=0.10 with one new final dump and the unchanged fail-closed refinement criterion. Do not call either result z=0 or MW/M31/M33 validation."
+}

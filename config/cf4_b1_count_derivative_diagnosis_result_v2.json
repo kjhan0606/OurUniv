@@ -1,0 +1,590 @@
+{
+  "schema": "ouruniv-cf4-b1-count-derivative-diagnosis-result-v2",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "source_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_integrated_joint_calibration_v3.py",
+    "bytes": 21546,
+    "sha256": "f0949384bc87ab180a7edd9f0ae745b1f464f484e312f9af783320e9bc8bab15"
+  },
+  "implementation_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_count_derivative_diagnosis_v2.py",
+    "bytes": 8685,
+    "sha256": "a536faab190dc56904b37cd576c1aef1b5e44e8eb95e2c9a4133e0f1205518b6"
+  },
+  "dependency_artifact": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_b1_development_mock_calibration.py",
+    "bytes": 13819,
+    "sha256": "53ab2744f3803a097b183bf10a929699afb9c93dbcce7dfec710864d2993fd8c"
+  },
+  "mode_result_input": {
+    "path": "config/cf4_b1_mode_coverage_diagnosis_result_v3.json",
+    "bytes": 91180,
+    "sha256": "9575046ced7e1c818b73b7f94a005e20f1ef3d916017760d289aa1d9f25341f0"
+  },
+  "definition": {
+    "purpose": "test derivative-scale stability and direct member z-covariance before mark-side stress",
+    "derivative_steps": [
+      0.001,
+      0.0001,
+      1e-05
+    ],
+    "empirical_variance": "count centre + D phi*centre^2 in score standardization",
+    "sample_indices": [
+      0,
+      1,
+      2,
+      3,
+      16,
+      17,
+      18,
+      19,
+      32,
+      33,
+      34,
+      35,
+      48,
+      49,
+      50,
+      51
+    ],
+    "validation_opened": false
+  },
+  "by_arm": {
+    "A": {
+      "member_count": 4,
+      "median_sandwich_to_expected_sigma": 0.9970777711716712,
+      "max_step_ladder_relative_difference": 1.0288576017924913e-06
+    },
+    "B": {
+      "member_count": 4,
+      "median_sandwich_to_expected_sigma": 0.9977229026262668,
+      "max_step_ladder_relative_difference": 1.0538408086718337e-06
+    },
+    "C": {
+      "member_count": 4,
+      "median_sandwich_to_expected_sigma": 1.002582622709577,
+      "max_step_ladder_relative_difference": 1.025186872025825e-06
+    },
+    "D": {
+      "member_count": 4,
+      "median_sandwich_to_expected_sigma": 1.002084280838897,
+      "max_step_ladder_relative_difference": 1.2118812016507404e-06
+    }
+  },
+  "direct_member_z_covariance": {
+    "A": {
+      "member_count": 16,
+      "z_sd_by_mode": [
+        0.7168442229071629,
+        0.8828697540977146,
+        0.8757329542533575,
+        0.7593847784149554,
+        0.788707033308727,
+        0.9945854738969787,
+        0.833915638152525,
+        0.6095375181433743
+      ],
+      "z_sd_mean": 0.8076971716468494
+    },
+    "B": {
+      "member_count": 16,
+      "z_sd_by_mode": [
+        1.3540949777942048,
+        0.8183548321137939,
+        1.0241918146434466,
+        1.049475401285414,
+        0.9144026481874894,
+        0.7883062490008593,
+        0.9332168504149784,
+        1.1853623530911659
+      ],
+      "z_sd_mean": 1.0084256408164192
+    },
+    "C": {
+      "member_count": 16,
+      "z_sd_by_mode": [
+        1.0571129835661375,
+        0.9757166668145645,
+        0.9233461930125704,
+        1.0101395930366197,
+        1.0802054114521107,
+        0.6948566755840597,
+        0.9374087912080229,
+        0.805956165393211
+      ],
+      "z_sd_mean": 0.9355928100084121
+    },
+    "D": {
+      "member_count": 16,
+      "z_sd_by_mode": [
+        0.6682156182749144,
+        0.6018203099968658,
+        0.5683741227427975,
+        0.9229389135117603,
+        0.729557172753803,
+        0.8133292757776625,
+        0.6723168709381058,
+        0.8286769786363279
+      ],
+      "z_sd_mean": 0.7256536578290296
+    }
+  },
+  "members": [
+    {
+      "index": 0,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083000,
+        "counts": 2026400000,
+        "count_split": 2026401000,
+        "marks": 2026500000,
+        "posterior": 2026600000
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 169361.91828975567,
+        "0.0001": 169361.7811287844,
+        "1e-05": 169361.7797568622
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 8.479989894746167e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 8.489059753283187e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9888940309562343,
+        0.9993969316562625,
+        0.9944561038948914,
+        0.9957514565385578,
+        0.9966481220103107,
+        0.996673826922013,
+        0.9939125022296167,
+        0.9957100726658278
+      ]
+    },
+    {
+      "index": 1,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083001,
+        "counts": 2026400001,
+        "count_split": 2026401001,
+        "marks": 2026500001,
+        "posterior": 2026600001
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 258870.61344050043,
+        "0.0001": 258870.3943575767,
+        "1e-05": 258870.39216612233
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 9.005780288607728e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 9.013619841288555e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.00332399306175,
+        0.9963935957506734,
+        0.9978066584392139,
+        0.9997702657046437,
+        1.0015479562219487,
+        1.0001552862736214,
+        0.999078038885673,
+        0.9945587117467912
+      ]
+    },
+    {
+      "index": 2,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083002,
+        "counts": 2026400002,
+        "count_split": 2026401002,
+        "marks": 2026500002,
+        "posterior": 2026600002
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 531220.7989907856,
+        "0.0001": 531220.2947262505,
+        "1e-05": 531220.289684992
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.0288576017924913e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.0280054326324035e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9951431524293973,
+        1.0070594300384212,
+        1.0003373914637534,
+        1.0030389470121412,
+        0.9928090413845213,
+        1.0019006979430938,
+        0.9935689814866258,
+        1.0049819515288803
+      ]
+    },
+    {
+      "index": 3,
+      "arm": "A",
+      "seed": {
+        "truth": 2026083003,
+        "counts": 2026400003,
+        "count_split": 2026401003,
+        "marks": 2026500003,
+        "posterior": 2026600003
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 201080.0177576342,
+        "0.0001": 201079.8514677314,
+        "1e-05": 201079.84980453626
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 8.830461190107505e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 8.83929251960647e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9921525488110984,
+        0.997688092125414,
+        0.9939903873445416,
+        0.9972496938306717,
+        0.9925660200508126,
+        1.0001060388897622,
+        0.9969058485126706,
+        0.9998781205838305
+      ]
+    },
+    {
+      "index": 16,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083016,
+        "counts": 2026400016,
+        "count_split": 2026401016,
+        "marks": 2026500016,
+        "posterior": 2026600016
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 125595.67391501652,
+        "0.0001": 125595.5777873846,
+        "1e-05": 125595.57676774461
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 7.923889261122995e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.0398664092577884e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0052342905393568,
+        1.0111994877020425,
+        1.0163475256713215,
+        1.0055742533814669,
+        1.0075177080578912,
+        1.0100688565787017,
+        1.0086846438803003,
+        1.008682731426436
+      ]
+    },
+    {
+      "index": 17,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083017,
+        "counts": 2026400017,
+        "count_split": 2026401017,
+        "marks": 2026500017,
+        "posterior": 2026600017
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 304155.75596214214,
+        "0.0001": 304155.4901904375,
+        "1e-05": 304155.4875330113
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 9.563497954175438e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 9.553069529087692e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9982885705756581,
+        0.9966059276296043,
+        0.9966399365630636,
+        0.9951839681439465,
+        0.9972566109233811,
+        1.0021739501844742,
+        0.9974132572903938,
+        1.0033771212652975
+      ]
+    },
+    {
+      "index": 18,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083018,
+        "counts": 2026400018,
+        "count_split": 2026401018,
+        "marks": 2026500018,
+        "posterior": 2026600018
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 553645.2021188547,
+        "0.0001": 553644.6735844695,
+        "1e-05": 553644.6682989063
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.0538408086718337e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.0524480907111255e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9922928738541994,
+        0.996632980785255,
+        0.9946726503072889,
+        0.991543252209606,
+        0.9951516941448638,
+        0.9985371687224558,
+        1.003028163787882,
+        0.9920805668409268
+      ]
+    },
+    {
+      "index": 19,
+      "arm": "B",
+      "seed": {
+        "truth": 2026083019,
+        "counts": 2026400019,
+        "count_split": 2026401019,
+        "marks": 2026500019,
+        "posterior": 2026600019
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 195942.50191396187,
+        "0.0001": 195942.33934306938,
+        "1e-05": 195942.3376265241
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 8.783570638956102e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 9.269655854892988e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9936777832320222,
+        0.9954632634202536,
+        1.0014151403594072,
+        0.9900415437288725,
+        1.0006424610474054,
+        0.9965072209806062,
+        0.9980325479621399,
+        0.9958584779766948
+      ]
+    },
+    {
+      "index": 32,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083032,
+        "counts": 2026400032,
+        "count_split": 2026401032,
+        "marks": 2026500032,
+        "posterior": 2026600032
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 253817.80794648975,
+        "0.0001": 253817.59145096943,
+        "1e-05": 253817.5892794684
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 9.17497207054173e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 9.237962241979247e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0106024857580136,
+        1.002007281604255,
+        1.0099624000838674,
+        1.0016140056146423,
+        1.0037368920715375,
+        1.0037393157007832,
+        1.0096323376777732,
+        1.0001633276552349
+      ]
+    },
+    {
+      "index": 33,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083033,
+        "counts": 2026400033,
+        "count_split": 2026401033,
+        "marks": 2026500033,
+        "posterior": 2026600033
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 473828.00359686627,
+        "0.0001": 473827.55947526975,
+        "1e-05": 473827.5563654201
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.025186872025825e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 6.140455564137189e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9984533153012938,
+        0.9936143642256217,
+        0.9969278772581498,
+        0.9950093436269342,
+        0.9999727771704239,
+        0.9959534181965752,
+        1.000764283140496,
+        0.9933415896166992
+      ]
+    },
+    {
+      "index": 34,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083034,
+        "counts": 2026400034,
+        "count_split": 2026401034,
+        "marks": 2026500034,
+        "posterior": 2026600034
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 258028.126939567,
+        "0.0001": 258027.9011946763,
+        "1e-05": 258027.89893857826
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 9.411741684948092e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 9.392723446082437e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0025184366237454,
+        1.0114535296106868,
+        1.0020689937128637,
+        1.0101266875244992,
+        1.0051035836161273,
+        1.0118733924125296,
+        1.0034834086503077,
+        1.0059440866450873
+      ]
+    },
+    {
+      "index": 35,
+      "arm": "C",
+      "seed": {
+        "truth": 2026083035,
+        "counts": 2026400035,
+        "count_split": 2026401035,
+        "marks": 2026500035,
+        "posterior": 2026600035
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 190777.30702584918,
+        "0.0001": 190777.1538687759,
+        "1e-05": 190777.15233025755
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 8.656542593051344e-07,
+      "relative_fisher_difference_1e-5_vs_1e-4": 8.696005234017841e-09,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9979285088372347,
+        1.0072897470119238,
+        1.0026468087954088,
+        0.9998577073633104,
+        1.0073371312328228,
+        0.998782049715336,
+        1.0028525847132488,
+        1.0092338241070655
+      ]
+    },
+    {
+      "index": 48,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083048,
+        "counts": 2026400048,
+        "count_split": 2026401048,
+        "marks": 2026500048,
+        "posterior": 2026600048
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 191254.55648927865,
+        "0.0001": 191254.36346711149,
+        "1e-05": 191254.36167202517
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.059497459571965e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.570491554609653e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9895776921419444,
+        1.012776163817955,
+        1.0017506691008486,
+        1.0042877896680893,
+        1.0020460665910034,
+        1.0052431185737933,
+        0.9952960957198322,
+        1.001894922687818
+      ]
+    },
+    {
+      "index": 49,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083049,
+        "counts": 2026400049,
+        "count_split": 2026401049,
+        "marks": 2026500049,
+        "posterior": 2026600049
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 227631.98405046685,
+        "0.0001": 227631.74904705273,
+        "1e-05": 227631.74669239327
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.0700808053898012e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.0719436239112562e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        0.9930412319015367,
+        1.0064598316086393,
+        1.0021224950867909,
+        1.0003250133266621,
+        1.0094575870910025,
+        0.9980845834819807,
+        1.015921030837255,
+        1.0085152295477349
+      ]
+    },
+    {
+      "index": 50,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083050,
+        "counts": 2026400050,
+        "count_split": 2026401050,
+        "marks": 2026500050,
+        "posterior": 2026600050
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 380346.2998331713,
+        "0.0001": 380345.8807962187,
+        "1e-05": 380345.87659391004
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.2118812016507404e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.2122740514231317e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0033478607210369,
+        1.0030793484531983,
+        1.0055764906851048,
+        1.0028419541820273,
+        1.0092331922516808,
+        1.0073051724708122,
+        1.005795734452169,
+        1.0057609742973828
+      ]
+    },
+    {
+      "index": 51,
+      "arm": "D",
+      "seed": {
+        "truth": 2026083051,
+        "counts": 2026400051,
+        "count_split": 2026401051,
+        "marks": 2026500051,
+        "posterior": 2026600051
+      },
+      "derivative_fisher_trace_by_step": {
+        "0.001": 555753.7819031223,
+        "0.0001": 555753.1446253334,
+        "1e-05": 555753.1382858888
+      },
+      "relative_fisher_difference_1e-3_vs_1e-4": 1.1888424686946664e-06,
+      "relative_fisher_difference_1e-5_vs_1e-4": 1.231661957225676e-08,
+      "sandwich_to_expected_sigma_by_mode": [
+        1.0005395303794085,
+        0.9936651386592527,
+        0.9909322309815131,
+        0.995970964998175,
+        0.9870895636208031,
+        0.9934263845186935,
+        0.991145674600856,
+        0.9888416013613573
+      ]
+    }
+  ],
+  "interpretation": {
+    "mean_model_changed": false,
+    "mark_side_arm_executed": false,
+    "mark_side_arm_status": "REJECTED_INFORMATION_NULL_BY_OPUS_V14",
+    "observational_z0_posterior": "NOT_CREATED",
+    "B2_IC_FORWARD": "NOT_STARTED"
+  },
+  "next_action": "Use derivative stability and direct z covariance to set a frozen width policy; do not run the information-null mark arm."
+}

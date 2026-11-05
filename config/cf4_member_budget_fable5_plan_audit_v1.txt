@@ -1,0 +1,24 @@
+Read-only Fable5 planning audit, Korean <=900 words. No tools/changes.
+User approved DESIGN after337991: mass/subcell connection for M33 to same field.
+Final CF4/counts/LG goal is z=0 density/velocity posterior -> LCDM IC -> forward
+LG zoom; LG<=.3 cMpc/h, environment1–2. Actual map remains12. q_F morphology
+failed; q_S/selection law unresolved. No actual fine LG posterior exists.
+Previous14-coefficient composite proxy correctly distinguishes original field
+in3/3 cases, but from MW/host; M33 conditional increments are+.479,-1.358,-.023
+nats vs other-field mean. Its score did NOT use aperture mass or M33-site field
+readout. No refit or larger neural model is authorized.
+
+Attached alternative is one parameter-free joint mass/moment-budget necessary
+condition on seven unions, three existing cached fields, no solver/ML/raw reads.
+Audit Q-GOAL/Q-LEAN explicitly: is this a useful minimal physical observation
+link or merely another validation detour? Do not rubber-stamp a positivity check.
+Check all three identities, observation/state-supplied positions vs forbidden
+native-catalogue inputs in a new field, exact union/no-double-count semantics,
+bulk second-moment lower envelope, necessity not sufficiency, finite tolerance,
+native enclosed MEMBER mass vs whole/virial/observational mass. Own-field pass
+is tautological control and not scientific validation; wrong-field comparison
+must not become a fake posterior/prior bank. Literature total-mass estimate
+is NOT activated as independent measured bound mass. Preserve mean-velocity vs
+physical dispersion vs posterior uncertainty distinction.
+Give GO/CONDITIONAL GO/NO-GO, only essential changes and bounded exit. A substantive
+NO-GO is not invocation failure; Astra fallback only if no usable audit arrives.

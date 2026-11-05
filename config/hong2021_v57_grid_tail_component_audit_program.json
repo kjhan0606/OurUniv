@@ -1,0 +1,186 @@
+{
+  "schema": "hong2021-v57-grid-tail-component-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Explain the sealed V56 TNG100 train-only high-backbone failure without refitting or opening development or independent data. Partition the remaining physical second-moment excess below, inside, and beyond the fixed V56 survival grid; decompose every empirically supported threshold into survival-probability and conditional-amplitude errors; and attribute predicted tail probability and moment to permutation-invariant location-ranked mixture components.",
+  "parent_evidence": {
+    "v56_record": "config/hong2021_v56_result_record.json",
+    "v56_record_sha256": "f85cac3fcb921d66771d6c30074a5e397b4871280a93c26efeaf727abb9a7e41",
+    "required_status": "complete_train_only_mechanism_gate_partial_domain_success_development_unopened",
+    "required_classification": "proper_upper_survival_grid_does_not_calibrate_train_high_backbone_physical_moments",
+    "required_next": "stop_before_development_sampling_and_audit_grid_survival_calibration_and_component_tail_amplitudes",
+    "required_domain_top_backbone_pass": {
+      "TNG100": false,
+      "SIMBA": true,
+      "Swift": true
+    },
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v56_program": "config/hong2021_v56_survival_grid_program.json",
+    "v56_program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+    "v56_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.pt",
+    "v56_checkpoint_sha256": "dd6d7bf4d3054c7cf22a218f113e591ab30323d2037c07c6c0f9ab5fd0e111f6",
+    "v56_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.json",
+    "v56_training_report_sha256": "271cb783031d0a1fc19f9978ee0c04140a629a431575b82505e9bfbf8e4a93ca",
+    "v56_training_report_decision_digest_sha256": "da2266b863027531f628f10d2b8a3143870b27673d2b4246e27fd4b42b486684",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "v56_grid_decision_digest_sha256": "6fc035baa47598841d339b4a3af22af7eb1589d2a778dbb059fd1d5663f899e1",
+    "v56_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid_sequence/preflight.json",
+    "v56_preflight_sha256": "eb6a8d984a907c0983828f192a40388578dc2fcbb53415a161606e606c639295",
+    "v56_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_train_high_backbone_gate/decision.json",
+    "v56_train_gate_sha256": "02a7507960b854a6c93b65bce6598992a164e4c5e86c0ec138200c1a9e491383",
+    "v56_train_gate_decision_digest_sha256": "c139c455727d5ea18976c8a0f0fa5e237a71815a81fdca59d9e068d92ae77c54",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "population": {
+    "split": "immutable train only",
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "probe": "the identical deterministic V51/V53/V54/V56 4096-voxel probe per object",
+    "query_stratum": "the domainwise q99.9-and-above query-backbone stratum using the exact boundaries sealed in the V56 train-gate decision",
+    "validation_or_development_access": false
+  },
+  "fixed_threshold_partition": {
+    "coordinate": "log10rho=4.5*y",
+    "lower_anchor_source": "immutable V54 q99.999 common train threshold",
+    "lower_anchor_log10rho": 3.3113619089126587,
+    "scored_grid_source": "the exact immutable V56 16-cell survival grid",
+    "scored_grid_thresholds_log10rho": [
+      3.352849731221795,
+      3.3943375535309315,
+      3.435825375840068,
+      3.4773131981492043,
+      3.5188010204583406,
+      3.560288842767477,
+      3.6017766650766134,
+      3.64326448738575,
+      3.684752309694886,
+      3.7262401320040226,
+      3.767727954313159,
+      3.8092157766222954,
+      3.8507035989314318,
+      3.892191421240568,
+      3.9336792435497046,
+      3.975167065858841
+    ],
+    "scored_grid_physical_moment_weights": [
+      0.010387219172619684,
+      0.012574575851679653,
+      0.015222490684540561,
+      0.01842793044658503,
+      0.022308276888891976,
+      0.027005624761868928,
+      0.032691984708245914,
+      0.03957558152833744,
+      0.04790847842716105,
+      0.057995806403350225,
+      0.07020693671147678,
+      0.08498900547429526,
+      0.10288328564448199,
+      0.12454500577000752,
+      0.15076734122061838,
+      0.18251045630583962
+    ],
+    "final_grid_threshold_is_global_train_maximum": true,
+    "truth_strict_exceedances_above_final_threshold_in_full_train_population": 0,
+    "combined_threshold_count": 17,
+    "mutually_exclusive_bin_count": 18,
+    "region_definitions": {
+      "below_grid": "at or below the q99.999 lower anchor",
+      "inside_grid": "strictly above the lower anchor and at or below the final V56 grid threshold",
+      "beyond_grid": "strictly above the final V56 grid threshold"
+    },
+    "strict_exceedance_rule": "log10rho is strictly greater than the threshold; equality remains in the lower bin"
+  },
+  "decomposition": {
+    "threshold_rows": "At the lower anchor and every V56 scored threshold, report empirical truth survival, analytic predicted survival, 64-point predicted tail moment, conditional tail amplitude, probability ratio, conditional-amplitude ratio, total tail-moment ratio, and their exact log-ratio identity whenever truth support is nonzero.",
+    "bin_partition": "Partition truth and predicted physical delta-squared over all 18 mutually exclusive output-density bins and report each bin's share of positive predicted-minus-truth moment excess.",
+    "region_partition": "Sum bin moments into below-grid, inside-grid, and beyond-grid regions and select a dominant region only when its share of positive moment excess is at least 0.5.",
+    "component_ranking": "At every query voxel, sort the five mixture components by increasing latent location before aggregation. This makes component ranks invariant to raw output-channel label permutations.",
+    "component_rows": "For each location rank, report mean mixture mass and its analytic survival-probability and quadrature physical-moment contributions at every threshold, plus its contribution to every output-density bin.",
+    "supported_grid_error_summary": "Over V56 scored thresholds with at least one empirical truth exceedance, compare physical-moment-weighted mean absolute log probability ratio with the corresponding mean absolute log conditional-amplitude ratio; renormalize the sealed V56 weights over supported cells only.",
+    "component_dominance": "A single location-ranked component dominates a tail when its predicted 64-point tail-moment share is at least 0.5; this is reported as mechanism evidence and does not alone select a model change."
+  },
+  "numerics": {
+    "primary": "64-point Gauss-Hermite quadrature of each of the five bounded-mixture components",
+    "control": "32-point Gauss-Hermite quadrature",
+    "analytic_probability": "float64 bounded-mixture survival with exact zero or one outside support",
+    "maximum_complete_moment_relative_difference_from_v56_gate": 1e-10,
+    "maximum_bin_partition_relative_error": 1e-12,
+    "maximum_component_partition_relative_error": 1e-12,
+    "maximum_log_ratio_identity_absolute_error": 1e-12,
+    "maximum_32_to_64_complete_moment_relative_difference": 0.005,
+    "maximum_32_to_64_tail_moment_relative_difference_for_classification": 0.02,
+    "minimum_empirical_exceedance_count_for_threshold_classification": 1,
+    "unsupported_threshold_rule": "Report predicted probability and moment but do not form truth ratios or use the threshold in probability-versus-amplitude classification.",
+    "failure_action": "If reproduction, partition, quadrature, or supported-threshold identity checks fail, report all measurements but make no scientific mechanism classification and freeze a higher-accuracy train-only audit."
+  },
+  "classification": {
+    "target_domain": "TNG100, the only V56 train-gate failure",
+    "dominant_region_threshold": 0.5,
+    "branches": [
+      {
+        "condition": "any numerical requirement fails",
+        "classification": "V56_grid_tail_component_decomposition_is_numerically_unresolved",
+        "next": "freeze_a_higher_accuracy_train_only_grid_tail_audit_without_training_or_development_access"
+      },
+      {
+        "condition": "TNG100 beyond-grid positive-excess share is at least 0.5",
+        "classification": "V56_TNG_moment_excess_lies_beyond_scored_global_train_maximum",
+        "next": "freeze_one_matched_train_only_model_that_extends_the_proper_survival_grid_over_the_immutable_reachable_output_support_without_changing_other_model_or_training_choices"
+      },
+      {
+        "condition": "TNG100 below-grid positive-excess share is at least 0.5",
+        "classification": "V56_TNG_moment_excess_lies_below_the_upper_survival_grid",
+        "next": "freeze_one_matched_train_only_model_that_extends_the_proper_survival_grid_downward_to_the_immutable_q99_9_output_threshold_without_changing_other_model_or_training_choices"
+      },
+      {
+        "condition": "TNG100 inside-grid positive-excess share is at least 0.5 and the supported-grid weighted mean absolute log probability ratio is strictly greater than the weighted mean absolute log conditional-amplitude ratio",
+        "classification": "V56_TNG_scored_grid_survival_probabilities_remain_miscalibrated",
+        "next": "freeze_one_matched_train_only_model_that_changes_only_the_predeclared_upper_survival_score_coefficient"
+      },
+      {
+        "condition": "TNG100 inside-grid positive-excess share is at least 0.5 and the supported-grid weighted mean absolute log conditional-amplitude ratio is at least the weighted mean absolute log probability ratio",
+        "classification": "V56_TNG_scored_grid_is_too_coarse_for_conditional_tail_amplitude",
+        "next": "freeze_one_matched_train_only_model_that_changes_only_the_predeclared_upper_survival_grid_resolution"
+      },
+      {
+        "condition": "otherwise",
+        "classification": "V56_TNG_remaining_moment_excess_is_mixed_across_grid_regions",
+        "next": "seal_the_domainwise_grid_and_component_decomposition_before_selecting_any_further_model"
+      }
+    ]
+  },
+  "output": {
+    "audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v57_grid_tail_component_audit/audit.json",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v57_grid_tail_component_audit_sequence"
+  },
+  "firewall": {
+    "training_or_refit": "forbidden",
+    "new_development_sample": "forbidden",
+    "development_access": "forbidden",
+    "validation_access": "forbidden",
+    "threshold_change": "forbidden",
+    "support_change": "forbidden",
+    "posthoc_scale_or_clipping": "forbidden",
+    "posthoc_DC_or_Ak": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

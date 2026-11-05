@@ -1,0 +1,58 @@
+{
+  "schema": "ouruniv-cf4-lg-mainline-result-v1",
+  "recorded_date": "2026-08-13",
+  "status": "fixed-midpoint_model_rejected",
+  "parent_seed": 3429,
+  "interpretation": "The CF4/BGc parent remains statistically accepted. This record rejects only the fixed inverse-mapped Local-Group protohalo-midpoint proposal model and candidate 5108; it does not reject the CF4 constrained-realization posterior.",
+  "candidate_5108": {
+    "gate_result": "/gpfs/kjhan/CF4/recon/lg_p3429_s5108_z0_gate_v1/gate_result_v2.json",
+    "gate_result_sha256": "d487ae0ae3f78eb78a22d94a47fe14562fe58d855a7cc24f65c5616b5becbf85",
+    "environment_result": "/gpfs/kjhan/CF4/recon/lg_p3429_s5108_z0_gate_v1/environment_result_v2.json",
+    "environment_result_sha256": "409758e708e08541fbac829e1e5932bfed213adb2a1dccb04ca1678bf82b82ab",
+    "ramses_complete": true,
+    "hop_complete": true,
+    "clean_zoom": true,
+    "phase_preserved": true,
+    "m33_subpeak_gate": true,
+    "environment_gate": false,
+    "core_lg_gate": false,
+    "overall": false,
+    "m200c_msun_h": [3227402271504.032, 1645488991265.092],
+    "separation_mpc_h": 1.2241786291097847,
+    "total_radial_velocity_km_s": -78.17750336966441,
+    "tangential_velocity_km_s": 14.696346261484925,
+    "failed_core_checks": ["mass_1", "separation"]
+  },
+  "fixed_midpoint_development": {
+    "protohalo_midpoint_offset_mpc_h": [0.0, -6.0, 4.0],
+    "v4": {
+      "proposal_count": 32,
+      "proposal_seed_range": [5109, 5140],
+      "p2_screen_survivor_realizations": 1,
+      "p2_screen_pair_count": 1,
+      "recentered_p1_pair_count": 0,
+      "p2_result_sha256": "930f468557691de4f045000a75131c2da62086a9fca6f8fb00ab4851322de2d9",
+      "recentered_preview_sha256": "497689db8a8b1e7559c1b156889926daf0ef01a4d9226e0d8cfb497547368212",
+      "selection_sha256": "23ab4a3dd111bd2f54636b0fc91a2e4a197ec35e4d7c17e71f0411bf443c744d"
+    },
+    "v5": {
+      "proposal_count": 64,
+      "proposal_seed_range": [5141, 5204],
+      "config_path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_v5_recentered_search_config.json",
+      "config_sha256": "fd8bbb36d4e50d1875f0263521f7d573457f59f7ea788d71dee5b7c8920eb01a",
+      "p2_screen_survivor_realizations": 5,
+      "p2_screen_pair_count": 8,
+      "recentered_p1_pair_count": 0,
+      "p2_result_sha256": "02dbaea8a7d8fae867f762f511efe8d3ab03b9a3684d56801cf150804006c405",
+      "recentered_preview_sha256": "065b743c9c5119c33800f4af62234af2f338593410f5b5461fa9a34f6ba804ee",
+      "selection_sha256": "2a1f9fcdf9faaf75d2d5c1d5827249343e2f38da146128a3f05b45b46d24dbbb"
+    },
+    "combined_proposal_count": 96,
+    "combined_p2_screen_survivor_realizations": 6,
+    "combined_p2_screen_pair_count": 9,
+    "combined_recentered_p1_pair_count": 0,
+    "common_recentered_failures": ["Virgo", "Coma"],
+    "observed_pair_midpoint_offset_range_mpc_h": [2.006, 4.641],
+    "decision": "Do not draw more samples from the unchanged fixed-midpoint model. Change the declared midpoint model prospectively and use only fresh validation seeds."
+  }
+}

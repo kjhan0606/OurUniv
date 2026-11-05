@@ -1,0 +1,190 @@
+{
+  "schema": "hong2021-v65-train-only-multi-object-structure-factorization-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Use only immutable train objects to determine whether the V64 sub-Mpc pair mismatch is primarily caused by donor-rank dependence or by the spatial arrangement of query-local likelihood parameters, and whether a direct pair objective has a coherent shared optimization direction before any refit.",
+  "parent_evidence": {
+    "v64_result_record": "config/hong2021_v64_result_record.json",
+    "v64_result_record_sha256": "95084c7017bcdfc4ec5357c3bf26b8c816bba9f80ad194368ae91e7905d31b14",
+    "required_status": "complete_no_refit_audit_selected_train_only_structure_factorization",
+    "required_classification": "sampler_aligned_tail_repair_is_not_a_sufficient_single_model_change",
+    "required_material_sampler_mismatch": false,
+    "required_pair_gradient_scale_pass": true,
+    "required_training_or_refit_performed": false,
+    "required_new_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v64_program": "config/hong2021_v64_sampler_alignment_audit_program.json",
+    "v64_program_sha256": "f64d45a75258682ae3200605a740876c1326b80ec811a91ee54fd97bc4e946ec",
+    "v64_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v64_sampler_alignment_audit/audit.json",
+    "v64_audit_sha256": "97707cec836db1d55467e4c00bbba1adceb7aa4d473f8b78383df5456bc1fb33",
+    "v64_audit_decision_digest_sha256": "a56108d72cf34548a69a017ce5a649a1d2e623ceca5264d90c8dffc58fb9efbe",
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "v63_train_gate_sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "immutable_train_queries": {
+    "selection_seed": 165065,
+    "objects_per_domain": 16,
+    "TNG100": [
+      32,
+      35,
+      79,
+      94,
+      98,
+      103,
+      122,
+      135,
+      149,
+      215,
+      303,
+      316,
+      323,
+      347,
+      399,
+      416
+    ],
+    "SIMBA": [
+      5,
+      15,
+      43,
+      50,
+      70,
+      100,
+      102,
+      107,
+      109,
+      127,
+      155,
+      164,
+      171,
+      186,
+      199,
+      201
+    ],
+    "Swift": [
+      12,
+      36,
+      38,
+      57,
+      69,
+      178,
+      198,
+      201,
+      218,
+      269,
+      283,
+      288,
+      292,
+      305,
+      339,
+      406
+    ],
+    "signed_cube_isometry": "identity for the value audit; the fixed train cubes are not augmented or selected by their result"
+  },
+  "frozen_rank_controls": {
+    "members_per_query_and_control": 16,
+    "source_balanced": {
+      "seed": 165066,
+      "donor_domain": "cycle DOMAIN_ORDER starting at the query domain",
+      "donor_index": "uniform immutable train object, excluding the identical query object in the identical domain",
+      "isometry": "uniform frozen signed cube isometry"
+    },
+    "same_domain": {
+      "seed": 165067,
+      "donor_domain": "identical to the query domain for every member",
+      "donor_index": "uniform immutable train object excluding the query object",
+      "isometry": "uniform frozen signed cube isometry"
+    },
+    "spatially_permuted_rank_control": {
+      "seed": 165068,
+      "source": "the source-balanced rank fields",
+      "operation": "an independent frozen uniform permutation of all 64^3 voxel positions per member, preserving each exact rank multiset while destroying spatial dependence"
+    },
+    "rolled_parameter_control": {
+      "source": "the source-balanced rank fields",
+      "parameter_roll_cells": [
+        16,
+        8,
+        4
+      ],
+      "ranks_unchanged": true
+    }
+  },
+  "pair_probe": {
+    "anchor_seed": 165069,
+    "anchors_per_query": 4096,
+    "interior_coordinate_range_inclusive": [
+      3,
+      60
+    ],
+    "offsets_cells": [
+      1,
+      2,
+      3
+    ],
+    "separations_mpc_h": [
+      0.3125,
+      0.625,
+      0.9375
+    ],
+    "statistic": "mean delta(x) delta(x+r) for the target and each 16-member empirical-rank control",
+    "per_object_error": "mean over three separations of absolute ln(predicted pair mean divided by truth pair mean)",
+    "domain_summary": "median and q90 per-object error plus each separation's median signed log ratio"
+  },
+  "gradient_coherence_probe": {
+    "query_objects": "the first four frozen query indices in each domain",
+    "rank_members": 4,
+    "objective": "source-balanced sub-Mpc pair log-ratio score using source-balanced ranks",
+    "gradient_target": "the shared 15-component final output-layer bias of the sealed V63 network",
+    "measurements": [
+      "per-query bias-gradient vector and L2",
+      "cosine to the leave-one-out global mean bias gradient",
+      "domainwise and global median cosine",
+      "fraction of negative leave-one-out cosine",
+      "aggregate coefficient-0.1 pair-gradient L2 divided by bounded-NLL bias-gradient L2"
+    ]
+  },
+  "selection_rules": {
+    "rank_dependence_causal": "same-domain ranks strictly reduce both the median and q90 per-object pair error relative to source-balanced ranks in every domain, and spatial rank permutation strictly worsens the median in every domain",
+    "query_parameter_spatial_arrangement_causal": "rolled parameters strictly worsen the median per-object pair error in every domain",
+    "direct_pair_gradient_coherent": "global median leave-one-out bias-gradient cosine is at least 0.5, negative cosine fraction is at most 0.25, and the coefficient-scaled aggregate pair-to-NLL bias-gradient L2 ratio is in [0.01,100]",
+    "select_domain_conditioned_copula": "rank dependence is causal and the direct pair gradient is not coherent",
+    "select_direct_pair_objective": "rank dependence is not causal, query-parameter arrangement is causal, and the direct pair gradient is coherent",
+    "select_joint_copula_and_pair_model": "rank dependence, query-parameter arrangement, and direct pair gradient coherence all hold",
+    "no_model_selected": "none of the causal branches holds or any numerical, ancestry, memory, or firewall check fails"
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+  "firewall": {
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "development_rank_or_selection_access": "forbidden",
+    "posthoc_coefficient_or_threshold_tuning": "forbidden",
+    "training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

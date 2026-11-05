@@ -1,0 +1,41 @@
+{
+  "schema": "ouruniv-cf4-b1-coverage-contract-adjudication-result-v1",
+  "status": "COMPLETE_DEVELOPMENT_ONLY_NO_SCIENCE_CLAIM",
+  "source": "config/cf4_b1_calibration_diagnosis_result_v3.json",
+  "source_artifact": {
+    "path": "config/cf4_b1_calibration_diagnosis_result_v3.json",
+    "bytes": 73115,
+    "sha256": "5f239351c044d7950232406ca6619fbd192b7d2ce7d3444b2dcef62726e825c5"
+  },
+  "checker_artifact": {
+    "path": "src/cf4_b1_coverage_contract_adjudication_v1.py",
+    "bytes": 3979,
+    "sha256": "2f4c7029d050d2e24b452990677f0c276e4605ef111537cf2855b3dbb36a572b"
+  },
+  "metric_scope": "legacy single-member per-voxel diagnostic; member denominator is serialized development population",
+  "member_count": 64,
+  "failure_counts": {
+    "coverage68": 47,
+    "coverage95": 47,
+    "union": 56
+  },
+  "failure_fractions": {
+    "coverage68": 0.734375,
+    "coverage95": 0.734375,
+    "union": 0.875
+  },
+  "contingency": {
+    "coverage68_only": 9,
+    "coverage95_only": 9,
+    "both": 38,
+    "neither": 8
+  },
+  "arithmetic": {
+    "component68": "9+38=47",
+    "component95": "9+38=47",
+    "partition": "9+9+38+8=64"
+  },
+  "interpretation": "The stored 47 values are counts (47/64 = 0.734375), not 47/47 ratios. The contingency is internally consistent; the strict gate remains unchanged and fails 56/64.",
+  "validation_opened": false,
+  "B2_IC_FORWARD": "NOT_STARTED"
+}

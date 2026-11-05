@@ -1,0 +1,207 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-terminal-publication-repair-program-v2",
+  "status": "frozen_design_approved_implementation_only",
+  "date": "2026-08-27",
+  "purpose": "Publish the already sealed terminal scientific-failure result by byte-preserving copy under the a10 successor protocol; preserve the v1 implementation and grant permanently as never executed.",
+  "lineage": {
+    "required_parent_commit": "500ed0eaa8a37f661cc284b9432dddc6711fa2af",
+    "required_commit_relationship": "required_parent_commit (the permanently nonexecuted v1 grant commit) -> exact-six v2 implementation commit -> exact-one grant_v2 commit; runtime HEAD is the grant_v2 commit and equals upstream",
+    "required_pre_submission_code_audit": "CODE_GO",
+    "required_exact_added_paths": [
+      "config/cf4_lg_highk_terminal_publication_repair_program_v2.json",
+      "scripts/check_cf4_lg_highk_terminal_publication_repair_v2.py",
+      "scripts/run_cf4_lg_highk_terminal_publication_repair_v2.sbatch",
+      "src/cf4_lg_highk_terminal_publication_repair_v2.py",
+      "tests/test_cf4_lg_highk_terminal_publication_repair_v2.py",
+      "tests/test_cf4_lg_highk_terminal_publication_repair_slurm_v2.py"
+    ],
+    "required_mode": "100644",
+    "renames_allowed": false,
+    "grant_commit": {
+      "path": "config/cf4_lg_highk_terminal_publication_repair_grant_v2.json",
+      "schema": "ouruniv-cf4-lg-highk-terminal-publication-repair-grant-v2",
+      "required_exact_added_paths": [
+        "config/cf4_lg_highk_terminal_publication_repair_grant_v2.json"
+      ],
+      "required_mode": "100644",
+      "must_be_absent_from_implementation_commit": true
+    },
+    "future_result_record_commit": {
+      "path": "config/cf4_lg_highk_terminal_publication_repair_result_record_v2.json",
+      "schema": "ouruniv-cf4-lg-highk-terminal-publication-repair-result-record-v2",
+      "required_exact_added_paths": [
+        "config/cf4_lg_highk_terminal_publication_repair_result_record_v2.json"
+      ],
+      "required_mode": "100644",
+      "must_be_absent_until_successful_publication": true
+    },
+    "sealed_runtime_commit": "51877b7ebba8601216411ef4e3d36623016ec625",
+    "terminal_config": {
+      "path": "config/cf4_lg_highk_terminal_aggregation_v1.json",
+      "sha256": "9c4d57705b7a423fbfc73898f0fee731e11a5aa87f0ab3e5603110b8c02eb213"
+    },
+    "failed_publication_job": {
+      "job_id": 324943,
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed": "00:01:09",
+      "partition": "a40",
+      "node": "syn05",
+      "cpus": 16,
+      "memory": "20G",
+      "log_path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1_slurm-324943.log",
+      "log_sha256": "8b530c93c9ed7f72ebbedd61254c8469ff523ef24b04a0f34a311673e8c92ac2",
+      "failure": "renameat2(RENAME_NOREPLACE) returned EINVAL after a complete durable staging seal",
+      "canonical_output_created": false
+    },
+    "v1_permanent_nonexecution_record": {
+      "implementation_commit": "50a3efb788bb62f2ade1d01f49862a9aee35d498",
+      "grant_commit": "500ed0eaa8a37f661cc284b9432dddc6711fa2af",
+      "grant_path": "config/cf4_lg_highk_terminal_publication_repair_grant_v1.json",
+      "grant_sha256": "233a5348f29c1b60919e8198ff5b8af2671279758187fda9100bcf2d45faee42",
+      "execution_state": "permanently_not_executed",
+      "slurm_submitted": false,
+      "canonical_or_staging_mutation_by_v1_repair": false,
+      "reason": "Fable PREEXECUTION NO-GO: grammar-debug node pin was invalid for the authorized repair runtime; v1 remains immutable historical evidence"
+    }
+  },
+  "source_staging": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/.lg_highk_terminal_aggregation_v1.305221.a51b6c9282d34950a3ca52287c115c99.staging",
+    "required_directory_mode": "0555",
+    "required_entry_type": "regular_file_not_symlink",
+    "required_file_mode": "0444",
+    "required_link_count": 1,
+    "preserve_after_publication": true
+  },
+  "source_artifacts": [
+    {
+      "name": "input_manifest.json",
+      "schema": "ouruniv-cf4-lg-highk-terminal-aggregation-input-manifest-v1",
+      "size_bytes": 121804,
+      "sha256": "93e2f29b5eb481b0244377baef684c5f58f9f224e25eb536aef7af02de517532"
+    },
+    {
+      "name": "pair_recentered_p1.json",
+      "schema": "ouruniv-cf4-lg-highk-pair-recentered-p1-result-v1",
+      "size_bytes": 99966,
+      "sha256": "c9c8124d4dce20c4de4b1d76aa48834ddbd8557a05f4a0a7d9e44438cb8ec339"
+    },
+    {
+      "name": "terminal_result.json",
+      "schema": "ouruniv-cf4-lg-highk-terminal-aggregation-result-v1",
+      "size_bytes": 119847,
+      "sha256": "73e57de15a8beed571e3c08cc92a5f786ad79e386e6a28fdfed77b6b34cf8fdd"
+    },
+    {
+      "name": "manifest.json",
+      "schema": "ouruniv-cf4-lg-highk-terminal-aggregation-seal-manifest-v1",
+      "size_bytes": 2258,
+      "sha256": "4417b4f85e5d2baf5336202cfcf59973e6eec8b857a7940ae6fb582c486e32b2"
+    },
+    {
+      "name": "COMPLETE",
+      "schema": "ouruniv-cf4-lg-highk-terminal-aggregation-complete-v1",
+      "size_bytes": 172,
+      "sha256": "2fff9924225bfab0811304f9f0b0c6d418c42e4ca9a07c88e4d3d3c9285b9323"
+    }
+  ],
+  "canonical_target": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1",
+    "required_final_directory_mode": "0555",
+    "required_file_mode": "0444",
+    "required_link_count": 1,
+    "must_be_absent_before_first_attempt": true,
+    "source_and_target_inodes_must_differ": true
+  },
+  "publication_protocol": {
+    "creation": "mkdirat on a held parent directory fd with mode 0700; an existing target is a terminal error",
+    "source_open": "held source directory fd and O_RDONLY|O_NOFOLLOW stable regular-file fds",
+    "copy_order": [
+      "input_manifest.json",
+      "pair_recentered_p1.json",
+      "terminal_result.json",
+      "manifest.json",
+      "COMPLETE"
+    ],
+    "target_open": "O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW",
+    "file_durability": "copy exact bytes, fchmod 0444, fsync every file",
+    "target_identity_binding": "after mkdirat, bind held target fd to parent-dirfd nofollow/follow stat by exact device, inode, directory type, and mode; repeat before and after every copy, checker, fchmod, and final fsync",
+    "directory_durability": "independent checker must pass against inherited identity-bound target fd while mode 0700; only then fsync target directory, fchmod 0555, fsync target directory, and fsync parent directory",
+    "failure_policy": "leave any partial canonical directory at mode 0700; never clean up or retry automatically",
+    "source_postcondition": "revalidate exact source entry set, metadata, hashes, and stable fstat identities; never remove staging"
+  },
+  "checker_contract": {
+    "independent_implementation": true,
+    "science_module_imports": false,
+    "science_recomputation": false,
+    "verify_historical_git_blobs_at_sealed_commit": true,
+    "verify_manifest_rows_and_complete_seal": true,
+    "verify_fixed_scientific_failure_metrics": {
+      "status": "complete_scientific_fail_terminal_aggregation_closed",
+      "scientific_pass": false,
+      "jointly_eligible_rows": 0,
+      "normalized_row_weight_ESS": 0,
+      "maximum_single_normalized_row_weight": 0,
+      "positive_weight_parent_count": 0,
+      "positive_weight_geometry_key_count": 0,
+      "positive_weight_fine_field_seed_count": 0,
+      "grouped_support_ESS_and_maximum_weights": 0,
+      "row_count": 256,
+      "all_row_and_grouped_normalized_weights": 0,
+      "grouped_identity_counts": {
+        "bridge": 4,
+        "fine_field_seed": 256,
+        "geometry": 250,
+        "parent": 79
+      }
+    },
+    "verify_byte_identical_distinct_inode_nlink1": true,
+    "private_target_check": "checker receives inherited target and parent fds, rebinds the parent entry to the target fd, and requires mode 0700 before final chmod"
+  },
+  "resources": {
+    "partition": "a10",
+    "nodes": 1,
+    "tasks": 1,
+    "cpus_per_task": 1,
+    "memory": "1G",
+    "walltime": "00:10:00",
+    "gpus": 0
+  },
+  "execution": {
+    "repository": "/home/kjhan/BACKUP/CF4",
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "slurm_export": "NONE",
+    "requeue": false,
+    "array": false,
+    "canonical_program_path": "config/cf4_lg_highk_terminal_publication_repair_program_v2.json",
+    "grant_path": "config/cf4_lg_highk_terminal_publication_repair_grant_v2.json",
+    "future_result_record_path": "config/cf4_lg_highk_terminal_publication_repair_result_record_v2.json"
+  },
+  "authorization": {
+    "implementation": true,
+    "publication_execution": false,
+    "grant_required_for_publication_execution": true,
+    "grant_present_at_design_time": false,
+    "slurm_submission": false,
+    "scientific_recomputation": false,
+    "promotion": false
+  },
+  "forbidden": [
+    "science imports including JAX or PMWD",
+    "scientific recomputation or mutation of sealed bytes",
+    "symlink traversal, hard links, rename publication, overwrite, cleanup, or automatic retry",
+    "removing or chmod-changing the source staging directory",
+    "RAMSES execution or automatic promotion"
+  ],
+  "audit_sequence": [
+    "verify required parent -> exact-six implementation -> exact-one grant Git lineage, modes, clean upstream bytes, and canonical program path/hash",
+    "verify the canonical JSON grant binds the program hash, implementation commit and exact six file hashes/modes, source five map and paths, and publication-only false/true authorization fields before any GPFS mutation",
+    "open and validate the source staging directory and five stable source file descriptors",
+    "create the absent canonical target exclusively at mode 0700 using a held parent fd",
+    "copy the three payload files, then manifest.json, then COMPLETE with exclusive no-follow opens and per-file durability",
+    "rebind target identity before and after every copy; never write or chmod an entry that no longer matches the held target fd",
+    "run the independent checker on inherited parent and target fds while target mode is 0700, verifying entry set, hashes, seal, historical Git provenance, fixed scientific-failure metrics, and source-target inode separation",
+    "only after checker success rebind identity, fsync and chmod the canonical directory 0555, rebind again, fsync its parent, and preserve staging"
+  ]
+}

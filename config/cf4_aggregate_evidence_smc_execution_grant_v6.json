@@ -1,0 +1,30 @@
+{
+  "authorization": {
+    "automatic_retry_retune_scale_up_or_follow_on_authorized": false,
+    "cache_population_authorized": false,
+    "downstream_execution_authorized": false,
+    "grant_creation_authorized": true,
+    "pilot_execution_authorized": false,
+    "production_execution_authorized": false,
+    "v6_design_and_implementation_authorized": true
+  },
+  "authorization_program_sha256": "f870e20e9b6eb2e063fdd79797c4b6137be6d38c1c9229c42c625ca1d74a2fd9",
+  "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6",
+  "external_release": {
+    "manifest_file_sha256": "344bed3d1758589f7489069599e0ec3b326b285be1aec945a49168129f3bed30",
+    "manifest_id": "ea773ff2c40c0f5c42e27fe9311b7a397353a72a42e6c9f617e11aab0184a52a",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_manifest.json",
+    "payload_sha256": "9cb805162bd4dfc5d15486b2eb2161cb74cda6ebb01a98f7b6885bf44440870d",
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v6_release.json",
+    "release_file_sha256": "0b1dcce3e47dc9be292ad1eda599985b00f9f2e880808cdddf069aa48376b4a7",
+    "release_id": "fb9696af745f27443b28a46ff93fe2e1c034365578201fae589e486a1fa32686"
+  },
+  "grant_id": "4b87780a15d20efee72ad3f53e900bd77dfa48eebf9879454440c9853197fdb4",
+  "one_shot": true,
+  "pilot_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_disposable_pilot",
+  "precommit_audit_verdict": "GRANT GO",
+  "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_receipts",
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v6",
+  "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_run",
+  "status": "sealed_one_shot_execution_authorization"
+}

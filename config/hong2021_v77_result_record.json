@@ -1,0 +1,197 @@
+{
+  "schema": "hong2021-v77-fresh32-partition-compatibility-audit-result-record-v1",
+  "status": "complete_fresh32_partition_or_gate_requires_additional_redesign",
+  "purpose": "Bind the prospectively frozen audit showing that the V74 32-query fit-train group design does not transfer to the actually available target-unseen validation groups and that the compatible 32-query complete gate is not statistically attainable.",
+  "completed_at": "2026-08-12T16:34:09+09:00",
+  "record_base_commit": "44b601d62f6faf82f56f2888f8e754255d82ec29",
+  "frozen_program": {
+    "path": "config/hong2021_v77_fresh32_partition_compatibility_audit_program.json",
+    "sha256": "43ea962c8a1f1143731c0e968a1e416bdc92c7c269e1a09f9aa51a23d365c2e1",
+    "freeze_commit": "afaa4125d2e03392ce81436416758cfd47b5cd5a",
+    "implementation_commit": "44b601d62f6faf82f56f2888f8e754255d82ec29"
+  },
+  "parent": {
+    "V76_result_record": "config/hong2021_v76_result_record.json",
+    "V76_result_record_sha256": "9e34791c3bb3ca0f9cfdfce7a819c2e79f98784ff2341f090ffaa0fd181ee8f7",
+    "V74_result_record": "config/hong2021_v74_result_record.json",
+    "V74_result_record_sha256": "9c36f02be71a1a142531bf2c83389c83331737ff8aff8de24ace2b2b738145fb",
+    "V74_result_preserved": true,
+    "V76_result_preserved": true,
+    "V72_verdict_preserved": true
+  },
+  "compatibility_gap": {
+    "V74_fit_train_group_counts": {"TNG100": 4, "SIMBA": 8, "Swift": 20},
+    "actual_fresh_group_counts": {"TNG100": 4, "SIMBA": 3, "Swift": 7},
+    "V74_32_query_quota": {
+      "TNG100": [8, 8, 8, 8],
+      "SIMBA": [4, 4, 4, 4, 4, 4, 4, 4],
+      "Swift": "twelve groups with 2 and eight groups with 1"
+    },
+    "actual_fresh_quota": {
+      "TNG100": [6, 9, 8, 9],
+      "SIMBA": [7, 10, 15],
+      "Swift": [5, 5, 5, 4, 5, 4, 4]
+    },
+    "interpretation": "V74 correctly established attainability for its frozen fit-train grouping, but that grouping cannot be executed on the untouched validation pool. Its conclusion was therefore insufficient for a complete fresh gate, not numerically wrong."
+  },
+  "fresh_metadata_selection": {
+    "historical_development_indices_excluded": 16,
+    "consumed_V72_stage_A_indices_excluded": 16,
+    "TNG100": {
+      "untouched_available": 61,
+      "selected": 32,
+      "quota": {"0": 6, "1": 9, "2": 8, "3": 9},
+      "pass": true
+    },
+    "SIMBA": {
+      "untouched_available": 32,
+      "selected": 32,
+      "quota": {"24": 7, "25": 10, "26": 15},
+      "pass": true,
+      "caveat": "The screen consumes every untouched SIMBA validation object; no second independent SIMBA confirmation remains in this data product."
+    },
+    "Swift": {
+      "untouched_available": 116,
+      "selected": 32,
+      "quota": {"20": 5, "21": 5, "22": 5, "23": 4, "24": 5, "25": 4, "26": 4},
+      "pass": true
+    },
+    "input_voxels_read": false,
+    "target_voxels_read": false,
+    "all_domains_pass": true
+  },
+  "compatible_design_verification": {
+    "trials_per_domain": 20000,
+    "physical_morphology": {
+      "all_domain_component_pass_probability": {
+        "q99_999": 0.89025,
+        "Q4": 0.94875,
+        "high_k_power": 0.99845,
+        "residual_RMS": 1.0,
+        "absolute_core": 0.86525,
+        "density_PDF": 1.0,
+        "two_point": 0.78195,
+        "environment": 0.99865,
+        "morphology_core": 0.78185,
+        "joint": 0.7311
+      },
+      "aligned_joint_Wilson_95": [0.7249111210091288, 0.7372001199257396],
+      "required_aligned_joint_Wilson_lower": 0.8,
+      "domain_absolute_core_probability": {
+        "TNG100": 0.9485,
+        "SIMBA": 0.91305,
+        "Swift": 0.99975
+      },
+      "domain_joint_probability": {
+        "TNG100": 0.9174,
+        "SIMBA": 0.7974,
+        "Swift": 0.9995
+      },
+      "primary_bottleneck": "SIMBA two-point strict-improvement probability is 0.82075; together with SIMBA q99.999 probability 0.9209 its domain joint falls to 0.7974.",
+      "pass": false
+    },
+    "maximum_energy": {
+      "upper_margin": {
+        "TNG100": 0.02833125569650693,
+        "SIMBA": 0.015919431955036152,
+        "Swift": 0.012904850670860855
+      },
+      "family_false_rejection_probability": 0.04835,
+      "family_false_rejection_Wilson_95": [0.04546292425909533, 0.05141054191038397],
+      "point_limit": 0.06,
+      "Wilson_upper_limit": 0.065,
+      "calibrated": true
+    }
+  },
+  "complete_gate_attainability": {
+    "physical_morphology_failure_upper": 0.2750888789908712,
+    "energy_failure_upper": 0.05141054191038397,
+    "V76_rank_coverage_failure_upper": 0.05,
+    "union_bound_complete_pass_lower": 0.6235005790987449,
+    "required_lower": 0.8,
+    "pass": false,
+    "additional_finding": "Even if every morphology check always passed, the aligned absolute-core Wilson lower is only 0.86045; subtracting the frozen energy and V76 failure budgets yields at most about 0.759. A two-point-only fix cannot satisfy the frozen complete-gate requirement."
+  },
+  "decision": {
+    "classification": "fresh32_partition_or_gate_requires_additional_redesign",
+    "fresh_metadata_selection_valid": true,
+    "physical_morphology_attainable": false,
+    "maximum_energy_calibrated": true,
+    "complete_gate_attainable": false,
+    "complete_candidate_agnostic_gate_may_be_frozen": false,
+    "candidate_or_fresh_payload_execution_authorized": false,
+    "next": "Seek explicit approval for a separately frozen metric-level conditional-null redesign with a single global error budget. It must address both absolute-core sampling rejection and the SIMBA two-point bottleneck; changing only query count, energy, or two-point cannot meet the 0.8 complete-gate target."
+  },
+  "scientific_interpretation": {
+    "established": [
+      "The actual untouched 32-query validation allocation is metadata-valid and disjoint from historical development and consumed V72 stage A.",
+      "The maximum-energy noninferiority rule remains calibrated under the actual fresh group-count and quota design.",
+      "The unchanged V74 physical and morphology conjunction is too sampling-sensitive for the actual fresh design.",
+      "The main named component bottleneck is SIMBA two-point, but the global absolute-core false-rejection rate also prevents an 0.8 complete-gate guarantee."
+    ],
+    "not_established": [
+      "No complete prospective gate is frozen.",
+      "No new generator or candidate has been selected, sampled, or evaluated.",
+      "No selected validation input or target payload has been read.",
+      "V72 stage B, Astrid, and independent EAGLE remain unopened."
+    ]
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "cpu_policy": "logical CPU 64, nice 15, one process; RAMSES ranks on CPU 0-63 remained active",
+    "runner": "scripts/hong2021_v77_fresh32_partition_compatibility_lageunha.sh",
+    "runner_sha256": "2c34bc7eb0f10056c969106c18a6a879d08bda4a7aca3b4d6c661488c718883e",
+    "source": "src/hong2021_v77_fresh32_partition_compatibility.py",
+    "source_sha256": "8b34041b1370ee306b4401cc06b7de369ba07c936b3375522f3ae43f3c87946b"
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility",
+    "audit_result": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/audit_result.json",
+      "sha256": "79967b77b9c94517c426ec0e2adec0ebd19ceda566a252d8d57f66e1e9949314",
+      "decision_digest_sha256": "2cf8e94739a1236788528dfc4a05f89aae01a1240b7a60adb20626e05a35fb03"
+    },
+    "calibration_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/calibration_arrays.npz",
+      "sha256": "a2829d63f2f73354c816f5515cd0ce2fbda386e1230db6fb745fa2c44ea23feb"
+    },
+    "verification_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/verification_arrays.npz",
+      "sha256": "64c301110e0e9d226467508be61f592e328a974b02424ea08e918750f00d1872"
+    },
+    "sequence_pytest_log_sha256": "710f1e37af1d65d6e972f4de950b05b844a6b923d422602566a3f1da160a05b0",
+    "sequence_audit_log_sha256": "3c5df2cb8fca343e33a11c2419ef1f26b6aaab1e5f507bbc51c1fb0946463421",
+    "sequence_status_sha256": "3cbf0131a0a8c9ab37b2529c882299bc0a6a8de5667cbb72e6174f3acbbf727a"
+  },
+  "verification": {
+    "local_full_tests": "627 passed in 70.67s",
+    "local_V74_V77_tests": "14 passed in 11.26s",
+    "Lageunha_V77_tests": "6 passed in 7.63s",
+    "test_source": "tests/test_hong2021_v77_fresh32_partition_compatibility.py",
+    "test_source_sha256": "ef1fc77ec90303ac4791d9e0ca832c6393e40a1fea053837b5b1167b291a301c",
+    "arrays_per_phase": 75,
+    "array_rows": 20000,
+    "nonfinite_values": 0,
+    "decision_digest_recomputed_equal": true,
+    "repository_clean_during_audit": true
+  },
+  "firewall": {
+    "validation_input_or_target_payload_accessed": false,
+    "training_or_model_sampling_performed": false,
+    "raw_fit_train_truth_reread": false,
+    "V72_stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_or_independent_EAGLE_accessed": false,
+    "new_candidate_constructed": false,
+    "V72_verdict_changed": false,
+    "RAMSES_interrupted": false
+  },
+  "authorization": {
+    "freeze_or_execute_a_complete_gate": false,
+    "construct_sample_or_evaluate_a_new_candidate": false,
+    "read_selected_validation_input_or_target": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "required_next": "Await explicit user approval for a target-free global metric-level conditional-null redesign audit."
+  }
+}

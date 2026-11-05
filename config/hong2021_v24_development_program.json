@@ -1,0 +1,113 @@
+{
+  "schema": "hong2021-v24-base48-capacity-development-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Test whether moderate score-network capacity, rather than an antagonistic conditional-mean proxy objective, is the remaining limitation after V22 and V23.",
+  "controlled_baseline": {
+    "experiment": "V22 long-horizon conditional-affine EDM",
+    "registry": "config/hong2021_v22_development_program.json",
+    "registry_sha256": "2f2d5337ceecab413e647f54bcaa75e1502d76db3b24daafd22d1c1a2bd7cfbe",
+    "decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v22_e10_long_horizon/development_decision.json",
+    "decision_sha256": "4d40f0a30f612c31582286726035c9b209f962ee72536a3bc9b6aa8206d23796",
+    "decision_digest_sha256": "f64787b0937ddc1c3aa9d1360f0eb75592d42604f8950a91fb17a4838184f7c6",
+    "base_channels": 32,
+    "parameters": 3618465
+  },
+  "intervening_negative_result": {
+    "v23_registry": "config/hong2021_v23_development_program.json",
+    "v23_registry_sha256": "beb43cd57b71aaab4c4798100a009e3b36d300025d6295e08d22c0d71a15c797",
+    "v23_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/development_decision.json",
+    "v23_decision_sha256": "0748135a47f6624b0355a0c7082b6cda1335883f7539e1f107e08415b82aa140",
+    "v23_decision_digest_sha256": "cdb0184c7d7640da53fc35303984051553105cbcbeede7509d6ad79a8a8f8e97",
+    "mechanism_audit_attestation": "config/hong2021_v23_mechanism_audit.json",
+    "mechanism_audit_attestation_sha256": "08e5c964e4032b2ffdb6e98033b7471addc85772fb539c778ef96f392821eb24",
+    "mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v23_e11_conditional_mean/mechanism_audit.json",
+    "mechanism_audit_sha256": "c39faea160b71e6693effdb2df56fbb0da7b8eb7332fc12ba0c7da0e8f523c3a",
+    "mechanism_audit_digest_sha256": "de7f7ce52bcb10a72546acb93255ddf88044e3b65257a18d051bc801d573f700",
+    "finding": "The V23 conditional loss had 0.624 mean gradient-norm ratio and -0.387 mean cosine versus the V22 base objective; it improved its denoising proxy but degraded all Q3/Q4 results.",
+    "Astrid_used": false,
+    "historical_EAGLE_used": false
+  },
+  "single_change": {
+    "description": "Return exactly to the V22 objective/protocol and increase ObservableContextUNet base_channels from 32 to 48.",
+    "model_schema": "hong2021-v24-base48-capacity-multiscale-edm-v1",
+    "base_channels_from": 32,
+    "base_channels_to": 48,
+    "expected_parameters": 8133361,
+    "training_from_scratch": true,
+    "steps": 30000,
+    "candidate_steps": [10000, 20000, 30000]
+  },
+  "explicitly_removed_from_v23": {
+    "conditional_mean_penalty": true,
+    "lambda_conditional_mean": null,
+    "reason": "V23 established that this proxy supplies a large antagonistic gradient and worsens field metrics. V24 is a capacity test against the V22 baseline, not a two-factor capacity-plus-penalty experiment."
+  },
+  "inherited_byte_identical_from_v22": [
+    "V21 conditional-affine profile", "V21 G21 transform", "six V21 caches",
+    "condition channels and observable context", "batch=6 and equal-source 2/2/2 balance",
+    "0.5 unweighted plus 0.5 tail-weighted EDM loss",
+    "tail weights", "noise distribution", "initializer and band variances",
+    "training, validation, and sampling seeds", "augmentation",
+    "optimizer, learning rates, gradient clip, EMA, and 30000-step cosine schedule",
+    "sampler and 16-member ensembles", "development subsets",
+    "field evaluator, Q3/Q4/Q5 definitions, and thresholds"
+  ],
+  "feasibility_precheck": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "batch": 6,
+    "base_channels": 48,
+    "parameters": 8133361,
+    "peak_allocated_gib": 6.885789394378662,
+    "peak_reserved_gib": 8.416015625,
+    "finite_gradients": true,
+    "selection_role": "none"
+  },
+  "diagnostics_and_selection": {
+    "selection": "smallest candidate passing every unchanged V6 field check plus Q3 and Q4 independently in all three domains",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.10,
+      "generated_max_above_truth_max_dex": 0.30
+    },
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "Q5": "unchanged no-harm checks",
+    "Q6": "residual and forward-mapped latent conditional mean/std profiles at all candidates; selection_role none",
+    "swift_no_harm": "Swift must retain the unchanged field gate and Q3/Q4 pass at the selected candidate",
+    "capacity_diagnostics": [
+      "parameter count and peak CUDA memory",
+      "balanced validation trajectory",
+      "gradient norm and clipping trajectory",
+      "V22-to-V24 Q3/Q4/Q6 changes at every frozen candidate"
+    ]
+  },
+  "failure_classification_at_step_30000": [
+    {
+      "condition": "all-domain field plus Q3/Q4 pass",
+      "classification": "moderate_capacity_increase_sufficient",
+      "next": "seal V24 and await explicit approval before independent-data access"
+    },
+    {
+      "condition": "no all-domain pass and balanced validation improves by less than 1 percent from step 25000 to 30000",
+      "classification": "base48_capacity_increase_insufficient_at_convergence",
+      "next": "stop capacity scaling and design a sampler-aligned or alternative generative objective"
+    },
+    {
+      "condition": "no all-domain pass without the frozen plateau condition",
+      "classification": "base48_failed_without_plateau",
+      "next": "audit optimization and candidate trajectories without extending or tuning"
+    }
+  ],
+  "fixed_decision_order": [
+    "implement and test only the base_channels change against V22",
+    "run a sealed Lageunha Ada preflight",
+    "train one model from scratch with no mid-run changes",
+    "evaluate 10000, 20000, 30000 in ascending order",
+    "select the smallest all-domain pass",
+    "otherwise apply the frozen failure classification and stop with Astrid unopened",
+    "never increase capacity again, alter thresholds, extend the horizon, or add V23 loss after seeing V24 results"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

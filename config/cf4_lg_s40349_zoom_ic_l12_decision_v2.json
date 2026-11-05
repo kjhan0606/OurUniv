@@ -1,0 +1,40 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-zoom-ic-l12-decision-v2",
+  "date": "2026-09-23",
+  "job": 398944,
+  "stage": "8/8 bounded zoom-IC pilot",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "trace_report": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_spatial_trace_v1.json",
+  "transfer_report": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_eh98_transfer_v1.json",
+  "ic_report": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40349_zoom_ic_l12_v2.json",
+  "ic_report_sha256": "912ec10b08e682b343e06a606285164870a295e3e3a824a95f12eedf6a6a1f4c",
+  "manifest": "/gpfs/kjhan/CF4/zoom/cf4_lg_b3292_s40349_traceonly_l12_v2/zoom_ic_manifest.json",
+  "manifest_sha256": "d3a60cc5847260b9f72fb4ced9caa11648d230cc460846d5956987379c0c5bea",
+  "checks": {
+    "exact_parent_level": 9,
+    "parent_grid": 512,
+    "finest_ic_level": 12,
+    "runtime_levelmax_declared": 19,
+    "global_base_spacing_cMpc_h": 0.75,
+    "finest_particle_spacing_cMpc_h": 0.09375,
+    "minimum_runtime_cell_ckpc_h": 0.732421875,
+    "lcdm_tail_overlap_shape_scatter_percent": 0.10,
+    "lcdm_tail_nyquist_join_ratio": 1.0031459626075145,
+    "small_scale_seed": 403495108,
+    "grafic_header_payload_bytes": 48,
+    "grafic_header_omega_b": 0.0,
+    "job_max_rss_gib": 3.47,
+    "job_requested_memory_gib": 16
+  },
+  "decision": "TRACE_ONLY_ZOOM_IC_L12_GENERATED_READER_GATE_PENDING",
+  "interpretation": "The bounded L12 hierarchy preserves the exact seed-40349 L9 parent modes and adds one explicitly prior-drawn LCDM-shaped high-k realization inside the spatially traced LG mask. This is an IC engineering pilot, not a validated Local Group realization or production zoom.",
+  "limitations": [
+    "The regrouped HOP catalogue does not resolve the two parent peaks at the frozen threshold.",
+    "M33 is unresolved at L9 and has not been identified in this IC.",
+    "High-k phases are an unconstrained conditional realization, not recovered CF4 information.",
+    "A RAMSES multi-level reader and initial-Poisson gate is still required before any evolution."
+  ],
+  "next": "Run the no-output L9-L12 RAMSES reader/initial-Poisson gate at levelmax=12; do not start a z=0 zoom evolution from IC generation alone."
+}

@@ -1,0 +1,12 @@
+{
+  "bundle": "Z5-BIAS-MARGINALIZED-PHYSICAL-POSTERIOR",
+  "status": "CLOSED_DRIVER_REVIEWED_MECHANICS_PASS_PHYSICS_GAP_REMAINS",
+  "reviewer": "Astra driver; external audits waived by user",
+  "aggregate": "/gpfs/kjhan/CF4/z0_density/z5_bias_posterior_v1/aggregate.json",
+  "jobs": {"array": 332955, "aggregate": 332956, "all_completed": true, "elapsed_seconds": [1165,1156]},
+  "matched": {"max_Rhat": 1.021795804159881, "min_bulk_ESS": 202.3256385275208, "min_tail_ESS": 531.9441639696284, "divergence": 0, "support_density_correlation": 0.5829046230583851, "coverage68": 0.6818813905930471, "coverage95": 0.9425766871165644, "bias_95_intervals_containing_generator": 6},
+  "PM": {"max_Rhat": 1.0215216715876034, "min_bulk_ESS": 198.02565665713135, "min_tail_ESS": 345.17080440921904, "divergence": 0, "support_density_correlation": 0.598191620059573, "coverage68": 0.9022494887525563, "coverage95": 0.9973824130879345, "bias_95_intervals_containing_generator": 1},
+  "decision": "The joint-MAP bias runaway did not persist in sampled posterior means. Both chains pass the declared diagnostics, but PM truth coverage is excessive and five bias intervals exclude their generator values. These indicate remaining observable/model mismatch, not a need simply to sample longer.",
+  "limits": "Two development cases with fixed nuisance truths; selected convergence projections only. PM truth has an additional conservative interpolating shift. No population calibration certificate, actual-data inference, IC or resolution attainment.",
+  "next": "User approved Z6 native-coordinate PM z=0 model repair and bounded comparisons. Preserve ΛCDM IC power and use disjoint development fields for prior fitting and testing."
+}

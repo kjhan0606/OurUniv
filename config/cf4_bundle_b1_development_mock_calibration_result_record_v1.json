@@ -1,0 +1,70 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-development-mock-calibration-result-record-v1",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "status": "COMPLETE_64_DEVELOPMENT_MOCKS_TECHNICAL_GATE_FAIL_NO_SCIENCE_CLAIM",
+  "contract": {
+    "path": "config/cf4_bundle_b1_likelihood_contract_amendment_v1.json",
+    "bytes": 10803,
+    "sha256": "008d37026ff7bd698460b70f7b467ef5c5140b276d39d4ca83f9085c085424e7"
+  },
+  "implementation": {
+    "source": {
+      "path": "src/cf4_b1_development_mock_calibration.py",
+      "bytes": 13601,
+      "sha256": "feafa4f0c14fc721a39e6376e6303a14e80a4c90956089c56dcedec906187339"
+    },
+    "test": {
+      "path": "tests/test_cf4_b1_development_mock_calibration.py",
+      "bytes": 2463,
+      "sha256": "4bc91cdb50264eeb57a5910d202950b8c5f5c87e6d72eb14e57c3bdcbdc0cd95"
+    }
+  },
+  "result": {
+    "path": "config/cf4_bundle_b1_development_mock_calibration_result_v1.json",
+    "bytes": 6340,
+    "sha256": "de53e52903f4154615d8d1d2ecedbef8588398ace845213cec841a63d279d3ff"
+  },
+  "execution": {
+    "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 PYTHONSAFEPATH=1 PYTHONPATH=src python src/cf4_b1_development_mock_calibration.py --output config/cf4_bundle_b1_development_mock_calibration_result_v1.json",
+    "backend": "local CPU",
+    "external_data_read": false,
+    "GPFS": false,
+    "Slurm": false,
+    "validation_seed_opened": false,
+    "development_member_count": 64,
+    "arm_assignment": "A-D, 16 members per arm",
+    "test_result": "5 passed in 6.73s"
+  },
+  "metrics": {
+    "all_members_positive_support": true,
+    "all_arms_have_heldout_gain": false,
+    "strict_low_k_gate_pass_count": 0,
+    "arm_median_response": {
+      "A": 0.7713773744592904,
+      "B": 0.7566815159843168,
+      "C": 0.7594092448313728,
+      "D": 0.7894830584975645
+    },
+    "arm_median_correlation_r": {
+      "A": 0.4081745141474229,
+      "B": 0.4297194966386657,
+      "C": 0.4094358246227709,
+      "D": 0.42528400466331895
+    },
+    "arm_median_residual_power_ratio": {
+      "A": 2.97955610583118,
+      "B": 2.7489327769695757,
+      "C": 2.786765780328464,
+      "D": 2.8223376308595487
+    }
+  },
+  "interpretation": {
+    "what_failed": "The local technical voxelwise-Poisson estimator with fixed correlated-prior smoothing fails the preregistered low-k response/correlation/residual gates in all four stress arms.",
+    "what_is_not_concluded": "This is not an observational posterior, not a rejection of the full differentiable joint likelihood, and not a resolution measurement.",
+    "required_action": "Do not promote KF-EXPAND or B2. Diagnose the estimator/field parameterization and information content before any validation seed is opened.",
+    "observational_z0_posterior": "NOT_CREATED",
+    "frontier": "NOT_PROMOTED",
+    "target_0p3_cMpc_h": "NOT_ALLOWED"
+  }
+}

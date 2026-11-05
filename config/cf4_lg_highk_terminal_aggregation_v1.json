@@ -1,0 +1,336 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-terminal-aggregation-program-v1",
+  "status": "frozen_user_authorized_terminal_aggregation",
+  "date": "2026-08-27",
+  "purpose": "Revalidate the complete frozen 256-row high-k PM production, evaluate all five frozen P1 gates at every same-identity hard-P2 and loose-likelihood pair midpoint using one N192 parent forward at a time, and produce the terminal equal-weight normalized z=0 likelihood aggregation without promotion.",
+  "lineage": {
+    "production_completion_implementation_commit": "9f4fa6c934407efcc35c894924380639d0bd1714",
+    "production_completion_checker": "scripts/check_cf4_lg_highk_streaming_pm_production_v1.py",
+    "science_contract_author": "Fable",
+    "science_contract_decision": "approved_terminal_pair_recentered_P1_and_normalized_z0_aggregation",
+    "user_execution_approval": {
+      "date_kst": "2026-08-27",
+      "scope": "this terminal aggregation only",
+      "recorded_separately_from_streaming_program": true
+    },
+    "required_pre_submission_code_audit": "CODE_GO",
+    "required_commit_scope": [
+      "config/cf4_lg_highk_terminal_aggregation_v1.json",
+      "src/cf4_lg_highk_terminal_aggregation.py",
+      "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+      "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py",
+      "tests/test_cf4_lg_highk_terminal_aggregation.py",
+      "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
+    ],
+    "execution_history": [
+      {
+        "job_id": 324902,
+        "classification": "technical_failure_before_any_scientific_output",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed_seconds": 56,
+        "partition": "a40",
+        "node": "syn05",
+        "log": {
+          "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1_slurm-324902.log",
+          "sha256": "dce48a1892f27610fbfaf96bc1c4c2f77c9e6bb3011f9c02cf84014300174dfe"
+        },
+        "canonical_output_created": false,
+        "sibling_staging_created": false
+      },
+      {
+        "job_id": 324919,
+        "classification": "technical_failure_before_any_scientific_output",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed_seconds": 45,
+        "partition": "a40",
+        "node": "syn05",
+        "log": {
+          "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1_slurm-324919.log",
+          "sha256": "7f878a83d647309453cf8d36f3f10e1fa08a4af75dac69d113fd31253c3a4501"
+        },
+        "canonical_output_created": false,
+        "sibling_staging_created": false
+      }
+    ],
+    "three_commit_execution_lineage": {
+      "baseline_commit": "0f74bcecf01012a2c9cc40827759440db380ff6d",
+      "baseline_parent_commit": "9f4fa6c934407efcc35c894924380639d0bd1714",
+      "baseline_exact_added_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py"
+      ],
+      "correction1_commit": "863792f4d476a4336291f60b66be7d68833dabd6",
+      "correction1_parent_commit": "0f74bcecf01012a2c9cc40827759440db380ff6d",
+      "correction1_exact_modified_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py"
+      ],
+      "correction2_parent_commit": "863792f4d476a4336291f60b66be7d68833dabd6",
+      "correction2_exact_modified_paths": [
+        "config/cf4_lg_highk_terminal_aggregation_v1.json",
+        "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+        "src/cf4_lg_highk_terminal_aggregation.py",
+        "tests/test_cf4_lg_highk_terminal_aggregation.py"
+      ],
+      "required_mode": "100644",
+      "renames_allowed": false,
+      "untouched_files": {
+        "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py": "e72a595c322ec10921a8435b650f07d82198ae0baab81e3824089d5a0d496aa4",
+        "tests/test_cf4_lg_highk_terminal_aggregation_slurm.py": "baccfd0b2cc76784b2eac3db0bda8f64eba04c574bd5908d45c159e764297007"
+      }
+    }
+  },
+  "inputs": {
+    "production_root": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_streaming_pm_production_v1"
+    },
+    "production_program": {
+      "path": "config/cf4_lg_highk_streaming_forward_program_v1.json",
+      "sha256": "856b758457dc69f3d9e6ee19ad8b88d68da96bc3d801e6b5a9f01b87a98dd135"
+    },
+    "completion_checker": {
+      "path": "scripts/check_cf4_lg_highk_streaming_pm_production_v1.py",
+      "sha256": "6e001c6adf7d6fcc895eb3b9a46ff60d3fd27137b8e31c7d1a53e458eede9c84"
+    },
+    "schedule": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_joint_schedule_v1/schedule.npz",
+      "sha256": "10c8526f3508a908a14981636ca9f730480838b65ea4bbcd3186c0730f330ccd"
+    },
+    "covariance_cache": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_covariance_cache_v1/cache.npz",
+      "sha256": "c15747dd7afdfb6d2b0013c726bdaa99b8fc1a3b3a1c75581086eebe35470b1a"
+    },
+    "parent_manifest": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_parent_response_atlas_v1/manifest.json",
+      "sha256": "47049d0047aa626912652c82ac34757f01ebe4adc0654d07f674d6b943db4211"
+    },
+    "p1_config": {
+      "path": "config/p1_targets_v2_observer.json",
+      "sha256": "34bf11486b084312d6a7e476f469e6973cfbf3a9392c7c7eab9b1a6b9a124e0a"
+    },
+    "legacy_p1_result": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3/p1_result.json",
+      "sha256": "050df61252ff038de9aec8fd6902dd42367b49c6ce1ac9782681158cf310cecd"
+    },
+    "hard_p2_config": {
+      "path": "config/p2_lg_targets_v1.json",
+      "sha256": "1c066ae189dee4c077b8400c4427d108f6e7dfc3d6ebedbd1b571cf22d7b3273"
+    },
+    "v8_likelihood_program": {
+      "path": "config/p2_lg_z0_forward_importance_v8.json",
+      "sha256": "6a89f5027f253282e18f21201146dde384837f0d689d725a25022def8ea7e6f2"
+    },
+    "score_member_code": {
+      "path": "src/cf4_parent_p1.py",
+      "sha256": "fe41ca7a0d86bae27a41d5ab7bec6f4d766bdd7698cc66dc51fe7e88d9f747b5"
+    },
+    "pair_screen_code": {
+      "path": "src/cf4_p2_screen.py",
+      "sha256": "e6287e81500148baf245833468d04fb483ef68b632378981e2b9c66f520d9799"
+    },
+    "score_catalog_code": {
+      "path": "src/cf4_lg_z0_likelihood.py",
+      "sha256": "0fa110b3165de723896666b9249e81d81400d2b9a4a5968d108fecf6cb9d4f22"
+    },
+    "make_forward_code": {
+      "path": "src/mock_pipeline.py",
+      "sha256": "74971ac119a69611854e0ed716bde23da3a50d34b555a556c5f06c092dd7b975"
+    }
+  },
+  "observed_integrity_anchor": {
+    "canonical_rows": 256,
+    "rows_with_loose_pairs": 213,
+    "loose_pairs": 1321,
+    "rows_with_hard_pairs": 16,
+    "hard_pairs": 18,
+    "hard_loose_same_identity_pairs": 18,
+    "hard_pairs_with_same_identity_loose_pair": 18,
+    "recentered_p1_unique_parents": 12,
+    "geometry_keys": 250,
+    "bridge_group_counts": [64, 64, 64, 64]
+  },
+  "reuse_policy": {
+    "allowed": [
+      "score_member from its SHA-pinned implementation",
+      "periodic pair midpoint and observer offset",
+      "find_pairs and rank_score from their SHA-pinned implementation",
+      "score_catalog normalized Gaussian likelihood definitions",
+      "stable logsumexp",
+      "sorted unordered halo pair identity"
+    ],
+    "v8_allowed_sections": ["candidate_preselection", "z0_likelihood"],
+    "v8_proposal_artifacts_allowed": false,
+    "v8_proposal_importance_correction_allowed": false
+  },
+  "science_contract": {
+    "box_size_mpc_h": 384.0,
+    "parent_forward_mesh": 192,
+    "parent_forward_cache": "one unique parent in memory at a time and never persisted",
+    "make_forward_construction": "exactly once for the shared N192 geometry and identical cosmology, then reused across all 12 unique parents",
+    "density_smoothing_mpc_h": 4.0,
+    "pair_midpoint_is_observer": true,
+    "zero_offset_P1_must_match_sealed_legacy_parent_row": true,
+    "P1_numeric_comparison_policy": {
+      "nearest_box_face_mpc_h": {
+        "relative_tolerance": 0.0,
+        "absolute_tolerance": "4 * max(math.ulp(left), math.ulp(right))",
+        "observed_absolute_difference": 2.842170943040401e-14,
+        "observed_binary64_ULPs": 2
+      },
+      "observer_environment_spheres": {
+        "mean_delta": "existing narrow field-specific float32 serialization ULP bound",
+        "radius_mpc_h": "exact binary64",
+        "cosmic_mean_mass_msun_h": "exact binary64",
+        "maximum_excess_mass_msun_h": "exact binary64",
+        "excess_mass_msun_h": "fresh and legacy must each equal mean_delta * cosmic_mean_mass_msun_h within 4 * max(math.ulp(derived), math.ulp(formula)); no direct cross-run derived-mass tolerance after both formula checks",
+        "sphere_and_environment_pass": "exact, recomputed from primitive values, and any boundary-induced pass change is rejected"
+      },
+      "all_other_unregistered_float_fields": "exact"
+    },
+    "N576_field_or_particle_regeneration": false,
+    "exact_P1_gate_names": ["Virgo", "Coma", "LocalVoid", "BootesVoid", "ObserverEnvironment"],
+    "all_five_P1_gates_required": true
+  },
+  "pair_contract": {
+    "identity": "sorted unordered (halo_i,halo_j)",
+    "recompute_hard_P2_from_saved_halos": true,
+    "recompute_loose_likelihood_catalogue_from_saved_halos": true,
+    "recomputed_catalogues_must_match_stored_catalogues": true,
+    "every_hard_pair_requires_same_identity_loose_pair": true,
+    "eligible_pair": "same identity in hard-P2 and full loose catalogue and all five pair-recentered P1 gates pass",
+    "best_pair_only": false,
+    "PM_massive_halo_veto": false,
+    "comparison_policy": {
+      "discrete_identity_key_and_gate_fields": "exact",
+      "stored_likelihood_formula": "rtol 0 and atol 1e-8",
+      "float32_catalogue_fields": "field-specific power-of-two ULP bounds measured read-only over all 256 sealed rows; no global tolerance",
+      "measured_maxima_are_below_bounds": true,
+      "read_only_256_row_measurement": {
+        "maximum_absolute_difference": {
+          "halo_mass_msun_h": 261575.1123046875,
+          "mass_ratio": 7.404939852406756e-7,
+          "separation_mpc_h": 1.8398876427738742e-5,
+          "midpoint_coordinate_mpc_h": 7.62939453125e-6,
+          "midpoint_offset_mpc_h": 9.876151693788415e-6,
+          "isolation_mpc_h": 1.5764706783549798e-5,
+          "peculiar_radial_velocity_km_s": 0.005984611682606555,
+          "total_radial_velocity_km_s": 0.006529474847951633,
+          "tangential_velocity_km_s": 0.006372127968631958,
+          "hard_ranking_score": 3.4025574027429784e-5,
+          "stored_likelihood_formula": 1.4210854715202004e-14
+        },
+        "enforced_power_of_two_absolute_bounds": {
+          "halo_mass_msun_h": 262144.0,
+          "mass_ratio": 9.5367431640625e-7,
+          "separation_midpoint_offset_and_isolation_mpc_h": 3.0517578125e-5,
+          "midpoint_coordinate_mpc_h": 1.52587890625e-5,
+          "velocity_km_s": 0.0078125,
+          "hard_ranking_score": 6.103515625e-5,
+          "stored_likelihood_formula": 1e-8
+        }
+      }
+    }
+  },
+  "aggregation_contract": {
+    "row_log_evidence": "logsumexp(log_L over jointly eligible pairs)-log(number of every loose pair in the row)",
+    "empty_loose_or_eligible_row_log_evidence": "negative_infinity",
+    "row_log_weight": "-log(256)+row_log_evidence",
+    "scheduled_row_prior": 0.00390625,
+    "normalize_once_across_256_rows": true,
+    "deduplicate_repeated_rows": false,
+    "extra_scientific_weights": false,
+    "minimum_jointly_eligible_rows": 8,
+    "minimum_normalized_row_weight_ESS": 8.0,
+    "maximum_single_normalized_row_weight": 0.25,
+    "JSON_nonfinite_policy": "store value null and finite false",
+    "eligible_row_definition": "np.isfinite(unnormalized row log weight), independent of normalized-weight underflow"
+  },
+  "grouped_support_gates": {
+    "minimum_parent_weight_ESS": 4.0,
+    "maximum_single_parent_normalized_weight": 0.5,
+    "minimum_geometry_key_weight_ESS": 8.0,
+    "maximum_single_geometry_key_normalized_weight": 0.25,
+    "minimum_bridge_group_weight_ESS": 2.0,
+    "maximum_single_bridge_group_normalized_weight": 0.5,
+    "report_positive_weight_parent_geometry_and_fine_seed_counts": true,
+    "positive_support_count_definition": "number of reported groups whose normalized grouped weight is strictly greater than zero after the single normalization; this count is descriptive and is not the eligible-row definition"
+  },
+  "outputs": {
+    "canonical_root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_terminal_aggregation_v1",
+    "sibling_staging_glob": ".lg_highk_terminal_aggregation_v1.*.staging",
+    "exact_entries": ["input_manifest.json", "pair_recentered_p1.json", "terminal_result.json", "manifest.json", "COMPLETE"],
+    "file_mode": "0444",
+    "directory_mode": "0555",
+    "atomic_publish": "write a unique sibling staging directory, seal all hashes and sizes, then one atomic rename",
+    "write_scientific_pass_and_fail": true
+  },
+  "resources": {
+    "partitions": "a40,a100,h100,h200",
+    "nodes": 1,
+    "tasks": 1,
+    "cpus": 16,
+    "memory": "20G",
+    "gpus": 1,
+    "time_limit": "02:00:00",
+    "minimum_visible_GPU_VRAM_GiB": 40,
+    "JAX_preallocation": false,
+    "python_executable": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "python_packages": {
+      "jax": "0.10.1",
+      "jaxlib": "0.10.1",
+      "pmwd": "0.1.dev131+g0552bc013"
+    },
+    "array": false,
+    "requeue": false
+  },
+  "execution": {
+    "runner": "src/cf4_lg_highk_terminal_aggregation.py",
+    "checker": "scripts/check_cf4_lg_highk_terminal_aggregation_v1.py",
+    "slurm": "scripts/run_cf4_lg_highk_terminal_aggregation_v1.sbatch",
+    "preflight_requires_exact_six_file_commit": true,
+    "preflight_requires_clean_tracked_tree_and_upstream_HEAD": true,
+    "preflight_requires_CODE_GO": true,
+    "test_only_before_GPU_forward": true,
+    "manifest_records_actual_slurm_python_git_and_implementation_identity": true,
+    "durable_publish": "fsync each 0444 file, fsync 0555 staging directory, renameat2 RENAME_NOREPLACE on the sibling filesystem, then fsync parent directory",
+    "retry_or_extension": false
+  },
+  "authorization": {
+    "implementation_and_tests": true,
+    "terminal_aggregation_execution": true,
+    "automatic_promotion": false,
+    "RAMSES": false,
+    "same_model_extension": false
+  },
+  "forbidden": [
+    "parent-centered P1 prefilter",
+    "V8 proposal bank or proposal correction",
+    "logmeanexp over only eligible pairs",
+    "best-pair-only evidence",
+    "PM massive-host veto",
+    "N576 or particle regeneration",
+    "threshold or seed changes",
+    "result-dependent retry or extension",
+    "automatic selection, promotion, or downstream submission"
+  ],
+  "audit_sequence": [
+    "verify the exact committed six-file implementation, CODE GO, tracked-tree cleanliness, and upstream equality",
+    "run the existing production completion checker with require-complete",
+    "verify all observed integrity anchors and recompute both pair catalogues",
+    "run test-only preflight before any parent forward",
+    "forward one unique N192 parent at a time and validate zero-offset P1",
+    "evaluate exact five P1 gates at every same-identity pair midpoint",
+    "aggregate with the full loose denominator and equal 1/256 row weights",
+    "write pass or fail into a sibling staging root and atomically publish a sealed immutable directory",
+    "run the independent output checker and stop without promotion"
+  ]
+}

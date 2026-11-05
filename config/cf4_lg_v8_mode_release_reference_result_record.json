@@ -1,0 +1,66 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-mode-release-reference-result-v1",
+  "status": "complete_pass_authorize_opening_v8_projection_metrics_only",
+  "completed_date": "2026-08-15",
+  "purpose": "Seal the result-blind N192 reference calibration before opening any V8 projection CF4 or released-mode metric.",
+  "execution": {
+    "host": "syntax",
+    "git_commit": "544718c0388e6b89a3afd3e8dbe8712c6c0eba9a",
+    "started_at": "2026-08-15T21:25:31+09:00",
+    "ended_at": "2026-08-15T21:30:08+09:00",
+    "runner": "scripts/run_cf4_lg_v8_mode_release_reference.sh",
+    "monitor_commit": "4cc92a0",
+    "environment": {
+      "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/environment.txt",
+      "sha256": "e75d95084d24a202c8d13f491f766b67ce4526484109fb43228fe8dd5e973bc1",
+      "python": "3.11.15",
+      "jax": "0.10.1",
+      "jax_backend": "gpu",
+      "jax_device": "cuda:0",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "pmwd": "0.1.dev131+g0552bc013"
+    }
+  },
+  "lineage": {
+    "program": "config/p2_lg_v8_cf4_mode_release_reference.json",
+    "program_sha256": "c97a7e4c071c569fea303f9358b8ec002bc226a2359d2eeb83898d49cdc5253c",
+    "implementation": "src/cf4_lg_mode_release_reference.py",
+    "implementation_sha256": "4ecfc294cecb61293de8585807ed0d7ecd9a3f3279659e5e4cec364d7be36e52",
+    "calibration": "/gpfs/kjhan/CF4/recon/linear_cr/v8_cf4_mode_release_reference/calibration.json",
+    "calibration_sha256": "c9edb6d0a108746fe18fa75295ab73f53286a25f9aa2725d132a0560375cb988",
+    "complete_marker_sha256": "9d6aec0734ba0c45b2ffea51ef4e93c88f375e6b6c468783239eb07906c66b87",
+    "monitor_summary_sha256": "8542344fda760df2ba818222d60334b26558707854a6294475d1218e64b8851f"
+  },
+  "reference_bank": {
+    "seed_count": 256,
+    "seed_range_inclusive": [3193, 3448],
+    "calibration_count_excluding_parent3429": 255,
+    "CF4_likelihood_rows": 19316
+  },
+  "results": {
+    "L2_parent3429": {
+      "marginal_deviance": 19725.82746366961,
+      "one_sided_upper_tail_conformal_p": 0.62890625,
+      "minimum_p": 0.01,
+      "pass": true
+    },
+    "two_chain_mean_checks_all_pass": true,
+    "two_chain_homogeneity": {
+      "group_sizes": [136, 120],
+      "coordinate_count": 42,
+      "permutations": 100000,
+      "observed_max_ks_statistic": 1.4559714767729721,
+      "permutation_pvalue": 0.5596644033559665,
+      "minimum_p": 0.01,
+      "pass": true
+    }
+  },
+  "decision": {
+    "authorize_opening_V8_projection_CF4_metrics": true,
+    "next_action": "Freeze and execute the prospective all-256 V8 projection L0-L5 audit against this sealed reference calibration.",
+    "fresh_V9_authorized": false,
+    "seed_promotion_authorized": false,
+    "RAMSES_authorized": false
+  }
+}

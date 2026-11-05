@@ -1,0 +1,186 @@
+{
+  "schema": "ouruniv-cf4-q2-jax-oracle-gradient-performance-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q2",
+  "owner": "driver",
+  "plan_status": "GO_Q2_0_ONLY_Q2_1_BLOCKED",
+  "prerequisite_bundle": "Q1",
+  "prerequisite_audit": {
+    "agy": "PASS_WITH_SCIENCE_NO_GO",
+    "opus5": "UNAVAILABLE_NOT_LOGGED_IN",
+    "implementation_authorized": false,
+    "note": "Q1 NumPy oracle is validated by driver and agy; the opus5 audit could not run without a login and is not represented as a pass."
+  },
+  "fable_audit": {
+    "status": "GO_WITH_SCOPE_LIMIT",
+    "summary": "Q2.0 Q1-closure and read-only numeric preflight are approved. Q2.1–Q2.4 implementation remains blocked until Q1 is immutably baselined and all numeric feasibility conditions are satisfied.",
+    "final_goal_alignment": "DIRECT_PREREQUISITE_NOT_SUFFICIENT",
+    "required_amendments_applied": true,
+    "implementation_authorized": false,
+    "approved_scope": ["Q1 closure tests", "read-only Q2.0 numeric preflight"]
+  },
+  "final_project_goal": "Use CF4 constraints to obtain a statistically valid z=0 local-universe density/velocity posterior, construct an exact q-corrected IC with conditional high-k structure, and forward-validate a zoom IC at an effective observational resolution of <=0.3 cMpc/h.",
+  "purpose": "Promote the validated Q1 observation operator to a differentiable static-shape JAX implementation and establish value, gradient, and computational-envelope gates before any likelihood expansion.",
+  "final_goal_alignment": {
+    "necessity": "A differentiable operator that agrees with the Q1 oracle is required before sampling a CF4 z=0 posterior; otherwise optimization or HMC/SMC gradients can change the inferred field independently of the validated observation model.",
+    "sufficiency": "Q2 is necessary but not sufficient. It does not calibrate selection/LF/bias/HOD/model discrepancy, establish posterior coverage, add conditional high-k, construct ICs, run PM/HOP, or demonstrate <=0.3 cMpc/h information."
+  },
+  "scope": {
+    "development_only": true,
+    "production_inference": false,
+    "KF_EXPAND": false,
+    "z0_posterior": false,
+    "IC_generation": false,
+    "conditional_high_k": false,
+    "PM_or_HOP": false,
+    "zoom": false,
+    "GPFS": false,
+    "Slurm": false,
+    "Grok": false,
+    "science_resolution_claim": false
+  },
+  "inherited_frozen_contract": {
+    "operator": "periodic_torus_expected_cell_response",
+    "source": "src/cf4_q1_cell_integrated_convolution.py",
+    "boundary_fixture": "RSD_FOG_boundary_v1",
+    "nonboundary_fixture": "RSD_FOG_nonboundary_v1",
+    "candidate_vs_oracle_relative_l1": 0.005,
+    "candidate_vs_oracle_absolute_l1_floor": 1e-12,
+    "jax_vs_oracle_relative_l1": 1e-6,
+    "jax_vs_oracle_absolute_l1_floor": 1e-10,
+    "gradient_relative_l1": 1e-5,
+    "gradient_absolute_l1_floor": 1e-8,
+    "tail_cutoff_sigma": 8.0,
+    "tail_truncation_relative_l1": 1e-8,
+    "mass_relative": 1e-10,
+    "mass_absolute": 1e-12
+  },
+  "q1_immutable_baseline": {
+    "commit_required_before_q2_implementation": true,
+      "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+      "tree": "4444868df93572389602b518239e239591db134a",
+    "files": {
+      "src/cf4_q1_cell_integrated_convolution.py": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2",
+      "src/cf4_2mpp_boundary_stress.py": "e606a939b2935941709e825a41d4876dd714bb8a1bb91469a05aeb55dec2135c",
+      "tests/test_cf4_q1_cell_integrated_convolution.py": "d61a8bb1760161070f3827541803eb3863be583de34eadb17b318828f420d3bc",
+      "config/cf4_q1_cell_integrated_convolution_plan_v1.json": "67c0975ceffa31adb6700fb5046e783668dce134f747dd81fba2ef576f228401",
+      "config/cf4_q1_cell_integrated_convolution_result_record_v1.json": "a44b951f08ee27548a892bd6c8bfb347843e9832c59a27fc4127f88d7f3892db"
+    },
+    "status": "IMMUTABLE_COMMITTED_35_TEST_CLOSURE"
+  },
+  "q1_audit_closure_requirements": {
+    "source": "agy_and_opus5_bundle_end_audits",
+    "required_before_q2_1": true,
+    "tests": [
+      "Dedicated sigma>L (recommended sigma=2L) multi-wrap fixture with adaptive-reference agreement and a wrapped-Gaussian/Fourier limit check; do not assume unconditional 3-D uniformity for a one-dimensional LOS displacement.",
+      "Adaptive-reference checks for all six populations and at least three sources per boundary/non-boundary fixture, including the widest-sigma population.",
+      "Pre-renormalization mass defect and dropped-sliver probability are recorded and gated; post-renormalization mass is labelled by-construction only.",
+      "Clip=1e-13 and sliver-merge epsilon=1e-10 are frozen constants with bound tests, or replaced by an explicitly mass-relative rule.",
+      "Tail-cutoff 6/8/10 convergence is compared with the frozen 1e-8 tail tolerance; the sigma>L limit is interpreted through a wrapped-Gaussian/Fourier reference, not an unconditional 3-D uniform-field assertion.",
+      "Result records contain no unsupported multi-wrap claim."
+    ],
+    "status": "REQUIRED_NUMPY_CLOSURE"
+  },
+  "preflight_freeze_before_implementation": {
+    "purpose": "Measure the actual computational problem instead of confusing secure crossmatch objects with PM source particles.",
+    "required_fields": {
+      "pm_source_particles_M_max": 7077888,
+      "mesh_size_N": 32,
+      "box_size_cMpc_h": 384.0,
+      "max_sigma_fog_km_s": 300.0,
+      "max_sigma_redshift_km_s": 80.0,
+      "max_displacement_component_cMpc_h": 2.316206864681996,
+      "cell_spacing_cMpc_h": 12.0,
+      "population_count": 6
+    },
+    "known_non_equivalence": "secure_cf4_objects=16584 is not a bound on PM source-particle count; an N=192 particle mesh contains 7077888 cells/particles before zoom refinements.",
+    "displacement_definition": "d_axis_max is the one-sigma stochastic displacement component in cMpc/h: h*sigma_total/(a*H(a))*abs(rhat_axis), with h the little-h conversion, not a velocity or a cell count.",
+    "segment_bound": "K_max = 1 + sum_axis(ceil(2*T*abs(d_axis_max)/cell_spacing) + 2) = 19 for the frozen development bounds, T=8; runtime crossing_count must be <= K_max or fail closed.",
+    "status": "NUMERIC_PREFLIGHT_COMPLETE_DEVELOPMENT_BOUNDS_ONLY"
+  },
+  "frozen_error_formulas": {
+    "value_total": "value_l1 <= 1e-10 + 1e-6*oracle_l1",
+    "value_per_population": "population_l1 <= 1e-10 + 1e-6*population_oracle_l1",
+    "reported_relative": "value_l1/max(oracle_l1, 1e-10)",
+    "gradient_component": "gradient_l1 <= 1e-8 + 1e-5*gradient_reference_l1",
+    "meaning": "Absolute L1 is reported raw and the pass criterion uses the actual oracle/reference norm. The denominator floor is used only for reporting relative values, never to loosen the absolute gate."
+  },
+  "frozen_gradient_protocol": {
+    "seed": 20260904,
+    "directions": 8,
+    "finite_difference_scheme": "central_double_precision",
+    "relative_step": 1e-5,
+    "absolute_step": 1e-7,
+    "parameter_classes": ["positions", "velocities_km_s", "sigma_fog_km_s", "sigma_redshift_km_s", "population_masses", "latent_field_chain_rule", "bias_parameters_chain_rule"],
+    "topology_cases": ["periodic_seam", "TSC_knot_left", "TSC_knot_right", "half_box_minimum_image_surface", "observer_coincidence_rejection"],
+    "status": "FROZEN_BEFORE_JAX_IMPLEMENTATION"
+  },
+  "frozen_resource_ceiling": {
+    "max_host_memory_bytes": 68719476736,
+    "max_device_memory_bytes": 17179869184,
+    "max_jit_compile_seconds": 300.0,
+    "max_value_seconds_per_million_particles": 30.0,
+    "max_gradient_seconds_per_million_particles": 120.0,
+    "max_single_batch_gradient_seconds": 600.0,
+    "benchmark_required_dimensions": "Use M_pm_source_particles_max=7077888, mesh N=32, six populations, K_max=19, and the frozen development physical bounds; no substitution of M=16584.",
+    "operator_change_for_speed": "FORBIDDEN",
+    "status": "NUMERIC_CEILINGS_FROZEN_BUT_DIMENSIONS_PENDING_PREFLIGHT"
+  },
+  "static_shape_design": {
+    "requirement": "The JAX graph must have static array shapes under jit; dynamic Python lists, dynamic scatter sizes, and data-dependent shape changes are forbidden.",
+    "candidate": "Represent each particle's ordered epsilon intervals in a fixed padded array. Generate a fixed upper bound from the declared maximum displacement component and mesh spacing, mask unused intervals, and fail closed if any input exceeds the bound.",
+    "segment_bound_formula": "K_max = 1 + sum_axis(ceil(2*T*abs(d_axis_max)/cell_spacing) + 2), with T=8 and an explicit declared d_axis_max; no silent truncation.",
+    "periodic_rule": "All positions are wrapped modulo L before the Q1 cell response; the static implementation must match the torus oracle, not an open-boundary surrogate.",
+    "fallback_rule": "The NumPy Q1 oracle remains the reference. A JAX fallback or tail approximation is admissible only if its frozen error gates are met and its shape/overflow limits are explicit."
+  },
+  "work_packages": [
+    {
+      "id": "Q2.0",
+      "task": "First close the Q1 numerical-evidence requirements, then run a read-only local preflight to measure PM source-particle count, mesh/box dimensions, physical sigma bounds, displacement components, K_max, chunk size, padded-array bytes, and resource-budget dimensions. Freeze these numeric values and obtain the Q1 baseline commit before coding.",
+      "acceptance": "Every Q1 closure test passes; every required preflight field is numeric, units are explicit, the Q1 commit/SHA manifest is immutable, and computed K_max/chunk/memory fit the frozen ceilings or Q2 is NO-GO."
+    },
+    {
+      "id": "Q2.1",
+      "task": "Implement the static-shape JAX value operator as a separate development entrypoint, preserving the Q1 operator and fail-closed input/ownership checks.",
+      "acceptance": "Q2.0 is complete; jax_enable_x64 is required; no production likelihood path is changed; out-of-bound segment counts are rejected rather than truncated."
+    },
+    {
+      "id": "Q2.2",
+      "task": "Compare JAX values with the Q1 NumPy oracle on both frozen boundary and non-boundary fixtures, including per-population and exposure-weighted diagnostics.",
+      "acceptance": "The frozen scaled-L1 formulas pass for total and every population on both fixtures; raw absolute and relative values are recorded with exact fixture IDs."
+    },
+    {
+      "id": "Q2.3",
+      "task": "Validate reverse-mode AD against double-precision finite differences or analytic oracle derivatives for positions, velocities, FoG/redshift dispersion, and population masses.",
+      "acceptance": "The frozen central-difference protocol passes scaled gradient gates for all parameter classes and topology cases; NaN/Inf, branch-surface discontinuity, and interval-permutation checks fail closed."
+    },
+    {
+      "id": "Q2.4",
+      "task": "Benchmark value and gradient evaluation over the exact M_pm_source_particles_max and mesh N frozen by Q2.0, with smaller scaling points for diagnostics.",
+      "acceptance": "Measured dimensions fit every numeric resource ceiling and record peak host/device memory, compile latency, value throughput, gradient throughput, and static segment occupancy. The mathematical operator may not be degraded to meet a runtime target."
+    }
+  ],
+  "release_gates": [
+    "Q1 NumPy oracle remains unchanged and is independently reproducible.",
+    "JAX value agreement passes total and per-population frozen tolerances on both fixtures.",
+    "AD gradient agreement and knot/boundary behavior pass all frozen tolerances.",
+    "Static-shape overflow, x64, ownership, and finite-support checks are fail-closed.",
+    "Performance and memory envelope is documented; no production or posterior call is authorized by Q2 alone."
+  ],
+  "dependency_blockers": [
+    "Selection completeness/LF/mean-density and bias/HOD/model-discrepancy calibration remain a separate prerequisite.",
+    "64 development-mock calibration and untouched 256-mock coverage/held-out density-velocity frontier remain required before KF-EXPAND.",
+    "No observational <=0.3 cMpc/h claim is permitted until response/phase/cross-correlation/variance/coverage gates are complete."
+  ],
+  "audit_request": {
+    "auditor": "fable",
+    "focus": "Assess whether Q2 is the feasible and final-goal-aligned next bundle after Q1/agy, whether static-shape JAX and gradient requirements are sufficient and realistic, and whether any scope creep or missing blocker exists. Return GO/CONDITIONAL-GO/NO-GO.",
+    "approval_required_before_implementation": true
+  },
+  "execution_policy": {
+    "use_gpfs": false,
+    "use_slurm": false,
+    "production_execution": false,
+    "do_not_modify_shared_context": true
+  }
+}

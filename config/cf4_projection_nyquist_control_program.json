@@ -1,0 +1,95 @@
+{
+  "schema": "ouruniv-cf4-projection-nyquist-control-program-v1",
+  "status": "frozen_before_N576_to_N192_white_field_control",
+  "frozen_date": "2026-08-16",
+  "purpose": "Use result-independent IID white fields to decide whether the exact legacy N576-to-N192 output-Nyquist handling causes the V8 high-shell power deficit, and whether a deterministic variance-preserving +/- Nyquist fold repairs that numerical mechanism.",
+  "implementation": {
+    "path": "src/cf4_projection_nyquist_control.py",
+    "sha256": "04e1c815c413cdfe6e2bb81e594e4f6826ea5744fbf1b7dc14e628bf7ea1b8a7"
+  },
+  "legacy_projection": {
+    "path": "src/cf4_make_ic.py",
+    "sha256": "bc5ede41920df78d1561ac0b6dc3fbca97d59b2ef347f09f72bb81170ed3ee63",
+    "callable": "fourier_resample_white_field",
+    "policy": "The first full-size control field must be projected by both the production callable and the precomputed-rFFT helper; the two float32 spatial results must agree at the frozen normalized-error tolerances."
+  },
+  "failed_V8_audit": {
+    "path": "config/cf4_lg_v8_mode_release_audit_result_record.json",
+    "sha256": "348679dccea1a0145fb0108c78adbd5f8fb0a401dbfa8f1fba529e4370107ade",
+    "required_status": "complete_fail_current_N64_freeze_architecture_V9_no_go"
+  },
+  "information_firewall": {
+    "consumed_white_field_control_only": true,
+    "CF4_catalog_read": false,
+    "CF4_forward_operator_built": false,
+    "existing_V8_field_read": false,
+    "new_constrained_field_constructed": false,
+    "proposal_or_seed_selected": false,
+    "threshold_retuning_after_control": false,
+    "retroactive_V8_mutation_allowed": false,
+    "V9_or_RAMSES_authorized": false
+  },
+  "mesh": {
+    "source_N": 576,
+    "output_N": 192,
+    "frozen_N": 64,
+    "box_size_mpc_h": 384.0,
+    "source_dtype": "float64",
+    "output_dtype": "float32"
+  },
+  "sampling": {
+    "rng": "NumPy Generator PCG64DXSM",
+    "distribution": "independent standard normal in N576 spatial cells",
+    "seeds": [2026081601, 2026081602, 2026081603, 2026081604, 2026081605, 2026081606, 2026081607, 2026081608],
+    "count": 8,
+    "streaming_policy": "One source and its two N192 projections at a time; retain only scalar shell metrics."
+  },
+  "shells": {
+    "mask": "Exact cubical F192 minus F64 rFFT mask used by the sealed V8 audit.",
+    "edges_h_mpc": [0.0, 0.65, 0.80, 1.00, 1.25, 1.55, 1.90, 2.30, null],
+    "regions": {
+      "interior": "No component lies on the N192 output-Nyquist index.",
+      "boundary": "At least one of kx, ky, kz lies on the N192 output-Nyquist index."
+    },
+    "power": "Hermitian-weighted mean abs(norm='ortho' rFFT coefficient)^2."
+  },
+  "comparison": {
+    "V8_released_shell_mean_Pwhite": [
+      1.004427531910144,
+      1.0054622879126438,
+      1.0000857950723854,
+      0.9989206898517005,
+      0.9990138740039589,
+      0.9979532752032573,
+      0.9914083656977002,
+      0.9813580703909333
+    ],
+    "comparison_scope": "Only shells with nonzero output-Nyquist boundary weight enter the legacy-to-V8 mechanism gate."
+  },
+  "gates": {
+    "helper_relative_RMS_max": 1e-7,
+    "helper_maximum_normalized_error_max": 1e-6,
+    "white_absolute_floor": 0.005,
+    "boundary_white_absolute_floor": 0.01,
+    "standard_error_multiple": 5.0,
+    "legacy_boundary_deficit_min": 0.05,
+    "legacy_V8_shell_match_absolute_max": 0.01,
+    "all_required": [
+      "The legacy helper reproduces the production callable.",
+      "Legacy non-Nyquist interiors remain statistically white.",
+      "The variance-preserving fold is statistically white in every released shell and on every affected Nyquist boundary subset.",
+      "The legacy boundary has a material power deficit.",
+      "The legacy white-field shell means match the sealed V8 means on all boundary-affected shells.",
+      "The variance-preserving fold is closer to unit power than legacy on every boundary-affected shell."
+    ]
+  },
+  "decision": {
+    "pass": "Isolate the numerical high-shell failure to output-Nyquist handling and authorize a separately frozen future-only projection contract. This does not repair the independent CF4 posterior-family failure and does not authorize V9, seed promotion, or RAMSES.",
+    "fail": "Do not alter projection. Expand the numerical control before designing any new constrained-realization architecture."
+  },
+  "storage": {
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/projection_nyquist_control",
+    "canonical_output": "/gpfs/kjhan/CF4/recon/linear_cr/projection_nyquist_control/result.json",
+    "write_policy": "exclusive create; lifecycle and output files are immutable"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "ouruniv-cf4-lg-conditioned-parent-b3292-s40274-result-v1",
+  "date": "2026-09-22",
+  "stage": "7/8 parent RAMSES z=0 structure validation completed",
+  "status": "seed_40274_rejected_after_phase_identical_ramses_forward_validation",
+  "large_scale_parent": {
+    "parent_seed": 3292,
+    "conditioning_beta": 0.25,
+    "frozen_k_max_h_mpc": 0.6
+  },
+  "selected_candidate": {
+    "search_index": 173,
+    "field_seed": 40274,
+    "geometry_seed": 41274,
+    "likelihood_noise_seed": 42274,
+    "midpoint_seed": 43274,
+    "search_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_pair_diagnostic_v3/result.json",
+    "reproduction_result": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_pair_v3/result.json",
+    "reproduction_result_sha256": "a6c42c04a6c8b3f64ce30d2da946e14ea9ccfccc78100d9d02c74954cc65768e",
+    "field": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_pair_v3/passing_field_000.npz",
+    "field_file_sha256": "4f3e1c86b84a7385ac26aae6b3e01edb3e32bda51927e76a080bf5adbaba8324",
+    "pm_pair": {
+      "masses_msun_h": [1379088281250.0, 943586718750.0],
+      "mass_ratio": 1.4615384615384615,
+      "separation_mpc_h": 0.4614345442916884,
+      "midpoint_offset_mpc_h": 1.9552699754619494,
+      "isolation_mpc_h": 3.9296034486667986,
+      "peculiar_radial_velocity_km_s": -105.46330671983478,
+      "total_radial_velocity_km_s": -59.319852290665935,
+      "tangential_velocity_km_s": 37.37234026109014,
+      "ranking_score": 0.9005385112166512
+    }
+  },
+  "grafic_parent_ic": {
+    "job": 396126,
+    "directory": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_pair_v3/grafic_l9",
+    "mesh_size": 512,
+    "spacing_mpc_h": 0.75,
+    "phase_transfer_median_r": 1.0,
+    "phase_transfer_min_r": 0.999,
+    "transfer_sha256": "b4c3e6cdb05187fb0a6382fd2769f2dfabe31028c4f6e947833f6eccc96a24c6"
+  },
+  "ramses_parent_forward": {
+    "preflight_job": 396127,
+    "z0_job": 396128,
+    "run": "/gpfs/kjhan/CF4/ramses/cf4_lg_b3292_s40274_parent_z0_v1/job_396128",
+    "final_aexp": 1.00741764473610,
+    "fine_steps": 157,
+    "mass_conservation_error": 0.0,
+    "energy_conservation_error": -0.00306,
+    "elapsed": "00:11:20",
+    "peak_rss_kib": 51163324
+  },
+  "galaxyfinder_parent_validation": {
+    "pipeline_job": 396136,
+    "initial_validation_job": 396137,
+    "cutflow_diagnostic_job": 396150,
+    "finder": "GalaxyFinder RAMSES NewDD plus variable-mass opFoF",
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40274_parent_galaxyfinder_v1.json",
+    "result_sha256": "dfe3ccefe5d7ec65a94a4f20289e53aae05c01ff89f3373c978db2378e9bec34",
+    "halo_count": 142450,
+    "hard_pair_count": 0,
+    "near_miss": {
+      "masses_msun_h": [3050766305116.937, 1815932324474.3687],
+      "separation_mpc_h": 1.668241503689189,
+      "midpoint_offset_mpc_h": 3.964601453124395,
+      "isolation_mpc_h": 4.339162392255337,
+      "failed_cuts": ["separation"]
+    },
+    "virgo_mass_msun_h": 339906212495173.5,
+    "coma_mass_msun_h": 593010859880499.0
+  },
+  "hop_parent_validation": {
+    "pipeline_job": 396138,
+    "validation_job": 396157,
+    "result": "/gpfs/kjhan/CF4/diagnostics/cf4_lg_b3292_s40274_parent_hop_v1.json",
+    "result_sha256": "ba174103c16c3ff5f641d51adc56c93f129ebbf1977c28b7365b25b38f66d58a",
+    "catalog_sha256": "ccabd87492a922eca3bb84a78f701834f3d98784641589be3f811d50f68971e3",
+    "group_count": 74614,
+    "independent_hard_pair_count": 0,
+    "virgo_mass_msun_h": 332445922099200.0,
+    "coma_mass_msun_h": 558216888975360.0,
+    "decision": "HOP_PARENT_STRUCTURE_FAIL"
+  },
+  "decision": {
+    "selected_L9_field": "SEED_40274_REJECTED",
+    "production_IC": "NO_GO",
+    "zoom_IC": "NO_GO_FOR_SEED_40274",
+    "reason": "The PM pair does not survive the phase-identical RAMSES forward model as two halos within the frozen 0.3-1.2 Mpc/h separation interval; independent HOP also finds no passing pair.",
+    "next": "Run the preregistered four-candidate PM-to-RAMSES survival calibration (Slurm array 396161) on wider PM pairs before selecting the production parent and constructing its zoom mask."
+  }
+}

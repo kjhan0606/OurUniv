@@ -1,0 +1,116 @@
+{
+  "schema": "hong2021-v64-train-only-empirical-rank-sampler-alignment-result-record-v1",
+  "status": "complete_no_refit_audit_selected_train_only_structure_factorization",
+  "program": "config/hong2021_v64_sampler_alignment_audit_program.json",
+  "program_sha256": "f64d45a75258682ae3200605a740876c1326b80ec811a91ee54fd97bc4e946ec",
+  "code_commit": "52e5e11ad3ddd4d3f9dd3abeb3f8fa11371f10a7",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v64_sampler_alignment_audit/audit.json",
+    "sha256": "97707cec836db1d55467e4c00bbba1adceb7aa4d473f8b78383df5456bc1fb33",
+    "decision_digest_sha256": "a56108d72cf34548a69a017ce5a649a1d2e623ceca5264d90c8dffc58fb9efbe",
+    "classification": "sampler_aligned_tail_repair_is_not_a_sufficient_single_model_change",
+    "next": "freeze_a_train_only_copula_or_joint_structure_audit_before_any_refit",
+    "candidate_selected": false
+  },
+  "tail_sampler_alignment": {
+    "material_sampler_mismatch": false,
+    "material_threshold_absolute_log_ratio": 0.09531017980432493,
+    "maximum_absolute_empirical_rank_16_over_Gauss_Hermite_log_ratio": 0.040055829171692314,
+    "maximum_empirical_rank_8_to_16_relative_difference": 0.09010304922672807,
+    "finite_rank_stability": true,
+    "domains": {
+      "TNG100": {
+        "Gauss_Hermite_over_truth": 0.9583202946032834,
+        "empirical_rank_16_over_truth": 0.9206926154391961,
+        "empirical_rank_8_over_truth": 0.981971653593334,
+        "empirical_rank_16_over_Gauss_Hermite_absolute_log_ratio": 0.040055829171692314
+      },
+      "SIMBA": {
+        "Gauss_Hermite_over_truth": 1.0747899988406202,
+        "empirical_rank_16_over_truth": 1.0471773465960421,
+        "empirical_rank_8_over_truth": 1.0631275740420558,
+        "empirical_rank_16_over_Gauss_Hermite_absolute_log_ratio": 0.02602698955779428
+      },
+      "Swift": {
+        "Gauss_Hermite_over_truth": 0.9765878761119857,
+        "empirical_rank_16_over_truth": 0.9610063439382904,
+        "empirical_rank_8_over_truth": 0.8744167420232207,
+        "empirical_rank_16_over_Gauss_Hermite_absolute_log_ratio": 0.016083726824781173
+      }
+    }
+  },
+  "train_only_sub_mpc_pair_diagnostic": {
+    "pair_score": 0.10113162907688746,
+    "domains": {
+      "TNG100": {
+        "0.3125_mpc_h_predicted_over_truth": 0.5666747008596142,
+        "0.625_mpc_h_predicted_over_truth": 0.6309998711260817,
+        "0.9375_mpc_h_predicted_over_truth": 0.7667238760676167
+      },
+      "SIMBA": {
+        "0.3125_mpc_h_predicted_over_truth": 0.8611815022003605,
+        "0.625_mpc_h_predicted_over_truth": 1.1427963799533913,
+        "0.9375_mpc_h_predicted_over_truth": 0.9082331072720853
+      },
+      "Swift": {
+        "0.3125_mpc_h_predicted_over_truth": 2.235866138365406,
+        "0.625_mpc_h_predicted_over_truth": 1.2667048613473662,
+        "0.9375_mpc_h_predicted_over_truth": 1.973978369015813
+      }
+    }
+  },
+  "gradient_evidence": {
+    "bounded_NLL_output_gradient_L2": 0.006798829999418814,
+    "V63_Gauss_Hermite_score_output_gradient_L2": 0.06028579658511758,
+    "sampler_aligned_tail_score_output_gradient_L2": 0.055181498467344,
+    "sub_mpc_pair_score_output_gradient_L2": 0.3629177634347314,
+    "coefficient_0_1_scaled_tail_to_NLL_L2_ratio": 0.811632273083179,
+    "coefficient_0_1_scaled_pair_to_NLL_L2_ratio": 5.337944373748936,
+    "tail_to_pair_gradient_cosine": 0.01328329435869713,
+    "tail_to_pair_gradient_dot_product": 0.0002660158489367199,
+    "tail_gradient_scale_pass": true,
+    "pair_gradient_scale_pass": true,
+    "pair_conflict": false
+  },
+  "numerical_and_resource_integrity": {
+    "maximum_inverse_CDF_error": 2.980232238769531e-07,
+    "numerical_pass": true,
+    "peak_allocated_bytes": 1215043072,
+    "peak_allocated_bytes_limit": 30064771072,
+    "memory_pass": true,
+    "pytest_passed": 486,
+    "pytest_log_sha256": "26bf90d9d4c4fa5dfa54a939102ac086e6509aa5f83521031f0049d806a97331",
+    "audit_log_sha256": "97707cec836db1d55467e4c00bbba1adceb7aa4d473f8b78383df5456bc1fb33",
+    "sequence_status": "complete_no_refit_train_only_sampler_alignment_audit",
+    "sequence_status_sha256": "4f48fae864843671de74adb9e350efe9885759ed84215799b163d067e0efe116"
+  },
+  "scientific_conclusion": [
+    "The finite 16-member empirical-rank sampler changes the V63 q99.9 physical moment by at most 4.01% relative to the 64-point Gauss-Hermite expectation. This is below the frozen 10% materiality threshold and cannot explain the sealed development failure.",
+    "The train-only sub-Mpc pair diagnostic is instead strongly domain dependent: it underpredicts TNG100 correlations, is close for SIMBA, and overpredicts Swift correlations.",
+    "The coefficient-scaled pair-score output gradient is 5.34 times the bounded-NLL gradient and is nearly orthogonal to the tail gradient. A marginal tail-only replacement therefore lacks a causal path to the remaining structure error.",
+    "A multi-object train-only factorization must next distinguish donor-rank dependence from query-local parameter spatial arrangement before any new fit is authorized."
+  ],
+  "selected_next_step": {
+    "action": "freeze and run a no-refit multi-object train-only donor-dependence versus query-parameter structure audit",
+    "required_controls": [
+      "source-balanced cross-domain donor ranks",
+      "same-domain donor ranks",
+      "spatially permuted rank fields with the exact rank multiset preserved",
+      "spatially rolled query-local parameter fields with ranks unchanged",
+      "at least 16 immutable train query objects per domain and the three frozen 0-1 Mpc/h separations"
+    ],
+    "selection_question": "does same-domain rank dependence robustly improve train pair ratios, or is a direct query-parameter pair objective the only gradient-bearing common repair?"
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "optimizer_step_performed": false,
+    "validation_accessed": false,
+    "new_development_accessed": false,
+    "development_rank_or_selection_accessed": false,
+    "posthoc_coefficient_or_threshold_tuning_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

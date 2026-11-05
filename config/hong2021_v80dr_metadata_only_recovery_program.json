@@ -1,0 +1,162 @@
+{
+  "schema": "hong2021-v80dr-metadata-only-recovery-program-v1",
+  "status": "frozen_before_copy_or_metadata_mutation_or_evaluator_recovery",
+  "frozen_at": "2026-08-12T20:45:53+09:00",
+  "purpose": "Recover the one authorized V80D engineering diagnostic without modifying its sealed ensembles or resampling. Make exact copies of all six complete HDF5 files, add only the evaluator-required diagnostic_k_h_mpc=1.0 root attribute to the copies, prove every pre-existing dataset byte and attribute is unchanged, then run the frozen evaluator and V79 formulas once as non-independent engineering evidence.",
+  "engineering_only": true,
+  "statistically_valid_V79_reexecution": false,
+  "parent_failure": {
+    "terminal_seal": "config/hong2021_v80d_terminal_failure_seal.json",
+    "terminal_seal_sha256": "8d205293101a5c49d00527fef16cdf7208c6ddd5baae4254da15ff6296088e3c",
+    "classification": "terminal_engineering_execution_failure_not_a_statistical_model_rejection_or_acceptance",
+    "metrics_created": 0,
+    "formula_diagnostic_created": false,
+    "V79_global_p_created": false
+  },
+  "frozen_failure_state": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence",
+    "status": "failed_terminal_V80D_no_additional_fix_or_retry exit=1 previous=evaluating_six_V80D_engineering_ensembles",
+    "status_sha256": "07fae3ab53333f384ac5d7bab49ed3f488a2ff494e8299841c628614f45964c0",
+    "sealed_result_sha256": "8d205293101a5c49d00527fef16cdf7208c6ddd5baae4254da15ff6296088e3c",
+    "sample_log_sha256": "4d019ff3db9073e99f655dd372dfd4a4688d965ff4a0899d00ab186f95c8fcc0",
+    "original_ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles",
+    "original_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_report/diagnostic_report.json",
+    "original_metrics_files": 0,
+    "all_six_complete": true,
+    "all_six_missing_diagnostic_k_h_mpc": true
+  },
+  "sealed_source_ensembles": {
+    "candidate/tng": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/tng/ensemble16.h5",
+      "bytes": 606548712,
+      "sha256": "61225065054f2865caa9ac2e18b5c97fbb5b71364bcbf2144eac1caca8cba177"
+    },
+    "control/tng": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/tng/ensemble16.h5",
+      "bytes": 606548712,
+      "sha256": "05e1c6d178e0994e820b3cf222910280a559c9b4bd8ee7b681ad983a223e2790"
+    },
+    "candidate/simba_dev": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/simba_dev/ensemble16.h5",
+      "bytes": 606649567,
+      "sha256": "efa51981f650740c1e3cc0af88d7928e30d03c9c1fbb5fb212c9d9a4f963590e"
+    },
+    "control/simba_dev": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/simba_dev/ensemble16.h5",
+      "bytes": 606649567,
+      "sha256": "a2deb1df44e602bdfd434011d92affade7bfa853825a56b13f80e321e8967e72"
+    },
+    "candidate/swift_dev": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/swift_dev/ensemble16.h5",
+      "bytes": 606474939,
+      "sha256": "647878ca93336213e12173f05d69f746d50bd14c16d2c8d7d24532d9d2a0fb9e"
+    },
+    "control/swift_dev": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/swift_dev/ensemble16.h5",
+      "bytes": 606474939,
+      "sha256": "90d741da0f2e8c2be6466106f5c806f0cd4eb6fc11a67c0fecc280e6b233d3a1"
+    }
+  },
+  "only_authorized_mutation": {
+    "target": "new copies under outputs.recovered_ensemble_root only",
+    "attribute": {
+      "diagnostic_k_h_mpc": 1.0
+    },
+    "value_type": "HDF5 float64 root attribute",
+    "scientific_role": "fixed diagnostic boundary inherited by centered-residual evaluations; it labels low-k reporting and does not alter any generated, conditional-mean, truth, source-index, innovation, calibration, sampling, metric-threshold, or decision data",
+    "modify_original_ensembles": false,
+    "forbidden": "any original-file mutation, dataset mutation, pre-existing attribute mutation, resampling, calibration, seed, member, source-index, sampler, checkpoint, metric, threshold, candidate, control, or formula change"
+  },
+  "mandatory_integrity_proof": {
+    "pre_copy": "verify every sealed source file SHA256, expected schema/program/complete metadata, and absence of diagnostic_k_h_mpc",
+    "exact_copy": "require the copied file SHA256 to equal the sealed source SHA256 before adding metadata",
+    "dataset_proof": "stream each dataset before and after metadata insertion; require identical name, shape, dtype, and raw C-order byte SHA256 manifests",
+    "attribute_proof": "require every pre-existing root attribute to remain identical and exactly one new diagnostic_k_h_mpc float64 value 1.0",
+    "source_proof": "rehash each sealed source after copy mutation and require its original SHA256",
+    "atomicity": "build the recovered root under a .partial directory and rename it only after all six proofs pass",
+    "failure_policy": "preserve partial evidence and stop; no repair of the repair and no retry"
+  },
+  "frozen_scientific_contract": {
+    "V80D_program": "config/hong2021_v80d_engineering_diagnostic_program.json",
+    "V80D_program_sha256": "318a01d4b28e2950624af0835836feaf9884db78a6a098b3571b114312587fc6",
+    "V80_candidate_program": "config/hong2021_v80_single_candidate_program.json",
+    "V80_candidate_program_sha256": "43d41ae9722e2321d3a206492d543e39ba5e8b22868e4f3a755cd1b2147dc205",
+    "V79_formula_program": "config/hong2021_v79_complete_candidate_agnostic_gate_program.json",
+    "V79_formula_program_sha256": "1234ac864343b41cb08f6788892f7dcb2db60b68843bc00edad5d15284e3956d",
+    "source_indices_members_seeds_sampler_checkpoints_calibration": "exactly unchanged from V80D",
+    "evaluator": "exact frozen V80 wrapper and residual evaluator at voxel_mpc_h=0.3125",
+    "formula": "exact frozen V79 physical-energy and rank-coverage formulas with 99,999 relabelings, reported only diagnostically",
+    "formula_global_alpha_reference": 0.05,
+    "post_recovery_selection_or_tuning": false
+  },
+  "implementation_sources": {
+    "V80DR_recovery": {
+      "path": "src/hong2021_v80dr_metadata_recovery.py",
+      "sha256": "bc0f669ed184de96d52c4f758d8ee49e06ac0c7eedb55ab114e17a4946ddf11c"
+    },
+    "V80DR_report": {
+      "path": "src/hong2021_v80dr_engineering_report.py",
+      "sha256": "483425c18846716c37f50b3ca46329cc35f640193713059e94e543584810a3de"
+    },
+    "V80DR_tests": {
+      "path": "tests/test_hong2021_v80dr_metadata_recovery.py",
+      "sha256": "637994479c3e2e9c039f45fc1965ded3cd8b57eb82dc260e1bc2a56c726b8f0f"
+    },
+    "V80_sampler": {
+      "path": "src/hong2021_v80_sample.py",
+      "sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080"
+    },
+    "V80_evaluator_wrapper": {
+      "path": "src/hong2021_v80_evaluate.py",
+      "sha256": "f09b552c25c1a6bc33387c224d4bd4a45568cc71ef09d078843ec62ab2864c6d"
+    },
+    "frozen_residual_evaluator": {
+      "path": "src/hong2021_residual_evaluate.py",
+      "sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42"
+    },
+    "V79_formula_source": {
+      "path": "src/hong2021_v79_complete_gate.py",
+      "sha256": "ea0d60d48b4d8652b78c1410306de7e1b6cd73e4a50af544b2df38ef7031288d"
+    },
+    "V72_metadata_recovery_precedent": {
+      "path": "config/hong2021_v72_stage_A_evaluator_metadata_recovery_program.json",
+      "sha256": "8ad681eb58075701ed680dada751b7e2f659d9850bdede9eab4d209fbf86a0e9"
+    }
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_sequence",
+    "recovery_record": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_sequence/recovery_record.json",
+    "recovered_ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_engineering_report/diagnostic_report.json",
+    "refuse_existing": true
+  },
+  "execution_sequence": [
+    "run the full test suite on clean frozen Lageunha",
+    "copy and metadata-repair all six ensembles once with the mandatory integrity proof",
+    "write and validate the canonical recovery record before evaluation",
+    "run exactly six frozen evaluator invocations on the recovered copies",
+    "run the exact frozen V79 physical-energy and rank-coverage formulas once diagnostically",
+    "seal the result without any V79 manifest or gate"
+  ],
+  "decision_interpretation": {
+    "formula_pass": "V80 is promising enough to audit genuinely independent simulation-object availability and cost and to freeze a prospective V81 design. This is not a V79 pass.",
+    "formula_fail": "Stop V80 and do not spend independent validation objects on it.",
+    "execution_failure": "Seal and stop without another metadata repair, evaluator retry, or report retry.",
+    "no_global_type_I_error_claim": true,
+    "no_target_unseen_claim": true
+  },
+  "authorization": {
+    "user_instruction": "The user explicitly approved the recommended metadata-only recovery with '승인'.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "user_approved_metadata_only_recovery": true,
+    "copy_sealed_ensembles": true,
+    "add_only_diagnostic_k_h_mpc_1": true,
+    "run_frozen_evaluator_and_formula_diagnostic_once": true,
+    "resampling": false,
+    "modify_original_ensembles": false,
+    "V79_gate_or_manifest": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "modify_or_stop_RAMSES": false,
+    "automatic_next_if_promising": "audit availability and cost of genuinely independent simulation validation objects, freeze a V81 design, and stop for explicit approval before acquiring or opening them"
+  }
+}

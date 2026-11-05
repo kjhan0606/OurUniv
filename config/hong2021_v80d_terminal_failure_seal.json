@@ -1,0 +1,125 @@
+{
+  "schema": "hong2021-v80d-engineering-terminal-failure-seal-v1",
+  "status": "sealed_engineering_evaluator_metadata_contract_failure_no_retry",
+  "sealed_at": "2026-08-12T20:22:20+09:00",
+  "purpose": "Seal the single authorized non-independent V80D engineering diagnostic after all six ensembles were generated successfully but the frozen evaluator rejected a missing HDF5 root attribute before producing any metric. Preserve every ensemble and log, prohibit metadata repair or evaluator retry under V80D, and prevent this execution from being represented as a V79 result or as evidence for V81 validation spending.",
+  "diagnostic_program": {
+    "path": "config/hong2021_v80d_engineering_diagnostic_program.json",
+    "sha256": "318a01d4b28e2950624af0835836feaf9884db78a6a098b3571b114312587fc6",
+    "freeze_commit": "c0484cedcb0286964413cca1a291e31e8a23badf",
+    "freeze_commit_time": "2026-08-12T19:34:00+09:00",
+    "engineering_only": true,
+    "statistically_valid_V79_reexecution": false,
+    "additional_failure_fix_and_retry_authorized": false
+  },
+  "execution": {
+    "host": "Lageunha",
+    "runner": "scripts/hong2021_v80d_engineering_lageunha.sh",
+    "runner_sha256": "f61486d5e2a2cb34e85f1042c6da60bdcee933da1b1f4ded005d615a4cbb32d9",
+    "runner_commit": "ea5c3ab1b3ee92b18f18707a9beffbb9d76c18e1",
+    "runner_commit_time": "2026-08-12T19:36:05+09:00",
+    "tmux_session": "hong_v80d_engineering",
+    "tmux_auto_exited": true,
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence/status",
+    "status_sha256": "07fae3ab53333f384ac5d7bab49ed3f488a2ff494e8299841c628614f45964c0",
+    "status": "failed_terminal_V80D_no_additional_fix_or_retry exit=1 previous=evaluating_six_V80D_engineering_ensembles",
+    "RAMSES_CPU_set": "0-63",
+    "V80D_sampling_GPU": "NVIDIA RTX 5000 Ada Generation GPU 0",
+    "V80D_evaluator_CPU_sets": ["64-73", "74-83", "84-93", "94-103", "104-113", "114-123"],
+    "RAMSES_modified_or_stopped": false
+  },
+  "completed_pre_failure_steps": {
+    "Lageunha_full_tests": "657 passed in 65.07s",
+    "pytest_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence/pytest.log",
+    "pytest_log_sha256": "baac351b4dc2950f4b654a8ae781c8809b390b72577d7772f02782cd8a70cd1e",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence/preflight.json",
+    "preflight_sha256": "a21bf95df3e05704aaa3fb2e376d5d9b36228402e83e6b64343c7a4978fc2319",
+    "preflight_decision_digest_sha256": "778a9e4c14aa75540a1580e5c9ac2cb2af9f8355c077ec40df49f06772600048",
+    "sample_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence/sample.log",
+    "sample_log_sha256": "4d019ff3db9073e99f655dd372dfd4a4688d965ff4a0899d00ab186f95c8fcc0",
+    "sampling": "complete 32 queries x 16 members x candidate/control for each of TNG100, SIMBA, and Swift",
+    "sampling_peak_GPU_allocated_bytes": 1510728192,
+    "all_six_ensemble_files_closed_and_atomically_renamed": true,
+    "partial_ensemble_files_remaining": false
+  },
+  "failure": {
+    "phase": "parallel evaluation startup for all six completed engineering ensembles",
+    "exception": "KeyError: Unable to synchronously open attribute (can't locate attribute: 'diagnostic_k_h_mpc')",
+    "evaluator_entry_source": "src/hong2021_v80_evaluate.py",
+    "evaluator_entry_source_sha256": "f09b552c25c1a6bc33387c224d4bd4a45568cc71ef09d078843ec62ab2864c6d",
+    "frozen_evaluator_source": "src/hong2021_residual_evaluate.py",
+    "frozen_evaluator_source_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "frozen_evaluator_line": 219,
+    "operation": "read float(handle.attrs['diagnostic_k_h_mpc']) before metric computation",
+    "root_cause": "The V80 sampler writes only the frozen domain expected_attrs plus schema, arm, candidate_program_sha256, and calibration_sha256. The frozen expected_attrs do not contain diagnostic_k_h_mpc, while the reused residual evaluator requires that root attribute. All six ensembles therefore have the same sampler-evaluator metadata contract mismatch.",
+    "generated_density_fields_failed": false,
+    "scientific_statistical_result_available": false,
+    "engineering_formula_diagnostic_available": false,
+    "V79_global_p_available": false,
+    "classification": "terminal_engineering_execution_failure_not_a_statistical_model_rejection_or_acceptance"
+  },
+  "preserved_complete_ensembles": {
+    "candidate_TNG100": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/tng/ensemble16.h5",
+      "bytes": 606548712,
+      "sha256": "61225065054f2865caa9ac2e18b5c97fbb5b71364bcbf2144eac1caca8cba177"
+    },
+    "control_TNG100": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/tng/ensemble16.h5",
+      "bytes": 606548712,
+      "sha256": "05e1c6d178e0994e820b3cf222910280a559c9b4bd8ee7b681ad983a223e2790"
+    },
+    "candidate_SIMBA": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/simba_dev/ensemble16.h5",
+      "bytes": 606649567,
+      "sha256": "efa51981f650740c1e3cc0af88d7928e30d03c9c1fbb5fb212c9d9a4f963590e"
+    },
+    "control_SIMBA": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/simba_dev/ensemble16.h5",
+      "bytes": 606649567,
+      "sha256": "a2deb1df44e602bdfd434011d92affade7bfa853825a56b13f80e321e8967e72"
+    },
+    "candidate_Swift": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/candidate/swift_dev/ensemble16.h5",
+      "bytes": 606474939,
+      "sha256": "647878ca93336213e12173f05d69f746d50bd14c16d2c8d7d24532d9d2a0fb9e"
+    },
+    "control_Swift": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles/control/swift_dev/ensemble16.h5",
+      "bytes": 606474939,
+      "sha256": "90d741da0f2e8c2be6466106f5c806f0cd4eb6fc11a67c0fecc280e6b233d3a1"
+    },
+    "all_six_missing_diagnostic_k_h_mpc": true,
+    "ensemble_files_deleted_renamed_or_repaired_after_failure": false
+  },
+  "preserved_evaluation_logs": {
+    "candidate_TNG100_sha256": "4bdf8b845adc393f3d6c94948a3d568f3b0b46cf365c625a8c12fb58c3084769",
+    "control_TNG100_sha256": "0de72abf82d02aa5cbe37d252667c7aa8ee66d8de1da9d9d9fc47c7d91543c2b",
+    "candidate_SIMBA_sha256": "3e5d44a751f3952925e83014f6abb766e3bf7206276a0be0b7bac877b4f06c80",
+    "control_SIMBA_sha256": "84b8d20ec01754c7f9972363eb355fb333ddb3aa1343b80ce59663975afd3878",
+    "candidate_Swift_sha256": "89155387de81e206e43002a7e2cb8935302bb564ead31b93c25d869fae585bf7",
+    "control_Swift_sha256": "8e7280ab7e52d638ecc1bf9095ec2d2ff9a6ef5d4888bec3dfdc8cd8f8a4f113",
+    "metrics_files_created": 0
+  },
+  "unperformed_steps": {
+    "V80D_formula_report": false,
+    "V79_manifest_or_gate": false,
+    "V79_decision_or_gate_seal": false,
+    "V81_independent_input_availability_audit": false,
+    "V81_design_freeze": false,
+    "new_independent_simulation_payload_access": false,
+    "V72_stage_B_access": false,
+    "Astrid_or_EAGLE_access": false
+  },
+  "terminal_policy": {
+    "V80D_retry_authorized": false,
+    "metadata_attribute_repair_authorized": false,
+    "evaluator_retry_authorized": false,
+    "resampling_authorized": false,
+    "run_V79_gate_authorized": false,
+    "V81_automatic_audit_triggered": false,
+    "reason_V81_not_triggered": "The prospectively frozen trigger required a completed formula diagnostic that was scientifically promising. No metric or formula diagnostic exists.",
+    "next": "Stop V80D. A metadata-only recovery and first evaluator execution would require a new explicit user authorization and a newly frozen recovery program; it could remain engineering evidence only and could never become V79 completion. Do not acquire or open independent V81 validation data on the basis of this failed diagnostic."
+  },
+  "decision_digest_sha256": "def3afd1efcb67239b86eb544f46bc0231b16cf00f324dc14400d7b6d91e5ef0"
+}

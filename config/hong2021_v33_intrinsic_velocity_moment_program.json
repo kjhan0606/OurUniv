@@ -1,0 +1,121 @@
+{
+  "schema": "hong2021-v33-intrinsic-velocity-second-moment-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Reconstruct the byte-equivalent V14 development observations from raw galaxy catalogues while retaining the previously discarded intrinsic within-voxel radial-velocity second moment, then quantify its incremental validation information before any new generative training.",
+  "parent_evidence": {
+    "v32_record": "config/hong2021_v32_context_audit_record.json",
+    "v32_record_sha256": "b7edcd785ba1b5d00159eebb98be0cb9300618441618f9de7f866e86597fe57c",
+    "required_classification": "velocity_second_moment_supported_without_linear_local_patch_gain",
+    "required_next": "rebuild_development_inputs_with_explicit_velocity_second_moments_before_generative_training"
+  },
+  "input_definition": {
+    "channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s",
+      "intrinsic_within_voxel_radial_velocity_dispersion_km_s"
+    ],
+    "radial_velocity": "dot(galaxy_velocity-observer_velocity, periodic_minimum_image(galaxy_position-observer_position)/radius)",
+    "dispersion": "sqrt(sum_i((v_i-vbar)^2)/(N-1)) for N>=2; zero for N<2; equal catalogue weights",
+    "assignment": "the exact frozen nearest-voxel assignment, periodic cube, latitude mask, observer, galaxy selection, and cube origin used by V14",
+    "important_distinction": "intrinsic catalogue velocity dispersion is not propagated observational uncertainty of the mean"
+  },
+  "datasets": {
+    "TNG100": {
+      "execution_host": "syntax",
+      "raw_catalogue_root": "/scratch/kjhan/IllustrisTNG/TNG100-1/output/groups_099",
+      "raw_catalogue_files_expected": 448,
+      "raw_subhalos_expected": 4371211,
+      "galaxy_selection": "finite SubhaloStellarPhotometrics[:,1] and M_B<-15",
+      "train": {
+        "source": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5",
+        "source_sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d",
+        "objects": 432,
+        "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5"
+      },
+      "validation": {
+        "source": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5",
+        "source_sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65",
+        "objects": 93,
+        "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5"
+      }
+    },
+    "SIMBA": {
+      "execution_host": "lageunha",
+      "raw_catalogue_pattern": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/CV/CV_{realization}/groups_090.hdf5",
+      "galaxy_selection": "SubhaloMassType[:,4]*1e10 Msun >= 97664166.24188423",
+      "train": {
+        "realizations": [16, 17, 18, 19, 20, 21, 22, 23],
+        "source": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5",
+        "source_sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7",
+        "objects": 202,
+        "output": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5"
+      },
+      "validation": {
+        "realizations": [24, 25, 26],
+        "source": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5",
+        "source_sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910",
+        "objects": 64,
+        "output": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5"
+      }
+    },
+    "Swift": {
+      "execution_host": "lageunha",
+      "raw_catalogue_pattern": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/CV/CV_{realization}/groups_090.hdf5",
+      "galaxy_selection": "SubhaloMassType[:,4]*1e10 Msun >= 97664166.24188423",
+      "train": {
+        "realizations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+        "source": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5",
+        "source_sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd",
+        "objects": 409,
+        "output": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5"
+      },
+      "validation": {
+        "realizations": [20, 21, 22, 23, 24, 25, 26],
+        "source": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+        "source_sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4",
+        "objects": 148,
+        "output": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5"
+      }
+    }
+  },
+  "hard_acceptance": {
+    "source_sha256": "must match the frozen value before opening raw catalogues",
+    "source_equivalence": [
+      "recomputed count must be elementwise identical to source channel 0",
+      "recomputed mean radial velocity must be elementwise identical to source channel 1",
+      "all non-input datasets must be copied without value changes",
+      "streaming target payload SHA256 must be identical between source and output",
+      "all output values must be finite and dispersion must be non-negative and zero wherever count<2"
+    ],
+    "catalogue_provenance": "record a logical SHA256 over the selected raw galaxy positions and velocities plus observer IDs; never infer dispersion from the V14 mean grid"
+  },
+  "incremental_information_audit": {
+    "scales_mpc_h": [1.25, 2.5],
+    "base_features": "the frozen V32 base features",
+    "controls": [
+      "V32 dispersion lower bound reconstructed from native count and mean",
+      "exact pooled dispersion reconstructed from count, mean, and unbiased native dispersion",
+      "exact pooled dispersion plus the frozen V32 linear 3x3x3 local context"
+    ],
+    "fit_and_rows": "identical source-balanced train-only ridge lambda=0.001 and row selection used by V32",
+    "intrinsic_sig_v_supported": "exact-pooled-sig_v/base validation RMSE <=0.99 in all three domains at either common scale",
+    "increment_over_retained_means_supported": "exact-pooled-sig_v/recoverable-lower-bound validation RMSE <=0.995 in all three domains at either common scale"
+  },
+  "next": {
+    "if_both_support_rules_pass": "freeze one matched two-channel versus kinematic-three-channel nonlinear deterministic-backbone ablation before conditional residual training",
+    "if_only_intrinsic_rule_passes": "freeze the same matched nonlinear ablation but record that the unique information beyond retained means is weak",
+    "if_neither_rule_passes": "retain the physically correct channel interface for CF4, but do not spend a full generative run on sig_v alone; audit nonlinear residual spatial sufficiency first"
+  },
+  "cf4_boundary": {
+    "simulation_training_channels": "count, exact unweighted mean radial velocity, intrinsic unweighted velocity dispersion",
+    "later_cf4_channels": "count, inverse-variance weighted mean radial velocity, propagated sigma of that mean, and within-voxel weighted velocity dispersion",
+    "rule": "a future CF4-like error/noise model must be separately frozen; no observational error is fabricated in V33"
+  },
+  "firewall": {
+    "development_truth_role": "diagnostic only after this committed freeze",
+    "validation_used_to_construct_inputs": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

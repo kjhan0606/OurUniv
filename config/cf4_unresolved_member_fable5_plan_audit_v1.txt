@@ -1,0 +1,22 @@
+Read-only Fable5 planning/design audit. Korean response <=1100 words. No tools
+or file changes. User approved a DESIGN bundle for unresolved M33 and same-field
+LG observational connection. Audit attached design BEFORE implementation.
+Final goal: actual CF4/counts/LG -> z=0 density/velocity posterior -> LCDM IC ->
+forward validated LG zoom, LG<=.3 cMpc/h, surroundings1–2. Actual current map12;
+no fine observed-LG posterior. Existing fine-density flow fails morphology.
+Latest native .1875 diagnostic32/32 M31/M33 same nearest peak, distinct3way0/32;
+selected satellite fixtures, not a cosmic unresolved fraction. Old kinematic
+transport needs native members, thus cannot identify members on a NEW field.
+
+Required Q-GOAL, Q-LEAN, MW/M31/M33 identification and unresolved-M33 scrutiny.
+Do not rubber-stamp a design merely because its conditional density is named.
+Audit normalized anchor/member split proposal, same-field mass/momentum/variance
+accounting, center offsets, observational measure, selection and mass semantics.
+Could this become another enormous validation/ML detour? Is a simpler credible
+observation operator preferable? Distinguish a useful diagnostic from a claimed
+posterior. The driver explicitly records remaining implementation choices, not
+pretending to have trained or fully specified q_theta. Give a bounded verdict
+for DESIGN and the smallest next implementable deliverable. Call out any
+fundamental issue before suggesting implementation. Essential/deferred scope;
+no new simulation or training may launch from this audit alone. Astra backup
+is only for failed invocation/no usable audit, not substantive disagreement.

@@ -1,0 +1,252 @@
+{
+  "schema": "hong2021-v18-predeclared-prior-matched-initialization-program-v1",
+  "status": "frozen_after_preexecution_inference_grid_mapping_correction_before_v18_e6",
+  "purpose": "Test one training-free, parameter-free correction to the EDM sampler prior on the frozen V15-E3 checkpoints, without post-hoc tuning or independent-data access.",
+  "parent_evidence": {
+    "v17_registry": "config/hong2021_v17_development_program.json",
+    "v17_registry_sha256": "11763978f768ba83d9cbb5b36ccb8198a7625546d678147e035e5530fee604e0",
+    "e5_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v17_e5_band_balanced_edm/development_decision.json",
+    "e5_decision_sha256": "661bc9e0e3b133b058083b1bc80109397cfe4dd919011ff2cdf6c288f20d9e0e",
+    "e5_decision_digest_sha256": "5300fbaed5ead62e670b75cd480b94b7b1008b187cdbb7dbfbdff9eaef05f6ab",
+    "e5_development_pass": false,
+    "e5_selected_checkpoint": null,
+    "e5_next": "stop_unopened_and_obtain_new_independent_design_audit",
+    "v15_registry": "config/hong2021_v15_development_program.json",
+    "v15_registry_sha256": "4b16420389a906879428b88b25b87cacbdc98a5dd5bab16181b864d324001334",
+    "e3_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/development_decision.json",
+    "e3_decision_sha256": "7f492b4695e9bde37b4ad8cdcc19d3ad05a084816724f2e339ba2fb3a7164e41",
+    "e3_decision_digest_sha256": "5884b91a8828f5707beb41403a6b916c64cec6aaf0b3f3da777b0023e01146cc",
+    "e3_development_pass": false,
+    "e3_selected_checkpoint": null,
+    "e3_training_code_commit": "2108004e17eb4e59e147a30d96b6308cb7fdb407",
+    "e3_checkpoint_schema": "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1",
+    "e3_checkpoints": [
+      {
+        "step": 5000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/validation_checkpoints/step_005000.pt",
+        "sha256": "d5f83f21ed8f55c7a648eb297204a4eb412cb67c957a8ec5f375b8e8de16eb97"
+      },
+      {
+        "step": 10000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/validation_checkpoints/step_010000.pt",
+        "sha256": "09e8771e84390b65f1a916329dfca1623a1426bd49aefebc2af20bd7bff11324"
+      }
+    ],
+    "astrid_used": false,
+    "scientific_baseline": "V15-E3 nearest decoder with L=(U+T)/2; V16-E4 trilinear and V17-E5 equal-band loss are rejected rather than inherited"
+  },
+  "documented_parent_correction": {
+    "date": "2026-08-06",
+    "error": "The V17 registry seed_rationale incorrectly claimed that E4/E5 sampling seeds 45777/46777/47777 were paired to E3. Stored E3 ensembles and the frozen V15 registry prove that E3 used 35777/36777/37777.",
+    "impact": "E3 versus E4/E5 field comparisons are same-protocol but not sampling-draw-paired. E4 versus E5 is draw-paired. No prior artifact is changed.",
+    "v18_resolution": "V18 inherits E3 seeds 35777/36777/37777, so E6 versus stored E3 is draw-paired at the initialization-noise level."
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "posthoc_Ak": false,
+    "simulation_label_conditioning": false,
+    "target_derived_inference_features_or_scales": false,
+    "field_clipping": false,
+    "density_floor": false,
+    "pseudocount": false,
+    "loss_coefficient_or_band_weight_search": false,
+    "sigma_max_or_initialization_scale_search": false,
+    "per_domain_initialization_variance": false,
+    "sampling_step_member_seed_or_subset_search": false,
+    "threshold_changes_after_results": false,
+    "near_miss_rescue": false
+  },
+  "e6_prior_matched_initialization": {
+    "sampling_only": true,
+    "training_or_checkpoint_update": false,
+    "single_change_from_v15_e3": "replace x=sigma_first*normal(0,I) by a source-balanced training-prior marginal x=IFFT(sqrt(sigma_first^2+v_band)*FFT(normal(0,I))) while retaining the E3 checkpoints, evaluator, gate, subsets, and all other sampler settings",
+    "candidate_steps": [5000, 10000],
+    "checkpoint_source": "parent_evidence.e3_checkpoints",
+    "initialization": {
+      "schema": "hong2021-v18-prior-matched-spectral-initialization-v1",
+      "formula": "x=ifftn(sqrt(sigma_first_step^2+v_band(k))*fftn(noise,norm=ortho),norm=ortho).real; DC uses sigma_first_step only",
+      "noise_draw": "one torch.randn tensor with the unchanged shape, generator, dtype, device, draw count, and draw order",
+      "additional_rng_draws": 0,
+      "fft_transform": "torch.fft.fftn/ifftn",
+      "fft_norm": "ortho",
+      "fft_compute_dtype": "float64/complex128 outside autocast",
+      "output_dtype": "float32",
+      "maximum_imaginary_over_real_rms": 1e-12,
+      "grid": 64,
+      "voxel_mpc_h": 0.3125,
+      "band_edges_h_mpc": [0.0, 1.0, 3.0, 6.0, "infinity"],
+      "full_fft_mode_counts": [146, 3596, 25296, 233105],
+      "non_dc_modes": 262143,
+      "expected_mode_counts_by_grid": {
+        "64": [146, 3596, 25296, 233105],
+        "80": [250, 6872, 49928, 454949]
+      },
+      "source_balanced_per_band_mode_variance": [1836.1418485297647, 73.04195496322953, 10.368459581198783, 1.1250001849821358],
+      "measurement_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v18_e6_prior_matched_init/initialization_variance_measurement.json",
+      "measurement_report_sha256": "e1ca69de9d71c3af0b590c3ce14b6901655ec66cdd785badd75b57dae4d84dd7",
+      "measurement_reverification_relative_tolerance": 1e-9,
+      "parseval_relative_tolerance": 1e-9,
+      "maximum_absolute_ortho_dc": 1e-6,
+      "band0_shell_profile_selection_role": "report-only; no shell-specific initialization or tuning"
+    },
+    "inference_initialization_mapping": {
+      "astrid_grid": 80,
+      "astrid_voxel_mpc_h": 0.3125,
+      "mapping": "apply the identical source-balanced per-Fourier-mode variances measured on the 64^3 training caches to every non-DC 80^3 mode in the corresponding physical-k band; DC uses sigma_first_step only",
+      "justification": "with norm=ortho at fixed voxel size, stationary-field per-mode coefficient variance is an intensive lattice power spectral density and is not rescaled by box volume or mode count",
+      "astrid_mode_counts": [250, 6872, 49928, 454949],
+      "astrid_non_dc_modes": 511999,
+      "astrid_data_used_in_mapping": false,
+      "inference_data_remeasurement_forbidden": true,
+      "free_parameters_added": 0,
+      "finite_box_disclosure": "six 80^3 fundamental modes at k=0.2513 h/Mpc lie below the 64^3 fundamental k=0.3142 h/Mpc and inherit the band-average variance; relative band-integrated per-voxel variance shifts from lattice counts are approximately -12%, -2%, +1%, and 0% for bands 0-3 and are not corrected or tuned"
+    },
+    "training_cache_sources": {
+      "TNG100": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_train_standardized.h5",
+        "sha256": "60655d61008cf1ff619ab8a390a02aba3f2e894ece454f6c40b9ef31f1dcfb5b",
+        "objects": 432,
+        "domain_attribute": "TNG100",
+        "per_band_mode_variance": [1552.1388423446956, 72.28031092808288, 10.391095908952037, 1.1302631087725208]
+      },
+      "SIMBA": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_train_standardized.h5",
+        "sha256": "a05c43cb6d9c7d935543920b985b74f90b631fb69a661dee8dac61268f88bff2",
+        "objects": 202,
+        "domain_attribute": "SIMBA",
+        "per_band_mode_variance": [1885.3677617081264, 73.59694953460325, 10.416291732945977, 1.120521023449376]
+      },
+      "Swift": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_train_standardized.h5",
+        "sha256": "ac57b8c49bd05c68319139d53aab11c71eddd8ea10430d9fe0fc6a4f3ccf528a",
+        "objects": 409,
+        "domain_attribute": "Swift-EAGLE",
+        "per_band_mode_variance": [2070.9189415364726, 73.24860442700245, 10.297991101698331, 1.1242164227245106]
+      }
+    },
+    "validation_inputs": {
+      "TNG100": {
+        "data_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5",
+        "data_sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65",
+        "cache_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_validation_standardized.h5",
+        "cache_sha256": "9634e75de13267fc374d209096202fdf419eb9819f1f1026e11e72f21836d275"
+      },
+      "SIMBA": {
+        "data_path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5",
+        "data_sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910",
+        "cache_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_validation_standardized.h5",
+        "cache_sha256": "015e00aabf7236f955bc5910b3350d6b4ae369421f37e2314f640c36960640a7"
+      },
+      "Swift": {
+        "data_path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+        "data_sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4",
+        "cache_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_validation_standardized.h5",
+        "cache_sha256": "0158f2245b2a22e7542c0a061a00056125fe03173dfdec9197534c37b771d647"
+      }
+    },
+    "sampler": {
+      "ensemble_members": 16,
+      "steps": 40,
+      "sigma_min": 0.002,
+      "sigma_max": 40.0,
+      "rho": 7.0,
+      "integrator": "deterministic Heun probability-flow ODE",
+      "sigma_first_step_definition": "float(karras_sigmas(40,0.002,40.0,7.0,device)[0])"
+    },
+    "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777},
+    "seed_lineage": "inherit the V15-E3 frozen seeds to pair E6 to stored E3 at the initial random draw; these seeds predate E6 and are not selected from outcomes; E4/E5 used a different triple",
+    "development_objects": {
+      "TNG100": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "SIMBA": {
+        "path": "config/hong2021_simba_dev_representative16_v1.json",
+        "sha256": "8e60a07328f75058a682ffd42a4667655f62935baaeb3985b10bcdd727a92663"
+      },
+      "Swift": {
+        "path": "config/hong2021_swift_eagle_dev_representative16_v1.json",
+        "sha256": "d0475680dc846332b928833961a34802fb4560dd100f8714bc95241db13582b7"
+      }
+    },
+    "e3_baseline_residual_power_over_truth": {
+      "5000": {
+        "TNG100": [0.30415463876365995, 0.9997999874623726, 1.096475376204852, 0.9880179689370772],
+        "SIMBA": [0.6378597821280122, 1.0873892519482788, 1.087505576085716, 0.996224189247001],
+        "Swift": [0.5007633124973082, 1.0581150631222052, 1.0633945974729446, 0.9662444712866475]
+      },
+      "10000": {
+        "TNG100": [0.27199294713121563, 0.9124803197449395, 1.0579601818920925, 0.9967541878056462],
+        "SIMBA": [0.5702677238964938, 1.0238734813746508, 1.0668780075893671, 1.0038118177489632],
+        "Swift": [0.4462015516303418, 0.9749637854642723, 1.0318640660105143, 0.9728613072606084]
+      },
+      "band_order_h_mpc": ["0.3-1", "1-3", "3-6", "6-10.0531"]
+    },
+    "falsifiable_predictions": {
+      "P1a": "at the same checkpoint step and domain, generated residual power over truth residual power in 0.3-1 h/Mpc increases by at least 0.15 absolute relative to stored E3",
+      "P1b": "the same 0.3-1 h/Mpc residual-power ratio is at least 0.75 in every domain",
+      "P2": "TNG100 0-1 Mpc/h two-point pooled-KS is below the unchanged deterministic value 0.1875",
+      "P3": "all E3-10k checks that already pass remain passing",
+      "P4_risks": "Swift rho>10 volume may remain failed or worsen; SIMBA rho>100 peak count, coverage95, and 3-10 Mpc/h two-point margins may flip; none permits a rescue",
+      "pooled_ks_adjudication_signature": "if P1a and P1b pass and TNG 0-1 Mpc/h KS lies in [0.17,0.22], the next independent audit must first assess a predeclared sample-size-symmetric statistic blindly across E3/E4/E5/E6; the E6 gate remains unchanged"
+    },
+    "selection": "smallest candidate step passing all unchanged V6 field checks independently in all three development domains",
+    "unchanged_evaluator": {
+      "path": "src/hong2021_residual_evaluate.py",
+      "preimplementation_sha256": "a0ae49f945b206a0ec8979d2b7eb6a0700d9efe3e0aab4e1233f0a41db2ecc59"
+    },
+    "unchanged_gate": {
+      "path": "src/hong2021_v6_gate.py",
+      "preimplementation_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512"
+    },
+    "report_only_diagnostics": {
+      "residual_power_over_truth_all_four_bands": true,
+      "e3_same_step_delta": true,
+      "P1a_P1b_classification": true,
+      "band0_shell_profile": true,
+      "rng_pairing_self_check": true,
+      "selection_role": "none"
+    }
+  },
+  "fixed_decision_order": [
+    "implement E6 exactly as declared without training or checkpoint updates",
+    "evaluate candidates in ascending order 5000 then 10000 using the unchanged V6 field gate on all three development domains",
+    "if E6 passes, stop development and create a one-file committed V18 Astrid seal before any independent-data access",
+    "if TNG100 and SIMBA pass and the only Swift failure is peak/void, stop unopened and predeclare the reserved all-band target-free conditional-scale experiment with its CPU predictability pre-gate",
+    "for every other failure, classify the fixed 10000-step row by P1a then P1b and stop unopened for a new independent audit",
+    "if P1a and P1b pass but a gate check fails, audit conditional xi structure; if TNG 0-1 KS is in [0.17,0.22], adjudicate the pooled unequal-sample KS with a new predeclared symmetric statistic before any training",
+    "if P1a passes but P1b fails, constrain the next audit to trained-score sigma coverage and a possible widened-sigma retrain with prior-matched initialization",
+    "if P1a fails anywhere, discard the initialization hypothesis and retain E3 as the scientific baseline",
+    "never tune sigma_max, initialization variance, steps, members, seeds, subsets, thresholds, loss coefficients, or band weights after E6 results"
+  ],
+  "pre_execution_correction": {
+    "date": "2026-08-06",
+    "reason": "The initial committed V18 registry specified the 64^3 development initializer but omitted the zero-free-parameter mapping to the future sealed 80^3 Astrid inference grid.",
+    "failed_attempt_stage": "implementation review before any V18-E6 sampling, ensemble creation, metric calculation, or independent-data access",
+    "optimizer_updates": 0,
+    "sampling_or_gate_metrics_created": false,
+    "astrid_accessed": false,
+    "scientific_changes": "adds only the missing inference-grid mapping; every development quantity, seed, subset, threshold, checkpoint, sampler step, and gate remains unchanged",
+    "corrected_fields": [
+      "status",
+      "e6_prior_matched_initialization.initialization.expected_mode_counts_by_grid",
+      "e6_prior_matched_initialization.inference_initialization_mapping"
+    ],
+    "independent_audit": "Claude Fable PASS; same per-mode variance on the 80^3 physical-k masks is the unique ortho-FFT stationary-field mapping"
+  },
+  "astrid_seal": {
+    "required_before_access": true,
+    "one_file_commit": true,
+    "one_shot_attempts_remaining": 1,
+    "must_bind": ["registry", "decision", "selected E3 checkpoint", "V18 sampling code", "unchanged evaluator", "unchanged gate", "initialization measurement report", "preprocessing", "Astrid one-shot command"],
+    "require_unopened": true
+  },
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "date": "2026-08-06",
+    "record": "/home/kjhan/.claude/plans/you-are-the-independent-woolly-whistle.md",
+    "conclusion": "Reject V17-E5; correct the frozen E3 sampler prior with exactly one source-balanced train-measured per-band initialization covariance and no retraining.",
+    "targeted_seed_correction_audit": "PASS; V18 uses E3 seeds 35777/36777/37777 and all E3-versus-E4/E5 sampling-pair claims were corrected.",
+    "astrid_must_remain_sealed": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "ouruniv-explicit-lg-peak-likelihood-v4-recentered-search",
+  "frozen_date": "2026-08-04",
+  "supersedes": "config/p2_lg_peak_likelihood_v3_inverse_mapped.json",
+  "supersedes_sha256": "d55e451c47f9ecc7f26e244a6c6bcbdb2187a0be7ea28ad51058b75019704cbf",
+  "activation_condition": "The three v3 P2 pair survivors all fail the P1 environment after translating the observer to the predicted pair midpoint; the same preview correctly flags the Virgo and ObserverEnvironment failures later measured for p3429/s5108 by RAMSES/HOP.",
+  "information_status": "These constraints are an explicit additional MW/M31 morphological likelihood and are not attributed to CF4.",
+  "method": "Keep the v3 Matheron likelihood, inverse-mapped Lagrangian midpoint, and frozen N64 long modes unchanged; draw 32 preregistered fresh morphology realizations and require the unchanged five P1 gates again at each evolved P2 pair midpoint before promotion to RAMSES.",
+  "parent_seed": 3429,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/cf4_linear_cr_v3_bgc_parent_extension_v3_s3429.npz",
+  "mesh_size": 576,
+  "parent_projection_mesh_size": 192,
+  "frozen_mode_mesh_size": 64,
+  "box_size_mpc_h": 384.0,
+  "proposal_seeds": [
+    5109, 5110, 5111, 5112, 5113, 5114, 5115, 5116,
+    5117, 5118, 5119, 5120, 5121, 5122, 5123, 5124,
+    5125, 5126, 5127, 5128, 5129, 5130, 5131, 5132,
+    5133, 5134, 5135, 5136, 5137, 5138, 5139, 5140
+  ],
+  "geometry_seeds": [
+    6209, 6210, 6211, 6212, 6213, 6214, 6215, 6216,
+    6217, 6218, 6219, 6220, 6221, 6222, 6223, 6224,
+    6225, 6226, 6227, 6228, 6229, 6230, 6231, 6232,
+    6233, 6234, 6235, 6236, 6237, 6238, 6239, 6240
+  ],
+  "likelihood_noise_seeds": [
+    7309, 7310, 7311, 7312, 7313, 7314, 7315, 7316,
+    7317, 7318, 7319, 7320, 7321, 7322, 7323, 7324,
+    7325, 7326, 7327, 7328, 7329, 7330, 7331, 7332,
+    7333, 7334, 7335, 7336, 7337, 7338, 7339, 7340
+  ],
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_offset_mpc_h": [0.0, -6.0, 4.0],
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "selection_policy": {
+    "all_proposals_receive_the_same_likelihood": true,
+    "orientation_is_drawn_isotropically_from_the_frozen_geometry_seed": true,
+    "lagrangian_midpoint_is_fixed_from_the_sha_pinned_pre_forward_map": true,
+    "n64_long_mode_coefficients_must_remain_unchanged": true,
+    "repeat_all_five_p1_gates_on_every_n192_projection": true,
+    "repeat_all_five_p1_gates_at_each_evolved_p2_pair_midpoint": true,
+    "p2_pair_midpoint_gate_is_applied_before_ramses_promotion": true,
+    "no_threshold_retuning_after_forward_results": true,
+    "use_the_existing_p1_and_p2_physical_thresholds_unchanged": true,
+    "definitive_acceptance_still_requires_ramses_hop_m200c_and_contamination": true
+  },
+  "storage": {
+    "proposal_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_proposals_v4_recentered_search",
+    "parent_projection_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_parent_projections_v4_recentered_search",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p1_v4_recentered_search",
+    "screen_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_lg_peak_p2_v4_recentered_search"
+  }
+}

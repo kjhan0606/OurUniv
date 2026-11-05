@@ -1,0 +1,79 @@
+{
+  "schema": "hong2021-v43-tail-threshold-target-compatibility-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine why the V42 body-preserving candidate cannot reach the frozen V41 object-amplitude target: distinguish an inaccurate object target from insufficient train-only residual-tail support and from a more fundamental transported-body/backbone incompatibility, without fitting or generating another field.",
+  "parent_evidence": {
+    "v42_record": "config/hong2021_v42_result_record.json",
+    "v42_record_sha256": "b0be26c5a721a0a2c74a675c7bfcc7162d365c42365d110993bb7cd4a0771677",
+    "required_classification": "body_preserving_tail_intervention_is_not_a_common_domain_repair",
+    "required_next": "audit_tail_threshold_support_and_object_amplitude_target_compatibility",
+    "v42_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v42_e23_within_block_tail_body/development_decision.json",
+    "v42_decision_sha256": "021fd881ed0a9b3f1e2b809d5c81c9182a83f7bc1b5ba514395cbf37d00d9aa4",
+    "v42_decision_digest_sha256": "80a238ca12aca2c74b9932415ce6b308ab332e61aa5ae03fd1513aef487d6a2f"
+  },
+  "inherited_inputs": {
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "candidate_arm": "within_block_tail_body",
+    "uncalibrated_arm": "tail_calibration_disabled_control",
+    "selection_rule": "reuse the V42 decision-bound three-domain ensembles and their frozen 16 queries by 16 members exactly"
+  },
+  "object_target_audit": {
+    "truth": "held-out object log10 mean delta squared computed from the already frozen V42 truth cube",
+    "prediction": "the V41 object-amplitude prediction stored in the V42 uncalibrated ensemble, required to be identical across all 16 members of an object",
+    "diagnostic_only": true,
+    "support_rule_all_domains": {
+      "RMSE_dex_max": 0.30,
+      "absolute_mean_bias_dex_max": 0.15,
+      "Spearman_min": 0.50
+    }
+  },
+  "tail_support_audit": {
+    "residual": "the exact centered unit-scale residual in the V42 tail-calibration-disabled arm",
+    "conditional_threshold_source": "the frozen train-only V31 copula at the actual query backbone",
+    "quantiles": [0.9, 0.95, 0.975, 0.99, 0.995, 0.999],
+    "zero_excess_endpoint": "center min(residual, conditional_threshold) by one exact DC projection and evaluate object log10 mean delta squared",
+    "unit_excess_endpoint": "the unchanged centered V42 uncalibrated residual",
+    "target_bracket": "the frozen V41 prediction lies inclusively between the two endpoint log amplitudes",
+    "bracket_support_rule": "at least 90 percent of all member-object pairs independently in every domain",
+    "extreme_location_support": [
+      "recall of the 26 largest generated log-density voxels (native q99.99 count) by each conditional residual-tail mask",
+      "recall of the 3 largest generated log-density voxels (native q99.999 count) by each conditional residual-tail mask"
+    ],
+    "v42_reconstruction_tolerance_dex": 0.000002,
+    "no_endpoint_is_eligible_as_a_generator": true
+  },
+  "fixed_branches": [
+    {
+      "condition": "object target passes all domains and q99.9 brackets at least 90 percent in every domain",
+      "classification": "v42_fixed_lambda_solver_or_implementation_is_inconsistent_with_attainable_support",
+      "next": "audit_v42_tail_solver_reconstruction_before_any_model_change"
+    },
+    {
+      "condition": "object target passes all domains, q99.9 does not bracket, and q99 brackets at least 90 percent in every domain",
+      "classification": "object_target_is_supported_but_q99_9_tail_support_is_too_narrow",
+      "next": "freeze_train_only_continuous_conditional_tail_likelihood_above_q99_without_spatial_rank_rearrangement"
+    },
+    {
+      "condition": "object target passes all domains but q99 also fails to bracket at least 90 percent anywhere",
+      "classification": "object_target_is_supported_but_transported_body_and_backbone_are_incompatible",
+      "next": "retire_block_and_native_rank_transport_and_fit_a_train_only_local_conditional_residual_likelihood"
+    },
+    {
+      "condition": "object target fails its frozen held-out support rule anywhere",
+      "classification": "v41_object_amplitude_target_is_not_cross_domain_supported",
+      "next": "audit_train_only_domain_calibration_of_the_object_target_before_any_generator_change"
+    }
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v43_tail_threshold_target_audit/audit.json",
+  "firewall": {
+    "fit_or_sampling": false,
+    "validation_truth_role": "diagnostic_metrics_only_after_v42_was_frozen",
+    "threshold_or_branch_tuning_after_audit": false,
+    "new_field_generation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

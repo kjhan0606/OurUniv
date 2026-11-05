@@ -1,0 +1,145 @@
+{
+  "schema": "hong2021-v40-object-structure-observable-sufficiency-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Determine whether the target-free galaxy-kinematic observables and frozen backbone contain transferable information about rare present-day density amplitudes and connected high-density structure locations before attempting any further residual generator.",
+  "parent_evidence": {
+    "v39_record": "config/hong2021_v39_result_record.json",
+    "v39_record_sha256": "1fc081904a01f2569861c6d2d9e76cc15c480f56d94620cb11df3146d2e08b33",
+    "required_classification": "fixed_local_patch_copula_is_not_a_common_domain_repair",
+    "required_next": "audit_backbone_observable_sufficiency_at_object_and_structure_level_before_any_further_generator"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "development_domains": "reuse and reverify every TNG100, SIMBA, and Swift train/validation data and V21 frozen backbone cache path, hash, schema, and object count from V35",
+    "simulation_identity_feature": false
+  },
+  "physical_targets": {
+    "log10_density": "4.5 times the stored target y",
+    "delta": "10**log10_density - 1",
+    "object_amplitude": "log10 of the cube mean of delta squared",
+    "object_extreme": "cube q99.999 log10 density",
+    "native_structure_thresholds": {
+      "dense": 0.999,
+      "extreme": 0.9999,
+      "fit": "one exact native-voxel truth quantile per source using train targets only; apply unchanged to that source validation"
+    },
+    "coarse_grid": "factor-4 nonoverlapping blocks: 16^3 cells at 1.25 Mpc/h",
+    "coarse_positive_label": "a block is positive when it contains at least one native voxel above the applicable train-only source threshold",
+    "connected_structure": "26-connected native validation voxels above the applicable threshold with no artificial wrap across cutout faces",
+    "validation_target_role": "metrics only after every feature, learner, seed, threshold rule, and decision boundary is committed"
+  },
+  "target_free_features": {
+    "full_block_model": "the exact V34 factor-4 222-component scalar plus oriented current-scale and parent-scale observable/backbone descriptor",
+    "backbone_only_block_model": [
+      "central backbone mean and standard deviation",
+      "radius over cube half-width",
+      "ordered 3x3x3 backbone-mean patch at 1.25 Mpc/h",
+      "ordered 3x3x3 backbone-mean patch at 2.5 Mpc/h"
+    ],
+    "object_model": "for each of log1p block count, block mean radial velocity, exact population velocity dispersion, and backbone mean: mean, standard deviation, q10, q50, q90, q99, and maximum over the factor-4 grid",
+    "object_backbone_only_model": "the same seven summaries of backbone mean only",
+    "forbidden": [
+      "simulation identity",
+      "validation density in any feature or fitted threshold",
+      "validation-derived feature selection or hyperparameter tuning",
+      "post-hoc Fourier amplitude A(k)",
+      "Astrid or historical EAGLE information"
+    ]
+  },
+  "fixed_training": {
+    "source_balance": "each fitted model gives equal total sample weight to every included source",
+    "block_rows": "for each threshold and source, retain all positive train blocks up to 65536 by a frozen PCG64 permutation and the same number of negative blocks; the common minimum retained positive count across included sources sets the per-source count",
+    "block_seeds": {"dense": 40031, "extreme": 40041},
+    "model_families": [
+      "pooled fit on all three train sources and evaluated separately on all validation sources",
+      "three leave-one-source-out fits, each trained on the other two sources and evaluated only on the omitted source validation"
+    ],
+    "block_classifier": {
+      "implementation": "sklearn.ensemble.HistGradientBoostingClassifier",
+      "loss": "log_loss",
+      "learning_rate": 0.05,
+      "max_iter": 128,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 128,
+      "l2_regularization": 1.0,
+      "early_stopping": false,
+      "random_state": 40051
+    },
+    "object_regressor": {
+      "implementation": "sklearn.ensemble.HistGradientBoostingRegressor",
+      "loss": "squared_error",
+      "learning_rate": 0.05,
+      "max_iter": 128,
+      "max_leaf_nodes": 15,
+      "min_samples_leaf": 20,
+      "l2_regularization": 1.0,
+      "early_stopping": false,
+      "random_state": 40061
+    },
+    "spatial_control": "periodically roll each validation score grid by the fixed block offset (3,5,7), preserving its marginal score distribution",
+    "object_control": "fit the same full regressor after independently applying a fixed PCG64 permutation with seed 40071 to the targets within each included train source"
+  },
+  "fixed_metrics": {
+    "block_location": [
+      "average precision divided by validation positive prevalence",
+      "precision and recall after selecting exactly the truth-positive block count within each validation cube",
+      "full-model average precision divided by backbone-only average precision",
+      "full-model average precision divided by fixed spatial-control average precision"
+    ],
+    "connected_structure": [
+      "number-weighted component recall when any selected factor-4 block intersects the component",
+      "delta-squared-mass-weighted component recall under the same hit rule"
+    ],
+    "object_amplitude": [
+      "RMSE divided by the equal-source train-constant RMSE",
+      "Spearman rank correlation",
+      "RMSE divided by the permuted-target control RMSE"
+    ],
+    "object_extreme": "reported diagnostically with the same metrics but not used to choose a generator branch"
+  },
+  "predeclared_support": {
+    "structure_location_supported": "for either threshold, pooled full-model AP/prevalence >=2.0, top-count recall >=0.20, and mass-weighted component recall >=0.50 in every domain; the corresponding leave-one-source-out values must be >=1.5, >=0.15, and >=0.35; pooled and leave-one-out full/spatial-control AP ratios must both be >=1.25 in every domain",
+    "object_amplitude_supported": "for both pooled and leave-one-source-out fits in every domain, full-model RMSE/constant <=0.90, Spearman >=0.30, and full/permuted-control RMSE <=0.90",
+    "observable_increment_supported": "diagnostic only: full/backbone average precision >=1.10 in every domain at either threshold for both pooled and leave-one-source-out fits"
+  },
+  "fixed_branches": [
+    {
+      "condition": "structure_location_supported and object_amplitude_supported",
+      "classification": "object_amplitude_and_structure_location_are_transferably_observable",
+      "next": "freeze_two_stage_structure_seeded_amplitude_calibrated_stochastic_residual"
+    },
+    {
+      "condition": "structure_location_supported only",
+      "classification": "structure_location_is_observable_but_object_amplitude_is_not",
+      "next": "freeze_structure_seeded_rank_preserving_copula_with_train_marginal_amplitude"
+    },
+    {
+      "condition": "object_amplitude_supported only",
+      "classification": "object_amplitude_is_observable_but_structure_location_is_not",
+      "next": "freeze_object_level_conditional_scale_with_spatially_exchangeable_LCDM_innovation"
+    },
+    {
+      "condition": "neither",
+      "classification": "backbone_observables_are_insufficient_for_rare_structure_reconstruction",
+      "next": "stop_learning_high_resolution_z0_density_from_CF4_and_treat_unresolved_modes_as_a_conditional_LCDM_prior"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact parent and V35 input/cache hashes",
+    "train-only density threshold fitting and source-balanced model fitting",
+    "no validation rows enter any fit, threshold, feature selection, or stopping rule",
+    "synthetic component matching, top-count selection, and spatial-control tests pass",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v40_object_structure_sufficiency/audit.json",
+  "firewall": {
+    "new_generator_fit_or_sampling": false,
+    "validation_used_for_fit_or_hyperparameter_choice": false,
+    "density_field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

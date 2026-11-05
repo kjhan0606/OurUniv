@@ -1,0 +1,30 @@
+{
+  "schema": "cf4-v3-bgc-parent-extension-v1",
+  "frozen_date": "2026-08-02",
+  "frozen_before_sampling": true,
+  "reason": "The first 16 BGc members contained no realization passing the unchanged named-structure gates plus the newly preregistered observer-environment mass gate. Extend the posterior sample without changing likelihood or physical thresholds.",
+  "base_configuration": "config/v3_bgc_parent_all_v1.json",
+  "model": {
+    "N": 192,
+    "box_size_mpc_h": 384.0,
+    "velocity_estimator": "bgc",
+    "error_scale": 0.9,
+    "sigma_nl_km_s": 0.0,
+    "bgc_window": 801,
+    "target_cz_range_km_s": [1500.0, 18000.0],
+    "reference_pool_cz_range_km_s": [500.0, 30000.0],
+    "holdout_fraction": 0.0,
+    "sample_seeds": [3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035, 3036, 3037, 3038, 3039, 3040, 3041, 3042, 3043, 3044, 3045, 3046, 3047, 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055, 3056, 3057, 3058, 3059, 3060, 3061, 3062, 3063, 3064]
+  },
+  "selection_policy": {
+    "all_48_samples_receive_the_same_P0_gate": true,
+    "all_P0_samples_receive_config_p1_targets_v2_observer": true,
+    "no_seed_is_selected_before_forwarding": true,
+    "no_threshold_retuning_after_results": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v1",
+    "gate_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_gate_v1",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v1"
+  }
+}

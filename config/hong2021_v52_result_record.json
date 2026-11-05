@@ -1,0 +1,167 @@
+{
+  "schema": "hong2021-v52-matched-no-risk-bounded-mixture-result-record-v1",
+  "status": "complete_development_failure_mixed_domain_risk_removal",
+  "program": "config/hong2021_v52_no_risk_bounded_mixture_program.json",
+  "program_sha256": "4831c79c1c0e2a06a62d48d8665b3b8a57eea32e92b3bf1a4ae16acd67437413",
+  "code_commit": "b7d7ec88c9b66a35d4c62516409811084d6815e0",
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "3ef1178a7f8a93dfda9fcd7e2904134924bf9c23ec347a4d2bfded8722bd657b",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v52/no_risk_bounded_logit_mixture_copula_step12000.json",
+    "report_sha256": "254eed7ac92242ff768c4432275f0ea375b58693a81720209b3f7733f7f25643",
+    "report_decision_digest_sha256": "79f709b758a92f91c5718534b1bb06f0e1acbd24b0cb90aafb95fbb40eaf3cc3",
+    "steps": 12000,
+    "parameters": 8490415,
+    "risk_channel_exact_standardized_zero": true,
+    "fixed_validation_NLL": {
+      "4000": {
+        "TNG100": 1.389312075030419,
+        "SIMBA": 1.3589440118521452,
+        "Swift": 1.3524967142053552
+      },
+      "8000": {
+        "TNG100": 1.3870397601076352,
+        "SIMBA": 1.3561882358044386,
+        "Swift": 1.348290988722363
+      },
+      "12000": {
+        "TNG100": 1.3877514446935346,
+        "SIMBA": 1.3566196989268064,
+        "Swift": 1.346265421525852
+      }
+    },
+    "AMP_overflow_count": 4,
+    "AMP_overflow_steps": [
+      4063,
+      6077,
+      8897,
+      10948
+    ],
+    "all_overflows_recovered_by_GradScaler": true,
+    "strict_RFC_8259_JSON": true,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false
+  },
+  "integrity": {
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "preflight_sha256": "431ea718b1f742b66e5510c92ceb63c986c5250b7287cafb2882141da3655a93",
+    "pytest_passed": 402,
+    "pytest_log_sha256": "4d11f410d6fbc9cf67344096150af143f0887b5d080b7e9b185c5681b187b835",
+    "preflight_log_sha256": "fa5f0958cdc8485c017b3206135d114fa81d24d011b7325dc72b66f2aea8a80a",
+    "training_log_sha256": "7442f5be888e54c83da77ecbf716d320b37af591a6e57134e327d0c58f8d8bd5",
+    "sampling_log_sha256": "cf06deb8011184435b099d4b2f84869f909a4e87de799a57c64aaa5d6a3d3be9",
+    "gate_log_sha256": "1c7bb6abdf2d66e6f4601e38ef5b714a7ef2f1e1579da23beae67423efbb6776",
+    "metrics_checked": 6,
+    "ensembles_checked": 6,
+    "artifact_hash_mismatches": 0,
+    "decision_digest_independently_verified": true,
+    "maximum_candidate_residual_DC": 6.984919309616089e-10,
+    "maximum_candidate_inverse_CDF_error": 3.5762786865234375e-7
+  },
+  "development_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v52_e27_no_risk_bounded_mixture/development_decision.json",
+    "sha256": "1c7bb6abdf2d66e6f4601e38ef5b714a7ef2f1e1579da23beae67423efbb6776",
+    "decision_digest_sha256": "be66f2f698baa3848478f08497c5649a57aabf2fa8f0aa00c458286ee8011526",
+    "gate_code_commit": "b7d7ec88c9b66a35d4c62516409811084d6815e0",
+    "worktree_clean_at_gate": true,
+    "development_pass": false,
+    "classification": "matched_no_risk_result_is_mixed_or_not_a_common_domain_repair",
+    "next": "audit_V52_vs_V50_domainwise_extremes_field_checks_and_high_backbone_strata_before_any_new_model",
+    "candidate_high_k_power_and_residual_RMS_all_domains": true,
+    "candidate_Q3_all_domains": false,
+    "candidate_Q4_all_domains": false,
+    "candidate_all_three_field_pass": false,
+    "rolled_parameter_control_improves_Q3_Q4_every_domain": false
+  },
+  "candidate_Q3_Q4": {
+    "TNG100": {
+      "delta_q99_999_dex": 0.28660201365301763,
+      "generated_max_above_truth_max_dex": 1.4532058238983154,
+      "generated_over_truth_mean_delta_squared": 4.710415065416335,
+      "field_pass": false,
+      "failed_field_checks": [
+        "two_point_improves_deterministic_all_scales"
+      ],
+      "ensemble_sha256": "a7dd4839bf4eef68e2a610cfd2af8ab3febcd1da9dc47b900d3b3542dc2240c1",
+      "metrics_sha256": "27e118cc35889e79b626598ce463dec897d6710cd6449653b572243db7c0f4c6"
+    },
+    "SIMBA": {
+      "delta_q99_999_dex": 0.21670843667482753,
+      "generated_max_above_truth_max_dex": 0.7926858365535736,
+      "generated_over_truth_mean_delta_squared": 2.5840993021775858,
+      "field_pass": true,
+      "failed_field_checks": [],
+      "ensemble_sha256": "ecdbdf3567e95865554bcaff85bf6c175db3e4ccd967b14c6992c6b681e895d9",
+      "metrics_sha256": "34a5ec5be67bbb75d3b3d74469d61c7be56bdd6aafd44ddd84212ba71b36ad7c"
+    },
+    "Swift": {
+      "delta_q99_999_dex": 0.32373204925617927,
+      "generated_max_above_truth_max_dex": 1.0647591948509216,
+      "generated_over_truth_mean_delta_squared": 6.536541485418561,
+      "field_pass": true,
+      "failed_field_checks": [],
+      "ensemble_sha256": "b711ced87b3251a6d9982785400107ecbb8cb45a09a6e7fdc2c0910ad9cd168f",
+      "metrics_sha256": "90c2d371c5e12f6f2715a1915a0d0de26498520c8d346f55599354a9d2a86a90"
+    }
+  },
+  "comparison_to_sealed_V50": {
+    "TNG100": {
+      "q99_999_error_strictly_improves": false,
+      "maximum_excess_strictly_improves": false,
+      "mean_delta_squared_ratio_strictly_improves": false,
+      "V50_equals_or_improves_all_three": true
+    },
+    "SIMBA": {
+      "q99_999_error_strictly_improves": true,
+      "maximum_excess_strictly_improves": true,
+      "mean_delta_squared_ratio_strictly_improves": true,
+      "V50_equals_or_improves_all_three": false
+    },
+    "Swift": {
+      "q99_999_error_strictly_improves": true,
+      "maximum_excess_strictly_improves": true,
+      "mean_delta_squared_ratio_strictly_improves": true,
+      "V50_equals_or_improves_all_three": false
+    },
+    "V52_strictly_improves_all_three_every_domain": false,
+    "V50_equals_or_improves_all_three_every_domain": false
+  },
+  "control_artifact_sha256": {
+    "rolled_parameter_control": {
+      "TNG100": {
+        "ensemble": "b4c620d6e80a5075eec1822251180b511d8516868b42cec653e9be02ae9a2f5c",
+        "metrics": "9e766e2e283f9f27503193e1cd00ca6ff93a3cde74682689a7c1506566fde2fa"
+      },
+      "SIMBA": {
+        "ensemble": "aaf269b16a6d91f3b5800c98bdc3a6eb2b2a4c39e28b99894ca9f6d250c40b7a",
+        "metrics": "c339ad1dacbaa6f0a3c2dc536b5ea689bcf50e9dc5e01abb7bccbc3935f9f477"
+      },
+      "Swift": {
+        "ensemble": "38243d1b86ae440f6da319168f420a4acdf95b735dd3664a503be85e4f25d57c",
+        "metrics": "712a2ef3c874b13923246d5f1f3fd3c5d3041d0f243756e73fc89fdda7be0aa0"
+      }
+    }
+  },
+  "scientific_conclusion": [
+    "Removing the structure-risk channel is not a common-domain repair. It strictly improves q99.999 error, maximum excess, and physical second-moment calibration in SIMBA and Swift, but slightly worsens all three in the TNG100 training domain.",
+    "The no-risk candidate preserves high-k power and residual RMS in every domain and passes every field check in SIMBA and Swift. TNG100 fails only the frozen all-scale two-point-improvement check, so the mixed outcome is not explained by a wholesale loss of the stochastic field body.",
+    "The V51 inference-only risk-zero improvement therefore does not transfer as a universal causal effect under matched retraining. Risk is a domain-dependent amplifier or proxy whose utility interacts with the remaining backbone conditioning.",
+    "No new model is selected from this mixed result. The frozen next step is a read-only V52-versus-V50 audit of domainwise extreme errors, the failed TNG100 two-point scales, and high-backbone strata before any architecture, loss, feature, or threshold change."
+  ],
+  "firewall": {
+    "support_changed": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "sample_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

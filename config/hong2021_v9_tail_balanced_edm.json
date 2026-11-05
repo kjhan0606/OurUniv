@@ -1,0 +1,41 @@
+{
+  "schema": "hong2021-v9-tail-balanced-edm-plan-v1",
+  "status": "frozen_before_smoke_and_training",
+  "purpose": "Correct rare peak/void tail morphology without post-hoc field rescaling or independent-test tuning",
+  "parent_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v8_observable_context/validation_checkpoints/step_010000.pt",
+  "failure_motivation_from_development_only": {
+    "tng_highest_k_power_ratio": 0.8942894535775043,
+    "simba_void_fraction_truth_generated": [0.3452436923980713, 0.44338634610176086],
+    "simba_rho_gt_100_peak_count_truth_generated": [89.75, 55.86328125]
+  },
+  "loss": {
+    "density_bins_log10_rho_over_mean": ["<-1", "-1..0", "0..1", "1..2", ">=2"],
+    "frequency_fit": "Equal-source average of TNG-train and SIMBA-CV16-23-train voxel probabilities only",
+    "tail_weight": "inverse square root of bin probability, normalized to mean one and capped at ten before renormalization",
+    "objective": "0.5 original EDM denoising + 0.5 tail-weighted EDM denoising",
+    "validation_or_independent_truth_in_weight_fit": false
+  },
+  "training": {
+    "steps": 5000,
+    "batch": 6,
+    "source_balance": {"tng": 3, "simba": 3},
+    "learning_rate": 0.00001,
+    "minimum_learning_rate": 0.000001,
+    "ema_decay": 0.999,
+    "validation_every_steps": 500,
+    "augmentation": "48 signed cube isometries"
+  },
+  "development_selection": {
+    "predeclared_steps": [1000, 3000, 5000],
+    "inference": {"ensemble_per_object": 16, "sampling_steps": 40},
+    "tng_indices": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+    "simba_indices_file": "config/hong2021_simba_dev_representative16_v1.json",
+    "selection": "Select the smallest step that passes all eight unchanged field checks in both development domains",
+    "failure": "If no step passes both domains, declare V9 failed and do not inspect historical SIMBA stress or sealed EAGLE"
+  },
+  "independence": {
+    "historical_simba_cv0_15": "Stress test only; already inspected after V7 and never used for V9 selection",
+    "eagle_confirmation32": "Only new independent V9 test; open once only after development and historical stress pass",
+    "posthoc_Ak_or_scalar_rescaling": false
+  }
+}

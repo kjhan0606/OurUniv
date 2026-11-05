@@ -1,0 +1,207 @@
+{
+  "schema": "ouruniv-cf4-twompp-joint-information-budget-pilot-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_N32_JOINT_INFORMATION_TECHNICAL_PILOT_ONLY",
+  "purpose": "Test whether the frozen metadata-consistent CF4-disjoint 2M++ count sample can close the velocity-only lowest-bin information deficit at N32 before any z=0 field inference.",
+  "authorization": {
+    "authorization_basis": "The user approved the N32 joint velocity-plus-density information-budget pilot after the exact 319-row exclusion and 36,635-row retained-subset gate passed on 2026-09-01.",
+    "joint_information_budget_technical_pilot": true,
+    "single_Slurm_submission": true,
+    "GPFS_read": true,
+    "GPFS_write": true,
+    "network_access": false,
+    "field_inference": false,
+    "galaxy_positions_as_field_likelihood_datum": false,
+    "observed_population_totals_for_shot_noise_normalization": true,
+    "truth_array_generation_or_deserialization": false,
+    "development_or_validation_truth_seed": false,
+    "numerical_trace_probe_seed": true,
+    "exact_bias_RSD_FoG_selection_discrepancy_marginalization": false,
+    "parent_posterior_promotion": false,
+    "resolution_increase": false,
+    "untouched_256_mock_validation": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "design": {
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "radial_min_cMpc_h": 5.0,
+    "radial_max_cMpc_h": 180.0,
+    "HEALPix_NSIDE": 512,
+    "HEALPix_ordering": "RING",
+    "volume_quadrature_points_per_axis": 2,
+    "volume_quadrature": "tensor-product two-point Gauss-Legendre; eight equal-weight subpoints per N32 voxel",
+    "bright_apparent_population": "Ksmag <= 11.5 with no artificial Ksmag=9 lower cut because the frozen retained sample has no such cut",
+    "faint_apparent_population": "11.5 < Ksmag <= 12.5",
+    "bright_apparent_K_max": 11.5,
+    "faint_apparent_K_max": 12.5,
+    "absolute_K_edges": [
+      -25.0,
+      -23.6666666666667,
+      -22.3333333333333,
+      -21.0
+    ],
+    "Schechter": {
+      "Mstar": -23.28,
+      "alpha": -0.94,
+      "formula_source": "/gpfs/kjhan/CF4/software/ares-6cf608ed/libLSS/data/schechter_completeness.hpp",
+      "formula_source_commit": "6cf608ed8c70474c15c8ca76cce675742e291c71",
+      "K_evolution_extinction_correction": "none added; Ksmag is the published corrected K2M++ magnitude"
+    },
+    "excluded_recno_count": 319,
+    "retained_tracer_count": 36635,
+    "population_order": [
+      "apparent_0_absolute_0",
+      "apparent_0_absolute_1",
+      "apparent_0_absolute_2",
+      "apparent_1_absolute_0",
+      "apparent_1_absolute_1",
+      "apparent_1_absolute_2"
+    ],
+    "population_counts": [
+      9617,
+      3463,
+      527,
+      15671,
+      6197,
+      1160
+    ],
+    "expected_count_normalization": "For each population p, lambda_p(x)=N_p*S_p(x)/sum_x S_p(x); only the six observed totals, not galaxy positions, set the Poisson shot-noise scale.",
+    "reference_bias_by_population": [
+      1.3,
+      1.05,
+      0.85,
+      1.3,
+      1.05,
+      0.85
+    ],
+    "reference_bias_semantics": "A frozen monotone luminosity-dependent sensitivity vector, not a calibrated 2M++ bias measurement or prior; it is used only in the known-reference-bias technical ceiling.",
+    "velocity_baseline_scenario": "marginalized_s1",
+    "velocity_covariance_surrogate": "For each frozen N32 merged bin, use an isotropic diagonal Fourier precision whose posterior/prior trace equals the completed 64-geometry marginalized_s1 mean trace. Use the weaker delta/theta trace and set theta-unavailable bins to prior precision.",
+    "density_linearization": "Gaussianized Poisson Fisher at homogeneous delta=0 with log-normalization nuisance templates; full nonlinear count likelihood is not evaluated.",
+    "density_scenarios": {
+      "known_selection_reference_bias_ceiling": {
+        "density_Fisher_retention": 1.0,
+        "marginalize_population_normalizations": false,
+        "semantics": "Official angular maps, Schechter radial selection, six reference biases, and all six mean count normalizations treated as known. This is a technical reference ceiling, not a physical absolute upper bound."
+      },
+      "normalization_marginalized_reference_bias": {
+        "density_Fisher_retention": 1.0,
+        "marginalize_population_normalizations": true,
+        "semantics": "Analytically Schur-marginalize six independent population log-normalizations with flat priors while retaining the frozen reference bias vector."
+      },
+      "normalization_marginalized_half_Fisher_sensitivity": {
+        "density_Fisher_retention": 0.5,
+        "marginalize_population_normalizations": true,
+        "semantics": "Retain one half of the normalization-marginalized density Fisher information as an explicit sensitivity bracket; not a calibrated RSD or bias marginalization."
+      },
+      "normalization_marginalized_quarter_Fisher_sensitivity": {
+        "density_Fisher_retention": 0.25,
+        "marginalize_population_normalizations": true,
+        "semantics": "Retain one quarter of the normalization-marginalized density Fisher information as an explicit sensitivity bracket; not a calibrated RSD, FoG, selection, or discrepancy marginalization."
+      }
+    },
+    "known_ceiling_scenario": "known_selection_reference_bias_ceiling",
+    "trace_probe_count": 32,
+    "trace_probe_seed": 2026090101,
+    "trace_probe_randomness": "32 deterministic Hermitian Rademacher probes use seeds trace_probe_seed+i; numerical covariance probes only, no truth or data random stream",
+    "CG_relative_tolerance": 3e-06,
+    "CG_max_iterations": 2000,
+    "information_gates": {
+      "response_min_inclusive": 0.8,
+      "correlation_r_min_inclusive": 0.7,
+      "residual_power_ratio_max_inclusive": 0.5,
+      "numerical_information_lower_min_inclusive": 0.8,
+      "frontier_rule": "contiguous joint delta-theta prefix from the lowest N32 bin; theta-unavailable bins fail closed"
+    },
+    "decision_rule": {
+      "known_ceiling_lowest_bin_fails": "NO_GO_KNOWN_CEILING_INSUFFICIENT_NO_PARENT_PROMOTION",
+      "known_ceiling_lowest_bin_passes": "PASS_KNOWN_CEILING_ROUTE_PROMISING_NO_PARENT_PROMOTION",
+      "promotion_rule": "No technical-pilot outcome promotes the parent posterior. Exact nuisance calibration on development mocks and later independent validation require a new approved stage."
+    },
+    "limitations": [
+      "The completed velocity artifact supplies bin-average trace fractions, not its full posterior covariance; the velocity term is therefore an isotropic diagonal surrogate.",
+      "The population totals estimate shot-noise normalization, but galaxy positions are not consumed as field-likelihood data.",
+      "Bias uncertainty is not identifiable in a datum-free homogeneous linearization and is not called marginalized.",
+      "RSD, FoG, angular-selection calibration uncertainty, and forward-model discrepancy require mocks or a datum-dependent likelihood and are not called marginalized.",
+      "N32 has 12 cMpc/h cells; no 0.3 cMpc/h observational or numerical resolution claim is allowed."
+    ]
+  },
+  "bindings": {
+    "implementation": {
+      "path": "src/cf4_twompp_joint_information_budget_pilot_v1.py",
+      "bytes": 35147,
+      "sha256": "d318031ef47a4063671f77d564565afd63ca97bb0920580cb779f2004e83df22"
+    },
+    "subset_program": {
+      "path": "config/cf4_twompp_metadata_consistent_subset_program_v1.json",
+      "bytes": 3619,
+      "sha256": "439adb82f33ec6411742a01f33607606c39e959ef0f942d332a03e31e38e2444"
+    },
+    "subset_implementation": {
+      "path": "src/cf4_twompp_metadata_consistent_subset_v1.py",
+      "bytes": 17291,
+      "sha256": "46e4435f4a991c03c26f3d3a1bea68d7537b37a4e16d199a2397697701001683"
+    },
+    "subset_result_record": {
+      "path": "config/cf4_twompp_metadata_consistent_subset_v1_result_record.json",
+      "bytes": 4197,
+      "sha256": "117500c9a01d254d968beb8066671c010a524ae3885a21e6c54f1181e402f885"
+    },
+    "excluded_recnos": {
+      "path": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation/excluded_recnos.csv",
+      "bytes": 40183,
+      "sha256": "b0ddbb700612e8aaf937b647405e17b058f04aef2f97a93f207cb32b5d6ac60f"
+    },
+    "velocity_metrics": {
+      "path": "/gpfs/kjhan/CF4/kf_design/bgc_same_truth_information_budget_v2/aggregate/metrics.npz",
+      "bytes": 363326,
+      "sha256": "9926febb682c4224e4d0ebb2753c1a73447711d1affc5dc1e6cca42cdb05c9e2"
+    },
+    "velocity_result_record": {
+      "path": "config/cf4_same_truth_information_budget_v2_result.json",
+      "bytes": 11258,
+      "sha256": "ec29544846e47c94d355a09d4dc8962b5745d13258f4e053a719fa96f8c2ad28"
+    },
+    "fixed_field_kernels": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "bytes": 61275,
+      "sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7"
+    },
+    "frozen_CF4_catalog": {
+      "path": "data/cf4_clean.npz",
+      "bytes": 4167782,
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "bytes": 107382,
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302"
+    }
+  },
+  "environment": {
+    "selection_python": "/home/kjhan/miniconda3/bin/python3.13",
+    "selection_packages": "numpy=2.3.3 scipy=1.18.0 astropy=7.2.0 healpy=1.19.0",
+    "solver_python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "solver_packages": "numpy=2.4.6 scipy=1.17.1 jax=0.10.1 jaxlib=0.10.1 pmwd=0.1.dev131+g0552bc013"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "cpus_per_task": 4,
+    "expected_peak_memory_MiB": 2500,
+    "requested_memory_MiB": 3072,
+    "memory_headroom_multiplier": 1.2288,
+    "time_limit": "01:00:00",
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/pilot",
+    "staging": "/gpfs/kjhan/CF4/kf_design/twompp_joint_information_budget_pilot_v1/.pilot.staging",
+    "maximum_submissions": 1,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "refuse_overwrite": true,
+    "automatic_follow_on_allowed": false
+  }
+}

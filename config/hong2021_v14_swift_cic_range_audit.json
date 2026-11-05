@@ -1,0 +1,30 @@
+{
+  "schema": "hong2021-v14-swift-eagle-cic-range-audit-v1",
+  "status": "recorded_after_development_cic_before_hdf5_preparation_or_model_fit",
+  "suite": "CAMELS Swift-EAGLE L25n256 CV0-26",
+  "common_operator": "exact periodic cell-centred CIC, 80^3 cells in 25 Mpc/h",
+  "observed_full_box_extrema": {
+    "minimum_count": 1.6344991308869794e-05,
+    "minimum_target_log10_overdensity_div_4p5": -1.400458942465886,
+    "minimum_realization": 13,
+    "maximum_count": 249267.46875,
+    "maximum_target_log10_overdensity_div_4p5": 0.8624923707993895,
+    "maximum_realization": 24,
+    "cells_below_target_minus_one": 3,
+    "total_cells": 13824000,
+    "fraction_below_target_minus_one": 2.170138888888889e-07,
+    "nonpositive_cells": 0
+  },
+  "diagnosis": "The inherited absolute target guard [-1,1] rejects three finite positive CIC cells whose weights are extremely small. They are valid outputs of the already frozen CIC operator, not corrupt or zero cells.",
+  "decision": {
+    "policy": "retain every finite positive CIC value exactly",
+    "implementation": "src/hong2021_v14_target.py",
+    "remove_arbitrary_absolute_range_guard": true,
+    "pseudocount": false,
+    "clipping": false,
+    "censoring": false,
+    "zero_or_nonfinite_policy": "fail closed"
+  },
+  "firewall_consistency": "This implements the precommitted v2 zero policy: fail nonpositive cells and forbid pseudocounts, clipping, censoring, or learned floors.",
+  "independent_data_accessed": false
+}

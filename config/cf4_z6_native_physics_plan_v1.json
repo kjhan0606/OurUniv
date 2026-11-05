@@ -1,0 +1,49 @@
+{
+  "bundle": "Z6-NATIVE-PM-Z0-JOINT-PRIOR",
+  "status": "USER_APPROVED_IMPLEMENTATION_AND_BOUNDED_COMPARISON",
+  "date": "2026-09-06",
+  "driver_design_review": "GO: remove extra truth interpolation and replace the uncalibrated z=0 Gaussian-logdensity/fully deterministic velocity closure with an independently trained development z=0 covariance. Reuse existing PM artifacts and posterior driver; no new simulation or generic framework.",
+  "goal": "CF4-informed present density/velocity posterior, then consistent IC/forward validation and LG-only 0.3 cMpc/h zoom in 1-2 cMpc/h surroundings. This N32 diagnostic/prototype does not attain those resolutions.",
+  "reference": "https://arxiv.org/abs/1312.1354 distinguishes density and log-density power spectra; this implementation is a development empirical joint-prior prototype, not a reproduction of that paper.",
+  "data": {
+    "posterior_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1",
+    "training_indices": [1, 2, 3, 4],
+    "evaluation_indices": [0, 5],
+    "allowed_members": ["truth_coarse_density", "truth_coarse_velocity"],
+    "tasks": [0, 1, 2],
+    "cases": [
+      {"task": 0, "truth_index": 0, "model": "old_loglinear_native_origin", "noise_seed": 2026090608},
+      {"task": 1, "truth_index": 0, "model": "PM_calibrated_joint", "noise_seed": 2026090608},
+      {"task": 2, "truth_index": 5, "model": "PM_calibrated_joint", "noise_seed": 2026090609}
+    ],
+    "contract": "Native density and mass-weighted velocity, no post-hoc truth interpolation or smoothing. Training split is frozen before fitting; evaluation truths do not set covariance. All are previously used development simulations, NOT pristine validation. No observed counts/vobs enter fits."
+  },
+  "model": {
+    "physical_grid_origin_cMpc_h": 3.0,
+    "physical_origin_fraction": 0.25,
+    "count_bins_origin_cMpc_h": 6.0,
+    "coordinate_contract": "Native PM N64 node-pair block averages have centroid3, spacing12. Use this origin for source positions and velocity reads; keep survey count-bin centres6 and existing TSC deposition/selection. No resampling of truth arrays.",
+    "density": "g=log(rho)-mean(log(rho)); train its Fourier covariance from four native PM fields; rho=exp(g)/mean(exp(g))",
+    "velocity": "Train E[v(k)|g(k)] and longitudinal/transverse residual covariance. Three additional Gaussian white fields supply conditional velocity scatter, including vorticity and finite-volume bulk variance.",
+    "spectral_bins": 10,
+    "assumptions": "Gaussian joint log-density/velocity, isotropy, fixed finite-ensemble covariance. Non-Gaussian density-shape and covariance uncertainty remain approximations; no claim of exact dynamics.",
+    "LCDM_IC_power": "UNCHANGED. This estimates statistics of the nonlinear, deposited z=0 observable, not a fitted correction A(k) to an IC or to a reconstructed map.",
+    "mock_observation_model": "Same coarse six-population normalized bias/RSD/FoG/selection and fixed CF4 geometry as Z5; independent tracer/selection systematics are not tested."
+  },
+  "sampler": {"chain_count": 4, "warmup_steps": 512, "draws_per_chain": 1024, "integration_steps": 32, "initial_step_size": 0.0005, "maximum_step_size": 0.04, "target_acceptance": 0.9, "divergence_threshold": 1000.0, "chunk_steps": 64, "stored_field_thinning": 4, "initialization": "zero candidate plus 0.5 standardized jitter in every free coordinate; no truth initializer or extra MAP fit", "inverse_mass": "identity"},
+  "assessment": {
+    "mechanics_gates": {"Rhat_max": 1.05, "bulk_ESS_min": 100, "tail_ESS_min": 100, "sampling_divergence_fraction_max": 0.01},
+    "required": ["native-coordinate read/deposit consistency and PSD joint covariance", "prior and observation-map gradients", "same-data baseline vs repaired physical posterior", "repeat repaired model on second non-training truth", "bias intervals, density coverage/recovery and heldout prediction"],
+    "decision": "No-go for promotion if mechanics fail or physical mismatch remains. Two development truths and fitted covariance cannot certify calibration even on apparent success. Freeze criteria and stop after this bundle."
+  },
+  "resources": {
+    "calibration": {"CPUs": 2, "estimated_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:15:00"},
+    "posterior": {"GPU_per_task": 1, "CPUs_per_task": 4, "estimated_host_MiB": 8192, "requested_host_MiB": 9831, "time_limit": "02:00:00", "partitions": "a40,a100,h100,h200", "exclude": "syn06"},
+    "aggregate": {"CPUs": 1, "estimated_MiB": 1000, "requested_MiB": 1200, "time_limit": "00:05:00"},
+    "memory_margin": 0.2, "output_budget_GiB": 4
+  },
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1",
+  "completion": "Calibration/test Slurm job, afterany GPU array (fail early unless calibration passes), then afterany CPU aggregation. No repeated filesystem tests, process scans, or next-bundle auto-launch.",
+  "deferred": ["new PM simulation", "actual-data posterior", "resolution increase", "IC/zoom/high-k completion", "GPFS-specific work"],
+  "next_bundle_requires_user_approval": true
+}

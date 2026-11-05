@@ -1,0 +1,162 @@
+# R1 fixed3D comparison and independent-solver connection — 2026-09-14
+
+User authorizes the next priority after the partial TSC correction. The
+existing independent-solver requirement is NOT waived. This bundle first
+executes the immediately reusable same3D-state comparison, while a current
+verified RAMSES executable/input contract is located. No routine new audit.
+
+## Independent reference: read-only discovery and unresolved contract
+
+The old CF4 RAMSES launchers point to
+`/home/kjhan/BACKUP/lagRamses-de-nonstd/build_lb_minimax/ramses_lb_minimax3d`
+(2026-07-30); the documented `bin/ramses_final3d` is dated2026-08-17. These
+are not confirmed to contain the later run-safety fixes. The inspected
+`patch/lagRamses/amr_step.jaehyun.f90` still triggers periodic output at
+coarse step0. Do not call this old source the verified current implementation
+or launch a historical namelist. No external-project source was modified.
+User was asked for the current verified executable path without blocking the
+in-scope3D comparison. Rebuilding/patching another project is not silently
+substituted for a science comparison.
+
+The inspected GRAFIC reader supports explicit displacement plus independent
+velocity, but the existing CF4 exporter does not yet provide a checked exact-
+state handoff. RAMSES creates particles at cell centers whereas these PM
+states start at grid vertices; the offset must be accounted for, not ignored.
+Preserve original128³ displacement/velocity files for that connection. No
+RAMSES evolution, independent force accuracy or new source-build is claimed.
+
+## Frozen same-state work executable now
+
+Use all three archived128³ ICs from359203, including their interpolated32³
+mode content, unchanged box12 cMpc/h/cosmology/mass. No new high-k or selected
+seed. Four arms: CIC force256/max delta-a1/512 (reproduce archived particle
+endpoints); TSC force128 and256 at1/256; TSC force256 at1/512. Same PMWD KDK
+factors, no amplitude/force-window compensation or phase shifts.
+
+Report particle positions/velocities, Gaussian probe observables, density
+readout band power/cross-correlation/difference at common.1875 cells, and
+force differences at IDENTICAL initial and archived final particle positions.
+Comparisons with CIC are differences, not errors against truth. Fixed readout
+bands in h/cMpc: (0,pi/2],(pi/2,pi],(pi,pi/.3],(pi/.3,pi/.1875]; these are
+reporting scales, not information-frontier declarations or imposed force cuts.
+Report TSC time-halving particle differences separately. Four focused tests,
+including a small8³/3D trajectory-gradient finite-difference comparison, run
+before these twelve evolutions. Passing that test does not validate a large
+production trajectory adjoint or an independent physical solver.
+
+Resource request1GPU/4CPU/10GiB/30min (application25min), current allowed GPU
+partitions including a100_pcie, exclude syn06. Estimated host ceiling8GiB
+(previous1.75GiB plus paired states, compiler and small-field readouts),
++20% rounded10GiB. Bound particle/force artifacts to about1GiB uncompressed,
+not a series of full AMR snapshots. R1 used5246/14400 GPU-seconds before this
+job; even the full1800s remains within the approved allocation cap.
+
+Q-GOAL: determine whether the plane artifact materially affects the3D
+observation predictions before choosing a dynamics backend for actual CF4/LG.
+Q-LEAN: reuse initial states, observables, conservative readout and diagnostic
+KDK; no new framework/HMC or another assignment-order sweep. MW/M31/M33 must
+ultimately be identified in generated states with role ambiguity and bound M33
+handled; these three Gaussian probes do not identify them or supply their
+observational likelihood. R2/science promotion remains held.
+
+Outputs: `/gpfs/kjhan/CF4/z0_density/r1_three_dimensional_v6/job_JOBID/`;
+logs `/gpfs/kjhan/CF4/logs/cf4_R1_3d_JOBID.{out,err}`.
+
+##359415 completed; user confirms latest RAMSES source
+
+Source e63f60d, Slurm359415 COMPLETED128s/exit0 on syn103/a100_pcie,
+2026-09-14 18:35:24–18:37:32 KST. Four tests/twelve evolutions pass. Archived
+CIC endpoints reproduce to~1e-13 relative velocity. The short3D trajectory
+derivative AD=-.0003735988948135 agrees with both finite differences.
+
+Same force256/time1/512, TSC minus CIC across the three seeds:
+- Individual velocity relative RMS66.11–76.89%; position RMS.123–.149 cMpc/h.
+- Initial same-state force differences9.82–12.13%, final9.71–10.88%.
+- Density differences by fixed k bands:.527–.749%,1.376–2.119%,5.772–7.228%,
+  and13.815–14.953%. These are differences between solvers, NOT true errors.
+- Nine Gaussian probe masses differ by at most1.486%; centroid by.02149
+  cMpc/h; mean velocity by1.364 km/s.
+- Halving TSC time steps changes individual velocity3.48–14.72%, but probe
+  masses at most.0562% and mean velocities.0531 km/s.
+
+Thus large particle-by-particle differences cannot alone be equated with a
+failed macroscopic density reconstruction after nonlinear evolution. Conversely,
+agreement of broad probes cannot certify small scales, bound halos or M33.
+Keep the independent evolution comparison; no further assignment/mesh sweep.
+Peak process host2.283GiB/device1809263104 bytes. GPU allocation now5374/14400s,
+remaining9026s. Result/particle and moment artifacts retained under job359415.
+
+User subsequently confirms `/home/kjhan/BACKUP/lagRamses-de-nonstd` is the
+latest SOURCE. This resolves the source-location question, not the compiled-
+binary or input-contract checks. Tracked source is clean at
+`d689044d896d9f195629891a202eaf2fd64ee0d2`; build an archived source copy
+inside CF4 via Slurm, no original-project edits or old-binary substitution.
+Build request1CPU/6GiB/20min (estimated5GiB+20%), USE_FFTW=1, standard existing
+Makefile/compiler; no numerical run in this build job and no GPU reservation.
+
+Source review changes the handoff choice: use the existing cosmological
+ASCII particle path, with explicit normalized positions, code velocities and
+total-matter masses, retaining Omega_b=.05 in cosmological metadata. The
+GRAFIC particle constructor unconditionally multiplies masses by
+(1-Omega_b/Omega_m); using it with the physical baryon parameter would drop
+total gravitating mass here. ASCII avoids that and cell-center offsets without
+modifying RAMSES gravity or recomputing velocities. `ic_deltab` supplies ONLY
+the required extended cosmological header for this ASCII path, not a gas map.
+The planned initial-state snapshot is intentional, not a no-output reader run.
+
+## Independent RAMSES reference execution
+
+Build359445 completed0:0 in101s, source d689044d896d9f195629891a202eaf2fd64ee0d2.
+Binary SHA256 e5a9b28a67238061946f3db82d8a991aff1180b4eefd2fc63c864ab0c3318129.
+Use fixed first seed2026091301,128³ original particles, box12 cMpc/h, a=1/64.
+Initial snapshot must reproduce positions, velocities, IDs and total-matter
+mass before evolution. Then compare AMR levelmax8 and9, levelmin7, at a=1
+against both archived CIC/TSC endpoints and each other using identical density
+readout and Gaussian probes. This is an independent dynamics diagnostic, not
+a CF4 posterior or MW/M31/M33 identification; no R2 promotion is automatic.
+
+Explicit output policy: initial-state check noutput1/aout=.015625 (z=63);
+each evolution noutput2/aout=.015625,1 (z=63,0). Five intentional snapshots
+total, conservative2GiB each/~10GiB total plus~.35GiB ASCII input and small
+summaries. Shared output storage had~90T free at the single sizing check.
+foutput/fbackup=1e9; existing step-zero output is intentional and counted.
+Effective namelists are /gpfs/kjhan/CF4/r1_ref_v7/job_JOBID/{initial_state,amr8,amr9}/run.nml.
+CPU-only Slurm: one node,4MPI×2OMP=8cores,15GiB (12GiB estimate+20%, rounded),
+90min allocation; application80min, each evolution30min, initial check5min.
+No GPU requested; R1 cumulative GPU allocation remains5374/14400s. Preserve
+all outputs on failure; reject incomplete dumps, mass/input mismatches,
+missing FFTW markers or fine-MG nonconvergence rather than trust exit0.
+
+Execution359480 submitted from ed1d896 on a100_pcie/syn103, CPU-only. The
+already completed build dependency was rejected by Slurm; submitted without
+that stale dependency after confirming build success and binary hash.
+Initial-state validation PASSED:2097152 unique particles, normalized total
+mass1, a=.015625, max position discrepancy8.88e-16 cMpc/h, max peculiar
+velocity discrepancy1.552e-6 km/s (float32 header precision). Required FFTW
+and baryon-header markers present. AMR8 evolution started; AMR9 and final
+comparisons follow automatically only if preceding checks succeed. Results
+are not yet an independent convergence verdict.
+
+## Timeout recovery — same comparison, no physics changes
+
+359480 FAILED after30m39s at2026-09-14 19:25:19 KST. The application killed
+AMR8 at its1800s per-evolution cap, not the Slurm90min allocation limit.
+Last reported coarse step600/a=.8691; no fine-MG nonconvergence or fatal
+runtime marker found. Initial-state validation passed; AMR9 never started
+and no final comparisons exist. Preserve all previous outputs.
+
+User approves continuation. Change ONLY time limits: each evolution90min,
+application190min, Slurm200min. The extra margin accounts for the unmeasured
+finer AMR9 cost; it is a cap, not a promised runtime. Keep same binary, seed,
+IC, tolerances,4MPI×2OMP,15GiB, and five-snapshot policy (~10GiB plus input).
+Use a new job directory and repeat the short initial-state check. No GPU
+allocation or new science scope. AMR8 and then AMR9 comparisons remain
+automatic within the job; a failure preserves results and stops the sequence.
+
+Retry360338, source79d75f1149ac1137df38c0c2976ce6c03ccaa305, started
+2026-09-14 23:20:24 KST on syn103/a100_pcie. Allocation confirms CPU8,
+15GiB, no GPU; deadline2026-09-15 02:40:24 KST. Current free space150T.
+Outputs /gpfs/kjhan/CF4/r1_ref_v7/job_360338/; effective namelists under
+initial_state/run.nml, amr8/run.nml and amr9/run.nml within that directory.
+Logs /gpfs/kjhan/CF4/logs/cf4_R1_ramses_360338.{out,err}. Submitted/running,
+not a completed comparison or accuracy verdict.

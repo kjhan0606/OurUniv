@@ -1,0 +1,21 @@
+{
+  "schema": "ouruniv-cf4-lg-zoom-ic-pilot-decision-v1",
+  "date": "2026-09-20",
+  "job": "388615",
+  "stage": "8/8",
+  "decision": "ZOOM_IC_PILOT_GENERATED_FORWARD_VALIDATION_PENDING",
+  "manifest": "/gpfs/kjhan/CF4/zoom/cf4_lg_zoom_pilot_v2/zoom_ic_manifest.json",
+  "checks": {
+    "manifest_status": "complete",
+    "global_parent_level": 8,
+    "finest_ic_level": 12,
+    "runtime_levelmax": 19,
+    "lg_particle_spacing_cMpc_h": 0.09375,
+    "runtime_min_cell_ckpc_h": 0.732421875,
+    "trace_particles": 163,
+    "geometric_mask": false,
+    "nested_levels": [8, 9, 10, 11, 12]
+  },
+  "interpretation": "A trace-derived pilot zoom IC exists and meets the <=0.3 cMpc/h LG target at the IC particle level. It is not yet a validated Local Group realization.",
+  "next": "Run a bounded RAMSES zoom preflight/evolution using the multi-level GRAFIC directories, then HOP contamination and MW/M31/M33 diagnostics before any production promotion."
+}

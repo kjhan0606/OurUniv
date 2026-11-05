@@ -1,0 +1,38 @@
+{
+  "schema": "ouruniv-cf4-lg-s40349-zoom-l12-reader-decision-v1",
+  "date": "2026-09-23",
+  "job": 1108348,
+  "stage": "8/8 bounded zoom reader gate",
+  "selection_status": "trace-only-zoom-candidate",
+  "parent_promoted": false,
+  "m33_resolved": false,
+  "run": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l12_reader_v1/job_1108348",
+  "effective_namelist": "/gpfs/kjhan/CF4/ramses/s40349_zoom_l12_reader_v1/job_1108348/ramses.nml",
+  "checks": {
+    "completed": true,
+    "exit_code": 0,
+    "elapsed_seconds": 112,
+    "max_rss_gib": 41.97,
+    "requested_memory_gib": 64,
+    "particle_count": 138632600,
+    "maximum_rank_particle_count": 9436883,
+    "morton_self_lookup_mismatch": 0,
+    "finest_loaded_level": 12,
+    "level_12_grid_count_final": 507807,
+    "fftw_base_solve_completed": true,
+    "fine_multigrid_nonconvergence_count": 0,
+    "maximum_reported_fine_residual": 7.437e-05,
+    "epsilon": 0.0001,
+    "unexpected_full_snapshots": 0,
+    "extended_grafic_header_bytes": 48,
+    "extended_grafic_omega_b": 0.0
+  },
+  "decision": "TRACE_ONLY_ZOOM_L12_READER_PASS",
+  "interpretation": "The exact L9-L12 hierarchy loads, balances, builds particles, passes Morton checks, and completes base/fine Poisson solves without writing a snapshot. The nstepmax=0 implementation performs one reported coarse step; this is an initial-state gate, not a z=0 evolution or structure validation.",
+  "limitations": [
+    "The RAMSES message labels omega_b=0 as legacy because its consistency branch tests omega_b>0; the runner independently verified the 48-byte header and exact zero value on all fields.",
+    "Runtime AMR levels 13-19 were not enabled in this reader-only gate.",
+    "The trace-only parent, unresolved M33, and unconstrained high-k phase qualifications remain unchanged."
+  ],
+  "next": "Run one no-output two-step gate with runtime levelmax=19 and increased particle/grid capacity headroom; do not start a long z=0 evolution automatically."
+}

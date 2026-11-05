@@ -1,0 +1,21 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-calibration-v2-decision",
+  "date": "2026-09-20",
+  "job": "388277",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_calibration_v2/result.json",
+  "decision": "DEVELOPMENT_GO_PRODUCTION_NO_GO",
+  "result": "All six spatial holdout deviances improve after adding population-specific radial nuisance.",
+  "critical_diagnostics": {
+    "radial_nuisance_boundary_hit": [false, false, false, false, false, true],
+    "pearson_overdispersion_proxy": [25176664.6108, 6753793.5508, 5767415.4489, 151958714.8412, 122421875.2108, 11978782.6999],
+    "interpretation": "The nuisance absorbs mismatch but leaves enormous count overdispersion; this is not a calibrated physical RSD/FoG model."
+  },
+  "remaining_required_work": [
+    "replace the radial nuisance with a redshift-space forward model using measured velocity-error and FoG kernels",
+    "fit an explicit negative-binomial or stochastic residual field with externally validated dispersion",
+    "perform mask-boundary and zero-completeness sensitivity tests",
+    "obtain independent survival/bias calibration before production posterior"
+  ],
+  "production_IC_allowed": false,
+  "stage": "4/8 development; no IC or PM forward run"
+}

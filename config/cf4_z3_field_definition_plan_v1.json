@@ -1,0 +1,34 @@
+{
+  "bundle": "Z3-FIELD-DEFINITION-CALIBRATION",
+  "status": "COMPLETED_DRIVER_REVIEWED",
+  "result": "config/cf4_z3_field_definition_result_v1.json",
+  "driver_design_review": "GO: diagnose the unresolved interval-width discrepancy with stored development fields and a linear response check; no new sampling or nonlinear PM evolution.",
+  "goal": "Reliable CF4-informed 1-2 cMpc/h surroundings feeding a Local Group-only 0.3 cMpc/h zoom IC hierarchy. This diagnostic remains N32 and makes no resolution attainment claim.",
+  "inputs": {
+    "base_program": "config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "posterior_program": "config/cf4_datum_bearing_z0_phasec_posterior_v1.json",
+    "posterior_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_posterior_v1",
+    "tasks": "all eight already generated development assignments in the posterior program",
+    "members": ["truth_coarse_density", "truth_coarse_velocity", "posterior_density_mean", "posterior_density_quantiles", "posterior_velocity_mean", "posterior_white_thinned"]
+  },
+  "method": {
+    "normalization": "Compare the inference white-to-density transfer directly with installed PMWD linear_modes(a=1, real=True) on the same N32 white field; relative RMS tolerance 1e-10.",
+    "fixed_response_candidates": ["raw", "non_Nyquist_only", "CIC6_plus_block12_centered", "CIC6_plus_block12_native_phase"],
+    "CIC": "Approximate continuous CIC assignment amplitude product sinc(k_a*6/(2*pi))^2; does not include particle sampling aliases or nonlinear evolution.",
+    "block": "Exact two-fine-node averaging amplitude product cos(k_a*3), with native-index phase exp(i*3*sum(k_a)); verify against explicit fine-grid embedding and block averaging.",
+    "Nyquist": "Exclude coarse Nyquist planes from windowed candidates; retain a separate masked baseline so their removal is not confused with smoothing.",
+    "samples": "Every fourth already stored white draw per chain, fixed in advance; compare the raw subsample with existing full-draw coverage as a sampling diagnostic.",
+    "statistics": ["truth and linear-prior field RMS", "coverage and standardized residual spread per candidate", "same-seed linear-template correlation and residual RMS", "truth power divided by candidate prior power for every mesh k shell", "fraction of linear posterior draws below delta=-1", "raw linear versus mass-weighted truth velocity correlation"],
+    "interpretation": "Filtering stored draws is sensitivity analysis, not a refitted posterior or calibration pass. No filter or phase is selected by its coverage. A linear-prior comparison is not ensemble simulation-based calibration."
+  },
+  "static_source_findings": [
+    "Truth is CIC-deposited N64 nonlinear mass and momentum, block-averaged to N32; velocity is momentum/mass.",
+    "Inference exports unsmoothed linear Fourier density and potential-flow velocity, while its positive tracer mean is exponential in that linear density.",
+    "Truth tracer mapping uses centered log(fine_density) and fixed population-total normalization; inference has free population amplitudes without the same normalization.",
+    "PMWD grid points begin at zero; later truth/tracer routines use cell-center coordinates. Native array-index alignment must be quantified before choosing a common physical coordinate convention."
+  ],
+  "resources": {"backend": "Slurm CPU only", "cpus": 2, "estimated_peak_MiB": 2000, "requested_MiB": 2400, "time_limit": "00:20:00"},
+  "output_root": "/gpfs/kjhan/CF4/z0_density/z3_field_definition_v1",
+  "deferred": ["new HMC/PM runs", "actual CF4 posterior", "fitting a spectrum correction to these truths", "IC generation or zoom run"],
+  "boundary": "Driver closure review then user approval before another bundle. Fable/Opus audits waived for Astra."
+}

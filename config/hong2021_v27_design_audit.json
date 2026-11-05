@@ -1,0 +1,88 @@
+{
+  "schema": "hong2021-v27-parent-aligned-condition-design-audit-v1",
+  "status": "complete_development_only_before_v27_freeze_or_implementation",
+  "purpose": "Select one conditional-context repair after V26 proved that its Haar interface discarded the child-phase information defining every target detail scale.",
+  "parent_failure": {
+    "v26_registry": "config/hong2021_v26_development_program.json",
+    "v26_registry_sha256": "810e7ce430c0b9a1a7322bad3ef0ea650af80165cd26a16fc84e8d9b9e96ac2c",
+    "v26_context_audit": "config/hong2021_v26_context_representation_audit.json",
+    "v26_context_audit_sha256": "482bbec97f1e19446b7b3942862048234ab8eca5d3e698cbce5bac52c4a61a5b",
+    "v26_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/development_decision.json",
+    "v26_decision_sha256": "b7427b049b8694301cd6c344385a5d3cf14ed51bc00a5a9eb3a0133bc0109d35",
+    "v26_decision_digest_sha256": "9e0d518662fc80685f18fc0d8677f0de008c014e354ec8e681ca6ec648317266",
+    "classification": "parent_child_phase_aliasing_in_conditional_haar_context",
+    "required_next": "repair the condition-to-Haar interface without changing the density target, likelihood, optimizer, horizon, or gates"
+  },
+  "selected_change": {
+    "name": "parent_aligned_2x2x2_child_phase_condition",
+    "old_at_detail_resolution_r": "adaptive-average-pool each of four condition fields directly to r by r by r, yielding four local channels",
+    "new_at_detail_resolution_r": "adaptive-average-pool each condition field to 2r by 2r by 2r and apply exact 3-D space-to-depth with block size two, yielding 4x8=32 parent-aligned child-phase channels on the r grid",
+    "information_property": "the transform is bijective between the pooled 2r grid and the 32-channel r-grid representation, so all eight child values and every signed child contrast are retained",
+    "coarsest_effect": "the seven target octant contrasts at 1 cubed are conditioned on all eight observed octant values for every condition field rather than only whole-box averages",
+    "finest_effect": "the 32 cubed target details are conditioned on the exact eight 64-grid child voxels for every condition field",
+    "additional_context_retained": "the reconstructed coarser latent and eight train-only standardized observable scalar features",
+    "local_context_channels_old_to_new": [13, 41],
+    "trainable_parameter_count_old_to_new": [3206424, 3787032]
+  },
+  "alternatives_rejected": [
+    {
+      "name": "per_scale_loss_reweighting_or_separate_optimizers",
+      "reason": "The stored Adam first/second moments show balanced effective update norms across scales and negligible decoupled weight decay despite raw dimension-weighted gradients."
+    },
+    {
+      "name": "longer_training_or_another_capacity_only_retry",
+      "reason": "The first two validation-scale NLLs worsened from 10000 to 30000 in every domain while generated latent support excursions grew."
+    },
+    {
+      "name": "pool_condition_to_r_then_use_larger_convolutions",
+      "reason": "No convolution can recover within-parent child phases after the r-grid average has discarded them, especially at the 1-grid coarsest scale."
+    },
+    {
+      "name": "post_sample_clipping_rank_remapping_or_Ak",
+      "reason": "These operations would conceal likelihood miscalibration, break direct sampling semantics, and do not restore conditional morphology."
+    },
+    {
+      "name": "change_G21_support_spline_bounds_or_flow_bins",
+      "reason": "The V26 failure was traced to condition aliasing rather than trained-spline numerical inversion or base-normal calibration."
+    },
+    {
+      "name": "open_Astrid_or_historical_EAGLE",
+      "reason": "V26 failed the three-domain development gate and independent-data access remains forbidden."
+    }
+  ],
+  "invariants_from_v26": [
+    "TNG100, SIMBA, and Swift train/validation files and the same fixed development objects",
+    "the frozen V21 exact-zero-DC conditional-affine Gaussianized latent and every inverse map",
+    "six-level orthonormal 3-D Haar target coordinates and train-only affine moments",
+    "four target-free condition fields and eight train-only observable scalar features",
+    "coarse-to-fine exact conditional rational-quadratic spline likelihood",
+    "six independent scale flows, four alternating channel couplings, eight bins, tail bound six, hidden width 32, and two residual blocks",
+    "equal-source batches, all 48 signed cube isometries, AdamW, learning-rate schedule, EMA, gradient clip, and mixed precision",
+    "30000-step horizon with candidates 10000, 20000, and 30000",
+    "sampling seeds, 16-member ensembles, physical inverse, field evaluator, Q3/Q4/Q5 thresholds, and smallest-passing-candidate rule",
+    "Astrid and historical-EAGLE firewall"
+  ],
+  "falsifiable_predictions": {
+    "coarse_condition_sensitivity": "coarsest context changes under a nontrivial cube isometry by the corresponding child-phase permutation rather than remaining invariant",
+    "base_z": "truth base-z standard deviation at the first two scales moves toward one relative to V26 in every development domain",
+    "scale_nll": "the first two fixed-validation scale NLLs no longer worsen jointly from 10000 to 30000 in all domains",
+    "latent_support": "generated |G21 latent|>=5 occupancy and generated maxima decrease relative to V26 without clipping",
+    "field_outcome": "Q3/Q4 and high-k/2PCF improve jointly if the missing phase interface was causal"
+  },
+  "hard_preflight_requirements": [
+    "full pytest on the committed implementation",
+    "exact parent and audit hashes with a clean committed worktree",
+    "space-to-depth followed by depth-to-space exact roundtrip at all six resolutions",
+    "coarsest context cube-isometry sensitivity and correct child-phase permutation",
+    "condition channels are target-free and density truth never enters context",
+    "Haar roundtrip, Parseval identity, exact non-DC coverage, trained-flow forward/inverse checks, finite real-data gradients, and direct-sampling seed reproducibility inherited from V26",
+    "Ada peak memory below 8 GiB",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "decision": "freeze exactly one V27 context-interface change, implement from scratch-compatible initialization, and run one unchanged three-domain development program",
+  "firewall": {
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_data_eligible_only_after": "all-domain V27 development pass, committed seal, and explicit user approval"
+  }
+}

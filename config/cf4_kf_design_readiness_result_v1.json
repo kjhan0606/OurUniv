@@ -1,0 +1,86 @@
+{
+  "schema": "ouruniv-cf4-kf-design-readiness-result-v1",
+  "status": "PASS_DESIGN_INTERNAL_CONSISTENCY_BLOCKED_BY_SCIENCE_INPUTS",
+  "stage": "KF-DESIGN",
+  "generated_by": "src/cf4_kf_design_readiness.py",
+  "record_form": "abridged",
+  "omitted_report_fields": [
+    "checks",
+    "baseline_binding",
+    "geometry_manifest.validated",
+    "geometry_manifest.body_sha256"
+  ],
+  "renamed_report_fields": {
+    "blockers": "remaining_blockers"
+  },
+  "remaining_blockers_semantics": "complete blocker list; execution and overclaim prohibitions are also listed explicitly",
+  "purpose": "Record-only local readiness result; no catalog, GPFS, Slurm, mock, posterior, IC, PM, HOP, or RAMSES execution.",
+  "read_only_local_audit": true,
+  "source_bindings": {
+    "route": {
+      "path": "config/cf4_science_route_v3.json",
+      "sha256": "2ac2fc372aad3e256342a2a1dde74f7dc8ea31282da8b0af04d912e49eef7afb"
+    },
+    "design": {
+      "path": "config/cf4_kf_design_v1.json",
+      "sha256": "ab4d9c46c6bb33c10d34f96403112e71332ddcddcd84196889489911c0b62865"
+    },
+    "manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+      "body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+    },
+    "likelihood": {
+      "path": "config/cf4_2mpp_joint_likelihood_v1.json",
+      "sha256": "6db1cc307a9f7cd1142eeeefbc41ab4f33a0d1718389c1e940bb41da2730ff85"
+    },
+    "local_contract": {
+      "path": "config/cf4_2mpp_joint_likelihood_local_contract_v1.json",
+      "sha256": "a8e78eb8b2c5282869b5406c7292518239f80782461855a36cc8a0209faf560b"
+    },
+    "crossmatch": {
+      "path": "config/cf4_2mpp_crossmatch_v1_result.json",
+      "sha256": "3e2e5841d62e9581c7437a28f07d6f5c3423b023749f99a678546d1d7d29752a"
+    },
+    "baseline": {
+      "path": "config/cf4_kf_design_baseline_amendment_v1.json",
+      "sha256": "3b39b2139b64f74ccbf95b582512f3b8d3e03a76acc1ac17d489c5b913195484"
+    },
+    "parent_architecture": {
+      "path": "config/cf4_independent_parent_architecture_design.json",
+      "sha256": "b17e6ec0ec67cc7329614e98a989a447be5ec43edd1f6a370c481e19f9cd132b"
+    }
+  },
+  "resolved_design_items": {
+    "frozen_BGc_WF_and_current_artifact_baseline": "complete_record_only_external_artifacts_not_read",
+    "immutable_geometry_bin_manifest": "validated_geometry_only",
+    "crossmatch_provenance": "COMPLETE"
+  },
+  "remaining_blockers": [
+    "2M++ raw provenance and CF4 crossmatch are complete, but angular empty-sky completeness, K/evolution/extinction/LF, RSD/FoG, luminosity-bias/HOD/model-discrepancy, and CF4 group-member shared-redshift covariance likelihood implementation remain pending",
+    "structure-summary likelihood provenance, covariance, and model-discrepancy contracts are partial",
+    "full angular selection/completeness map at empty-sky positions is absent from the current raw tables",
+    "K-correction, evolution-correction, extinction, and luminosity-function contract is incomplete",
+    "RSD and FoG/group-dispersion priors are incomplete",
+    "luminosity-dependent bias, HOD or overdispersion, and forward-model discrepancy require calibration on independent mocks",
+    "CF4 group-member covariance and shared-redshift source-resolution contract is incomplete",
+    "KF-DESIGN readiness is not a science inference or observational-resolution claim",
+    "no KF-EXPAND, all-D mock, Slurm, GPFS, catalog, IC, PM, HOP, or RAMSES execution is authorized by this audit"
+  ],
+  "geometry_manifest": {
+    "native_bin_count": 38,
+    "roi_count": 6,
+    "science_claim_created": false
+  },
+  "authorization": {
+    "KF_EXPAND": false,
+    "all_D_mock_execution": false,
+    "observational_inference": false,
+    "Slurm_submission": false,
+    "GPFS_read": false,
+    "GPFS_write": false,
+    "network_access": false,
+    "IC_PM_HOP_RAMSES": false
+  },
+  "next_action": "Complete source-bound selection and likelihood design contracts, then request bundle-closure audit; keep KF-EXPAND and all execution closed."
+}

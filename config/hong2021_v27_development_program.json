@@ -1,0 +1,191 @@
+{
+  "schema": "hong2021-v27-parent-aligned-conditional-haar-flow-development-program-v1",
+  "status": "frozen_before_candidate_training_or_development_evaluation",
+  "purpose": "Test whether preserving all observed child phases at each Haar parent repairs V26 coarse conditional underfit, cross-scale tail excursions, and morphology loss.",
+  "design_audit": {
+    "path": "config/hong2021_v27_design_audit.json",
+    "sha256": "8ee643d74d75702560117898f5eb329dbdca4108768b3f2da90437f35e5554bc",
+    "selected_change": "parent_aligned_2x2x2_child_phase_condition"
+  },
+  "parent_evidence": {
+    "v26_registry": "config/hong2021_v26_development_program.json",
+    "v26_registry_sha256": "810e7ce430c0b9a1a7322bad3ef0ea650af80165cd26a16fc84e8d9b9e96ac2c",
+    "v26_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/development_decision.json",
+    "v26_decision_sha256": "b7427b049b8694301cd6c344385a5d3cf14ed51bc00a5a9eb3a0133bc0109d35",
+    "v26_decision_digest_sha256": "9e0d518662fc80685f18fc0d8677f0de008c014e354ec8e681ca6ec648317266",
+    "v26_failure_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/automatic_failure_audit.json",
+    "v26_failure_audit_sha256": "67456080cc91d2ecac24a76f60a35ed2189e44de6d98f32de41c511d4d96e753",
+    "v26_mechanism_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/trained_flow_mechanism_audit_v2.json",
+    "v26_mechanism_audit_sha256": "658076ff96a9ba53b8a2b53f4280dcf9180639fb86b95ac843656facd6977cb8",
+    "v26_optimizer_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v26_e14_conditional_haar_flow/gradient_scale_audit_v2.json",
+    "v26_optimizer_audit_sha256": "d4fad670ee65dadc7d543cf4180e457ff23a201b0d8339abc5771257ade4e7c7",
+    "v26_context_audit": "config/hong2021_v26_context_representation_audit.json",
+    "v26_context_audit_sha256": "482bbec97f1e19446b7b3942862048234ab8eca5d3e698cbce5bac52c4a61a5b",
+    "failure_classification": "parent_child_phase_aliasing_in_conditional_haar_context",
+    "required_next": "repair the condition-to-Haar interface without changing the density target, likelihood, optimizer, horizon, or gates"
+  },
+  "single_coherent_change": {
+    "from": "four condition fields average-pooled directly to each r-grid Haar detail resolution",
+    "to": "the same fields pooled to 2r and exactly rearranged into 32 parent-aligned child-phase channels on the r grid",
+    "space_to_depth_block": [2, 2, 2],
+    "old_to_new_local_condition_channels": [4, 32],
+    "old_to_new_total_flow_context_channels": [13, 41],
+    "information_discarded_by_new_interface": false,
+    "new_target_or_density_information": false,
+    "training_from_scratch": true,
+    "continuation_checkpoint": null
+  },
+  "inherited_unchanged": [
+    "TNG100, SIMBA, and Swift train/validation data and the same 16-object development subsets",
+    "six frozen V21 conditional-affine caches, V21 profile, G21 transform, V14 physical inverse, and their hashes",
+    "four target-free condition fields: preprocessed count, preprocessed velocity, corrected deterministic mean, and radius",
+    "eight train-only source-balanced cube-isometry-invariant observable features",
+    "six-level orthonormal Haar target, exact zero DC, and 42 train-only detail moments",
+    "all 48 signed cube isometries applied jointly before Haar analysis",
+    "six independent scale flows, four alternating coupling masks, rational-quadratic splines, eight bins, and tail bound six",
+    "hidden width 32, two residual blocks, periodic 3x3x3 convolutions, and identity spline initialization",
+    "equal-source batch 2/2/2, exact unweighted NLL, AdamW, cosine schedule, EMA, fixed global clip, and mixed precision",
+    "30000 steps and the predeclared 10000, 20000, and 30000 candidates",
+    "training, validation, and sampling seed lineage",
+    "16-member direct-sampling ensembles and exact inverse chain",
+    "field evaluator, Q3/Q4/Q5 thresholds, V24/V25/V26 comparisons, and smallest-passing-candidate rule",
+    "Astrid and historical-EAGLE firewall"
+  ],
+  "coordinate_system": {
+    "input_target": "frozen V21 exact-zero-DC conditional-affine Gaussianized latent",
+    "transform": "six-level orthonormal 3-D Haar",
+    "coarsest_dc": "fixed to zero and excluded from likelihood",
+    "detail_dimensions_coarse_to_fine": [7, 56, 448, 3584, 28672, 229376],
+    "modeled_dimensions": 262143,
+    "standardization_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v26/design/haar_detail_moments.json",
+    "standardization_artifact_sha256": "32975f030ee014e15edb749dec8b26a0885e71ebab491f45f5d51e0f38782a24",
+    "post_sample_dc_operation": "one numerical roundoff-only cube centering before the unchanged V21/V14 inverse"
+  },
+  "condition_representation": {
+    "fields": [
+      "preprocessed_count",
+      "preprocessed_line_of_sight_velocity",
+      "corrected_deterministic_mean",
+      "observer_radius"
+    ],
+    "target_free": true,
+    "at_detail_resolution_r": [
+      "adaptive average pool every field to exactly 2r by 2r by 2r",
+      "reshape each non-overlapping 2x2x2 parent block into eight ordered child-phase channels",
+      "concatenate the resulting 32 channels, one reconstructed coarser-latent channel, and eight broadcast global features"
+    ],
+    "child_phase_order": "z-major binary offsets (000,001,010,011,100,101,110,111) within every parent",
+    "total_channels": 41,
+    "invertible_at_the_pooled_resolution": true,
+    "coarsest_observed_grid": [2, 2, 2],
+    "finest_observed_grid": [64, 64, 64]
+  },
+  "likelihood": {
+    "factorization": "p(d_coarse|child_phase(c)) times product over finer levels p(d_level|child_phase(c), reconstructed_coarser_latent)",
+    "base": "independent standard normal for every standardized Haar detail coefficient",
+    "levels": 6,
+    "detail_channels_per_level": 7,
+    "coupling_layers_per_level": 4,
+    "alternating_passive_channel_masks": [[0, 1, 2], [3, 4, 5, 6]],
+    "transform": "monotonic rational-quadratic spline",
+    "bins": 8,
+    "tail_bound_standardized_units": 6.0,
+    "outside_tail_bound": "identity linear tails",
+    "conditioner": {
+      "hidden_channels": 32,
+      "residual_blocks": 2,
+      "convolutions": "periodic 3x3x3",
+      "normalization": "per-voxel channel normalization",
+      "local_inputs": "passive target Haar details, 32 parent-aligned condition child phases, and reconstructed coarser latent",
+      "global_inputs": "eight standardized observable context features broadcast at every scale",
+      "output_initialization": "exact identity spline"
+    },
+    "parameters": 3787032,
+    "parameter_increase_explanation": "580608 input-convolution weights forced solely by replacing 4 local condition channels with 32 information-preserving child-phase channels across 24 conditioners",
+    "objective": "equal-source mean exact negative log likelihood per non-DC dimension",
+    "target_or_density_dependent_weights": false,
+    "auxiliary_field_or_tail_losses": false
+  },
+  "training_protocol": {
+    "host": "LagEunha",
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "batch": 6,
+    "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift": 2},
+    "steps": 30000,
+    "candidate_steps": [10000, 20000, 30000],
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "minimum_learning_rate": 0.00001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "ema_decay": 0.999,
+    "validation_every": 500,
+    "mixed_precision": "CUDA autocast plus GradScaler; spline algebra and log-determinants in float32",
+    "augmentation": "uniform random one of 48 signed cube isometries applied jointly before Haar analysis and child-phase extraction",
+    "seed": 144021,
+    "validation_seeds": [99173, 99174, 99175],
+    "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777}
+  },
+  "hard_preflight": [
+    "full pytest",
+    "exact registry and all parent/audit/artifact hashes",
+    "space-to-depth/depth-to-space roundtrip at resolutions 1,2,4,8,16,32",
+    "coarsest context isometry sensitivity and exact child-phase permutation",
+    "no density truth or target-dependent feature enters condition extraction",
+    "Haar forward/inverse, Parseval, exact non-DC coverage, and zero-DC checks",
+    "fixed-batch spline forward/inverse roundtrip and logdet cancellation after nonidentity perturbation",
+    "identity initialization, parameter count 3787032, finite real-data loss and gradients",
+    "Ada peak memory below 8 GiB",
+    "direct-sampling RNG reproducibility and pre-centering DC audit",
+    "Astrid and historical EAGLE unopened"
+  ],
+  "diagnostics_and_selection": {
+    "selection": "smallest candidate passing every unchanged field check plus Q3 and Q4 independently in TNG100, SIMBA, and Swift",
+    "Q3": {
+      "absolute_delta_q99_999_log10rho_max_dex": 0.1,
+      "generated_max_above_truth_max_dex": 0.3
+    },
+    "Q4": {"generated_over_truth_mean_delta_squared_max": 1.5},
+    "Q5": "unchanged no-harm checks",
+    "nonselection_diagnostics": [
+      "train and fixed-validation exact NLL by source and Haar scale",
+      "truth and generated base-z moments by Haar scale",
+      "truth and generated voxel-latent support occupancy and extrema",
+      "trained-model forward/inverse roundtrip and logdet cancellation",
+      "pre-centering and final DC",
+      "V24/V25/V26 field, Q3, Q4, scale-NLL, base-z, and support comparisons",
+      "per-object maxima and 2PCF/high-k/peak/void changes"
+    ]
+  },
+  "failure_classification_at_step_30000": [
+    {
+      "condition": "all-domain field plus Q3/Q4 pass",
+      "classification": "parent_aligned_condition_interface_sufficient",
+      "next": "seal_v27_and_await_explicit_user_approval_before_independent_data"
+    },
+    {
+      "condition": "coarse base-z and latent support improve in all domains but any unchanged field check fails",
+      "classification": "condition_phase_repair_calibrates_latent_but_deterministic_backbone_or_residual_morphology_remains_insufficient",
+      "next": "stop_without_posthoc_tuning_and_audit_deterministic_current_density_backbone"
+    },
+    {
+      "condition": "coarse base-z or latent support does not improve consistently and no all-domain pass",
+      "classification": "explicit_conditional_haar_flow_insufficient_after_information_preserving_context",
+      "next": "stop_flow_variants_and_test_a_train_only_empirical_joint_residual_control_before_a_new_density_representation"
+    }
+  ],
+  "fixed_decision_order": [
+    "freeze this registry before implementation, candidate training, or development evaluation",
+    "implement and test exactly the parent-aligned child-phase context change",
+    "commit the implementation and run the Lageunha Ada hard preflight",
+    "train once from scratch to 30000 with no interventions",
+    "evaluate 10000, 20000, and 30000 in ascending order",
+    "select the smallest all-domain pass or apply the frozen failure classification",
+    "do not change context packing, spline bins/bounds, masks, capacity, loss, horizon, seeds, sampler, thresholds, or add post-hoc clipping after seeing results"
+  ],
+  "approval_firewall": {
+    "Astrid_access": "forbidden until a three-domain development pass, committed seal, and explicit user approval",
+    "historical_EAGLE_access": "forbidden",
+    "Astrid_attempts_remaining": 1
+  }
+}

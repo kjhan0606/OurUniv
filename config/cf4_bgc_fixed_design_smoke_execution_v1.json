@@ -1,0 +1,102 @@
+{
+  "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-execution-v1",
+  "date": "2026-08-31",
+  "status": "USER_APPROVED_SINGLE_FIXED_DESIGN_TRUTH_MOCK_SMOKE",
+  "authorization_basis": "User approved the next stage: one provenance-complete grouped-CF4 fixed-design conditional truth-mock implementation smoke, followed by audit and disposition.",
+  "authorization": {
+    "single_Slurm_execution_authorized": true,
+    "GPFS_declared_read_write_authorized": true,
+    "observed_grouped_CF4_fixed_design_conditioning_authorized": true,
+    "development_truth_seed_count_authorized": 1,
+    "population_selection_mock_authorized": false,
+    "development_64_mock_execution_authorized": false,
+    "untouched_256_mock_validation_authorized": false,
+    "frontier_or_science_claim_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "IC_PM_HOP_RAMSES_authorized": false,
+    "network_access_authorized": false,
+    "retry_authorized": false
+  },
+  "input_bindings": {
+    "grouped_CF4_catalog": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37",
+      "semantics": "positions_errors_and_BGc_design_only_observed_vobs_excluded_from_mock_posterior_datum"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "file_sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+      "body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+    }
+  },
+  "source_bindings": {
+    "fixed_design_smoke": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "772bd190e26741fdf583e93a4d083c840f34fdeae8ad6eeacdf86173912f3fd5"
+    },
+    "calibration_metrics": {
+      "path": "src/cf4_mock_calibration.py",
+      "sha256": "6d6ec85f3a585ba02c5a22a554e8d9a0d51e5cc94f84f0f58d21ceba79a4215c"
+    },
+    "linear_CR": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "CF4_ingest": {
+      "path": "src/cf4_ingest.py",
+      "sha256": "de0df0c427a935e82cd76904ee522145cc0c9c5b64ed8494b6ca3b8478af1b26"
+    },
+    "BGc_likelihood": {
+      "path": "src/cf4_bgc.py",
+      "sha256": "9ffbc8d07ca07ee05cba53f58d3e3cca5598bd27fffa8610c0c856bba043a90d"
+    }
+  },
+  "smoke_contract": {
+    "selection_semantics": "observed_grouped_CF4_fixed_design_conditioned",
+    "mock_datum": "u_mock=A*s_truth+B*q_truth+epsilon",
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "development_truth_seed": 2026083000,
+    "development_truth_seed_count": 1,
+    "posterior_draw_count": 4,
+    "canonical_independent_real_mode_count": 8538,
+    "global_merged_bin_records": 33,
+    "analytic_posterior_mean_required_for_point_metrics": true,
+    "full_three_component_velocity_truth_mean_and_draws_required": true,
+    "population_selection_function_validated": false,
+    "ROI_metrics_status": "NOT_EVALUATED",
+    "high_k_status": "NOT_EVALUATED_FAIL_CLOSED",
+    "coverage_status": "NOT_EVALUATED",
+    "science_claim_allowed": false
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "Slurm_partition": "a10",
+    "CPU_only": true,
+    "cpus_per_task": 4,
+    "memory_expected_peak_MiB": 3072,
+    "memory_headroom_multiplier": 1.3333333333333333,
+    "memory_request_MiB": 4096,
+    "time_limit": "00:30:00",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v1",
+    "final_output": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v1/smoke",
+    "maximum_submissions": 1,
+    "maximum_executions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  }
+}

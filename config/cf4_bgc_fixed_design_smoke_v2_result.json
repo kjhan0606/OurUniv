@@ -1,0 +1,114 @@
+{
+  "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-result-record-v2",
+  "date": "2026-08-31",
+  "status": "COMPLETE_IMPLEMENTATION_SMOKE_PASS_NO_SCIENCE_CLAIM",
+  "execution": {
+    "Slurm_job_id": 328664,
+    "worker": "syn04",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:28",
+    "allocated_CPUs": 4,
+    "requested_memory_MiB": 1536,
+    "batch_MaxRSS_reported_KiB": 3516,
+    "batch_MaxVMSize_reported_KiB": 749456,
+    "memory_accounting_disposition": "MaxRSS was undersampled for this short job and is not used as a peak estimate; the predecessor's measured 956188 KiB peak informed the 1536 MiB request",
+    "stderr_bytes": 0,
+    "correction_submission_count_consumed": 1,
+    "correction_execution_count_consumed": 1,
+    "new_unique_development_truth_seed_count_consumed": 0,
+    "total_unique_development_truth_seed_count": 1
+  },
+  "bindings": {
+    "producer_implementation_commit": "623157618969453853ba854033332ed214c41101",
+    "producer_implementation_source_sha256": "0a1a9348ec4a65ff8a9d10eddc0f3dd251b3a1469ec8b50f874f80f554aa46cb",
+    "portable_validator_commit": "d58fadbbfb378329442db4455365a3231f3b1bb3",
+    "portable_validator_source_sha256": "ff74599db58cbd87b7dea82ccb6124fa38454bb43c0c5acbc082f44403fea5f7",
+    "execution_config_path": "config/cf4_bgc_fixed_design_smoke_execution_v2.json",
+    "execution_config_sha256": "ebbd80497ccb5175de4581fccfc1216fcebd61cf5e32b5a8e9d60f541f07b446",
+    "Slurm_runner_path": "scripts/run_cf4_bgc_fixed_design_smoke_v2.sbatch",
+    "Slurm_runner_sha256": "34ae621e05d91692e433adc2a71f75c90afefe99f03c313c1c12446be8d3736f",
+    "failed_v1_result_record_path": "config/cf4_bgc_fixed_design_smoke_v1_result.json",
+    "failed_v1_result_record_sha256": "d08faa7ac968aa8226f61a6282ea8463bcb5437274e9a8593e5ad734e1588f87",
+    "bin_manifest_file_sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+    "bin_manifest_body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+  },
+  "artifacts": {
+    "output_directory": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v2/smoke",
+    "result_json_sha256": "ab905723d9986f3fd5ee839cc418fe985664342ab07451a8c3c0329552456977",
+    "fields_npz_sha256": "94dad04015ad6698328af0c98459db957a1deb8789f333200feec7323bb2e681",
+    "artifact_manifest_json_sha256": "df31050000d1bf7a64878000020999bc79d155e211c28444f76872a8bf1bff2a",
+    "COMPLETE_sha256": "627682068cec56c83b62a8737ec2c621f54d3aa871a2ad8e04277ef568669105",
+    "producer_run_validation_count": 2,
+    "controller_independent_validation": "PASS"
+  },
+  "validator_portability_audit": {
+    "initial_controller_failure": "recorded approximately 1e-15 diagnostics were compared by exact floating-point equality across different thread settings",
+    "maximum_observed_last_bit_difference": 2.9582283945787943e-31,
+    "portable_comparison_relative_tolerance": 1.4210854715202004e-14,
+    "portable_comparison_absolute_tolerance": 1e-30,
+    "field_arrays_modified": false,
+    "Slurm_reexecution_performed": false,
+    "final_controller_validation": "PASS"
+  },
+  "implementation_checks": {
+    "selection_semantics": "observed_grouped_CF4_fixed_design_conditioned",
+    "mock_datum_formula": "u_mock=A*s_truth+B*q_truth+epsilon",
+    "mock_datum_formula_max_abs_residual": 0.0,
+    "observed_catalog_vobs_used_as_posterior_datum": false,
+    "selected_rows": 19313,
+    "train_rows": 15346,
+    "holdout_rows": 3967,
+    "truth_seed": 2026083000,
+    "truth_seed_white_exact": true,
+    "truth_nuisance_seed_exact": true,
+    "adjoint_relative_error": 0.0,
+    "mean_cg_relative_residual": 0.00002184881851305027,
+    "maximum_sample_cg_relative_residual": 0.00002866425536409178,
+    "truth_radial_forward_CIC_relative_error": 1.6945989081439593e-15,
+    "delta_theta_non_Nyquist_max_relative_error": 9.901647283129875e-16,
+    "density_canonical_independent_real_mode_count": 8538,
+    "theta_non_Nyquist_canonical_independent_real_mode_count": 8535,
+    "theta_Nyquist_axis_modes_excluded": 3,
+    "full_vector_velocity_truth_mean_and_four_draws_preserved": true,
+    "scalar_sigma_v_substitution_used": false,
+    "v1_to_v2_changed_arrays": [
+      "truth_theta",
+      "posterior_mean_theta",
+      "posterior_theta"
+    ],
+    "all_non_theta_arrays_identical_to_v1": true
+  },
+  "descriptive_one_mock_diagnostics": {
+    "density_available_merged_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "theta_available_merged_bin_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "density_response_first_three_bins": [
+      0.3151325580519987,
+      0.19387474400152724,
+      0.2008907039078488
+    ],
+    "density_correlation_r_first_three_bins": [
+      0.5701664009235643,
+      0.4353801576868641,
+      0.4836461952544848
+    ],
+    "heldout_mock_z_mean": -0.025309217990940013,
+    "heldout_mock_z_std": 1.0084364748220167,
+    "interpretation": "implementation diagnostics from one fixed-design development truth only; no bin is a calibrated observational frontier"
+  },
+  "scientific_disposition": {
+    "fixed_design_conditional_truth_mock_implementation": "PASS",
+    "population_selection_function_validated": false,
+    "development_64_mock_execution_performed": false,
+    "untouched_256_mock_validation_performed": false,
+    "ROI_metrics_evaluated": false,
+    "high_k_evaluated": false,
+    "cell_size_cMpc_h": 12.0,
+    "target_0_3_cMpc_h_reached": false,
+    "frontier_evaluated": false,
+    "science_claim_allowed": false,
+    "KF_EXPAND_authorized": false,
+    "IC_PM_HOP_RAMSES_authorized": false,
+    "next_blocker": "Freeze a population-selection and noise truth-mock generator before authorizing a 64-mock development calibration; this is new execution scope."
+  }
+}

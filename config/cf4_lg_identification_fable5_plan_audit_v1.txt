@@ -1,0 +1,24 @@
+Read-only Fable5 plan audit, Korean response <=800 words. No tools or changes.
+Final OurUniv goal: actual CF4 + counts + MW/M31/M33 -> z=0 density/velocity
+posterior -> LCDM IC -> forward validated phase-consistent LG zoom. LG <=.3
+cMpc/h, surroundings1–2. Actual current map is only12; no fine LG posterior.
+Previous field flows fail small-scale morphology; new training now postponed.
+User approved prioritizing field-only LG identification after you pointed out
+missing observation connection. Your prior N(g(F),Sigma) suggestion presupposed
+known native components in g; driver rejected that circularity. The attached
+plan now identifies candidates from TOTAL field only and matches truth afterward.
+
+Required Q-GOAL: is this direct enough progress toward field-conditioned LG
+observables, with explicit unresolved-M33 handling and no claimed posterior?
+Required Q-LEAN: are one CPU job, one finder, two fixed apertures and minimal
+tests proportionate? Cut unnecessary instrumentation; do not ask for a big framework.
+Explicitly audit MW/M31/M33 identification: no native positions/membership in
+candidate selection, observed observer coarse-cell condition disclosed, multiple
+role assignments retained, total aperture proxies not bound halos, no fabricated
+M33 or copied catalogue on generated fields. What is missing or circular now?
+Check whether matched-only covariance is honestly limited and whether boundary,
+source-selection and role adjacency introduce avoidable bias. Recommend only
+essential in-scope changes. GO/CONDITIONAL GO/NO-GO with a bounded disposition.
+No full q_S/new simulation/whole pipeline prerequisite for this limited CPU
+identification deliverable. A substantive adverse verdict is not tool failure;
+Astra fallback applies only if your invocation cannot deliver a usable audit.

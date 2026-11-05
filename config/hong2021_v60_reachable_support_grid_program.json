@@ -1,0 +1,99 @@
+{
+  "schema": "hong2021-v60-reachable-support-grid-program-v1",
+  "status": "frozen_before_grid_implementation_or_materialization",
+  "purpose": "Materialize the single V59-selected model change without training: scan immutable train backbones, compute the maximum physical output reachable under the unchanged V56 bounded residual support, preserve every existing V56 survival threshold exactly, and append thresholds at the unchanged V56 log-density spacing until one final threshold equals the immutable reachable maximum.",
+  "parent_evidence": {
+    "v59_record": "config/hong2021_v59_result_record.json",
+    "v59_record_sha256": "961a450d3995e6ad0939c8f25cf09c72e5db902300b7e5265ed17595106677fc",
+    "required_status": "complete_beyond_grid_TNG_failure_selected_reachable_support_extension",
+    "required_classification": "V56_TNG_moment_excess_lies_beyond_scored_global_train_maximum",
+    "required_next": "freeze_one_matched_train_only_model_that_extends_the_proper_survival_grid_over_the_immutable_reachable_output_support_without_changing_other_model_or_training_choices",
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v59_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v59_256_128_grid_tail_audit/audit.json",
+    "v59_audit_sha256": "92a23e700f80ed8f32c6274b880f084b7dfcdcf8edd9f51373e4b1af0bff7ad7",
+    "v59_audit_decision_digest_sha256": "3aabaf18e38690dd5c5d104c4a65eb8809161ec53d7c869661ae4743a73430b4",
+    "v56_program": "config/hong2021_v56_survival_grid_program.json",
+    "v56_program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "v56_grid_decision_digest_sha256": "6fc035baa47598841d339b4a3af22af7eb1589d2a778dbb059fd1d5663f899e1",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "population": {
+    "split": "immutable train only",
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "objects": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "scan": "every native backbone voxel returned by the unchanged V56 conditioning pipeline",
+    "validation_or_development_access": false
+  },
+  "reachable_support_definition": {
+    "unchanged_open_standardized_residual_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "target_mean_and_std": "the exact scalar values in the byte-bound V45 conditioning cache",
+    "voxel_reachable_upper_physical_y": "backbone + target_mean + target_std * 10.259036149654781",
+    "voxel_reachable_upper_log10rho": "4.5 times voxel_reachable_upper_physical_y",
+    "domain_upper": "the maximum voxel_reachable_upper_log10rho over every immutable train voxel in the domain",
+    "global_upper": "the maximum domain_upper over TNG100, SIMBA, and Swift",
+    "finite_value_required": true
+  },
+  "grid_extension": {
+    "lower_anchor_log10rho": 3.3113619089126587,
+    "existing_thresholds": "all 16 exact V56 thresholds, byte-equal and in the same order",
+    "existing_final_threshold_log10rho": 3.975167065858841,
+    "unchanged_log10rho_step": 0.041487822309136395,
+    "append_rule": "Starting from the existing final threshold, repeatedly append previous plus the unchanged step while that value is strictly below global_upper; then append global_upper exactly if it is not already the last threshold.",
+    "no_threshold_removal_or_movement": true,
+    "strictly_increasing_required": true,
+    "physical_moment_proxy": "(10^log10rho - 1)^2 at every edge",
+    "physical_moment_weights": "successive proxy increments divided by the total proxy increment from the unchanged lower anchor to global_upper",
+    "weight_sum": 1.0,
+    "reference_probability": 1e-05,
+    "normalization": 9.9999e-06,
+    "coefficient": 0.1
+  },
+  "hard_checks": [
+    "the first 16 output thresholds are byte-equal to the V56 grid",
+    "the last output threshold equals global_upper exactly",
+    "all thresholds and weights are finite and strictly positive where required",
+    "weights sum to one within 1e-12",
+    "the maximum native train truth log10rho remains the sealed V56 final threshold and has zero strict exceedances above it",
+    "global_upper is strictly greater than the V56 final threshold",
+    "no validation, development, Astrid, or historical EAGLE data are accessed"
+  ],
+  "output": {
+    "grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid/grid.json",
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid_sequence"
+  },
+  "firewall": {
+    "training_or_refit": "forbidden",
+    "new_development_sample": "forbidden",
+    "development_access": "forbidden",
+    "validation_access": "forbidden",
+    "support_change": "forbidden",
+    "existing_threshold_change": "forbidden",
+    "coefficient_or_normalization_change": "forbidden",
+    "posthoc_scale_or_clipping": "forbidden",
+    "posthoc_DC_or_Ak": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

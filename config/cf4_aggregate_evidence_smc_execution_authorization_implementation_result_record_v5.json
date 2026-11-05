@@ -1,0 +1,170 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-implementation-result-record-v1",
+  "status": "complete_pass_postcommit_authorization_v5_implementation",
+  "date": "2026-08-18",
+  "purpose": "Seal the independently tested, v5-only continuous provenance authorization implementation at commit c85e47b while recording that the v5 grant, paired external release and manifest, receipt, production data and state, execution, cache population, selection, downstream actions, and automatic follow-on remain absent and unauthorized.",
+  "v4_tainted_and_read_only": true,
+  "commit_lineage": {
+    "git_commit": "c85e47bb149b84480d2760985b191ce490bcdbed",
+    "parent_commit": "0e760c09de556bb15310c8382128e610671120e0",
+    "tree": "f440fd71fe23078a62216aaa6ffd4db0173458c4",
+    "branch": "agent/freeze-zoom-pipeline",
+    "local_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "tracking_ref": "refs/remotes/origin/agent/freeze-zoom-pipeline",
+    "remote_name": "origin",
+    "remote_url": "git@github.com:kjhan0606/OurUniv.git",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "HEAD_commit": "c85e47bb149b84480d2760985b191ce490bcdbed",
+    "local_ref_commit": "c85e47bb149b84480d2760985b191ce490bcdbed",
+    "tracking_ref_commit": "c85e47bb149b84480d2760985b191ce490bcdbed",
+    "remote_ref_commit": "c85e47bb149b84480d2760985b191ce490bcdbed"
+  },
+  "committed_authorization_files": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v5.json",
+      "sha256": "6f12a639a76510c509d0e7d8321865e62fb67a31821b63722a4d5f1076c56e64",
+      "git_blob_oid": "e106c00bd0493f83d96a56c664b0ce450529658c",
+      "git_mode": "100644"
+    },
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v5.json",
+      "sha256": "e5590144ac74c5be3ad0002166ee5c02610517377f489805369ea78e8e7e39e9",
+      "git_blob_oid": "689adaa4454580e3cc1dfa196ec8ae4d94337c62",
+      "git_mode": "100644"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "sha256": "55c4db460dd4c24c2467a3102b45963a433af46afe11ff69e81d309356039a03",
+      "git_blob_oid": "efdd1b228da6e0f57588832da5fe40206135ccec",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "sha256": "fded37c9997e2310274e827fff569c04101bf18595ac6a76ae3a77b77372ff18",
+      "git_blob_oid": "cc77a57e8a679751bc7bf91b8aa8832e1a93dbd1",
+      "git_mode": "100644"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "13b7d12a6333089840444ec06f734aab6c62a00b124f34d729b35a92e65cb04b",
+      "git_blob_oid": "327ea901d80e2f59aea168dda006ad8b7286f410",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "sha256": "3915da06eb32a212c4492e0c7309c926ca138fbb33cc3a2eacd1f89ed4152f86",
+      "git_blob_oid": "e114948d4c4cbbca439d7de5e68f52ff1b12929c",
+      "git_mode": "100755"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+      "sha256": "99e65b4430156f592a58ffe34491ab5ae6cb78698b893da36d64f4c2a6e70ee1",
+      "git_blob_oid": "f8a75e10ca01649ffd3d370cddfe60f0486253ce",
+      "git_mode": "100644"
+    }
+  ],
+  "scope": {
+    "implementation_commit_addition_count": 7,
+    "implementation_commit_added_paths": [
+      "config/cf4_aggregate_evidence_smc_execution_authorization_design_v5.json",
+      "config/cf4_aggregate_evidence_smc_execution_authorization_program_v5.json",
+      "src/cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v5.py",
+      "scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "scripts/launch_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh",
+      "tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py"
+    ],
+    "implementation_commit_other_tracked_change_count": 0,
+    "implementation_commit_modified_path_count": 0,
+    "implementation_commit_deleted_path_count": 0,
+    "implementation_commit_renamed_path_count": 0,
+    "protected_v5_files_clean_against_implementation_commit": true,
+    "excluded_user_owned_outside_authorization_scope": [
+      {
+        "path": "scripts/tripwire/",
+        "worktree_status": "untracked_user_owned",
+        "included_in_v5_implementation_commit": false,
+        "touched_by_v5_authorization_implementation": false
+      },
+      {
+        "path": "syn101_tripwire/",
+        "worktree_status": "untracked_user_owned",
+        "included_in_v5_implementation_commit": false,
+        "touched_by_v5_authorization_implementation": false
+      }
+    ]
+  },
+  "verification": {
+    "commands": [
+      {
+        "command": "git log -1 --format='commit=%H%nparent=%P%ntree=%T%nsubject=%s'",
+        "result": "commit=c85e47bb149b84480d2760985b191ce490bcdbed; parent=0e760c09de556bb15310c8382128e610671120e0; tree=f440fd71fe23078a62216aaa6ffd4db0173458c4; subject=Add v5 continuous authorization safeguards"
+      },
+      {
+        "command": "git rev-parse refs/heads/agent/freeze-zoom-pipeline refs/remotes/origin/agent/freeze-zoom-pipeline; git ls-remote --heads origin refs/heads/agent/freeze-zoom-pipeline",
+        "result": "HEAD, local branch, origin tracking ref, and remote ref all resolve to c85e47bb149b84480d2760985b191ce490bcdbed"
+      },
+      {
+        "command": "git diff-tree --no-commit-id --name-status -r c85e47bb149b84480d2760985b191ce490bcdbed",
+        "result": "exactly seven additions, matching committed_authorization_files; no modifications, deletions, or renames"
+      },
+      {
+        "command": "git diff --quiet c85e47bb149b84480d2760985b191ce490bcdbed -- <seven v5 paths>",
+        "result": "exit 0; all seven protected v5 files are byte-identical to c85e47b"
+      },
+      {
+        "command": "PYTHONPATH=src pytest -q tests/test_cf4_aggregate_evidence_smc_execution_authorized_v5.py tests/test_cf4_aggregate_evidence_smc_authorized_v5_runner.py",
+        "result": "12 passed in 0.27s; exit 0"
+      },
+      {
+        "command": "bash -n scripts/run_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh scripts/launch_cf4_aggregate_evidence_smc_authorized_v5_lageunha.sh; git diff --check",
+        "result": "exit 0; shell syntax and whitespace checks passed"
+      }
+    ],
+    "seven_paths_SHA256_blob_OID_and_mode_exact": true,
+    "implementation_commit_tree_and_parent_exact": true,
+    "local_tracking_and_remote_ref_equal_implementation_commit": true,
+    "v5_receipt_continuity_hard_link_and_inode_tests_pass": true,
+    "v5_completion_marker_science_status_and_read_only_manifest_tests_pass": true,
+    "v4_not_modified": true,
+    "user_owned_tripwire_excluded": true
+  },
+  "runtime_state": {
+    "observed_read_only": true,
+    "canonical_grant_path": "config/cf4_aggregate_evidence_smc_execution_grant_v5.json",
+    "canonical_grant_present": false,
+    "external_release_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+    "external_release_present": false,
+    "external_manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+    "external_manifest_present": false,
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts",
+    "receipt_root_present": false,
+    "production_data_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5",
+    "production_data_present": false,
+    "production_state_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+    "production_state_present": false,
+    "production_SMC_executed": false,
+    "oracle_cache_populated": false,
+    "production_output_populated": false
+  },
+  "authorization": {
+    "versioned_one_shot_authorization_design_and_implementation_authorized": true,
+    "grant_creation_authorized": false,
+    "external_LINEAGE_GO_release_creation_authorized": false,
+    "external_manifest_creation_authorized": false,
+    "receipt_creation_authorized": false,
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

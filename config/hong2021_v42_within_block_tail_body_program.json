@@ -1,0 +1,129 @@
+{
+  "schema": "hong2021-v42-within-block-tail-body-development-program-v1",
+  "status": "frozen_before_implementation_fit_sampling_or_development_evaluation",
+  "purpose": "Repair the remaining SIMBA extreme-quantile error without repeating V41's destruction of stochastic small-scale power: keep the V41 block-risk and object-amplitude predictors fixed, learn native extreme locations only inside seeded blocks, and calibrate only a strictly monotone upper residual-tail excess while leaving the conditional residual body at unit scale.",
+  "parent_evidence": {
+    "v41_record": "config/hong2021_v41_result_record.json",
+    "v41_record_sha256": "76b908e4420626ee6727076041ba6b1fafcfd9135df146a964226d09f7304edf",
+    "required_classification": "object_amplitude_calibration_supported_but_structure_seeding_is_insufficient",
+    "required_next": "freeze_train_only_within_block_extreme_location_model_without_changing_object_amplitude"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "v41_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.joblib",
+    "v41_artifact_sha256": "bb53077bfd4a96edb2da6f4ce3c14fb351e601834f0af78cfb5cfe0d265c4e9e",
+    "v41_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v41/two_stage_model.json",
+    "v41_report_sha256": "c2e9c6352771a9e725443bf000e17bd5a0ba19d679dea32ffd33c250879a2b42",
+    "v41_report_decision_digest_sha256": "3354d7c733539a2ea86f40b882ef0bdec4bc4feec8d6904fc85a8838741bf739",
+    "v41_seed_block_count": 11,
+    "selection_rule": "reuse every frozen V28/V31 query, donor identity, donor isometry, and member pairing byte-for-byte"
+  },
+  "train_only_native_extreme_model": {
+    "label": "native train voxel log10 density exceeds its source-specific q99.99 threshold already frozen in the V41 fit artifact",
+    "features": "the exact V36 221-component native scalar plus ordered 3x3x3 native and factor-4 parent observable/backbone descriptor, excluding every target component",
+    "rows": "for each source retain every positive native train voxel up to 32768 by frozen PCG64 priority and the same number of negatives; use the common minimum retained positive count and exact source/class balance",
+    "seeds": {"TNG100": 42031, "SIMBA": 42132, "Swift": 42233},
+    "learner": "the exact V40 HistGradientBoostingClassifier specification",
+    "native_seed_voxels_per_seed_block": "round to nearest integer the equal-source mean number of q99.99-positive native train voxels per cube divided by the unchanged V41 seed_block_count",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v42/native_extreme_model.joblib",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v42/native_extreme_model.json",
+    "validation_opened": false,
+    "simulation_identity_feature": false
+  },
+  "nested_rank_transport": {
+    "coarse": "reuse the exact V41 full-risk factor-4 block permutation with 11 carrier blocks and no global residual scaling",
+    "native_query_risk": "evaluate the frozen native classifier only for the 64 voxels in each of the 11 seeded query blocks",
+    "native_carriers": "the fixed count of highest conditional-rank voxels inside each already transported 4^3 donor block",
+    "native_targets": "the same count of highest native-risk query voxels in that block",
+    "native_assignment": "descending native carrier rank to descending native query risk with deterministic native-flat-index ties",
+    "completion": "complete each 64-voxel map by identity wherever possible and deterministic minimum periodic within-block displacement for the remaining cycle",
+    "invariants": [
+      "exact 4096-block coarse permutation",
+      "exact 64-voxel permutation inside every modified block",
+      "exact preservation of the complete donor conditional-rank multiset before inverse",
+      "no changes outside the 11 seeded blocks"
+    ]
+  },
+  "body_preserving_tail_calibration": {
+    "uncalibrated_residual": "V31 conditional inverse of the nested transported rank field at the actual query backbone followed by exact residual-mean subtraction",
+    "tail_threshold": "the train-only V31 conditional residual q99.9 value evaluated at each query backbone voxel",
+    "decomposition": "r_body=min(r,threshold) and positive excess=max(r-threshold,0) are used algebraically; the output is r_body+lambda*excess with lambda strictly positive, so no flat cap is emitted",
+    "lambda_knots": [0.015625, 0.25, 1.0],
+    "fixed_solver": "evaluate predicted object log10 mean delta squared at the three fixed lambda knots, linearly interpolate lambda in the first bracketing log-amplitude segment, or choose the nearest fixed boundary when unbracketed, then evaluate once",
+    "body_invariant": "after removing the single exact DC projection, every voxel at or below its train-only tail threshold is byte-identical to the unit-scale uncalibrated residual",
+    "object_amplitude_prediction": "byte-identical V41 full object-regressor prediction; no refit or alternate target",
+    "global_residual_scale": 1.0,
+    "hard_tail_cap_or_density_clipping": false,
+    "posthoc_Fourier_Ak": false
+  },
+  "matched_arms": {
+    "within_block_tail_body": "full V41 block risk, actual native within-block risk, and body-preserving tail-only calibration",
+    "block_only_tail_control": "full V41 block risk, no native within-block rearrangement, and the same tail-only calibration",
+    "rolled_native_risk_control": "full V41 block risk, native risk periodically rolled by (1,2,3) inside every 4^3 block, and the same tail-only calibration",
+    "tail_calibration_disabled_control": "identical nested rank transport with lambda fixed to one; diagnostic only and ineligible for selection",
+    "common": "identical query, V31 donor/isometry, coarse block carrier, object-amplitude prediction, conditional inverse, and exact DC projection"
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.10,
+    "Q3_generated_max_above_truth_max_dex": 0.30,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.50,
+    "primary_pass": "within_block_tail_body passes field, Q3, and Q4 independently in every domain",
+    "selection_role": "only within_block_tail_body can be selected"
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "within_block_tail_body_model_sufficient",
+      "next": "seal_v42_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain and high-k power plus residual RMS pass every domain but another field check fails",
+      "classification": "tail_and_body_repaired_remaining_failure_is_field_morphology_or_calibration",
+      "next": "audit_only_the_remaining_named_field_checks_before_any_generator_change"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but high-k power or residual RMS fails anywhere",
+      "classification": "tail_only_calibration_still_damages_stochastic_body",
+      "next": "audit_conditional_tail_threshold_and_DC_coupling_without_refitting_structure_models"
+    },
+    {
+      "condition": "Q4 passes every domain but Q3 fails anywhere",
+      "classification": "native_extreme_location_is_still_insufficient",
+      "next": "stop_spatial_rearrangement_and_fit_a_train_only_conditional_extreme_value_tail_likelihood"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "body_preserving_tail_intervention_is_not_a_common_domain_repair",
+      "next": "audit_tail_threshold_support_and_object_amplitude_target_compatibility"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact V41 parent, V41 fit, V35 data/cache, V31 copula, selection, and reference hashes",
+    "native model fit is source/class balanced and opens train targets only",
+    "synthetic and real nested permutations preserve every conditional-rank value exactly",
+    "real candidate is finite, uses global body scale one, lambda in [1/64,1], and residual DC below 1e-7",
+    "non-tail residual difference after undoing DC is below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v42_e23_within_block_tail_body",
+  "firewall": {
+    "validation_used_for_fit_threshold_hyperparameter_or_sampling_prediction": false,
+    "global_residual_scaling": false,
+    "hard_density_or_residual_clipping": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "schema": "hong2021-v82c-consumed-loo-location-scale-Gaussian-program-v1",
+  "status": "frozen_and_pushed_before_V82C_draw_or_report",
+  "frozen_at": "2026-08-13T01:14:00+09:00",
+  "purpose": "Resolve the single remaining cheap ambiguity in V82B: its conditional Gaussian controlled quartile scale but omitted the newly exposed conditional residual location. Reproduce V82B draws exactly, add only leave-one-query-out conditional-mean-quartile location, and apply the same exact rank/coverage reference decision before any flow design or training.",
+  "engineering_only": true,
+  "statistically_independent": false,
+  "scope_boundary": {
+    "consumed_inputs_only": true,
+    "leave_one_query_out_truth_fit": true,
+    "same_V82B_seeds_and_LOO_power": true,
+    "same_V82B_quartile_scale": true,
+    "only_new_component_is_LOO_quartile_location": true,
+    "require_exact_V82B_scale_histogram_reproduction": true,
+    "train_neural_network": false,
+    "design_or_select_flow_during_execution": false,
+    "write_or_mutate_input": false,
+    "persist_generated_ensemble": false,
+    "open_new_independent_data": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "use_CF4": false,
+    "modify_or_stop_RAMSES": false,
+    "statistical_validation_claim": false
+  },
+  "support_artifacts": {
+    "V82B_result_record": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v82b_result_record.json",
+      "sha256": "ce3c7d6ccf4cc1f569b6882036dcdf285769aca9d6a08b237a48a796beb936b3"
+    },
+    "V82B_program": {
+      "path": "/home/kjhan/BACKUP/CF4/config/hong2021_v82b_consumed_loo_gaussian_controls_program.json",
+      "sha256": "8aca170b2a8441ab6cb70329c63a094c4f3b311e38933954f236b2e7d89b04b8"
+    },
+    "V82B_report": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82b_consumed_gaussian_sequence/report.json",
+      "sha256": "8a8b8da73c902e79bca69dfb6bd05508aca9fb000444e716da607df2e8f32e4d"
+    }
+  },
+  "input_artifacts": {
+    "TNG100": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/tng/ensemble16.h5",
+        "sha256": "f52c826f98a53f1f4b78e47c2e0fae2f8aa305d02df3ad307d30324e2b57d772"
+      }
+    },
+    "SIMBA": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/simba_dev/ensemble16.h5",
+        "sha256": "632329be9a142c022e1c9c997c27ad8bacb026f04e2363d70f5a50b6db531677"
+      }
+    },
+    "Swift": {
+      "consumed_ensemble": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80dr_metadata_recovery_ensembles/candidate/swift_dev/ensemble16.h5",
+        "sha256": "d2d990b663ddc7f49f92d298d91d4528c7db9eb35bc6ede517fc454022c2f262"
+      }
+    }
+  },
+  "implementation_sources": {
+    "V82C_control": {
+      "path": "src/hong2021_v82c_location_scale_control.py",
+      "sha256": "37ff6fd484b3134e80267618776e5ab9c51f3c868e413e1dd4505e8da49989ca"
+    },
+    "V82C_tests": {
+      "path": "tests/test_hong2021_v82c_location_scale_control.py",
+      "sha256": "8d392a6eb0a1451056c306be2ff42d816834050b669a47ac26bd1f6098581a97"
+    },
+    "V82B_controls": {
+      "path": "src/hong2021_v82b_gaussian_control.py",
+      "sha256": "f1d67e363962bb1d356f5c767722bdbb120d29615554e0c9a615a9f94ba63f4b"
+    },
+    "V82A_diagnostics": {
+      "path": "src/hong2021_v82a_consumed_autopsy.py",
+      "sha256": "c9939ff4aaba87259a9bae8c59877576876d2a66b201d9c6d7c4008c9c630250"
+    },
+    "V75_exact_label_null": {
+      "path": "src/hong2021_v75_rank_coverage_exact_null.py",
+      "sha256": "06c1c1a3daabddc947c2f64f26fbd93c627b4488dfb723472c804619b9fcccd2"
+    },
+    "spectral_binner": {
+      "path": "src/hong2021_residual_evaluate.py",
+      "sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42"
+    },
+    "canonical_digest_and_git_state": {
+      "path": "src/hong2021_v15_development_gate.py",
+      "sha256": "cdbe64cd5541f86287cbb46beef790a9d0cbead82f07bb39dd8f2c75de64ea3b"
+    },
+    "file_hash": {
+      "path": "src/hong2021_v18_init.py",
+      "sha256": "11b4d27d9420883746d2306313870d05a5af3a1b33cc3cff01a4791a5810ecaf"
+    },
+    "git_ancestor": {
+      "path": "src/hong2021_v63_train.py",
+      "sha256": "fcdb4c493ce6fd1658477a5ff904ba50e6cd01dbc9c24c3422d6275a0f5fc318"
+    }
+  },
+  "fixed_construction": {
+    "base_draw": "Exactly reproduce V82B stationary Gaussian residual using its domain seed and LOO periodic P(k).",
+    "scale": "Exactly reproduce V82B LOO conditional-mean-quartile RMS divided by LOO global RMS.",
+    "location": "For evaluated query q and each conditional-mean quartile, sum centered truth residuals in the same quartile over the other 31 queries and divide by their voxel count.",
+    "field": "stationary residual times quartile scale plus quartile location, followed by per-member numerical DC subtraction.",
+    "conditioning": "Stable-sort the evaluated query conditional mean into four exact equal-count strata.",
+    "members_per_query": 16,
+    "queries_per_domain": 32,
+    "grid": 64,
+    "voxel_mpc_h": 0.3125,
+    "no_evaluated_truth_in_fit": true,
+    "no_per_draw_normalization_or_selection": true
+  },
+  "fixed_random_seeds": {
+    "TNG100": 182200,
+    "SIMBA": 182201,
+    "Swift": 182202
+  },
+  "frozen_decision": {
+    "exact_null": "V75 17-label table and 99,999 program/domain-derived relabelings per domain.",
+    "individual_reference_threshold": 0.004166666666666667,
+    "compatible": "All six rank-TV and coverage-deviation p-values are strictly greater than 1/240.",
+    "pass_branch": "Conditional Gaussian location-scale is sufficient as this low-cost control; do not design or train a flow yet.",
+    "fail_branch": "Conditional Gaussian location-scale also fails; conditional skew/non-Gaussian shape or richer continuous conditioning remains, so a conditional flow or equivalent distributional model is warranted for design but not automatic training.",
+    "spectral_metrics_do_not_override_rank_decision": true,
+    "not_a_validation_gate": true
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82c_consumed_location_scale_sequence",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82c_consumed_location_scale_sequence/report.json",
+    "refuse_existing": true
+  },
+  "execution": {
+    "host": "lageunha",
+    "cpu_affinity": "64-95",
+    "nice": 10,
+    "RAMSES_cpu_affinity_to_leave_untouched": "0-63",
+    "GPU_required": false
+  },
+  "authorization": {
+    "user_instruction": "The user approved autonomous execution of Fable's low-cost diagnostic sequence with '그렇게 진행해'. V82B explicitly forbade automatic training, and this final cheaper Gaussian control resolves its exposed location omission before any model expansion.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "user_approved_automatic_final_Gaussian_control": true,
+    "automatic_training_after_result": false,
+    "automatic_result_record_and_recommendation": true
+  }
+}

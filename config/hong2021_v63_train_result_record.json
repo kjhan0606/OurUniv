@@ -1,0 +1,128 @@
+{
+  "schema": "hong2021-v63-conditional-log-physical-moment-train-result-record-v1",
+  "status": "complete_train_gate_pass_authorized_locked_development",
+  "program": "config/hong2021_v63_conditional_moment_model_program.json",
+  "program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+  "training_code_commit": "879aafefa4725a0c662654f51898b236f1231e9c",
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "decision_digest_sha256": "fa68bbb71797ed58403d2a3f5da1118e1d1f4bb9740c1e3b659e8d0498b93aa5",
+    "status": "pass"
+  },
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "report_decision_digest_sha256": "d279f7f2dec82dac2b6bf8d7b484363597206590f61a5963438bee808aacbd36",
+    "steps": 12000,
+    "checkpoint_selection": "fixed step-12000 EMA",
+    "moment_coefficient": 0.1,
+    "moment_quadrature_order": 64,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "AMP_overflow_count": 7,
+    "AMP_overflow_steps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      7,
+      9179
+    ],
+    "peak_allocated_bytes": 10471297536,
+    "final_fixed_validation": {
+      "TNG100": {
+        "bounded_NLL": 1.3925947861004901,
+        "conditional_moment_score": 0.15765340500390443,
+        "geometric_mean_predicted_over_truth_moment": 1.3165940438638488,
+        "minimum_selected_voxels": 35
+      },
+      "SIMBA": {
+        "bounded_NLL": 1.3606835715472698,
+        "conditional_moment_score": 0.1331767845024232,
+        "geometric_mean_predicted_over_truth_moment": 0.9582918508073287,
+        "minimum_selected_voxels": 63
+      },
+      "Swift": {
+        "bounded_NLL": 1.3537125603572742,
+        "conditional_moment_score": 0.07386955216126347,
+        "geometric_mean_predicted_over_truth_moment": 0.9127237869252909,
+        "minimum_selected_voxels": 66
+      }
+    }
+  },
+  "train_only_mechanism_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "decision_digest_sha256": "f854d01a9db83439b08edc9be9a1df1698c913876f107f72a3c8bedfe3e65d4d",
+    "train_mechanism_pass": true,
+    "classification": "conditional_log_physical_moment_objective_calibrates_all_train_high_backbone_domains",
+    "next": "proceed_to_locked_V63_development_sampling_and_evaluation",
+    "training_or_refit_performed_by_gate": false
+  },
+  "train_only_q99_9_physical_moment_ratios": {
+    "definition": "predicted 64-point quadrature mean delta-squared divided by empirical truth mean delta-squared in the fixed pooled q99.9-and-above train-backbone stratum",
+    "allowed_interval": [
+      0.6666666666666666,
+      1.5
+    ],
+    "TNG100": {
+      "ratio": 0.971268670477712,
+      "selected_voxels": 1770,
+      "top_backbone_pass": true,
+      "aggregate_32_to_64_relative_difference": 2.465274239975186e-16
+    },
+    "SIMBA": {
+      "ratio": 0.9758004131258738,
+      "selected_voxels": 828,
+      "top_backbone_pass": true,
+      "aggregate_32_to_64_relative_difference": 3.4262254736420052e-15
+    },
+    "Swift": {
+      "ratio": 0.9877040394459962,
+      "selected_voxels": 1676,
+      "top_backbone_pass": true,
+      "aggregate_32_to_64_relative_difference": 6.986142672921365e-16
+    },
+    "maximum_32_to_64_relative_difference": 3.4262254736420052e-15,
+    "quadrature_limit": 0.005
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_training_and_gate": true,
+    "training_pytest_passed": 472,
+    "training_pytest_log_sha256": "70cd2cbb64acf5637d9c23582f7ea90d7c5f28f49b0fd3c54d3a0c419992de1e",
+    "training_log_sha256": "bdadbc427931fb5ed76ce4d84673b43665d7187635aaea3eb8ec2c3adfba84f8",
+    "train_gate_log_sha256": "07835ffd9bfe9feae03d5ed767f5b551843049e30e2f3bf1fa65aad6d9e59bd1",
+    "monitor_log_sha256": "ea5a36286bdbb2c653eeb01ed61d4516d438825989b09f14cdd6f893e8afa604",
+    "sequence_status": "complete_train_gate_pass_waiting_locked_development",
+    "sequence_status_sha256": "3479e628f0875a3f9ea2f18bc19fcf503c069cec772b62c293cf1193be33f161"
+  },
+  "scientific_conclusion": [
+    "V63 repairs the fixed pooled q99.9 train functional without posthoc rescaling: TNG100, SIMBA, and Swift ratios are 0.9713, 0.9758, and 0.9877, respectively.",
+    "The 32- and 64-point quadratures agree to at worst 3.43e-15, so the pass is not a numerical-integration artifact.",
+    "Relative to V56, the only model change was the frozen coefficient-0.1 source-balanced conditional log physical-moment objective; the likelihood, network, support, optimizer, schedule, augmentation, seed, and gates were retained.",
+    "The fixed validation diagnostics were never used for stopping, checkpoint selection, or hyperparameter selection. The authoritative train-only gate alone authorizes the locked development experiment."
+  ],
+  "authorization": {
+    "locked_V63_development_sampling_and_evaluation_allowed": true,
+    "posthoc_tuning_allowed": false,
+    "new_training_or_refit_allowed": false,
+    "Astrid_access_allowed": false,
+    "historical_EAGLE_access_allowed": false,
+    "independent_EAGLE_gate_allowed": false,
+    "explicit_user_approval_required_before_independent_EAGLE": true
+  },
+  "firewall": {
+    "new_development_sample_generated": false,
+    "development_accessed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

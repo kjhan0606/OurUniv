@@ -1,0 +1,153 @@
+{
+  "schema": "hong2021-v66-train-only-final-output-layer-conditional-gradient-routing-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Determine without a refit whether the V63 final 1x1 convolution can use its local decoder features to route the object-specific sub-Mpc pair corrections that were incoherent in the V65 shared-bias probe.",
+  "parent_evidence": {
+    "v65_result_record": "config/hong2021_v65_result_record.json",
+    "v65_result_record_sha256": "1e8ae1976a35a53c1928011c9adda2fc659f15c44bf1e7504724e306c11a5f7b",
+    "required_status": "complete_no_refit_audit_selected_train_only_conditional_gradient_routing_probe",
+    "required_classification": "train_only_structure_factorization_does_not_select_a_single_model_change",
+    "required_candidate_selected": false,
+    "required_rank_dependence_causal": false,
+    "required_query_parameter_spatial_arrangement_causal": true,
+    "required_direct_pair_bias_gradient_coherent": false,
+    "required_training_or_refit_performed": false,
+    "required_new_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v65_program": "config/hong2021_v65_structure_factorization_audit_program.json",
+    "v65_program_sha256": "58c244e03a5f7fbb9cef29943869067fe3c202d01f3f3773d3cb69d4022bcc21",
+    "v65_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v65_structure_factorization_audit/audit.json",
+    "v65_audit_sha256": "4f82940cb03ef2ff29fb7ad880227f5355bcfc43bb1661ee3c8628ddb279a00e",
+    "v65_audit_decision_digest_sha256": "e80016232d9efa9495a9ab8e45fdc62a4a04805b64e15a97820a25932234a47d",
+    "v63_program": "config/hong2021_v63_conditional_moment_model_program.json",
+    "v63_program_sha256": "ea41d61a2961b3f436ed69662dc39ad8ad151980aca32863c0442948d31b6a48",
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "v63_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.json",
+    "v63_training_report_sha256": "95332273aee3eb7838de859db61f8563b35eed502a5e5088ece4ba86104eb5c6",
+    "v63_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_train_high_backbone_gate/decision.json",
+    "v63_train_gate_sha256": "17cddbc731f9c34b6a471709eb9a28b43e6a5e07b59e063c7ccdd082b1e0f95c",
+    "v63_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v63_conditional_moment_sequence/preflight.json",
+    "v63_preflight_sha256": "00d7e8fd1ad182645597d52db10b773c151d2e54669775090f55c92dcc76d4db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d"
+  },
+  "immutable_gradient_queries": {
+    "source": "the first four V65 immutable train query positions in each domain",
+    "TNG100": [
+      32,
+      35,
+      79,
+      94
+    ],
+    "SIMBA": [
+      5,
+      15,
+      43,
+      50
+    ],
+    "Swift": [
+      12,
+      36,
+      38,
+      57
+    ],
+    "signed_cube_isometry": "identity"
+  },
+  "frozen_rank_and_pair_probe": {
+    "rank_source": "the first four members of each corresponding source_balanced donor mapping stored in the sealed V65 audit",
+    "rank_members_per_query": 4,
+    "conditional_copula": "the sealed V31 conditional copula",
+    "anchor_seed": 165069,
+    "anchors_per_query": 4096,
+    "offsets_cells": [
+      1,
+      2,
+      3
+    ],
+    "separations_mpc_h": [
+      0.3125,
+      0.625,
+      0.9375
+    ],
+    "objective": "one half the mean squared log pair-moment ratio over the three separations"
+  },
+  "gradient_targets": {
+    "bias_control": {
+      "parameter": "model.output.bias",
+      "components": 15,
+      "required_reproduction_maximum_absolute_difference": 1e-05
+    },
+    "conditional_output_weight": {
+      "parameter": "model.output.weight",
+      "shape": [
+        15,
+        32,
+        1,
+        1,
+        1
+      ],
+      "components": 480
+    },
+    "joint_final_output_layer": {
+      "flatten_order": "output.weight followed by output.bias",
+      "components": 495
+    },
+    "all_other_parameters": "requires_grad false",
+    "optimizer_step": "forbidden"
+  },
+  "measurements": {
+    "per_query": [
+      "pair and bounded-NLL gradient vectors for bias, weight, and their joint concatenation",
+      "gradient L2 norms",
+      "joint pair-gradient cosine to the leave-one-out global mean",
+      "joint pair-gradient cosine to the leave-one-out same-domain mean"
+    ],
+    "aggregate": [
+      "global and domain median leave-one-out cosines and negative fractions",
+      "singular values and explained squared-norm fractions of the twelve joint pair gradients",
+      "coefficient-0.1 aggregate pair-gradient L2 divided by aggregate bounded-NLL gradient L2",
+      "pair-versus-NLL cosine",
+      "first-order pair and NLL descent dot products under the aggregate bounded-NLL plus coefficient-0.1 pair update"
+    ]
+  },
+  "selection_rules": {
+    "conditional_routing_supported": "the joint final-layer global median leave-one-out pair-gradient cosine is at least 0.5, its negative fraction is at most 0.25 and strictly below the sealed V65 bias value 5/12, every domain median joint cosine is positive, every query weight-gradient L2 is positive, and the V65 bias gradients are reproduced within 1e-5",
+    "optimization_scale_pass": "the coefficient-0.1 aggregate joint pair-gradient L2 divided by aggregate joint bounded-NLL gradient L2 is in [0.01,100]",
+    "combined_update_compatible": "both aggregate first-order descent dot products are strictly positive for the bounded-NLL plus coefficient-0.1 pair-gradient update",
+    "select_final_output_layer_pair_model": "conditional routing, optimization scale, combined-update compatibility, numerical integrity, ancestry, memory, and all firewalls pass",
+    "no_model_selected": "any required condition fails"
+  },
+  "authorized_if_selected": {
+    "future_trainable_parameters": "only model.output.weight and model.output.bias",
+    "future_objective": "the sealed V63 objective plus coefficient 0.1 times the sampler-aligned sub-Mpc pair score",
+    "authorization_is_not_training": true,
+    "a_new_model_program_must_be_frozen_before_any_refit": true
+  },
+  "resource_gate": {
+    "host": "Lageunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "peak_allocated_bytes_limit": 30064771072,
+    "training_or_refit": false
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v66_conditional_gradient_routing_audit/audit.json",
+  "firewall": {
+    "validation_access": "forbidden",
+    "new_development_access": "forbidden",
+    "development_rank_or_selection_access": "forbidden",
+    "posthoc_coefficient_or_threshold_tuning": "forbidden",
+    "training_or_refit": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

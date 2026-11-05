@@ -1,0 +1,251 @@
+{
+  "schema": "ouruniv-cf4-v6-open-shared-schedule-production-grammar-debug-execution-design-v2",
+  "status": "prospective_design_only",
+  "date": "2026-08-21",
+  "purpose": "Replace only the incorrect standalone-TRES Slurm provenance parser with a parser sealed against the observed grammar Slurm 24.11.3 ReqTRES and AllocTRES schema.",
+  "lineage": {
+    "design_parent_HEAD": "8610724cd4515c0f8f47298dfbccd482e7f443b3",
+    "branch": "agent/freeze-zoom-pipeline",
+    "remote_ref": "refs/heads/agent/freeze-zoom-pipeline",
+    "additive_only": true
+  },
+  "immutable_v1_chain": {
+    "execution_and_reuse_authorized": false,
+    "defect": "source expected standalone scontrol TRES although grammar Slurm 24.11.3 exposes ReqTRES and AllocTRES",
+    "design": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_design_v1.json",
+      "commit": "8d0dc64d6e9ddbb384900562c9346d34e65f34c9",
+      "sha256": "23ab1fb29f5b6779aa096fe631849aeebf89f17ef8ed487792d03851b4c22b36",
+      "mode": "0644"
+    },
+    "implementation_commit": "ce1051b38325c2965f1cd554570e95c2c3174351",
+    "implementation_result_record": {
+      "path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_implementation_result_record_v1.json",
+      "commit": "b02ecb428fee12f0295dcb3e4f79a84a6bcaa197",
+      "sha256": "c8052beaab2d975f6008c88d83c888bdbf89bfb676b210530fa9ef01f4a039bd",
+      "mode": "0644"
+    },
+    "implementation_files": {
+      "program": {"path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_program_v1.json", "sha256": "e4fb4ac825dee4af010b273cfb7422d72b84fa14e752ddb292da3ece2385643a", "mode": "0644"},
+      "source": {"path": "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v1.py", "sha256": "778646bcd5c6ff36cac25ba497f883874cb55da4ec49e05b7dbb13e9a367c46f", "mode": "0644"},
+      "sbatch": {"path": "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v1.sbatch", "sha256": "9e8524bc2496d98ad0902052caf5cbecde77be404d1590a8ae2599246e89f62a", "mode": "0755"},
+      "status": {"path": "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v1.sh", "sha256": "2d86499d74352b3e9afac1d89b048b33ff8ec7c74ae9e8edd3090056b7e4b918", "mode": "0755"},
+      "source_test": {"path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v1.py", "sha256": "a3f52ec0d874a97f02cd1357ef8e5cc4777f42e706a2db1eef5a7be4c6dd5fea", "mode": "0644"},
+      "runner_test": {"path": "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v1.py", "sha256": "4797a531aefb9ff54c83909a34f2ff5147807b3ad4c623aa6670b410f921ef32", "mode": "0644"}
+    },
+    "external_pair_and_grant": {
+      "manifest": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_manifest_v1.json", "sha256": "742951c4a13679cd980b03fb366aab4e8b21edb377042423951be0131a5de05b", "mode": "0444"},
+      "release": {"path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_release_v1.json", "sha256": "e0c547bb273b98b0cbc349233a830b2f1310c518b9e6b7416c52a3c3bcc51010", "mode": "0444"},
+      "grant": {"path": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_grant_v1.json", "commit": "8610724cd4515c0f8f47298dfbccd482e7f443b3", "sha256": "b2e36ed9380ddc732eee6ab228c854282ab3715f5f3c5009679b80123412e369", "mode": "0644"}
+    }
+  },
+  "invalid_regression_lineage": {
+    "root_mode": "0555",
+    "entries_must_remain_regular_non_symlink_mode_0444": true,
+    "v1": {
+      "root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_grammar_debug_preexecution_regression_v1",
+      "job_sha256": "fc91b2dae16040619228c86fca48e42e15678421d9b63bfbc02fc3a58ab524b9",
+      "record_sha256": "2f8b03c6f6b68ce195e703f17ed3d9ae8aafba31af75226c4384b6b329a880f2"
+    },
+    "v2": {
+      "root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_grammar_debug_preexecution_regression_v2",
+      "job_sha256": "8c0d4a25c29b586acc4990f18ba6d00482aab9d63314c583efc868a510b73a34",
+      "record_sha256": "0c032424bd45564528ded93b786ddd910fd9e85085b6d3dcb8719755c91b377f"
+    },
+    "v3": {
+      "root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_grammar_debug_preexecution_regression_v3",
+      "job_sha256": "3c2dc8caa941decd882529147a226947708ef71a7d47346347f2bb9282efc0e1",
+      "record_sha256": "85fb29cc9cfcbd4ca28a272d1ab8618f1a9c50e3a2a5035d83505ff4ee5fd09d"
+    },
+    "submitted_or_executed": false
+  },
+  "science_contract": {
+    "bitwise_identical_to_v1": true,
+    "master_seeds": [2026082301, 2026082302, 2026082303, 2026082304],
+    "replicates_sequential": true,
+    "particles_per_replicate": 2048,
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "beta": [0.0, 0.1531397846993059, 0.3181984675451238, 0.5129471527439684, 0.7369993853258423, 1.0],
+    "schedule_sha256": "c1b96d871e8c66d04e5028ed32773dc19656ad5b60149a047e025d75a69221b6",
+    "stage_count_exact": 5,
+    "MH_sweeps_per_stage": 4,
+    "resampling_ESS_fraction": 0.5,
+    "worker_processes": 8,
+    "threads_per_worker": 1,
+    "P_pool": "evidence_weighted",
+    "P_pool_formula": "a=exp(log_I_bar-max(log_I_bar));P_pool=sum(a[:,None]*P_rep,axis=0)/sum(a)",
+    "adaptive_beta": false,
+    "runtime_override": false,
+    "all_v1_science_pins_and_gates_remain_exact": true
+  },
+  "real_slurm_schema_evidence": {
+    "projection": {
+      "cluster": "grammar",
+      "field_names": ["AllocTRES", "BatchFlag", "CPUs/Task", "MinMemoryNode", "NumCPUs", "NumNodes", "NumTasks", "ReqTRES"],
+      "observed": {"AllocTRES": "cpu=16,node=1,billing=16", "BatchFlag": "1", "CPUs/Task": "16", "MinMemoryNode": "64G", "NumCPUs": "16", "NumNodes": "1", "NumTasks": "1", "ReqTRES": "cpu=16,mem=64G,node=1,billing=16"},
+      "slurm_version": "24.11.3",
+      "source_kind": "read_only_running_job_scontrol_projection",
+      "standalone_TRES_present": false
+    },
+    "canonical_compact_no_newline_sha256": "e206ce42c1fabb03f15cf7e3ddead5c8bc08072d83655cc278e23117e49cce74"
+  },
+  "slurm_parser_contract": {
+    "comma_separated_key_value_parser": "reject_empty_duplicate_missing_malformed_and_unknown_keys",
+    "ReqTRES_exact": {"cpu": "12", "mem": "96G", "node": "1", "billing": "12"},
+    "AllocTRES_required_exact": {"cpu": "12", "node": "1", "billing": "12"},
+    "AllocTRES_optional_mem": ["absent", "96G"],
+    "standalone_TRES_only_fixture": "reject",
+    "SLURM_MEM_PER_NODE_exact_MiB": 98304,
+    "MinMemoryNode_allowed": ["96G", "98304M"],
+    "cgroup_memory_limit_minimum_bytes": 103079215104,
+    "cgroup_resolution": {
+      "membership_source": "/proc/self/cgroup",
+      "mount_source": "/proc/self/mountinfo",
+      "v2_value_file": "memory.max",
+      "v1_controller": "memory",
+      "v1_value_file": "memory.limit_in_bytes",
+      "resolved_target_must_be_below_canonical_mount": true,
+      "reject_parent_components_duplicate_controller_unstable_read_or_final_symlink": true,
+      "decimal_value_minimum_bytes": 103079215104,
+      "v2_max_or_v1_unlimited_sentinel_allowed_only_with_exact_scheduler_and_MemAvailable_gates": true,
+      "target_compute_regression_seals_controller_version_path_and_value": true
+    },
+    "raw_and_parsed_ReqTRES_AllocTRES_sealed_in_snapshot_RUNNING_and_terminal": true,
+    "fresh_scontrol_requery_before_receipt_before_science_after_science_and_before_terminal": true
+  },
+  "implementation_surface": {
+    "exact_files": [
+      "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_program_v2.json",
+      "src/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v2.py",
+      "scripts/run_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.sbatch",
+      "scripts/status_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.sh",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_authorized_v2.py",
+      "tests/test_cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2.py"
+    ],
+    "modes": ["0644", "0644", "0755", "0755", "0644", "0644"],
+    "v1_files_byte_identical": true,
+    "semantic_delta_exact_allowlist": [
+      "versioned_v2_program_source_sbatch_status_test_paths",
+      "v2_pair_grant_runtime_and_schema_identifiers",
+      "TRES_to_ReqTRES_AllocTRES_parser_replacement",
+      "scheduler_snapshot_and_marker_fields_for_raw_and_parsed_ReqTRES_AllocTRES",
+      "v2_lineage_and_hash_pins"
+    ],
+    "all_other_v1_science_lifecycle_receipt_signal_timeout_artifact_postcheck_semantics_exact": true
+  },
+  "canonical_paths": {
+    "future_manifest": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_manifest_v2.json",
+    "future_release": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_release_v2.json",
+    "future_grant": "config/cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_execution_grant_v2.json",
+    "data_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2",
+    "cache_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_cache",
+    "state_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_run",
+    "receipt_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_receipts",
+    "slurm_log_template": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_shared_schedule_production_grammar_debug_v2_slurm-%j.log",
+    "preexecution_regression_root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_grammar_debug_preexecution_regression_v4"
+  },
+  "resource_contract": {
+    "backend": "Slurm_one_shot_CPU_batch",
+    "cluster_login": "grammar",
+    "partition": "debug",
+    "nodelist": "grammar-debug",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 12,
+    "memory": "96G",
+    "time": "12:00:00",
+    "signal": "B:TERM@300",
+    "no_requeue": true,
+    "export": "NONE",
+    "maximum_expected_RSS_GiB": 80,
+    "requested_memory_GiB": 96,
+    "memory_margin_fraction": 0.2,
+    "minimum_MemAvailable_GiB": 80,
+    "minimum_free_GPFS_GiB": 40
+  },
+  "environment_contract": {
+    "shebang": "/bin/bash",
+    "CUDA_VISIBLE_DEVICES": "",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "MALLOC_ARENA_MAX": "2",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONSAFEPATH": "1",
+    "BASH_ENV_ENV_PYTHONSTARTUP_LD_PRELOAD_LD_LIBRARY_PATH": "unset"
+  },
+  "information_firewall": {
+    "unchanged_from_v1": true,
+    "parent_and_CF4_open_only_after_four_terminal_histories_and_terminal_artifact_seal": true,
+    "controller_returns_only_key_and_logZbar_before_terminal": true
+  },
+  "lifecycle": {
+    "one_shot": true,
+    "reservation_order": ["STATE", "CACHE", "DATA"],
+    "markers": ["RUNNING", "COMPLETE", "FAILED"],
+    "invalid_provenance_or_execution_routes_to_FAILED": true,
+    "no_retry_resume_requeue_reuse_or_automatic_follow_on": true
+  },
+  "receipt_contract": {
+    "path": "<receipt_root>/<grant_id>/production",
+    "release_anchor_hardlink": true,
+    "snapshot_mode": "0444",
+    "running_receipt_mode": "0700",
+    "terminal_receipt_mode": "0555",
+    "marker_mode": "0444",
+    "scheduler_fields_include_raw_and_parsed_ReqTRES_and_AllocTRES": true,
+    "scheduler_and_log_revalidated_at_every_checkpoint": true
+  },
+  "artifact_and_postcheck_contract": {
+    "science_entry": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution._execute_reserved_canonical_private",
+    "postcheck": "cf4_aggregate_evidence_smc_v6_open_shared_schedule_production_execution.validate_published_bundle",
+    "scientific_COMPLETE_statuses": ["complete_pass_production_smc", "complete_scientific_fail_production_smc"],
+    "raw_parent_logZ_to_P_rep_and_exact_artifact_tree_gates_unchanged": true
+  },
+  "preexecution_regression_contract": {
+    "root": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v6_open_grammar_debug_preexecution_regression_v4",
+    "target_node": "grammar-debug",
+    "exact_related_test_count": 117,
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "python_argv_prefix": ["/home/kjhan/miniconda3/bin/python", "-P", "-m", "pytest"],
+    "JUnit_requires_tests_117_failures_0_errors_0_skipped_0": true,
+    "deselected_xfail_xpass": 0,
+    "production_submission_requires_independent_regression_result_GO": true
+  },
+  "failure_semantics": {
+    "invalid_regression_v1_v2_v3": "preserve_read_only_never_submit_or_reuse",
+    "v2_parser_or_lineage_failure": "FAILED_no_scientific_conclusion",
+    "scientific_gate_failure_after_valid_execution": "COMPLETE_scientific_fail",
+    "automatic_scaling_retuning_retry_or_fallback": false
+  },
+  "authorization": {
+    "design_creation_authorized": true,
+    "design_precommit_audit_authorized": true,
+    "design_commit_authorized": false,
+    "implementation_authorized": false,
+    "implementation_result_record_authorized": false,
+    "pair_creation_authorized": false,
+    "grant_creation_authorized": false,
+    "regression_submission_authorized": false,
+    "receipt_creation_authorized": false,
+    "cache_population_authorized": false,
+    "production_execution_authorized": false,
+    "retry_resume_requeue_retune_or_scale_up_authorized": false,
+    "conditional_bank_authorized": false,
+    "candidate_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "next": {
+    "after_independent_DESIGN_COMMIT_GO": "commit_this_one_file_then_postcommit_lineage_audit",
+    "after_postcommit_LINEAGE_GO": "write_exact_six_v2_implementation_files_and_fake_tests_only",
+    "production_or_regression_submission_now": false
+  }
+}

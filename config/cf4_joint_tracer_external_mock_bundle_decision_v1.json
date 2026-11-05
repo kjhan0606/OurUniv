@@ -1,0 +1,18 @@
+{
+  "schema": "ouruniv-cf4-joint-tracer-external-mock-bundle-decision-v1",
+  "date": "2026-09-20",
+  "job": "388322",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/joint_tracer_external_mock_bundle_v1/result.json",
+  "decision": "PASS_BUNDLE_MECHANICS_PRODUCTION_NO_GO",
+  "bundle": [
+    "independent redshift-space mock",
+    "Gaussian FoG displacement sigma=0,3,6 cMpc/h",
+    "three independent mask realizations",
+    "six-population NB/bias/radial parameter recovery"
+  ],
+  "result": "All three cases passed bias, radial nuisance, and NB-dispersion recovery gates.",
+  "interpretation": "The calibration estimator is robust in the specified synthetic stress tests.",
+  "remaining_production_gate": "An external survival/bias calibration or an independently generated survey mock with physically calibrated RSD/FoG is still required.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

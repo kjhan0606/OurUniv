@@ -1,0 +1,17 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/z0_density/r1_three_dimensional_v6",
+  "reference_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359203",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "seeds": [2026091301, 2026091401, 2026091402],
+  "particle_n": 128,
+  "readout_n": 64,
+  "arms": [
+    {"name": "cic256_t512", "assignment": "cic", "mesh_ratio": 2, "time_factor": 16},
+    {"name": "tsc128_t256", "assignment": "tsc", "mesh_ratio": 1, "time_factor": 8},
+    {"name": "tsc256_t256", "assignment": "tsc", "mesh_ratio": 2, "time_factor": 8},
+    {"name": "tsc256_t512", "assignment": "tsc", "mesh_ratio": 2, "time_factor": 16}
+  ],
+  "application_seconds_cap": 1500,
+  "previous_R1_allocation_seconds": 5246,
+  "scope": "Same archived three-dimensional particle ICs, no fresh high-k. Assignment/time sensitivity and diagnostic trajectory gradient, NOT independent gravity validation or real CF4/LG inference. Independent RAMSES execution awaits a verified current binary/input contract."
+}

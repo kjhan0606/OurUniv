@@ -1,0 +1,26 @@
+{
+  "schema": "cf4-v3-bgc-parent-extension-v3",
+  "frozen_date": "2026-08-02",
+  "frozen_before_sampling": true,
+  "extends": "config/v3_bgc_parent_extension_v2.json",
+  "extends_sha256": "3f28e49a2f9e5225d205126e766e051989a03c4cb0a89d9e05ed6e1b3c4f69ba",
+  "activation_condition": "Run only if the frozen 32-member N576 P2 ensemble for parent 3096 produces no screen pass.",
+  "reason": "This is the final preregistered blind parent extension before separating an explicitly LG-conditioned likelihood from the CF4-only posterior.",
+  "model": {
+    "sample_seed_range_inclusive": [3193, 3448],
+    "n_samples": 256
+  },
+  "selection_policy": {
+    "all_samples_receive_the_same_P0_gate": true,
+    "all_P0_samples_receive_config_p1_targets_v2_observer": true,
+    "all_P1_survivors_receive_small_scale_seeds_2001_through_2032": true,
+    "no_seed_is_selected_before_forwarding": true,
+    "no_threshold_retuning_after_results": true,
+    "stop_blind_extension_after_this_batch_if_no_P2_candidate": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3",
+    "gate_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_gate_v3",
+    "p1_directory": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_p1_observer_extension_v3"
+  }
+}

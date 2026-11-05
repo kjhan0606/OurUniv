@@ -1,0 +1,17 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-count-only-smoke-relabel-v1",
+  "date": "2026-09-04",
+  "status": "RELABELED_COUNT_ONLY_SMOKE_DIAGNOSTIC",
+  "artifact": "config/cf4_bundle_b1_development_mock_calibration_result_v1.json",
+  "former_description": "64 development mock calibration",
+  "effective_description": "Synthetic six-population count-only smoke diagnostic; not calibration of the complete CF4+2M++ joint likelihood.",
+  "reason": "The backup audit found that version 1 omitted CF4 grouped velocity/shared-redshift, source-bound ownership, TSC/adjoint, nuisance inference and valid train-conditioned predictive/coverage semantics.",
+  "immutable_history": true,
+  "replacement": "config/cf4_bundle_b1_development_mock_calibration_result_v2.json",
+  "science_claims": {
+    "observational_z0_posterior": false,
+    "frontier_promotion": false,
+    "0p3_cMpc_h": false,
+    "validation_seed_access": false
+  }
+}

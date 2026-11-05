@@ -1,0 +1,80 @@
+{
+  "schema": "hong2021-v60-reachable-support-grid-result-record-v1",
+  "status": "complete_reachable_support_grid_selected_V61_preflight",
+  "program": "config/hong2021_v60_reachable_support_grid_program.json",
+  "program_sha256": "88cff6f3d3c4295a83edf6d1e919fe8fefe434abbaa13a1a829b06ed117c54ab",
+  "code_commit": "2a5c0968c8e55da0e67cdf0ef4526a6e3051c3e1",
+  "grid": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid/grid.json",
+    "sha256": "d9c9aa2d91c746139589b10a858ff749b114b3eb8cec0fb134f823b39db0a2db",
+    "decision_digest_sha256": "66bcb9fd1dbf872e6e05f3a9c9a86cbd0ed08c4f21b9d67a6bbad368456d5d70",
+    "lower_edge_log10rho": 3.3113619089126587,
+    "global_reachable_upper_log10rho_supremum": 8.85270822700113,
+    "existing_cells": 16,
+    "appended_cells": 118,
+    "total_cells": 134,
+    "unchanged_log10rho_step": 0.0414878223091364,
+    "existing_thresholds_byte_equal": true,
+    "final_threshold_equals_global_reachable_upper": true,
+    "physical_moment_weight_sum": 1.0,
+    "existing_16_cell_weight_sum_after_full_support_normalization": 1.674638e-10,
+    "appended_cell_weight_sum": 0.9999999998325366,
+    "minimum_weight": 1.7394818095130573e-12,
+    "maximum_weight": 0.15610145433474917
+  },
+  "domainwise_reachable_support": {
+    "definition": "4.5 times (maximum immutable train backbone plus target_mean plus target_std times the unchanged upper standardized residual support)",
+    "TNG100": {
+      "maximum_backbone": 0.9539627432823181,
+      "reachable_upper_log10rho_supremum": 8.85270822700113,
+      "maximum_truth_log10rho": 3.975167065858841
+    },
+    "SIMBA": {
+      "maximum_backbone": 0.9165794253349304,
+      "reachable_upper_log10rho_supremum": 8.684483296237886,
+      "maximum_truth_log10rho": 3.8104518055915833
+    },
+    "Swift": {
+      "maximum_backbone": 0.9246445298194885,
+      "reachable_upper_log10rho_supremum": 8.720776266418397,
+      "maximum_truth_log10rho": 3.7610385417938232
+    }
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "worktree_clean_at_materialization": true,
+    "pytest_passed": 449,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "d71ed54b380c0409531e9c1b9a5faf484c23b688d8fa8278f696a1e8b377b6e5",
+    "grid_log_sha256": "670ed0d5a095977c5f474916c5d9a2bfb4fb53d76d48616964ebe936e161a103",
+    "all_domain_native_truth_maxima_reproduce_V56": true,
+    "strict_truth_exceedances_above_V56_final_threshold": 0,
+    "decision_digest_independently_verified": true
+  },
+  "selected_next_step": {
+    "action": "freeze and run a V61 hard preflight for the single-change 134-cell reachable-support survival grid before any training",
+    "preflight_checks": [
+      "the first 16 thresholds remain byte-equal to V56 and the final threshold equals the V60 reachable supremum",
+      "the V56 bounded NLL, four V54 Brier terms, upper-grid coefficient, normalization, initialization, and real equal-source batch are unchanged",
+      "composite-loss identity and finite nonzero gradients",
+      "Ada peak allocated memory below the predeclared limit",
+      "no development or independent-data access"
+    ],
+    "training_started": false
+  },
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "support_changed": false,
+    "existing_threshold_changed": false,
+    "coefficient_or_normalization_changed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

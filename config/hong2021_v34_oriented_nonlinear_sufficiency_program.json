@@ -1,0 +1,128 @@
+{
+  "schema": "hong2021-v34-oriented-multiscale-nonlinear-sufficiency-program-v1",
+  "status": "frozen_before_implementation_or_execution",
+  "purpose": "Determine whether the V31 residual conditional mean contains reproducible nonlinear information in the full oriented local observable/backbone patch that was discarded by the V32 mean/std summaries, before changing or retraining the generative residual model.",
+  "parent_evidence": {
+    "v33_record": "config/hong2021_v33_result_record.json",
+    "v33_record_sha256": "0135cb7cda59b17ebbf18cf628df22a54f6d04ba3713a250924c4c84bf0df545",
+    "required_classification": "intrinsic_sig_v_not_supported_by_fixed_linear_common_domain_gate",
+    "required_next": "retain_physical_CF4_channel_boundary_but_audit_nonlinear_residual_spatial_sufficiency_before_full_generative_run",
+    "v33_information_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v33_intrinsic_velocity_information/audit.json",
+    "v33_information_audit_sha256": "03f53729bcb906b844418944964e84197dc0846bb2ff6446eea0d32c2dda0461"
+  },
+  "development_domains": {
+    "TNG100": {
+      "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+      "train_data_sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_train_conditional_affine.h5",
+      "train_cache_sha256": "aa6bc0e0aeb73bda577ca15428c2b85484d6f036b817ed07c3156d07d701e500",
+      "train_objects": 432,
+      "validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+      "validation_data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+      "validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+      "validation_objects": 93
+    },
+    "SIMBA": {
+      "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+      "train_data_sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_train_conditional_affine.h5",
+      "train_cache_sha256": "0cdfd9c6bc893432f2188fe55127a12ec591990576a2211ec3c36273b6d5297c",
+      "train_objects": 202,
+      "validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+      "validation_data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+      "validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+      "validation_objects": 64
+    },
+    "Swift": {
+      "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+      "train_data_sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+      "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_train_conditional_affine.h5",
+      "train_cache_sha256": "e9243b75a575795cab60151eaa5915a6d6c9ba4489207baebe3bbc71040b33c3",
+      "train_objects": 409,
+      "validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+      "validation_data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+      "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+      "validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46",
+      "validation_objects": 148
+    }
+  },
+  "target_and_scales": {
+    "target": "nonoverlapping block mean of physical y residual truth minus the frozen V14 corrected backbone plus predicted residual DC",
+    "factors": [4, 8],
+    "physical_scales_mpc_h": [1.25, 2.5],
+    "coarser_context_factors": [8, 16],
+    "coarser_context_scales_mpc_h": [2.5, 5.0]
+  },
+  "features": {
+    "scalar": [
+      "central log1p block galaxy count",
+      "central block mean radial velocity",
+      "central exact individual-galaxy population velocity dispersion pooled from native unbiased sig_v",
+      "central backbone mean",
+      "central backbone standard deviation",
+      "radius from observer divided by cube half-width"
+    ],
+    "oriented_single_scale": "scalar plus the lexicographically ordered periodic 3x3x3 patches at offsets (-1,0,1)^3 of log1p count, mean velocity, exact pooled sig_v, and backbone mean; no mean/std compression and no rotation-invariant sorting",
+    "oriented_multiscale": "oriented_single_scale plus the same four ordered 3x3x3 patches on the factor-2 coarser grid, mapped to each current cell by its containing parent block",
+    "forbidden_features": [
+      "simulation identity",
+      "target or validation residual",
+      "post-hoc Fourier amplitude A(k)",
+      "Astrid or historical EAGLE information"
+    ]
+  },
+  "fixed_training_rows": {
+    "rows_per_source_per_factor": 65536,
+    "selection": "without-replacement NumPy PCG64 permutation from the exact V32 train-row population after its factor-4 parity selection or factor-8 all-row selection",
+    "seeds": {
+      "factor_4": 34004,
+      "factor_8": 34008
+    },
+    "source_balance": "exactly equal rows from TNG100, SIMBA, and Swift; concatenate in that order",
+    "validation": "all rows of every frozen validation cube; streamed by cube and never used for fitting or early stopping"
+  },
+  "fixed_nonlinear_learner": {
+    "implementation": "sklearn.ensemble.HistGradientBoostingRegressor",
+    "models": [
+      "nonlinear_scalar",
+      "nonlinear_oriented_single_scale",
+      "nonlinear_oriented_multiscale"
+    ],
+    "loss": "squared_error",
+    "learning_rate": 0.05,
+    "max_iter": 128,
+    "max_leaf_nodes": 31,
+    "max_depth": null,
+    "min_samples_leaf": 128,
+    "l2_regularization": 1.0,
+    "max_bins": 255,
+    "early_stopping": false,
+    "random_state": 34021,
+    "feature_standardization": "none; fixed histogram tree learner",
+    "hardware": "Lageunha CPU; no GPU is needed for this prerequisite audit"
+  },
+  "frozen_linear_reference": {
+    "source": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v33_intrinsic_velocity_information/audit.json",
+    "model": "base",
+    "rule": "read byte-frozen per-domain validation RMSE only; do not refit or alter the V33 reference"
+  },
+  "predeclared_interpretation": {
+    "nonlinear_scalar_supported": "nonlinear_scalar/V33_linear_base validation RMSE <=0.98 in all three domains at either common factor",
+    "oriented_patch_supported": "nonlinear_oriented_single_scale/nonlinear_scalar validation RMSE <=0.98 in all three domains at either common factor",
+    "multiscale_increment_supported": "nonlinear_oriented_multiscale/nonlinear_oriented_single_scale validation RMSE <=0.99 in all three domains at either common factor",
+    "material_full_model_gain": "nonlinear_oriented_multiscale/V33_linear_base validation RMSE <=0.95 in all three domains at either common factor",
+    "next_if_oriented_patch_supported": "freeze a matched local conditional-mean/backbone ablation and inject learned oriented multiscale context into the later conditional residual likelihood",
+    "next_if_only_scalar_supported": "replace scalar binned conditioning by a nonlinear scalar conditional mean before changing the spatial likelihood",
+    "next_if_neither_supported": "treat the remaining failure as conditional spatial covariance/copula rather than predictable local mean; freeze a conditional multiscale residual-spectrum and phase-coupling audit"
+  },
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v34_oriented_nonlinear_sufficiency/audit.json",
+  "firewall": {
+    "development_truth_role": "fit on train only and evaluate validation only after this committed freeze",
+    "validation_used_for_fit_or_early_stopping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

@@ -1,0 +1,80 @@
+Read-only science-plan audit. Do not edit files, execute code, submit jobs,
+read held-out values, or launch simulations. Advice is advisory; the driver
+will independently verify the evidence and decide what to adopt.
+
+Project goal: infer the actual CF4-conditioned present-day (z=0) density and
+velocity field from CF4 plus galaxy observations through a latent LCDM IC and
+forward evolution. R2 is the first field delivery; the active global target
+is N128/384 cMpc/h for diagnostic plumbing, then N256/1.5 cMpc/h for the
+actual environment map. The eventual same NEW evolved LG field must constrain
+MW and M31 as ambiguous latent roles and M33 explicitly at <=0.3 cMpc/h.
+Native truth identities may calibrate/evaluate, never seed/select generated
+field candidates.
+
+Current verified status:
+- The active v6 sky-closed split has 47,121 training counts over 37,951
+  occupied count-cell factors. H100 Slurm job 412227 built a source-only
+  factor ownership ledger with exact reconstruction and unique owners for
+  every count key, 6,028 training CF4 source groups, and 8,901 CF4 FP rows.
+- Crossmatch classes among those training rows: 2,682 secure_joint_mark,
+  6,181 unmatched, 30 extended-review candidates, and 8 coordinate/redshift
+  conflicts. Of secure rows, 2,661 map to training point-manifest recnos and
+  21 reference recnos absent from the manifest. Group classes include 3,871
+  with no direct secure count link/no unresolved edge, 21 anchor-marked with
+  no direct count link, 31 ambiguous-only, 27 secure-plus-unresolved,
+  1,820 clean one-point, and 258 clean multi-member candidates. No secure
+  recno is shared across training groups. Result:
+  `/gpfs/kjhan/CF4/z0_density/r2_v6_factor_ownership_ledger_20261004_v2/result.json`.
+- Fable5's prior review corrected an applicability mistake: NSIDE ray
+  exposure outputs used an old disjoint catalogue (24,993 training counts),
+  not active inclusive v6 (47,121). They do not validate the v6 target. No
+  v6 ray rerun or NSIDE4096 follow-up is warranted.
+- The existing shared-latent log-sum-exp helper is generic. The active
+  `predict_source_volume_intensity` / `count_field_loglike` path has no source
+  group ID or shared group-latent argument. `raw_field_logpdf` accepts a
+  supplied per-row source-conditioning radius, not a probability law for a
+  shared inferred group latent. `conditional_group_mark_logpdf` needs an
+  externally/source-calibrated covariance over group Vcmb, group distance
+  modulus, and member Vcmb. Therefore an actual T10106 count-plus-two-mark
+  likelihood and its one-member/AD-FD mechanics were not computed; driver
+  disposition is a technical NO-GO, not a science-fit failure.
+- Existing `CF4_R2_LATENT_GROUP_MARKS_20260926.md` reports a numerical
+  group-role/shared-offset mark operator under explicitly illustrative,
+  uncalibrated inputs; it must be reused where applicable, not repeated or
+  promoted as calibration. Existing `CF4_R2_GROUP_SELECTION_AND_CONDITIONAL_BUNDLE_20260926.md`
+  rejects the restricted group-redshift conditional as calibrated. The
+  selected mock lacks recovered Tempel group IDs and a true preselection
+  parent, so it cannot identify group inclusion/survival/bias/FoG or shared
+  covariance. Existing Tully/CF4 overlap summaries are selected-subset
+  descriptions, not independent calibration.
+
+Audit only the next bounded R2 plan, not the project in general. Recommend
+one next science bundle with concrete existing source files/code and one
+decisive output. Compare these routes explicitly:
+1. Recover a true preselection/recovered-group parent and its published
+   selection/recovery process, if a plausible source already exists among the
+   project inputs or cited catalogues.
+2. Define a narrower conditional estimand that explicitly conditions on the
+   observed selected groups/association classes and excludes any unidentified
+   inclusion/survival factor. State what useful field information it still
+   provides and exactly what it cannot support.
+3. Reuse the existing group-mark operator but derive the exact conditional
+   factorization that connects it to the active count/field model, if possible
+   without assuming a shared latent that current interfaces do not represent.
+
+For your recommended route:
+- Q-GOAL: how does it advance a real CF4-conditioned z=0 map rather than add
+  more diagnostic plumbing? Is it capable of reaching the active N256/1.5
+  environment target?
+- Q-LEAN: what is the smallest implementation/validation; what prior work
+  must not be repeated (source census, old-ray exposure, group-role operator,
+  PM evolution, fit/sampler)?
+- Identify whether any required input is genuinely absent and whether that
+  makes the step externally blocked. Do not invent a mock, covariance, or
+  selection probability merely to continue.
+- Require MW/M31 role marginalization and unresolved M33 observables to
+  constrain the same NEW evolved LG field at <=0.3 cMpc/h; truth IDs are
+  calibration/evaluation only.
+
+Return PASS, CONDITIONAL PASS, REJECT, or NO VERDICT, with evidence, one
+recommended bundle, exact acceptance/stop conditions, Q-GOAL and Q-LEAN.

@@ -1,0 +1,128 @@
+{
+  "schema": "hong2021-v62-conditional-physical-moment-gradient-audit-program-v1",
+  "status": "frozen_before_audit_implementation_or_execution",
+  "purpose": "Test, without refitting or development access, whether one direct q99.9-backbone conditional physical-moment objective supplies a gate-aligned and optimization-relevant gradient where the V61 appended survival Brier score was effectively inert.",
+  "parent_evidence": {
+    "v61_record": "config/hong2021_v61_result_record.json",
+    "v61_record_sha256": "c82f85ace3f8bfe198e110f2a71bb2f46989896778900bc0009451bc985be993",
+    "required_status": "complete_train_only_mechanism_failure_selected_objective_gradient_audit",
+    "required_classification": "reachable_support_survival_grid_does_not_calibrate_train_high_backbone_physical_moments",
+    "required_next_action": "freeze and run a no-refit train-only objective-gradient audit before authorizing one new model",
+    "required_development_accessed": false,
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v56_record": "config/hong2021_v56_result_record.json",
+    "v56_record_sha256": "f85cac3fcb921d66771d6c30074a5e397b4871280a93c26efeaf727abb9a7e41",
+    "v56_program": "config/hong2021_v56_survival_grid_program.json",
+    "v56_program_sha256": "ec93d8d0894292793279edafad5e8243a272e2c55d52d4c27b3a0cd9ef714f40",
+    "v56_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_survival_grid/grid.json",
+    "v56_grid_sha256": "ba0cadb1c921c73918fcf139f121f1d9fa35e0c673ab8f62483315485bfd5fde",
+    "v56_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.pt",
+    "v56_checkpoint_sha256": "dd6d7bf4d3054c7cf22a218f113e591ab30323d2037c07c6c0f9ab5fd0e111f6",
+    "v56_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v56/upper_survival_grid_step12000.json",
+    "v56_training_report_sha256": "271cb783031d0a1fc19f9978ee0c04140a629a431575b82505e9bfbf8e4a93ca",
+    "v56_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v56_train_high_backbone_gate/decision.json",
+    "v56_train_gate_sha256": "02a7507960b854a6c93b65bce6598992a164e4c5e86c0ec138200c1a9e491383",
+    "v61_program": "config/hong2021_v61_reachable_support_model_program.json",
+    "v61_program_sha256": "327d750774a82885888ff08313e829462d43c877d45effc990f1035358f04cd1",
+    "v61_preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_reachable_support_sequence/preflight.json",
+    "v61_preflight_sha256": "d900088be814bc969a94e4e4e2ff8b85d358665ab52dc9c31539e17bacb43063",
+    "v61_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v61/reachable_support_grid_step12000.pt",
+    "v61_checkpoint_sha256": "aad42e91ffe6bc1287dedcc74358c2875a825a292b285929209b402dea18fb86",
+    "v61_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v61/reachable_support_grid_step12000.json",
+    "v61_training_report_sha256": "b88c8ad0e34d7caefed8798cd515ead16a17ca02fec7cd4ea960ba790a4d3b14",
+    "v61_train_gate": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v61_train_high_backbone_gate/decision.json",
+    "v61_train_gate_sha256": "3aab86f7c91b1a998d4f07b85d496a9ad268284dc26efeba68776f630ac9bb4e",
+    "v60_grid": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v60_reachable_support_grid/grid.json",
+    "v60_grid_sha256": "d9c9aa2d91c746139589b10a858ff749b114b3eb8cec0fb134f823b39db0a2db",
+    "v54_threshold_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v54_tail_threshold_selection/thresholds.json",
+    "v54_threshold_selection_sha256": "e5c1cd480ac47b52d568e1f8c8b8386a68230150e7f2079ad3e832220557d103",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "support_selection": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "support_selection_sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2"
+  },
+  "fixed_real_train_batch": {
+    "domains": [
+      "TNG100",
+      "SIMBA",
+      "Swift"
+    ],
+    "object_index": 0,
+    "signed_cube_isometry_index": 7,
+    "mask": "physical backbone plus immutable target mean greater than or equal to the sealed domainwise q99.9 train-probe backbone boundary",
+    "boundary_source": "the byte-bound V61 train-only gate, equal to the earlier sealed V56/V53 boundaries",
+    "target": "the immutable train target transformed back to physical y without clipping",
+    "validation_accessed": false
+  },
+  "candidate_objective": {
+    "name": "source-balanced q99.9-backbone conditional log physical-moment mismatch",
+    "predictive_functional": "the bounded-mixture expectation of delta squared at each selected voxel, integrated by differentiable Gauss-Hermite quadrature and averaged over selected voxels in each source",
+    "empirical_functional": "the mean exact delta squared of the immutable target over the same selected voxels",
+    "domain_score": "0.5 times the squared natural logarithm of predictive_functional divided by empirical_functional",
+    "source_balance": "arithmetic mean of the three domain scores",
+    "future_model_coefficient_if_selected": 0.1,
+    "retained_base_if_selected": "the complete V56 bounded NLL plus four V54 tail Brier terms plus the original byte-bound 16-cell V56 upper survival grid",
+    "density_or_residual_clipping": false,
+    "posthoc_scale_or_Ak": false
+  },
+  "numerical_controls": {
+    "primary_Gauss_Hermite_order": 64,
+    "control_Gauss_Hermite_order": 32,
+    "maximum_32_to_64_relative_difference": 0.005,
+    "physical_transform": "delta squared equals (exp(4.5 ln(10) y)-1)^2 in float64",
+    "open_bounded_residual_support_unchanged": true,
+    "component_scale_cap": false
+  },
+  "gradient_comparison": {
+    "models": [
+      "exact same-seed V56 initialization",
+      "sealed V56 step-12000 EMA",
+      "sealed V61 step-12000 EMA"
+    ],
+    "benchmarks": [
+      "bounded NLL",
+      "original V56 16-cell upper survival score",
+      "V61 appended 118-cell survival score"
+    ],
+    "measurements": [
+      "unscaled objective value",
+      "model-output gradient L2 norm per selected voxel",
+      "model-output gradient maximum absolute value",
+      "full-model gradient L2 norm for the coefficient-0.1 candidate composite at initialization",
+      "peak allocated GPU memory"
+    ],
+    "minimum_candidate_to_V61_appended_output_gradient_L2_ratio": 1000000.0,
+    "peak_allocated_bytes_limit": 30064771072
+  },
+  "fixed_branches": [
+    {
+      "condition": "all physical moments and gradients are finite, 32-to-64 controls pass, every real mask is nonempty, the candidate-to-V61-appended output-gradient ratio is at least 1e6, and the initialization composite fits the memory limit",
+      "classification": "direct_conditional_log_physical_moment_objective_has_gate_aligned_optimization_scale",
+      "next": "freeze_one_V63_model_that_retains_the_complete_V56_objective_and_adds_only_the_coefficient_0.1_conditional_log_physical_moment_term"
+    },
+    {
+      "condition": "the candidate is finite but fails the gradient-ratio or memory requirement",
+      "classification": "direct_conditional_physical_moment_objective_is_not_optimization_feasible",
+      "next": "stop_before_refit_and_audit_a_bounded_train_only_moment_estimating_score_without_development_access"
+    },
+    {
+      "condition": "any quadrature control or physical moment is nonfinite or unresolved",
+      "classification": "direct_conditional_physical_moment_objective_is_numerically_unresolved",
+      "next": "stop_before_refit_and_freeze_a_higher_accuracy_train_only_numerical_audit"
+    }
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v62_conditional_moment_gradient_audit/audit.json",
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

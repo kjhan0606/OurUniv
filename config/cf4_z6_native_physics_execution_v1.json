@@ -1,0 +1,32 @@
+{
+  "bundle": "Z6-NATIVE-PM-Z0-JOINT-PRIOR",
+  "status": "TWO_POSTERIOR_TASKS_RUNNING_ONE_RESOURCE_PENDING",
+  "date": "2026-09-06",
+  "implementation_commit": "f9f47bd9925bb5f2ec1ef0896af3f4f1514c3203",
+  "calibration": {
+    "job": 332988, "state": "COMPLETED", "exit_code": "0:0", "elapsed_seconds": 51,
+    "tests_passed": 8, "training_indices": [1,2,3,4], "evaluation_indices_not_used_for_fitting": [0,5],
+    "native_log_density_SD": [0.5195826505828272,0.5152150516369535,0.519723794629884,0.5234544417032221],
+    "native_density_SD": [0.6911184807833161,0.6882322272652608,0.6925347148967014,0.6928813508231816],
+    "covariance": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1/covariance.npz",
+    "report": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1/calibration.json",
+    "interpretation": "PSD and training contract pass, not a posterior or physical calibration certificate. Finite-ensemble covariance uncertainty and Gaussian/isotropic assumptions remain."
+  },
+  "posterior_array": 332989,
+  "last_observed_tasks": [
+    {"id": "332989_0", "case": "old_loglinear_native_origin_truth0", "state": "RUNNING", "node": "syn05", "partition": "a40", "chain": 0, "phase": "warmup", "steps": 448, "latest_acceptance": 0.9119855147958497, "latest_divergences": 0},
+    {"id": "332989_1", "case": "PM_calibrated_joint_truth0", "state": "RUNNING", "node": "syn102", "partition": "a100", "chain": 0, "phase": "warmup", "steps": 128, "latest_acceptance": 0.9049904738808252, "latest_divergences": 0},
+    {"id": "332989_2", "case": "PM_calibrated_joint_truth5", "state": "PENDING", "reason": "Resources"}
+  ],
+  "posterior_resources_per_task": {"GPUs": 1, "CPUs": 4, "estimated_host_MiB": 8192, "requested_host_MiB": 9831, "walltime_limit": "02:00:00"},
+  "completion_job": 332990,
+  "completion_dependency": "afterany:332989",
+  "aggregate_path": "/gpfs/kjhan/CF4/z0_density/z6_native_physics_v1/aggregate.json",
+  "runtime_estimate": "About 20-30 minutes per running case from observed chunk throughput, excluding queue/startup delays. Task2 is resource-pending; no fixed overall completion time promised.",
+  "automatic_scope": "Finish or fail each bounded job and aggregate available results. Driver closure still required. No seed substitution, sampling extension, new simulation or next-bundle launch.",
+  "next_bundle_requires_user_approval": true,
+  "LCDM_IC_spectrum_changed": false,
+  "truth_arrays_reinterpolated": false,
+  "GPFS_specific_operations": false,
+  "unrelated_user_files_preserved": true
+}

@@ -1,0 +1,190 @@
+{
+  "schema": "hong2021-v72-two-stage-conditioning-stratified-spatial-quantile-transport-program-v2",
+  "status": "refrozen_after_code_only_spatial_tie_audit_before_V72_implementation_or_fresh_payload_access",
+  "purpose": "Test one training-free successor to V71 that retains the fixed V70 within-member spatial rank field while restoring the paired V63 latent marginal inside target-free conditioning strata. Run one fresh stage-A screen and, only after an exact pass, one disjoint fresh stage-B confirmation under predeclared fair tail, spectral, and field gates.",
+  "authorization": {
+    "user_instruction": "The user explicitly instructed '다음으로 진행' after the sealed V71 result.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "V72_program_and_single_stage_A_authorized": true,
+    "stage_B_authorized_only_by_exact_stage_A_pass": true,
+    "independent_EAGLE_access_authorized": false,
+    "required_after_stage_B_pass": "seal V72 and await a new explicit user approval before independent EAGLE access"
+  },
+  "parent_evidence": {
+    "preimplementation_spatial_tie_threshold_erratum": "config/hong2021_v72_preimplementation_spatial_tie_threshold_erratum.json",
+    "preimplementation_spatial_tie_threshold_erratum_sha256": "5746fc94fc3f80b6ace24b44d9a3de4d9d209ae67165f916d130e4a552eeb233",
+    "v72_feasibility_audit": "config/hong2021_v72_feasibility_and_fresh_partition_audit.json",
+    "v72_feasibility_audit_sha256": "8699a6776b7cfdad71cf58717ed8898a3dddabbd91ccf05d29b6f60c3983524e",
+    "v71_result_record": "config/hong2021_v71_result_record.json",
+    "v71_result_record_sha256": "2566625359b2eef8339405f34365d831408762acbf1d00dc2e8249910a927134",
+    "v70_model_program": "config/hong2021_v70_latent_spatial_score_model_program.json",
+    "v70_model_program_sha256": "79f1b5fe1462664b9b7a237bd82a821e205f3901603d64801a01b328c43f7e42",
+    "v35_data_definition": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_data_definition_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "V71_development_role": "model-development evidence motivating spatial rather than member-axis transport; never V72 selection evidence",
+    "V71_verdict_changed": false
+  },
+  "frozen_inputs": {
+    "v63_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v63/conditional_moment_step12000.pt",
+    "v63_checkpoint_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "v70_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/step30000.pt",
+    "v70_checkpoint_sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf",
+    "v70_training_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v70_latent_spatial/training_report.json",
+    "v70_training_report_sha256": "831697545e4b73ea1f875a5cbf07ba4eb82b5602964b0165851433a7553ef519",
+    "TNG100_validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+    "TNG100_validation_data_sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+    "TNG100_validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/tng100_validation_conditional_affine.h5",
+    "TNG100_validation_cache_sha256": "2735187d306638cdb491ca27cb5d971d1c0a2f0e3cb0532b5a615885da0d0cff",
+    "SIMBA_validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+    "SIMBA_validation_data_sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+    "SIMBA_validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/simba_validation_conditional_affine.h5",
+    "SIMBA_validation_cache_sha256": "36f5ef9c0822e354199b41c9aa3986f4764ba07c7ecb2058ed7a1fb2fdd1f98e",
+    "Swift_validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+    "Swift_validation_data_sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+    "Swift_validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v21/model/swift_eagle_validation_conditional_affine.h5",
+    "Swift_validation_cache_sha256": "0a96245adab4067d2445d9a34e4d0cd1faff5f3b96acad7094cb44e701b1fe46"
+  },
+  "historical_consumed_selection": {
+    "TNG100": [0, 4, 8, 12, 15, 21, 29, 32, 49, 53, 57, 62, 63, 74, 76, 79],
+    "SIMBA": [0, 4, 7, 8, 9, 13, 15, 16, 22, 25, 31, 34, 39, 52, 56, 62],
+    "Swift": [0, 27, 29, 36, 48, 49, 61, 67, 76, 80, 87, 88, 89, 101, 106, 121]
+  },
+  "fresh_stage_A_selection": {
+    "TNG100": [2, 6, 9, 14, 17, 26, 30, 39, 48, 51, 60, 64, 67, 82, 86, 87],
+    "SIMBA": [2, 3, 14, 18, 19, 24, 35, 36, 41, 47, 50, 55, 59, 60, 61, 63],
+    "Swift": [5, 16, 20, 32, 38, 56, 74, 77, 82, 94, 111, 114, 115, 122, 143, 145],
+    "source": "target-free hash-stratified selection frozen in the V72 feasibility audit",
+    "objects_per_domain": 16
+  },
+  "fresh_stage_B_selection": {
+    "TNG100": [1, 25, 27, 31, 34, 36, 41, 43, 50, 59, 61, 66, 84, 85, 89, 90],
+    "SIMBA": [6, 12, 17, 20, 23, 26, 28, 30, 38, 42, 43, 44, 45, 51, 54, 58],
+    "Swift": [1, 9, 22, 37, 42, 55, 62, 73, 75, 97, 103, 110, 118, 132, 133, 142],
+    "source": "target-free hash-stratified selection frozen in the V72 feasibility audit",
+    "objects_per_domain": 16,
+    "payload_access_before_exact_stage_A_pass": "forbidden"
+  },
+  "candidate_construction": {
+    "name": "conditioning_stratified_spatial_quantile_transport",
+    "abbreviation": "SQT",
+    "candidate_arm": "conditioning_stratified_spatial_quantile_transport",
+    "diagnostic_arms": ["raw_V70_latent_spatial_score", "independent_voxel_V63_marginal"],
+    "diagnostic_arms_may_affect_selection": false,
+    "conditioning_score": "the target-free physical residual conditional mean field backbone plus the frozen scalar target_mean",
+    "strata_per_query": 16,
+    "stratum_construction": "stable ascending sort of all 64^3 conditioning-score voxels, with flattened voxel index as the secondary tie order, divided into sixteen contiguous equal-occupancy blocks of exactly 16384 voxels",
+    "transport_for_each_query_member_and_stratum": [
+      "stable ascending argsort of the fixed V70 raw latent values over the stratum voxel positions",
+      "stable ascending sort of the paired initial standard-normal innovation values over the identical stratum voxel positions",
+      "scatter the sorted innovation values into the voxel positions specified by the V70 rank order"
+    ],
+    "tie_rule": "stable order with flattened voxel index as the deterministic secondary order; exact equal marginal values are indistinguishable and recorded",
+    "exact_pre_inverse_invariant": "candidate and independent-control latent multisets are bitwise identical separately within every query, member, and conditioning stratum",
+    "spatial_property": "candidate spatial rank order equals the raw V70 spatial rank order separately within every query, member, and stratum, except indistinguishable marginal ties",
+    "physical_inverse": "unchanged V63 bounded-mixture inverse, frozen target affine inverse, and one per-member residual DC projection before adding the unchanged backbone",
+    "post_DC_caveat": "the memberwise DC projection can break exact stratum multiset equality by a member-specific constant and is recorded diagnostically",
+    "training_gradient_optimizer_or_fitted_transport": false,
+    "density_or_residual_clipping": false,
+    "global_scale_or_Ak": false
+  },
+  "fixed_sampling": {
+    "checkpoint": "fixed V70 step-30000 EMA",
+    "method": "deterministic EDM probability-flow Heun",
+    "members_per_query": 16,
+    "inference_batch": 4,
+    "sigma_steps": 40,
+    "sigma_minimum": 0.002,
+    "sigma_maximum": 40.0,
+    "rho": 7.0,
+    "stochastic_churn": 0.0,
+    "stage_A_noise_seed": 170082,
+    "stage_B_noise_seed": 170083,
+    "second_seed_or_sampler_attempt_within_a_stage": false
+  },
+  "fair_tail_gate": {
+    "q99_999": "absolute generated-minus-truth pooled log10rho q99.999 difference at most 0.1 dex in every domain",
+    "Q4_physical_moment": "generated-over-truth mean delta-squared ratio in [2/3,1.5] in every domain",
+    "cube_maximum_energy_score": "For each query, compute the unbiased scalar energy score of the sixteen generated per-cube log10rho maxima against that query truth maximum; average across sixteen queries. Candidate score must be strictly lower than the paired independent-control score in every domain.",
+    "unequal_sample_global_maximum_comparison": "forbidden",
+    "raw_V70_diagnostic_excluded_from_selection": true
+  },
+  "unchanged_field_gate": {
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256_at_freeze": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate_source": "src/hong2021_v6_gate.py",
+    "field_gate_source_sha256_at_freeze": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "Q3_Q4_measurement_source": "src/hong2021_v20_development_gate.py",
+    "Q3_Q4_measurement_source_sha256_at_freeze": "f63b8eb8813f1c21265e7a5ec13a6543e7372fdce6d9955909bb33635149a028",
+    "Q3_Q4_historical_pass_source": "src/hong2021_v48_development_gate.py",
+    "Q3_Q4_historical_pass_source_sha256_at_freeze": "f1b2e58ca766d3ce1e0e6c7f6a917d9fe7b9475ed2bb9318730bf57cfa37ad17",
+    "field_requirements": "all eight unchanged field_gate checks pass independently in TNG100, SIMBA, and Swift",
+    "explicit_spectral_requirement": "generated total-power over truth is in [0.9,1.1] in both 3-6 and 6-10.0531 h/Mpc bands in every domain",
+    "residual_RMS_requirement": "generated-over-truth residual RMS is in [0.9,1.1] in every domain",
+    "diagnostic_arms_excluded_from_selection": true
+  },
+  "numerical_requirements": {
+    "all_values_finite": true,
+    "maximum_inverse_CDF_error": 2e-06,
+    "maximum_absolute_residual_DC": 1e-07,
+    "pre_inverse_stratum_multiset_equality": "bitwise exact",
+    "maximum_marginal_tied_voxel_fraction": 0.0003,
+    "rank_disagreement_fraction_excluding_marginal_ties": 0.0,
+    "innovation_digest_pairing_across_all_arms": "exact",
+    "peak_Ada_allocation_bytes": 30064771072
+  },
+  "stage_A_gate": {
+    "selection": "fresh_stage_A_selection",
+    "candidate_pass": "all fair-tail, unchanged-field, explicit-spectral, residual-RMS, numerical, provenance, and firewall requirements pass in all three domains",
+    "single_use": true,
+    "candidate_or_threshold_change_after_result": false
+  },
+  "stage_B_gate": {
+    "selection": "fresh_stage_B_selection",
+    "authorization": "only the canonical, hash-bound exact stage-A candidate pass",
+    "candidate_pass": "the identical frozen candidate independently passes the identical stage-A requirements on stage B",
+    "single_use": true,
+    "candidate_or_threshold_change_after_stage_A": false
+  },
+  "fixed_branches": [
+    {
+      "condition": "code-only preflight fails",
+      "classification": "V72_not_safe_for_fresh_stage_A",
+      "next": "stop_without_stage_A_or_stage_B_payload_access"
+    },
+    {
+      "condition": "single stage-A gate fails",
+      "classification": "V72_SQT_is_not_fresh_screen_sufficient",
+      "next": "seal_and_stop_without_stage_B_or_EAGLE_access_or_posthoc_candidate_changes"
+    },
+    {
+      "condition": "stage A passes and single stage-B gate fails",
+      "classification": "V72_SQT_is_not_fresh_confirmation_sufficient",
+      "next": "seal_and_stop_before_EAGLE_without_repeating_either_stage"
+    },
+    {
+      "condition": "both stage A and stage B pass",
+      "classification": "V72_SQT_is_fresh_two_stage_sufficient",
+      "next": "seal_and_await_new_explicit_user_approval_before_independent_EAGLE"
+    }
+  ],
+  "output_roots": {
+    "sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence",
+    "stage_A": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A",
+    "stage_B": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_B",
+    "terminal_seal": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_sequence/sealed_result.json"
+  },
+  "firewall": {
+    "V71_rerun_or_override": "forbidden",
+    "stage_A_payload_access_before_code_only_preflight_pass": "forbidden",
+    "stage_B_payload_access_before_exact_stage_A_pass": "forbidden",
+    "training_gradient_optimizer_or_fit": "forbidden",
+    "candidate_strata_seed_member_sampler_metric_or_threshold_tuning": "forbidden",
+    "second_attempt_in_either_stage": "forbidden",
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_EAGLE_access": "forbidden without a new explicit user approval after both fresh stages pass",
+    "independent_gate_locked": true
+  }
+}

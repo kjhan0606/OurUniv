@@ -1,0 +1,68 @@
+{
+  "schema": "hong2021-v39-bijective-patch-copula-result-record-v1",
+  "status": "complete_development_only_fixed_patch_copula_falsified",
+  "program": "config/hong2021_v39_bijective_patch_copula_program.json",
+  "program_sha256": "47f864be2511c4b33e599b3578cf6033e0362373d028d68edbb14b6969108edb",
+  "implementation_commit": "f2e4f68ca8c562322c571d16951a843ee9140c17",
+  "descriptor": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v39/patch_descriptor.json",
+    "sha256": "5d361ca202fe74484acc53b5fd07c20ca86dd1dae14867137492b4f2cc7b44d5",
+    "decision_digest_sha256": "3f7ecc7f0939602575e3c56b053c32371c628de8998bb479ca68ff2f5e976fd5"
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v39_patch_copula_sequence/preflight.json",
+    "sha256": "23a9fb748c3b9b74a9fb64c7635e03ae2ddafb4327aa290da7aa79c295b3a477",
+    "decision_digest_sha256": "68c996db2dc6da1bc33c08ebd1bed8c8fe6ce875d7b731847d5463d6b02afb7a"
+  },
+  "decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v39_e21_bijective_patch_copula/development_decision.json",
+    "sha256": "022791a9283fc987d0321f274773168d62c41a0eb2ad9f4d791b2acde657b690",
+    "decision_digest_sha256": "97da063d835d595a10ba57812a5cef41ddbf57e27a59c066e55ab2cf28bd0491",
+    "development_pass": false,
+    "patch_alignment_material": false,
+    "classification": "fixed_local_patch_copula_is_not_a_common_domain_repair",
+    "next": "audit_backbone_observable_sufficiency_at_object_and_structure_level_before_any_further_generator"
+  },
+  "Q4_V31_aligned_shuffled": {
+    "TNG100": [12.430654369910183, 3.6261963542066002, 6.995081289820002],
+    "SIMBA": [6.348658275131794, 7.005908820506376, 15.260517824539974],
+    "Swift": [2.2148310662425215, 2.8236227167444135, 2.9028066839981177]
+  },
+  "Q3_delta_q99_999_dex_V31_aligned_shuffled": {
+    "TNG100": [0.2557302647641073, 0.22461762004075103, 0.2926973209419774],
+    "SIMBA": [0.32144639001185116, 0.3486481488814994, 0.3534909657847578],
+    "Swift": [0.1664042760429787, 0.14225924784398103, 0.15651395781425448]
+  },
+  "scientific_conclusion": [
+    "The bijective block transport exactly preserves each donor conditional-rank multiset and improves the global density PDF and residual calibration in all three development domains.",
+    "Query-aligned patch placement materially repairs TNG100 Q4, from 12.43 in V31 to 3.63, and outperforms the paired shuffled control at 7.00.",
+    "The repair does not transfer: SIMBA Q4 worsens from 6.35 to 7.01 and Swift worsens from 2.21 to 2.82. High-k power also remains above the frozen ten-percent tolerance in every domain.",
+    "A fixed voxel-level backbone descriptor therefore lacks a common-domain relationship to rare nonlinear peaks. Before another generator is attempted, observable sufficiency must be tested directly at object and connected-structure level."
+  ],
+  "next_experiment_boundary": {
+    "primary": "audit whether target-free backbone observables identify the location, occupancy, and integrated mass of rare target peaks and connected structures in train-only data",
+    "required_controls": [
+      "source-balanced train-only fitting",
+      "object-level and connected-structure-level targets derived only from training truth",
+      "cross-source held-out diagnostics within TNG100, SIMBA, and Swift",
+      "fixed null and shuffled-query controls"
+    ],
+    "forbidden": [
+      "new residual generator before the sufficiency decision",
+      "validation-tuned thresholds or features",
+      "density clipping",
+      "post-hoc A(k)",
+      "Astrid or historical EAGLE access"
+    ]
+  },
+  "firewall": {
+    "validation_used_for_fit_or_hyperparameter_choice": false,
+    "validation_power_used_for_scaling": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping_used": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

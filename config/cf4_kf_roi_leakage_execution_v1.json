@@ -1,0 +1,122 @@
+{
+  "schema": "ouruniv-cf4-kf-roi-leakage-execution-v1",
+  "date": "2026-08-30",
+  "status": "user_approved_narrow_execution_grant",
+  "authorization_basis": "current_user_approval_this_turn",
+  "scope": {
+    "design_path": "config/cf4_kf_bin_manifest_design_v1.json",
+    "design_raw_sha256": "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9",
+    "implementation_path": "src/cf4_kf_roi_leakage.py",
+    "runner_path": "scripts/run_cf4_kf_roi_leakage_v1.sbatch",
+    "checker_path": "scripts/check_cf4_kf_roi_leakage_v1.py",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1",
+    "preflight_output": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1/preflight",
+    "production_output": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1/production",
+    "preflight_MaxRSS_receipt": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v1/preflight_MaxRSS_receipt.json"
+  },
+  "authorization": {
+    "design_implementation_authorized": true,
+    "Slurm_preflight_authorized": true,
+    "maximum_preflight_submissions": 1,
+    "Slurm_production_authorized_conditionally": true,
+    "maximum_production_submissions": 1,
+    "production_condition": "the unique preflight numerical_convergence status is PASS and its exact result SHA256 and MaxRSS receipt are supplied",
+    "GPFS_read_authorized_only_for_declared_inputs_and_output_root": true,
+    "GPFS_write_authorized_only_under_output_root": true,
+    "network_access_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_science_inference_authorized": false,
+    "retry_authorized": false,
+    "numeric_retuning_authorized": false,
+    "replacement_run_authorized": false
+  },
+  "controller_contract": {
+    "controller": "syntax",
+    "allowed_actions": [
+      "submit",
+      "audit"
+    ],
+    "manual_syntax_execution_allowed": false,
+    "manual_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "worker_cluster_name_required": "syntax",
+    "worker_must_not_be_login_host_syntax": true
+  },
+  "source_integrity": {
+    "source_must_be_committed_before_submission": true,
+    "source_must_be_pushed_before_submission": true,
+    "worker_HEAD_must_equal_expected_commit": true,
+    "worker_HEAD_must_equal_upstream_branch_commit": true,
+    "expected_commit_supplied_at_submission": true,
+    "expected_upstream_commit_supplied_at_submission": true,
+    "dirty_worktree_allowed": false
+  },
+  "Slurm": {
+    "partition": "a10",
+    "CPU_only": true,
+    "GPU_count": 0,
+    "cpus_per_task": 16,
+    "thread_environment": 16,
+    "time_limit": "02:00:00",
+    "export_policy": "NONE_except_explicit_submission_variables",
+    "preflight_memory_MiB": 4096,
+    "production_memory_rule": "max(1024 MiB, ceil(preflight MaxRSS MiB * 1.2))",
+    "production_memory_value_must_be_recorded_exactly": true,
+    "submission_must_set_dynamic_production_mem": true
+  },
+  "runtime_environment": {
+    "python_executable": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "NumPy_version": "2.4.6",
+    "SciPy_version": "1.17.1",
+    "user_site_allowed": false,
+    "bytecode_writes_allowed": false
+  },
+  "numerical_contract": {
+    "mode_count_convolution_rounding_abs_tolerance": 1e-05,
+    "convergence_abs_tolerance": 0.0005,
+    "classification_must_match_between_preflight_orders": true,
+    "preflight_coarse_orders": {
+      "radial": 96,
+      "shell": 6,
+      "mu": 12
+    },
+    "preflight_fine_orders": {
+      "radial": 160,
+      "shell": 10,
+      "mu": 20
+    },
+    "production_orders": {
+      "radial": 160,
+      "shell": 10,
+      "mu": 20
+    },
+    "post_result_tuning_allowed": false
+  },
+  "publication_contract": {
+    "output_directory_must_not_exist": true,
+    "sibling_staging_required": true,
+    "plain_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "required_payloads": [
+      "result.json",
+      "mode_counts.json",
+      "mixing_matrices.npz",
+      "manifest.json"
+    ],
+    "COMPLETE_marker_published_last": true,
+    "valid_scientific_NO_GO_process_exit_code": 0,
+    "invalid_numerics_process_exit_nonzero": true
+  },
+  "run_sequence": [
+    "commit and push the exact implementation",
+    "syntax controller submits and audits exactly one preflight",
+    "record preflight result SHA256 and sacct MaxRSS receipt",
+    "only if numerical convergence PASS, request max(1 GiB, ceil(1.2*MaxRSS)) and submit at most one production",
+    "audit the published directory with the checker",
+    "do not retry, tune, replace, materialize the final manifest, or start KF-EXPAND without new approval"
+  ]
+}

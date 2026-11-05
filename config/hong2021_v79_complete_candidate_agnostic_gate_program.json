@@ -1,0 +1,167 @@
+{
+  "schema": "hong2021-v79-complete-candidate-agnostic-gate-program-v1",
+  "status": "frozen_before_V79_implementation_candidate_design_sampling_or_fresh_payload_access",
+  "purpose": "Freeze the complete candidate-agnostic 32-query Hong gate selected by V78. Define immutable fresh indices, artifact and provenance contracts, measurement paths, one global statistical decision, numerical invariants, single-use behavior, and authorization boundaries without choosing, constructing, sampling, or evaluating a candidate.",
+  "frozen_at": "2026-08-12T17:40:00+09:00",
+  "parent_evidence": {
+    "V78_result_record": "config/hong2021_v78_result_record.json",
+    "V78_result_record_sha256": "5f589db2c7055f0e1c981b37ace25d8c637bc163217f4b41fe738c619e382352",
+    "V78_program": "config/hong2021_v78_global_conditional_null_redesign_audit_program.json",
+    "V78_program_sha256": "ef6bc9f66065412467ce1b8cfd6d726857b8456179eb219f6be141326e0ed82a",
+    "V78_source": "src/hong2021_v78_global_conditional_null.py",
+    "V78_source_sha256": "2fbf6bca61a927425a53814a532a378be457256ae6dae8458a1042b3d340e9a7",
+    "V77_result_record": "config/hong2021_v77_result_record.json",
+    "V77_result_record_sha256": "0f234602c1bda4274ebc3372dcac2f17a46d0a0e97007cd40a2a4dfffc3bbe8b",
+    "V76_result_record": "config/hong2021_v76_result_record.json",
+    "V76_result_record_sha256": "9e34791c3bb3ca0f9cfdfce7a819c2e79f98784ff2341f090ffaa0fd181ee8f7",
+    "V78_selection_required": "single_global_conditional_null_gate_selected_complete_specification_may_be_frozen",
+    "V72_verdict_preserved": true
+  },
+  "frozen_reference_inputs": {
+    "V77_calibration_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/calibration_arrays.npz",
+    "V77_calibration_arrays_sha256": "a2829d63f2f73354c816f5515cd0ce2fbda386e1230db6fb745fa2c44ea23feb",
+    "V77_verification_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v77_fresh32_partition_compatibility/verification_arrays.npz",
+    "V77_verification_arrays_sha256": "64c301110e0e9d226467508be61f592e328a974b02424ea08e918750f00d1872"
+  },
+  "measurement_sources": {
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate_diagnostics": "src/hong2021_v6_gate.py",
+    "field_gate_diagnostics_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "V72_measurement_helpers": "src/hong2021_v72_gate.py",
+    "V72_measurement_helpers_sha256": "0a1e6d41a6f9d0c32f204ac92ff2c3a4ba2b0d7afafae11cfcd530c5804105fc",
+    "exact_label_helpers": "src/hong2021_v75_rank_coverage_exact_null.py",
+    "exact_label_helpers_sha256": "06c1c1a3daabddc947c2f64f26fbd93c627b4488dfb723472c804619b9fcccd2",
+    "global_null_helpers": "src/hong2021_v78_global_conditional_null.py",
+    "global_null_helpers_sha256": "2fbf6bca61a927425a53814a532a378be457256ae6dae8458a1042b3d340e9a7"
+  },
+  "single_use_fresh_selection": {
+    "role": "one target-unseen screen for one separately frozen candidate; no tuning, retry, or alternative candidate after disclosure",
+    "historical_development_and_consumed_V72_stage_A_excluded": true,
+    "TNG100": [10,11,13,20,22,25,27,28,33,36,38,41,42,45,46,54,56,61,65,68,69,70,71,72,77,80,83,84,88,89,91,92],
+    "SIMBA": [1,5,6,10,11,12,17,20,21,23,26,27,28,29,30,32,33,37,38,40,42,43,44,45,46,48,49,51,53,54,57,58],
+    "Swift": [1,4,6,15,26,28,31,37,41,44,51,53,55,59,60,66,75,83,85,90,93,95,96,97,104,107,110,112,125,128,132,141],
+    "objects_per_domain": 32,
+    "SIMBA_confirmation_caveat": "This screen uses every untouched object in the current SIMBA validation product; passing does not create a second independent SIMBA confirmation."
+  },
+  "future_candidate_program_contract": {
+    "freeze_and_push_before_sampling_or_selected_payload_read": true,
+    "required_bindings": [
+      "candidate scientific construction and hypothesis",
+      "all source-code and configuration hashes",
+      "checkpoint and cache hashes",
+      "candidate and paired-control definitions",
+      "member count, sampler, steps, batch, seeds, and pairing invariant",
+      "the exact V79 fresh indices",
+      "output paths and refusal of existing output",
+      "single-use failure and pass branches"
+    ],
+    "candidate_count": 1,
+    "post_disclosure_candidate_sampler_seed_member_metric_threshold_or_partition_change": false,
+    "candidate_training_permitted_by_this_program": false,
+    "candidate_design_or_training_requires_new_explicit_user_approval": true
+  },
+  "future_execution_manifest_contract": {
+    "schema": "hong2021-v79-single-use-execution-manifest-v1",
+    "must_bind": [
+      "V79 program hash and gate implementation commit/hash",
+      "separately approved candidate program hash and freeze commit",
+      "candidate and paired-control ensemble file paths and SHA256 per domain",
+      "candidate and paired-control evaluator metrics paths and SHA256 per domain",
+      "source indices, seeds, sampler, members, checkpoint, and innovation-pairing digests",
+      "preflight result proving no selected payload was read before candidate freeze"
+    ],
+    "manifest_written_after_artifact_creation_but_before_gate": true,
+    "gate_refuses_unbound_or_extra_artifacts": true
+  },
+  "ensemble_contract": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "candidate_and_control_per_domain": true,
+    "candidate_sample_shape": [32,16,1,64,64,64],
+    "control_sample_shape": [32,16,1,64,64,64],
+    "truth_shape": [32,1,64,64,64],
+    "conditional_mean_shape": [32,1,64,64,64],
+    "source_index_shape": [32],
+    "source_indices_exact_order": "must equal the corresponding frozen V79 list",
+    "members_per_query": 16,
+    "voxel_mpc_h": 0.3125,
+    "density_scale": 4.5,
+    "required_dataset_equality_between_candidate_and_control": [
+      "truth bitwise",
+      "conditional_mean bitwise",
+      "source_index bitwise",
+      "input bitwise if stored"
+    ],
+    "paired_innovation_requirement": "candidate-specific program must define and prove the appropriate candidate/control pairing; the gate reports but never invents pairing"
+  },
+  "physical_energy_observation": {
+    "q99_999": "signed generated-minus-truth pooled log10rho q99.999 delta per domain",
+    "Q4": "generated-over-truth mean physical delta-squared ratio per domain",
+    "high_k_power": "generated-over-truth log-density total-power ratio in 3-6 and 6-10.0531 h/Mpc per domain",
+    "residual_RMS": "generated residual RMS over truth residual RMS per domain",
+    "density_PDF": "generated-versus-truth log10-density histogram TV per domain",
+    "two_point": "generated-versus-truth KS mean in 0-1, 1-3, and 3-10 Mpc/h per domain",
+    "environment": "Boolean that all frozen generated mean peak/void errors are strictly smaller than the corresponding deterministic mean errors per domain",
+    "energy": "candidate mean query-wise unbiased scalar maximum-energy score minus paired-control score per domain",
+    "diagnostics_only": [
+      "old V77 hard threshold passes",
+      "deterministic-comparison PDF and two-point passes",
+      "individual family p-values"
+    ]
+  },
+  "physical_energy_global_block": {
+    "implementation": "exactly V78 family transforms, ridge covariance, empirical tails, sparse max(-log p), dense Fisher sum, and twice-minimum block p",
+    "calibration_reference": "V77 calibration arrays",
+    "global_statistic_reference": "V77 verification arrays",
+    "block_alpha": 0.025
+  },
+  "rank_coverage_global_block": {
+    "implementation": "V76 exact complete-field truth-label randomization independently within each domain, pooled over all 32 queries",
+    "random_relabelings_per_domain": 99999,
+    "tie_priority_and_relabel_seeds": "derive separate deterministic 64-bit seeds from SHA256(V79 program SHA256, candidate ensemble SHA256, domain, purpose)",
+    "six_p_values": "rank and coverage separately for each of three domains",
+    "block_p": "min(1,6*minimum of the six p-values)",
+    "block_alpha": 0.025,
+    "individual_effective_threshold": 0.004166666666666667
+  },
+  "complete_decision": {
+    "global_p": "min(1,2*min(physical_energy_block_p,rank_coverage_block_p))",
+    "global_alpha": 0.05,
+    "statistical_pass": "global p strictly greater than 0.05",
+    "deterministic_numerical_pass": [
+      "all ensemble, metric, and p-value quantities finite",
+      "maximum absolute generated residual cube mean <=1e-7",
+      "all shapes, hashes, source indices, provenance, and pairing invariants exact"
+    ],
+    "candidate_pass": "statistical pass and every deterministic numerical/provenance requirement pass",
+    "stage_behavior": {
+      "pass": "seal result and await a new explicit user decision about independent confirmation or downstream CF4 work",
+      "fail": "seal result and stop; no retry, seed change, metric change, candidate change, or use of another fresh subset"
+    },
+    "single_use": true
+  },
+  "claim_boundary": {
+    "allowed_after_pass": "the frozen candidate passes this single target-unseen compatible-population screen at the named metrics and global alpha",
+    "forbidden_after_pass": [
+      "claim of proof that the density field or IC is correct",
+      "claim of independent SIMBA confirmation",
+      "claim of CF4 applicability before the observational input contract is satisfied",
+      "claim of Local Group/Virgo/Coma/void reproduction before dynamical constrained-realization tests"
+    ]
+  },
+  "implementation_only_authorization": {
+    "implement_and_unit_test_candidate_agnostic_gate": true,
+    "read_any_selected_validation_input_or_target": false,
+    "construct_train_sample_or_evaluate_candidate": false,
+    "create_execution_manifest": false,
+    "run_V79_gate": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "modify_or_stop_RAMSES": false,
+    "required_stop": "After implementation tests and GitHub push, await explicit user approval for a separately frozen candidate design."
+  },
+  "outputs": {
+    "future_decision_filename": "decision.json",
+    "future_seal_filename": "sealed_result.json",
+    "implementation_has_no_scientific_output": true
+  }
+}

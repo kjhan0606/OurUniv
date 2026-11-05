@@ -1,0 +1,14 @@
+{
+  "schema": "ouruniv-cf4-camels-ares-survival-calibration-decision-v1",
+  "date": "2026-09-20",
+  "job": "388373",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/camels_ares_survival_calibration_v1/result.json",
+  "decision": "EXTERNAL_ANGULAR_SURVIVAL_CALIBRATION_PASS",
+  "source": "CAMELS SIMBA CV24-26 subhalos thinned by official ARES completeness_12_5 map",
+  "gates": {"all_populations_nonempty": true, "finite": true, "realized_survival_matches_ares_expectation": true},
+  "finding": "Across all validation realizations and six stellar-mass populations, Bernoulli survival frequencies agree with the ARES map expectation within binomial uncertainty.",
+  "scope_limit": "This calibrates angular survival only. It does not calibrate CF4 luminosity-dependent radial selection or Carrick-tracer bias.",
+  "implication": "The v7 nuisance boundary is not evidence that the ARES angular map is wrong; it indicates non-identifiability between CF4 tracer response and the Carrick reference covariate.",
+  "production_IC_allowed": false,
+  "stage": "4/8 development"
+}

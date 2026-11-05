@@ -1,0 +1,116 @@
+{
+  "schema": "hong2021-v33-intrinsic-velocity-second-moment-result-record-v1",
+  "status": "complete_development_only_input_reconstruction_and_information_audit",
+  "program": "config/hong2021_v33_intrinsic_velocity_moment_program.json",
+  "program_sha256": "7033b585d55bdb06b8eafd0626c8d899ce1ffde0c77e33ff55e7ddcf881c0407",
+  "implementation_commit": "39e69f0bf5d160e3d089d7d456ccb65a3cfd12ce",
+  "datasets": {
+    "TNG100": {
+      "train": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_train.h5",
+        "sha256": "9dd5f24fac0a855063b474b1880e4c7c0d45034af519226fa793298a75d0411d",
+        "target_payload_sha256": "b07662568a11452b0b01cc09b4091ff923dbea6aa3c5d664044e2b090ef68d5b",
+        "raw_selected_catalogue_logical_sha256": "f89f0d9a9bc6e41e6536624dfe9e6dc7d43a5d220722be9ed8a2e99ae52aac4d"
+      },
+      "validation": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v33/kinematic3/tng100_validation.h5",
+        "sha256": "4682e90874e31616f3b7757b6582f60f34be8830e1d1e58a4e265a2848d8a8b3",
+        "target_payload_sha256": "4aca0eeb94392f1d0a2b1144a39a54daaaeda40c567d87d13d8cc701b4089a14",
+        "raw_selected_catalogue_logical_sha256": "adf24e66f5669ec55e17ad5778a428283d6301a712a23f2a8145694b415f5bbe"
+      }
+    },
+    "SIMBA": {
+      "train": {
+        "path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv16_23_train_all_observers.h5",
+        "sha256": "8a990c278e1ca8498fee919a70de5554244882c50ace9eef76ce9a48c84dc89b",
+        "target_payload_sha256": "1c92ddc250ad120aeeab15482a7b9a037da299e4545887c1e8a527ede9db7234",
+        "raw_selected_catalogue_logical_sha256": "17233742bfa4d40a8828b0b484f05943516104b4ce73dbe4734a1942144e0d46"
+      },
+      "validation": {
+        "path": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v33/kinematic3/simba_cv24_26_validation_all_observers.h5",
+        "sha256": "f58c60dd4558b9bdfa69b2392766c08c35dfca0aa9e5190f28ab29958bddc69c",
+        "target_payload_sha256": "81a68f591ce3b5b20d9cb0b7a43b08dba58c539eef7eb87be31ad7a55cadb97c",
+        "raw_selected_catalogue_logical_sha256": "54d909d4fba90a709bbbac7b1eb5f297870b2f9899e758ddba87a3912ff57d5e"
+      }
+    },
+    "Swift": {
+      "train": {
+        "path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv0_19_train_all_observers.h5",
+        "sha256": "7faf36da4189e90ab39ea0b0ca2fe104b4eba09c07f3d93fb8bab7ed9efb9f87",
+        "target_payload_sha256": "f5e068c4d10901ad16e047b2b4b56007f21e3e70fef14d41effb8c12a915c1db",
+        "raw_selected_catalogue_logical_sha256": "9ffd2f8d98335595d0d94a33406add825d8eb7ba91c5b46210eb6e03947da431"
+      },
+      "validation": {
+        "path": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v33/kinematic3/swift_eagle_cv20_26_validation_all_observers.h5",
+        "sha256": "c2d74433ac35177301032934a84818a2c2f046603496a40b830731fff45e8add",
+        "target_payload_sha256": "c2cc29e90b9097592608534c49c3ffa564c97997aacd519ccda37eb4c29c7d65",
+        "raw_selected_catalogue_logical_sha256": "657cb05ed1978e1310051aa35d7cbc9d25c4b34ecba298e5d3d2e7163792e977"
+      }
+    }
+  },
+  "hard_acceptance": {
+    "all_count_max_abs_difference_from_v14": 0.0,
+    "all_mean_velocity_max_abs_difference_from_v14_kms": 0.0,
+    "all_target_payloads_unchanged": true,
+    "all_dispersion_values_finite_nonnegative_and_zero_for_count_below_two": true,
+    "observational_sigma_mean_included": false
+  },
+  "native_validation_summary": {
+    "TNG100": {
+      "galaxy_fraction_in_multi_galaxy_cells": 0.4549723526633138,
+      "mean_dispersion_in_multi_galaxy_cells_kms": 163.83840294282788,
+      "maximum_dispersion_kms": 1820.6396484375
+    },
+    "SIMBA": {
+      "galaxy_fraction_in_multi_galaxy_cells": 0.3170164165403582,
+      "mean_dispersion_in_multi_galaxy_cells_kms": 126.85295102732164,
+      "maximum_dispersion_kms": 1935.8758544921875
+    },
+    "Swift": {
+      "galaxy_fraction_in_multi_galaxy_cells": 0.2962950011365027,
+      "mean_dispersion_in_multi_galaxy_cells_kms": 120.59170075541142,
+      "maximum_dispersion_kms": 1878.140869140625
+    }
+  },
+  "information_audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v33_intrinsic_velocity_information/audit.json",
+    "sha256": "03f53729bcb906b844418944964e84197dc0846bb2ff6446eea0d32c2dda0461",
+    "decision_digest_sha256": "63f58d5afc4421b3993f3e799e0d142e283815e06d50cf3b03031e2312a081bd",
+    "classification": "intrinsic_sig_v_not_supported_by_fixed_linear_common_domain_gate",
+    "next": "retain_physical_CF4_channel_boundary_but_audit_nonlinear_residual_spatial_sufficiency_before_full_generative_run",
+    "intrinsic_sig_v_supported_factors": [],
+    "unique_second_moment_supported_factors": [],
+    "factor_4_exact_sig_v_over_base_rmse": {
+      "TNG100": 0.9988867570535114,
+      "SIMBA": 0.9992564791426657,
+      "Swift": 0.9991607036514908
+    },
+    "factor_4_exact_sig_v_over_recoverable_rmse": {
+      "TNG100": 0.999922012104418,
+      "SIMBA": 0.9999333300177634,
+      "Swift": 0.9998968837056005
+    },
+    "factor_8_exact_sig_v_over_base_rmse": {
+      "TNG100": 0.9951475524237571,
+      "SIMBA": 0.997485290336661,
+      "Swift": 0.9979254634687567
+    },
+    "factor_8_exact_sig_v_over_recoverable_rmse": {
+      "TNG100": 1.0001917064341586,
+      "SIMBA": 0.9998992397415472,
+      "Swift": 0.9998440990895779
+    }
+  },
+  "scientific_conclusion": [
+    "The requested mean-velocity and intrinsic sig_v grids are now represented without changing any V14 count, mean-velocity, observer, split, or target value.",
+    "Native sig_v is physically nontrivial, but a fixed source-balanced linear control finds less than one percent common-domain validation improvement and essentially no unique gain beyond the dispersion lower bound already encoded by neighboring retained means.",
+    "Intrinsic sig_v must remain distinct from propagated observational sigma of the mean in the future CF4 interface, but sig_v alone does not justify another full generative training run.",
+    "V32 summarized each 3x3x3 neighborhood by mean and standard deviation and therefore did not test oriented patch sufficiency. The next audit must use the full oriented multiscale patch with a frozen nonlinear learner before changing the residual generator."
+  ],
+  "firewall": {
+    "posthoc_Ak_used": false,
+    "validation_truth_used_to_construct_inputs": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

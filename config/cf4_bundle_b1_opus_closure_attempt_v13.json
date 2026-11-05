@@ -1,0 +1,39 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v13",
+  "date": "2026-09-05",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "audited_commit": "823c813",
+  "status": "COMPLETE",
+  "verdict": "CONDITIONAL",
+  "promotion_disposition": "NO-GO",
+  "risk_level": "MEDIUM",
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v13.txt",
+  "findings": {
+    "hashes_and_bytes": true,
+    "mode_v3_machine_reproducible": true,
+    "analytic_sigma": true,
+    "analytic_coverage68_mean": 0.751953125,
+    "analytic_coverage95_mean": 0.966796875,
+    "pooled_guard_numerically_reproduced": true,
+    "pooled_guard_machine_implemented": false,
+    "pooled_guard_power_unit_mismatch": true,
+    "pooled_guard_95_component_missing": true,
+    "per_mode_band_power_weak": true,
+    "arm_stratification_required": true,
+    "strict_gate_unchanged": true,
+    "validation_opened": false,
+    "B2_IC_FORWARD": false,
+    "in_sample_width_tuning": true,
+    "mark_side_misspecification_unspecified": true,
+    "count_side_diagnostic_required_first": true
+  },
+  "required_next": [
+    "Implement and test the clustered pooled guard in source code.",
+    "Use n=64 and n=256 seed-cluster sensitivity, remove n=512 pair power.",
+    "Add a 95-level guard and stratify by arm or use B as reference.",
+    "Run the arm-stratified count-side sandwich diagnostic.",
+    "Preregister a fixed mark-side heavy-tail arm and width-freeze policy.",
+    "Keep validation sealed and do not start B2."
+  ]
+}

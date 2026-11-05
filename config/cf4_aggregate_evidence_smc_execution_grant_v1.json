@@ -1,0 +1,77 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v1",
+  "status": "sealed_one_shot_execution_authorization",
+  "one_shot": true,
+  "grant_parent_commit": "981795a0cdf4ebc3d270672e1b2bb705db03e425",
+  "authorization_program_sha256": "99539c20d873125aaece88239fb5615a1929db5f98e2fd84eb13f13da64bd841",
+  "authorization_design_base_commit": "d3213fa8fa2effe82dc6874911d21132dc088b4b",
+  "runner_implementation_commit": "3db0e219a2569ed300e3647eca94a7078cae073c",
+  "runner_result_record_sha256": "d96708a9f6b4998237aba4b4078918e2b483b7bb7cbf370bb1866da692d9f92a",
+  "authorization_v1_implementation_commit": "09331152c7a472f2afad17d717ee2ef8710a3ff2",
+  "authorization_v1_implementation_result_record": {
+    "path": "config/cf4_aggregate_evidence_smc_execution_authorization_implementation_result_record_v1.json",
+    "sha256": "4de260dd2ea145987ab09de109d14bc6fb9a479424f705189e9c825524697d15"
+  },
+  "authorization_v1_files": [
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_design_v1.json",
+      "sha256": "a37a981dd12feaad7a85608a68e0a3b0f57ee4c1d15b385112286b5cb6608bef",
+      "git_blob_oid": "e4ea2e5c9bbb88e687c7202430d47ad33156b0a4",
+      "git_mode": "100644"
+    },
+    {
+      "path": "config/cf4_aggregate_evidence_smc_execution_authorization_program_v1.json",
+      "sha256": "99539c20d873125aaece88239fb5615a1929db5f98e2fd84eb13f13da64bd841",
+      "git_blob_oid": "a48d8388055a9b2a9ab7cdf82194f63c9024b7de",
+      "git_mode": "100644"
+    },
+    {
+      "path": "src/cf4_aggregate_evidence_smc_execution_authorized_v1.py",
+      "sha256": "508151130f9c00f42273c0f3eee0f276b3e118a5e9dfc065628257a039bb9a6c",
+      "git_blob_oid": "196e0c3eff868cf6e756e31c69ebaa845427e880",
+      "git_mode": "100644"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_execution_authorized_v1.py",
+      "sha256": "541e7ec414796ebc695dd54fb9aedb2d96787f46652c33f108bd1e1d02fd95a3",
+      "git_blob_oid": "da2848dba05c20d25f569cb8e1eacfb55a24bf1f",
+      "git_mode": "100644"
+    },
+    {
+      "path": "scripts/run_cf4_aggregate_evidence_smc_authorized_v1_lageunha.sh",
+      "sha256": "9a5ca001e88c9859c33d925351e972a9f66c98bdd15034a88709b646e902e032",
+      "git_blob_oid": "faa8c2c565fdbd162775c4bee2935ea75cce2f1c",
+      "git_mode": "100755"
+    },
+    {
+      "path": "scripts/launch_cf4_aggregate_evidence_smc_authorized_v1_lageunha.sh",
+      "sha256": "aac7922253d013bac48649fc8a3ca0fb8d50d576ffd874eaf3463b515447135a",
+      "git_blob_oid": "63e6f1f754a9b17f4591ea28198ead49e6b846a7",
+      "git_mode": "100755"
+    },
+    {
+      "path": "tests/test_cf4_aggregate_evidence_smc_authorized_v1_runner.py",
+      "sha256": "383f16296cc5fc09edf38f65d639f6cab698d910a71f92f9775ec58152777214",
+      "git_blob_oid": "76530e109ee5cc56d834242dc654ca848041e038",
+      "git_mode": "100644"
+    }
+  ],
+  "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v1",
+  "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v1_run",
+  "authorization": {
+    "production_SMC_execution_authorized": true,
+    "oracle_cache_population_authorized": true,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  },
+  "precommit_audit_verdict": "EXECUTION GO"
+}

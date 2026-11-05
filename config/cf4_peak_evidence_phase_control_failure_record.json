@@ -1,0 +1,55 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-phase-control-failure-record-v1",
+  "status": "failed_numerical_tolerance_before_scientific_gate",
+  "failed_date": "2026-08-16",
+  "execution": {
+    "host": "LagEunha",
+    "git_commit": "58488b695b7f7ed9a8b1bfd03cbc105e7a3aada3",
+    "started_at": "2026-08-16T10:21:37+09:00",
+    "ended_at": "2026-08-16T10:22:37+09:00",
+    "exit_code": 1,
+    "thread_limit": 1,
+    "process_table_polling_used": false
+  },
+  "lineage": {
+    "program": "config/cf4_peak_evidence_phase_control_program.json",
+    "program_sha256": "41a0849c24880170ade1dc69252eb86b7ef2d22587a5769514c994a4836c574d",
+    "failed_marker_sha256": "9927484acb9ee26874b8d1a6e0057c85fd97fae297dc474d24ae3f368105358c",
+    "run_log_sha256": "4a0a949f7dea1887f9727d0251be22f01ca22c103fa43b0d631f9a1cd9c6ddce",
+    "environment_sha256": "d3313410497cde90753c54b30e65e65e477f6c464fb07915d7ce4f42ed77efbf",
+    "derived_filter_sha256": "1e1d2ce4b022c908b8a3a64257e82fb8621c40cf8f77b1fd206f1347cdd2f59a"
+  },
+  "failure": {
+    "stage": "first nontrivial exact phase-response construction after successful N576 density-filter generation",
+    "exception": "RuntimeError: phase response broke Hermitian symmetry",
+    "scientific_gate_opened": false,
+    "parent_evidence_computed": false,
+    "cause": "The implementation used a hard relative imaginary-RMS limit of 1e-12. The real phase-response signal is extremely small after Q projection and Gaussian filtering, making harmless complex roundoff approach that relative threshold."
+  },
+  "read_only_diagnostics": [
+    {
+      "phase": [0, 0, 0],
+      "real_RMS": 3.299319982873142e-07,
+      "imaginary_RMS": 7.182648197675352e-23,
+      "imaginary_relative_RMS": 2.177008666925509e-16,
+      "maximum_absolute_imaginary": 2.0231263402059578e-20
+    },
+    {
+      "phase": [0, 0, 1],
+      "real_RMS": 3.432340532625972e-07,
+      "imaginary_RMS": 2.3563341878941304e-19,
+      "imaginary_relative_RMS": 6.865094431907594e-13,
+      "maximum_absolute_imaginary": 1.8828734288113377e-18
+    }
+  ],
+  "interpretation": "The absolute imaginary residual is below 2e-18 and is not evidence of a broken Hermitian operator. This is an engineering tolerance failure, not a covariance, evidence, CF4, or Local-Group scientific failure.",
+  "decision": {
+    "reuse_failed_output_as_pass": false,
+    "delete_or_overwrite_failed_state": false,
+    "v2_control_authorized": true,
+    "v2_change_scope": "Record phase-response imaginary diagnostics and use a prospectively fixed relative limit of 1e-10 in a new immutable state directory.",
+    "all_parent_evidence_authorized": false,
+    "candidate_generation_authorized": false,
+    "PM_or_RAMSES_authorized": false
+  }
+}

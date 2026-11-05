@@ -1,0 +1,41 @@
+{
+  "schema": "ouruniv-cf4-q7-q1r-redesign-plan-v1",
+  "date": "2026-09-04",
+  "bundle": "Q7.1R",
+  "owner": "driver",
+  "auditor": "claude-opus-5",
+  "status": "IMPLEMENTED_CONDITIONAL_AUDIT",
+  "parent_audit": "config/cf4_q7_q1_opus_audit_v2.json",
+  "parent_verdict": "CONDITIONAL-GO",
+  "objective": "Close the Opus conditions without inventing physical CF4 information, then obtain a defensible GO/NO-GO for Q7.2 seven-fixture operator validation.",
+  "redesign": {
+    "interval_certificate": "Internal directed-rounding Lipschitz enclosure; explicit sigma/displacement variation; normalized Gaussian bound E_abs_epsilon <= min(T,1); raw periodic support seam crossings fail closed.",
+    "topology": "Zero-scale bins include the exact unit TSC payload hash; nonzero bins retain sourcewise fallback when topology/seam/near-zero conditions cannot be certified.",
+    "basis_registry": "Directional basis is accepted only when a repository-owned manifest registers semantic order, units, coordinate convention and the exact consumed-array digest. Development manifest is explicitly non-physical.",
+    "summary_registry": "175-summary propagation is accepted only with a repository-owned manifest registering shape, induced-L1 norm definition, units, convention and exact matrix digest; products and sums are rounded upward.",
+    "falsification": "Deterministic and randomized sourcewise containment tests include an expected seam-certificate failure."
+  },
+  "artifacts": {
+    "implementation": "src/cf4_q7_topology_aware_approximate_operator.py",
+    "tests": "tests/test_cf4_q7_topology_aware_approximate_operator.py",
+    "development_basis_manifest": "config/cf4_q7_development_directional_basis_registry_v1.json",
+    "development_summary_manifest": "config/cf4_q7_development_summary_operator_registry_v1.json"
+  },
+  "acceptance_gates": {
+    "tests": "31 Q1/Q6/Q7 tests pass",
+    "physical_basis": "A separately derived REGISTERED manifest must replace REGISTERED_DEVELOPMENT before gradient/science promotion.",
+    "physical_summary_maps": "All 175 operator norms must come from independently derived fixed maps and a REGISTERED manifest; development ones are test-only.",
+    "audit": "Claude Opus 5 must return GO on the latest commit; timeout or CONDITIONAL-GO is not promotion."
+  },
+  "execution_firewall": {
+    "q7_2_started": false,
+    "heldout_opened": false,
+    "posterior": false,
+    "ic": false,
+    "pm_hop": false,
+    "gpfs": false,
+    "slurm": false,
+    "production": false
+  },
+  "next": "Register physical basis and 175-summary maps, obtain Opus GO, then request/perform Q7.2; until then stop at Q7.1R."
+}

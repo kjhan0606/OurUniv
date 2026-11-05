@@ -1,0 +1,14 @@
+VERDICT: NO-GO
+RISK_LEVEL: MODERATE (provenance anchors and gate-contract interpretation)
+
+Opus v19 packet audit of HEAD 4da663a6974ab59907344a504ed95e5a25520232:
+
+BLOCKING: the lexical import record says exit 1/zero matches while the live packet check says exit 0/one self-match; the receipt/regression anchors are one certified tree behind HEAD; and the result record pins receipt bytes while the receipt verifies the record, forming a mutual hash cycle.
+
+SUBSTANTIVE: 2/16 strict passes are uniform across all arms, so no D-specific causal attribution is justified. Legacy per-arm coverage is two-sided (A/C/D over-cover, B under-covers), so a pooled scalar width policy cannot close all arms. The 68/95 failure contingency is 9/9/38/8 (union 56), exactly matching the strict failure count. Per-arm medians need explicit legacy-per-voxel scope labels.
+
+POSITIVE: runtime sys.modules exclusion is stronger evidence than lexical grep; the scientific boundary is correct: observational z=0 posterior NOT_CREATED, frontier NOT_ALLOWED, validation unopened, B2 NOT_STARTED, and no 0.3 cMpc/h claim.
+
+REQUIRED_NEXT: break the receipt/record cycle with a one-way external certificate or immutable tag; correct lexical/runtime import evidence; anchor regression to an exact source/test commit with a non-tautological diff; retain the production periodic mutation guard; keep width policy diagnostic-only and require fresh disjoint seeds for any per-arm amendment; keep validation/B2 closed.
+
+AUDIT_MODE: packet-internal desk audit; no shell/filesystem tools were available to the auditor.

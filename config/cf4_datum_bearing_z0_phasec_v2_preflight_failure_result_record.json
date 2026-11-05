@@ -1,0 +1,53 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-preflight-failure-record-v1",
+  "date": "2026-09-01",
+  "status": "V2_PREFLIGHT_FAILED_ARRAY_NEVER_STARTED_NO_SCIENCE_RESULT",
+  "lineage": {
+    "commit": "b89a80e2aaea1a7e83800263049ec00eeba5f04f",
+    "execution_amendment": {
+      "path": "config/cf4_datum_bearing_z0_phasec_execution_amendment_v2.json",
+      "sha256": "bf84cc538d005ea1b56db5934abbfafb963c606783de0206a9b3098305865313"
+    },
+    "implementation": {
+      "path": "src/cf4_datum_bearing_z0_phasec_pilot.py",
+      "sha256": "dc5439d670ee0c32a55f46ee4e90b0660b7583118f0c0b66ae2889497eb40a6d"
+    },
+    "preflight_job_id": 329870,
+    "dependency_cancelled_array_job_id": 329871,
+    "failed_empty_aggregate_job_id": 329872
+  },
+  "preflight_outcome": {
+    "node": "syn06",
+    "partition": "a40",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:40",
+    "MaxRSS_KiB": 1604192,
+    "stderr": {
+      "path": "/gpfs/kjhan/CF4/z0_density/slurm-cf4-z0-phasec-pre-329870.err",
+      "bytes": 1092,
+      "sha256": "833212be17e76a6e1a33dd9e5ccc7df4ac8af654ff65aa3fcd92400589de285f"
+    }
+  },
+  "failure_boundary": {
+    "N64_nested_white_created_ephemerally": true,
+    "N64_PMWD_truth_created_ephemerally": true,
+    "mock_counts_and_velocity_created_ephemerally": true,
+    "N32_LCDM_transfer_check_passed": false,
+    "joint_likelihood_value_or_gradient_created": false,
+    "optimizer_started": false,
+    "sampler_started": false,
+    "posterior_draw_count": 0,
+    "science_metric_created": false,
+    "validation_seed_access": false
+  },
+  "failure": "fixed.build_density_transfer evaluated its JAX linear-power table on the default GPU device and rejected a nonfinite or negative transfer before the first likelihood value/gradient",
+  "execution_only_repair": {
+    "construct_LCDM_transfer_under_jax_default_device_CPU": true,
+    "likelihood_and_gradient_remain_GPU": true,
+    "mathematical_transfer_formula_change": false,
+    "science_contract_change": false,
+    "seed_arm_sampler_gate_or_diagnostic_change": false,
+    "new_preflight_output_required": true
+  }
+}

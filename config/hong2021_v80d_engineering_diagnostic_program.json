@@ -1,0 +1,66 @@
+{
+  "schema": "hong2021-v80d-engineering-diagnostic-program-v1",
+  "status": "frozen_before_V80D_reexecution_of_consumed_V79_subset",
+  "frozen_at": "2026-08-12T19:33:10+09:00",
+  "purpose": "Run one explicitly non-independent engineering diagnostic on the already consumed V80/V79 subset after correcting only the diagnostic HDF5 DC-row shape. Determine whether the frozen V80 scientific candidate is promising enough to justify acquiring new independent simulation objects for a prospective V81; never reinterpret this as V79 completion or pass.",
+  "engineering_only": true,
+  "statistically_valid_V79_reexecution": false,
+  "retry_or_candidate_selection_role": false,
+  "parent_failure": {
+    "candidate_program": "config/hong2021_v80_single_candidate_program.json",
+    "candidate_program_sha256": "43d41ae9722e2321d3a206492d543e39ba5e8b22868e4f3a755cd1b2147dc205",
+    "terminal_seal": "config/hong2021_v80_terminal_failure_seal.json",
+    "terminal_seal_sha256": "4460acfb1faf06a71a3d8c325f1a2098b3937754ca38c0a9b7f13294fb68374a",
+    "parent_remains_terminal": true,
+    "V79_global_p_was_not_obtained": true
+  },
+  "only_code_change": "reshape maximum_absolute_residual_DC from (members,1) to (members,) before the diagnostic HDF5 row write",
+  "frozen_unchanged_scientific_contract": {
+    "candidate_construction": "exact V80 calibrated V72 spatial quantile transport",
+    "paired_control": "exact V80 calibrated independent V63 marginal control",
+    "calibration_sha256": "21b80b6c9582648c087a25aeb8617ce8f2c80ca01780b6d9257faba08eae0393",
+    "checkpoint_candidate_sha256": "dc35c58715b67a86d4a2218a1b8435d6436a3cc8880cb107152ae0d02925bacf",
+    "checkpoint_control_sha256": "25beb6003ec0278bd09db184e8cda581b98da317bae91f95b4e3029ae409ac4d",
+    "members": 16,
+    "sampler_steps": 40,
+    "sampling_batch": 4,
+    "seeds": {"TNG100": 180080, "SIMBA": 180081, "Swift": 180082},
+    "source_indices": "exactly the frozen V80 program lists",
+    "metric_formula": "exact V79 physical-energy and rank-coverage formulas, reported diagnostically",
+    "calibration_refit": false,
+    "seed_or_sampler_change": false,
+    "metric_or_threshold_change": false,
+    "additional_candidate": false
+  },
+  "implementation_sources": {
+    "V80D_sampling_wrapper": {"path": "src/hong2021_v80d_engineering_sample.py", "sha256": "57cec13ec6524d03f047295fc4f780e80f269bdd6765a6de36c9d77de8f490cf"},
+    "V80D_report": {"path": "src/hong2021_v80d_engineering_report.py", "sha256": "96908883ab02d998b3185f052771748110a3c20382a537141c5f789811a2c42d"},
+    "V80_sampling_parent": {"path": "src/hong2021_v80_sample.py", "sha256": "c5cfc23e679b87536c8dc7b5210733ee412cd78faa1fd3947d32f6a7ed3e1080"},
+    "V80_evaluator": {"path": "src/hong2021_v80_evaluate.py", "sha256": "f09b552c25c1a6bc33387c224d4bd4a45568cc71ef09d078843ec62ab2864c6d"},
+    "V79_formula_source": {"path": "src/hong2021_v79_complete_gate.py", "sha256": "ea0d60d48b4d8652b78c1410306de7e1b6cd73e4a50af544b2df38ef7031288d"},
+    "V79_program": {"path": "config/hong2021_v79_complete_candidate_agnostic_gate_program.json", "sha256": "1234ac864343b41cb08f6788892f7dcb2db60b68843bc00edad5d15284e3956d"}
+  },
+  "outputs": {
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence",
+    "preflight": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_sequence/preflight.json",
+    "ensemble_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_ensembles",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v80d_engineering_report/diagnostic_report.json",
+    "refuse_existing": true
+  },
+  "decision_interpretation": {
+    "formula_pass": "Candidate is promising enough to justify a separately designed V81 using genuinely independent simulation objects. It is not a V79 pass.",
+    "formula_fail": "Stop this model-development path and do not spend new independent validation objects on V80.",
+    "no_global_type_I_error_claim": true,
+    "no_target_unseen_claim": true
+  },
+  "authorization": {
+    "user_instruction": "The user approved the recommended two-step route with '그렇게 하게나'.",
+    "instruction_date_Asia_Seoul": "2026-08-12",
+    "run_one_engineering_diagnostic_on_consumed_subset": true,
+    "fix_any_additional_failure_and_retry": false,
+    "run_V79_gate_or_create_V79_manifest": false,
+    "open_V72_stage_B_Astrid_or_EAGLE": false,
+    "modify_or_stop_RAMSES": false,
+    "automatic_next_if_promising": "audit availability and cost of genuinely independent simulation validation objects, then freeze a V81 design and stop for explicit approval before acquiring or opening them"
+  }
+}

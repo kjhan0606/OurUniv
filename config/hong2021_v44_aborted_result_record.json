@@ -1,0 +1,54 @@
+{
+  "schema": "hong2021-v44-query-local-mixture-copula-aborted-result-record-v1",
+  "status": "aborted_before_first_validation_due_to_nonidentifiable_mixture_initialization",
+  "program": "config/hong2021_v44_local_mixture_copula_program.json",
+  "program_sha256": "5929bb84b47cc21db09a281feecb802a6831e96ffc858c479fe73ef51b21fadb",
+  "implementation_code_commit": "764aed7db843dc5f5309d9f56dbd8e25c3d1c982",
+  "execution": {
+    "host": "lageunha",
+    "sequence_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v44_local_mixture_sequence",
+    "status": "failed exit=1",
+    "status_sha256": "cf53e245f154b3d2a16c4c1d44e493386a2116547ca6fb61f034a3e553e48e25",
+    "training_log": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v44_local_mixture_sequence/train.log",
+    "training_log_sha256": "8814d172faa5345b075f217fb9928bfb733875b9e221471f7bf6e53098352d85",
+    "last_logged_step": 1250,
+    "fixed_validation_diagnostics_opened": 0,
+    "checkpoint_created": false,
+    "samples_created": false,
+    "development_metrics_opened": false,
+    "termination_reason": "manual_interrupt_after_analytic_initialization_audit"
+  },
+  "analytic_audit": {
+    "seed": 144044,
+    "synthetic_parameter_shape": [3, 15, 4, 4, 4],
+    "zero_parameter_negative_log_likelihood": 1.4496850967407227,
+    "zero_parameter_component_output_spread": 0.0,
+    "maximum_within_role_component_gradient_spread": {
+      "mixture_logits": 0.0,
+      "locations": 0.0,
+      "raw_scales": 0.0
+    },
+    "maximum_absolute_gradient": {
+      "mixture_logits": 6.208816794028849e-11,
+      "locations": 0.0014466340653598309,
+      "raw_scales": 0.002465358469635248
+    },
+    "mathematical_invariant": "With all five component logits, locations, and scales initialized identically, permutation symmetry gives every same-role component the same gradient. The five components therefore remain on the identical-component invariant subspace apart from unprincipled floating-point noise.",
+    "effective_model": "one logistic component duplicated five times rather than an identifiable five-component mixture"
+  },
+  "classification": "v44_preflight_failed_to_test_mixture_identifiability",
+  "next": "freeze_v45_with_deterministic_asymmetric_component_locations_and_a_hard_identifiability_preflight",
+  "scientific_conclusion": [
+    "V44 cannot test whether a query-local five-component likelihood repairs the common-domain failure because its zero final initialization makes all five mixture components exchangeable and dynamically identical.",
+    "The defect was found from the frozen architecture and likelihood equations before the first predeclared validation diagnostic, not from development performance.",
+    "V45 may preserve every V44 input, split, loss, schedule, donor rank, evaluation threshold, and firewall, changing only the component-identifying initialization and the preflight needed to prove that distinct components receive distinct gradients."
+  ],
+  "firewall": {
+    "validation_truth_opened_by_training_diagnostic": false,
+    "development_samples_generated": false,
+    "development_metrics_opened": false,
+    "change_motivated_by_development_performance": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false
+  }
+}

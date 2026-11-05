@@ -1,0 +1,218 @@
+{
+  "schema": "hong2021-v73-train-truth-gate-attainability-audit-result-record-v1",
+  "status": "complete_gate_redesign_required_new_Hong_candidates_stopped_pending_explicit_approval",
+  "purpose": "Bind the preregistered low-cost V73 audit of whether the V72 sampling-sensitive gate is attainable at sixteen queries per domain, without training, model sampling, fresh validation access, or changing the sealed V72 verdict.",
+  "completed_at": "2026-08-12T12:54:18+09:00",
+  "record_base_commit": "714d1aabd687e7da4ff450c47f4d778d5139876b",
+  "frozen_program": {
+    "path": "config/hong2021_v73_train_truth_gate_attainability_audit_program.json",
+    "sha256": "cf92b53504c6501faf9d6043661f070a3e7458dc57ccd94bff77365760a1cf05",
+    "freeze_commit": "1607dc0064e1ce1a57629196156985403b893214",
+    "implementation_commit": "1415b90ec7eab6e9600680cf6a56e981ddf851a5",
+    "contention_limit_commit": "714d1aabd687e7da4ff450c47f4d778d5139876b"
+  },
+  "parent": {
+    "V72_result_record": "config/hong2021_v72_result_record.json",
+    "V72_result_record_sha256": "e047761ce216ca88ca3e77a902ac1dfb19b092e8d52f3414979993fb70812064",
+    "V72_verdict_changed": false,
+    "V72_stage_A_failure_remains_sealed": true,
+    "V72_stage_B_accessed": false
+  },
+  "execution": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "runner": "scripts/hong2021_v73_gate_attainability_lageunha.sh",
+    "runner_sha256": "860f176a495519c25d1672803f847834e66bb4281992781450d21673a0fa04fe",
+    "source": "src/hong2021_v73_gate_attainability.py",
+    "source_sha256": "e01555d1f2ca56eb237595dfd21e1877056671fd3ff4e22bcd95014fa7c86796",
+    "cpu_policy": "nice 15, taskset 64-67, four summary workers; observed numerical-library affinity further limited workers to logical CPU 64",
+    "approximate_wall_time": "less than seven minutes after the Lageunha unit test",
+    "total_result_storage": "approximately 15 MiB excluding logs",
+    "training_or_model_sampling_performed": false
+  },
+  "fit_train_population": {
+    "total_objects": 995,
+    "TNG100": {
+      "objects": 416,
+      "group_counts_xz_quadrants": [182, 92, 74, 68]
+    },
+    "SIMBA": {
+      "objects": 186,
+      "realisations": "16-23",
+      "group_counts": [25, 16, 24, 27, 28, 23, 16, 27]
+    },
+    "Swift": {
+      "objects": 393,
+      "realisations": "0-19",
+      "group_counts": [15, 25, 14, 18, 24, 16, 18, 18, 19, 23, 19, 18, 26, 15, 21, 19, 20, 21, 21, 23]
+    },
+    "V70_mechanism_holdout_objects_excluded": 48,
+    "validation_or_fresh_payload_accessed": false
+  },
+  "same_domain_truth_oracle": {
+    "trials_per_domain": 10000,
+    "queries_per_trial": 16,
+    "oracle_members_per_query": 16,
+    "TNG100": {
+      "q99_999_pass_probability": 0.896,
+      "Q4_pass_probability": 0.868,
+      "high_k_power_pass_probability": 0.9996,
+      "residual_RMS_pass_probability": 1.0,
+      "absolute_core_pass_probability": 0.8482,
+      "density_PDF_pass_probability": 1.0,
+      "two_point_all_scales_pass_probability": 0.8559,
+      "environment_all_fields_pass_probability": 0.9779,
+      "morphology_core_pass_probability": 0.851,
+      "joint_pass_probability": 0.7675
+    },
+    "SIMBA": {
+      "q99_999_pass_probability": 0.9998,
+      "Q4_pass_probability": 0.999,
+      "high_k_power_pass_probability": 1.0,
+      "residual_RMS_pass_probability": 1.0,
+      "absolute_core_pass_probability": 0.9989,
+      "density_PDF_pass_probability": 1.0,
+      "two_point_all_scales_pass_probability": 0.9991,
+      "environment_all_fields_pass_probability": 1.0,
+      "morphology_core_pass_probability": 0.9991,
+      "joint_pass_probability": 0.9981
+    },
+    "Swift": {
+      "q99_999_pass_probability": 0.9984,
+      "Q4_pass_probability": 0.9996,
+      "high_k_power_pass_probability": 1.0,
+      "residual_RMS_pass_probability": 1.0,
+      "absolute_core_pass_probability": 0.9982,
+      "density_PDF_pass_probability": 1.0,
+      "two_point_all_scales_pass_probability": 0.9978,
+      "environment_all_fields_pass_probability": 1.0,
+      "morphology_core_pass_probability": 0.9978,
+      "joint_pass_probability": 0.9962
+    },
+    "all_three_domain_joint_pass_probability": 0.7633,
+    "all_three_domain_joint_false_rejection_probability": 0.2367,
+    "maximum_predeclared_acceptable_false_rejection_probability": 0.2
+  },
+  "cross_domain_common_law_stress": {
+    "trials_per_ordered_pair": 5000,
+    "absolute_core_pass_probability": {
+      "TNG100_to_SIMBA": 0.0002,
+      "TNG100_to_Swift": 0.016,
+      "SIMBA_to_TNG100": 0.0794,
+      "SIMBA_to_Swift": 0.85,
+      "Swift_to_TNG100": 0.1934,
+      "Swift_to_SIMBA": 0.8784
+    },
+    "ordered_pairs_below_material_0p2_threshold": [
+      "TNG100_to_SIMBA",
+      "TNG100_to_Swift",
+      "SIMBA_to_TNG100",
+      "Swift_to_TNG100"
+    ],
+    "domain_blind_common_law_materially_incompatible": true,
+    "claim_limit": "This is a domain-blind empirical stress test, not a mathematical impossibility proof for a target-free conditional model."
+  },
+  "TNG_spatial_heterogeneity": {
+    "q99_999_leave_one_quadrant_range_dex": 0.09170150756835938,
+    "Q4_maximum_over_minimum": 1.4027317648734565,
+    "power_3_6_maximum_over_minimum": 1.016385633744593,
+    "power_6_10_maximum_over_minimum": 1.0109886590516175,
+    "material_under_frozen_thresholds": false,
+    "claim_limit": "Within-box spatial heterogeneity only; this is not independent-box cosmic variance."
+  },
+  "V72_energy_stability": {
+    "paired_bootstrap_trials": 100000,
+    "TNG100": {
+      "mean_candidate_minus_control": 0.07424502708017826,
+      "paired_bootstrap_95": [0.04279956262558699, 0.10622805987484753],
+      "underpowered": false,
+      "interpretation": "The V72 candidate is robustly worse than the independent control on the TNG100 maximum-energy score."
+    },
+    "SIMBA": {
+      "mean_candidate_minus_control": 0.004717292760809266,
+      "paired_bootstrap_95": [-0.015027626746644577, 0.02441598567180334],
+      "underpowered": true
+    },
+    "Swift": {
+      "mean_candidate_minus_control": -0.000456520790855096,
+      "paired_bootstrap_95": [-0.024054852308084573, 0.02142115149336554],
+      "underpowered": true
+    },
+    "exchangeable_truth_oracle_A_better_than_B_probability": {
+      "TNG100": 0.4991,
+      "SIMBA": 0.4984,
+      "Swift": 0.495
+    },
+    "V72_outcome_changed": false
+  },
+  "decision": {
+    "gate_redesign_required": true,
+    "domain_blind_common_law_materially_incompatible": true,
+    "TNG_spatial_heterogeneity_material": false,
+    "classification": "sampling_sensitive_V72_gate_requires_null_calibrated_redesign",
+    "reason": "The all-three-domain truth-oracle joint pass probability is 0.7633, below the preregistered 0.8 attainability floor. TNG100 is the bottleneck: q99.999, Q4, and the all-scale two-point improvement each have material finite-query false-rejection rates, while high-k power and residual RMS are stable.",
+    "next": "Stop new Hong generator candidates and seek explicit user approval for a separately frozen, null-calibrated gate redesign."
+  },
+  "scientific_interpretation": {
+    "what_is_established": [
+      "The current sixteen-query conjunctive gate is too sampling-sensitive to be a reliable sole selector across all three development domains.",
+      "This conclusion is driven by TNG100 finite-population tail, Q4, and two-point comparisons, not by high-k power or residual-RMS instability.",
+      "A simulation-domain-blind empirical residual law is strongly stressed whenever TNG100 is transferred to or from another domain; SIMBA and Swift are mutually much more compatible.",
+      "The strict maximum-energy comparison behaves like a coin flip under exchangeable truth-oracle draws, while the already consumed V72 TNG100 candidate-versus-control disadvantage is statistically resolved."
+    ],
+    "what_is_not_established": [
+      "The sealed V72 candidate is not rescued or reevaluated.",
+      "A conditional model is not proven impossible by the cross-domain stress test.",
+      "No threshold may be relaxed retrospectively from this result.",
+      "No new candidate, fresh partition, Stage B, Astrid, or EAGLE access is authorized."
+    ]
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability",
+    "audit_result": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/audit_result.json",
+      "sha256": "274925549c6eb652979c76a2ddac4496a08a81158d10a68ffe96cad6b788e002",
+      "decision_digest_sha256": "f04e4d916b12c08ee4f4c2b4d573eeb8150c8695990ff2151133342478e6791d"
+    },
+    "bootstrap_arrays": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/bootstrap_arrays.npz",
+      "sha256": "083611c8144f0307b0aa11ab5665c715302b1e0a3e6937f13a6e94963fa1bce7"
+    },
+    "train_truth_summary": {
+      "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v73_gate_attainability/train_truth_summary.npz",
+      "sha256": "1d85f76c9df4ea9a26cb8c82bae746f586cb904d8cc65294aa92c6295c36a2b8",
+      "record_sha256": "6b9d741be1bd3ce5c50a15c146e9dcbdb3d2008e1668d668ce2ecaa99131f24c"
+    },
+    "sequence_log_sha256": "5696bc7380dbc83d9852aae0bf623401d0cb04c1199d40fa6d71bb3bd336a46e",
+    "sequence_status_sha256": "ff9d97171fb3dbe8223ae87b8c03909c9873d285cf238c74f99b986298333ca7"
+  },
+  "verification": {
+    "local_full_tests": "596 passed in 41.57s",
+    "local_related_tests": "29 passed in 8.30s",
+    "Lageunha_V73_tests": "10 passed in 9.21s",
+    "test_source": "tests/test_hong2021_v73_gate_attainability.py",
+    "test_source_sha256": "06386a6273e7b4ccaa058f82e7251405c70e586501b81d0e878712a978c8a6a1",
+    "bootstrap_array_count": 144,
+    "bootstrap_nonfinite_values": 0,
+    "summary_array_count": 55,
+    "decision_digest_recomputed_equal": true,
+    "repository_clean_during_audit": true
+  },
+  "firewall": {
+    "validation_or_fresh_payload_accessed": false,
+    "V72_stage_B_accessed": false,
+    "Astrid_accessed": false,
+    "historical_or_independent_EAGLE_accessed": false,
+    "training_or_model_checkpoint_accessed": false,
+    "new_candidate_constructed": false,
+    "gate_changed": false
+  },
+  "authorization": {
+    "rerun_or_modify_V72": false,
+    "open_V72_stage_B": false,
+    "open_Astrid_or_EAGLE": false,
+    "implement_a_new_generator": false,
+    "modify_the_gate_without_a_new_frozen_program": false,
+    "required_next": "Await explicit user approval before freezing a null-calibrated gate redesign; any future gate applies prospectively and cannot reinterpret the consumed V72 result."
+  }
+}

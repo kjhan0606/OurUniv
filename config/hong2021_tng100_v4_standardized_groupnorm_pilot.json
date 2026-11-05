@@ -1,0 +1,96 @@
+{
+  "schema": "hong2021-tng100-v4-standardized-groupnorm-pilot-v1",
+  "status": "complete_high_k_gate_failed_uniform_mse_deterministic_frozen",
+  "purpose": "Final uniform-MSE deterministic falsification using train-fitted input scaling and cosine learning-rate decay",
+  "controlled_comparison": {
+    "baseline": "config/hong2021_tng100_v3_groupnorm_pilot.json",
+    "same_split_input_target_augmentation_width_batch_optimizer_seed_loss": true,
+    "changes": [
+      "occupied-cell input scaling fitted only on training data",
+      "cosine learning-rate decay from 1e-3 to 1e-5 over 20 epochs"
+    ]
+  },
+  "data": {
+    "train": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_train.h5",
+    "validation": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v2/split00_l0_paper/tng100_validation.h5",
+    "density_environment_audit": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v2_split00_l0_bn/density_field_environment_audit.json",
+    "void_bias_detected": false,
+    "spatial_reuse_warning": "432 training cubes cover only 33.93 unique equivalent cube volumes; covered voxels are reused 12.73 times on average"
+  },
+  "input_preprocessing": {
+    "mode": "occupied_standardized",
+    "fit_split": "training_only",
+    "count_scale_without_centering": 1.8951369476066098,
+    "velocity_occupied_mean_kms": -162.29324166986555,
+    "velocity_occupied_std_kms": 425.5309724675744,
+    "empty_cells_preserved_as_zero": true
+  },
+  "training": {
+    "normalization": "GroupNorm",
+    "epochs": 20,
+    "batch": 6,
+    "seed": 2021,
+    "optimizer": "Adam",
+    "initial_learning_rate": 0.001,
+    "schedule": "CosineAnnealingLR",
+    "minimum_learning_rate": 0.00001,
+    "loss": "uniform voxel MSE in normalized log density",
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v4_split00_l0_groupnorm_std_cosine"
+  },
+  "baseline": {
+    "checkpoint": "v3 GroupNorm minimum-validation epoch 14",
+    "spectral_metrics": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v3_split00_l0_groupnorm/spectral_minimum_validation/spectral_metrics.json",
+    "validation_mse": 0.012326497819005964,
+    "log_density_r_3_6_h_mpc": 0.336898541232834,
+    "log_density_r_6_10_h_mpc": 0.1665875939530679
+  },
+  "precommitted_gates": {
+    "primary_checkpoint": "minimum augmented validation MSE",
+    "minimum_delta_log_density_r_3_6_h_mpc": 0.05,
+    "required_log_density_r_3_6_h_mpc": 0.386898541232834,
+    "maximum_absolute_mean_log10_density_bias_dex": 0.05,
+    "sample_mse_above_0.05": 0,
+    "train_vs_eval_max_abs": 0.0,
+    "density_stratified_metrics_required": true,
+    "decision_if_high_k_gate_fails": "Freeze uniform-MSE deterministic model; do not extend to 200 epochs"
+  },
+  "evaluation": {
+    "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_v4_split00_l0_groupnorm_std_cosine",
+    "gate_file": "config/hong2021_evaluation_gates_v2.json"
+  },
+  "result": {
+    "primary_checkpoint": "minimum-validation epoch 7",
+    "training_seconds_through_epoch_20": 10400,
+    "validation_mse": 0.012334674254900334,
+    "voxel_pearson_y": 0.6514954985750929,
+    "mean_log10_density_bias_dex": -0.015364992051725958,
+    "log10_density_scatter_dex": 0.4995408598713244,
+    "sample_mse_above_0.05": 0,
+    "train_vs_eval_max_abs": 0.0,
+    "log_density_fourier": {
+      "r_3_6_h_mpc": 0.35228739693734484,
+      "delta_r_3_6_h_mpc_vs_v3": 0.015388855704510818,
+      "required_delta_r_3_6_h_mpc": 0.05,
+      "r_6_10_h_mpc": 0.1735614159928258,
+      "delta_r_6_10_h_mpc_vs_v3": 0.00697382203975791,
+      "transfer_3_6_h_mpc": 0.39501424352119324,
+      "transfer_6_10_h_mpc": 0.25286503818712613
+    },
+    "gates": {
+      "high_k_phase_correlation": "failed",
+      "log_density_bias": "passed",
+      "outlier_count": "passed",
+      "train_eval_mode_independence": "passed",
+      "density_stratified_metrics": "completed"
+    },
+    "automatic_two_point_selection": {
+      "checkpoint": "minimum-training epoch 20",
+      "note": "Reported only as a secondary result because the precommitted primary checkpoint is minimum validation MSE",
+      "validation_mse": 0.013017824626983263,
+      "log_density_r_3_6_h_mpc": 0.3528259406972582,
+      "log_density_r_6_10_h_mpc": 0.1789318288496707
+    },
+    "density_stratified_interpretation": "Standardization slightly reduces void overprediction and some extreme-peak bias but does not remove regression toward the volume-weighted mean or recover missing filament phases",
+    "decision": "Freeze the uniform-voxel-MSE deterministic Hong model and proceed to a conditional stochastic residual model; do not extend this model to 200 epochs or apply it to CF4"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "ouruniv-cf4-selection-calibration-record-v1",
+  "status": "CALIBRATED_EXTERNAL_INPUT_BOUND_SUPPORT_REPAIR_NOT_CALIBRATION",
+  "selection_science_source": "ARES official angular completeness maps",
+  "ares_commit": "6cf608ed8c70474c15c8ca76cce675742e291c71",
+  "completeness_maps": {
+    "11_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_11_5.fits.gz",
+      "sha256": "1eb561b93d6cc95095350d20ce61131a1c44afcdf385dec033817f0dc5a87ace"
+    },
+    "12_5": {
+      "path": "/gpfs/kjhan/CF4/software/ares-6cf608ed/examples/completeness_12_5.fits.gz",
+      "sha256": "20af269339c04eb002556afe88ef3ade19f43c08c6a146e6a17fdd29af4f80a9"
+    }
+  },
+  "derived_maps": {
+    "v1_path": "/gpfs/kjhan/CF4/z0_density/bundle_c_v1/selection_1p5_v1/selection.h5",
+    "v1_sha256": "48d40d00cbe8d3e635a6ee46019b2338e904a7ac7c0c03f05b5e776bd6a3abc3",
+    "v2_path": "/gpfs/kjhan/CF4/z0_density/bundle_c_v1/selection_1p5_v2/selection.h5",
+    "v2_sha256": "848f5bed62ab1e5ca68096c4b248c8297e98b6697543ec9dab30303734610783"
+  },
+  "adoption_rule": "Use v1 official-map integration as the calibrated baseline; use v2 only as a numerical support-repair sensitivity variant.",
+  "not_claimed": ["complete CF4 selection normalization", "scale-dependent survival/bias calibration", "map coverage outside 384 cMpc/h box"],
+  "production_ic_authorized": false
+}

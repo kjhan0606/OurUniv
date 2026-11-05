@@ -1,0 +1,49 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-joint-schedule-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_pass_schedule_only_no_field_generated",
+  "execution": {
+    "job_id": 323851,
+    "state": "COMPLETED",
+    "elapsed": "00:00:07",
+    "max_rss_kib": 3512
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/CF4/recon/linear_cr/lg_highk_joint_schedule_v1",
+    "schedule_sha256": "10c8526f3508a908a14981636ca9f730480838b65ea4bbcd3186c0730f330ccd",
+    "result_sha256": "382c7bdc3a35e625ad9157f8b43b8303b620e16db15050c20eef9d641e20447a"
+  },
+  "schedule": {
+    "count": 256,
+    "count_per_group": 64,
+    "group_count": [64, 64, 64, 64],
+    "unique_parent_count": 79,
+    "maximum_parent_replication": 20,
+    "equal_posterior_weight": 0.00390625,
+    "empirical_parent_L1": 0.5005984898509311,
+    "single_parent_selected": false,
+    "peak_evidence_reapplied": false
+  },
+  "parent_L1_null": {
+    "draws": 50000,
+    "seed": 2026082502,
+    "q99": 0.5962818714291103,
+    "q999": 0.629824728060375,
+    "tail_probability": 0.5693086138277235,
+    "passes_q999": true
+  },
+  "technical_pilot_rows": [
+    {"schedule_index": 0, "group_id": 0, "parent_seed": 3423},
+    {"schedule_index": 64, "group_id": 1, "parent_seed": 3405},
+    {"schedule_index": 128, "group_id": 2, "parent_seed": 3195},
+    {"schedule_index": 192, "group_id": 3, "parent_seed": 3367}
+  ],
+  "decision": {
+    "joint_schedule_promoted": true,
+    "conditional_field_engine_implementation_authorized": true,
+    "conditional_field_execution_authorized": false,
+    "PM_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "next": "Implement and unit-test the exact scalable N192-to-N576 conditional-field engine; stop before submitting the four-field technical pilot."
+}

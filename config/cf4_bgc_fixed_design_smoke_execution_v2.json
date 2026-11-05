@@ -1,0 +1,111 @@
+{
+  "schema": "ouruniv-cf4-bgc-fixed-design-single-mock-smoke-execution-v2",
+  "date": "2026-08-31",
+  "status": "ASSISTANT_ERROR_CORRECTION_SINGLE_FIXED_DESIGN_TRUTH_MOCK_SMOKE",
+  "authorization_basis": "Standing user instruction permits correction of an assistant-caused implementation failure without a new approval. Job 328661 passed its original incomplete checks but independent audit proved that stored theta copied delta instead of being reconstructed from stored velocity.",
+  "authorization": {
+    "single_Slurm_correction_execution_authorized": true,
+    "GPFS_declared_read_write_authorized": true,
+    "same_truth_seed_reexecution_authorized": true,
+    "new_unique_development_truth_seed_authorized": false,
+    "population_selection_mock_authorized": false,
+    "development_64_mock_execution_authorized": false,
+    "untouched_256_mock_validation_authorized": false,
+    "frontier_or_science_claim_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "IC_PM_HOP_RAMSES_authorized": false,
+    "network_access_authorized": false,
+    "additional_retry_authorized": false
+  },
+  "failed_predecessor_binding": {
+    "Slurm_job_id": 328661,
+    "result_record_path": "config/cf4_bgc_fixed_design_smoke_v1_result.json",
+    "result_record_sha256": "d08faa7ac968aa8226f61a6282ea8463bcb5437274e9a8593e5ad734e1588f87",
+    "preserved_output": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v1/smoke",
+    "failure": "stored_theta_not_reconstructed_from_stored_velocity"
+  },
+  "input_bindings": {
+    "grouped_CF4_catalog": {
+      "path": "data/cf4_clean.npz",
+      "sha256": "38cd2a22268c203ddc7ef708eeaa683ff2f55084ebf3983dc3cbffa56fe44b37",
+      "semantics": "positions_errors_and_BGc_design_only_observed_vobs_excluded_from_mock_posterior_datum"
+    },
+    "bin_manifest": {
+      "path": "config/cf4_kf_bin_manifest_v1.json",
+      "file_sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+      "body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+    }
+  },
+  "source_bindings": {
+    "fixed_design_smoke": {
+      "path": "src/cf4_bgc_fixed_design_smoke.py",
+      "sha256": "0a1a9348ec4a65ff8a9d10eddc0f3dd251b3a1469ec8b50f874f80f554aa46cb"
+    },
+    "calibration_metrics": {
+      "path": "src/cf4_mock_calibration.py",
+      "sha256": "6d6ec85f3a585ba02c5a22a554e8d9a0d51e5cc94f84f0f58d21ceba79a4215c"
+    },
+    "linear_CR": {
+      "path": "src/cf4_linear_cr.py",
+      "sha256": "bee7924e64777c9ad5a0052ed4f8ec9b85fa4a932f6f87c92a0627bb3535c2ed"
+    },
+    "CF4_ingest": {
+      "path": "src/cf4_ingest.py",
+      "sha256": "de0df0c427a935e82cd76904ee522145cc0c9c5b64ed8494b6ca3b8478af1b26"
+    },
+    "BGc_likelihood": {
+      "path": "src/cf4_bgc.py",
+      "sha256": "9ffbc8d07ca07ee05cba53f58d3e3cca5598bd27fffa8610c0c856bba043a90d"
+    }
+  },
+  "smoke_contract": {
+    "selection_semantics": "observed_grouped_CF4_fixed_design_conditioned",
+    "mock_datum": "u_mock=A*s_truth+B*q_truth+epsilon",
+    "grid_N": 32,
+    "box_size_cMpc_h": 384.0,
+    "cell_size_cMpc_h": 12.0,
+    "development_truth_seed": 2026083000,
+    "new_unique_development_truth_seed_count": 0,
+    "posterior_draw_count": 4,
+    "density_canonical_independent_real_mode_count": 8538,
+    "theta_non_Nyquist_canonical_independent_real_mode_count": 8535,
+    "theta_definition": "minus_discrete_spectral_divergence_of_stored_velocity_divided_by_100f",
+    "Nyquist_plane_modes_excluded_from_theta_metrics": true,
+    "analytic_posterior_mean_required_for_point_metrics": true,
+    "full_three_component_velocity_truth_mean_and_draws_required": true,
+    "population_selection_function_validated": false,
+    "ROI_metrics_status": "NOT_EVALUATED",
+    "high_k_status": "NOT_EVALUATED_FAIL_CLOSED",
+    "coverage_status": "NOT_EVALUATED",
+    "science_claim_allowed": false
+  },
+  "environment": {
+    "python": "/home/kjhan/miniconda3/envs/circle/bin/python3.11",
+    "python_version": "3.11.15",
+    "numpy": "2.4.6",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "pmwd": "0.1.dev131+g0552bc013",
+    "scipy": "1.17.1"
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "Slurm_partition": "a10",
+    "CPU_only": true,
+    "cpus_per_task": 4,
+    "memory_expected_peak_MiB": 1200,
+    "memory_headroom_multiplier": 1.28,
+    "memory_request_MiB": 1536,
+    "time_limit": "00:30:00",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v2",
+    "final_output": "/gpfs/kjhan/CF4/kf_design/bgc_fixed_design_smoke_v2/smoke",
+    "maximum_correction_submissions": 1,
+    "maximum_correction_executions": 1,
+    "manual_syntax_or_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "plain_same_filesystem_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "COMPLETE_written_last": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "ouruniv-cf4-lg-highk-selected-b3292-s30113-v1",
+  "status": "frozen_exact_reproduction_before_forward",
+  "source_pilot": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_conditioned_pilot_v2/result.json",
+  "source_pilot_selected_index": 12,
+  "parent_seed": 3292,
+  "parent_field": "/gpfs/kjhan/CF4/recon/linear_cr/parent_ensemble_conditioning_refine_v1/cf4_parent_ensemble_conditioned_b3292_beta0p25.npz",
+  "parent_field_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d",
+  "mesh_size": 512,
+  "frozen_k_max_h_mpc": 0.6,
+  "box_size_mpc_h": 384.0,
+  "seed_bank": {
+    "count": 1,
+    "field_seed_start": 30113,
+    "geometry_seed_start": 31113,
+    "likelihood_noise_seed_start": 32113,
+    "midpoint_seed_start": 33113
+  },
+  "peak_constraints": {
+    "linear_density_epoch": "z=0 linear extrapolation",
+    "gaussian_radius_mpc_h": 1.5,
+    "protohalo_midpoint_prior": {
+      "distribution": "diagonal_normal",
+      "mean_mpc_h": [-0.971, -6.353, 2.853],
+      "sigma_mpc_h": [3.0, 3.0, 3.0]
+    },
+    "protohalo_separation_mpc_h": 4.0,
+    "shell_radius_mpc_h": 1.3333333333333333,
+    "centre_target_delta_linear": 1.8,
+    "six_shell_target_delta_linear": 1.5,
+    "likelihood_sigma_delta": 0.25,
+    "n_constraints_per_proposal": 14
+  },
+  "hard_p2_config": "config/p2_lg_targets_v11_parent_b3292_beta025_l9.json",
+  "output": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_selected_s30113_v1",
+  "retention": {
+    "conditioned_fields": true,
+    "passing_conditioned_fields": true,
+    "full_particle_state": false,
+    "passing_halo_catalogues_only": true
+  },
+  "expected_reproduction": {
+    "field_sha256": "0fbac87513616fb49f72669f7aee69eee764c99b3c4b23ad2ff73b3b6e6342b7",
+    "screen_pass": true,
+    "n_screen_pairs": 1
+  },
+  "science_policy": {
+    "selected_for_validation_not_production": true,
+    "parent_environment_recheck_required": true,
+    "RAMSES_not_authorized_by_this_record": true
+  }
+}

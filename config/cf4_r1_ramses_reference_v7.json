@@ -1,0 +1,17 @@
+{
+  "output_root": "/gpfs/kjhan/CF4/r1_ref_v7",
+  "binary": "/gpfs/kjhan/CF4/r1_ref_build/job_359445/bin/ramses_cf4_ref3d",
+  "ramses_source_commit": "d689044d896d9f195629891a202eaf2fd64ee0d2",
+  "reference_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_resolution_v3/job_359203",
+  "tsc_directory": "/gpfs/kjhan/CF4/z0_density/r1_three_dimensional_v6/job_359415",
+  "entry_directory": "/gpfs/kjhan/CF4/z0_density/r1_particle_entry_v1/job_354568",
+  "seed": 2026091301,
+  "particle_n": 128,
+  "readout_n": 64,
+  "levelmin": 7,
+  "reference_levelmax": [8, 9],
+  "mpi_ranks": 4,
+  "application_seconds_cap": 11400,
+  "each_evolution_seconds_cap": 5400,
+  "scope": "One fixed seed, same total-matter particle positions/velocities/masses, independent RAMSES DMO AMR8/9 comparison. Intentional initial snapshot validates ASCII handoff before evolution. No original RAMSES edits, no real LG identification or posterior promotion."
+}

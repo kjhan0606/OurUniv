@@ -1,0 +1,93 @@
+{
+  "schema": "hong2021-v70-independent-eagle-readiness-code-audit-v1",
+  "status": "complete_code_only_gate_not_authorized",
+  "purpose": "Determine, without opening any GPFS EAGLE artifact, whether the historically frozen V6 EAGLE confirmation machinery can execute a future V70 one-shot independent gate and identify every required pre-access adaptation.",
+  "audit_code_commit": "d1365c0de62ba187fca73fc56c270135f8fe840b",
+  "local_evidence": {
+    "historical_v6_gate_record": {
+      "path": "config/hong2021_eagle_ref100_gate.json",
+      "sha256": "a100194f4bfd6137fa079452a5f96be592b25c3a7953954dc47e2fbbb4ad3433"
+    },
+    "confirmation_seal": {
+      "path": "config/hong2021_eagle_confirmation_seal_v1.json",
+      "sha256": "822473038ee51e596e178caa9fecc1a35ea5029224591da974948c4cd08258d7"
+    },
+    "sealed_confirmation32_selection": {
+      "path": "config/hong2021_eagle_confirmation32_v1.json",
+      "sha256": "20416f34c5e79f04bf38014f917786d5d68973a9d3953ef6d4ed2bb3711737f7"
+    },
+    "eagle_preparation_source": {
+      "path": "src/hong2021_prepare_eagle.py",
+      "sha256": "bbfd20e9f37e2139030c0c9ac333c121909251b1e0612d7a8ac677b70c7560ea"
+    },
+    "historical_independent_gate_source": {
+      "path": "src/hong2021_independent_gate.py",
+      "sha256": "275e3d5154e3aed75f4f09971af0d5936da4ca90dec3cb532cddb86c94ae30d6"
+    },
+    "historical_v6_runner": {
+      "path": "scripts/run_hong2021_eagle_edm_gate_lageunha.sh",
+      "sha256": "307e5b260065a1d0d5c147edcac95d43672d9c0b8f06ccf25c9ead9f04eda8b4"
+    },
+    "v14_baseline_source": {
+      "path": "src/hong2021_v14_baseline_audit.py",
+      "sha256": "a1a3f453bace9e31354ae461b173fab583e99f6edf8c20912f28c3c7525faa87"
+    },
+    "v14_corrected_backbone_source": {
+      "path": "src/hong2021_v14_residual_cache.py",
+      "sha256": "b8bf6651810f3e2823a3c263d43f11140a20d9c3623ecd00279bf7a2765b08e7"
+    },
+    "v41_target_free_predictor_source": {
+      "path": "src/hong2021_v41_two_stage.py",
+      "sha256": "05a220b9a5091178be5802d868f8317deb506de9d81b07410e6dc776d50e21f4"
+    },
+    "v45_conditioning_source": {
+      "path": "src/hong2021_v45_train.py",
+      "sha256": "55e740388304ee6e23ca263eb0954b8926408b88de3d02d060341174e6209010"
+    }
+  },
+  "findings": {
+    "historical_gate_result": "The already inspected V6 EAGLE gate failed one environment check and is diagnostic history only; neither its model nor its result may select or tune V70.",
+    "reserved_population": "The existing target-free farthest-point selection seals 32 of the 156 V6-uninspected confirmation cubes. Those identities can remain the one-shot V70 population if and only if the V70 development gate passes and explicit user approval is later granted.",
+    "historical_runner_compatibility": false,
+    "historical_runner_reason": "The V6 runner consumes a two-observable prepared input and a Laplacian-residual V6 checkpoint. V70 requires a three-observable kinematic input and the complete seven-channel V45 condition for a bounded-marginal latent spatial score model.",
+    "existing_prepared_input_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s"
+    ],
+    "required_V70_observable_channels": [
+      "galaxy_count",
+      "mean_radial_peculiar_velocity_km_s",
+      "intrinsic_radial_velocity_dispersion_km_s"
+    ],
+    "velocity_dispersion_feasible_without_new_catalog_information": true,
+    "velocity_dispersion_basis": "The frozen Hong EAGLE catalogue schema already contains every selected galaxy's three Cartesian velocity components and position. The exact population radial-velocity second moment and dispersion can be accumulated in the same cells and mask as the existing count and mean radial velocity.",
+    "existing_independent_gate_compatibility": false,
+    "existing_independent_gate_reason": "hong2021_independent_gate.py applies the historical field and optional grid-HOP gates but does not enforce the V70 locked Q3 and Q4 requirements or V70 provenance. It cannot be used as the complete V70 decision."
+  },
+  "required_post_development_pre_access_work": [
+    "After, and only after, a sealed V70 development pass, freeze and commit a V70 EAGLE program before any independent-file access.",
+    "Bind the existing confirmation seal and exact confirmation32 selection hashes; never reuse the 16 historically inspected V6 cubes.",
+    "Implement a target-free EAGLE kinematic adapter that computes count, mean radial velocity, and exact population radial velocity dispersion from the already frozen catalogue selection without reading density truth.",
+    "Apply the frozen V4 deterministic model and frozen V14 exact-zero-DC mean correction to construct the corrected backbone without target refitting or EAGLE normalization.",
+    "Apply the frozen V41 train-only structure-risk classifier and object-amplitude regressor, then the frozen V45 source-balanced condition normalization, to construct the exact seven V70 channels.",
+    "Sample only the fixed step-30000 V70 EMA with a predeclared seed, 16 members, 40-step Heun schedule, bounded V63 inverse, and exact residual DC projection.",
+    "Open EAGLE density truth only after the complete prediction ensemble is atomically sealed, then run the predeclared field, Q3, Q4, and conditional grid-HOP sequence once.",
+    "A failed one-shot confirmation remains failed; do not retune the model, EAGLE adapter, seed, member count, sampler, normalization, or thresholds from EAGLE truth."
+  ],
+  "authorization_state": {
+    "V70_development_pass_available": false,
+    "explicit_user_approval_available": false,
+    "independent_EAGLE_program_frozen": false,
+    "independent_EAGLE_access_authorized": false
+  },
+  "firewall": {
+    "GPFS_EAGLE_file_opened_by_this_audit": false,
+    "local_historical_V6_result_record_read": true,
+    "new_or_reserved_EAGLE_target_or_metric_read_by_this_audit": false,
+    "EAGLE_selection_or_threshold_changed": false,
+    "training_or_refit_performed": false,
+    "historical_EAGLE_used_for_V70_selection": false,
+    "independent_gate_locked": true
+  },
+  "next": "continue_fixed_V70_training_and_locked_train_then_development_gates; prepare_the_independent_program_and_adapter_only_after_a_sealed_development_pass"
+}

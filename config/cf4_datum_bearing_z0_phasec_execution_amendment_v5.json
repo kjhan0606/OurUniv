@@ -1,0 +1,70 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-execution-amendment-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_V5_SINGLE_SOURCE_KERNEL_WAITING_PREFLIGHT",
+  "authorization": {
+    "basis": "V4 measured a real bounded CPU/GPU growth mismatch before any likelihood value or posterior. The repair removes duplicate cosmology construction rather than widening tolerance, under the user's standing pre-science correction instruction.",
+    "execution_only_retry_after_pre_science_failure": true,
+    "change_science_contract": false,
+    "change_seed_arm_assignment": false,
+    "change_sampler_or_diagnostics": false,
+    "actual_observational_field_inference": false,
+    "validation_seed_access": false,
+    "Phase_D_or_later": false
+  },
+  "base_program": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+  },
+  "V1_infrastructure_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v1_infrastructure_failure_result_record.json",
+    "sha256": "8547f5920a98d1ff31814414c297ca0f8e0aaa856adddb597ebcefec712eb6ea"
+  },
+  "prior_preflight_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v4_preflight_failure_result_record.json",
+    "sha256": "372c8a1dcae4b988e41c3877759c2a25e3945d3c7599a25b00291439d7f9b407"
+  },
+  "Phase_C_implementation": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phasec_pilot.py",
+    "sha256": "79225219fb170cbe19d5be617f070444b2edd351cecabb8941d7558e77744f11"
+  },
+  "execution_override": {
+    "backend": "Slurm_GPU_preflight_then_array_plus_CPU_aggregate",
+    "partitions": "a40,a100,h200,a100_pcie",
+    "excluded_partition_and_reason": "h100 excluded because V1 tasks could not acquire a CUDA context on syn08",
+    "preflight_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_preflight_v5",
+    "preflight_scope": "seed-2026083000 N64 PMWD truth, single-source CPU transfer/growth, and one GPU joint value/gradient; no optimizer or sampler",
+    "preflight_cpus": 8,
+    "preflight_expected_peak_host_memory_MiB": 4096,
+    "preflight_requested_host_memory_MiB": 5120,
+    "preflight_time_limit": "01:00:00",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v5_aggregate",
+    "maximum_Slurm_submissions": 3,
+    "dependency_order": "preflight afterok -> array 0-7; aggregate afterany array",
+    "automatic_retry_or_replacement": false
+  },
+  "environment_override": {
+    "XLA_FLAGS": "--xla_gpu_autotune_level=0",
+    "LCDM_transfer_and_growth_source": "one JAX CPU construction",
+    "count_and_CF4_operator_evaluation": "allocated JAX GPU using the same CPU-sourced immutable transfer and growth",
+    "CF4_catalog_read": "periodic CIC of the shared linear velocity field at the frozen positions and radial directions",
+    "cross_device_tolerance_widened": false
+  },
+  "inherited_without_change": [
+    "purpose",
+    "mock_assignments",
+    "grid",
+    "cosmology",
+    "external_population_prior",
+    "truth_model",
+    "stress",
+    "inference_model",
+    "heldout",
+    "sampler",
+    "pilot_flags",
+    "diagnostics",
+    "rng_tags",
+    "success_semantics"
+  ]
+}

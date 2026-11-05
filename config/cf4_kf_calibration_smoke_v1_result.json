@@ -1,0 +1,56 @@
+{
+  "schema": "ouruniv-cf4-kf-calibration-smoke-result-record-v1",
+  "date": "2026-08-31",
+  "status": "COMPLETE_SMOKE_PASS_NO_SCIENCE_CLAIM",
+  "execution": {
+    "Slurm_job_id": 328644,
+    "worker": "syn04",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:13",
+    "allocated_CPUs": 1,
+    "requested_memory_MiB": 512,
+    "batch_MaxRSS_KiB": 1464,
+    "batch_MaxVMSize_KiB": 814988,
+    "stderr_bytes": 0,
+    "submission_count_consumed": 1,
+    "execution_count_consumed": 1,
+    "retry_authorized": false
+  },
+  "bindings": {
+    "implementation_commit": "6a71a120c59c02c4f26d565891b067c1ccbd005c",
+    "execution_config_path": "config/cf4_kf_calibration_smoke_execution_v1.json",
+    "execution_config_sha256": "6e8c1829b774780de6071d82ac19623ae11a617bede290c64b1ec1bcb474eee1",
+    "bin_manifest_path": "config/cf4_kf_bin_manifest_v1.json",
+    "bin_manifest_file_sha256": "d76e1a6dbe0b60c5c0f50a2e3c619b041f72c6b686a2fb3d977455b1c874b302",
+    "bin_manifest_body_sha256": "f78e0991efd928ebdd999c9a91856ccd71a296a335b813176a02de842449e0cf"
+  },
+  "artifacts": {
+    "output_directory": "/gpfs/kjhan/CF4/kf_design/cf4_calibration_smoke_v1/smoke",
+    "result_json_sha256": "fd5b49175dfa2e8cf477c1490df5acf4bf6b0a30b125dbcf7eeb476e68d0c22f",
+    "artifact_manifest_json_sha256": "b3ea2f517e3db87500f429ef866fee1782de56991de2a17f6c3e00867ee28c1d",
+    "COMPLETE_sha256": "405adc28d14077ea37876a5462d43e064949894a37c86490397a1c1e00641464",
+    "controller_independent_validation": "PASS"
+  },
+  "smoke_scope": {
+    "mock_count": 4,
+    "posterior_draw_count": 8,
+    "input": "deterministic synthetic implementation fixture",
+    "CF4_selection_noise_truth_mock_provenance_validated": false,
+    "coverage68_status": "NOT_EVALUATED",
+    "coverage95_status": "NOT_EVALUATED",
+    "heldout_improvement_status": "NOT_EVALUATED",
+    "strict_gate_any_pass": false,
+    "strict_gate_geometry_intersection_any_pass": false
+  },
+  "scientific_disposition": {
+    "manifest_materialization": "PASS_GEOMETRY_ONLY",
+    "calibration_implementation_smoke": "PASS",
+    "development_64_mock_science_execution_performed": false,
+    "untouched_256_mock_validation_performed": false,
+    "observational_constraint_frontier_created": false,
+    "KF_EXPAND_authorized": false,
+    "IC_PM_HOP_RAMSES_authorized": false,
+    "next_blocker": "Implement and freeze provenance-complete CF4 selection/noise truth-mock generation before the 64-mock development calibration can begin."
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "hong2021-v84b1-group-held-out-spliced-tail-result-record-v1",
+  "status": "complete_V84B1_group_gate_failure_all_other_payloads_locked",
+  "recorded_at": "2026-08-13T12:03:55+09:00",
+  "superseded_preflight": {
+    "program_sha256": "5a6c89fc032f33a1245f43d731189e5e4114c2e564acef55e96d2d62a45c03bb",
+    "status_path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b_group_spliced_tail_sequence/status",
+    "status_sha256": "8f7c144f120f5dfe01b2c59c54cec3ef75d270b2140321b1426763b81795ab9c",
+    "failure": "missing system libnvrtc-builtins.so.13.0 during the inherited torch.erfinv preflight round-trip probe",
+    "training_performed": false,
+    "group_holdout_payload_accessed": false,
+    "output_reused": false
+  },
+  "amended_program": {
+    "path": "config/hong2021_v84b_group_spliced_tail_program.json",
+    "sha256": "f07ca34f9e5ab57c2625aba138dba8056193d049bae591abadcb820197896175",
+    "freeze_commit": "1c499abc7eeeaa7ba10169ecf2b88bbbebd622b8",
+    "execution_commit": "c06fdcf30c33c128302dbbb733f39a862f861b45"
+  },
+  "preflight": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_sequence/preflight.json",
+    "sha256": "10733987f919c1367e3f603405a3a58f6c73f1fa3f274f2b49c2fc3bbe738b88",
+    "decision_digest_sha256": "9dfcf86407392fbe02943ef7a3b3d71e263bf40063e77c240aa8079d7d7b15f4",
+    "canonical_digest_reverified": true,
+    "status": "pass",
+    "CDF_ICDF_maximum_round_trip_error": 5.960464477539063e-8,
+    "upper_physical_second_moment_margin": 0.317707063315556,
+    "peak_allocated_bytes": 7465839104,
+    "tail_voxels_lower_upper": {
+      "TNG100": [478782, 433476],
+      "SIMBA": [165290, 207730],
+      "Swift": [460532, 456486]
+    }
+  },
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/step12000.pt",
+    "checkpoint_sha256": "529d56e67ae2e15ab6dfc9b9e2a0a36e2da0c574efce9684fa1ff6f0cf2b2385",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v84b1_group_spliced_tail/training_report.json",
+    "report_sha256": "3dbe786bc5047c6c872df80da048f7a9d814d73ca46800f9e0c0488a44a28c09",
+    "decision_digest_sha256": "6e7215b0c4a036804fc24885e7b99897ed04c22271466c034c59a1d5f29b4846",
+    "canonical_digest_reverified": true,
+    "steps": 12000,
+    "final_logged_conditional_NLL": 1.351453185081482,
+    "AMP_overflow_steps": [6873, 9924],
+    "AMP_overflow_updates_skipped": true,
+    "peak_allocated_bytes": 7401071616,
+    "holdout_used_for_stopping_or_checkpoint_selection": false
+  },
+  "group_gate": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v84b1_group_spliced_tail_gate/decision.json",
+    "sha256": "a8349bca11f398f7804590a37f7a888020ebb5db1941e14d7552ce88dbfc31a2",
+    "decision_digest_sha256": "a9e94d965ddeac3fd5110d25e2bb4d33a626a9fdeccce4005db70ecdd215ceb8",
+    "canonical_digest_reverified": true,
+    "status": "fail",
+    "group_held_out_mechanism_pass": false,
+    "domains": {
+      "TNG100": {
+        "pass": false,
+        "NLL_improvement_over_standard_normal": 0.06520840916291154,
+        "PIT_mean": 0.49143745019262164,
+        "PIT_total_variation_from_uniform": 0.014536330483176495,
+        "coverage_50_80_95": [0.49040837721391156, 0.7900682796131481, 0.9455445896495472],
+        "tail_ratio_1e_3_lower_upper": [0.6895065307617188, 1.1078227650035513],
+        "tail_ratio_1e_4_lower_upper": [0.07282603870738637, 0.6927143443714489]
+      },
+      "SIMBA": {
+        "pass": false,
+        "NLL_improvement_over_standard_normal": 0.0644219724683521,
+        "PIT_mean": 0.5014480107780271,
+        "PIT_total_variation_from_uniform": 0.005329072134835376,
+        "coverage_50_80_95": [0.49544429779052734, 0.7963815416608538, 0.9488984516688755],
+        "tail_ratio_1e_3_lower_upper": [1.0734966823032923, 1.1238370622907365],
+        "tail_ratio_1e_4_lower_upper": [1.4700208391462053, 0.7193429129464286]
+      },
+      "Swift": {
+        "pass": false,
+        "NLL_improvement_over_standard_normal": 0.06342371397712031,
+        "PIT_mean": 0.4955994105871074,
+        "PIT_total_variation_from_uniform": 0.008387153500416248,
+        "coverage_50_80_95": [0.49538171486776383, 0.7947478997902792, 0.947045310598905],
+        "tail_ratio_1e_3_lower_upper": [1.2507829509797643, 1.073180652055584],
+        "tail_ratio_1e_4_lower_upper": [1.4327002353355531, 0.6847694271900614]
+      }
+    }
+  },
+  "scientific_interpretation": {
+    "retained_success": "Proper spliced NLL gives positive held-out NLL improvement in all domains and central coverage is close to nominal. SIMBA and Swift also pass the frozen 100-bin PIT-TV threshold.",
+    "failure": "A single conditional exponential excess family does not generalize the 1e-4 tail curvature. The predicted upper tail is too heavy in all domains, while the predicted lower tail is too heavy for spatially held-out TNG100 but too light for held-out SIMBA and Swift realizations.",
+    "TNG100_additional_failure": "TNG100 also exceeds the maximum 100-bin PIT-TV threshold, indicating a spatially shifted marginal shape beyond only the extreme-tail scale.",
+    "primary_classification": "splicing_is_useful_but_exponential_tail_shape_and_current_conditioning_are_insufficient_for_group_generalization",
+    "V70_V72_spatial_copula_status": "retained but not sampled or evaluated in V84B1"
+  },
+  "firewall": {
+    "group_holdout_accessed_exactly_once_after_fixed_training": true,
+    "checkpoint_or_hyperparameter_selected_on_holdout": false,
+    "validation_payload_accessed": false,
+    "consumed_development_payload_accessed": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true,
+    "production_refit_started": false,
+    "automatic_retry_authorized": false
+  },
+  "next": "Stop V84B1. Before any V84C training, prospectively freeze nested group cross-validation using only the former V84B fit groups/spatial fit region, test a finite-moment conditional generalized-Pareto or multi-slope tail against the exponential tail, and reserve a new group/spatial outer holdout. Do not tune or select on this failed V84B1 holdout."
+}

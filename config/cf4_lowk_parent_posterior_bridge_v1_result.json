@@ -1,0 +1,43 @@
+{
+  "schema": "ouruniv-cf4-promoted-lowk-parent-posterior-result-v1",
+  "date_kst": "2026-08-25",
+  "status": "complete_promoted_posterior_ensemble_no_seed_selected",
+  "scope": "Driver science decision while Fable duties are temporarily delegated to the driver until 2026-08-26 08:00 KST",
+  "execution": {
+    "job_id": 323849,
+    "state": "COMPLETED",
+    "elapsed": "00:00:06",
+    "max_rss_kib": 3512
+  },
+  "artifacts": {
+    "root": "/gpfs/kjhan/CF4/recon/linear_cr/lowk_parent_posterior_bridge_v1",
+    "posterior_bank": "posterior_bank.npz",
+    "result": "result.json"
+  },
+  "posterior": {
+    "source_cycle": 16,
+    "particle_count": 8192,
+    "particles_per_group": 2048,
+    "unique_geometry_key_count": 6695,
+    "parent_count": 256,
+    "parent_ess": 40.68327087020479,
+    "particle_weight_sum": 1.0,
+    "parent_probability_sum": 0.999999999999999,
+    "maximum_conditional_row_sum_error": 6.661338147750939e-16,
+    "maximum_log_z_bar_reconstruction_difference": 8.881784197001252e-16,
+    "maximum_parent_marginal_reconstruction_difference": 2.220446049250313e-16
+  },
+  "decision": {
+    "lowk_posterior_ensemble_promoted": true,
+    "single_parent_seed_selected": false,
+    "authorized_as_input_to_highk_conditioning_design": true,
+    "highk_conditioning_execution_authorized": false,
+    "new_random_draw_used": false,
+    "new_oracle_evaluation_used": false
+  },
+  "next": {
+    "required": "Design LG-observation-driven high-k conditioning against the promoted low-k ensemble",
+    "execution_requires_design_review": true,
+    "fable_automatic_schedule_present": false
+  }
+}

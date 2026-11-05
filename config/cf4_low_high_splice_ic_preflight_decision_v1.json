@@ -1,0 +1,14 @@
+{
+  "schema": "ouruniv-cf4-low-high-splice-ic-preflight-decision-v1",
+  "date": "2026-09-20",
+  "repair_job": "388398",
+  "preflight_job": "388402",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/ic_preflight_repaired_field_v1/result.json",
+  "decision": "IC_PREFLIGHT_PASS_PRODUCTION_IC_NOT_STARTED",
+  "checks": {"shape_256": true, "finite": true, "zero_mean": true, "continuity_ratio": 1.9924731015},
+  "field": "/gpfs/kjhan/CF4/kf_design/low_high_splice_repair_bundle_v1/repaired_field.npz",
+  "interpretation": "The repaired field is numerically admissible for IC generation at 256^3. Low-k amplitude was rescaled by the splice repair and must remain recorded in the IC provenance.",
+  "production_evolution_started": false,
+  "next_stage": "Generate IC preflight/reader artifact, then PM/PMWD evolution only after explicit run contract audit.",
+  "stage": "5/8 IC generation ready"
+}

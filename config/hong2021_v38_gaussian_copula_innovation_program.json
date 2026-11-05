@@ -1,0 +1,126 @@
+{
+  "schema": "hong2021-v38-query-conditioned-gaussian-copula-innovation-development-program-v1",
+  "status": "frozen_before_implementation_fit_sampling_or_development_evaluation",
+  "purpose": "Replace V31 rigid donor transport by a train-only source-balanced Gaussian-copula Wiener decomposition: predict the conditional-rank phase component from target-free query fields, add the paired donor's residual innovation without translation, and test it against a zero-predictor innovation control.",
+  "parent_evidence": {
+    "v37_record": "config/hong2021_v37_result_record.json",
+    "v37_record_sha256": "67a1c31f47f109fef4da9fd1ca47e7faa8f18a3c7e580e346e2822adc64c5aee",
+    "required_classification": "bounded_global_translation_does_not_explain_joint_coupling",
+    "required_next": "fit_a_train_only_query_conditioned_gaussian_copula_innovation_field_without_donor_translation_search"
+  },
+  "inherited_inputs": {
+    "v35_program": "config/hong2021_v35_residual_spectrum_phase_program.json",
+    "v35_program_sha256": "161b5b9c7345c6777e39ebc342243ee12226b75d8e461c0db69f410ea2193e4a",
+    "v31_record": "config/hong2021_v31_result_record.json",
+    "v31_record_sha256": "a6a0ba7c718d9710cf3b3ae59163373afa738f35dd2c9bc9d2af0f18df0dc6df",
+    "conditional_copula_artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v31/physical_conditional_copula.npz",
+    "conditional_copula_artifact_sha256": "318f19b4d78f8bf4c71941297942204caa184fed3ce5e271a803b182bc1e6a1d",
+    "selection_rule": "reuse every frozen V28/V31 query, donor identity, and donor isometry byte-for-byte; donor translation and reselection are forbidden"
+  },
+  "gaussian_copula_coordinate": {
+    "physical_residual": "r=y_truth minus the frozen V14 corrected backbone including predicted residual DC",
+    "conditional_rank": "u=F_V31(r|backbone) from the exact frozen train-only 32-bin conditional CDF",
+    "endpoint_regularization": "u_mid=epsilon+(1-2*epsilon)*u with epsilon=1/(2*64^3)=1.9073486328125e-6; this is a fixed grid mid-rank map in probability space, not density clipping",
+    "gaussian_score": "z=Phi^-1(u_mid), followed by exact cube-mean subtraction before Fourier fitting",
+    "inverse": "u_generated=Phi(z_generated), then the unchanged V31 query conditional inverse and exact physical-residual mean projection",
+    "per_cube_rank_remapping": false,
+    "density_field_clipping": false
+  },
+  "target_free_feature_fields": {
+    "native_grid": "64^3 at 0.3125 Mpc/h",
+    "channels": [
+      "log1p native galaxy count",
+      "asinh(native mean radial peculiar velocity / 100 km/s)",
+      "log1p(native intrinsic radial-velocity dispersion / 100 km/s)",
+      "frozen V14 corrected backbone",
+      "square of the frozen V14 corrected backbone",
+      "log1p count times frozen backbone",
+      "radius from observer divided by 10 Mpc/h"
+    ],
+    "normalization": "common train-only channel mean and standard deviation with exactly one-third total weight per TNG100, SIMBA, and Swift source",
+    "cube_dc": "subtract every standardized feature cube mean before the Fourier transform",
+    "simulation_identity_feature": false
+  },
+  "train_only_wiener_fit": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "data_and_cache": "reuse and reverify all V35 kinematic3 train data and V21 train backbone caches",
+    "fourier_edges_h_mpc": [0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, "inf"],
+    "dc_mode": "excluded and fixed to zero",
+    "source_balance": "compute per-source averages of feature auto/cross covariance, feature-score cross covariance, and score power over all train cubes/modes; average the three source matrices with weight one third",
+    "coefficient": "for each band beta=(C_xx+lambda I)^-1 C_xz with real isotropic coefficients",
+    "ridge": "lambda=1e-3*trace(C_xx)/7 independently in each band, frozen before fit",
+    "predicted_power": "P_p=beta^T C_xx beta",
+    "innovation_power": "P_e=P_z-2 beta^T C_xz+beta^T C_xx beta",
+    "candidate_innovation_scale": "sqrt(max(P_z-P_p,0)/P_e) per band from train covariances",
+    "zero_predictor_scale": "sqrt(P_z/P_e) per band so the control has the same train target band power without a query predictor",
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v38/gaussian_copula_wiener.npz",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v38/gaussian_copula_wiener.json",
+    "validation_opened_during_fit": false
+  },
+  "sampling": {
+    "candidate": "z_query=predicted_score(query)+candidate_scale*isometry[score(donor)-predicted_score(donor)]",
+    "zero_predictor_control": "z_control=zero_predictor_scale*isometry[score(donor)-predicted_score(donor)]",
+    "fourier_scaling_role": "a frozen train-fit conditional covariance model component, never fitted to candidate or validation power and never changed after evaluation",
+    "arms": ["query_conditioned", "zero_predictor_control"],
+    "objects_per_domain": 16,
+    "members_per_object": 16,
+    "new_random_numbers": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak": false,
+    "density_field_clipping": false
+  },
+  "development_evaluation": {
+    "domains": ["TNG100", "SIMBA", "Swift"],
+    "field_gate": "unchanged V6 eight-check gate",
+    "Q3_absolute_delta_q99_999_log10rho_max_dex": 0.1,
+    "Q3_generated_max_above_truth_max_dex": 0.3,
+    "Q4_generated_over_truth_mean_delta_squared_max": 1.5,
+    "primary_pass": "query_conditioned passes field plus Q3 and Q4 independently in every domain",
+    "conditional_innovation_material": "query_conditioned Q4/V31 <=0.75 and query_conditioned Q4/zero_predictor <=0.90 in every domain",
+    "selection_role": "only query_conditioned can be selected; zero_predictor is a frozen causal control"
+  },
+  "fixed_branches": [
+    {
+      "condition": "primary_pass",
+      "classification": "linear_query_conditioned_gaussian_copula_sufficient",
+      "next": "seal_v38_and_await_explicit_approval_before_independent_gate"
+    },
+    {
+      "condition": "Q3 and Q4 pass every domain but any field check fails",
+      "classification": "linear_gaussian_copula_repairs_tails_but_not_morphology",
+      "next": "freeze_a_multiscale_nonlinear_query_conditioned_copula_without_changing_the_marginal_inverse"
+    },
+    {
+      "condition": "conditional_innovation_material but Q3 or Q4 still fails",
+      "classification": "linear_query_conditioning_is_causal_but_insufficient",
+      "next": "replace_bandwise_linear_predictor_by_train_only_multiscale_nonlinear_conditional_copula"
+    },
+    {
+      "condition": "otherwise",
+      "classification": "linear_gaussian_query_conditioning_is_not_a_common_domain_repair",
+      "next": "freeze_a_train_only_nonparametric_local_patch_copula_with_bijective_overlap_consistency"
+    }
+  ],
+  "hard_preflight": [
+    "full pytest and clean committed worktree",
+    "exact parent, V35 data/cache, V31 copula, selections, and V31 reference hashes",
+    "all normalization and covariance moments are source-balanced train-only quantities",
+    "all band covariance matrices, coefficients, powers, and scales are finite and positive where required",
+    "real-field Fourier prediction and innovation reconstruction round trip is below 1e-6 in Gaussian-score RMS",
+    "query_conditioned and control reuse identical donors and isometries with no translation",
+    "one real sample per arm is finite with residual DC below 1e-7",
+    "Astrid and historical EAGLE remain unopened"
+  ],
+  "output_root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v38_e20_gaussian_copula_innovation",
+  "firewall": {
+    "validation_used_for_fit_or_hyperparameter_choice": false,
+    "validation_power_used_for_scaling": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "density_field_clipping": false,
+    "posthoc_Ak": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden"
+  }
+}

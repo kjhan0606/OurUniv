@@ -1,0 +1,13 @@
+{
+  "schema": "ouruniv-cf4-bundle-b1-opus-closure-attempt-v5",
+  "date": "2026-09-04",
+  "bundle": "B1-Z0-POSTERIOR",
+  "auditor": "claude-opus-5",
+  "auditor_role": "primary_auditor",
+  "invocation": {"mode": "normal authenticated Claude mode", "bare": false, "timeout_seconds": 240, "permission_mode": "plan"},
+  "status": "TIMEOUT_NO_OUTPUT_AUTHENTICATED",
+  "exit_code": 124,
+  "stdout_bytes": 0,
+  "raw_output": "config/cf4_bundle_b1_opus_closure_attempt_v5.txt",
+  "interpretation": "Authentication was working, but the unrestricted repository audit produced no final output within 240 seconds. A file-scope-limited primary audit was then used."
+}

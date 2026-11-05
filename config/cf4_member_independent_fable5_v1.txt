@@ -1,0 +1,62 @@
+You are Fable5, asked by the user to develop an INDEPENDENT NEXT PLAN for this
+failed member-mass learning problem. This is NOT an audit of the driver's
+next plan. You have NOT been supplied that plan or the driver's recent suggested
+fix. Work from the evidence and current failed implementation appended here.
+Do not try to infer/agree with what the driver wants. Recommend a different
+route or no-go if evidence warrants it. Do not run tools, fit data or claim
+you inspected artifacts beyond the supplied text. Return one self-contained
+plan (roughly <=1200 words): diagnosis hypotheses vs confirmed facts, concrete
+next changes, one lean bounded experiment, alternatives rejected/deferred,
+resources, numerical/scientific success and stop criteria, Q-GOAL/Q-LEAN,
+and link to the final objective. Address all MW/M31/M33 on NEW fields, no
+oracle masks/IDs/positions, role ambiguity and same-cell M33. Be explicit
+about what mass-only readout cannot tell us about member velocities or a
+posterior. Do not merely prescribe more steps or a large new validation system.
+
+Facts/constraints shared with the driver:
+- Final goal actual CF4+galaxy+LG observations -> z0 density/velocity posterior
+  -> LCDM IC -> forward evolution -> LG zoom. LG<=.3 cMpc/h, surroundings1–2.
+  Actual CF4/count catalogue rows have no entries in the chosen LG R2 region;
+  local member constraints are explicit additional observations. Present actual
+  posterior work is still12 cMpc/h diagnostic; no valid observed fine LG exists.
+- Existing native TNG total seven-moment400^3 .1875 field and cached32
+  disjoint-member decompositions. Whole24cMpc/h source patches can overlap.
+  Fixed13 training [0,2,3,4,5,7,8,9,10,11,12,14,15],3 reused development
+  [16,17,20] have no training/development voxel overlap, same simulated box.
+  Positively selected satellite-population cases, not independent validation.
+  Native IDs label training/evaluation truth only, never new-field inputs.
+- Previous peak detector gives shared M31/M33 peak in all32 cases; closed
+  14-coefficient kinematic proxy detects host dependence but not consistent
+  M33 increment. A closed mass-budget test was inconclusive because all
+  cross-field alternatives already failed host mass. Do not reopen these.
+- Previous spatial-flow/diffusion priors failed to generate usable fine maps;
+ 30k diffusion froze near zero-noise prediction. That is a separate failed
+  model. Current work is member learnability before any further field training.
+- Current member pilot341713 ran2000 updates, all3 software/augmentation tests
+  passed,17m34s allocation on Slurm syn05,949s learning, host3.99GiB/GPU2.20GiB.
+  Source/config and original result follow. No model accepted, no new fit active.
+- Loss is mean over roles/fields of sum|pred_mass-true_mass|/true_role_total;
+  this is NOT class-weighted CE. A previously considered class-reweighted cell
+  CE was withdrawn because it biases physical allocation. Native target at
+  zero loss is possible in the limit; that is not proof this learner found it.
+- Baseline: canonical unrotated training-average per-cell member fraction,
+  multiplied by supplied total mass. Inference inputs total mass/mean velocity/
+  three physical dispersions+coordinates relative to known coarse observer
+  cell. No native true subcell centers or member masks at inference. Mass-only
+  softmax weights must NOT be used to declare distinct member COM velocities.
+- Original criteria: each role training mean L1<=.8 baseline; M33 development
+  L1 must improve in all3 cases and MW/M31 median not worsen. All failed.
+  Zero-member predictor has L1=1. A pass of a weak metric is not identification.
+- Same-field physical member/selection law, COM/stellar discrepancy and efficient
+  posterior inference remain missing. q(S|F,O,E) needs p(E|F,O) or a fully
+  E-conditioned joint prior;32 selected positive fixtures cannot calibrate it.
+- No new science execution authorized in this request. Practical reference
+  budget next pilot1GPU/2CPU/6GiB/90min, Slurm a40/a100/h100/h200 excluding
+  syn06. No manual syn101/login numerical work, no GPFS or process-scan tests,
+  no new raw simulation or endless gate/retry series. You may propose changing
+  the scope if scientifically needed, explicitly distinguishing it from approval.
+
+Appended material, in order: existing model/features/loss/metrics source;
+existing training/evaluation runner; config; completed result JSON; original
+retained evaluation rows (including native/predicted masses, overlap and OOD
+mean-field ablation); first/last training records. No new repair proposal follows.

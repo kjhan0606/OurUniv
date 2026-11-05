@@ -1,0 +1,13 @@
+{
+  "schema": "ouruniv-cf4-highk-lcdm-binding-bundle-decision-v1",
+  "date": "2026-09-20",
+  "job": "388392",
+  "artifact": "/gpfs/kjhan/CF4/kf_design/highk_lcdm_binding_bundle_v1/result.json",
+  "decision": "LCDM_AMPLITUDE_BOUND_CONTINUITY_FAIL_IC_BLOCKED",
+  "passed": ["transfer table and kphys/T binding", "As/ns binding", "finite bound field"],
+  "failed": {"bound_field_continuity_ratio": 6.7728579909, "required_range": [0.5,2.0]},
+  "interpretation": "High-k absolute normalization is now explicit, but the low/high-k splice remains discontinuous. IC generation is not scientifically admissible until the splice or low-k amplitude is re-fitted.",
+  "next_required": "Re-fit the taper/low-k amplitude against the bound LCDM target and repeat the continuity audit.",
+  "production_IC_allowed": false,
+  "stage": "4/8 high-k binding complete, splice repair required"
+}

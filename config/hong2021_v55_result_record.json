@@ -1,0 +1,158 @@
+{
+  "schema": "hong2021-v55-fixed-threshold-tail-amplitude-audit-result-record-v1",
+  "status": "complete_common_beyond_highest_threshold_amplitude_failure_selected_survival_grid",
+  "program": "config/hong2021_v55_tail_amplitude_audit_program.json",
+  "program_sha256": "b87b1f8f6626117cf11ab33b8ee23725a5007cbcc25b225abdec5ad5be17d97c",
+  "audit_code_commit": "3151ea75d6558955f3f6c1077e4a1f4c4b9dc175",
+  "audit": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v55_tail_amplitude_audit/audit.json",
+    "sha256": "8d20d0a88b3aa2cd72772903676897f85713fc98772debfa1ab96328460f2e30",
+    "decision_digest_sha256": "da3e880164a3d89903c87b159b36bf7e45af621fc1a1a64024919a6fbce2ec83",
+    "classification": "V54_probability_score_leaves_beyond_highest_threshold_amplitudes_unconstrained",
+    "next": "freeze_one_matched_train_only_model_with_a_proper_survival_score_grid_spanning_q99_999_to_the_immutable_train_maximum_while_retaining_the_unchanged_bounded_NLL"
+  },
+  "integrity": {
+    "host": "LagEunha",
+    "gpu": "NVIDIA RTX 5000 Ada Generation",
+    "worktree_clean_at_audit": true,
+    "pytest_passed": 424,
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "pytest_log_sha256": "7eafeb6d85661a4d7690382d65d2af71cb8dd5727bb4dc9eb3dc8b601c2ef7d6",
+    "audit_log_sha256": "64e195fa65ec612797f91cf4bb1fd9c244722c3689c0c649383314ed5b9469e3",
+    "decision_digest_independently_verified": true,
+    "all_domains_numerical_requirements_pass": true,
+    "maximum_complete_moment_relative_difference_from_V54_gate": 5.364516854914748e-11,
+    "maximum_32_to_64_tail_moment_relative_difference": 0.000477679161245122,
+    "maximum_log_ratio_identity_absolute_error": 0.0,
+    "initial_precalculation_failure": {
+      "archived_sequence": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v55_tail_amplitude_audit_sequence_failed_3c2bea7_parent_key",
+      "code_commit": "3c2bea713a434a647d3c33450abf92745acbcc06",
+      "reason": "the loader checked development_access instead of the sealed development_accessed firewall key",
+      "model_or_train_probe_evaluation_performed": false,
+      "development_or_independent_data_accessed": false,
+      "status_sha256": "3219d959df2f032b389a2d7e478a64fb7103dc575c42c88ed4658559d3769b6d",
+      "pytest_log_sha256": "9a0b5f7cdeecfbcf43fdeda8440af40d5295ccbeee68bfa0b04c4bfb26b4a0af",
+      "audit_log_sha256": "9f513b446201a3dbd8583a154531125477dde1e93eeb2194d8e8f4189ecae51e",
+      "fix_commit": "3151ea75d6558955f3f6c1077e4a1f4c4b9dc175"
+    }
+  },
+  "fixed_threshold_probability_amplitude_decomposition": {
+    "definition": "within each sealed q99.9-and-above query-backbone train probe, predicted-over-truth tail moment equals predicted-over-truth exceedance probability times predicted-over-truth conditional delta-squared amplitude",
+    "threshold_labels": [
+      "q99",
+      "q99_9",
+      "q99_99",
+      "q99_999"
+    ],
+    "TNG100": {
+      "top_backbone_probe_voxels": 1770,
+      "probability_ratios": [
+        0.9968517316565397,
+        0.9628207067965309,
+        0.8200151614507858,
+        1.1879182744364658
+      ],
+      "conditional_amplitude_ratios": [
+        108.0361898522531,
+        112.18704586676137,
+        146.51415238316395,
+        153.78182480556816
+      ],
+      "tail_moment_ratios": [
+        107.69606293579318,
+        108.01601079484999,
+        120.14382632130523,
+        182.68023996272143
+      ],
+      "q99_999_truth_exceedance_count": 37,
+      "above_q99_999_positive_excess_share": 0.9999694627651381,
+      "complete_predicted_over_truth_mean_delta_squared": 107.69606342937035,
+      "beyond_q99_999_amplitude_dominates": true
+    },
+    "SIMBA": {
+      "top_backbone_probe_voxels": 828,
+      "probability_ratios": [
+        0.9929058317148589,
+        0.9329731429435579,
+        0.872231912832633,
+        1.7177083684633137
+      ],
+      "conditional_amplitude_ratios": [
+        5.298789698631854,
+        5.705485024380014,
+        7.864273835929651,
+        25.89914052237229
+      ],
+      "tail_moment_ratios": [
+        5.261199192802187,
+        5.323064295213224,
+        6.859470610952547,
+        44.48717041128619
+      ],
+      "q99_999_truth_exceedance_count": 2,
+      "above_q99_999_positive_excess_share": 0.9999456708653107,
+      "complete_predicted_over_truth_mean_delta_squared": 5.261194993669072,
+      "beyond_q99_999_amplitude_dominates": true
+    },
+    "Swift": {
+      "top_backbone_probe_voxels": 1676,
+      "probability_ratios": [
+        0.9959369447176486,
+        0.9983056306814048,
+        0.9392479820365012,
+        1.2529809586722247
+      ],
+      "conditional_amplitude_ratios": [
+        21.22978268570732,
+        21.376386633574384,
+        27.769036037684174,
+        41.03478485550626
+      ],
+      "tail_moment_ratios": [
+        21.143524905022986,
+        21.340167139920027,
+        26.082011061493738,
+        51.415804067160714
+      ],
+      "q99_999_truth_exceedance_count": 14,
+      "above_q99_999_positive_excess_share": 0.9999999160125854,
+      "complete_predicted_over_truth_mean_delta_squared": 21.143516088258533,
+      "beyond_q99_999_amplitude_dominates": true
+    },
+    "interpretation": "V54 learned the fixed-threshold exceedance probabilities: at q99 through q99.99 their ratios are mostly 0.82 to 1.00. The physical moment error instead resides in conditional amplitudes, which are already 5.30 to 108.04 times truth above q99 and rise to 25.90 to 153.78 times truth above q99.999. More than 99.994 percent of every domain's positive excess moment is above the highest scored threshold."
+  },
+  "selected_next_model": {
+    "base": "the full-information V54 five-component bounded-logit mixture with the unchanged bounded NLL and structure-risk channel",
+    "mechanism": "replace the four isolated tail events with a predeclared proper survival-score grid that resolves amplitudes from the sealed q99.999 threshold through the immutable train maximum",
+    "unchanged": [
+      "bounded support, network, and all seven input channels",
+      "initialization, optimizer, schedule, augmentation, and equal-source batches",
+      "train-only mechanism gate before development sampling",
+      "donor ranks, sampling, controls, and development gates",
+      "independent-data firewall"
+    ],
+    "reason": "A survival-score grid distinguishes distributions that put the same probability above q99.999 at radically different amplitudes; the four isolated Brier events cannot distinguish them.",
+    "guaranteed_repair": false
+  },
+  "scientific_conclusion": [
+    "The V54 Brier score succeeds at its stated target of fixed-threshold exceedance probability but that target is insufficient for physical second-moment calibration.",
+    "At q99.999 the probability ratios are only 1.19, 1.72, and 1.25 while conditional amplitude ratios are 153.78, 25.90, and 41.03 in TNG100, SIMBA, and Swift.",
+    "The same amplitude dominance is visible from q99 onward and more than 99.994 percent of the positive moment excess lies above the highest fixed threshold in every domain.",
+    "The audit exactly reproduces the sealed V54 train-gate moments, its maximum tail quadrature discrepancy is 4.78e-4, and the probability-amplitude log identity closes exactly, so the conclusion is not a numerical-integration artifact.",
+    "The next model must resolve the survival curve beyond q99.999 rather than merely reweighting the same four event probabilities."
+  ],
+  "firewall": {
+    "training_or_refit_performed": false,
+    "new_development_sample_generated": false,
+    "validation_accessed": false,
+    "development_accessed": false,
+    "threshold_changed": false,
+    "support_changed": false,
+    "posthoc_scale_or_clipping_used": false,
+    "posthoc_DC_or_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

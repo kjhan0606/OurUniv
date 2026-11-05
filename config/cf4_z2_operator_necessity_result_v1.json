@@ -1,0 +1,68 @@
+{
+  "bundle": "Z2-OPERATOR-NECESSITY",
+  "status": "CLOSED_DEVELOPMENT_NECESSITY_DIAGNOSTIC",
+  "driver_review": "GO_FOR_NARROW_DIAGNOSTIC_CLOSURE_NO_POSTERIOR_PROMOTION",
+  "external_audits": "Skipped under user-directed Astra driver exception",
+  "implementation_commit": "abca7bd",
+  "plan": "config/cf4_z2_operator_necessity_plan_v1.json",
+  "execution": {
+    "array_job": 332552,
+    "tasks_completed": 2,
+    "exit_codes": ["0:0", "0:0"],
+    "elapsed_seconds": [109, 108],
+    "node": "syn05",
+    "partition": "a40",
+    "GPUs_requested": 0,
+    "CPUs_per_task": 2,
+    "memory_requested_MiB_per_task": 1200,
+    "memory_estimated_MiB_per_task": 1000,
+    "request_margin": 0.2,
+    "Slurm_MaxRSS_KiB": [479116, 479356],
+    "output_paths": [
+      "/gpfs/kjhan/CF4/z0_density/z2_operator_necessity_v1/task_0_332553.json",
+      "/gpfs/kjhan/CF4/z0_density/z2_operator_necessity_v1/task_1_332552.json"
+    ],
+    "array_id_note": "SLURM_JOB_ID for array task 0 is 332553; scheduler notation is 332552_0. Task 1 has SLURM_JOB_ID 332552."
+  },
+  "four_state_summary": [
+    {"mock": "A00", "FoG_km_s": 100.0, "joint_Poisson_KL_nats": 0.00009621359462445198, "total_selected_intensity_relative_L1": 0.00004182369098104634},
+    {"mock": "A00", "FoG_km_s": 222.5540928492468, "joint_Poisson_KL_nats": 0.018557186878133614, "total_selected_intensity_relative_L1": 0.000777344039197827},
+    {"mock": "D06", "FoG_km_s": 100.0, "joint_Poisson_KL_nats": 0.0004226974989966287, "total_selected_intensity_relative_L1": 0.00007599054059709073},
+    {"mock": "D06", "FoG_km_s": 222.5540928492468, "joint_Poisson_KL_nats": 0.024902181692867578, "total_selected_intensity_relative_L1": 0.0009263547443134634}
+  ],
+  "reference_checks": {
+    "all_four_states_pass": true,
+    "max_per_source_Q1_relative_L1": 0.00000012283276992095588,
+    "max_full_population_128_to_256_relative_L1": 0.00000041049725872015327,
+    "max_reference_self_KL_nats": 0.0000000044400607019005615,
+    "current_NumPy_vs_JAX_TSC_primitive": "PASS at 1e-12 absolute/relative tolerance on the fixed probe"
+  },
+  "spectral_summary": {
+    "fields": "Sum of six selected count intensities, not matter density",
+    "whole_mesh_range_reported": true,
+    "max_total_shell_residual_to_Poisson_shot_power": 0.00008769582440900984,
+    "largest_total_shell_power_suppression_fraction": 0.0147283443710625,
+    "interpretation": "Highest-k fractional power change can approach 1.5 percent while absolute residual power remains small compared with Poisson shot power. Neither statistic measures the observational density information frontier."
+  },
+  "driver_judgment": {
+    "priority": "Defer dynamic Q1 implementation as the immediate calibration repair; tested current N32 plug-in states do not demonstrate a material likelihood error from GH2 broadening.",
+    "not_established": [
+      "Global GH2 accuracy over posterior draws, nuisance tails or higher resolution",
+      "Pointwise likelihood changes for the observed catalog or posterior score bias",
+      "Adequacy of the frozen LOS convention or geometry derivatives",
+      "Explanation or repair of the existing 0.9287 coverage diagnostic"
+    ],
+    "scientific_limit": "Four plug-in states using posterior field means and prior nuisance values provide a prioritization diagnostic only; a low KL here cannot close Q1 permanently or approve the posterior."
+  },
+  "next_recommendation": {
+    "bundle": "Z3-FIELD-DEFINITION-CALIBRATION",
+    "scope": "Compare truth and inferred field definitions, coarse-graining windows, transfer normalization and density-to-tracer mapping before any new sampling. Quantify whether the existing coverage compares the same physical quantity.",
+    "source_evidence": [
+      "build_scan_truth forms coarse_delta by block-averaging particle-deposited density and coarse_velocity by mass-weighted momentum division.",
+      "build_inference_model evaluates a linear Fourier density/velocity field; its tracer mass uses exp(alpha+bias*(delta-mean(delta))).",
+      "truth_intensity uses centered log(fine_density) and separately normalizes population masses. These are deliberate model differences whose calibration effects remain unresolved."
+    ],
+    "user_approval_required": true,
+    "started": false
+  }
+}

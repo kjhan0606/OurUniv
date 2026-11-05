@@ -1,0 +1,77 @@
+{
+  "schema": "hong2021-v82a-consumed-rank-phase-autopsy-result-record-v1",
+  "status": "complete_consumed_only_engineering_autopsy",
+  "recorded_at": "2026-08-13T00:25:00+09:00",
+  "program": {
+    "path": "config/hong2021_v82a_consumed_rank_phase_autopsy_program.json",
+    "sha256": "1c2ebd894d21f5e186070193548b43f8b39df0e25c3f7b2f291d46bf439a78f1"
+  },
+  "report": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v82a3_consumed_autopsy_sequence/report.json",
+    "sha256": "bece9587af1ee147b5737eb2a62a776a3adeb0faf928889c203e8f808b66c6cc",
+    "decision_digest_sha256": "0382b7f83f26989e42ccd2272a479627f62eb12c6bbedd0354b526c611d897a9"
+  },
+  "rank_shape": {
+    "TNG100": {
+      "candidate_TV": 0.006816422238069421,
+      "control_TV": 0.008220651570488423,
+      "candidate_minus_control_per_query_TV_mean": -0.0006199864780201633,
+      "candidate_worse_queries_of_32": 10,
+      "candidate_variance_over_uniform": 1.0135384823200482,
+      "control_variance_over_uniform": 1.0171552094028868,
+      "candidate_quartile_TV_low_to_high_mean": [0.01729283613317153, 0.006921151105095356, 0.010817808263442093, 0.0079192834741929],
+      "control_quartile_TV_low_to_high_mean": [0.017327168408562153, 0.007895862354951745, 0.011667055242201858, 0.007758000317741841]
+    },
+    "SIMBA": {
+      "candidate_TV": 0.0015676372191485224,
+      "control_TV": 0.001724032794727999,
+      "candidate_minus_control_per_query_TV_mean": 0.0001597965464872472,
+      "candidate_worse_queries_of_32": 21,
+      "candidate_variance_over_uniform": 0.9971248630664596,
+      "control_variance_over_uniform": 0.9995537001942214,
+      "candidate_quartile_TV_low_to_high_mean": [0.010058318867402917, 0.009442946490119487, 0.00445051754222197, 0.0034429606269387666],
+      "control_quartile_TV_low_to_high_mean": [0.010240947498994714, 0.009116313036750347, 0.0034459338468663878, 0.0023694318883559287]
+    },
+    "Swift": {
+      "candidate_TV": 0.001147838199839872,
+      "control_TV": 0.001571515027214497,
+      "candidate_minus_control_per_query_TV_mean": 0.0003185622832354378,
+      "candidate_worse_queries_of_32": 20,
+      "candidate_variance_over_uniform": 1.001046739394153,
+      "control_variance_over_uniform": 1.003410650522013,
+      "candidate_quartile_TV_low_to_high_mean": [0.004223627202651077, 0.0038090593674603643, 0.0029740614049574912, 0.002570124233470243],
+      "control_quartile_TV_low_to_high_mean": [0.004250863019157856, 0.003946276272044462, 0.0014381128198960244, 0.003712037030388325]
+    }
+  },
+  "residual_spectrum": {
+    "candidate_power_ratio_3_6_and_6_10_h_mpc": {
+      "TNG100": [1.038972045404544, 1.0513008118416696],
+      "SIMBA": [1.0213496702449563, 1.0373132261723914],
+      "Swift": [1.0297478124558637, 1.0297202049884564]
+    },
+    "control_power_ratio_3_6_and_6_10_h_mpc": {
+      "TNG100": [0.3548246168837907, 3.5994461028985425],
+      "SIMBA": [0.3494748322924748, 3.587486274210917],
+      "Swift": [0.34981363275735633, 3.492923649170509]
+    },
+    "candidate_ensemble_mean_truth_phase_cosine_3_6_and_6_10_h_mpc": {
+      "TNG100": [0.06220642403315933, 0.05860248178145121],
+      "SIMBA": [0.06424929291856224, 0.05335496476777211],
+      "Swift": [0.06443644294092932, 0.05468663602375012]
+    },
+    "control_ensemble_mean_truth_phase_cosine_3_6_and_6_10_h_mpc": {
+      "TNG100": [0.018200112870472126, 0.002520825682296026],
+      "SIMBA": [0.02600941189650699, 0.0037579574217590605],
+      "Swift": [0.030530590576093565, 0.0038438591527852383]
+    }
+  },
+  "interpretation": {
+    "primary_root_cause": "Domain- and conditional-environment-dependent marginal residual calibration inherited by both arms, strongest for TNG100 and the lowest conditional-mean quartile.",
+    "spatial_transport_finding": "The V72 spatial transport is not the source of rank failure. Candidate rank shape is similar to or better than its paired independent-marginal control, while its high-k residual power shape is dramatically better.",
+    "phase_finding": "Candidate residuals retain small descriptive truth coherence and strong paired control coherence from shared innovations. Held-out stochastic truth phase is not a per-member target; randomizing phase alone would discard useful structure without fixing conditional rank calibration.",
+    "next_low_cost_test": "Freeze two consumed-only leave-one-query-out Gaussian controls: stationary isotropic P(k), and the same control with conditional-mean-quartile residual scale modulation. This distinguishes a two-point/amplitude problem from conditional heteroscedastic or non-Gaussian calibration.",
+    "may_reverse_V80_rejection": false,
+    "statistical_validation_claim": false,
+    "open_independent_data": false
+  }
+}

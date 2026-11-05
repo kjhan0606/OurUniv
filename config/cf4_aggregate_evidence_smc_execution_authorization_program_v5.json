@@ -1,0 +1,50 @@
+{
+  "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-authorization-program-v5",
+  "status": "frozen_versioned_one_shot_program_execution_unauthorized",
+  "purpose": "A v5-only authorization program. The v4 run and all v4 paths are tainted and must never be reused.",
+  "base_production_program": {
+    "path": "config/cf4_aggregate_evidence_smc_production_program.json",
+    "sha256": "74cd10fdff0171daff6984ebc8db13cfd82d6dc495891ff585b81ac9eb0129c5"
+  },
+  "frozen_science_parameters": {
+    "parent_seed_range_inclusive": [3193, 3448],
+    "parent_count": 256,
+    "source": "base_production_program"
+  },
+  "storage": {
+    "data_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5",
+    "state_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_run",
+    "receipts_directory": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_v5_receipts",
+    "exclusive_reservation": true,
+    "restart_or_checkpoint_import": false
+  },
+  "future_grant_interface": {
+    "canonical_path": "config/cf4_aggregate_evidence_smc_execution_grant_v5.json",
+    "schema": "ouruniv-cf4-aggregate-evidence-smc-execution-grant-v5",
+    "current_grant_present": false,
+    "runtime_grant_path_override_allowed": false,
+    "must_pin_release_path_release_id_payload_and_manifest_hashes": true
+  },
+  "external_pre_execution_release": {
+    "canonical_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_release.json",
+    "manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/aggregate_evidence_smc_execution_authorization_v5_manifest.json",
+    "current_release_present": false,
+    "current_manifest_present": false,
+    "runtime_path_override_allowed": false
+  },
+  "authorization": {
+    "production_SMC_execution_authorized": false,
+    "oracle_cache_population_authorized": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_authorized": false,
+    "HOP_authorized": false,
+    "RAMSES_authorized": false,
+    "downstream_execution_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_retune_authorized": false,
+    "automatic_scale_up_authorized": false,
+    "automatic_follow_on_authorized": false
+  }
+}

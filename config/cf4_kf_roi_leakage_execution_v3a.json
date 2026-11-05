@@ -1,0 +1,142 @@
+{
+  "schema": "ouruniv-cf4-kf-roi-leakage-execution-v3a",
+  "date": "2026-08-30",
+  "status": "original_user_approval_operator_correction_single_v3a_preflight_only",
+  "authorization_basis": "the_original_user_approval_remains_authoritative_for_this_operator_error_correction; this is not new scientific or numerical scope",
+  "predecessor_scheduler_failure": {
+    "execution_grant_path": "config/cf4_kf_roi_leakage_execution_v3.json",
+    "execution_grant_raw_sha256": "dc8f5b78e030fde11b8070e63273967cf63f03c8d1368e1a0425be92c444e6fa",
+    "runner_path": "scripts/run_cf4_kf_roi_leakage_v3.sbatch",
+    "Slurm_job_id": 327915,
+    "worker": "syn04",
+    "status": "OPERATOR_CAUSED_SCHEDULER_LAUNCH_FAILURE_BEFORE_PYTHON",
+    "sacct_batch_exit_code": "13:0",
+    "scheduler_exit_status": 141,
+    "signal": "SIGPIPE_13",
+    "exact_cause": "under set -euo pipefail, awk exited after the ClusterName match and closed the scontrol show config pipe early",
+    "stdout_empty": true,
+    "stderr_empty": true,
+    "python_or_numerical_code_reached": false,
+    "numerical_preflight_executions_consumed": 0,
+    "artifact_or_COMPLETE_published": false,
+    "old_v3_logs_and_paths_must_be_preserved": true
+  },
+  "scope": {
+    "design_path": "config/cf4_kf_bin_manifest_design_v2.json",
+    "design_raw_sha256": "c2b1949b4fea26e96c79da57ff3d39aa654292f908ed414b038d094bf4303402",
+    "implementation_path": "src/cf4_kf_roi_leakage.py",
+    "runner_path": "scripts/run_cf4_kf_roi_leakage_v3a.sbatch",
+    "checker_path": "scripts/check_cf4_kf_roi_leakage_v3.py",
+    "execution_grant_path": "config/cf4_kf_roi_leakage_execution_v3a.json",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3a",
+    "preflight_output": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v3a/preflight",
+    "scientific_design_and_numerical_algorithm_changed_from_v3": false
+  },
+  "authorization": {
+    "v3a_operator_correction_implementation_authorized": true,
+    "corrective_scheduler_submission_authorized": true,
+    "Slurm_preflight_authorized": true,
+    "maximum_corrective_scheduler_submissions": 1,
+    "maximum_numerical_preflight_executions": 1,
+    "prior_v3_scheduler_attempts_recorded": 1,
+    "prior_v3_numerical_preflight_executions_recorded": 0,
+    "further_operator_correction_authorized": false,
+    "Slurm_production_authorized": false,
+    "GPFS_read_authorized_only_for_declared_inputs_and_output_root": true,
+    "GPFS_write_authorized_only_under_output_root": true,
+    "network_access_authorized": false,
+    "retry_authorized": false,
+    "numeric_retuning_authorized": false,
+    "replacement_run_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_science_inference_authorized": false,
+    "scientific_leakage_decision_authorized": false
+  },
+  "controller_contract": {
+    "controller": "syntax",
+    "allowed_actions": [
+      "submit",
+      "audit"
+    ],
+    "manual_controller_execution_allowed": false,
+    "manual_worker_execution_allowed": false,
+    "manual_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "worker_cluster_name_required": "syntax",
+    "worker_must_not_be_login_host_syntax_or_syn101": true
+  },
+  "source_integrity": {
+    "source_must_be_committed_and_pushed_before_submission": true,
+    "worker_HEAD_must_equal_expected_commit_and_upstream": true,
+    "execution_grant_raw_SHA256_must_match_runner_and_result": true,
+    "dirty_worktree_allowed": false,
+    "cleanliness_exclusion_only": "scripts/tripwire/**"
+  },
+  "Slurm": {
+    "partition": "a10",
+    "CPU_only": true,
+    "GPU_count": 0,
+    "cpus_per_task": 16,
+    "thread_environment": 16,
+    "memory_MiB": 4096,
+    "time_limit": "02:00:00",
+    "export_policy": "NONE_except_explicit_submission_variables"
+  },
+  "numerical_contract": {
+    "method": "analytic A(q), cumulative q-angular transform, exact u-v shell mapping, composite-v GL and inner-u GL",
+    "q_cumulative_max": "3*k_Ny",
+    "output_guards": "lower [0,k_f), analysis [k_f,k_Ny], upper [k_Ny,2*k_Ny], far tail beyond 2*k_Ny",
+    "clipping_or_renormalization_allowed": false,
+    "convergence_abs_tolerance": 0.0005,
+    "mode_count_convolution_rounding_abs_tolerance": 1e-05,
+    "coarse": {
+      "moment_order": 96,
+      "u_order": 6,
+      "v_period_samples": 16,
+      "v_panel_order": 4,
+      "q_period_samples": 16,
+      "q_panel_order": 4,
+      "parseval_tail_x": [
+        384.0,
+        768.0
+      ]
+    },
+    "fine": {
+      "moment_order": 160,
+      "u_order": 10,
+      "v_period_samples": 32,
+      "v_panel_order": 8,
+      "q_period_samples": 32,
+      "q_panel_order": 8,
+      "parseval_tail_x": [
+        512.0,
+        1024.0
+      ]
+    },
+    "all_windows_bins_orders_and_guards_required_before_PASS_or_FAIL": true,
+    "guard_decomposition_required": true,
+    "analysis_reciprocity_required": true,
+    "terminal_support_failure_allowed": true,
+    "post_result_tuning_allowed": false
+  },
+  "publication_contract": {
+    "output_directory_must_not_exist": true,
+    "sibling_staging_required": true,
+    "plain_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "publish_only_if_status_PRECHECK_PASS": true,
+    "on_PRECHECK_FAIL_print_detailed_JSON_to_stdout_and_stderr_exit_nonzero": true,
+    "on_PRECHECK_FAIL_publish_nothing": true,
+    "COMPLETE_marker_written_last_in_staging": true,
+    "PRECHECK_PASS_is_not_scientific_decision_or_k_claim": true
+  },
+  "run_sequence": [
+    "commit and push exact design v2, grant v3a, unchanged numerical implementation with operational binding, corrected runner, checker, and tests",
+    "syntax controller submits and audits exactly one v3a corrective scheduler submission",
+    "that submission may execute the numerical preflight at most once and publish only PRECHECK_PASS",
+    "do not make another correction, retry, retune, replace, run production, materialize final manifest, start KF-EXPAND/all-D, or make a science claim"
+  ]
+}

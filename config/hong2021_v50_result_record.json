@@ -1,0 +1,186 @@
+{
+  "schema": "hong2021-v50-bounded-logit-mixture-copula-result-record-v1",
+  "status": "complete_development_failure_train_only_bounded_support_audit_required",
+  "program": "config/hong2021_v50_bounded_logit_mixture_copula_program.json",
+  "program_sha256": "f67e8f5a9eacf40eb138774632add896e922e84d944263bb245ff2a71344d85f",
+  "code_commit": "139bb8f2c37ae047ce05b55427980ddf30091b68",
+  "support_selection": {
+    "artifact": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+    "sha256": "3c339a76a5f1172ed30b5aeb5fe14e958a123ec10452e8386d52fbd1269e76b2",
+    "decision_digest_sha256": "91335a4be726aaae1cc8354aaa96fedc338bc65c9f2afd8ed4aedbb438a9dfce",
+    "open_standardized_support": [
+      -13.78839653180272,
+      10.259036149654781
+    ],
+    "changed_after_train_only_selection": false
+  },
+  "training": {
+    "checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.pt",
+    "checkpoint_sha256": "834488cf990e0334573d66ead742d6036f6737f551f406be10b16cdc54e466b4",
+    "report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v50/bounded_logit_mixture_copula_step12000.json",
+    "report_sha256": "0b1525e49904f8465e922de09d3a85f23d9c238c15e5a39433dd1e70ae688e55",
+    "report_decision_digest_sha256": "ebc54fb8ac1f11b53f497567ced3f2ddf701f15daa000415467fc7c2f0430aed",
+    "steps": 12000,
+    "parameters": 8490415,
+    "fixed_validation_NLL": {
+      "4000": {
+        "TNG100": 1.3900211408574095,
+        "SIMBA": 1.3591323960572481,
+        "Swift": 1.3527598815995294
+      },
+      "8000": {
+        "TNG100": 1.3878556143852971,
+        "SIMBA": 1.35672939568758,
+        "Swift": 1.348872926589605
+      },
+      "12000": {
+        "TNG100": 1.388817459024409,
+        "SIMBA": 1.3573186863213778,
+        "Swift": 1.3469387494228982
+      }
+    },
+    "validation_used_for_stopping_selection_or_tuning": false,
+    "logged_AMP_gradient_overflow": {
+      "count": 1,
+      "step": 8400,
+      "loss_was_finite": true,
+      "loss": 1.3507378101348877,
+      "gradient_norm_before_clip": "Infinity",
+      "standard_GradScaler_update_skipped_the_optimizer_step_and_reduced_the_scale": true,
+      "next_logged_step": 8450,
+      "next_logged_gradient_norm_before_clip": 0.31445610523223877,
+      "subsequent_logged_nonfinite_gradient_count": 0,
+      "interpretation": "A single recoverable mixed-precision overflow occurred. It did not recur and does not change the frozen gate result, but it is retained as a training-integrity anomaly."
+    },
+    "report_serialization_anomaly": {
+      "literal_Infinity_occurrences": 1,
+      "strict_RFC_8259_JSON": false,
+      "Python_json_and_project_loader_compatible": true,
+      "canonical_report_digest_independently_verified": true
+    }
+  },
+  "integrity": {
+    "sequence_status": "complete",
+    "sequence_status_sha256": "37a40f08d8548dba289b9b0bb35bcf63b359f6d37ee86044ebc6b6da080b9ec1",
+    "preflight_sha256": "934570caa2a4cb259710557a3ab865904aea4e26a1935136f7b3aaf2aefdbb14",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153",
+    "pytest_passed": 389,
+    "pytest_log_sha256": "4b652be4d384f5e4b5ecce4a419efcbaec3adde13a525203feaefcabcf1c88fc",
+    "training_log_sha256": "ac4d23497e7a7b378faa9649e114fd149ae1bf59583e1735e75ac80ce961a23b",
+    "sampling_log_sha256": "7cecbcf5b41c7a080eb23e2dcae3b6dc03c9f36ebcf3bfd6773750fb116bf01d",
+    "metrics_checked": 9,
+    "ensembles_checked": 9,
+    "artifact_hash_mismatches": 0,
+    "decision_digest_independently_verified": true,
+    "report_digest_independently_verified": true,
+    "maximum_candidate_residual_DC": 4.656612873077393e-10,
+    "maximum_candidate_inverse_CDF_error": 3.5762786865234375e-7
+  },
+  "development_decision": {
+    "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_e26_bounded_logit_mixture_copula/development_decision.json",
+    "sha256": "a473deb6ffa79afc6d423bb28b81cfa568746e1e8e2a78226ecf042e6483e337",
+    "decision_digest_sha256": "17dc814404609dbd517cc5a50354720cdf3011fc476849a005d72858bd210dc0",
+    "gate_code_commit": "139bb8f2c37ae047ce05b55427980ddf30091b68",
+    "worktree_clean_at_gate": true,
+    "development_pass": false,
+    "classification": "bounded_marginal_support_preserves_the_field_body_but_is_not_sufficient_for_extreme_calibration",
+    "next": "audit_train_only_support_boundary_occupancy_and_bounded_PIT_without_threshold_or_support_changes",
+    "candidate_high_k_power_and_residual_RMS_all_domains": true,
+    "candidate_Q3_all_domains": false,
+    "candidate_Q4_all_domains": false,
+    "candidate_all_three_field_pass": false,
+    "rolled_parameter_control_improves_Q3_Q4_every_domain": false
+  },
+  "candidate_Q3_Q4": {
+    "TNG100": {
+      "delta_q99_999_dex": 0.24375307309233074,
+      "generated_max_above_truth_max_dex": 1.375536561012268,
+      "generated_over_truth_mean_delta_squared": 4.68286979788228,
+      "field_pass": false,
+      "failed_field_checks": [
+        "two_point_improves_deterministic_all_scales"
+      ],
+      "ensemble_sha256": "e3f6f052890bc1ea70ad47a8d5a597e2a5c04d51563a6dab31fd9255e8b0b2e9",
+      "metrics_sha256": "24604a7c180e97f7841842dc6a8e4849702d1df369b611e96c052aa35c13a9c8"
+    },
+    "SIMBA": {
+      "delta_q99_999_dex": 0.25728082379376405,
+      "generated_max_above_truth_max_dex": 1.3239466845989227,
+      "generated_over_truth_mean_delta_squared": 6.248745224297992,
+      "field_pass": false,
+      "failed_field_checks": [
+        "two_point_improves_deterministic_all_scales"
+      ],
+      "ensemble_sha256": "eb54a98313b7ceca3d9aa5632ae3d7a7c5d24ad35c070af60923e34d44ea5e71",
+      "metrics_sha256": "c286b4efeb057e371edbaeebc370d5c9fbfcc47e9a5e53557024dd588e71c645"
+    },
+    "Swift": {
+      "delta_q99_999_dex": 0.3699449872075684,
+      "generated_max_above_truth_max_dex": 1.4367751479148865,
+      "generated_over_truth_mean_delta_squared": 23.988385315810945,
+      "field_pass": true,
+      "failed_field_checks": [],
+      "ensemble_sha256": "edcbea344de2f125e01fbc755349a57391b933c727fd169cbfa5bf77b8bb8d25",
+      "metrics_sha256": "62cbe390bcbec6ec10c6fe15c39038b24e118b4ec0a4380e81126e91882980b2"
+    }
+  },
+  "control_artifact_sha256": {
+    "rolled_parameter_control": {
+      "TNG100": {
+        "ensemble": "006b4ec3f74a4fc5f78e9399baad84eb5abb05ebf68d472688cfed77d8477313",
+        "metrics": "2a1b9848610595e3d064e0202706b568d0761d5b07a767c0394aa0c290ebc467"
+      },
+      "SIMBA": {
+        "ensemble": "8fbac2fe56b22571e64db60a7797ec4d5eccce2a654dc03dfeb5e14a147c78d4",
+        "metrics": "b4c77f2b62d080952737ea6efb59743583dab2e20665b02bc4d0b901cadaa9ed"
+      },
+      "Swift": {
+        "ensemble": "9ba8a48f2d90c6d35ae666c642b4c18b2ee0febfcd2c69f0f6e1e8da9a8d4150",
+        "metrics": "6eaa05be7b6b1d6adb75ee4aa345e7f1d22895b48259e764e2bf57c30294b738"
+      }
+    },
+    "structure_risk_ablation": {
+      "TNG100": {
+        "ensemble": "24c7f3a8895738703d30fe672b7d67922818928f1e2a953199d0fb29805cdf9d",
+        "metrics": "b0a847c4a7f70f8e208ba25917e829b2127eac9c8bed80b9ae4959e6c878d00f"
+      },
+      "SIMBA": {
+        "ensemble": "b77d699fbac5fbc967d23c9a30b08bd0c20b02d93d9ae00d65bb4f95d1643506",
+        "metrics": "3d426744bc1a31ac39c4271cda2900a2e7ed5ec51c1dbcb21437f19965c6861c"
+      },
+      "Swift": {
+        "ensemble": "4fa660d94386abc90606d57b23e4882ab779a2761bf7a1468503252d35aff6f0",
+        "metrics": "7c348725489f15892faea61ae263186603c4e0d2c50ecf63a59cc57dd0163e56"
+      }
+    }
+  },
+  "comparison_to_V48": {
+    "fixed_step_12000_validation_NLL_lower_in_all_domains": true,
+    "candidate_q99_999_error_reduced_in_all_domains": true,
+    "candidate_maximum_excess_reduced_in_all_domains": true,
+    "candidate_mean_delta_squared_ratio_reduced_in_all_domains": true,
+    "development_pass_recovered": false
+  },
+  "scientific_conclusion": [
+    "The train-only bounded logit likelihood improves fixed-step validation NLL and all three extreme-tail diagnostics relative to V48 in TNG100, SIMBA, and Swift, while preserving high-k power and residual RMS in every domain.",
+    "The repair remains insufficient: q99.999 is high by 0.24 to 0.37 dex, generated maxima exceed truth maxima by 1.32 to 1.44 dex, and physical mean delta squared is high by factors 4.68 to 23.99.",
+    "TNG100 and SIMBA fail only the frozen all-scale two-point improvement field check; Swift passes all eight field checks. The common failure is therefore the frozen Q3/Q4 extreme calibration, not loss of the stochastic field body.",
+    "The frozen next branch is a train-only audit of occupancy near both fixed support boundaries and bounded-likelihood PIT. Neither support, gate thresholds, generator, nor any independent data may change during that audit."
+  ],
+  "firewall": {
+    "support_changed_after_train_scan": false,
+    "validation_used_for_training_stopping_checkpoint_or_hyperparameter_selection": false,
+    "spatial_rank_transport": false,
+    "global_residual_scaling": false,
+    "object_amplitude_post_calibration": false,
+    "hard_density_or_residual_clipping": false,
+    "sample_clipping": false,
+    "component_scale_cap": false,
+    "donor_translation": false,
+    "donor_reselection": false,
+    "posthoc_Ak_used": false,
+    "Astrid_accessed": false,
+    "historical_EAGLE_accessed": false,
+    "independent_gate_locked": true
+  }
+}

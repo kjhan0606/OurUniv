@@ -1,0 +1,40 @@
+{
+  "decision": "OPFOF_ALL_PARTICLE_CROSSCHECK_CONDITIONAL_NO_GO",
+  "stage": 8,
+  "jobs": {
+    "all_particle_opfof": 391054,
+    "postprocess_profile_retry": 391080,
+    "postprocess_catalog_velocity_retry": 391084
+  },
+  "settings": {
+    "nfile": 64,
+    "mpi_ranks": 8,
+    "opfof_nx": 512,
+    "all_particle_species": true,
+    "mass_weighted_halo_sums": true,
+    "linking_input_mass_contract": "OPFoF bridge input has position/velocity only; physical multi-mass is restored by summing member mass codes after grouping"
+  },
+  "result": {
+    "halo_count_ge20": 1108,
+    "halo_count_ge5e11": 328,
+    "best_pair": {
+      "m1_fof_msun_h": 635615987706.5205,
+      "m2_fof_msun_h": 820204289642.606,
+      "separation_mpc_h": 0.8129941185463876,
+      "vrad_pec_kms": -52.51416949521651,
+      "vtotal_kms": 28.847698207096997,
+      "vtan_kms": 22.30187037470293,
+      "isolation_mpc_h": 9.78029160419623
+    },
+    "gate": {
+      "mass_and_separation": true,
+      "approaching": false,
+      "tangential": true,
+      "clean_zoom": false,
+      "phase_preserved": false,
+      "overall": false
+    },
+    "m33": "not_resolved"
+  },
+  "interpretation": "Including all coarse and fine particles removes the previous input-completeness limitation and yields a MW/M31-scale pair. The pair is not approaching at z=0 under the current Hubble-plus-peculiar velocity convention, and contamination/profile and phase gates remain unresolved. This is a conditional scientific no-go for promotion, not an OPFoF memory or input failure. Do not discard coarse particles in later cross-checks."
+}

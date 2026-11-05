@@ -1,0 +1,32 @@
+{
+  "schema": "ouruniv-cf4-lg-v8-proposal-audit-result-record-v1",
+  "status": "complete_pass_authorize_fresh_v8",
+  "program": {
+    "path": "config/p2_lg_z0_forward_likelihood_v8_proposal_audit.json",
+    "sha256": "2c0511723662a54f69d5a9a8b0ed8a41e0a68dcc93167edc41a00f628e20a0da"
+  },
+  "result": {
+    "path": "/gpfs/kjhan/CF4/recon/linear_cr/v8_z0_forward_likelihood_proposal_audit/result.json",
+    "sha256": "745dfbec1e8211d42d2f8ae6a4649f9c6e4c171b3d3fa4880767e04bba4f3abf"
+  },
+  "metrics": {
+    "development_rows": 60,
+    "finite_likelihood_rows": 40,
+    "analytic_target_prior_over_proposal_bound": 2.0,
+    "point_ESS_fraction": 0.08683417967502409,
+    "bootstrap_lower_quantile": 0.005,
+    "bootstrap_lower_ESS_fraction": 0.03310244943344093,
+    "selected_bank_size": 256,
+    "selected_bank_bootstrap_lower_ESS": 8.474227054960878,
+    "selected_bank_point_expected_ESS": 22.229549996806167
+  },
+  "decision": {
+    "fresh_v8_authorized": true,
+    "fresh_seed_bank_opened": false,
+    "authorized_bank_size": 256,
+    "exact_log_target_prior_minus_log_proposal_required": true,
+    "same_z0_likelihood_and_P1_P2_gates_required": true,
+    "RAMSES_authorized": false,
+    "next": "Freeze and execute one fresh 256-member defensive-mixture bank, then stop before RAMSES for review."
+  }
+}

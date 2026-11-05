@@ -1,0 +1,159 @@
+{
+  "schema": "hong2021-v75-rank-coverage-exact-label-null-audit-program-v1",
+  "status": "frozen_before_V75_implementation_synthetic_draws_or_V72_payload_read",
+  "purpose": "Determine whether the prospective thirty-two-query Hong gate can use a distribution-free, spatial-dependence-preserving rank and coverage calibration test. Audit the old hard rank-TV and physical-coverage thresholds under exact field exchangeability, verify a conditional truth-label randomization replacement under independent null labels and named alternatives, and apply the frozen replacement diagnostically to the already consumed V72 stage-A candidate and control without changing V72.",
+  "authorization": {
+    "user_instruction": "The user explicitly approved the rank/coverage exact-conditional-null audit after V74.",
+    "V75_audit_authorized": true,
+    "complete_gate_execution_or_new_generator_authorized": false,
+    "V72_reinterpretation_authorized": false
+  },
+  "parent_evidence": {
+    "V74_result_record": "config/hong2021_v74_result_record.json",
+    "V74_result_record_sha256": "9c36f02be71a1a142531bf2c83389c83331737ff8aff8de24ace2b2b738145fb",
+    "V74_selected_query_count": 32,
+    "ensemble_members": 16,
+    "ensemble_evaluator": "src/hong2021_residual_evaluate.py",
+    "ensemble_evaluator_sha256": "773c7aa2d6a695f8f7a80ad5d3ab2e21207e1da1717736a1f2d849b0695afe42",
+    "field_gate": "src/hong2021_v6_gate.py",
+    "field_gate_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512",
+    "V72_gate": "src/hong2021_v72_gate.py",
+    "V72_gate_sha256": "0a1e6d41a6f9d0c32f204ac92ff2c3a4ba2b0d7afafae11cfcd530c5804105fc"
+  },
+  "scope_limits": {
+    "this_is_not_a_generator": true,
+    "training_or_model_sampling": false,
+    "raw_fit_train_truth_access": false,
+    "validation_or_fresh_partition_access": false,
+    "V72_stage_B_access": false,
+    "Astrid_access": false,
+    "historical_or_independent_EAGLE_access": false,
+    "model_checkpoint_access": false,
+    "V72_stage_A_access": "only the six already consumed, explicitly hash-bound candidate/control ensemble files listed below",
+    "V72_verdict_change": false,
+    "new_candidate_or_complete_gate_authorized": false
+  },
+  "old_gate_under_audit": {
+    "rank": "pooled voxel truth-rank histogram total variation from uniform <=0.05",
+    "coverage": "maximum absolute difference of physical-value empirical 16-84 and 2.5-97.5 percent interval coverage from the evaluator finite-ensemble expectations <=0.03",
+    "finite_ensemble_expectations": {
+      "coverage_68": 0.6,
+      "coverage_95": 0.8382352941176471
+    },
+    "known_mathematical_limits_to_measure_not_assume": [
+      "univariate truth rank is uniform under exchangeability, but the sampling distribution of a pooled voxel-rank histogram depends on within-field spatial dependence",
+      "physical-value coverage of linearly interpolated empirical quantiles is not invariant under a nonlinear monotone transform, so its expectation is not distribution-free"
+    ]
+  },
+  "prospective_exact_label_test": {
+    "exchangeability_unit": "For each query, augment the sixteen generated residual fields with the one truth residual field. Under a calibrated conditional field generator, all seventeen complete fields are exchangeable given the query observables.",
+    "relabeling": "For every possible designated truth label 0-16, use the other sixteen complete fields as the ensemble and remeasure the identical pooled voxel-rank TV and both physical-value coverages. Randomly select one label independently per query to generate the conditional null while preserving all within-field spatial dependence, nonlinear marginal shape, and finite-quantile interpolation.",
+    "ties": "Attach an iid frozen continuous priority field to each of the seventeen complete fields. Priorities move with fields during relabeling and break exact value ties without privileging the observed truth label. Inclusive physical coverage is unchanged.",
+    "composite_statistic": "maximum of rank-TV/0.05 and maximum-coverage-deviation/0.03; the old hard thresholds are scale references only and are not separately required",
+    "conditional_p_value": "(1 + number of random relabelings with composite statistic at least the observed statistic)/(1 + random relabelings)",
+    "random_relabelings_per_domain": 99999,
+    "domain_alpha": 0.016666666666666666,
+    "multiplicity": "Bonferroni one-sided family-wise alpha 0.05 over three domains",
+    "domain_pass": "conditional p-value strictly greater than 1/60",
+    "all_domain_pass": "all three domains pass",
+    "individual_rank_and_coverage_p_values": "reported diagnostically using the identical relabelings; the single predeclared composite p-value is the selection statistic",
+    "tie_priority_and_relabel_seed": "derive separate deterministic 64-bit seeds from SHA256(V75 program SHA256, immutable ensemble file SHA256, domain, and purpose label)",
+    "claim": "This is exact conditional on field exchangeability up to finite Monte Carlo resolution. It is not a proof of conditional calibration when the test lacks power."
+  },
+  "synthetic_exact_null_audit": {
+    "queries": 32,
+    "fields_per_query": 17,
+    "voxels_per_field": 4096,
+    "field_seed": 750001,
+    "calibration_label_seed": 750002,
+    "verification_label_seed": 750003,
+    "label_assignments_per_phase_and_scenario": 100000,
+    "scenarios": {
+      "independent_normal_voxels": "iid standard normal over field and voxel",
+      "spatially_correlated_normal": "each field is 0.9 times one field-global normal plus sqrt(1-0.9^2) times iid voxel normal",
+      "perfect_within_field_dependence": "one continuous normal value repeated at every voxel in a field",
+      "rounded_heavy_tail_with_ties": "Student-t with three degrees of freedom, 0.85 field-global dependence, rounded to one decimal before iid priority tie breaking"
+    },
+    "old_gate_report": "verification pass probability for each old hard check and their conjunction in every scenario",
+    "old_gate_invalid_if": "any exact-null scenario has either old hard-check pass probability below 0.8",
+    "replacement_report": "verification rejection probability and Wilson 95-percent interval at domain alpha for the composite conditional-label test",
+    "replacement_calibrated_if": "every scenario's point rejection probability is <=0.02 and Wilson upper bound is <=0.022",
+    "coverage_distribution_counterexample": {
+      "sets_per_distribution": 500000,
+      "seed": 750004,
+      "distributions": ["uniform", "normal", "lognormal", "Student-t-3"],
+      "report": "physical-value coverage under sixteen iid ensemble values and one iid truth for both frozen intervals, compared with the old fixed expectations"
+    }
+  },
+  "synthetic_power_audit": {
+    "replications_per_alternative": 100,
+    "queries": 32,
+    "fields_per_query": 17,
+    "voxels_per_field": 256,
+    "random_relabelings_per_replication": 4095,
+    "seed": 750005,
+    "common_structure": "0.7 field-global normal plus sqrt(1-0.7^2) iid voxel normal",
+    "alternatives": {
+      "location_bias": "sixteen generated fields have conditional mean +0.5 while truth fields have mean zero",
+      "underdispersion": "sixteen generated fields have conditional standard deviation 0.6 while truth fields have standard deviation one"
+    },
+    "detection": "composite conditional p-value <=1/60",
+    "minimum_power": 0.8,
+    "replacement_power_sufficient_if": "both alternatives have point detection probability >=0.8 and Wilson lower bound >=0.7"
+  },
+  "consumed_V72_diagnostic": {
+    "queries_per_domain": 16,
+    "candidate": {
+      "TNG100": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/tng/ensemble16.h5",
+        "sha256": "2d316779c91cde2d1c8b2c60a567f97b57584694b8b1ea72dcc3487f547390a6"
+      },
+      "SIMBA": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/simba_dev/ensemble16.h5",
+        "sha256": "0edbeb09fc749d065a8a1b5a19ef10dad7834f79ce9a6b3a278fa8e27cbae80e"
+      },
+      "Swift": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/conditioning_stratified_spatial_quantile_transport/fresh_candidate/swift_dev/ensemble16.h5",
+        "sha256": "1230296da0536126ced51207a0eb1b3789e29e2a8319f47fce68270e77c25873"
+      }
+    },
+    "control": {
+      "TNG100": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/tng/ensemble16.h5",
+        "sha256": "55f553572a8bb4acdcc5eb117aa0721c1a1280cb5381531bdcd99ab3e4a370da"
+      },
+      "SIMBA": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/simba_dev/ensemble16.h5",
+        "sha256": "c3de317860613c079c52e8ac47106b8f176f7d51caf9595826bbf5f9b9fa7de3"
+      },
+      "Swift": {
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v72_sqt_stage_A/independent_voxel_V63_marginal/fresh_candidate/swift_dev/ensemble16.h5",
+        "sha256": "a907c12f0ca85c18076906b497e792535df056a5f7aa05fbbe2076d102e00a6d"
+      }
+    },
+    "residual_definition": "center every generated sample-minus-conditional_mean field and truth-minus-conditional_mean field independently before the relabeling audit, matching the centered residual schema",
+    "report": "old rank/coverage values, relabel-null critical distribution, composite and individual conditional p-values, tie fraction, candidate/control conclusions",
+    "decision_role": "diagnostic only; V72 remains sealed regardless of outcome"
+  },
+  "predeclared_decision": {
+    "replacement_selected": "old gate is invalid, replacement is calibrated, and replacement power is sufficient",
+    "additional_redesign_required": "replacement calibration or power fails",
+    "complete_prospective_gate_may_be_frozen_if_replacement_selected": true,
+    "complete_gate_or_candidate_execution_still_requires_explicit_user_approval": true,
+    "V72_result_changed": false
+  },
+  "outputs": {
+    "root": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null",
+    "synthetic_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/synthetic_arrays.npz",
+    "V72_diagnostic_arrays": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/V72_diagnostic_arrays.npz",
+    "audit_result": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v75_rank_coverage_exact_null/audit_result.json"
+  },
+  "resource_and_firewall": {
+    "host": "Lageunha",
+    "device": "CPU only",
+    "workers": 1,
+    "nice": 15,
+    "cpu_affinity": "logical CPU 64",
+    "existing_RAMSES_run_must_not_be_modified_or_stopped": true
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "ouruniv-cf4-twompp-metadata-consistent-subset-program-v1",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_FREEZE_AND_VALIDATE_36635_TRACER_SUBSET_ONLY",
+  "authorization": {
+    "authorization_basis": "The user approved freezing the 319-row metadata-consistency exclusion and validating the retained 36,635-tracer subset on 2026-09-01.",
+    "subset_validation": true,
+    "single_Slurm_submission": true,
+    "GPFS_read": true,
+    "GPFS_write": true,
+    "network_access": false,
+    "field_inference": false,
+    "likelihood_datum_consumption": false,
+    "joint_information_budget": false,
+    "resolution_increase": false,
+    "IC_PM_HOP_RAMSES": false,
+    "automatic_follow_on": false
+  },
+  "parent_outlier_program": {
+    "path": "config/cf4_twompp_completeness_outlier_audit_program_v1.json",
+    "bytes": 3613,
+    "sha256": "c75c52b891656a72626767ed7345c88f2aec564a07771caf8d042af2e9332db5"
+  },
+  "parent_outlier_implementation": {
+    "path": "src/cf4_twompp_completeness_outlier_audit_v1.py",
+    "bytes": 21053,
+    "sha256": "4c2a942834377fd70bdcc2704dd5474ef29f06a1692491cc0dadc00261918fed"
+  },
+  "parent_failure_result_record": {
+    "path": "config/cf4_twompp_completeness_outlier_audit_v1_failure_result_record.json",
+    "bytes": 6172,
+    "sha256": "e81d9ab7198d2f20ebd735c089075a7b18f33bf3597abdb00fc1de18dab75982"
+  },
+  "parent_failure_result": {
+    "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/result.json",
+    "bytes": 4580,
+    "sha256": "236cabadc6616432bbdee7990b423befd5d17a7f82967097058da7abc50f1f84"
+  },
+  "frozen_outliers": {
+    "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/outliers.csv",
+    "bytes": 36312,
+    "sha256": "61ed7b3e43f89cffb95dc26394bb1e16416ca573d8bee89f6b84747a50f857d3"
+  },
+  "parent_FAILED_marker": {
+    "path": "/gpfs/kjhan/CF4/kf_design/twompp_completeness_outlier_v1/.audit.staging/FAILED",
+    "bytes": 352,
+    "sha256": "d335509ba07e7452d71e33961c259c1d3a122dcd01cd558b98bf0e71a5f79f11"
+  },
+  "implementation": {
+    "path": "src/cf4_twompp_metadata_consistent_subset_v1.py",
+    "sha256": "46e4435f4a991c03c26f3d3a1bea68d7537b37a4e16d199a2397697701001683"
+  },
+  "frozen_subset": {
+    "exclusion_source": "every row in the exact frozen_outliers CSV; no new row selection",
+    "excluded_recno_count_exact": 319,
+    "large_absolute_difference_strictly_greater_than": 0.05,
+    "retained_tracer_count_exact": 36635,
+    "retained_zero_exposure_count_exact": 0,
+    "retained_large_difference_count_exact": 0,
+    "retained_six_population_counts": {
+      "apparent_0_absolute_0": 9617,
+      "apparent_0_absolute_1": 3463,
+      "apparent_0_absolute_2": 527,
+      "apparent_1_absolute_0": 15671,
+      "apparent_1_absolute_1": 6197,
+      "apparent_1_absolute_2": 1160
+    },
+    "density_outcome_access_allowed_for_selection": false,
+    "threshold_adaptation_allowed": false,
+    "reintroduction_of_any_excluded_recno_allowed": false
+  },
+  "execution": {
+    "controller": "syntax_submit_and_audit_only",
+    "backend": "Slurm_CPU_only",
+    "partition": "a10",
+    "output": "/gpfs/kjhan/CF4/kf_design/twompp_metadata_consistent_subset_v1/validation",
+    "maximum_submissions": 1,
+    "requested_cpus": 1,
+    "expected_peak_memory_MiB": 500,
+    "requested_memory_MiB": 768,
+    "memory_headroom_multiplier": 1.536,
+    "time_limit": "00:15:00",
+    "plain_same_filesystem_directory_rename_publication": true,
+    "refuse_overwrite": true,
+    "manual_syntax_or_syn101_numerical_execution_allowed": false,
+    "automatic_follow_on_allowed": false
+  }
+}

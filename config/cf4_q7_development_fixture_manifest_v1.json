@@ -1,0 +1,44 @@
+{
+  "schema": "ouruniv-cf4-q7-development-fixture-manifest-v1",
+  "bundle": "Q7.0",
+  "date": "2026-09-04",
+  "status": "FROZEN_AFTER_USER_APPROVAL",
+  "purpose": "Deterministic development-only realization of the seven Q6 topology/sigma families for the Q7 approximate operator; no held-out data are opened.",
+  "count_semantics": "source_count is per-fixture array length; families are independent.",
+  "q1_reference": {
+    "commit": "5d1500c384d1bf6fcc92c0517debd4307fe31f4b",
+    "source_sha256": "74ae1bb12171a2baac76c8052d592b4dc5098043bf7c11bca6ffb9eea852d6b2"
+  },
+  "randomness": {
+    "generator": "numpy.random.Generator",
+    "bit_generator": "PCG64",
+    "generator_source": "scripts/cf4_q7_development_fixture.py",
+    "generator_source_sha256": "1bf76cac8007bd64a7805b0587674bdaf4a2e8be9a369d5f777cad414d93db1e",
+    "array_digest_scope": "sha256(LE-float64-C-contiguous positions||los||scales||masses)",
+    "heldout_touched": false
+  },
+  "geometry": {
+    "grid_size": 8,
+    "box_size_cMpc_h": 8.0,
+    "tail_cutoff_sigma": 8.0,
+    "los_vectors_are_unit_normalized": true
+  },
+  "fixtures": [
+    {"id": "same_knot_different_coefficient", "seed": 62001, "source_count": 32, "fixture_sha256": "c3549762ee86ef2e01ea733dc4396327323f88368bdc759cabb8a3e7096a6fe2"},
+    {"id": "translated_cell", "seed": 62002, "source_count": 32, "fixture_sha256": "7d70a8e3805587acd7d8d93c4d81e06386359bca5efc64e16cc2602516b3d16d"},
+    {"id": "near_coincident", "seed": 62003, "source_count": 32, "fixture_sha256": "b6e9219293af3391e267113898a813bcc0851514774bb4ea20c6c0f24e48fee7"},
+    {"id": "interval_permutation", "seed": 62004, "source_count": 32, "fixture_sha256": "bc7dd434cd4d3c2b02701fb2c63e51e943929fcbc54096e84231b6f1389eca7d"},
+    {"id": "seam_sliver_clip", "seed": 62005, "source_count": 32, "fixture_sha256": "8816bb32b81bcecbc446c0cb69686c112920b48374c7e459478f5cf37a7b1b6f"},
+    {"id": "los_sigma_variation", "seed": 62006, "source_count": 192, "fixture_sha256": "e31366c9fdf791a2289bab54b3b9d7f38aef002e461aa171b1a89501e6e5021a"},
+    {"id": "cold_zero_near_zero", "seed": 62007, "source_count": 32, "fixture_sha256": "c48b28bb340e8dc9107b7d40dfd86d72aa485e513f89cd1c5dc50ff472e6322b"}
+  ],
+  "freeze_rules": {
+    "fixture_order": "listed order",
+    "seed_changes": "forbidden",
+    "topology_changes": "forbidden",
+    "heldout_split_or_retuning": "forbidden",
+    "resource_claim": "none"
+  },
+  "manifest_payload_sha256": "e985159994f569da146b20d416f9dfa0f7b0e99e1eb79d791b95e10267ace99c",
+  "manifest_hash_scope": "sha256(canonical sorted JSON payload with manifest_payload_sha256 omitted; separators=(',', ':'), UTF-8, no newline)"
+}

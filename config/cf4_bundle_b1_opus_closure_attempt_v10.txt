@@ -1,0 +1,38 @@
+VERDICT: NO-GO
+
+RISK_LEVEL: MEDIUM (development-only; no observational, IC, GPFS, Slurm or held-out exposure)
+
+Primary Claude Opus 5 closure audit of committed HEAD e513cae for B1-Z0-POSTERIOR.
+
+1. Hash/byte consistency passes for the integrated source, test, result, diagnosis
+   source/test/result, and mode-coverage source/test/results. The audited tree is
+   clean for those paths; unrelated user-owned untracked files were not inspected.
+2. The 64-member result is faithful: fit_success=64/64, abnormal termination=0,
+   strict frozen gate=8/64, failure histogram coverage68=50 and coverage95=50,
+   canonical/vectorized joint error <=7.567e-10, and mode-level means
+   0.72265625/0.951171875.
+3. Exact grouped Sherman-Morrison Fisher, same-truth joint generation, D-arm
+   Gamma-Poisson variance, optimizer retry behavior, and seed quarantine pass.
+4. D-arm width repair changes posterior draws only; the mean model remains unchanged.
+   However, the scale factors were selected against the same 64 development seeds,
+   so the improved mode coverage has no out-of-sample calibration content.
+5. The across-seed latent-mode interval frequency is the correct frequentist
+   diagnostic and must remain diagnostic-only. It needs analytic Laplace sigma and
+   a stated acceptance region before any promotion use.
+6. The frozen gate still uses the legacy per-voxel spread statistic, which is not
+   a coverage frequency. It accounts for all gate failures and must be redesigned
+   before 64/64 can be decision-grade.
+7. One auxiliary split stream, counts+1000 (2026401000..2026401063), is undeclared
+   in the seed firewall. This is a provenance disclosure defect, not a validation
+   contamination.
+8. Mode-coverage artifacts omit width configuration and source hash; the before
+   artifact is not reproducible from current HEAD. Add these fields.
+9. The live path does not use the dead analytic _count_objective; remove or wire it.
+   Add at least one mark-side misspecification arm before any promotion argument.
+10. No observational z=0 posterior, high-k field, IC, PM/HOP/RAMSES, GPFS, Slurm,
+    held-out data, or 0.3 cMpc/h claim is supported.
+
+RECOMMENDATION: Do not open validation and do not start B2. Keep validation sealed.
+Retain the new mode metric as development-only, fix the declared stream and
+provenance in this bundle, then redesign the strict gate and add a mark-side
+misspecification arm before any promotion decision.

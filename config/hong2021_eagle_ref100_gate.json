@@ -1,0 +1,116 @@
+{
+  "schema": "hong2021-independent-eagle-ref100-gate-v1",
+  "status": "complete_failed_one_environment_check_grid_hop_skipped",
+  "purpose": "Locked cross-simulation test of the TNG100-trained V6 EDM model",
+  "simulation": {
+    "suite": "EAGLE",
+    "run": "RefL0100N1504",
+    "snapshot": 28,
+    "redshift": 0.0,
+    "box_mpc_h": 67.77,
+    "dark_matter_particles": 3402072064
+  },
+  "sources": {
+    "archive": "/gpfs/kjhan/EAGLE/RefL0100N1504/raw/RefL0100N1504_snap_028.tar",
+    "catalog": "/gpfs/kjhan/EAGLE/RefL0100N1504/catalogs/RefL0100N1504_Hong_targets_snap28.csv",
+    "query_script": "scripts/query_eagle_hong_catalog.sh",
+    "preparation_script": "src/hong2021_prepare_eagle.py",
+    "prepared_input": "/gpfs/kjhan/EAGLE/RefL0100N1504/derived/hong2021_v1/eagle_ref100_z0_test.h5",
+    "unit_audit": "/gpfs/kjhan/EAGLE/RefL0100N1504/derived/hong2021_v1/unit_audit.json",
+    "density_cache": "/gpfs/kjhan/EAGLE/RefL0100N1504/derived/hong2021_v1/dm_counts_exact_regular_216.npy"
+  },
+  "frozen_selection": {
+    "target": "Top 35,632 galaxies by 30-pkpc stellar mass, matching the TNG100 M_B<-15 number density",
+    "target_number_density_h3_mpc3": 0.1144794074074074,
+    "center": "SubGroupNumber=0 and 4e10<Mstar_30pkpc/Msun<1e11",
+    "paper_reported_centers": 478,
+    "current_catalog_policy": "Report the current public-catalog count; do not tune the mass limits after seeing EAGLE truth"
+  },
+  "cube": {
+    "box_mpc_h": 20.0,
+    "grid": 64,
+    "voxel_mpc_h": 0.3125,
+    "input_channels": ["galaxy_count", "mean_radial_peculiar_velocity_km_s"],
+    "galactic_mask_abs_b_deg": 10.0,
+    "target": "log10(rho_dm/rho_dm_cosmic_mean)/4.5",
+    "geometry_policy": "Exact 216^3 regular grid on [0,67.5)^3; use only coordinate-selected cubes that do not touch the 0.27-Mpc/h periodic remainder"
+  },
+  "independence_policy": {
+    "training_on_eagle": false,
+    "normalization_refit_on_eagle": false,
+    "threshold_tuning_on_eagle_truth": false,
+    "model": "Frozen TNG100 V6 EDM",
+    "grid_hop": "Run only if the frozen EAGLE field gate passes"
+  },
+  "preparation_result": {
+    "archive_bytes": 504327096320,
+    "snapshot_files": 256,
+    "dark_matter_particles_read": 3402072064,
+    "dark_matter_particles_in_regular_grid": 3365825385,
+    "elapsed_seconds": 369.7360773086548,
+    "target_stellar_mass_threshold_msun": 125592136.0,
+    "current_public_catalog_center_candidates": 498,
+    "geometry_safe_test_cubes": 172,
+    "prepared_hdf5_bytes": 108937079
+  },
+  "model": {
+    "deterministic_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v4_split00_l0_groupnorm_std_cosine/minimum_validation_loss.pt",
+    "edm_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_v6_edm_laplacian_sigma2/minimum_validation.pt",
+    "normalization": "Frozen TNG training normalization; no EAGLE fit or recalibration",
+    "representative_objects": 16,
+    "ensemble_per_object": 16,
+    "sampling_steps": 40,
+    "seed": 2777
+  },
+  "outputs": {
+    "representative_indices": "/gpfs/kjhan/EAGLE/RefL0100N1504/derived/hong2021_v1/representative16_indices.json",
+    "ensemble": "/gpfs/kjhan/EAGLE/RefL0100N1504/evaluation/hong2021_v6_edm/edm_representative16_ensemble16.h5",
+    "metrics": "/gpfs/kjhan/EAGLE/RefL0100N1504/evaluation/hong2021_v6_edm/ensemble_evaluation/metrics.json",
+    "decision": "/gpfs/kjhan/EAGLE/RefL0100N1504/evaluation/hong2021_v6_edm/independent_gate_decision.json",
+    "failed_metric_posthoc_bootstrap": "/gpfs/kjhan/EAGLE/RefL0100N1504/evaluation/hong2021_v6_edm/rho_gt_100_posthoc_bootstrap.json"
+  },
+  "domain_shift_diagnostics": {
+    "tng_validation_occupied_cells_per_cube_mean": 777.6021505376344,
+    "eagle_occupied_cells_per_cube_mean": 744.9651162790698,
+    "tng_validation_occupied_count_mean_std": [1.492968458315472, 2.003038727738797],
+    "eagle_occupied_count_mean_std": [1.3439914464544929, 1.110924138764186],
+    "tng_validation_velocity_mean_std_kms": [-177.85317092191403, 430.0346384685875],
+    "eagle_velocity_mean_std_kms": [-149.756161072614, 352.69164958220216],
+    "tng_validation_target_mean_std": [-0.16751319070226547, 0.14632393105258795],
+    "eagle_target_mean_std": [-0.17023254221170153, 0.1385970027750546],
+    "interpretation": "EAGLE is substantially closer to TNG than the provisional SIMBA gate, but its occupied-cell multiplicity, velocity scatter, and target scatter are still narrower."
+  },
+  "result": {
+    "field_gate_pass": false,
+    "grid_hop_run": false,
+    "checks_passed": 7,
+    "checks_total": 8,
+    "failed_check": "all_selected_peak_void_statistics_improve_deterministic",
+    "total_log_density_power_ratio": {
+      "3-6_h_mpc": 0.927070395904066,
+      "6-10.0531_h_mpc": 1.0515074775956315
+    },
+    "generated_over_truth_residual_rms": 1.0042633497167837,
+    "coverage_68": 0.6122298240661621,
+    "coverage_95": 0.8572728633880615,
+    "rank_histogram_tv": 0.007330740199369544,
+    "density_pdf_tv_generated": 0.13881222903728485,
+    "density_pdf_tv_deterministic": 0.44287800788879395,
+    "rho_gt_100_volume_fraction": {
+      "truth": 0.0012202262878417969,
+      "deterministic": 0.0014157295227050781,
+      "generated": 0.001453682780265808
+    },
+    "rho_gt_100_posthoc_bootstrap": {
+      "status": "diagnostic_only_does_not_override_frozen_gate",
+      "resamples": 100000,
+      "probability_generated_absolute_error_smaller_than_deterministic": 0.26498
+    },
+    "interpretation": "The frozen EAGLE gate passes all spectral and calibration checks and improves every selected environment statistic except one marginal rho>100 volume-fraction comparison. The conjunctive preregistered gate therefore remains failed."
+  },
+  "decision": {
+    "advance_to_grid_hop": false,
+    "advance_to_forward_dynamics": false,
+    "policy": "Do not relax or retune the EAGLE threshold after inspecting truth"
+  }
+}

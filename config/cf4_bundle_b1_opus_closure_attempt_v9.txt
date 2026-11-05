@@ -1,0 +1,12 @@
+VERDICT: NO-GO
+
+- Hashes verify: `src/cf4_b1_integrated_joint_calibration_v3.py` = b5f2808c…0811 (22960 B) and the v3 result = 3196fb1f…40a1 (9099 B) match the record byte-for-byte. Record's `diagnosis_implementation.result` hash still pins diagnosis **v1** while `diagnosis_current` points at v2, and v2's `schema` string is still `…-diagnosis-result-v1` — a provenance labelling inconsistency, not a data mismatch.
+- Strict gate fails by its own frozen criterion: 11/64 passes, `strict_low_k_gate_pass: false`. Per-arm A=2, B=3, C=2, D=4. That alone is decisive.
+- Failure is entirely coverage: histogram coverage68=49, coverage95=49; response, correlation, residual power, heldout gain, convergence, and joint-factor consistency have zero failures in every arm.
+- Width repair is a null result: `strict_gate_pass_count_before` = `after` = 11. The A/C 0.97 scale moved median coverage68 by ~0.014 against a ~0.11 overshoot; D stays under-covered (0.544 vs 0.683). The repair does not touch the mechanism it names.
+- Optimizer status clean: `fit_success_count` 64, `fit_abnormal_termination_count` 0, and the retry path in `run_mock` correctly refuses to count a merely finite objective as convergence.
+- Grouped Fisher is exact, not approximated: `_single_group_mark_fisher` implements the Sherman–Morrison rank-1 term for C=σ²I+τ²11ᵀ, and canonical-vs-vectorised joint agreement is ≤7.6e-10 across all members.
+- Seed firewall holds: development [2026083000,2026083064) with counts/marks/posterior streams at 2026400/500/600000+index, quarantine [2026083064,2026083128) plus its aliased auxiliary blocks, sealed validation [2026083320,2026083576), `validation_opened: false` in all four artefacts. No external data, GPFS, or Slurm in the execution record.
+- Likely root cause the repair missed: `coverage68/95` in `_mode_metrics` is a per-voxel fraction over a single member's 16 draws, not a frequentist coverage over seeds, so it conflates field-point spread with posterior calibration — arm-scalar rescaling cannot fix an estimator of the wrong quantity. This is a development-only technical calibration; no observational posterior and no 0.3 cMpc/h claim is made or supported.
+
+NEXT: Redefine coverage as an across-seed, per-mode credible-interval frequency on the eight latent coefficients before attempting any further width model, then rerun the same 64 development seeds with the mean model and gate frozen.

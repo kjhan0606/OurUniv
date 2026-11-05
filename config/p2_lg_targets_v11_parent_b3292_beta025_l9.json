@@ -1,0 +1,65 @@
+{
+  "schema": "cf4-p2-lg-targets-v11-parent-b3292-beta025-l9",
+  "frozen_before_high_resolution_forwarding": true,
+  "frozen_date": "2026-09-22",
+  "purpose": "First observer-centred Local-Group high-k rejection-sampling screen on the recovered L9-stable parent.",
+  "parent_seeds": [3292],
+  "paired_small_scale_seeds": [
+    2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+    2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+    2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+    2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
+  ],
+  "input": {
+    "p1_result": "config/cf4_parent_b3292_beta025_p1_bridge_v1.json",
+    "parent_candidate_sha256": "e7f0cc920985620dab54cc589d35f58c38ec17063d605cf946579873b4a9711d"
+  },
+  "screen": {
+    "mesh_size": 512,
+    "canonical_mesh_size": 512,
+    "canonical_projection": "direct L9 realization; accepted parent GRAFIC source uses the identical N512 field",
+    "box_size_mpc_h": 384.0,
+    "particle_spacing_mpc_h": 0.75,
+    "central_half_width_mpc_h": 30.0,
+    "halo_finder": "FoF b=0.2, n_min=20 for screening only",
+    "mass_definition": "FoF mass, Msun/h",
+    "pair_member_mass_range_msun_h": [500000000000.0, 4000000000000.0],
+    "pair_mass_ratio_max": 4.0,
+    "pair_separation_range_mpc_h": [0.3, 1.2],
+    "pair_midpoint_max_offset_mpc_h": 5.0,
+    "isolation_mass_threshold_msun_h": 5000000000000.0,
+    "isolation_radius_mpc_h": 3.0,
+    "kinematics_status": "record and rank only; definitive dynamics require RAMSES zoom",
+    "m33_status": "record a possible third halo but do not reject if FoF merges it with M31"
+  },
+  "m33_subpeak_gate": {
+    "status": "required only at definitive zoom resolution",
+    "finder": "unmerged HOP density peak or RAMSES PHEW cross-check; standard FoF catalog alone is insufficient",
+    "mass_range_msun_h": [30000000000.0, 500000000000.0],
+    "m31_separation_range_mpc_h": [0.08, 0.35],
+    "maximum_mass_fraction_of_m31": 0.3
+  },
+  "ranking": {
+    "target_member_mass_msun_h": 1200000000000.0,
+    "target_separation_mpc_h": 0.574,
+    "target_total_radial_velocity_km_s": -109.0,
+    "target_tangential_velocity_km_s": 57.0,
+    "weights": {
+      "log_mass_each": 1.0,
+      "separation_per_0p30_mpc_h": 0.7,
+      "midpoint_per_2_mpc_h": 0.3,
+      "radial_velocity_per_80_km_s": 0.25,
+      "tangential_velocity_per_80_km_s": 0.1,
+      "m33_candidate_bonus": -0.25
+    }
+  },
+  "selection_policy": {
+    "information_label": "LG observations condition otherwise unconstrained high-k modes",
+    "no_threshold_retuning_after_forward": true,
+    "no_automatic_production_promotion": true,
+    "selected_member_requires_parent_environment_recheck": true
+  },
+  "storage": {
+    "output_directory": "/gpfs/kjhan/CF4/recon/linear_cr/parent_b3292_beta025_lg_p2_l9_v1"
+  }
+}

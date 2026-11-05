@@ -1,0 +1,55 @@
+{
+  "schema": "cf4-v2-local-likelihood-validation-result-v1",
+  "status": "complete",
+  "verdict": "DO_NOT_PROMOTE_TO_N192",
+  "config": "config/v2_local_likelihood_validation_v1.json",
+  "manifest": "recon/linear_cr/manifest_v2local_validation_sig100_n64.json",
+  "split_seed": 20260809,
+  "sample_seeds": [71, 72, 73, 74, 75, 76, 77, 78],
+  "rows": {
+    "WF15": 19226,
+    "local_direct": 252,
+    "heldout_total": 3896,
+    "heldout_WF15": 3845,
+    "heldout_local_direct": 51
+  },
+  "numerical": {
+    "adjoint_relative_error": 1.5785791025330537e-06,
+    "mean_cg_relative_residual": 3.2640411518514156e-05,
+    "maximum_cg_relative_residual": 3.755871148314327e-05,
+    "pass": true
+  },
+  "global_heldout": {
+    "z_mean": 0.011426568686337225,
+    "z_std": 1.0267452786820528,
+    "coverage_1sigma": 0.7084188911704312,
+    "coverage_2sigma": 0.9453285420944558,
+    "delta_log_score": 592.9958821481414,
+    "pass": true
+  },
+  "local_direct_heldout": {
+    "z_mean": -0.1584145236353384,
+    "z_std": 1.3028896738142095,
+    "coverage_1sigma": 0.7843137254901961,
+    "coverage_2sigma": 0.9215686274509803,
+    "delta_log_score": 212.27057649854697,
+    "pass": false,
+    "failed_gates": ["z_std"]
+  },
+  "observer_linear_density_R5_mpc_h": {
+    "posterior_mean": 0.40302079916000366,
+    "sample_values": [
+      0.42375507950782776,
+      0.4227532148361206,
+      0.48749154806137085,
+      0.45302829146385193,
+      0.3708401322364807,
+      0.22949612140655518,
+      0.3052500784397125,
+      0.48408639430999756
+    ],
+    "sample_mean": 0.39708760753273964,
+    "sample_std": 0.09059396611381432
+  },
+  "next_action": "Implement and mock-validate BGc or a hierarchical distance-modulus likelihood; do not retune on split 20260809."
+}

@@ -1,0 +1,262 @@
+{
+  "schema": "hong2021-v19-predeclared-band-anchored-noise-program-v1",
+  "status": "frozen_before_v19_e7_implementation_or_execution",
+  "purpose": "Test the independently audited trained-score sigma-coverage mechanism with one from-scratch retrain that changes only the training-noise lognormal, while retaining the V18 prior-matched initializer and the sealed independent-data firewall.",
+  "parent_evidence": {
+    "v18_registry": "config/hong2021_v18_development_program.json",
+    "v18_registry_sha256": "e8d8ed88c9a74bf124644edd8d112767e4581c347841d32e58077693d2f3f481",
+    "e6_decision": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v18_e6_prior_matched_init/development_decision.json",
+    "e6_decision_sha256": "add393d2c93af92f30d959cb1149049151d253e84f214e9d7c8ee5dede403d92",
+    "e6_decision_digest_sha256": "9e0eaafbadc4b748be182f51bd772abe18ba345426f81a2537d8b6f482a12c8c",
+    "e6_development_pass": false,
+    "e6_selected_checkpoint": null,
+    "e6_next": "stop_unopened_and_obtain_new_independent_design_audit",
+    "v18_code_commit": "cf35025f0341ef2e8b7794916440d756b81006a0",
+    "v15_registry": "config/hong2021_v15_development_program.json",
+    "v15_registry_sha256": "4b16420389a906879428b88b25b87cacbdc98a5dd5bab16181b864d324001334",
+    "e3_run": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/run.json",
+    "e3_training_code_commit": "2108004e17eb4e59e147a30d96b6308cb7fdb407",
+    "e3_checkpoint_schema": "hong2021-v15-e3-relative-noise-tail-quarter-multiscale-edm-v1",
+    "e3_sigma_data": 2.006363569349486,
+    "e3_edm_p_mean": 0.18549829030348333,
+    "e3_edm_p_std": 1.2,
+    "e3_checkpoints": [
+      {
+        "step": 5000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/validation_checkpoints/step_005000.pt",
+        "sha256": "d5f83f21ed8f55c7a648eb297204a4eb412cb67c957a8ec5f375b8e8de16eb97"
+      },
+      {
+        "step": 10000,
+        "path": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_swift_v15_e3_relative_noise_tail_quarter_edm/validation_checkpoints/step_010000.pt",
+        "sha256": "09e8771e84390b65f1a916329dfca1623a1426bd49aefebc2af20bd7bff11324"
+      }
+    ],
+    "astrid_used": false,
+    "historical_eagle_used": false
+  },
+  "independent_audit": {
+    "reviewer": "Claude Fable",
+    "date": "2026-08-06",
+    "record": "/home/kjhan/.claude/plans/you-are-the-independent-temporal-meadow.md",
+    "record_sha256": "359ccbdbd9144a6a8190e4ab40e79de899df81dca2606624d6b3b866b527e538",
+    "verdict": "DESIGN READY",
+    "conclusion": "Run exactly one from-scratch E3-protocol retrain changing only the training-noise distribution to the zero-free-parameter band-anchored lognormal, then sample with the unchanged V18 prior-matched initializer.",
+    "astrid_must_remain_sealed": true
+  },
+  "documented_program_facts": {
+    "score_sigma_coverage": {
+      "e3_expected_fraction_sigma_gt_20": 0.0096,
+      "e3_expected_fraction_sigma_gt_40": 0.00175,
+      "e3_expected_draws_sigma_gt_20_of_60000": 576,
+      "band0_integrated_score_gap_power_factor": {
+        "TNG100": 0.7152,
+        "SIMBA": 0.8032,
+        "Swift": 0.78
+      },
+      "interpretation": "All three development domains over-shrink band 0 where E3 training exposure collapses; this is the score-side mechanism tested by E7."
+    },
+    "band0_per_mode_power": {
+      "training_cache": {
+        "TNG100": 1552.1388423446956,
+        "SIMBA": 1885.3677617081264,
+        "Swift": 2070.9189415364726
+      },
+      "development_16": {
+        "TNG100": 2739.488701875997,
+        "SIMBA": 2016.9908934232799,
+        "Swift": 2022.2573797709726
+      },
+      "TNG100_full_validation_population": 2469.1,
+      "TNG100_training_per_object_p10_p90_max": [1177.0, 1968.0, 3166.0],
+      "TNG100_development_16_range": [1653.3, 4170.4],
+      "interpretation": "TNG validation is band-0-hot relative to training, so the V18 absolute P1b threshold of 0.75 was structurally unreachable under a train-measured firewall-compliant initializer and is not reused as the V19 mechanism criterion."
+    },
+    "e6_two_point_insensitivity": {
+      "TNG100_band0_ratio_e3_10000": 0.27199294713121563,
+      "TNG100_band0_ratio_e6_10000": 0.46917812245195095,
+      "TNG100_two_point_0_1_ks_e3_10000": 0.2565104166666667,
+      "TNG100_two_point_0_1_ks_e6_10000": 0.2578125,
+      "interpretation": "A further TNG 0-1 Mpc/h two-point pass is not promised by band-0 score repair."
+    }
+  },
+  "firewall": {
+    "development_domains": ["TNG100", "SIMBA", "Swift"],
+    "historical_eagle_confirmation_forbidden": true,
+    "astrid_forbidden_until_three_domain_pass_and_committed_seal": true,
+    "astrid_one_shot_attempts_remaining": 1,
+    "training_noise_distribution_search": false,
+    "posthoc_Ak": false,
+    "simulation_label_conditioning": false,
+    "target_derived_inference_features_or_scales": false,
+    "field_clipping": false,
+    "density_floor": false,
+    "pseudocount": false,
+    "loss_coefficient_or_band_weight_search": false,
+    "sigma_max_or_initialization_scale_search": false,
+    "per_domain_initialization_variance": false,
+    "sampling_step_member_seed_or_subset_search": false,
+    "threshold_changes_after_results": false,
+    "interpolation_toward_e3_noise_distribution": false,
+    "near_miss_rescue": false
+  },
+  "e7_band_anchored_noise_retrain": {
+    "training_from_scratch": true,
+    "continuation_checkpoint": null,
+    "single_change_from_v15_e3": "replace ln(sigma)~Normal(ln(0.6*sigma_data),1.2^2) by the single lognormal that matches the first two ln(sigma) moments of the equal-weight four-band mixture ln(sigma)|b~Normal(ln(0.6*sqrt(v_b)),1.2^2); every other training and sampling degree of freedom is inherited unchanged",
+    "checkpoint_schema": "hong2021-v19-e7-band-anchored-noise-multiscale-edm-v1",
+    "steps": 10000,
+    "candidate_steps": [5000, 10000],
+    "training_noise": {
+      "schema": "hong2021-v19-band-anchored-lognormal-v1",
+      "source_balanced_per_band_mode_variance": [1836.1418485297647, 73.04195496322953, 10.368459581198783, 1.1250001849821358],
+      "band_weights": [0.25, 0.25, 0.25, 0.25],
+      "inherited_median_rms_fraction": 0.6,
+      "inherited_component_log_standard_deviation": 1.2,
+      "component_log_medians": [3.2468852901059457, 1.6346913770243199, 0.6585586089929222, -0.45193402372352304],
+      "derivation": "p_mean=sum_b(log(0.6*sqrt(v_b)))/4; p_std=sqrt(1.2^2+sum_b((log(0.6*sqrt(v_b))-p_mean)^2)/4)",
+      "p_mean": 1.2720503130999161,
+      "p_std": 1.8124552265001808,
+      "median_sigma": 3.5681609146559907,
+      "expected_fraction_sigma_gt_20": 0.17079700086583992,
+      "expected_fraction_sigma_gt_40": 0.09119111687035825,
+      "expected_fraction_sigma_20_to_40": 0.07960588399548174,
+      "expected_fraction_sigma_0_5_to_2": 0.23558883722337887,
+      "additional_rng_draws_relative_to_e3": 0,
+      "parameter_selection_uses_e3_or_e6_outcomes": false
+    },
+    "training_protocol": {
+      "batch": 6,
+      "source_balance_per_batch": {"TNG100": 2, "SIMBA": 2, "Swift": 2},
+      "validation_batch": 6,
+      "workers": 1,
+      "base_channels": 32,
+      "learning_rate": 0.0002,
+      "minimum_learning_rate": 0.00002,
+      "schedule": "CosineAnnealingLR over exactly 10000 optimizer steps",
+      "weight_decay": 0.0001,
+      "ema_decay": 0.999,
+      "gradient_clip": 1.0,
+      "tail_exponent": 0.25,
+      "tail_maximum": 10.0,
+      "loss": "0.5*unweighted_EDM_MSE+0.5*tail_weighted_EDM_MSE",
+      "validation_every": 500,
+      "training_seed": 144021,
+      "validation_seeds": {"TNG100": 99173, "SIMBA": 99174, "Swift": 99175},
+      "augmentation": "48 signed cube isometries",
+      "decoder_upsampling": "nearest",
+      "decoder_align_corners": null,
+      "selection": "gate-only at the fixed candidate steps; validation losses are report-only because their measure changes with the training-noise distribution"
+    },
+    "data": {
+      "TNG100": {
+        "train_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_train.h5",
+        "train_data_sha256": "74b3319fe353c85e420dfbf9ae26bda141bc3577aa4669f94d90c01c5f50c80d",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_train_standardized.h5",
+        "train_cache_sha256": "60655d61008cf1ff619ab8a390a02aba3f2e894ece454f6c40b9ef31f1dcfb5b",
+        "validation_data": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/cic_data/tng100_validation.h5",
+        "validation_data_sha256": "4ae31bbf18530cb9e8dd58ee0ec4e83614801812e1317c0d60b6506dcdc3ad65",
+        "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/tng_validation_standardized.h5",
+        "validation_cache_sha256": "9634e75de13267fc374d209096202fdf419eb9819f1f1026e11e72f21836d275"
+      },
+      "SIMBA": {
+        "train_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv16_23_train_all_observers.h5",
+        "train_data_sha256": "07313ffaef99137008263676276ebb730f27dadb473a936aa57ad193422022b7",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_train_standardized.h5",
+        "train_cache_sha256": "a05c43cb6d9c7d935543920b985b74f90b631fb69a661dee8dac61268f88bff2",
+        "validation_data": "/gpfs/kjhan/CAMELS/SIMBA/L25n256/derived/hong2021_v14/simba_cv24_26_validation_all_observers.h5",
+        "validation_data_sha256": "163cf6ea4c028415555276adc92b15e78bab1ad66ff5fa0cad7afd7195310910",
+        "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/simba_validation_standardized.h5",
+        "validation_cache_sha256": "015e00aabf7236f955bc5910b3350d6b4ae369421f37e2314f640c36960640a7"
+      },
+      "Swift": {
+        "train_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv0_19_train_all_observers.h5",
+        "train_data_sha256": "044e376d7e728380c0718d1066860bac139a0cf010c71a7c6cc413c723d16ffd",
+        "train_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_train_standardized.h5",
+        "train_cache_sha256": "ac57b8c49bd05c68319139d53aab11c71eddd8ea10430d9fe0fc6a4f3ccf528a",
+        "validation_data": "/gpfs/kjhan/CAMELS/Swift-EAGLE/L25n256/derived/hong2021_v14/swift_eagle_cv20_26_validation_all_observers.h5",
+        "validation_data_sha256": "80e15476a2adda62f9e77692bd4992fe4e3b318f5c2aa178257f5cebc9bd26d4",
+        "validation_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v14/model/swift_eagle_validation_standardized.h5",
+        "validation_cache_sha256": "0158f2245b2a22e7542c0a061a00056125fe03173dfdec9197534c37b771d647"
+      }
+    },
+    "development_objects": {
+      "TNG100": [49, 8, 63, 0, 15, 4, 32, 21, 12, 74, 79, 53, 76, 29, 57, 62],
+      "SIMBA": {"path": "config/hong2021_simba_dev_representative16_v1.json", "sha256": "8e60a07328f75058a682ffd42a4667655f62935baaeb3985b10bcdd727a92663"},
+      "Swift": {"path": "config/hong2021_swift_eagle_dev_representative16_v1.json", "sha256": "d0475680dc846332b928833961a34802fb4560dd100f8714bc95241db13582b7"}
+    },
+    "initialization": {
+      "schema": "hong2021-v18-prior-matched-spectral-initialization-v1",
+      "source_balanced_per_band_mode_variance": [1836.1418485297647, 73.04195496322953, 10.368459581198783, 1.1250001849821358],
+      "measurement_report": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v18_e6_prior_matched_init/initialization_variance_measurement.json",
+      "measurement_report_sha256": "e1ca69de9d71c3af0b590c3ce14b6901655ec66cdd785badd75b57dae4d84dd7",
+      "expected_mode_counts_by_grid": {"64": [146, 3596, 25296, 233105], "80": [250, 6872, 49928, 454949]},
+      "additional_rng_draws": 0,
+      "maximum_imaginary_over_real_rms": 1e-12,
+      "inference_mapping": "identical V18 fixed-voxel-size per-mode variance mapping on the sealed 80^3 grid; no inference-data remeasurement"
+    },
+    "sampler": {
+      "ensemble_members": 16,
+      "steps": 40,
+      "sigma_min": 0.002,
+      "sigma_max": 40.0,
+      "rho": 7.0,
+      "integrator": "deterministic Heun probability-flow ODE"
+    },
+    "sampling_seeds": {"TNG100": 35777, "SIMBA": 36777, "Swift": 37777},
+    "seed_lineage": "unchanged V15-E3/V18-E6 sampling seeds; E7 is draw-paired at the initial random tensor to both stored baselines",
+    "unchanged_evaluator": {"path": "src/hong2021_residual_evaluate.py", "preimplementation_sha256": "a0ae49f945b206a0ec8979d2b7eb6a0700d9efe3e0aab4e1233f0a41db2ecc59"},
+    "unchanged_gate": {"path": "src/hong2021_v6_gate.py", "preimplementation_sha256": "f67b9d4ec4456efb07f01627fc2c010ce94edd0850b27d643e7dce1ff9e3f512"},
+    "mechanism_diagnostics": {
+      "Q1": {
+        "protocol": "frozen E3-audit CPU score spectroscopy on the 16 declared objects per domain, one fixed torch CPU noise draw with seed 777000 reused across sigma, float64 ortho FFT, band-0 regression g=sum(Re(D_k*conj(x_k)))/sum(abs(x_k)^2)",
+        "karras_ladder_indices": [0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 14, 17, 21, 26, 31],
+        "required_maximum_g_train_minus_g": {"index_0_sigma_40": 0.045, "index_4_sigma_22_7": 0.03, "index_9_sigma_10_4": 0.03},
+        "pass_rule": "all three thresholds pass independently in every domain at the 10000-step checkpoint"
+      },
+      "Q2": {
+        "ceiling_formula": "((sigma_first^2+v_balanced_band0)*v_train_band0/(v_train_band0+sigma_first^2))/v_dev16_band0",
+        "predeclared_ceiling": {"TNG100": 0.6176277325827156, "SIMBA": 0.9215408999701256, "Swift": 0.9585680904401971},
+        "required_fraction_of_ceiling": 0.85,
+        "required_band0_ratio": {"TNG100": 0.5249835726953083, "SIMBA": 0.7833097649746067, "Swift": 0.8147828768741675},
+        "pass_rule": "generated residual power over truth residual power in 0.3-1 h/Mpc reaches the required ratio in every domain at the 10000-step checkpoint"
+      },
+      "gradient": {
+        "mean_norm_before_fixed_clip": true,
+        "fixed_clip_activation_fraction": true,
+        "sustained_fraction_above_0_5": "report-only anomaly for the next audit; never a mid-run intervention"
+      }
+    },
+    "gate_selection": "smallest candidate step passing all unchanged V6 field checks independently in all three development domains; Q1 and Q2 are mechanism classifications and do not replace the unchanged gate"
+  },
+  "hard_preflight": [
+    "derive p_mean and p_std from the frozen v_b to relative tolerance 1e-12",
+    "one million fixed-seed draws pass a one-sample analytic lognormal KS threshold below 0.002",
+    "with E3 p_mean and p_std, the V19 loss and one training step are bitwise identical to the E3 path on a fixed-seed CPU stub",
+    "training-noise generator state is identical to E3 after the same number of stub steps",
+    "all data, cache, parent decision, registry, evaluator, gate, measurement, and subset hashes validate",
+    "V18 initializer tests and 64^3/80^3 mode counts remain unchanged",
+    "Astrid root contains no files and the worktree is clean at launch",
+    "existing V19 training, evaluation, sequence, or seal outputs cause refusal rather than overwrite"
+  ],
+  "fixed_decision_order": [
+    "implement and independently audit E7 exactly as declared before any GPU execution",
+    "train one model from scratch and evaluate candidates in ascending order 5000 then 10000 using the unchanged V6 field gate on all three development domains",
+    "if all three domains pass the unchanged V6 gate, stop development and create a one-file committed V19 Astrid seal before any independent-data access",
+    "if TNG100 and SIMBA pass and the only Swift failure is peak/void, stop unopened and predeclare the reserved all-band target-free conditional-scale experiment with its CPU predictability pre-gate",
+    "classify the fixed 10000-step row by Q1 then Q2; candidate checkpoint selection may not use Q1, Q2, validation loss, or report-only diagnostics",
+    "if Q1 and Q2 pass and TNG fails only 0-1 Mpc/h two-point, the sigma-coverage hypothesis is confirmed and exhausted; stop unopened and constrain the next audit to a sample-size-symmetric two-point statistic across E3/E6/E7 plus a nonlinear stage-1 band-0 predictability pre-gate",
+    "if Q1 fails anywhere, the exposure hypothesis is falsified; stop unopened and constrain the next audit to architecture or representation, retaining E3 checkpoints plus prior-matched initialization as baseline",
+    "if Q1 passes but any previously passing small-scale check regresses, stop unopened and discard the V19 noise distribution without trying an interpolation",
+    "never adjust p_mean, p_std, v_b, sigma_max, ladder, members, seeds, subsets, thresholds, loss coefficients, or band weights after E7 results"
+  ],
+  "astrid_seal": {
+    "required_before_access": true,
+    "one_file_commit": true,
+    "one_shot_attempts_remaining": 1,
+    "must_bind": ["V19 registry", "E7 decision", "selected V19 checkpoint", "V19 training and sampling code", "unchanged evaluator", "unchanged gate", "V18 initialization measurement", "preprocessing", "Astrid one-shot command"],
+    "require_unopened": true,
+    "inference_grid": 80,
+    "voxel_mpc_h": 0.3125
+  }
+}

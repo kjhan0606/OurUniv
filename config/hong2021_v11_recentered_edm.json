@@ -1,0 +1,39 @@
+{
+  "schema": "hong2021-v11-recentered-fullband-edm-plan-v1",
+  "status": "frozen_before_smoke_and_full_training",
+  "reason": "V10 changed the conditional mean but reused a V8 Laplacian residual distribution centered on the old mean; V11 retrains the stochastic component around the frozen corrected mean and retains stochastic power at every non-DC mode",
+  "correction_checkpoint": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v10_twocomponent/validation_checkpoints/step_005000.pt",
+  "correction_selection": "step 5000 was the predeclared terminal V10 correction and has the lowest TNG and SIMBA correction validation losses, both monotonically decreasing through step 5000",
+  "stochastic_initialization": "/gpfs/kjhan/IllustrisTNG/TNG100-1/training/tng100_simba_v8_observable_context/validation_checkpoints/step_010000.pt",
+  "residual_target": "truth - (frozen deterministic mean + frozen V10 correction), followed by exact per-cube DC projection",
+  "residual_frequency_support": "all non-DC modes; no Laplacian or post-sampling spectral filter",
+  "residual_scale": "sqrt(0.5*TNG_train_RMS^2 + 0.5*SIMBA_development_train_RMS^2)",
+  "model": {
+    "architecture": "V8 observable-context compact 3-D EDM U-Net",
+    "initialization": "all V8 EMA weights, with context standardization refit on corrected-mean TNG and SIMBA development training cubes",
+    "simulation_label_conditioning": false,
+    "target_or_truth_context": false,
+    "likelihood": "uniform EDM voxel likelihood",
+    "augmentation": "uniform random 48 cube isometries",
+    "steps": 10000,
+    "batch": 6,
+    "source_balance_per_batch": {"TNG": 3, "SIMBA_development": 3},
+    "backbone_learning_rate": 0.00002,
+    "context_learning_rate": 0.0002,
+    "minimum_learning_rate": 0.000002,
+    "ema_decay": 0.999
+  },
+  "development_candidates": [2000, 5000, 10000],
+  "development_rule": "select the smallest predeclared step passing all eight unchanged field checks on both TNG and SIMBA development ensembles with 16 objects, 16 members, and 40 EDM steps",
+  "postdevelopment_order": [
+    "historical SIMBA CV0-15 stress field gate",
+    "sealed EAGLE confirmation32 field gate opened once",
+    "unchanged grid-HOP gate on TNG development, historical SIMBA, and EAGLE confirmation32"
+  ],
+  "independence": {
+    "historical_simba_used_for_fitting_or_selection": false,
+    "sealed_eagle_used_for_fitting_or_selection": false,
+    "independent_mean_correction": "computed on the fly from observables and old deterministic mean only; no target is read to construct the corrected mean",
+    "eagle_opening": "only after both development domains and historical SIMBA stress pass"
+  }
+}

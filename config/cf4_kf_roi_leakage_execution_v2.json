@@ -1,0 +1,128 @@
+{
+  "schema": "ouruniv-cf4-kf-roi-leakage-execution-v2",
+  "date": "2026-08-30",
+  "status": "user_approved_single_v2_preflight_only",
+  "authorization_basis": "current_user_approval_after_preserved_v1_numerical_failure",
+  "failed_predecessor": {
+    "execution_grant_path": "config/cf4_kf_roi_leakage_execution_v1.json",
+    "execution_grant_raw_sha256": "4511916c16b77e39985b7bfc22230d7773e02799cc8cccc08159d0f8f39586a9",
+    "Slurm_job_id": 327817,
+    "status": "FAILED_NUMERICAL_PRECHECK",
+    "elapsed_seconds": 34,
+    "failure": "analysis-bin mixing probability exceeds unity tolerance",
+    "canonical_output_or_COMPLETE_published": false,
+    "logs_must_remain_untouched": true
+  },
+  "scope": {
+    "design_path": "config/cf4_kf_bin_manifest_design_v1.json",
+    "design_raw_sha256": "76b71a482a1d92b146e335e231c5b4430f06df009566f22ce1efb739c5c96da9",
+    "implementation_path": "src/cf4_kf_roi_leakage.py",
+    "runner_path": "scripts/run_cf4_kf_roi_leakage_v2.sbatch",
+    "checker_path": "scripts/check_cf4_kf_roi_leakage_v2.py",
+    "execution_grant_path": "config/cf4_kf_roi_leakage_execution_v2.json",
+    "output_root": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v2",
+    "preflight_output": "/gpfs/kjhan/CF4/kf_design/roi_leakage_v2/preflight"
+  },
+  "authorization": {
+    "v2_implementation_authorized": true,
+    "Slurm_preflight_authorized": true,
+    "maximum_preflight_submissions": 1,
+    "Slurm_production_authorized": false,
+    "GPFS_read_authorized_only_for_declared_inputs_and_output_root": true,
+    "GPFS_write_authorized_only_under_output_root": true,
+    "network_access_authorized": false,
+    "retry_authorized": false,
+    "numeric_retuning_authorized": false,
+    "replacement_run_authorized": false,
+    "final_manifest_materialization_authorized": false,
+    "KF_EXPAND_authorized": false,
+    "all_D_mock_execution_authorized": false,
+    "production_science_inference_authorized": false,
+    "scientific_leakage_decision_authorized": false
+  },
+  "controller_contract": {
+    "controller": "syntax",
+    "allowed_actions": [
+      "submit",
+      "audit"
+    ],
+    "manual_controller_execution_allowed": false,
+    "manual_worker_execution_allowed": false,
+    "manual_syn101_execution_allowed": false,
+    "monitoring_loop_allowed": false,
+    "worker_cluster_name_required": "syntax",
+    "worker_must_not_be_login_host_syntax": true
+  },
+  "source_integrity": {
+    "source_must_be_committed_before_submission": true,
+    "source_must_be_pushed_before_submission": true,
+    "worker_HEAD_must_equal_expected_commit": true,
+    "worker_HEAD_must_equal_upstream_branch_commit": true,
+    "expected_commit_supplied_at_submission": true,
+    "expected_upstream_commit_supplied_at_submission": true,
+    "execution_grant_raw_SHA256_must_match_runner_and_result": true,
+    "dirty_worktree_allowed": false,
+    "cleanliness_exclusion_only": "scripts/tripwire/**"
+  },
+  "Slurm": {
+    "partition": "a10",
+    "CPU_only": true,
+    "GPU_count": 0,
+    "cpus_per_task": 16,
+    "thread_environment": 16,
+    "memory_MiB": 4096,
+    "time_limit": "02:00:00",
+    "export_policy": "NONE_except_explicit_submission_variables"
+  },
+  "numerical_contract": {
+    "radial_transform": "deterministic analytic raised-cosine sphere transform with stable q_to_0 and q_near_4pi_over_R evaluation",
+    "angular_change_of_variable": "dmu=q_dq/(k*kprime), q from abs(k-kprime) through k+kprime",
+    "q_panel_frequency_scale": "2R for a sphere; 2R plus maximum pair distance for a disjoint union, resolving product frequencies in A(q)^2 S(q)",
+    "normalization": "M columns use (2pi)^3 int_W2_dV Parseval denominator and are never clipped or renormalized",
+    "mode_count_convolution_rounding_abs_tolerance": 1e-05,
+    "convergence_abs_tolerance": 0.0005,
+    "coarse": {
+      "moment_order": 96,
+      "shell_order": 6,
+      "q_period_samples": 16,
+      "q_panel_order": 4,
+      "parseval_tail_x": [
+        384.0,
+        768.0
+      ]
+    },
+    "fine": {
+      "moment_order": 160,
+      "shell_order": 10,
+      "q_period_samples": 32,
+      "q_panel_order": 8,
+      "parseval_tail_x": [
+        512.0,
+        1024.0
+      ]
+    },
+    "all_ROI_bin_order_diagnostics_required_before_PASS_or_FAIL": true,
+    "signed_normalization_residual_required": true,
+    "independent_real_and_q_space_Parseval_check_required": true,
+    "classification_must_match_between_coarse_and_fine": true,
+    "post_result_tuning_allowed": false
+  },
+  "publication_contract": {
+    "output_directory_must_not_exist": true,
+    "sibling_staging_required": true,
+    "plain_directory_rename_publication": true,
+    "renameat2_required": false,
+    "refuse_overwrite": true,
+    "publish_only_if_status_PRECHECK_PASS": true,
+    "on_PRECHECK_FAIL_print_detailed_diagnostic_JSON_and_exit_nonzero": true,
+    "on_PRECHECK_FAIL_publish_nothing": true,
+    "COMPLETE_marker_published_last": true,
+    "PRECHECK_PASS_is_not_a_scientific_leakage_decision": true
+  },
+  "run_sequence": [
+    "commit and push the exact v2 implementation, grant, runner, checker, and tests",
+    "syntax controller submits and audits exactly one v2 preflight",
+    "publish only a fully numerically passing PRECHECK_PASS artifact",
+    "do not submit production or a retry/replacement, retune numerics, materialize a final manifest, start KF-EXPAND, or perform science inference without new approval"
+  ]
+}

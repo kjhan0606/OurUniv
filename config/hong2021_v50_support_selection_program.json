@@ -1,0 +1,58 @@
+{
+  "schema": "hong2021-v50-train-only-bounded-support-selection-program-v1",
+  "status": "frozen_before_train_scan_or_V50_model_implementation",
+  "purpose": "Select one immutable standardized-residual support for a proper bounded V50 conditional likelihood using all and only the frozen train voxels, before model implementation, fitting, validation diagnostics, development sampling, or gate access.",
+  "parent_evidence": {
+    "v49_record": "config/hong2021_v49_result_record.json",
+    "v49_record_sha256": "febb27de8d667a6e55c376ea510cb8ab485765e1622f7a196ff86c117dcd0d43",
+    "required_status": "complete_mixed_tail_evidence_sealed_and_one_likelihood_selected",
+    "required_family": "proper train-only bounded-support monotone conditional transform likelihood",
+    "required_independent_gate_locked": true
+  },
+  "frozen_inputs": {
+    "v48_program": "config/hong2021_v48_identifiable_gaussian_mixture_copula_program.json",
+    "v48_program_sha256": "aa667f40d9db4723547a11916f56e0c5b2f99be0546f526356dfb5c52eecc4f9",
+    "conditioning_cache": "/gpfs/kjhan/IllustrisTNG/TNG100-1/derived/hong2021_v45/conditioning_cache.h5",
+    "conditioning_cache_sha256": "f62a074927a1ee67eb8b2a43fd36f0db024bb56545c049af93578abca9412153"
+  },
+  "population": {
+    "split": "train only",
+    "domains": {
+      "TNG100": 432,
+      "SIMBA": 202,
+      "Swift": 409
+    },
+    "native_voxels_per_object": 262144,
+    "total_native_voxels": 273416192,
+    "standardized_residual": "z=(truth-backbone-target_mean)/target_std using the immutable V45 conditioning cache"
+  },
+  "support_rule": {
+    "global_minimum": "minimum z over every frozen train voxel in all three domains",
+    "global_maximum": "maximum z over every frozen train voxel in all three domains",
+    "range": "global_maximum-global_minimum",
+    "symmetric_margin": "maximum of 0.25 and 0.05 times range",
+    "lower_support": "global_minimum-symmetric_margin",
+    "upper_support": "global_maximum+symmetric_margin",
+    "boundary": "open interval; every train value must be strictly interior",
+    "rounding": "store IEEE-754 float64 results without manual rounding"
+  },
+  "hard_checks": [
+    "clean committed worktree and exact V49 record, V48 program, and cache hashes",
+    "all expected train object and voxel counts match",
+    "all standardized residuals and extrema are finite",
+    "every train voxel lies strictly inside the selected open support",
+    "no validation or development data are opened",
+    "no Astrid or historical EAGLE data are accessed"
+  ],
+  "output": "/gpfs/kjhan/IllustrisTNG/TNG100-1/evaluation/tng100_simba_swift_v50_support_selection/support.json",
+  "firewall": {
+    "model_implementation": false,
+    "fit_or_optimizer": false,
+    "validation_access": "forbidden",
+    "development_array_access": "forbidden",
+    "support_adjustment_after_scan": false,
+    "Astrid_access": "forbidden",
+    "historical_EAGLE_access": "forbidden",
+    "independent_gate_locked": true
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "ouruniv-cf4-kf-design-baseline-amendment-v1",
+  "date": "2026-09-05",
+  "status": "FROZEN_REPOSITORY_BASELINE_EXTERNAL_ARTIFACTS_NOT_READ",
+  "stage": "KF-DESIGN",
+  "purpose": "Bind the pre-existing BGc/WF and current-artifact baseline required by the active science route without reading GPFS artifacts or opening any inference.",
+  "authorization": {
+    "design_record_creation": true,
+    "local_contract_audit": true,
+    "external_artifact_read": false,
+    "catalog_read": false,
+    "GPFS_read": false,
+    "GPFS_write": false,
+    "Slurm_submission": false,
+    "KF_EXPAND": false,
+    "all_D_mock_execution": false,
+    "observational_inference": false,
+    "IC_PM_HOP_RAMSES": false,
+    "network_access": false
+  },
+  "source_bindings": {
+    "repository_method_summary": {
+      "path": "README.md",
+      "role": "documented WF15/BGc method and archived direct-route baseline"
+    },
+    "repository_science_plan": {
+      "path": "CODEX_PLAN.md",
+      "role": "frozen baseline and route policy narrative"
+    },
+    "bgc_parent_contract": {
+      "path": "config/v3_bgc_parent_all_v1.json",
+      "role": "accepted N192 BGc parent ensemble contract"
+    },
+    "bgc_extension_contract": {
+      "path": "config/v3_bgc_parent_extension_v3.json",
+      "role": "sealed 256-parent N192 extension contract"
+    },
+    "independent_parent_architecture": {
+      "path": "config/cf4_independent_parent_architecture_design.json",
+      "role": "frozen independent-parent baseline and later conditional design"
+    }
+  },
+  "hash_provenance": {
+    "path": "config/cf4_independent_parent_architecture_design.json",
+    "json_pointer": "/sealed_CF4_parent_bank/manifest_sha256",
+    "semantics": "transcribed historical binding; not recomputed because external GPFS manifest was not read"
+  },
+  "frozen_baseline": {
+    "control": {
+      "id": "WF15_archived_control",
+      "method": "Watkins-Feldman log-distance velocity estimator plus matrix-free Wiener filter and Matheron conditional draws",
+      "posterior_role": "historical control only",
+      "external_artifact_path": "/gpfs/kjhan/CF4/recon/linear_cr/parent_v1_all",
+      "external_artifact_read_in_this_amendment": false
+    },
+    "accepted_bgc": {
+      "id": "BGc_N192_all_data_16_member",
+      "method": "leakage-free fixed-count BGc transformation with N=192 and L=384 cMpc/h",
+      "seed_range_inclusive": [3001, 3016],
+      "external_artifact_path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_all_v1",
+      "external_artifact_read_in_this_amendment": false,
+      "selection_and_gate_status": "historical_P0_pass; no seed promotion by this amendment"
+    },
+    "current_parent_bank": {
+      "id": "BGc_N192_sealed_256_parent_bank",
+      "method": "same accepted BGc/WF family, sealed parent bank",
+      "seed_range_inclusive": [3193, 3448],
+      "count": 256,
+      "external_manifest_path": "/gpfs/kjhan/CF4/recon/linear_cr/v3_bgc_parent_extension_v3/manifest_v3_bgc_parent_extension_v3.json",
+      "external_manifest_sha256": "dcf5d24104b178a74371455497f4228eb03188189937915672219f10d4c11687",
+      "external_artifact_read_in_this_amendment": false,
+      "parent_selection": "uniform over all sealed parents; result-dependent subset forbidden"
+    }
+  },
+  "baseline_comparison_contract": {
+    "baseline_is_frozen_before_new_truth_or_candidate_inspection": true,
+    "method_GO_requires_material_calibrated_frontier_extension": true,
+    "narrow_low_k_only_pass_is_insufficient": true,
+    "power_only_completion_random_high_k_or_interpolation_is_insufficient": true,
+    "field_outputs": ["z0_matter_density_delta", "z0_velocity_divergence_theta"],
+    "joint_frontier": "minimum of separately measured delta and theta frontiers",
+    "IC_frontier": "not part of KF-DESIGN baseline comparison; measured only in IC-HYBRID"
+  },
+  "scientific_disposition": {
+    "baseline_binding": "complete_record_only",
+    "external_artifact_verification": "deferred_until_separately_authorized_and_available",
+    "KF_EXPAND": "blocked_by_likelihood_and_mock_contracts",
+    "observational_resolution_claim": false,
+    "posterior_created": false
+  }
+}

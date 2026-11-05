@@ -1,0 +1,69 @@
+{
+  "schema": "ouruniv-cf4-datum-bearing-z0-phasec-execution-amendment-v2",
+  "date": "2026-09-01",
+  "status": "AUTHORIZED_V3_EXECUTION_ONLY_REPAIR_WAITING_PREFLIGHT",
+  "authorization": {
+    "basis": "The V2 fail-closed preflight produced no likelihood value, posterior, or science metric. Under the user's standing instruction, this pre-science device-placement error is repaired without a new science approval.",
+    "execution_only_retry_after_pre_science_failure": true,
+    "change_science_contract": false,
+    "change_seed_arm_assignment": false,
+    "change_sampler_or_diagnostics": false,
+    "actual_observational_field_inference": false,
+    "validation_seed_access": false,
+    "Phase_D_or_later": false
+  },
+  "base_program": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_program_v1.json",
+    "sha256": "52633332a0aad094cfc088d195d92aa7129a2923d77c6246e1f71edf34b292cb"
+  },
+  "V1_infrastructure_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v1_infrastructure_failure_result_record.json",
+    "sha256": "8547f5920a98d1ff31814414c297ca0f8e0aaa856adddb597ebcefec712eb6ea"
+  },
+  "prior_preflight_failure": {
+    "path": "/home/kjhan/BACKUP/CF4/config/cf4_datum_bearing_z0_phasec_v2_preflight_failure_result_record.json",
+    "sha256": "c2621c19cd88697ded03efa0e9a0da23fe2b29ad6235c49d169b0ffaa003c46f"
+  },
+  "Phase_C_implementation": {
+    "path": "/home/kjhan/BACKUP/CF4/src/cf4_datum_bearing_z0_phasec_pilot.py",
+    "sha256": "657f3353e9105ba7a10babb82c6821ae0c8def2a2e1bb12047fffd1bf7a3c1de"
+  },
+  "execution_override": {
+    "backend": "Slurm_GPU_preflight_then_array_plus_CPU_aggregate",
+    "partitions": "a40,a100,h200,a100_pcie",
+    "excluded_partition_and_reason": "h100 excluded because V1 tasks 3-7 could not acquire a CUDA context on syn08",
+    "preflight_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_preflight_v3",
+    "preflight_scope": "seed-2026083000 N64 PMWD truth, CPU-device LCDM transfer construction, and one GPU N32 joint value/gradient only; no optimizer or sampler",
+    "preflight_cpus": 8,
+    "preflight_expected_peak_host_memory_MiB": 4096,
+    "preflight_requested_host_memory_MiB": 5120,
+    "preflight_time_limit": "01:00:00",
+    "output_root": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v3",
+    "aggregate_output": "/gpfs/kjhan/CF4/z0_density/datum_bearing_phasec_pilot_v3_aggregate",
+    "maximum_Slurm_submissions": 3,
+    "dependency_order": "preflight afterok -> array 0-7; aggregate afterany array",
+    "automatic_retry_or_replacement": false
+  },
+  "environment_override": {
+    "XLA_FLAGS": "--xla_gpu_autotune_level=0",
+    "LCDM_transfer_device": "JAX CPU",
+    "likelihood_and_gradient_device": "allocated JAX GPU",
+    "repair_reason": "avoid V1 GPU autotuner redzone profiling and V2 default-GPU linear-power construction failures without changing mathematical inputs"
+  },
+  "inherited_without_change": [
+    "purpose",
+    "mock_assignments",
+    "grid",
+    "cosmology",
+    "external_population_prior",
+    "truth_model",
+    "stress",
+    "inference_model",
+    "heldout",
+    "sampler",
+    "pilot_flags",
+    "diagnostics",
+    "rng_tags",
+    "success_semantics"
+  ]
+}

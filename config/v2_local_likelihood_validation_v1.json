@@ -1,0 +1,40 @@
+{
+  "schema": "cf4-v2-local-likelihood-validation-v1",
+  "frozen_date": "2026-07-29",
+  "frozen_before_validation_run": true,
+  "status": "fresh_N64_validation",
+  "development_history": {
+    "initial_sigma_nl_km_s": 200.0,
+    "tuned_candidates_km_s": [50.0, 100.0, 150.0],
+    "selection_rule_source": "config/v2_local_likelihood_tuning_v1.json",
+    "selected_sigma_nl_km_s": 100.0
+  },
+  "model": {
+    "N": 64,
+    "box_size_mpc_h": 384.0,
+    "local_distance_max_mpc": 15.0,
+    "local_max_distance_modulus_error_mag": 0.25,
+    "local_max_abs_velocity_km_s": 1500.0,
+    "local_error_scale": 1.0,
+    "local_sigma_nl_km_s": 100.0,
+    "wf_error_scale": 0.9,
+    "wf_sigma_nl_km_s": 0.0,
+    "delta_h0_prior_km_s_mpc": 3.0,
+    "split_seed": 20260809,
+    "sample_seeds": [71, 72, 73, 74, 75, 76, 77, 78]
+  },
+  "acceptance": {
+    "adjoint_relative_error_max": 5e-05,
+    "cg_relative_residual_max": 0.0001,
+    "global_abs_z_mean_max": 0.1,
+    "global_z_std_range": [0.85, 1.15],
+    "global_coverage_1sigma_range": [0.62, 0.75],
+    "global_coverage_2sigma_range": [0.92, 0.98],
+    "local_minimum_holdout_rows": 30,
+    "local_abs_z_mean_max": 0.2,
+    "local_z_std_range": [0.8, 1.2],
+    "local_coverage_1sigma_range": [0.55, 0.8],
+    "local_coverage_2sigma_range": [0.88, 1.0],
+    "promotion_policy": "All numerical, global, and local gates must pass before an N192 test is authorized."
+  }
+}

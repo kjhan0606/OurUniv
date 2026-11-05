@@ -1,0 +1,83 @@
+{
+  "schema": "ouruniv-cf4-projection-contract-control-result-record-v1",
+  "status": "complete_pass_future_projection_contract",
+  "completed_date": "2026-08-16",
+  "purpose": "Seal the full N192/N576 numerical contract that exactly preserves an independent CF4 posterior parent while retaining independent fine null-space modes.",
+  "execution": {
+    "host": "LagEunha",
+    "git_commit": "ed9cb2c769db3c38b51f9053ecb3f96d13276922",
+    "started_at": "2026-08-16T10:01:41+09:00",
+    "ended_at": "2026-08-16T10:04:41+09:00",
+    "thread_limit": 1,
+    "process_table_polling_used": false,
+    "environment_sha256": "c3127d885bfdddcdb686e43f2bf6d9da0e31262f0c5a680c7ef4251851975f45"
+  },
+  "lineage": {
+    "program": "config/cf4_projection_contract_control_program.json",
+    "program_sha256": "5ae9f8fdec3550758e8af2134c0c0aeb47a6a76e5959f1389a1c8cfc4dde299b",
+    "contract_implementation": "src/cf4_projection_contract.py",
+    "contract_implementation_sha256": "14ff16637980cf2c7565189b3e07bd899afe163ba71c6b1d123e70eb71a6f63f",
+    "control_implementation": "src/cf4_projection_contract_control.py",
+    "control_implementation_sha256": "afbd374a38eb4b7eeeb072ffd3a8ea2a1794fbf0cde757c7253fdb3792332348",
+    "canonical_result": "/gpfs/kjhan/CF4/recon/linear_cr/projection_contract_control/result.json",
+    "canonical_result_sha256": "926428c606584b554c149f459a1fdea91889c3042ccb301a9344422633b9c33f",
+    "complete_marker_sha256": "b488cc19b0e9fafebfb3e4b108483744d22ac10fc7b2aaa6265b43b7946e5a0c"
+  },
+  "contract": {
+    "restriction": "R folds each N192 output-Nyquist equivalence class with 1/sqrt(2**r) normalization.",
+    "prolongation": "x=z+R*(y-Rz), where y is the N192 parent and z is independent N576 white noise.",
+    "identities": ["R R*=I", "R x=y"],
+    "legacy_V8_products_modified": false
+  },
+  "results": {
+    "roundtrip_case_count": 5,
+    "roundtrip_relative_RMS_range": [
+      2.4292297950978536e-08,
+      2.4307080792596025e-08
+    ],
+    "roundtrip_maximum_normalized_error_max": 2.385118875736225e-07,
+    "full_spectrum_vs_rfft_relative_RMS": 3.500268922363575e-13,
+    "full_spectrum_vs_rfft_maximum_normalized_error": 9.311084681051796e-10,
+    "same_parent3429_two_fine_fields_difference_RMS": 1.387736372843852,
+    "IID_fine_moments": [
+      {
+        "mean": 9.019041768852754e-05,
+        "std": 1.0000001913948613,
+        "skew": 0.00024360703874058234,
+        "excess_kurtosis": -0.0003966759798101904
+      },
+      {
+        "mean": -0.00011203049801455399,
+        "std": 1.000021371690397,
+        "skew": 0.00014975088607879967,
+        "excess_kurtosis": -0.0003053877975478514
+      }
+    ]
+  },
+  "gates": {
+    "all_roundtrips": true,
+    "full_spectrum_matches_rfft_control": true,
+    "IID_fine_moments": true,
+    "same_parent_null_space_diversity": true,
+    "contract_pass": true
+  },
+  "interpretation": {
+    "parent_preservation": "Every tested IID or sealed CF4 N192 field, including parents3193 and 3429, is recovered after N576 prolongation to float32 numerical precision with all output-Nyquist modes included.",
+    "fine_diversity": "Two independent N576 draws conditioned on the identical parent3429 differ at the expected near-sqrt(2) field RMS while both restrict back to the same N192 field.",
+    "scientific_scope": "The numerical contract removes the old projection ambiguity and makes an independent-parent hierarchy possible. It does not by itself define the Local-Group likelihood, peak evidence correction, parent weights, or any candidate selection."
+  },
+  "decision": {
+    "paired_projection_contract_authorized": true,
+    "independent_parent_architecture_design_authorized": true,
+    "candidate_generation_authorized": false,
+    "seed_selection_authorized": false,
+    "PM_or_RAMSES_authorized": false,
+    "next": [
+      "Define the proposal state as parent index, fine null-space seed, peak-noise seed, geometry seed, and midpoint seed.",
+      "Use all 256 sealed CF4 posterior parents with an explicitly uniform or stratified parent proposal.",
+      "Condition peak information only in ker(R), so every generated field restricts exactly to its parent.",
+      "Include normalized peak marginal evidence and midpoint target/proposal density in the importance weight.",
+      "Run a cheap all-parent evidence/ESS feasibility audit before generating N576 candidates or running PM."
+    ]
+  }
+}

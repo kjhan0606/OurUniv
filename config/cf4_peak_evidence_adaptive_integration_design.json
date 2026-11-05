@@ -1,0 +1,179 @@
+{
+  "schema": "ouruniv-cf4-peak-evidence-adaptive-integration-scientific-design-v1",
+  "status": "frozen_Fable_scientific_design_before_implementation",
+  "frozen_date": "2026-08-16",
+  "scientific_designer": "Fable",
+  "implementation_owner": "Codex",
+  "authorization": {
+    "source_result_record": "config/cf4_all_parent_peak_evidence_v1_result_record.json",
+    "source_result_record_sha256": "98e1d4a06041ef5c6c198ac6e72a6b71fbd46ad47a97db49685cc4a4bfb9ad93",
+    "source_result_record_required_status": "complete_fail_Monte_Carlo_or_proposal_instability",
+    "adaptation_execution_authorized": true,
+    "final_execution_authorized_before_adaptation_pass": false,
+    "conditional_field_bank_authorized": false,
+    "candidate_generation_authorized": false,
+    "parent_or_seed_selection_authorized": false,
+    "PM_or_halo_finder_authorized": false,
+    "RAMSES_authorized": false
+  },
+  "purpose": "Repair only the midpoint/axis evidence integration proposal. The Local-Group peak targets, likelihood sigma, all 256 CF4 parents, exact projection contract, and CF4 gates remain unchanged.",
+  "information_firewall": {
+    "V1_64_draw_values_used_for_new_fit_or_initialization": false,
+    "V1_role": "Development evidence used only to freeze the new bank sizes and proposal family.",
+    "adaptation_fitter_input": [
+      "midpoint offset q_i",
+      "unoriented axis a_i",
+      "parent-uniform logmeanexp of log_Z_peak over all 256 parents"
+    ],
+    "adaptation_fitter_forbidden_input": [
+      "parent seed or identity",
+      "parent-specific log_Z_peak rows",
+      "CF4 deviance or rank",
+      "top parent or selected parent information"
+    ],
+    "adaptation_rows_reused_in_final_scientific_gate": false,
+    "final_rows_reused_for_proposal_training": false,
+    "physical_peak_target_or_sigma_change_allowed": false
+  },
+  "target_density": {
+    "notation": "pi0(q,a)=p(q) u(a)",
+    "midpoint_prior": "The unchanged V8 three-dimensional diagonal-normal target prior p(q).",
+    "axis_prior": "u(a)=1/(4*pi) on S2, with a and -a physically equivalent."
+  },
+  "adaptation_bank": {
+    "draw_count": 2048,
+    "proposal": "g_A(q,a)=g_V1(q) u(a), where g_V1 is the sealed equal-weight prior-plus-transport midpoint Gaussian mixture.",
+    "master_seed": 2026082001,
+    "draw_seed_rule": "NumPy Generator(PCG64DXSM(SeedSequence(master_seed, spawn_key=(draw_index,))))",
+    "parent_count": 256,
+    "common_geometry_for_every_parent": true,
+    "geometry_log_weight": "logmeanexp_j(log Z_ji) + log pi0(q_i,a_i) - log g_A(q_i,a_i)",
+    "parent_marginalization": "Every parent has exactly weight 1/256 before geometry fitting.",
+    "gate": {
+      "all_parent_lineage_and_hashes_exact": true,
+      "normalized_log_Z_row_count": 524288,
+      "all_log_Z_finite": true,
+      "geometry_marginal_ESS_min": 128.0,
+      "maximum_normalized_geometry_weight_max": 0.025,
+      "four_fold_CV_rule": "fold=draw_index mod 4; fit on the other three folds",
+      "each_holdout_delta_min": 0.0,
+      "holdout_delta": "sum of holdout-normalized omega_i times log[h_minus_fold(q_i,a_i)/pi0(q_i,a_i)]",
+      "all_four_CV_fits_and_full_fit_converged": true,
+      "synthetic_contracts_pass": true,
+      "pass_requires_all": true
+    },
+    "fallback": {
+      "allowed_only_for_geometry_ESS_or_max_weight_failure": true,
+      "independent_draw_count": 8192,
+      "master_seed": 2026082005,
+      "combine_with_first_adaptation_bank": false,
+      "maximum_attempts": 1,
+      "CV_or_EM_failure_action": "Stop for proposal-family redesign; do not alter K, floors, kappa cap, targets, or sigma after reading results."
+    }
+  },
+  "adaptive_component_density": {
+    "notation": "h(q,a)=sum_k alpha_k Normal3(q|mu_k,Sigma_k) A(a|nu_k,kappa_k)",
+    "component_count": 4,
+    "midpoint_covariance": "full 3x3",
+    "midpoint_covariance_eigenvalue_min_mpc_h_squared": 0.5625,
+    "midpoint_covariance_eigenvalue_max_mpc_h_squared": 36.0,
+    "midpoint_mean_clipping": false,
+    "joint_coupling": "The midpoint and antipodal axis share only the same component index k; no regression or parent-conditioned term is allowed.",
+    "axis_density": {
+      "kappa_zero": "A(a|nu,0)=1/(4*pi)",
+      "kappa_positive": "A(a|nu,kappa)=kappa*cosh(kappa*dot(nu,a))/(4*pi*sinh(kappa))",
+      "antipodal_identity_exact": true,
+      "kappa_min": 0.0,
+      "kappa_max": 20.0,
+      "sampling": "Draw sign s uniformly from {-1,+1}, then draw vMF(s*nu,kappa). For U,V uniform, w=1+log(U+(1-U)*exp(-2*kappa))/kappa and phi=2*pi*V; for kappa=0 use w=2*U-1."
+    }
+  },
+  "weighted_EM": {
+    "objective": "L=sum_i omega_i log h(q_i,a_i)",
+    "master_seed": 2026082002,
+    "restart_count": 8,
+    "seed_rule": "SeedSequence(master_seed, spawn_key=(fold_id,restart_id)); fold_id 0..3 for CV and 4 for the full fit.",
+    "initialization": {
+      "method": "weighted k-means++",
+      "distance_squared": "norm((q_i-q_c)/3)^2 + 2*(1-dot(a_i,a_c)^2)",
+      "first_centre_probability": "omega_i",
+      "later_centre_probability": "omega_i times nearest-centre distance squared",
+      "hard_assignment_tie": "lowest component number",
+      "initial_alpha_mu_covariance": "weighted hard-assignment moments with covariance eigenvalue clipping",
+      "initial_axis": "principal eigenvector of sum_i omega_i a_i a_i^T in the assigned group",
+      "axis_sign": "Make the coordinate having the largest absolute value positive; coordinate-index ties use the lowest index.",
+      "initial_kappa": 1.0
+    },
+    "M_step": {
+      "latent_sign_mean": "m_ik=tanh(kappa_k*dot(nu_k,a_i))",
+      "axis_resultant": "R_k=sum_i omega_i tau_ik m_ik a_i / sum_i omega_i tau_ik",
+      "axis_direction": "nu_k=R_k/norm(R_k), with the frozen axis-sign convention",
+      "kappa_equation": "coth(kappa_k)-1/kappa_k=norm(R_k)",
+      "kappa_solver": "Bisection on [0,20] with absolute tolerance 1e-12; clip to 20 when the target exceeds the value at 20.",
+      "zero_resultant": "kappa=0 and nu=(1,0,0)",
+      "component_effective_membership": "(sum_i omega_i tau_ik)^2 / sum_i (omega_i tau_ik)^2"
+    },
+    "maximum_iterations": 200,
+    "objective_decrease_failure_tolerance": "1e-10*max(1,abs(L_previous))",
+    "convergence": "Relative objective increase <=1e-8 for five consecutive iterations.",
+    "empty_component_failure": "Fail the restart if N_k<1e-4 or component effective membership<4.",
+    "resurrection_merge_or_K_change_allowed": false,
+    "selection": "Among converged restarts choose maximum L; ties within 1e-12 choose the lowest restart number.",
+    "all_restarts_fail_action": "Adaptation failure."
+  },
+  "final_proposal": {
+    "notation": "g_F(q,a)=0.5*pi0(q,a)+0.5*h(q,a)",
+    "sampling": "First draw a Bernoulli(0.5). Base branch draws q from p and a from u. Adaptive branch draws k from alpha, q from its full Gaussian, and a from its antipodal axis kernel.",
+    "log_density": "logsumexp(log(0.5)+log p+log u, log(0.5)+log h)",
+    "parent_geometry_log_weight": "log Z_ji + log p(q_i)+log u(a_i)-log g_F(q_i,a_i)",
+    "analytic_target_over_proposal_bound": 2.0,
+    "proposal_artifact_must_be_frozen_before_final_draw": true
+  },
+  "final_bank": {
+    "draw_count": 8192,
+    "master_seed": 2026082003,
+    "draw_seed_rule": "NumPy Generator(PCG64DXSM(SeedSequence(master_seed, spawn_key=(draw_index,))))",
+    "parent_count": 256,
+    "common_geometry_for_every_parent": true,
+    "gates": {
+      "first_second_4096_parent_weight_L1_max": 0.20,
+      "half_parent_ESS_relative_difference_max": 0.20,
+      "joint_parent_geometry_ESS_min": 128.0,
+      "maximum_joint_parent_geometry_weight_max": 0.025,
+      "geometry_marginal_ESS_min": 128.0,
+      "maximum_geometry_weight_max": 0.025,
+      "parent_ESS_min": 32.0,
+      "maximum_parent_weight_max": 0.10,
+      "weighted_CF4_reference_Q99_mass_max": 0.05,
+      "weighted_CF4_deviance_Q90_le_reference_Q99p5": true,
+      "weighted_CF4_one_sided_KS_permutation_p_min": 0.01,
+      "CF4_permutation_seed": 2026081901,
+      "CF4_permutations": 100000,
+      "pass_requires_all": true
+    },
+    "failure_action": "If an MC gate fails, do not train on the final bank and stop. Only after all MC gates pass may a parent-support or CF4 gate failure be interpreted as physical tension."
+  },
+  "synthetic_validation": {
+    "master_seed": 2026082004,
+    "antipodal_log_density_point_count": 1000,
+    "antipodal_log_density_max_difference": 1e-12,
+    "sphere_normalization_kappa": [0.0, 1.0, 20.0],
+    "sphere_normalization_Gauss_Legendre_nodes": 256,
+    "sphere_normalization_absolute_error_max": 5e-12,
+    "sampling_draw_count": 200000,
+    "sampling_moment_max_standard_errors": 5.0,
+    "unit_likelihood_importance_mean_max_standard_errors": 5.0,
+    "unit_likelihood_importance_mean_absolute_error_max": 0.01,
+    "defensive_log_bound_tolerance": 1e-12,
+    "scalar_vectorized_log_value_max_difference": 1e-10,
+    "same_seed_arrays_bitwise_identical": true
+  },
+  "storage": {
+    "result_JSON": "Lineage, proposal, summaries, gates, and per-parent aggregates only.",
+    "numeric_artifact": "Immutable compact arrays including float64 log_Z_peak[parent,draw], float64 log_importance[parent,draw], midpoint q, axis a, proposal component and branch, and geometry normalization terms.",
+    "artifact_shape_dtype_and_SHA256_recorded": true,
+    "exclusive_create_and_atomic_rename": true,
+    "per_cell_JSON_dict_forbidden": true
+  },
+  "decision_on_final_pass": "Authorize only the design of a separately frozen conditional-field bank. Seed promotion, candidate screening, PM, halo finding, zoom masks, and RAMSES remain unauthorized."
+}
