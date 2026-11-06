@@ -74,3 +74,55 @@ Q-GOAL: same NEW evolved field and eventual MW/M31/M33 <=0.3 LG constraints;
 MW/M31 roles remain ambiguous, M33 unresolved, and truth identities remain
 calibration/evaluation only. Q-LEAN: one reusable factor and one bounded study;
 no new selection census, simulation or generic gate framework.
+
+## Executed result — Syntax CPU job 453825
+
+Source commit `78a1e00d3e57a19d3eb8a1f3533a5993cfd031df`; a10/syn01,
+one CPU, 512 MiB, COMPLETED/0:0 in 18 seconds. Study wall time was 4.65 s,
+process-reported peak RSS 211.75 MiB. Slurm's short-job RSS sample was only
+3,356 KiB and is not used as the actual Python peak. Six new component tests
+and seven existing raw-FP regression tests passed. The source/data checks,
+13-test scope and illustrative PDF do not constitute survey calibration.
+
+Artifacts are in
+`/gpfs/kjhan/CF4/z0_density/r2_conditional_fp_component_20261107/453825/`:
+`result.json`, `conditional_fp_examples.png`, `R2_조건부_FP_예제보고.pdf`.
+The JSON pins all three input file hashes. The rendered PNG was inspected;
+all four scientific checks have an example figure and the limitations are
+visible. The legacy fitted field/population was neither refitted nor promoted.
+
+Median local conditional/joint Fisher information fractions:
+
+| Fixed reference/direction | Existing training rows (8,901) | Linked subset (1,414) |
+| --- | ---: | ---: |
+| Development prior covariance, radius-only eta shift | 0.19970 | 0.19983 |
+| Legacy fitted covariance, radius-only eta shift at fixed M | 0.37056 | 0.37042 |
+| Legacy covariance, illustrative low-z M response | 0.27231 | 0.27192 |
+
+These fractions hold the population parameters/covariance fixed. They do NOT
+measure information retained by a marginalized field posterior, independent
+distance precision, or how well the old population transfers to the larger
+source set. The 8,901 rows occupy 6,028 training source groups; they cannot be
+treated as 8,901 independent group measurements. There was no zero-information
+row for the tested directions; the unit test also checks a direction with
+zero conditional information, without forcing a positive floor.
+
+The two-node conditional mixture integrates to 1.0000000000. Covariate
+conditioning changes its illustrative weights from (0.5,0.5) to
+(0.105883,0.894117); ignoring that change shifts the mean from the correct
+0.811558 to 0.780038. The bounded logistic residual-selection control at
+gamma=0.5 shifts the standardized mean by 0.236044; fixed-covariate-only
+selection leaves the normalized distribution unchanged. Gamma is an
+illustrative sensitivity value, not a calibrated selection prior. In the
+radius-only control, a common eta shift and a shared FP zero point acting
+in that same mean direction have rank-one information. This does not assert
+that all such degeneracies survive an additional independent calibration or
+the full joint field/count model.
+
+Driver decision: the candidate is not empty of distance signal under these
+reference geometries, so continue the observation-model redesign. Selection
+calibration is still false, the live v6 target is unchanged, and R2 is not
+complete. Next address source-specific conditional selection/population
+calibration and the native FP-only/shared-group source kernel; do not use
+these fixed-parameter Fisher fractions to authorize a production chain.
+No new field, held-out prediction, PM/RAMSES run or external exit audit occurred.

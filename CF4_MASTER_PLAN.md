@@ -71,6 +71,21 @@ constrain those roles, with native truth identities only for calibration/
 evaluation. Q-LEAN: one observation-factor bundle, existing evidence and
 focused checks; no new gravity run, parent-search loop or gate-code ladder.
 
+### Conditional-FP implementation evidence — 2026-11-07
+
+The isolated component and bounded training-error-geometry study are now
+implemented; Syntax CPU job453825 (a10/syn01, one CPU, 512 MiB) completed in
+18 seconds, with13 focused new/existing tests passing and211.75 MiB measured
+Python peak RSS. The candidate retains nonzero local distance information
+in the tested fixed-population geometries; source reweighting and normalized
+conditional mixtures were checked. Residual-dependent selection and shared
+zero-point confounding remain explicit failures of automatic identification.
+`CF4_R2_CONDITIONAL_FP_COMPONENT_20261107.md` records the evidence and an
+illustrated Korean report. This is not selection calibration, a native
+FP-only/shared-group field likelihood, or a posterior. Continue that source
+model work; no production chain or held-out evaluation is authorized by the
+component tests. The live v6 target is unchanged; R2 remains incomplete.
+
 ## Earlier R2 input/precision update — 2026-11-07 (historical boundary)
 
 The user confirms that neither the source-matched mark-availability parent
