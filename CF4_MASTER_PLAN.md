@@ -86,6 +86,18 @@ FP-only/shared-group field likelihood, or a posterior. Continue that source
 model work; no production chain or held-out evaluation is authorized by the
 component tests. The live v6 target is unchanged; R2 remains incomplete.
 
+The shared-group continuation is also implemented and checked (CPU job453839,
+10 s, 17 focused tests, 258.41 MiB peak). It multiplies members at a common
+distance/local-nuisance node before integration, and conditions one global
+calibration variable on all groups' covariate evidence. A direct analytic 9D
+Gaussian provides an independent numerical reference. Existing training
+metadata show 3,918 of 8,901 rows in 1,045 multi-member source groups; this
+does not establish physical membership or implicate the old distinct-parent
+1,414-mark cohort. The same component note contains results and an illustrated
+report. Source selection/population, calibrated covariance and native FP-only
+distance weights remain unresolved; no live-field connection or new posterior
+is claimed. Continue that science task, not another normalization-test ladder.
+
 ## Earlier R2 input/precision update — 2026-11-07 (historical boundary)
 
 The user confirms that neither the source-matched mark-availability parent

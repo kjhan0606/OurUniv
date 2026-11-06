@@ -186,3 +186,44 @@ weights, not run another parameter sweep on assumed calibration. R2 remains
 incomplete; MW/M31 role ambiguity and unresolved M33 must still be constrained
 on the same NEW evolved field in R3. Q-LEAN: one extension to the existing
 component and bounded CPU study, no new simulation or general gate framework.
+
+### Executed shared-group result — Syntax CPU job 453839
+
+Source `f680d54a12a085797daddd1f94a926875f574067`; a10/syn01, one CPU,
+512 MiB, COMPLETED/0:0 in 10 seconds. All 17 focused tests passed (10
+conditional-FP, including four new shared-node checks, plus seven raw-FP
+regressions). Study time 5.00 s; process-measured peak RSS 258.41 MiB, below
+the predeclared 400 MiB estimate and 512 MiB allocation. The short-job Slurm
+RSS sample again missed the process peak and is not used as peak memory.
+
+The existing 8,901 training rows contain 6,028 source groups: 4,983 single-row
+groups and 1,045 multi-row groups containing 3,918 rows. These are catalogue
+identities, not verified physical memberships. The wider cohort therefore
+cannot be used as 8,901 independent group distances. This is NOT evidence of
+that error in the old 1,414-mark cohort, which deliberately has distinct
+source parents; the new integration enables reconsidering that restriction.
+
+The shared-offset integral agrees with an independent analytic 9D Gaussian
+reference (joint, covariate and conditional densities, absolute log tolerance
+1e-10). In the explicit discrete example, shared-node weights change from
+(0.25, 0.50, 0.25) to (0.06209, 0.46289, 0.47502). Both the correct and stale-
+weight response curves integrate to one, but their total-variation distance
+is 0.03946: normalization alone would miss this different probability law.
+In the separate dimensionless n=8 sharing example, the mean standard error
+is 0.61237, versus 0.39528 when a common error is incorrectly made independent.
+Neither example measures a real-survey bias, uncertainty or calibration prior.
+
+Artifacts: `/gpfs/kjhan/CF4/z0_density/r2_conditional_fp_component_20261107/453839/`,
+including `result.json`, `shared_group_examples.png` and
+`R2_그룹공유보정_예제보고.pdf`. The figure was visually inspected; each of the
+four reported checks has an example, with actual-data versus illustrative
+content explicitly separated. The original four-panel component report was
+also regenerated. Input hashes and source commit are recorded in the JSON.
+
+Driver decision: adopt this numerical connection for continued source-model
+development. It does not calibrate response selection, shared covariance,
+group membership or native FP-only distance weights. No field was fitted,
+held-out outcome read, production chain submitted, or sample/target changed.
+No additional sampler/mock sweep is warranted by these tests. The next
+science task remains specifying and confronting the actual selected-source
+response and source-distance law; R2 and the full field deliverable stay open.
