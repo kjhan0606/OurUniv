@@ -126,3 +126,63 @@ complete. Next address source-specific conditional selection/population
 calibration and the native FP-only/shared-group source kernel; do not use
 these fixed-parameter Fisher fractions to authorize a production chain.
 No new field, held-out prediction, PM/RAMSES run or external exit audit occurred.
+
+## Source-law decision and shared-group connection
+
+The immediate continuation reuses the existing group-distance/shared-zero
+machinery as the ownership reference, but does not call its normalized scores
+with a new unconditional zero-point prior. The raw conditional FP component
+has covariate evidence that depends on those same shared variables.
+
+| Source stage | Treatment in the candidate | Remaining scientific condition |
+| --- | --- | --- |
+| Observed magnitude and raw dispersion cuts | Fixed by measured U; their indicator is constant at that U | Cancellation also requires no remaining response/latent-dependent selection; noisy measured U is not true U |
+| Observed sky/redshift window | Can condition on these observations | Redshift-to-distance uncertainty and source spatial weights remain; observed n(z) is not a true-distance prior |
+| Colour, axial ratio, morphology and image/spectral quality | Additional measured covariates may describe some stages | U alone does not capture them; not all original quality variables/history are present. A selected morphological population needs its own response model |
+| Iterative FP residual rejection | Response-dependent; does NOT cancel | A final fit/threshold alone does not reconstruct all earlier rejection boundaries; no residual-selection normalization is yet supported |
+| CF4/Tempel/count linkage and single-mark restriction | Artificial count intersection is being reconsidered, not silently removed | Preserve identity-level split and occurrence/redshift ownership; missing links are not failures or independent sources |
+| Group and source-wide calibration | Integrate shared variables jointly | Their covariance, selected-population transport and group assignments need evidence; numerical integration does not measure them |
+
+Source for selection stages: [Howlett et al., sections 2 and 4.2](https://arxiv.org/html/2201.03112).
+Its relative CF3 zero-point error is not an independent absolute-scale prior;
+the existing `CF4_R2_ZERO_ANCHOR_SOURCE_20260929.md` already explains the
+overlap/cosmic-variance issue. Do not repeat that investigation or adopt a
+new convenient scatter width from the toy examples below.
+
+For group g, let j be a **joint local node** (e.g. common distance and group
+offset), b a source-wide calibration node, and w_gj(b) the supplied normalized
+source weights conditional on already-owned redshift/other observations K.
+At fixed nodes, the new functions evaluate
+
+    N_g(b) = sum_j w_gj(b) product_i p(U_i|j,b) p(T_i|U_i,j,b)
+    D_g(b) = sum_j w_gj(b) product_i p(U_i|j,b)
+    p(T_all|U_all,K,F) = sum_b q_b product_g N_g(b) /
+                         sum_b q_b product_g D_g(b).
+
+This assumes independent member measurement errors **conditional on the
+shared nodes**. It does not allow unknown correlated errors to be discarded.
+Source-weight amplitudes are normalized separately at each (g,b); otherwise
+arbitrary source normalization would manufacture a calibration constraint.
+The equivalent conditional mixture has weights proportional to
+`q_b product_g D_g(b)`, not the old q_b. Returning the joint and covariate
+integrals separately keeps information ownership explicit. For a full field
+posterior, dropping p(U|F) also requires declaring a defensible conditional-
+design model or supplying p(F|U); this algebra does not equate that inference
+to the full joint observation model.
+
+`grouped_log_integrals` and `shared_conditional_logpdf` extend the existing
+small NumPy reference; no second source-fit or group framework is introduced.
+Four focused checks compare to an independently constructed nine-dimensional
+Gaussian with shared offsets, exactly enumerate shared/local nodes, test
+arbitrary source-amplitude and member-order invariance, and reject malformed
+or wholly unsupported inputs. The bounded CPU study also reports existing
+training group multiplicities and illustrated shared-error/conditioning
+examples. Examples are explicitly NOT new calibration priors or field fits.
+
+This connection removes an implementation gap, not the unresolved source law.
+The existing live v6 target and frozen sample remain unchanged. Next work must
+establish a supported source population/response-selection law and distance
+weights, not run another parameter sweep on assumed calibration. R2 remains
+incomplete; MW/M31 role ambiguity and unresolved M33 must still be constrained
+on the same NEW evolved field in R3. Q-LEAN: one extension to the existing
+component and bounded CPU study, no new simulation or general gate framework.

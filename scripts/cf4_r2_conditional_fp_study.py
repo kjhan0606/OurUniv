@@ -14,10 +14,12 @@ import time
 import numpy as np
 from scipy.integrate import quad
 from scipy.special import expit
+from scipy.special import logsumexp
 from scipy.stats import norm
 
 from cf4_r2_conditional_fp import (
-    CONDITION_MATRIX as A, component_terms, conditioned_log_weights, mixture_logpdf)
+    CONDITION_MATRIX as A, component_terms, conditioned_log_weights, mixture_logpdf,
+    grouped_log_integrals, shared_conditional_logpdf)
 from cf4_r2_raw_selected_fp import optical_error_covariance
 
 
@@ -29,6 +31,98 @@ def quantiles(values):
         raise ValueError('nonfinite statistic; do not silently discard rows')
     return dict(zip(('min', 'p05', 'median', 'p95', 'max'),
                     np.quantile(values, [0, .05, .5, .95, 1]).tolist()))
+
+
+def shared_group_study(parent_groups, output_dir):
+    """Actual training multiplicities plus EXPLICIT synthetic shared-node laws.
+
+    No fit to training responses, calibration prior, source weight inference
+    or field likelihood. The offset/scatter sizes below are examples only.
+    """
+    import matplotlib.pyplot as plt
+    _, counts = np.unique(parent_groups, return_counts=True)
+    sizes, frequencies = np.unique(counts, return_counts=True)
+    means = np.array([[.3, 2.2, 2.7], [.2, 2.15, 2.8]])
+    shared_nodes, prior = np.array([-.2, 0, .2]), np.array([.25, .5, .25])
+    local_nodes = np.array([-.15, .15])
+    offsets = shared_nodes[:, None, None] + local_nodes[None, None, :]
+    mu = means[None, :, None, :] + offsets[..., None]*np.array([1., 0, 0])
+    u = means @ A.T + [[.6, .012], [.8, .016]]
+    terms = component_terms(mu, .09*np.eye(3), u[None, :, None, :])
+    weights, row_group = np.zeros((3, 2, 2)), np.array([0, 1])
+
+    def score(t):
+        lt = np.zeros_like(terms['mean'])  # T2 is integrated out, NOT observed at zero.
+        lt[:, 0] = norm.logpdf(t, terms['mean'][:, 0], np.sqrt(terms['variance'][:, 0]))
+        grouped = grouped_log_integrals(lt, terms['log_condition_density'], row_group, weights)
+        correct = shared_conditional_logpdf(grouped, np.log(prior))
+        wrong = logsumexp(np.log(prior) + (grouped['log_joint']-grouped['log_conditions']).sum(axis=1))
+        return correct, wrong
+
+    example, _ = score(.5)
+    updated = np.exp(example['log_shared_given_conditions'])
+    integral = quad(lambda t: np.exp(score(t)[0]['logpdf']), -4, 5)[0]
+    stale_integral = quad(lambda t: np.exp(score(t)[1]), -4, 5)[0]
+    if abs(integral-1) > 1e-9 or abs(stale_integral-1) > 1e-9:
+        raise AssertionError('shared-node example normalization failed')
+    grid = np.linspace(-.2, 1.5, 201)
+    curves = np.array([[np.exp(score(t)[0]['logpdf']), np.exp(score(t)[1])] for t in grid])
+    distance = quad(lambda t: abs(np.exp(score(t)[0]['logpdf'])-np.exp(score(t)[1]))/2, -4, 5)[0]
+    # Independent per-row inflation gives fictitious precision as n increases.
+    n = np.arange(1, max(8, int(counts.max()))+1)
+    common_sigma = .5  # dimensionless illustration, NOT a survey nuisance prior
+    correct_sd = np.sqrt(1/n + common_sigma**2)
+    independent_sd = np.sqrt((1+common_sigma**2)/n)
+    fig, axes = plt.subplots(2, 2, figsize=(11.69, 8.27))
+    fig.subplots_adjust(left=.08, right=.97, top=.91, bottom=.22, hspace=.4, wspace=.3)
+    def title(ax, text):
+        ax.text(.03, .97, text, transform=ax.transAxes, va='top', fontsize=9,
+                bbox=dict(facecolor='white', alpha=.9, edgecolor='none'))
+    ax = axes[0, 0]
+    ax.bar(sizes, frequencies)
+    ax.set(xlabel='관측된 그룹당 훈련 은하 수', ylabel='그룹 수', yscale='log')
+    title(ax, f'1. 실제 자료: {len(parent_groups)}개 은하 / {len(counts)}개 그룹')
+    ax.set_ylim(.7, float(frequencies.max())*5)
+    ax = axes[0, 1]
+    ax.plot(n, correct_sd, label='그룹 공통 오차를 한 번 적분')
+    ax.plot(n, independent_sd, '--', label='은하별 독립 오차로 처리 (잘못된 예)')
+    ax.set(xlabel='같은 그룹의 은하 수 (예제)', ylabel='평균의 표준오차 (예제 단위)', ylim=(0, 1.5))
+    title(ax, '2. 같은 그룹은 독립 거리 측정을 반복한 것이 아님')
+    ax.legend(loc='upper right', bbox_to_anchor=(1., .82))
+    ax = axes[1, 0]
+    ax.bar(shared_nodes-.025, prior, width=.05, label='조건화 전 가중치')
+    ax.bar(shared_nodes+.025, updated, width=.05, label='두 그룹의 조건 관측량 반영')
+    ax.set(xlabel='공통 보정 후보 (예제)', ylabel='가중치', ylim=(0, 1.3))
+    title(ax, '3. 공통 보정값은 모든 그룹에서 함께 갱신')
+    ax.legend(loc='upper left', bbox_to_anchor=(0., .82))
+    ax = axes[1, 1]
+    ax.plot(grid, curves[:, 0], label='공동 적분 후 조건화')
+    ax.plot(grid, curves[:, 1], '--', label='그룹별 조건화 후 이전 가중치')
+    ax.set(xlabel='첫 은하의 log 크기 (예제)', ylabel='조건부 확률밀도', ylim=(0, curves.max()*1.5))
+    title(ax, '4. 두 곡선 모두 적분은 1 — 정규화만으로 옳음을 보장 못함')
+    ax.legend(loc='upper left', bbox_to_anchor=(0., .82))
+    fig.suptitle('R2 조건부 FP — 그룹 거리와 공통 보정의 올바른 결합', fontsize=14)
+    fig.text(.08, .145, '1만 실제 훈련자료의 그룹 구성입니다. 2·3·4는 원리를 보여주는 예제이며 실제 보정값·거리 추정이 아닙니다.\n'
+        '공통 보정값이나 같은 그룹의 거리를 은하마다 독립적으로 적분하면 다른 확률모형이 됩니다.\n'
+        '실제 선택효과·그룹 배정·보정 공분산·FP-only 거리 가중치는 아직 미확정입니다. 현재장 추론과 held-out 검증은 하지 않았습니다.',
+        va='top', fontsize=9, linespacing=1.6)
+    fig.savefig(output_dir/'shared_group_examples.png', dpi=120)
+    fig.savefig(output_dir/'R2_그룹공유보정_예제보고.pdf')
+    plt.close(fig)
+    return dict(training_rows=len(parent_groups), source_groups=len(counts),
+        multi_member_groups=int(np.sum(counts > 1)),
+        rows_in_multi_member_groups=int(np.sum(counts[counts > 1])),
+        observed_member_counts=sizes.tolist(), group_frequencies=frequencies.tolist(),
+        grouping_is_catalogue_identity_not_physical_truth=True,
+        example_shared_nodes=shared_nodes.tolist(), example_shared_prior=prior.tolist(),
+        example_conditioned_shared_weights=updated.tolist(),
+        example_correct_integral=integral, example_incorrect_integral=stale_integral,
+        example_total_variation_distance=distance, example_scatter_units='dimensionless',
+        example_group_common_scatter=common_sigma,
+        example_n8_correct_mean_sd=float(correct_sd[7]),
+        example_n8_incorrect_independent_sd=float(independent_sd[7]),
+        node_law_is_calibrated=False, field_or_population_fit=False,
+        global_joint_conditioning_test='independent 9D Gaussian reference in unit test')
 
 
 def main():
@@ -153,6 +247,7 @@ def main():
     fig.savefig(args.output_dir/'conditional_fp_examples.png', dpi=120)
     fig.savefig(args.output_dir/'R2_조건부_FP_예제보고.pdf')
     plt.close(fig)
+    shared = shared_group_study(parent_groups, args.output_dir)
     result = dict(status='CONDITIONAL_FP_COMPONENT_STUDY_NOT_SELECTION_CALIBRATION',
         job_id=os.environ['SLURM_JOB_ID'], source_commit=os.environ['CF4_EXPECTED_COMMIT'],
         inputs=[dict(path=str(p), sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in paths],
@@ -163,6 +258,7 @@ def main():
         synthetic_incorrect_unreweighted_mean=float(np.mean(mixture['mean'])),
         fixed_covariate_selection=constant, residual_selection_stress=stress,
         shared_zero_point_and_global_eta_information_rank=1,
+        shared_group_study=shared,
         legacy_population_parameters=parameters.tolist(), legacy_covariance=fitted_cov.tolist(),
         parameter_fits=0, heldout_scored=False, PM_evolutions=0, live_target_changed=False,
         selection_calibrated=False, R2_complete=False,
@@ -171,7 +267,7 @@ def main():
             'low-z M direction omits K-corrections and changing latent-source weights; not full field derivative',
             'shared zero point remains degenerate; group members not independent replicates',
             'known measured-covariate cuts may cancel; morphology/quality/outlier/linkage selection not calibrated',
-            'no native FP-only source kernel or same-field multi-member likelihood implemented',
+            'shared-node product/integration implemented; no calibrated native FP-only source kernel or live-field connection',
             'stress strength is an illustrative axis, not an observed bound or adopted prior',
             'MW/M31 roles ambiguous and M33 unresolved; same NEW field constraints remain required'],
         elapsed_seconds=time.monotonic()-start,
