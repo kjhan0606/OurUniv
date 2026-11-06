@@ -7,6 +7,39 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
+## Current R2 update — 2026-11-07
+
+The user confirms that neither the source-matched mark-availability parent
+input nor a defensible selection-independence specification is available.
+The reactivated R2 goal retains its full CF4+galaxy-conditioned N256/384
+z=0 density/velocity posterior, calibration, uncertainty and held-out
+requirements. Do not launch production chains, read held-out outcomes,
+repeat closed source searches/mocks, or manufacture a selection prior.
+`CF4_R2_OBSERVATION_CALIBRATION_DECISION_20261104.md` now distinguishes the
+implemented cut-normalized working factor from the unestablished true
+availability-conditioned likelihood; fixing an observed index set alone
+does not correct selection. No code or target was changed.
+
+The driver completed the analytic mean-map precision reconciliation using
+the current cross-chain comparator and saved450919 scalar result. For four
+independent Gaussian chain means and known within-chain SD, the marginal
+p95 of chain disagreement is3.22795 times pooled mean error, whereas twice
+the pooled error is only its RMS scale. The unchanged0.10 cutoff corresponds
+in that reference to about260 effective states per chain, not the100-per-
+chain RMS shorthand. These are single-cell/homogeneous-reference quantities,
+not a finite-region pass guarantee, actual-chain forecast, or SD-map gate
+calibration. The512-retained-state cap is not demonstrated adequate. Exact
+assumptions and arithmetic are in the existing conditional-v6 run contract.
+No gate was relaxed, new calculation submitted, or budget expanded.
+
+Q-GOAL: this corrects a required observation/uncertainty interpretation but
+does not deliver the R2 posterior. Q-LEAN: source and saved-result checks
+plus scalar analytic arithmetic only; no new instrumentation or simulation.
+MW/M31 remain role-ambiguous and M33 unresolved; their observables must
+ultimately constrain those same roles in the same NEW evolved LG field at
+`<=0.3 cMpc/h`, with native truth identities reserved for calibration/
+evaluation. R2 remains open/NO-GO; R3 has not started.
+
 ## Current R2 update — 2026-11-05
 
 Syntax CPU job 450009 completed the bounded spatial field-MCSE synthetic study

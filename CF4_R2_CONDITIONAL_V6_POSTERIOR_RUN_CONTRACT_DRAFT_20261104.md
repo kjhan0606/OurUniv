@@ -162,17 +162,76 @@ limitations are in `CF4_R2_JOINT_FIELD_MCSE_STRESS_RESULT_20261105.md`.
 Driver disposition: retain this as a separate **chain-local agreement and
 map-stability guard**, not as a second estimate of pooled MCSE. In the ideal
 IID/equal-chain case, `s_B / within_SD` is approximately
-`1/sqrt(ESS_per_chain)`; the0.10 cutoff corresponds roughly to100 effective
-states per chain, or400 pooled effective states across four balanced chains.
-That is consistent in scale with the existing scalar ESS>=400 screen, but is
-only a heuristic correspondence: autocorrelation, finite chain count and the
-regional p95 matter, and the posterior-SD-map ratio is a separate stability
-statistic. Keep the predeclared cutoff unchanged for now and label its extra
+`1/sqrt(ESS_per_chain)` in root-mean-square scale. The former correspondence
+to100 effective states per chain (400 pooled) describes that RMS scale,
+**not the regional p95 criterion**. The finite-four-chain calculation below
+shows why it must not be used to size the run. Autocorrelation, estimated
+within-chain variance and regional dependence also matter; the posterior-SD
+map ratio is a different statistic. Keep the predeclared cutoff unchanged
+for now and label its extra
 per-chain requirement explicitly. The stress result does not show
 nonstationarity or justify loosening it. Defer a positive control until the
 chain-local requirement is frozen, and do not let it displace the
 source-matched selection work; it is not needed to reinterpret the completed
 negative control.
+
+### Analytic reconciliation of the mean-map p95 cost — 2026-11-07
+
+The driver checked both implementations in
+`src/cf4_r2_cross_chain_field_diagnostics.py`: their numerator is the
+unweighted sample SD of individual-chain means with divisor `m-1`, while the
+denominator is the retained-count-weighted RMS of the chain posterior SDs.
+Neither divides the numerator by `sqrt(m)`. No code or cutoff is changed.
+
+Consider one cell with independent Gaussian chain means of common mean and
+variance `v`, and a known common posterior SD `sigma`. Define
+`r = sqrt(v/m)/sigma`, the true pooled-mean error ratio, and
+`D = s_B/sigma`. Then exactly under these assumptions,
+
+\[
+ \frac{(m-1)D^2}{m r^2}\sim\chi^2_{m-1}.
+\]
+
+For four chains, `chi2_3(0.95)=7.81472790325`, so the **marginal** 95th
+percentile of `D` is `3.22794628*r`, not `2*r`. The latter is its RMS scale.
+Consequences for the unchanged0.10 mean-map cutoff are:
+
+- A pooled ratio0.05 gives only60.84% pointwise probability of `D<=0.10`;
+  at ratio0.10 the pointwise probability is13.86%. These are probabilities
+  across repeated Gaussian chain means, not regional gate pass rates.
+- The marginal p95 reaches0.10 at `r=0.03097945`. Writing
+  `v=sigma^2/n_eff` gives `n_eff=260.49093` per chain, or1041.96372 pooled.
+  This is2.6049 times the earlier RMS-based effective-count illustration.
+- At the proposed512 retained states per chain, that reference requires
+  a finite-length variance-inflation factor `512/n_eff` no larger than
+  about1.9655. No actual R2 chain has established such efficiency.
+- The saved job450919 x/z true pooled ratios0.05342156 correspond to a
+  Gaussian marginal p95 of about0.17244, consistent in scale with its
+  reported regional values0.170--0.174. This is an interpretation check,
+  not a proof that its random-occupancy velocity estimator is Gaussian.
+
+The quantile was checked by inversion of the closed-form CDF
+`erf(sqrt(x/2)) - sqrt(2*x/pi)*exp(-x/2)`; no chain, target evaluation or
+synthetic-field simulation was run. The scalar arithmetic is not a
+calibration experiment. With independent chains of `n` IID Gaussian *draws*
+each, a common mean/variance, and the denominator formed from their unbiased
+within-chain variances (divisor `n-1`), the exact single-cell law is instead
+`D^2 ~ F_(m-1, m*(n-1))/n`. This is an additional reference case, not the
+law of the actual autocorrelated, conditional-occupancy estimates; those
+require their own finite-sample treatment. A marginal quantile approximates a
+large homogeneous region's spatial percentile only when the spatial
+dependence permits that limit. It does not give95% probability that a
+finite regional p95 passes, does not handle heterogeneous cells, and says
+nothing about the posterior-SD-map conjunction. Thus260 is **not** an R2
+sample-size recommendation or a joint-gate qualification.
+
+Disposition: the separate chain-agreement requirement has a materially
+larger illustrative precision cost than the400-pooled-ESS shorthand. Do not
+use that shorthand or the512-draw cap as evidence of feasible map precision.
+Retain the unchanged, unqualified gate and the production NO-GO; do not
+launch a positive control, increase a budget, or add a new threshold from
+this calculation. The source-selection dependency remains unresolved after
+the user's confirmation that neither requested input is currently available.
 
 Before any further calibration, use a generator with a verified joint
 stationary spatial law (or a separately validated finite-sample reference),

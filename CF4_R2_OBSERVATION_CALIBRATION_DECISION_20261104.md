@@ -59,15 +59,17 @@ the existing SDSS-PV mocks only to test the FP subfactor under their own
 selection model. The driver checked the current factor wiring directly:
 
 \[
-\pi(F,\theta\mid C,Y_{A=1})\;\propto\;
+\widetilde\pi_{v6}(F,\theta\mid C,Y_I;I)\;\propto\;
 \pi(F,\theta)\,p(C\mid F,\theta_c)
-\prod_{i\in I_{\rm linked}}p(Y_i\mid C_i,A_i=1,T_i=1,F,\theta_p),
+\prod_{i\in I_{\rm linked}}q_{v6}(Y_i\mid C_i,T_i=1,F,\theta_p),
 \]
 
 where \(F\) is the evolved field, \(C\) is the observed 2M++ count
 catalogue, \(A_i\) denotes entry into the linked CF4/Tempel/SDSS-PV mark
-cohort, and \(T_i\) denotes the explicitly modeled per-object FP
-measurement cuts. In code, the first factor is the single sparse Poisson
+cohort, \(I\) is the fixed list of observed linked marks, and \(T_i\)
+denotes the explicitly modeled per-object FP measurement cuts. The tilde
+and \(q_{v6}\) explicitly denote a working target, not an established
+selected-cohort likelihood. In code, the first factor is the single sparse Poisson
 count score (`count_field_loglike`); the second is the source-weighted raw
 mark numerator divided by its same-state cut-normalization integral
 (`raw_field_logpdf` / `row_logpdf`). The latter includes the declared finite
@@ -79,10 +81,14 @@ the published object-level correction is already reflected in the source
 likelihood definition and is not group inclusion.
 
 This omission is not automatically fatal to every conditional likelihood.
-The cohort-selection factor can be dropped for field inference only if its
-probability is constant in \(F\) after conditioning on the variables actually
-held fixed in this target (equivalently, a defensible conditional-independence
-argument for \(A\)). If availability depends on latent distance, velocity,
+If the true selected-mark conditional were known, its separate cohort-entry
+factor could be dropped when field-independent after conditioning on the
+variables actually held fixed. The implemented cut-normalized working factor
+is not yet that true selected-mark conditional: field independence of an
+overall entry rate alone would not establish the required cancellation
+within its mark/source mixture. A sufficient conditional-independence
+argument or an explicit joint missingness factorization is still needed.
+If availability depends on latent distance, velocity,
 environment, FP residual, or unconditioned group properties, the term need not
 cancel. The frozen 47,121 count rows and 1,414 selected marks contain neither
 the eligible non-mark roster nor a demonstrated set of sufficient observed
@@ -109,6 +115,51 @@ evaluation.
 no new catalogue extraction, archive pass, simulation, sampler screen, or
 additional instrumentation. The result does not close observation
 calibration.
+
+## Unavailable-input disposition and conditional notation — 2026-11-07
+
+The user confirmed that neither the source-matched parent/attempt/usable-FP/
+linkage input nor a defensible selection-independence specification is
+currently available. This is a scientific input dependency, not a running
+job or a permission wait. Do not repeat the same request, public-parent
+search, mock pass, or source census; do not send email. Reactivating the R2
+goal does not supply those inputs or authorize an arbitrary selection law.
+
+The driver rechecked `raw_field_logpdf` and the raw-FP normalization in
+`row_logpdf`: the denominator integrates the stated measurement cuts, not
+the additional availability/linkage event. The earlier displayed equation
+was too strong in naming that working factor directly as
+`p(Y | C,A=1,T=1,F)`. It is corrected above to `q_v6`; the code and previous
+NO-GO verdict are unchanged. Conditioning the written target on an observed
+index list is not itself a selection correction.
+
+For example, if `q_F(y | C,T)` were the correct pre-availability mark law,
+an additional effective selection probability `a_F(y,C,T)` would give
+
+\[
+ p(y\mid C,T,A=1,F)
+ =\frac{q_F(y\mid C,T)\,a_F(y,C,T)}
+ {\int q_F(y'\mid C,T)\,a_F(y',C,T)\,dy'}.
+\]
+
+Selection depending on unobserved distance or environment can make the
+effective `a_F` field-dependent even without an explicit field argument in
+the survey's targeting rule. As a purely algebraic illustration, two
+preselection mark laws `(0.8,0.2)` and `(0.2,0.8)`, paired respectively with
+selection probabilities `(0.25,1)` and `(1,0.25)`, both yield inclusion0.4
+and selected marks `(0.5,0.5)`. This is not an actual CF4 mock or a prior:
+it shows why selected marks, or even a total inclusion fraction alone, do
+not generally identify the unknown mark-dependent selection. It does not
+claim that the galaxy-count data contain no information about the field.
+
+Driver disposition: no production or multi-chain target, held-out outcome
+read, FP-dropping substitution, or claimed calibrated conditional posterior
+follows. Preserve the full R2 objective. The remaining in-scope analytic
+precision reconciliation is recorded in
+`CF4_R2_CONDITIONAL_V6_POSTERIOR_RUN_CONTRACT_DRAFT_20261104.md`; it does
+not resolve selection or make the conditional working model a science
+delivery. Routine interpretation checks are driver-reviewed; this is not
+an R2 exit audit or a new external-review request.
 
 ## Minimum source-matched information to change the decision
 
