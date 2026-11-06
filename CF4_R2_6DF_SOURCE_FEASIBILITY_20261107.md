@@ -90,3 +90,30 @@ separate map. Subsequent MW/M31 role ambiguity and unresolved M33 must be
 constrained there at <=0.3 cMpc/h; truth IDs remain calibration/evaluation only.
 Q-LEAN: one exact released archive and a falsifiable source decision. No large
 simulation, new sampler, broad catalogue campaign or stage-by-stage approvals.
+
+## Identity-only execution and bounded training-status extension
+
+CPU job453857 (a10/syn01,128 MiB,3 s,exit0) recovered 11,102 distinct 6dFGS
+and 2MASS identities. All rows have31 whitespace-delimited columns, matching
+the supplied schema. The nested source is `campbell_table8.ascii`,2,433,077
+bytes, SHA256 `c93783da45e924215b35cc6fdfb4243768a4d30301886ab787d70cf1aef8741e`.
+Measured Python peak31.64 MiB. No flags or numerical FP/velocity/distance
+values were parsed. Results/identities are under
+`/gpfs/kjhan/CF4/z0_density/r2_6df_source_probe_20261107/453857/`.
+
+Complete the same feasibility question by using exact 2MASS names and the
+existing secure CF4/count crossmatch. Read J selection/PV flags ONLY when
+the existing point and CF4-group roles are both training and the entire
+native group is safe. Unknown, ambiguous and non-training connections seal
+their whole native group; propagate that seal through shared CF4 groups
+with the existing closure routine. No flag chooses the inspected subset.
+All unlinked/conflicting rows remain in the identity artifact and stay sealed.
+This deliberately restricted diagnostic must NOT become the native science
+cohort or a selection-probability denominator. No numerical FP values are
+parsed even for these training rows. The frozen split/target is untouched.
+
+This metadata extension uses NumPy and the existing graph routine; expected
+peak<=200 MiB, request256 MiB (>20% headroom), one CPU and the same two-minute
+cap. Record whether any final residual-cut failures actually survive in these
+training-linked raw rows. A null result in this restricted subset cannot prove
+the full raw table lacks rejected measurements.
