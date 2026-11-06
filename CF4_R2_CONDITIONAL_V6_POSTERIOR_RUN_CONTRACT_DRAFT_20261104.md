@@ -1,5 +1,13 @@
 # Conditional-v6 posterior run contract — revised draft, 2026-11-04
 
+**Route update 2026-11-07:** the user-approved R2 priority is now the
+source-native conditional-observation redesign in `CF4_MASTER_PLAN.md`.
+This document remains a v6 reference, not the run contract for the new factor.
+No production execution, threshold change or 128/512 schedule is carried over
+automatically. Reconcile the new observation law, scientific precision,
+convergence evidence and total resource cost before proposing a production
+run. The full R2 posterior/uncertainty/calibration/held-out objective is retained.
+
 **Status: design proposal only. No Slurm job is authorized by this draft.**
 The first version received Astra's mid-course **NO-GO as written**. This
 revision adopts the supported persistence and diagnostic corrections below;

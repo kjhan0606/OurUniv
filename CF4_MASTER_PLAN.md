@@ -7,7 +7,71 @@ and cf4_science_route_v3.json as execution/priority authority. Preserve those
 files and previous results as history; do not silently revive their routes.
 Direct subsequent user instructions take precedence over this file.
 
-## Current R2 update — 2026-11-07
+## Current R2 objective and route revision — 2026-11-07 (user-approved)
+
+The user requested a detailed reassessment and an alternative to the blocked
+approach, then explicitly requested this goal update. The final science goal
+is unchanged; the immediate observation-model route is revised. This section
+supersedes earlier blanket restrictions on redesign without a complete parent
+roster, not the evidence against promoting the existing v6 target.
+
+**R2 objective:** infer and validate a scientifically defensible CF4+galaxy-
+conditioned z=0 density/velocity posterior on a 1.5 cMpc/h grid in the
+384 cMpc/h box, including posterior samples, uncertainty, held-out prediction,
+and observation/sampler calibration. Use the same latent-IC evolved state so
+the result remains connected to the subsequent LG constraints and zoom ICs.
+Neither a development map nor a count-only substitute completes this goal.
+
+**Immediate objective:** develop and discriminate a source-native conditional
+observation model, rather than treating the 1,414 linked/singleton FP marks
+and their missing parent roster as the only possible route. Examine an
+angular-size response conditional on measured magnitude, dispersion, redshift,
+sky position and supported source/quality covariates. Selection cancellation
+must be derived and justified; conditioning on the observed index list is
+not enough. Unresolved residual-, latent-distance- or environment-dependent
+selection still requires modelling or supporting evidence. Do not manufacture
+a prior or call an assumption-only mock real-survey calibration.
+
+### Next bundle and decision
+
+1. Using existing training-only source information, classify each selection
+   stage as conditioned, explicitly normalized, or unresolved. Do not repeat
+   the closed public-parent census or treat unmatched rows as failures.
+2. Derive and implement a separately named conditional FP factor with its
+   measurement covariance, coordinate transformation and latent-distance
+   weights conditioned on the new observables. Reconsider the artificial
+   count-intersection/singleton restrictions, without silently changing the
+   frozen sample: preserve group/identity-level held-out isolation, shared
+   group/calibration errors, and single ownership of overlapping count/mark
+   occurrence/redshift information. FP-only source weights are not
+   automatically the 2M++ tracer weights.
+3. In one bounded low-dimensional study, check normalization, retained
+   distance information, residual-selection confounding and evaluation cost.
+   Sensitivity axes are not calibrated nuisance priors. The earlier Gaussian
+   algebra control is not a test on actual CF4 data or a field posterior.
+4. Connect the factor to the same evolved field only if its assumptions and
+   useful information survive that study. Otherwise reject the candidate
+   with a concrete reason and assess another supported distance-indicator
+   factor, not another sampler-setting sweep. Any production proposal must
+   first reconcile scientific accuracy, convergence evidence and total cost;
+   do not inherit the v6 128/512 schedule or relax old gates to pass old runs.
+
+Astra's 2026-11-07 mid-course advice was GO for bounded observation-model
+redesign and NO-GO for v6 production or a calibrated-posterior claim. The
+driver adopts that distinction, with explicit attention to the SDSS paper's
+residual-dependent outlier rejection, source reweighting and conditional-
+design information loss. This is not an exit audit. **R2 is incomplete;
+redesign work may proceed; production remains NO-GO; R3 has not started.**
+No new sampling budget or Slurm submission is implied by this document update.
+
+Q-GOAL: preserve the actual current-field posterior as the first delivery,
+then identify MW/M31/M33 from the same NEW evolved LG field at <=0.3 cMpc/h.
+MW/M31 roles remain ambiguous and M33 unresolved; their observables must
+constrain those roles, with native truth identities only for calibration/
+evaluation. Q-LEAN: one observation-factor bundle, existing evidence and
+focused checks; no new gravity run, parent-search loop or gate-code ladder.
+
+## Earlier R2 input/precision update — 2026-11-07 (historical boundary)
 
 The user confirms that neither the source-matched mark-availability parent
 input nor a defensible selection-independence specification is available.

@@ -1,6 +1,25 @@
 # R2 observation-calibration decision — 2026-11-04
 
-## Decision
+## Current route revision — 2026-11-07
+
+The user approved updating the goal after reassessing this blocker. Follow
+the current R2 objective and route revision in `CF4_MASTER_PLAN.md`.
+The missing parent still prevents claiming calibrated selection for v6, but
+is not a proof that every defensible CF4-conditioned inference is impossible.
+Source-native conditional FP redesign and a bounded discrimination study may
+proceed; the earlier requirement to obtain a parent or a supplied ignorability
+specification before any redesign is superseded. Selection cancellation,
+latent-distance weights, noisy conditioning variables, residual-dependent
+cuts, shared group errors and count/mark ownership must be addressed explicitly.
+Discarding source-design information does not automatically reproduce the
+full joint posterior. Preserve the full R2 field/calibration/held-out goal.
+
+The working v6 target remains unchanged and NO-GO for production or posterior
+promotion. No held-out outcomes, repeated parent searches, arbitrary selection
+prior or new sampling budget are authorized by this revision. Astra's
+mid-course redesign advice is adopted; it is not R2 exit approval.
+
+## Earlier decision for the frozen v6 model
 
 Do **not** repeat the native-TNG RSD/count mock or the already completed
 actual-state moment/observation-operator bundle. They do not identify the
