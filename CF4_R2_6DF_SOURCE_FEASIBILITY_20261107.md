@@ -117,3 +117,44 @@ peak<=200 MiB, request256 MiB (>20% headroom), one CPU and the same two-minute
 cap. Record whether any final residual-cut failures actually survive in these
 training-linked raw rows. A null result in this restricted subset cannot prove
 the full raw table lacks rejected measurements.
+
+### Completed source decision — job453861
+
+Source commit `24a2adc9fb4a761ad682c35aee28de60c90a9238`; a10/syn01,
+one CPU,256 MiB,COMPLETED/0:0,3 s. The metadata operation took0.575 s with
+80.91 MiB process peak. Its pinned inputs matched the recorded archive,
+v6 split and existing crossmatch/catalogue hashes.
+
+Of11,102 identities,4,007 had direct unambiguous training links. Closing the
+new native group connections conservatively left3,001 inspected rows in
+2,834 native groups;8,101 rows remained sealed. The inspected rows contain
+2,973 J-PV inclusions and28 exclusions. Exactly one inspected row has
+`sampcodeJ=111110`: its final residual criterion failed while its other five
+FP-fit criteria passed. The raw record remains in the released table.
+
+This verifies **at least one** training-linked residual reject's record
+retention, not complete rejection history, numerical measurement usability,
+selection probability or representativeness of the3,001-row subset. Neither
+the28/3,001 fraction nor the single residual rejection estimates the native
+source's rejection rate. Numerical FP values/errors are still unparsed;
+their finite/usable status has not been asserted. No held-out selection
+flags or outcomes were summarized. No old split or live target changed.
+
+Artifacts:
+`/gpfs/kjhan/CF4/z0_density/r2_6df_source_probe_20261107/453861/result.json`
+and `identities.csv`. The JSON's `published_reject_retention_is_row_verified`
+means this existence check only, not all rejected rows. The original table
+header refers to “Table6” despite the official table8 filename and31-column
+schema; retain that literal metadata rather than silently repairing it.
+
+Driver decision: the bounded source-access question has a positive answer
+and is closed. Continue a **source-specific model decision** using this
+actual pre-final-cut release; do not launch another access/census loop or
+automatically adopt the diagnostic crossmatched subset as the science sample.
+The next required bundle must resolve identity/held-out ownership for the
+native (including rejected/unlinked) population, bind the2014 native
+measurement/error/coordinate conventions, and determine which earlier
+selection stages can be conditioned on or normalized with source evidence.
+If those dependencies remain unsupported, do not call the resulting model
+selection-calibrated. The source-distance kernel, shared/absolute calibration,
+field inference and validation still have to be delivered. R2 is incomplete.

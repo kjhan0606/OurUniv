@@ -98,6 +98,30 @@ report. Source selection/population, calibrated covariance and native FP-only
 distance weights remain unresolved; no live-field connection or new posterior
 is claimed. Continue that science task, not another normalization-test ladder.
 
+### Evidence-guided source alternative — 2026-11-07
+
+The source reassessment found and retrieved the official2014 6dFGS raw FP
+release, not just its final PV catalogue. Astra gave CONDITIONAL GO for one
+source/identity feasibility probe and NO-GO for replacement/field fitting/
+production/exit. The driver verified the premise: jobs453857/453861 recovered
+11,102 distinct raw identities and inspected selection metadata only for
+3,001 conservatively training-isolated rows. Those include28 J-PV exclusions
+and one `111110` residual-rejected record. All other8,101 rows and all numerical
+FP outcomes remain sealed. This proves an accessible pre-final-cut source and
+one retained rejected record, not complete/calibrated selection or usability
+of its numerical measurements. It does not repair SDSS's missing history.
+
+Follow `CF4_R2_6DF_SOURCE_FEASIBILITY_20261107.md` for the evidence and driver
+disposition. The source-access question is closed positively; next establish
+native population/split ownership and the source-specific observation law,
+including initial measurement availability, rather than repeating the SDSS
+algebra or using the diagnostic count-matched subset as the new cohort. Using
+the raw population could remove the authors' later response-dependent cut;
+earlier selection, population/contamination, source-distance weights and
+shared/absolute calibration still require support. The R2 objective is intact;
+no new posterior, production target, R3 start or exit email is authorized by
+this feasibility result.
+
 ## Earlier R2 input/precision update — 2026-11-07 (historical boundary)
 
 The user confirms that neither the source-matched mark-availability parent
